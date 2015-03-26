@@ -37,6 +37,7 @@ public class StatesBuilder {
     public static String STATE_TERMINATEABLE = "terminateable";
     public static String STATE_NO_COPY = "no-copy";
     public static String STATE_COPYABLE = "copyable";
+    public static String STATE_LOGEVENT = "logEvent";
 
     private TreeSet<String> states = new TreeSet<>();
 
@@ -130,6 +131,11 @@ public class StatesBuilder {
 
     public StatesBuilder copyable() {
         states.add(STATE_COPYABLE);
+        return this;
+    }
+
+    public StatesBuilder logEvent() {
+        states.add(STATE_LOGEVENT);
         return this;
     }
 }

@@ -146,7 +146,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().noPublish().depublishable().noVersioning().noTerminate().noCopy()
+                        .status().logEvent().editable().noRequest().noPublish().depublishable().noVersioning().noTerminate().noCopy()
                         .states()
         );
 
@@ -161,7 +161,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().noPublish().depublishable().versionable().noTerminate().noCopy()
+                        .status().logEvent().editable().noRequest().noPublish().depublishable().versionable().noTerminate().noCopy()
                         .states()
         );
 
@@ -176,7 +176,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().noPublish().depublishable().versionable().noTerminate().noCopy()
+                        .status().logEvent().editable().noRequest().noPublish().depublishable().versionable().noTerminate().noCopy()
                         .states()
         );
 
@@ -189,7 +189,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .status().logEvent().editable().noRequest().publishable().noDepublish().versionable().terminateable().noCopy()
                         .states()
         );
 
@@ -202,7 +202,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .status().logEvent().editable().noRequest().publishable().noDepublish().versionable().terminateable().noCopy()
                         .states()
         );
 
@@ -218,7 +218,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().noPublish().noDepublish().noVersioning().terminateable().noCopy()
+                        .status().logEvent().editable().noRequest().noPublish().noDepublish().noVersioning().terminateable().noCopy()
                         .states()
         );
 
@@ -233,7 +233,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().noPublish().depublishable().noVersioning().noTerminate().noCopy()
+                        .status().logEvent().editable().noRequest().noPublish().depublishable().noVersioning().noTerminate().noCopy()
                         .states()
         );
     }
@@ -359,7 +359,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().noPublish().noDepublish().noVersioning().terminateable().noCopy()
+                        .status().logEvent().editable().noRequest().noPublish().noDepublish().noVersioning().terminateable().noCopy()
                         .states()
         );
 
@@ -372,7 +372,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
+                        .status().logEvent().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
                         .states()
         );
 
@@ -385,7 +385,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
+                        .status().logEvent().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
                         .states()
         );
 
@@ -398,7 +398,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
+                        .status().logEvent().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
                         .states()
         );
 
@@ -413,7 +413,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().requested().noPublish().noDepublish().noVersioning().terminateable().noCopy()
+                        .status().logEvent().editable().requested().noPublish().noDepublish().noVersioning().terminateable().noCopy()
                         .states()
         );
 
@@ -432,7 +432,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().noEdit().requested().noPublish().noDepublish().noVersioning().terminateable().noCopy()
+                        .status().logEvent().noEdit().requested().noPublish().noDepublish().noVersioning().terminateable().noCopy()
                         .states()
         );
     }
@@ -457,7 +457,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .status().logEvent().editable().noRequest().publishable().noDepublish().versionable().terminateable().noCopy()
                         .states()
         );
 
@@ -473,7 +473,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .status().logEvent().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
                         .states()
         );
 
@@ -486,7 +486,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .status().logEvent().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
                         .states()
         );
 
@@ -501,7 +501,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .status().logEvent().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
                         .states()
         );
 
@@ -517,7 +517,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
+                        .status().logEvent().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
                         .states()
         );
 
@@ -533,7 +533,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
+                        .status().logEvent().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
                         .states()
         );
 
@@ -553,7 +553,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
+                        .status().logEvent().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
                         .states()
         );
 
@@ -569,7 +569,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .status().logEvent().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
                         .states()
         );
 
@@ -589,7 +589,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .status().logEvent().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
                         .states()
         );
 
@@ -605,7 +605,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
+                        .status().logEvent().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
                         .states()
         );
 
@@ -623,7 +623,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .status().logEvent().editable().requested().publishable().noDepublish().versionable().terminateable().noCopy()
                         .states()
         );
 
@@ -637,7 +637,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .status().logEvent().editable().requested().publishable().noDepublish().versionable().terminateable().noCopy()
                         .states()
         );
 
@@ -651,7 +651,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .status().logEvent().editable().requested().publishable().noDepublish().versionable().terminateable().noCopy()
                         .states()
         );
 
@@ -664,7 +664,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .status().logEvent().editable().requested().publishable().noDepublish().versionable().terminateable().noCopy()
                         .states()
         );
 
@@ -681,7 +681,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .status().logEvent().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
                         .states()
         );
 
@@ -694,7 +694,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .status().logEvent().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
                         .states()
         );
     }
@@ -722,7 +722,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editing().noRequest().noPublish().noDepublish().versionable().noTerminate().noCopy()
+                        .status().logEvent().editing().noRequest().noPublish().noDepublish().versionable().noTerminate().noCopy()
                         .states()
         );
 
@@ -736,7 +736,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editing().noRequest().noPublish().noDepublish().versionable().noTerminate().copyable()
+                        .status().logEvent().editing().noRequest().noPublish().noDepublish().versionable().noTerminate().copyable()
                         .states()
         );
 
@@ -752,7 +752,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().noPublish().depublishable().versionable().noTerminate().noCopy()
+                        .status().logEvent().editable().noRequest().noPublish().depublishable().versionable().noTerminate().noCopy()
                         .states()
         );
 
@@ -771,7 +771,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().publishable().depublishable().versionable().noTerminate().noCopy()
+                        .status().logEvent().editable().noRequest().publishable().depublishable().versionable().noTerminate().noCopy()
                         .states()
         );
 
@@ -785,7 +785,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().publishable().depublishable().versionable().noTerminate().noCopy()
+                        .status().logEvent().editable().noRequest().publishable().depublishable().versionable().noTerminate().noCopy()
                         .states()
         );
 
@@ -800,7 +800,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().noEdit().requested().publishable().depublishable().versionable().noTerminate().noCopy()
+                        .status().logEvent().noEdit().requested().publishable().depublishable().versionable().noTerminate().noCopy()
                         .states()
         );
 
@@ -815,7 +815,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().noEdit().requested().publishable().depublishable().versionable().noTerminate().noCopy()
+                        .status().logEvent().noEdit().requested().publishable().depublishable().versionable().noTerminate().noCopy()
                         .states()
         );
     }
@@ -846,7 +846,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editing().noRequest().noPublish().noDepublish().versionable().noTerminate().noCopy()
+                        .status().logEvent().editing().noRequest().noPublish().noDepublish().versionable().noTerminate().noCopy()
                         .states()
         );
 
@@ -860,7 +860,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editing().noRequest().noPublish().noDepublish().versionable().noTerminate().copyable()
+                        .status().logEvent().editing().noRequest().noPublish().noDepublish().versionable().noTerminate().copyable()
                         .states()
         );
 
@@ -875,7 +875,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().publishable().noDepublish().versionable().terminateable().copyable()
+                        .status().logEvent().editable().noRequest().publishable().noDepublish().versionable().terminateable().copyable()
                         .states()
         );
 
@@ -889,7 +889,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().noPublish().depublishable().versionable().noTerminate().copyable()
+                        .status().logEvent().editable().noRequest().noPublish().depublishable().versionable().noTerminate().copyable()
                         .states()
         );
 
@@ -903,7 +903,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().noPublish().depublishable().versionable().noTerminate().noCopy()
+                        .status().logEvent().editable().noRequest().noPublish().depublishable().versionable().noTerminate().noCopy()
                         .states()
         );
 
@@ -918,7 +918,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
+                        .status().logEvent().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
                         .states()
         );
 
@@ -933,7 +933,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().noEdit().requested().noPublish().depublishable().versionable().noTerminate().copyable()
+                        .status().logEvent().noEdit().requested().noPublish().depublishable().versionable().noTerminate().copyable()
                         .states()
         );
     }
@@ -957,7 +957,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().noPublish().noDepublish().noVersioning().terminateable().noCopy()
+                        .status().logEvent().editable().noRequest().noPublish().noDepublish().noVersioning().terminateable().noCopy()
                         .states()
         );
 
@@ -972,7 +972,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .status().logEvent().editable().noRequest().publishable().noDepublish().versionable().terminateable().noCopy()
                         .states()
         );
 
@@ -986,7 +986,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().publishable().noDepublish().versionable().terminateable().copyable()
+                        .status().logEvent().editable().noRequest().publishable().noDepublish().versionable().terminateable().copyable()
                         .states()
         );
     }
@@ -1016,7 +1016,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
+                        .status().logEvent().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
                         .states()
         );
 
@@ -1030,7 +1030,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().copyable()
+                        .status().logEvent().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().copyable()
                         .states()
         );
 
@@ -1044,7 +1044,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().copyable()
+                        .status().logEvent().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().copyable()
                         .states()
         );
 
@@ -1058,7 +1058,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
+                        .status().logEvent().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
                         .states()
         );
 
@@ -1076,7 +1076,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().noEdit().requested().noPublish().noDepublish().noVersioning().terminateable().noCopy()
+                        .status().logEvent().noEdit().requested().noPublish().noDepublish().noVersioning().terminateable().noCopy()
                         .states()
         );
 
@@ -1090,7 +1090,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().noPublish().noDepublish().noVersioning().terminateable().noCopy()
+                        .status().logEvent().editable().noRequest().noPublish().noDepublish().noVersioning().terminateable().noCopy()
                         .states()
         );
 
@@ -1104,7 +1104,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().noPublish().noDepublish().noVersioning().terminateable().copyable()
+                        .status().logEvent().editable().noRequest().noPublish().noDepublish().noVersioning().terminateable().copyable()
                         .states()
         );
     }
@@ -1129,7 +1129,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().noPublish().depublishable().noVersioning().noTerminate().noCopy()
+                        .status().logEvent().editable().noRequest().noPublish().depublishable().noVersioning().noTerminate().noCopy()
                         .states()
         );
 
@@ -1143,7 +1143,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                        .status().editable().noRequest().noPublish().depublishable().noVersioning().noTerminate().copyable()
+                        .status().logEvent().editable().noRequest().noPublish().depublishable().noVersioning().noTerminate().copyable()
                         .states()
         );
     }
