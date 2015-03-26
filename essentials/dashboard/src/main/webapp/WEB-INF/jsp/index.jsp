@@ -33,7 +33,7 @@
   <script src="${pageContext.request.contextPath}/components/angular-sanitize/angular-sanitize.min.js?v=${project.version}"></script>
 
   <%-- HIPPO THEME DEPS --%>
-  <script src="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/js/lib/angular-ui-tree.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/hippo-theme/dist/js/main.js?v=${project.version}"></script>
 
   <%-- ESSENTIALS --%>

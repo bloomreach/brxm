@@ -221,6 +221,7 @@ dashboard/src/main/webapp/js/Essentials.js -text
 dashboard/src/main/webapp/js/app.js -text
 dashboard/src/main/webapp/js/controllers.js -text
 dashboard/src/main/webapp/js/directives.js -text
+dashboard/src/main/webapp/js/lib/angular-ui-tree.js -text
 dashboard/src/main/webapp/js/loader.js -text
 dashboard/src/main/webapp/js/routes.js -text
 dashboard/src/main/webapp/pages/build.html -text
