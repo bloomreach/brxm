@@ -19,7 +19,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -28,9 +27,16 @@ import org.apache.wicket.util.value.ValueMap;
 
 public class Dialog<T> extends AbstractDialog<T> {
 
+    private static final String DEFAULT_DIALOG_TITLE = "Dialog title";
+
+    public static final String BOTTOM_LEFT_ID = "bottom-left";
+
+    private IValueMap size = DialogConstants.LARGE;
     private IValueMap properties;
-    private Component bottomLeft;
+
     private String cssClass;
+    private String titleKey = "dialog.title";
+    private IModel<?> titleModel;
 
     public Dialog() {
         this(null);
@@ -39,57 +45,46 @@ public class Dialog<T> extends AbstractDialog<T> {
     public Dialog(final IModel<T> model) {
         super(model);
 
-        add(bottomLeft = createBottomLeft("bottom-left"));
+        add(new EmptyPanel(BOTTOM_LEFT_ID).setVisible(false));
     }
 
     @Override
     public IModel<String> getTitle() {
-        final String titleKey = getTitleKey();
-        final IModel<?> titleModel = getTitleModel();
-        final String title = getString(titleKey, titleModel, "Dialog title");
-        return Model.of(title);
-    }
-
-    protected String getTitleKey() {
-        return "dialog.title";
-    }
-
-    protected IModel<?> getTitleModel() {
-        return null;
-    }
-
-    protected Component createBottomLeft(final String id) {
-        return new EmptyPanel(id).setVisible(false);
-    }
-
-    protected Component getBottomLeft() {
-        return bottomLeft;
+        return Model.of(getString(titleKey, titleModel, DEFAULT_DIALOG_TITLE));
     }
 
     @Override
     public IValueMap getProperties() {
         if (properties == null) {
-            final String cssClass = getCssClass();
             if (StringUtils.isNotEmpty(cssClass)) {
-                Map<String, Object> map = new LinkedHashMap<>(getSize());
+                Map<String, Object> map = new LinkedHashMap<>(size);
                 map.put("css-class-name", cssClass);
                 properties = new ValueMap(map).makeImmutable();
             } else {
-                properties = getSize();
+                properties = size;
             }
         }
         return properties;
     }
 
-    protected String getCssClass() {
-        return cssClass;
+    @Override
+    protected boolean addAjaxIndicator() {
+        return false;
+    }
+
+    protected void setTitleKey(final String titleKey) {
+        this.titleKey = titleKey;
+    }
+
+    protected void setTitleModel(IModel<?> titleModel) {
+        this.titleModel = titleModel;
+    }
+
+    protected void setSize(final IValueMap size) {
+        this.size = size;
     }
 
     protected void setCssClass(final String cssClass) {
         this.cssClass = cssClass;
-    }
-
-    protected IValueMap getSize() {
-        return DialogConstants.LARGE;
     }
 }
