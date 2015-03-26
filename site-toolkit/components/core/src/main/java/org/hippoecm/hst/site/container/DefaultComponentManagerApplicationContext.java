@@ -17,7 +17,6 @@ package org.hippoecm.hst.site.container;
 
 import java.util.Properties;
 
-import org.hippoecm.hst.component.support.ClientComponentManager;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
@@ -65,19 +64,11 @@ public class DefaultComponentManagerApplicationContext extends ClassPathXmlAppli
         this.componentManager = componentManager;
         this.containerConfiguration = containerConfiguration;
 
-        boolean isClientComponentManager = componentManager != null && componentManager instanceof ClientComponentManager;
-
         if (this.containerConfiguration != null && !this.containerConfiguration.isEmpty()) {
             Properties initProps = this.containerConfiguration.toProperties();
             PropertyPlaceholderConfigurer ppc = new OverridingByAttributesPropertyPlaceholderConfigurer();
-            if (isClientComponentManager) {
-                ppc.setIgnoreUnresolvablePlaceholders(this.containerConfiguration.getBoolean(ClientComponentManager.IGNORE_UNRESOLVABLE_PLACE_HOLDERS, true));
-                ppc.setSystemPropertiesMode(this.containerConfiguration.getInt(ClientComponentManager.SYSTEM_PROPERTIES_MODE, PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK));
-            }
-            else {
-                ppc.setIgnoreUnresolvablePlaceholders(this.containerConfiguration.getBoolean(SpringComponentManager.IGNORE_UNRESOLVABLE_PLACE_HOLDERS, true));
-                ppc.setSystemPropertiesMode(this.containerConfiguration.getInt(SpringComponentManager.SYSTEM_PROPERTIES_MODE, PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK));
-            }
+            ppc.setIgnoreUnresolvablePlaceholders(this.containerConfiguration.getBoolean(SpringComponentManager.IGNORE_UNRESOLVABLE_PLACE_HOLDERS, true));
+            ppc.setSystemPropertiesMode(this.containerConfiguration.getInt(SpringComponentManager.SYSTEM_PROPERTIES_MODE, PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK));
             ppc.setProperties(initProps);
             addBeanFactoryPostProcessor(ppc);
         }
