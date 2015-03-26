@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,25 +18,29 @@ package org.hippoecm.frontend.plugins.richtext.dialog;
 
 import javax.jcr.Node;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorDocumentLink;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerController;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettings;
+import org.hippoecm.frontend.widgets.breadcrumb.BreadCrumb;
+import org.hippoecm.frontend.widgets.breadcrumb.NodeBreadCrumbWidget;
 
 public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink> extends AbstractRichTextEditorDialog<T> {
-    private static final long serialVersionUID = 1L;
 
     private final IPluginContext context;
     private final IPluginConfig config;
 
     private final NodePickerController controller;
+    private final NodeBreadCrumbWidget breadcrumbs;
 
     public AbstractBrowserDialog(IPluginContext context, IPluginConfig config, IModel<T> model) {
         super(model);
@@ -48,7 +52,7 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
 
             @Override
             protected IModel<Node> getInitialModel() {
-                return (IModel<Node>) getModelObject().getLinkTarget();
+                return getModelObject().getLinkTarget();
             }
 
             @Override
@@ -56,15 +60,27 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
                 IModel<Node> selectedModel = getSelectedModel();
                 if(isValid && selectedModel != null) {
                     getModelObject().setLinkTarget(selectedModel);
-                    onModelSelected(selectedModel);
                     checkState();
                 } else {
                     setOkEnabled(false);
                 }
             }
+
+            @Override
+            protected void onFolderSelected(final IModel<Node> model) {
+                onModelSelected(model);
+            }
         };
 
         add(controller.create("content"));
+
+        addOrReplace(breadcrumbs = new NodeBreadCrumbWidget(Dialog.BOTTOM_LEFT_ID, null, controller.getRootPaths()) {
+            @Override
+            protected void onClickBreadCrumb(final BreadCrumb<Node> crumb, final AjaxRequestTarget target) {
+                controller.setSelectedFolder(crumb.getModel());
+            }
+        });
+        breadcrumbs.update(controller.getFolderModel());
     }
 
     @Override
@@ -75,6 +91,9 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
     }
 
     protected void onModelSelected(IModel<Node> model) {
+        if (breadcrumbs != null) {
+            breadcrumbs.update(model);
+        }
     }
 
     protected IModel<Node> getFolderModel() {

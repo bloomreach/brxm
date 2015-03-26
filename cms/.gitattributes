@@ -2479,7 +2479,6 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/RichTextU
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/broken-image-16.png -text svneol=unset#image/png
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/broken-image-32.png -text svneol=unset#image/png
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/AbstractAjaxDialogBehavior.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/AbstractBrowserDialog.html -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/AbstractBrowserDialog.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/AbstractRichTextEditorDialog.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImageBrowserDialog.css -text
