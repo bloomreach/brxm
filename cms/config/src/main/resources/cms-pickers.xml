@@ -47,12 +47,6 @@
       <sv:property sv:name="section.images" sv:type="String">
         <sv:value>service.dialog.tree.images</sv:value>
       </sv:property>
-      <sv:property sv:name="wicket.extensions" sv:type="String">
-        <sv:value>extension.breadcrumb</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.breadcrumb" sv:type="String">
-        <sv:value>service.dialog.breadcrumb</sv:value>
-      </sv:property>
       <sv:property sv:name="extension.list" sv:type="String">
         <sv:value>service.dialog.list</sv:value>
       </sv:property>
@@ -70,6 +64,9 @@
       </sv:property>
       <sv:property sv:name="search.viewers" sv:type="String">
         <sv:value>cms-search-views</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.variant" sv:type="String">
+        <sv:value>picker</sv:value>
       </sv:property>
       <sv:node sv:name="browser.options">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -176,6 +173,9 @@
       </sv:property>
       <sv:property sv:name="search.viewers" sv:type="String">
         <sv:value>cms-search-views</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.variant" sv:type="String">
+        <sv:value>picker</sv:value>
       </sv:property>
       <sv:node sv:name="browser.options">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -312,12 +312,6 @@
       <sv:property sv:name="section.files" sv:type="String">
         <sv:value>service.dialog.tree.files</sv:value>
       </sv:property>
-      <sv:property sv:name="wicket.extensions" sv:type="String">
-        <sv:value>extension.breadcrumb</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.breadcrumb" sv:type="String">
-        <sv:value>service.dialog.breadcrumb</sv:value>
-      </sv:property>
       <sv:property sv:name="extension.list" sv:type="String">
         <sv:value>service.dialog.list</sv:value>
       </sv:property>
@@ -335,6 +329,9 @@
       </sv:property>
       <sv:property sv:name="search.viewers" sv:type="String">
         <sv:value>cms-search-views</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.variant" sv:type="String">
+        <sv:value>picker</sv:value>
       </sv:property>
       <sv:node sv:name="browser.options">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
