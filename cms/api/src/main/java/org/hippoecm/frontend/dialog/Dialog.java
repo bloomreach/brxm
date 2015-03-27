@@ -27,8 +27,6 @@ import org.apache.wicket.util.value.ValueMap;
 
 public class Dialog<T> extends AbstractDialog<T> {
 
-    private static final String DEFAULT_DIALOG_TITLE = "Dialog title";
-
     public static final String BOTTOM_LEFT_ID = "bottom-left";
 
     private IValueMap size = DialogConstants.LARGE;
@@ -50,7 +48,7 @@ public class Dialog<T> extends AbstractDialog<T> {
 
     @Override
     public IModel<String> getTitle() {
-        return Model.of(getString(titleKey, titleModel, DEFAULT_DIALOG_TITLE));
+        return Model.of(getString(titleKey, titleModel, StringUtils.EMPTY));
     }
 
     @Override
