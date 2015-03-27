@@ -34,7 +34,7 @@
 
                 function navigateToSelected(items, parent) {
                     angular.forEach(items, function (item) {
-                        if (item.selected) {
+                        if(item.selected) {
                             $state.go('picker.docs', {
                                 pickerTreeItemId: parent.id
                             });
@@ -60,7 +60,6 @@
                         type: 'pages'
                     }
                 ];
-                PickerCtrl.pickerType = PickerCtrl.pickerTypes[0];
 
                 PickerCtrl.selectDocument = function() {
                     $state.go('menu-item.edit', {
