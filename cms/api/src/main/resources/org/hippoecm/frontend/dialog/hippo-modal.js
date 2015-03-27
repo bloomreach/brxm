@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -102,7 +102,7 @@
         if (this.isFullscreen) {
             //go small
             this.event.beforeInitScreen.fire();
-            
+
             w.className = this.oldWClassname;
 
             w.style.width = this.oldWWidth;
@@ -122,10 +122,10 @@
         } else {
             //go fullscreen
             this.event.beforeFullScreen.fire();
-            
+
             this.oldWClassname = w.className;
             w.className = w.className + ' ' + 'modal_fullscreen';
-            
+
             //save previous dimensions
             this.oldWWidth = w.style.width;
             this.oldWHeight = w.style.height;
@@ -136,7 +136,7 @@
             this.oldCHeight = f.style.height;
             this.oldCTop = f.style.top;
             this.oldCLeft = f.style.left;
-            
+
             //calculate new dimensions
             width  = Wicket.Window.getViewportWidth();
             height = Wicket.Window.getViewportHeight();
@@ -183,11 +183,7 @@
                 "<div class=\"w_content\">";
 
         if (isFrame) {
-            s += "<iframe";
-            if (Wicket.Browser.isIELessThan7()) {
-                s += " src=\"about:blank\"";
-            }
-            s += " frameborder=\"0\" id=\"" + idContent + "\" allowtransparency=\"false\" style=\"height: 200px\" class=\"wicket_modal\"></iframe>";
+            s += "<iframe frameborder=\"0\" id=\"" + idContent + "\" allowtransparency=\"false\" style=\"height: 200px\" class=\"wicket_modal\"></iframe>";
         } else {
             s += "<div id='" + idContent + "' class='w_content_container'></div>";
         }
