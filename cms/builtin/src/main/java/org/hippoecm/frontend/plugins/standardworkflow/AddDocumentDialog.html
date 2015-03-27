@@ -14,45 +14,31 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:extend>
-    <table class="hippo-window-form">
-        <wicket:container wicket:id="name-url">
-            <tr>
-                <td><wicket:message key="name-label">Name</wicket:message></td>
-                <td>
-                    <input type="text" wicket:id="name" class="hippo-form-input"/>
-                </td>
-            </tr>
-            <tr>
-                <td width="75"><wicket:message key="url-label">Name</wicket:message></td>
-                <td>
-                    <input wicket:id="url" class="hippo-form-input"/>
+    <wicket:extend>
+        <div class="dialog-add-document">
+            <wicket:container wicket:id="name-url">
+                <div class="label"><wicket:message key="name-label">Name</wicket:message></div>
+                <div class="input"><input type="text" wicket:id="name" class="hippo-form-input"/></div>
+
+                <div class="label"><wicket:message key="url-label">Name</wicket:message></div>
+                <div class="input input-action-button">
+                    <input class="with-button" wicket:id="url"/>
                     <a wicket:id="uriAction" class="action">
                         <span wicket:id="uriActionLabel">[ UriActionLabel ]</span>
                     </a>
-                </td>
-            </tr>
-        </wicket:container>
-      <tr wicket:id="language">
-        <td><label><wicket:message key="language" /></label></td>
-        <td><select class="hippo-form-select" wicket:id="select"></select></td>
-      </tr>
-      <tr>
-        <td>
-          <span wicket:id="typelabel"/>
-        </td>
-        <td>
-          <select class="hippo-form-select" wicket:id="prototype"/>
-        </td>
-      </tr>
-      <tr>
-        <td>&nbsp;</td>
-        <td>
-          <span wicket:id="notypes"/>
-          <br/>
-        </td>
-      </tr>
-      <wicket:child/>
-    </table>
-  </wicket:extend>
+                </div>
+            </wicket:container>
+            <div wicket:id="language">
+                <div class="label"><wicket:message key="language" /></div>
+                <div><select wicket:id="select"></select></div>
+            </div>
+
+            <div class="label"><span wicket:id="typelabel"/></div>
+            <div class="input"><select class="hippo-form-select" wicket:id="prototype"/></div>
+
+            <div wicket:id="notypes"/>
+
+            <wicket:child/>
+        </div>
+    </wicket:extend>
 </html>

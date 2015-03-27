@@ -30,20 +30,20 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.i18n.types.SortedTypeChoiceRenderer;
 import org.hippoecm.frontend.plugins.standardworkflow.components.LanguageField;
-import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.frontend.plugins.standardworkflow.validators.AddDocumentValidator;
 import org.hippoecm.frontend.translation.ILocaleProvider;
+import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.StringCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AddDocumentDialog extends AbstractWorkflowDialog<AddDocumentArguments> {
+public class AddDocumentDialog extends AbstractWorkflowDialogRestyling<AddDocumentArguments> {
     private static Logger log = LoggerFactory.getLogger(AddDocumentDialog.class);
 
     private final NameUriField nameUriContainer;
@@ -132,7 +132,7 @@ public class AddDocumentDialog extends AbstractWorkflowDialog<AddDocumentArgumen
 
     @Override
     public IValueMap getProperties() {
-        return DialogConstants.MEDIUM;
+        return DialogConstants.MEDIUM_AUTO;
     }
 
     public LanguageField getLanguageField() {
