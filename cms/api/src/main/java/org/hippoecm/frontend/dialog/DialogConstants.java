@@ -27,6 +27,9 @@ public interface DialogConstants {
     String BUTTON = "button";
 
     IValueMap SMALL = new ValueMap("width=380,height=250").makeImmutable();
+    IValueMap SMALL_AUTO = new ValueMap("width=380,height=auto").makeImmutable();
     IValueMap MEDIUM = new ValueMap("width=475,height=375").makeImmutable();
+    IValueMap MEDIUM_AUTO = new ValueMap("width=475,height=auto").makeImmutable();
     IValueMap LARGE = new ValueMap("width=855,height=450").makeImmutable();
+    IValueMap LARGE_AUTO = new ValueMap("width=855,height=auto").makeImmutable();
 }

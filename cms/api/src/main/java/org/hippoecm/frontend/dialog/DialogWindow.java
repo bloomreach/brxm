@@ -173,7 +173,13 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         setWindowClosedCallback(new Callback(dialog));
 
         IValueMap properties = dialog.getProperties();
-        setInitialHeight(properties.getInt("height", 455));
+
+        if (properties.containsKey("height") && properties.getString("height").equals("auto")) {
+            setUseInitialHeight(false);
+        } else {
+            setInitialHeight(properties.getInt("height", 455));
+        }
+
         setInitialWidth(properties.getInt("width", 850));
         setResizable(properties.getAsBoolean("resizable", false));
 
