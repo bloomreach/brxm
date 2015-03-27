@@ -47,7 +47,6 @@ public abstract class BreadcrumbWidget<T> extends Panel {
 
                 Breadcrumb<T> crumb = item.getModelObject();
                 int numberOfCrumbs = model.getObject().size();
-                boolean isFirst = item.getIndex() == 0;
                 boolean isLast = item.getIndex() == (numberOfCrumbs - 1);
 
                 AjaxLink<Breadcrumb<T>> link = new AjaxLink<Breadcrumb<T>>("link", item.getModel()) {
@@ -68,12 +67,6 @@ public abstract class BreadcrumbWidget<T> extends Panel {
                 item.add(link);
 
                 item.add(CssClass.append(crumb.isEnabled() ? "enabled" : "disabled"));
-                if (isFirst) {
-                    item.add(CssClass.append("first"));
-                }
-                if (isLast) {
-                    item.add(CssClass.append("last"));
-                }
 
                 //CMS7-8008: Just show the last part of the breadcrumb
                 item.setVisible(item.getIndex() >= (numberOfCrumbs - maxNumberOfCrumbs));
