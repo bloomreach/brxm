@@ -241,13 +241,6 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             }
         }
 
-/*
-        @Override
-        protected Component createBottomLeft(final String id) {
-            return new Label(id, Model.of("This is a test with a lot of words that should not push the buttons out of the thing"));
-        }
-*/
-
         @Override
         public void onOk() {
             boolean ok = true;
