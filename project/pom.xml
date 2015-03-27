@@ -793,7 +793,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.9.1</version>
+        <version>${maven.build.helper.version}</version>
         <executions>
           <execution>
             <id>property-commandline-offline</id>
