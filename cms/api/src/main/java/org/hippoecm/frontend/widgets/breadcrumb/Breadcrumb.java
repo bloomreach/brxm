@@ -20,10 +20,10 @@ import org.apache.wicket.model.IModel;
 
 public abstract class Breadcrumb<T> implements IDetachable {
 
-        private IModel<T> model;
-        private boolean enabled;
+    private IModel<T> model;
+    private boolean enabled;
 
-        public Breadcrumb(final IModel<T> model, boolean enabled) {
+    public Breadcrumb(final IModel<T> model, boolean enabled) {
         this.model = model;
         this.enabled = enabled;
     }
