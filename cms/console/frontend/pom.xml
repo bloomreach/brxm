@@ -226,7 +226,7 @@
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>bower</executable>
-              <commandlineArgs>install --no-color</commandlineArgs>
+              <commandlineArgs>install ${commandline.offline} --no-color</commandlineArgs>
             </configuration>
           </execution>
           <execution>
