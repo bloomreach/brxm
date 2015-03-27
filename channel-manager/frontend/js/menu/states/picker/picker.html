@@ -24,8 +24,7 @@
                   ng-change="PickerCtrl.changePickerType()">
           </select>
         </div>
-        <div class="tree-col">
-          <div class="hippo-tree-wrapper" data-keep-scroll-pos>
+        <div class="tree-col" data-keep-scroll-pos>
             <div hippo-tree data-items="PickerCtrl.treeItems" data-callbacks="PickerTreeCtrl.callbacks" data-selected-item="PickerCtrl.selectedItem" drag="false">
               <a class="btn btn-link btn-xs" data-nodrag data-ng-click="toggleItem()" stop-propagation data-ng-if="item.expandable">
                 <hippo-icon name="{{collapsed ? 'caret-right' : 'caret-down'}}" size="m"></hippo-icon>
@@ -38,7 +37,6 @@
             </div>
             <div class="empty-tree" data-ng-if="PickerCtrl.treeItems.length == 0">{{ 'EMPTY_DOCUMENT_PICKER' | translate }}</div>
           </div>
-        </div>
       </div>
       <div data-ui-view class="col-sm-9" id="form-panel"></div>
     </div>
