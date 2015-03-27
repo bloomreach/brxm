@@ -31,8 +31,8 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorDocumentLink;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerController;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettings;
-import org.hippoecm.frontend.widgets.breadcrumb.BreadCrumb;
-import org.hippoecm.frontend.widgets.breadcrumb.NodeBreadCrumbWidget;
+import org.hippoecm.frontend.widgets.breadcrumb.Breadcrumb;
+import org.hippoecm.frontend.widgets.breadcrumb.NodeBreadcrumbWidget;
 
 public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink> extends AbstractRichTextEditorDialog<T> {
 
@@ -40,7 +40,7 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
     private final IPluginConfig config;
 
     private final NodePickerController controller;
-    private final NodeBreadCrumbWidget breadcrumbs;
+    private final NodeBreadcrumbWidget breadcrumbs;
 
     public AbstractBrowserDialog(IPluginContext context, IPluginConfig config, IModel<T> model) {
         super(model);
@@ -74,9 +74,9 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
 
         add(controller.create("content"));
 
-        addOrReplace(breadcrumbs = new NodeBreadCrumbWidget(Dialog.BOTTOM_LEFT_ID, null, controller.getRootPaths()) {
+        addOrReplace(breadcrumbs = new NodeBreadcrumbWidget(Dialog.BOTTOM_LEFT_ID, null, controller.getRootPaths()) {
             @Override
-            protected void onClickBreadCrumb(final BreadCrumb<Node> crumb, final AjaxRequestTarget target) {
+            protected void onClickBreadCrumb(final Breadcrumb<Node> crumb, final AjaxRequestTarget target) {
                 controller.setSelectedFolder(crumb.getModel());
             }
         });

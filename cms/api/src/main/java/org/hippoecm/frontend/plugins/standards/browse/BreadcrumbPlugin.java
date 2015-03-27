@@ -48,13 +48,13 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.util.MaxLengthStringFormatter;
-import org.hippoecm.frontend.widgets.breadcrumb.NodeBreadCrumbWidget;
+import org.hippoecm.frontend.widgets.breadcrumb.NodeBreadcrumbWidget;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @deprecated This plugin is deprecated since 10.0.x and replaced by the {@link NodeBreadCrumbWidget}. This widget is
+ * @deprecated This plugin is deprecated since 10.0.x and replaced by the {@link NodeBreadcrumbWidget}. This widget is
  * included by default in the {@link LinkPickerDialog } and {@link AbstractBrowserDialog} which means that the
  * complete breadcrumb plugin configuration can be removed. The <em>root.paths</em> property should be moved to
  * cluster node of the picker, e.g. cms-pickers/documents, and a value <em>root.paths</em> should be added to the
