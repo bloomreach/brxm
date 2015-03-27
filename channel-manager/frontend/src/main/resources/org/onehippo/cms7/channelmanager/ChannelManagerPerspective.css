@@ -604,8 +604,8 @@
     border-radius: 4px;
 }
 
-#componentPropertiesWindow .x-panel-footer .x-btn:hover,
-#componentPropertiesWindow .x-panel-footer .x-btn:focus {
+#componentPropertiesWindow .x-panel-footer .x-btn:not(.x-item-disabled):hover,
+#componentPropertiesWindow .x-panel-footer .x-btn:not(.x-item-disabled):focus {
     background-color: #39434C;
     border-color: #39434C;
     color: #ffffff;
