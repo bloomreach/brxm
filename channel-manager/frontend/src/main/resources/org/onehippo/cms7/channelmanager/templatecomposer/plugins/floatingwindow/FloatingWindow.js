@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,26 +20,20 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
 
     draggable: true,
 
-    //TODO: handle horizontal position
     initComponent: function() {
-        var w = 0, t, region, marginX, marginY;
+        var w = 0, t, region, marginX;
         if (typeof window.innerWidth === 'number') {
-            //Non-IE
+            // Non-IE
             w = window.innerWidth;
         } else if (document.documentElement && document.documentElement.clientWidth) {
-            //IE 6+ in 'standards compliant mode'
+            // IE 6+ in 'standards compliant mode'
             w = document.documentElement.clientWidth;
-        } else if (document.body && document.body.clientWidth) {
-            //IE 4 compatible
-            w = document.body.clientWidth;
         }
-        //Ext.lib.Dom.getViewWidth(true);
         t = Ext.getBody().getScroll().top;
 
         region = Ext.isEmpty(this.initialConfig.initRegion) ? 'center' : this.initialConfig.initRegion;
         if (region !== 'center') {
             marginX = Ext.isEmpty(this.initialConfig.x) ? 0 : this.initialConfig.x;
-            marginY = Ext.isEmpty(this.initialConfig.y) ? 0 : this.initialConfig.y;
             if (region === 'right') {
                 this.initialConfig.x = w - (this.initialConfig.width + marginX + Ext.getScrollBarWidth());
                 this.initialConfig.y += t;
@@ -75,27 +69,12 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
      * Restore the window position to the relative stored position
      */
     restoreRelativePosition: function() {
-        var active, anim, cb;
-        //Moving a selected window using animation creates a shadow artifact that drags behind the window
-        //during the animation. I tried creating the animation without the el.shift helper function
-        //but failed, should revisit this later.
-        //For now, the currently active window is deactivated and reactivated after animation
-
-//        var a = Ext.lib.Anim.motion(this.el, {
-//            x: this.relPos[0],
-//            y: this.relPos[1] + (document.documentElement || document.body).scrollTop
-//        }, 0.5, 'easeIn');
-//        a.onTween.addListener(function(){
-//            this.syncSize();
-//            this.syncShadow();
-//        }, this);
-//        a.animate();
+        var active, cb;
 
         active = Ext.WindowMgr.getActive();
         if (active !== null) {
             active.setActive(false);
         }
-        anim = {activateTimeout: null};
 
         if (this.el.hasActiveFx()) {
             this.el.stopFx();

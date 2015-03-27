@@ -263,7 +263,6 @@ frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/pl
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/VerticalTabPanel.css -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/VerticalTabPanel.js -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/vtabs-border-bottom.png -text svneol=unset#image/png
-frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/vtabs-border-right.png -text svneol=unset#image/png
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/vtabs-sprite.gif -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/templatecomposerglobal.js -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/trigger.svg -text

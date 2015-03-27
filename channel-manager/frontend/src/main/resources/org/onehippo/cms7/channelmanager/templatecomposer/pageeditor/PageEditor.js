@@ -896,9 +896,8 @@
         },
 
         createPropertiesWindow: function(mountId) {
-            var width, propertiesPanel, window;
+            var propertiesPanel, windowWidth, window;
 
-            width = Ext.isDefined(this.variantsUuid) ? 610 : 480;
             propertiesPanel = new Hippo.ChannelManager.TemplateComposer.PropertiesPanel({
                 id: 'componentPropertiesPanel',
                 resources: this.resources,
@@ -925,11 +924,16 @@
                 }
             });
 
+            windowWidth = 480;
+            if (Ext.isDefined(this.variantsUuid)) {
+                windowWidth += propertiesPanel.tabWidth;
+            }
+
             window = new Hippo.ux.window.FloatingWindow({
                 id: 'componentPropertiesWindow',
                 title: this.resources['properties-window-default-title'],
                 x: 10, y: 120,
-                width: width,
+                width: windowWidth,
                 height: 350,
                 layout: 'fit',
                 closable: true,
