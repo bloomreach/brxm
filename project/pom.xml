@@ -107,6 +107,7 @@
     <maven.plugin.taglib.version>2.4</maven.plugin.taglib.version>
     <maven.plugin.war.version>2.4</maven.plugin.war.version>
     <maven.plugin.enforcer.version>1.4</maven.plugin.enforcer.version>
+    <maven.build.helper.version>1.9.1</maven.build.helper.version>
 
     <!-- if you want a remote debugging on a different a address
          override on command line with -Dcargo.debug.addres=xxxx -->
@@ -133,6 +134,8 @@
 
     <!-- default empty javaagent, see also "jrebel" profile below -->
     <javaagent />
+
+    <commandline.offline></commandline.offline>
 
   </properties>
 
@@ -782,6 +785,42 @@
                   <version>3.0.5</version>
                 </requireMavenVersion>
               </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- detect if offline and build a commandline.offline property value
+           which can be passed along to forked/executed processes,
+      -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>${maven.build.helper.version}</version>
+        <executions>
+          <execution>
+            <id>property-commandline-offline</id>
+            <goals>
+              <goal>regex-property</goal>
+            </goals>
+            <configuration>
+              <name>commandline.offline</name>
+              <value>"${settings.offline}"</value>
+              <regex>"true"</regex>
+              <replacement>"-o"</replacement>
+              <failIfNoMatch>false</failIfNoMatch>
+            </configuration>
+          </execution>
+          <execution>
+            <id>property-commandline-online</id>
+            <goals>
+              <goal>regex-property</goal>
+            </goals>
+            <configuration>
+              <name>commandline.offline</name>
+              <value>${commandline.offline}</value>
+              <regex>"false"</regex>
+              <replacement></replacement>
+              <failIfNoMatch>false</failIfNoMatch>
             </configuration>
           </execution>
         </executions>
