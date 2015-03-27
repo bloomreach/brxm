@@ -43,6 +43,7 @@ import org.hippoecm.frontend.plugins.cms.codemirror.CodeMirrorEditor;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.RepoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,6 +93,8 @@ public class UpdaterEditor extends Panel {
         form.add(feedback);
 
         final AjaxButton executeButton = new AjaxButton("execute-button") {
+            private static final long serialVersionUID = 1L;
+
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
                 executeUpdater(false);
@@ -112,6 +115,7 @@ public class UpdaterEditor extends Panel {
         form.add(executeButton);
 
         final AjaxButton undoButton = new AjaxButton("undo-button") {
+            private static final long serialVersionUID = 1L;
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
                 executeUndo();
@@ -132,6 +136,7 @@ public class UpdaterEditor extends Panel {
         form.add(undoButton);
 
         final AjaxButton dryRunButton = new AjaxButton("dryrun-button") {
+            private static final long serialVersionUID = 1L;
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
                 executeUpdater(true);
@@ -152,6 +157,7 @@ public class UpdaterEditor extends Panel {
         form.add(dryRunButton);
 
         final AjaxButton saveButton = new AjaxButton("save-button") {
+            private static final long serialVersionUID = 1L;
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
                 saveUpdater();
@@ -173,6 +179,7 @@ public class UpdaterEditor extends Panel {
         form.add(saveButton);
 
         final AjaxButton stopButton = new AjaxButton("stop-button") {
+            private static final long serialVersionUID = 1L;
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
                 stopUpdater();
@@ -192,6 +199,7 @@ public class UpdaterEditor extends Panel {
         form.add(stopButton);
 
         final AjaxButton deleteButton = new AjaxButton("delete-button") {
+            private static final long serialVersionUID = 1L;
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
                 deleteUpdater();
@@ -213,6 +221,7 @@ public class UpdaterEditor extends Panel {
         form.add(radios);
 
         final LabelledInputFieldTableRow nameField = new LabelledInputFieldTableRow("name", new Model<String>("Name"), new PropertyModel<String>(this, "name")) {
+            private static final long serialVersionUID = 1L;
             @Override
             public boolean isEnabled() {
                 return isNameFieldEnabled();
@@ -226,6 +235,7 @@ public class UpdaterEditor extends Panel {
         radios.add(nameField);
 
         final LabelledTextAreaTableRow descriptionField = new LabelledTextAreaTableRow("description", new Model<String>("Description"), new PropertyModel<String>(this, "description")) {
+            private static final long serialVersionUID = 1L;
             @Override
             public boolean isEnabled() {
                 return isDescriptionFieldEnabled();
@@ -239,6 +249,7 @@ public class UpdaterEditor extends Panel {
         radios.add(descriptionField);
 
         final RadioLabelledInputFieldTableRow pathField = new RadioLabelledInputFieldTableRow("path", radios, new Model<String>("Path"), new PropertyModel<String>(this, "visitorPath")) {
+            private static final long serialVersionUID = 1L;
             @Override
             public boolean isEnabled() {
                 return isPathFieldEnabled();
@@ -257,6 +268,7 @@ public class UpdaterEditor extends Panel {
         radios.add(pathField);
 
         final RadioLabelledInputFieldTableRow queryField = new RadioLabelledInputFieldTableRow("query", radios, new Model<String>("Query"), new PropertyModel<String>(this, "visitorQuery")) {
+            private static final long serialVersionUID = 1L;
             @Override
             public boolean isEnabled() {
                 return isQueryFieldEnabled();
@@ -275,6 +287,7 @@ public class UpdaterEditor extends Panel {
         radios.add(queryField);
 
         final LabelledTextAreaTableRow parametersField = new LabelledTextAreaTableRow("parameters", new Model<String>("Parameters"), new PropertyModel<String>(this, "parameters")) {
+            private static final long serialVersionUID = 1L;
             @Override
             public boolean isEnabled() {
                 return isParametersFieldEnabled();
@@ -288,6 +301,7 @@ public class UpdaterEditor extends Panel {
         radios.add(parametersField);
 
         final LabelledInputFieldTableRow batchSizeField = new LabelledInputFieldTableRow("batch-size", new Model<String>("Batch Size"), new PropertyModel<String>(this, "batchSize")) {
+            private static final long serialVersionUID = 1L;
             @Override
             public boolean isEnabled() {
                 return isBatchSizeFieldEnabled();
@@ -302,6 +316,7 @@ public class UpdaterEditor extends Panel {
         radios.add(batchSizeField);
 
         final LabelledInputFieldTableRow throttleField = new LabelledInputFieldTableRow("throttle", new Model<String>("Throttle (ms)"), new PropertyModel<String>(this, "throttle")) {
+            private static final long serialVersionUID = 1L;
             @Override
             public boolean isEnabled() {
                 return isThrottleFieldEnabled();
@@ -315,6 +330,7 @@ public class UpdaterEditor extends Panel {
         radios.add(throttleField);
 
         final LabelledCheckBoxTableRow dryRunCheckBox = new LabelledCheckBoxTableRow("dryrun", new Model<String>("Dry run"), new PropertyModel<Boolean>(this, "dryRun")) {
+            private static final long serialVersionUID = 1L;
             @Override
             public boolean isEnabled() {
                 return false;
@@ -562,7 +578,7 @@ public class UpdaterEditor extends Panel {
         }
         final Session session = UserSession.get().getJcrSession();
         try {
-            session.getWorkspace().getQueryManager().createQuery(visitorQuery, Query.XPATH);
+            session.getWorkspace().getQueryManager().createQuery(RepoUtils.encodeXpath(visitorQuery), Query.XPATH);
         } catch (InvalidQueryException e) {
             final String message = "The query that is provided is not a valid xpath query";
             error(message);
