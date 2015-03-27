@@ -22,6 +22,7 @@
   </bean>
   
   <bean id="ehCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+    <property name="cacheManagerName" value="#{servletContext.contextPath}_ehCacheManager"/>
   </bean>
   
   <bean class="org.hippoecm.hst.cache.ehcache.EhCacheManagerShuttingDownListener" init-method="init" destroy-method="destroy">
@@ -31,7 +32,7 @@
   <bean id="abstractEhCacheBase" abstract="true">
     <property name="cacheManager" ref="ehCacheManager" />
     <property name="maxEntriesLocalHeap" value="256" />
-    <property name="maxElementsOnDisk" value="0" />
+    <property name="maxEntriesLocalDisk" value="0" />
     <property name="eternal" value="false" />
     <!-- time to live in seconds. default 1 day -->
     <property name="timeToLive" value="86400" />
@@ -54,7 +55,6 @@
         <property name="timeToLive" value="${default.binaries.cache.timeToLiveSeconds}" />
       </bean>
     </constructor-arg>
-    <property name="statisticsEnabled" value="${default.binaries.cache.statistics.enabled}"/>
   </bean>
 
   <bean id="pageCache" class="org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl">
@@ -65,7 +65,6 @@
         <property name="timeToLive" value="${pageCache.timeToLiveSeconds}" />
       </bean>
     </constructor-arg>
-    <property name="statisticsEnabled" value="${pageCache.statistics.enabled}"/>
   </bean>
 
   <bean id="webFileCache" class="org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl">
@@ -76,7 +75,6 @@
         <property name="timeToLive" value="${webFileCache.timeToLiveSeconds}" />
       </bean>
     </constructor-arg>
-    <property name="statisticsEnabled" value="${webFileCache.statistics.enabled}"/>
   </bean>
 
 

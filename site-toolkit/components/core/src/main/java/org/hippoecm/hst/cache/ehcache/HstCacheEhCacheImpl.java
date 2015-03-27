@@ -50,10 +50,6 @@ public class HstCacheEhCacheImpl implements HstCache {
                     "configured.");
         }
     }
-
-    public void setStatisticsEnabled(boolean statisticsEnabled) {
-        ehcache.setStatisticsEnabled(statisticsEnabled);
-    }
     
     public CacheElement get(Object key) {
         Element element = ehcache.get(key);
