@@ -283,7 +283,7 @@
                 iconCls: fullscreen ? 'expand' : 'collapse',
                 listeners: {
                     click: {
-                        fn: function(button) {
+                        fn: function() {
                             this.fullscreen = fullscreen;
                             this.createViewToolbar();
                             this.registerResizeListener();
@@ -714,10 +714,10 @@
                 this.hideChannelChangesNotification();
                 return;
             }
-            this.showChannelChangesNotification(pageContext);
+            this.showChannelChangesNotification();
         },
 
-        showChannelChangesNotification: function(pageContext) {
+        showChannelChangesNotification: function() {
             var notification, userIds;
             notification = Ext.getCmp('channelChangesNotification');
             if (this.channel.changedBySet.length === 0) {
