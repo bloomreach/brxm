@@ -562,10 +562,6 @@
     background-color: #fff;
 }
 
-#componentPropertiesWindow .default-value {
-    color: rgba(34, 39, 47, 0.6);
-}
-
 #componentPropertiesWindow .field-group-title {
     display: block;
     font-weight: bold;
