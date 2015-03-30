@@ -35,6 +35,7 @@ import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.i18n.types.SortedTypeChoiceRenderer;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standardworkflow.components.LanguageField;
 import org.hippoecm.frontend.plugins.standardworkflow.validators.AddDocumentValidator;
 import org.hippoecm.frontend.translation.ILocaleProvider;
@@ -116,6 +117,8 @@ public class AddDocumentDialog extends AbstractWorkflowDialogRestyling<AddDocume
                 error(new StringResourceModel(key, AddDocumentDialog.this, null, parameters).getObject());
             }
         });
+
+        add(CssClass.append("add-document-dialog"));
     }
 
     @Override

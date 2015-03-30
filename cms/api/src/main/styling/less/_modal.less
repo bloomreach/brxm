@@ -103,6 +103,50 @@
   .hippo-dialog-feedback.feedback-enabled {
     padding-bottom: 16px;
   }
+
+  .hippo-dialog-body {
+    padding: 16px;
+    
+    .label {
+      padding: 0 0 5px 0;
+    }
+    
+    .input {
+      display: flex;
+      align-items: center;
+      padding: 0 0 16px 0;
+    
+      &:last-child {
+        padding: 0 0 4px 0;
+      }
+    
+      .action {
+        display: block;
+        margin-left: 8px;
+      }
+    }
+    
+    input,
+    select {
+      flex-grow: 1;
+      height: 30px;
+      border: 1px solid @light-gray;
+    }
+    
+    input {
+      padding: 0 8px 0 8px;
+    }
+    }
+
+  .hippo-window-buttons {
+    bottom: 0;
+    right: 0;
+
+    display: inline;
+    padding-right: 16px;
+    padding-top: 12px;
+    position: relative;
+  }
 }
 
 .hippo-dialog-bottom {
@@ -158,37 +202,31 @@
   }
 }
 
-.dialog-add-document {
-  padding: 16px;
-
-  .label {
-    padding: 0 0 5px 0;
-  }
-
-  .input {
+.add-document-dialog {
+  .hippo-dialog-feedback {
+    background-color: @alert-danger-bg;
+    padding-left: 16px;
+    border-bottom: 1px solid @alert-danger-border;
     display: flex;
     align-items: center;
-    padding: 0 0 16px 0;
+    min-height: 61px;
 
-    &:last-child {
-      padding: 0 0 4px 0;
+    ul {
+      background: url("@{images}/icons/feedback-error.svg") no-repeat left center;
+      border: 0;
+      color: @alert-danger-text;
+      padding: 8px 16px 8px 40px;
+      text-align: left;
+      word-wrap: break-word;
+
+      li {
+        background: none;
+        list-style-type: none;
+        margin: 5px;
+        min-height: initial;
+        padding-left: 0;
+      }
     }
-
-    .action {
-      display: block;
-      margin-left: 8px;
-    }
-  }
-
-  input,
-  select {
-    flex-grow: 1;
-    height: 30px;
-    border: 1px solid @light-gray;
-  }
-
-  input {
-    padding: 0 8px 0 8px;
   }
 }
 
