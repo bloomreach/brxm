@@ -21,10 +21,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The singleton Hippo service registry.  Serves as a service locator across applications running in the same JVM.
@@ -127,8 +127,8 @@ public final class HippoServiceRegistry {
 
     }
 
-    private static final Map<String, NamedRegistration> namedServices = new HashMap<String, NamedRegistration>();
-    private static final Map<Class<?>, List<HippoServiceRegistration>> unnamedServices = new HashMap<Class<?>, List<HippoServiceRegistration>>();
+    private static final Map<String, NamedRegistration> namedServices = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, List<HippoServiceRegistration>> unnamedServices = new ConcurrentHashMap<>();
 
     private HippoServiceRegistry() {
     }
