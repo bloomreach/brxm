@@ -167,7 +167,7 @@
                     hasSampleData: '@'
                 },
                 templateUrl: 'directives/essentials-simple-install-plugin.html',
-                controller: function ($scope, $sce, $log, $location, $rootScope, $http) {
+                controller: function ($scope, $log, $location, $rootScope, $http) {
                     // initialize fields to system defaults.
                     $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
                         var params = {};
@@ -190,7 +190,6 @@
                             });
                     };
                     $http.get($rootScope.REST.PLUGINS.byId($scope.pluginId)).success(function (plugin) {
-                        $scope.pluginDescription = $sce.trustAsHtml(plugin.description);
                         $scope.plugin = plugin;
                     });
                 }
@@ -205,7 +204,7 @@
                     label: '@'
                 },
                 templateUrl: 'directives/essentials-cms-document-type-deep-link.html',
-                controller: function ($scope, $sce, $log, $rootScope) {
+                controller: function ($scope, $rootScope) {
                     $scope.label = 'CMS Document Type Editor';
                     $scope.defaultNameSpace = $rootScope.projectSettings.projectNamespace;
                 }
@@ -218,7 +217,7 @@
                     messages: '='
                 },
                 templateUrl: 'directives/essentials-notifier.html',
-                controller: function ($scope, $filter, $sce, $log, $rootScope, $http, $timeout, $document) {
+                controller: function ($scope, $filter, $log, $rootScope, $http, $timeout, $document) {
                     var promisesQueue = [];
                     var lastLength = 0;
                     var ERROR_SHOW_TIME = 1000;
@@ -315,7 +314,7 @@
                     plugin: '='
                 },
                 templateUrl: 'directives/essentials-plugin.html',
-                controller: function ($scope, $filter, $sce, $log, $rootScope, $http) {
+                controller: function ($scope, $filter, $log, $rootScope, $http) {
                     $scope.slides = [];
                     angular.forEach($scope.plugin.imageUrls, function(url) {
                         $scope.slides.push({
@@ -381,7 +380,7 @@
                     plugin: '='
                 },
                 templateUrl: 'directives/essentials-installed-tool.html',
-                controller: function ($scope, $filter, $sce, $log, $rootScope, $http, $location) {
+                controller: function ($scope, $location) {
                     $scope.useTool = function () {
                         $location.path('/tools/' + $scope.plugin.id);
                     };
@@ -395,7 +394,7 @@
                     plugin: '='
                 },
                 templateUrl: 'directives/essentials-feature-footer.html',
-                controller: function ($scope, $filter, $sce, $log, $rootScope, $http) {
+                controller: function ($scope, $filter, $log, $rootScope, $http) {
                     $scope.toggleChanges = function($event) {
                         $event.preventDefault();
                         $scope.showChanges = !$scope.showChanges;

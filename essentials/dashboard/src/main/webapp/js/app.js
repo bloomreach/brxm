@@ -248,7 +248,7 @@
                 keyboard: true,
                 modalFade: true,
                 template: '<div class="modal-header"><h3>{{modalOptions.headerText}}</h3></div>' +
-                    '<div class="modal-body"><p>{{modalOptions.bodyText}}</p></div>' +
+                    '<div class="modal-body" ng-bind-html="modalOptions.bodyText"></div>' +
                     '<div ng-hide="!modalOptions.closeButtonText && !modalOptions.actionButtonText" class="modal-footer">' +
                     '<button type="button" ng-hide="!modalOptions.closeButtonText" class="btn" data-ng-click="modalOptions.close()">{{modalOptions.closeButtonText}}</button>' +
                     '<button ng-hide="!modalOptions.actionButtonText" class="btn btn-primary" data-ng-click="modalOptions.ok();">{{modalOptions.actionButtonText}}</button>' +

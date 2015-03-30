@@ -88,9 +88,11 @@
 
                 var modalOptions = {
                     headerText: 'Service Down',
-                    bodyText: 'The setup application server appears to be down. If you are' +
-                    ' rebuilding the project, please wait until it is up and running again.'
-
+                    bodyText: '<p>The setup application server appears to be down. If you are' +
+                    ' rebuilding the project, please wait until it is up and running again.</p>' +
+                    ' <p>Remember, to rebuild and restart the project, execute:</p>' +
+                    ' <pre>mvn verify</pre>' +
+                    ' <pre>mvn -Pcargo.run -Drepo.path=storage</pre>'
                 };
 
                 function openModal() {
