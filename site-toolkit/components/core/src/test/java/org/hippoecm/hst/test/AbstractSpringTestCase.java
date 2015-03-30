@@ -72,15 +72,12 @@ public abstract class AbstractSpringTestCase
         componentManager = new SpringComponentManager(getContainerConfiguration());
         componentManager.setConfigurationResources(getConfigurations());
 
+        final MockServletContext servletContext = new MockServletContext();
+        servletContext.setContextPath("/site");
+        componentManager.setServletContext(servletContext);
         componentManager.initialize();
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());
-        final HstManager hstManager = componentManager.getComponent(HstManager.class.getName());
-        final MockServletContext servletContext = new MockServletContext();
-        servletContext.setContextPath("/site");
-        if (hstManager != null) {
-            ((ServletContextAware) hstManager).setServletContext(servletContext);
-        }
     }
 
     @After

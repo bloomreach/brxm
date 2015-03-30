@@ -75,21 +75,21 @@ public class AbstractPageComposerTest {
 
     @Before
     public void setUp() throws Exception {
-        this.componentManager = new SpringComponentManager(getContainerConfiguration());
-        this.componentManager.setConfigurationResources(getConfigurations());
+        componentManager = new SpringComponentManager(getContainerConfiguration());
+        componentManager.setConfigurationResources(getConfigurations());
 
-        this.componentManager.initialize();
-        this.componentManager.start();
-        HstServices.setComponentManager(getComponentManager());
         final MockServletContext servletContext = new MockServletContext();
         servletContext.setContextPath("/site");
-        this.hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-        ((ServletContextAware)hstManager).setServletContext(servletContext);
-        this.siteMapMatcher = HstServices.getComponentManager().getComponent(HstSiteMapMatcher.class.getName());
-        this.hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
-        this.hstEventsCollector = HstServices.getComponentManager().getComponent("hstEventsCollector");
-        this.hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
-        this.mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
+        componentManager.setServletContext(servletContext);
+        componentManager.initialize();
+        componentManager.start();
+        HstServices.setComponentManager(getComponentManager());
+        hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        siteMapMatcher = HstServices.getComponentManager().getComponent(HstSiteMapMatcher.class.getName());
+        hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
+        hstEventsCollector = HstServices.getComponentManager().getComponent("hstEventsCollector");
+        hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
+        mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
 
         session = (HippoSession)createSession();
 
