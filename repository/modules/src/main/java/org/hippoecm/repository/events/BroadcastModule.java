@@ -15,8 +15,12 @@
  */
 package org.hippoecm.repository.events;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -49,8 +53,10 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
 
     private Session session;
     private String clusterId;
-    private BroadcastThread broadcastThread;
+    private long pollingTime;
     private String moduleConfigIdentifier;
+    private Broadcaster broadcaster;
+    private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     public BroadcastModule() {
     }
@@ -58,6 +64,7 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
     @Override
     public void configure(final Node moduleConfig) throws RepositoryException {
         this.moduleConfigIdentifier = moduleConfig.getIdentifier();
+        pollingTime = JcrUtils.getLongProperty(moduleConfig, POLLING_TIME, DEFAULT_POLLING_TIME);
     }
 
     public void initialize(Session session) throws RepositoryException {
@@ -66,22 +73,27 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
         clusterId = RepoUtils.getClusterNodeId(session);
         log.debug("Cluster Node Id: {}", clusterId);
 
-        broadcastThread = new BroadcastThread(session, this);
-        configure(broadcastThread);
-        broadcastThread.start();
+        broadcaster = new Broadcaster(session, this);
+        configure(broadcaster);
+        executor.scheduleAtFixedRate(broadcaster, 0l, pollingTime, TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void shutdown() {
-        broadcastThread.stopThread();
-        broadcastThread = null;
+        broadcaster.stop();
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                log.warn("Failed to shut down broadcaster cleanly: timed out waiting");
+            }
+        } catch (InterruptedException ignored) {
+        }
     }
 
-    protected void configure(final BroadcastThread broadcastThread) throws RepositoryException {
+    protected void configure(final Broadcaster broadcaster) throws RepositoryException {
         final Node moduleConfigNode = session.getNodeByIdentifier(moduleConfigIdentifier);
-        broadcastThread.setQueryLimit(JcrUtils.getLongProperty(moduleConfigNode, QUERY_LIMIT, DEFAULT_QUERY_LIMIT));
-        broadcastThread.setPollingTime(JcrUtils.getLongProperty(moduleConfigNode, POLLING_TIME, DEFAULT_POLLING_TIME));
-        broadcastThread.setMaxEventAge(JcrUtils.getLongProperty(moduleConfigNode, MAX_EVENT_AGE, DEFAULT_MAX_EVENT_AGE));
+        broadcaster.setQueryLimit(JcrUtils.getLongProperty(moduleConfigNode, QUERY_LIMIT, DEFAULT_QUERY_LIMIT));
+        broadcaster.setMaxEventAge(JcrUtils.getLongProperty(moduleConfigNode, MAX_EVENT_AGE, DEFAULT_MAX_EVENT_AGE));
     }
 
     private synchronized long getLastProcessed(String channelName, boolean onlyNewEvents) throws RepositoryException {
@@ -148,6 +160,30 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
 
     @Override
     public BroadcastJob getNextJob() {
+        PersistedHippoEventListener listener = null;
+        ClassLoader listenerClassLoader = null;
+        long oldestProcessingStamp = -1;
+        for (HippoServiceRegistration registration : getPersistedHippoEventsServiceRegistrations()) {
+            try {
+                PersistedHippoEventListener aListener = (PersistedHippoEventListener)registration.getService();
+                long lastProcessed = getLastProcessed(aListener.getChannelName(), aListener.onlyNewEvents());
+                if (listener == null || lastProcessed <= oldestProcessingStamp) {
+                    listener = aListener;
+                    oldestProcessingStamp = lastProcessed;
+                    listenerClassLoader = registration.getClassLoader();
+                }
+            } catch (RepositoryException e) {
+                log.error("Error determining oldest listener", e);
+            }
+        }
+        if (listener == null) {
+            return null;
+        }
+
+        return new BroadcastJobImpl(listener, listenerClassLoader, oldestProcessingStamp);
+    }
+
+    protected Collection<HippoServiceRegistration> getPersistedHippoEventsServiceRegistrations() {
         Map<String, HippoServiceRegistration> registrationMap = new HashMap<>();
         for (HippoServiceRegistration registration : HippoServiceRegistry.getRegistrations(PersistedHippoEventsService.class)) {
             if (registration.getService() instanceof PersistedHippoEventListener) {
@@ -169,27 +205,7 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
                         " does not implement the PersistedWorkflowEventListener interface");
             }
         }
-        PersistedHippoEventListener listener = null;
-        ClassLoader listenerClassLoader = null;
-        long oldestProcessingStamp = -1;
-        for (HippoServiceRegistration registration : registrationMap.values()) {
-            try {
-                PersistedHippoEventListener aListener = (PersistedHippoEventListener)registration.getService();
-                long lastProcessed = getLastProcessed(aListener.getChannelName(), aListener.onlyNewEvents());
-                if (listener == null || lastProcessed <= oldestProcessingStamp) {
-                    listener = aListener;
-                    oldestProcessingStamp = lastProcessed;
-                    listenerClassLoader = registration.getClassLoader();
-                }
-            } catch (RepositoryException e) {
-                log.error("Error determining oldest listener", e);
-            }
-        }
-        if (listener == null) {
-            return null;
-        }
-
-        return new BroadcastJobImpl(listener, listenerClassLoader, oldestProcessingStamp);
+        return registrationMap.values();
     }
 
     private class BroadcastJobImpl implements BroadcastJob {

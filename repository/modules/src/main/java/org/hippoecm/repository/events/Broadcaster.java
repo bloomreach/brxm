@@ -40,14 +40,12 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.repository.util.JcrUtils.getProperties;
 
 
-class BroadcastThread extends Thread {
+class Broadcaster implements Runnable {
 
-    private static final Logger log = LoggerFactory.getLogger(BroadcastThread.class);
+    private static final Logger log = LoggerFactory.getLogger(Broadcaster.class);
     private static final long DEFAULT_TIMESTAMP = -1L;
 
     private static final String HIPPOLOG_TIMESTAMP = "hippolog:timestamp";
-
-    private volatile boolean keepRunning = true;
 
     private class JobRunner {
 
@@ -104,11 +102,12 @@ class BroadcastThread extends Thread {
     private final BroadcastService broadcastService;
     private final ValueGetter<Property,?> propertyValueGetter;
 
+    private volatile boolean keepRunning = true;
+
     private long queryLimit;
-    private long pollingTime;
     private long maxEventAge;
 
-    public BroadcastThread(final Session session, final BroadcastService broadcastService) {
+    public Broadcaster(final Session session, final BroadcastService broadcastService) {
         this.session = session;
         this.broadcastService = broadcastService;
         this.propertyValueGetter = new PropertyValueGetterImpl();
@@ -118,10 +117,6 @@ class BroadcastThread extends Thread {
         this.queryLimit = limit;
     }
 
-    public synchronized void setPollingTime(final long pollingTime) {
-        this.pollingTime = pollingTime;
-    }
-
     public void setMaxEventAge(final long maxEventAge) {
         this.maxEventAge = maxEventAge;
     }
@@ -129,48 +124,22 @@ class BroadcastThread extends Thread {
     public void run() {
         while (keepRunning) {
             log.debug("Polling");
-            BroadcastJob job = broadcastService.getNextJob();
+            final BroadcastJob job = broadcastService.getNextJob();
             if (job != null) {
                 log.debug("Found job: {}", job.getChannelName());
                 JobRunner runner = new JobRunner(job);
                 runner.run();
-
-                if (keepRunning && runner.wereEventsProcessed()) {
-                    continue;
+                if (!runner.wereEventsProcessed()) {
+                    break;
                 }
-            }
-
-            if (keepRunning) {
-                try {
-                    synchronized (this) {
-                        wait(pollingTime);
-                    }
-                } catch (InterruptedException e) {
-                    keepRunning = false;
-                    log.error("Error during running thread", e);
-                }
+            } else {
+                break;
             }
         }
     }
 
-    /**
-     * Invoking this method will stop this thread.
-     */
-    public void stopThread() {
-        this.keepRunning = false;
-        int numPollsToWait = 5;
-        while (isAlive() && numPollsToWait-- > 0) {
-            try {
-                synchronized (this) {
-                    wait(pollingTime);
-                }
-            } catch (InterruptedException e) {
-                log.error("Error during running thread", e);
-            }
-        }
-        if (isAlive()) {
-            log.warn("Unable to shut down the broadcast thread");
-        }
+    void stop() {
+        keepRunning = false;
     }
 
     private List<Node> getNextLogNodes(long lastItem, final String eventCategory) throws RepositoryException {
