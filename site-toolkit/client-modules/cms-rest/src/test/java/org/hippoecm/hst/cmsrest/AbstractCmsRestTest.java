@@ -40,17 +40,15 @@ public abstract class AbstractCmsRestTest {
 
     @Before
     public void setUp() throws Exception {
-        this.componentManager = new SpringComponentManager(getContainerConfiguration());
-        this.componentManager.setConfigurationResources(getConfigurations());
-
-        this.componentManager.initialize();
-        this.componentManager.start();
-        HstServices.setComponentManager(getComponentManager());
-
+        componentManager = new SpringComponentManager(getContainerConfiguration());
+        componentManager.setConfigurationResources(getConfigurations());
         final MockServletContext servletContext = new MockServletContext();
         servletContext.setContextPath("/site");
-        this.hstManager = getComponentManager().getComponent(HstManager.class.getName());
-        ((ServletContextAware)hstManager).setServletContext(servletContext);
+        componentManager.setServletContext(servletContext);
+        componentManager.initialize();
+        componentManager.start();
+        HstServices.setComponentManager(getComponentManager());
+        hstManager = getComponentManager().getComponent(HstManager.class.getName());
     }
 
     @After

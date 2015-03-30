@@ -44,16 +44,14 @@ public abstract class AbstractJaxrsSpringTestCase
 
     @Before
     public void setUp() throws Exception {
-        this.componentManager = new SpringComponentManager(getContainerConfiguration());
-        this.componentManager.setConfigurationResources(getConfigurations());
-        
-        this.componentManager.initialize();
-        this.componentManager.start();
-        HstServices.setComponentManager(getComponentManager());
+        componentManager = new SpringComponentManager(getContainerConfiguration());
+        componentManager.setConfigurationResources(getConfigurations());
         final MockServletContext servletContext = new MockServletContext();
         servletContext.setContextPath("/site");
-        ((ServletContextAware)componentManager.getComponent(HstManager.class.getName()))
-                .setServletContext(servletContext);
+        componentManager.setServletContext(servletContext);
+        componentManager.initialize();
+        componentManager.start();
+        HstServices.setComponentManager(getComponentManager());
     }
 
     @After

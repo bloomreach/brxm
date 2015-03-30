@@ -98,7 +98,6 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
         this.servletContext = servletContext;
     }
 
-
     public void setHstModelMutex(Object hstModelMutex) {
         this.hstModelMutex = hstModelMutex;
     }
