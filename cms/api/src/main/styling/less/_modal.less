@@ -204,25 +204,27 @@
 
 .add-document-dialog {
   .hippo-dialog-feedback {
-    background-color: @alert-danger-bg;
-    padding-left: 16px;
-    border-bottom: 1px solid @alert-danger-border;
-    display: flex;
-    align-items: center;
-    min-height: 61px;
-
     ul {
-      background: url("@{images}/icons/feedback-error.svg") no-repeat left center;
-      border: 0;
+      background-color: @alert-danger-bg;
+      background-image: url("@{images}/icons/feedback-error.svg");
+      background-repeat: no-repeat;
+      background-position: 16px 16px;
       color: @alert-danger-text;
-      padding: 8px 16px 8px 40px;
+      padding: 8px 16px 8px 56px;
       text-align: left;
       word-wrap: break-word;
+      min-height: 45px;
+
+      border-bottom: 1px solid @alert-danger-border;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
 
       li {
         background: none;
         list-style-type: none;
-        margin: 5px;
+        margin: 0;
         min-height: initial;
         padding-left: 0;
       }
