@@ -49,6 +49,7 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
+import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
 
 public class GenericRequestContextWrapper implements  HstMutableRequestContext {
 
@@ -181,6 +182,12 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     @Override
     public void setCachingObjectConverter(final boolean enabled) {
         context.setCachingObjectConverter(enabled);
+    }
+
+
+    @Override
+    public void setHstSiteMenusManager(final HstSiteMenusManager siteMenusManager) {
+        context.setHstSiteMenusManager(siteMenusManager);
     }
 
     @Override
@@ -411,5 +418,10 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     @Override
     public void dispose() {
         context.dispose();
+    }
+
+    @Override
+    public void matchingFinished() {
+        context.matchingFinished();
     }
 }

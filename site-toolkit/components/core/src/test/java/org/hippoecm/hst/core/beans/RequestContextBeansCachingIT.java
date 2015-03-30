@@ -137,14 +137,14 @@ public class RequestContextBeansCachingIT extends AbstractBeanTestCase {
 
 
     @Test
-    public void testContentBeansNotRequestScopeCached() throws Exception {
+    public void testContentBeansByDefaultRequestScopeCached() throws Exception {
 
         HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
         ModifiableRequestContextProvider.set(ctx);
         ((HstMutableRequestContext)ctx).setContentBeansTool(contentBeansTool);
 
-        assertFalse(ctx.getContentBean() == ctx.getContentBean());
-        assertFalse(ctx.getSiteContentBaseBean() == ctx.getSiteContentBaseBean());
+        assertTrue(ctx.getContentBean() == ctx.getContentBean());
+        assertTrue(ctx.getSiteContentBaseBean() == ctx.getSiteContentBaseBean());
 
     }
 
@@ -154,11 +154,10 @@ public class RequestContextBeansCachingIT extends AbstractBeanTestCase {
         HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
         ModifiableRequestContextProvider.set(ctx);
         ((HstMutableRequestContext)ctx).setContentBeansTool(contentBeansTool);
-        ((HstMutableRequestContext)ctx).setCachingObjectConverter(true);
+        ((HstMutableRequestContext)ctx).setCachingObjectConverter(false);
 
-        assertTrue(ctx.getContentBean() == ctx.getContentBean());
-        assertTrue(ctx.getSiteContentBaseBean() == ctx.getSiteContentBaseBean());
-
+        assertFalse(ctx.getContentBean() == ctx.getContentBean());
+        assertFalse(ctx.getSiteContentBaseBean() == ctx.getSiteContentBaseBean());
     }
 
     @Test
@@ -168,6 +167,7 @@ public class RequestContextBeansCachingIT extends AbstractBeanTestCase {
         ModifiableRequestContextProvider.set(ctx);
         // contentBeansTool has a non caching object converter
         ((HstMutableRequestContext)ctx).setContentBeansTool(contentBeansTool);
+        ((HstMutableRequestContext)ctx).setCachingObjectConverter(false);
 
         final HippoBean siteContentBaseBean = ctx.getSiteContentBaseBean();
         assertFalse(siteContentBaseBean == ctx.getSiteContentBaseBean());
@@ -187,7 +187,6 @@ public class RequestContextBeansCachingIT extends AbstractBeanTestCase {
         ModifiableRequestContextProvider.set(ctx);
         // contentBeansTool has a non caching object converter
         ((HstMutableRequestContext)ctx).setContentBeansTool(contentBeansTool);
-        ((HstMutableRequestContext)ctx).setCachingObjectConverter(true);
 
         final HippoBean siteContentBaseBean = ctx.getSiteContentBaseBean();
         assertTrue(siteContentBaseBean == ctx.getSiteContentBaseBean());
@@ -215,6 +214,7 @@ public class RequestContextBeansCachingIT extends AbstractBeanTestCase {
         ModifiableRequestContextProvider.set(ctx);
         // contentBeansTool now with caching object mananger
         ((HstMutableRequestContext)ctx).setContentBeansTool(contentBeansTool);
+        ((HstMutableRequestContext)ctx).setCachingObjectConverter(false);
 
         final HippoBean contentBean = ctx.getContentBean();
         assertFalse(contentBean == ctx.getContentBean());
@@ -232,7 +232,6 @@ public class RequestContextBeansCachingIT extends AbstractBeanTestCase {
         ModifiableRequestContextProvider.set(ctx);
         // contentBeansTool now with caching object mananger
         ((HstMutableRequestContext)ctx).setContentBeansTool(contentBeansTool);
-        ((HstMutableRequestContext)ctx).setCachingObjectConverter(true);
 
         final HippoBean contentBean = ctx.getContentBean();
         assertTrue(contentBean == ctx.getContentBean());
@@ -257,6 +256,7 @@ public class RequestContextBeansCachingIT extends AbstractBeanTestCase {
         ModifiableRequestContextProvider.set(ctx);
         // contentBeansTool now with caching object mananger
         ((HstMutableRequestContext)ctx).setContentBeansTool(contentBeansTool);
+        ((HstMutableRequestContext)ctx).setCachingObjectConverter(false);
         ((HstMutableRequestContext)ctx).setHstQueryManagerFactory((HstQueryManagerFactory)getComponent(HstQueryManagerFactory.class.getName()));
 
         final HippoBeanIterator hippoBeans1 = ctx.getQueryManager().createQuery(ctx.getSiteContentBaseBean()).execute().getHippoBeans();
@@ -272,7 +272,6 @@ public class RequestContextBeansCachingIT extends AbstractBeanTestCase {
         ModifiableRequestContextProvider.set(ctx);
         // contentBeansTool now with caching object mananger
         ((HstMutableRequestContext)ctx).setContentBeansTool(contentBeansTool);
-        ((HstMutableRequestContext)ctx).setCachingObjectConverter(true);
         ((HstMutableRequestContext)ctx).setHstQueryManagerFactory((HstQueryManagerFactory)getComponent(HstQueryManagerFactory.class.getName()));
 
         final HippoBeanIterator hippoBeans1 = ctx.getQueryManager().createQuery(ctx.getSiteContentBaseBean()).execute().getHippoBeans();

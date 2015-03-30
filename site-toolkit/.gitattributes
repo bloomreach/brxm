@@ -582,7 +582,6 @@ components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIHstPageInfo.java -te
 components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIPageRenderer.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIPageScanner.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIVarsPlaceholderResolver.java -text
-components/core/src/main/java/org/hippoecm/hst/component/support/ClientComponentManager.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/ConfigurationUtils.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/cache/CompositeConfigurationNodes.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstConfigurationLoadingCache.java -text
@@ -669,7 +668,6 @@ components/core/src/main/java/org/hippoecm/hst/core/container/PersistableSession
 components/core/src/main/java/org/hippoecm/hst/core/container/ResourceServingValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/SSIAsynchronousComponentWindowRenderer.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/SecurityValve.java -text
-components/core/src/main/java/org/hippoecm/hst/core/container/SiteMenusResolvingValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/SubjectBasedSessionValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/WebFileValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/jcr/DelegatingRepository.java -text

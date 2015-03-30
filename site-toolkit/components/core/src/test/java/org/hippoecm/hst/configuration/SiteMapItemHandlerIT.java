@@ -35,6 +35,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.test.sitemapitemhandler.AbstractTestHstSiteItemMapHandler;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
@@ -98,8 +99,8 @@ public class SiteMapItemHandlerIT extends AbstractTestConfigurations {
                 
                 assertNotNull("There must be a handler on the resolvedSiteMapItem for '/handler_nooptest'",handlerConfigrations.size() > 0);
                 assertTrue("There must be exactly one handler and it should be browser_redirecthandler",handlerConfigrations.size() == 1 && handlerConfigrations.get(0).getName().equals("noophandler"));
-                
-                HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
+
+                HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = HstServices.getComponentManager().getComponent(HstSiteMapItemHandlerFactory.class.getName());
                 
                 assertNotNull(siteMapItemHandlerFactory);
                
@@ -192,8 +193,8 @@ public class SiteMapItemHandlerIT extends AbstractTestConfigurations {
                 ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
                 
                 assertTrue("The expected id of the resolved sitemap item is 'handler_nooptest/_default_' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "handler_nooptest/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
-                 
-                HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
+
+                HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = HstServices.getComponentManager().getComponent(HstSiteMapItemHandlerFactory.class.getName());
                 List<HstSiteMapItemHandlerConfiguration> handlerConfigrations = resolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();
                                                                      
                 try {
@@ -247,9 +248,10 @@ public class SiteMapItemHandlerIT extends AbstractTestConfigurations {
                 // assert we have two handlers:
                 
                 assertTrue("for '/multiplehandler_wildcardexample/foo/bar' we expect two handlers but we found '"+handlerConfigrations.size()+"'",handlerConfigrations.size() == 2);
-                
-                HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
-                
+
+
+                HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = HstServices.getComponentManager().getComponent(HstSiteMapItemHandlerFactory.class.getName());
+
                 ResolvedSiteMapItem processedSiteMapItem = resolvedSiteMapItem;
                 for( HstSiteMapItemHandlerConfiguration handlerConfig : handlerConfigrations){
                     try {
@@ -319,8 +321,8 @@ public class SiteMapItemHandlerIT extends AbstractTestConfigurations {
                 List<HstSiteMapItemHandlerConfiguration> handlerConfigrations = resolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();
                 
                 assertTrue("There must be exactly one handler and it should be browser_redirecthandler",handlerConfigrations.size() == 1 && handlerConfigrations.get(0).getName().equals("browser_redirecthandler"));
-                
-                HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
+
+                HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = HstServices.getComponentManager().getComponent(HstSiteMapItemHandlerFactory.class.getName());
                 
                 assertNotNull(siteMapItemHandlerFactory);
                 
@@ -376,7 +378,7 @@ public class SiteMapItemHandlerIT extends AbstractTestConfigurations {
                 List<HstSiteMapItemHandlerConfiguration> handlerConfigrations = resolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();
                 
                 try {
-                    HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
+                    HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = HstServices.getComponentManager().getComponent(HstSiteMapItemHandlerFactory.class.getName());
                     
                     assertNotNull(siteMapItemHandlerFactory);
                     

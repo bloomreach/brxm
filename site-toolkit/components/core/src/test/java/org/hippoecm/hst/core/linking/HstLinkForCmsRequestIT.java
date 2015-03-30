@@ -277,6 +277,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
         ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem(containerUrl);
         requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
         requestContext.setResolvedMount(resolvedSiteMapItem.getResolvedMount());
+        requestContext.matchingFinished();
         HstURLFactory hstURLFactory = getComponent(HstURLFactory.class.getName());
         requestContext.setURLFactory(hstURLFactory);
         requestContext.setSiteMapMatcher(siteMapMatcher);

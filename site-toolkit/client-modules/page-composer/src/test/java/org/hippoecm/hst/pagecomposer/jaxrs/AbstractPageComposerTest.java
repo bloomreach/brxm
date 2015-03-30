@@ -164,6 +164,7 @@ public class AbstractPageComposerTest {
         ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem(containerUrl, requestContext);
         requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
         requestContext.setResolvedMount(resolvedSiteMapItem.getResolvedMount());
+        requestContext.matchingFinished();
         HstURLFactory hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
         requestContext.setURLFactory(hstURLFactory);
         requestContext.setSiteMapMatcher(siteMapMatcher);

@@ -77,7 +77,7 @@
     <commons-jexl.version>1.1</commons-jexl.version>
     <commons-configuration.version>1.7</commons-configuration.version>
     <commons-proxy.version>1.0</commons-proxy.version>
-    <ehcache-core.version>2.6.0</ehcache-core.version>
+    <ehcache-core.version>2.9.0</ehcache-core.version>
     <ehcache-web.version>2.0.4</ehcache-web.version>
 
     <aspectj.version>1.6.9</aspectj.version>
@@ -308,7 +308,7 @@
 
       <dependency>
         <groupId>net.sf.ehcache</groupId>
-        <artifactId>ehcache-core</artifactId>
+        <artifactId>ehcache</artifactId>
         <version>${ehcache-core.version}</version>
       </dependency>
 
@@ -316,6 +316,12 @@
         <groupId>net.sf.ehcache</groupId>
         <artifactId>ehcache-web</artifactId>
         <version>${ehcache-web.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache-core</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>

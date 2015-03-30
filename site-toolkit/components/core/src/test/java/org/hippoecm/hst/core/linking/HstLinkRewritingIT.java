@@ -290,7 +290,6 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
         final HstSiteMapItem preferredItem = subsite.getHstSite().getSiteMap().getSiteMapItem("news");
         final HstLink newsLink = linkCreator.create(node, subsite, preferredItem, false);
         assertEquals("subsite", newsLink.getMount().getName());
-        System.out.println(newsLink.toUrlForm(requestContext, false));
     }
 
     /**

@@ -231,7 +231,10 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 containerRequest.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
             }
             requestContext.setServletContext(servletContext);
+            requestContext.setServletRequest(containerRequest);
+            requestContext.setServletResponse(res);
             requestContext.setPathSuffix(containerRequest.getPathSuffix());
+
 
             if (BooleanUtils.toBoolean(request.getParameter(ContainerConstants.HST_REQUEST_USE_FULLY_QUALIFIED_URLS))) {
                 requestContext.setFullyQualifiedURLs(true);
@@ -306,6 +309,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
                     log.debug("{} matched to sitemapitem  '{}'", containerRequest, resolvedSiteMapItem.getHstSiteMapItem());
                     requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+                    requestContext.matchingFinished();
                 }
 
                 if (!isSupportedScheme(requestContext, resolvedSiteMapItem, farthestRequestScheme)) {
@@ -354,6 +358,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     return;
                 }
                 else {
+                    requestContext.matchingFinished();
                     if (!isSupportedScheme(requestContext, resolvedMount, farthestRequestScheme)) {
                         final Mount mount = resolvedMount.getMount();
                         final String urlWithExplicitSchemeForRequest;

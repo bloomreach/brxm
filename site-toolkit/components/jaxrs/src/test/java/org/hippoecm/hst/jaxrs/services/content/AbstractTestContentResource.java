@@ -176,7 +176,9 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         String pathInfo = requestPath.substring(MOUNT_PATH.length() + 1);
         
         HstMutableRequestContext requestContext = createRequestContext(pathInfo);
-
+        requestContext.setServletRequest(request);
+        requestContext.setServletResponse(response);
+        requestContext.matchingFinished();
         ModifiableRequestContextProvider.set(requestContext);
 
     	request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
@@ -204,6 +206,9 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         final HstMutableRequestContext requestContextWrapper;
         {
             HstMutableRequestContext requestContext = createRequestContext(pathInfo);
+            requestContext.setServletRequest(request);
+            requestContext.setServletResponse(response);
+            requestContext.matchingFinished();
             Repository repository = componentManager.getComponent(Repository.class.getName() + ".delegating");
             admin = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
 

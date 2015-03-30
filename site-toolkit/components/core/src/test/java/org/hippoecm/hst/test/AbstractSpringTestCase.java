@@ -166,6 +166,8 @@ public abstract class AbstractSpringTestCase
         HstManager hstSitesManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
         VirtualHosts vHosts = hstSitesManager.getVirtualHosts();
         HstMutableRequestContext requestContext = ((HstRequestContextComponent)HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName())).create();
+        requestContext.setServletRequest(request);
+        requestContext.setServletResponse(response);
         request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
         ResolvedMount mount = vHosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath() , HstRequestUtils.getRequestPath(request));     
         requestContext.setResolvedMount(mount);
@@ -175,6 +177,7 @@ public abstract class AbstractSpringTestCase
         ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
         requestContext.setBaseURL(hstContainerURL);
         requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+        requestContext.matchingFinished();
         return requestContext;
     }
 }

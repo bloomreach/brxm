@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -258,8 +258,6 @@ public class HstSitePipeline implements Pipeline
         public Invocation(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Valve[] valves) {
             this.requestContainerConfig = requestContainerConfig;
             this.requestContext = requestContext;
-            ((HstMutableRequestContext)requestContext).setServletRequest(servletRequest);
-            ((HstMutableRequestContext)requestContext).setServletResponse(servletResponse);
             this.valves = valves;
         }
 

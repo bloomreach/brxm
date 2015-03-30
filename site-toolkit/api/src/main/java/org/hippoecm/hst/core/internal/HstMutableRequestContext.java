@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
+import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
 
 
 /**
@@ -143,4 +144,10 @@ public interface HstMutableRequestContext extends HstRequestContext {
      */
     public void dispose();
 
+    /**
+     * Marks the {@link HstRequestContext} that its matching phase has been finished
+     */
+    public void matchingFinished();
+
+    void setHstSiteMenusManager(HstSiteMenusManager siteMenusManager);
 }

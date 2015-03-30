@@ -17,15 +17,21 @@ package org.hippoecm.hst.site.request;
 
 import javax.jcr.Repository;
 
+import org.hippoecm.hst.content.tool.ContentBeansTool;
+import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.core.search.HstQueryManagerFactory;
+import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
 
 /**
  * HstRequestContextComponentImpl
- * 
+ *
  * @version $Id$
  */
 public class HstRequestContextComponentImpl implements HstRequestContextComponent {
@@ -33,6 +39,13 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
     protected Repository repository;
     protected ContextCredentialsProvider contextCredentialsProvider;
     protected ContainerConfiguration config;
+    private boolean cachingObjectConverter;
+    private ContentBeansTool contentBeansTool;
+    private HstSiteMapMatcher siteMapMatcher;
+    private HstURLFactory urlFactory;
+    private HstLinkCreator linkCreator;
+    private HstSiteMenusManager siteMenusManager;
+    private HstQueryManagerFactory hstQueryManagerFactory;
 
     public HstRequestContextComponentImpl(Repository repository, ContextCredentialsProvider contextCredentialsProvider, ContainerConfiguration config) {
         this.repository = repository;
@@ -43,6 +56,14 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
     public HstMutableRequestContext create() {
         HstMutableRequestContext rc = new HstRequestContextImpl(repository, contextCredentialsProvider);
         rc.setContainerConfiguration(config);
+        rc.setURLFactory(urlFactory);
+        rc.setLinkCreator(linkCreator);
+        rc.setSiteMapMatcher(siteMapMatcher);
+        rc.setHstSiteMenusManager(siteMenusManager);
+        rc.setHstQueryManagerFactory(hstQueryManagerFactory);
+        rc.setContentBeansTool(contentBeansTool);
+        rc.setCachingObjectConverter(cachingObjectConverter);
+
         return rc;
     }
 
@@ -50,4 +71,34 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
         // dispose the request context to ensure all the stateful objects aren't to be reused again.
         ((HstMutableRequestContext) context).dispose();
     }
+
+    public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher) {
+        this.siteMapMatcher = siteMapMatcher;
+    }
+
+    public void setUrlFactory(HstURLFactory urlFactory) {
+        this.urlFactory = urlFactory;
+    }
+
+    public void setLinkCreator(HstLinkCreator linkCreator) {
+        this.linkCreator = linkCreator;
+    }
+
+    public void setSiteMenusManager(HstSiteMenusManager siteMenusManager) {
+        this.siteMenusManager = siteMenusManager;
+    }
+
+    public void setHstQueryManagerFactory(HstQueryManagerFactory hstQueryManagerFactory) {
+        this.hstQueryManagerFactory = hstQueryManagerFactory;
+    }
+
+    public void setContentBeansTool(ContentBeansTool contentBeansTool) {
+        this.contentBeansTool = contentBeansTool;
+    }
+
+
+    public void setCachingObjectConverter(final boolean cachingObjectConverter) {
+        this.cachingObjectConverter = cachingObjectConverter;
+    }
+
 }
