@@ -71,7 +71,7 @@
           <span class="hidden-xs">Rebuild</span>
           <hippo-icon name="bell" class="hi-color-danger" ng-show="NEEDS_REBUILD"></hippo-icon>
         </a>
-        <a href="#" ng-click="showMessages($event)" ng-show="feedbackMessages.length && showMessagesNavbarLink">
+        <a href="#" ng-click="showMessages($event)" ng-show="feedbackMessages.length && showMessagesNavbarLink" class="navbar-link">
           <hippo-icon name="info-circle" size="m"></hippo-icon><span class="badge badge-info">{{feedbackMessages.length}}</span>
         </a>
       </div>
