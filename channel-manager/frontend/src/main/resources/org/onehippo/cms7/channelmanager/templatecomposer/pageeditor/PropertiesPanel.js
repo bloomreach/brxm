@@ -251,12 +251,6 @@
                     componentId: this.componentId,
                     lastModifiedTimestamp: this.lastModifiedTimestamp,
                     bubbleEvents: ['variantDirty', 'variantPristine', 'close'],
-                    margins: {
-                        top: 0,
-                        right: 10,
-                        bottom: 0,
-                        left: 0
-                    },
                     listeners: {
                         propertiesChanged: this._onPropertiesChanged,
                         propertiesSaved: this._onPropertiesSaved,
