@@ -12,7 +12,7 @@
 <p>
   It appears that you just created an empty Hippo project from the archetype. There is nothing to show on the site yet.
   We recommend you use
-  <a href="http://<%=request.getServerName() + ':' + request.getServerPort() + "/essentials"%>">Hippo's setup application</a>
+  <a href="http://<%=request.getServerName() + ':' + request.getServerPort() + "/essentials"%>" target="_blank">Hippo's setup application</a>
   to start developing your project.
 </p>
 </body>
