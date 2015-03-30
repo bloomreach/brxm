@@ -43,7 +43,7 @@ public class SiteMapPageRepresentation {
                                                final String homePagePathInfo,
                                                final String previewConfigurationPath) throws IllegalArgumentException {
 
-        id = item.getId();
+        id = ((CanonicalInfo)item).getCanonicalIdentifier();
         this.parentId = parentId;
         name = NodeNameCodec.decode(item.getValue());
         pageTitle = item.getPageTitle();
