@@ -443,11 +443,13 @@ public class UpdaterExecutor implements EventListener {
 
     private void saveReport(final Node node) throws RepositoryException {
         try {
-            node.setProperty(HippoNodeType.HIPPOSYS_STARTTIME, report.getStartTime());
-            node.setProperty(HippoNodeType.HIPPOSYS_UPDATEDCOUNT, report.getUpdateCount());
-            node.setProperty(HippoNodeType.HIPPOSYS_FAILEDCOUNT, report.getFailedCount());
-            node.setProperty(HippoNodeType.HIPPOSYS_SKIPPEDCOUNT, report.getSkippedCount());
             node.setProperty(HippoNodeType.HIPPOSYS_LOGTAIL, report.getLogTail());
+            if (report.isStarted()) {
+                node.setProperty(HippoNodeType.HIPPOSYS_STARTTIME, report.getStartTime());
+                node.setProperty(HippoNodeType.HIPPOSYS_UPDATEDCOUNT, report.getUpdateCount());
+                node.setProperty(HippoNodeType.HIPPOSYS_FAILEDCOUNT, report.getFailedCount());
+                node.setProperty(HippoNodeType.HIPPOSYS_SKIPPEDCOUNT, report.getSkippedCount());
+            }
             if (report.isFinished()) {
                 node.setProperty(HippoNodeType.HIPPOSYS_FINISHTIME, report.getFinishTime());
                 setBinaryProperty(node, HippoNodeType.HIPPOSYS_UPDATED, report.getUpdatedFile());

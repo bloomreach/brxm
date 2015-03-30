@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 class UpdaterExecutionReport {
 
     private long startTime = -1l;
+    private boolean started = false;
     private long finishTime = -1l;
     private boolean finished = false;
 
@@ -65,6 +66,7 @@ class UpdaterExecutionReport {
     }
 
     void start() {
+        this.started = true;
         this.startTime = System.currentTimeMillis();
     }
 
@@ -77,6 +79,10 @@ class UpdaterExecutionReport {
         final Calendar result = Calendar.getInstance();
         result.setTimeInMillis(startTime);
         return result;
+    }
+
+    boolean isStarted() {
+        return started;
     }
 
     Calendar getFinishTime() {
