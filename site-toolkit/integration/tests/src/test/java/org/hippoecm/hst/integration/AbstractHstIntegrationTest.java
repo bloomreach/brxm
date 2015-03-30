@@ -54,16 +54,15 @@ public class AbstractHstIntegrationTest {
 
     @Before
     public void setUp() throws Exception {
-        this.componentManager = new SpringComponentManager(getContainerConfiguration());
-        this.componentManager.setConfigurationResources(getConfigurations());
+        componentManager = new SpringComponentManager(getContainerConfiguration());
+        componentManager.setConfigurationResources(getConfigurations());
 
-        this.componentManager.initialize();
-        this.componentManager.start();
-        HstServices.setComponentManager(getComponentManager());
         final MockServletContext servletContext = new MockServletContext();
         servletContext.setContextPath("/site");
-        ((ServletContextAware)componentManager.getComponent(HstManager.class.getName()))
-                .setServletContext(servletContext);
+        componentManager.setServletContext(servletContext);
+        componentManager.initialize();
+        componentManager.start();
+        HstServices.setComponentManager(getComponentManager());
 
         // register hst config changes listener
         localSession = createLocalSession(new SimpleCredentials("admin", "admin".toCharArray()));
@@ -71,17 +70,17 @@ public class AbstractHstIntegrationTest {
         localSession.getWorkspace().getObservationManager().addEventListener(hstConfiglistener,
                 Event.ALL_TYPES, "/hst:hst", true, null, null, false);
 
-        this.hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-        this.siteMapMatcher = HstServices.getComponentManager().getComponent(HstSiteMapMatcher.class.getName());
-        this.hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
-        this.hstEventsCollector = HstServices.getComponentManager().getComponent("hstEventsCollector");
-        this.hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
+        hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        siteMapMatcher = HstServices.getComponentManager().getComponent(HstSiteMapMatcher.class.getName());
+        hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
+        hstEventsCollector = HstServices.getComponentManager().getComponent("hstEventsCollector");
+        hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
     }
 
     @After
     public void tearDown() throws Exception {
-        this.componentManager.stop();
-        this.componentManager.close();
+        componentManager.stop();
+        componentManager.close();
 
         // remove hst config changes listener
         localSession.getWorkspace().getObservationManager().removeEventListener(hstConfiglistener);
