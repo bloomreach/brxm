@@ -51,8 +51,12 @@ public class DocumentUtils {
     private static final Logger log = LoggerFactory.getLogger(DocumentUtils.class);
 
     public static Set<DocumentRepresentation> findAvailableDocumentRepresentations(final PageComposerContextService pageComposerContextService,
-                                                                                   final HstComponentConfiguration page) throws RepositoryException {
+                                                                                   final HstComponentConfiguration page,
+                                                                                   final DocumentRepresentation primaryDocumentRepresentation) throws RepositoryException {
         Set<DocumentRepresentation> documentRepresentations = new HashSet<>();
+        if (primaryDocumentRepresentation != null) {
+            documentRepresentations.add(primaryDocumentRepresentation);
+        }
         if (page == null) {
             return documentRepresentations;
         }

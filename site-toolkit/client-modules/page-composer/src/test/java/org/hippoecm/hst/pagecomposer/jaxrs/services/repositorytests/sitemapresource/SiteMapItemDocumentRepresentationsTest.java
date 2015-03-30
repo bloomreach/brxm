@@ -35,6 +35,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResourceTest {
@@ -174,20 +175,23 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
     }
 
     @Test
-    public void homepage_availableDocumentRepresentations_is_empty_when_no_components_with_picked_documents_available() throws Exception {
+    public void homepage_availableDocumentRepresentations_contains_only_rimary_when_no_components_with_picked_documents_available() throws Exception {
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
-        assertTrue(home.getAvailableDocumentRepresentations().isEmpty());
+        assertEquals(1, home.getAvailableDocumentRepresentations().size());
+        assertSame(home.getPrimaryDocumentRepresentation(), home.getAvailableDocumentRepresentations().iterator().next());
     }
 
     @Test
-    public void homepage_availableDocumentRepresentations_is_empty_for_non_existing_component() throws Exception {
+    public void homepage_availableDocumentRepresentations_contains_only_primary_non_existing_component() throws Exception {
         final SiteMapItemRepresentation toUpdate = getSiteMapItemRepresentation(session, "home");
         session.getNodeByIdentifier(toUpdate.getId()).setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,"non-existing");
         session.save();
 
         Thread.sleep(100);
         final SiteMapItemRepresentation homeWithoutExistingComponent = getSiteMapItemRepresentation(session, "home");
-        assertTrue(homeWithoutExistingComponent.getAvailableDocumentRepresentations().isEmpty());
+        assertEquals(1, homeWithoutExistingComponent.getAvailableDocumentRepresentations().size());
+        assertSame(homeWithoutExistingComponent.getPrimaryDocumentRepresentation(),
+                homeWithoutExistingComponent.getAvailableDocumentRepresentations().iterator().next());
     }
 
 
@@ -242,7 +246,7 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
 
         final SiteMapItemRepresentation homePage = getSiteMapItemRepresentation(session, "home");
         final Set<DocumentRepresentation> availableDocumentRepresentations = homePage.getAvailableDocumentRepresentations();
-        assertEquals(4, availableDocumentRepresentations.size());
+        assertEquals(5, availableDocumentRepresentations.size());
 
         DocumentRepresentation representation1 = new DocumentRepresentation(
                 "/unittestcontent/documents/unittestproject/News/News2",
@@ -261,6 +265,8 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
         for (DocumentRepresentation representation : representations) {
             assertTrue(availableDocumentRepresentations.contains(representation));
         }
+
+        assertTrue(availableDocumentRepresentations.contains(homePage.getPrimaryDocumentRepresentation()));
     }
 
     @Test
@@ -309,7 +315,7 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
 
         final SiteMapItemRepresentation homePage = getSiteMapItemRepresentation(session, "home");
         final Set<DocumentRepresentation> availableDocumentRepresentations = homePage.getAvailableDocumentRepresentations();
-        assertEquals(8, availableDocumentRepresentations.size());
+        assertEquals(9, availableDocumentRepresentations.size());
 
         DocumentRepresentation representation1 = new DocumentRepresentation(
                 "/unittestcontent/documents/unittestproject/News/News2",
@@ -343,6 +349,8 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
         for (DocumentRepresentation representation : representations) {
             assertTrue(availableDocumentRepresentations.contains(representation));
         }
+
+        assertTrue(availableDocumentRepresentations.contains(homePage.getPrimaryDocumentRepresentation()));
 
     }
 

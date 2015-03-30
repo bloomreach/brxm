@@ -47,8 +47,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NotNullValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorBuilder;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
-import org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils;
-import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,8 +114,10 @@ public class SiteMapResource extends AbstractConfigResource {
                 if (siteMapItem.getRelativeContentPath() != null) {
                     final String rootContentPath = getPageComposerContextService().getEditingMount().getContentPath();
                     primaryDocumentRepresentation = getDocumentRepresentationHstConfigUser(rootContentPath + "/" + siteMapItem.getRelativeContentPath(), rootContentPath);
+                    primaryDocumentRepresentation.setSelected(true);
                 }
-                Set<DocumentRepresentation> availableDocumentRepresentations = findAvailableDocumentRepresentations(getPageComposerContextService(), page);
+                Set<DocumentRepresentation> availableDocumentRepresentations = findAvailableDocumentRepresentations(
+                        getPageComposerContextService(), page, primaryDocumentRepresentation);
 
                 final SiteMapItemRepresentation siteMapItemRepresentation = new SiteMapItemRepresentation()
                         .represent(siteMapItem, getPageComposerContextService().getEditingMount(), primaryDocumentRepresentation, availableDocumentRepresentations);

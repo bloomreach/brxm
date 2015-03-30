@@ -24,6 +24,7 @@ public class DocumentRepresentation {
     private String displayName;
     private boolean isDocument;
     private boolean exists;
+    private boolean selected;
 
     // constructor for deserialization
     public DocumentRepresentation(){
@@ -82,6 +83,14 @@ public class DocumentRepresentation {
         this.exists = exists;
     }
 
+    public void setSelected(final boolean selected) {
+        this.selected = selected;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -93,12 +102,6 @@ public class DocumentRepresentation {
 
         final DocumentRepresentation that = (DocumentRepresentation) o;
 
-        if (exists != that.exists) {
-            return false;
-        }
-        if (isDocument != that.isDocument) {
-            return false;
-        }
         if (!path.equals(that.path)) {
             return false;
         }
@@ -113,8 +116,6 @@ public class DocumentRepresentation {
     public int hashCode() {
         int result = path.hashCode();
         result = 31 * result + rootMountContentPath.hashCode();
-        result = 31 * result + (isDocument ? 1 : 0);
-        result = 31 * result + (exists ? 1 : 0);
         return result;
     }
 }
