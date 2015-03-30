@@ -50,8 +50,6 @@
 
         store: null,
 
-        PADDING: 16,
-
         constructor: function(config) {
             this.variant = config.variant;
             this.newVariantId = this.variant.id;
@@ -120,7 +118,7 @@
             Ext.apply(this, {
                 autoHeight: true,
                 border: false,
-                padding: this.PADDING,
+                padding: 16,
                 autoScroll: true,
                 labelWidth: 120,
                 labelSeparator: '',
@@ -143,7 +141,7 @@
 
         getVisibleHeight: function() {
             if (this.rendered) {
-                return this.getHeight() + this.PADDING;
+                return this.getHeight();
             }
             return 0;
         },
