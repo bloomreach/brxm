@@ -46,6 +46,8 @@ import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 import static org.onehippo.repository.util.JcrConstants.MIX_REFERENCEABLE;
 
 public class EnhancedSystemViewImporter implements Importer {
@@ -215,8 +217,15 @@ public class EnhancedSystemViewImporter implements Importer {
             return nodeInfo;
         } else {
             importTargetNode.refresh(false);
-            throw new ItemExistsException("A node already exists at "
-                    + conflicting.safeGetJCRPath() + " and same-name siblings are not allowed.");
+            String errorMessage = "A node already exists at "
+                    + conflicting.safeGetJCRPath()
+                    + " and same-name siblings are not allowed.";
+
+            final Name name = nodeInfo.getName();
+            if (name != null && !Strings.isNullOrEmpty(name.getLocalName())) {
+                errorMessage = errorMessage + " Conflicting node name is: " + name.getLocalName();
+            }
+            throw new ItemExistsException(errorMessage);
         }
     }
 
