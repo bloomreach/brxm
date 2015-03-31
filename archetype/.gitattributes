@@ -79,4 +79,3 @@ src/main/resources/archetype-resources/site/src/test/resources/log4j.xml -text
 src/main/resources/archetype-resources/src/main/assembly/distribution.xml -text
 src/test/resources/projects/gettingstarted/archetype.properties -text
 src/test/resources/projects/gettingstarted/goal.txt -text
-/sync-marker.txt -text
