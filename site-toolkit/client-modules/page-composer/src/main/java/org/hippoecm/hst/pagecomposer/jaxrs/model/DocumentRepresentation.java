@@ -30,22 +30,17 @@ public class DocumentRepresentation {
     public DocumentRepresentation(){
     }
 
-    public DocumentRepresentation(final String absPath,
+    public DocumentRepresentation(final String path,
                                   final String rootMountContentPath,
                                   final String displayName,
                                   final boolean isDocument,
                                   final boolean exists) {
-        if (absPath == null || rootMountContentPath == null) {
-            throw new IllegalArgumentException("absPath and rootMountContentPath are not allowed to be null");
-        }
-        if (!absPath.startsWith(rootMountContentPath + "/")) {
-            throw new IllegalArgumentException("Path must start with rootMountContentPath");
-        }
-        this.rootMountContentPath = rootMountContentPath;
-        path = absPath.substring(rootMountContentPath.length() + 1);
-        this.displayName = displayName;
-        this.isDocument = isDocument;
-        this.exists = exists;
+            this.rootMountContentPath = rootMountContentPath;
+            this.path = path;
+            this.displayName = displayName;
+            this.isDocument = isDocument;
+            this.exists = exists;
+
     }
 
     /**

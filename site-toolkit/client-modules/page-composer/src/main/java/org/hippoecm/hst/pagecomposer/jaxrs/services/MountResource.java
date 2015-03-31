@@ -396,8 +396,8 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
                     log.warn("Unexpected document path '{}'", docPath);
                     continue;
                 }
-
-                documentLocations.add(DocumentUtils.getDocumentRepresentationHstConfigUser(docPath, canonicalContentPath));
+                String relPath = docPath.substring(canonicalContentPath.length() + 1);
+                documentLocations.add(DocumentUtils.getDocumentRepresentationHstConfigUser(relPath, canonicalContentPath));
             }
         } catch (RepositoryException e) {
             log.warn("Exception happened while trying to fetch documents of type '" + docType + "'", e);

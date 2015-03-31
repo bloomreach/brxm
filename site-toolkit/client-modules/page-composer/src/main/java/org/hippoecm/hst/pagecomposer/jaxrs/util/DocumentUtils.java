@@ -75,7 +75,7 @@ public class DocumentUtils {
                                                        final HstComponentConfiguration item,
                                                        final Set<DocumentRepresentation> documentRepresentations) throws RepositoryException {
 
-        if (item.getComponentClassName() == null ) {
+        if (item.getComponentClassName() == null) {
             return;
         }
         try {
@@ -125,16 +125,13 @@ public class DocumentUtils {
                                     continue;
                                 }
 
-                                if (absolutePath && !documentLocation.startsWith(contentPath + "/")) {
-                                    continue;
-                                }
-
-                                if (!absolutePath) {
-                                    if (documentLocation.startsWith("/")) {
-                                        documentLocation = contentPath + documentLocation;
-                                    } else {
-                                        documentLocation = contentPath + "/" + documentLocation;
+                                if (absolutePath) {
+                                    if (!documentLocation.startsWith(contentPath + "/")) {
+                                        log.debug("Skipping absolute document path '{}' outside or equal to current root content '{}'",
+                                                documentLocation, contentPath);
+                                        continue;
                                     }
+                                    documentLocation = documentLocation.substring(contentPath.length() + 1);
                                 }
                                 documentRepresentations.add(getDocumentRepresentationHstConfigUser(documentLocation, contentPath));
                             }
@@ -150,13 +147,12 @@ public class DocumentUtils {
     }
 
 
-
     /**
-     *
-     * @throws java.lang.IllegalArgumentException is <code>absPath</code> does not start with <code>mount.getContentPath() + '/'</code>
-     * @throws RuntimeRepositoryException in case some repository exception happens
+     * @throws java.lang.IllegalArgumentException is <code>relPath</code> does not start with <code>mount.getContentPath()
+     *                                            + '/'</code>
+     * @throws RuntimeRepositoryException         in case some repository exception happens
      */
-    public static DocumentRepresentation getDocumentRepresentationHstConfigUser(final String absPath, final String rootContentPath) {
+    public static DocumentRepresentation getDocumentRepresentationHstConfigUser(final String relPath, final String rootContentPath) {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
         Credentials configUser = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".hstconfigreader");
         Session session = null;
@@ -164,21 +160,26 @@ public class DocumentUtils {
         try {
             // pooled hst config user session which has in general read access everywhere
             session = repository.login(configUser);
-            Node node = session.getNode(absPath);
+            final Node node;
+            if (StringUtils.isEmpty(relPath)) {
+               node = session.getNode(rootContentPath);
+            } else {
+                node = session.getNode(rootContentPath + "/" + relPath);
+            }
             final boolean isDocument;
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 isDocument = true;
-            }else if (!node.isSame(node.getSession().getRootNode()) &&
-                     node.isNodeType(HippoNodeType.NT_DOCUMENT) &&
+            } else if (!node.isSame(node.getSession().getRootNode()) &&
+                    node.isNodeType(HippoNodeType.NT_DOCUMENT) &&
                     node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                 isDocument = true;
             } else {
                 isDocument = false;
             }
-            String displayName = ((HippoNode)node).getLocalizedName();
-            return new DocumentRepresentation(node.getPath(), rootContentPath, displayName, isDocument, true);
+            String displayName = ((HippoNode) node).getLocalizedName();
+            return new DocumentRepresentation(relPath, rootContentPath, displayName, isDocument, true);
         } catch (PathNotFoundException e) {
-           return new DocumentRepresentation(absPath, rootContentPath, null, false, false);
+            return new DocumentRepresentation(relPath, rootContentPath, null, false, false);
         } catch (RepositoryException e) {
             throw new RuntimeRepositoryException("Could not obtain hst config user session", e);
         } finally {
