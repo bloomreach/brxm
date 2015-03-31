@@ -188,7 +188,11 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         if (isResizable()) {
             cssClasses += " hippo-dialog-resizable";
         }
-        cssClasses += properties.getString("css-class-name", StringUtils.EMPTY);
+
+        final String customCssClass = properties.getString("css-class-name", null);
+        if (StringUtils.isNotEmpty(customCssClass)) {
+            cssClasses += " " + customCssClass;
+        }
         setCssClassName(cssClasses);
 
         AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
