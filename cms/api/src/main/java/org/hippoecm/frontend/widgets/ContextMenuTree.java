@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,12 +24,10 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.extensions.markup.html.tree.DefaultAbstractTree;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
 import org.apache.wicket.extensions.markup.html.tree.ITreeStateListener;
 import org.apache.wicket.extensions.markup.html.tree.LinkType;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.AbstractReadOnlyModel;
@@ -38,6 +36,7 @@ import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.skin.Icon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -208,22 +207,10 @@ public class ContextMenuTree extends DefaultAbstractTree {
             item.add(contextLink);
         }
 
-        // do distinguish between selected and unselected rows we add an
-        // behavior
-        // that modifies row css class.
-        item.add(new Behavior() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onComponentTag(Component component, ComponentTag tag) {
-                super.onComponentTag(component, tag);
-                if (getTreeState().isNodeSelected(node)) {
-                    tag.put("class", "row-selected");
-                } else {
-                    tag.put("class", "row");
-                }
-            }
-        });
+        item.add(CssClass.append("row"));
+        if (getTreeState().isNodeSelected(node)) {
+            item.add(CssClass.append("row-selected"));
+        }
     }
 
     /**

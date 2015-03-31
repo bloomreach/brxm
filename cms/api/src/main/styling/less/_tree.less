@@ -28,8 +28,7 @@
     z-index: 2;
 
     // Make the rows expand so it will activate the scrolling of the .hippotree div
-    .row,
-    .row-selected {
+    .row {
       white-space: nowrap;
       height: 20px;
       padding: 2px 4px 0 8px;
@@ -66,6 +65,15 @@
           color: @tree-folder-color;
         }
 
+        &:hover {
+          color: @tree-hover-color;
+
+          .hi-folder,
+          .hi-folder-open {
+            color: @tree-hover-color;
+          }
+        }
+
         // Text label
         > span + span {
           display: inline-block;
@@ -94,15 +102,6 @@
       }
     }
 
-    // Tree item hover highlight
-    .row .hippo-tree-node-link:hover {
-      color: @tree-hover-color;
-
-      svg {
-        color: @tree-hover-color
-      }
-    }
-
     // Selected tree item
     .row-selected {
       font-weight: 600;
@@ -114,7 +113,8 @@
 
       // white SVGs when node is selected
       .hippo-tree-junction-link svg.hi,
-      .hippo-tree-node-link svg.hi {
+      .hippo-tree-node-link svg.hi,
+      .hippo-tree-node-link:hover svg.hi {
         color: @white;
       }
 
