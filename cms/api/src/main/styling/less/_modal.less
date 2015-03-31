@@ -106,33 +106,33 @@
 
   .hippo-dialog-body {
     padding: 16px;
-    
+
     .label {
       padding: 0 0 5px 0;
     }
-    
+
     .input {
       display: flex;
       align-items: center;
       padding: 0 0 16px 0;
-    
+
       &:last-child {
         padding: 0 0 4px 0;
       }
-    
+
       .action {
         display: block;
         margin-left: 8px;
       }
     }
-    
+
     input,
     select {
       flex-grow: 1;
       height: 30px;
       border: 1px solid @light-gray;
     }
-    
+
     input {
       padding: 0 8px 0 8px;
     }
@@ -150,7 +150,8 @@
 }
 
 .hippo-dialog-bottom {
-  min-height: 48px;
+  min-height: @modal-footer-height;
+  height: @modal-footer-height;
   width: 100%;
   display: flex;
   flex-direction: row;
