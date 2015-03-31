@@ -72,7 +72,7 @@
           <hippo-icon name="bell" class="hi-color-danger" ng-show="NEEDS_REBUILD"></hippo-icon>
         </a>
         <a href="#" ng-click="showMessages($event)" ng-show="feedbackMessages.length && showMessagesNavbarLink"
-           class="navbar-link" title="{{feedbackMessages.length}} message(s)">
+           class="navbar-link" title="{{feedbackMessages.length}} notification message(s)">
           <hippo-icon name="info-circle" size="m"></hippo-icon><span class="badge badge-info">{{feedbackMessages.length}}</span>
         </a>
       </div>
