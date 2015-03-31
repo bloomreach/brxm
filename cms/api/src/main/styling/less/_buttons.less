@@ -13,11 +13,29 @@
 // limitations under the License.
 
 // default buttons
-.hippo-root button, .hippo-root input[type="button"], .hippo-root input[type="submit"] {
-  padding: 2px 4px;
-}
+.hippo-root {
+  button,
+  input[type="button"],
+  input[type="submit"] {
+    padding: 2px 4px;
+    border: 1px solid @button-border;
+    border-radius: @button-border-radius;
+    background-color: @button-bgcolor;
+    color: @button-color;
 
-button[disabled], input[disabled] {
-  color: @button-disabled-color;
+    &:hover,
+    &:focus {
+      background-color: @button-focus-bgcolor;
+      border-color: @button-focus-border;
+      color: @button-focus-color;
+    }
+
+    &[disabled],
+    &[disabled]:hover {
+      background-color: @button-disabled-bgcolor;
+      border-color: @button-disabled-border;
+      color: @button-disabled-color;
+    }
+  }
 }
 
