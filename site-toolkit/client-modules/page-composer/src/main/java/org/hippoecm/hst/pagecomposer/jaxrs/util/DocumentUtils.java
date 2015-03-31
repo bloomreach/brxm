@@ -121,7 +121,7 @@ public class DocumentUtils {
                             }
                             for (String parameterName : propertyNames) {
                                 String documentLocation = item.getParameter(parameterName);
-                                if (documentLocation == null || "/".equals(documentLocation)) {
+                                if (StringUtils.isEmpty(documentLocation) || "/".equals(documentLocation)) {
                                     continue;
                                 }
 
