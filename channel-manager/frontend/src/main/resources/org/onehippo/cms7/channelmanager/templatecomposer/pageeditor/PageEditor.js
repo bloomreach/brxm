@@ -133,7 +133,7 @@
         constructor: function(config) {
             Hippo.ChannelManager.TemplateComposer.API.superclass.constructor.call(this, config);
             this.pageContainer = config.pageContainer;
-            this.addEvents('variantselected');
+            this.addEvents('variantselected', 'containeritemselected');
         },
 
         selectedVariant: function(variant) {
@@ -146,8 +146,11 @@
 
         isPreviewMode: function() {
             return this.pageContainer.previewMode;
-        }
+        },
 
+        selectedContainerItem: function(record, containerDisabled) {
+            this.fireEvent('containeritemselected', record.get('id'), containerDisabled);
+        }
     });
 
     Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
@@ -855,8 +858,11 @@
             }, this);
 
             this.on('selectItem', function(record, containerDisabled) {
-                if (record.get('type') === HST.CONTAINERITEM && containerDisabled !== true) {
-                    this.showProperties(record);
+                if (record.get('type') === HST.CONTAINERITEM) {
+                    if (containerDisabled !== true) {
+                        this.showProperties(record);
+                    }
+                    this.templateComposerApi.selectedContainerItem(record, containerDisabled);
                 }
             }, this);
 
