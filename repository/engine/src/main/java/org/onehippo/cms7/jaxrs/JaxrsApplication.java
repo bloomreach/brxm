@@ -42,13 +42,7 @@ public class JaxrsApplication extends Application {
 
     private Set<Object> dummySingletons = Collections.unmodifiableSet(new HashSet<Object>() {{ add(new DummyService()); }});
     private Set<Object> singletons;
-    private Set<Class<?>> classes = Collections.unmodifiableSet(new HashSet<Class<?>>() {{ add(JaxrsAuthenticationHandler.class); }});
     private volatile int version = -1;
-
-    @Override
-    public Set<Class<?>> getClasses() {
-        return classes;
-    }
 
     @Override
     public Set<Object> getSingletons() {
@@ -67,6 +61,7 @@ public class JaxrsApplication extends Application {
 
     private void updateSingletons() {
         final Set<Object> singletons = new HashSet<>();
+        version = HippoServiceRegistry.getVersion();
         final List<HippoServiceRegistration> registrations = getJaxrsServiceRegistrations();
         for (HippoServiceRegistration registration : registrations) {
             final Object service = registration.getService();
@@ -74,7 +69,6 @@ public class JaxrsApplication extends Application {
             singletons.add(service);
         }
         this.singletons = Collections.unmodifiableSet(singletons);
-        version = HippoServiceRegistry.getVersion();
     }
 
     protected List<HippoServiceRegistration> getJaxrsServiceRegistrations() {
