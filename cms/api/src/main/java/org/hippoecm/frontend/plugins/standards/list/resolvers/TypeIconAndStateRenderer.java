@@ -15,9 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
@@ -129,37 +127,16 @@ public class TypeIconAndStateRenderer extends AbstractNodeRenderer {
         }
 
         private Icon[] determineStateIcons(final Node node) throws RepositoryException {
-            if (node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-                String prefix = node.getParent().getName();
-                NamespaceRegistry nsReg = node.getSession().getWorkspace().getNamespaceRegistry();
-                String currentUri = nsReg.getURI(prefix);
-
-                Node ntHandle = node.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
-                NodeIterator variants = ntHandle.getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
-
-                Node current = null;
-                Node draft = null;
-                while (variants.hasNext()) {
-                    Node variant = variants.nextNode();
-                    if (variant.isNodeType(HippoNodeType.NT_REMODEL)) {
-                        String uri = variant.getProperty(HippoNodeType.HIPPO_URI).getString();
-                        if (currentUri.equals(uri)) {
-                            current = variant;
-                        }
-                    } else {
-                        draft = variant;
-                    }
-                }
-
-                if (current == null && draft != null) {
-                    return new Icon[] {Icon.MINUS_CIRCLE, Icon.EMPTY};
-                } else if (current != null && draft == null) {
-                    return new Icon[] {Icon.CHECK_CIRCLE, Icon.EMPTY};
-                } else if (current != null && draft != null) {
-                    return new Icon[] {Icon.CHECK_CIRCLE, Icon.EXCLAMATION_TRIANGLE};
-                }
+            switch (TypeState.getState(node)) {
+                case NEW:
+                    return new Icon[]{Icon.MINUS_CIRCLE, Icon.EMPTY};
+                case LIVE:
+                    return new Icon[]{Icon.CHECK_CIRCLE, Icon.EMPTY};
+                case CHANGED:
+                    return new Icon[]{Icon.CHECK_CIRCLE, Icon.EXCLAMATION_TRIANGLE};
+                default:
+                    return EMPTY_STATE_ICONS;
             }
-            return EMPTY_STATE_ICONS;
         }
 
     }

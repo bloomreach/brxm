@@ -276,6 +276,7 @@ api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/RowSele
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/StateIconAttributeModifier.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/StateIconAttributes.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/TypeRenderer.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/TypeStateAttributes.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/PanelPlugin.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/PanelPluginPanel.html -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/PanelPluginPanel.java -text

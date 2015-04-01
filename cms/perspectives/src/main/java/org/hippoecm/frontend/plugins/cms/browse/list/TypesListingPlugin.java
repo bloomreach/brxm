@@ -51,6 +51,7 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeIconAndStateRenderer;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeIconAttributeModifier;
 import org.hippoecm.frontend.skin.DocumentListColumn;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -183,7 +184,7 @@ public final class TypesListingPlugin extends ExpandCollapseListingPlugin<Node> 
 
         @Override
         public List<ListColumn<Node>> getColumns() {
-            List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
+            List<ListColumn<Node>> columns = new ArrayList<>();
             columns.add(createIconColumn());
             columns.add(createNameColumn());
             return columns;
@@ -195,6 +196,7 @@ public final class TypesListingPlugin extends ExpandCollapseListingPlugin<Node> 
             column.setComparator(StateComparator.getInstance());
             column.setRenderer(TypeIconAndStateRenderer.getInstance());
             column.setCssClass(DocumentListColumn.ICON.getCssClass());
+            column.setAttributeModifier(TypeIconAttributeModifier.getInstance());
             return column;
         }
 
@@ -215,7 +217,7 @@ public final class TypesListingPlugin extends ExpandCollapseListingPlugin<Node> 
 
         private ListColumn<Node> createTypeColumn() {
             final ClassResourceModel typeHeader = new ClassResourceModel("typeslisting-type", TypesListingPlugin.class);
-            final ListColumn<Node> column = new ListColumn<Node>(typeHeader, null);
+            final ListColumn<Node> column = new ListColumn<>(typeHeader, null);
             column.setRenderer(new TemplateTypeRenderer(typeLocator));
             column.setCssClass(DocumentListColumn.TYPE.getCssClass());
             return column;

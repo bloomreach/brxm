@@ -197,6 +197,7 @@
           <include>**/*.gif</include>
           <include>**/*.ico</include>
           <include>**/*.eot</include>
+          <include>**/*.properties</include>
           <include>**/*.svg</include>
           <include>**/*.ttf</include>
           <include>**/*.woff</include>
