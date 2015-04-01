@@ -3,6 +3,6 @@
 <hst:setBundle basename="essentials.global"/>
 <hr></hr>
 <div class="text-center">
-  <sub><fmt:message key="footer.text"/></sub>
+  <sub><fmt:message key="footer.text" var="footer"/><c:out value="${footer}"/></sub>
 </div>
 <hst:include ref="container"/>

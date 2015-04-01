@@ -7,7 +7,9 @@
 <c:if test="${(pageable ne null)}">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title"><fmt:message key="blog.moreby"/>&nbsp;<c:out value="${author.fullName}"/></h3>
+      <h3 class="panel-title">
+        <fmt:message key="blog.moreby" var="moreby"/><c:out value="${moreby}"/>&nbsp;<c:out value="${author.fullName}"/>
+      </h3>
     </div>
     <c:choose>
       <c:when test="${pageable.total gt 0}">
@@ -20,7 +22,7 @@
       </c:when>
       <c:otherwise>
         <div class="panel-body">
-          <p><fmt:message key="blog.notfound"/></p>
+          <p><fmt:message key="blog.notfound" var="notfound"/><c:out value="${notfound}"/></p>
         </div>
       </c:otherwise>
     </c:choose>

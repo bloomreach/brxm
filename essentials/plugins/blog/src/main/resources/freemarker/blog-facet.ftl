@@ -7,14 +7,15 @@
 <form action="<@hst.actionURL />" method="get">
   <div class="row form-group">
     <div class="col-xs-8">
+    <@fmt.message key='facets.placeholder' var="placeholder"/>
     <#if query??>
-      <input type="search" value="${query?html}" name="query" class="form-control" placeholder="<@fmt.message key='facets.placeholder'/>">
+      <input type="search" value="${query?html}" name="query" class="form-control" placeholder="${placeholder?html}">
     <#else>
-      <input type="search" value="" name="query" class="form-control" placeholder="<@fmt.message key='facets.placeholder'/>">
+      <input type="search" value="" name="query" class="form-control" placeholder="${placeholder?html}">
     </#if>
     </div>
     <div class="col-xs-4">
-      <button type="submit" class="btn btn-primary pull-right"><@fmt.message key='facets.searchbutton'/></button>
+      <button type="submit" class="btn btn-primary pull-right"><@fmt.message key='facets.searchbutton' var="button"/>${button?html}</button>
     </div>
   </div>
 </form>
@@ -30,7 +31,9 @@
               <#if (item.leaf?? && item.leaf && (item.count > 0))>
                 <@hst.facetnavigationlink  current=facets remove=item var="removeLink"/>
                 <li class="active">
-                  <a href="${removeLink}">${item.name?html}&nbsp;<span class="alert-danger"><@fmt.message key='facets.remove'/></span></a>
+                  <a href="${removeLink}">${item.name?html}&nbsp;
+                      <span class="alert-danger"><@fmt.message key='facets.remove' var="remove"/>${remove?html}</span>
+                  </a>
                 </li>
               <#else>
                 <@hst.link var="link" hippobean=item navigationStateful=true/>

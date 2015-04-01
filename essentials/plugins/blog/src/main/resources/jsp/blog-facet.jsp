@@ -7,11 +7,14 @@
 <form action="<hst:actionURL />" method="get">
   <div class="row form-group">
     <div class="col-xs-8">
+      <fmt:message key='facets.placeholder' var="placeholder"/>
       <input type="search" value="<c:out value='${query}'/>" name="query" class="form-control"
-             placeholder="<fmt:message key='facets.placeholder'/>">
+             placeholder="${fn:escapeXml(placeholder)}">
     </div>
     <div class="col-xs-4">
-      <button type="submit" class="btn btn-primary pull-right"><fmt:message key='facets.searchbutton'/></button>
+      <button type="submit" class="btn btn-primary pull-right">
+        <fmt:message key='facets.searchbutton' var="button"/><c:out value="${button}"/>
+      </button>
     </div>
   </div>
 </form>
@@ -27,7 +30,9 @@
                 <c:when test="${item.leaf and item.count gt 0}">
                   <hst:facetnavigationlink remove="${item}" current="${facets}" var="removeLink"/>
                   <li class="active">
-                    <a href="${removeLink}"><c:out value="${item.name}"/>&nbsp;<span class="alert-danger"><fmt:message key='facets.remove'/></span></a>
+                    <a href="${removeLink}"><c:out value="${item.name}"/>&nbsp;
+                      <span class="alert-danger"><fmt:message key='facets.remove' var="remove"/><c:out value="${remove}"/></span>
+                    </a>
                   </li>
                 </c:when>
                 <c:otherwise>

@@ -4,7 +4,9 @@
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
 <hst:setBundle basename="essentials.pagination"/>
 <ul class="pagination">
-  <li class="disabled"><a href="#">${pageable.total}&nbsp;<fmt:message key="results.indication"/></a></li>
+  <li class="disabled">
+    <a href="#">${pageable.total}&nbsp;<fmt:message key="results.indication" var="indication"/><c:out value="${indication}"/></a>
+  </li>
   <c:if test="${pageable.totalPages > 1}">
     <c:forEach var="pageNr" items="${pageable.pageNumbersArray}" varStatus="index">
       <hst:renderURL var="pageUrl">
@@ -16,7 +18,7 @@
           <hst:param name="page" value="${pageable.previousPage}"/>
           <hst:param name="pageSize" value="${pageable.pageSize}"/>
         </hst:renderURL>
-        <li><a href="${pageUrlPrevious}"><fmt:message key="page.previous"/></a></li>
+        <li><a href="${pageUrlPrevious}"><fmt:message key="page.previous" var="prev"/><c:out value="${prev}"/></a></li>
       </c:if>
       <c:choose>
         <c:when test="${pageable.currentPage eq pageNr}">
@@ -31,7 +33,7 @@
           <hst:param name="page" value="${pageable.nextPage}"/>
           <hst:param name="pageSize" value="${pageable.pageSize}"/>
         </hst:renderURL>
-        <li><a href="${pageUrlNext}"><fmt:message key="page.next"/></a></li>
+        <li><a href="${pageUrlNext}"><fmt:message key="page.next" var="next"/><c:out value="${next}"/></a></li>
       </c:if>
     </c:forEach>
   </c:if>

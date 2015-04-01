@@ -8,7 +8,7 @@
 <#if pageable??>
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h3 class="panel-title"><@fmt.message key="blog.moreby"/>&nbsp;${author.fullName?html}</h3>
+        <h3 class="panel-title"><@fmt.message key="blog.moreby" var="moreby"/>${moreby?html}&nbsp;${author.fullName?html}</h3>
     </div>
     <#if pagebale?? && pageable.total > 0>
         <div class="panel-body">
@@ -19,7 +19,7 @@
         </div>
     <#else>
         <div class="panel-body">
-            <p><fmt:message key="blog.notfound"/></p>
+            <p><@fmt.message key="blog.notfound" var="notfound"/>${notfound?html}</p>
         </div>
     </#if>
 </div>

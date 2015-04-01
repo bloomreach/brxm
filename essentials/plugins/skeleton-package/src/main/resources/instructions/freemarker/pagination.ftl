@@ -1,8 +1,11 @@
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
 <#include "../include/imports.ftl">
 <#if pageable??>
+<@hst.setBundle basename="essentials.pagination"/>
 <ul class="pagination">
-    <li class="disabled"><a href="#">${pageable.total} document(s)</a></li>
+    <li class="disabled">
+        <a href="#">${pageable.total}&nbsp;<@fmt.message key="results.indication" var="indication"/>${indication?html}</a>
+    </li>
   <#if pageable.totalPages gt 1>
     <#list pageable.pageNumbersArray as pageNr>
         <@hst.renderURL var="pageUrl">
@@ -14,7 +17,7 @@
                 <@hst.param name="page" value="${pageable.previousPage}"/>
                 <@hst.param name="pageSize" value="${pageable.pageSize}"/>
             </@hst.renderURL>
-            <li><a href="${pageUrlPrevious}">previous</a></li>
+            <li><a href="${pageUrlPrevious}"><@fmt.message key="page.previous" var="prev"/>${prev?html}</a></li>
         </#if>
         <#if pageable.currentPage == pageNr>
             <li class="active"><a href="#">${pageNr}</a></li>
@@ -27,7 +30,7 @@
                 <@hst.param name="page" value="${pageable.nextPage}"/>
                 <@hst.param name="pageSize" value="${pageable.pageSize}"/>
             </@hst.renderURL>
-            <li><a href="${pageUrlNext}">next</a></li>
+            <li><a href="${pageUrlNext}"><@fmt.message key="page.next" var="next"/>${next?html}</a></li>
         </#if>
     </#list>
   </#if>

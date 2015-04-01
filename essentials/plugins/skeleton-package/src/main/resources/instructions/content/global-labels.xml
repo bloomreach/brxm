@@ -82,7 +82,7 @@
             <sv:value>footer.text</sv:value>
         </sv:property>
         <sv:property sv:multiple="true" sv:name="resourcebundle:messages" sv:type="String">
-            <sv:value>(&amp;copy;){{currentYear}}</sv:value>
+            <sv:value>©{{currentYear}}</sv:value>
         </sv:property>
     </sv:node>
 </sv:node>
