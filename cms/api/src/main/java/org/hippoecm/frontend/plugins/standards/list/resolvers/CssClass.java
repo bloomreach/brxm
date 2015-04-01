@@ -20,7 +20,7 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IObservableModel;
 
 /**
- * Utility to set and add CSS classes of Wicket components.
+ * Utility to set, add and remove CSS classes of Wicket components.
  */
 public class CssClass {
 
