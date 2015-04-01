@@ -287,7 +287,6 @@
         _createPropertiesEditor: function(variant, variants, propertiesForm) {
             var editor = Hippo.ExtWidgets.create('Hippo.ChannelManager.TemplateComposer.PropertiesEditor', {
                 cls: 'component-properties-editor',
-                autoScroll: true,
                 componentId: this.componentId,
                 variant: variant,
                 allVariants: variants.slice(0, variants.length - 1),

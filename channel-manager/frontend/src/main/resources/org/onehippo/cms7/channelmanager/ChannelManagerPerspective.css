@@ -850,8 +850,11 @@
 }
 
 .channel-manager .component-properties-editor > .x-panel-bwrap > .x-panel-body {
-    overflow-x: hidden !important;
     overflow-y: auto;
+}
+
+.templateComposerPropertiesForm form {
+    overflow-x: hidden !important;
 }
 
 .ext-gecko .x-window-body .templateComposerPropertiesForm .x-form-item {

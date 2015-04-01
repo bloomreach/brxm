@@ -930,7 +930,7 @@
                 }
             });
 
-            windowWidth = 480;
+            windowWidth = 525;
             if (Ext.isDefined(this.variantsUuid)) {
                 windowWidth += propertiesPanel.tabWidth;
             }
@@ -965,7 +965,9 @@
             propertiesPanel.on('visibleHeightChanged', function(visibleHeight) {
                 var currentWindowHeight = window.getHeight(),
                     visibleWindowHeight = visibleHeight + window.getFrameHeight(),
-                    maxWindowHeight = Hippo.ChannelManager.TemplateComposer.Instance.getHeight(),
+                    pageEditorHeight = Ext.getCmp('pageEditorIFrame').getHeight(),
+                    windowY = window.getPosition()[1],
+                    maxWindowHeight = pageEditorHeight - windowY,
                     newWindowHeight = Math.min(visibleWindowHeight, maxWindowHeight);
                 if (currentWindowHeight !== newWindowHeight) {
                     window.setHeight(newWindowHeight);
