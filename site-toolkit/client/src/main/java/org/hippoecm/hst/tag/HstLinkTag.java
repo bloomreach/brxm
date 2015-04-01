@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.tag;
 
-import static org.hippoecm.hst.utils.TagUtils.getQueryString;
-import static org.hippoecm.hst.utils.TagUtils.writeOrSetVar;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -34,7 +31,6 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
@@ -45,6 +41,9 @@ import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.hst.utils.TagUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.utils.TagUtils.getQueryString;
+import static org.hippoecm.hst.utils.TagUtils.writeOrSetVar;
 
 /**
  * Abstract supporting class for Hst Link tags
