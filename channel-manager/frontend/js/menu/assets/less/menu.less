@@ -275,3 +275,8 @@ h3.lead.item-title {
   color: @black;
   fill: @warning;
 }
+
+/**see https://issues.onehippo.com/browse/CHANNELMGR-159 for why ie11 freezes*/
+svg use {
+  pointer-events: none;
+}
