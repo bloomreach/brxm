@@ -43,6 +43,8 @@ public class Dialog<T> extends AbstractDialog<T> {
     public Dialog(final IModel<T> model) {
         super(model);
 
+        setButtonCssClass("hippo-button");
+
         add(new EmptyPanel(BOTTOM_LEFT_ID).setVisible(false));
     }
 

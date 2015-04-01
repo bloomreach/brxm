@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
@@ -80,6 +81,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     static private IMarkupResourceStreamProvider streamProvider = new DefaultMarkupResourceStreamProvider();
 
     private boolean fullscreen = false;
+    private String buttonCssClass;
 
     protected static class PersistentFeedbackMessagesModel extends FeedbackMessagesModel {
 
@@ -267,7 +269,11 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         ListView<ButtonWrapper> buttonsView = new ListView<ButtonWrapper>("buttons", buttons) {
             @Override
             protected void populateItem(ListItem<ButtonWrapper> item) {
-                item.add(item.getModelObject().getButton());
+                final Button button = item.getModelObject().getButton();
+                if (StringUtils.isNotEmpty(buttonCssClass)) {
+                    button.add(CssClass.append(buttonCssClass));
+                }
+                item.add(button);
             }
         };
         buttonsView.setReuseItems(true);
@@ -513,6 +519,13 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                 break;
             }
         }
+    }
+
+    /**
+     * Set a specific class that is added to all the buttons in the dialog
+     */
+    protected void setButtonCssClass(String buttonCssClass) {
+        this.buttonCssClass = buttonCssClass;
     }
 
     /**
