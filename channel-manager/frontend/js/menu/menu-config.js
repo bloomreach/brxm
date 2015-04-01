@@ -58,6 +58,12 @@
                         templateUrl: 'states/picker/picker.html',
                         params: {
                             link: null
+                        },
+                        resolve: {
+                            getInitialData: ['hippo.channel.menu.PickerService', '$stateParams', function (PickerService, $stateParams) {
+                                console.log('resolve');
+                                return PickerService.getInitialData($stateParams.siteContentIdentifier, $stateParams.link);
+                            }]
                         }
                     })
 

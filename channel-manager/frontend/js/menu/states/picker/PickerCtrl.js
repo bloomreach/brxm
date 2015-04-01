@@ -23,14 +23,7 @@
             '$filter',
             'hippo.channel.menu.PickerService',
             function ($state, $stateParams, $filter, PickerService) {
-                var PickerCtrl = this,
-                    getDocumentData = function() {
-                        PickerService.getInitialData($stateParams.siteContentIdentifier, $stateParams.link).then(function() {
-                            PickerCtrl.pickerType = $filter('hippoGetByProperty')(PickerCtrl.pickerTypes, 'type', PickerCtrl.treeItems[0].pickerType);
-                            navigateToSelected(PickerCtrl.treeItems);
-                        });
-
-                    };
+                var PickerCtrl = this;
 
                 function navigateToSelected(items, parent) {
                     angular.forEach(items, function (item) {
@@ -85,13 +78,16 @@
                         });
                     } else {
                         $stateParams.link = null;
-                        getDocumentData();
+                        PickerService.getInitialData($stateParams.siteContentIdentifier, $stateParams.link).then(function() {
+                            navigateToSelected(PickerCtrl.treeItems);
+                        });
                     }
                     PickerCtrl.selectedDocument = null;
 
                 };
 
-                getDocumentData();
+                PickerCtrl.pickerType = $filter('hippoGetByProperty')(PickerCtrl.pickerTypes, 'type', PickerCtrl.treeItems[0].pickerType);
+                navigateToSelected(PickerCtrl.treeItems);
             }
         ]);
 }());
