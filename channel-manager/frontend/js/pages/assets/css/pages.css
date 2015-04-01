@@ -79,6 +79,7 @@ form {
 }
 
 #url .input-group-addon {
+    padding-left: 5px;
     padding-right: 5px;
 }
 
@@ -90,6 +91,10 @@ form {
     display: block;
 }
 
+.url-selector .chosen-drop {
+    min-width: 200px;
+}
+
 .url-selector .chosen-results {
-  max-height: 200px;
+    max-height: 200px;
 }
