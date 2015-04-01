@@ -22,6 +22,7 @@ components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsC
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsDocumentComponent.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsEventsComponent.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsFacetsComponent.java -text
+components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsGoogleMapsComponent.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsImageComponent.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsListComponent.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsListPickerComponent.java -text
@@ -42,6 +43,8 @@ components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/Essent
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsDocumentListComponentInfo.properties -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsEventsComponentInfo.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsFacetsComponentInfo.java -text
+components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsGoogleMapsComponentInfo.java -text
+components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsGoogleMapsComponentInfo.properties -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsImageComponentInfo.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsListPickerComponentInfo.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsMenuComponentInfo.java -text
@@ -158,6 +161,7 @@ dashboard/src/main/webapp/images/icons/documents-wizard.png -text
 dashboard/src/main/webapp/images/icons/events.png -text
 dashboard/src/main/webapp/images/icons/faq.png -text
 dashboard/src/main/webapp/images/icons/gallery-manager.png -text
+dashboard/src/main/webapp/images/icons/googlemaps.png -text
 dashboard/src/main/webapp/images/icons/images.png -text
 dashboard/src/main/webapp/images/icons/list.png -text
 dashboard/src/main/webapp/images/icons/menu.png -text
@@ -193,6 +197,7 @@ dashboard/src/main/webapp/images/screenshots/faq02.png -text
 dashboard/src/main/webapp/images/screenshots/faq03.png -text
 dashboard/src/main/webapp/images/screenshots/faq04.png -text
 dashboard/src/main/webapp/images/screenshots/genericlist01.png -text
+dashboard/src/main/webapp/images/screenshots/googlemaps1.png -text
 dashboard/src/main/webapp/images/screenshots/image01.png -text
 dashboard/src/main/webapp/images/screenshots/image02.png -text
 dashboard/src/main/webapp/images/screenshots/menu01.png -text
@@ -696,6 +701,17 @@ plugins/gallery-manager/src/main/resources/META-INF/resources/tool/galleryPlugin
 plugins/gallery-manager/src/main/resources/META-INF/web-fragment.xml -text
 plugins/gallery-manager/src/main/resources/image_set_updater.xml -text
 plugins/gallery-manager/src/test/resources/log4j.xml -text
+plugins/google-maps/pom.xml -text
+plugins/google-maps/src/main/resources/META-INF/googlemaps_instructions.xml -text
+plugins/google-maps/src/main/resources/META-INF/resources/feature/googlemapsPlugin/googlemapsPlugin.html -text
+plugins/google-maps/src/main/resources/META-INF/web-fragment.xml -text
+plugins/google-maps/src/main/resources/freemarker/essentials-googlemaps.ftl -text
+plugins/google-maps/src/main/resources/hst/catalog/googlemaps-catalog-item.xml -text
+plugins/google-maps/src/main/resources/hst/googlemaps-template-freemarker.xml -text
+plugins/google-maps/src/main/resources/hst/googlemaps-template-jsp.xml -text
+plugins/google-maps/src/main/resources/images/googlemaps.png -text
+plugins/google-maps/src/main/resources/js/essentials-google-maps.js -text
+plugins/google-maps/src/main/resources/jsp/essentials-googlemaps.jsp -text
 plugins/image-component/pom.xml -text
 plugins/image-component/src/main/resources/META-INF/imageComponentPlugin_instructions.xml -text
 plugins/image-component/src/main/resources/META-INF/resources/feature/imageComponentPlugin/imageComponentPlugin.html -text

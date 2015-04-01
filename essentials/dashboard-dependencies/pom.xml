@@ -177,6 +177,12 @@
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-essentials-plugin-google-maps</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-connector</artifactId>
     </dependency>
     <dependency>

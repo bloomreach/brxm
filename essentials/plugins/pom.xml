@@ -63,6 +63,7 @@
     <module>tagging</module>
     <module>taxonomy</module>
     <module>video</module>
+    <module>google-maps</module>
   </modules>
 
   <dependencyManagement>
