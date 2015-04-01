@@ -27,7 +27,7 @@
                 // TODO: create tests for the PrototypeService
                 return {
                     getPrototypes: function () {
-                        var url = ConfigService.apiUrlPrefix + '/' + ConfigService.mountId + './prototypepages',
+                        var url = ConfigService.apiUrlPrefix + '/' + ConfigService.mountId + './newpagemodel',
                             deferred = $q.defer();
 
                         $http.get(url, {})
