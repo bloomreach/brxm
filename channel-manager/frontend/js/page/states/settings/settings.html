@@ -88,24 +88,13 @@
 
             <div class="form-group has-feedback">
                 <label>{{ 'PRIMARY_DOCUMENT' | translate }}</label>
-                <br/>
-                {{page.primaryDocumentRepresentation.displayName}}
-
-
-                <button class="btn btn-default btn-md"
-                        data-ng-click="removePrimaryDocument(page)"
-                        data-ng-show="page.primaryDocumentRepresentation">
-                    <hippo-icon name="trash" size="m"></hippo-icon> {{ 'REMOVE_PRIMARY_DOCUMENT' | translate }}
-                </button>
-                <br/>
                 <select chosen
                         data-ng-disabled="!state.isEditable || !page.availableDocumentRepresentations.length"
-                        data-ng-show="state.isEditable && page.availableDocumentRepresentations.length"
+                        data-ng-if="state.isEditable && page.availableDocumentRepresentations.length"
                         data-ng-model="page.primaryDocumentRepresentation"
                         data-ng-options="item as item.displayName for item in page.availableDocumentRepresentations"
-                        no-results-text="no results found for"
-                        data-placeholder="placeholder"
-                        width="selectBoxWidth"
+                        no-results-text="'no results found'"
+                        width="'100%'"
                         class="ng-pristine ng-untouched ng-valid localytics-chosen">
                 </select>
             </div>

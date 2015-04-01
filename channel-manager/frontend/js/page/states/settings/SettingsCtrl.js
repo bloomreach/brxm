@@ -178,12 +178,34 @@
                 }
 
                 function loadPage() {
+                    function arrayObjectIndexOf(arr, obj){
+                        for(var i = 0; i < arr.length; i++){
+                            if(angular.equals(arr[i], obj)){
+                                return i;
+                            }
+                        }
+                        return -1;
+                    }
                     return PageService.getCurrentPage()
                             .then(function (currentPage) {
+                                var defaultRepresentation = [
+                                    {
+                                        displayName: 'none',
+                                        path: ''
+
+                                    }
+                                ];
                                 $scope.page.id = currentPage.id;
                                 $scope.page.title = currentPage.pageTitle;
-                                $scope.page.primaryDocumentRepresentation = currentPage.primaryDocumentRepresentation;
-                                $scope.page.availableDocumentRepresentations = currentPage.availableDocumentRepresentations;
+                                $scope.page.availableDocumentRepresentations = defaultRepresentation.concat(currentPage.availableDocumentRepresentations);
+
+                                if(currentPage.primaryDocumentRepresentation) {
+                                    var indexOfPrimaryDoc = arrayObjectIndexOf($scope.page.availableDocumentRepresentations, currentPage.primaryDocumentRepresentation);
+                                    $scope.page.primaryDocumentRepresentation = $scope.page.availableDocumentRepresentations[indexOfPrimaryDoc];
+                                } else {
+                                    $scope.page.primaryDocumentRepresentation = $scope.page.availableDocumentRepresentations[0];
+                                }
+
                                 $scope.page.url = currentPage.name;
                                 $scope.page.hasContainerItem = currentPage.hasContainerItemInPageDefinition;
                                 $scope.page.isHomePage = currentPage.isHomePage;
