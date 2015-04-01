@@ -73,9 +73,9 @@
                 };
 
                 // fetch prototypes
-                PrototypeService.getPrototypes().then(function (response) {
-                    $scope.prototypes = response;
-                    $scope.page.prototype = response[0];
+                PrototypeService.getPrototypes().then(function (data) {
+                    $scope.prototypes = data.prototypes;
+                    $scope.page.prototype = data.prototypes[0];
                 }, function (errorResponse) {
                     $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
                 });

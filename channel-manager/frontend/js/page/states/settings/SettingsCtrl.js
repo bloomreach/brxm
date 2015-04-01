@@ -171,9 +171,9 @@
 
                 function loadPrototypes() {
                     return PrototypeService.getPrototypes()
-                        .then(function (prototypes) {
-                            $scope.prototypes = prototypes;
-                            return prototypes;
+                        .then(function (data) {
+                            $scope.prototypes = data.prototypes;
+                            return data.prototypes;
                         }, setErrorFeedback);
                 }
 

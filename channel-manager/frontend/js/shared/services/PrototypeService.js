@@ -32,7 +32,7 @@
 
                         $http.get(url, {})
                             .then(function (response) {
-                                deferred.resolve(response.data.data.prototypes);
+                                deferred.resolve(response.data.data);
                             }, function (errorResponse) {
                                 deferred.reject(errorResponse);
                             });

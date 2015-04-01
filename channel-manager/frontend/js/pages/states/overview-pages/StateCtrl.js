@@ -25,8 +25,8 @@
         function ($scope, ConfigService, PrototypeService, FeedbackService) {
             // fetch prototypes
             if (ConfigService.userCanEdit) {
-                PrototypeService.getPrototypes().then(function(prototypes) {
-                    $scope.isAddPageVisible = prototypes.length > 0;
+                PrototypeService.getPrototypes().then(function(data) {
+                    $scope.isAddPageVisible = data.prototypes.length > 0;
                 }, function(errorResponse) {
                     $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
                 });
