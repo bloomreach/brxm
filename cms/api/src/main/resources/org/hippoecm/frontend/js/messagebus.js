@@ -16,9 +16,9 @@
 (function () {
     "use strict";
 
-    Ext.namespace('Hippo');
+    window.Hippo = window.Hippo || {};
 
-    Hippo.createMessageBus = function(name) {
+    Hippo.createMessageBus = function() {
         var subscriptions = {};
         return {
             exception: function(msg, e) {

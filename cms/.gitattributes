@@ -789,6 +789,7 @@ api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/left
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/left-right.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/right-corners.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/top-bottom.gif -text
+api/src/main/resources/org/hippoecm/frontend/js/events.js -text
 api/src/main/resources/org/hippoecm/frontend/js/future.js -text
 api/src/main/resources/org/hippoecm/frontend/js/global.js -text
 api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-128.png -text svneol=unset#image/png

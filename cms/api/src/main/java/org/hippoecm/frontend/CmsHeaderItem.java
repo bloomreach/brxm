@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,18 @@
  */
 package org.hippoecm.frontend;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 
 public class CmsHeaderItem extends HippoHeaderItem {
+
+    private static final ResourceReference MESSAGE_BUS_JS = new JavaScriptResourceReference(HippoHeaderItem.class, "js/messagebus.js");
+    private static final ResourceReference EVENTS_JS = new JavaScriptResourceReference(HippoHeaderItem.class, "js/events.js");
 
     private static final CmsHeaderItem INSTANCE = new CmsHeaderItem();
 
@@ -34,7 +39,7 @@ public class CmsHeaderItem extends HippoHeaderItem {
 
     @Override
     public Iterable<?> getRenderTokens() {
-        return Arrays.asList("hippo-cms-header-item");
+        return Collections.singleton("hippo-cms-header-item");
     }
 
     @Override
@@ -49,6 +54,8 @@ public class CmsHeaderItem extends HippoHeaderItem {
 
         JavaScriptReferenceHeaderItem.forReference(GLOBAL_JS).render(response);
         JavaScriptReferenceHeaderItem.forReference(FUTURE_JS).render(response);
+        JavaScriptReferenceHeaderItem.forReference(MESSAGE_BUS_JS).render(response);
+        JavaScriptReferenceHeaderItem.forReference(EVENTS_JS).render(response);
         JavaScriptReferenceHeaderItem.forReference(isDevelopmentMode() ? THEME_MIN_JS : THEME_JS).render(response);
     }
 }
