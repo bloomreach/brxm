@@ -35,7 +35,7 @@
                         callObj.url += link;
                     }
                     return $http(callObj).success(function (returnedData) {
-                        angular.copy([returnedData.data], pickerData.items);
+                        return angular.copy([returnedData.data], pickerData.items);
                     });
                 }
 
