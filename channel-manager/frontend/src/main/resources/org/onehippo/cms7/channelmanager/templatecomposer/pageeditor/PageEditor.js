@@ -133,7 +133,7 @@
         constructor: function(config) {
             Hippo.ChannelManager.TemplateComposer.API.superclass.constructor.call(this, config);
             this.pageContainer = config.pageContainer;
-            this.addEvents('variantselected');
+            this.addEvents('variantselected', 'containeritemselected');
         },
 
         selectedVariant: function(variant) {
@@ -146,8 +146,11 @@
 
         isPreviewMode: function() {
             return this.pageContainer.previewMode;
-        }
+        },
 
+        selectedContainerItem: function(record, containerDisabled) {
+            this.fireEvent('containeritemselected', record.get('id'), containerDisabled);
+        }
     });
 
     Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
@@ -283,7 +286,7 @@
                 iconCls: fullscreen ? 'expand' : 'collapse',
                 listeners: {
                     click: {
-                        fn: function(button) {
+                        fn: function() {
                             this.fullscreen = fullscreen;
                             this.createViewToolbar();
                             this.registerResizeListener();
@@ -714,10 +717,10 @@
                 this.hideChannelChangesNotification();
                 return;
             }
-            this.showChannelChangesNotification(pageContext);
+            this.showChannelChangesNotification();
         },
 
-        showChannelChangesNotification: function(pageContext) {
+        showChannelChangesNotification: function() {
             var notification, userIds;
             notification = Ext.getCmp('channelChangesNotification');
             if (this.channel.changedBySet.length === 0) {
@@ -855,8 +858,11 @@
             }, this);
 
             this.on('selectItem', function(record, containerDisabled) {
-                if (record.get('type') === HST.CONTAINERITEM && containerDisabled !== true) {
-                    this.showProperties(record);
+                if (record.get('type') === HST.CONTAINERITEM) {
+                    if (containerDisabled !== true) {
+                        this.showProperties(record);
+                    }
+                    this.templateComposerApi.selectedContainerItem(record, containerDisabled);
                 }
             }, this);
 
@@ -896,9 +902,8 @@
         },
 
         createPropertiesWindow: function(mountId) {
-            var width, propertiesPanel, window;
+            var propertiesPanel, windowWidth, window;
 
-            width = Ext.isDefined(this.variantsUuid) ? 610 : 480;
             propertiesPanel = new Hippo.ChannelManager.TemplateComposer.PropertiesPanel({
                 id: 'componentPropertiesPanel',
                 resources: this.resources,
@@ -925,11 +930,16 @@
                 }
             });
 
+            windowWidth = 480;
+            if (Ext.isDefined(this.variantsUuid)) {
+                windowWidth += propertiesPanel.tabWidth;
+            }
+
             window = new Hippo.ux.window.FloatingWindow({
                 id: 'componentPropertiesWindow',
                 title: this.resources['properties-window-default-title'],
                 x: 10, y: 120,
-                width: width,
+                width: windowWidth,
                 height: 350,
                 layout: 'fit',
                 closable: true,

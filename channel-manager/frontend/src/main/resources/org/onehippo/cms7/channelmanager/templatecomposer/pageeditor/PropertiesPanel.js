@@ -64,7 +64,8 @@
 
             config = Ext.apply(config, { activeTab: 0 });
             Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.constructor.call(this, Ext.apply(config, {
-                border: false
+                border: false,
+                tabMarginTop: 0
             }));
         },
 
@@ -119,9 +120,7 @@
                 locale: this.locale
             });
 
-            if (this.componentVariants.isMultivariate()) {
-                this._showTabs();
-            } else {
+            if (!this.componentVariants.isMultivariate()) {
                 this._hideTabs();
             }
 
@@ -252,12 +251,6 @@
                     componentId: this.componentId,
                     lastModifiedTimestamp: this.lastModifiedTimestamp,
                     bubbleEvents: ['variantDirty', 'variantPristine', 'close'],
-                    margins: {
-                        top: 0,
-                        right: 10,
-                        bottom: 0,
-                        left: 0
-                    },
                     listeners: {
                         propertiesChanged: this._onPropertiesChanged,
                         propertiesSaved: this._onPropertiesSaved,
@@ -335,10 +328,6 @@
 
         _hideTabs: function() {
             this.tabWidth = 0;
-        },
-
-        _showTabs: function() {
-            this.tabWidth = 130;
         },
 
         _getCurrentVariantId: function() {

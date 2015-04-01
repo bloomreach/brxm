@@ -16,6 +16,6 @@
 
 module.exports = {
     tmp: 'target/tmp',
-    bower: 'target/bower/components',
+    bower: 'target/bower_components',
     dist: 'target/dist'
 };

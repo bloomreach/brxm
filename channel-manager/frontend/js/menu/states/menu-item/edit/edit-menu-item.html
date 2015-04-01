@@ -71,11 +71,11 @@
                    data-hippo-channel-tooltip-show="form.title.$invalid"
                    data-tooltip-placement="top">
             <span class="form-control-feedback" data-ng-show="form.title.$dirty">
-              <hippo-icon ng-if="EditMenuItemCtrl.isSaving.title && !EditMenuItemCtrl.isSaved.title"
+              <hippo-icon ng-if="EditMenuItemCtrl.isSaving.title"
                           name="spinner"
                           size="m">
               </hippo-icon>
-              <hippo-icon ng-if="form.title.$valid && EditMenuItemCtrl.isSaved.title"
+              <hippo-icon ng-if="form.title.$valid && EditMenuItemCtrl.isSaved.title && !EditMenuItemCtrl.isSaving.title"
                           name="check-circle"
                           size="m">
               </hippo-icon>
@@ -128,21 +128,18 @@
                        data-ng-model="MenuItemCtrl.selectedMenuItem.sitemapLink"
                        data-show-focus="EditMenuItemCtrl.linkToFocus == 'sitemapLink'"
                        data-ng-blur="EditMenuItemCtrl.updateLinkDestination(form)">
-                
               <span class="form-control-feedback" data-ng-show="form.sitemapItem.$dirty">
-                  <hippo-icon ng-if="EditMenuItemCtrl.isSaving.link && !EditMenuItemCtrl.isSaved.link"
+                  <hippo-icon ng-if="EditMenuItemCtrl.isSaving.link"
                               name="spinner"
                               size="m">
                   </hippo-icon>
-                  <hippo-icon ng-if="form.sitemapItem.$valid && EditMenuItemCtrl.isSaved.link"
+                  <hippo-icon ng-if="form.sitemapItem.$valid && EditMenuItemCtrl.isSaved.link && !EditMenuItemCtrl.isSaving.link"
                               name="check-circle"
-                              size="m"
-                              class="hi-color-white hi-fill-success">
+                              size="m">
                   </hippo-icon>
                   <hippo-icon ng-if="form.sitemapItem.$invalid || !EditMenuItemCtrl.isSaved.link"
                               name="minus-circle"
-                              size="m"
-                              class="hi-color-white hi-fill-danger">
+                              size="m">
                   </hippo-icon>
                 </span>
                 <span class="input-group-btn">
@@ -180,11 +177,11 @@
                        data-hippo-channel-tooltip-show="form.url.$invalid"
                        data-tooltip-placement="top">
                 <span class="form-control-feedback" data-ng-show="form.url.$dirty">
-                    <hippo-icon ng-if="EditMenuItemCtrl.isSaving.link && !EditMenuItemCtrl.isSaved.link"
+                    <hippo-icon ng-if="EditMenuItemCtrl.isSaving.link"
                                 name="spinner"
                                 size="m">
                     </hippo-icon>
-                    <hippo-icon ng-if="form.url.$valid && EditMenuItemCtrl.isSaved.link"
+                    <hippo-icon ng-if="form.url.$valid && EditMenuItemCtrl.isSaved.link && !EditMenuItemCtrl.isSaving.link"
                                 name="check-circle"
                                 size="m">
                     </hippo-icon>

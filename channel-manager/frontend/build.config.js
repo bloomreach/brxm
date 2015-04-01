@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 module.exports = {
-    bower: 'target/bower/components',
+    bower: 'target/bower_components',
     ngsource: 'js',
     ngtarget: 'target/classes/angular',
     cmsource: 'src/main/resources/org/onehippo/cms7/channelmanager',

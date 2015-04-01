@@ -1,13 +1,44 @@
 /* VrTabPanel CSS for Blue theme */
 
-/* Custom sprit for vertical tabs */
-.x-tot2ivn-vr-tab-strip .x-tab-right, .x-tot2ivn-vr-tab-strip .x-tab-left, .x-tot2ivn-vr-tab-strip .x-tab-strip-inner {
-    background-image: url(vtabs-sprite.gif);
+/* Remove background sprite for tabs */
+.x-tot2ivn-vr-tab-strip-top.x-tab-strip-top {
+    background: #fff none;
+}
+
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tab-right,
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tab-left,
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tab-strip-inner {
+    background: none;
+}
+
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tot2ivn-vr-tab-strip-title {
+    border-top: 1px solid #e1e3e5;
+}
+
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tot2ivn-vr-tab-strip-title:first-of-type {
+    border-top-color: transparent;
+}
+
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tot2ivn-vr-tab-strip-title:last-of-type {
+    border-bottom: 1px solid #e1e3e5;
+}
+
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tot2ivn-vr-tab-strip-title.x-tab-strip-active,
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tot2ivn-vr-tab-strip-title.x-tab-strip-active + .x-tot2ivn-vr-tab-strip-title {
+    border-top-color: #0086f8;
+}
+
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tab-right {
+    padding-left: 0;
+}
+
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tab-left {
+    padding-right: 0;
 }
 
 /* Left Panel background */
 .x-tot2ivn-vr-tab-panel {
-    background: #cedff5 url(vtabs-border-right.png) repeat-y;
+    background: #ffffff;
     border-color: #99bbe8 !important;
 }
 
@@ -22,11 +53,7 @@
 
 .x-tot2ivn-vr-tab-panel ul.x-tot2ivn-vr-tab-strip-top {
     border-bottom: 0;
-}
-
-.x-tot2ivn-vr-tab-strip-wrap {
-    background: url(vtabs-border-bottom.png) repeat-x left bottom;
-    padding-bottom: 1px;
+    padding-top: 0;
 }
 
 /* Right Body Panel */
@@ -41,28 +68,33 @@
 .x-tot2ivn-vr-tab-panel li.x-tot2ivn-vr-tab-strip-title {
     display: block;
     width: 100%;
-    max-height: 48px;
-    overflow: hidden;
+    margin: 0;
 }
 
-.x-tab-strip span.x-tot2ivn-vr-tab-strip-text {
-    padding-top: 6px !important;
-    padding-bottom: 6px !important;
-    white-space: pre-wrap;
+.x-tot2ivn-vr-tab-strip.x-tab-strip span.x-tab-strip-text {
+    padding: 0 8px 0 16px !important;
+    height: 26px;
+    line-height: 26px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-size: 12px;
     color: #3f3f3f;
 }
 
-/* Last menu item */
-.x-tot2ivn-vr-tab-panel li.x-tot2ivn-vr-tab-last {
-    border-bottom: 1px solid #b3b3b3;
+/* Hovered menu item */
+.x-tot2ivn-vr-tab-strip :not(.x-tab-strip-active) .x-tab-right:hover span.x-tab-strip-text {
+    color: #000000;
 }
 
 /* Active menu item */
-.x-tot2ivn-vr-tab-panel .x-tab-strip-active span.x-tot2ivn-vr-tab-strip-text {
-    font-weight: normal !important;
-    color: #000;
+.x-tot2ivn-vr-tab-panel .x-tab-strip-top .x-tab-strip-active .x-tab-right {
+    margin-bottom: 0;
 }
 
-.x-tot2ivn-vr-tab-panel .x-tab-strip-active .x-tab-right {
-    margin-bottom: 0;
+.x-tot2ivn-vr-tab-panel .x-tab-strip-active span.x-tot2ivn-vr-tab-strip-text {
+    font-weight: normal !important;
+    color: #ffffff;
+    background-color: #0086f8;
 }

@@ -50,8 +50,6 @@
 
         store: null,
 
-        PADDING: 16,
-
         constructor: function(config) {
             this.variant = config.variant;
             this.newVariantId = this.variant.id;
@@ -120,7 +118,7 @@
             Ext.apply(this, {
                 autoHeight: true,
                 border: false,
-                padding: this.PADDING,
+                padding: 16,
                 autoScroll: true,
                 labelWidth: 120,
                 labelSeparator: '',
@@ -143,7 +141,7 @@
 
         getVisibleHeight: function() {
             if (this.rendered) {
-                return this.getHeight() + this.PADDING;
+                return this.getHeight();
             }
             return 0;
         },
@@ -298,10 +296,6 @@
                     break;
                 default:
                     field = this._addComponent(xtype, record, defaultValue, value);
-            }
-
-            if (value === defaultValue) {
-                field.addClass('default-value');
             }
 
             return field;
@@ -487,10 +481,7 @@
             function updateValueInRecord() {
                 var newValue = this.getValue();
                 if (typeof(newValue) === 'undefined' || (typeof(newValue) === 'string' && newValue.length === 0) || newValue === this.defaultValue) {
-                    this.addClass('default-value');
                     this.setValue(this.defaultValue);
-                } else {
-                    this.removeClass('default-value');
                 }
                 record.set('value', newValue);
             }

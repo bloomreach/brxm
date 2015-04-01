@@ -6,7 +6,6 @@
  *	Tab position defaults to 'left'. Position 'right' is not supported.
  *	Auto-scrolling currently not implemented.
  *  Three config properties users would want to config are :
-	@cfg border
 	@cfg tabWidth
 	@cfg tabMarginTop
 	See description of config properties below.
@@ -20,22 +19,17 @@
 Ext.ns('Ext.ux.tot2ivn');
 Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
 
-    TAB_HORIZONTAL_MARGIN_AND_PADDING: 12,
+    TAB_HORIZONTAL_MARGIN_AND_PADDING: 0,
 
     /** Vertical Tab Panel cfg */
-	/**
-     * @cfg {Boolean} border
-     * Set to true to draw the outline border of the whole panel. Defaults to true.
+    /**
+     * @cfg {Number} tabWidth The initial width in pixels of each new tab title (defaults to 175).
      */
-	 border: true,
-	 /**
-     * @cfg {Number} tabWidth The initial width in pixels of each new tab title (defaults to 130).
-     */
-    tabWidth : 130,
-	/**
+    tabWidth : 175,
+    /**
      * @cfg {Number} tabMarginTop The initial top margin in pixels of the tab strip. (defaults to 15).
      */
-	tabMarginTop : 15,
+    tabMarginTop : 15,
 
 	/**
      * @cfg {Boolean} layoutOnTabChange
@@ -119,9 +113,9 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
     /**
      * @cfg {Number} tabMargin The number of pixels of space to calculate into the sizing and scrolling of
      * tabs. If you change the margin in CSS, you will need to update this value so calculations are correct
-     * with either <tt>{@link #resizeTabs}</tt> or scrolling tabs. (defaults to <tt>2</tt>)
+     * with either <tt>{@link #resizeTabs}</tt> or scrolling tabs. (defaults to <tt>0</tt>)
      */
-    tabMargin : 2,
+    tabMargin : 0,
     /**
      * @cfg {Boolean} plain </tt>true</tt> to render the tab strip without a background container image
      * (defaults to <tt>false</tt>).
@@ -154,13 +148,6 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
     initComponent : function(){
         this.frame = false;
         Ext.ux.tot2ivn.VrTabPanel.superclass.initComponent.call(this);
-
-		// Add border
-		if (this.border) {
-			this.style = 'border: 1px solid #99BBE8; ' + this.style;
-		}
-        // Render left border of body using a 1-pixel background image with left offset = tabWidth - 1
-        this.style = 'background-position: ' + (this.tabWidth - 1) + 'px 0; ' + this.style;
 
         this.addEvents(
             /**
@@ -253,7 +240,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
                       '<a class="x-tab-right" href="#" style="width: ' + (this.tabWidth - this.TAB_HORIZONTAL_MARGIN_AND_PADDING) + 'px"">',
                         '<em class="x-tab-left">',
                           '<span class="x-tab-strip-inner">',
-                            '<span class="x-tab-strip-text x-tot2ivn-vr-tab-strip-text {iconCls}">{text}</span>',
+                            '<span class="x-tab-strip-text x-tot2ivn-vr-tab-strip-text {iconCls}" title="{text}">{text}</span>',
                           '</span>',
                          '</em>',
                        '</a>',
