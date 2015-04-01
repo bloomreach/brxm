@@ -18,17 +18,24 @@ package org.hippoecm.hst.core.sitemenu;
 
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HstSiteMenuUtils {
 
+    private static final Logger log = LoggerFactory.getLogger(HstSiteMenuUtils.class);
     private HstSiteMenuUtils(){
 
     }
 
     public static boolean isUserInRole(final HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration, final HstRequestContext hstRequestContext) {
         for (String role : hstSiteMenuItemConfiguration.getRoles()) {
-            return hstRequestContext.getServletRequest().isUserInRole(role);
+            if (hstRequestContext.getServletRequest().isUserInRole(role)) {
+                log.debug("Found HstSiteMenuItemConfiguration '{}' to be in role '{}'", hstSiteMenuItemConfiguration.getName(), role);
+                return true;
+            }
         }
+        log.debug("No matching role found for HstSiteMenuItemConfiguration '{}'", hstSiteMenuItemConfiguration.getName());
         return false;
     }
 }
