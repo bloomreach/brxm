@@ -18,9 +18,9 @@ package org.hippoecm.hst.core.linking;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -50,7 +50,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     private String[] binaryLocations;
     private String binariesPrefix;
     private String pageNotFoundPath = DEFAULT_PAGE_NOT_FOUND_PATH;
-    private WeakIdentityMap<HstSiteMapItem, LocationMapTree> loadedSubLocationMapTree = WeakIdentityMap.newConcurrentHashMap();
+    private WeakIdentityMap<HstSiteMapItem, SubLocationMapTreesHolder> loadedSubLocationMapTreesHolder = WeakIdentityMap.newConcurrentHashMap();
     private HstLinkProcessor linkProcessor;
     
     private List<LocationResolver> locationResolvers;
@@ -128,7 +128,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         final Mount mount = hstRequestContext.getResolvedMount().getMount();
         final String type = mount.getType();
         final String hostGroupName = mount.getVirtualHost().getHostGroupName();
-       return createAll(node, hstRequestContext, hostGroupName, type , crossMount);
+        return createAll(node, hstRequestContext, hostGroupName, type, crossMount);
     }
 
     public List<HstLink> createAll(final Node node, final HstRequestContext hstRequestContext,
@@ -292,17 +292,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             }
         }
         return false;
-    }
-
-    private LocationMapResolver getSubLocationMapResolver(final HstSiteMapItem preferredItem,
-                                                          final HstComponentsConfiguration componentsConfiguration,
-                                                          final String mountContentPath) {
-        LocationMapTree subLocationMapTree = loadedSubLocationMapTree.get(preferredItem);
-        if(subLocationMapTree == null) {
-            subLocationMapTree = new LocationMapTreeImpl(preferredItem, componentsConfiguration, mountContentPath);
-            loadedSubLocationMapTree.put(preferredItem, subLocationMapTree);
-        }
-        return new LocationMapResolver(subLocationMapTree);
     }
 
     private RewriteContext createRewriteContext(final Node node, final Mount mount,
@@ -717,11 +706,11 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     List<HstLinkImpl> hstLinkListForMount = resolveToHstLinkList(rewritePath, tryMount, resolverProperties);
                     // strip doubles here.
                     // Two HstLinks with same getPath for one mount are collapsed
-                    // Tow HstLinks with same getPath except one with extension (/foo and /foo.html) are collapsed to a
+                    // Two HstLinks with same getPath except one with extension (/foo and /foo.html) are collapsed to a
                     // one, where in case HstLinkImpl has contentType DOCUMENT the one with extension is kept, and
                     // contentType FOLDER the /foo. If contentType unknown, we keep both
 
-                    Map<String, HstLinkImpl> collapsedLinks = new TreeMap<>();
+                    Map<String, HstLinkImpl> collapsedLinks = new HashMap<>();
                     for (HstLinkImpl hstLink : hstLinkListForMount) {
                         String path = hstLink.getPath();
                         if (path == null) {
@@ -779,6 +768,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 return Collections.emptyList();
             }
 
+            Collections.sort(hstLinkList, new LowestDepthFirstAndThenLexicalComparator());
             return hstLinkList;
         }
 
@@ -901,7 +891,9 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         private List<ResolvedLocationMapTreeItem> resolveToAllLocationMapTreeItem(String path, Mount tryMount, ResolverProperties resolverProperties) {
             List<ResolvedLocationMapTreeItem> resolvedLocations = new ArrayList<>();
             if (tryMount.isMapped() && tryMount.getHstSite() != null) {
-                LocationMapResolver resolver = new LocationMapResolver(tryMount.getHstSite().getLocationMapTree());
+                LocationMapResolver resolver = new LocationMapResolver(
+                                                tryMount.getHstSite().getLocationMapTree(),
+                                                tryMount.getHstSite().getLocationMapTreeComponentDocuments());
                 resolver.setRepresentsDocument(resolverProperties.representsDocument);
                 resolver.setCanonical(resolverProperties.canonicalLink);
                 resolver.setResolvedSiteMapItem(resolverProperties.resolvedSiteMapItem);
@@ -975,12 +967,12 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             if (tryMount.isMapped() && tryMount.getHstSite() != null) {
                 if (resolverProperties.preferredItem != null) {
                     final LocationMapResolver subResolver;
-                    if (tryMount.getHstSite() != null && tryMount.getHstSite().isComponentLinkRewritingSupported()) {
-                        subResolver = getSubLocationMapResolver(resolverProperties.preferredItem,
-                                tryMount.getHstSite().getComponentsConfiguration(), tryMount.getContentPath());
-                    }  else {
-                        subResolver = getSubLocationMapResolver(resolverProperties.preferredItem, null, null);
-                    }
+
+                    subResolver = getSubLocationMapResolver(
+                            resolverProperties.preferredItem,
+                            tryMount.getHstSite().getComponentsConfiguration(),
+                            tryMount.getContentPath());
+
                     subResolver.setRepresentsDocument(resolverProperties.representsDocument);
                     subResolver.setResolvedSiteMapItem(resolverProperties.resolvedSiteMapItem);
                     subResolver.setCanonical(resolverProperties.canonicalLink);
@@ -993,7 +985,8 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     }
                 }
                 if (resolvedLocation == null) {
-                    LocationMapResolver resolver = new LocationMapResolver(tryMount.getHstSite().getLocationMapTree());
+                    LocationMapResolver resolver = new LocationMapResolver(tryMount.getHstSite().getLocationMapTree(),
+                            tryMount.getHstSite().getLocationMapTreeComponentDocuments());
                     resolver.setRepresentsDocument(resolverProperties.representsDocument);
                     resolver.setCanonical(resolverProperties.canonicalLink);
                     resolver.setResolvedSiteMapItem(resolverProperties.resolvedSiteMapItem);
@@ -1032,10 +1025,10 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         boolean fallback;
         boolean navigationStateful;
     }
-    
 
-    
-    private class CandidateMountComparator implements Comparator<Mount> {
+
+
+    static class CandidateMountComparator implements Comparator<Mount> {
 
         Mount referenceMount;
         CandidateMountComparator(Mount referenceMount) {
@@ -1099,6 +1092,60 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 }
             }
             return counter;
+        }
+    }
+
+    static class LowestDepthFirstAndThenLexicalComparator implements Comparator<HstLink> {
+        @Override
+        public int compare(final HstLink link1, final HstLink link2) {
+            final String path1 = link1.getPath();
+            final String path2 = link2.getPath();
+
+            if (path1 == null) {
+                if (path2 == null) {
+                    return 0;
+                }
+                return 1;
+            }
+            if (path2 == null) {
+                return -1;
+            }
+
+            int depth1 = path1.split("/").length;
+            int depth2 = path2.split("/").length;
+            if (depth1 == depth2) {
+                return path1.compareTo(path2);
+            }
+            return depth1 - depth2;
+        }
+    }
+
+
+    private LocationMapResolver getSubLocationMapResolver(final HstSiteMapItem preferredItem,
+                                                          final HstComponentsConfiguration componentsConfiguration,
+                                                          final String mountContentPath) {
+        SubLocationMapTreesHolder subLocationMapTreesHolder = loadedSubLocationMapTreesHolder.get(preferredItem);
+        if(subLocationMapTreesHolder == null) {
+            subLocationMapTreesHolder = new SubLocationMapTreesHolder(
+                    new LocationMapTreeSiteMap(preferredItem),
+                    new LocationMapTreeComponentDocuments(preferredItem, componentsConfiguration, mountContentPath)
+            );
+
+            loadedSubLocationMapTreesHolder.put(preferredItem, subLocationMapTreesHolder);
+        }
+        return new LocationMapResolver(subLocationMapTreesHolder.subLocationMapTreeSiteMap,
+                subLocationMapTreesHolder.subLocationMapTreeComponentDocuments);
+    }
+
+    private static class SubLocationMapTreesHolder {
+        private LocationMapTree subLocationMapTreeSiteMap;
+        private LocationMapTree subLocationMapTreeComponentDocuments;
+
+        public SubLocationMapTreesHolder(final LocationMapTreeSiteMap subLocationMapTreeSiteMap,
+                                         final LocationMapTreeComponentDocuments subLocationMapTreeComponentDocuments) {
+
+            this.subLocationMapTreeSiteMap = subLocationMapTreeSiteMap;
+            this.subLocationMapTreeComponentDocuments = subLocationMapTreeComponentDocuments;
         }
     }
 

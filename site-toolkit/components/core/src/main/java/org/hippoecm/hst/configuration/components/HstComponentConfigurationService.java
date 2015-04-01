@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
@@ -295,16 +296,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                     // if there is a non empty parameterNamePrefix, we prefix the parameter name with this value + the 
                     // HstComponentConfiguration#PARAMETER_PREFIX_NAME_DELIMITER
                     for (int i = 0; i < parameterNames.length; i++) {
-                        StringBuilder parameterNameBuilder = new StringBuilder(parameterNames[i]);
-                        if (!StringUtils.isEmpty(parameterNamePrefixes[i])) {
-                            parameterNameBuilder.insert(0, HstComponentConfiguration.PARAMETER_PREFIX_NAME_DELIMITER);
-                            parameterNameBuilder.insert(0, parameterNamePrefixes[i]);
+                        if (StringUtils.isEmpty(parameterNamePrefixes[i])) {
+                            this.parameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
+                            this.localParameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
+                        } else {
                             if (!parameterNamePrefixSet.contains(parameterNamePrefixes[i])) {
                                 parameterNamePrefixSet.add(parameterNamePrefixes[i]);
                             }
+                            final String prefixedParameterName = ConfigurationUtils.createPrefixedParameterName(parameterNamePrefixes[i], parameterNames[i]);
+                            this.parameters.put(StringPool.get(prefixedParameterName), StringPool.get(parameterValues[i]));
+                            this.localParameters.put(StringPool.get(prefixedParameterName), StringPool.get(parameterValues[i]));
                         }
-                        this.parameters.put(StringPool.get(parameterNameBuilder.toString()), StringPool.get(parameterValues[i]));
-                        this.localParameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
                     }
                 }
             } else {

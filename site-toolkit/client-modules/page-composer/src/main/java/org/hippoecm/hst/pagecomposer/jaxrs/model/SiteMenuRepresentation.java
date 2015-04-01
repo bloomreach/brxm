@@ -24,16 +24,18 @@ import javax.xml.bind.annotation.XmlElement;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 
 public class SiteMenuRepresentation {
 
     private String id;
-
     private String name;
-
     private long lastModifiedTimestamp;
+
+    private String siteContentIdentifier;
+    private String siteMapIdentifier;
 
     private List<SiteMenuItemRepresentation> children = new ArrayList<>();
 
@@ -41,12 +43,23 @@ public class SiteMenuRepresentation {
         super();
     }
 
-    public SiteMenuRepresentation(HstSiteMenuConfiguration siteMenuConfiguration, Mount mount) throws IllegalArgumentException {
+    public SiteMenuRepresentation(final HstSiteMenuConfiguration siteMenuConfiguration, final Mount mount,
+                                  final String siteContentIdentifier) throws IllegalArgumentException {
         if (!(siteMenuConfiguration instanceof CanonicalInfo)) {
-            throw new IllegalArgumentException("Expected object of type CanonicalInfo");
+            throw new IllegalArgumentException("Expected siteMenuConfiguration of type CanonicalInfo but was " +
+                    siteMenuConfiguration.getClass().getName());
         }
         id = ((CanonicalInfo) siteMenuConfiguration).getCanonicalIdentifier();
         name = siteMenuConfiguration.getName();
+        this.siteContentIdentifier = siteContentIdentifier;
+
+        final HstSiteMap siteMap = mount.getHstSite().getSiteMap();
+        if (!(siteMap instanceof CanonicalInfo)) {
+            throw new IllegalArgumentException("Expected siteMap of type CanonicalInfo but was " +
+                    siteMap.getClass().getName());
+        }
+
+        siteMapIdentifier = ((CanonicalInfo)siteMap).getCanonicalIdentifier();
 
         // TODO last modified timestamp / etc etc
         lastModifiedTimestamp = Calendar.getInstance().getTimeInMillis();
@@ -79,6 +92,22 @@ public class SiteMenuRepresentation {
 
     public void setLastModifiedTimestamp(final long lastModifiedTimestamp) {
         this.lastModifiedTimestamp = lastModifiedTimestamp;
+    }
+
+    public String getSiteContentIdentifier() {
+        return siteContentIdentifier;
+    }
+
+    public void setSiteContentIdentifier(final String siteContentIdentifier) {
+        this.siteContentIdentifier = siteContentIdentifier;
+    }
+
+    public String getSiteMapIdentifier() {
+        return siteMapIdentifier;
+    }
+
+    public void setSiteMapIdentifier(final String siteMapIdentifier) {
+        this.siteMapIdentifier = siteMapIdentifier;
     }
 
     @XmlElement(name = "items")

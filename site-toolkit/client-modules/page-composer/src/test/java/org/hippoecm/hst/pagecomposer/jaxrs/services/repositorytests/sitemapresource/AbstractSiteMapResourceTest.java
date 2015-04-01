@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,22 +25,24 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
@@ -48,7 +50,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.AbstractMountResourceTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.junit.After;
 import org.junit.Before;
 
@@ -129,7 +130,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
     }
 
     protected void createPreviewWithSiteMapWorkspace() throws Exception {
-        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "");
 
         final String previewConfigurationPath = ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath() + "-preview";
         assertFalse("Preview config node should not exist yet.",
@@ -143,63 +144,35 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
     }
 
     public SiteMapItemRepresentation getSiteMapItemRepresentation(final Session requestSession,
-                                                                  final String relPath) throws Exception {
-        final SiteMapRepresentation representation = getSiteMapRepresentation(requestSession);
+                                                                  final String siteMapItemPath) throws Exception {
+        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "home");
+        ((HstMutableRequestContext) ctx).setSession(requestSession);
+        final PageComposerContextService pageComposerContextService = mountResource.getPageComposerContextService();
+        final HstSite site = pageComposerContextService.getEditingPreviewSite();
 
-        int segmentPos = 0;
-        String[] segments = relPath.split("/");
 
-        SiteMapItemRepresentation itemPresentation = null;
-        boolean match = false;
-        while (segmentPos < segments.length) {
-            if (segmentPos == 0) {
-                for (SiteMapItemRepresentation siteMapItemRepresentation : representation.getChildren()) {
-                    if (siteMapItemRepresentation.getName().equals(segments[segmentPos])) {
-                        itemPresentation = siteMapItemRepresentation;
-                        segmentPos++;
-                        match = true;
-                        break;
-                    }
-                }
-                if (!match) {
-                    return null;
-                }
-            } else {
-                match = false;
-                if (itemPresentation == null) {
-                    return null;
-                }
-                SiteMapItemRepresentation current = itemPresentation;
-                itemPresentation = null;
-                for (SiteMapItemRepresentation childItemRepresentation : current.getChildren()) {
-                    if (childItemRepresentation.getName().equals(segments[segmentPos])) {
-                        itemPresentation = childItemRepresentation;
-                        match = true;
-                        break;
-                    }
-                }
-                if (!match) {
-                    return null;
-                }
-                segmentPos++;
-            }
+        final HstSiteMap siteMap = site.getSiteMap();
+        final String[] elems = siteMapItemPath.split("/");
+        HstSiteMapItem siteMapItemToRepresent = siteMap.getSiteMapItem(elems[0]);
+        int pos = 1;
+        while (elems.length > pos && siteMapItemToRepresent != null) {
+            siteMapItemToRepresent = siteMapItemToRepresent.getChild(elems[1]);
+            pos++;
         }
 
-        return itemPresentation;
-    }
-
-    public SiteMapRepresentation getSiteMapRepresentation(final Session requestSession) throws Exception {
-        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
-        ((HstMutableRequestContext) ctx).setSession(requestSession);
-        final HstSite site = mountResource.getPageComposerContextService().getEditingPreviewSite();
-        final HstSiteMap siteMap = site.getSiteMap();
         // override the config identifier to have sitemap id
         ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, ((CanonicalInfo) siteMap).getCanonicalIdentifier());
 
-        final Mount mount = ctx.getResolvedMount().getMount();
-        String homePathPath =  HstSiteMapUtils.getPath(mount, mount.getHomePage());
-        return new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath(), site.getComponentsConfiguration(),
-                homePathPath);
+         if (siteMapItemToRepresent == null) {
+            return null;
+        }
+
+        Response response = createResource().getSiteMapItem(((CanonicalInfo) siteMapItemToRepresent).getCanonicalIdentifier());
+        SiteMapItemRepresentation siteMapItemRepresentation =
+                (SiteMapItemRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+
+        return siteMapItemRepresentation;
+
     }
 
     protected SiteMapResource createResource() {

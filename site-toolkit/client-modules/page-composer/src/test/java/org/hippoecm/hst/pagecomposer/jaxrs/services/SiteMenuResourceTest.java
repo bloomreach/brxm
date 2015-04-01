@@ -34,9 +34,11 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.mock.configuration.MockSiteMap;
 import org.hippoecm.hst.mock.configuration.MockSiteMenuConfiguration;
 import org.hippoecm.hst.mock.configuration.MockSiteMenuItemConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
@@ -84,6 +86,7 @@ public class SiteMenuResourceTest {
     private VirtualHosts virtualHosts;
     private Mount mount;
     private HstSite site;
+    private MockSiteMap siteMap;
     private MockSiteMenuConfiguration menuConfig;
     private MockSiteMenuItemConfiguration itemConfig;
     private PageComposerContextService pageComposerContextService;
@@ -104,6 +107,7 @@ public class SiteMenuResourceTest {
         this.virtualHosts = createMock(VirtualHosts.class);
         this.mount = createMock(Mount.class);
         this.site = createMock(HstSite.class);
+        this.siteMap = createMock(MockSiteMap.class);
         this.menuConfig = createMock(MockSiteMenuConfiguration.class);
         this.itemConfig = createNiceMock(MockSiteMenuItemConfiguration.class);
         this.node = createMock(Node.class);
@@ -132,6 +136,10 @@ public class SiteMenuResourceTest {
         expect(menuConfig.getSiteMenuConfigurationItems()).andReturn(children);
         expect(session.hasPendingChanges()).andReturn(false);
         expect(pageComposerContextService.getEditingMount()).andReturn(mount);
+        expect(pageComposerContextService.getSiteContentIdentifier(mount)).andReturn("uuid-of-content");
+        expect(mount.getHstSite()).andReturn(site);
+        expect(site.getSiteMap()).andReturn(siteMap);
+        expect(siteMap.getCanonicalIdentifier()).andReturn("uuid-of-siteMap");
         replay(mocks);
 
         final Response response = siteMenuResource.getMenu();

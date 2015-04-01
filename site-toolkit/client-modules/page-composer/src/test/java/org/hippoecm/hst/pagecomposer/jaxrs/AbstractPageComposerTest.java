@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,7 +56,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.ServletContextAware;
 
@@ -139,16 +138,15 @@ public class AbstractPageComposerTest {
         return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
+
+    protected Session createLiveUserSession() throws RepositoryException {
+        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
+        return repository.login(new SimpleCredentials("liveuser", "liveuserpass".toCharArray()));
+    }
+
     protected Configuration getContainerConfiguration() {
         return new PropertiesConfiguration();
     }
-
-    protected void setMountIdOnHttpSession(final MockHttpServletRequest request, final String mountId) {
-        final MockHttpSession httpSession = new MockHttpSession();
-        httpSession.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
-        request.setSession(httpSession);
-    }
-
 
     protected HstRequestContext getRequestContextWithResolvedSiteMapItemAndContainerURL(final String hostAndPort,
                                                                                         final String pathInfo) throws Exception {
@@ -204,7 +202,6 @@ public class AbstractPageComposerTest {
         mockRequest.setContextPath("/site");
         mockRequest.setRequestURI("/site" + pathInfo);
 
-        mockRequest.setRequestURI(pathInfo);
         if (queryString != null) {
             mockRequest.setQueryString(queryString);
         }
@@ -222,7 +219,8 @@ public class AbstractPageComposerTest {
 
         final String mountId = mount.getMount().getIdentifier();
         requestContext.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, mountId);
-        setMountIdOnHttpSession(mockRequest, mountId);
+        mockRequest.getSession().setAttribute(ContainerConstants.RENDERING_HOST, host);
+        mockRequest.getSession().setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
 
         return hstURLFactory.getContainerURLProvider().parseURL(mockRequest, response, mount);
     }

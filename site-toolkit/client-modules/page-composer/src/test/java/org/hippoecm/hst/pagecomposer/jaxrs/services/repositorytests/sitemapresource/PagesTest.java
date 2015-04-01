@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
@@ -45,19 +44,19 @@ public class PagesTest extends AbstractSiteMapResourceTest {
     }
 
     @Test
-    public void test_get_hostname() throws Exception {
+    public void get_hostname() throws Exception {
         initContext();
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getMountRepresentation();
         final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
-        assertThat(Response.Status.OK.getStatusCode(), is(response.getStatus()));
+        assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         final MountRepresentation data =  (MountRepresentation)representation.getData();
         assertThat(data.getHostName(), is("localhost"));
         assertThat(data.getMountPath(), is(""));
     }
 
     @Test
-    public void test_pages_sorted_by_pathInfo() throws Exception {
+    public void pages_sorted_by_pathInfo() throws Exception {
         initContext();
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages();
@@ -77,7 +76,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
     }
 
     @Test
-    public void test_homepage_is_first_and_pathInfo_equals_slash() throws Exception {
+    public void homepage_is_first_and_pathInfo_equals_slash() throws Exception {
         initContext();
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages();
@@ -88,9 +87,62 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         assertEquals("home", siteMapPagesRepresentation.getPages().get(0).getName());
     }
 
+    @Test
+    public void skip_page_by_sitemap_item_property_hiddeninchannelmanager() throws Exception {
+        // mark homepage to be hidden from pages in channel manager
+        final Node home = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home");
+        home.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER, true);
+        session.save();
+        initContext();
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.getSiteMapPages();
+        SiteMapPagesRepresentation siteMapPagesRepresentation =
+                (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+        assertFalse("home".equals(siteMapPagesRepresentation.getPages().get(0).getName()));
+    }
 
     @Test
-    public void test_sitemap_item_page_title() throws Exception {
+    public void skip_page_for_webfiles_because_container_resource_is_true() throws Exception {
+        initContext();
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.getSiteMapPages();
+        SiteMapPagesRepresentation siteMapPagesRepresentation =
+                (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+
+        for (SiteMapPageRepresentation siteMapPageRepresentation : siteMapPagesRepresentation.getPages()) {
+            // hst:default/hst:siteap/webfiles sitemap item has hst:containerresource = true hence not part of pages overview
+            assertFalse("webfiles".equals(siteMapPageRepresentation.getPathInfo()));
+        }
+    }
+
+    @Test
+    public void dont_skip_page_for_webfiles_if_container_resource_set_to_false() throws Exception {
+        session.getNode("/hst:hst/hst:configurations/hst:default/hst:sitemap/webfiles")
+                .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_CONTAINER_RESOURCE, false);
+        session.save();
+        Thread.sleep(200);
+        initContext();
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.getSiteMapPages();
+        SiteMapPagesRepresentation siteMapPagesRepresentation =
+                (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+
+        boolean found = false;
+        for (SiteMapPageRepresentation siteMapPageRepresentation : siteMapPagesRepresentation.getPages()) {
+            // hst:default/hst:siteap/webfiles sitemap item has now hst:containerresource = false hence should be part of pages overview
+            if ("webfiles".equals(siteMapPageRepresentation.getPathInfo())) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("page with pathInfo 'webfiles' expected", found);
+    }
+
+    // If set to 'false' the /webfiles sitemap
+    // item should become visible as channel mngr page
+
+    @Test
+    public void sitemap_item_page_title() throws Exception {
         final Node home = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home");
         home.setProperty(HstNodeTypes.SITEMAPITEM_PAGE_TITLE, "foo");
         session.save();
@@ -107,7 +159,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
     }
 
     @Test
-    public void test_sitemap_contains_host_and_mountPath() throws Exception {
+    public void sitemap_contains_host_and_mountPath() throws Exception {
         initContext();
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages();
@@ -208,16 +260,6 @@ public class PagesTest extends AbstractSiteMapResourceTest {
     }
 
     public SiteMapItemRepresentation getHomePage() throws Exception {
-        initContext();
-        final SiteMapResource siteMapResource = createResource();
-
-        final Response response = siteMapResource.getSiteMap();
-        SiteMapRepresentation siteMap = (SiteMapRepresentation)((ExtResponseRepresentation) response.getEntity()).getData();
-        for (SiteMapItemRepresentation siteMapItemRepresentation : siteMap.getChildren()) {
-            if (siteMapItemRepresentation.getName().equals("home")) {
-                return siteMapItemRepresentation;
-            }
-        }
-        throw new AssertionError("Homepage sitemap item not found");
+        return getSiteMapItemRepresentation(session, "home");
     }
 }

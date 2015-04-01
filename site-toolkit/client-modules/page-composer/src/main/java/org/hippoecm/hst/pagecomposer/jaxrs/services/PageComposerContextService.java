@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,14 +51,15 @@ public class PageComposerContextService {
 
     public Node getRequestConfigNodeById(final String id, final String expectedNodeType, final Session session) throws RepositoryException {
         if (id == null) {
-            log.warn("Cannot get requestConfigNode because no attr '{}' on request. Return null", CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER);
+            throw new IllegalStateException(String.format("Cannot get requestConfigNode because no attr '%s' on request. Return null",
+                    CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER));
         }
         try {
             Node configNode = session.getNodeByIdentifier(id);
             if (configNode.isNodeType(expectedNodeType)) {
                 return configNode;
             } else {
-                log.warn("Expected node was of type '' but actual node is of type '{}'. Return null.", expectedNodeType, configNode.getPrimaryNodeType().getName());
+                log.warn("Expected node was of type '{}' but actual node is of type '{}'. Return null.", expectedNodeType, configNode.getPrimaryNodeType().getName());
                 return null;
             }
         } catch (ItemNotFoundException e) {
@@ -138,4 +139,19 @@ public class PageComposerContextService {
         return getEditingPreviewSite().hasPreviewConfiguration();
     }
 
+    /**
+     * @return the site content identifier for <code>mount</code> and <code>null</code> if not found
+     */
+    public String getSiteContentIdentifier(final Mount mount) {
+        String contentPath = mount.getContentPath();
+        if (contentPath == null) {
+            return null;
+        }
+        try {
+            return getRequestContext().getSession().getNode(contentPath).getIdentifier();
+        } catch (RepositoryException e) {
+            log.info("Cannot find site content identifier for mount {} for content path {}", mount, contentPath);
+            return null;
+        }
+    }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -66,6 +66,14 @@ public interface HstSite {
      * @return the location map for this <code>HstSite</code>
      */
     LocationMapTree getLocationMapTree();
+
+    /**
+     * The component documents location map is mapping from documents to sitemap items only now specifically linked to
+     * from a hst component that belongs to the sitemap item (and thus not via the <code>relativecontentpath</code>s )
+     *
+     * @return the location map for this <code>HstSite</code>
+     */
+    LocationMapTree getLocationMapTreeComponentDocuments();
     
     /**
      * Returns the configured {@link HstSiteMenusConfiguration} for this HstSite or <code>null</code> if this <code>HstSite</code> does
@@ -91,10 +99,5 @@ public interface HstSite {
      * @return <code>true</code> when this {@link HstSite} has a different configuration than the live.
      */
     boolean hasPreviewConfiguration();
-
-    /**
-     * @return <code>true</code> when the link rewriting should next to the sitemap also include documents picked in hst components
-     */
-    boolean isComponentLinkRewritingSupported();
 
 }

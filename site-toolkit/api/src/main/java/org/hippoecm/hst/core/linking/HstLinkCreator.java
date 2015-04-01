@@ -302,7 +302,9 @@ public interface HstLinkCreator {
      * @param requestContext the HstRequestContext
      * @param crossMount if <code>true</code> also mounts not belonging to the current request context
      *                   ({@link HstRequestContext#getResolvedMount()}) are tried.
-     * @return the List of {@link HstLink}s for this jcr Node or empty list when non found
+     * @return the List of {@link HstLink}s for this jcr Node or empty list when non found. The returned List is sorted by
+     * first the {@link HstLink}s with the shortest path (in number of slashes) and if there are links with equal number of slashes,
+     * return lexically sorted on path
      */
     List<HstLink> createAll(Node node, HstRequestContext requestContext, boolean crossMount);
 
@@ -316,7 +318,9 @@ public interface HstLinkCreator {
      *             of the {@link org.hippoecm.hst.core.request.HstRequestContext#getResolvedMount()} is used.
      * @param crossMount if <code>true</code> also mounts not belonging to the current request context
      *                   ({@link HstRequestContext#getResolvedMount()}) are tried.
-     * @return the List of {@link HstLink}s for this jcr Node or empty list when non found
+     * @return the List of {@link HstLink}s for this jcr Node or empty list when non found. The returned List is sorted by
+     * first the {@link HstLink}s with the shortest path (in number of slashes) and if there are links with equal number of slashes,
+     * return lexically sorted on path
      */
     List<HstLink> createAll(Node node, HstRequestContext requestContext, String hostGroupName, String type, boolean crossMount);
 

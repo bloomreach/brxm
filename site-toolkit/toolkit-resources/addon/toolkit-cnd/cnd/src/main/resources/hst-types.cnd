@@ -176,7 +176,8 @@
 - hst:lastmodified (date)
 // to indicate whether the sitemap item serves container resources like webapp css, js etc.
 - hst:containerresource (boolean)
-
+// boolean when set to false can be used to explicitly skip a sitemap item in pages overview in channel mngr.
+- hst:hiddeninchannelmanager (boolean)
 + * (hst:sitemapitem)
 
 [hst:sitemap] > nt:base, mix:referenceable orderable
@@ -248,7 +249,6 @@
 - hst:content (string)
 // deprecated and unused: do not use
 - hst:portalconfigurationenabled (boolean)
-- hst:componentlinkrewritingsupported (boolean)
 
 [hst:sites] > nt:base, mix:referenceable, mix:versionable
 + * (hst:site) = hst:site version

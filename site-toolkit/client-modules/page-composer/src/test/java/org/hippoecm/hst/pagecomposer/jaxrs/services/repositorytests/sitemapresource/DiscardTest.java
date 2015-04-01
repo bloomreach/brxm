@@ -148,6 +148,7 @@ public class DiscardTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation newsDefault = getSiteMapItemRepresentation(session, "news/_default_");
         final String previewDefaultNewsPath = session.getNodeByIdentifier(newsDefault.getId()).getPath();
         newsDefault.setRelativeContentPath("bar");
+        newsDefault.setPrimaryDocumentRepresentation(null);
         siteMapResource.update(newsDefault);
 
         // now on jcr level modify the 'news' item to be locked by bob. This cannot be done through siteMapResource
@@ -195,6 +196,7 @@ public class DiscardTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final SiteMapItemRepresentation newsDefault = getSiteMapItemRepresentation(session, "news/_default_");
         newsDefault.setRelativeContentPath("bar");
+        newsDefault.setPrimaryDocumentRepresentation(null);
         siteMapResource.update(newsDefault);
 
         // now on jcr level rename 'news' and lock it for bob. This cannot be done through siteMapResource

@@ -31,6 +31,7 @@ import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService;
 import org.hippoecm.hst.util.PathUtils;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +101,12 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             // session below will be pooled hst config reader session
             session = repository.login(credentials);
             Node node = session.getNodeByIdentifier(uuid);
-        	resourceType = node.getPrimaryNodeType().getName();
+
+            if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                resourceType = HippoNodeType.NT_DOCUMENT;
+            } else {
+                resourceType = node.getPrimaryNodeType().getName();
+            }
 
         } catch (ItemNotFoundException e) {
             log.info("Configuration node with uuid {} does not exist any more : {}", uuid, e.toString());

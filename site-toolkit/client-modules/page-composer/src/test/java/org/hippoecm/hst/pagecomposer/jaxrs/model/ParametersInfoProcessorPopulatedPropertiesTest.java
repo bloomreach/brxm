@@ -15,24 +15,13 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.core.parameters.ParametersInfo;
-import org.hippoecm.hst.mock.configuration.components.MockHstComponentConfiguration;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.PropertyRepresentationFactory;
-import org.hippoecm.hst.pagecomposer.jaxrs.property.SwitchTemplatePropertyRepresentationFactory;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
-import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.repository.mock.MockNode;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.DEFAULT_PARAMETER_PREFIX;
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;

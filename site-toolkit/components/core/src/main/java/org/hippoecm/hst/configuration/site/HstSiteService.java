@@ -33,7 +33,8 @@ import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlers
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfigurationService;
 import org.hippoecm.hst.core.linking.LocationMapTree;
-import org.hippoecm.hst.core.linking.LocationMapTreeImpl;
+import org.hippoecm.hst.core.linking.LocationMapTreeComponentDocuments;
+import org.hippoecm.hst.core.linking.LocationMapTreeSiteMap;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ public class HstSiteService implements HstSite {
     private static final Logger log = LoggerFactory.getLogger(HstSiteService.class);
     volatile Optional<HstSiteMap> siteMap;
     volatile LocationMapTree locationMapTree;
+    volatile LocationMapTree locationMapTreeComponentDocuments;
     volatile Optional<HstSiteMapItemHandlersConfiguration> siteMapItemHandlersConfigurationService;
     volatile Optional<HstComponentsConfiguration> componentsConfiguration;
     volatile Optional<HstSiteMenusConfiguration> siteMenusConfigurations;
@@ -53,7 +55,6 @@ public class HstSiteService implements HstSite {
     private MountSiteMapConfiguration mountSiteMapConfiguration;
     private HstConfigurationLoadingCache configLoadingCache;
     private final Object hstModelMutex;
-    private boolean componentLinkRewritingSupported;
 
     public static HstSiteService createLiveSiteService(final HstNode site,
                                                        final MountSiteMapConfiguration mountSiteMapConfiguration,
@@ -76,7 +77,6 @@ public class HstSiteService implements HstSite {
         name = site.getValueProvider().getName();
         canonicalIdentifier = site.getValueProvider().getIdentifier();
         this.mountSiteMapConfiguration = mountSiteMapConfiguration;
-        componentLinkRewritingSupported = site.getValueProvider().getBoolean(HstNodeTypes.SITE_PROPERTY_COMPONENT_LINK_REWRITING_SUPPORTED);
         findAndSetConfigurationPath(site, hstNodeLoadingCache, isPreviewSite);
         init();
     }
@@ -246,13 +246,24 @@ public class HstSiteService implements HstSite {
             if (locationMapTree != null) {
                 return locationMapTree;
             }
-            if (isComponentLinkRewritingSupported()) {
-                locationMapTree = new LocationMapTreeImpl(getSiteMap().getSiteMapItems(),
-                        getComponentsConfiguration(), mountSiteMapConfiguration.getMountContentPath());
-            } else {
-                locationMapTree = new LocationMapTreeImpl(getSiteMap().getSiteMapItems());
-            }
+
+            locationMapTree = new LocationMapTreeSiteMap(getSiteMap().getSiteMapItems());
             return locationMapTree;
+        }
+    }
+
+    @Override
+    public LocationMapTree getLocationMapTreeComponentDocuments() {
+        if (locationMapTreeComponentDocuments != null) {
+            return locationMapTreeComponentDocuments;
+        }
+        synchronized (hstModelMutex) {
+            if (locationMapTreeComponentDocuments != null) {
+                return locationMapTreeComponentDocuments;
+            }
+            locationMapTreeComponentDocuments = new LocationMapTreeComponentDocuments(getSiteMap().getSiteMapItems(),
+                    getComponentsConfiguration(), mountSiteMapConfiguration.getMountContentPath());
+            return locationMapTreeComponentDocuments;
         }
     }
 
@@ -310,11 +321,6 @@ public class HstSiteService implements HstSite {
         for(HstComponentConfiguration child : hstComponentConfiguration.getChildren().values()) {
             sanitizeHstComponentConfiguration(child);
         }
-    }
-
-    @Override
-    public boolean isComponentLinkRewritingSupported() {
-        return componentLinkRewritingSupported;
     }
 
     @Override

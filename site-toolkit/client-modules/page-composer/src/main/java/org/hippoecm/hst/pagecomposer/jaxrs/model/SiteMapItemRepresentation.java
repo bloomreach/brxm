@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,18 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SiteMapItemRepresentation {
+
+    private static final Logger log = LoggerFactory.getLogger(SiteMapItemRepresentation.class);
 
     private String name;
     private String id;
@@ -46,6 +50,8 @@ public class SiteMapItemRepresentation {
     private Calendar lockedOn;
     private long versionStamp;
     private String relativeContentPath;
+    private DocumentRepresentation primaryDocumentRepresentation;
+    private Set<DocumentRepresentation> availableDocumentRepresentations;
     private String scheme;
     private boolean wildCard;
     private boolean any;
@@ -61,11 +67,12 @@ public class SiteMapItemRepresentation {
 
     private List<SiteMapItemRepresentation> children = new ArrayList<>();
 
-    public SiteMapItemRepresentation representShallow(final HstSiteMapItem item,
-                                                      final String previewConfigurationPath,
-                                                      final HstComponentsConfiguration hstComponentsConfiguration,
-                                                      final String homePagePathInfo)
-            throws IllegalArgumentException {
+
+    public SiteMapItemRepresentation represent(final HstSiteMapItem item,
+                                               final Mount mount,
+                                               final DocumentRepresentation primaryDocumentRepresentation,
+                                               final Set<DocumentRepresentation> availableDocumentRepresentations) {
+
         if (!(item instanceof CanonicalInfo)) {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
         }
@@ -76,7 +83,7 @@ public class SiteMapItemRepresentation {
         id = ((CanonicalInfo) item).getCanonicalIdentifier();
 
         this.pathInfo = HstSiteMapUtils.getPath(item, null);
-
+        final String homePagePathInfo =  HstSiteMapUtils.getPath(mount, mount.getHomePage());
         if (this.pathInfo.equals(homePagePathInfo)) {
             this.pathInfo = "/";
             this.isHomePage = true;
@@ -84,13 +91,15 @@ public class SiteMapItemRepresentation {
 
         pageTitle = item.getPageTitle();
         componentConfigurationId = item.getComponentConfigurationId();
+        final HstComponentConfiguration page = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration(componentConfigurationId);
+        hasContainerItemInPageDefinition = hasContainerItemInPageDefinition(page);
 
-        hasContainerItemInPageDefinition = hasContainerItemInPageDefinition(
-                hstComponentsConfiguration.getComponentConfiguration(componentConfigurationId));
+        this.primaryDocumentRepresentation = primaryDocumentRepresentation;
+        this.availableDocumentRepresentations = availableDocumentRepresentations;
 
         cacheable = item.isCacheable();
         workspaceConfiguration = ((CanonicalInfo) item).isWorkspaceConfiguration();
-        inherited = !((CanonicalInfo) item).getCanonicalPath().startsWith(previewConfigurationPath + "/");
+        inherited = !((CanonicalInfo) item).getCanonicalPath().startsWith(mount.getHstSite().getConfigurationPath() + "/");
         lockedBy = ((ConfigurationLockInfo) item).getLockedBy();
         lockedOn = ((ConfigurationLockInfo) item).getLockedOn();
         if (lockedOn != null) {
@@ -107,22 +116,9 @@ public class SiteMapItemRepresentation {
         roles = item.getRoles();
 
         return this;
+
     }
 
-    public SiteMapItemRepresentation represent(final HstSiteMapItem item,
-                                               final String previewConfigurationPath,
-                                               final HstComponentsConfiguration hstComponentsConfiguration,
-                                               final String homePagePathInfo) {
-        representShallow(item, previewConfigurationPath, hstComponentsConfiguration, homePagePathInfo);
-
-        for (HstSiteMapItem childItem : item.getChildren()) {
-            SiteMapItemRepresentation child = new SiteMapItemRepresentation();
-            child.represent(childItem, previewConfigurationPath, hstComponentsConfiguration, homePagePathInfo);
-            children.add(child);
-        }
-
-        return this;
-    }
 
     private boolean hasContainerItemInPageDefinition(final HstComponentConfiguration root) {
         if (root == null) {
@@ -248,6 +244,22 @@ public class SiteMapItemRepresentation {
         this.relativeContentPath = relativeContentPath;
     }
 
+    public DocumentRepresentation getPrimaryDocumentRepresentation() {
+        return primaryDocumentRepresentation;
+    }
+
+    public void setPrimaryDocumentRepresentation(final DocumentRepresentation primaryDocumentRepresentation) {
+        this.primaryDocumentRepresentation = primaryDocumentRepresentation;
+    }
+
+    public Set<DocumentRepresentation> getAvailableDocumentRepresentations() {
+        return availableDocumentRepresentations;
+    }
+
+    public void setAvailableDocumentRepresentations(final Set<DocumentRepresentation> availableDocumentRepresentations) {
+        this.availableDocumentRepresentations = availableDocumentRepresentations;
+    }
+
     public String getScheme() {
         return scheme;
     }
@@ -328,4 +340,5 @@ public class SiteMapItemRepresentation {
     public void setHasContainerItemInPageDefinition(final boolean hasContainerItemInPageDefinition) {
         this.hasContainerItemInPageDefinition = hasContainerItemInPageDefinition;
     }
+
 }

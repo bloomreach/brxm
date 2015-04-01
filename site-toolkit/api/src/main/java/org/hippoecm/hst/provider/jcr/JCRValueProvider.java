@@ -30,7 +30,7 @@ public interface JCRValueProvider extends ValueProvider{
     Node getJcrNode();
     
     /**
-     * @return the locallized name of the backing jcr node according {@link HippoNode#getLocalizedName()}
+     * @return the localized name of the backing jcr node according {@link HippoNode#getLocalizedName()}
      */
     String getLocalizedName();
     

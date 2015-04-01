@@ -59,14 +59,15 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAM
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_ABSTRACTPAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAPITEM;
-import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_CONTAINER_RESOURCE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PAGE_TITLE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_AUTHENTICATED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENT_CONFIG_MAPPING_NAMES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENT_CONFIG_MAPPING_VALUES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_CONTAINER_RESOURCE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_ERRORCODE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH;
@@ -181,6 +182,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
     private int schemeNotMatchingResponseCode = -1;
     private final String [] resourceBundleIds;
     private boolean containerResource;
+    private boolean hiddenInChannelManager;
 
     HstSiteMapItemService(final HstNode node,
                           final MountSiteMapConfiguration mountSiteMapConfiguration,
@@ -425,8 +427,8 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
             users = new HashSet<>();
         }
 
-        if (node.getValueProvider().hasProperty(SITEMAPITEM_CONTAINER_RESOURCE)) {
-            containerResource = node.getValueProvider().getBoolean(SITEMAPITEM_CONTAINER_RESOURCE);
+        if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_CONTAINER_RESOURCE)) {
+            containerResource = node.getValueProvider().getBoolean(SITEMAPITEM_PROPERTY_CONTAINER_RESOURCE);
         } else if(parentItem != null) {
             containerResource = parentItem.isContainerResource();
         }
@@ -435,13 +437,13 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
             if (!this.canonicalPath.contains("/"+HstNodeTypes.NODENAME_HST_HSTDEFAULT + "/" + HstNodeTypes.NODENAME_HST_SITEMAP + "/")) {
                 final String msg = String.format("Invalid sitemap item configuration for '%s'. A sitemap item is only " +
                         "allowed to be marked with '%s = true' if the sitemap item is located in '%s'.",
-                        canonicalPath, HstNodeTypes.SITEMAPITEM_CONTAINER_RESOURCE,
+                        canonicalPath, HstNodeTypes.SITEMAPITEM_PROPERTY_CONTAINER_RESOURCE,
                         "/"+HstNodeTypes.NODENAME_HST_HSTDEFAULT + "/" + HstNodeTypes.NODENAME_HST_SITEMAP + "/" );
                 throw new ModelLoadingException(msg);
             }
             log.info("Sitemap item '{}' is a container resource item. Default the properties '{}' will be" +
-                            " set to '{}', '{}' = true and '{}' = true, unless the properties are explicitly configured on the item" +
-                            " to have a different value",
+                            " set to '{}', '{}' = true and '{}' = true, unless the properties are explicitly configured on this item" +
+                            " or a parent item to have a different value",
                     canonicalPath, SITEMAPITEM_PROPERTY_NAMEDPIPELINE, PLAIN_FILTER_CHAIN_INVOKING_PIPELINE_NAME,
                     SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING, GENERAL_PROEPRTY_SCHEME_AGNOSTIC
             );
@@ -451,19 +453,27 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
             namedPipeline = PLAIN_FILTER_CHAIN_INVOKING_PIPELINE_NAME;
         }
 
+        if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER)) {
+            hiddenInChannelManager = node.getValueProvider().getBoolean(SITEMAPITEM_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER);
+        } else if(parentItem != null) {
+            hiddenInChannelManager = parentItem.isHiddenInChannelManager();
+        }
+
         if(node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING)) {
             isExcludedForLinkRewriting = node.getValueProvider().getBoolean(SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING);
+        } else if (parentItem != null) {
+            isExcludedForLinkRewriting = parentItem.isExcludedForLinkRewriting();
         }
 
         if(node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_NAMEDPIPELINE)) {
             namedPipeline = node.getValueProvider().getString(SITEMAPITEM_PROPERTY_NAMEDPIPELINE);
-        } else if (!containerResource) {
-            if (this.parentItem != null) {
-                namedPipeline = parentItem.getNamedPipeline();
-            } else {
-                // inherit the namedPipeline from the mount (can be null)
-                namedPipeline = mountSiteMapConfiguration.getNamedPipeline();
-            }
+        } else if (parentItem != null) {
+            namedPipeline = parentItem.getNamedPipeline();
+        }
+
+        if (namedPipeline == null) {
+            // inherit the namedPipeline from the mount (can be null)
+            namedPipeline = mountSiteMapConfiguration.getNamedPipeline();
         }
 
         namedPipeline = StringPool.get(namedPipeline);
@@ -486,8 +496,10 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
 
         if(node.getValueProvider().hasProperty(GENERAL_PROEPRTY_SCHEME_AGNOSTIC)) {
             schemeAgnostic = node.getValueProvider().getBoolean(GENERAL_PROEPRTY_SCHEME_AGNOSTIC);
+        } else if (parentItem != null) {
+            schemeAgnostic =  parentItem.isSchemeAgnostic();
         } else if (!containerResource) {
-            schemeAgnostic = parentItem != null ? parentItem.isSchemeAgnostic() : mountSiteMapConfiguration.isSchemeAgnostic();
+            schemeAgnostic = mountSiteMapConfiguration.isSchemeAgnostic();
         }
 
         if(node.getValueProvider().hasProperty(GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
@@ -698,6 +710,11 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
     @Override
     public boolean isContainerResource() {
         return containerResource;
+    }
+
+    @Override
+    public boolean isHiddenInChannelManager() {
+        return hiddenInChannelManager;
     }
 
     public HstSiteMapItem getParentItem() {

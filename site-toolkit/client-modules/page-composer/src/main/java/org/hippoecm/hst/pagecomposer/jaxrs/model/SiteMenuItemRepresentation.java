@@ -31,9 +31,7 @@ import org.hippoecm.repository.api.NodeNameCodec;
 public class SiteMenuItemRepresentation {
 
     private String id;
-
     private String name;
-
     private boolean repositoryBased;
     private Map<String, String> localParameters;
     private Set<String> roles;

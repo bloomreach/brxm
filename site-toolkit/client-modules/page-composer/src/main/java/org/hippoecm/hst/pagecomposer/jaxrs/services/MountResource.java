@@ -51,14 +51,17 @@ import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtIdsRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.NewPageModelRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PageModelRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PrototypesRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.UserRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -138,10 +141,29 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
     public Response getPrototypePages() {
         final HstSite editingPreviewSite = getPageComposerContextService().getEditingPreviewSite();
         PrototypesRepresentation prototypePagesRepresentation = new PrototypesRepresentation().represent(editingPreviewSite,
-                 true, getPageComposerContextService());
+                true, getPageComposerContextService());
         log.info("Prototype pages loaded successfully");
         return ok("Prototype pages loaded successfully", prototypePagesRepresentation);
     }
+
+    @GET
+    @Path("/newpagemodel")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getNewPageModel() {
+        final Mount mount = getPageComposerContextService().getEditingMount();
+        PrototypesRepresentation prototypePagesRepresentation = new PrototypesRepresentation().represent(mount.getHstSite(),
+                true, getPageComposerContextService());
+
+        final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(mount.getHstSite().getSiteMap(),
+                mount, getPreviewConfigurationPath());
+
+        NewPageModelRepresentation newPageModelRepresentation = new NewPageModelRepresentation();
+        newPageModelRepresentation.setLocations(pages.getPages());
+        newPageModelRepresentation.setPrototypes(prototypePagesRepresentation.getPrototypes());
+        log.info("Prototype pages loaded successfully");
+        return ok("Prototype pages loaded successfully", newPageModelRepresentation);
+    }
+
 
     @GET
     @Path("/userswithchanges/")
@@ -374,7 +396,8 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
                     log.warn("Unexpected document path '{}'", docPath);
                     continue;
                 }
-                documentLocations.add(new DocumentRepresentation(docPath.substring(canonicalContentPath.length() + 1)));
+                String relPath = docPath.substring(canonicalContentPath.length() + 1);
+                documentLocations.add(DocumentUtils.getDocumentRepresentationHstConfigUser(relPath, canonicalContentPath));
             }
         } catch (RepositoryException e) {
             log.warn("Exception happened while trying to fetch documents of type '" + docType + "'", e);

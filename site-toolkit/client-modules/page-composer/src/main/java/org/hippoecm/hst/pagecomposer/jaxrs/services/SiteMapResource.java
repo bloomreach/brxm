@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -28,25 +29,35 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.SiteMapTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NotNullValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorBuilder;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
-import org.hippoecm.hst.util.HstSiteMapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils.findAvailableDocumentRepresentations;
+import static org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils.getDocumentRepresentationHstConfigUser;
 
 @Path("/" + HstNodeTypes.NODETYPE_HST_SITEMAP + "/")
 @Produces(MediaType.APPLICATION_JSON)
 public class SiteMapResource extends AbstractConfigResource {
+
+    private static final Logger log = LoggerFactory.getLogger(SiteMapResource.class);
 
     private SiteMapHelper siteMapHelper;
     private ValidatorFactory validatorFactory;
@@ -57,21 +68,6 @@ public class SiteMapResource extends AbstractConfigResource {
 
     public void setValidatorFactory(final ValidatorFactory validatorFactory) {
         this.validatorFactory = validatorFactory;
-    }
-
-    @GET
-    @Path("/")
-    public Response getSiteMap() {
-        return tryGet(new Callable<Response>() {
-            @Override
-            public Response call() throws Exception {
-                final HstSite site = getPageComposerContextService().getEditingPreviewSite();
-                final HstSiteMap siteMap = site.getSiteMap();
-                final SiteMapRepresentation representation = new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath(),
-                        site.getComponentsConfiguration(), getHomePagePath());
-                return ok("Sitemap loaded successfully", representation);
-            }
-        });
     }
 
     @GET
@@ -95,10 +91,8 @@ public class SiteMapResource extends AbstractConfigResource {
                 final HstSite site = getPageComposerContextService().getEditingPreviewSite();
                 final HstSiteMap siteMap = site.getSiteMap();
                 final Mount mount = getPageComposerContextService().getEditingMount();
-                final SiteMapRepresentation sitemap = new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath(),
-                        site.getComponentsConfiguration(), getHomePagePath());
-                final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(sitemap,
-                        mount);
+                final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(siteMap,
+                        mount, getPreviewConfigurationPath());
                 return ok("Sitemap loaded successfully", pages);
             }
         });
@@ -112,11 +106,35 @@ public class SiteMapResource extends AbstractConfigResource {
             public Response call() throws Exception {
                 final HstSiteMapItem siteMapItem = siteMapHelper.getConfigObject(siteMapItemUuid);
                 final HstSite site = getPageComposerContextService().getEditingPreviewSite();
+                final HstComponentsConfiguration componentsConfiguration = site.getComponentsConfiguration();
+                String componentConfigurationId = siteMapItem.getComponentConfigurationId();
+                final HstComponentConfiguration page = componentsConfiguration.getComponentConfiguration(componentConfigurationId);
+
+                DocumentRepresentation primaryDocumentRepresentation = null;
+                if (siteMapItem.getRelativeContentPath() != null) {
+                    final String rootContentPath = getPageComposerContextService().getEditingMount().getContentPath();
+                    primaryDocumentRepresentation = getDocumentRepresentationHstConfigUser(rootContentPath + "/" + siteMapItem.getRelativeContentPath(), rootContentPath);
+                    primaryDocumentRepresentation.setSelected(true);
+                }
+                Set<DocumentRepresentation> availableDocumentRepresentations = findAvailableDocumentRepresentations(
+                        getPageComposerContextService(), page, primaryDocumentRepresentation);
+
                 final SiteMapItemRepresentation siteMapItemRepresentation = new SiteMapItemRepresentation()
-                        .representShallow(siteMapItem, site.getConfigurationPath(), site.getComponentsConfiguration(),
-                                getHomePagePath());
+                        .represent(siteMapItem, getPageComposerContextService().getEditingMount(), primaryDocumentRepresentation, availableDocumentRepresentations);
 
                 return ok("Sitemap item loaded successfully", siteMapItemRepresentation);
+            }
+        });
+    }
+
+    @GET
+    @Path("/picker")
+    public Response getSiteMapTreePicker() {
+        return tryGet(new Callable<Response>() {
+            @Override
+            public Response call() throws Exception {
+                AbstractTreePickerRepresentation representation = SiteMapTreePickerRepresentation.representRequestSiteMap(getPageComposerContextService());
+                return ok("Sitemap loaded successfully", representation);
             }
         });
     }
@@ -262,8 +280,4 @@ public class SiteMapResource extends AbstractConfigResource {
         }, preValidator);
     }
 
-    private String getHomePagePath() {
-        final Mount mount = getPageComposerContextService().getEditingMount();
-        return HstSiteMapUtils.getPath(mount, mount.getHomePage());
-    }
 }

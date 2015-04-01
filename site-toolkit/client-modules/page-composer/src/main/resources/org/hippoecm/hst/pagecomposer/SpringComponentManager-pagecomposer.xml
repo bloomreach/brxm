@@ -120,6 +120,13 @@
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapItemResource" parent="abstractConfigResource">
+              <property name="siteMapHelper" ref="siteMapHelper"/>
+            </bean>
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource" parent="abstractConfigResource">
               <property name="siteMapHelper" ref="siteMapHelper"/>
               <property name="siteMenuHelper" ref="siteMenuHelper"/>
@@ -132,6 +139,11 @@
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.RootResource" parent="abstractConfigResource">
               <property name="rootPath" value="${hst.configuration.rootPath}"/>
             </bean>
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.HippoDocumentResource"  parent="abstractConfigResource"/>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
