@@ -89,8 +89,7 @@
             <div class="form-group has-feedback">
                 <label>{{ 'PRIMARY_DOCUMENT' | translate }}</label>
                 <select chosen
-                        data-ng-disabled="!state.isEditable || !page.availableDocumentRepresentations.length"
-                        data-ng-if="state.isEditable && page.availableDocumentRepresentations.length"
+                        data-ng-if="state.isEditable"
                         data-ng-model="page.primaryDocumentRepresentation"
                         data-ng-options="item as item.displayName for item in page.availableDocumentRepresentations"
                         no-results-text="'no results found'"

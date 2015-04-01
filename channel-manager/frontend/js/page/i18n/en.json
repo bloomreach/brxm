@@ -32,6 +32,8 @@
     "PRIMARY_DOCUMENT": "Primary page document",
     "REMOVE_PRIMARY_DOCUMENT" : "Remove",
     "CONFIRM_REMOVE_PRIMARY_DOCUMENT_TITLE" : "Confirm remove",
-    "CONFIRM_REMOVE_PRIMARY_DOCUMENT_MESSAGE": "Are you sure you want to remove the primary document?"
+    "CONFIRM_REMOVE_PRIMARY_DOCUMENT_MESSAGE": "Are you sure you want to remove the primary document?",
+
+    "NONE": "None"
 
 }

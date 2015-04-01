@@ -190,7 +190,7 @@
                             .then(function (currentPage) {
                                 var defaultRepresentation = [
                                     {
-                                        displayName: 'none',
+                                        displayName: $filter('translate')('NONE'),
                                         path: ''
 
                                     }
