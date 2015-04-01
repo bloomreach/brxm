@@ -113,7 +113,7 @@ public class SiteMapResource extends AbstractConfigResource {
                 DocumentRepresentation primaryDocumentRepresentation = null;
                 if (siteMapItem.getRelativeContentPath() != null) {
                     final String rootContentPath = getPageComposerContextService().getEditingMount().getContentPath();
-                    primaryDocumentRepresentation = getDocumentRepresentationHstConfigUser(rootContentPath + "/" + siteMapItem.getRelativeContentPath(), rootContentPath);
+                    primaryDocumentRepresentation = getDocumentRepresentationHstConfigUser(siteMapItem.getRelativeContentPath(), rootContentPath);
                     primaryDocumentRepresentation.setSelected(true);
                 }
                 Set<DocumentRepresentation> availableDocumentRepresentations = findAvailableDocumentRepresentations(

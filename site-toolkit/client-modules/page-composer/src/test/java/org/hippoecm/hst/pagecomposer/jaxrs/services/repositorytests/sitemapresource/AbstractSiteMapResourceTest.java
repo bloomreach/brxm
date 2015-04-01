@@ -53,6 +53,7 @@ import org.hippoecm.hst.site.HstServices;
 import org.junit.After;
 import org.junit.Before;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTest {
@@ -168,6 +169,9 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         }
 
         Response response = createResource().getSiteMapItem(((CanonicalInfo) siteMapItemToRepresent).getCanonicalIdentifier());
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
         SiteMapItemRepresentation siteMapItemRepresentation =
                 (SiteMapItemRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
 
