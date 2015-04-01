@@ -18,6 +18,16 @@
   input[type="button"],
   input[type="submit"] {
     padding: 2px 4px;
+  }
+
+  button[disabled], input[disabled] {
+    color: @button-disabled-color;
+  }
+
+  button.hippo-button,
+  input.hippo-button[type="button"],
+  input.hippo-button[type="submit"] {
+    padding: 2px 4px;
     border: 1px solid @button-border;
     border-radius: @button-border-radius;
     background-color: @button-bgcolor;
