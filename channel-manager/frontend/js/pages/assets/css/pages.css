@@ -89,3 +89,7 @@ form {
 #template .input-group {
     display: block;
 }
+
+.url-selector .chosen-results {
+  max-height: 200px;
+}

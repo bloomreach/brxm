@@ -75,6 +75,7 @@
                 // fetch prototypes
                 PrototypeService.getPrototypes().then(function (data) {
                     $scope.prototypes = data.prototypes;
+                    $scope.locations = data.locations;
                     $scope.page.prototype = data.prototypes[0];
                 }, function (errorResponse) {
                     $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);

@@ -76,10 +76,15 @@
                     return deferred.promise;
                 };
 
-                pageService.createPage = function (page) {
-                    var deferred = $q.defer();
+                pageService.createPage = function (page, location) {
+                    var deferred = $q.defer(),
+                        url = '/' + ConfigService.sitemapId + './create';
 
-                    $http.post(pageServiceUrl('/' + ConfigService.sitemapId + './create'), page)
+                    if(location) {
+                      url += '/' + location.id;
+                    }
+
+                    $http.post(pageServiceUrl(url), page)
                         .success(function (response) {
                             deferred.resolve(response);
                         })

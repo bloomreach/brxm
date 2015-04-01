@@ -108,7 +108,3 @@ form {
 .tooltip-newlines + .tooltip > .tooltip-inner {
     white-space: pre-wrap;
 }
-
-.url-selector .chosen-results {
-    max-height: 120px;
-}

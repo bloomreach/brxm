@@ -52,13 +52,20 @@
                     </span>
                 </div>
 
-                <div class="form-group has-feedback" id="url" data-ng-class="{
+                <div class="form-group has-feedback url-selector" id="url" data-ng-class="{
                         'has-success': form.url.$valid,
                         'has-error': form.url.$dirty && form.url.$invalid
                     }">
                     <label for="page-url">{{ 'URL' | translate }}</label>
                     <div class="input-group">
-                        <span class="input-group-addon">{{ host }}/</span>
+                        <span class="input-group-btn">
+                            <select chosen
+                                    data-ng-model="page.location"
+                                    data-ng-options="item as item.renderPathInfo for item in locations"
+                                    width="'155px'"
+                                    class="ng-pristine ng-untouched ng-valid localytics-chosen">
+                            </select>
+                        </span>
                         <input type="text" name="url" class="form-control" id="page-url"
                                data-ng-model="page.url"
                                data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
