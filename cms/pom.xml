@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-cms</artifactId>
-  <version>2.27.00-SNAPSHOT</version>
+  <version>2.27.00-usage-statistics-SNAPSHOT</version>
 
   <inceptionYear>2007</inceptionYear>
 
@@ -135,9 +135,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/branches/hippo-cms-usage-statistics-2.27.xx</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/branches/hippo-cms-usage-statistics-2.27.xx</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/branches/hippo-cms-usage-statistics-2.27.xx</url>
   </scm>
 
   <build>
