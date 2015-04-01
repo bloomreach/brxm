@@ -81,7 +81,7 @@
                         url = '/' + ConfigService.sitemapId + './create';
 
                     if(location) {
-                      url += '/' + location.id;
+                        url += '/' + location.id;
                     }
 
                     $http.post(pageServiceUrl(url), page)
