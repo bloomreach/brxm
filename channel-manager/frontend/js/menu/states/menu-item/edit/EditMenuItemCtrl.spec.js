@@ -66,7 +66,7 @@ describe('Edit Menu Item Controller', function () {
         var $controller = $injector.get('$controller');
         $scope = $injector.get('$rootScope').$new();
         createController = function() {
-            return $controller('hippo.channel.menu.EditMenuItemCtrl', {
+            return $controller('hippo.channel.menu.EditMenuItemCtrl as EditMenuItemCtrl', {
                 '$scope': $scope
             });
         };
@@ -84,13 +84,15 @@ describe('Edit Menu Item Controller', function () {
 
     it('should select parent after delete if deleted item has no siblings left', function () {
 
-        $scope.selectedMenuItem = {
-            id: 'child1'
-        };
-
         var controller = createController();
 
-        $scope.remove.execute();
+        $scope.MenuItemCtrl = {
+            selectedMenuItem: {
+                id: 'child1'
+            }
+        };
+
+        $scope.EditMenuItemCtrl.remove.execute();
 
         $httpBackend.expectPOST('api/menuId./delete/child1').respond('OK');
         $httpBackend.flush();

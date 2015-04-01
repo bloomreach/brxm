@@ -32,6 +32,22 @@
         </p>
     </div>
 
+    <div hippo-confirmation-dialog
+         class="confirmation-dialog"
+         data-confirm-icon="trash-o"
+         data-perform-confirmation="confirmRemovePrimaryDocument()"
+         data-perform-cancel="cancelRemovePrimaryDocument()"
+         data-confirm-label="{{ 'REMOVE_PRIMARY_DOCUMENT' | translate }}"
+         data-cancel-label="{{ 'CANCEL' | translate }}"
+         data-show="isConfirmationRemovePrimaryDocumentVisible">
+        <p class="confirmation-dialog-title">
+            {{ 'CONFIRM_REMOVE_PRIMARY_DOCUMENT_TITLE' | translate:page }}
+        </p>
+        <p class="confirmation-dialog-message">
+            {{ 'CONFIRM_REMOVE_PRIMARY_DOCUMENT_MESSAGE' | translate:page }}
+        </p>
+    </div>
+
     <div class="panel-body l-fixed-height">
         <form name="form" role="form" novalidate>
             <div class="alert alert-danger" data-ng-show="errorFeedback.message">
@@ -68,6 +84,30 @@
                               size="m">
                   </hippo-icon>
                 </span>
+            </div>
+
+            <div class="form-group has-feedback">
+                <label>{{ 'PRIMARY_DOCUMENT' | translate }}</label>
+                <br/>
+                {{page.primaryDocumentRepresentation.displayName}}
+
+
+                <button class="btn btn-default btn-md"
+                        data-ng-click="removePrimaryDocument(page)"
+                        data-ng-show="page.primaryDocumentRepresentation">
+                    <hippo-icon name="trash" size="m"></hippo-icon> {{ 'REMOVE_PRIMARY_DOCUMENT' | translate }}
+                </button>
+                <br/>
+                <select chosen
+                        data-ng-disabled="!state.isEditable || !page.availableDocumentRepresentations.length"
+                        data-ng-show="state.isEditable && page.availableDocumentRepresentations.length"
+                        data-ng-model="page.primaryDocumentRepresentation"
+                        data-ng-options="item as item.displayName for item in page.availableDocumentRepresentations"
+                        no-results-text="no results found for"
+                        data-placeholder="placeholder"
+                        width="selectBoxWidth"
+                        class="ng-pristine ng-untouched ng-valid localytics-chosen">
+                </select>
             </div>
 
             <div class="form-group has-feedback" id="url" data-ng-class="{
@@ -140,10 +180,10 @@
     </div>
 
     <div class="panel-footer clearfix">
-         <div class="tooltip-newlines"
-              data-tooltip="{{ tooltips.deleteButton() }}"
-              data-tooltip-trigger="mouseenter"
-              data-tooltip-placement="top">
+        <div class="tooltip-newlines"
+             data-tooltip="{{ tooltips.deleteButton() }}"
+             data-tooltip-trigger="mouseenter"
+             data-tooltip-placement="top">
             <button class="btn btn-default btn-md"
                     data-ng-click="deletePage(page)"
                     data-ng-disabled="!state.isEditable || page.isHomepage">

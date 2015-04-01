@@ -32,7 +32,7 @@
 <body>
     <div data-ng-app="hippo.channel.menu" id="application" class="l-stretch">
         <div class="hidden" ng-include="'../components/hippo-theme/dist/images/hippo-icon-sprite.svg'"></div>
-        <div ui-view></div>
+        <div ui-view id="ui-view"></div>
     </div>
 
     <script src="../components/jquery/dist/jquery.min.js"></script>
@@ -62,9 +62,17 @@
     <script src="states/menu-item/edit/EditMenuItemFormCtrl.js"></script>
     <script src="states/menu-item/none/NoMenuItemCtrl.js"></script>
     <script src="states/loader/LoaderCtrl.js"></script>
+    <script src="states/menu-item/none/NoMenuItemCtrl.js"></script>
+
+    <script src="states/picker/PickerCtrl.js"></script>
+    <script src="states/picker/PickerTreeCtrl.js"></script>
+    <script src="states/picker/PickerDocCtrl.js"></script>
 
     <script src="services/FocusService.js"></script>
     <script src="services/MenuService.js"></script>
+    <script src="services/PickerService.js"></script>
+
+    <script src="directives/keepScrollPos.js"></script>
 
 </body>
 </html>

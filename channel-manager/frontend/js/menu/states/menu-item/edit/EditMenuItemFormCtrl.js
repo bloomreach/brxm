@@ -22,43 +22,61 @@
         .controller('hippo.channel.menu.EditMenuItemFormCtrl', [
             '$rootScope',
             '$scope',
+            '$stateParams',
             '$filter',
             'hippo.channel.FormStateService',
             'hippo.channel.Container',
             'hippo.channel.menu.FocusService',
             'hippo.channel.menu.MenuService',
-            function ($rootScope, $scope, $filter, FormStateService, ContainerService, FocusService, MenuService) {
-                var translate = $filter('translate');
+            function ($rootScope, $scope, $stateParams, $filter, FormStateService, ContainerService, FocusService, MenuService) {
+                var EditMenuItemFormCtrl = this,
+                    translate = $filter('translate');
 
-                $scope.focus = FocusService.focusElementWithId;
+                EditMenuItemFormCtrl.focus = FocusService.focusElementWithId;
 
-                $scope.$watch('form', function () {
+                $scope.$watch(function() {
+                    return $scope.form;
+                }, function () {
                     var deregisterNewItemListener = $rootScope.$on('new-menu-item', afternewItem);
                     function afternewItem() {
-                        $scope.selectedMenuItem.title = '';
-                        $scope.selectedMenuItem.isNew = true;
+                        $scope.MenuItemCtrl.selectedMenuItem.title = '';
+                        $scope.MenuItemCtrl.selectedMenuItem.isNew = true;
 
                         FormStateService.setDirty(true);
                         deregisterNewItemListener();
+                    }
+                    if($stateParams.selectedDocumentPath) {
+                        $scope.MenuItemCtrl.selectedMenuItem.link = $scope.MenuItemCtrl.selectedMenuItem.sitemapLink = $stateParams.selectedDocumentPath;
+                        $scope.EditMenuItemCtrl.linkToFocus = 'sitemapLink';
+                        $scope.EditMenuItemCtrl.saveSelectedMenuItem('link');
+                        $stateParams.selectedDocumentPath = null;
                     }
                 });
 
                 // The following logic will check the client-side validation of the
                 // edit menu item form. When a field is invalid, the FormStateService
                 // will be updated, so the window can't be closed.
-                $scope.$watch('form.title.$valid', function () {
+                $scope.$watch(function() {
+                    return $scope.form.title.$valid;
+                }, function () {
                     checkFormValidity();
                 });
 
-                $scope.$watch('selectedMenuItem.linkType', function () {
+                $scope.$watch(function() {
+                    return $scope.MenuItemCtrl.selectedMenuItem.linkType;
+                }, function () {
                     checkFormValidity();
                 });
 
-                $scope.$watch('form.sitemapItem.$valid', function () {
+                $scope.$watch(function() {
+                    return $scope.form.sitemapItem.$valid;
+                }, function () {
                     checkFormValidity();
                 });
 
-                $scope.$watch('form.url.$valid', function () {
+                $scope.$watch(function() {
+                    return $scope.form.url.$valid;
+                }, function () {
                     checkFormValidity();
                 });
 
@@ -66,10 +84,10 @@
                     var isValid = $scope.form.title.$valid &&
                         $scope.form.destination.$valid;
 
-                    if ($scope.selectedMenuItem) {
-                        if ($scope.selectedMenuItem.linkType === 'EXTERNAL') {
+                    if ($scope.MenuItemCtrl.selectedMenuItem) {
+                        if ($scope.MenuItemCtrl.selectedMenuItem.linkType === 'EXTERNAL') {
                             isValid = isValid && ($scope.form.url.$valid);
-                        } else if ($scope.selectedMenuItem.linkType === 'SITEMAPITEM') {
+                        } else if ($scope.MenuItemCtrl.selectedMenuItem.linkType === 'SITEMAPITEM') {
                             isValid = isValid && ($scope.form.sitemapItem.$valid);
                         }
                     }
@@ -77,37 +95,47 @@
                     FormStateService.setValid(isValid);
                 }
 
-                $scope.$watch('form.$dirty', function () {
+                $scope.$watch(function() {
+                    return $scope.form.$dirty;
+                }, function () {
                     FormStateService.setDirty($scope.form.$dirty);
                 });
 
                 // The following logic will set the correct error messages when the
                 // client-side validation status updates.
-                $scope.$watch('form.title.$error.required', function () {
-                    $scope.$parent.fieldFeedbackMessage.title = translate('LABEL_REQUIRED');
+                $scope.$watch(function() {
+                    return $scope.form.title.$error.required;
+                }, function () {
+                    $scope.EditMenuItemCtrl.fieldFeedbackMessage.title = translate('LABEL_REQUIRED');
                 });
 
-                $scope.$watch('form.title.$valid', function (value) {
+                $scope.$watch(function() {
+                    return $scope.form.title.$valid;
+                }, function (value) {
                     if (value) {
-                        $scope.$parent.fieldFeedbackMessage.title = '';
+                        $scope.EditMenuItemCtrl.fieldFeedbackMessage.title = '';
                     }
                 });
 
-                $scope.$watch('form.url.$error.required', function () {
+                $scope.$watch(function() {
+                    return $scope.form.url.$error.required;
+                }, function () {
                     if (!$scope.form.url.$pristine) {
-                        $scope.$parent.fieldFeedbackMessage.link = translate('EXTERNAL_LINK_REQUIRED');
+                        $scope.EditMenuItemCtrl.fieldFeedbackMessage.link = translate('EXTERNAL_LINK_REQUIRED');
                     }
                 });
 
-                $scope.$watch('form.url.$valid', function (value) {
+                $scope.$watch(function() {
+                    return $scope.form.url.$valid;
+                }, function (value) {
                     if (value) {
-                        $scope.$parent.fieldFeedbackMessage.link = '';
+                        $scope.EditMenuItemCtrl.fieldFeedbackMessage.link = '';
                     }
                 });
 
                 function saveFieldIfDirty(fieldName, propertyName) {
                     if ($scope.form[fieldName].$dirty) {
-                        $scope.$parent.saveSelectedMenuItem(propertyName);
+                        $scope.EditMenuItemCtrl.saveSelectedMenuItem(propertyName);
                     }
                 }
 

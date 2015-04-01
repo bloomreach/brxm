@@ -1,0 +1,59 @@
+<!--
+  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div data-ng-controller="hippo.channel.menu.PickerDocCtrl as PickerDocCtrl">
+  <table class="table document-picker">
+    <thead>
+      <tr>
+        <td></td>
+        <td>Name</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="picker-item"
+          ng-repeat="item in PickerDocCtrl.selectedItem.items"
+          ng-if="item.selectable"
+          ng-class="{active: PickerCtrl.selectedDocument == item}"
+          scroll-if="PickerCtrl.selectedDocument == item"
+          ng-click="PickerDocCtrl.selectDocument(item)">
+        <td class="status">
+          <div class="hi-stack">
+            <hippo-icon name="{{item.type == 'folder' ? 'folder' : 'file-text'}}"
+                        class="file-type"
+                        size="l"></hippo-icon>
+            <hippo-icon ng-if="item.state == 'live' || item.state == 'changed'"
+                        name="check-circle"
+                        class="state-live"
+                        size="m"
+                        position="top left"></hippo-icon>
+            <hippo-icon ng-if="item.state == 'new'"
+                        name="minus-circle"
+                        class="state-new"
+                        size="m"
+                        position="top left"></hippo-icon>
+            <hippo-icon ng-if="item.state == 'changed'"
+                        name="exclamation-triangle"
+                        class="state-changed"
+                        size="m"
+                        position="bottom left"></hippo-icon>
+          </div>
+
+        </td>
+        <td>{{item.displayName}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

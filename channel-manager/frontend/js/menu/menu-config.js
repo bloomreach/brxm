@@ -34,21 +34,44 @@
 
                     .state('menu-item', {
                         abstract: true,
-                        controller: 'hippo.channel.menu.MenuItemCtrl',
+                        controller: 'hippo.channel.menu.MenuItemCtrl as MenuItemCtrl',
                         templateUrl: 'states/menu-item/menu-item.html'
                     })
 
                     .state('menu-item.edit', {
                         url: '/:menuItemId/edit',
-                        controller: 'hippo.channel.menu.EditMenuItemCtrl',
-                        templateUrl: 'states/menu-item/edit/edit-menu-item.html'
+                        controller: 'hippo.channel.menu.EditMenuItemCtrl as EditMenuItemCtrl',
+                        templateUrl: 'states/menu-item/edit/edit-menu-item.html',
+                        params: {
+                            selectedDocumentPath: null
+                        }
                     })
 
                     .state('menu-item.none', {
                         url: '/none',
                         controller: 'hippo.channel.menu.NoMenuItemCtrl'
-                    });
+                    })
 
+                    .state('picker', {
+                        url: '/:menuItemId/:siteContentIdentifier/:siteMapIdentifier/picker',
+                        controller: 'hippo.channel.menu.PickerCtrl as PickerCtrl',
+                        templateUrl: 'states/picker/picker.html',
+                        params: {
+                            link: null
+                        },
+                        resolve: {
+                            getInitialData: ['hippo.channel.menu.PickerService', '$stateParams', function (PickerService, $stateParams) {
+                                console.log('resolve');
+                                return PickerService.getInitialData($stateParams.siteContentIdentifier, $stateParams.link);
+                            }]
+                        }
+                    })
+
+                    .state('picker.docs', {
+                        url: '/:pickerTreeItemId/picker/doc',
+                        controller: 'hippo.channel.menu.PickerDocCtrl as PickerDocCtrl',
+                        templateUrl: 'states/picker/pickerDoc.html'
+                    });
 
                 // translations
                 $translateProvider.useStaticFilesLoader({

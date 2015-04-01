@@ -24,8 +24,9 @@
             '$rootScope',
             'hippo.channel.Container',
             function ($scope, $rootScope, ContainerService) {
+                var CloseConfirmationCtrl = this;
                 // default visibility of the dialog
-                $scope.dialog = {
+                CloseConfirmationCtrl.dialog = {
                     visible: false
                 };
 
@@ -33,18 +34,18 @@
                 // the communication with the iFrame
                 $rootScope.$on('close-confirmation:show', function () {
                     $scope.$apply(function () {
-                        $scope.dialog.visible = true;
+                        CloseConfirmationCtrl.dialog.visible = true;
                     });
                 });
 
                 // confirm - close the panel
-                $scope.confirm = function () {
+                CloseConfirmationCtrl.confirm = function () {
                     ContainerService.performClose();
                 };
 
                 // cancel - hide the dialog
-                $scope.cancel = function () {
-                    $scope.dialog.visible = false;
+                CloseConfirmationCtrl.cancel = function () {
+                    CloseConfirmationCtrl.dialog.visible = false;
                 };
             }
         ]);

@@ -25,5 +25,11 @@
     "PAGE_LOCKED": "Deze pagina is vergrendeld door {{ owner }} op {{ timestamp | date:'d-M-yyyy H:mm' }}",
 
     "TECHNICAL_ERROR": "Er is een technische fout opgetreden",
-    "ITEM_ALREADY_LOCKED": "U kunt deze pagina niet bewerken omdat '{{ lockedBy }}' hem al bewerkt"
+    "ITEM_ALREADY_LOCKED": "U kunt deze pagina niet bewerken omdat '{{ lockedBy }}' hem al bewerkt",
+
+    "PRIMARY_DOCUMENT": "Primaire pagina document",
+    "REMOVE_PRIMARY_DOCUMENT" : "Verwijder",
+    "CONFIRM_REMOVE_PRIMARY_DOCUMENT_TITLE" : "Bevestig verwijderen",
+    "CONFIRM_REMOVE_PRIMARY_DOCUMENT_MESSAGE": "Weet u zeker dat u het primaire pagina document wilt verwijderen?"
+
 }

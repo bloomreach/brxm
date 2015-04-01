@@ -24,6 +24,7 @@
         "jasmine": true,
         "inject": true,
         "it": true,
+        "xit": true,
         "spyOn": true
     },
     "globalstrict": true,

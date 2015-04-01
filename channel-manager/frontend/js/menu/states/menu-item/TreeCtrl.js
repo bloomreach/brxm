@@ -30,13 +30,14 @@
             'hippo.channel.FormStateService',
             'hippo.channel.menu.MenuService',
             function ($scope, $state, $stateParams, $rootScope, $log, ConfigService, FeedbackService, FormStateService, MenuService) {
+                var TreeCtrl = this;
 
                 function setErrorFeedback(errorResponse) {
-                    $scope.$parent.feedback = FeedbackService.getFeedback(errorResponse);
+                    $scope.MenuItemCtrl.feedback = FeedbackService.getFeedback(errorResponse);
                 }
 
                 function editItem(itemId) {
-                    $scope.$parent.feedback = '';
+                    $scope.MenuItemCtrl.feedback = '';
 
                     $state.go('menu-item.edit', {
                         menuItemId: itemId
@@ -46,7 +47,7 @@
                 function selectItem(itemId) {
                     if (FormStateService.isDirty()) {
                         if (FormStateService.isValid()) {
-                            MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function() {
+                            MenuService.saveMenuItem($scope.MenuItemCtrl.selectedMenuItem).then(function() {
                                     editItem(itemId);
                                 },
                                 function (error) {
@@ -60,7 +61,7 @@
                     }
                 }
 
-                $scope.callbacks = {
+                TreeCtrl.callbacks = {
                     accept: function() {
                         // created an issue for the Tree component, to add a disabled state
                         // link: https://github.com/JimLiu/angular-ui-tree/issues/63

@@ -1,0 +1,277 @@
+/*
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import "../../../../target/bower/components/hippo-theme/src/less/_variables.less";
+
+
+#ui-view {
+  height: 100%;
+}
+
+/* --- Loader --- */
+#loader {
+  width: 100%;
+  height: 480px;
+}
+
+.container {
+  margin-left: 0;
+  margin-right: 0;
+  width: 100%;
+  height: 100%;
+}
+.row {
+  height: 100%;
+  position: relative;
+}
+
+.tree-col {
+  height: ~"calc(100% - 51px)";
+}
+
+.picker-container
+.tree-col {
+  height: ~"calc(100% - 83px)";
+  padding: 0;
+}
+
+#panel-footer {
+  height: 51px;
+  padding: 8px;
+  background-color: #F3F3F3;
+  border-top: 1px solid #E3E3E3;
+  display: flex;
+  align-items: center;
+}
+#panel-footer div {
+  display: inline-block;
+}
+#panel-footer #buttons-wrap {
+  margin-left: auto;
+}
+
+#menu-panel {
+  height: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+#form-panel {
+  border-left: 1px solid #E3E3E3;
+  background-color: #f4f4f4;
+  height: 100%;
+}
+
+.picker-container #form-panel{
+  height: ~"calc(100% - 51px)";
+  overflow-y: auto;
+  background: @white;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.form-group .input-group .form-control-feedback {
+  top: 0;
+  right: 40px;
+}
+
+#add, #actions {
+  display: table-cell;
+  float: none;
+  vertical-align: top;
+  border-top: 1px solid #dddddd;
+}
+
+#add {
+  border-right: 1px solid #dddddd;
+}
+
+#add button,
+#actions button {
+  margin: 10px 0;
+}
+
+.panel-default .empty-tree {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-container {
+  display: flex;
+  flex-direction: column;
+}
+
+#panel-wrap {
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}
+
+form h4.page-header {
+  margin-top: 12px;
+}
+
+hr {
+  border-top-color: #dddddd;
+}
+
+h3.lead.item-title {
+  margin-top: 6px;
+  margin-bottom: 15px;
+}
+
+.radio.first {
+  margin-top: 0;
+}
+
+/* --- Confirmation message --- */
+.edit-menu-item-container {
+  position: relative;
+}
+
+.overlay {
+  margin-left: -292px;
+  top: 0;
+  background: white;
+  position: absolute;
+  z-index: 999999;
+  width: 840px;
+  height: 485px;
+  opacity: 0;
+}
+
+.confirmation-dialog {
+  position: absolute;
+  z-index: 999999;
+  border-top: none;
+  margin-left: -100px;
+  width: 500px;
+}
+
+.confirmation-dialog.s-visible {
+  top: 0;
+}
+
+.confirmation-dialog.s-invisible {
+  /* set offscreen to allow it to scroll in. Should likely
+  change in the future to be calculated with js */
+  top: -240px;
+}
+
+.confirmation-dialog-title {
+  font-weight: bold;
+}
+
+.confirmation-dialog-message {
+  /* prevent long titles from overflowing. Add scrollbar if they do */
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+#close-confirmation {
+  left: 0;
+  top: 0;
+  position: absolute;
+}
+
+#close-confirmation .overlay {
+  margin-left: 0;
+}
+
+#close-confirmation .confirmation-dialog {
+  margin-left: 180px;
+}
+
+/* --- Top bar --- */
+#top-bar {
+  background-color: rgb(245, 245, 245);
+  border-bottom: 1px solid @dark-gray;
+  padding: 5px 15px;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+  width: 100%;
+}
+
+#picker-type {
+  height: 32px;
+  background: #f4f4f4;
+  padding: 3px;
+  select {
+    width: 100%;
+    padding: 3px;
+  }
+}
+
+.status {
+  width: 32px;
+}
+
+.document-picker {
+  margin-bottom: 0;
+  thead {
+    background: #f4f4f4;
+  }
+  tbody tr:first-child td {
+    border-top: 0;
+  }
+  .picker-item.active > td {
+    background-color: @primary;
+    color: @white;
+  }
+  .picker-item td {
+    vertical-align: middle;
+  }
+}
+
+.picker-item {
+  cursor: pointer;
+  &:hover {
+    background: @light-gray;
+  }
+}
+
+.file-type {
+  color: @primary;
+}
+.angular-ui-tree-title-wrapper-icon {
+  color: @dark-shade;
+}
+
+
+.active {
+  .file-type {
+    color: @white;
+  }
+  .state-live, .state-new, .state-changed {
+    color: @primary;
+    fill: @white;
+  }
+}
+.state-live {
+  color: @white;
+  fill: @success;
+}
+.state-new {
+  color: @white;
+  fill: @danger;
+}
+.state-changed {
+  color: @black;
+  fill: @warning;
+}

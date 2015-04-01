@@ -26,50 +26,41 @@
             '$state',
             'hippo.channel.menu.MenuService',
             function ($scope, $filter, $rootScope, $state, MenuService) {
-                $scope.list = [];
-                $scope.selectedMenuItem = {};
-                $scope.feedback = {};
+                var MenuItemCtrl = this;
+                MenuItemCtrl.treeItems = [];
+                MenuItemCtrl.selectedMenuItem = {};
+                MenuItemCtrl.feedback = {};
 
                 // initial load of menu tree structure
                 MenuService.getMenu().then(function (menuData) {
-                    $scope.list = menuData.items;
-                    $scope.selectedMenuItem = $scope.list.length > 0 ? $scope.list[0] : undefined;
+                    MenuItemCtrl.treeItems = menuData.items;
+                    MenuItemCtrl.selectedMenuItem = MenuItemCtrl.treeItems.length > 0 ? MenuItemCtrl.treeItems[0] : undefined;
 
                     $scope.$watch(function() {
                         return menuData.items;
                     }, function() {
-                        $scope.list = menuData.items;
+                        MenuItemCtrl.treeItems = menuData.items;
                         $scope.$broadcast('menu-items-changed');
 
                         // merge pending changes into newly loaded tree
-                        if ($scope.list.length > 0 && $scope.selectedMenuItem) {
-                            MenuService.getMenuItem($scope.selectedMenuItem.id).then(function(item) {
-                                if ($scope.selectedMenuItem != item) {
-                                    delete $scope.selectedMenuItem.items;
-                                    $scope.selectedMenuItem = angular.extend(item, $scope.selectedMenuItem);
+                        if (MenuItemCtrl.treeItems.length > 0 && MenuItemCtrl.selectedMenuItem) {
+                            MenuService.getMenuItem(MenuItemCtrl.selectedMenuItem.id).then(function(item) {
+                                if (MenuItemCtrl.selectedMenuItem != item) {
+                                    delete MenuItemCtrl.selectedMenuItem.items;
+                                    MenuItemCtrl.selectedMenuItem = angular.extend(item, MenuItemCtrl.selectedMenuItem);
                                 }
                             });
                         }
                     }, false);
 
-                    $scope.showTooltip = function() {
+                    MenuItemCtrl.showTooltip = function() {
                         var translate = $filter('translate');
-                        $scope.tooltip = translate('TOOLTIP_OPEN_LINK');
+                        MenuItemCtrl.tooltip = translate('TOOLTIP_OPEN_LINK');
                     };
 
-                    $scope.hideTooltip = function() {
-                        $scope.tooltip = '';
+                    MenuItemCtrl.hideTooltip = function() {
+                        MenuItemCtrl.tooltip = '';
                     };
-                });
-
-                // if we redirect to a url without DOM-interaction, we need to set the selected menu item manually
-                $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
-                    if (toState.name == 'menu-item.edit' &&
-                            (!$scope.selectedMenuItem || toParams.menuItemId != $scope.selectedMenuItem.id)) {
-                        MenuService.getMenuItem(toParams.menuItemId).then(function (item) {
-                            $scope.selectedMenuItem = item;
-                        });
-                    }
                 });
             }
         ]);

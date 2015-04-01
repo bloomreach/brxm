@@ -34,137 +34,157 @@
         .controller('hippo.channel.menu.EditMenuItemCtrl', [
             '$rootScope',
             '$scope',
-            '$stateParams',
             '$state',
+            '$stateParams',
             '$window',
             'hippo.channel.FeedbackService',
             'hippo.channel.menu.MenuService',
             'hippo.channel.FormStateService',
             'hippo.channel.Container',
-            function ($rootScope, $scope, $stateParams, $state, $window, FeedbackService, MenuService, FormStateService, ContainerService) {
-                var savedMenuItem;
+            function ($rootScope, $scope, $state, $stateParams, $window, FeedbackService, MenuService, FormStateService, ContainerService) {
+                var EditMenuItemCtrl = this,
+                    savedMenuItem;
 
-                $scope.isSaving = {
+                if ($scope.MenuItemCtrl && (!$scope.MenuItemCtrl.selectedMenuItem || $stateParams.menuItemId !== $scope.MenuItemCtrl.selectedMenuItem.id)) {
+                    MenuService.getMenuItem($stateParams.menuItemId).then(function (item) {
+                        $scope.MenuItemCtrl.selectedMenuItem = item;
+                    });
+                }
+
+                EditMenuItemCtrl.isSaving = {
                     title: false,
                     linkType: false,
                     link: false
                 };
 
-                $scope.isSaved = {
+                EditMenuItemCtrl.isSaved = {
                     title: true,
                     linkType: true,
                     link: true
                 };
 
-                $scope.remove = {
+                EditMenuItemCtrl.remove = {
                     isVisible: false,
                     show: function() {
-                        $scope.remove.isVisible = true;
+                        EditMenuItemCtrl.remove.isVisible = true;
                     },
                     execute: function() {
-                        $scope.remove.isVisible = false;
+                        EditMenuItemCtrl.remove.isVisible = false;
                         remove();
                     },
                     cancel: function() {
-                        $scope.remove.isVisible = false;
+                        EditMenuItemCtrl.remove.isVisible = false;
                     }
                 };
 
-                $scope.external = {
+                EditMenuItemCtrl.internalLink = {
+                    openPicker: function() {
+                        var menuData = MenuService.getMenuData();
+                        $state.go('picker', {
+                            menuItemId: $scope.MenuItemCtrl.selectedMenuItem.id,
+                            siteContentIdentifier: menuData.siteContentIdentifier,
+                            siteMapIdentifier: menuData.siteMapIdentifier,
+                            link: $scope.MenuItemCtrl.selectedMenuItem.link
+                        });
+                    },
+                    showPage: function() {
+                        var link = getLink($scope.MenuItemCtrl.selectedMenuItem);
+                        ContainerService.showPage(link);
+                    }
+                };
+
+                EditMenuItemCtrl.externalLink = {
                     isVisible: false,
                     show: function() {
-                        $scope.external.isVisible = true;
+                        EditMenuItemCtrl.externalLink.isVisible = true;
                     },
                     execute: function() {
-                        $scope.external.isVisible = false;
-                        $window.open($scope.selectedMenuItem.link);
+                        EditMenuItemCtrl.externalLink.isVisible = false;
+                        $window.open($scope.MenuItemCtrl.selectedMenuItem.link);
                     },
                     cancel: function() {
-                        $scope.external.isVisible = false;
+                        EditMenuItemCtrl.externalLink.isVisible = false;
                     }
                 };
 
-                $scope.fieldFeedbackMessage = {};
+                EditMenuItemCtrl.fieldFeedbackMessage = {};
 
-                $scope.saveTitle = function (form) {
-                    if($scope.selectedMenuItem.isNew) {
+                EditMenuItemCtrl.saveTitle = function (form) {
+                    if($scope.MenuItemCtrl.selectedMenuItem.isNew) {
                         form.title.$dirty = true;
-                        delete $scope.selectedMenuItem.isNew;
+                        delete $scope.MenuItemCtrl.selectedMenuItem.isNew;
                     }
                     if(form.title.$dirty && form.title.$valid) {
-                        $scope.saveSelectedMenuItem('title');
+                        EditMenuItemCtrl.saveSelectedMenuItem('title');
                     }
                 };
 
-                $scope.updateLinkDestination = function (form) {
+                EditMenuItemCtrl.updateLinkDestination = function (form) {
                     var formItem;
-                    if($scope.selectedMenuItem.linkType === 'NONE') {
-                        $scope.linkToFocus = 'none';
-                        $scope.saveSelectedMenuItem('linkType');
+                    if($scope.MenuItemCtrl.selectedMenuItem.linkType === 'NONE') {
+                        EditMenuItemCtrl.linkToFocus = 'none';
+                        EditMenuItemCtrl.saveSelectedMenuItem('linkType');
                     } else {
-                        if ($scope.selectedMenuItem.linkType === 'SITEMAPITEM') {
+                        if ($scope.MenuItemCtrl.selectedMenuItem.linkType === 'SITEMAPITEM') {
                             formItem = form.sitemapItem;
-                            $scope.linkToFocus = 'sitemapLink';
-                        } else if ($scope.selectedMenuItem.linkType === 'EXTERNAL') {
+                            EditMenuItemCtrl.linkToFocus = 'sitemapLink';
+                        } else if ($scope.MenuItemCtrl.selectedMenuItem.linkType === 'EXTERNAL') {
                             formItem = form.url;
-                            $scope.linkToFocus = 'externalLink';
+                            EditMenuItemCtrl.linkToFocus = 'externalLink';
                         }
                         if(formItem.$dirty && formItem.$valid) {
-                            $scope.saveSelectedMenuItem('link');
+                            $scope.EditMenuItemCtrl.saveSelectedMenuItem('link');
                         }
                     }
                 };
 
-                $scope.saveSelectedMenuItem = function(propertyName) {
+                EditMenuItemCtrl.saveSelectedMenuItem = function(propertyName) {
                     if (shouldSaveSelectedMenuItemProperty(propertyName)) {
                         saveSelectedMenuItemProperty(propertyName);
                     }
                 };
 
-                $scope.showPage = function() {
-                    var link = getLink($scope.selectedMenuItem);
-                    ContainerService.showPage(link);
-                };
-
-                $scope.dismissFeedback = function () {
-                    if($scope.feedback.message) {
-                        $scope.feedback.message = '';
+                EditMenuItemCtrl.dismissFeedback = function () {
+                    if($scope.MenuItemCtrl.feedback.message) {
+                        $scope.MenuItemCtrl.feedback.message = '';
                     }
-                    $scope.fieldFeedbackMessage = {};
+                    EditMenuItemCtrl.fieldFeedbackMessage = {};
                 };
 
-                savedMenuItem = angular.copy($scope.selectedMenuItem);
+                if($scope.MenuItemCtrl) {
+                    savedMenuItem = angular.copy($scope.MenuItemCtrl.selectedMenuItem);
+                }
 
                 function shouldSaveSelectedMenuItemProperty() {
-                    $scope.dismissFeedback();
-                    return angular.isDefined($scope.selectedMenuItem);
+                    EditMenuItemCtrl.dismissFeedback();
+                    return angular.isDefined($scope.MenuItemCtrl.selectedMenuItem);
                 }
 
                 function saveSelectedMenuItemProperty(propertyName) {
-                    savedMenuItem = angular.copy($scope.selectedMenuItem);
+                    savedMenuItem = angular.copy($scope.MenuItemCtrl.selectedMenuItem);
 
                     // child properties haven't changed, so don't send them
                     delete savedMenuItem.items;
 
-                    $scope.isSaving[propertyName] = true;
+                    EditMenuItemCtrl.isSaving[propertyName] = true;
 
                     MenuService.saveMenuItem(savedMenuItem)
                         .then(function () {
-                            $scope.isSaving[propertyName] = false;
-                            $scope.isSaved[propertyName] = true;
+                            EditMenuItemCtrl.isSaving[propertyName] = false;
+                            EditMenuItemCtrl.isSaved[propertyName] = true;
                             FormStateService.setValid(true);
                         },
                         function (errorResponse) {
-                            $scope.fieldFeedbackMessage[propertyName] = FeedbackService.getFeedback(errorResponse).message;
-                            $scope.isSaving[propertyName] = false;
-                            $scope.isSaved[propertyName] = false;
+                            EditMenuItemCtrl.fieldFeedbackMessage[propertyName] = FeedbackService.getFeedback(errorResponse).message;
+                            EditMenuItemCtrl.isSaving[propertyName] = false;
+                            EditMenuItemCtrl.isSaved[propertyName] = false;
                             FormStateService.setValid(false);
-                            $scope.feedback = FeedbackService.getFeedback(errorResponse);
+                            $scope.MenuItemCtrl.feedback = FeedbackService.getFeedback(errorResponse);
                         });
                 }
 
                 function remove() {
-                    MenuService.getPathToMenuItem($scope.selectedMenuItem.id).then(function(path) {
+                    MenuService.getPathToMenuItem($scope.MenuItemCtrl.selectedMenuItem.id).then(function(path) {
                         var nextState = (function() {
                             var item, parent, items;
                             if (!path || path.length < 2) {
@@ -193,12 +213,12 @@
                         }());
 
                         // HTTP-request to delete the menu item
-                        MenuService.deleteMenuItem($scope.selectedMenuItem.id).then(function () {
+                        MenuService.deleteMenuItem($scope.MenuItemCtrl.selectedMenuItem.id).then(function () {
                             $state.go('menu-item.' + nextState.state, {
                                 menuItemId: nextState.id
                             });
                         }, function (errorResponse) {
-                            $scope.feedback = FeedbackService.getFeedback(errorResponse);
+                            $scope.MenuItemCtrl.feedback = FeedbackService.getFeedback(errorResponse);
                         });
                     });
                 }
