@@ -137,7 +137,8 @@ public class WebFilesServiceImpl implements WebFilesService {
         } catch (IOException e) {
             throw e;
         } catch (RepositoryException | ConfigurationException e) {
-            throw new WebFileException(warn("Cannot import web files from '%s' : '%s'", fileOrDirectory, e.toString()), e);
+            // just log at info level. WebFileException will be handled later and result in complete bundle re-import
+            throw new WebFileException(info("Cannot import web files from '%s' : '%s'", fileOrDirectory, e.toString()), e);
         } finally {
             archive.close();
         }
@@ -157,7 +158,8 @@ public class WebFilesServiceImpl implements WebFilesService {
         final String importPath = StringUtils.substringBeforeLast(archiveRootPath, "/");
         final Node importRootNode = JcrUtils.getNodeIfExists(importPath, session);
         if (importRootNode == null) {
-            throw new WebFileException(warn("Cannot import web files at '%s': no such node", importPath));
+            // just log at info level. WebFileException will be handled later and result in complete bundle re-import
+            throw new WebFileException(info("Cannot import web files at '%s': no such node", importPath));
         }
 
         log.debug("Importing archive at '{}'", importPath);
@@ -203,6 +205,12 @@ public class WebFilesServiceImpl implements WebFilesService {
     private static String warn(final String message, final Object... args) {
         String warning = String.format(message, args);
         log.warn(warning);
+        return warning;
+    }
+
+    private static String info(final String message, final Object... args) {
+        String warning = String.format(message, args);
+        log.info(warning);
         return warning;
     }
 
