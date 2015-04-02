@@ -22,8 +22,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.value.IValueMap;
-import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -106,11 +104,6 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
         if(controller.getRenderer() != null) {
             controller.getRenderer().render(target);
         }
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return new ValueMap("width=855,height=485");
     }
 
     @Override

@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2015 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.hippo-picker .section-viewer .section-view.selected .section-center {
-  // IE10 needs a max height to draw scrollbars
-  max-height: ~"calc(100% - @{sections-top-height}px)";
+.hippo-dialog {
+
+  .section-search-input > input {
+    font-size: 11px;
+    padding-bottom: 0;
+  }
+
+  .section-search-scopes {
+    padding: 0 16px;
+  }
 }
