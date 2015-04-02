@@ -249,16 +249,16 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
         assertEquals(5, availableDocumentRepresentations.size());
 
         DocumentRepresentation representation1 = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/News/News2",
+                "News/News2",
                 "/unittestcontent/documents/unittestproject", "News2", true, true);
         DocumentRepresentation representation2 = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/News/News1",
+                "News/News1",
                 "/unittestcontent/documents/unittestproject", "News1", true, true);
         DocumentRepresentation representation3 = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/common/aboutfolder/about-us",
+                "common/aboutfolder/about-us",
                 "/unittestcontent/documents/unittestproject", "About Us", true, true);
         DocumentRepresentation representation4 = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/common",
+                "common",
                 "/unittestcontent/documents/unittestproject", "common", false, true);
 
         DocumentRepresentation[] representations = {representation1, representation2, representation3, representation4};
@@ -318,29 +318,29 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
         assertEquals(9, availableDocumentRepresentations.size());
 
         DocumentRepresentation representation1 = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/News/News2",
+                "News/News2",
                 "/unittestcontent/documents/unittestproject", "News2", true, true);
         DocumentRepresentation representation2 = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/News/News1",
+                "News/News1",
                 "/unittestcontent/documents/unittestproject", "News1", true, true);
         DocumentRepresentation representation3 = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/common/aboutfolder/about-us",
+                "common/aboutfolder/about-us",
                 "/unittestcontent/documents/unittestproject", "About Us", true, true);
         DocumentRepresentation representation4 = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/common",
+                "common",
                 "/unittestcontent/documents/unittestproject", "common", false, true);
 
         DocumentRepresentation professionalRepresentation1 = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/dummy-News/News2",
+                "dummy-News/News2",
                 "/unittestcontent/documents/unittestproject", null, false, false);
         DocumentRepresentation professionalRepresentation2 = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/dummy-News/News1",
+                "dummy-News/News1",
                 "/unittestcontent/documents/unittestproject", null, false, false);
         DocumentRepresentation professionalRepresentation3 = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/common/aboutfolder/dummy-about-us",
+                "common/aboutfolder/dummy-about-us",
                 "/unittestcontent/documents/unittestproject", null, false, false);
         DocumentRepresentation professionalRepresentation4 = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/dummy-common",
+                "dummy-common",
                 "/unittestcontent/documents/unittestproject", null, false, false);
 
         DocumentRepresentation[] representations = {representation1, representation2, representation3, representation4,

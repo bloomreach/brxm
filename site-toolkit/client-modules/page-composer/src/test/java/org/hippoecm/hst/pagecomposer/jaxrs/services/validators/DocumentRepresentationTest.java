@@ -30,19 +30,11 @@ public class DocumentRepresentationTest {
     public void test_DocumentRepresentation_creation() {
 
         DocumentRepresentation presentation = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/News/News1",
+                "News/News1",
                 "/unittestcontent/documents/unittestproject", "News One", true, true);
 
         assertEquals("News/News1", presentation.getPath());
         assertEquals("News One", presentation.getDisplayName());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_DocumentRepresentation_creation_fails_when_absPath_does_not_start_with_contentRoot() {
-
-        new DocumentRepresentation(
-                "/unittestcontent/documents/News/News1",
-                "/unittestcontent/documents/unittestproject", "News One", true, true);
     }
 
     @Test
@@ -50,12 +42,12 @@ public class DocumentRepresentationTest {
 
         Set<DocumentRepresentation> testSet = new HashSet<>();
         DocumentRepresentation presentation1 = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/News/News1",
+                "News/News1",
                 "/unittestcontent/documents/unittestproject", "News One", true, true);
 
 
         DocumentRepresentation presentation2 = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/News/News1",
+                "News/News1",
                 "/unittestcontent/documents/unittestproject", "News DIFFERENT NAME", true, true);
 
         testSet.add(presentation1);
@@ -65,7 +57,7 @@ public class DocumentRepresentationTest {
 
 
         DocumentRepresentation presentationDifferentRootContent = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/News/News1",
+                "News/News1",
                 "/unittestcontent/documents", "News One", true, true);
 
 
