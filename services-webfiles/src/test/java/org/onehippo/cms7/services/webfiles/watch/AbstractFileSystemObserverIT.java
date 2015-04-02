@@ -55,10 +55,10 @@ import static org.onehippo.cms7.services.webfiles.watch.WatchTestUtils.forceTouc
  */
 public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
-    private static final long TIMEOUT_MS = 5000;
+    protected static final long TIMEOUT_MS = 5000;
     
     protected GlobFileNameMatcher fileNameMatcher;
-    private ChangesListener changesListener;
+    protected ChangesListener changesListener;
     private FileSystemObserver fileSystemObserver;
 
     @Before
@@ -73,7 +73,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
 
     protected abstract FileSystemObserver createFileSystemObserver() throws Exception;
 
-    private void observeTestBundle() throws IOException {
+    protected void observeTestBundle() throws IOException {
         fileSystemObserver.registerDirectory(testBundleDir.toPath(), changesListener);
     }
 
@@ -385,7 +385,7 @@ public abstract class AbstractFileSystemObserverIT extends AbstractWatcherIT {
         changesListener.assertNoChanges();
     }
 
-    private static class ChangesListener implements FileSystemListener {
+    protected static class ChangesListener implements FileSystemListener {
 
         private CyclicBarrier startRecording = new CyclicBarrier(2);
         private CyclicBarrier stopRecording = new CyclicBarrier(2);

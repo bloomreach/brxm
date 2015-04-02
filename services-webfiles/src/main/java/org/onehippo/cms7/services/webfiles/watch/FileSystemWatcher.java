@@ -31,13 +31,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.lang.System.currentTimeMillis;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
@@ -66,14 +66,14 @@ class FileSystemWatcher implements FileSystemObserver, Runnable {
      * the associated watch key's watchable() still returns the old path. This map is therefore used to
      * keep track of which watch key actually matches to which path.
      */
-    private final Map<WatchKey, Path> watchedPaths;
+    final Map<WatchKey, Path> watchedPaths;
 
     FileSystemWatcher(final GlobFileNameMatcher watchedFiles) throws IOException {
         this.watchedFiles = watchedFiles;
         this.changesProcessors = new HashMap<>();
 
         watcher = FileSystems.getDefault().newWatchService();
-        watchedPaths = new HashMap<>();
+        watchedPaths = new WeakHashMap<>();
 
         thread = new Thread(this);
         thread.setName("FileSystemWatcher-" + instanceCounter);
@@ -100,18 +100,13 @@ class FileSystemWatcher implements FileSystemObserver, Runnable {
                     return FileVisitResult.SKIP_SUBTREE;
                 }
 
+
                 final WatchKey key = visitedDirectory.register(watcher,
                         ENTRY_CREATE,
                         ENTRY_MODIFY,
                         ENTRY_DELETE);
 
-                Path previouslyRegisteredPath = watchedPaths.put(key, visitedDirectory);
-
-                if (previouslyRegisteredPath == null) {
-                    log.info("Registering new directory '{}'", visitedDirectory);
-                } else if (!visitedDirectory.equals(previouslyRegisteredPath)) {
-                    log.info("Registering moved directory '{}' -> '{}' to watcher '{}'", previouslyRegisteredPath, visitedDirectory, watcher);
-                }
+                watchedPaths.put(key, visitedDirectory);
 
                 return FileVisitResult.CONTINUE;
             }
