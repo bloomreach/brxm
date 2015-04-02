@@ -77,7 +77,7 @@ ${response.setContentType("text/html;charset=UTF-8")}
         <div class="username-box"><noscript>Logged in as: </noscript>${jcrSession.userID}</div>
       </#if>
       <div class="logout">
-        <a href="${request.contextPath}/repository/?logout">Log out</a>
+        <a href="${rootRelativePath}?logout">Log out</a>
       </div>
     </div>
 

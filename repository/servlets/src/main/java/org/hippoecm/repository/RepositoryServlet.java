@@ -324,6 +324,8 @@ public class RepositoryServlet extends HttpServlet {
 
         if(req.getParameter("logout") != null){
             FormAuth.logout(req);
+            res.sendRedirect(req.getContextPath() + req.getServletPath() + "/");
+            return;
         }
 
         Session jcrSession = FormAuth.authorize(req, repository);
@@ -350,6 +352,9 @@ public class RepositoryServlet extends HttpServlet {
             while (currentNodePath.startsWith("/")) {
                 currentNodePath = currentNodePath.substring(1);
             }
+
+            templateParams.put("rootRelativePath", StringUtils.isEmpty(currentNodePath) ? "" :
+                    StringUtils.join(new String[currentNodePath.split("/").length + 1], "../"));
 
             currentNodePath = URLDecoder.decode(currentNodePath, "UTF-8");
             Node rootNode = jcrSession.getRootNode();
