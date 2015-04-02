@@ -13,7 +13,6 @@
 // limitations under the License.
 
 .hippo-selectable-documents {
-  height: 300px;
   padding: 4px 8px;
   display: flex;
   flex-direction: column;
@@ -25,13 +24,16 @@
 
   .hippo-selectable-documents-list {
     flex: 1 0 auto;
-    tbody {
+    .hippo-paging tbody {
       height: 170px;
     }
   }
 
   .hippo-selectable-documents-buttons {
-    height: 30px;
+    height: 41px;
+    padding: 0 16px 0 16px;
+
+    background-color: white;
 
     display: flex;
     justify-content: space-between;

@@ -15,17 +15,17 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div class="hippo-selectable-documents-label" wicket:id="message">Description of the selectable documents:</div>
+    <div class="hippo-selectable-documents-header">
+      <div class="hippo-selectable-documents-label" wicket:id="message">Description of the selectable documents:</div>
+      <a class="button-label" wicket:id="open"><wicket:message key="open">Open</wicket:message></a>
+    </div>
     <div class="hippo-selectable-documents-list">
       <table wicket:id="datatable">[table]</table>
     </div>
-    <div wicket:id="actions" class="hippo-selectable-documents-buttons">
-      <div>
-        <wicket:message key="select">Select</wicket:message>: 
-        <a wicket:id="select-all"><wicket:message key="all">all</wicket:message></a>,
-        <a wicket:id="select-none"><wicket:message key="none">none</wicket:message></a>
-      </div>
-      <input type="submit" wicket:id="open"/>
+    <div wicket:id="actions" class="hippo-select-allnone-button">
+      <wicket:message key="select">Select</wicket:message>:
+      <a wicket:id="select-all"><wicket:message key="all">all</wicket:message></a>,
+      <a wicket:id="select-none"><wicket:message key="none">none</wicket:message></a>
     </div>
   </wicket:panel>
 </html>
