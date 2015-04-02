@@ -54,6 +54,22 @@
     </layout>
   </appender>
 
+  <!-- messages -->
+  <appender name="messages" class="org.apache.log4j.ConsoleAppender">
+    <param name="Target" value="System.out"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{HH:mm:ss} %-5p %m%n"/>
+    </layout>
+  </appender>
+
+  <!-- warnings -->
+  <appender name="warnings" class="org.apache.log4j.ConsoleAppender">
+    <param name="Target" value="System.err"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{HH:mm:ss} %-5p %m%n"/>
+    </layout>
+  </appender>
+
   <!-- ====================================================================== -->
   <!-- L O G G E R S                                                          -->
   <!-- ====================================================================== -->
@@ -142,11 +158,27 @@
   <logger name="org.hippoecm.repository.jackrabbit.persistence">
     <level value="info"/>
   </logger>
-  <logger name="org.hippoecm.repository.updater">
+  <logger name="org.hippoecm.repository.updater" additivity="false">
     <level value="info"/>
+    <appender-ref ref="messages"/>
   </logger>
-  <logger name="org.onehippo.cms7.autoexport">
+  <logger name="org.onehippo.cms7.autoexport" additivity="false">
     <level value="info"/>
+    <appender-ref ref="messages"/>
+  </logger>
+  <logger name="org.onehippo.cms7.services.webfiles.watch.WebFilesWatcher" additivity="false">
+    <level value="info"/>
+    <appender-ref ref="messages"/>
+  </logger>
+  <logger name="org.onehippo.cms7.services.autoreload.AutoReloadServiceModule" additivity="false">
+    <level value="info"/>
+    <appender-ref ref="messages"/>
+  </logger>
+
+  <!-- Freemarker errors -->
+  <logger name="org.hippoecm.hst.servlet.HstFreemarkerServlet" additivity="false">
+    <level value="warn"/>
+    <appender-ref ref="warnings"/>
   </logger>
 
   <root>
