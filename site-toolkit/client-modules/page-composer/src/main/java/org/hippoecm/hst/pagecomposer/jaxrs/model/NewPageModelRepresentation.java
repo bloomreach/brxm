@@ -20,11 +20,27 @@ import java.util.List;
 
 public class NewPageModelRepresentation {
 
-    private List<PrototypeRepresentation> prototypes = new ArrayList<>();
-    private List<SiteMapPageRepresentation> locations = new ArrayList<>();
+    private List<PrototypeRepresentation> prototypes;
+    private List<Location> locations;
 
 
     public NewPageModelRepresentation() {}
+
+    public NewPageModelRepresentation(final List<PrototypeRepresentation> prototypes,
+                                      final List<SiteMapPageRepresentation> pages,
+                                      final String hostName) {
+        this.prototypes = prototypes;
+        locations = new ArrayList<>();
+        locations.add(new Location(hostName + "/", null));
+        for (SiteMapPageRepresentation page : pages) {
+            if (!page.isWorkspaceConfiguration()) {
+                continue;
+            }
+            Location location = new Location(hostName + page.getRenderPathInfo() + "/", page.getId());
+            locations.add(location);
+        }
+
+    }
 
     public List<PrototypeRepresentation> getPrototypes() {
         return prototypes;
@@ -34,11 +50,37 @@ public class NewPageModelRepresentation {
         this.prototypes = prototypes;
     }
 
-    public List<SiteMapPageRepresentation> getLocations() {
+    public List<Location> getLocations() {
         return locations;
     }
 
-    public void setLocations(final List<SiteMapPageRepresentation> locations) {
+    public void setLocations(final List<Location> locations) {
         this.locations = locations;
+    }
+
+    public class Location {
+        private String location;
+        private String id;
+
+        public Location(final String location, final String id) {
+            this.location = location;
+            this.id = id;
+        }
+
+        public String getLocation() {
+            return location;
+        }
+
+        public void setLocation(final String location) {
+            this.location = location;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
     }
 }
