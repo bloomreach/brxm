@@ -75,8 +75,9 @@ public interface WebFilesService {
      * @param bundleName the name of the web file bundle
      * @param bundleSubPath the relative sub-path in the web file bundle to import the resources into.
      * @param fileOrDirectory the file or directory to import web files from.
+     * @throws IOException if an I/O error occurs while reading web files from the fileOrDirectory
      * @throws WebFileException if an error occurs while importing web files
      */
-    void importJcrWebFiles(Session session, String bundleName, String bundleSubPath, File fileOrDirectory) throws WebFileException;
+    void importJcrWebFiles(Session session, String bundleName, String bundleSubPath, File fileOrDirectory) throws IOException, WebFileException;
 
 }
