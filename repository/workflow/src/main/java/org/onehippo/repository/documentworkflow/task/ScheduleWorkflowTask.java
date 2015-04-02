@@ -128,7 +128,7 @@ public class ScheduleWorkflowTask extends AbstractDocumentTask {
                     workflow.depublish();
                 }
             } catch (RemoteException | WorkflowException | RepositoryException e) {
-                log.error("Execution of scheduled workflow operation {} on {} failed", new String[] { methodName, subjectPath },  e);
+                log.error("Execution of scheduled workflow operation {} on {} failed", methodName, subjectPath,  e);
             } finally {
                 if (session != null) {
                     session.logout();
