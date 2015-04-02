@@ -62,10 +62,6 @@
             <property name="address" value="/" />
             <property name="providers" ref="jaxrsRestAllEntityProviders" />
             <property name="resourceProviders" ref="jaxrsRestPlainResourceProviders" />
-            <!-- Configure the SecuredJAXRSInvoker if you need (javax.annotation.security based secured JAXRS methods.
-                 Note: this requires a provided dependency on JEE 1.5 annotation spec, like geronimo-annotation_1.1_spec-1.1.jar
-                       to be present, either through the JEE container or provided by the project 
-            -->
             <property name="invoker" ref="jaxrsRestPlainServiceInvoker" />
           </bean>
         </property>
