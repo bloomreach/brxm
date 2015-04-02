@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,22 +29,20 @@ import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.convert.IConverter;
 import org.apache.wicket.util.convert.converter.DateConverter;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.model.properties.StringConverter;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
@@ -61,7 +59,7 @@ class PropertyValueEditor extends DataView {
 
     private JcrPropertyModel propertyModel;
     private final DateConverter dateConverter = new ISO8601DateConverter();
-    
+
     private boolean focusOnLastItem;
 
     PropertyValueEditor(String id, JcrPropertyModel dataProvider) {
@@ -99,7 +97,7 @@ class PropertyValueEditor extends DataView {
                 }
             };
 
-            removeLink.add(new AttributeModifier("title", getString("property.value.remove")));
+            removeLink.add(TitleAttribute.set(getString("property.value.remove")));
 
             PropertyDefinition definition = propertyModel.getProperty().getDefinition();
             removeLink.setVisible(definition.isMultiple() && !definition.isProtected());
@@ -135,7 +133,7 @@ class PropertyValueEditor extends DataView {
 
     /**
      * Creates property value editing component.
-     * 
+     *
      * @throws RepositoryException
      */
     protected Component createValueEditor(final JcrPropertyValueModel valueModel) throws RepositoryException {

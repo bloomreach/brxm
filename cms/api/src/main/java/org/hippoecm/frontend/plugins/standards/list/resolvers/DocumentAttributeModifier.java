@@ -1,12 +1,12 @@
 /*
  *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,9 +21,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.HippoStdNodeType;
@@ -67,8 +65,7 @@ public class DocumentAttributeModifier extends AbstractNodeAttributeModifier {
 
     private AttributeModifier createTitleModifierOrNull(final Node node) {
         final NodeTranslator nodeTranslator = new NodeTranslator(new JcrNodeModel(node));
-        final IModel<String> nodeName = Model.of(nodeTranslator.getNodeName());
-        return new AttributeAppender("title", nodeName, " ");
+        return TitleAttribute.append(nodeTranslator.getNodeName());
     }
 
     private AttributeModifier createClassModifierOrNull(final Node node) {

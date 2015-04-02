@@ -1,12 +1,12 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,14 +26,6 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import com.google.gdata.client.analytics.AnalyticsService;
-import com.google.gdata.client.analytics.DataQuery;
-import com.google.gdata.data.analytics.DataEntry;
-import com.google.gdata.data.analytics.DataFeed;
-import com.google.gdata.util.AuthenticationException;
-import com.google.gdata.util.ServiceException;
-
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel;
 import org.apache.wicket.markup.html.basic.Label;
@@ -44,17 +36,25 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.googleanalytics.GoogleAnalyticsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gdata.client.analytics.AnalyticsService;
+import com.google.gdata.client.analytics.DataQuery;
+import com.google.gdata.data.analytics.DataEntry;
+import com.google.gdata.data.analytics.DataFeed;
+import com.google.gdata.util.AuthenticationException;
+import com.google.gdata.util.ServiceException;
+
 
 public class DocumentHitsPlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(DocumentHitsPlugin.class);    
+    private static final Logger log = LoggerFactory.getLogger(DocumentHitsPlugin.class);
     private static final double RANGE = 62.0;
 
     private enum Period {
@@ -62,17 +62,17 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
         DAYS("ga:nthDay"),
         WEEKS("ga:nthWeek"),
         MONTHS("ga:nthMonth");
-        
+
         private final String dimension;
-        
+
         private Period(String dimension) {
             this.dimension = dimension;
         }
-        
+
         private String getDimension() {
             return dimension;
         }
-        
+
         private static Period fromString(String s) {
             if (s.equalsIgnoreCase("days")) {
                 return DAYS;
@@ -86,7 +86,7 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
             log.warn("Invalid configuration value for property period: '" + s + "'. Defaulting to period 'days'.");
             return DAYS;
         }
-        
+
         private static String getI18CaptionKey(Period period) {
             switch(period) {
             case DAYS: return "period.days.caption";
@@ -95,7 +95,7 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
             }
             return null;
         }
-        
+
         private static String getI18InfoKey(Period period) {
             switch(period){
             case DAYS: return "period.days.info";
@@ -104,9 +104,9 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
             }
             return null;
         }
-                
+
     }
-    
+
     // configuration
     private Long numberofintervals;
     private Period period;
@@ -118,13 +118,13 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
     private boolean loaded = false;
     private boolean success = true;
     private String errorMessage;
-    
+
     public DocumentHitsPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        
+
         this.numberofintervals = config.getAsLong("numberofintervals", 10);
         this.period = Period.fromString(config.getString("period", "weeks"));
-        
+
         // We lazy load the google analytics widget using ajax
         AjaxLazyLoadPanel panel = new AjaxLazyLoadPanel("ajax-lazy-load-panel") {
             private static final long serialVersionUID = 1L;
@@ -132,32 +132,32 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
             @Override
             public Component getLazyLoadComponent(String markupId) {
                 Fragment fragment = new Fragment(markupId, "lazy-load-document-hits-container", DocumentHitsPlugin.this);
-                
+
                 Image image = new Image("document-hits-image", getGraphUrl());
-                image.add(new AttributeModifier("title", getGraphInfo()));
+                image.add(TitleAttribute.set(getGraphInfo()));
                 fragment.add(image);
                 Label label = new Label("document-hits-label", getGraphLabel());
                 fragment.add(label);
                 return fragment;
             }
         };
-        
+
         add(panel);
 
     }
-    
+
     private String getGraphLabel() {
         if (!loaded) {
             loadGraphData();
         }
-        
+
         if (!success) {
             return errorMessage;
         }
 
         return getTranslation(Period.getI18CaptionKey(period), new Model<String[]>(new String[] { mostRecentPageViews.toString() }));
     }
-    
+
     private String getGraphInfo() {
         return getTranslation(Period.getI18InfoKey(period), new Model<String[]>(new String[]{numberofintervals.toString()}));
     }
@@ -167,16 +167,16 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
         if (!loaded) {
             loadGraphData();
         }
-        
+
         if (!success) {
             return "empty.gif";
         }
-        
+
         StringBuilder graphData = new StringBuilder();
         // the graph has a range of 62: A-Z, a-z, and 0-9 (26+26+10=62) where 'A' represents the y axis minimum
         // and '9' its maximum. We need space for the number of page views plus one to accommodate zero page views
         double value = (RANGE / (maxPageViews+1));
-        
+
         for (Long pageViews : pageViewsList) {
             // yPos is a number between 0 and 61 that locates the number of page views
             // on the scale
@@ -197,11 +197,11 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
             }
             graphData.append(nextChar);
         }
-        
-        
+
+
         return getScheme() + "://chart.googleapis.com/chart?cht=ls&amp;chs=75x18&amp;chco=0077cc&amp;chm=B%2Ce6f2fa%2C0%2C0.0%2C0.0&amp;chd=s%3A" + graphData.toString();
     }
-    
+
     private void loadGraphData() {
         loaded = true;
         success = false;
@@ -214,14 +214,14 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
             query.setFilters("ga:pagePath==" + getParentNodePath());
             query.setStartDate(getStartDate());
             query.setEndDate(getEndDate());
-            
+
             if (log.isDebugEnabled()) {
                 log.debug("Querying google analytics for feed with url: " + query.getUrl());
             }
-            
+
             // Execute the query
             DataFeed dataFeed = getAnalyticsService().getFeed(query.getUrl(), DataFeed.class);
-            
+
             // Gather the results
             pageViewsList = new LinkedList<Long>();
             for (DataEntry entry : dataFeed.getEntries()) {
@@ -272,7 +272,7 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
             }
         }
     }
-    
+
     private String getStartDate() {
         Calendar cal = Calendar.getInstance();
         if (period == Period.DAYS) {
@@ -304,7 +304,7 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(cal.getTime());
     }
-    
+
     private AnalyticsService getAnalyticsService() throws AuthenticationException {
         AnalyticsService analyticsService = new AnalyticsService("hippocms7_reporting_v1");
         // Client Login Authorization.
@@ -331,11 +331,11 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
         Node node = getModelObject();
         return node.getParent().getPath();
     }
-    
+
     private String getScheme() {
         return ((ServletWebRequest) getRequest()).getContainerRequest().getScheme();
     }
-    
+
     private String getTranslation(String key, Model<String[]> model) {
         return new StringResourceModel(key, this, model, "").getObject();
     }

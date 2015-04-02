@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.standards.list.resolvers;
 import javax.jcr.Node;
 
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.ObservablePropertyModel;
 
@@ -41,7 +40,7 @@ public class TypeIconAttributeModifier extends AbstractNodeAttributeModifier {
         final TypeStateAttributes attrs = new TypeStateAttributes(new JcrNodeModel(node));
         final AttributeModifier[] attributes = new AttributeModifier[2];
         attributes[0] = CssClass.appendAndObserve(new ObservablePropertyModel<>(attrs, "cssClass"));
-        attributes[1] = new AttributeAppender("title", new ObservablePropertyModel(attrs, "description"), " ");
+        attributes[1] = TitleAttribute.append(new ObservablePropertyModel<>(attrs, "description"));
         return attributes;
     }
 }

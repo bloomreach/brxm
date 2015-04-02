@@ -19,7 +19,6 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
 import org.apache.wicket.markup.ComponentTag;
@@ -35,6 +34,8 @@ import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.LabelTreeNode;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.skin.Icon;
@@ -112,16 +113,16 @@ public abstract class CmsJcrTree extends ContextMenuTree {
     protected void decorateNodeLink(MarkupContainer nodeLink, final TreeNode node, int level) {
         if (treeNodeTranslator.hasTitle(node, level)) {
             IModel<String> titleModel = new Model<>(treeNodeTranslator.getTitleName(node));
-            nodeLink.add(new AttributeAppender("title", titleModel));
+            nodeLink.add(TitleAttribute.append(titleModel));
         }
 
-        nodeLink.add(new AttributeAppender("class", new AbstractReadOnlyModel<String>() {
+        nodeLink.add(CssClass.append(new AbstractReadOnlyModel<String>() {
             @Override
             public String getObject() {
                 // Embed node state for testing
                 return getTreeState().isNodeExpanded(node) ? "hippo-tree-node-expanded" : "hippo-tree-node-collapsed";
             }
-        }, " "));
+        }));
     }
 
     protected MarkupContainer newJunctionImage(final MarkupContainer parent, final String id,

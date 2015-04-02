@@ -41,6 +41,10 @@ public class TitleAttribute {
         return AttributeModifier.replace(TITLE_ATTRIBUTE, title);
     }
 
+    public static AttributeModifier set(final IModel<String> titleModel) {
+        return AttributeModifier.replace(TITLE_ATTRIBUTE, titleModel);
+    }
+
     public static AttributeModifier clear() {
         return AttributeModifier.remove(TITLE_ATTRIBUTE);
     }
