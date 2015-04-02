@@ -17,14 +17,16 @@ package org.hippoecm.frontend.widgets.breadcrumb;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import javax.jcr.Node;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -45,60 +47,89 @@ public abstract class NodeBreadcrumbWidget extends BreadcrumbWidget<Node> {
         }
     }
 
+    @Override
+    protected IModel<String> getName(final IModel<Node> model) {
+        final String name = new NodeTranslator(model).getNodeName().getObject();
+        if (StringUtils.isEmpty(name)) {
+            String path = JcrUtils.getNodePathQuietly(model.getObject());
+            if ("/".equals(path)) {
+                return Model.of("/");
+            }
+            return null;
+        }
+        return Model.of(NodeNameCodec.decode(name));
+    }
+
     private NodeBreadcrumbModel getModel() {
         return (NodeBreadcrumbModel) getDefaultModel();
     }
 
-    private static class NodeBreadcrumbModel extends BreadcrumbModel<Node> {
+    private static class NodeBreadcrumbModel extends LoadableDetachableModel<List<IModel<Node>>> {
 
-        private final Set<String> rootPaths = new HashSet<>();
+        private final HashSet<String> rootPaths = new HashSet<>();
+        private IModel<Node> model;
 
         public NodeBreadcrumbModel(IModel<Node> model, final String... roots) {
+            this.model = model;
+
             if (roots == null || roots.length == 0) {
                 rootPaths.add("/");
             } else {
                 Collections.addAll(rootPaths, roots);
             }
-            update(model);
         }
 
-        public void update(IModel<Node> nodeModel) {
-            if (nodeModel == null) {
-                return;
+        @Override
+        protected void onDetach() {
+            if (model != null) {
+                model.detach();
+            }
+            super.onDetach();
+        }
+
+        @Override
+        protected List<IModel<Node>> load() {
+            if (model == null) {
+                return null;
             }
 
-            final Node node = nodeModel.getObject();
+            final Node node = model.getObject();
             if (node == null) {
-                return;
+                return null;
             }
 
             final String path = JcrUtils.getNodePathQuietly(node);
             if (path == null) {
-                return;
+                return null;
             }
 
-            if (valid(path)) {
-                List<Breadcrumb<Node>> list = getObject();
-                list.clear();
+            if (!valid(path)) {
+                return null;
+            }
 
-                list.add(0, new NodeBreadcrumb(nodeModel, false));
+            List<IModel<Node>> items = new LinkedList<>();
+            items.add(0, model);
 
-                if (!rootPaths.contains(path)) {
-                    JcrNodeModel parentModel = getParentJcrNodeModel(nodeModel);
-                    while (parentModel != null) {
-                        list.add(0, new NodeBreadcrumb(parentModel, true));
-                        if (rootPaths.contains(parentModel.getItemModel().getPath())) {
-                            parentModel = null;
-                        } else {
-                            parentModel = parentModel.getParentModel();
-                        }
+            if (!rootPaths.contains(path)) {
+                JcrNodeModel parentModel = getParentJcrNodeModel(model);
+                while (parentModel != null) {
+                    items.add(0, parentModel);
+                    if (rootPaths.contains(parentModel.getItemModel().getPath())) {
+                        parentModel = null;
+                    } else {
+                        parentModel = parentModel.getParentModel();
                     }
                 }
             }
+            return items;
+        }
+
+        void update(IModel<Node> model) {
+            this.model = model;
         }
 
         private JcrNodeModel getParentJcrNodeModel(final IModel<Node> nodeModel) {
-            JcrNodeModel jcrNodeModel  = nodeModel instanceof JcrNodeModel ? (JcrNodeModel) nodeModel :
+            JcrNodeModel jcrNodeModel = nodeModel instanceof JcrNodeModel ? (JcrNodeModel) nodeModel :
                     new JcrNodeModel(nodeModel.getObject());
             return jcrNodeModel.getParentModel();
         }
@@ -112,27 +143,6 @@ public abstract class NodeBreadcrumbWidget extends BreadcrumbWidget<Node> {
                 }
             }
             return valid;
-        }
-    }
-
-    private static class NodeBreadcrumb extends Breadcrumb<Node> {
-
-        public NodeBreadcrumb(final IModel<Node> model, final boolean enabled) {
-            super(model, enabled);
-        }
-
-        @Override
-        public String getName() {
-            final IModel<Node> nodeModel = getModel();
-            final String name = new NodeTranslator(nodeModel).getNodeName().getObject();
-            if (StringUtils.isEmpty(name)) {
-                String path = JcrUtils.getNodePathQuietly(nodeModel.getObject());
-                if ("/".equals(path)) {
-                    return "/";
-                }
-                return null;
-            }
-            return NodeNameCodec.decode(name);
         }
     }
 }

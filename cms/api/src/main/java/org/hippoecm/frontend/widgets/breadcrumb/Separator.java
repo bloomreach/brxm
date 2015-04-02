@@ -15,29 +15,16 @@
  */
 package org.hippoecm.frontend.widgets.breadcrumb;
 
-import java.util.LinkedList;
-import java.util.List;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.skin.Icon;
 
-import org.apache.wicket.model.IModel;
+public class Separator extends Breadcrumb {
 
-public class BreadcrumbModel<T> implements IModel<List<Breadcrumb<T>>> {
+    public Separator(final String id) {
+        super(id);
 
-    private List<Breadcrumb<T>> crumbs = new LinkedList<>();
-
-    @Override
-    public List<Breadcrumb<T>> getObject() {
-        return crumbs;
-    }
-
-    @Override
-    public void setObject(final List<Breadcrumb<T>> object) {
-        crumbs = object;
-    }
-
-    @Override
-    public void detach() {
-        if (crumbs != null) {
-            crumbs.forEach(Breadcrumb::detach);
-        }
+        setCssClass("breadcrumb-separator");
+        add(HippoIcon.fromSprite("icon", Icon.CHEVRON_RIGHT, IconSize.M));
     }
 }

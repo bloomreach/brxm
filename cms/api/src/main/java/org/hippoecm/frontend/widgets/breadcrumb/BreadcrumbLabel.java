@@ -15,22 +15,19 @@
  */
 package org.hippoecm.frontend.widgets.breadcrumb;
 
-import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 
-public abstract class Breadcrumb extends Panel {
+public class BreadcrumbLabel extends Breadcrumb {
 
-    private String cssClass;
-
-    public Breadcrumb(final String id) {
+    public BreadcrumbLabel(final String id, final IModel<String> name) {
         super(id);
-        setRenderBodyOnly(true);
-    }
 
-    protected String getCssClass() {
-        return cssClass;
-    }
+        setCssClass("breadcrumb-label");
 
-    protected void setCssClass(final String cssClass) {
-        this.cssClass = cssClass;
+        final Label label = new Label("label", name);
+        label.add(TitleAttribute.append(name));
+        add(label);
     }
 }

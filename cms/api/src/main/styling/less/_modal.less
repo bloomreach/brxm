@@ -156,9 +156,8 @@
   justify-content: space-between;
 
   .hippo-dialog-bottom-left {
-    overflow: hidden;
-    padding-right: 8px;
     height: 100%;
+    overflow: hidden;
   }
 
   .hippo-dialog-bottom-right {
@@ -170,10 +169,13 @@
     bottom: 0;
     right: 0;
 
-    display: inline;
-    padding-right: 16px;
-    padding-top: 12px;
+    display: inline-block;
+    align-self: center;
     position: relative;
+
+    input:last-child {
+      margin-right: 16px;
+    }
   }
 }
 
@@ -364,4 +366,3 @@ table.hippo-window-form {
   padding: 5px;
   font-size: 1.1em;
 }
-
