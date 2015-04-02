@@ -34,7 +34,7 @@ public class Dialog<T> extends AbstractDialog<T> {
 
     public static final String BOTTOM_LEFT_ID = "bottom-left";
 
-    private IValueMap size = DialogConstants.LARGE;
+    private IValueMap size = DialogConstants.LARGE_AUTO;
     private IValueMap properties;
 
     private String cssClass;
