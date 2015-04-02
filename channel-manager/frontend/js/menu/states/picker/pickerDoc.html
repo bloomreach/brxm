@@ -27,7 +27,7 @@
           ng-repeat="item in PickerDocCtrl.selectedItem.items"
           ng-if="item.selectable"
           ng-class="{active: PickerCtrl.selectedDocument == item}"
-          scroll-if="PickerCtrl.selectedDocument == item"
+          scroll-to-if="PickerCtrl.selectedDocument == item"
           ng-click="PickerDocCtrl.selectDocument(item)">
         <td class="status">
           <div class="hi-stack">
