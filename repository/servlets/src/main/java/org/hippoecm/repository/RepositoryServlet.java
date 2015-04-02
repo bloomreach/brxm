@@ -324,7 +324,8 @@ public class RepositoryServlet extends HttpServlet {
 
         if(req.getParameter("logout") != null){
             FormAuth.logout(req);
-            res.sendRedirect(req.getContextPath() + req.getServletPath() + "/");
+            // redirect to current URL without ?logout
+            res.sendRedirect("./");
             return;
         }
 
