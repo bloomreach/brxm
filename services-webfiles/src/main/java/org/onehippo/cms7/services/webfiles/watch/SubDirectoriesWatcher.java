@@ -161,7 +161,11 @@ class SubDirectoriesWatcher implements FileSystemListener {
         try {
             listener.onPathsChanged(rootDirectory, changedPaths);
         } catch (RuntimeException e) {
-            log.warn("Exception by listener '{}' while processing paths {}", listener, changedPaths, e);
+            if (log.isDebugEnabled()) {
+                log.warn("Exception by listener '{}' while processing paths {}", listener, changedPaths, e);
+            } else {
+                log.warn("Exception by listener '{}' while processing paths {} : {}", listener, changedPaths, e.toString());
+            }
         }
     }
 

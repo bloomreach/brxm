@@ -107,8 +107,8 @@ public class WebFilesFileArchive extends AbstractWebFilesArchive {
             return FileUtils.openInputStream(directory);
         } else {
             File file = ((FileEntry) entry).file;
-            if (file == null || !includedFiles.accept(file) || !file.isFile() || !file.canRead()) {
-                return null;
+            if (file == null || !includedFiles.accept(file) || !file.isFile() || !file.canRead() || !file.exists()) {
+                throw new IOException(String.format("Can't read file '%s'", file.getPath()));
             }
             return FileUtils.openInputStream(file);
         }

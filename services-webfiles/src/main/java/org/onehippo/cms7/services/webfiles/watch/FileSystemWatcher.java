@@ -27,7 +27,9 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -52,7 +54,7 @@ class FileSystemWatcher implements FileSystemObserver, Runnable {
 
     private static int instanceCounter = 0;
 
-    static final int POLLING_TIME_MILLIS = 50;
+    static final int POLLING_TIME_MILLIS = 100;
 
     private final GlobFileNameMatcher watchedFiles;
     private final Map<Path, ChangesProcessor> changesProcessors;
@@ -133,8 +135,8 @@ class FileSystemWatcher implements FileSystemObserver, Runnable {
     private void processChanges() throws ClosedWatchServiceException {
         try {
             log.info("Waiting for changes...");
-            final long pollStopTime = watchChange();
-            pollForChangesUntil(pollStopTime);
+            watchChange();
+            pollForMoreChanges();
             stopProcessingChanges();
         } catch (ClosedWatchServiceException e) {
             throw e;
@@ -143,25 +145,33 @@ class FileSystemWatcher implements FileSystemObserver, Runnable {
         }
     }
 
-    private long watchChange() throws ClosedWatchServiceException, InterruptedException {
+    private void watchChange() throws ClosedWatchServiceException, InterruptedException {
         final WatchKey key = watcher.take();
-        final long pollStopTime = currentTimeMillis() + POLLING_TIME_MILLIS;
+        log.debug("Change found for '{}'", key.watchable());
         processWatchKey(key);
-        return pollStopTime;
     }
 
     /**
      * Keep polling for a short time: when (multiple) directories get deleted the watch keys might
      * arrive just a bit later
      */
-    private void pollForChangesUntil(final long pollStopTime) throws ClosedWatchServiceException, InterruptedException {
-        long timeout;
-        while ((timeout = pollStopTime - currentTimeMillis()) > 0) {
-            log.debug("Waiting {} ms for more changes...", timeout);
-            WatchKey key = watcher.poll(timeout, TimeUnit.MILLISECONDS);
-            if (key != null) {
-                processWatchKey(key);
+    private void pollForMoreChanges() throws ClosedWatchServiceException, InterruptedException {
+        boolean keepPolling = true;
+        List<WatchKey> polledKeys = new ArrayList<>();
+        final long startPolling = System.currentTimeMillis();
+        while (keepPolling) {
+            log.debug("Waiting {} ms for more changes...", POLLING_TIME_MILLIS);
+            WatchKey key = watcher.poll(POLLING_TIME_MILLIS, TimeUnit.MILLISECONDS);
+            if (key == null) {
+                keepPolling = false;
+            } else {
+                log.debug("Found change for '{}' found during extra polling time", key.watchable());
+                polledKeys.add(key);
             }
+        }
+        log.debug("Polled '{}' more changes during '{}' ms", polledKeys.size(), String.valueOf(System.currentTimeMillis() - startPolling));
+        for (WatchKey polledKey : polledKeys) {
+            processWatchKey(polledKey);
         }
     }
 

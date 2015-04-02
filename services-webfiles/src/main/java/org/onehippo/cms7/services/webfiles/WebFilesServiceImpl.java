@@ -25,6 +25,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.vault.fs.config.ConfigurationException;
@@ -64,7 +65,7 @@ public class WebFilesServiceImpl implements WebFilesService {
             final Node bundleRoot = getBundleRoot(session, bundleName);
             return new WebFileBundleImpl(session, bundleRoot);
         } catch (RepositoryException e) {
-            throw new WebFileException(warn("Cannot instantiate web file bundle for '%s'", bundleName));
+            throw new WebFileException(warn("Cannot instantiate web file bundle for '%s' : '%s'", bundleName, e.toString()));
         }
     }
 
@@ -102,7 +103,7 @@ public class WebFilesServiceImpl implements WebFilesService {
     }
 
 
-    private void importJcrWebFileBundle(final Session session, final AbstractWebFilesArchive archive) {
+    private void importJcrWebFileBundle(final Session session, final AbstractWebFilesArchive archive) throws IOException, WebFileException{
         WebFileBundleArchive bundleArchive = new WebFileBundleArchive(archive);
         String bundleName = null;
         try {
@@ -111,15 +112,18 @@ public class WebFilesServiceImpl implements WebFilesService {
             final Node webFilesRoot = getWebFilessRoot(session);
             final String bundleRootPath = webFilesRoot.getPath() + '/' + bundleName;
             replaceWebFiles(session, bundleArchive, bundleRootPath, bundleRootPath);
-        } catch (IOException|RepositoryException|ConfigurationException e) {
-            throw new WebFileException(warn("Cannot import web file bundle '%s'", bundleName), e);
+        } catch (RepositoryException|ConfigurationException e) {
+            throw new WebFileException(warn("Cannot import web file bundle '%s' : '%s' ", bundleName, e.toString()), e);
         } finally {
             bundleArchive.close();
         }
     }
 
     @Override
-    public void importJcrWebFiles(final Session session, final String bundleName, final String bundleSubPath, final File fileOrDirectory) throws WebFileException {
+    public void importJcrWebFiles(final Session session,
+                                  final String bundleName,
+                                  final String bundleSubPath,
+                                  final File fileOrDirectory) throws IOException, WebServiceException {
         final WebFilesFileArchive archive = new WebFilesFileArchive(fileOrDirectory, importedFiles);
         try {
             archive.open(true);
@@ -130,8 +134,10 @@ public class WebFilesServiceImpl implements WebFilesService {
                 archiveRootPath += '/' + bundleSubPath;
             }
             replaceWebFiles(session, archive, bundleRootPath, archiveRootPath);
-        } catch (IOException|RepositoryException|ConfigurationException e) {
-            throw new WebFileException(warn("Cannot import web files from '%s'", fileOrDirectory), e);
+        } catch (IOException e) {
+            throw e;
+        } catch (RepositoryException | ConfigurationException e) {
+            throw new WebFileException(warn("Cannot import web files from '%s' : '%s'", fileOrDirectory, e.toString()), e);
         } finally {
             archive.close();
         }
@@ -142,7 +148,6 @@ public class WebFilesServiceImpl implements WebFilesService {
                                  final String bundleRootPath,
                                  final String archiveRootPath) throws RepositoryException, IOException, ConfigurationException {
         long startTime = System.currentTimeMillis();
-
         final Node archiveRootNode = JcrUtils.getNodeIfExists(archiveRootPath, session);
         if (archiveRootNode != null) {
             log.debug("Removing existing children of '{}'", archiveRootPath);

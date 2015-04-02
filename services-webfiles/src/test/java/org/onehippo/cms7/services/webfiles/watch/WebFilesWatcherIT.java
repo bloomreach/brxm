@@ -157,7 +157,7 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
     }
 
     @Test
-    public void onPathsChanged_invoked_directly() {
+    public void onPathsChanged_invoked_directly() throws IOException {
         webFilesService.importJcrWebFiles(anyObject(Session.class), eq("testbundle"), eq("css/style.css"), eq(styleCss));
         expectLastCall();
 
@@ -180,7 +180,7 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
     }
 
     @Test
-    public void onPathsChanged_invoked_directly_without_eventBus() {
+    public void onPathsChanged_invoked_directly_without_eventBus() throws IOException {
         webFilesService.importJcrWebFiles(anyObject(Session.class), eq("testbundle"), eq("css/style.css"), eq(styleCss));
         expectLastCall();
 
@@ -199,7 +199,7 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
     }
 
     @Test
-    public void onPathsChanged_invoked_directly_without_autoReload_service() {
+    public void onPathsChanged_invoked_directly_without_autoReload_service() throws IOException {
         webFilesService.importJcrWebFiles(anyObject(Session.class), eq("testbundle"), eq("css/style.css"), eq(styleCss));
         expectLastCall();
 

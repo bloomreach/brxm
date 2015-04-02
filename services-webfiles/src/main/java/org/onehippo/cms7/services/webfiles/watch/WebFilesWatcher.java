@@ -159,6 +159,7 @@ public class WebFilesWatcher implements SubDirectoriesWatcher.PathChangesListene
     @Override
     public void onPathsChanged(final Path watchedRootDir, final Set<Path> changedPaths) {
         final long startTime = System.currentTimeMillis();
+        Set<Path> processedPaths = new HashSet<>(changedPaths.size());
         try {
             for (Path changedPath : changedPaths) {
                 final Path relChangedDir = watchedRootDir.relativize(changedPath);
@@ -166,13 +167,38 @@ public class WebFilesWatcher implements SubDirectoriesWatcher.PathChangesListene
                 final String bundleSubDir = getBundleSubDir(relChangedDir);
 
                 log.info("Replacing web files in bundle '{}': /{}", bundleName, bundleSubDir);
-                service.importJcrWebFiles(session, bundleName, bundleSubDir, changedPath.toFile());
+                try {
+                    service.importJcrWebFiles(session, bundleName, bundleSubDir, changedPath.toFile());
+                    processedPaths.add(changedPath);
+                } catch (IOException e) {
+                    // we do not have to take action. An IOException is the result of a concurrent change (delete/move)
+                    // during creation or processing of the archive. The change will trigger a new import
+                    log.debug("IOException during importing '{}'. This is typically the result of a file that is deleted" +
+                            "during the import of a directory. This delete will trigger an event shortly after this" +
+                            " exception.", changedPath, e);
+                } catch (NullPointerException e) {
+                    // sigh....because org.apache.jackrabbit.vault.util.FileInputSource.getByteStream() returns null
+                    // on a IOException (for example when a file is deleted during processing) I get an NPE I cannot avoid,
+                    // however, it is just similar to the IOException above, typically the result of an event that will
+                    // be processed shortly after this exception. Hence, ignore
+                    log.debug("NullPointerException we cannot avoid because org.apache.jackrabbit.vault.util.FileInputSource.getByteStream() " +
+                            "returns null on IOException. We can ignore this event since it is the result of an event that will " +
+                            " be processed shortly after this exception. Hence, ignore change path '{}'", changedPath, e);
+
+                }
             }
-            session.save();
-            publishEvents(watchedRootDir, changedPaths);
+            if (!processedPaths.isEmpty()) {
+                session.save();
+                publishEvents(watchedRootDir, processedPaths);
+            }
         } catch (WebFileException | RepositoryException e) {
-            log.info("Failed to reload web files from '{}', resetting session and trying to reimport whole bundle(s)", changedPaths);
-            log.debug("Cause:", e);
+            if (log.isDebugEnabled()) {
+                log.info("Failed to reload web files from '{}', resetting session and trying to reimport whole bundle(s)",
+                        changedPaths, e);
+            } else {
+                log.info("Failed to reload web files from '{}' : '{}', resetting session and trying to reimport whole bundle(s)",
+                        changedPaths, e.toString());
+            }
             resetSilently(session);
             tryReimportBundles(watchedRootDir, changedPaths);
         }
