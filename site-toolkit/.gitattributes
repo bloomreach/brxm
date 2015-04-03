@@ -392,6 +392,7 @@ client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/s
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/CommonFolderContentHippoDocumentResourceTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/ExpandedNodeHierarchyTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/ExpandedParentTreeRepresentationTest.java -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/ExpandedParentTreeSubMountRepresentationTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/RootContentHippoDocumentResourceTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/SiteMapItemTreePickerRepresentationTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/treepickerrepresentation/SiteMapTreePickerRepresentationTest.java -text

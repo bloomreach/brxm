@@ -24,14 +24,11 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.hosting.VirtualHost;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -63,60 +60,57 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
 
     /**
      * Returns the expanded parent tree representation for this {@link DocumentTreePickerRepresentation}
-     * instance. An exceptional use case is that the <code>siteMapPathInfo</code> points to a sitemap item that does not
-     * have a relative content path at all. In that case, instead of the current {@link DocumentTreePickerRepresentation}
+     * instance. An exceptional use case is that the <code>siteMapPathInfo</code> points to a sitemap item that does
+     * not
+     * have a relative content path at all. In that case, instead of the current {@link
+     * DocumentTreePickerRepresentation}
      * instance is returned, a <strong>new</strong> instance {@link SiteMapTreePickerRepresentation} is returned!
      */
     public static AbstractTreePickerRepresentation representExpandedParentTree(final PageComposerContextService pageComposerContextService,
-                                                                        final String siteMapPathInfo) throws RepositoryException {
+                                                                               final ResolvedMount resolvedMount,
+                                                                               final String siteMapPathInfo) throws RepositoryException {
 
-        HttpSession session = pageComposerContextService.getRequestContext().getServletRequest().getSession(false);
+
         try {
-            if (session != null) {
-                String renderingHost = (String) session.getAttribute(ContainerConstants.RENDERING_HOST);
-                final VirtualHost virtualHost = pageComposerContextService.getRequestContext().getResolvedMount().getMount().getVirtualHost();
-                final ResolvedMount resolvedMount = virtualHost.getVirtualHosts().matchMount(renderingHost, null, siteMapPathInfo);
-
-
-                final Session jcrSession = pageComposerContextService.getRequestContext().getSession();
-                if (!jcrSession.getNode(resolvedMount.getMount().getContentPath()).getIdentifier()
-                        .equals(pageComposerContextService.getRequestConfigIdentifier())) {
-                    final String msg = String.format("Representing an expanded parent tree through './%s' is only supported with request " +
-                            "identifier equal to the channel root content identifier", siteMapPathInfo);
-                    throw new ClientException(msg, ClientError.INVALID_UUID);
-                }
-
-                final ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem(siteMapPathInfo);
-
-                if (resolvedSiteMapItem.getPathInfo().equals(resolvedMount.getMount().getPageNotFound())) {
-                    // siteMapPathInfo item is resolved to the page not found item. this is an invalid item in the sitemap
-                    // item tree
-                    final String msg = String.format("For 'siteMapPathInfo %s' the resolved sitemap item '%s' is the page not " +
-                                    "found sitemap item for which no tree picker representation can be created.",
-                            siteMapPathInfo, resolvedSiteMapItem.getHstSiteMapItem());
-                    throw new IllegalStateException(msg);
-                }
-
-                if (StringUtils.isEmpty(resolvedSiteMapItem.getRelativeContentPath())) {
-                    // if explicit sitemap item, return sitemap item representation
-                    // if sitemap item contains wildcards, the siteMapPathInfo is invalid as it cannot be represented in the
-                    // document OR sitemap tree
-
-                    if (resolvedSiteMapItem.getHstSiteMapItem().isExplicitPath()) {
-                        return SiteMapTreePickerRepresentation.representExpandedParentTree(pageComposerContextService, resolvedSiteMapItem.getHstSiteMapItem());
-                    }
-                    final String msg = String.format("For 'siteMapPathInfo %s' the resolved sitemap item '%s' does not have a relative content path and " +
-                            "is not an explicit sitemap item hence no tree picker representation can be created for it be " +
-                            "created for it.", siteMapPathInfo, resolvedSiteMapItem.getHstSiteMapItem());
-                    throw new IllegalStateException(msg);
-                }
-
-                final String contentRootPath = pageComposerContextService.getEditingMount().getContentPath();
-                final String selectedPath = contentRootPath + "/" + resolvedSiteMapItem.getRelativeContentPath();
-                final ExpandedNodeHierarchy expandedNodeHierarchy = createExpandedNodeHierarchy(jcrSession,
-                        contentRootPath, Collections.singletonList(selectedPath));
-                return new DocumentTreePickerRepresentation().represent(pageComposerContextService, expandedNodeHierarchy, true, selectedPath);
+            final Session jcrSession = pageComposerContextService.getRequestContext().getSession();
+            if (!jcrSession.getNode(resolvedMount.getMount().getContentPath()).getIdentifier()
+                    .equals(pageComposerContextService.getRequestConfigIdentifier())) {
+                final String msg = String.format("Representing an expanded parent tree through './%s' is only supported with request " +
+                        "identifier equal to the channel root content identifier", siteMapPathInfo);
+                throw new ClientException(msg, ClientError.INVALID_UUID);
             }
+
+            final ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem(siteMapPathInfo);
+
+            if (resolvedSiteMapItem.getPathInfo().equals(resolvedMount.getMount().getPageNotFound())) {
+                // siteMapPathInfo item is resolved to the page not found item. this is an invalid item in the sitemap
+                // item tree
+                final String msg = String.format("For 'siteMapPathInfo %s' the resolved sitemap item '%s' is the page not " +
+                                "found sitemap item for which no tree picker representation can be created.",
+                        siteMapPathInfo, resolvedSiteMapItem.getHstSiteMapItem());
+                throw new IllegalStateException(msg);
+            }
+
+            if (StringUtils.isEmpty(resolvedSiteMapItem.getRelativeContentPath())) {
+                // if explicit sitemap item, return sitemap item representation
+                // if sitemap item contains wildcards, the siteMapPathInfo is invalid as it cannot be represented in the
+                // document OR sitemap tree
+
+                if (resolvedSiteMapItem.getHstSiteMapItem().isExplicitPath()) {
+                    return SiteMapTreePickerRepresentation.representExpandedParentTree(pageComposerContextService, resolvedSiteMapItem.getHstSiteMapItem());
+                }
+                final String msg = String.format("For 'siteMapPathInfo %s' the resolved sitemap item '%s' does not have a relative content path and " +
+                        "is not an explicit sitemap item hence no tree picker representation can be created for it be " +
+                        "created for it.", siteMapPathInfo, resolvedSiteMapItem.getHstSiteMapItem());
+                throw new IllegalStateException(msg);
+            }
+
+            final String contentRootPath = pageComposerContextService.getEditingMount().getContentPath();
+            final String selectedPath = contentRootPath + "/" + resolvedSiteMapItem.getRelativeContentPath();
+            final ExpandedNodeHierarchy expandedNodeHierarchy = createExpandedNodeHierarchy(jcrSession,
+                    contentRootPath, Collections.singletonList(selectedPath));
+            return new DocumentTreePickerRepresentation().represent(pageComposerContextService, expandedNodeHierarchy, true, selectedPath);
+
         } catch (ClientException e) {
             throw e;
         } catch (PathNotFoundException | MatchException | IllegalStateException e) {
@@ -155,7 +149,7 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
         setPickerType(PickerType.DOCUMENTS.getName());
         setId(node.getIdentifier());
         setNodeName(node.getName());
-        setDisplayName(((HippoNode) node).getLocalizedName());
+        setDisplayName(((HippoNode)node).getLocalizedName());
         setNodePath(node.getPath());
 
         if (getNodePath().equals(selectedPath)) {

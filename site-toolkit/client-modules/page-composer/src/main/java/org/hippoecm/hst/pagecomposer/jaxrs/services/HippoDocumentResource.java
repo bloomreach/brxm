@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.concurrent.Callable;
 
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -26,6 +27,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -62,12 +67,18 @@ public class HippoDocumentResource extends AbstractConfigResource {
         return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
+
                 final AbstractTreePickerRepresentation representation;
                 if (StringUtils.isEmpty(siteMapPathInfo)) {
                     representation = representRequestContentNode(getPageComposerContextService());
-
                 } else {
-                    representation = representExpandedParentTree(getPageComposerContextService(), siteMapPathInfo);
+                    // find first the mount for current request
+                    HttpSession session = getPageComposerContextService().getRequestContext().getServletRequest().getSession();
+                    String renderingHost = (String)session.getAttribute(ContainerConstants.RENDERING_HOST);
+                    final VirtualHost virtualHost = getPageComposerContextService().getRequestContext().getResolvedMount().getMount().getVirtualHost();
+                    final Mount editingMount = getPageComposerContextService().getEditingMount();
+                    final ResolvedMount resolvedMount = virtualHost.getVirtualHosts().matchMount(renderingHost, null, editingMount.getMountPath());
+                    representation = representExpandedParentTree(getPageComposerContextService(),resolvedMount,  siteMapPathInfo);
                 }
                 return ok("Folder loaded successfully", representation);
             }

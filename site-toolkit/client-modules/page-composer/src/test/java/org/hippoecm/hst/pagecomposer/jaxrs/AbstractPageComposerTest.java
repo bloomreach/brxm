@@ -24,6 +24,7 @@ import javax.jcr.observation.Event;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -231,7 +232,11 @@ public class AbstractPageComposerTest {
         requestContext.setAttribute(ContainerConstants.UNDECORATED_MOUNT, resolvedMount.getMount());
         final Mount decorated = mountDecorator.decorateMountAsPreview(resolvedMount.getMount());
         ((MutableResolvedMount) resolvedMount).setMount(decorated);
-        return resolvedMount.matchSiteMapItem(url.getPathInfo());
+        String pathInfo = url.getPathInfo();
+        if (StringUtils.isNotEmpty(resolvedMount.getResolvedMountPath())) {
+            pathInfo = pathInfo.substring(resolvedMount.getResolvedMountPath().length());
+        }
+        return resolvedMount.matchSiteMapItem(pathInfo);
     }
 
     protected void createHstConfigBackup(Session session) throws RepositoryException {
