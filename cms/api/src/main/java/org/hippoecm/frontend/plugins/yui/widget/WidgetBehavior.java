@@ -62,20 +62,6 @@ public class WidgetBehavior extends AbstractYuiBehavior {
         context.addTemplate(template);
     }
 
-/*
-    @Override
-    protected void onRenderHead(final IHeaderResponse response) {
-        super.onRenderHead(response);
-        response.render(new OnDomReadyHeaderItem("YAHOO.hippo.WidgetManager.render();") {
-
-            @Override
-            public Iterable<?> getRenderTokens() {
-                return Collections.singletonList(getComponent() + "-widget-" + getComponent().getBehaviorId(WidgetBehavior.this));
-            }
-        });
-    }
-
-*/
     public String getMarkupId() {
         return component.getMarkupId();
     }
