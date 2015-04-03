@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,13 @@
  * @module functionqueue
  */
 ( function() {
-    var Lang = YAHOO.lang;
+    var Lang = YAHOO.lang,
+        Dom = YAHOO.util.Dom;
 
     YAHOO.namespace('hippo');
 
     YAHOO.hippo.FunctionQueue = function(_id) {
-        this.id = _id;
+        this.id = _id || Dom.generateId();
         this.queue = [];
         this.uniques = [];
         this.preQueueHandler = null;
@@ -43,6 +44,7 @@
         handleQueue : function() {
             YAHOO.log('Handle function  queue[' + this.id + '] with size: '
                     + this.queue.length, 'info', 'FunctionQueue');
+
             if (Lang.isFunction(this.preQueueHandler)) {
                 this.preQueueHandler.apply();
             }
@@ -73,6 +75,10 @@
                 }
                 this.queue.push(func);
             }
+        },
+
+        isEmpty : function() {
+            return this.queue.length === 0;
         },
 
         toString : function() {
