@@ -49,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.helpers.NOPLogger;
 
 import static org.easymock.EasyMock.and;
+import static org.easymock.EasyMock.anyBoolean;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.eq;
@@ -310,7 +311,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         final PostStartupTask importWebFiles = tasks.get(0);
 
         Capture<ZipFile> capturedZip = new Capture();
-        webFilesService.importJcrWebFileBundle(anyObject(Session.class), and(capture(capturedZip), isA(ZipFile.class)));
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), and(capture(capturedZip), isA(ZipFile.class)), anyBoolean());
         expectLastCall();
 
         replay(webFilesService);
@@ -337,7 +338,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         final PostStartupTask reimportWebFiles = reloadTasks.get(0);
 
         EasyMock.reset(webFilesService);
-        webFilesService.importJcrWebFileBundle(anyObject(Session.class), anyObject(ZipFile.class));
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), anyObject(ZipFile.class), anyBoolean());
         expectLastCall();
 
         replay(webFilesService);
@@ -360,7 +361,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         final PostStartupTask importWebFiles = tasks.get(0);
 
         final File testBundleDir = new File(FileUtils.toFile(testBundleUrl).getParent(), "webfilebundle");
-        webFilesService.importJcrWebFileBundle(anyObject(Session.class), eq(testBundleDir));
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), eq(testBundleDir), anyBoolean());
         expectLastCall();
 
         replay(webFilesService);
@@ -377,7 +378,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         final PostStartupTask reimportWebFiles = reloadTasks.get(0);
 
         EasyMock.reset(webFilesService);
-        webFilesService.importJcrWebFileBundle(anyObject(Session.class), eq(testBundleDir));
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), eq(testBundleDir), anyBoolean());
         expectLastCall();
 
         replay(webFilesService);
@@ -400,7 +401,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         final PostStartupTask importWebFiles = tasks.get(0);
 
         final File testBundleDir = new File(FileUtils.toFile(testBundleUrl).getParent(), "noSuchDirectory");
-        webFilesService.importJcrWebFileBundle(anyObject(Session.class), eq(testBundleDir));
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), eq(testBundleDir), anyBoolean());
         expectLastCall().andThrow(new WebFileException("simulate a web file exception during import"));
 
         replay(webFilesService);

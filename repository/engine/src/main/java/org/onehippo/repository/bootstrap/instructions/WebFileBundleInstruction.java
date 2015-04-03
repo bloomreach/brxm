@@ -115,7 +115,7 @@ public class WebFileBundleInstruction extends InitializeInstruction {
                 return;
             }
             try {
-                service.importJcrWebFileBundle(session, bundleZipFile);
+                service.importJcrWebFileBundle(session, bundleZipFile, true);
                 session.save();
             } catch (IOException | RepositoryException | WebFileException e) {
                 log.error("Failed to import web file bundle '{}' from '{}'", bundleZipFile.getSubPath(),
@@ -143,7 +143,7 @@ public class WebFileBundleInstruction extends InitializeInstruction {
                 return;
             }
             try {
-                service.importJcrWebFileBundle(session, bundleDir);
+                service.importJcrWebFileBundle(session, bundleDir, true);
                 session.save();
             } catch (IOException | RepositoryException | WebFileException e) {
                 log.error("Failed to import web file bundle from '{}'", bundleDir, e);
