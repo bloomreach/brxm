@@ -1125,9 +1125,7 @@ api/src/main/styling/less/_mixins.less -text
 api/src/main/styling/less/_modal.less -text
 api/src/main/styling/less/_modal_datepicker.less -text
 api/src/main/styling/less/_modal_doclist.less -text
-api/src/main/styling/less/_modal_section_search.less -text
 api/src/main/styling/less/_modal_section_viewer.less -text
-api/src/main/styling/less/_modal_tree.less -text
 api/src/main/styling/less/_navigator.less -text
 api/src/main/styling/less/_perspectives_switcher.less -text
 api/src/main/styling/less/_revision_history.less -text
