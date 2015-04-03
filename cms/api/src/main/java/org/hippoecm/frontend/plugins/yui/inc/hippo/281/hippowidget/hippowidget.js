@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,7 @@
  * Hippowidgets register with their ancestor layout units for rendering, resizing en destroying
  * </p>
  * @namespace YAHOO.hippo
- * @requires yahoo, dom, functionqueue, layoutmanager, hippoajax
+ * @requires yahoo, dom, layoutmanager, hippoajax
  * @module hippowidget
  * @beta
  */
@@ -30,34 +30,31 @@ YAHOO.namespace('hippo');
 
         var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
 
+        function exists(_o) {
+            return !Lang.isUndefined(_o) && _o !== null;
+        }
+
         YAHOO.hippo.WidgetManagerImpl = function() {
             this.NAME = 'HippoWidget';
-            this.queue = new YAHOO.hippo.FunctionQueue();
         };
 
         YAHOO.hippo.WidgetManagerImpl.prototype = {
 
             register : function(id, config, Instance) {
-                var name = this.NAME;
-                this.queue.registerFunction(function() {
-                    var widget = Dom.get(id);
-                    if (widget === null || widget === undefined) {
-                        return;
-                    }
-                    if (Lang.isUndefined(widget[name])) {
-                        try {
-                            widget[name] = new Instance(id, config);
-                        } catch(e) {
-                            YAHOO.log('Could not instantiate widget of type ' + Instance, 'error');
-                            return;
-                        }
-                    }
-                    widget[name].render();
-                });
-            },
+                var name = this.NAME,
+                    widget = Dom.get(id);
 
-            render : function() {
-                this.queue.handleQueue();
+                if (widget === null || widget === undefined) {
+                    return;
+                }
+
+                if (Lang.isUndefined(widget[name])) {
+                    try {
+                        widget[name] = new Instance(id, config);
+                    } catch(e) {
+                        YAHOO.log('Could not instantiate widget of type ' + Instance, 'error');
+                    }
+                }
             },
 
             update : function(id) {
@@ -84,6 +81,9 @@ YAHOO.namespace('hippo');
             }
 
             var self = this;
+            YAHOO.hippo.LayoutManager.registerRenderListener(this.el, this, function(sizes, unit) {
+                self.render(sizes, unit);
+            }, true);
             YAHOO.hippo.LayoutManager.registerResizeListener(this.el, this, function(sizes) {
                 self.resize(sizes);
             }, false);
@@ -112,11 +112,12 @@ YAHOO.namespace('hippo');
                 Dom.setStyle(this.el, 'height', h + 'px');
             },
 
-            render : function() {
+            render : function(sizes, unit) {
                 var parent, reg;
-                this.unit = YAHOO.hippo.LayoutManager.findLayoutUnit(this.el);
-                if (this.unit !== null && this.unit !== undefined) {
-                    this.resize(this.unit.getSizes());
+
+                this.unit = exists(unit) ? unit : YAHOO.hippo.LayoutManager.findLayoutUnit(this.el);
+                if (this.unit !== null) {
+                    this.resize(exists(sizes) ? sizes: this.unit.getSizes());
                 } else {
                     //We're not inside a layout unit to provide us with dimension details, thus the
                     //resize event will never be called. For providing an initial size, the first ancestor
@@ -124,7 +125,8 @@ YAHOO.namespace('hippo');
                     parent = Dom.getAncestorBy(this.el, function(node) {
                         return Lang.isValue(node.className) && Lang.trim(node.className).length > 0;
                     });
-                    if (parent !== null && parent !== undefined) {
+
+                    if (exists(parent)) {
                         reg = Dom.getRegion(parent);
                         this.resize({wrap: {w: reg.width, h: reg.height}});
                     }
@@ -136,6 +138,7 @@ YAHOO.namespace('hippo');
             },
 
             destroy : function() {
+                YAHOO.hippo.LayoutManager.unregisterRenderListener(this.el, this);
                 YAHOO.hippo.LayoutManager.unregisterResizeListener(this.el, this);
             },
 
