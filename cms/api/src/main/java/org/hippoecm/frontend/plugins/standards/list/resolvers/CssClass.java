@@ -45,6 +45,10 @@ public class CssClass {
         return AttributeModifier.replace(CLASS_ATTRIBUTE, cssClass);
     }
 
+    public static AttributeModifier set(final IModel<String> cssClass) {
+        return AttributeModifier.replace(CLASS_ATTRIBUTE, cssClass);
+    }
+
     public static AttributeModifier clear() {
         return AttributeModifier.remove(CLASS_ATTRIBUTE);
     }
