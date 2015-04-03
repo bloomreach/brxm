@@ -26,14 +26,14 @@
 
 YAHOO.namespace('hippo');
 
-function exists(_o, lang) {
-  return !lang.isUndefined(_o) && _o !== null;
-}
-
 (function() {
     if (!YAHOO.hippo.Widget) {
 
-        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
+        var Dom = YAHOO.util.Dom,
+            Lang = YAHOO.lang,
+            exists = function(_o) {
+                return !Lang.isUndefined(_o) && _o !== null;
+            };
 
         YAHOO.hippo.WidgetManagerImpl = function() {
             this.NAME = 'HippoWidget';
@@ -116,9 +116,9 @@ function exists(_o, lang) {
             render : function(sizes, unit) {
                 var parent, reg;
 
-                this.unit = exists(unit, Lang) ? unit : YAHOO.hippo.LayoutManager.findLayoutUnit(this.el);
+                this.unit = exists(unit) ? unit : YAHOO.hippo.LayoutManager.findLayoutUnit(this.el);
                 if (this.unit !== null) {
-                    this.resize(exists(sizes, Lang) ? sizes: this.unit.getSizes());
+                    this.resize(exists(sizes) ? sizes: this.unit.getSizes());
                 } else {
                     //We're not inside a layout unit to provide us with dimension details, thus the
                     //resize event will never be called. For providing an initial size, the first ancestor
@@ -127,7 +127,7 @@ function exists(_o, lang) {
                         return Lang.isValue(node.className) && Lang.trim(node.className).length > 0;
                     });
 
-                    if (exists(parent, Lang)) {
+                    if (exists(parent)) {
                         reg = Dom.getRegion(parent);
                         this.resize({wrap: {w: reg.width, h: reg.height}});
                     }

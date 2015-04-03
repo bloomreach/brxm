@@ -231,7 +231,6 @@
             <exclude>org/hippoecm/frontend/plugins/yui/layout/init_page.js</exclude>
             <exclude>org/hippoecm/frontend/plugins/yui/tree/init_tree.js</exclude>
             <exclude>org/hippoecm/frontend/plugins/yui/widget/widget_template.js</exclude>
-            <exclude>org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippoajax/hippoajax-debug.js</exclude>
             <exclude>org/hippoecm/frontend/plugins/jquery/upload/js/*.js</exclude>
           </excludes>
           <predefinedVars>
