@@ -74,7 +74,7 @@ public abstract class AbstractSubDirectoriesWatcherWithFileSystemObserverIT exte
         fileNameMatcher.includeFiles("*.js");
         fileSystemObserver = createFileSystemObserver();
         callbackTracker = new CallbackTracker();
-        new SubDirectoriesWatcher(webFilesDirectory.toPath(), fileSystemObserver, callbackTracker);
+        SubDirectoriesWatcher.watch(webFilesDirectory.toPath(), fileSystemObserver, callbackTracker);
     }
 
     protected abstract FileSystemObserver createFileSystemObserver() throws Exception;

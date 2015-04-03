@@ -19,7 +19,9 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.monitor.FileAlterationListener;
@@ -63,6 +65,11 @@ class FileSystemPoller implements FileSystemObserver, FileAlterationListener {
         observer.addListener(this);
         listeners.put(directory, listener);
         monitor.addObserver(observer);
+    }
+
+    @Override
+    public List<Path> getObservedRootDirectories() {
+        return new ArrayList<>(listeners.keySet());
     }
 
     @Override

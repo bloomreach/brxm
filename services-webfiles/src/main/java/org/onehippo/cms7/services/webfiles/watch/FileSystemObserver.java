@@ -17,6 +17,7 @@ package org.onehippo.cms7.services.webfiles.watch;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * Observes registered directories for changes (created, modified en deleted files and directories)
@@ -31,6 +32,12 @@ public interface FileSystemObserver {
      * @throws IOException when an I/O error occurs while registering the directory for observation
      */
     public void registerDirectory(Path directory, FileSystemListener listener) throws IOException;
+
+    /**
+     * @return the root {@link java.nio.file.Path} directories which are registered via
+     * {@link #registerDirectory(java.nio.file.Path, FileSystemListener)}
+     */
+    public List<Path> getObservedRootDirectories();
 
     /**
      * Closes resources used by this observer.

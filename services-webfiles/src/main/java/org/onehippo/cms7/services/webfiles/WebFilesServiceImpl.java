@@ -35,6 +35,7 @@ import org.apache.jackrabbit.vault.fs.io.Importer;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.autoreload.AutoReloadService;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.cms7.services.webfiles.jcr.WebFileBundleImpl;
 import org.onehippo.cms7.services.webfiles.vault.AbstractWebFilesArchive;
@@ -91,15 +92,29 @@ public class WebFilesServiceImpl implements WebFilesService {
     }
 
     @Override
-    public void importJcrWebFileBundle(final Session session, final File directory) throws IOException, WebFileException {
+    public void importJcrWebFileBundle(final Session session, final File directory, boolean bootstrapPhase) throws IOException, WebFileException {
+        final AutoReloadService autoReload = HippoServiceRegistry.getService(AutoReloadService.class);
+        if (bootstrapPhase && autoReload != null && autoReload.isEnabled()) {
+            // (re)import files will be done directly from file system. In case of an existing local repository, existing
+            // web files will be replaced completely to sync possible local changes after restart
+            log.debug("Auto reload is enabled hence webfiles are (re-)imported directly from filesystem instead of via bootstrap.");
+        }
         final WebFilesFileArchive archive = new WebFilesFileArchive(directory, importedFiles);
         importJcrWebFileBundle(session, archive);
+
     }
 
     @Override
-    public void importJcrWebFileBundle(final Session session, final ZipFile zip) throws IOException, WebFileException {
-        final WebFilesZipArchive archive = new WebFilesZipArchive(zip, importedFiles);
-        importJcrWebFileBundle(session, archive);
+    public void importJcrWebFileBundle(final Session session, final ZipFile zip, boolean bootstrapPhase) throws IOException, WebFileException {
+        final AutoReloadService autoReload = HippoServiceRegistry.getService(AutoReloadService.class);
+        if (bootstrapPhase && autoReload != null && autoReload.isEnabled()) {
+            // (re)import files will be done directly from file system. In case of an existing local repository, existing
+            // web files will be replaced completely to sync possible local changes after restart
+           log.debug("Auto reload is enabled hence webfiles are (re-)imported directly from filesystem instead of via bootstrap.");
+        } else {
+            final WebFilesZipArchive archive = new WebFilesZipArchive(zip, importedFiles);
+            importJcrWebFileBundle(session, archive);
+        }
     }
 
 

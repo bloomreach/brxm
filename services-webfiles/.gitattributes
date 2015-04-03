@@ -5,6 +5,7 @@ src/main/java/org/onehippo/cms7/services/webfiles/WebFilesServiceModule.java -te
 src/main/java/org/onehippo/cms7/services/webfiles/jcr/JcrBinaryImpl.java -text
 src/main/java/org/onehippo/cms7/services/webfiles/jcr/WebFileBundleImpl.java -text
 src/main/java/org/onehippo/cms7/services/webfiles/jcr/WebFileImpl.java -text
+src/main/java/org/onehippo/cms7/services/webfiles/util/WatchFilesUtils.java -text
 src/main/java/org/onehippo/cms7/services/webfiles/vault/AbstractWebFilesArchive.java -text
 src/main/java/org/onehippo/cms7/services/webfiles/vault/FileNameComparatorUtils.java -text
 src/main/java/org/onehippo/cms7/services/webfiles/watch/WebFilesWatcherJcrConfig.java -text

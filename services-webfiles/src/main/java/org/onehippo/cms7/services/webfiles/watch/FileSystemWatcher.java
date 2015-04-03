@@ -92,6 +92,11 @@ class FileSystemWatcher implements FileSystemObserver, Runnable {
         }
     }
 
+    @Override
+    public List<Path> getObservedRootDirectories() {
+        return new ArrayList<>(changesProcessors.keySet());
+    }
+
     private void registerRecursively(final Path directory) throws IOException {
         Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
             @Override

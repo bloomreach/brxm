@@ -208,7 +208,7 @@ public class WebFilesServiceImplIT extends RepositoryTestCase {
     public void importBundleFromZip() throws RepositoryException, IOException {
         File testBundleFile = FileUtils.toFile(getClass().getResource("/testbundle.zip"));
         ZipFile testBundleZip = new ZipFile(testBundleFile);
-        service.importJcrWebFileBundle(session, testBundleZip);
+        service.importJcrWebFileBundle(session, testBundleZip, true);
         assertTestBundle();
     }
 
@@ -216,7 +216,7 @@ public class WebFilesServiceImplIT extends RepositoryTestCase {
     public void importEmptyBundleFromZip() throws IOException, RepositoryException {
         File emptyBundleFile = FileUtils.toFile(getClass().getResource("/testbundle-empty.zip"));
         ZipFile emptyBundleZip = new ZipFile(emptyBundleFile);
-        service.importJcrWebFileBundle(session, emptyBundleZip);
+        service.importJcrWebFileBundle(session, emptyBundleZip, true);
         assertNotNull("testbundle should exist", service.getJcrWebFileBundle(session, "testbundle"));
     }
 
@@ -224,7 +224,7 @@ public class WebFilesServiceImplIT extends RepositoryTestCase {
     public void importEmptyZip() throws IOException, RepositoryException {
         File emptyZipFile = FileUtils.toFile(getClass().getResource("/empty.zip"));
         ZipFile emptyZip = new ZipFile(emptyZipFile);
-        service.importJcrWebFileBundle(session, emptyZip);
+        service.importJcrWebFileBundle(session, emptyZip, true);
     }
 
     @Test
@@ -233,7 +233,7 @@ public class WebFilesServiceImplIT extends RepositoryTestCase {
 
         File testBundleFile = FileUtils.toFile(getClass().getResource("/testbundle-with-custom-dot-content-xml.zip"));
         ZipFile testBundleZip = new ZipFile(testBundleFile);
-        service.importJcrWebFileBundle(session, testBundleZip);
+        service.importJcrWebFileBundle(session, testBundleZip, true);
 
         assertTestBundle();
         assertTrue("test folder defined in .content.xml exists", session.nodeExists("/webfiles/testbundle/test"));
@@ -244,7 +244,7 @@ public class WebFilesServiceImplIT extends RepositoryTestCase {
     public void importBundleFromZipWithEmptyDirectory() throws IOException, RepositoryException {
         File testBundleFile = FileUtils.toFile(getClass().getResource("/testbundle-with-empty-dir.zip"));
         ZipFile testBundleZip = new ZipFile(testBundleFile);
-        service.importJcrWebFileBundle(session, testBundleZip);
+        service.importJcrWebFileBundle(session, testBundleZip, true);
 
         assertTestBundle();
         final String emptyDirNodePath = WebFilesService.JCR_ROOT_PATH + "/testbundle/emptyDir";

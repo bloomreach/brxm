@@ -28,7 +28,7 @@ public class WebFilesWatcherJavaConfig implements WebFilesWatcherConfig {
     private final List<String> useWatchServiceOnOsNames;
     private long watchDelayMillis;
 
-    WebFilesWatcherJavaConfig() {
+    public WebFilesWatcherJavaConfig() {
         watchedModules = new ArrayList<>();
         includedFiles = new ArrayList<>();
         excludedDirs = new ArrayList<>();
@@ -40,13 +40,13 @@ public class WebFilesWatcherJavaConfig implements WebFilesWatcherConfig {
         watchedModules.add(module);
     }
 
-    void includeFiles(final String... globPatterns) {
+    public void includeFiles(final String... globPatterns) {
         for (String pattern : globPatterns) {
             includedFiles.add(pattern);
         }
     }
 
-    void excludeDirs(final String... globPatterns) {
+    public void excludeDirs(final String... globPatterns) {
         for (String pattern : globPatterns) {
             excludedDirs.add(pattern);
         }

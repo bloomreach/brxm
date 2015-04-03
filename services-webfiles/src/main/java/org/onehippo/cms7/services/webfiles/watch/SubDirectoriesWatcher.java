@@ -45,7 +45,12 @@ class SubDirectoriesWatcher implements FileSystemListener {
     private final SortedSet<Path> modifiedPaths;
     private final Set<Path> deletedPaths;
 
-    SubDirectoriesWatcher(final Path directory, final FileSystemObserver fsObserver, final PathChangesListener listener) throws IOException {
+
+    public static void watch(final Path webFilesDirectory, final FileSystemObserver fsObserver, final PathChangesListener listener) throws IOException {
+        new SubDirectoriesWatcher(webFilesDirectory, fsObserver, listener);
+    }
+
+    private SubDirectoriesWatcher(final Path directory, final FileSystemObserver fsObserver, final PathChangesListener listener) throws IOException {
         this.rootDirectory = directory;
         this.listener = listener;
         this.fsObserver = fsObserver;

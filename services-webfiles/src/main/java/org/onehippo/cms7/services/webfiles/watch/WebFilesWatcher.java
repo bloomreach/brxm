@@ -16,15 +16,21 @@
 package org.onehippo.cms7.services.webfiles.watch;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.jcr.AccessDeniedException;
+import javax.jcr.InvalidItemStateException;
+import javax.jcr.ItemExistsException;
+import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.version.VersionException;
 
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.services.autoreload.AutoReloadService;
@@ -32,6 +38,7 @@ import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.cms7.services.webfiles.WebFileEvent;
 import org.onehippo.cms7.services.webfiles.WebFileException;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
+import org.onehippo.cms7.services.webfiles.util.WatchFilesUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,10 +50,7 @@ import org.slf4j.LoggerFactory;
  */
 public class WebFilesWatcher implements SubDirectoriesWatcher.PathChangesListener {
 
-    public static final String PROJECT_BASEDIR_PROPERTY = "project.basedir";
-    public static final String WEB_FILES_LOCATION_IN_MODULE = "src/main/resources";
-
-    static Logger log = LoggerFactory.getLogger(WebFilesWatcher.class);
+    public static Logger log = LoggerFactory.getLogger(WebFilesWatcher.class);
 
     private final WebFilesWatcherConfig config;
     private WebFilesService service;
@@ -66,23 +70,32 @@ public class WebFilesWatcher implements SubDirectoriesWatcher.PathChangesListene
 
         if (fileSystemObserver == null && autoReload != null) {
             autoReload.setEnabled(false);
+        } else if (autoReload != null){
+            log.info("Auto reload and Web Files watching enabled. Start with initial (re-)import");
+            for (Path webFilesRootDirectory : fileSystemObserver.getObservedRootDirectories()) {
+                try {
+                    log.info("Importing directory '{}'", webFilesRootDirectory);
+                    service.importJcrWebFileBundle(session, webFilesRootDirectory.toFile(), false);
+                    session.save();
+                } catch (IOException | RepositoryException e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Failed to import directory '{}'", webFilesRootDirectory, e);
+                    } else {
+                        log.warn("Failed to import directory '{}' : '{}'", webFilesRootDirectory, e.toString());
+                    }
+                    resetSilently(session);
+                }
+            }
         }
     }
 
     private FileSystemObserver observeFileSystemIfNeeded() {
-        final List<String> watchedModules = config.getWatchedModules();
-        if (!watchedModules.isEmpty()) {
-            final String projectBaseDir = System.getProperty(PROJECT_BASEDIR_PROPERTY);
-            if (projectBaseDir != null) {
-                final Path baseDir = FileSystems.getDefault().getPath(projectBaseDir);
-                if (Files.isDirectory(baseDir)) {
-                    return observeFileSystem(baseDir);
-                } else {
-                    log.warn("Watching web files is disabled: environment variable '{}' does not point to a directory", PROJECT_BASEDIR_PROPERTY);
-                }
-            } else {
-                log.info("Watching web files is disabled: environment variable '{}' not set", PROJECT_BASEDIR_PROPERTY);
-            }
+        final Path projectBaseDir = WatchFilesUtils.getProjectBaseDir();
+        if (projectBaseDir == null) {
+            return null;
+        }
+        if (config.getWatchedModules().size() > 0) {
+            return observeFileSystem(projectBaseDir);
         } else {
             log.info("Watching web files is disabled: no web file modules configured to watch");
         }
@@ -97,14 +110,13 @@ public class WebFilesWatcher implements SubDirectoriesWatcher.PathChangesListene
             log.error("Watching web files is disabled: cannot create file system observer", e);
             return null;
         }
-        for (String watchedModule : config.getWatchedModules()) {
+
+        List<Path> webFilesDirectories = WatchFilesUtils.getWebFilesDirectories(projectBaseDir, config);
+        for (Path webFilesDirectory : webFilesDirectories) {
             try {
-                final SubDirectoriesWatcher watcherOrNull = createWatcherOrNull(projectBaseDir, watchedModule, fsObserver);
-                if (watcherOrNull != null) {
-                    log.info("Watching web files in module '{}'", watchedModule);
-                }
+                SubDirectoriesWatcher.watch(webFilesDirectory, fsObserver, this);
             } catch (Exception e) {
-                log.error("Failed to watch web files in module '{}'", watchedModule, e);
+                log.error("Failed to watch or import web files in module '{}'", webFilesDirectory, e);
             }
         }
         return fsObserver;
@@ -137,19 +149,6 @@ public class WebFilesWatcher implements SubDirectoriesWatcher.PathChangesListene
         }
         return matcher.matchesCurrentOs();
     }
-
-    private SubDirectoriesWatcher createWatcherOrNull(final Path projectBaseDir, final String watchedModule, final FileSystemObserver fsObserver) throws Exception {
-        final Path webFilesModule = projectBaseDir.resolve(watchedModule);
-        final Path webFilesDirectory = webFilesModule.resolve(WEB_FILES_LOCATION_IN_MODULE);
-        if (Files.isDirectory(webFilesDirectory)) {
-            return new SubDirectoriesWatcher(webFilesDirectory, fsObserver, this);
-        } else {
-            log.warn("Cannot watch web files in module '{}': it does not contain directory '{}'",
-                    watchedModule, WEB_FILES_LOCATION_IN_MODULE);
-        }
-        return null;
-    }
-
 
     @Override
     public void onStart() {
@@ -248,7 +247,7 @@ public class WebFilesWatcher implements SubDirectoriesWatcher.PathChangesListene
                 final Path bundleRootDir = watchedRootDir.resolve(bundleName);
                 if (reimportedBundleRoots.add(bundleRootDir)) {
                     log.info("Reimporting bundle '{}'", bundleName);
-                    service.importJcrWebFileBundle(session, bundleRootDir.toFile());
+                    service.importJcrWebFileBundle(session, bundleRootDir.toFile(), false);
                 }
             }
             session.save();

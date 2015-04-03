@@ -23,9 +23,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
+import org.onehippo.cms7.services.webfiles.util.WatchFilesUtils;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.cms7.services.webfiles.util.WatchFilesUtils.PROJECT_BASEDIR_PROPERTY;
+import static org.onehippo.cms7.services.webfiles.util.WatchFilesUtils.WEB_FILES_LOCATION_IN_MODULE;
 
 public class AbstractWatcherIT {
 
@@ -47,7 +50,7 @@ public class AbstractWatcherIT {
     public void setUp() throws Exception {
         String webFilesDirectoryPath = tmpFolder.getRoot().getCanonicalPath()
                 + File.separator + watchedModule
-                + File.separator + WebFilesWatcher.WEB_FILES_LOCATION_IN_MODULE;
+                + File.separator + WEB_FILES_LOCATION_IN_MODULE;
         webFilesDirectory = new File(webFilesDirectoryPath);
         FileUtils.forceMkdir(webFilesDirectory);
         webFilesDirectory.deleteOnExit();
@@ -55,7 +58,7 @@ public class AbstractWatcherIT {
         watchModuleDir = webFilesDirectory.toPath().getParent().getParent().getParent();
         projectBaseDir = watchModuleDir.getParent().getParent();
 
-        System.setProperty(WebFilesWatcher.PROJECT_BASEDIR_PROPERTY, projectBaseDir.toString());
+        System.setProperty(PROJECT_BASEDIR_PROPERTY, projectBaseDir.toString());
 
         testBundleDir = new File(webFilesDirectory, "testbundle");
 
@@ -81,7 +84,7 @@ public class AbstractWatcherIT {
 
     @After
     public void tearDown() throws InterruptedException {
-        System.clearProperty(WebFilesWatcher.PROJECT_BASEDIR_PROPERTY);
+        System.clearProperty(PROJECT_BASEDIR_PROPERTY);
     }
 
 }

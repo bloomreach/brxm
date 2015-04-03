@@ -42,11 +42,13 @@ import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.easymock.EasyMock.anyBoolean;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
@@ -158,6 +160,8 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
 
     @Test
     public void onPathsChanged_invoked_directly() throws IOException {
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), anyObject(File.class), anyBoolean());
+        expectLastCall();
         webFilesService.importJcrWebFiles(anyObject(Session.class), eq("testbundle"), eq("css/style.css"), eq(styleCss));
         expectLastCall();
 
@@ -181,6 +185,8 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
 
     @Test
     public void onPathsChanged_invoked_directly_without_eventBus() throws IOException {
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), anyObject(File.class), anyBoolean());
+        expectLastCall();
         webFilesService.importJcrWebFiles(anyObject(Session.class), eq("testbundle"), eq("css/style.css"), eq(styleCss));
         expectLastCall();
 
@@ -222,6 +228,8 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
 
     @Test(timeout = TIMEOUT_MS)
     public void creating_file_imports_file() throws IOException, InterruptedException {
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), anyObject(File.class), anyBoolean());
+        expectLastCall();
         final File cssDir = styleCss.getParentFile();
         final File newCss = new File(cssDir, "new.css");
 
@@ -242,6 +250,8 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
 
     @Test(timeout = TIMEOUT_MS)
     public void creating_directory_imports_directory() throws IOException, InterruptedException {
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), anyObject(File.class), anyBoolean());
+        expectLastCall();
         final File newDir = new File(testBundleDir, "newDir");
 
         webFilesService.importJcrWebFiles(anyObject(Session.class), eq("testbundle"), eq("newDir"), eq(newDir));
@@ -261,6 +271,8 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
 
     @Test
     public void creating_excluded_directory_imports_nothing() throws IOException, InterruptedException {
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), anyObject(File.class), anyBoolean());
+        expectLastCall();
         final File newDir = new File(testBundleDir, ".svn");
 
         replayWebFilesService();
@@ -275,6 +287,8 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
 
     @Test(timeout = TIMEOUT_MS)
     public void touching_file_imports_file() throws IOException, InterruptedException {
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), anyObject(File.class), anyBoolean());
+        expectLastCall();
         webFilesService.importJcrWebFiles(anyObject(Session.class), eq("testbundle"), eq("css/style.css"), eq(styleCss));
         expectLastCall();
         autoReload.broadcastPageReload();
@@ -292,6 +306,8 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
 
     @Test
     public void creating_excluded_file_imports_nothing() throws IOException, InterruptedException {
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), anyObject(File.class), anyBoolean());
+        expectLastCall();
         final File stylePdf = new File(cssDir, "style.pdf");
         replayWebFilesService();
 
@@ -307,6 +323,8 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
 
     @Test(timeout = TIMEOUT_MS)
     public void removing_file_imports_parent_directory() throws IOException, InterruptedException {
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), anyObject(File.class), anyBoolean());
+        expectLastCall();
         final File cssDir = styleCss.getParentFile();
 
         webFilesService.importJcrWebFiles(anyObject(Session.class), eq("testbundle"), eq(cssDir.getName()), eq(cssDir));
@@ -326,6 +344,8 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
 
     @Test(timeout = TIMEOUT_MS)
     public void renaming_file_imports_parent_directory() throws IOException, InterruptedException {
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), anyObject(File.class), anyBoolean());
+        expectLastCall();
         final File cssDir = styleCss.getParentFile();
 
         webFilesService.importJcrWebFiles(anyObject(Session.class), eq("testbundle"), eq(cssDir.getName()), eq(cssDir));
@@ -346,6 +366,8 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
 
     @Test(timeout = TIMEOUT_MS)
     public void removing_subdirectory_imports_parent() throws IOException, InterruptedException {
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), anyObject(File.class), anyBoolean());
+        expectLastCall();
         final File cssDir = styleCss.getParentFile();
         final File cssSubDir = new File(cssDir, "cssSubDir");
         assertTrue(cssSubDir.mkdir());
@@ -367,6 +389,8 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
 
     @Test(timeout = TIMEOUT_MS)
     public void removing_root_directory_imports_everything() throws IOException, InterruptedException {
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), anyObject(File.class), anyBoolean());
+        expectLastCall();
         webFilesService.importJcrWebFiles(anyObject(Session.class), eq("testbundle"), eq(""), eq(testBundleDir));
         expectLastCall();
         autoReload.broadcastPageReload();
@@ -396,11 +420,13 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
 
     @Test
     public void failing_import_logs_warning_resets_session_and_reimport_whole_bundle() throws IOException, InterruptedException, RepositoryException {
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), anyObject(File.class), anyBoolean());
+        expectLastCall();
         webFilesService.importJcrWebFiles(anyObject(Session.class), eq("testbundle"), eq("css"), eq(cssDir));
         expectLastCall().andThrow(new WebFileException("Simulating failed import"));
         session.refresh(eq(false));
         expectLastCall();
-        webFilesService.importJcrWebFileBundle(anyObject(Session.class), eq(testBundleDir));
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), eq(testBundleDir), anyBoolean());
         expectLastCall();
         autoReload.broadcastPageReload();
         expectLastCall();
@@ -417,6 +443,8 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
 
     @Test
     public void windows_paths_are_converted_to_correct_jcr_paths() throws IOException, InterruptedException, RepositoryException {
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), anyObject(File.class), anyBoolean());
+        expectLastCall();
         final Path windowsBundleRoot = new MockPath("C:\\Users\\John\\myhippoproject\\bootstrap\\webfiles\\src\\main\\resources", '\\');
         final Path windowsStyleCss = new MockPath("C:\\Users\\John\\myhippoproject\\bootstrap\\webfiles\\src\\main\\resources\\bundle\\css\\style.css", '\\');
 
@@ -435,6 +463,8 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
 
     @Test
     public void modification_after_watcher_shutdown_does_not_trigger_import() throws InterruptedException, IOException {
+        webFilesService.importJcrWebFileBundle(anyObject(Session.class), anyObject(File.class), anyBoolean());
+        expectLastCall();
         final AtomicInteger counter = new AtomicInteger();
 
         webFilesService.importJcrWebFiles(anyObject(Session.class), anyObject(String.class), anyObject(String.class), anyObject(File.class));
