@@ -29,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetNavigation;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -194,7 +195,7 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
             for (Node child : new NodeIterable(node.getNodes())) {
                 try {
                     ExpandedNodeHierarchy childHierarchy = expandedNodeHierarchy.getChildren().get(child.getPath());
-                    if (child.isNodeType(NT_DOCUMENT)) {
+                    if (child.isNodeType(NT_DOCUMENT) || child.isNodeType("hippofacnav:facetnavigation")) {
                         setExpandable(true);
                         setLeaf(false);
                     } else if (child.isNodeType(NT_HANDLE)) {
