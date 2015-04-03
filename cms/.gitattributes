@@ -1261,8 +1261,9 @@ brokenlinks/repository/src/main/java/org/onehippo/cms7/brokenlinks/GlobCompiler.
 brokenlinks/repository/src/main/java/org/onehippo/cms7/brokenlinks/LinkURIUtils.java -text
 brokenlinks/repository/src/main/resources/brokenlinks-authorization.xml -text
 brokenlinks/repository/src/main/resources/brokenlinks-job.xml -text
+brokenlinks/repository/src/main/resources/brokenlinks-reports-plugin.xml svneol=native#text/plain
+brokenlinks/repository/src/main/resources/brokenlinks-reports-translators.xml svneol=native#text/plain
 brokenlinks/repository/src/main/resources/brokenlinks-reports.xml svneol=native#text/plain
-brokenlinks/repository/src/main/resources/brokenlinks-reports_de.xml -text
 brokenlinks/repository/src/main/resources/brokenlinks-workflows.xml svneol=native#text/plain
 brokenlinks/repository/src/main/resources/brokenlinks.cnd -text
 brokenlinks/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
