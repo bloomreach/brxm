@@ -75,7 +75,7 @@ public class WebFilesServiceImplIT extends RepositoryTestCase {
     @Test
     public void importBundleFromDirectory() throws RepositoryException, IOException {
         File testBundleDir = FileUtils.toFile(getClass().getResource("/testbundle"));
-        service.importJcrWebFileBundle(session, testBundleDir);
+        service.importJcrWebFileBundle(session, testBundleDir, true);
         assertTestBundle();
     }
 
@@ -83,7 +83,7 @@ public class WebFilesServiceImplIT extends RepositoryTestCase {
     public void importEmptyBundleFromDirectory() throws IOException, RepositoryException {
         File emptyBundleDir = testFolder.newFolder("testbundle");
 
-        service.importJcrWebFileBundle(session, emptyBundleDir);
+        service.importJcrWebFileBundle(session, emptyBundleDir, true);
 
         final WebFileBundle testBundle = service.getJcrWebFileBundle(session, "testbundle");
         assertNotNull("testbundle should exist", testBundle);
@@ -92,15 +92,15 @@ public class WebFilesServiceImplIT extends RepositoryTestCase {
     @Test
     public void reimportBundleFromDirectory() throws RepositoryException, IOException {
         File testBundleDir = FileUtils.toFile(getClass().getResource("/testbundle"));
-        service.importJcrWebFileBundle(session, testBundleDir);
-        service.importJcrWebFileBundle(session, testBundleDir);
+        service.importJcrWebFileBundle(session, testBundleDir, true);
+        service.importJcrWebFileBundle(session, testBundleDir, true);
         assertTestBundle();
     }
 
     @Test
     public void importBundleWithoutFileDeletesJcrFile() throws IOException, RepositoryException {
         File testBundleDir = FileUtils.toFile(getClass().getResource("/testbundle"));
-        service.importJcrWebFileBundle(session, testBundleDir);
+        service.importJcrWebFileBundle(session, testBundleDir, true);
 
         File changedBundleDir = testFolder.newFolder("testbundle");
         FileUtils.copyDirectory(testBundleDir, changedBundleDir);
@@ -108,7 +108,7 @@ public class WebFilesServiceImplIT extends RepositoryTestCase {
         File styleCss = new File(changedBundleDir, "css/style.css");
         FileUtils.forceDelete(styleCss);
 
-        service.importJcrWebFileBundle(session, changedBundleDir);
+        service.importJcrWebFileBundle(session, changedBundleDir, true);
 
         final WebFileBundle testBundle = service.getJcrWebFileBundle(session, "testbundle");
         assertFalse("Deleted file 'css/style.css' should have been deleted from web files too", testBundle.exists("/css/style.css"));
@@ -117,7 +117,7 @@ public class WebFilesServiceImplIT extends RepositoryTestCase {
     @Test
     public void importChangedFile() throws IOException, RepositoryException, InterruptedException {
         File testBundleDir = FileUtils.toFile(getClass().getResource("/testbundle"));
-        service.importJcrWebFileBundle(session, testBundleDir);
+        service.importJcrWebFileBundle(session, testBundleDir, true);
 
         File changedBundleDir = testFolder.newFolder("testbundle");
         FileUtils.copyDirectory(testBundleDir, changedBundleDir);
@@ -135,7 +135,7 @@ public class WebFilesServiceImplIT extends RepositoryTestCase {
     @Test
     public void importDeletedDirectoryIsRemoved() throws IOException, RepositoryException {
         File testBundleDir = FileUtils.toFile(getClass().getResource("/testbundle"));
-        service.importJcrWebFileBundle(session, testBundleDir);
+        service.importJcrWebFileBundle(session, testBundleDir, true);
 
         File changedBundleDir = testFolder.newFolder("testbundle");
         FileUtils.copyDirectory(testBundleDir, changedBundleDir);
@@ -143,7 +143,7 @@ public class WebFilesServiceImplIT extends RepositoryTestCase {
         File css = new File(changedBundleDir, "css");
         FileUtils.forceDelete(css);
 
-        service.importJcrWebFileBundle(session, changedBundleDir);
+        service.importJcrWebFileBundle(session, changedBundleDir, true);
 
         final WebFileBundle testBundle = service.getJcrWebFileBundle(session, "testbundle");
         assertFalse("Deleting directory 'css' should have deleted 'css/style.css' from web files too", testBundle.exists("/css/style.css"));
@@ -160,7 +160,7 @@ public class WebFilesServiceImplIT extends RepositoryTestCase {
         File ignoredDir = new File(changedBundleDir, ".git");
         FileUtils.forceMkdir(ignoredDir);
 
-        service.importJcrWebFileBundle(session, changedBundleDir);
+        service.importJcrWebFileBundle(session, changedBundleDir, true);
 
         assertFalse("Ignored .git directory should not have been imported", session.nodeExists("/webfiles/testbundle/.git"));
     }
@@ -180,7 +180,7 @@ public class WebFilesServiceImplIT extends RepositoryTestCase {
                         "</jcr:root>");
 
         importedFiles.includeFiles(".content.xml");
-        service.importJcrWebFileBundle(session, customBundleDir);
+        service.importJcrWebFileBundle(session, customBundleDir, true);
 
         assertTestBundle();
         assertTrue("test folder defined in .content.xml exists", session.nodeExists("/webfiles/testbundle/test"));
@@ -196,7 +196,7 @@ public class WebFilesServiceImplIT extends RepositoryTestCase {
         File emptyDir = new File(bundleWithEmptyDir, "emptyDir");
         FileUtils.forceMkdir(emptyDir);
 
-        service.importJcrWebFileBundle(session, bundleWithEmptyDir);
+        service.importJcrWebFileBundle(session, bundleWithEmptyDir, true);
 
         final String emptyDirNodePath = WebFilesService.JCR_ROOT_PATH + "/testbundle/emptyDir";
         assertTrue("node exists: " + emptyDirNodePath, session.nodeExists(emptyDirNodePath));
@@ -256,7 +256,7 @@ public class WebFilesServiceImplIT extends RepositoryTestCase {
     @Test
     public void reimportAllWebFilesAfterDeletingRootDirectory() throws IOException, RepositoryException {
         File testBundleDir = FileUtils.toFile(getClass().getResource("/testbundle"));
-        service.importJcrWebFileBundle(session, testBundleDir);
+        service.importJcrWebFileBundle(session, testBundleDir, true);
 
         File changedBundleDir = testFolder.newFolder("testbundle");
         FileUtils.copyDirectory(testBundleDir, changedBundleDir);
