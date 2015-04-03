@@ -49,10 +49,12 @@ public interface WebFilesService {
      *
      * @param session the JCR session used to access web files.
      * @param directory the directory containing the web files to import.
+     * @param bootstrapPhase <code>true</code> if this method is invoked during repository bootstrap phase or as part of a
+     *                       PostStartupTask
      * @throws IOException if an I/O error occurs while reading web files from file system
      * @throws WebFileException if another error occurs while importing web files
      */
-    void importJcrWebFileBundle(Session session, File directory) throws IOException, WebFileException;
+    void importJcrWebFileBundle(Session session, File directory, boolean bootstrapPhase) throws IOException, WebFileException;
 
     /**
      * Imports a web file bundle from the given zip file. The zip file should contain a single root directory entry
@@ -62,10 +64,12 @@ public interface WebFilesService {
      *
      * @param session the JCR session used to access web files.
      * @param zip the ZIP file containing the web files to import.
+     * @param bootstrapPhase <code>true</code> if this method is invoked during repository bootstrap phase or as part of a
+     *                       PostStartupTask
      * @throws IOException if an I/O error occurs while reading web files from the ZIP file
      * @throws WebFileException if another error occurs while importing web files
      */
-    void importJcrWebFileBundle(Session session, ZipFile zip) throws IOException, WebFileException;
+    void importJcrWebFileBundle(Session session, ZipFile zip, boolean bootstrapPhase) throws IOException, WebFileException;
 
     /**
      * Imports a sub-tree of a web file bundle from a directory. The sub-tree can consist of a directory or
