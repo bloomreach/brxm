@@ -265,13 +265,13 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
              * @param timeoutLength
              */
             registerEventListener : function(target, unit, evt, obj, func, executeNow, timeoutLength) {
-                var oid, useTimeout, eventName, me, callback;
+                var oid, useTimeout, eventName, me, myId, callback;
 
                 function exists(_o) {
                     return !Lang.isUndefined(_o) && _o !== null;
                 }
                 oid = exists(obj) && exists(obj.id) ? obj.id : Dom.generateId();
-                var myId = '[' + evt + ', ' + oid + ']';
+                myId  = '[' + evt + ', ' + oid + ']';
 
                 if (executeNow) {
                     func.apply(obj, [unit.getSizes()]);

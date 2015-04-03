@@ -121,11 +121,11 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
                 }, null, el);
 
                 for (i = 0, len = els.length; i < len; i++) {
-                    HippoAjax.callDestroyFunction(els[i].HippoDestroyID);
+                  YAHOO.hippo.HippoAjax.callDestroyFunction(els[i].HippoDestroyID);
                 }
 
                 if (!Lang.isUndefined(el.HippoDestroyID)) {
-                    HippoAjax.callDestroyFunction(el.HippoDestroyID);
+                  YAHOO.hippo.HippoAjax.callDestroyFunction(el.HippoDestroyID);
                 }
             }
         };
@@ -140,7 +140,7 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
             el = Dom.get(compId);
 
             if (el !== null && el !== undefined) {
-                HippoAjax.cleanupElement(el);
+              YAHOO.hippo.HippoAjax.cleanupElement(el);
 
                 YAHOO.util.Event.purgeElement(el, true);
             }
