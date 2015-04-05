@@ -16,7 +16,7 @@
 
 <div class="panel panel-default" ng-controller="galleryPluginCtrl">
     <div class="panel-heading">
-        <h3>Gallery manager</h3>
+        <h3>Gallery manager Local</h3>
     </div>
     <div class="panel-body">
         <div ng-show="showBeanrewriterMessage" class="alert alert-info">
@@ -25,7 +25,7 @@
         </div>
         <div><h4>Create Custom Image Set</h4>
 
-            <form novalidate name="newImageSetForm">
+            <form novalidate name="newImageSetForm" class="form-horizontal">
                 <essentials-help help-reference="help.imageSet" show-hide-variable="myHelp"></essentials-help>
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Imageset name:</label>
@@ -36,10 +36,8 @@
                         <input type="checkbox" ng-model="updateExisting"/> Update existing image sets and regenerate HST beans
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="col-xs-12">
-                        <button ng-disabled="!newImageSetForm.$valid" class="btn btn-success pull-right" ng-click="addImageSet()">Create new image set</button>
-                    </div>
+                <div class="form-group col-sm-12">
+                    <button ng-disabled="!newImageSetForm.$valid" class="btn btn-success pull-right" ng-click="addImageSet()">Create new image set</button>
                 </div>
             </form>
         </div>
@@ -48,7 +46,7 @@
         <div ng-show="imageSets.length">
             <h4>Edit Image Set</h4>
 
-            <form novalidate name="imageSetFrom">
+            <form novalidate name="imageSetFrom" class="form-horizontal">
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Select image set</label>
                     <div class="col-sm-4">
@@ -61,10 +59,12 @@
                                 width="'100%'">
                         </select>
                     </div>
+                    <div class="col-sm-4"></div>
                 </div>
-                <div class="clearfix"></div>
                 <div ng-show="selectedImageSet">
-                    <h5>Add Image Variant</h5>
+                    <div class="form-group col-sm-12">
+                        <h5>Add Image Variant</h5>
+                    </div>
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Variant name:</label>
                         <div class="col-sm-4">
@@ -74,8 +74,9 @@
                             <button ng-disabled="!imageVariantName" class="btn btn-success pull-right" type="button" ng-click="addImageVariant()">Add new image variant</button>
                         </div>
                     </div>
-                    <div class="clearfix"></div>
-                    <h5>Edit Image Variant</h5>
+                    <div class="form-group col-sm-12">
+                        <h5>Edit Image Variant</h5>
+                    </div>
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Select image variant:</label>
                         <div class="col-sm-4">
@@ -90,87 +91,92 @@
                             </select>
                         </div>
                         <div class="col-sm-4">
-                            <button ng-show="selectedImageModel" class="close" type="button" ng-click="removeImageVariant(selectedImageModel)">×</button>
+                            <button ng-show="selectedImageModel && !selectedImageModel.readOnly"
+                                    class="btn btn-warning pull-right"
+                                    type="button"
+                                    ng-click="removeImageVariant(selectedImageModel)">
+                                Delete selected image variant
+                            </button>
                         </div>
                     </div>
 
-                    <div class="clearfix"></div>
                     <div ng-show="selectedImageModel">
-                        <div class="form-group">
-                            <div class="col-sm-12">
-                                <label class="col-sm-4 control-label">Width:</label>
-                                <div class="col-sm-8">
-                                    <input ng-model="selectedImageModel.width" ng-pattern="/^[0-9]{1,}$/" ng-required="true"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-12">
-                                <label class="col-sm-4 control-label">Height:</label>
-                                <div class="col-sm-8">
-                                    <input ng-model="selectedImageModel.height" ng-pattern="/^[0-9]{1,}$/" ng-required="true"/>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="clearfix"></div>
-
-                        <h5>Translations</h5>
-                        <div ng-show="selectedImageModel" class="col-sm-12" ng-repeat="translation in selectedImageModel.translations">
+                        <div class="form-group" ng-hide="selectedImageModel.readOnly">
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">{{translation.language}}</label>
-                                <div class="col-sm-3">
-                                    <input ng-model="translation.language" ng-pattern="/^[a-z]{2,}$/" ng-required="true"/>
+                                <h4 class="col-sm-4 control-label">Variant Parameters</h4>
+                                <div class="col-sm-8"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Width</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" ng-model="selectedImageModel.width" ng-pattern="/^[0-9]{1,}$/" ng-required="true"/>
                                 </div>
-                                <div class="col-sm-4">
-                                    <input ng-model="translation.message" ng-required="true"/>
+                                <div class="col-sm-2"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Height</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" ng-model="selectedImageModel.height" ng-pattern="/^[0-9]{1,}$/" ng-required="true"/>
                                 </div>
-                                <div class="col-sm-1">
+                                <div class="col-sm-2"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Upscale:</label>
+                                <div class="col-sm-6">
+                                    <select class="chosen-select" chosen
+                                            ng-model="selectedImageModel.upscaling"
+                                            ng-options="v.value as v.description for v in upscalingValues"
+                                            width="'100%'">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Speed vs Quality</label>
+                                <div class="col-sm-6">
+                                    <select class="chosen-select" chosen
+                                            ng-model="selectedImageModel.optimize"
+                                            ng-options="o.value as o.description for o in optimizeValues"
+                                            width="'100%'">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">JPEG Quality</label>
+                                <div class="col-sm-6">
+                                    <select class="chosen-select" chosen
+                                            ng-model="selectedImageModel.compression"
+                                            ng-options="c.value as c.description for c in compressionValues"
+                                            width="'100%'">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-group">
+                                <h4 class="col-sm-4 control-label">Translations</h4>
+                                <div class="col-sm-8"></div>
+                            </div>
+                            <div class="form-group col-sm-12" ng-repeat="translation in selectedImageModel.translations">
+                                <label class="col-sm-2 control-label"></label>
+                                <div class="col-sm-2">
+                                    <input class="form-control" ng-model="translation.language" ng-pattern="/^[a-z]{2,}$/" ng-required="true"/>
+                                </div>
+                                <div class="col-sm-6">
+                                    <input class="form-control" ng-model="translation.message" ng-required="true"/>
+                                </div>
+                                <div class="col-sm-2">
                                     <button data-dismiss="alert" class="close" type="button" ng-click="removeTranslation(translation)">×</button>
                                 </div>
                             </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="form-group">
-                            <div class="col-sm-12">
+                            <div class="form-group col-sm-12">
                                 <button class="btn btn-success pull-right" type="button" ng-click="addTranslation()">Add new translation</button>
-                            </div>
-                        </div>
-
-                        <div class="clearfix"></div>
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Upscale:</label>
-                            <div class="col-sm-4">
-                                <select class="chosen-select" chosen
-                                        ng-model="selectedImageModel.upscaling"
-                                        ng-options="v.value as v.description for v in upscalingValues"
-                                        width="'100%'">
-                                    <option value=""></option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Speed vs Quality</label>
-                            <div class="col-sm-4">
-                                <select class="chosen-select" chosen
-                                        ng-model="selectedImageModel.optimize"
-                                        ng-options="o.value as o.description for o in optimizeValues"
-                                        width="'100%'">
-                                    <option value=""></option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">JPEG Quality</label>
-                            <div class="col-sm-4">
-                                <select class="chosen-select" chosen
-                                        ng-model="selectedImageModel.compression"
-                                        ng-options="c.value as c.description for c in compressionValues"
-                                        width="'100%'">
-                                    <option value=""></option>
-                                </select>
                             </div>
                         </div>
                     </div>
