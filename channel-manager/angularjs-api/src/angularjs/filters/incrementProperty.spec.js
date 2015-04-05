@@ -32,7 +32,7 @@ describe('the incrementProperty filter', function () {
         items1 = [
             {
                 name: 'Untitled'
-            },
+            }
         ],
         items2 = [
             {
@@ -40,7 +40,7 @@ describe('the incrementProperty filter', function () {
             },
             {
                 name: 'Untitled (1)'
-            },
+            }
         ],
         items3 = [
             {
@@ -51,7 +51,7 @@ describe('the incrementProperty filter', function () {
             },
             {
                 name: 'Untitled (5)'
-            },
+            }
         ],
         items4 = [
             {
@@ -70,7 +70,7 @@ describe('the incrementProperty filter', function () {
             {
                 name: 'Untitled (5)'
             }
-        ]
+        ];
 
     it('should add a number to an item without any increments', function () {
         expect(incrementPropertyFilter(items, 'name', 'Untitled')).toEqual('Untitled');

@@ -38,7 +38,7 @@ describe('HstApiRequests', function () {
         spyOn(qMock, 'when');
 
         templateCacheMock = {
-            get: function (config) {
+            get: function () {
                 return false;
             }
         };

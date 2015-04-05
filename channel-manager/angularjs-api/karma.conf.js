@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,52 +13,67 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// Tests exist alongside the component they are testing with no separate test directory required; the build process
+// should be sophisticated enough to handle this. via https://github.com/ngbp/ng-boilerplate#philosophy
 
 module.exports = function (config) {
 
-    var build = require( './build.config.js' );
+  var buildConfig = require('./build.config.js');
 
-    config.set({
-        basePath: '',
-        frameworks: ['jasmine'],
+  config.set({
+    // base path that will be used to resolve all patterns (eg. files, exclude)
+    basePath: '',
 
-        // files to load in the browser
-        files: [
-            // external sources
-            build.bower + '/jquery/dist/jquery.js',
-            build.bower + '/jasmine-jquery/lib/jasmine-jquery.js',
-            build.bower + '/angular/angular.js',
-            build.bower + '/angular-mocks/angular-mocks.js',
+    // frameworks to use
+    // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
+    frameworks: ['jasmine'],
 
-            // components
-            'src/shared/shared-dependencies.js',
-            'src/shared/**/*.js'
-        ],
+    // list of files / patterns to load in the browser
+    files: [
+      buildConfig.components_dir + '/jquery/dist/jquery.js',
+      buildConfig.components_dir + '/jasmine-jquery/lib/jasmine-jquery.js',
+      buildConfig.components_dir + '/angular/angular.js',
+      buildConfig.components_dir + '/angular-mocks/angular-mocks.js',
+      buildConfig.mainjs,
+      buildConfig.jstpl,
+      buildConfig.src_dir + '/angularjs/**/*.js'
+    ],
 
-        // generate js files from html templates to expose them during testing
-        preprocessors: {
-            '**/*.html': 'ng-html2js'
-        },
+    // list of files to exclude
+    exclude: [],
 
-        // https://github.com/karma-runner/karma-ng-html2js-preprocessor#configuration
-        ngHtml2JsPreprocessor: {
-            // setting this option will create only a single module that contains templates
-            // from all the files, so you can load them all with module('foo')
-            //moduleName: 'hippo.templates'
-        },
+    // preprocess matching files before serving them to the browser
+    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
+    preprocessors: {},
 
-        // files to exclude
-        exclude: [],
+    // test results reporter to use
+    // possible values: 'dots', 'progress'
+    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
+    reporters: ['progress', 'junit'],
 
-        // level of logging
-        // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-        logLevel: config.LOG_INFO,
+    junitReporter: {
+      outputFile: 'target/test-results.xml'
+    },
 
-        port: 9876,
-        reporters: ['dots', 'junit'],
+    // web server port
+    port: 9876,
 
-        junitReporter: {
-            outputFile: 'target/test-results.xml'
-        }
-    });
+    // enable / disable colors in the output (reporters and logs)
+    colors: true,
+
+    // level of logging
+    // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
+    logLevel: config.LOG_INFO,
+
+    // enable / disable watching file and executing tests whenever any file changes
+    autoWatch: false,
+
+    // start these browsers
+    // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+    browsers: ['PhantomJS'],
+
+    // Continuous Integration mode
+    // if true, Karma captures browsers, runs the tests and exits
+    singleRun: false
+  });
 };

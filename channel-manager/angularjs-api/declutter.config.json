@@ -1,6 +1,0 @@
-{
-    "angular": ["angular.min.js", "angular.min.js.map"],
-    "angular-mocks": [],
-    "jquery": ["dist/jquery.min.js", "dist/jquery.min.map"],
-    "jasmine-jquery": []
-}

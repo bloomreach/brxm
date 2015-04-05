@@ -47,8 +47,6 @@
                         return '(' + (maxNum + 1) + ')';
                     });
                 }
-
-                return null;
             };
         });
 })();
