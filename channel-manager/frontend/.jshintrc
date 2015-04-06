@@ -28,7 +28,7 @@
   },
   "globalstrict": true,
   "immed": true,
-  "indent": 4,
+  "indent": 2,
   "laxbreak": true,
   "loopfunc": true,
   "newcap": true,
