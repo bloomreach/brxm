@@ -15,171 +15,171 @@
  */
 
 describe('Settings Controller', function () {
-    'use strict';
+  'use strict';
 
-    var scope, PageService, PrototypeService,
-        setCmsUser, createController,
-        isPageInWorkspace,
-        cmsUser, pageLockedBy, pageLockedOn;
+  var scope, PageService, PrototypeService,
+    setCmsUser, createController,
+    isPageInWorkspace,
+    pageLockedBy, pageLockedOn;
 
-    beforeEach(module('hippo.channel.page', function($provide) {
-        setCmsUser = function(cmsUser) {
-            $provide.value('hippo.channel.ConfigService', {
-                cmsUser: cmsUser
-            });
-        };
+  beforeEach(module('hippo.channel.page', function ($provide) {
+    setCmsUser = function (cmsUser) {
+      $provide.value('hippo.channel.ConfigService', {
+        cmsUser: cmsUser
+      });
+    };
 
-        setCmsUser('admin');
+    setCmsUser('admin');
 
-        PageService = jasmine.createSpyObj('PageService', ['getMountInfo', 'getCurrentPage']);
-        $provide.value('hippo.channel.PageService', PageService);
+    PageService = jasmine.createSpyObj('PageService', ['getMountInfo', 'getCurrentPage']);
+    $provide.value('hippo.channel.PageService', PageService);
 
-        PrototypeService = jasmine.createSpyObj('PrototypeService', ['getPrototypes']);
-        $provide.value('hippo.channel.PrototypeService', PrototypeService);
-    }));
+    PrototypeService = jasmine.createSpyObj('PrototypeService', ['getPrototypes']);
+    $provide.value('hippo.channel.PrototypeService', PrototypeService);
+  }));
 
-    beforeEach(inject(function ($rootScope, $controller, $q) {
-        scope = $rootScope.$new();
+  beforeEach(inject(function ($rootScope, $controller, $q) {
+    scope = $rootScope.$new();
 
-        function resolvePromises() {
-            $rootScope.$apply();
-        }
+    function resolvePromises () {
+      $rootScope.$apply();
+    }
 
-        function resolvedPromise(value) {
-            var deferred = $q.defer();
-            deferred.resolve(value);
-            return deferred.promise;
-        }
+    function resolvedPromise (value) {
+      var deferred = $q.defer();
+      deferred.resolve(value);
+      return deferred.promise;
+    }
 
-        createController = function() {
-            PageService.getMountInfo.and.callFake(function() {
-                return resolvedPromise({hostName: 'www.onehippo.com', mountPath: '/mountpath'});
-            });
+    createController = function () {
+      PageService.getMountInfo.and.callFake(function () {
+        return resolvedPromise({hostName: 'www.onehippo.com', mountPath: '/mountpath'});
+      });
 
-            PageService.getCurrentPage.and.callFake(function() {
-                return resolvedPromise({
-                    id: 'pageId',
-                    pageTitle: 'Page Title',
-                    name: 'pageName',
-                    workspaceConfiguration: isPageInWorkspace,
-                    lockedBy: pageLockedBy,
-                    lockedOn: pageLockedOn
-                });
-            });
+      PageService.getCurrentPage.and.callFake(function () {
+        return resolvedPromise({
+          id: 'pageId',
+          pageTitle: 'Page Title',
+          name: 'pageName',
+          workspaceConfiguration: isPageInWorkspace,
+          lockedBy: pageLockedBy,
+          lockedOn: pageLockedOn
+        });
+      });
 
-            PrototypeService.getPrototypes.and.callFake(function() {
-                return resolvedPromise([
-                    {
-                        displayName: 'Prototype One'
-                    },
-                    {
-                        displayName: 'Prototype Two'
-                    }
-                ]);
-            });
+      PrototypeService.getPrototypes.and.callFake(function () {
+        return resolvedPromise([
+          {
+            displayName: 'Prototype One'
+          },
+          {
+            displayName: 'Prototype Two'
+          }
+        ]);
+      });
 
-            var controller = $controller('hippo.channel.page.SettingsCtrl', { $scope: scope });
+      var controller = $controller('hippo.channel.page.SettingsCtrl', {$scope: scope});
 
-            resolvePromises();
+      resolvePromises();
 
-            return controller;
-        };
-    }));
+      return controller;
+    };
+  }));
 
-    it('should get the mount info', function () {
-        createController();
-        expect(PageService.getMountInfo).toHaveBeenCalled();
-        expect(scope.host).toEqual('www.onehippo.com/mountpath');
-    });
+  it('should get the mount info', function () {
+    createController();
+    expect(PageService.getMountInfo).toHaveBeenCalled();
+    expect(scope.host).toEqual('www.onehippo.com/mountpath');
+  });
 
-    it('should get the prototypes', function () {
-        createController();
-        expect(PrototypeService.getPrototypes).toHaveBeenCalled();
-        expect(scope.prototypes.length).toEqual(2);
-        expect(scope.prototypes[0].displayName).toEqual('Prototype One');
-    });
+  it('should get the prototypes', function () {
+    createController();
+    expect(PrototypeService.getPrototypes).toHaveBeenCalled();
+    expect(scope.prototypes.length).toEqual(2);
+    expect(scope.prototypes[0].displayName).toEqual('Prototype One');
+  });
 
-    it('should get the current page', inject(function ($rootScope) {
-        createController();
-        expect(PageService.getCurrentPage).toHaveBeenCalled();
-        expect(scope.page.id).toEqual('pageId');
-        expect(scope.page.title).toEqual('Page Title');
-        expect(scope.page.url).toEqual('pageName');
-    }));
+  it('should get the current page', inject(function () {
+    createController();
+    expect(PageService.getCurrentPage).toHaveBeenCalled();
+    expect(scope.page.id).toEqual('pageId');
+    expect(scope.page.title).toEqual('Page Title');
+    expect(scope.page.url).toEqual('pageName');
+  }));
 
-    it('should get the lock information', function() {
-        pageLockedBy = 'editor';
-        pageLockedOn = 12345;
+  it('should get the lock information', function () {
+    pageLockedBy = 'editor';
+    pageLockedOn = 12345;
 
-        createController();
+    createController();
 
-        expect(scope.lock.owner).toEqual('editor');
-        expect(scope.lock.timestamp).toEqual(12345);
-    });
+    expect(scope.lock.owner).toEqual('editor');
+    expect(scope.lock.timestamp).toEqual(12345);
+  });
 
-    it('should lock the page when it is locked by another user', function() {
-        pageLockedBy = 'editor';
-        setCmsUser('admin');
+  it('should lock the page when it is locked by another user', function () {
+    pageLockedBy = 'editor';
+    setCmsUser('admin');
 
-        createController();
+    createController();
 
-        expect(scope.state.isLocked).toEqual(true);
-    });
+    expect(scope.state.isLocked).toEqual(true);
+  });
 
-    it('should not lock the page when it is not locked by anyone', function() {
-        pageLockedBy = null;
+  it('should not lock the page when it is not locked by anyone', function () {
+    pageLockedBy = null;
 
-        createController();
+    createController();
 
-        expect(scope.state.isLocked).toEqual(false);
-    });
+    expect(scope.state.isLocked).toEqual(false);
+  });
 
-    it('should not lock the page when it is locked by the current user', function() {
-        pageLockedBy = 'editor';
-        setCmsUser('editor');
+  it('should not lock the page when it is locked by the current user', function () {
+    pageLockedBy = 'editor';
+    setCmsUser('editor');
 
-        createController();
+    createController();
 
-        expect(scope.state.isLocked).toEqual(false);
-    });
+    expect(scope.state.isLocked).toEqual(false);
+  });
 
-    it('should make a page editable when it is located in the HST workspace and not locked by anyone', function () {
-        isPageInWorkspace = true;
-        pageLockedBy = null;
+  it('should make a page editable when it is located in the HST workspace and not locked by anyone', function () {
+    isPageInWorkspace = true;
+    pageLockedBy = null;
 
-        createController();
+    createController();
 
-        expect(scope.state.isEditable).toEqual(true);
-    });
+    expect(scope.state.isEditable).toEqual(true);
+  });
 
-    it('should not make a page editable when it is located in the HST workspace but locked by another user', function () {
-        isPageInWorkspace = true;
+  it('should not make a page editable when it is located in the HST workspace but locked by another user', function () {
+    isPageInWorkspace = true;
 
-        pageLockedBy = 'editor';
-        setCmsUser('admin');
+    pageLockedBy = 'editor';
+    setCmsUser('admin');
 
-        createController();
+    createController();
 
-        expect(scope.state.isEditable).toEqual(false);
-    });
+    expect(scope.state.isEditable).toEqual(false);
+  });
 
-    it('should make a page editable when it is located in the HST workspace and locked by the current CMS user', function () {
-        isPageInWorkspace = true;
+  it('should make a page editable when it is located in the HST workspace and locked by the current CMS user', function () {
+    isPageInWorkspace = true;
 
-        pageLockedBy = 'editor';
-        setCmsUser('editor');
+    pageLockedBy = 'editor';
+    setCmsUser('editor');
 
-        createController();
+    createController();
 
-        expect(scope.state.isEditable).toEqual(true);
-    });
+    expect(scope.state.isEditable).toEqual(true);
+  });
 
-    it('should not make a page editable when it not located in the HST workspace', function () {
-        isPageInWorkspace = false;
+  it('should not make a page editable when it not located in the HST workspace', function () {
+    isPageInWorkspace = false;
 
-        createController();
+    createController();
 
-        expect(scope.state.isEditable).toEqual(false);
-    });
+    expect(scope.state.isEditable).toEqual(false);
+  });
 
 });

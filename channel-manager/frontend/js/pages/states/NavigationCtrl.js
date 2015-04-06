@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 (function () {
-    'use strict';
+  'use strict';
 
-    angular.module('hippo.channel.pages')
-        .controller('hippo.channel.pages.NavigationCtrl', [
-        '$scope',
-        '$state',
-        function ($scope, $state) {
-            // navigation
-            $scope.navigateTo = function (stateName) {
-                $state.go(stateName);
-            };
-        }
+  angular.module('hippo.channel.pages')
+    .controller('hippo.channel.pages.NavigationCtrl', [
+      '$scope',
+      '$state',
+      function ($scope, $state) {
+        // navigation
+        $scope.navigateTo = function (stateName) {
+          $state.go(stateName);
+        };
+      }
     ]);
 
 }());

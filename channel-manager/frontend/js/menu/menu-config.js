@@ -13,81 +13,85 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function() {
-    "use strict";
+(function () {
+  "use strict";
 
-    angular.module('hippo.channel.menu')
+  angular.module('hippo.channel.menu')
 
-        .config([
-            '$stateProvider',
-            '$translateProvider',
-            '$tooltipProvider',
-            function($stateProvider, $translateProvider, $tooltipProvider) {
+    .config([
+      '$stateProvider',
+      '$translateProvider',
+      '$tooltipProvider',
+      function ($stateProvider, $translateProvider, $tooltipProvider) {
 
-                // routing
-                $stateProvider
-                    .state('loader', {
-                        url: '/loader',
-                        controller: 'hippo.channel.menu.LoaderCtrl',
-                        templateUrl: 'states/loader/loader.html'
-                    })
+        // routing
+        $stateProvider
+          .state('loader', {
+            url: '/loader',
+            controller: 'hippo.channel.menu.LoaderCtrl',
+            templateUrl: 'states/loader/loader.html'
+          })
 
-                    .state('menu-item', {
-                        abstract: true,
-                        controller: 'hippo.channel.menu.MenuItemCtrl as MenuItemCtrl',
-                        templateUrl: 'states/menu-item/menu-item.html'
-                    })
+          .state('menu-item', {
+            abstract: true,
+            controller: 'hippo.channel.menu.MenuItemCtrl as MenuItemCtrl',
+            templateUrl: 'states/menu-item/menu-item.html'
+          })
 
-                    .state('menu-item.edit', {
-                        url: '/:menuItemId/edit',
-                        controller: 'hippo.channel.menu.EditMenuItemCtrl as EditMenuItemCtrl',
-                        templateUrl: 'states/menu-item/edit/edit-menu-item.html',
-                        params: {
-                            selectedDocumentPath: null
-                        }
-                    })
-
-                    .state('menu-item.none', {
-                        url: '/none',
-                        controller: 'hippo.channel.menu.NoMenuItemCtrl'
-                    })
-
-                    .state('picker', {
-                        url: '/:menuItemId/:siteContentIdentifier/:siteMapIdentifier/picker',
-                        controller: 'hippo.channel.menu.PickerCtrl as PickerCtrl',
-                        templateUrl: 'states/picker/picker.html',
-                        params: {
-                            link: null
-                        },
-                        resolve: {
-                            getInitialData: ['hippo.channel.menu.PickerService', '$stateParams', function (PickerService, $stateParams) {
-                                console.log('resolve');
-                                return PickerService.getInitialData($stateParams.siteContentIdentifier, $stateParams.link);
-                            }]
-                        }
-                    })
-
-                    .state('picker.docs', {
-                        url: '/:pickerTreeItemId/picker/doc',
-                        controller: 'hippo.channel.menu.PickerDocCtrl as PickerDocCtrl',
-                        templateUrl: 'states/picker/pickerDoc.html'
-                    });
-
-                // translations
-                $translateProvider.useStaticFilesLoader({
-                    prefix: 'i18n/',
-                    suffix: '.json'
-                });
-
-                // tooltips
-                $tooltipProvider.options({
-                    animation: false
-                });
-                $tooltipProvider.setTriggers({
-                    'show': 'hide'
-                });
+          .state('menu-item.edit', {
+            url: '/:menuItemId/edit',
+            controller: 'hippo.channel.menu.EditMenuItemCtrl as EditMenuItemCtrl',
+            templateUrl: 'states/menu-item/edit/edit-menu-item.html',
+            params: {
+              selectedDocumentPath: null
             }
-        ]
-    );
+          })
+
+          .state('menu-item.none', {
+            url: '/none',
+            controller: 'hippo.channel.menu.NoMenuItemCtrl'
+          })
+
+          .state('picker', {
+            url: '/:menuItemId/:siteContentIdentifier/:siteMapIdentifier/picker',
+            controller: 'hippo.channel.menu.PickerCtrl as PickerCtrl',
+            templateUrl: 'states/picker/picker.html',
+            params: {
+              link: null
+            },
+            resolve: {
+              getInitialData: [
+                'hippo.channel.menu.PickerService',
+                '$stateParams',
+                function (PickerService, $stateParams) {
+                  console.log('resolve');
+                  return PickerService.getInitialData($stateParams.siteContentIdentifier, $stateParams.link);
+                }
+              ]
+            }
+          })
+
+          .state('picker.docs', {
+            url: '/:pickerTreeItemId/picker/doc',
+            controller: 'hippo.channel.menu.PickerDocCtrl as PickerDocCtrl',
+            templateUrl: 'states/picker/pickerDoc.html'
+          });
+
+        // translations
+        $translateProvider.useStaticFilesLoader({
+          prefix: 'i18n/',
+          suffix: '.json'
+        });
+
+        // tooltips
+        $tooltipProvider.options({
+          animation: false
+        });
+        $tooltipProvider.setTriggers({
+          'show': 'hide'
+        });
+      }
+    ]
+  );
 
 }());

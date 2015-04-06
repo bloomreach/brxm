@@ -19,24 +19,26 @@
     <div id="panel-wrap">
       <div id="menu-panel" class="col-sm-3" data-ng-controller="hippo.channel.menu.PickerTreeCtrl as PickerTreeCtrl">
         <div id="picker-type">
+          <label for="picker-type-select" class="sr-only">Picker Type Select</label>
           <select ng-model="PickerCtrl.pickerType"
                   ng-options="option.name for option in PickerCtrl.pickerTypes"
-                  ng-change="PickerCtrl.changePickerType()">
+                  ng-change="PickerCtrl.changePickerType()"
+                  id="picker-type-select">
           </select>
         </div>
         <div class="tree-col" data-keep-scroll-pos>
-            <div hippo-tree data-items="PickerCtrl.treeItems" data-callbacks="PickerTreeCtrl.callbacks" data-selected-item="PickerCtrl.selectedItem" drag="false">
-              <a class="btn btn-link btn-xs" data-nodrag data-ng-click="toggleItem()" stop-propagation data-ng-if="item.expandable">
-                <hippo-icon name="{{item.collapsed ? 'caret-right' : 'caret-down'}}" size="m"></hippo-icon>
-              </a>
-              <span class="spacer" data-ng-if="!item.expandable"></span>
-              <span class="angular-ui-tree-title-wrapper">
-                <hippo-icon name="{{item.collapsed || !item.expandable ? 'folder' : 'folder-open'}}"  size="m" class="angular-ui-tree-title-wrapper-icon"></hippo-icon>
-                <span class="angular-ui-tree-title">{{ item.displayName }}</span>
-              </span>
-            </div>
-            <div class="empty-tree" data-ng-if="PickerCtrl.treeItems.length == 0">{{ 'EMPTY_DOCUMENT_PICKER' | translate }}</div>
+          <div data-hippo-tree data-items="PickerCtrl.treeItems" data-callbacks="PickerTreeCtrl.callbacks" data-selected-item="PickerCtrl.selectedItem" data-drag="false">
+            <a class="btn btn-link btn-xs" data-nodrag data-ng-click="toggleItem()" data-stop-propagation data-ng-if="item.expandable">
+              <hippo-icon name="{{item.collapsed ? 'caret-right' : 'caret-down'}}" size="m"></hippo-icon>
+            </a>
+            <span class="spacer" data-ng-if="!item.expandable"></span>
+            <span class="angular-ui-tree-title-wrapper">
+              <hippo-icon name="{{item.collapsed || !item.expandable ? 'folder' : 'folder-open'}}" size="m" class="angular-ui-tree-title-wrapper-icon"></hippo-icon>
+              <span class="angular-ui-tree-title">{{ item.displayName }}</span>
+            </span>
           </div>
+          <div class="empty-tree" data-ng-if="PickerCtrl.treeItems.length == 0">{{ 'EMPTY_DOCUMENT_PICKER' | translate }}</div>
+        </div>
       </div>
       <div data-ui-view class="col-sm-9" id="form-panel"></div>
     </div>
@@ -49,11 +51,10 @@
       </div>
     </div>
 
-
     <!-- START general confirmation dialog -->
     <div data-ng-controller="hippo.channel.menu.CloseConfirmationCtrl" id="close-confirmation">
       <div class="overlay" data-ng-show="dialog.visible">&#160;</div>
-      <div hippo-confirmation-dialog
+      <div data-hippo-confirmation-dialog
            data-show="dialog.visible"
            data-perform-confirmation="confirm()"
            data-perform-cancel="cancel()"

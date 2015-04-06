@@ -1,39 +1,28 @@
 {
-    "PAGE_TITLE": "Page title",
-    "PAGE_TITLE_REQUIRED": "The page title cannot be empty",
-
-    "URL": "URL",
-    "URL_REQUIRED": "The URL cannot be empty",
-    "URL_ILLEGAL_CHARACTERS": "These characters are not allowed: {{ illegalCharacters }}",
-
-    "ASSIGN_NEW_TEMPLATE": "Assign a new template",
-    "ASSIGN_NEW_TEMPLATE_REPOSITION_WARNING": "Components on the page might be repositioned if a new template is assigned.",
-    "ASSIGN_NEW_TEMPLATE_REMOVED_WARNING": "The selected template does not have any containers. All container items on the current page will be deleted if this template is applied.",
-    "SELECT_TEMPLATE": "Select a template",
-    "NO_TEMPLATE_FOUND_FOR": "No template found for",
-
-    "SAVE": "Save",
-    "CANCEL": "Cancel",
-    "DELETE_PAGE": "Delete page",
-    "COPY_PAGE": "Copy page",
-
-    "CONFIRM_DELETE_TITLE": "Confirm delete",
-    "CONFIRM_DELETE_MESSAGE": "Are you sure you want to delete '{{ title }}'?",
-
-    "TOOLTIP_NOT_EDITABLE": "You cannot delete the page because it is currently not editable",
-    "TOOLTIP_IS_HOMEPAGE": "The homepage cannot be deleted",
-
-    "PAGE_LOCKED": "This page is locked by {{ owner }} at {{ timestamp | date:'M/d/yyyy h:mm a' }}",
-
-    "TECHNICAL_ERROR": "A technical error has occurred",
-    "ITEM_ALREADY_LOCKED": "You cannot edit this page because '{{ lockedBy }}' is already editing it",
-
-
-    "PRIMARY_DOCUMENT": "Primary page document",
-    "REMOVE_PRIMARY_DOCUMENT" : "Remove",
-    "CONFIRM_REMOVE_PRIMARY_DOCUMENT_TITLE" : "Confirm remove",
-    "CONFIRM_REMOVE_PRIMARY_DOCUMENT_MESSAGE": "Are you sure you want to remove the primary document?",
-
-    "NONE": "None"
-
+  "PAGE_TITLE": "Page title",
+  "PAGE_TITLE_REQUIRED": "The page title cannot be empty",
+  "URL": "URL",
+  "URL_REQUIRED": "The URL cannot be empty",
+  "URL_ILLEGAL_CHARACTERS": "These characters are not allowed: {{ illegalCharacters }}",
+  "ASSIGN_NEW_TEMPLATE": "Assign a new template",
+  "ASSIGN_NEW_TEMPLATE_REPOSITION_WARNING": "Components on the page might be repositioned if a new template is assigned.",
+  "ASSIGN_NEW_TEMPLATE_REMOVED_WARNING": "The selected template does not have any containers. All container items on the current page will be deleted if this template is applied.",
+  "SELECT_TEMPLATE": "Select a template",
+  "NO_TEMPLATE_FOUND_FOR": "No template found for",
+  "SAVE": "Save",
+  "CANCEL": "Cancel",
+  "DELETE_PAGE": "Delete page",
+  "COPY_PAGE": "Copy page",
+  "CONFIRM_DELETE_TITLE": "Confirm delete",
+  "CONFIRM_DELETE_MESSAGE": "Are you sure you want to delete '{{ title }}'?",
+  "TOOLTIP_NOT_EDITABLE": "You cannot delete the page because it is currently not editable",
+  "TOOLTIP_IS_HOMEPAGE": "The homepage cannot be deleted",
+  "PAGE_LOCKED": "This page is locked by {{ owner }} at {{ timestamp | date:'M/d/yyyy h:mm a' }}",
+  "TECHNICAL_ERROR": "A technical error has occurred",
+  "ITEM_ALREADY_LOCKED": "You cannot edit this page because '{{ lockedBy }}' is already editing it",
+  "PRIMARY_DOCUMENT": "Primary page document",
+  "REMOVE_PRIMARY_DOCUMENT": "Remove",
+  "CONFIRM_REMOVE_PRIMARY_DOCUMENT_TITLE": "Confirm remove",
+  "CONFIRM_REMOVE_PRIMARY_DOCUMENT_MESSAGE": "Are you sure you want to remove the primary document?",
+  "NONE": "None"
 }

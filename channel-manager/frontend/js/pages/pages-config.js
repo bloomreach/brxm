@@ -13,46 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function() {
-    "use strict";
+(function () {
+  "use strict";
 
-    angular.module('hippo.channel.pages')
+  angular.module('hippo.channel.pages')
 
-        .config([
-            '$stateProvider',
-            '$translateProvider',
-            '$tooltipProvider',
-            function($stateProvider, $translateProvider, $tooltipProvider) {
+    .config([
+      '$stateProvider',
+      '$translateProvider',
+      '$tooltipProvider',
+      function ($stateProvider, $translateProvider, $tooltipProvider) {
 
-                // routing
-                $stateProvider
-                    .state('overview-pages', {
-                        url: '/overview-pages',
-                        controller: 'hippo.channel.pages.OverviewPagesCtrl',
-                        templateUrl: 'states/overview-pages/overview-pages.html'
-                    })
+        // routing
+        $stateProvider
+          .state('overview-pages', {
+            url: '/overview-pages',
+            controller: 'hippo.channel.pages.OverviewPagesCtrl',
+            templateUrl: 'states/overview-pages/overview-pages.html'
+          })
 
-                    .state('add-page', {
-                        url: '/add-page',
-                        controller: 'hippo.channel.pages.AddPageCtrl',
-                        templateUrl: 'states/add-page/add-page.html'
-                    });
+          .state('add-page', {
+            url: '/add-page',
+            controller: 'hippo.channel.pages.AddPageCtrl',
+            templateUrl: 'states/add-page/add-page.html'
+          });
 
-                // translations
-                $translateProvider.useStaticFilesLoader({
-                    prefix: 'i18n/',
-                    suffix: '.json'
-                });
+        // translations
+        $translateProvider.useStaticFilesLoader({
+          prefix: 'i18n/',
+          suffix: '.json'
+        });
 
-                // tooltips
-                $tooltipProvider.options({
-                    animation: false
-                });
-                $tooltipProvider.setTriggers({
-                    'show': 'hide'
-                });
-            }
-        ]
-    );
+        // tooltips
+        $tooltipProvider.options({
+          animation: false
+        });
+        $tooltipProvider.setTriggers({
+          'show': 'hide'
+        });
+      }
+    ]
+  );
 
 }());

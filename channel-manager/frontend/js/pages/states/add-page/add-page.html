@@ -15,108 +15,110 @@
   -->
 <div class="l-stretch">
 
-    <div class="panel panel-default l-stretch">
-        <div class="list-group l-stretch l-fixed-height">
-            <form name="form" role="form" novalidate>
-                <h1>{{ 'CREATE_NEW_PAGE' | translate }}</h1>
+  <div class="panel panel-default l-stretch">
+    <div class="list-group l-stretch l-fixed-height">
+      <form name="form" role="form" novalidate>
+        <h1>{{ 'CREATE_NEW_PAGE' | translate }}</h1>
 
-                <div class="alert alert-danger" data-ng-show="errorFeedback.message">
-                    {{ errorFeedback.message }}
-                </div>
+        <div class="alert alert-danger" data-ng-show="errorFeedback.message">
+          {{ errorFeedback.message }}
+        </div>
 
-                <div class="form-group has-feedback"
-                     data-ng-class="{
+        <div class="form-group has-feedback"
+             data-ng-class="{
                         'has-success': form.title.$dirty && form.title.$valid,
                         'has-error': form.title.$dirty && form.title.$invalid
                     }">
-                    <label for="page-title">{{ 'PAGE_TITLE' | translate }}</label>
-                    <input type="text" name="title" class="form-control" id="page-title"
-                           data-ng-attr-placeholder="{{ 'PAGE_TITLE' | translate }}"
-                           data-ng-model="page.title"
-                           data-ng-focus="form.title.$setPristine();"
-                           data-ng-required="true"
-                           data-hippo-channel-auto-focus
-                           data-tooltip="{{ 'TITLE_REQUIRED' | translate }}"
-                           data-tooltip-trigger="show"
-                           data-hippo-channel-tooltip-show="form.title.$dirty && form.title.$error.required"
-                           data-tooltip-placement="top">
-                    <span class="form-control-feedback">
-                      <hippo-icon ng-if="form.title.$dirty && form.title.$valid"
-                                  name="check-circle"
-                                  size="m">
-                      </hippo-icon>
-                      <hippo-icon ng-if="form.title.$dirty && form.title.$invalid"
-                                  name="minus-circle"
-                                  size="m">
-                      </hippo-icon>
-                    </span>
-                </div>
+          <label for="page-title">{{ 'PAGE_TITLE' | translate }}</label>
+          <input type="text" name="title" class="form-control" id="page-title"
+                 data-ng-attr-placeholder="{{ 'PAGE_TITLE' | translate }}"
+                 data-ng-model="page.title"
+                 data-ng-focus="form.title.$setPristine();"
+                 data-ng-required="true"
+                 data-hippo-channel-auto-focus
+                 data-tooltip="{{ 'TITLE_REQUIRED' | translate }}"
+                 data-tooltip-trigger="show"
+                 data-hippo-channel-tooltip-show="form.title.$dirty && form.title.$error.required"
+                 data-tooltip-placement="top">
+          <span class="form-control-feedback">
+            <hippo-icon ng-if="form.title.$dirty && form.title.$valid"
+                        name="check-circle"
+                        size="m">
+            </hippo-icon>
+            <hippo-icon ng-if="form.title.$dirty && form.title.$invalid"
+                        name="minus-circle"
+                        size="m">
+            </hippo-icon>
+          </span>
+        </div>
 
-                <div class="form-group has-feedback url-selector" id="url" data-ng-class="{
+        <div class="form-group has-feedback url-selector" id="url" data-ng-class="{
                         'has-success': form.url.$valid,
                         'has-error': form.url.$dirty && form.url.$invalid
                     }">
-                    <label for="page-url">{{ 'URL' | translate }}</label>
-                    <div class="input-group">
-                        <span class="input-group-btn">
-                            <select chosen
-                                    data-ng-model="page.location"
-                                    data-ng-options="item as item.location for item in locations"
-                                    width="'auto'"
-                                    class="ng-pristine ng-untouched ng-valid localytics-chosen">
-                            </select>
-                        </span>
-                        <input type="text" name="url" class="form-control" id="page-url"
-                               data-ng-model="page.url"
-                               data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
-                               data-ng-focus="form.url.$setPristine();"
-                               data-ng-required="true" data-ng-keyup="disableAutomaticUrlUpdate()"
-                               data-tooltip="{{ tooltips.url() }}"
-                               data-tooltip-trigger="show"
-                               data-hippo-channel-tooltip-show="form.url.$dirty && form.url.$invalid"
-                               data-tooltip-placement="top">
-                    </div>
-                    <span class="form-control-feedback">
-                      <hippo-icon ng-if="form.url.$dirty && form.url.$valid"
-                                  name="check-circle"
-                                  size="m"
-                                  class="hi-color-white hi-fill-success">
-                      </hippo-icon>
-                      <hippo-icon ng-if="form.url.$dirty && form.url.$invalid"
-                                  name="minus-circle"
-                                  size="m"
-                                  class="hi-color-white hi-fill-danger">
-                      </hippo-icon>
-                    </span>
-                </div>
-
-                <div class="form-group" id="template">
-                    <label for="page-prototype">{{ 'PAGE_TEMPLATE' | translate }}</label>
-                    <select class="form-control"
-                            id="page-prototype"
-                            data-chosen
-                            data-ng-options="prototype.displayName for prototype in prototypes"
-                            data-ng-model="page.prototype"
-                            data-no-results-text="'NO_RESULTS' | translate"
-                            data-placeholder="'SELECT_OPTION' | translate">
-                    </select>
-                </div>
-
-                <hr/>
-
-                <button type="submit" class="btn btn-default"
-                        data-ng-click="submit()"
-                        data-ng-disabled="form.$invalid">
-                  {{ 'CREATE_PAGE' | translate }}
-                </button>
-                <button type="submit" class="btn btn-link" data-ng-click="navigateTo('overview-pages')" data-ng-controller="hippo.channel.pages.NavigationCtrl">{{ 'CANCEL' | translate }}</button>
-            </form>
+          <label for="page-url">{{ 'URL' | translate }}</label>
+          <div class="input-group">
+            <span class="input-group-btn">
+              <label for="page-location">Page Location</label>
+              <select data-chosen
+                      data-ng-model="page.location"
+                      data-ng-options="item as item.location for item in locations"
+                      data-width="'auto'"
+                      id="page-location"
+                      class="ng-pristine ng-untouched ng-valid localytics-chosen">
+              </select>
+            </span>
+            <input type="text" name="url" class="form-control" id="page-url"
+                   data-ng-model="page.url"
+                   data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
+                   data-ng-focus="form.url.$setPristine();"
+                   data-ng-required="true" data-ng-keyup="disableAutomaticUrlUpdate()"
+                   data-tooltip="{{ tooltips.url() }}"
+                   data-tooltip-trigger="show"
+                   data-hippo-channel-tooltip-show="form.url.$dirty && form.url.$invalid"
+                   data-tooltip-placement="top">
+          </div>
+          <span class="form-control-feedback">
+            <hippo-icon ng-if="form.url.$dirty && form.url.$valid"
+                        name="check-circle"
+                        size="m"
+                        class="hi-color-white hi-fill-success">
+            </hippo-icon>
+            <hippo-icon ng-if="form.url.$dirty && form.url.$invalid"
+                        name="minus-circle"
+                        size="m"
+                        class="hi-color-white hi-fill-danger">
+            </hippo-icon>
+          </span>
         </div>
-    </div>
 
-    <div class="l-center-container" data-ng-show="errorFeedback">
-        <div class="alert alert-danger l-center-block">
-            {{ errorFeedback.message }}
+        <div class="form-group" id="template">
+          <label for="page-prototype">{{ 'PAGE_TEMPLATE' | translate }}</label>
+          <select class="form-control"
+                  id="page-prototype"
+                  data-chosen
+                  data-ng-options="prototype.displayName for prototype in prototypes"
+                  data-ng-model="page.prototype"
+                  data-no-results-text="'NO_RESULTS' | translate"
+                  data-placeholder="'SELECT_OPTION' | translate">
+          </select>
         </div>
+
+        <hr/>
+
+        <button type="submit" class="btn btn-default"
+                data-ng-click="submit()"
+                data-ng-disabled="form.$invalid">
+          {{ 'CREATE_PAGE' | translate }}
+        </button>
+        <button type="submit" class="btn btn-link" data-ng-click="navigateTo('overview-pages')" data-ng-controller="hippo.channel.pages.NavigationCtrl">{{ 'CANCEL' | translate }}</button>
+      </form>
     </div>
+  </div>
+
+  <div class="l-center-container" data-ng-show="errorFeedback">
+    <div class="alert alert-danger l-center-block">
+      {{ errorFeedback.message }}
+    </div>
+  </div>
 </div>

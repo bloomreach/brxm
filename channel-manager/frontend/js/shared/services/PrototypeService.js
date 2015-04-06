@@ -15,30 +15,30 @@
  */
 
 (function () {
-    "use strict";
+  "use strict";
 
-    angular.module('hippo.channel')
+  angular.module('hippo.channel')
 
-        .service('hippo.channel.PrototypeService', [
-            'hippo.channel.ConfigService',
-            '$http',
-            '$q',
-            function (ConfigService, $http, $q) {
-                // TODO: create tests for the PrototypeService
-                return {
-                    getPrototypes: function () {
-                        var url = ConfigService.apiUrlPrefix + '/' + ConfigService.mountId + './newpagemodel',
-                            deferred = $q.defer();
+    .service('hippo.channel.PrototypeService', [
+      'hippo.channel.ConfigService',
+      '$http',
+      '$q',
+      function (ConfigService, $http, $q) {
+        // TODO: create tests for the PrototypeService
+        return {
+          getPrototypes: function () {
+            var url = ConfigService.apiUrlPrefix + '/' + ConfigService.mountId + './newpagemodel',
+              deferred = $q.defer();
 
-                        $http.get(url, {})
-                            .then(function (response) {
-                                deferred.resolve(response.data.data);
-                            }, function (errorResponse) {
-                                deferred.reject(errorResponse);
-                            });
-                        return deferred.promise;
-                    }
-                };
-            }
-        ]);
+            $http.get(url, {})
+              .then(function (response) {
+                deferred.resolve(response.data.data);
+              }, function (errorResponse) {
+                deferred.reject(errorResponse);
+              });
+            return deferred.promise;
+          }
+        };
+      }
+    ]);
 }());

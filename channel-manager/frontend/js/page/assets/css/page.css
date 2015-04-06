@@ -16,95 +16,95 @@
 
 /* --- Settings Form --- */
 .panel-default {
-    border: none;
+  border: none;
 }
 
 .panel > .panel-footer {
-    text-align: center;
-    border-radius: 0;
+  text-align: center;
+  border-radius: 0;
 }
 
 .l-fixed-height {
-    height: 373px;
+  height: 373px;
 }
 
 form {
-    padding: 15px;
+  padding: 15px;
 }
 
 #url input {
-    border-radius: 0 4px 4px 0;
+  border-radius: 0 4px 4px 0;
 }
 
 #url .input-group-addon {
-    padding-right: 5px;
+  padding-right: 5px;
 }
 
 #url .form-control {
-    padding-left: 3px;
+  padding-left: 3px;
 }
 
 .toggle {
-    display: block;
+  display: block;
 }
 
 .toggle-closed {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .toggle-open {
-    cursor: default;
-    color: #000;
+  cursor: default;
+  color: #000000;
 }
 
 .toggle-open:hover {
-    color: #000;
-    text-decoration: none;
+  color: #000000;
+  text-decoration: none;
 }
 
 #template .panel-body {
-    padding-bottom: 0;
+  padding-bottom: 0;
 }
 
 #template .alert {
-    margin-top: 10px;
-    margin-bottom: 0;
+  margin-top: 10px;
+  margin-bottom: 0;
 }
 
 /* --- Confirmation dialog --- */
 .confirmation-dialog {
-    position: absolute;
-    width: 80%;
-    left: 10%;
-    z-index: 999999999999;
-    top: 0;
-    border-top: none;
-    display: none;
+  position: absolute;
+  width: 80%;
+  left: 10%;
+  z-index: 999999999999;
+  top: 0;
+  border-top: none;
+  display: none;
 }
 
 .confirmation-dialog.s-visible, .confirmation.s-invisible {
-    display: block
+  display: block
 }
 
 .confirmation-dialog.s-visible {
-    top: 0
+  top: 0
 }
 
 .confirmation-dialog.s-invisible {
-    top: -181px
+  top: -181px
 }
 
 .confirmation-dialog-title {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .confirmation-dialog-message {
-    /* prevent long messages from making the confirmation so high
-       that its bottom becomes visible in 'invisible' state */
-    max-height: 40px;
+  /* prevent long messages from making the confirmation so high
+     that its bottom becomes visible in 'invisible' state */
+  max-height: 40px;
 }
 
 /* --- Tooltip --- */
 .tooltip-newlines + .tooltip > .tooltip-inner {
-    white-space: pre-wrap;
+  white-space: pre-wrap;
 }

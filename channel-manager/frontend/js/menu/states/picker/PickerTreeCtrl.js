@@ -15,36 +15,36 @@
  */
 
 (function () {
-    "use strict";
+  "use strict";
 
-    angular.module('hippo.channel.menu')
-        .controller('hippo.channel.menu.PickerTreeCtrl', [
-            '$scope',
-            '$state',
-            '$stateParams',
-            'hippo.channel.menu.PickerService',
-            function ($scope, $state, $stateParams, PickerService) {
-                var PickerTreeCtrl = this;
+  angular.module('hippo.channel.menu')
+    .controller('hippo.channel.menu.PickerTreeCtrl', [
+      '$scope',
+      '$state',
+      '$stateParams',
+      'hippo.channel.menu.PickerService',
+      function ($scope, $state, $stateParams, PickerService) {
+        var PickerTreeCtrl = this;
 
-                PickerTreeCtrl.callbacks = {
-                    displayTreeItem: function(item) {
-                        return item.type === 'folder' || item.type === 'page';
-                    },
-                    selectItem: function(item) {
-                        if(!item.leaf && item.items.length < 1) {
-                            PickerService.getData(item);
-                        }
-                        $scope.PickerCtrl.selectedDocument = item;
-                        $state.go('picker.docs', {
-                            pickerTreeItemId: item.id
-                        });
-                    },
-                    toggleItem: function(item) {
-                        if(item.collapsed === false && item.items.length === 0) {
-                            PickerService.getData(item);
-                        }
-                    }
-                };
+        PickerTreeCtrl.callbacks = {
+          displayTreeItem: function (item) {
+            return item.type === 'folder' || item.type === 'page';
+          },
+          selectItem: function (item) {
+            if (!item.leaf && item.items.length < 1) {
+              PickerService.getData(item);
             }
-        ]);
+            $scope.PickerCtrl.selectedDocument = item;
+            $state.go('picker.docs', {
+              pickerTreeItemId: item.id
+            });
+          },
+          toggleItem: function (item) {
+            if (item.collapsed === false && item.items.length === 0) {
+              PickerService.getData(item);
+            }
+          }
+        };
+      }
+    ]);
 }());

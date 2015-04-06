@@ -15,28 +15,28 @@
  */
 
 describe('filter', function () {
-    'use strict';
+  'use strict';
 
-    var startWithSlash;
+  var startWithSlash;
 
-    beforeEach(module('hippo.channel.pages'));
-    beforeEach(inject(function (_startWithSlashFilter_) {
-        startWithSlash = _startWithSlashFilter_;
-    }));
+  beforeEach(module('hippo.channel.pages'));
+  beforeEach(inject(function (_startWithSlashFilter_) {
+    startWithSlash = _startWithSlashFilter_;
+  }));
 
-    describe('startWithSlash', function () {
-        it('should add an initial slash when the input does not start with a slash', function () {
-            expect(startWithSlash('test')).toBe('/test');
-        });
-        it('should not add an initial slash when the input already starts with a slash', function () {
-            expect(startWithSlash('/test')).toBe('/test');
-        });
-        it('should not add an initial slash when the input is a slash', function () {
-            expect(startWithSlash('/')).toBe('/');
-        });
-        it('should return a slash with the input is empty', function () {
-            expect(startWithSlash('')).toBe('/');
-        });
+  describe('startWithSlash', function () {
+    it('should add an initial slash when the input does not start with a slash', function () {
+      expect(startWithSlash('test')).toBe('/test');
     });
+    it('should not add an initial slash when the input already starts with a slash', function () {
+      expect(startWithSlash('/test')).toBe('/test');
+    });
+    it('should not add an initial slash when the input is a slash', function () {
+      expect(startWithSlash('/')).toBe('/');
+    });
+    it('should return a slash with the input is empty', function () {
+      expect(startWithSlash('')).toBe('/');
+    });
+  });
 
 });

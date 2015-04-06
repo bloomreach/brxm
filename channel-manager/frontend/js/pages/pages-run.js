@@ -13,29 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function() {
-    "use strict";
+(function () {
+  "use strict";
 
-    angular.module('hippo.channel.pages')
+  angular.module('hippo.channel.pages')
 
-        .run([
-            '$translate',
-            '$state',
-            'hippo.channel.ConfigService',
-            'hippo.channel.Container',
-            '_hippo.channel.IFrameService',
-            function ($translate, $state, Config, Container, IFrame) {
-                // set language
-                $translate.use(Config.locale);
+    .run([
+      '$translate',
+      '$state',
+      'hippo.channel.ConfigService',
+      'hippo.channel.Container',
+      '_hippo.channel.IFrameService',
+      function ($translate, $state, Config, Container, IFrame) {
+        // set language
+        $translate.use(Config.locale);
 
-                // go to default state
-                $state.go('overview-pages');
+        // go to default state
+        $state.go('overview-pages');
 
-                // close the app when the container is closed
-                Container.handleClose();
+        // close the app when the container is closed
+        Container.handleClose();
 
-                // enable live reload
-                IFrame.enableLiveReload();
-            }
-        ]);
+        // enable live reload
+        IFrame.enableLiveReload();
+      }
+    ]);
 }());

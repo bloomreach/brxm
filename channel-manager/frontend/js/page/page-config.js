@@ -13,40 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function() {
-    "use strict";
+(function () {
+  "use strict";
 
-    angular.module('hippo.channel.page')
+  angular.module('hippo.channel.page')
 
-        .config([
-            '$stateProvider',
-            '$translateProvider',
-            '$tooltipProvider',
-            function($stateProvider, $translateProvider, $tooltipProvider) {
+    .config([
+      '$stateProvider',
+      '$translateProvider',
+      '$tooltipProvider',
+      function ($stateProvider, $translateProvider, $tooltipProvider) {
 
-                // routing
-                $stateProvider
-                    .state('settings', {
-                        url: '/settings',
-                        controller: 'hippo.channel.page.SettingsCtrl',
-                        templateUrl: 'states/settings/settings.html'
-                    });
+        // routing
+        $stateProvider
+          .state('settings', {
+            url: '/settings',
+            controller: 'hippo.channel.page.SettingsCtrl',
+            templateUrl: 'states/settings/settings.html'
+          });
 
-                // translations
-                $translateProvider.useStaticFilesLoader({
-                    prefix: 'i18n/',
-                    suffix: '.json'
-                });
+        // translations
+        $translateProvider.useStaticFilesLoader({
+          prefix: 'i18n/',
+          suffix: '.json'
+        });
 
-                // tooltips
-                $tooltipProvider.options({
-                    animation: false
-                });
-                $tooltipProvider.setTriggers({
-                    'show': 'hide'
-                });
-            }
-        ]
-    );
+        // tooltips
+        $tooltipProvider.options({
+          animation: false
+        });
+        $tooltipProvider.setTriggers({
+          'show': 'hide'
+        });
+      }
+    ]
+  );
 
 }());

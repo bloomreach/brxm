@@ -15,90 +15,86 @@
  */
 
 describe('Edit Menu Item Controller', function () {
-    'use strict';
+  'use strict';
 
-    var $httpBackend, $scope, $state, createController;
+  var $httpBackend, $scope, $state, createController;
 
-    beforeEach(module('hippo.channel.menu'));
+  beforeEach(module('hippo.channel.menu'));
 
-    beforeEach(function() {
-        module(function($provide) {
-            $provide.value('hippo.channel.ConfigService', {
-                apiUrlPrefix: 'api',
-                menuId: 'menuId'
-            });
-            $provide.value('hippo.channel.HstApiRequests', jasmine.createSpy());
-            $state = jasmine.createSpyObj('$state', ['go']);
-            $provide.value('$state', $state);
-        });
-
+  beforeEach(function () {
+    module(function ($provide) {
+      $provide.value('hippo.channel.ConfigService', {
+        apiUrlPrefix: 'api',
+        menuId: 'menuId'
+      });
+      $provide.value('hippo.channel.HstApiRequests', jasmine.createSpy());
+      $state = jasmine.createSpyObj('$state', ['go']);
+      $provide.value('$state', $state);
     });
 
-    beforeEach(inject(function($injector) {
-        $httpBackend = $injector.get('$httpBackend');
-        $httpBackend.when('GET', 'api/menuId').respond({
-            data: {
-                items: [
-                    {
-                        id: '1',
-                        title: 'One'
-                    },
-                    {
-                        id: '2',
-                        title: 'Two',
-                        items: [
-                            {
-                                id: 'child1',
-                                title: 'Child 1'
-                            }
-                        ]
-                    },
-                    {
-                        id: '3',
-                        title: 'One'
-                    }
-                ]
-            }
-        });
-    }));
+  });
 
-    beforeEach(inject(function ($injector) {
-        var $controller = $injector.get('$controller');
-        $scope = $injector.get('$rootScope').$new();
-        createController = function() {
-            return $controller('hippo.channel.menu.EditMenuItemCtrl as EditMenuItemCtrl', {
-                '$scope': $scope
-            });
-        };
-    }));
-
-    afterEach(function() {
-        $httpBackend.verifyNoOutstandingExpectation();
-        $httpBackend.verifyNoOutstandingRequest();
+  beforeEach(inject(function ($injector) {
+    $httpBackend = $injector.get('$httpBackend');
+    $httpBackend.when('GET', 'api/menuId').respond({
+      data: {
+        items: [
+          {
+            id: '1',
+            title: 'One'
+          },
+          {
+            id: '2',
+            title: 'Two',
+            items: [
+              {
+                id: 'child1',
+                title: 'Child 1'
+              }
+            ]
+          },
+          {
+            id: '3',
+            title: 'One'
+          }
+        ]
+      }
     });
+  }));
 
-    function expectGetMenu() {
-        $httpBackend.expectGET('api/menuId');
-        $httpBackend.flush();
-    }
+  beforeEach(inject(function ($injector) {
+    var $controller = $injector.get('$controller');
+    $scope = $injector.get('$rootScope').$new();
+    createController = function () {
+      return $controller('hippo.channel.menu.EditMenuItemCtrl as EditMenuItemCtrl', {
+        '$scope': $scope
+      });
+    };
+  }));
 
-    it('should select parent after delete if deleted item has no siblings left', function () {
+  afterEach(function () {
+    $httpBackend.verifyNoOutstandingExpectation();
+    $httpBackend.verifyNoOutstandingRequest();
+  });
 
-        var controller = createController();
+  function expectGetMenu () {
+    $httpBackend.expectGET('api/menuId');
+    $httpBackend.flush();
+  }
 
-        $scope.MenuItemCtrl = {
-            selectedMenuItem: {
-                id: 'child1'
-            }
-        };
+  it('should select parent after delete if deleted item has no siblings left', function () {
+    $scope.MenuItemCtrl = {
+      selectedMenuItem: {
+        id: 'child1'
+      }
+    };
 
-        $scope.EditMenuItemCtrl.remove.execute();
+    $scope.EditMenuItemCtrl.remove.execute();
 
-        $httpBackend.expectPOST('api/menuId./delete/child1').respond('OK');
-        $httpBackend.flush();
+    $httpBackend.expectPOST('api/menuId./delete/child1').respond('OK');
+    $httpBackend.flush();
 
-        expect($state.go).toHaveBeenCalledWith('menu-item.edit', { menuItemId: '2' });
-    });
-
+    expect($state.go).toHaveBeenCalledWith('menu-item.edit', {menuItemId: '2'});
+  });
 
 });

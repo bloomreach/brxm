@@ -1,29 +1,41 @@
 {
-    "angular": ["angular.min.js", "angular.min.js.map"],
-    "angular-bootstrap": ["ui-bootstrap-tpls.min.js"],
-    "angular-chosen-localytics": ["chosen.js"],
-    "angular-mocks": [],
-    "angular-route": ["angular-route.min.js", "angular-route.min.js.map"],
-    "angular-translate": ["angular-translate.min.js"],
-    "angular-translate-loader-static-files": ["angular-translate-loader-static-files.min.js"],
-    "angular-ui-router": ["release/angular-ui-router.min.js"],
-    "angular-ui-tree": ["dist/angular-ui-tree.min.js"],
-    "chosen": ["chosen.jquery.min.js"],
-    "es5-shim": [],
-    "google-code-prettify": [],
-    "hippo-theme": [
-      "dist/css/main.min.css",
-      "dist/js/main.min.js",
-      "dist/images/*",
-      "dist/fonts/*"
-    ],
-    "hippo-addon-channel-manager-angularjs-api": [
-        "dist/css/main.min.css",
-        "dist/js/main.min.js",
-        "dist/images/*",
-        "dist/fonts/*"
-    ],
-    "jasmine-jquery": [],
-    "jquery": ["dist/jquery.min.js", "dist/jquery.min.map"],
-    "underscore": ["underscore-min.js", "underscore-min.map"]
+  "angular": [
+    "angular.min.js",
+    "angular.min.js.map"
+  ],
+  "angular-bootstrap": ["ui-bootstrap-tpls.min.js"],
+  "angular-chosen-localytics": ["chosen.js"],
+  "angular-mocks": [],
+  "angular-route": [
+    "angular-route.min.js",
+    "angular-route.min.js.map"
+  ],
+  "angular-translate": ["angular-translate.min.js"],
+  "angular-translate-loader-static-files": ["angular-translate-loader-static-files.min.js"],
+  "angular-ui-router": ["release/angular-ui-router.min.js"],
+  "angular-ui-tree": ["dist/angular-ui-tree.min.js"],
+  "chosen": ["chosen.jquery.min.js"],
+  "es5-shim": [],
+  "google-code-prettify": [],
+  "hippo-theme": [
+    "dist/css/main.min.css",
+    "dist/js/main.min.js",
+    "dist/images/*",
+    "dist/fonts/*"
+  ],
+  "hippo-addon-channel-manager-angularjs-api": [
+    "dist/css/main.min.css",
+    "dist/js/main.min.js",
+    "dist/images/*",
+    "dist/fonts/*"
+  ],
+  "jasmine-jquery": [],
+  "jquery": [
+    "dist/jquery.min.js",
+    "dist/jquery.min.map"
+  ],
+  "underscore": [
+    "underscore-min.js",
+    "underscore-min.map"
+  ]
 }

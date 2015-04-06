@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 (function () {
-    "use strict";
+  "use strict";
 
-    angular.module('hippo.channel.menu')
+  angular.module('hippo.channel.menu')
 
-        .controller('hippo.channel.menu.NoMenuItemCtrl', [
-            'hippo.channel.FormStateService',
-            function (FormStateService) {
-                FormStateService.setDirty(false);
-                FormStateService.setValid(true);
-            }
-        ]);
+    .controller('hippo.channel.menu.NoMenuItemCtrl', [
+      'hippo.channel.FormStateService',
+      function (FormStateService) {
+        FormStateService.setDirty(false);
+        FormStateService.setValid(true);
+      }
+    ]);
 }());

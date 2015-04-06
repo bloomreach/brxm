@@ -14,49 +14,49 @@
  * limitations under the License.
  */
 (function () {
-    'use strict';
+  'use strict';
 
-    angular.module('hippo.channel.pages')
+  angular.module('hippo.channel.pages')
 
-        .controller('hippo.channel.pages.OverviewPagesCtrl', [
-            '$scope',
-            '$state',
-            '$filter',
-            'hippo.channel.FeedbackService',
-            'hippo.channel.ConfigService',
-            'hippo.channel.PageService',
-            'hippo.channel.Container',
-            function ($scope, $state, $filter, FeedbackService, ConfigService, PageService, ContainerService) {
-                var translate;
+    .controller('hippo.channel.pages.OverviewPagesCtrl', [
+      '$scope',
+      '$state',
+      '$filter',
+      'hippo.channel.FeedbackService',
+      'hippo.channel.ConfigService',
+      'hippo.channel.PageService',
+      'hippo.channel.Container',
+      function ($scope, $state, $filter, FeedbackService, ConfigService, PageService, ContainerService) {
+        var translate;
 
-                // scope variables
-                $scope.pages = [];
-                $scope.tooltip = '';
-                $scope.userIsEditing = ConfigService.userIsEditing;
+        // scope variables
+        $scope.pages = [];
+        $scope.tooltip = '';
+        $scope.userIsEditing = ConfigService.userIsEditing;
 
-                // translate filter
-                translate = $filter('translate');
+        // translate filter
+        translate = $filter('translate');
 
-                // fetch pages
-                PageService.getPages().then(function (pages) {
-                    $scope.pages = pages;
-                }, function (errorResponse) {
-                    $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
-                });
+        // fetch pages
+        PageService.getPages().then(function (pages) {
+          $scope.pages = pages;
+        }, function (errorResponse) {
+          $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
+        });
 
-                $scope.showTooltip = function() {
-                    if (!$scope.userIsEditing) {
-                        $scope.tooltip = translate('ADD_NEW_PAGE_DISABLED_TOOLTIP');
-                    }
-                };
+        $scope.showTooltip = function () {
+          if (!$scope.userIsEditing) {
+            $scope.tooltip = translate('ADD_NEW_PAGE_DISABLED_TOOLTIP');
+          }
+        };
 
-                $scope.hideTooltip = function() {
-                    $scope.tooltip = '';
-                };
+        $scope.hideTooltip = function () {
+          $scope.tooltip = '';
+        };
 
-                $scope.showPage = function(page) {
-                    ContainerService.showPage(page.renderPathInfo);
-                };
-            }
-        ]);
+        $scope.showPage = function (page) {
+          ContainerService.showPage(page.renderPathInfo);
+        };
+      }
+    ]);
 }());

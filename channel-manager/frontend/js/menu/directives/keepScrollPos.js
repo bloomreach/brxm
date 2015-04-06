@@ -14,39 +14,39 @@
  * limitations under the License.
  */
 (function () {
-    "use strict";
+  "use strict";
 
-    angular.module("hippo.channel.menu")
+  angular.module("hippo.channel.menu")
 
-        /**
-         * @ngdoc directive
-         * @name hippo.channel.menu:keepScrollPos
-         * @restrict A
-         *
-         * @description
-         * Remembers the vertical scroll position of an element when the app state changes,
-         * and restores the vertical scroll position once the element becomes visible again.
-         */
-         .directive("keepScrollPos", [
-            '$timeout',
-            function($timeout) {
-                var scrollPos = 0;
-                return {
-                    restrict: 'A',
-                    link: function(scope, element) {
-                        scope.$on('$stateChangeStart', function() {
-                            scrollPos = element.scrollTop();
-                        });
-                        scope.$on('$stateChangeSuccess', function() {
-                            if (scrollPos > 0) {
-                                $timeout(function() {
-                                    element.scrollTop(scrollPos);
-                                    scrollPos = 0;
-                                }, 0);
-                            }
-                        });
-                    }
-                };
-            }
-        ]);
+  /**
+   * @ngdoc directive
+   * @name hippo.channel.menu:keepScrollPos
+   * @restrict A
+   *
+   * @description
+   * Remembers the vertical scroll position of an element when the app state changes,
+   * and restores the vertical scroll position once the element becomes visible again.
+   */
+    .directive("keepScrollPos", [
+      '$timeout',
+      function ($timeout) {
+        var scrollPos = 0;
+        return {
+          restrict: 'A',
+          link: function (scope, element) {
+            scope.$on('$stateChangeStart', function () {
+              scrollPos = element.scrollTop();
+            });
+            scope.$on('$stateChangeSuccess', function () {
+              if (scrollPos > 0) {
+                $timeout(function () {
+                  element.scrollTop(scrollPos);
+                  scrollPos = 0;
+                }, 0);
+              }
+            });
+          }
+        };
+      }
+    ]);
 }());

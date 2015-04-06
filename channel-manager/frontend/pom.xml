@@ -299,7 +299,9 @@
           <execution>
             <id>fetch-bower-dependencies</id>
             <phase>initialize</phase>
-            <goals><goal>copy-dependencies</goal></goals>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
             <configuration>
               <includeGroupIds>org.onehippo.cms7, frontend,org.onehippo.cms7</includeGroupIds>
               <includeArtifactIds>
@@ -319,7 +321,9 @@
           <execution>
             <id>npm-install</id>
             <phase>generate-sources</phase>
-            <goals><goal>exec</goal></goals>
+            <goals>
+              <goal>exec</goal>
+            </goals>
             <configuration>
               <executable>npm</executable>
               <commandlineArgs>install</commandlineArgs>
@@ -328,7 +332,9 @@
           <execution>
             <id>bower-install</id>
             <phase>process-resources</phase>
-            <goals><goal>exec</goal></goals>
+            <goals>
+              <goal>exec</goal>
+            </goals>
             <configuration>
               <executable>bower</executable>
               <commandlineArgs>install ${commandline.offline} --no-color</commandlineArgs>
@@ -337,7 +343,9 @@
           <execution>
             <id>grunt-build</id>
             <phase>process-resources</phase>
-            <goals><goal>exec</goal></goals>
+            <goals>
+              <goal>exec</goal>
+            </goals>
             <configuration>
               <executable>grunt</executable>
               <commandlineArgs>build --no-color</commandlineArgs>
@@ -346,7 +354,9 @@
           <execution>
             <id>grunt-test</id>
             <phase>test</phase>
-            <goals><goal>exec</goal></goals>
+            <goals>
+              <goal>exec</goal>
+            </goals>
             <configuration>
               <executable>grunt</executable>
               <commandlineArgs>test --no-color</commandlineArgs>

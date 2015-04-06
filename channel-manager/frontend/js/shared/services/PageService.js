@@ -15,115 +15,115 @@
  */
 
 (function () {
-    "use strict";
+  "use strict";
 
-    angular.module('hippo.channel')
+  angular.module('hippo.channel')
 
-        .service('hippo.channel.PageService', [
-            '$http',
-            '$q',
-            'hippo.channel.ConfigService',
-            function ($http, $q, ConfigService) {
-                var pageService = {};
+    .service('hippo.channel.PageService', [
+      '$http',
+      '$q',
+      'hippo.channel.ConfigService',
+      function ($http, $q, ConfigService) {
+        var pageService = {};
 
-                function pageServiceUrl(suffix) {
-                    var url = ConfigService.apiUrlPrefix;
-                    if (angular.isString(suffix)) {
-                        url += suffix;
-                    }
-                    return url;
-                }
+        function pageServiceUrl (suffix) {
+          var url = ConfigService.apiUrlPrefix;
+          if (angular.isString(suffix)) {
+            url += suffix;
+          }
+          return url;
+        }
 
-                pageService.getPages = function () {
-                    var deferred = $q.defer();
+        pageService.getPages = function () {
+          var deferred = $q.defer();
 
-                    $http.get(pageServiceUrl('/' + ConfigService.sitemapId + './pages'))
-                        .success(function (response) {
-                            deferred.resolve(response.data.pages);
-                        })
-                        .error(function (error) {
-                            deferred.reject(error);
-                        });
+          $http.get(pageServiceUrl('/' + ConfigService.sitemapId + './pages'))
+            .success(function (response) {
+              deferred.resolve(response.data.pages);
+            })
+            .error(function (error) {
+              deferred.reject(error);
+            });
 
-                    return deferred.promise;
-                };
+          return deferred.promise;
+        };
 
-                pageService.getCurrentPage = function () {
-                    var deferred = $q.defer();
+        pageService.getCurrentPage = function () {
+          var deferred = $q.defer();
 
-                    $http.get(pageServiceUrl('/' + ConfigService.sitemapId + './item/' + ConfigService.sitemapItemId))
-                        .success(function (response) {
-                            deferred.resolve(response.data);
-                        })
-                        .error(function (error) {
-                            deferred.reject(error);
-                        });
+          $http.get(pageServiceUrl('/' + ConfigService.sitemapId + './item/' + ConfigService.sitemapItemId))
+            .success(function (response) {
+              deferred.resolve(response.data);
+            })
+            .error(function (error) {
+              deferred.reject(error);
+            });
 
-                    return deferred.promise;
-                };
+          return deferred.promise;
+        };
 
-                pageService.getMountInfo = function () {
-                    var deferred = $q.defer();
+        pageService.getMountInfo = function () {
+          var deferred = $q.defer();
 
-                    $http.get(pageServiceUrl('/' + ConfigService.sitemapId + './mount'))
-                        .success(function (response) {
-                            deferred.resolve(response.data);
-                        })
-                        .error(function (error) {
-                            deferred.reject(error);
-                        });
+          $http.get(pageServiceUrl('/' + ConfigService.sitemapId + './mount'))
+            .success(function (response) {
+              deferred.resolve(response.data);
+            })
+            .error(function (error) {
+              deferred.reject(error);
+            });
 
-                    return deferred.promise;
-                };
+          return deferred.promise;
+        };
 
-                pageService.createPage = function (page, location) {
-                    var deferred = $q.defer(),
-                        url = '/' + ConfigService.sitemapId + './create';
+        pageService.createPage = function (page, location) {
+          var deferred = $q.defer(),
+            url = '/' + ConfigService.sitemapId + './create';
 
-                    if(location) {
-                        url += '/' + location.id;
-                    }
+          if (location) {
+            url += '/' + location.id;
+          }
 
-                    $http.post(pageServiceUrl(url), page)
-                        .success(function (response) {
-                            deferred.resolve(response);
-                        })
-                        .error(function (error) {
-                            deferred.reject(error);
-                        });
+          $http.post(pageServiceUrl(url), page)
+            .success(function (response) {
+              deferred.resolve(response);
+            })
+            .error(function (error) {
+              deferred.reject(error);
+            });
 
-                    return deferred.promise;
-                };
+          return deferred.promise;
+        };
 
-                pageService.updatePage = function (page) {
-                    var deferred = $q.defer();
+        pageService.updatePage = function (page) {
+          var deferred = $q.defer();
 
-                    $http.post(pageServiceUrl('/' + ConfigService.sitemapId + './update'), page)
-                        .success(function (response) {
-                            deferred.resolve(response);
-                        })
-                        .error(function (error) {
-                            deferred.reject(error);
-                        });
+          $http.post(pageServiceUrl('/' + ConfigService.sitemapId + './update'), page)
+            .success(function (response) {
+              deferred.resolve(response);
+            })
+            .error(function (error) {
+              deferred.reject(error);
+            });
 
-                    return deferred.promise;
-                };
+          return deferred.promise;
+        };
 
-                pageService.deletePage = function (pageId) {
-                    var deferred = $q.defer();
+        pageService.deletePage = function (pageId) {
+          var deferred = $q.defer();
 
-                    $http.post(pageServiceUrl('/' + ConfigService.sitemapId + './delete/' + pageId))
-                        .success(function (response) {
-                            deferred.resolve(response);
-                        })
-                        .error(function (error) {
-                            deferred.reject(error);
-                        });
+          $http.post(pageServiceUrl('/' + ConfigService.sitemapId + './delete/' + pageId))
+            .success(function (response) {
+              deferred.resolve(response);
+            })
+            .error(function (error) {
+              deferred.reject(error);
+            });
 
-                    return deferred.promise;
-                };
+          return deferred.promise;
+        };
 
-                return pageService;
-            }
-        ]);
+        return pageService;
+      }
+    ]);
 }());

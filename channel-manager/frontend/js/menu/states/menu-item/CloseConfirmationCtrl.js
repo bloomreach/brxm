@@ -15,38 +15,38 @@
  */
 
 (function () {
-    'use strict';
+  'use strict';
 
-    angular.module('hippo.channel.menu')
+  angular.module('hippo.channel.menu')
 
-        .controller('hippo.channel.menu.CloseConfirmationCtrl', [
-            '$scope',
-            '$rootScope',
-            'hippo.channel.Container',
-            function ($scope, $rootScope, ContainerService) {
-                var CloseConfirmationCtrl = this;
-                // default visibility of the dialog
-                CloseConfirmationCtrl.dialog = {
-                    visible: false
-                };
+    .controller('hippo.channel.menu.CloseConfirmationCtrl', [
+      '$scope',
+      '$rootScope',
+      'hippo.channel.Container',
+      function ($scope, $rootScope, ContainerService) {
+        var CloseConfirmationCtrl = this;
+        // default visibility of the dialog
+        CloseConfirmationCtrl.dialog = {
+          visible: false
+        };
 
-                // the message is supposed to come from the ContainerService, that handles
-                // the communication with the iFrame
-                $rootScope.$on('close-confirmation:show', function () {
-                    $scope.$apply(function () {
-                        CloseConfirmationCtrl.dialog.visible = true;
-                    });
-                });
+        // the message is supposed to come from the ContainerService, that handles
+        // the communication with the iFrame
+        $rootScope.$on('close-confirmation:show', function () {
+          $scope.$apply(function () {
+            CloseConfirmationCtrl.dialog.visible = true;
+          });
+        });
 
-                // confirm - close the panel
-                CloseConfirmationCtrl.confirm = function () {
-                    ContainerService.performClose();
-                };
+        // confirm - close the panel
+        CloseConfirmationCtrl.confirm = function () {
+          ContainerService.performClose();
+        };
 
-                // cancel - hide the dialog
-                CloseConfirmationCtrl.cancel = function () {
-                    CloseConfirmationCtrl.dialog.visible = false;
-                };
-            }
-        ]);
+        // cancel - hide the dialog
+        CloseConfirmationCtrl.cancel = function () {
+          CloseConfirmationCtrl.dialog.visible = false;
+        };
+      }
+    ]);
 })();

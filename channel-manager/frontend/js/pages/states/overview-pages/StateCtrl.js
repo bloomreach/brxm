@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 (function () {
-    'use strict';
+  'use strict';
 
-    angular.module('hippo.channel.pages')
-        .controller('hippo.channel.pages.StateCtrl', [
-        '$scope',
-        'hippo.channel.ConfigService',
-        'hippo.channel.PrototypeService',
-        'hippo.channel.FeedbackService',
-        function ($scope, ConfigService, PrototypeService, FeedbackService) {
-            // fetch prototypes
-            if (ConfigService.userCanEdit) {
-                PrototypeService.getPrototypes().then(function(data) {
-                    $scope.isAddPageVisible = data.prototypes.length > 0;
-                }, function(errorResponse) {
-                    $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
-                });
-            }
+  angular.module('hippo.channel.pages')
+    .controller('hippo.channel.pages.StateCtrl', [
+      '$scope',
+      'hippo.channel.ConfigService',
+      'hippo.channel.PrototypeService',
+      'hippo.channel.FeedbackService',
+      function ($scope, ConfigService, PrototypeService, FeedbackService) {
+        // fetch prototypes
+        if (ConfigService.userCanEdit) {
+          PrototypeService.getPrototypes().then(function (data) {
+            $scope.isAddPageVisible = data.prototypes.length > 0;
+          }, function (errorResponse) {
+            $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
+          });
         }
+      }
     ]);
 
 }());

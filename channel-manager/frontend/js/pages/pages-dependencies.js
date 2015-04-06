@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function() {
-    "use strict";
+(function () {
+  "use strict";
 
-    angular.module('hippo.channel.pages', [
-        'hippo.channel',
-        'hippo.theme',
-        'ngRoute',
-        'pascalprecht.translate',
-        'ui.bootstrap',
-        'ui.router',
-        'ui.tree'
-    ]);
+  angular.module('hippo.channel.pages', [
+    'hippo.channel',
+    'hippo.theme',
+    'ngRoute',
+    'pascalprecht.translate',
+    'ui.bootstrap',
+    'ui.router',
+    'ui.tree'
+  ]);
 
 }());

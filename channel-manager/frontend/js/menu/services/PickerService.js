@@ -15,48 +15,48 @@
  */
 
 (function () {
-    "use strict";
+  "use strict";
 
-    angular.module('hippo.channel.menu')
+  angular.module('hippo.channel.menu')
 
-        .service('hippo.channel.menu.PickerService', [
-            'hippo.channel.ConfigService',
-            '$http',
-            function (ConfigService, $http) {
-                var pickerData = {
-                        items: []
-                    }, callObj = {
-                        method: 'GET'
-                    };
+    .service('hippo.channel.menu.PickerService', [
+      'hippo.channel.ConfigService',
+      '$http',
+      function (ConfigService, $http) {
+        var pickerData = {
+          items: []
+        }, callObj = {
+          method: 'GET'
+        };
 
-                function getInitialData(id, link) {
-                    callObj.url = ConfigService.apiUrlPrefix + '/' + id + './picker/';
-                    if(link) {
-                        callObj.url += link;
-                    }
-                    return $http(callObj).success(function (returnedData) {
-                        return angular.copy([returnedData.data], pickerData.items);
-                    });
-                }
+        function getInitialData (id, link) {
+          callObj.url = ConfigService.apiUrlPrefix + '/' + id + './picker/';
+          if (link) {
+            callObj.url += link;
+          }
+          return $http(callObj).success(function (returnedData) {
+            return angular.copy([returnedData.data], pickerData.items);
+          });
+        }
 
-                function getData(item) {
-                    callObj.url = ConfigService.apiUrlPrefix + '/' + item.id + './picker/';
-                    return $http(callObj).success(function (returnedData) {
-                        item.items = returnedData.data.items;
-                    });
-                }
+        function getData (item) {
+          callObj.url = ConfigService.apiUrlPrefix + '/' + item.id + './picker/';
+          return $http(callObj).success(function (returnedData) {
+            item.items = returnedData.data.items;
+          });
+        }
 
-                return {
-                    getTree: function() {
-                        return pickerData.items;
-                    },
-                    getInitialData: function(id, link) {
-                        return getInitialData(id, link);
-                    },
-                    getData: function(item) {
-                        return getData(item);
-                    }
-                };
-            }
-        ]);
+        return {
+          getTree: function () {
+            return pickerData.items;
+          },
+          getInitialData: function (id, link) {
+            return getInitialData(id, link);
+          },
+          getData: function (item) {
+            return getData(item);
+          }
+        };
+      }
+    ]);
 }());

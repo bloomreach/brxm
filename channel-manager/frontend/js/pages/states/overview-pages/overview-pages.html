@@ -16,36 +16,37 @@
 
 <div class="l-stretch">
 
-    <div class="panel panel-default l-stretch" data-ng-show="pages" data-ng-controller="hippo.channel.pages.StateCtrl">
-        <div class="panel-body"
-             data-ng-class="{'l-fixed-height': isAddPageVisible, 'l-stretch': !isAddPageVisible}">
-            <div class="list-group">
-                <a class="list-group-item" data-ng-repeat="page in pages" data-ng-click="showPage(page)" href="#">
-                    <p class="list-group-item-text">{{ page.pathInfo | startWithSlash }}</p>
-                    <p class="list-group-item-text">{{ page.pageTitle || page.name }}</p>
-                </a>
-            </div>
-        </div>
-        <div class="panel-footer clearfix"
-             data-ng-show="isAddPageVisible"
-             data-ng-controller="hippo.channel.pages.NavigationCtrl">
-            <div class="tooltip-newlines"
-                 data-tooltip="{{ !userIsEditing ? ('ADD_NEW_PAGE_DISABLED_TOOLTIP' | translate) : '' }}"
-                 data-tooltip-trigger="mouseenter"
-                 data-tooltip-placement="top">
-                <button class="btn btn-default btn-md"
-                        data-ng-click="navigateTo('add-page')"
-                        data-ng-disabled="!userIsEditing">
-                    <hippo-icon name="plus" size=""></hippo-icon> {{ 'ADD_NEW_PAGE' | translate }}
-                </button>
-            </div>
-        </div>
+  <div class="panel panel-default l-stretch" data-ng-show="pages" data-ng-controller="hippo.channel.pages.StateCtrl">
+    <div class="panel-body"
+         data-ng-class="{'l-fixed-height': isAddPageVisible, 'l-stretch': !isAddPageVisible}">
+      <div class="list-group">
+        <a class="list-group-item" data-ng-repeat="page in pages" data-ng-click="showPage(page)" href="#">
+          <p class="list-group-item-text">{{ page.pathInfo | startWithSlash }}</p>
+          <p class="list-group-item-text">{{ page.pageTitle || page.name }}</p>
+        </a>
+      </div>
     </div>
+    <div class="panel-footer clearfix"
+         data-ng-show="isAddPageVisible"
+         data-ng-controller="hippo.channel.pages.NavigationCtrl">
+      <div class="tooltip-newlines"
+           data-tooltip="{{ !userIsEditing ? ('ADD_NEW_PAGE_DISABLED_TOOLTIP' | translate) : '' }}"
+           data-tooltip-trigger="mouseenter"
+           data-tooltip-placement="top">
+        <button class="btn btn-default btn-md"
+                data-ng-click="navigateTo('add-page')"
+                data-ng-disabled="!userIsEditing">
+          <hippo-icon name="plus" size=""></hippo-icon>
+          {{ 'ADD_NEW_PAGE' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
 
-    <div class="l-center-container" data-ng-show="errorFeedback">
-        <div class="alert alert-danger l-center-block">
-            {{ errorFeedback.message }}
-        </div>
+  <div class="l-center-container" data-ng-show="errorFeedback">
+    <div class="alert alert-danger l-center-block">
+      {{ errorFeedback.message }}
     </div>
+  </div>
 
 </div>

@@ -15,22 +15,22 @@
  */
 
 (function () {
-    "use strict";
+  "use strict";
 
-    angular.module('hippo.channel.menu')
+  angular.module('hippo.channel.menu')
 
-        .controller('hippo.channel.menu.PickerDocCtrl', [
-            '$scope',
-            '$state',
-            '$stateParams',
-            '$filter',
-            function ($scope, $state, $stateParams, $filter) {
-                var PickerDocCtrl = this;
-                PickerDocCtrl.selectedItem = $filter('hippoGetByProperty')($scope.PickerCtrl.treeItems, 'id', $stateParams.pickerTreeItemId, 'items');
+    .controller('hippo.channel.menu.PickerDocCtrl', [
+      '$scope',
+      '$state',
+      '$stateParams',
+      '$filter',
+      function ($scope, $state, $stateParams, $filter) {
+        var PickerDocCtrl = this;
+        PickerDocCtrl.selectedItem = $filter('hippoGetByProperty')($scope.PickerCtrl.treeItems, 'id', $stateParams.pickerTreeItemId, 'items');
 
-                PickerDocCtrl.selectDocument = function(item) {
-                    $scope.PickerCtrl.selectedDocument = item;
-                };
-            }
-        ]);
+        PickerDocCtrl.selectDocument = function (item) {
+          $scope.PickerCtrl.selectedDocument = item;
+        };
+      }
+    ]);
 }());

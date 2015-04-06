@@ -15,25 +15,25 @@
  */
 
 (function () {
-    "use strict";
+  "use strict";
 
-    angular.module('hippo.channel.menu')
+  angular.module('hippo.channel.menu')
 
-        .factory('hippo.channel.menu.FocusService', [
-            '$window',
-            '$timeout',
-            function($window, $timeout) {
-                return {
-                    focusElementWithId: function(elementId) {
-                        var element = $window.document.getElementById(elementId);
+    .factory('hippo.channel.menu.FocusService', [
+      '$window',
+      '$timeout',
+      function ($window, $timeout) {
+        return {
+          focusElementWithId: function (elementId) {
+            var element = $window.document.getElementById(elementId);
 
-                        // Wait for next tick, in case this function is called when focusing another element.
-                        // For example when calling this function with ng-focus or ng-click
-                        $timeout(function () {
-                            element.focus();
-                        }, 1);
-                    }
-                };
-            }
-        ]);
+            // Wait for next tick, in case this function is called when focusing another element.
+            // For example when calling this function with ng-focus or ng-click
+            $timeout(function () {
+              element.focus();
+            }, 1);
+          }
+        };
+      }
+    ]);
 }());

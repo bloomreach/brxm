@@ -14,25 +14,20 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<!--[if lt IE 7 ]> <html class="ie6 ielt9"> <![endif]-->
-<!--[if IE 7 ]>    <html class="ie7 ielt9"> <![endif]-->
-<!--[if IE 8 ]>    <html class="ie8 ielt9"> <![endif]-->
-<!--[if IE 9 ]>    <html class="ie9"> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--> <html class=""> <!--<![endif]-->
-
-<head>
+<html>
+  <head>
     <title>Page Management</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <link rel="stylesheet" href="../components/hippo-theme/dist/css/main.min.css">
     <link rel="stylesheet" href="../components/hippo-addon-channel-manager-angularjs-api/dist/css/main.min.css">
     <link rel="stylesheet" href="assets/css/menu.css">
-</head>
+  </head>
 
-<body>
+  <body>
     <div data-ng-app="hippo.channel.menu" id="application" class="l-stretch">
-        <div class="hidden" ng-include="'../components/hippo-theme/dist/images/hippo-icon-sprite.svg'"></div>
-        <div ui-view id="ui-view"></div>
+      <div class="hidden" ng-include="'../components/hippo-theme/dist/images/hippo-icon-sprite.svg'"></div>
+      <div data-ui-view id="ui-view"></div>
     </div>
 
     <script src="../components/jquery/dist/jquery.min.js"></script>
@@ -74,5 +69,5 @@
 
     <script src="directives/keepScrollPos.js"></script>
 
-</body>
+  </body>
 </html>
