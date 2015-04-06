@@ -46,6 +46,27 @@ module.exports = function (grunt) {
   grunt.initConfig({
     build: require('./build.config.js'),
 
+    // watch source files and rebuild when they change
+    watch: {
+      options: {
+        spawn: false,
+        interrupt: true,
+        livereload: true
+      },
+
+      apps: {
+        files: [
+          '<%= build.ngsource %>/**/*'
+        ],
+        tasks: ['build']
+      },
+
+      extjs: {
+        files: ['src/main/resources/**/*.{html,js,css,png,svg}'],
+        tasks: ['newer:copy:extjs']
+      }
+    },
+
     // clean target (distribution) folder
     clean: {
       target: {
@@ -98,13 +119,13 @@ module.exports = function (grunt) {
         ]
       },
 
-      channelmanager: {
+      extjs: {
         files: [
           {
             expand: true,
-            cwd: '<%= build.cmsource %>',
+            cwd: '<%= build.extjssource %>',
             src: ['**/*.{html,js,css,png,svg}'],
-            dest: '<%= build.cmtarget %>'
+            dest: '<%= build.extjstarget %>'
           }
         ]
       }
@@ -127,27 +148,6 @@ module.exports = function (grunt) {
     usemin: {
       css: '<%= build.ngtarget %>/**/*.css',
       html: '<%= build.ngtarget %>/**/*.html'
-    },
-
-    // watch source files and rebuild when they change
-    watch: {
-      options: {
-        spawn: false,
-        interrupt: true,
-        livereload: true
-      },
-
-      apps: {
-        files: [
-          '<%= build.ngsource %>/**/*'
-        ],
-        tasks: ['build']
-      },
-
-      channelmanager: {
-        files: ['src/main/resources/**/*.{html,js,css,png,svg}'],
-        tasks: ['newer:copy:channelmanager']
-      }
     },
 
     // only use a sub-set of files in Bower components
@@ -200,7 +200,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', 'Build everything', [
     'jshint:apps',
     'declutter',
-    'clean:target',
+    'clean',
     'less',
     'copy',
     'filerev',
@@ -216,5 +216,4 @@ module.exports = function (grunt) {
     'jshint:tests',
     'karma:continuous'
   ]);
-
 };
