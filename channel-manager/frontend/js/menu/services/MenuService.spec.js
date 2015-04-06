@@ -185,6 +185,7 @@ describe('Menu Service', function () {
 
     menuService.deleteMenuItem('3');
 
+    var response = {data: {items: [{id: 1, title: 'One'}]}};
     $httpBackend.expectPOST('api/menuId./delete/3').respond('OK');
     $httpBackend.flush();
   });
@@ -213,7 +214,7 @@ describe('Menu Service', function () {
   it('should create a menu item', function () {
     var newMenuItem = {id: 'child1', title: 'New title'};
     $httpBackend.expectPOST('api/menuId./create/parentId', newMenuItem).respond('OK');
-    menuService.createMenuItem('parentId', newMenuItem);
+    var promise = menuService.createMenuItem('parentId', newMenuItem);
     $httpBackend.flush();
   });
 

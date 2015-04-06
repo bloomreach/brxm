@@ -19,11 +19,9 @@
     <div id="panel-wrap">
       <div id="menu-panel" class="col-sm-3" data-ng-controller="hippo.channel.menu.PickerTreeCtrl as PickerTreeCtrl">
         <div id="picker-type">
-          <label for="picker-type-select" class="sr-only">Picker Type Select</label>
           <select ng-model="PickerCtrl.pickerType"
                   ng-options="option.name for option in PickerCtrl.pickerTypes"
-                  ng-change="PickerCtrl.changePickerType()"
-                  id="picker-type-select">
+                  ng-change="PickerCtrl.changePickerType()">
           </select>
         </div>
         <div class="tree-col" data-keep-scroll-pos>

@@ -83,6 +83,9 @@ describe('Edit Menu Item Controller', function () {
   }
 
   it('should select parent after delete if deleted item has no siblings left', function () {
+
+    var controller = createController();
+
     $scope.MenuItemCtrl = {
       selectedMenuItem: {
         id: 'child1'
