@@ -68,14 +68,16 @@ describe('Settings Controller', function () {
       });
 
       PrototypeService.getPrototypes.and.callFake(function () {
-        return resolvedPromise([
-          {
-            displayName: 'Prototype One'
-          },
-          {
-            displayName: 'Prototype Two'
-          }
-        ]);
+        return resolvedPromise({
+          prototypes: [
+            {
+              displayName: 'Prototype One'
+            },
+            {
+              displayName: 'Prototype Two'
+            }
+          ]
+        });
       });
 
       var controller = $controller('hippo.channel.page.SettingsCtrl', {$scope: scope});
