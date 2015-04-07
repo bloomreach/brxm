@@ -24,8 +24,8 @@
   </instructionSet>
 
   <instructionSet group="extraTemplates">
-    <freemarker action="copy" source="freemarker/essentials-menu/essentials-menu-navbar.ftl"   target="{{freemarkerRoot}}/hstdefault/essentials-menu/essentials-menu-navbar.ftl"/>
-    <freemarker action="copy" source="freemarker/essentials-menu/essentials-menu-vertical.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-menu/essentials-menu-vertical.ftl"/>
+    <freemarker action="copy" source="freemarker/essentials-menu-navbar.ftl"   target="{{freemarkerRoot}}/hstdefault/essentials-menu/navbar.ftl"/>
+    <freemarker action="copy" source="freemarker/essentials-menu-vertical.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-menu/vertical.ftl"/>
   </instructionSet>
   <instructionSet group="freemarker">
     <freemarker action="copy" source="freemarker/essentials-menu.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-menu.ftl"/>

@@ -32,8 +32,8 @@
   </instructionSet>
 
   <instructionSet group="extraTemplates">
-    <freemarker action="copy" source="freemarker/eventslist-main-eventslist/eventslist-main-eventslist-styled.ftl" target="{{freemarkerRoot}}/hstdefault/eventslist-main-eventslist/eventslist-main-eventslist-styled.ftl"/>
-    <freemarker action="copy" source="freemarker/eventspage-main/eventspage-main-styled.ftl" target="{{freemarkerRoot}}/{{namespace}}/eventspage-main/eventspage-main-styled.ftl"/>
+    <freemarker action="copy" source="freemarker/eventslist-main-eventslist-variant.ftl" target="{{freemarkerRoot}}/hstdefault/eventslist-main-eventslist/variant.ftl"/>
+    <freemarker action="copy" source="freemarker/eventspage-main-variant.ftl" target="{{freemarkerRoot}}/{{namespace}}/eventspage-main/variant.ftl"/>
   </instructionSet>
   <instructionSet group="freemarker">
     <freemarker action="copy" source="freemarker/eventslist-main-eventslist.ftl" target="{{freemarkerRoot}}/hstdefault/eventslist-main-eventslist.ftl"/>
