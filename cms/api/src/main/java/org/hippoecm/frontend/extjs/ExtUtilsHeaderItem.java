@@ -27,7 +27,6 @@ import org.wicketstuff.js.ext.util.ExtResourcesHeaderItem;
 
 public class ExtUtilsHeaderItem extends HeaderItem {
 
-    private static final JavaScriptResourceReference EXT_MESSAGE_BUS = new JavaScriptResourceReference(ExtWidgetRegistry.class, "MessageBus.js");
     private static final JavaScriptResourceReference EXT_IFRAME_PANEL = new JavaScriptResourceReference(ExtWidgetRegistry.class, "IFramePanel.js");
 
     private static final ExtUtilsHeaderItem INSTANCE = new ExtUtilsHeaderItem();
@@ -50,7 +49,6 @@ public class ExtUtilsHeaderItem extends HeaderItem {
 
     @Override
     public void render(final Response response) {
-        JavaScriptHeaderItem.forReference(EXT_MESSAGE_BUS).render(response);
         JavaScriptHeaderItem.forReference(EXT_IFRAME_PANEL).render(response);
     }
 }
