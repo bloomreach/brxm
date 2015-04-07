@@ -25,7 +25,7 @@ import org.apache.wicket.request.resource.ResourceReference;
 
 public class CmsHeaderItem extends HippoHeaderItem {
 
-    private static final ResourceReference MESSAGE_BUS_JS = new JavaScriptResourceReference(HippoHeaderItem.class, "js/messagebus.js");
+    private static final ResourceReference MESSAGE_BUS_JS = new JavaScriptResourceReference(HippoHeaderItem.class, "js/message-bus.js");
     private static final ResourceReference EVENTS_JS = new JavaScriptResourceReference(HippoHeaderItem.class, "js/events.js");
 
     private static final CmsHeaderItem INSTANCE = new CmsHeaderItem();
