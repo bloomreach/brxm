@@ -54,8 +54,7 @@ import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
-import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.service.IconSize;
@@ -330,7 +329,7 @@ public class TabbedPanel extends WebMarkupContainer {
                 return "title";
             }
         }));
-        link.add(new AttributeAppender("title", new LoadableDetachableModel<String>() {
+        link.add(TitleAttribute.append(new LoadableDetachableModel<String>() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -341,8 +340,7 @@ public class TabbedPanel extends WebMarkupContainer {
                 }
                 return "";
             }
-
-        }, ""));
+        }));
 
         final String titleCssClass = tabModel.getObject().getTitleCssClass();
         if (titleCssClass != null) {

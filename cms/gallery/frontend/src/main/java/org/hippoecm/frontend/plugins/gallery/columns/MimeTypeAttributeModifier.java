@@ -20,8 +20,8 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeAttributeModifier;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.util.JcrConstants;
@@ -49,7 +49,7 @@ class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
             if (document.hasNode(relPath)) {
                 final Node child = document.getNode(relPath);
                 final Property mimeType = child.getProperty(JcrConstants.JCR_MIME_TYPE);
-                return new AttributeAppender("title", mimeType.getString());
+                return TitleAttribute.append(mimeType.getString());
             }
         } catch (RepositoryException e) {
             log.debug("Cannot get MIME type of node {}", JcrUtils.getNodePathQuietly(handleOrDocument), e);

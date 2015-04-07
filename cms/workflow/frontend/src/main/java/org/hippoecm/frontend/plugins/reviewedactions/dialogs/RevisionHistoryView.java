@@ -1,12 +1,12 @@
 /*
  *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
@@ -47,6 +46,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractListAttrib
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 
 /**
  * A panel that displays the revision history of a document as a list.
@@ -210,7 +210,7 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
         });
         columns.add(column);
     }
-    
+
     /**
      * Adds a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the state information to the list of columns.
      * @param columns the list of columns.
@@ -224,8 +224,8 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
                 Revision revision = model.getObject();
                 StateIconAttributes attrs = new StateIconAttributes((JcrNodeModel) revision.getDocument());
                 AttributeModifier[] attributes = new AttributeModifier[2];
-                attributes[0] = CssClass.append(new PropertyModel<String>(attrs, "cssClass"));
-                attributes[1] = new AttributeAppender("title", new PropertyModel(attrs, "summary"), " ");
+                attributes[0] = CssClass.append(new PropertyModel<>(attrs, "cssClass"));
+                attributes[1] = TitleAttribute.append(new PropertyModel<>(attrs, "summary"));
                 return attributes;
             }
 

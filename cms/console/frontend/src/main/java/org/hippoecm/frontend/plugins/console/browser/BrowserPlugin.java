@@ -27,7 +27,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -73,6 +72,7 @@ import org.hippoecm.frontend.plugins.console.menu.recompute.RecomputeDialog;
 import org.hippoecm.frontend.plugins.console.menu.rename.RenameDialog;
 import org.hippoecm.frontend.plugins.console.menu.t9ids.T9idsDialog;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.plugins.yui.scrollbehavior.ScrollBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.tree.TreeWidgetBehavior;
@@ -283,7 +283,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
 
             final String tooltip = getTooltip(jcrNode);
             if (StringUtils.isNotBlank(tooltip)) {
-                icon.add(new AttributeAppender("title", tooltip));
+                icon.add(TitleAttribute.append(tooltip));
             }
             return icon;
         }

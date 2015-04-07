@@ -1124,9 +1124,10 @@ api/src/main/styling/less/_legacy.less -text
 api/src/main/styling/less/_mixins.less -text
 api/src/main/styling/less/_modal.less -text
 api/src/main/styling/less/_modal_datepicker.less -text
+api/src/main/styling/less/_modal_doclist.less -text
+api/src/main/styling/less/_modal_section_viewer.less -text
 api/src/main/styling/less/_navigator.less -text
 api/src/main/styling/less/_perspectives_switcher.less -text
-api/src/main/styling/less/_picker_section_viewer.less -text
 api/src/main/styling/less/_revision_history.less -text
 api/src/main/styling/less/_rich_text.less -text
 api/src/main/styling/less/_scaffolding.less -text
@@ -1139,7 +1140,6 @@ api/src/main/styling/less/_typography.less -text
 api/src/main/styling/less/_variables.less -text
 api/src/main/styling/less/lib/open-sans.less -text
 api/src/main/styling/less/main.less -text
-api/src/main/styling/less/nolint/style-test.less -text
 api/src/main/styling/less/nolint/wicket.less -text
 api/src/main/styling/less/nolint/workarounds.less -text
 api/src/test/java/org/hippoecm/frontend/editor/plugins/resource/PdfParserTest.java -text
@@ -1260,8 +1260,9 @@ brokenlinks/repository/src/main/java/org/onehippo/cms7/brokenlinks/GlobCompiler.
 brokenlinks/repository/src/main/java/org/onehippo/cms7/brokenlinks/LinkURIUtils.java -text
 brokenlinks/repository/src/main/resources/brokenlinks-authorization.xml -text
 brokenlinks/repository/src/main/resources/brokenlinks-job.xml -text
+brokenlinks/repository/src/main/resources/brokenlinks-reports-plugin.xml svneol=native#text/plain
+brokenlinks/repository/src/main/resources/brokenlinks-reports-translators.xml svneol=native#text/plain
 brokenlinks/repository/src/main/resources/brokenlinks-reports.xml svneol=native#text/plain
-brokenlinks/repository/src/main/resources/brokenlinks-reports_de.xml -text
 brokenlinks/repository/src/main/resources/brokenlinks-workflows.xml svneol=native#text/plain
 brokenlinks/repository/src/main/resources/brokenlinks.cnd -text
 brokenlinks/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain

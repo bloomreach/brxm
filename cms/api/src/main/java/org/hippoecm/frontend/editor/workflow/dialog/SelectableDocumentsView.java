@@ -25,13 +25,11 @@ import javax.jcr.Node;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -60,6 +58,7 @@ public class SelectableDocumentsView extends Panel implements IPagingDefinition 
     private IEditorManager editorMgr;
     private ListDataTable dataTable;
     private WebMarkupContainer actionContainer;
+    private AjaxLink openButton;
     private List<IModel<Node>> selectedDocuments = new LinkedList<IModel<Node>>();
 
     public SelectableDocumentsView(final String id,
@@ -80,6 +79,14 @@ public class SelectableDocumentsView extends Panel implements IPagingDefinition 
             }
         }, true, this);
         dataTable.add(CssClass.append(DocumentListColumn.DOCUMENT_LIST_CSS_CLASS));
+
+        dataTable.add(CssClass.append(new AbstractReadOnlyModel<String>() {
+            @Override
+            public String getObject() {
+                return provider.size() > getPageSize() ? "hippo-paging" : "";
+            }
+        }));
+
         add(dataTable);
 
         add(actionContainer = new WebMarkupContainer("actions"));
@@ -118,17 +125,16 @@ public class SelectableDocumentsView extends Panel implements IPagingDefinition 
         };
         actionContainer.add(selectNone);
 
-        Button openBtn = new AjaxButton("open") {
+        openButton = new AjaxLink("open") {
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            public void onClick(AjaxRequestTarget target) {
                 openEditor();
             }
         };
-        openBtn.setModel(Model.of(getString("open")));
         if (editorMgr == null) {
-            openBtn.setEnabled(false);
+            openButton.setEnabled(false);
         }
-        actionContainer.add(openBtn);
+        add(openButton);
     }
 
     @Override
@@ -136,6 +142,7 @@ public class SelectableDocumentsView extends Panel implements IPagingDefinition 
         boolean hasLinks = (provider.size() > 0);
         dataTable.setVisible(hasLinks);
         actionContainer.setVisible(hasLinks);
+        openButton.setVisible(hasLinks);
         super.onBeforeRender();
     }
 

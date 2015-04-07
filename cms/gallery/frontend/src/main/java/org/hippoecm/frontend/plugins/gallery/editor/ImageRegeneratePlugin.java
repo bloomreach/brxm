@@ -1,12 +1,12 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
@@ -33,6 +32,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
@@ -103,25 +104,25 @@ public class ImageRegeneratePlugin extends RenderPlugin {
             });
 
 
-            regenerateButton.add(new AttributeAppender("class", new LoadableDetachableModel<String>(){
+            regenerateButton.add(CssClass.append(new LoadableDetachableModel<String>(){
                 @Override
                 protected String load(){
                    return (isOriginal || areExceptionsThrown || !isModelModified.getObject()) ? "regenerate-button inactive" : "regenerate-button active";
                 }
-            }, " "));
+            }));
 
 
-            regenerateButton.add(new AttributeAppender("title", new LoadableDetachableModel<String>() {
+            regenerateButton.add(TitleAttribute.append(new LoadableDetachableModel<String>() {
                 @Override
                 protected String load() {
                     String buttonTipProperty =
-                    areExceptionsThrown ? "regenerate-button-tip-inactive-error" :
-                    !isModelModified.getObject() ? "regenerate-button-tip-inactive-not-modified" :
-                    "regenerate-button-tip";
+                            areExceptionsThrown ? "regenerate-button-tip-inactive-error" :
+                                    !isModelModified.getObject() ? "regenerate-button-tip-inactive-not-modified" :
+                                            "regenerate-button-tip";
 
                     return new StringResourceModel(buttonTipProperty, ImageRegeneratePlugin.this, null).getString();
                 }
-            }, " "));
+            }));
 
         }
 

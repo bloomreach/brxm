@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.dashboard;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -25,6 +24,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
@@ -64,7 +64,7 @@ public class BrowseLink extends Panel {
         linkLabel.setEscapeModelStrings(false);
         link.add(linkLabel);
 
-        link.add(new AttributeModifier("title", new PropertyModel(browseLinkTarget, "displayPath")));
+        link.add(TitleAttribute.set(new PropertyModel<>(browseLinkTarget, "displayPath")));
     }
 
 

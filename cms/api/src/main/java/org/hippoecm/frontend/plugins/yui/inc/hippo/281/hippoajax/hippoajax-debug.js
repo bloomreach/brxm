@@ -1,12 +1,12 @@
 /*
- * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
 /**
  * @description
  * <p>
- * Provides an interface for components to register on handling WicketAjax 
+ * Provides an interface for components to register on handling WicketAjax
  * component update
  * </p>
  * @namespace YAHOO.hippo
@@ -27,11 +27,16 @@
 
 YAHOO.namespace('hippo');
 
+var HippoAjax = YAHOO.hippo.HippoAjax;
+
 if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
     (function() {
         "use strict";
 
-        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang, wicketProcessComponent, wicketLogError;
+        var Dom = YAHOO.util.Dom,
+            Lang = YAHOO.lang,
+            wicketProcessComponent,
+            wicketLogError;
 
         YAHOO.hippo.HippoAjaxImpl = function() {};
 
@@ -113,33 +118,33 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
 
             cleanupElement: function(el) {
                 var els, i, len;
-                //console.time("HippoAjax.processComponent.cleanup");
-                els = YAHOO.util.Dom.getElementsBy(function(node) {
-                    return !YAHOO.lang.isUndefined(node.HippoDestroyID);
+
+                els = Dom.getElementsBy(function(node) {
+                    return !Lang.isUndefined(node.HippoDestroyID);
                 }, null, el);
 
                 for (i = 0, len = els.length; i < len; i++) {
-                    YAHOO.hippo.HippoAjax.callDestroyFunction(els[i].HippoDestroyID);
+                    this.callDestroyFunction(els[i].HippoDestroyID);
+                }
+
+                if (!Lang.isUndefined(el.HippoDestroyID)) {
+                    this.callDestroyFunction(el.HippoDestroyID);
                 }
             }
         };
 
-        YAHOO.hippo.HippoAjax = new YAHOO.hippo.HippoAjaxImpl();
+        YAHOO.hippo.HippoAjax = HippoAjax = new YAHOO.hippo.HippoAjaxImpl();
 
         wicketProcessComponent = Wicket.Ajax.Call.prototype.processComponent;
         Wicket.Ajax.Call.prototype.processComponent = function(context, node) {
             var compId, el;
 
             compId = node.getAttribute("id");
-            el = YAHOO.util.Dom.get(compId);
+            el = Dom.get(compId);
 
             if (el !== null && el !== undefined) {
-                YAHOO.hippo.HippoAjax.cleanupElement(el);
-
-                //console.time('HippoAjax.processComponent.purgeElement');
+                HippoAjax.cleanupElement(el);
                 YAHOO.util.Event.purgeElement(el, true);
-                //console.timeEnd('HippoAjax.processComponent.purgeElement');
-                //console.timeEnd("HippoAjax.processComponent.cleanup");
             }
             wicketProcessComponent.call(this, context, node);
         };
@@ -199,9 +204,6 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
     }());
 
     YAHOO.register("hippoajax", YAHOO.hippo.HippoAjax, {
-        version: "2.8.1",
-        build: "19"
+        version: "2.8.1", build: "19"
     });
 }
-
-var HippoAjax = YAHOO.hippo.HippoAjax;

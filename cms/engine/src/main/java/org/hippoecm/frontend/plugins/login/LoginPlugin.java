@@ -1,12 +1,12 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,13 +31,16 @@ import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.core.request.mapper.AbstractComponentMapper;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.Request;
@@ -66,15 +69,11 @@ public class LoginPlugin extends RenderPlugin {
 
     private static final String ERROR_MESSAGE_LOGIN_FAILURE = "Login failure!";
     private static final String PAGE_PARAMS_KEY_LOGIN_EXCEPTION_CAUSE = LoginException.CAUSE.class.getName();
-
-    public static final String DEFAULT_LOCALE = "en";
+    private static final String LOCALE_COOKIE = "loc";
 
     // Sorted by alphabetical order of the language name (see i18n properties), for a more user-friendly form
     public final static String[] LOCALES = {"en", "fr", "nl", "de"};
-
-    private static final long serialVersionUID = 1L;
-
-    private static final String LOCALE_COOKIE = "loc";
+    public static final String DEFAULT_LOCALE = "en";
 
     protected String username;
     protected String password;
@@ -97,14 +96,15 @@ public class LoginPlugin extends RenderPlugin {
     }
 
     protected class SignInForm extends Form {
-        private static final long serialVersionUID = 1L;
 
+        private PageParameters parameters;
+
+        protected final FeedbackPanel feedback;
         protected final DropDownChoice<String> locale;
-
-        public String selectedLocale;
         protected final RequiredTextField<String> usernameTextField;
         protected final PasswordTextField passwordTextField;
-        private PageParameters parameters;
+
+        public String selectedLocale;
 
         public SignInForm(final String id) {
             super(id);
@@ -115,7 +115,7 @@ public class LoginPlugin extends RenderPlugin {
             if (localeArray == null) {
                 localeArray = LOCALES;
             }
-            final Set<String> locales = new HashSet<String>(Arrays.asList(localeArray));
+            final Set<String> locales = new HashSet<>(Arrays.asList(localeArray));
 
             // by default, use the user's browser settings for the locale
             selectedLocale = DEFAULT_LOCALE;
@@ -136,16 +136,34 @@ public class LoginPlugin extends RenderPlugin {
                 }
             }
 
-            add(usernameTextField = new RequiredTextField<String>("username", new PropertyModel<String>(
-                    LoginPlugin.this, "username")));
+            feedback = new FeedbackPanel("feedback");
+            feedback.setOutputMarkupId(true);
+            feedback.setEscapeModelStrings(false);
+            add(feedback);
 
-            add(passwordTextField = new PasswordTextField("password", new PropertyModel<String>(LoginPlugin.this,
-                    "password")));
+            final PropertyModel<String> username = PropertyModel.of(LoginPlugin.this, "username");
+            add(usernameTextField = new RequiredTextField<>("username", username));
+            usernameTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                protected void onUpdate(AjaxRequestTarget target) {
+                    String username = this.getComponent().getDefaultModelObjectAsString();
+                    HttpSession session = ((ServletWebRequest) SignInForm.this.getRequest()).getContainerRequest()
+                            .getSession(true);
+                    LoginPlugin.this.username = username;
+                }
+            });
 
-            add(locale = new DropDownChoice<String>("locale",
+            final PropertyModel<String> password = PropertyModel.of(LoginPlugin.this, "password");
+            passwordTextField = new PasswordTextField("password", password);
+            passwordTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                protected void onUpdate(AjaxRequestTarget target) {
+                    LoginPlugin.this.password = LoginPlugin.this.password;
+                }
+            });
+            passwordTextField.setResetPassword(false);
+            add(passwordTextField);
+
+            add(locale = new DropDownChoice<>("locale",
                     new PropertyModel<String>(this, "selectedLocale") {
-                        private static final long serialVersionUID = 1L;
-
                         @Override
                         public void setObject(final String object) {
                             super.setObject(locales.contains(object) ? object : DEFAULT_LOCALE);
@@ -154,8 +172,6 @@ public class LoginPlugin extends RenderPlugin {
                     Arrays.asList(localeArray),
                     // Display the language name from i18n properties
                     new IChoiceRenderer<String>() {
-                        private static final long serialVersionUID = 1L;
-
                         public String getDisplayValue(String object) {
                             Locale locale = new Locale(object);
                             return new StringResourceModel(object, LoginPlugin.this, null, null, locale.getDisplayLanguage()).getString();
@@ -166,12 +182,7 @@ public class LoginPlugin extends RenderPlugin {
                         }
                     }
             ));
-
-            passwordTextField.setResetPassword(false);
-
             locale.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-                private static final long serialVersionUID = 1L;
-
                 protected void onUpdate(AjaxRequestTarget target) {
                     //immediately set the locale when the user changes it
                     Cookie localeCookie = new Cookie(LOCALE_COOKIE, selectedLocale);
@@ -182,24 +193,7 @@ public class LoginPlugin extends RenderPlugin {
                 }
             });
 
-            usernameTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-                private static final long serialVersionUID = 1L;
-
-                protected void onUpdate(AjaxRequestTarget target) {
-                    String username = this.getComponent().getDefaultModelObjectAsString();
-                    HttpSession session = ((ServletWebRequest) SignInForm.this.getRequest()).getContainerRequest()
-                            .getSession(true);
-                    LoginPlugin.this.username = username;
-                }
-            });
-
-            passwordTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-                private static final long serialVersionUID = 1L;
-
-                protected void onUpdate(AjaxRequestTarget target) {
-                    LoginPlugin.this.password = password;
-                }
-            });
+            add(new Button("submit", new ResourceModel("submit-label")));
         }
 
         @Override
@@ -233,7 +227,7 @@ public class LoginPlugin extends RenderPlugin {
             boolean success = true;
             PageParameters loginExceptionPageParameters = null;
             try {
-                userSession.login(new UserCredentials(new SimpleCredentials(username, password == null ? new char[] {} : password.toCharArray())));
+                userSession.login(new UserCredentials(new SimpleCredentials(username, password == null ? new char[]{} : password.toCharArray())));
             } catch (LoginException le) {
                 log.debug(ERROR_MESSAGE_LOGIN_FAILURE, le);
                 success = false;

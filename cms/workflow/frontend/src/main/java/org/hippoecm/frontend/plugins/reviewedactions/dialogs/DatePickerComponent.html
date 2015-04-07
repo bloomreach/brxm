@@ -14,7 +14,10 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:extend>
-    <div wicket:id="refs" />
-  </wicket:extend>
+    <wicket:panel>
+        <div class="date-picker">
+            <div class="label" wicket:id="question">Date:</div>
+            <div wicket:id="value"/>
+        </div>
+    </wicket:panel>
 </html>

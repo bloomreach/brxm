@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,18 +17,20 @@ package org.hippoecm.frontend.dialog;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.IAjaxIndicatorAware;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxIndicatorAppender;
 import org.apache.wicket.extensions.wizard.IWizardModel;
 import org.apache.wicket.extensions.wizard.IWizardStep;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugins.standards.wizard.AjaxWizard;
 import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
 
-public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dialog {
+public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dialog, IAjaxIndicatorAware {
 
     private IDialogService dialogService;
     private Component focusComponent;
@@ -39,14 +41,14 @@ public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dial
 
         setOutputMarkupId(true);
 
-        add(indicator = new AjaxIndicatorAppender() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected CharSequence getIndicatorUrl() {
-                return RequestCycle.get().urlFor(DialogConstants.AJAX_LOADER_GIF, null);
-            }
-        });
+        if (addAjaxIndicator()) {
+            add(indicator = new AjaxIndicatorAppender() {
+                @Override
+                protected CharSequence getIndicatorUrl() {
+                    return RequestCycle.get().urlFor(new ResourceReferenceRequestHandler(DialogConstants.AJAX_LOADER_GIF));
+                }
+            });
+        }
     }
 
     public AbstractWizard(IModel<T> model) {
@@ -139,7 +141,7 @@ public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dial
     }
 
     @Override
-    public IModel getTitle() {
+    public IModel<String> getTitle() {
         return null;
     }
 
@@ -163,7 +165,14 @@ public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dial
      * @return the markup id of the ajax indicator
      */
     public String getAjaxIndicatorMarkupId() {
-        return indicator.getMarkupId();
+        if (indicator != null) {
+            return indicator.getMarkupId();
+        }
+        return null;
+    }
+
+    protected boolean addAjaxIndicator() {
+        return true;
     }
 
     public void setDialogService(IDialogService service) {
@@ -185,5 +194,4 @@ public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dial
         setFocus(widget.getFocusComponent());
         return widget;
     }
-
 }

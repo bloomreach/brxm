@@ -13,31 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.widgets.breadcrumb;
 
-import java.util.LinkedList;
-import java.util.List;
+// IE10 needs a width in pixels on the .hippo-dialog.bottom-left panel in order to render
+// items that have overflow:hidden correctly.
+(function() {
 
-import org.apache.wicket.model.IModel;
+    "use strict";
 
-public class BreadcrumbModel<T> implements IModel<List<Breadcrumb<T>>> {
+    var left = $('.hippo-dialog-bottom-left'),
+        bottom, right;
 
-    private List<Breadcrumb<T>> crumbs = new LinkedList<>();
-
-    @Override
-    public List<Breadcrumb<T>> getObject() {
-        return crumbs;
+    if (left.length) {
+        bottom = $('.hippo-dialog-bottom');
+        right = $('.hippo-dialog-bottom-right');
+        left.width(bottom.width() - right.width());
     }
-
-    @Override
-    public void setObject(final List<Breadcrumb<T>> object) {
-        crumbs = object;
-    }
-
-    @Override
-    public void detach() {
-        if (crumbs != null) {
-            crumbs.forEach(Breadcrumb::detach);
-        }
-    }
-}
+}());

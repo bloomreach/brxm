@@ -22,8 +22,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.value.IValueMap;
-import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -31,7 +29,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorDocumentLink;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerController;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettings;
-import org.hippoecm.frontend.widgets.breadcrumb.Breadcrumb;
 import org.hippoecm.frontend.widgets.breadcrumb.NodeBreadcrumbWidget;
 
 public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink> extends AbstractRichTextEditorDialog<T> {
@@ -76,8 +73,8 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
 
         addOrReplace(breadcrumbs = new NodeBreadcrumbWidget(Dialog.BOTTOM_LEFT_ID, null, controller.getRootPaths()) {
             @Override
-            protected void onClickBreadCrumb(final Breadcrumb<Node> crumb, final AjaxRequestTarget target) {
-                controller.setSelectedFolder(crumb.getModel());
+            protected void onClick(final IModel<Node> model, final AjaxRequestTarget target) {
+                controller.setSelectedFolder(model);
             }
         });
         breadcrumbs.update(controller.getFolderModel());
@@ -107,11 +104,6 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
         if(controller.getRenderer() != null) {
             controller.getRenderer().render(target);
         }
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return new ValueMap("width=855,height=485");
     }
 
     @Override

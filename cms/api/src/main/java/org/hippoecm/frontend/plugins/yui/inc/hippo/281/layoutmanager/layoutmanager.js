@@ -63,14 +63,13 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             throttler       : new Wicket.Throttler(true),
             throttleDelay   : 0,
             resizeEvent     : null,
+            registrations   : new YAHOO.hippo.FunctionQueue('event-registrations'),
 
             init : function() {
                 //Register window resize event
                 Event.on(window, 'resize', this.resize, this, true);
                 this.throttleDelay = 0;
                 if(YAHOO.env.ua.ie) {
-                    this.throttleDelay = 400;
-                } else if(YAHOO.env.ua.gecko) {
                     this.throttleDelay = 400;
                 }
 
@@ -105,6 +104,9 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             render : function() {
+                if (!this.registrations.isEmpty()) {
+                    this.registrations.handleQueue();
+                }
                 this.cleanupWireframes();
             },
 
@@ -209,6 +211,13 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             registerResizeListener : function(el, obj, func, executeNow, _timeoutLength) {
+                var self = this;
+                this.registrations.registerFunction(function() {
+                    self._registerResizeListener(el, obj, func, executeNow, _timeoutLength);
+                });
+            },
+
+            _registerResizeListener : function(el, obj, func, executeNow, _timeoutLength) {
                 var layoutUnit, timeoutLength;
                 layoutUnit = this.findLayoutUnit(el);
                 if (layoutUnit === null) {
@@ -223,9 +232,21 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             registerRenderListener : function(el, obj, func, executeNow) {
+                var self = this;
+                this.registrations.registerFunction(function() {
+                    self._registerRenderListener(el, obj, func, executeNow);
+                });
+            },
+
+            _registerRenderListener : function(el, obj, func, executeNow) {
                 var layoutUnit = this.findLayoutUnit(el);
                 if (layoutUnit === null) {
-                    YAHOO.log('Unable to find ancestor layoutUnit for element[@id=' + el.id + ', can not register render event', 'error', 'LayoutManager');
+                    //we might be in a modal, if execute-now is set, call it
+                    if (executeNow) {
+                        func.apply(obj);
+                    } else {
+                        YAHOO.log('Unable to find ancestor layoutUnit for element[@id=' + el.id + ', can not register render event', 'error', 'LayoutManager');
+                    }
                     return;
                 }
                 this.registerEventListener(layoutUnit.get('parent'), layoutUnit, 'render', obj, func, executeNow);
@@ -234,8 +255,12 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             registerEventListener : function(target, unit, evt, obj, func, executeNow, timeoutLength) {
                 var oid, useTimeout, eventName, me, callback;
 
-                oid = Lang.isUndefined(obj.id) ? Dom.generateId() : obj.id;
-                if(executeNow) {
+                function exists(_o) {
+                    return !Lang.isUndefined(_o) && _o !== null;
+                }
+                oid = exists(obj) && exists(obj.id) ? obj.id : Dom.generateId();
+
+                if (executeNow) {
                     func.apply(obj, [unit.getSizes()]);
                 }
                 useTimeout = !Lang.isUndefined(timeoutLength) && Lang.isNumber(timeoutLength) && timeoutLength > 0;

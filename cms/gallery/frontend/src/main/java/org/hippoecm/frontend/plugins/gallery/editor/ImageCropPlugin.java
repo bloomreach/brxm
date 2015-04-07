@@ -1,12 +1,12 @@
 /*
- *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,6 +36,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
@@ -119,7 +120,7 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
                                     isOriginalImageHeightSmallerThanThumbHeight ? "crop-button-tip-inactive-height" :
                                             "crop-button-tip";
 
-            cropButton.add(new AttributeAppender("title", new StringResourceModel(buttonTipProperty, this, null), " "));
+            cropButton.add(TitleAttribute.append(new StringResourceModel(buttonTipProperty, this, null)));
         }
 
         add(cropButton);

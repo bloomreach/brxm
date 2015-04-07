@@ -15,22 +15,16 @@
  */
 package org.hippoecm.frontend.widgets.breadcrumb;
 
-import org.apache.wicket.markup.html.panel.Panel;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.skin.Icon;
 
-public abstract class Breadcrumb extends Panel {
+public class Separator extends Breadcrumb {
 
-    private String cssClass;
-
-    public Breadcrumb(final String id) {
+    public Separator(final String id) {
         super(id);
-        setRenderBodyOnly(true);
-    }
 
-    protected String getCssClass() {
-        return cssClass;
-    }
-
-    protected void setCssClass(final String cssClass) {
-        this.cssClass = cssClass;
+        setCssClass("breadcrumb-separator");
+        add(HippoIcon.fromSprite("icon", Icon.CHEVRON_RIGHT, IconSize.M));
     }
 }

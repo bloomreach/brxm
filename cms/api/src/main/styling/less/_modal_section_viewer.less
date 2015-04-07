@@ -12,39 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.hippo-selectable-documents {
-  padding: 4px 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+.hippo-dialog {
 
-  .hippo-selectable-documents-label {
-    height: @font-size-base + 12px;
-  }
+  .section-viewer {
+    width: 230px;
+    float: left;
 
-  .hippo-selectable-documents-list {
-    flex: 1 0 auto;
-    .hippo-paging tbody {
-      height: 170px;
+    .section-view {
+      border-right: @picker-section-view-border;
+      box-sizing: border-box;
     }
   }
 
-  .hippo-selectable-documents-buttons {
-    height: 41px;
-    padding: 0 16px 0 16px;
+  .section-viewer .section-view.selected .section-center {
+    // IE10 needs a max height to draw scrollbars
+    max-height: ~"calc(100% - @{sections-top-height}px)";
+  }
 
-    background-color: white;
+  .section-selection {
+    background-color: @picker-section-selection-bgcolor;
+    border-right: @picker-section-selection-border;
+  }
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .section-top {
+    background-color: @picker-section-top-bgcolor;
+  }
 
-    .hippo-selectable-documents-select-buttons {
-      float: left;
-    }
-
-    input {
-      float: right;
-    }
+  .section-view.selected {
+    background-color: @picker-section-center-bgcolor;
   }
 }

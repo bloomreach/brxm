@@ -19,24 +19,15 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.Session;
-import org.apache.wicket.core.request.ClientInfo;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.protocol.http.ClientProperties;
-import org.apache.wicket.protocol.http.request.WebClientInfo;
-import org.apache.wicket.util.template.PackageTextTemplate;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 
-public class Dialog<T> extends AbstractDialog<T> {
-
-    public static final String BOTTOM_LEFT_ID = "bottom-left";
-
-    private static final String DIALOG_IE10_JS = "dialog-ie10.js";
+public class Wizard<T> extends AbstractWizard<T> {
 
     private IValueMap size = DialogConstants.LARGE_AUTO;
     private IValueMap properties;
@@ -45,31 +36,8 @@ public class Dialog<T> extends AbstractDialog<T> {
     private String titleKey = "dialog.title";
     private IModel<?> titleModel;
 
-    public Dialog() {
-        this(null);
-    }
-
-    public Dialog(final IModel<T> model) {
-        super(model);
-
-        setButtonCssClass("hippo-button");
-
-        add(new EmptyPanel(BOTTOM_LEFT_ID).setVisible(false));
-    }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        ClientInfo info = Session.get().getClientInfo();
-        if (info instanceof WebClientInfo) {
-            ClientProperties properties = ((WebClientInfo) info).getProperties();
-            // IE10 needs a width in pixels on the .hippo-dialog.bottom-left panel in order to render
-            // items that have overflow:hidden correctly.
-            if (properties.isBrowserInternetExplorer() && properties.getBrowserVersionMajor() == 10) {
-                PackageTextTemplate script = new PackageTextTemplate(Dialog.class, DIALOG_IE10_JS);
-                response.render(OnDomReadyHeaderItem.forScript(script.getString()));
-            }
-        }
-        super.renderHead(response);
+    public Wizard() {
+        getForm().get(FEEDBACK_ID).setOutputMarkupId(true);
     }
 
     @Override
@@ -89,6 +57,17 @@ public class Dialog<T> extends AbstractDialog<T> {
             }
         }
         return properties;
+    }
+
+    @Override
+    protected Component newButtonBar(final String id) {
+        final Component buttonBar = super.newButtonBar(id);
+        final AttributeModifier buttonCssClass = CssClass.append("hippo-button");
+        buttonBar.get("cancel").add(buttonCssClass);
+        buttonBar.get("previous").add(buttonCssClass);
+        buttonBar.get("next").add(buttonCssClass);
+        buttonBar.get("finish").add(buttonCssClass);
+        return buttonBar;
     }
 
     @Override

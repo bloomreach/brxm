@@ -30,7 +30,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerController;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettings;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.widgets.breadcrumb.Breadcrumb;
 import org.hippoecm.frontend.widgets.breadcrumb.NodeBreadcrumbWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,8 +89,8 @@ public class LinkPickerDialog extends Dialog<String> {
 
         addOrReplace(breadcrumbs = new NodeBreadcrumbWidget(Dialog.BOTTOM_LEFT_ID, null, controller.getRootPaths()) {
             @Override
-            protected void onClickBreadCrumb(final Breadcrumb<Node> crumb, final AjaxRequestTarget target) {
-                controller.setSelectedFolder(crumb.getModel());
+            protected void onClick(final IModel<Node> nodeModel, final AjaxRequestTarget target) {
+                controller.setSelectedFolder(nodeModel);
             }
         });
         breadcrumbs.update(controller.getFolderModel());
@@ -124,7 +123,6 @@ public class LinkPickerDialog extends Dialog<String> {
     @Override
     protected void onDetach() {
         super.onDetach();
-
         controller.detach();
     }
 

@@ -15,7 +15,6 @@
  */
 package org.hippoecm.addon.workflow;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.AbstractReadOnlyModel;
@@ -30,6 +29,7 @@ import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
@@ -124,7 +124,7 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
             protected void initialize() {
                 IModel<String> title = getTitle();
                 Label titleLabel = new Label("text", title);
-                titleLabel.add(new AttributeModifier("title", getTooltip()));
+                titleLabel.add(TitleAttribute.set(getTooltip()));
                 add(titleLabel);
             }
         });
@@ -177,7 +177,7 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
         return new StringResourceModel(getName(), this, null, getName());
     }
 
-    protected IModel getTooltip() {
+    protected IModel<String> getTooltip() {
         return getTitle();
     }
 

@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,7 +26,6 @@ import javax.jcr.ValueFactory;
 import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.ComponentTag;
@@ -37,6 +36,7 @@ import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +86,7 @@ public class PropertiesEditor extends DataView<Property> {
             valuesContainer.add(editor);
 
             final AjaxLink addLink = addLink("add", model, valuesContainer, editor);
-            addLink.add(new AttributeModifier("title", getString("property.value.add")));
+            addLink.add(TitleAttribute.set(getString("property.value.add")));
             item.add(addLink);
 
             PropertyDefinition definition = model.getProperty().getDefinition();
@@ -100,7 +100,7 @@ public class PropertiesEditor extends DataView<Property> {
      * Creates {@link PropertyValueEditor} for a property. If name equals 'hst:script' and parent node is of type
      * 'hst:template' a FreemarkerCodeMirrorPropertyValueEditor is returned instead.
      *
-     * @throws RepositoryException 
+     * @throws RepositoryException
      */
     protected PropertyValueEditor createPropertyValueEditor(final String id, final JcrPropertyModel model) throws RepositoryException {
 
@@ -143,14 +143,14 @@ public class PropertiesEditor extends DataView<Property> {
             }
         };
 
-        deleteLink.add(new AttributeModifier("title", getString("property.remove")));
+        deleteLink.add(TitleAttribute.set(getString("property.remove")));
 
         return deleteLink;
     }
 
-    private AjaxLink addLink(String id, final JcrPropertyModel model, final WebMarkupContainer component, 
+    private AjaxLink addLink(String id, final JcrPropertyModel model, final WebMarkupContainer component,
                              final PropertyValueEditor editor) {
-        
+
         return new AjaxLink<Property>(id, model) {
             private static final long serialVersionUID = 1L;
 
@@ -164,7 +164,7 @@ public class PropertiesEditor extends DataView<Property> {
                     System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
                     newValues[newValues.length - 1] = createDefaultValue(prop.getType());
                     prop.setValue(newValues);
-                    
+
                     editor.setFocusOnLastItem(true);
                 } catch (RepositoryException e) {
                     log.error(e.getMessage());
@@ -191,5 +191,5 @@ public class PropertiesEditor extends DataView<Property> {
             default : return valueFactory.createValue("");
         }
     }
-    
+
 }
