@@ -20,32 +20,42 @@
 
   Hippo.createMessageBus = function () {
     var subscriptions = {};
+
+    function publishInTopic (topic, args) {
+      var i, len, subscription;
+      if (subscriptions[topic] === undefined) {
+        return true;
+      }
+      len = subscriptions[topic].length;
+      for (i = 0; i < len; i++) {
+        subscription = subscriptions[topic][i];
+        if (subscription.callback.apply(subscription.scope, args) === false) {
+          return false;
+        }
+      }
+      return true;
+    }
+
     return {
+      ALL_TOPICS: '*',
+
       exception: function (msg, e) {
         this.publish('exception', msg, e);
       },
 
       publish: function (topic) {
-        var i, len, subscription;
-        if (subscriptions[topic] === undefined) {
-          return true;
-        }
-        len = subscriptions[topic].length;
-        for (i = 0; i < len; i++) {
-          subscription = subscriptions[topic][i];
-          if (subscription.callback.apply(subscription.scope, Array.prototype.slice.call(arguments, 1)) === false) {
-            return false;
-          }
-        }
-        return true;
+        var argumentsWithoutTopic = Array.prototype.slice.call(arguments, 1);
+        return publishInTopic(topic, argumentsWithoutTopic) && publishInTopic(this.ALL_TOPICS, arguments);
       },
 
       subscribe: function (topic, callback, scope) {
-        var scopeParameter = scope || window;
         if (subscriptions[topic] === undefined) {
           subscriptions[topic] = [];
         }
-        subscriptions[topic].push({callback: callback, scope: scopeParameter});
+        subscriptions[topic].push({
+          callback: callback,
+          scope: scope || window
+        });
       },
 
       subscribeOnce: function (topic, callback, scope) {
@@ -84,5 +94,7 @@
 
     };
   };
+
+  Hippo.Events = Hippo.createMessageBus();
 
 }());
