@@ -29,11 +29,9 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.ResourceLink;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
@@ -100,7 +98,6 @@ public class SimpleLoginPlugin extends LoginPlugin {
         private Label captchaLabel;
         private CaptchaImageResource captchaImageResource;
         private RequiredTextField<String> captchaTextField;
-        private final FeedbackPanel feedback;
 
         private String captchaTextValue;
         private final int allowedAttempts;
@@ -120,12 +117,6 @@ public class SimpleLoginPlugin extends LoginPlugin {
 
             final boolean autocomplete = getPluginConfig().getAsBoolean("signin.form.autocomplete", true);
             add(new AttributeModifier("autocomplete", new Model<>(autocomplete ? "on" : "off")));
-
-            feedback = new FeedbackPanel("feedback");
-            feedback.setOutputMarkupId(true);
-            feedback.setEscapeModelStrings(false);
-            add(feedback);
-            add(new Button("submit", new ResourceModel("submit-label")));
         }
 
         public boolean login() {

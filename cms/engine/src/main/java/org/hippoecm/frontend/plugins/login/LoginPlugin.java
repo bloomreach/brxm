@@ -31,13 +31,16 @@ import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.core.request.mapper.AbstractComponentMapper;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.Request;
@@ -96,6 +99,7 @@ public class LoginPlugin extends RenderPlugin {
 
         private PageParameters parameters;
 
+        protected final FeedbackPanel feedback;
         protected final DropDownChoice<String> locale;
         protected final RequiredTextField<String> usernameTextField;
         protected final PasswordTextField passwordTextField;
@@ -132,11 +136,31 @@ public class LoginPlugin extends RenderPlugin {
                 }
             }
 
+            feedback = new FeedbackPanel("feedback");
+            feedback.setOutputMarkupId(true);
+            feedback.setEscapeModelStrings(false);
+            add(feedback);
+
             final PropertyModel<String> username = PropertyModel.of(LoginPlugin.this, "username");
             add(usernameTextField = new RequiredTextField<>("username", username));
+            usernameTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                protected void onUpdate(AjaxRequestTarget target) {
+                    String username = this.getComponent().getDefaultModelObjectAsString();
+                    HttpSession session = ((ServletWebRequest) SignInForm.this.getRequest()).getContainerRequest()
+                            .getSession(true);
+                    LoginPlugin.this.username = username;
+                }
+            });
 
             final PropertyModel<String> password = PropertyModel.of(LoginPlugin.this, "password");
-            add(passwordTextField = new PasswordTextField("password", password));
+            passwordTextField = new PasswordTextField("password", password);
+            passwordTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                protected void onUpdate(AjaxRequestTarget target) {
+                    LoginPlugin.this.password = LoginPlugin.this.password;
+                }
+            });
+            passwordTextField.setResetPassword(false);
+            add(passwordTextField);
 
             add(locale = new DropDownChoice<>("locale",
                     new PropertyModel<String>(this, "selectedLocale") {
@@ -158,9 +182,6 @@ public class LoginPlugin extends RenderPlugin {
                         }
                     }
             ));
-
-            passwordTextField.setResetPassword(false);
-
             locale.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                 protected void onUpdate(AjaxRequestTarget target) {
                     //immediately set the locale when the user changes it
@@ -172,20 +193,7 @@ public class LoginPlugin extends RenderPlugin {
                 }
             });
 
-            usernameTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-                protected void onUpdate(AjaxRequestTarget target) {
-                    String username = this.getComponent().getDefaultModelObjectAsString();
-                    HttpSession session = ((ServletWebRequest) SignInForm.this.getRequest()).getContainerRequest()
-                            .getSession(true);
-                    LoginPlugin.this.username = username;
-                }
-            });
-
-            passwordTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-                protected void onUpdate(AjaxRequestTarget target) {
-                    LoginPlugin.this.password = LoginPlugin.this.password;
-                }
-            });
+            add(new Button("submit", new ResourceModel("submit-label")));
         }
 
         @Override
