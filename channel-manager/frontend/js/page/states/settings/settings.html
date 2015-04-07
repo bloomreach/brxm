@@ -89,13 +89,13 @@
 
       <div class="form-group has-feedback">
         <label for="primary-document">{{ 'PRIMARY_DOCUMENT' | translate }}</label>
-        <select data-chosen
+        <div data-ng-if="!state.isEditable">{{page.primaryDocumentRepresentation.displayName}}</div>
+        <select id="primary-document"
+                data-chosen
                 data-ng-if="state.isEditable"
                 data-ng-model="page.primaryDocumentRepresentation"
                 data-ng-options="item as item.displayName for item in page.availableDocumentRepresentations"
-                data-width="'100%'"
-                class="ng-pristine ng-untouched ng-valid localytics-chosen"
-                id="primary-document">
+                data-width="'100%'">
         </select>
       </div>
 
