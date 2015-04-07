@@ -29,7 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetNavigation;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -69,7 +69,7 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
      */
     public static AbstractTreePickerRepresentation representExpandedParentTree(final PageComposerContextService pageComposerContextService,
                                                                                final ResolvedMount resolvedMount,
-                                                                               final String siteMapPathInfo) throws RepositoryException {
+                                                                               final String siteMapItemRefIdOrPath) throws RepositoryException {
 
 
         try {
@@ -77,8 +77,18 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
             if (!jcrSession.getNode(resolvedMount.getMount().getContentPath()).getIdentifier()
                     .equals(pageComposerContextService.getRequestConfigIdentifier())) {
                 final String msg = String.format("Representing an expanded parent tree through './%s' is only supported with request " +
-                        "identifier equal to the channel root content identifier", siteMapPathInfo);
+                        "identifier equal to the channel root content identifier", siteMapItemRefIdOrPath);
                 throw new ClientException(msg, ClientError.INVALID_UUID);
+            }
+
+            final String siteMapPathInfo;
+            // siteMapPathInfo can be by siteMapItemPath but can also be by refId. Hence, we first check whether we are
+            // dealing with a siteMpaItem path of refId
+            final HstSiteMapItem siteMapItemByRefId = resolvedMount.getMount().getHstSite().getSiteMap().getSiteMapItemByRefId(siteMapItemRefIdOrPath);
+            if (siteMapItemByRefId != null) {
+                siteMapPathInfo = HstSiteMapUtils.getPath(siteMapItemByRefId);
+            } else {
+                siteMapPathInfo = siteMapItemRefIdOrPath;
             }
 
             final ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem(siteMapPathInfo);
@@ -86,9 +96,9 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
             if (resolvedSiteMapItem.getPathInfo().equals(resolvedMount.getMount().getPageNotFound())) {
                 // siteMapPathInfo item is resolved to the page not found item. this is an invalid item in the sitemap
                 // item tree
-                final String msg = String.format("For 'siteMapPathInfo %s' the resolved sitemap item '%s' is the page not " +
+                final String msg = String.format("For 'siteMapItemRefIdOrPath %s' the resolved sitemap item '%s' is the page not " +
                                 "found sitemap item for which no tree picker representation can be created.",
-                        siteMapPathInfo, resolvedSiteMapItem.getHstSiteMapItem());
+                        siteMapItemRefIdOrPath, resolvedSiteMapItem.getHstSiteMapItem());
                 throw new IllegalStateException(msg);
             }
 
@@ -102,7 +112,7 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
                 }
                 final String msg = String.format("For 'siteMapPathInfo %s' the resolved sitemap item '%s' does not have a relative content path and " +
                         "is not an explicit sitemap item hence no tree picker representation can be created for it be " +
-                        "created for it.", siteMapPathInfo, resolvedSiteMapItem.getHstSiteMapItem());
+                        "created for it.", siteMapItemRefIdOrPath, resolvedSiteMapItem.getHstSiteMapItem());
                 throw new IllegalStateException(msg);
             }
 
@@ -117,20 +127,20 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
         } catch (PathNotFoundException | MatchException | IllegalStateException e) {
             if (log.isDebugEnabled()) {
                 String msg = String.format("Exception trying to return document representation for siteMapPathInfo '%s'. Return root " +
-                        "content folder representation instead", siteMapPathInfo);
+                        "content folder representation instead", siteMapItemRefIdOrPath);
                 log.info(msg, e);
             } else {
                 log.info("Exception trying to return document representation for siteMapPathInfo '{}' : {}. Return root " +
-                        "content folder representation instead", siteMapPathInfo, e.toString());
+                        "content folder representation instead", siteMapItemRefIdOrPath, e.toString());
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 String msg = String.format("Exception trying to return document representation for siteMapPathInfo '%s'. Return root " +
-                        "content folder representation instead", siteMapPathInfo);
+                        "content folder representation instead", siteMapItemRefIdOrPath);
                 log.warn(msg, e);
             } else {
                 log.warn("Exception trying to return document representation for siteMapPathInfo '{}' : {}. Return root " +
-                        "content folder representation instead", siteMapPathInfo, e.toString());
+                        "content folder representation instead", siteMapItemRefIdOrPath, e.toString());
             }
         }
         final ExpandedNodeHierarchy singleNodeHierarchy = ExpandedNodeHierarchy.createSingleNodeHierarchy(pageComposerContextService.getRequestConfigNode(NT_DOCUMENT));

@@ -101,6 +101,26 @@ public class ExpandedParentTreeRepresentationTest extends AbstractTestTreePicker
         rootContentRepresentationAssertions(representation);
     }
 
+
+    @Test
+    public void representation_for_siteMapRefId_results_in_correctly_expanded_tree() throws Exception {
+        AbstractTreePickerRepresentation representation =
+                createExpandedTreeContentRepresentation("", getRootContentConfigIdentifier(), "newsRefId");
+        assertTrue(representation instanceof DocumentTreePickerRepresentation);
+
+        assertFalse(representation.isCollapsed());
+        assertEquals("expected 'common' and 'News' folder", 2, representation.getItems().size());
+
+        // 'common' should not be expanded
+        final AbstractTreePickerRepresentation commonFolderRepresentation = representation.getItems().get(0);
+        assertTrue(commonFolderRepresentation.isCollapsed());
+
+        // news folder should not be expanded but should be selected!
+        assertEquals("Folder News' should not be loaded/expanded ", 0, representation.getItems().get(1).getItems().size());
+        assertTrue(representation.getItems().get(1).isCollapsed());
+        assertTrue(representation.getItems().get(1).isSelected());
+    }
+
     @Test
     public void representation_for_contact_that_can_be_matched_in_sitemap_to_explicit_item_without_relative_contentpath_results_in_sitemap_representation() throws Exception {
 

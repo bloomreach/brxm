@@ -56,20 +56,20 @@ public class HippoDocumentResource extends AbstractConfigResource {
     }
 
     /**
-     * @param siteMapPathInfo
+     * @param siteMapItemRefIdOrPath
      * @return the rest response to create the client tree for <code>siteMapPathInfo</code> : the response contains all
      * ancestor nodes + their siblings up to the 'channel content root node' plus the siblings for <code>siteMapPathInfo</code>
      * plus its direct children.
      */
     @GET
-    @Path("/picker/{siteMapPathInfo: .*}")
-    public Response get(final @PathParam("siteMapPathInfo") String siteMapPathInfo) {
+    @Path("/picker/{siteMapItemRefIdOrPath: .*}")
+    public Response get(final @PathParam("siteMapItemRefIdOrPath") String siteMapItemRefIdOrPath) {
         return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
 
                 final AbstractTreePickerRepresentation representation;
-                if (StringUtils.isEmpty(siteMapPathInfo)) {
+                if (StringUtils.isEmpty(siteMapItemRefIdOrPath)) {
                     representation = representRequestContentNode(getPageComposerContextService());
                 } else {
                     // find first the mount for current request
@@ -78,7 +78,7 @@ public class HippoDocumentResource extends AbstractConfigResource {
                     final VirtualHost virtualHost = getPageComposerContextService().getRequestContext().getResolvedMount().getMount().getVirtualHost();
                     final Mount editingMount = getPageComposerContextService().getEditingMount();
                     final ResolvedMount resolvedMount = virtualHost.getVirtualHosts().matchMount(renderingHost, null, editingMount.getMountPath());
-                    representation = representExpandedParentTree(getPageComposerContextService(),resolvedMount,  siteMapPathInfo);
+                    representation = representExpandedParentTree(getPageComposerContextService(),resolvedMount,  siteMapItemRefIdOrPath);
                 }
                 return ok("Folder loaded successfully", representation);
             }
