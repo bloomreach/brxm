@@ -3,7 +3,7 @@
 <%--@elvariable id="cparam" type="org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo"--%>
 <c:choose>
   <c:when test="${not empty cparam.apiKey}">
-    <c:set var="mapsUrl">https://maps.googleapis.com/maps/api/js?key=${cparam.apiKey}</c:set>
+    <c:set var="mapsUrl">https://maps.googleapis.com/maps/api/js?key=${fn:escapeXml(cparam.apiKey)}</c:set>
   </c:when>
   <c:otherwise>
     <c:set var="mapsUrl">https://maps.googleapis.com/maps/api/js</c:set>
@@ -27,7 +27,7 @@
 
 <c:if test="${cmsrequest}">
   <script type="text/javascript">
-    updateEssentialsGoogleMap("${cparam.address}", ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, "${cparam.mapType}");
+    initializeGoogleMaps("${cparam.address}", ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, "${cparam.mapType}");
   </script>
 </c:if>
 

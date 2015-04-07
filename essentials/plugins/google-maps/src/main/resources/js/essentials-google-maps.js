@@ -17,13 +17,13 @@
 var myGoogleMap;
 
 function getMapType(mapType) {
-    if(mapType=="ROADMAP") {
+    if (mapType=="ROADMAP") {
         return google.maps.MapTypeId.ROADMAP;
     }
-    else if(mapType=="SATELLITE") {
+    else if (mapType=="SATELLITE") {
         return google.maps.MapTypeId.SATELLITE;
     }
-    else if(mapType=="TERRAIN") {
+    else if (mapType=="TERRAIN") {
         return google.maps.MapTypeId.TERRAIN;
     }
     else {
@@ -31,9 +31,9 @@ function getMapType(mapType) {
     }
 }
 
-function initializeGoogleMaps(address,longitude,latitude, zoomFactor,mapType) {
+function initializeGoogleMaps(address, longitude, latitude, zoomFactor, mapType) {
     var latlng = new google.maps.LatLng(0, 0);
-    if(latitude!="" || longitude!="") {
+    if (latitude != "" || longitude != "") {
         latlng = new google.maps.LatLng(latitude, longitude);
     }
     var mapOptions = {
@@ -42,41 +42,22 @@ function initializeGoogleMaps(address,longitude,latitude, zoomFactor,mapType) {
         mapTypeId: getMapType(mapType)
     };
     myGoogleMap = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-    if(address!="") {
+    if (address != "") {
         geoCodeAddress(address);
     }
 }
 
 function geoCodeAddress(address) {
     var myGeoCoder = new google.maps.Geocoder();
-    myGeoCoder.geocode( { 'address': address}, function(results, status) {
+    myGeoCoder.geocode( {'address': address}, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
             myGoogleMap.setCenter(results[0].geometry.location);
-            var marker = new google.maps.Marker({
+            new google.maps.Marker({
                 map: myGoogleMap,
                 position: results[0].geometry.location
             });
         } else {
-            //
+            // geocode failed, do nothing
         }
     });
-}
-
-// get the location for given address or latlong and initialize the map to that position
-function updateEssentialsGoogleMap(address,longitude,latitude, zoomFactor, mapType) {
-    var latlng = new google.maps.LatLng(0, 0);
-    if(latitude!="" || longitude!="") {
-        latlng = new google.maps.LatLng(latitude, longitude);
-    }
-
-    var mapOptions = {
-        center: latlng,
-        zoom: zoomFactor,
-        mapTypeId: getMapType(mapType)
-    };
-    myGoogleMap = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-    if(address!="") {
-        geoCodeAddress(address);
-    }
-
 }

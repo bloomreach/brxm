@@ -805,7 +805,6 @@
         "icon" : "/essentials/images/icons/googlemaps.png",
         "description": "This feature adds a configurable drag-and-drop Google Maps component.",
         "introduction": "With Google Maps, you can easily place a Google Map on your pages. This Feature will be installed as a drag-and-drop component in the component gallery in the Channel Manager. You can select in the CMS what coordinates, etc. should be shown.",
-        "documentationLink": "http://www.onehippo.org/library/setup/hst-components/googlemaps-component.html",
         "imageUrls": [
           "/essentials/images/screenshots/googlemaps1.png"
         ],

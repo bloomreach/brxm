@@ -2,7 +2,7 @@
 
 <#-- @ftlvariable name="cparam" type="org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo" -->
 <#if cparam.apiKey?has_content>
-    <#assign mapsUrl = "https://maps.googleapis.com/maps/api/js?key=${cparam.apiKey}"/>
+    <#assign mapsUrl = "https://maps.googleapis.com/maps/api/js?key=${cparam.apiKey?html}"/>
 <#else>
     <#assign mapsUrl = "https://maps.googleapis.com/maps/api/js"/>
 </#if>
@@ -24,7 +24,7 @@
 
 <#if cmsrequest>
 <script type="text/javascript">
-    updateEssentialsGoogleMap("${cparam.address}", ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, "${cparam.mapType}");
+    initializeGoogleMaps("${cparam.address}", ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, "${cparam.mapType}");
 </script>
 </#if>
 
