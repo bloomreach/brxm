@@ -371,21 +371,25 @@
   display: flex;
 
   label {
-    float: left;
+    display: flex;
     margin-right: 4px;
     white-space: nowrap;
   }
 
-  .text-input input {
-    border: 1px solid @light-shade;
-    padding: 2px 4px;
-    width: 524px
+  .text-input {
+    display: flex;
+    flex: 1 0 auto;
+
+    input {
+      flex: 1 0 auto;
+      border: 1px solid @light-shade;
+      padding: 2px 4px;
+    }
   }
 
   .checkbox {
-    width: 115px;
-    float: left;
-    padding-top: 2px;
+    display: flex;
+    padding-right: 32px;
   }
 }
 
