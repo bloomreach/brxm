@@ -9,7 +9,7 @@
     "grunt-contrib-less": "1.0.0",
     "grunt-contrib-watch": "0.6.1",
     "grunt-declutter-task": "https://github.com/onehippo/grunt-declutter-task/tarball/v0.1.0",
-    "grunt-filerev": "2.2.0",
+    "grunt-filerev": "2.0.0",
     "grunt-jslint": "1.1.14",
     "grunt-karma": "0.10.1",
     "grunt-newer": "1.1.0",
