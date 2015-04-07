@@ -37,24 +37,3 @@
 .hippo-root .upload-wrapper .upload-button-osx {
   position: relative;
 }
-
-.hippo-dialog-type select, .hippo-dialog-align select{
-  margin-top:5px;
-}
-
-.hippo-dialog-type, .hippo-dialog-align{
-  float:left;
-  margin-right: 20px;
-}
-
-.hippo-dialog-alt{
-  float:right;
-}
-
-.hippo-dialog-alt .text-input{
-  float:left;
-}
-
-body .hippo-picker-properties div.hippo-dialog-alt div.text-input input {
-  width: 282px;
-}
