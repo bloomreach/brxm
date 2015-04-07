@@ -15,32 +15,28 @@
  */
 package org.hippoecm.frontend.dialog;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Session;
 import org.apache.wicket.core.request.ClientInfo;
-import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.ClientProperties;
 import org.apache.wicket.protocol.http.request.WebClientInfo;
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 
 public class Dialog<T> extends AbstractDialog<T> {
 
-    private static final JavaScriptResourceReference IE10_WORKAROUND_SCRIPT = new JavaScriptResourceReference(Dialog.class,
-            "dialog-ie10.js");
-
     public static final String BOTTOM_LEFT_ID = "bottom-left";
+
+    private static final String DIALOG_IE10_JS = "dialog-ie10.js";
 
     private IValueMap size = DialogConstants.LARGE_AUTO;
     private IValueMap properties;
@@ -68,15 +64,9 @@ public class Dialog<T> extends AbstractDialog<T> {
             ClientProperties properties = ((WebClientInfo) info).getProperties();
             // IE10 needs a width in pixels on the .hippo-dialog.bottom-left panel in order to render
             // items that have overflow:hidden correctly.
-
             if (properties.isBrowserInternetExplorer() && properties.getBrowserVersionMajor() == 10) {
-                response.render(new OnDomReadyHeaderItem("fixDialogForIE10();") {
-                    @Override
-                    public Iterable<? extends HeaderItem> getDependencies() {
-                        return Collections.singletonList(JavaScriptReferenceHeaderItem.forReference(
-                                IE10_WORKAROUND_SCRIPT, "ie10-dialog-workaround"));
-                    }
-                });
+                PackageTextTemplate script = new PackageTextTemplate(Dialog.class, DIALOG_IE10_JS);
+                response.render(OnDomReadyHeaderItem.forScript(script.getString()));
             }
         }
         super.renderHead(response);

@@ -16,19 +16,16 @@
 
 // IE10 needs a width in pixels on the .hippo-dialog.bottom-left panel in order to render
 // items that have overflow:hidden correctly.
-function fixDialogForIE10() {
+(function() {
 
     "use strict";
 
-    var bottom = $('.hippo-dialog-bottom'),
-        left = $('.hippo-dialog-bottom-left'),
-        right = $('.hippo-dialog-bottom-right');
-
-    console.log('test ' + left.length);
+    var left = $('.hippo-dialog-bottom-left'),
+        bottom, right;
 
     if (left.length) {
+        bottom = $('.hippo-dialog-bottom');
+        right = $('.hippo-dialog-bottom-right');
         left.width(bottom.width() - right.width());
     }
-}
-
-
+}());
