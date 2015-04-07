@@ -21,13 +21,13 @@
 
 <hst:headContribution keyHint="initializeGoogleMaps" category="htmlBodyEnd">
   <script type="text/javascript">
-    initializeGoogleMaps("${cparam.address}", ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, "${cparam.mapType}");
+    initializeGoogleMaps("${fn:escapeXml(cparam.address)}", ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, "${cparam.mapType}");
   </script>
 </hst:headContribution>
 
 <c:if test="${cmsrequest}">
   <script type="text/javascript">
-    initializeGoogleMaps("${cparam.address}", ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, "${cparam.mapType}");
+    initializeGoogleMaps("${fn:escapeXml(cparam.address)}", ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, "${cparam.mapType}");
   </script>
 </c:if>
 

@@ -18,13 +18,13 @@
 
 <@hst.headContribution keyHint="initializeGoogleMaps" category="htmlBodyEnd">
 <script type="text/javascript">
-    initializeGoogleMaps("${cparam.address}", ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, "${cparam.mapType}");
+    initializeGoogleMaps("${cparam.address?html}", ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, "${cparam.mapType}");
 </script>
 </@hst.headContribution>
 
 <#if cmsrequest>
 <script type="text/javascript">
-    initializeGoogleMaps("${cparam.address}", ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, "${cparam.mapType}");
+    initializeGoogleMaps("${cparam.address?html}", ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, "${cparam.mapType}");
 </script>
 </#if>
 
