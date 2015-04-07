@@ -849,7 +849,7 @@
     left: 0;
 }
 
-.channel-manager .component-properties-editor > .x-panel-bwrap > .x-panel-body {
+.channel-manager .component-properties-editor > .x-panel-bwrap > .x-panel-body > .x-box-inner {
     overflow-y: auto;
 }
 
