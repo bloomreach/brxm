@@ -52,28 +52,35 @@ public class DocumentUtils {
 
     public static Set<DocumentRepresentation> findAvailableDocumentRepresentations(final PageComposerContextService pageComposerContextService,
                                                                                    final HstComponentConfiguration page,
-                                                                                   final DocumentRepresentation primaryDocumentRepresentation) throws RepositoryException {
+                                                                                   final DocumentRepresentation primaryDocumentRepresentation,
+                                                                                   final boolean documentsOnly) throws RepositoryException {
         Set<DocumentRepresentation> documentRepresentations = new HashSet<>();
         if (primaryDocumentRepresentation != null) {
+            // regardless whether current primaryDocumentRepresentation is document or not, we add it as it is the currently
+            // selected one
             documentRepresentations.add(primaryDocumentRepresentation);
         }
         if (page == null) {
             return documentRepresentations;
         }
-        populateDocumentRepresentationsRecursive(pageComposerContextService, page, documentRepresentations);
+        populateDocumentRepresentationsRecursive(pageComposerContextService, page, documentRepresentations, documentsOnly);
         return documentRepresentations;
     }
 
-    public static void populateDocumentRepresentationsRecursive(final PageComposerContextService pageComposerContextService, final HstComponentConfiguration item, final Set<DocumentRepresentation> documentRepresentations) throws RepositoryException {
-        populateDocumentRepresentations(pageComposerContextService, item, documentRepresentations);
+    public static void populateDocumentRepresentationsRecursive(final PageComposerContextService pageComposerContextService,
+                                                                final HstComponentConfiguration item,
+                                                                final Set<DocumentRepresentation> documentRepresentations,
+                                                                final boolean documentsOnly) throws RepositoryException {
+        populateDocumentRepresentations(pageComposerContextService, item, documentRepresentations, documentsOnly);
         for (HstComponentConfiguration child : item.getChildren().values()) {
-            populateDocumentRepresentationsRecursive(pageComposerContextService, child, documentRepresentations);
+            populateDocumentRepresentationsRecursive(pageComposerContextService, child, documentRepresentations, documentsOnly);
         }
     }
 
     public static void populateDocumentRepresentations(final PageComposerContextService pageComposerContextService,
                                                        final HstComponentConfiguration item,
-                                                       final Set<DocumentRepresentation> documentRepresentations) throws RepositoryException {
+                                                       final Set<DocumentRepresentation> documentRepresentations,
+                                                       final boolean documentsOnly) throws RepositoryException {
 
         if (item.getComponentClassName() == null) {
             return;
@@ -133,7 +140,17 @@ public class DocumentUtils {
                                     }
                                     documentLocation = documentLocation.substring(contentPath.length() + 1);
                                 }
-                                documentRepresentations.add(getDocumentRepresentationHstConfigUser(documentLocation, contentPath));
+                                final DocumentRepresentation presentation = getDocumentRepresentationHstConfigUser(documentLocation, contentPath);
+                                if (documentsOnly) {
+                                    if (presentation.isDocument() && presentation.isExists()) {
+                                        documentRepresentations.add(presentation);
+                                    } else {
+                                        log.debug("Skipping document represention '{}' because is not a document or does not exist.",
+                                                presentation);
+                                    }
+                                } else {
+                                    documentRepresentations.add(presentation);
+                                }
                             }
 
                         }

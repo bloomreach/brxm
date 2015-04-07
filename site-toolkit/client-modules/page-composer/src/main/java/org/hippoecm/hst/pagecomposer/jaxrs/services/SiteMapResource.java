@@ -117,7 +117,7 @@ public class SiteMapResource extends AbstractConfigResource {
                     primaryDocumentRepresentation.setSelected(true);
                 }
                 Set<DocumentRepresentation> availableDocumentRepresentations = findAvailableDocumentRepresentations(
-                        getPageComposerContextService(), page, primaryDocumentRepresentation);
+                        getPageComposerContextService(), page, primaryDocumentRepresentation, true);
 
                 final SiteMapItemRepresentation siteMapItemRepresentation = new SiteMapItemRepresentation()
                         .represent(siteMapItem, getPageComposerContextService().getEditingMount(), primaryDocumentRepresentation, availableDocumentRepresentations);

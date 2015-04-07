@@ -113,4 +113,16 @@ public class DocumentRepresentation {
         result = 31 * result + rootMountContentPath.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "DocumentRepresentation{" +
+                "path='" + path + '\'' +
+                ", rootMountContentPath='" + rootMountContentPath + '\'' +
+                ", displayName='" + displayName + '\'' +
+                ", isDocument=" + isDocument +
+                ", exists=" + exists +
+                ", selected=" + selected +
+                '}';
+    }
 }
