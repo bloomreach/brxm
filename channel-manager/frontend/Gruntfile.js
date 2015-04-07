@@ -71,10 +71,6 @@ module.exports = function (grunt) {
     clean: {
       target: {
         src: '<%= build.ngtarget %>'
-      },
-
-      bower: {
-        src: '<%= build.bower %>/**'
       }
     },
 
