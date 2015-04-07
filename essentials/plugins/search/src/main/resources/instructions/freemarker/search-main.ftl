@@ -7,10 +7,13 @@
     <h3>No results for: ${query?html}</h3>
   <#else>
     <#list pageable.items as item>
-      <@hst.link var="link" hippobean=item />
-      <article>
-        <h3><a href="${link}">${item.title?html}</a></h3>
-      </article>
+      <#if item.title??>
+        <@hst.link var="link" hippobean=item />
+        <article>
+          <@hst.cmseditlink hippobean=item/>
+          <h3><a href="${link}">${item.title?html}</a></h3>
+        </article>
+      </#if>
     </#list>
     <#if cparam.showPagination>
     <#include "../include/pagination.ftl">
