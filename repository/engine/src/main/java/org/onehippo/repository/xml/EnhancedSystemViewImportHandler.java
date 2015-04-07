@@ -241,7 +241,7 @@ public class EnhancedSystemViewImportHandler extends DefaultHandler {
 
     private class Node {
 
-        private Name name;
+        private final Name name;
         private Name type;
         private Name[] mixins;
         private NodeId uuid;
