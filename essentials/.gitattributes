@@ -970,6 +970,8 @@ plugins/video/src/main/resources/META-INF/resources/feature/videoComponentPlugin
 plugins/video/src/main/resources/META-INF/videoComponentPlugin_instructions.xml -text
 plugins/video/src/main/resources/META-INF/web-fragment.xml -text
 plugins/video/src/main/resources/instructions/freemarker/video-component.ftl -text
+plugins/video/src/main/resources/instructions/freemarker/video-component/video-component-autoplay.ftl -text
+plugins/video/src/main/resources/instructions/freemarker/video-component/video-component-bare.ftl -text
 plugins/video/src/main/resources/instructions/images/video.png -text
 plugins/video/src/main/resources/instructions/java/Video.txt -text
 plugins/video/src/main/resources/instructions/jsp/video-component.jsp -text

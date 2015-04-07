@@ -35,6 +35,8 @@
 
   <instructionSet group="freemarker">
     <freemarker action="copy" source="instructions/freemarker/video-component.ftl" target="{{freemarkerRoot}}/hstdefault/video-component.ftl"/>
+    <freemarker action="copy" source="instructions/freemarker/video-component/video-component-bare.ftl" target="{{freemarkerRoot}}/hstdefault/video-component/video-component-bare.ftl"/>
+    <freemarker action="copy" source="instructions/freemarker/video-component/video-component-autoplay.ftl" target="{{freemarkerRoot}}/hstdefault/video-component/video-component-autoplay.ftl"/>
     <xml action="copy" source="instructions/xml/hst/video-component-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 
