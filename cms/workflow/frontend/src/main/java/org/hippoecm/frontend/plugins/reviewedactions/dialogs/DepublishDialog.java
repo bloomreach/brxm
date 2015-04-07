@@ -15,11 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions.dialogs;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.DialogConstants;
@@ -28,10 +30,9 @@ import org.hippoecm.frontend.editor.workflow.model.ReferringDocumentsProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 
-import javax.jcr.RepositoryException;
-
-public class DepublishDialog extends AbstractWorkflowDialog {
+public class DepublishDialog extends AbstractWorkflowDialogRestyling<WorkflowDescriptor> {
 
     private IModel<String> title;
 
@@ -43,16 +44,13 @@ public class DepublishDialog extends AbstractWorkflowDialog {
 
         try {
             ReferringDocumentsProvider provider = new ReferringDocumentsProvider(new JcrNodeModel(wdm.getNode()));
-            MarkupContainer rdv = new ReferringDocumentsView("links", provider, editorMgr) {
-                @Override
-                public int getPageSize() {
-                    return 5;
-                }
-            };
+            MarkupContainer rdv = new ReferringDocumentsView("links", provider, editorMgr);
             add(rdv);
         } catch (RepositoryException e) {
             throw new WicketRuntimeException("No document node present", e);
         }
+
+        add(CssClass.append("hippo-window"));
         add(CssClass.append("hippo-depublish-dialog"));
 
         setFocusOnOk();
@@ -60,7 +58,7 @@ public class DepublishDialog extends AbstractWorkflowDialog {
 
     @Override
     public IValueMap getProperties() {
-        return DialogConstants.MEDIUM;
+        return DialogConstants.LARGE_AUTO;
     }
 
     @Override
