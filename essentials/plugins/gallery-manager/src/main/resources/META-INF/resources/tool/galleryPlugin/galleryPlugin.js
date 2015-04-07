@@ -17,7 +17,9 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.essentials').controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
+    angular.module('hippo.essentials')
+        .controller('galleryPluginCtrl', ['$scope', '$rootScope', '$http',
+            function ($scope, $rootScope, $http) {
 
         var endpoint = $rootScope.REST.dynamic + "galleryplugin";
         $scope.imageSets = [];
@@ -164,5 +166,5 @@
             " All variants of an image are together called an image set, and can be seen in the image gallery in the CMS." +
             " Read more about imagesets here: <a target='_blank' href='http://www.onehippo.org/library/concepts/images-and-assets/create-a-custom-image-set.html'>" +
             "http://www.onehippo.org/library/concepts/images-and-assets/create-a-custom-image-set.html</a>"}
-    })
+    }])
 }());
