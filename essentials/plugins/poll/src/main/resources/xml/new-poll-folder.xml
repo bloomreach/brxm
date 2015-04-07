@@ -94,7 +94,7 @@
       <sv:value>nl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>nieuwe nieuwsmap</sv:value>
+      <sv:value>nieuwe pollmap</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
@@ -133,10 +133,10 @@
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>it</sv:value>
+      <sv:value>de</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Nuova cartella poll</sv:value>
+      <sv:value>Neuen Poll Ordner</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
