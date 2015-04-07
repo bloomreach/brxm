@@ -68,7 +68,7 @@
           <sv:value>de</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:message" sv:type="String">
-          <sv:value>Keine broken links gefunden.</sv:value>
+          <sv:value>Keine broken links gefunden</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="hippo:translation">
