@@ -80,7 +80,7 @@
           var deferred = $q.defer(),
             url = '/' + ConfigService.sitemapId + './create';
 
-          if (location) {
+          if (location && location.id !== null) {
             url += '/' + location.id;
           }
 

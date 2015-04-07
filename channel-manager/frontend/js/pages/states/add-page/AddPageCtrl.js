@@ -65,7 +65,7 @@
             componentConfigurationId: $scope.page.prototype.id
           };
 
-          PageService.createPage(pageModel).then(function () {
+          PageService.createPage(pageModel, $scope.page.location).then(function () {
             ContainerService.showPage($scope.mountPath + '/' + pageModel.name);
           }, function (errorResponse) {
             $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
