@@ -15,13 +15,18 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.repeater.Item;
@@ -31,11 +36,13 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
+import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
@@ -62,9 +69,14 @@ import org.wicketstuff.js.ext.util.ExtResourcesHeaderItem;
 
 public class RootPlugin extends TabsPlugin {
 
-    private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(RootPlugin.class);
+
+    public static final String CONFIG_PINGER_INTERVAL = "pinger.interval";
+    public static final String CONFIG_SEND_USAGE_STATISTICS_TO_HIPPO = "send.usage.statistics.to.hippo";
+    public static final boolean DEFAULT_SEND_USAGE_STATISTICS_TO_HIPPO = true;
+
+    private static final String USAGE_STATISTICS_JS = "usage-statistics.js";
+    private static final String LOGIN_EVENT_JS = "login-event.js";
 
     private boolean rendered = false;
     private final ExtWidgetRegistry extWidgetRegistry;
@@ -87,10 +99,7 @@ public class RootPlugin extends TabsPlugin {
 
         @Override
         public boolean equals(Object that) {
-            if (that != null && that instanceof RenderServiceModel) {
-                return ((RenderServiceModel) that).getObject() == getObject();
-            }
-            return false;
+            return that instanceof RenderServiceModel && ((RenderServiceModel) that).getObject() == getObject();
         }
     }
 
@@ -100,15 +109,15 @@ public class RootPlugin extends TabsPlugin {
         // keep all feedback messages after each request cycle
         getApplication().getApplicationSettings().setFeedbackMessageCleanupFilter(IFeedbackMessageFilter.NONE);
 
-        if (config.containsKey("pinger.interval")) {
-            add(new Pinger("pinger", config.getAsDuration("pinger.interval")));
+        if (config.containsKey(CONFIG_PINGER_INTERVAL)) {
+            add(new Pinger("pinger", config.getAsDuration(CONFIG_PINGER_INTERVAL)));
         } else {
             add(new Pinger("pinger"));
         }
 
         add(new Label("currentUserName", Model.of(getCurrentUserName())));
 
-        services = new LinkedList<IRenderService>();
+        services = new LinkedList<>();
 
         final IDataProvider<IRenderService> provider = new ListDataProvider<IRenderService>(services) {
             private static final long serialVersionUID = 1L;
@@ -240,6 +249,29 @@ public class RootPlugin extends TabsPlugin {
 
         response.render(CmsHeaderItem.get());
         response.render(ExtResourcesHeaderItem.get());
+        if (sendUsageStatistics()) {
+            response.render(createUsageStatisticsReporter());
+        }
+        response.render(createLoginEvent());
+    }
+
+    private boolean sendUsageStatistics() {
+        return getPluginConfig().getAsBoolean(CONFIG_SEND_USAGE_STATISTICS_TO_HIPPO, DEFAULT_SEND_USAGE_STATISTICS_TO_HIPPO);
+    }
+
+    private HeaderItem createUsageStatisticsReporter() {
+        final PackageTextTemplate usageStatistics = new PackageTextTemplate(RootPlugin.class, USAGE_STATISTICS_JS);
+        final String javaScript = usageStatistics.asString(Collections.emptyMap());
+        return OnLoadHeaderItem.forScript(javaScript);
+    }
+
+    private HeaderItem createLoginEvent() {
+        final Map<String, String> eventParams = new TreeMap<>();
+        eventParams.put("releaseVersion", new SystemInfoDataProvider().getReleaseVersion());
+
+        final PackageTextTemplate loginEvent = new PackageTextTemplate(RootPlugin.class, LOGIN_EVENT_JS);
+        final String javaScript = loginEvent.asString(eventParams);
+        return OnLoadHeaderItem.forScript(javaScript);
     }
 
     protected String getItemId() {

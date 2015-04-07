@@ -769,6 +769,9 @@
     <sv:property sv:multiple="true" sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.tabs.documents</sv:value>
     </sv:property>
+    <sv:property sv:name="send.usage.statistics.to.hippo" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
     <sv:node sv:name="browser.ie">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>

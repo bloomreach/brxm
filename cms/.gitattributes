@@ -789,7 +789,6 @@ api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/left
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/left-right.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/right-corners.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/top-bottom.gif -text
-api/src/main/resources/org/hippoecm/frontend/js/events.js -text
 api/src/main/resources/org/hippoecm/frontend/js/future.js -text
 api/src/main/resources/org/hippoecm/frontend/js/global.js -text
 api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-128.png -text svneol=unset#image/png
@@ -2416,6 +2415,7 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/images/do
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/logout/LogoutPerspective_de.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/logout/LogoutPerspective_it.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/root/hippo-cms.ico -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/root/usage-statistics.js -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/TestSuite.java -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/admin/SearchableDataProviderTest.java -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/admin/domains/DomainDataProviderTest.java -text
