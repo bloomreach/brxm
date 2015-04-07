@@ -41,7 +41,7 @@ public class UnpublishedReferencesDialog extends AbstractWorkflowDialogRestyling
 
         add(new UnpublishedReferencesView("docsview", provider, mgr));
 
-        add(CssClass.append("publication-dialog"));
+        add(CssClass.append("hippo-workflow-dialog"));
 
         setOkLabel(getString("publish"));
     }

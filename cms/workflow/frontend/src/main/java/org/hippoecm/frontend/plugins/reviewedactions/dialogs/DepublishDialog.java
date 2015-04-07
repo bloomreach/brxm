@@ -50,7 +50,7 @@ public class DepublishDialog extends AbstractWorkflowDialogRestyling<WorkflowDes
             throw new WicketRuntimeException("No document node present", e);
         }
 
-        add(CssClass.append("hippo-depublish-dialog"));
+        add(CssClass.append("hippo-workflow-dialog"));
 
         setFocusOnOk();
     }

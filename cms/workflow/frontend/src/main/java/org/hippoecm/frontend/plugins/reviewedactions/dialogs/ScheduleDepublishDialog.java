@@ -46,7 +46,7 @@ public class ScheduleDepublishDialog extends AbstractWorkflowDialogRestyling<Nod
         setFocusOnCancel();
 
         add(CssClass.append("hippo-window"));
-        add(CssClass.append("schedule-depublication-dialog"));
+        add(CssClass.append("hippo-workflow-dialog"));
     }
 
     @Override

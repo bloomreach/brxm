@@ -47,7 +47,7 @@ public class SchedulePublishDialog extends AbstractWorkflowDialogRestyling<Node>
         addOrReplace(new DatePickerComponent(Dialog.BOTTOM_LEFT_ID, dateModel, new ResourceModel("schedule-publish-text")));
 
         add(CssClass.append("hippo-window"));
-        add(CssClass.append("hippo-schedulepublish-dialog"));
+        add(CssClass.append("hippo-workflow-dialog"));
 
         setFocusOnCancel();
     }
