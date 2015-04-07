@@ -64,7 +64,6 @@ content/src/main/resources/namespaces/polldemo/custompolldocument.xml svneol=nat
 content/src/main/resources/namespaces/polldemo/polldocument.xml svneol=native#text/plain
 content/src/main/resources/polldata.xml svneol=native#text/plain
 content/src/main/resources/polldata/custom-poll-documents/mycustompolldocument.xml svneol=native#text/plain
-content/src/main/resources/polldata/poll-documents/mycustompolldocument.xml svneol=native#text/plain
 content/src/main/resources/polldata/poll-documents/mypolldocument.xml svneol=native#text/plain
 content/src/main/resources/security/configuser-read-everywhere.xml svneol=native#text/plain
 content/src/main/resources/security/group-liveusers.xml svneol=native#text/plain

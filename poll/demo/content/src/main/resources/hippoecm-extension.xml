@@ -992,7 +992,7 @@
       <sv:value>polldata/poll-documents/mypolldocument.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/polldata/poll-documents</sv:value>
+      <sv:value>/polldata/polldemo/poll-documents</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="poll-demo-polldata-custom-poll-documents-mycustompolldocument">
@@ -1006,7 +1006,7 @@
       <sv:value>polldata/custom-poll-documents/mycustompolldocument.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/polldata/custom-poll-documents</sv:value>
+      <sv:value>/polldata/polldemo/custom-poll-documents</sv:value>
     </sv:property>
   </sv:node>
 
