@@ -164,5 +164,10 @@
                 $rootScope.$broadcast('show-messages');
             };
             $scope.showMessagesNavbarLink = false;
+
+            $scope.isCollapsed = true;
+            $scope.toggleCollapsed = function() {
+                $scope.isCollapsed = !$scope.isCollapsed;
+            };
         }]);
 })();
