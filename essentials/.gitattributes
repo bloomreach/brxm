@@ -37,6 +37,7 @@ components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/Essent
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsBlogComponentInfo.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsCarouselComponentInfo.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsCarouselComponentInfo.properties -text
+components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsContentComponentInfo.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsDocumentComponentInfo.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsDocumentComponentInfo.properties -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsDocumentListComponentInfo.java -text
@@ -772,6 +773,7 @@ plugins/news/src/main/resources/xml/hst/templates/news-main-content-jsp.xml -tex
 plugins/news/src/main/resources/xml/hst/templates/newslist-main-newslist-freemarker.xml -text
 plugins/news/src/main/resources/xml/hst/templates/newslist-main-newslist-jsp.xml -text
 plugins/news/src/main/resources/xml/hst/workspace/newslist.xml -text
+plugins/news/src/main/resources/xml/hst/workspace/newspage.xml -text
 plugins/news/src/main/resources/xml/namespaces/newsdocument.xml -text
 plugins/news/src/main/resources/xml/samples/content/documents/news/sample_gastropoda.xml -text
 plugins/news/src/main/resources/xml/samples/content/documents/news/sample_harvest.xml -text

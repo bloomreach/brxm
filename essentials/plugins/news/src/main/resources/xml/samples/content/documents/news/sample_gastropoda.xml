@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@
       <sv:value>en</sv:value>
     </sv:property>
     <sv:property sv:name="{{namespace}}:author" sv:type="String">
-      <sv:value>OBO</sv:value>
+      <sv:value>Alfred Anonymous</sv:value>
     </sv:property>
     <sv:property sv:name="{{namespace}}:date" sv:type="Date">
       <sv:value>{{jcrDate}}</sv:value>
@@ -85,7 +85,7 @@
       <sv:value>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</sv:value>
     </sv:property>
     <sv:property sv:name="{{namespace}}:location" sv:type="String">
-      <sv:value>AMS</sv:value>
+      <sv:value>Liverpool</sv:value>
     </sv:property>
     <sv:property sv:name="{{namespace}}:source" sv:type="String">
       <sv:value/>

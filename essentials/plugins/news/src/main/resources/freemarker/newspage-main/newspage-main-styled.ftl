@@ -5,34 +5,19 @@
     <@hst.link var="link" hippobean=document/>
 <article class="has-edit-button">
     <@hst.cmseditlink hippobean=document/>
-    <h3><a href="${link}">${document.title?html}</a></h3>
-    <#if document.date??>
-        <p><@fmt.formatDate value=document.date.time type="both" dateStyle="medium" timeStyle="short"/></p>
-    </#if>
-    <#if document.endDate??>
-        <p><@fmt.formatDate value=document.endDate.time type="both" dateStyle="medium" timeStyle="short"/></p>
-    </#if>
-    <#if document.author??>
-        <p>${document.author?html}</p>
-    </#if>
-    <#if document.source??>
-        <p>${document.source?html}</p>
-    </#if>
-    <#if document.location??>
-        <p>${document.location?html}</p>
-    </#if>
+    <h3><a href="${link}">${document.title?html}</a>
+        <#if document.date??>
+            <small><@fmt.formatDate value=document.date.time type="date" dateStyle="medium"/></small>
+        </#if>
+    </h3>
     <#if document.introduction??>
-        <p>${document.introduction?html}</p>
-    </#if>
-    <#if document.image?? && document.image.original??>
-        <@hst.link var="img" hippobean=document.image.original/>
-        <figure>
-            <img src="${img}" title="${document.image.fileName?html}" alt="${document.image.fileName?html}"/>
-            <#if document.image.description??>
-                <figcaption>${document.image.description?html}</figcaption>
-            </#if>
-        </figure>
+        <p class="lead">${document.introduction?html}</p>
     </#if>
     <@hst.html hippohtml=document.content/>
+    <#if document.author??>
+        <footer>
+            <p>-- by <em>${document.author?html}</em></p>
+        </footer>
+    </#if>
 </article>
 </#if>
