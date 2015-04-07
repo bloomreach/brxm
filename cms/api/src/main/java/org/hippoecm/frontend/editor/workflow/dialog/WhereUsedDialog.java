@@ -22,10 +22,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.editor.workflow.model.ReferringDocumentsProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A dialog that shows where a document is used, i.e. what other documents refer to it.
  */
-public class WhereUsedDialog extends AbstractDialog {
+public class WhereUsedDialog extends Dialog {
 
     private static final long serialVersionUID = 1L;
 
@@ -51,6 +52,8 @@ public class WhereUsedDialog extends AbstractDialog {
         } catch (RepositoryException e) {
             throw new WicketRuntimeException("No document node present", e);
         }
+
+        add(CssClass.append("hippo-workflow-dialog"));
     }
 
     public IModel getTitle() {
@@ -59,7 +62,7 @@ public class WhereUsedDialog extends AbstractDialog {
 
     @Override
     public IValueMap getProperties() {
-        return DialogConstants.MEDIUM;
+        return DialogConstants.LARGE_AUTO;
     }
 
 }
