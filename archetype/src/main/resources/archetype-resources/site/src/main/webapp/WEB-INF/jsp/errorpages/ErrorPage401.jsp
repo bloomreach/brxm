@@ -4,11 +4,13 @@
 <fmt:setBundle basename="org.hippoecm.hst.security.servlet.LoginServlet"/>
 
 <%
-  String destination = (String) pageContext.getSession().getAttribute("org.hippoecm.hst.security.servlet.destination");
-  if (destination == null) destination = "";
-
+  String destination = "";
+  HttpSession session = pageContext.getSession();
+  if (session != null) {
+    String destination = (String) session.getAttribute("org.hippoecm.hst.security.servlet.destination");
+    if (destination == null) destination = "";
+  }
   int autoRedirectSeconds = 2;
-
 %>
 
 <hst:link var="loginFormUrl" path="/login/form">
