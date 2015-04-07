@@ -21,14 +21,16 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDat
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.frontend.dialog.DialogConstants;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UnpublishedReferencesDialog extends AbstractWorkflowDialog {
+public class UnpublishedReferencesDialog extends AbstractWorkflowDialogRestyling<WorkflowDescriptor> {
 
     static final Logger log = LoggerFactory.getLogger(UnpublishedReferencesDialog.class);
 
@@ -39,6 +41,8 @@ public class UnpublishedReferencesDialog extends AbstractWorkflowDialog {
 
         add(new UnpublishedReferencesView("docsview", provider, mgr));
 
+        add(CssClass.append("publication-dialog"));
+
         setOkLabel(getString("publish"));
     }
 
@@ -48,7 +52,7 @@ public class UnpublishedReferencesDialog extends AbstractWorkflowDialog {
 
     @Override
     public IValueMap getProperties() {
-        return DialogConstants.MEDIUM;
+        return DialogConstants.LARGE_AUTO;
     }
 
 }
