@@ -19,17 +19,41 @@
   window.Hippo = window.Hippo || {};
 
   Hippo.createMessageBus = function () {
-    var subscriptions = {};
+    var subscriptions = {},
+      monitors = [];
 
-    function publishInTopic (topic, args) {
-      var i, len, subscription;
-      if (subscriptions[topic] === undefined) {
+    function addCallback (list, callback, scope) {
+      list.push({
+        callback: callback,
+        scope: scope || window
+      });
+    }
+
+    function removeCallback (list, callback, scope) {
+      var scopeParameter, i, len, entry;
+      if (list === undefined) {
+        return false;
+      }
+      scopeParameter = scope || window;
+      for (i = 0, len = list.length; i < len; i++) {
+        entry = list[i];
+        if (entry.callback === callback && entry.scope === scopeParameter) {
+          list.splice(i, 1);
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function call (entries, args) {
+      var i, len, entry;
+      if (entries === undefined) {
         return true;
       }
-      len = subscriptions[topic].length;
+      len = entries.length;
       for (i = 0; i < len; i++) {
-        subscription = subscriptions[topic][i];
-        if (subscription.callback.apply(subscription.scope, args) === false) {
+        entry = entries[i];
+        if (entry.callback.apply(entry.scope, args) === false) {
           return false;
         }
       }
@@ -37,7 +61,6 @@
     }
 
     return {
-      ALL_TOPICS: '*',
 
       exception: function (msg, e) {
         this.publish('exception', msg, e);
@@ -45,17 +68,14 @@
 
       publish: function (topic) {
         var argumentsWithoutTopic = Array.prototype.slice.call(arguments, 1);
-        return publishInTopic(topic, argumentsWithoutTopic) && publishInTopic(this.ALL_TOPICS, arguments);
+        return call(subscriptions[topic], argumentsWithoutTopic) && call(monitors, arguments);
       },
 
       subscribe: function (topic, callback, scope) {
         if (subscriptions[topic] === undefined) {
           subscriptions[topic] = [];
         }
-        subscriptions[topic].push({
-          callback: callback,
-          scope: scope || window
-        });
+        addCallback(subscriptions[topic], callback, scope);
       },
 
       subscribeOnce: function (topic, callback, scope) {
@@ -73,23 +93,24 @@
       },
 
       unsubscribe: function (topic, callback, scope) {
-        var scopeParameter, i, len, subscription;
-        if (subscriptions[topic] === undefined) {
-          return false;
-        }
-        scopeParameter = scope || window;
-        for (i = 0, len = subscriptions[topic].length; i < len; i++) {
-          subscription = subscriptions[topic][i];
-          if (subscription.callback === callback && subscription.scope === scopeParameter) {
-            subscriptions[topic].splice(i, 1);
-            return true;
-          }
-        }
-        return false;
+        return removeCallback(subscriptions[topic], callback, scope);
       },
 
       unsubscribeAll: function () {
         subscriptions = {};
+      },
+
+      monitor: function (callback, scope) {
+        return addCallback(monitors, callback, scope);
+      },
+
+      unmonitor: function (callback, scope) {
+        return removeCallback(monitors, callback, scope);
+      },
+
+      clear: function () {
+        this.unsubscribeAll();
+        monitors = [];
       }
 
     };
