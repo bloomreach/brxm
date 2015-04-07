@@ -103,12 +103,14 @@
             } else if (item.items) {
               found = findPathToMenuItem(item, id);
             }
-            return found === undefined;
+
+            return !found;
           });
 
           if (found) {
             found.unshift(parent);
           }
+
           return found;
         }
 
