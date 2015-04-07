@@ -1140,7 +1140,6 @@ api/src/main/styling/less/_typography.less -text
 api/src/main/styling/less/_variables.less -text
 api/src/main/styling/less/lib/open-sans.less -text
 api/src/main/styling/less/main.less -text
-api/src/main/styling/less/nolint/style-test.less -text
 api/src/main/styling/less/nolint/wicket.less -text
 api/src/main/styling/less/nolint/workarounds.less -text
 api/src/test/java/org/hippoecm/frontend/editor/plugins/resource/PdfParserTest.java -text

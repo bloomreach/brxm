@@ -1,12 +1,12 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,7 +51,6 @@ import org.hippoecm.frontend.util.WebApplicationHelper;
 
 public class SimpleLoginPlugin extends LoginPlugin {
 
-    private static final long serialVersionUID = 1L;
     private final static String DEFAULT_KEY = "invalid.login";
     private final static Map<String, String> causeKeys = new HashMap<String, String>(6) {{
         put(LoginException.CAUSE.INCORRECT_CREDENTIALS.name(), "invalid.login");
@@ -82,7 +81,8 @@ public class SimpleLoginPlugin extends LoginPlugin {
         if (config.containsKey(EDITION_PROPERTY)) {
             String edition = config.getString(EDITION_PROPERTY);
             // In case of using a different edition, add extra CSS rules to show the required styling
-            final CssResourceReference editionResourceRef = new CssResourceReference(SimpleLoginPlugin.class, "login_" + edition + ".css");
+            final CssResourceReference editionResourceRef = new CssResourceReference(SimpleLoginPlugin.class,
+                    "login_" + edition + ".css");
             response.render(CssHeaderItem.forReference(editionResourceRef));
         }
     }
@@ -93,7 +93,6 @@ public class SimpleLoginPlugin extends LoginPlugin {
     }
 
     protected class SignInForm extends LoginPlugin.SignInForm {
-        private static final long serialVersionUID = 1L;
 
         // Random captcha password to match against
         private String imagePass;
@@ -205,10 +204,10 @@ public class SimpleLoginPlugin extends LoginPlugin {
             captchaLabel = new Label("captchaLabel", new ResourceModel("captcha-label", "Enter the letters above"));
             // Clear the value of the captcha text field
             captchaTextValue = "";
-            captchaTextField = new RequiredTextField<String>("captcha", new PropertyModel<String>(SignInForm.this, "captchaTextValue"));
-            captchaImage = new Image("captchaImage", captchaImageResource) {
 
-                private static final long serialVersionUID = 1L;
+            final PropertyModel<String> captchaTextValue = PropertyModel.of(SignInForm.this, "captchaTextValue");
+            captchaTextField = new RequiredTextField<>("captcha", captchaTextValue);
+            captchaImage = new Image("captchaImage", captchaImageResource) {
 
                 // This method is overridden to properly forces the browser to refresh the image for the newly created
                 // captcha image component
