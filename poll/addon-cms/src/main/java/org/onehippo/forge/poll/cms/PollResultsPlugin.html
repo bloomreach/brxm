@@ -1,0 +1,45 @@
+<!--
+    Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<html xmlns:wicket="http://wicket.apache.org/">
+<wicket:panel>
+  <div wicket:id="poll-results-panel"></div>
+</wicket:panel>
+<wicket:fragment wicket:id="poll-results">
+  <div class="hippo-editor-field-subfield-item">
+    <div class="hippo-editor-field">
+      <h3 class="hippo-editor-field-title">
+        <span wicket:id="name-label">[name]</span>
+      </h3>
+      <div class="hippo-editor-field-subfield even">
+        <div class="hippo-editor-field-subfield-item">
+          <div class="hippo-editor-field-textarea">
+            <table class="resulttable">
+              <tr>
+                <th wicket:id="optionsvalue-label"></th>
+                <th class="count" wicket:id="count-label"></th>
+              </tr>
+              <tr wicket:id="row">
+                <td wicket:id="option">[Option]</td>
+                <td class="count" wicket:id="count">[199]</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</wicket:fragment>
+</html>

@@ -43,6 +43,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugin Poll</notice.project.name>
 
+    <hippo.cms.version>2.27.00-SNAPSHOT</hippo.cms.version>
     <hippo.repository.version>2.27.00-SNAPSHOT</hippo.repository.version>
     <hippo.hst.version>2.29.00-SNAPSHOT</hippo.hst.version>
   </properties>
@@ -68,6 +69,20 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-api</artifactId>
+        <version>${hippo.cms.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-editor-frontend</artifactId>
+        <version>${hippo.cms.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-api</artifactId>
@@ -136,6 +151,7 @@
   </profiles>
 
   <modules>
+    <module>addon-cms</module>
     <module>addon-repository</module>
     <module>hst-client</module>
   </modules>
