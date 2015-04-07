@@ -637,6 +637,7 @@ plugins/events/src/main/resources/META-INF/web-fragment.xml -text
 plugins/events/src/main/resources/freemarker/eventslist-main-eventslist.ftl -text
 plugins/events/src/main/resources/freemarker/eventslist-main-eventslist/eventslist-main-eventslist-styled.ftl -text
 plugins/events/src/main/resources/freemarker/eventspage-main.ftl -text
+plugins/events/src/main/resources/freemarker/eventspage-main/eventspage-main-styled.ftl -text
 plugins/events/src/main/resources/icons/new-folder-16.png -text
 plugins/events/src/main/resources/images/events-list.png -text
 plugins/events/src/main/resources/java/EventsDocument.txt -text
@@ -655,6 +656,7 @@ plugins/events/src/main/resources/xml/hst/templates/events-main-content-jsp.xml 
 plugins/events/src/main/resources/xml/hst/templates/eventslist-main-eventslist-freemarker.xml -text
 plugins/events/src/main/resources/xml/hst/templates/eventslist-main-eventslist-jsp.xml -text
 plugins/events/src/main/resources/xml/hst/workspace/eventslist.xml -text
+plugins/events/src/main/resources/xml/hst/workspace/eventspage.xml -text
 plugins/events/src/main/resources/xml/namespaces/eventsdocument.xml -text
 plugins/events/src/main/resources/xml/samples/content/documents/events/sample_breakfast.xml -text
 plugins/events/src/main/resources/xml/samples/content/documents/events/sample_introduction_speech.xml -text
