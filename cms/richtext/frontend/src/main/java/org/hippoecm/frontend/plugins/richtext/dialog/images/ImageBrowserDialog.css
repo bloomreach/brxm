@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-.upload-wrapper{
-    padding: 10px;
-    border: 1px solid #eee;
+.upload-wrapper {
+  padding: 10px;
+  border: 1px solid #eee;
 }
 
 .upload-wrapper .browse-button {
@@ -29,32 +29,32 @@
 }
 
 .hippo-root .upload-wrapper .upload-button {
-    margin: 0 0 0 2px;
-    padding: 0;
-    position:absolute;
+  margin: 0 0 0 2px;
+  padding: 0;
+  position:absolute;
 }
 
 .hippo-root .upload-wrapper .upload-button-osx {
-    position: relative;
+  position: relative;
 }
 
 .hippo-dialog-type select, .hippo-dialog-align select{
-   margin-top:5px;
+  margin-top:5px;
 }
 
 .hippo-dialog-type, .hippo-dialog-align{
-    float:left;
-    margin-right: 20px;
+  float:left;
+  margin-right: 20px;
 }
 
 .hippo-dialog-alt{
-    float:right;
+  float:right;
 }
 
 .hippo-dialog-alt .text-input{
-    float:left;
+  float:left;
 }
 
 body .hippo-picker-properties div.hippo-dialog-alt div.text-input input {
-    width: 282px;
+  width: 282px;
 }
