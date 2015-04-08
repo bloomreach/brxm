@@ -24,14 +24,14 @@ import org.hippoecm.frontend.model.SystemInfoDataProvider;
 
 public class UsageStatisticsExternalUrl {
 
-    private static final String CMS_VERSION = "${CMS_VERSION}";
+    private static final String RELEASE_VERSION = "${RELEASE_VERSION}";
     private static final String YEAR = "${YEAR}";
     private static final String MONTH = "${MONTH}";
     private static final String DAY = "${DAY}";
 
     // TODO: use cdn.onehippo.com instead of www.connect.acct.onehippo.com
     private static final String SERVER = "http://www.connect.acct.onehippo.com";
-    private static final String PATH = "/usage-statistics/" + CMS_VERSION + "/" + YEAR + "-" + MONTH + "-" + DAY + "/usage-statistics.js";
+    private static final String PATH = "/usage-statistics/" + RELEASE_VERSION + "/" + YEAR + "-" + MONTH + "-" + DAY + "/usage-statistics.js";
 
     public static final String SYSTEM_PROPERTY_SERVER = "hippo.usage.statistics.server";
 
@@ -46,7 +46,7 @@ public class UsageStatisticsExternalUrl {
     public static String get() {
         final SortedMap<String, String> parameters = new TreeMap<>();
 
-        parameters.put(CMS_VERSION, new SystemInfoDataProvider().getReleaseVersion());
+        parameters.put(RELEASE_VERSION, new SystemInfoDataProvider().getReleaseVersion());
 
         final Calendar now = Calendar.getInstance();
         parameters.put(YEAR, String.valueOf(now.get(Calendar.YEAR)));
