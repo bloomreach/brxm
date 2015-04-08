@@ -21,17 +21,13 @@ import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.frontend.dialog.Dialog;
-import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.reviewedactions.UnpublishedReferenceNodeProvider;
 import org.hippoecm.frontend.plugins.reviewedactions.model.ReferenceProvider;
 import org.hippoecm.frontend.plugins.reviewedactions.model.UnpublishedReferenceProvider;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IEditorManager;
 
 public class SchedulePublishDialog extends AbstractWorkflowDialogRestyling<Node> {
@@ -40,25 +36,14 @@ public class SchedulePublishDialog extends AbstractWorkflowDialogRestyling<Node>
             IEditorManager editorMgr) {
         super(nodeModel, action);
 
+        setTitleKey("schedule-publish-title");
+        setCssClass("hippo-workflow-dialog");
+        setFocusOnCancel();
+
         UnpublishedReferenceNodeProvider provider = new UnpublishedReferenceNodeProvider(
                 new UnpublishedReferenceProvider(new ReferenceProvider(nodeModel)));
         add(new UnpublishedReferencesView("links", provider, editorMgr));
 
         addOrReplace(new DatePickerComponent(Dialog.BOTTOM_LEFT_ID, dateModel, new ResourceModel("schedule-publish-text")));
-
-        add(CssClass.append("hippo-window"));
-        add(CssClass.append("hippo-workflow-dialog"));
-
-        setFocusOnCancel();
-    }
-
-    @Override
-    public IModel<String> getTitle() {
-        return new StringResourceModel("schedule-publish-title", this, null);
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.LARGE_AUTO;
     }
 }
