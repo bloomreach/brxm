@@ -17,27 +17,31 @@
   "use strict";
 
   var EXTERNAL_SCRIPT_URL = '${externalScriptUrl}',
-    EXTERNAL_LOAD_TIMEOUT_MS = 10000;
+    EXTERNAL_LOAD_TIMEOUT_MS = 10000,
+    eventQueue = [];
 
-  $.ajax(EXTERNAL_SCRIPT_URL, {
-    cache: true,
-    timeout: EXTERNAL_LOAD_TIMEOUT_MS,
-    dataType: 'script',
-    success: function () {
-      console.log("Loaded external script");
-    },
-    error: function (request, textStatus) {
-      var status = textStatus ? ": " + textStatus : '';
-      console.info("Could not enable usage statistics" + status);
-    },
-    complete: function () {
-      console.log("Done");
-    }
-  });
+  function queueEvent (topic, params) {
+    eventQueue.push({
+      name: topic,
+      params: params
+    });
+  }
 
-  // temporarily log all monitored events
-  Hippo.Events.monitor(function (topic, params) {
-    console.log("USAGE STATISTICS: " + topic + " " + JSON.stringify(params));
+  function loadExternalScript(done) {
+    $.ajax(EXTERNAL_SCRIPT_URL, {
+      cache: true,
+      timeout: EXTERNAL_LOAD_TIMEOUT_MS,
+      dataType: 'script',
+      complete: done
+    });
+  }
+
+  Hippo.Events.monitor(queueEvent);
+
+  loadExternalScript(function() {
+    Hippo.Events.unmonitor(queueEvent);
+    Hippo.Events.publish('start-usage-statistics', eventQueue);
+    eventQueue = null;
   });
 
 }(jQuery));
