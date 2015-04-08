@@ -44,7 +44,7 @@ In the one run:
 
 In the other run the other profile:
 
-'mvn test -Dtest=StampedeTest -Pclusternode1
+'mvn test -Dtest=StampedeTest -Pclusternode2
 -Dstampede.minutes=1 -Dstampede.threads1 -Dsurefire.forkmode=none
 -Dstampede.prompt=true'
 
