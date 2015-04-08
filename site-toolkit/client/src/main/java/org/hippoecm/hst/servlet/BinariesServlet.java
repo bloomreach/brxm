@@ -54,6 +54,8 @@ import org.hippoecm.hst.util.ServletConfigUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.servlet.utils.BinaryPage.CacheKey;
+
 /**
  * Serves binary files from the repository. Binary files are represented by nodes.
  *
@@ -207,6 +209,7 @@ public class BinariesServlet extends HttpServlet {
         @Override
         public BinaryPage createBinaryPage(final String resourcePath, final Session session) throws RepositoryException{
             final BinaryPage binaryPage = new BinaryPage(resourcePath);
+            binaryPage.setCacheKey(new CacheKey(session.getUserID(), resourcePath));
             initBinaryPageValues(session, binaryPage);
             return binaryPage;
         }
@@ -351,8 +354,10 @@ public class BinariesServlet extends HttpServlet {
     }
 
     protected BinaryPage getPageFromCacheOrLoadPage(HttpServletRequest request) {
-        String resourcePath = ResourceUtils.getResourcePath(request, baseBinariesContentPath);
-        BinaryPage page = binariesCache.getPageFromBlockingCache(resourcePath);
+        final String resourcePath = ResourceUtils.getResourcePath(request, baseBinariesContentPath);
+        final String sessionUserID = getSessionUserID(request);
+        CacheKey cacheKey = new CacheKey(sessionUserID, resourcePath);
+        BinaryPage page = binariesCache.getPageFromBlockingCache(cacheKey);
         if (page != null) {
             page = getValidatedPageFromCache(request, page);
         } else {
@@ -360,7 +365,7 @@ public class BinariesServlet extends HttpServlet {
                 page = getBinaryPage(request, resourcePath);
                 binariesCache.putPage(page);
             } catch (RuntimeException e) {
-                binariesCache.clearBlockingLock(resourcePath);
+                binariesCache.clearBlockingLock(cacheKey);
                 throw e;
             }
         }
@@ -409,6 +414,23 @@ public class BinariesServlet extends HttpServlet {
             SessionUtils.releaseSession(request, session);
         }
         return -1L;
+    }
+
+    protected final String getSessionUserID(HttpServletRequest request) {
+        Session session = null;
+        try {
+            session = SessionUtils.getBinariesSession(request);
+            return session.getUserID();
+        } catch (RepositoryException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Repository exception while resolving binaries request '" + request.getRequestURI() + "' : " + e, e);
+            } else {
+                log.warn("Repository exception while resolving binaries request '{}'. {}", request.getRequestURI(), e);
+            }
+        } finally {
+            SessionUtils.releaseSession(request, session);
+        }
+        return null;
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ public class BinariesCacheTest {
     @Before
     public void setup() throws UnsupportedEncodingException {
         page = new BinaryPage("/content/binaries/my:pdffile");
+        page.setCacheKey(new BinaryPage.CacheKey("testUser", page.getResourcePath()));
         cacheManager = CacheManager.create();
         cacheManager.addCache("binariesCache");
         Ehcache ehBinariesCache = cacheManager.getCache("binariesCache");
@@ -67,7 +68,7 @@ public class BinariesCacheTest {
     @Test
     public void testPutGet() {
         bc.putPage(page);
-        assertNotNull(bc.getPageFromBlockingCache(page.getResourcePath()));
+        assertNotNull(bc.getPageFromBlockingCache(page.getCacheKey()));
     }
 
     @Test
@@ -136,7 +137,7 @@ public class BinariesCacheTest {
         for (int i = 0; i < getters.length; i++) {
             getters[i] = new Thread(new Runnable() {
                 public void run() {
-                    BinaryPage elem = bc.getPageFromBlockingCache(page.getResourcePath());
+                    BinaryPage elem = bc.getPageFromBlockingCache(page.getCacheKey());
                     assertNotNull(elem);
                 }
             });
@@ -168,7 +169,7 @@ public class BinariesCacheTest {
             getters[i] = new Thread(new Runnable() {
                 public void run() {
                     if (firstOrSecond.tryAcquire()) {
-                        BinaryPage elem = bc.getPageFromBlockingCache(page.getResourcePath());
+                        BinaryPage elem = bc.getPageFromBlockingCache(page.getCacheKey());
                         secondCacheAccess.release();
                         try {
                             assertNull(elem);
@@ -191,7 +192,7 @@ public class BinariesCacheTest {
                             return;
                         }
 
-                        BinaryPage elem = bc.getPageFromBlockingCache(page.getResourcePath());
+                        BinaryPage elem = bc.getPageFromBlockingCache(page.getCacheKey());
                         // this thread will have been blocked for WAIT_BEFORE_PUT by the the
                         // first thread which acquired the lock and only freed it after the put
                         try {
@@ -240,7 +241,7 @@ public class BinariesCacheTest {
             getters[i] = new Thread(new Runnable() {
                 public void run() {
                     try {
-                        BinaryPage elem = bc.getPageFromBlockingCache(page.getResourcePath());
+                        BinaryPage elem = bc.getPageFromBlockingCache(page.getCacheKey());
                         int count = counter.incrementAndGet();
                         assertNull(elem);
                         if (count == 2) {

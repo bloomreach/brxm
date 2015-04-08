@@ -162,6 +162,11 @@
     <property name="valveName" value="filterChainInvokingValve" />
   </bean>
 
+  <bean id="binariesDispatchingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.BinariesDispatchingValve">
+    <property name="valveName" value="binariesInvokingValve" />
+  </bean>
+
+
   <!-- Post-processing valves -->
 
   <bean id="cleanupValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CleanupValve">
@@ -270,6 +275,31 @@
           </bean>
         </entry>
 
+        <entry key="BinariesPipeline">
+          <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+            <property name="initializationValves">
+              <list>
+                <ref bean="initializationValve" />
+                <ref bean="cmsSecurityValve"/>
+              </list>
+            </property>
+            <property name="processingValves">
+              <list>
+                <ref bean="localizationValve" />
+                <ref bean="securityValve" />
+                <ref bean="subjectBasedSessionValve" />
+                <ref bean="jcrSessionStatefulConcurrencyValve" />
+                <ref bean="binariesDispatchingValve" />
+              </list>
+            </property>
+            <property name="cleanupValves">
+              <list>
+                <ref bean="diagnosticReportingValve" />
+                <ref bean="cleanupValve" />
+              </list>
+            </property>
+          </bean>
+        </entry>
         <!-- PlainFilterChainInvokingPipeline Pipeline that only does
             initializationValve and cleanup valves and does not have things like  securityValve or
             subjectBasedSessionValve but directly delegates to the next servlet filter / servlet

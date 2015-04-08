@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -105,35 +107,33 @@ public class HstPingServletTest {
         ComponentManager componentManager = createMock(ComponentManager.class);
         Session mockSession = createMock(Session.class);
 
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        HstRequest hstRequest = createMock(HstRequest.class);
-        request.setAttribute(ContainerConstants.HST_REQUEST, hstRequest);
-
         HstRequestContext hrc = createMock(HstRequestContext.class);
-        expect(hstRequest.getRequestContext()).andReturn(hrc).times(2);
-        expect(hrc.getSession()).andReturn(mockSession).times(2);
-        expect(mockSession.isLive()).andReturn(true).times(2);
+        expect(hrc.getSession()).andReturn(mockSession).anyTimes();
 
         Node rootNode = createMock(Node.class);
         expect(mockSession.getRootNode()).andReturn(rootNode);
+        expect(mockSession.getUserID()).andReturn("testUser").anyTimes();
         expect(rootNode.getNode("content/documents")).andReturn(null);
 
         HstServices.setComponentManager(componentManager);
         assertTrue(HstServices.isAvailable());
 
-        replay(componentManager, hstRequest, hrc, mockSession, rootNode);
+        replay(componentManager, hrc, mockSession, rootNode);
         try {
-
+            ModifiableRequestContextProvider.set(hrc);
             pingServlet.doGet(request, response);
             String content = response.getContentAsString();
             assertTrue(content.contains("OK"));
             assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 
-            verify(componentManager, hstRequest, hrc, mockSession, rootNode);
+            verify(componentManager, hrc, mockSession, rootNode);
         } finally {
             HstServices.setComponentManager(null);
+            ModifiableRequestContextProvider.clear();
         }
     }
 

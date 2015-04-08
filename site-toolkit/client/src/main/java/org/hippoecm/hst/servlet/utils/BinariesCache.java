@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import org.hippoecm.hst.cache.CacheElement;
 import org.hippoecm.hst.cache.HstCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.servlet.utils.BinaryPage.CacheKey;
 
 /**
  * This class provides some convenience methods for
@@ -69,28 +71,29 @@ public class BinariesCache {
     public void setMaxObjectSizeBytes(long maxObjectSizeBytes) {
         this.maxObjectSizeBytes = maxObjectSizeBytes;
     }
-    
-    public BinaryPage getPageFromBlockingCache(String resourcePath) {
+
+
+    public BinaryPage getPageFromBlockingCache(final CacheKey cacheKey) {
         try {
-            CacheElement element = cache.get(resourcePath);
+            CacheElement element = cache.get(cacheKey);
             
             if (element != null) {
                 BinaryPage page = (BinaryPage) element.getContent();
                 if (log.isDebugEnabled()) {
-                    log.debug("Cache hit for {} including data: {}", resourcePath, page.containsData());
+                    log.debug("Cache hit for {} including data: {}", cacheKey, page.containsData());
                 }
                 return page;
             } else {
                 if (log.isDebugEnabled()) {
-                    log.debug("Cache miss for {}", resourcePath);
+                    log.debug("Cache miss for {}", cacheKey);
                 }
                 return null;
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.error("Exception while trying to get {}. Possible threading issue or high load?", resourcePath, e);
+                log.error("Exception while trying to get {}. Possible threading issue or high load?", cacheKey, e);
             } else {
-                log.error("Exception while trying to get {}. Possible threading issue or high load? {}", resourcePath, e.toString());
+                log.error("Exception while trying to get {}. Possible threading issue or high load? {}", cacheKey, e.toString());
             }
             return null;
         }
@@ -105,21 +108,21 @@ public class BinariesCache {
         putPage(page);
     }
 
-    public void putPage(BinaryPage page) {
+    public void putPage(final BinaryPage page) {
         if (log.isDebugEnabled()) {
             log.debug("Put page for {} including data: {}", page.getResourcePath(), page.containsData());
         }
-        CacheElement element = cache.createElement(page.getResourcePath(), page);
+        CacheElement element = cache.createElement(page.getCacheKey(), page);
         cache.put(element);
     }
 
     /**
-     * @deprecated deprecated since 2.26.00 Use {@link #clearBlockingLock(String)} instead.
+     * @deprecated deprecated since 2.26.00 Use {@link #clearBlockingLock(CacheKey)} instead.
      * @param page
      */
     @Deprecated
     public void clearBlockingLock(BinaryPage page) {
-        clearBlockingLock(page.getResourcePath());
+        clearBlockingLock(page.getCacheKey());
     }
 
     /**
@@ -127,13 +130,13 @@ public class BinariesCache {
      * when the method throws an exception or returns null
      * until <code>put(new Element(key, null));</code> to release the lock acquired.
      * Therefore, the caller code is responsible for calling this method to release the acquired lock.
-     * @param resourcePathKey
+     * @param cacheKey
      */
-    public void clearBlockingLock(String resourcePathKey) {
+    public void clearBlockingLock(final CacheKey cacheKey) {
         if (log.isDebugEnabled()) {
-            log.debug("Clear lock for {}", resourcePathKey);
+            log.debug("Clear lock for {}", cacheKey);
         }
-        CacheElement element = cache.createElement(resourcePathKey, null);
+        CacheElement element = cache.createElement(cacheKey, null);
         cache.put(element);
     }
 
@@ -142,7 +145,7 @@ public class BinariesCache {
         if (log.isDebugEnabled()) {
             log.debug("Remove page for {}", page.getResourcePath());
         }
-        cache.remove(page.getResourcePath());
+        cache.remove(page.getCacheKey());
     }
 
     public boolean isBinaryDataCacheable(BinaryPage page) {

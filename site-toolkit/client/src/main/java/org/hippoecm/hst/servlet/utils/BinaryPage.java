@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ public class BinaryPage implements Serializable {
     private long length;
     private boolean cacheable = true;
     private byte[] data = ArrayUtils.EMPTY_BYTE_ARRAY;
+    private CacheKey cacheKey;
 
     /** 
      * Create a new binary page. This will just create the page holder. The fields have to
@@ -187,6 +188,10 @@ public class BinaryPage implements Serializable {
         return cacheable;
     }
 
+    public CacheKey getCacheKey() {
+        return cacheKey;
+    }
+
     /**
      * Set the HTTP status. The status is not checked for validity.
      * @param status
@@ -247,6 +252,12 @@ public class BinaryPage implements Serializable {
         this.creationTime = System.currentTimeMillis();
     }
 
+
+    public void setCacheKey(final CacheKey cacheKey) {
+        this.cacheKey = cacheKey;
+    }
+
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -259,6 +270,7 @@ public class BinaryPage implements Serializable {
         sb.append(" lastmodified=").append(getLastModified());
         sb.append(" size=").append(getLength());
         sb.append(" cacheable=").append(cacheable);
+        sb.append(" cacheKey=").append(cacheKey);
         return sb.toString();
     }
 
@@ -286,6 +298,10 @@ public class BinaryPage implements Serializable {
             return false;
         }
 
+        if (cacheKey != null ? !cacheKey.equals(that.cacheKey) : that.cacheKey != null) {
+            return false;
+        }
+
         return true;
     }
 
@@ -295,7 +311,55 @@ public class BinaryPage implements Serializable {
         result = 31 * result + (int) (lastModified ^ (lastModified >>> 32));
         result = 31 * result + (int) (length ^ (length >>> 32));
         result = 31 * result + (cacheable ? 1 : 0);
+        result = cacheKey == null ? result : 31 * result + cacheKey.hashCode();
         return result;
+    }
+
+    public static class CacheKey {
+
+        private final String sessionUserID;
+        private final String resourcePath;
+
+        public CacheKey(final String sessionUserID, final String resourcePath) {
+            this.sessionUserID = sessionUserID;
+            this.resourcePath = resourcePath;
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            final CacheKey cacheKey = (CacheKey)o;
+
+            if (!resourcePath.equals(cacheKey.resourcePath)) {
+                return false;
+            }
+            if (sessionUserID != null ? !sessionUserID.equals(cacheKey.sessionUserID) : cacheKey.sessionUserID != null) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = sessionUserID != null ? sessionUserID.hashCode() : 0;
+            result = 31 * result + resourcePath.hashCode();
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "CacheKey{" +
+                    "sessionUserID='" + sessionUserID + '\'' +
+                    ", resourcePath='" + resourcePath + '\'' +
+                    '}';
+        }
     }
 
 }
