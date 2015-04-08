@@ -1121,6 +1121,7 @@ api/src/main/styling/less/_hippo_menu.less -text
 api/src/main/styling/less/_icons.less -text
 api/src/main/styling/less/_image_gallery.less -text
 api/src/main/styling/less/_legacy.less -text
+api/src/main/styling/less/_login.less -text
 api/src/main/styling/less/_mixins.less -text
 api/src/main/styling/less/_modal.less -text
 api/src/main/styling/less/_modal_datepicker.less -text
@@ -1955,7 +1956,7 @@ engine/src/main/java/org/hippoecm/frontend/plugins/login/BrowserCheckBehavior.ja
 engine/src/main/java/org/hippoecm/frontend/plugins/login/LoginPlugin.html svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/plugins/login/LoginPlugin.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/plugins/login/LoginPlugin_de.properties -text
-engine/src/main/java/org/hippoecm/frontend/plugins/login/SimpleLoginPlugin.html -text
+engine/src/main/java/org/hippoecm/frontend/plugins/login/SimpleLoginPlugin$CaptchaForm.html -text
 engine/src/main/java/org/hippoecm/frontend/plugins/login/SimpleLoginPlugin.java -text
 engine/src/main/java/org/hippoecm/frontend/plugins/login/SimpleLoginPlugin.properties -text
 engine/src/main/java/org/hippoecm/frontend/plugins/login/SimpleLoginPlugin_de.properties -text

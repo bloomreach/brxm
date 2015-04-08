@@ -16,258 +16,118 @@
 package org.hippoecm.frontend.plugins.login;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.List;
 
-import javax.jcr.SimpleCredentials;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpSession;
-
-import org.apache.wicket.Application;
-import org.apache.wicket.RestartResponseException;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.core.request.mapper.AbstractComponentMapper;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
-import org.apache.wicket.markup.html.form.PasswordTextField;
-import org.apache.wicket.markup.html.form.RequiredTextField;
-import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.info.PageComponentInfo;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.mapper.parameter.PageParametersEncoder;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.request.resource.UrlResourceReference;
 import org.apache.wicket.util.string.Strings;
-import org.hippoecm.frontend.InvalidLoginPage;
-import org.hippoecm.frontend.Main;
+import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.PluginPage;
-import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.session.LoginException;
-import org.hippoecm.frontend.session.PluginUserSession;
-import org.hippoecm.frontend.util.WebApplicationHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class LoginPlugin extends RenderPlugin {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginPlugin.class);
+    private static final ResourceReference DEFAULT_FAVICON = new UrlResourceReference(
+            Url.parse("skin/images/hippo-cms.ico"));
 
-    private static final String ERROR_MESSAGE_LOGIN_FAILURE = "Login failure!";
-    private static final String PAGE_PARAMS_KEY_LOGIN_EXCEPTION_CAUSE = LoginException.CAUSE.class.getName();
-    private static final String LOCALE_COOKIE = "loc";
+    private static final String EDITION = "edition";
+    private static final String AUTOCOMPLETE = "signin.form.autocomplete";
+    private static final String LOCALES = "locales";
+    private static final String SUPPORTED_BROWSERS = "browsers.supported";
 
     // Sorted by alphabetical order of the language name (see i18n properties), for a more user-friendly form
-    public final static String[] LOCALES = {"en", "fr", "nl", "de"};
-    public static final String DEFAULT_LOCALE = "en";
+    public static final String[] DEFAULT_LOCALES = {"en", "fr", "nl", "de"};
 
-    protected String username;
-    protected String password;
+    private ResourceReference editionCss;
+    private PageParameters parameters;
 
     public LoginPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        add(createSignInForm("signInForm"));
-        add(new Label("pinger"));
-    }
 
-    protected SignInForm createSignInForm(String id) {
-        return new SignInForm(id);
-    }
+        final ResourceReference iconReference = getFaviconReference();
+        add(new ResourceLink("faviconLink", iconReference));
 
-    @Override
-    public void renderHead(HtmlHeaderContainer container) {
-        super.renderHead(container);
-        container.getHeaderResponse().render(LoginHeaderItem.get());
-        container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript("document.forms.signInForm.username.focus();"));
-    }
-
-    protected class SignInForm extends Form {
-
-        private PageParameters parameters;
-
-        protected final FeedbackPanel feedback;
-        protected final DropDownChoice<String> locale;
-        protected final RequiredTextField<String> usernameTextField;
-        protected final PasswordTextField passwordTextField;
-
-        public String selectedLocale;
-
-        public SignInForm(final String id) {
-            super(id);
-
-            setOutputMarkupId(true);
-
-            String[] localeArray = getPluginConfig().getStringArray("locales");
-            if (localeArray == null) {
-                localeArray = LOCALES;
-            }
-            final Set<String> locales = new HashSet<>(Arrays.asList(localeArray));
-
-            // by default, use the user's browser settings for the locale
-            selectedLocale = DEFAULT_LOCALE;
-            if (locales.contains(getSession().getLocale().getLanguage())) {
-                selectedLocale = getSession().getLocale().getLanguage();
-            }
-
-            // check if user has previously selected a locale
-            Cookie[] cookies = WebApplicationHelper.retrieveWebRequest().getContainerRequest().getCookies();
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if (LOCALE_COOKIE.equals(cookie.getName())) {
-                        if (locales.contains(cookie.getValue())) {
-                            selectedLocale = cookie.getValue();
-                            getSession().setLocale(new Locale(selectedLocale));
-                        }
-                    }
-                }
-            }
-
-            feedback = new FeedbackPanel("feedback");
-            feedback.setOutputMarkupId(true);
-            feedback.setEscapeModelStrings(false);
-            add(feedback);
-
-            final PropertyModel<String> username = PropertyModel.of(LoginPlugin.this, "username");
-            add(usernameTextField = new RequiredTextField<>("username", username));
-            usernameTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-                protected void onUpdate(AjaxRequestTarget target) {
-                    String username = this.getComponent().getDefaultModelObjectAsString();
-                    HttpSession session = ((ServletWebRequest) SignInForm.this.getRequest()).getContainerRequest()
-                            .getSession(true);
-                    LoginPlugin.this.username = username;
-                }
-            });
-
-            final PropertyModel<String> password = PropertyModel.of(LoginPlugin.this, "password");
-            passwordTextField = new PasswordTextField("password", password);
-            passwordTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-                protected void onUpdate(AjaxRequestTarget target) {
-                    LoginPlugin.this.password = LoginPlugin.this.password;
-                }
-            });
-            passwordTextField.setResetPassword(false);
-            add(passwordTextField);
-
-            add(locale = new DropDownChoice<>("locale",
-                    new PropertyModel<String>(this, "selectedLocale") {
-                        @Override
-                        public void setObject(final String object) {
-                            super.setObject(locales.contains(object) ? object : DEFAULT_LOCALE);
-                        }
-                    },
-                    Arrays.asList(localeArray),
-                    // Display the language name from i18n properties
-                    new IChoiceRenderer<String>() {
-                        public String getDisplayValue(String object) {
-                            Locale locale = new Locale(object);
-                            return new StringResourceModel(object, LoginPlugin.this, null, null, locale.getDisplayLanguage()).getString();
-                        }
-
-                        public String getIdValue(String object, int index) {
-                            return object;
-                        }
-                    }
-            ));
-            locale.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-                protected void onUpdate(AjaxRequestTarget target) {
-                    //immediately set the locale when the user changes it
-                    Cookie localeCookie = new Cookie(LOCALE_COOKIE, selectedLocale);
-                    localeCookie.setMaxAge(365 * 24 * 3600); // expire one year from now
-                    WebApplicationHelper.retrieveWebResponse().addCookie(localeCookie);
-                    getSession().setLocale(new Locale(selectedLocale));
-                    target.add(SignInForm.this);
-                }
-            });
-
-            add(new Button("submit", new ResourceModel("submit-label")));
+        String[] supported = config.getStringArray(SUPPORTED_BROWSERS);
+        if (supported != null) {
+            add(new BrowserCheckBehavior(supported));
         }
 
-        @Override
-        protected void onBeforeRender() {
-            super.onBeforeRender();
-
-            Request request = RequestCycle.get().getRequest();
-
-            /**
-             * strip the first query parameter from URL
-             * Copied from {@link AbstractComponentMapper#removeMetaParameter}
-             */
-            Url urlCopy = new Url(request.getUrl());
-            if (!urlCopy.getQueryParameters().isEmpty() &&
-                    Strings.isEmpty(urlCopy.getQueryParameters().get(0).getValue())) {
-                String pageComponentInfoCandidate = urlCopy.getQueryParameters().get(0).getName();
-                if (PageComponentInfo.parse(pageComponentInfoCandidate) != null) {
-                    urlCopy.getQueryParameters().remove(0);
-                }
-            }
-
-            parameters = new PageParametersEncoder().decodePageParameters(urlCopy);
+        // In case of using a different edition, add extra CSS rules to show the required styling
+        if (config.containsKey(EDITION)) {
+            final String edition = config.getString(EDITION);
+            editionCss = new CssResourceReference(LoginPlugin.class, "login_" + edition + ".css");
         }
 
-        @Override
-        public void onSubmit() {
-            PluginUserSession userSession = (PluginUserSession) getSession();
-            String username = usernameTextField.getDefaultModelObjectAsString();
-            HttpSession session = ((ServletWebRequest) SignInForm.this.getRequest()).getContainerRequest().getSession(true);
-
-            boolean success = true;
-            PageParameters loginExceptionPageParameters = null;
-            try {
-                userSession.login(new UserCredentials(new SimpleCredentials(username, password == null ? new char[]{} : password.toCharArray())));
-            } catch (LoginException le) {
-                log.debug(ERROR_MESSAGE_LOGIN_FAILURE, le);
-                success = false;
-                loginExceptionPageParameters = buildPageParameters(le.getLoginExceptionCause());
-            }
-
-            ConcurrentLoginFilter.validateSession(session, username, false);
-            userSession.setLocale(new Locale(selectedLocale));
-            redirect(success, loginExceptionPageParameters);
+        final boolean autoComplete = getPluginConfig().getAsBoolean(AUTOCOMPLETE, true);
+        String[] localeArray = getPluginConfig().getStringArray(LOCALES);
+        if (localeArray == null) {
+            localeArray = DEFAULT_LOCALES;
         }
-
-        protected void redirect(boolean success, PageParameters errorParameters) {
-            if (!success) {
-                Main main = (Main) Application.get();
-                main.resetConnection();
-
-                if (errorParameters != null) {
-                    throw new RestartResponseException(new InvalidLoginPage(errorParameters));
-                } else {
-                    throw new RestartResponseException(InvalidLoginPage.class);
-                }
-            }
-
+        add(createLoginPanel("login-panel", autoComplete, Arrays.asList(localeArray), () -> {
             if (parameters != null) {
                 setResponsePage(PluginPage.class, parameters);
             } else {
                 setResponsePage(PluginPage.class);
             }
-        }
+        }));
 
-        protected void redirect(boolean success) {
-            redirect(success, null);
-        }
-
-        protected PageParameters buildPageParameters(LoginException.CAUSE cause) {
-            PageParameters pageParameters = new PageParameters();
-            pageParameters.add(PAGE_PARAMS_KEY_LOGIN_EXCEPTION_CAUSE, cause.name());
-            return pageParameters;
-        }
-
+        add(new Label("pinger"));
     }
 
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        response.render(LoginHeaderItem.get());
+        if (editionCss != null) {
+            response.render(CssHeaderItem.forReference(editionCss));
+        }
+    }
+
+    @Override
+    protected void onBeforeRender() {
+        super.onBeforeRender();
+
+        Request request = RequestCycle.get().getRequest();
+
+        /**
+         * Strip the first query parameter from URL if it is empty
+         * Copied from {@link AbstractComponentMapper#removeMetaParameter}
+         */
+        Url urlCopy = new Url(request.getUrl());
+        if (!urlCopy.getQueryParameters().isEmpty() &&
+                Strings.isEmpty(urlCopy.getQueryParameters().get(0).getValue())) {
+            String pageComponentInfoCandidate = urlCopy.getQueryParameters().get(0).getName();
+            if (PageComponentInfo.parse(pageComponentInfoCandidate) != null) {
+                urlCopy.getQueryParameters().remove(0);
+            }
+        }
+
+        parameters = new PageParametersEncoder().decodePageParameters(urlCopy);
+    }
+
+    protected ResourceReference getFaviconReference() {
+        final PluginApplication application = (PluginApplication) getApplication();
+        final ResourceReference reference = application.getPluginApplicationFavIconReference();
+        return reference != null ? reference: DEFAULT_FAVICON;
+    }
+
+    protected LoginPanel createLoginPanel(final String id, final boolean autoComplete, final List<String> locales,
+                                          final LoginSuccessHandler successHandler) {
+        return new LoginPanel(id, autoComplete, locales, successHandler);
+    }
 }
