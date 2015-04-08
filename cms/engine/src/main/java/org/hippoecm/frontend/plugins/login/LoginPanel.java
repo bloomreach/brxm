@@ -44,6 +44,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.UserCredentials;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.session.LoginException;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.util.WebApplicationHelper;
@@ -80,6 +81,8 @@ public class LoginPanel extends Panel {
         super(id);
 
         this.successHandler = successHandler;
+
+        add(CssClass.append("hippo-login-panel-center"));
 
         add(form = new LoginForm(autoComplete, locales));
     }

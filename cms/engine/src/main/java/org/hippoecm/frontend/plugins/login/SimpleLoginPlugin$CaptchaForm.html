@@ -17,19 +17,18 @@
   <body>
     <wicket:panel>
       <wicket:extend>
-      <tr>
-        <td colspan="2">
+        <!-- captcha image -->
+        <div class="hippo-login-form-input">
           <img wicket:id="captchaImage" width="100%"/>
-        </td>
-      </tr>
-      <tr>
-        <td width="50%">
+        </div>
+
+        <!-- captcha input -->
+        <div class="hippo-login-form-label">
           <label wicket:id="captchaLabel"></label>
-        </td>
-        <td>
+        </div>
+        <div class="hippo-login-form-input">
           <input class="hippo-form-text" wicket:id="captcha" type="text" value=""/>
-        </td>
-      </tr>
+        </div>
       </wicket:extend>
     </wicket:panel>
   </body>

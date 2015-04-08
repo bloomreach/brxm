@@ -37,6 +37,7 @@ import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class LoginPlugin extends RenderPlugin {
@@ -57,6 +58,10 @@ public class LoginPlugin extends RenderPlugin {
 
     public LoginPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        add(CssClass.append("hippo-login-plugin"));
+
+        add(new Label("pageTitle", getString("page.title")));
 
         final ResourceReference iconReference = getFaviconReference();
         add(new ResourceLink("faviconLink", iconReference));
