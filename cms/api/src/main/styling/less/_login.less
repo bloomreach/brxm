@@ -25,24 +25,24 @@
 }
 
 .hippo-login-extend {
-  background: #5794BF;
+  background: @login-extend-bgcolor;
   z-index: 1;
 }
 
 .hippo-login-panel {
-  background-color: #f3f3f3;
+  background-color: @login-panel-bgcolor;
   position: relative;
   text-align: left;
-  width: 305px;
-  border: 3px solid #9ba0a5;
+  width: @login-panel-width;
+  border: 3px solid @login-panel-border;
   z-index: 2;
   align-self: center;
-  left: 80px;
+  left: @login-panel-left;
 }
 
 .hippo-login-panel-header {
-  height: 120px;
-  background-color: #e3e3e3;
+  height: @login-panel-header-height;
+  background-color: @login-panel-header-bgcolor;
 }
 
 .hippo-login-panel-center {
@@ -52,7 +52,7 @@
     font-size: 18px;
     line-height: 18px;
     font-weight: normal;
-    color: #3d4451;
+    color: @login-panel-center-h2-color;
     padding: 0;
     margin: 0 0 12px;
   }
@@ -76,14 +76,14 @@
       padding: 0 4px;
       width: 100%;
       margin-bottom: 12px;
-      border: 1px solid #c1c1c1;
+      border: 1px solid @login-panel-center-input-border;
     }
 
     select {
       padding: 0;
       width: 100%;
       margin-bottom: 11px;
-      border: 1px solid #c1c1c1;
+      border: 1px solid @login-panel-center-input-border;
       height: 32px;
     }
   }
@@ -91,16 +91,16 @@
   .hippo-login-form-buttons input {
     height: 32px;
     box-sizing: border-box;
-    background-color: #0086f8;
-    border: 1px solid #0086f8;
-    color: @white;
+    background-color: @login-panel-center-button-bgcolor;
+    border: 1px solid @login-panel-center-button-border;
+    color: @login-panel-center-button-color;
     border-radius: 4px;
     min-width: 64px;
   }
 }
 
 .hippo-login-panel-footer {
-  color: #9ba0a5;
+  color: @login-panel-footer-color;
   padding-bottom: 20px;
   text-align: center;
   font-size: 11px;
@@ -109,11 +109,11 @@
 
 // Login feedback
 .hippo-login-feedback ul {
-  border: 1px solid #69849f;
+  border: 1px solid @login-panel-feedback-border;
   color: #69849f;
   margin-bottom: 12px;
   font-weight: bold;
-  background: #fff8d5 url("images/icons/dialog-information-32.png") no-repeat 10px center;
+  background-color: @login-panel-feedback-bgcolor;
   padding-left: 20px;
   padding-top: 4px;
   padding-right: 4px;
