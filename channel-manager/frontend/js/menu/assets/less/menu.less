@@ -38,7 +38,6 @@ html, body, .l-stretch, .l-center-container {
   vertical-align: middle;
 }
 
-.full-height,
 #ui-view {
   height: 100%;
 
@@ -101,12 +100,19 @@ html, body, .l-stretch, .l-center-container {
   height: 100%;
 }
 
-.picker-container #form-panel {
-  height: ~"calc(100% - 51px)";
-  overflow-y: auto;
-  background: @white;
-  padding-left: 0;
-  padding-right: 0;
+.picker-container {
+  #form-panel {
+    height: ~"calc(100% - 51px)";
+    overflow-y: auto;
+    background: @white;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .angular-ui-tree-handle {
+    display: inline-block;
+    min-width: 100%;
+  }
 }
 
 .form-group .input-group .form-control-feedback {
@@ -290,19 +296,3 @@ h3.lead.item-title {
     fill: @white;
   }
 }
-
-.state-live {
-  color: @white;
-  fill: @success;
-}
-
-.state-new {
-  color: @white;
-  fill: @danger;
-}
-
-.state-changed {
-  color: @black;
-  fill: @warning;
-}
-
