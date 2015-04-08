@@ -721,6 +721,7 @@ plugins/image-component/pom.xml -text
 plugins/image-component/src/main/resources/META-INF/imageComponentPlugin_instructions.xml -text
 plugins/image-component/src/main/resources/META-INF/resources/feature/imageComponentPlugin/imageComponentPlugin.html -text
 plugins/image-component/src/main/resources/META-INF/web-fragment.xml -text
+plugins/image-component/src/main/resources/instructions/freemarker/image-component-with-description.ftl -text
 plugins/image-component/src/main/resources/instructions/freemarker/image-component.ftl -text
 plugins/image-component/src/main/resources/instructions/images/image.png -text
 plugins/image-component/src/main/resources/instructions/jsp/image-component.jsp -text

@@ -1,0 +1,16 @@
+<#include "../../include/imports.ftl">
+
+<#-- @ftlvariable name="document" type="org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean" -->
+<#if document??>
+    <figure>
+        <@hst.link var="img" hippobean=document.original/>
+        <img src="${img}" title="${document.fileName?html}" alt="${document.fileName?html}"/>
+        <#if document.description??>
+            <figcaption>${document.description?html}</figcaption>
+        </#if>
+    </figure>
+<#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
+<#elseif editMode>
+    <img src="<@hst.link path="/images/essentials/catalog-component-icons/image.png" />"> Click to edit Image
+</#if>
+

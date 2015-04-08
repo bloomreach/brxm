@@ -32,4 +32,10 @@
     <freemarker action="copy" source="instructions/freemarker/image-component.ftl" target="{{freemarkerRoot}}/hstdefault/image-component.ftl"/>
     <xml action="copy" source="instructions/xml/hst/image-component-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
+
+  <instructionSet group="extraTemplates">
+    <freemarker action="copy"
+                source="instructions/freemarker/image-component-with-description.ftl"
+                target="{{freemarkerRoot}}/hstdefault/image-component/with-description.ftl"/>
+  </instructionSet>
 </instructions>
