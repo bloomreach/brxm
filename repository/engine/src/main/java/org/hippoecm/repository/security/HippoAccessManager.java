@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -928,6 +928,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             } else {
                 return !match;
             }
+        }
+        else if (rule.getFacetName().equals(NameConstants.JCR_UUID)) {
+            return nodeState.getNodeId().toString().equals(rule.getValue()) ? rule.isEqual() : !rule.isEqual();
         }
 
         // the hierarchy manager is attic aware. The property can also be in the removed properties

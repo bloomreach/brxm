@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -145,10 +145,10 @@ public class QFacetRule implements Serializable {
         String pathValue = facetNode.getProperty(HippoNodeType.HIPPOSYS_VALUE).getString();
         String path = pathValue.startsWith("/") ? pathValue.substring(1) : pathValue;
         if ("".equals(path)) {
-            uuid = facetNode.getSession().getRootNode().getIdentifier().toString();
+            uuid = facetNode.getSession().getRootNode().getIdentifier();
         } else {
             try {
-                uuid = facetNode.getSession().getRootNode().getNode(path).getIdentifier().toString();
+                uuid = facetNode.getSession().getRootNode().getNode(path).getIdentifier();
             } catch (PathNotFoundException e) {
                 StringBuilder msg = new StringBuilder();
                 msg.append("Path not found for facetRule ");
