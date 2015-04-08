@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -260,8 +259,13 @@ public class RootPlugin extends TabsPlugin {
     }
 
     private HeaderItem createUsageStatisticsReporter() {
+        final Map<String, String> scriptParams = new TreeMap<>();
+        final String url = UsageStatisticsExternalUrl.get();
+        scriptParams.put("externalScriptUrl", url);
+        log.info("Sending usage statistics to {}", url);
+
         final PackageTextTemplate usageStatistics = new PackageTextTemplate(RootPlugin.class, USAGE_STATISTICS_JS);
-        final String javaScript = usageStatistics.asString(Collections.emptyMap());
+        final String javaScript = usageStatistics.asString(scriptParams);
         return OnLoadHeaderItem.forScript(javaScript);
     }
 
