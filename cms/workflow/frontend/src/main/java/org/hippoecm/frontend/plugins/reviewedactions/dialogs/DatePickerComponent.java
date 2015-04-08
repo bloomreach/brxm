@@ -21,7 +21,6 @@ import java.util.Date;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.addon.workflow.FutureDateValidator;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.yui.datetime.YuiDateTimeField;
@@ -30,7 +29,7 @@ public class DatePickerComponent extends Panel {
     public DatePickerComponent(String id, IModel<Date> dateModel, IModel<String> label) {
         super(id);
 
-        add(new Label("question", new ResourceModel("schedule-depublish-text")));
+        add(new Label("question", label));
         add(CssClass.append("date-picker-container"));
 
         Calendar minimum = Calendar.getInstance();

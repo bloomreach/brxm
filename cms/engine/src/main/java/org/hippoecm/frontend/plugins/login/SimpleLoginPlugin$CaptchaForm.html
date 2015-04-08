@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
+    * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -14,25 +14,22 @@
     * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:head>
-    <title wicket:id="pageTitle">Hippo CMS 10</title>
-    <link wicket:id="faviconLink" rel="shortcut icon" type="image/x-icon"/>
-  </wicket:head>
   <body>
     <wicket:panel>
-      <div class="hippo-login-panel">
-        <div class="hippo-login-panel-header"></div>
-        <div wicket:id="login-panel"></div>
-        <div class="hippo-login-panel-footer">
-          <label>
-            <wicket:message key="edition.label"/>
-          </label>
+      <wicket:extend>
+        <!-- captcha image -->
+        <div class="hippo-login-form-input">
+          <img wicket:id="captchaImage" width="100%"/>
         </div>
-      </div>
-      <div class="hippo-login-extend">
-        <wicket:child/>
-      </div>
-      <div wicket:id="pinger" class="hippo-global-hideme">[Prevents session timeouts]</div>
+
+        <!-- captcha input -->
+        <div class="hippo-login-form-label">
+          <label wicket:id="captchaLabel"></label>
+        </div>
+        <div class="hippo-login-form-input">
+          <input class="hippo-form-text" wicket:id="captcha" type="text" value=""/>
+        </div>
+      </wicket:extend>
     </wicket:panel>
   </body>
 </html>

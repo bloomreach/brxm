@@ -1121,6 +1121,7 @@ api/src/main/styling/less/_hippo_menu.less -text
 api/src/main/styling/less/_icons.less -text
 api/src/main/styling/less/_image_gallery.less -text
 api/src/main/styling/less/_legacy.less -text
+api/src/main/styling/less/_login.less -text
 api/src/main/styling/less/_mixins.less -text
 api/src/main/styling/less/_modal.less -text
 api/src/main/styling/less/_modal_datepicker.less -text
@@ -1927,8 +1928,6 @@ engine/src/main/java/org/hippoecm/frontend/StagedLocalizer.java -text
 engine/src/main/java/org/hippoecm/frontend/StringResourceProviderConsumer.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/behaviors/ContextMenuBehavior.java -text
 engine/src/main/java/org/hippoecm/frontend/behaviors/contextmenu.js -text
-engine/src/main/java/org/hippoecm/frontend/hippo-cms.ico -text
-engine/src/main/java/org/hippoecm/frontend/hippo-console.ico -text
 engine/src/main/java/org/hippoecm/frontend/i18n/AbstractTranslateService.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/ConfigTraversingPlugin.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/NodeWrapper.java -text
@@ -1957,7 +1956,7 @@ engine/src/main/java/org/hippoecm/frontend/plugins/login/BrowserCheckBehavior.ja
 engine/src/main/java/org/hippoecm/frontend/plugins/login/LoginPlugin.html svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/plugins/login/LoginPlugin.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/plugins/login/LoginPlugin_de.properties -text
-engine/src/main/java/org/hippoecm/frontend/plugins/login/SimpleLoginPlugin.html -text
+engine/src/main/java/org/hippoecm/frontend/plugins/login/SimpleLoginPlugin$CaptchaForm.html -text
 engine/src/main/java/org/hippoecm/frontend/plugins/login/SimpleLoginPlugin.java -text
 engine/src/main/java/org/hippoecm/frontend/plugins/login/SimpleLoginPlugin.properties -text
 engine/src/main/java/org/hippoecm/frontend/plugins/login/SimpleLoginPlugin_de.properties -text
@@ -1980,6 +1979,8 @@ engine/src/main/java/org/hippoecm/frontend/service/preferences/PreferencesStoreP
 engine/src/main/java/org/hippoecm/frontend/service/restproxy/RestProxyServicePlugin.java -text
 engine/src/main/java/org/hippoecm/frontend/util/NodeStateUtil.java -text
 engine/src/main/resources/hippoecm-layouts.xml svneol=native#text/plain
+engine/src/main/resources/org/hippoecm/frontend/hippo-cms.ico -text
+engine/src/main/resources/org/hippoecm/frontend/hippo-console.ico -text
 engine/src/site/apt/index.apt -text
 engine/src/site/site.xml svneol=native#text/plain
 engine/src/test/resources/jackson-json-serialized-annotations/allinonechannelinfo.json -text

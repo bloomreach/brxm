@@ -15,28 +15,26 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions.dialogs;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
-import org.hippoecm.addon.workflow.FutureDateValidator;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.reviewedactions.UnpublishedReferenceNodeProvider;
 import org.hippoecm.frontend.plugins.reviewedactions.model.ReferenceProvider;
 import org.hippoecm.frontend.plugins.reviewedactions.model.UnpublishedReferenceProvider;
-import org.hippoecm.frontend.plugins.yui.datetime.YuiDateTimeField;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IEditorManager;
 
-public class SchedulePublishDialog extends AbstractWorkflowDialog<Node> {
+public class SchedulePublishDialog extends AbstractWorkflowDialogRestyling<Node> {
 
     public SchedulePublishDialog(IWorkflowInvoker action, JcrNodeModel nodeModel, IModel<Date> dateModel,
             IEditorManager editorMgr) {
@@ -46,16 +44,11 @@ public class SchedulePublishDialog extends AbstractWorkflowDialog<Node> {
                 new UnpublishedReferenceProvider(new ReferenceProvider(nodeModel)));
         add(new UnpublishedReferencesView("links", provider, editorMgr));
 
-        Calendar minimum = Calendar.getInstance();
-        minimum.setTime(dateModel.getObject());
-        minimum.set(Calendar.SECOND, 0);
-        minimum.set(Calendar.MILLISECOND, 0);
-        // if you want to round upwards, the following ought to be executed: minimum.add(Calendar.MINUTE, 1);
-        dateModel.setObject(minimum.getTime());
-        add(new Label("question", new ResourceModel("schedule-publish-text")));
-        YuiDateTimeField ydtf = new YuiDateTimeField("value", dateModel);
-        ydtf.add(new FutureDateValidator());
-        add(ydtf);
+        addOrReplace(new DatePickerComponent(Dialog.BOTTOM_LEFT_ID, dateModel, new ResourceModel("schedule-publish-text")));
+
+        add(CssClass.append("hippo-window"));
+        add(CssClass.append("hippo-workflow-dialog"));
+
         setFocusOnCancel();
     }
 
@@ -66,6 +59,6 @@ public class SchedulePublishDialog extends AbstractWorkflowDialog<Node> {
 
     @Override
     public IValueMap getProperties() {
-        return DialogConstants.LARGE;
+        return DialogConstants.LARGE_AUTO;
     }
 }
