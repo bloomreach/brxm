@@ -874,6 +874,7 @@ plugins/simple-content/src/main/resources/META-INF/web-fragment.xml -text
 plugins/simple-content/src/main/resources/config/new-content-document.xml -text
 plugins/simple-content/src/main/resources/config/new-content-folder.xml -text
 plugins/simple-content/src/main/resources/data/sample-content_entry.xml -text
+plugins/simple-content/src/main/resources/freemarker/contentlist-main-contentlist-variant.ftl -text
 plugins/simple-content/src/main/resources/freemarker/contentlist-main-contentlist.ftl -text
 plugins/simple-content/src/main/resources/freemarker/contentpage-main.ftl -text
 plugins/simple-content/src/main/resources/hst/catalog/simplecontent-catalog-item.xml -text
@@ -886,6 +887,7 @@ plugins/simple-content/src/main/resources/hst/template-content-jsp.xml -text
 plugins/simple-content/src/main/resources/hst/template-content-list-freemarker.xml -text
 plugins/simple-content/src/main/resources/hst/template-content-list-jsp.xml -text
 plugins/simple-content/src/main/resources/hst/workspace/contentlist.xml -text
+plugins/simple-content/src/main/resources/images/generic-list.png -text
 plugins/simple-content/src/main/resources/images/simple-content.png -text
 plugins/simple-content/src/main/resources/java/ContentDocument.txt -text
 plugins/simple-content/src/main/resources/jsp/contentlist-main-contentlist.jsp -text

@@ -39,6 +39,7 @@
     <xml action="copy" source="hst/menu/content-menu-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
     <xml action="copy" source="hst/catalog/simplecontent-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="images/simple-content.png" target="{{imagesRoot}}/essentials/catalog-component-icons/simple-content.png"/>
+    <file action="copy" binary="true" source="images/generic-list.png" target="{{imagesRoot}}/essentials/catalog-component-icons/generic-list.png"/>
   </instructionSet>
 
   <!-- HST TEMPLATES -->
@@ -54,5 +55,9 @@
     <xml action="copy" source="hst/template-content-list-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <freemarker action="copy" source="freemarker/contentpage-main.ftl" target="{{freemarkerRoot}}/hstdefault/contentpage-main.ftl"/>
     <freemarker action="copy" source="freemarker/contentlist-main-contentlist.ftl" target="{{freemarkerRoot}}/{{namespace}}/contentlist-main-contentlist.ftl"/>
+  </instructionSet>
+
+  <instructionSet group="extraTemplates">
+    <freemarker action="copy" source="freemarker/contentlist-main-contentlist-variant.ftl" target="{{freemarkerRoot}}/{{namespace}}/contentlist-main-contentlist/variant.ftl"/>
   </instructionSet>
 </instructions>

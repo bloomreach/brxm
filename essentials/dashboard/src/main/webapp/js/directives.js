@@ -107,7 +107,8 @@
                     label: '@',
                     params: '=',
                     hasNoTemplates: '@',
-                    hasSampleData: '@'
+                    hasSampleData: '@',
+                    hasExtraTemplates: '@'
                 },
                 templateUrl: 'directives/essentials-template-settings.html',
                 controller: function () {
@@ -164,7 +165,8 @@
                     label: '@',
                     pluginId: '@',
                     hasNoTemplates: '@',
-                    hasSampleData: '@'
+                    hasSampleData: '@',
+                    hasExtraTemplates: '@'
                 },
                 templateUrl: 'directives/essentials-simple-install-plugin.html',
                 controller: function ($scope, $log, $location, $rootScope, $http) {
@@ -180,7 +182,7 @@
                     });
 
                     $scope.apply = function () {
-                        $http.post($rootScope.REST.PLUGINS.setupById($scope.pluginId), $scope.params)
+                        $http.post($rootScope.REST.PLUGINS.setupById($scope.pluginId), { values: $scope.params } )
                             .success(function () {
                                 $rootScope.$broadcast('update-plugin-install-state', {
                                     'pluginId': $scope.pluginId,
