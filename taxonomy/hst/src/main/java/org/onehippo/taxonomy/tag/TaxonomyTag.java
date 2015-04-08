@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 
 import javax.servlet.jsp.PageContext;
@@ -27,7 +28,9 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.api.TaxonomyManager;
@@ -75,9 +78,12 @@ public class TaxonomyTag extends TagSupport {
         }
 
         List<LinkedList<Category>> resolvedTaxonomyItemLists = new ArrayList<>();
-      
+        HttpServletRequest servletRequest = (HttpServletRequest)pageContext.getRequest();
+        HstRequestContext reqContext = HstRequestUtils.getHstRequestContext(servletRequest);
+
+
         for(String taxonomyItemKey : keys) {
-            for(Taxonomy taxonomy : taxonomyManager.getTaxonomies().getRootTaxonomies()) {
+            for(Taxonomy taxonomy : taxonomyManager.getTaxonomies(reqContext).getRootTaxonomies()) {
                 if(taxonomy.getCategoryByKey(taxonomyItemKey) != null) {
                     Category taxonomyItem = taxonomy.getCategoryByKey(taxonomyItemKey);
                     LinkedList<Category> taxonomyItemList = new LinkedList<>(taxonomyItem.getAncestors());

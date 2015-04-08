@@ -18,25 +18,52 @@ package org.onehippo.taxonomy.api;
 
 import java.io.Serializable;
 
-import org.onehippo.taxonomy.api.Taxonomies;
+import javax.jcr.Session;
+import javax.servlet.http.HttpServletRequest;
+
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 public interface TaxonomyManager extends Serializable {
 
     /**
      * Returns a Taxonomies object managed by this TaxonomyManager
+     * <p><strong>BEWARE: this implementation is going te be removed in near future</strong></p>
      * @return {@link Taxonomies} object for this TaxonomyManager
+     * @deprecated use {@link TaxonomyManager#getTaxonomies(javax.jcr.Session)} or
+     *   {@link TaxonomyManager#getTaxonomies(org.hippoecm.hst.core.request.HstRequestContext)}
+     *
      */
+    @Deprecated
     Taxonomies getTaxonomies();
 
+
     /**
-     * 
+     * Returns a Taxonomies object managed by this TaxonomyManager for specific user session
+     *
+     * @param session JCR session
+     * @return {@link Taxonomies} object for this TaxonomyManager
+     */
+    Taxonomies getTaxonomies(Session session);
+
+
+    /**
+     * Same as {@link TaxonomyManager#getTaxonomies(javax.jcr.Session)}, uses liveuser session @{context.getSession()}
+     * @param context  HstRequestContext instance
+     * @return {@link Taxonomies} object for this TaxonomyManager
+     */
+    Taxonomies getTaxonomies(HstRequestContext context);
+
+    /**
+     * Taxonomy absolute content (container) path
+     *
      * @return the absolute content path to the taxonomies node container
      */
     String getTaxonomiesContentPath();
 
     /**
      * invalidates the (some) part of the Taxonomies.
-     * @param path 
+     *
+     * @param path taxonomy path
      */
     void invalidate(String path);
 }
