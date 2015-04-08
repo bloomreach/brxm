@@ -368,12 +368,6 @@ public class HstLinkImpl implements HstLink {
                 return true;
             }
 
-            if (isContainerResource()) {
-                // containerResource are only fully qualified if explicitly defined by explicitlyFullyQualified
-                // or by  requestContext.isFullyQualifiedURLs()
-                return false;
-            }
-
             final Mount requestMount = requestContext.getResolvedMount().getMount();
 
             if (requestMount.getVirtualHost() != mount.getVirtualHost()) {

@@ -32,14 +32,23 @@ import com.google.common.base.Predicate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.hosting.MatchException;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.google.common.base.Predicates.notNull;
 import static com.google.common.collect.FluentIterable.from;
 
 public class TagUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(TagUtils.class);
 
     private static final char DOUBLE_QUOTE = '"';
 
@@ -119,19 +128,59 @@ public class TagUtils {
             }
 
         }
-        ResolvedVirtualHost host = (ResolvedVirtualHost) servletRequest.getAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR);
-        if (host != null) {
-            if (host.getVirtualHost().isContextPathInUrl()) {
-                return servletRequest.getContextPath() + pathInfo;
-            } else {
-                // skip the contextPath
-                return pathInfo;
-            }
-        } else {
+
+        ResolvedVirtualHost resolvedVirtualHost = (ResolvedVirtualHost) servletRequest.getAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR);
+        if (resolvedVirtualHost == null) {
             // There is no VirtualHost on the request. Link will include the contextPath as we cannot do a
             // lookup in a virtual host whether the contextPath should be included or not;
             return servletRequest.getContextPath() + pathInfo;
         }
+
+        String fullyQualifiedPrefix = null;
+        ResolvedMount resolvedMount = (ResolvedMount) servletRequest.getAttribute(ContainerConstants.RESOLVED_MOUNT_REQUEST_ATTR);
+        if (resolvedMount != null) {
+            try {
+                Mount mount = resolvedMount.getMount();
+                final ResolvedSiteMapItem pathResolvesTo = resolvedMount.matchSiteMapItem(path);
+                final HstSiteMapItem hstSiteMapItem = pathResolvesTo.getHstSiteMapItem();
+                if (!hstSiteMapItem.isSchemeAgnostic()) {
+                    final String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(servletRequest);
+                    if (!farthestRequestScheme.equals(hstSiteMapItem.getScheme())) {
+                        // we have to create a cross scheme URL
+                        fullyQualifiedPrefix = hstSiteMapItem.getScheme() + "://" + mount.getVirtualHost().getHostName();
+                        if (mount.isPortInUrl()) {
+                            int port = mount.getPort();
+                            if (port == 0) {
+                                // the Mount is port agnostic. Take port from current container url
+                                port = HstRequestUtils.getRequestServerPort(servletRequest);
+                            }
+                            if (port == 80 || port == 443) {
+                                // do not include default ports
+                            } else {
+                                fullyQualifiedPrefix += ":" + port;
+                            }
+                        }
+
+                    }
+                }
+            } catch (MatchException e) {
+                log.debug("Could not match '{}' for mount '{}' : {}", path, resolvedMount.getMount(), e.toString());
+            }
+        }
+
+        if (resolvedVirtualHost.getVirtualHost().isContextPathInUrl()) {
+            if (fullyQualifiedPrefix != null) {
+                return fullyQualifiedPrefix + servletRequest.getContextPath() + pathInfo;
+            }
+            return servletRequest.getContextPath() + pathInfo;
+        } else {
+            // skip the contextPath
+            if (fullyQualifiedPrefix != null) {
+                return fullyQualifiedPrefix + pathInfo;
+            }
+            return pathInfo;
+        }
+
     }
 
     public static String getQueryString(final String characterEncoding,

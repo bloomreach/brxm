@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.container;
 
+import org.hippoecm.hst.core.request.ResolvedMount;
+
 /**
  * HstComponent container constants
  *
@@ -78,10 +80,9 @@ public interface ContainerConstants {
      */
     String SUBJECT_ATTR_NAME = "org.hippoecm.hst.security.servlet.subject";
 
-    /**
-     * attribute that has a value when the request URI is already decoded.
-     */
     String VIRTUALHOSTS_REQUEST_ATTR = "org.hippoecm.hst.configuration.hosting.VirtualHost.requestAttr";
+
+    String RESOLVED_MOUNT_REQUEST_ATTR = ResolvedMount.class.getName() + ".requestAttr";
 
     /**
      * Subject's repository credentials session attribute name (This one can be optionally and temporarily set in a
