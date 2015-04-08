@@ -24,7 +24,6 @@
   </parent>
 
   <name>Hippo Plugin Taxonomy Demo</name>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-taxonomy-demo</artifactId>
   <version>1.12.00-SNAPSHOT</version>
   <packaging>pom</packaging>
