@@ -31,7 +31,7 @@ public class UsageStatisticsExternalUrl {
 
     // TODO: use cdn.onehippo.com instead of www.connect.acct.onehippo.com
     private static final String SERVER = "http://www.connect.acct.onehippo.com";
-    private static final String PATH = "/usage-statisticssss/" + CMS_VERSION + "/" + YEAR + "-" + MONTH + "-" + DAY + "/usage-statistics.js";
+    private static final String PATH = "/usage-statistics/" + CMS_VERSION + "/" + YEAR + "-" + MONTH + "-" + DAY + "/usage-statistics.js";
 
     public static final String SYSTEM_PROPERTY_SERVER = "hippo.usage.statistics.server";
 
