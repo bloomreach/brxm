@@ -59,7 +59,23 @@
   </instructionSet>
 
   <instructionSet group="extraTemplates">
-    <freemarker action="copy" source="freemarker/contentlist-main-contentlist-variant.ftl" target="{{freemarkerRoot}}/{{namespace}}/contentlist-main-contentlist/variant.ftl"/>
-    <freemarker action="copy" source="freemarker/contentpage-main-variant.ftl" target="{{freemarkerRoot}}/hstdefault/contentpage-main/variant.ftl"/>
+    <freemarker action="copy"
+                source="freemarker/contentlist-main-contentlist-variant.ftl"
+                target="{{freemarkerRoot}}/{{namespace}}/contentlist-main-contentlist/variant.ftl"/>
+    <file action="copy"
+          source="freemarker/contentlist-main-contentlist.properties"
+          target="{{freemarkerRoot}}/{{namespace}}/contentlist-main-contentlist.properties"/>
+    <file action="copy"
+          source="freemarker/contentlist-main-contentlist_nl.properties"
+          target="{{freemarkerRoot}}/{{namespace}}/contentlist-main-contentlist_nl.properties"/>
+    <freemarker action="copy"
+                source="freemarker/contentpage-main-variant.ftl"
+                target="{{freemarkerRoot}}/hstdefault/contentpage-main/variant.ftl"/>
+    <file action="copy"
+          source="freemarker/contentpage-main.properties"
+          target="{{freemarkerRoot}}/hstdefault/contentpage-main.properties"/>
+    <file action="copy"
+          source="freemarker/contentpage-main_nl.properties"
+          target="{{freemarkerRoot}}/hstdefault/contentpage-main_nl.properties"/>
   </instructionSet>
 </instructions>

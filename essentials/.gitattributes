@@ -501,6 +501,8 @@ plugins/banner-and-carousel/src/main/resources/META-INF/resources/feature/banner
 plugins/banner-and-carousel/src/main/resources/META-INF/web-fragment.xml -text
 plugins/banner-and-carousel/src/main/resources/freemarker/essentials-banner-with-description.ftl -text
 plugins/banner-and-carousel/src/main/resources/freemarker/essentials-banner.ftl -text
+plugins/banner-and-carousel/src/main/resources/freemarker/essentials-banner.properties -text
+plugins/banner-and-carousel/src/main/resources/freemarker/essentials-banner_nl.properties -text
 plugins/banner-and-carousel/src/main/resources/freemarker/essentials-carousel.ftl -text
 plugins/banner-and-carousel/src/main/resources/hst/banner-template-freemarker.xml -text
 plugins/banner-and-carousel/src/main/resources/hst/banner-template-jsp.xml -text
@@ -542,9 +544,13 @@ plugins/blog/src/main/resources/freemarker/blog-author-posts.ftl -text
 plugins/blog/src/main/resources/freemarker/blog-author.ftl -text
 plugins/blog/src/main/resources/freemarker/blog-detail-variant.ftl -text
 plugins/blog/src/main/resources/freemarker/blog-detail.ftl -text
+plugins/blog/src/main/resources/freemarker/blog-detail.properties -text
+plugins/blog/src/main/resources/freemarker/blog-detail_nl.properties -text
 plugins/blog/src/main/resources/freemarker/blog-facet.ftl -text
 plugins/blog/src/main/resources/freemarker/blog-list-variant.ftl -text
 plugins/blog/src/main/resources/freemarker/blog-list.ftl -text
+plugins/blog/src/main/resources/freemarker/blog-list.properties -text
+plugins/blog/src/main/resources/freemarker/blog-list_nl.properties -text
 plugins/blog/src/main/resources/freemarker/blog-main.ftl -text
 plugins/blog/src/main/resources/hst/blog-sitemap.xml -text
 plugins/blog/src/main/resources/hst/catalog/blogauthorposts.xml -text
@@ -639,8 +645,12 @@ plugins/events/src/main/resources/META-INF/resources/feature/eventsPlugin/events
 plugins/events/src/main/resources/META-INF/web-fragment.xml -text
 plugins/events/src/main/resources/freemarker/eventslist-main-eventslist-variant.ftl -text
 plugins/events/src/main/resources/freemarker/eventslist-main-eventslist.ftl -text
+plugins/events/src/main/resources/freemarker/eventslist-main-eventslist.properties -text
+plugins/events/src/main/resources/freemarker/eventslist-main-eventslist_nl.properties -text
 plugins/events/src/main/resources/freemarker/eventspage-main-variant.ftl -text
 plugins/events/src/main/resources/freemarker/eventspage-main.ftl -text
+plugins/events/src/main/resources/freemarker/eventspage-main.properties -text
+plugins/events/src/main/resources/freemarker/eventspage-main_nl.properties -text
 plugins/events/src/main/resources/icons/new-folder-16.png -text
 plugins/events/src/main/resources/images/events-list.png -text
 plugins/events/src/main/resources/java/EventsDocument.txt -text
@@ -677,6 +687,8 @@ plugins/faq/src/main/resources/instructions/folderoptions/new-faq-list-document.
 plugins/faq/src/main/resources/instructions/freemarker/faq-main.ftl -text
 plugins/faq/src/main/resources/instructions/freemarker/faqlist-main-variant.ftl -text
 plugins/faq/src/main/resources/instructions/freemarker/faqlist-main.ftl -text
+plugins/faq/src/main/resources/instructions/freemarker/faqlist-main.properties -text
+plugins/faq/src/main/resources/instructions/freemarker/faqlist-main_nl.properties -text
 plugins/faq/src/main/resources/instructions/hst/faq-component-catalog-item.xml -text
 plugins/faq/src/main/resources/instructions/hst/faq-faq-template-freemarker.xml -text
 plugins/faq/src/main/resources/instructions/hst/faq-faq-template-jsp.xml -text
@@ -724,6 +736,8 @@ plugins/image-component/src/main/resources/META-INF/resources/feature/imageCompo
 plugins/image-component/src/main/resources/META-INF/web-fragment.xml -text
 plugins/image-component/src/main/resources/instructions/freemarker/image-component-with-description.ftl -text
 plugins/image-component/src/main/resources/instructions/freemarker/image-component.ftl -text
+plugins/image-component/src/main/resources/instructions/freemarker/image-component.properties -text
+plugins/image-component/src/main/resources/instructions/freemarker/image-component_nl.properties -text
 plugins/image-component/src/main/resources/instructions/images/image.png -text
 plugins/image-component/src/main/resources/instructions/jsp/image-component.jsp -text
 plugins/image-component/src/main/resources/instructions/xml/hst/image-component-catalog.xml -text
@@ -736,6 +750,8 @@ plugins/list/src/main/resources/META-INF/web-fragment.xml -text
 plugins/list/src/main/resources/freemarker/list-component-pagination-on-top-and-bottom.ftl -text
 plugins/list/src/main/resources/freemarker/list-component-pagination-on-top.ftl -text
 plugins/list/src/main/resources/freemarker/list-component.ftl -text
+plugins/list/src/main/resources/freemarker/list-component.properties -text
+plugins/list/src/main/resources/freemarker/list-component_nl.properties -text
 plugins/list/src/main/resources/images/generic-list.png -text
 plugins/list/src/main/resources/jsp/list-component.jsp -text
 plugins/list/src/main/resources/xml/hst/catalog/list.xml -text
@@ -749,6 +765,8 @@ plugins/menu/src/main/resources/META-INF/web-fragment.xml -text
 plugins/menu/src/main/resources/freemarker/essentials-menu-navbar.ftl -text
 plugins/menu/src/main/resources/freemarker/essentials-menu-vertical.ftl -text
 plugins/menu/src/main/resources/freemarker/essentials-menu.ftl -text
+plugins/menu/src/main/resources/freemarker/essentials-menu.properties -text
+plugins/menu/src/main/resources/freemarker/essentials-menu_nl.properties -text
 plugins/menu/src/main/resources/hst/catalog/menu-catalog-item.xml -text
 plugins/menu/src/main/resources/hst/menu-template-freemarker.xml -text
 plugins/menu/src/main/resources/hst/menu-template-jsp.xml -text
@@ -761,8 +779,12 @@ plugins/news/src/main/resources/META-INF/resources/feature/newsPlugin/newsPlugin
 plugins/news/src/main/resources/META-INF/web-fragment.xml -text
 plugins/news/src/main/resources/freemarker/newslist-main-newslist-variant.ftl -text
 plugins/news/src/main/resources/freemarker/newslist-main-newslist.ftl -text
+plugins/news/src/main/resources/freemarker/newslist-main-newslist.properties -text
+plugins/news/src/main/resources/freemarker/newslist-main-newslist_nl.properties -text
 plugins/news/src/main/resources/freemarker/newspage-main-variant.ftl -text
 plugins/news/src/main/resources/freemarker/newspage-main.ftl -text
+plugins/news/src/main/resources/freemarker/newspage-main.properties -text
+plugins/news/src/main/resources/freemarker/newspage-main_nl.properties -text
 plugins/news/src/main/resources/icons/new-folder-16.png -text
 plugins/news/src/main/resources/images/news-list.png -text
 plugins/news/src/main/resources/java/NewsDocument.txt -text
@@ -882,8 +904,12 @@ plugins/simple-content/src/main/resources/config/new-content-folder.xml -text
 plugins/simple-content/src/main/resources/data/sample-content_entry.xml -text
 plugins/simple-content/src/main/resources/freemarker/contentlist-main-contentlist-variant.ftl -text
 plugins/simple-content/src/main/resources/freemarker/contentlist-main-contentlist.ftl -text
+plugins/simple-content/src/main/resources/freemarker/contentlist-main-contentlist.properties -text
+plugins/simple-content/src/main/resources/freemarker/contentlist-main-contentlist_nl.properties -text
 plugins/simple-content/src/main/resources/freemarker/contentpage-main-variant.ftl -text
 plugins/simple-content/src/main/resources/freemarker/contentpage-main.ftl -text
+plugins/simple-content/src/main/resources/freemarker/contentpage-main.properties -text
+plugins/simple-content/src/main/resources/freemarker/contentpage-main_nl.properties -text
 plugins/simple-content/src/main/resources/hst/catalog/simplecontent-catalog-item.xml -text
 plugins/simple-content/src/main/resources/hst/content-list-page.xml -text
 plugins/simple-content/src/main/resources/hst/content-page.xml -text
@@ -986,6 +1012,8 @@ plugins/video/src/main/resources/META-INF/web-fragment.xml -text
 plugins/video/src/main/resources/instructions/freemarker/video-component-autoplay.ftl -text
 plugins/video/src/main/resources/instructions/freemarker/video-component-bare.ftl -text
 plugins/video/src/main/resources/instructions/freemarker/video-component.ftl -text
+plugins/video/src/main/resources/instructions/freemarker/video-component.properties -text
+plugins/video/src/main/resources/instructions/freemarker/video-component_nl.properties -text
 plugins/video/src/main/resources/instructions/images/video.png -text
 plugins/video/src/main/resources/instructions/java/Video.txt -text
 plugins/video/src/main/resources/instructions/jsp/video-component.jsp -text

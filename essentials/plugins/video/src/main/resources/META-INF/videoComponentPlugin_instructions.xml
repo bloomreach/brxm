@@ -39,8 +39,18 @@
   </instructionSet>
 
   <instructionSet group="extraTemplates">
-    <freemarker action="copy" source="instructions/freemarker/video-component-bare.ftl" target="{{freemarkerRoot}}/hstdefault/video-component/bare.ftl"/>
-    <freemarker action="copy" source="instructions/freemarker/video-component-autoplay.ftl" target="{{freemarkerRoot}}/hstdefault/video-component/autoplay.ftl"/>
+    <freemarker action="copy"
+                source="instructions/freemarker/video-component-bare.ftl"
+                target="{{freemarkerRoot}}/hstdefault/video-component/bare.ftl"/>
+    <freemarker action="copy"
+                source="instructions/freemarker/video-component-autoplay.ftl"
+                target="{{freemarkerRoot}}/hstdefault/video-component/autoplay.ftl"/>
+    <file action="copy"
+          source="instructions/freemarker/video-component.properties"
+          target="{{freemarkerRoot}}/hstdefault/video-component.properties"/>
+    <file action="copy"
+          source="instructions/freemarker/video-component_nl.properties"
+          target="{{freemarkerRoot}}/hstdefault/video-component_nl.properties"/>
   </instructionSet>
 
   <instructionSet group="sampleData">

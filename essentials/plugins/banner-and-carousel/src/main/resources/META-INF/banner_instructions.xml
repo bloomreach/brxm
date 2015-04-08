@@ -56,6 +56,12 @@
     <freemarker action="copy"
                 source="freemarker/essentials-banner-with-description.ftl"
                 target="{{freemarkerRoot}}/hstdefault/essentials-banner/with-description.ftl"/>
+    <file action="copy"
+          source="freemarker/essentials-banner.properties"
+          target="{{freemarkerRoot}}/hstdefault/essentials-banner.properties"/>
+    <file action="copy"
+          source="freemarker/essentials-banner_nl.properties"
+          target="{{freemarkerRoot}}/hstdefault/essentials-banner_nl.properties"/>
   </instructionSet>
 
   <instructionSet>

@@ -37,5 +37,11 @@
     <freemarker action="copy"
                 source="instructions/freemarker/image-component-with-description.ftl"
                 target="{{freemarkerRoot}}/hstdefault/image-component/with-description.ftl"/>
+    <file action="copy"
+          source="instructions/freemarker/image-component.properties"
+          target="{{freemarkerRoot}}/hstdefault/image-component.properties"/>
+    <file action="copy"
+          source="instructions/freemarker/image-component_nl.properties"
+          target="{{freemarkerRoot}}/hstdefault/image-component_nl.properties"/>
   </instructionSet>
 </instructions>

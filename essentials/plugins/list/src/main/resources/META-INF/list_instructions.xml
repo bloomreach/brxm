@@ -36,6 +36,12 @@
     <freemarker action="copy"
                 source="freemarker/list-component-pagination-on-top-and-bottom.ftl"
                 target="{{freemarkerRoot}}/hstdefault/list-component/pagination-on-top-and-bottom.ftl"/>
+    <file action="copy"
+          source="freemarker/list-component.properties"
+          target="{{freemarkerRoot}}/hstdefault/list-component.properties"/>
+    <file action="copy"
+          source="freemarker/list-component_nl.properties"
+          target="{{freemarkerRoot}}/hstdefault/list-component_nl.properties"/>
   </instructionSet>
 
   <instructionSet>

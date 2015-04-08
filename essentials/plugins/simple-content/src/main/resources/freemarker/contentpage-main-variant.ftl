@@ -1,12 +1,10 @@
 <#include "../../include/imports.ftl">
 
-<#-- @ftlvariable name="document" type="org.example.beans.ContentDocument" -->
+<#-- @ftlvariable name="document" type="{{beansPackage}}.ContentDocument" -->
 <#if document??>
-    <@hst.link var="link" hippobean=document/>
     <article class="has-edit-button">
         <@hst.cmseditlink hippobean=document/>
-        <h3>
-            <a href="${link}">${document.title?html}</a>
+        <h3>${document.title?html}
             <#if document.publicationDate??>
                 <small><@fmt.formatDate value=document.publicationDate.time type="date" dateStyle="medium"/></small>
             </#if>

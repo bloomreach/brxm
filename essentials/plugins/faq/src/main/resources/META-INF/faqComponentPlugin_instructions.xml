@@ -51,6 +51,12 @@
     <freemarker action="copy"
                 source="instructions/freemarker/faqlist-main-variant.ftl"
                 target="{{freemarkerRoot}}/hstdefault/faqlist-main/variant.ftl"/>
+    <file action="copy"
+          source="instructions/freemarker/faqlist-main.properties"
+          target="{{freemarkerRoot}}/hstdefault/faqlist-main.properties"/>
+    <file action="copy"
+          source="instructions/freemarker/faqlist-main_nl.properties"
+          target="{{freemarkerRoot}}/hstdefault/faqlist-main_nl.properties"/>
   </instructionSet>
 
   <instructionSet group="jsp">
