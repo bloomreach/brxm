@@ -539,8 +539,10 @@ plugins/blog/src/main/resources/content/blog-labels.xml -text
 plugins/blog/src/main/resources/content/facet-labels.xml -text
 plugins/blog/src/main/resources/freemarker/blog-author-posts.ftl -text
 plugins/blog/src/main/resources/freemarker/blog-author.ftl -text
+plugins/blog/src/main/resources/freemarker/blog-detail-variant.ftl -text
 plugins/blog/src/main/resources/freemarker/blog-detail.ftl -text
 plugins/blog/src/main/resources/freemarker/blog-facet.ftl -text
+plugins/blog/src/main/resources/freemarker/blog-list-variant.ftl -text
 plugins/blog/src/main/resources/freemarker/blog-list.ftl -text
 plugins/blog/src/main/resources/freemarker/blog-main.ftl -text
 plugins/blog/src/main/resources/hst/blog-sitemap.xml -text
@@ -672,8 +674,8 @@ plugins/faq/src/main/resources/instructions/folderoptions/new-faq-document.xml -
 plugins/faq/src/main/resources/instructions/folderoptions/new-faq-list-document-folder.xml -text
 plugins/faq/src/main/resources/instructions/folderoptions/new-faq-list-document.xml -text
 plugins/faq/src/main/resources/instructions/freemarker/faq-main.ftl -text
+plugins/faq/src/main/resources/instructions/freemarker/faqlist-main-variant.ftl -text
 plugins/faq/src/main/resources/instructions/freemarker/faqlist-main.ftl -text
-plugins/faq/src/main/resources/instructions/freemarker/faqlist-main/faqlist-main-styled.ftl -text
 plugins/faq/src/main/resources/instructions/hst/faq-component-catalog-item.xml -text
 plugins/faq/src/main/resources/instructions/hst/faq-faq-template-freemarker.xml -text
 plugins/faq/src/main/resources/instructions/hst/faq-faq-template-jsp.xml -text

@@ -103,6 +103,15 @@
     <freemarker action="copy" source="freemarker/blog-author.ftl" target="{{freemarkerRoot}}/{{namespace}}/author/blog-author.ftl"/>
   </instructionSet>
 
+  <instructionSet group="extraTemplates">
+    <freemarker action="copy"
+                source="freemarker/blog-list-variant.ftl"
+                target="{{freemarkerRoot}}/hstdefault/blog/blog-list/variant.ftl"/>
+    <freemarker action="copy"
+                source="freemarker/blog-detail-variant.ftl"
+                target="{{freemarkerRoot}}/{{namespace}}/blog/blog-detail/variant.ftl"/>
+  </instructionSet>
+
   <!--
     FACET & DAEMON MODULE SETUP
     NOTE: execute after creating folders etc, because we need to fetch blog folder UUID

@@ -18,7 +18,8 @@
     <div ng-show="plugin.installState === 'onBoard'">
         <essentials-simple-install-plugin
             plugin-id="{{pluginId}}"
-            has-sample-data="true">
+            has-sample-data="true"
+            has-extra-templates="true">
         </essentials-simple-install-plugin>
     </div>
     <div class="panel panel-default" ng-show="plugin.installState === 'installed'">
