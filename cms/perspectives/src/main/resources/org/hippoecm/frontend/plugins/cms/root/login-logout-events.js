@@ -16,3 +16,7 @@
 Hippo.Events.publish('login', {
   releaseVersion: '${releaseVersion}'
 });
+
+$(window).unload(function() {
+  Hippo.Events.publish('logout');
+});

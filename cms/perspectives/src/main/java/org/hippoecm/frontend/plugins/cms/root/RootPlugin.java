@@ -75,7 +75,7 @@ public class RootPlugin extends TabsPlugin {
     public static final boolean DEFAULT_SEND_USAGE_STATISTICS_TO_HIPPO = true;
 
     private static final String USAGE_STATISTICS_JS = "usage-statistics.js";
-    private static final String LOGIN_EVENT_JS = "login-event.js";
+    private static final String LOGIN_LOGOUT_EVENTS_JS = "login-logout-events.js";
 
     private boolean rendered = false;
     private final ExtWidgetRegistry extWidgetRegistry;
@@ -251,7 +251,7 @@ public class RootPlugin extends TabsPlugin {
         if (sendUsageStatistics()) {
             response.render(createUsageStatisticsReporter());
         }
-        response.render(createLoginEvent());
+        response.render(createLoginLogoutEvents());
     }
 
     private boolean sendUsageStatistics() {
@@ -269,12 +269,12 @@ public class RootPlugin extends TabsPlugin {
         return OnLoadHeaderItem.forScript(javaScript);
     }
 
-    private HeaderItem createLoginEvent() {
+    private HeaderItem createLoginLogoutEvents() {
         final Map<String, String> eventParams = new TreeMap<>();
         eventParams.put("releaseVersion", new SystemInfoDataProvider().getReleaseVersion());
 
-        final PackageTextTemplate loginEvent = new PackageTextTemplate(RootPlugin.class, LOGIN_EVENT_JS);
-        final String javaScript = loginEvent.asString(eventParams);
+        final PackageTextTemplate template = new PackageTextTemplate(RootPlugin.class, LOGIN_LOGOUT_EVENTS_JS);
+        final String javaScript = template.asString(eventParams);
         return OnLoadHeaderItem.forScript(javaScript);
     }
 
