@@ -106,6 +106,8 @@ public class RootPlugin extends TabsPlugin {
             add(new Pinger("pinger"));
         }
 
+        add(new Label("pageTitle", getString("page.title", null, "Hippo CMS 10")));
+
         add(new Label("currentUserName", Model.of(getCurrentUserName())));
 
         services = new LinkedList<IRenderService>();
