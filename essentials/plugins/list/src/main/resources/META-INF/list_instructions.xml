@@ -29,6 +29,15 @@
     <xml action="copy" source="xml/hst/templates/list-component-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 
+  <instructionSet group="extraTemplates">
+    <freemarker action="copy"
+                source="freemarker/list-component-pagination-on-top.ftl"
+                target="{{freemarkerRoot}}/hstdefault/list-component/pagination-on-top.ftl"/>
+    <freemarker action="copy"
+                source="freemarker/list-component-pagination-on-top-and-bottom.ftl"
+                target="{{freemarkerRoot}}/hstdefault/list-component/pagination-on-top-and-bottom.ftl"/>
+  </instructionSet>
+
   <instructionSet>
     <xml action="copy" source="xml/hst/catalog/list.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="images/generic-list.png" target="{{imagesRoot}}/essentials/catalog-component-icons/generic-list.png"/>

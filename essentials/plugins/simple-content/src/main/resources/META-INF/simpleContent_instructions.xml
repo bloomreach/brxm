@@ -33,6 +33,7 @@
   <!-- HST CONFIG-->
   <instructionSet>
     <xml action="copy" source="hst/workspace/contentlist.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="hst/workspace/contentpage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
     <xml action="copy" source="hst/content-sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
     <xml action="copy" source="hst/content-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="hst/content-list-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
@@ -59,5 +60,6 @@
 
   <instructionSet group="extraTemplates">
     <freemarker action="copy" source="freemarker/contentlist-main-contentlist-variant.ftl" target="{{freemarkerRoot}}/{{namespace}}/contentlist-main-contentlist/variant.ftl"/>
+    <freemarker action="copy" source="freemarker/contentpage-main-variant.ftl" target="{{freemarkerRoot}}/hstdefault/contentpage-main/variant.ftl"/>
   </instructionSet>
 </instructions>

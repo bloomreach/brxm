@@ -729,6 +729,8 @@ plugins/list/pom.xml -text
 plugins/list/src/main/resources/META-INF/list_instructions.xml -text
 plugins/list/src/main/resources/META-INF/resources/feature/listPlugin/listPlugin.html -text
 plugins/list/src/main/resources/META-INF/web-fragment.xml -text
+plugins/list/src/main/resources/freemarker/list-component-pagination-on-top-and-bottom.ftl -text
+plugins/list/src/main/resources/freemarker/list-component-pagination-on-top.ftl -text
 plugins/list/src/main/resources/freemarker/list-component.ftl -text
 plugins/list/src/main/resources/images/generic-list.png -text
 plugins/list/src/main/resources/jsp/list-component.jsp -text
@@ -876,6 +878,7 @@ plugins/simple-content/src/main/resources/config/new-content-folder.xml -text
 plugins/simple-content/src/main/resources/data/sample-content_entry.xml -text
 plugins/simple-content/src/main/resources/freemarker/contentlist-main-contentlist-variant.ftl -text
 plugins/simple-content/src/main/resources/freemarker/contentlist-main-contentlist.ftl -text
+plugins/simple-content/src/main/resources/freemarker/contentpage-main-variant.ftl -text
 plugins/simple-content/src/main/resources/freemarker/contentpage-main.ftl -text
 plugins/simple-content/src/main/resources/hst/catalog/simplecontent-catalog-item.xml -text
 plugins/simple-content/src/main/resources/hst/content-list-page.xml -text
@@ -887,6 +890,7 @@ plugins/simple-content/src/main/resources/hst/template-content-jsp.xml -text
 plugins/simple-content/src/main/resources/hst/template-content-list-freemarker.xml -text
 plugins/simple-content/src/main/resources/hst/template-content-list-jsp.xml -text
 plugins/simple-content/src/main/resources/hst/workspace/contentlist.xml -text
+plugins/simple-content/src/main/resources/hst/workspace/contentpage.xml -text
 plugins/simple-content/src/main/resources/images/generic-list.png -text
 plugins/simple-content/src/main/resources/images/simple-content.png -text
 plugins/simple-content/src/main/resources/java/ContentDocument.txt -text
