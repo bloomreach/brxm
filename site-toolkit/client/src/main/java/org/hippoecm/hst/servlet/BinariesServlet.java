@@ -449,6 +449,8 @@ public class BinariesServlet extends HttpServlet {
     }
 
     protected void initBinaryPageValues(Session session, BinaryPage page) throws RepositoryException {
+        // even if not found, do not check for every request but only on next validity check time
+        page.setNextValidityCheckTime(System.currentTimeMillis() + binariesCache.getValidityCheckIntervalMillis());
         if (!ResourceUtils.isValidResourcePath(page.getResourcePath())) {
             page.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -480,7 +482,6 @@ public class BinariesServlet extends HttpServlet {
         page.setStatus(HttpServletResponse.SC_OK);
         page.setMimeType(resourceNode.getProperty(binaryMimeTypePropName).getString());
         page.setLastModified(ResourceUtils.getLastModifiedDate(resourceNode, binaryLastModifiedPropName));
-        page.setNextValidityCheckTime(System.currentTimeMillis() + binariesCache.getValidityCheckIntervalMillis());
         page.setFileName(ResourceUtils.getFileName(resourceNode, contentDispositionFilenamePropertyNames));
         page.setLength(ResourceUtils.getDataLength(resourceNode, binaryDataPropName));
 
