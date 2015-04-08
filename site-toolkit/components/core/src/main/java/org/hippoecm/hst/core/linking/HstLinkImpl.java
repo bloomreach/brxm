@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.linking;
 
+import java.util.Optional;
+
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -44,28 +46,28 @@ public class HstLinkImpl implements HstLink {
     private String path;
     private String subPath;
     private Mount mount;
-    private HstSiteMapItem siteMapItem;
-    private boolean siteMapItemResolvedAlready;
+    private Optional<HstSiteMapItem> siteMapItem;
     private boolean notFound = false;
     private final static String[] FULLY_QUALIFIED_URL_PREFIXES = {"//", "http:", "https:"};
 
     /**
      * <p>
-     *     The {@link Type} of the {@link HstLink}. An {@link HstLink} can be of type <i>container resource</i> or of
-     *     type <i>mount resource</i>. When not yet known, the type is set to {@link Type#UNKNOWN}. The meaning of
-     *     <i>container resource</i> vs <i>mount resource</i> is:
+     * The {@link Type} of the {@link HstLink}. An {@link HstLink} can be of type <i>container resource</i> or of
+     * type <i>mount resource</i>. When not yet known, the type is set to {@link Type#UNKNOWN}. The meaning of
+     * <i>container resource</i> vs <i>mount resource</i> is:
      * </p>
      * <p>
-     *     <ol>
-     *         <li>{@link Type#CONTAINER_RESOURCE} : The resulting URL will be webapp relative and not
-     *             relative to {@link Mount#getMountPath()}</li>
-     *         <li>{@link Type#MOUNT_RESOURCE}: The resulting URL <b>WILL</b> include the {@link Mount#getMountPath()} after
-     *         the webapp relative part (context path). For sub mounts below the root mount (/)
-     *         the {@link Mount#getMountPath()} is the path to the sub mount, for example /fr</li>
-     *     </ol>
+     * <ol>
+     * <li>{@link Type#CONTAINER_RESOURCE} : The resulting URL will be webapp relative and not
+     * relative to {@link Mount#getMountPath()}</li>
+     * <li>{@link Type#MOUNT_RESOURCE}: The resulting URL <b>WILL</b> include the {@link Mount#getMountPath()} after
+     * the webapp relative part (context path). For sub mounts below the root mount (/)
+     * the {@link Mount#getMountPath()} is the path to the sub mount, for example /fr</li>
+     * </ol>
      * </p>
      */
     private Type type;
+
     enum Type {
         CONTAINER_RESOURCE,
         MOUNT_RESOURCE,
@@ -74,11 +76,12 @@ public class HstLinkImpl implements HstLink {
 
     /**
      * <p>
-     *     Indicates whether this {@link org.hippoecm.hst.core.linking.HstLink} instance was created from a jcr node
-     *     representing a document, a folder, or whether unknown. Default is {@link ContentType#UNKNOWN}
+     * Indicates whether this {@link org.hippoecm.hst.core.linking.HstLink} instance was created from a jcr node
+     * representing a document, a folder, or whether unknown. Default is {@link ContentType#UNKNOWN}
      * </p>
      */
     ContentType contentType;
+
     enum ContentType {
         FOLDER,
         DOCUMENT,
@@ -103,7 +106,7 @@ public class HstLinkImpl implements HstLink {
     }
 
     public HstLinkImpl(String path, Mount mount, boolean containerResource, boolean rewriteHomePagePath) {
-        this(path, mount, null,containerResource, rewriteHomePagePath);
+        this(path, mount, null, containerResource, rewriteHomePagePath);
     }
 
     public HstLinkImpl(String path, Mount mount, HstSiteMapItem siteMapItem, boolean containerResource, boolean rewriteHomePagePath) {
@@ -119,7 +122,9 @@ public class HstLinkImpl implements HstLink {
             this.path = PathUtils.normalizePath(path);
         }
         this.mount = mount;
-        this.siteMapItem = siteMapItem;
+        if (siteMapItem != null) {
+            this.siteMapItem = Optional.of(siteMapItem);
+        }
         this.type = type;
 
         if (type == Type.UNKNOWN && mount != null) {
@@ -128,13 +133,13 @@ public class HstLinkImpl implements HstLink {
             }
         }
 
-        if(rewriteHomePagePath) {
+        if (rewriteHomePagePath) {
             // check whether path is equal to homepage : if so, replace with ""
-            if(this.path != null && mount != null) {
+            if (this.path != null && mount != null) {
                 // get the homePagePath : the mount.getHomePage can be the homepage path OR the sitemap item refId
                 // with HstSiteMapUtils.getPath we get the homepage path regardless whether mount.getHomePage() is the path of the refId
                 String homePagePath = HstSiteMapUtils.getPath(mount, mount.getHomePage());
-                if(path.equals(homePagePath) || ("/"+path).equals(homePagePath)) {
+                if (path.equals(homePagePath) || ("/" + path).equals(homePagePath)) {
                     // homepage link : Set path to "";
                     this.path = "";
                 }
@@ -143,15 +148,14 @@ public class HstLinkImpl implements HstLink {
     }
 
 
-
     public Mount getMount() {
         return mount;
     }
-    
+
     public String getPath() {
         return this.path;
     }
-    
+
     public void setPath(String path) {
         this.path = PathUtils.normalizePath(path);
     }
@@ -199,7 +203,7 @@ public class HstLinkImpl implements HstLink {
     }
 
     public String[] getPathElements() {
-        if(this.path == null) {
+        if (this.path == null) {
             return null;
         }
         return this.path.split("/");
@@ -244,7 +248,7 @@ public class HstLinkImpl implements HstLink {
         } else {
 
             HstManager mngr = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-            String subPathDelimeter =  mngr.getPathSuffixDelimiter();
+            String subPathDelimeter = mngr.getPathSuffixDelimiter();
             if (subPath != null) {
                 // subPath is allowed to be empty ""
                 path += subPathDelimeter + subPath;
@@ -394,13 +398,13 @@ public class HstLinkImpl implements HstLink {
              */
 
             final String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(requestContext.getServletRequest());
-            if (siteMapItem != null) {
-                if (siteMapItem.isSchemeAgnostic()) {
+            if (siteMapItem != null && siteMapItem.isPresent()) {
+                if (siteMapItem.get().isSchemeAgnostic()) {
                     scheme = SCHEME_AGNOSTIC;
                     return false;
                 }
-                if (!farthestRequestScheme.equals(siteMapItem.getScheme())) {
-                    scheme = siteMapItem.getScheme();
+                if (!farthestRequestScheme.equals(siteMapItem.get().getScheme())) {
+                    scheme = siteMapItem.get().getScheme();
                     return true;
                 } else {
                     return false;
@@ -425,7 +429,7 @@ public class HstLinkImpl implements HstLink {
                     }
                 }
             }
-            
+
             if (mount.isSchemeAgnostic()) {
                 scheme = SCHEME_AGNOSTIC;
                 return false;
@@ -484,8 +488,8 @@ public class HstLinkImpl implements HstLink {
     }
 
     private HstSiteMapItem resolveSiteMapItem(HstRequestContext requestContext) {
-        if (siteMapItemResolvedAlready || siteMapItem != null) {
-            return siteMapItem;
+        if (siteMapItem != null) {
+            return siteMapItem.orElse(null);
         }
         ResolvedSiteMapItem resolved = null;
         try {
@@ -522,7 +526,7 @@ public class HstLinkImpl implements HstLink {
                     mount.getVirtualHost().getVirtualHosts().getCmsPreviewPrefix(), requestContext.getResolvedMount().getPortNumber());
             resolvedHostForLink.setResolvedMount(resMount);
 
-            if("".equals(path) || "/".equals(path)) {
+            if ("".equals(path) || "/".equals(path)) {
                 log.debug("siteMapPathInfo is '' or '/'. If there is a homepage path configured, we try to map this path to the sitemap");
                 resolved = mount.getHstSiteMapMatcher().match(resMount.getMount().getHomePage(), resMount);
             } else {
@@ -539,9 +543,10 @@ public class HstLinkImpl implements HstLink {
         }
 
         if (resolved != null) {
-            siteMapItem  = resolved.getHstSiteMapItem();
+            siteMapItem = Optional.of(resolved.getHstSiteMapItem());
+        } else {
+            siteMapItem = Optional.empty();
         }
-        siteMapItemResolvedAlready = true;
-        return siteMapItem;
+        return siteMapItem.orElse(null);
     }
 }
