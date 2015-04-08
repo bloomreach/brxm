@@ -499,6 +499,7 @@ plugins/banner-and-carousel/pom.xml -text
 plugins/banner-and-carousel/src/main/resources/META-INF/banner_instructions.xml -text
 plugins/banner-and-carousel/src/main/resources/META-INF/resources/feature/bannerPlugin/bannerPlugin.html -text
 plugins/banner-and-carousel/src/main/resources/META-INF/web-fragment.xml -text
+plugins/banner-and-carousel/src/main/resources/freemarker/essentials-banner-with-description.ftl -text
 plugins/banner-and-carousel/src/main/resources/freemarker/essentials-banner.ftl -text
 plugins/banner-and-carousel/src/main/resources/freemarker/essentials-carousel.ftl -text
 plugins/banner-and-carousel/src/main/resources/hst/banner-template-freemarker.xml -text
