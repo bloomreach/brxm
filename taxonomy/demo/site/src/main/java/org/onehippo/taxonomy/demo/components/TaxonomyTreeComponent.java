@@ -16,6 +16,7 @@
 package org.onehippo.taxonomy.demo.components;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -41,10 +42,10 @@ public class TaxonomyTreeComponent extends BaseHstComponent {
 
         TaxonomyManager taxonomyManager = HstServices.getComponentManager().getComponent(TaxonomyManager.class.getName());
        
-        if (taxonomyRoot == null || taxonomyManager.getTaxonomies().getTaxonomy(taxonomyRoot) == null) {
+        if (taxonomyRoot == null || taxonomyManager.getTaxonomies(RequestContextProvider.get()).getTaxonomy(taxonomyRoot) == null) {
             request.setAttribute("error", "Cannot find taxonomy " + taxonomyRoot);
         } else {
-            request.setAttribute("taxonomy", taxonomyManager.getTaxonomies().getTaxonomy(taxonomyRoot));
+            request.setAttribute("taxonomy", taxonomyManager.getTaxonomies(RequestContextProvider.get()).getTaxonomy(taxonomyRoot));
             request.setAttribute("baseUrl", baseUrl);
         }
     }

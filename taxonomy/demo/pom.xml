@@ -35,6 +35,7 @@
   </scm>
 
   <properties>
+    <forge.taxonomy.version>1.12.00-SNAPSHOT</forge.taxonomy.version>
     <taglibs.version>1.2.1</taglibs.version>
     <junit.version>4.5</junit.version>
     <commons.lang.version>2.6</commons.lang.version>

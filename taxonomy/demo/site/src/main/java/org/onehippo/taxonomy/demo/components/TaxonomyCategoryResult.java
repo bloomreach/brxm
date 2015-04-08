@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
@@ -50,10 +51,10 @@ public class TaxonomyCategoryResult extends BaseHstComponent {
         String taxonomy = getComponentParameter("root");
         String relPath = getComponentParameter("path");
         
-        if(taxonomy == null || taxonomyManager.getTaxonomies().getTaxonomy(taxonomy) == null) {
+        if(taxonomy == null || taxonomyManager.getTaxonomies(RequestContextProvider.get()).getTaxonomy(taxonomy) == null) {
             request.setAttribute("error", "Cannot find taxonomy " + taxonomy);
         } else {
-            Taxonomy tax = taxonomyManager.getTaxonomies().getTaxonomy(taxonomy);
+            Taxonomy tax = taxonomyManager.getTaxonomies(RequestContextProvider.get()).getTaxonomy(taxonomy);
             if(relPath == null || tax.getCategory(relPath) == null){
                 request.setAttribute("error", "Cannot find taxonomy term for relPath " + relPath);
             } else {
