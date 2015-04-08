@@ -19,12 +19,14 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
+import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class HstDefaultSiteMapLoginIT extends AbstractTestConfigurations {
@@ -48,12 +50,16 @@ public class HstDefaultSiteMapLoginIT extends AbstractTestConfigurations {
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/login/form");
         final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem("/login/form");
 
+        assertEquals("login/_any_",HstSiteMapUtils.getPath(resolvedSiteMapItem.getHstSiteMapItem()));
         assertTrue("/login/_any_ should be container resource since mountPath should not be in the URL",
                 resolvedSiteMapItem.getHstSiteMapItem().isContainerResource());
 
+        assertNull(resolvedSiteMapItem.getRelativeContentPath());
+        assertEquals("login/form", resolvedSiteMapItem.getPathInfo());
+
         assertFalse("Although a 'container resource' sitemap item by default has 'schemeagnostic = true' (to be able " +
                 "to serve resources over any scheme), the login/xyz is *not* scheme agnostic by default since we " +
-                "promote https",resolvedSiteMapItem.getHstSiteMapItem().isSchemeAgnostic());
+                "promote https", resolvedSiteMapItem.getHstSiteMapItem().isSchemeAgnostic());
         assertEquals("https", resolvedSiteMapItem.getHstSiteMapItem().getScheme());
         assertEquals("Default pipeline for a container resource should be 'PlainFilterChainInvokingPipeline'.","PlainFilterChainInvokingPipeline", resolvedSiteMapItem.getNamedPipeline());
     }

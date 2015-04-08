@@ -25,9 +25,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class HstDefaultSiteWebMapFilesIT extends AbstractTestConfigurations {
+public class HstDefaultSiteMapBinariesIT extends AbstractTestConfigurations {
 
     private HstManager hstManager;
     @Override
@@ -44,17 +47,21 @@ public class HstDefaultSiteWebMapFilesIT extends AbstractTestConfigurations {
     }
 
     @Test
-    public void default_sitemap_item_web_files() throws Exception {
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/webfiles/534635623/styles/style.css");
-        final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem("/webfiles/534635623/styles/style.css");
+    public void default_sitemap_item_binaries() throws Exception {
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/binaries/content/assets/themes/css/green.css");
+        final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem("/binaries/content/assets/themes/css/green.css");
 
-        assertEquals("webfiles/_default_/_any_", HstSiteMapUtils.getPath(resolvedSiteMapItem.getHstSiteMapItem()));
-        assertTrue(resolvedSiteMapItem.getHstSiteMapItem().isContainerResource());
-        assertEquals("webfiles/534635623/styles/style.css", resolvedSiteMapItem.getPathInfo());
+        assertEquals("binaries/_any_", HstSiteMapUtils.getPath(resolvedSiteMapItem.getHstSiteMapItem()));
+
+        assertTrue("/binaries/_any_ should be container resource since mountPath should not be in the URL",
+                resolvedSiteMapItem.getHstSiteMapItem().isContainerResource());
+
+        assertEquals("binaries/content/assets/themes/css/green.css", resolvedSiteMapItem.getPathInfo());
+
         assertTrue(resolvedSiteMapItem.getHstSiteMapItem().isSchemeAgnostic());
         assertEquals("http", resolvedSiteMapItem.getHstSiteMapItem().getScheme());
-        assertEquals("WebFilePipeline", resolvedSiteMapItem.getNamedPipeline());
-        assertEquals("534635623", resolvedSiteMapItem.getParameter("version"));
+        assertNull(resolvedSiteMapItem.getRelativeContentPath());
+        assertEquals("Default pipeline for a binary should be 'PlainFilterChainInvokingPipeline'.","PlainFilterChainInvokingPipeline", resolvedSiteMapItem.getNamedPipeline());
     }
 
 

@@ -795,6 +795,7 @@ components/core/src/test/java/org/hippoecm/hst/configuration/model/BrokenModelCo
 components/core/src/test/java/org/hippoecm/hst/configuration/mount/MountServiceIT.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/pages/PagesModelsIT.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/site/SiteServiceIT.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/sitemap/HstDefaultSiteMapBinariesIT.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/sitemap/HstDefaultSiteMapLoginIT.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/sitemap/HstDefaultSiteMapModelsIT.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/sitemap/HstDefaultSiteWebMapFilesIT.java -text

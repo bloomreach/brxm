@@ -234,4 +234,19 @@
       </sv:property>
     </sv:node>
   </sv:node>
+
+  <sv:node sv:name="binaries">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <!-- container resource must be true so that links are created relative to the webapp and not to the (sub)mount) -->
+    <sv:property sv:name="hst:containerresource" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:node sv:name="_any_">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
 </sv:node>
