@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<html>
+<html data-ng-app="hippo.channel.pages">
   <head>
     <title>Page Management</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -25,10 +25,8 @@
   </head>
 
   <body>
-    <div data-ng-app="hippo.channel.pages" id="application" class="loading-icon l-stretch">
-      <div class="hidden" ng-include="'../components/hippo-theme/dist/images/hippo-icon-sprite.svg'"></div>
-      <div class="l-stretch" data-ui-view></div>
-    </div>
+    <div class="hidden" ng-include="'../components/hippo-theme/dist/images/hippo-icon-sprite.svg'"></div>
+    <div class="main-content" ui-view></div>
 
     <script src="../components/jquery/dist/jquery.min.js"></script>
     <script src="../components/angular/angular.min.js"></script>

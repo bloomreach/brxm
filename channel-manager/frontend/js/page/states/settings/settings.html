@@ -14,41 +14,40 @@
   limitations under the License.
   -->
 
-<div class="panel panel-default l-stretch">
+<div data-hippo-confirmation-dialog
+     class="confirmation-dialog"
+     data-confirm-icon="trash"
+     data-perform-confirmation="confirmDelete()"
+     data-perform-cancel="cancelDelete()"
+     data-confirm-label="{{ 'DELETE_PAGE' | translate }}"
+     data-cancel-label="{{ 'CANCEL' | translate }}"
+     data-show="isConfirmationVisible">
+  <p class="confirmation-dialog-title">
+    {{ 'CONFIRM_DELETE_TITLE' | translate:page }}
+  </p>
+  <p class="confirmation-dialog-message">
+    {{ 'CONFIRM_DELETE_MESSAGE' | translate:page }}
+  </p>
+</div>
 
-  <div data-hippo-confirmation-dialog
-       class="confirmation-dialog"
-       data-confirm-icon="trash"
-       data-perform-confirmation="confirmDelete()"
-       data-perform-cancel="cancelDelete()"
-       data-confirm-label="{{ 'DELETE_PAGE' | translate }}"
-       data-cancel-label="{{ 'CANCEL' | translate }}"
-       data-show="isConfirmationVisible">
-    <p class="confirmation-dialog-title">
-      {{ 'CONFIRM_DELETE_TITLE' | translate:page }}
-    </p>
-    <p class="confirmation-dialog-message">
-      {{ 'CONFIRM_DELETE_MESSAGE' | translate:page }}
-    </p>
-  </div>
+<div data-hippo-confirmation-dialog
+     class="confirmation-dialog"
+     data-confirm-icon="trash-o"
+     data-perform-confirmation="confirmRemovePrimaryDocument()"
+     data-perform-cancel="cancelRemovePrimaryDocument()"
+     data-confirm-label="{{ 'REMOVE_PRIMARY_DOCUMENT' | translate }}"
+     data-cancel-label="{{ 'CANCEL' | translate }}"
+     data-show="isConfirmationRemovePrimaryDocumentVisible">
+  <p class="confirmation-dialog-title">
+    {{ 'CONFIRM_REMOVE_PRIMARY_DOCUMENT_TITLE' | translate:page }}
+  </p>
+  <p class="confirmation-dialog-message">
+    {{ 'CONFIRM_REMOVE_PRIMARY_DOCUMENT_MESSAGE' | translate:page }}
+  </p>
+</div>
 
-  <div data-hippo-confirmation-dialog
-       class="confirmation-dialog"
-       data-confirm-icon="trash-o"
-       data-perform-confirmation="confirmRemovePrimaryDocument()"
-       data-perform-cancel="cancelRemovePrimaryDocument()"
-       data-confirm-label="{{ 'REMOVE_PRIMARY_DOCUMENT' | translate }}"
-       data-cancel-label="{{ 'CANCEL' | translate }}"
-       data-show="isConfirmationRemovePrimaryDocumentVisible">
-    <p class="confirmation-dialog-title">
-      {{ 'CONFIRM_REMOVE_PRIMARY_DOCUMENT_TITLE' | translate:page }}
-    </p>
-    <p class="confirmation-dialog-message">
-      {{ 'CONFIRM_REMOVE_PRIMARY_DOCUMENT_MESSAGE' | translate:page }}
-    </p>
-  </div>
-
-  <div class="panel-body l-fixed-height">
+<div class="panel panel-default flex-full flex-column">
+  <div class="panel-body flex-child">
     <form name="form" role="form" novalidate>
       <div class="alert alert-danger" data-ng-show="errorFeedback.message">
         {{ errorFeedback.message }}
@@ -172,8 +171,8 @@
     </form>
   </div>
 
-  <div class="panel-footer clearfix">
-    <div class="tooltip-newlines"
+  <div class="panel-footer solid-child">
+    <div class="tooltip-newlines flex-center"
          data-tooltip="{{ tooltips.deleteButton() }}"
          data-tooltip-trigger="mouseenter"
          data-tooltip-placement="top">
