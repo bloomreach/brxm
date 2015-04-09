@@ -52,10 +52,12 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyR
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.MissingParametersInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;
+import static org.hippoecm.hst.pagecomposer.jaxrs.util.MissingParametersInfo.defaultMissingParametersInfo;
 
 /**
  * The REST resource handler for the nodes that are of the type "hst:containeritemcomponent". This is specified using
@@ -212,25 +214,30 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                                                            final String prefix) throws RepositoryException, ClassNotFoundException {
         List<ContainerItemComponentPropertyRepresentation> properties = new ArrayList<>();
 
-
+        String contentPath = "";
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        if (requestContext != null) {
+            contentPath = getPageComposerContextService().getEditingMount().getContentPath();
+        }
         //Get the properties via annotation on the component class
         String componentClassName = null;
         if (node.hasProperty(HST_COMPONENTCLASSNAME)) {
             componentClassName = node.getProperty(HST_COMPONENTCLASSNAME).getString();
         }
+        final ParametersInfo parametersInfo;
         if (componentClassName != null) {
             Class<?> componentClass = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
             if (componentClass.isAnnotationPresent(ParametersInfo.class)) {
-                ParametersInfo parametersInfo = componentClass.getAnnotation(ParametersInfo.class);
-                String contentPath = "";
-                final HstRequestContext requestContext = RequestContextProvider.get();
-                if (requestContext != null) {
-                    contentPath = getPageComposerContextService().getEditingMount().getContentPath();
-                }
-                properties = getPopulatedProperties(parametersInfo, locale, contentPath, prefix, node,
-                        containerItemHelper, propertyPresentationFactories);
+                parametersInfo = componentClass.getAnnotation(ParametersInfo.class);
+            } else {
+                parametersInfo = defaultMissingParametersInfo;
             }
+        } else {
+            parametersInfo = defaultMissingParametersInfo;
         }
+
+        properties = getPopulatedProperties(parametersInfo, locale, contentPath, prefix, node,
+                containerItemHelper, propertyPresentationFactories);
 
         ContainerItemComponentRepresentation representation = new ContainerItemComponentRepresentation();
         representation.setProperties(properties);
