@@ -98,7 +98,8 @@ public enum Icon {
     TRANSLATE,
     TYPE,
     UNLINK,
-    UNLOCKED;
+    UNLOCKED,
+    USER_CIRCLE;
 
     private static final Logger log = LoggerFactory.getLogger(Icon.class);
 
