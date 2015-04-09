@@ -28,11 +28,11 @@
         function navigateToSelected (items, parent) {
           angular.forEach(items, function (item) {
             if (item.selected) {
-              $state.go('picker.docs', {
-                pickerTreeItemId: parent.id
-              });
               PickerCtrl.selectedItem = parent;
               PickerCtrl.selectedDocument = item;
+              $state.go('picker.docs', {
+                pickerTreeItemId: PickerCtrl.selectedItem.id
+              });
             }
             if (item.items) {
               navigateToSelected(item.items, item);
@@ -83,11 +83,18 @@
             });
           }
           PickerCtrl.selectedDocument = null;
-
         };
 
         PickerCtrl.pickerType = $filter('hippoGetByProperty')(PickerCtrl.pickerTypes, 'type', PickerCtrl.treeItems[0].pickerType);
         navigateToSelected(PickerCtrl.treeItems);
+        if(Object.getOwnPropertyNames(PickerCtrl.selectedItem).length === 0)
+        {
+          PickerCtrl.selectedItem = PickerCtrl.treeItems[0];
+          $state.go('picker.docs', {
+            pickerTreeItemId: PickerCtrl.selectedItem.id
+          });
+
+        }
       }
     ]);
 }());
