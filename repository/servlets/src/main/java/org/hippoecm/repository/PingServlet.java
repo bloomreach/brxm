@@ -31,6 +31,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
+import org.onehippo.repository.security.JvmCredentials;
+
 /**
  * <p>A servlet that can be used to check if the repository is up-and-running. This
  * is especially useful for load balancer checks. The check does the following steps:</p>
@@ -257,7 +260,13 @@ public class PingServlet extends HttpServlet {
             if (username.isEmpty() || "anonymous".equalsIgnoreCase(username)) {
                 return repository.login();
             }
-            return repository.login(username, password.toCharArray());
+            if (StringUtils.isBlank(password)) {
+                // try as jvm enabled user
+                final JvmCredentials credentials = JvmCredentials.getCredentials(username);
+                return repository.login(credentials);
+            } else {
+                return repository.login(username, password.toCharArray());
+            }
         } catch (LoginException e) {
             String msg = "FAILURE - Wrong credentials for obtaining session from repository in ping servlet : " + ""
                     + "Are the '" + USERNAME_PARAM + "' and '" + PASSWORD_PARAM
