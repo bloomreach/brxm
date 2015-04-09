@@ -140,7 +140,7 @@ public class SimpleLoginPlugin extends LoginPlugin {
 
             form.add(captchaImage);
             form.add(captchaTextField);
-            form.add(captchaLabel);
+            form.addLabelledComponent(captchaLabel);
         }
 
     }

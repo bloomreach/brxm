@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.login;
 
 import java.security.AccessControlException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -27,10 +28,12 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -73,7 +76,7 @@ public class LoginPanel extends Panel {
 
     private final LoginSuccessHandler successHandler;
 
-    protected final Form form;
+    protected final LoginForm form;
     protected String username;
     protected String password;
     protected String selectedLocale;
@@ -115,13 +118,14 @@ public class LoginPanel extends Panel {
         }
     }
 
-    private class LoginForm extends Form {
+    protected class LoginForm extends Form {
 
         protected final FeedbackPanel feedback;
         protected final DropDownChoice<String> locale;
         protected final RequiredTextField<String> usernameTextField;
         protected final PasswordTextField passwordTextField;
         protected final Button submitButton;
+        protected final List<Component> labels = new ArrayList<>();
 
         public LoginForm(final boolean autoComplete, final List<String> locales) {
             super("login-form");
@@ -138,9 +142,11 @@ public class LoginPanel extends Panel {
             feedback.setOutputMarkupId(true);
             feedback.setEscapeModelStrings(false);
 
+            addLabelledComponent(new Label("username-label", new ResourceModel("username-label")));
             add(usernameTextField = new RequiredTextField<>("username", PropertyModel.of(LoginPanel.this, "username")));
             usernameTextField.setOutputMarkupId(true);
 
+            addLabelledComponent(new Label("password-label", new ResourceModel("password-label")));
             add(passwordTextField = new PasswordTextField("password", PropertyModel.of(LoginPanel.this, "password")));
             passwordTextField.setResetPassword(false);
 
@@ -156,6 +162,7 @@ public class LoginPanel extends Panel {
             }
             getSession().setLocale(new Locale(selectedLocale));
 
+            addLabelledComponent(new Label("locale-label", new ResourceModel("locale-label")));
             add(locale = new DropDownChoice<>("locale",
                     new PropertyModel<String>(LoginPanel.this, "selectedLocale") {
                         @Override
@@ -182,12 +189,14 @@ public class LoginPanel extends Panel {
                     //immediately set the locale when the user changes it
                     setCookieValue(LOCALE_COOKIE, selectedLocale, LOCALE_COOKIE_MAXAGE);
                     getSession().setLocale(new Locale(selectedLocale));
-                    target.add(LoginForm.this);
+                    for (Component component : labels) {
+                        target.add(component);
+                    }
                 }
             });
 
             submitButton = new Button("submit", new ResourceModel("submit-label"));
-            add(submitButton);
+            addLabelledComponent(submitButton);
         }
 
         @Override
@@ -214,6 +223,12 @@ public class LoginPanel extends Panel {
                 PluginUserSession.get().login();
                 loginFailed(LoginException.CAUSE.ACCESS_DENIED);
             }
+        }
+
+        protected void addLabelledComponent(final Component component) {
+            component.setOutputMarkupId(true);
+            add(component);
+            labels.add(component);
         }
     }
 
