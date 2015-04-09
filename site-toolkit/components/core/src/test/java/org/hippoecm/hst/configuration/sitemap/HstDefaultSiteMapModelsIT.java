@@ -87,7 +87,7 @@ public class HstDefaultSiteMapModelsIT extends AbstractTestConfigurations {
         session.save();
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/foo/bar.xyz");
         final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem("/foo/bar.xyz");
-        assertEquals("PlainFilterChainInvokingPipeline", resolvedSiteMapItem.getNamedPipeline());
+        assertEquals("ContainerResourcePipeline", resolvedSiteMapItem.getNamedPipeline());
         assertTrue(resolvedSiteMapItem.getHstSiteMapItem().isSchemeAgnostic());
         assertTrue(resolvedSiteMapItem.getHstSiteMapItem().isExcludedForLinkRewriting());
     }
