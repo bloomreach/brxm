@@ -242,7 +242,9 @@ h3.lead.item-title {
 }
 
 #picker-type {
-  height: 32px;
+  display: flex;
+  align-items: center;
+  height: 41px;
   background: #f4f4f4;
   padding: 3px;
   select {
@@ -259,6 +261,12 @@ h3.lead.item-title {
   margin-bottom: 0;
   thead {
     background: #f4f4f4;
+    tr {
+      height: 41px;
+      td {
+        vertical-align: middle;
+      }
+    }
   }
   tbody tr:first-child td {
     border-top: 0;
