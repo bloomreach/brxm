@@ -28,15 +28,15 @@ public class NewPageModelRepresentation {
 
     public NewPageModelRepresentation(final List<PrototypeRepresentation> prototypes,
                                       final List<SiteMapPageRepresentation> pages,
-                                      final String hostName) {
+                                      final String prefix) {
         this.prototypes = prototypes;
         locations = new ArrayList<>();
-        locations.add(new Location(hostName + "/", null));
+        locations.add(new Location(prefix + "/", null));
         for (SiteMapPageRepresentation page : pages) {
             if (!page.isWorkspaceConfiguration()) {
                 continue;
             }
-            Location location = new Location(hostName + page.getRenderPathInfo() + "/", page.getId());
+            Location location = new Location(prefix + page.getPathInfo() + "/", page.getId());
             locations.add(location);
         }
 
