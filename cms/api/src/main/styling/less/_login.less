@@ -101,6 +101,12 @@
     color: @login-panel-center-button-color;
     border-radius: 4px;
     min-width: 64px;
+
+    &[disabled] {
+      background-color: @button-disabled-bgcolor;
+      border-color: @button-disabled-border;
+      color: @button-disabled-color;
+    }
   }
 }
 

@@ -17,29 +17,28 @@
   <body>
     <wicket:panel>
 
-      <form wicket:id="login-form" onsubmit="return Hippo.onLoginSubmit()">
+      <form wicket:id="login-form">
         <div class="hippo-login-feedback" wicket:id="feedback">Feedback panel</div>
         <div class="hippo-login-form-container">
-          <h2>
-            <wicket:message key="header"/>
-          </h2>
+          <h2 wicket:id="header-label" />
+
           <!-- username -->
           <div class="hippo-login-form-label">
-            <div wicket:id="username-label"></div>
+            <label wicket:id="username-label"></label>
           </div>
           <div class="hippo-login-form-input">
             <input class="hippo-form-text" wicket:id="username" type="text" value="foo@goo.moo"/>
           </div>
           <!-- password -->
           <div class="hippo-login-form-label">
-            <div wicket:id="password-label"></div>
+            <label wicket:id="password-label"></label>
           </div>
           <div class="hippo-login-form-input">
             <input class="hippo-form-password" wicket:id="password" type="password" value="password"/>
           </div>
           <!-- locale dropdown-->
           <div class="hippo-login-form-label">
-            <div wicket:id="locale-label"></div>
+            <label wicket:id="locale-label"></label>
           </div>
           <div class="hippo-login-form-input">
             <select name="locale" wicket:id="locale"></select>

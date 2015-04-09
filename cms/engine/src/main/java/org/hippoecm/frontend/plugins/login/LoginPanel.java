@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.login;
 
 import java.security.AccessControlException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -32,6 +31,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -45,8 +45,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.collections.MiniMap;
-import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
@@ -59,6 +59,9 @@ import org.slf4j.LoggerFactory;
 public class LoginPanel extends Panel {
 
     public static final Logger log = LoggerFactory.getLogger(LoginPanel.class);
+
+    public static final JavaScriptResourceReference PREVENT_RESUBMIT_SCRIPT_REFERENCE =
+            new JavaScriptResourceReference(LoginPanel.class, "PreventResubmit.js");
 
     private static final String LOCALE_COOKIE = "loc";
     private static final int LOCALE_COOKIE_MAXAGE = 365 * 24 * 3600; // expire one year from now
@@ -141,6 +144,9 @@ public class LoginPanel extends Panel {
             add(feedback = new FeedbackPanel("feedback"));
             feedback.setOutputMarkupId(true);
             feedback.setEscapeModelStrings(false);
+            feedback.setFilter(message -> !message.isRendered());
+
+            addLabelledComponent(new Label("header-label", new ResourceModel("header")));
 
             addLabelledComponent(new Label("username-label", new ResourceModel("username-label")));
             add(usernameTextField = new RequiredTextField<>("username", PropertyModel.of(LoginPanel.this, "username")));
@@ -186,12 +192,14 @@ public class LoginPanel extends Panel {
             ));
             locale.add(new OnChangeAjaxBehavior() {
                 protected void onUpdate(AjaxRequestTarget target) {
-                    //immediately set the locale when the user changes it
+                    // Store locale in cookie
                     setCookieValue(LOCALE_COOKIE, selectedLocale, LOCALE_COOKIE_MAXAGE);
+                    // and update the session locale
                     getSession().setLocale(new Locale(selectedLocale));
-                    for (Component component : labels) {
-                        target.add(component);
-                    }
+
+                    // redraw labels and feedback panel
+                    labels.stream().filter(Component::isVisible).forEach(target::add);
+                    target.add(feedback);
                 }
             });
 
@@ -201,13 +209,13 @@ public class LoginPanel extends Panel {
 
         @Override
         public void renderHead(final IHeaderResponse response) {
-            final String script = String.format("$('#%s').focus()", usernameTextField.getMarkupId());
-            response.render(OnDomReadyHeaderItem.forScript(script));
-            final PackageTextTemplate template = new PackageTextTemplate(LoginPanel.class, "prevent-resubmit.js");
-            final Map<String, String> variables = new HashMap<String, String>(1){{
-                put("submitButtonId", submitButton.getMarkupId());
-            }};
-            response.render(OnDomReadyHeaderItem.forScript(template.asString(variables)));
+            final String focusScript = String.format("$('#%s').focus()", usernameTextField.getMarkupId());
+            response.render(OnDomReadyHeaderItem.forScript(focusScript));
+
+            response.render(JavaScriptReferenceHeaderItem.forReference(PREVENT_RESUBMIT_SCRIPT_REFERENCE));
+            final String preventResubmitScript = String.format("if (Hippo && Hippo.PreventResubmit) { " +
+                            "Hippo.PreventResubmit('#%s'); }", form.getMarkupId());
+            response.render(OnDomReadyHeaderItem.forScript(preventResubmitScript));
         }
 
         @Override
