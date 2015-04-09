@@ -129,21 +129,8 @@
         <input type="text" name="sitemapItem" class="form-control" id="hippo.channel.menu.menuItem.edit.sitemapItem"
                data-ng-model="MenuItemCtrl.selectedMenuItem.sitemapLink"
                data-show-focus="EditMenuItemCtrl.linkToFocus == 'sitemapLink'"
-               data-ng-blur="EditMenuItemCtrl.updateLinkDestination(form)">
-        <span class="form-control-feedback" data-ng-show="form.sitemapItem.$dirty">
-          <hippo-icon ng-if="EditMenuItemCtrl.isSaving.link"
-                      name="spinner"
-                      size="m">
-          </hippo-icon>
-          <hippo-icon ng-if="form.sitemapItem.$valid && EditMenuItemCtrl.isSaved.link && !EditMenuItemCtrl.isSaving.link"
-                      name="check-circle"
-                      size="m">
-          </hippo-icon>
-          <hippo-icon ng-if="form.sitemapItem.$invalid || !EditMenuItemCtrl.isSaved.link"
-                      name="minus-circle"
-                      size="m">
-          </hippo-icon>
-        </span>
+               data-ng-blur="EditMenuItemCtrl.updateLinkDestination(form)"
+               data-ng-readonly="'true'">
         <span class="input-group-btn">
           <div data-tooltip
                data-placement="left"
@@ -158,6 +145,7 @@
             </button>
           </div>
         </span>
+
       </div>
     </div>
     <div class="form-group has-feedback"
