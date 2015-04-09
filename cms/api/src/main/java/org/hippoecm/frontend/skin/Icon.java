@@ -31,6 +31,7 @@ public enum Icon {
 
     ARROW_DOWN,
     ARROW_UP,
+    ARROW_RIGHT_SQUARE,
     BELL,
     BULLET,
     BULLHORN,

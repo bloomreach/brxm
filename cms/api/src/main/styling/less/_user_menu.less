@@ -32,20 +32,19 @@
   display: none;
   position: absolute;
   z-index: 2;
-  left: 63px;
+  left: 65px;
   bottom: 16px;
   background-color: @user-menu-popup-background;
   box-shadow: 0 0 0 3px @user-menu-popup-border;
   padding: 8px 12px;
   text-align: left;
   min-width: 90px;
-  max-width: 140px;
+  max-width: 100%;
 
 
   > div.label {
     line-height: 1.3em;
     padding: 4px 0 0 0;
-    .truncate();
 
     &:first-child {
       padding-top: 0;
@@ -60,6 +59,10 @@
     span {
       width: 100%;
       text-align: center;
+    }
+
+    .hi {
+      vertical-align: initial;
     }
   }
 
