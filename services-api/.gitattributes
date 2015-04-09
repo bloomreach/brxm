@@ -7,7 +7,6 @@ src/main/java/org/onehippo/cms7/services/autoreload/AutoReloadService.java -text
 src/main/java/org/onehippo/cms7/services/eventbus/HippoEventListener.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/cms7/services/eventbus/Subscribe.java -text
 src/main/java/org/onehippo/cms7/services/googleanalytics/GoogleAnalyticsService.java -text
-src/main/java/org/onehippo/cms7/services/jaxrs/JaxrsService.java -text
 src/main/java/org/onehippo/cms7/services/webfiles/WebFile.java -text
 src/main/java/org/onehippo/cms7/services/webfiles/WebFileEvent.java -text
 src/main/java/org/onehippo/cms7/services/webfiles/WebFilesService.java -text
