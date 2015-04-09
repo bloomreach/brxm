@@ -504,6 +504,11 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
 
         @Override
+        public String getCdnHost() {
+            return null;
+        }
+
+        @Override
         public boolean isCustomHttpsSupported() {
             return false;
         }

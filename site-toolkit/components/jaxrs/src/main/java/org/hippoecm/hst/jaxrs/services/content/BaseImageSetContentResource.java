@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -204,7 +204,7 @@ public class BaseImageSetContentResource extends AbstractContentResource {
                 if (binariesCache != null) {
                     HstLink hstLink = requestContext.getHstLinkCreator().create(childImageBean, requestContext);
                     String relativeContentPath = 
-                        StringUtils.removeStart(hstLink.getPath(), PathUtils.normalizePath(requestContext.getContainerConfiguration().getString("binaries.prefix.path", "/binaries")));
+                        StringUtils.removeStart(hstLink.getPath(), "binaries");
                     binariesCache.remove(relativeContentPath);
                 }
                 

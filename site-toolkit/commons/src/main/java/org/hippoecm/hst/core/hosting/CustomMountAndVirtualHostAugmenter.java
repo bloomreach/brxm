@@ -352,6 +352,11 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         }
 
         @Override
+        public String getCdnHost() {
+            return null;
+        }
+
+        @Override
         public boolean isCustomHttpsSupported() {
             return false;
         }

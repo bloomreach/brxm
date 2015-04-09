@@ -23,6 +23,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -294,6 +295,16 @@ public class HstLinkImpl implements HstLink {
             } else if (!requestContext.isCmsRequest()) {
                 // the above !requestContext.isCmsRequest() check is to avoid fully qualified links in CMS channel manager:
                 // for the cms, we never want a fully qualified URLs for links as that is managed through the 'renderHost'
+
+                if (StringUtils.isNotBlank(mount.getVirtualHost().getCdnHost())) {
+                    final HstSiteMapItem siteMapItem = resolveSiteMapItem(requestContext);
+                    if (siteMapItem != null && siteMapItem.isContainerResource()
+                            && isCdnSupportedPipeline(siteMapItem.getNamedPipeline())) {
+                        log.debug("Using CDN host '{}' for container resource '{}'", mount.getVirtualHost().getCdnHost(), urlString);
+                        return mount.getVirtualHost().getCdnHost() + urlString;
+                    }
+                }
+
                 HstLinkImplCharacteristics hstLinkImplCharacteristics = new HstLinkImplCharacteristics(requestContext, fullyQualified);
                 if (hstLinkImplCharacteristics.isFullyQualified()) {
 
@@ -335,6 +346,10 @@ public class HstLinkImpl implements HstLink {
         }
 
         return urlString;
+    }
+
+    private boolean isCdnSupportedPipeline(final String pipeline) {
+        return HstSiteMapItemService.CDN_SUPPORTED_PIPELINES.contains(pipeline);
     }
 
     public boolean isNotFound() {

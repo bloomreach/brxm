@@ -223,6 +223,9 @@
     <sv:property sv:name="hst:scheme" sv:type="String">
       <sv:value>https</sv:value>
     </sv:property>
+    <sv:property sv:name="hst:namedpipeline" sv:type="String">
+      <sv:value>PlainFilterChainInvokingPipeline</sv:value>
+    </sv:property>
     <!-- hst:containerresource = true by default implies by default hst:schemeagnostic = true (to serve .css or .js etc over same scheme as
     request). However, we want for the login URLs which send username / password to use by default https. -->
     <sv:property sv:name="hst:schemeagnostic" sv:type="Boolean">

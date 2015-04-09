@@ -27,6 +27,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -42,13 +43,16 @@ import org.onehippo.cms7.util.WeakIdentityMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.VIRTUALHOST_PROPERTY_CDN_HOST;
+
 public class DefaultHstLinkCreator implements HstLinkCreator {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultHstLinkCreator.class);
 
-    private final static String DEFAULT_PAGE_NOT_FOUND_PATH = "pagenotfound";
+    private static final String DEFAULT_PAGE_NOT_FOUND_PATH = "pagenotfound";
+    public static final String BINARIES_PREFIX = "/binaries";
+    private static final String binariesPrefix = BINARIES_PREFIX;
     private String[] binaryLocations;
-    private String binariesPrefix;
     private String pageNotFoundPath = DEFAULT_PAGE_NOT_FOUND_PATH;
     private WeakIdentityMap<HstSiteMapItem, SubLocationMapTreesHolder> loadedSubLocationMapTreesHolder = WeakIdentityMap.newConcurrentHashMap();
     private HstLinkProcessor linkProcessor;
@@ -61,8 +65,16 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         this.rewriteContextResolver = rewriteContextResolver;
     }
 
+    /**
+     * @deprecated since 2.30.00 (CMS 10.0). If a cdn host is required, this needs to be configured on hst:virtualhost nodes
+     */
+    @Deprecated
     public void setBinariesPrefix(String binariesPrefix){
-        this.binariesPrefix = binariesPrefix;
+        if (StringUtils.isNotBlank(binariesPrefix)) {
+          log.warn("hst-config.properties property 'binaries.prefix.path' is not used any more. Ignoring configured value '{}'." +
+                  " If you configured a cdn host in the binaries prefix, you have to configure that now on a hst:virtualhost " +
+                  "or hst:mount configuration node through property '{}'.", binariesPrefix, VIRTUALHOST_PROPERTY_CDN_HOST);
+        }
     }
     
     public void setBinaryLocations(String[] binaryLocations) {

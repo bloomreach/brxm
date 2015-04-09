@@ -198,6 +198,13 @@ public interface VirtualHost {
     String [] getDefaultResourceBundleIds();
 
     /**
+     * @return <code>null</code> or empty String in case no cdn host is used and otherwise the cdn host to be used for URLs to sitemap items that have
+     * {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem#isContainerResource() HstSiteMapItem#isContainerResource() = true}.
+     * Supported format for a cdn host is //hostname. It is *not* allowed to include the scheme (http:|https:)
+     */
+    String getCdnHost();
+
+    /**
      * @return <code>true</code> if this {@link VirtualHost} allows a {@link HttpServletRequest} over <code>https</code> to
      * be rendered while the matched {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem} or {@link Mount} indicates
      * through <code>getScheme()</code> the request should be <code>http</code>

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,23 +20,26 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkImpl;
 import org.hippoecm.hst.core.linking.LocationMapTree;
 import org.hippoecm.hst.core.linking.ResourceContainer;
 import org.hippoecm.hst.core.linking.ResourceLocationResolver;
-import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.VIRTUALHOST_PROPERTY_CDN_HOST;
+import static org.hippoecm.hst.core.linking.DefaultHstLinkCreator.BINARIES_PREFIX;
+
 public class HippoResourceLocationResolver implements ResourceLocationResolver {
     
     private static final Logger log = LoggerFactory.getLogger(HippoResourceLocationResolver.class);
     private String[] binaryLocations;
-    private String binariesPrefix;
+    private static final String binariesPrefix = BINARIES_PREFIX;
     private List<ResourceContainer> resourceContainers;
     
     private final static String NODE_TYPE = HippoNodeType.NT_RESOURCE;
@@ -49,9 +52,17 @@ public class HippoResourceLocationResolver implements ResourceLocationResolver {
     public void setLocationMapTree(LocationMapTree locationMapTree) {
         // we do not need a locationMapTree one for binary data
     }
-    
+
+    /**
+     * @deprecated since 2.30.00 (CMS 10.0). If a cdn host is required, this needs to be configured on hst:virtualhost nodes
+     */
+    @Deprecated
     public void setBinariesPrefix(String binariesPrefix){
-        this.binariesPrefix = binariesPrefix;
+        if (StringUtils.isNotBlank(binariesPrefix)) {
+            log.warn("hst-config.properties property 'binaries.prefix.path' is not used any more. Ignoring configured value '{}'." +
+                    " If you configured a cdn host in the binaries prefix, you have to configure that now on a hst:virtualhost " +
+                    "or hst:mount configuration node through property '{}'.", binariesPrefix, VIRTUALHOST_PROPERTY_CDN_HOST);
+        }
     }
     
     public void setBinaryLocations(String[] binaryLocations) {

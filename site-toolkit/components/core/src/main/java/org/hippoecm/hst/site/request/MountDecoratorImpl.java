@@ -550,6 +550,11 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
+        public String getCdnHost() {
+            return delegatee.getCdnHost();
+        }
+
+        @Override
         public boolean isCustomHttpsSupported() {
             return delegatee.isCustomHttpsSupported();
         }

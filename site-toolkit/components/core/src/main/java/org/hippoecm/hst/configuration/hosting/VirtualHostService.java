@@ -93,6 +93,7 @@ public class VirtualHostService implements MutableVirtualHost {
     private Integer defaultPort;
     private final boolean cacheable;
     private String [] defaultResourceBundleIds;
+    private String cdnHost;
     private boolean customHttpsSupported;
 
     public VirtualHostService(final VirtualHostsService virtualHosts,
@@ -130,7 +131,7 @@ public class VirtualHostService implements MutableVirtualHost {
         if (virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_CONTEXTPATH)) {
             this.contextPath = virtualHostNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOST_PROPERTY_CONTEXTPATH);
         }
-        
+
         if (contextPath == null) {
             if (parentHost == null) {
                 contextPath = virtualHosts.getDefaultContextPath();
@@ -254,6 +255,24 @@ public class VirtualHostService implements MutableVirtualHost {
             this.defaultResourceBundleIds =  virtualHosts.getDefaultResourceBundleIds();
         }
 
+        if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_CDN_HOST)) {
+            cdnHost = virtualHostNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOST_PROPERTY_CDN_HOST);
+        } else if(parentHost != null) {
+            cdnHost = parentHost.getCdnHost();
+        }
+
+        if (StringUtils.isBlank(cdnHost) && !StringUtils.isEmpty(cdnHost)) {
+            // only white space
+            cdnHost = "";
+        }
+
+        if (StringUtils.isNotBlank(cdnHost) && !validCdnHost(cdnHost)) {
+            log.error("Ignoring invalid CDN host '{}'. Supported format is : //hostname or //hostname:portnumber. It is not " +
+                    "allowed to start with http: or https: and is not allowed to end with a /. Ignoring configured " +
+                    "cdnHost '{}'.", cdnHost, cdnHost);
+            cdnHost = null;
+        }
+
         String fullName = virtualHostNode.getValueProvider().getName();
         String[] nameSegments = fullName.split("\\.");
 
@@ -358,6 +377,7 @@ public class VirtualHostService implements MutableVirtualHost {
         this.showPort = parent.showPort;
         this.cacheable = parent.cacheable;
         this.defaultResourceBundleIds = parent.defaultResourceBundleIds;
+        this.cdnHost = parent.cdnHost;
         this.customHttpsSupported = parent.customHttpsSupported;
         this.name = nameSegments[position];
         // add child host services
@@ -385,7 +405,17 @@ public class VirtualHostService implements MutableVirtualHost {
         portMounts.put(portMount.getPortNumber(), portMount);
     }
 
-
+    private boolean validCdnHost(final String cdnHost) {
+        // note, this is a very simple validation, very far from complete. However this is a basic check to avoid
+        // cdn host starts with scheme or end with a /
+        if (!cdnHost.startsWith("//")) {
+            return false;
+        }
+        if (cdnHost.endsWith("/")) {
+            return false;
+        }
+        return true;
+    }
 
     public String getName(){
         return name;
@@ -503,12 +533,18 @@ public class VirtualHostService implements MutableVirtualHost {
         return defaultResourceBundleIds[0];
     }
 
+    @Override
     public String [] getDefaultResourceBundleIds() {
         if (defaultResourceBundleIds == null) {
             return ArrayUtils.EMPTY_STRING_ARRAY;
         }
 
         return (String[]) ArrayUtils.clone(defaultResourceBundleIds);
+    }
+
+    @Override
+    public String getCdnHost() {
+        return this.cdnHost;
     }
 
     @Override
@@ -530,6 +566,5 @@ public class VirtualHostService implements MutableVirtualHost {
     public String toString() {
         return "VirtualHostService [name=" + name + ", hostName =" + hostName + ", hostGroupName=" + hostGroupName + "]";
     }
-
 
 }
