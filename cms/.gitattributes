@@ -1138,6 +1138,7 @@ api/src/main/styling/less/_selectable_documents.less -text
 api/src/main/styling/less/_tabs.less -text
 api/src/main/styling/less/_tree.less -text
 api/src/main/styling/less/_typography.less -text
+api/src/main/styling/less/_user_menu.less -text
 api/src/main/styling/less/_variables.less -text
 api/src/main/styling/less/lib/open-sans.less -text
 api/src/main/styling/less/main.less -text

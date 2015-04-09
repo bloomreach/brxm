@@ -1,0 +1,90 @@
+// Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+.hippo-user-menu {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  color: @user-menu-current-user-color;
+  width: @user-menu-width;
+  height: @user-menu-height;
+  background-color: @user-menu-bgcolor;
+
+  .hippo-current-user-name {
+    font-size: 11px;
+    .truncate();
+    padding: 0 4px;
+  }
+}
+
+.hippo-user-popup-menu {
+  display: none;
+  position: absolute;
+  z-index: 2;
+  left: 63px;
+  bottom: 16px;
+  background-color: @user-menu-popup-background;
+  box-shadow: 0 0 0 3px @user-menu-popup-border;
+  padding: 8px 12px;
+  text-align: left;
+  min-width: 90px;
+  max-width: 140px;
+
+
+  > div.label {
+    line-height: 1.3em;
+    padding: 4px 0 0 0;
+    .truncate();
+
+    &:first-child {
+      padding-top: 0;
+    }
+  }
+
+  .hippo-logout {
+    margin-top: 16px;
+    padding-top: 0;
+    display: flex;
+
+    span {
+      width: 100%;
+      text-align: center;
+    }
+  }
+
+  // Draw an arrow
+  &:after, &:before {
+    right: 100%;
+    bottom: 0;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+  }
+
+  &:after {
+    border-right-color: @user-menu-popup-background;
+    border-width: 10px;
+    margin-bottom: 20px;
+  }
+
+  &:before {
+    border-right-color: @user-menu-popup-border;
+    border-width: 14px;
+    margin-bottom: 16px;
+  }
+}
+
