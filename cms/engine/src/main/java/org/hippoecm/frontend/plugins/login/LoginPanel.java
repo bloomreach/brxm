@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.login;
 
 import java.security.AccessControlException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -42,6 +43,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.collections.MiniMap;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
@@ -119,13 +121,14 @@ public class LoginPanel extends Panel {
         protected final DropDownChoice<String> locale;
         protected final RequiredTextField<String> usernameTextField;
         protected final PasswordTextField passwordTextField;
+        protected final Button submitButton;
 
         public LoginForm(final boolean autoComplete, final List<String> locales) {
             super("login-form");
 
             setOutputMarkupId(true);
 
-            if (locales == null || locales.size() == 0) {
+            if (locales == null || locales.isEmpty()) {
                 throw new IllegalArgumentException("Argument locales can not be null or empty");
             }
 
@@ -183,13 +186,19 @@ public class LoginPanel extends Panel {
                 }
             });
 
-            add(new Button("submit", new ResourceModel("submit-label")));
+            submitButton = new Button("submit", new ResourceModel("submit-label"));
+            add(submitButton);
         }
 
         @Override
         public void renderHead(final IHeaderResponse response) {
             final String script = String.format("$('#%s').focus()", usernameTextField.getMarkupId());
             response.render(OnDomReadyHeaderItem.forScript(script));
+            final PackageTextTemplate template = new PackageTextTemplate(LoginPanel.class, "prevent-resubmit.js");
+            final Map<String, String> variables = new HashMap<String, String>(1){{
+                put("submitButtonId", submitButton.getMarkupId());
+            }};
+            response.render(OnDomReadyHeaderItem.forScript(template.asString(variables)));
         }
 
         @Override

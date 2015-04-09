@@ -76,7 +76,6 @@ public class SimpleLoginPlugin extends LoginPlugin {
         @Override
         protected void login() throws LoginException {
             if (useCaptcha && isCaptchaEnabled() && !captchaTextValue.equalsIgnoreCase(imagePass)) {
-                //userSession.login();
                 throw new LoginException(CAUSE.INCORRECT_CAPTCHA);
             }
 

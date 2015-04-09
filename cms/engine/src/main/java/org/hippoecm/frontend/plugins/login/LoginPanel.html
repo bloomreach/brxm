@@ -16,7 +16,8 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <body>
     <wicket:panel>
-      <form wicket:id="login-form">
+
+      <form wicket:id="login-form" onsubmit="return Hippo.onLoginSubmit()">
         <div class="hippo-login-feedback" wicket:id="feedback">Feedback panel</div>
         <div class="hippo-login-form-container">
           <h2>
