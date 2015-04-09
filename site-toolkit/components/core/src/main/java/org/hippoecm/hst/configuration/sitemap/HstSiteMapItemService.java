@@ -28,7 +28,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -91,7 +91,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
     public static final String CONTAINER_RESOURCE_PIPELINE_NAME = "ContainerResourcePipeline";
     public static final String WEB_FILE_PIPELINE_NAME = "WebFilePipeline";
 
-    public static final Set<String> CDN_SUPPORTED_PIPELINES = Sets.newHashSet(CONTAINER_RESOURCE_PIPELINE_NAME, WEB_FILE_PIPELINE_NAME);
+    public static final Set<String> CDN_SUPPORTED_PIPELINES = ImmutableSet.of(CONTAINER_RESOURCE_PIPELINE_NAME, WEB_FILE_PIPELINE_NAME);
 
     private Map<String, HstSiteMapItem> childSiteMapItems = new HashMap<String, HstSiteMapItem>();
 
