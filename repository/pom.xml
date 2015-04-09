@@ -64,6 +64,7 @@
     <module>servlets</module>
     <module>scripts</module>
     <module>workflow</module>
+    <module>jaxrs</module>
   </modules>
 
   <properties>

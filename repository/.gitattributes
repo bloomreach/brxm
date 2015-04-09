@@ -175,7 +175,6 @@ engine/src/main/java/org/hippoecm/repository/security/user/DelegatingHippoUserMa
 engine/src/main/java/org/hippoecm/repository/security/user/DelegatingUserManager.java -text
 engine/src/main/java/org/hippoecm/repository/security/user/HippoUserManager.java -text
 engine/src/main/java/org/hippoecm/repository/security/user/RepositoryUserManager.java svneol=native#text/plain
-engine/src/main/java/org/onehippo/cms7/jaxrs/JaxrsApplication.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/InitializationProcessorImpl.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/InitializeInstruction.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/InitializeItem.java -text
@@ -291,6 +290,9 @@ engine/src/test/resources/org/onehippo/repository/bootstrap/util/PartialSystemVi
 engine/src/test/resources/org/onehippo/repository/bootstrap/util/PartialSystemViewFilterTest_input.xml -text
 engine/src/test/resources/repository-test.cnd -text
 engine/src/test/resources/role-jcrread.xml svneol=native#text/plain
+jaxrs/pom.xml svneol=native#text/plain
+jaxrs/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
+jaxrs/src/main/resources/role-restuser.xml svneol=native#text/plain
 modules/pom.xml svneol=native#text/plain
 modules/src/main/java/org/hippoecm/repository/jackrabbit/FacetResultSetProvider.java -text
 modules/src/main/java/org/hippoecm/repository/jackrabbit/MirrorVirtualProvider.java -text

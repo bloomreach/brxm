@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.jaxrs;
+package org.onehippo.repository.jaxrs;
 
 import java.security.AccessControlException;
 
@@ -33,9 +33,9 @@ import org.onehippo.repository.RepositoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RepositoryAuthenticatingJaxrsInvoker extends JAXRSInvoker {
+public class AuthenticatingRepositoryJaxrsInvoker extends JAXRSInvoker {
 
-    private static final Logger log = LoggerFactory.getLogger(RepositoryAuthenticatingJaxrsInvoker.class);
+    private static final Logger log = LoggerFactory.getLogger(AuthenticatingRepositoryJaxrsInvoker.class);
 
     @Override
     public Object invoke(Exchange exchange, Object requestParams, Object resourceObject) {
@@ -49,6 +49,7 @@ public class RepositoryAuthenticatingJaxrsInvoker extends JAXRSInvoker {
             try {
                 final RepositoryService repository = HippoServiceRegistry.getService(RepositoryService.class);
                 session = repository.login(new SimpleCredentials(policy.getUserName(), policy.getPassword().toCharArray()));
+                checkAuthorized(exchange, requestParams, resourceObject, session);
                 result = super.invoke(exchange, requestParams, resourceObject);
             }
             catch (AccessControlException | LoginException e) {
@@ -66,5 +67,9 @@ public class RepositoryAuthenticatingJaxrsInvoker extends JAXRSInvoker {
             }
         }
         return result;
+    }
+
+    protected void checkAuthorized(Exchange exchange, Object requestParams, Object resourceObject, Session session)
+            throws RepositoryException {
     }
 }
