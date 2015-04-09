@@ -41,8 +41,6 @@
           illegalCharacters: '/ :'
         };
 
-        $scope.host = '';
-        $scope.mountPath = '';
         $scope.prototypes = [];
 
         $scope.tooltips = {
@@ -66,7 +64,7 @@
           };
 
           PageService.createPage(pageModel, $scope.page.location).then(function () {
-            ContainerService.showPage($scope.mountPath + '/' + pageModel.name);
+            ContainerService.showPage('/' + pageModel.name);
           }, function (errorResponse) {
             $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
           });
@@ -78,14 +76,6 @@
           $scope.page.prototype = data.prototypes[0];
           $scope.locations = data.locations;
           $scope.page.location = data.locations[0];
-        }, function (errorResponse) {
-          $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
-        });
-
-        // fetch host
-        PageService.getMountInfo().then(function (mountInfo) {
-          $scope.mountPath = mountInfo.mountPath;
-          $scope.host = mountInfo.hostName + mountInfo.mountPath;
         }, function (errorResponse) {
           $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
         });
