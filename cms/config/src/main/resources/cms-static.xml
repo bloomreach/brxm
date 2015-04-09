@@ -31,7 +31,7 @@
       <sv:value>cms-services</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <sv:node sv:name="configTranslator">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -1104,23 +1104,6 @@
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugin.loader.PluginClusterLoader</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="logoutPerspective">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="perspective.title" sv:type="String">
-      <sv:value>logout-perspective-title</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.logout.LogoutPerspective</sv:value>
-    </sv:property>
-    <sv:property sv:name="translator.id" sv:type="String">
-      <sv:value>service.translator.config</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.tab</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
