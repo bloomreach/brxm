@@ -86,7 +86,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
     private static final Logger log = LoggerFactory.getLogger(HstSiteMapItemService.class);
 
     private static final String PARENT_PROPERTY_PLACEHOLDER = "${parent}";
-    private static final String PLAIN_FILTER_CHAIN_INVOKING_PIPELINE_NAME = "PlainFilterChainInvokingPipeline";
+    private static final String CONTAINER_RESOURCE_PIPELINE_NAME = "ContainerResourcePipeline";
 
     private Map<String, HstSiteMapItem> childSiteMapItems = new HashMap<String, HstSiteMapItem>();
 
@@ -444,13 +444,13 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
             log.info("Sitemap item '{}' is a container resource item. Default the properties '{}' will be" +
                             " set to '{}', '{}' = true and '{}' = true, unless the properties are explicitly configured on this item" +
                             " or a parent item to have a different value",
-                    canonicalPath, SITEMAPITEM_PROPERTY_NAMEDPIPELINE, PLAIN_FILTER_CHAIN_INVOKING_PIPELINE_NAME,
+                    canonicalPath, SITEMAPITEM_PROPERTY_NAMEDPIPELINE, CONTAINER_RESOURCE_PIPELINE_NAME,
                     SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING, GENERAL_PROEPRTY_SCHEME_AGNOSTIC
             );
 
             isExcludedForLinkRewriting = true;
             schemeAgnostic = true;
-            namedPipeline = PLAIN_FILTER_CHAIN_INVOKING_PIPELINE_NAME;
+            namedPipeline = CONTAINER_RESOURCE_PIPELINE_NAME;
         }
 
         if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER)) {

@@ -157,8 +157,12 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
         final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(mount.getHstSite().getSiteMap(),
                 mount, getPreviewConfigurationPath());
 
+        String prefix = mount.getVirtualHost().getHostName();
+        if (StringUtils.isNotEmpty(mount.getMountPath())) {
+            prefix += "/" + mount.getMountPath();
+        }
         NewPageModelRepresentation newPageModelRepresentation = new NewPageModelRepresentation(prototypePagesRepresentation.getPrototypes(),
-                pages.getPages(), mount.getVirtualHost().getHostName());
+                pages.getPages(), prefix);
         log.info("Prototype pages loaded successfully");
         return ok("Prototype pages loaded successfully", newPageModelRepresentation);
     }

@@ -634,12 +634,12 @@ components/core/src/main/java/org/hippoecm/hst/core/container/AbstractBaseOrdera
 components/core/src/main/java/org/hippoecm/hst/core/container/ActionValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/AggregationValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/AjaxAsynchronousComponentWindowRenderer.java -text
-components/core/src/main/java/org/hippoecm/hst/core/container/BinariesDispatchingValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/CleanupValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/CmsHostRestRequestContextValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/CmsSecurityValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/ComponentRenderingValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/ContainerConfigurationImpl.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/core/container/ContainerResourceDispatchingValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/ContextResolvingValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/DefaultPageErrorHandler.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/DefaultPageErrors.java svneol=native#text/plain

@@ -61,7 +61,7 @@ public class HstDefaultSiteMapLoginIT extends AbstractTestConfigurations {
                 "to serve resources over any scheme), the login/xyz is *not* scheme agnostic by default since we " +
                 "promote https", resolvedSiteMapItem.getHstSiteMapItem().isSchemeAgnostic());
         assertEquals("https", resolvedSiteMapItem.getHstSiteMapItem().getScheme());
-        assertEquals("Default pipeline for a container resource should be 'PlainFilterChainInvokingPipeline'.","PlainFilterChainInvokingPipeline", resolvedSiteMapItem.getNamedPipeline());
+        assertEquals("Default pipeline for a container resource should be 'ContainerResourcePipeline'.","ContainerResourcePipeline", resolvedSiteMapItem.getNamedPipeline());
     }
 
 

@@ -243,9 +243,6 @@
     <sv:property sv:name="hst:containerresource" sv:type="Boolean">
       <sv:value>true</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:namedpipeline" sv:type="String">
-      <sv:value>BinariesPipeline</sv:value>
-    </sv:property>
     <sv:property sv:name="hst:refId" sv:type="String">
       <sv:value>BINARIES-PIPELINE-ID</sv:value>
     </sv:property>

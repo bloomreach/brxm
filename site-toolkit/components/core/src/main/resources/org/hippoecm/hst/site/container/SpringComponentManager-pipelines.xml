@@ -162,8 +162,8 @@
     <property name="valveName" value="filterChainInvokingValve" />
   </bean>
 
-  <bean id="binariesDispatchingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.BinariesDispatchingValve">
-    <property name="valveName" value="binariesInvokingValve" />
+  <bean id="containerResourceDispatchingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ContainerResourceDispatchingValve">
+    <property name="valveName" value="containerResourceDispatchingValve" />
   </bean>
 
 
@@ -275,7 +275,7 @@
           </bean>
         </entry>
 
-        <entry key="BinariesPipeline">
+        <entry key="ContainerResourcePipeline">
           <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
             <property name="initializationValves">
               <list>
@@ -289,7 +289,7 @@
                 <ref bean="securityValve" />
                 <ref bean="subjectBasedSessionValve" />
                 <ref bean="jcrSessionStatefulConcurrencyValve" />
-                <ref bean="binariesDispatchingValve" />
+                <ref bean="containerResourceDispatchingValve" />
               </list>
             </property>
             <property name="cleanupValves">

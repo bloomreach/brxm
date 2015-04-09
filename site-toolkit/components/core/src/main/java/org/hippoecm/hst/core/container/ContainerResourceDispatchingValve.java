@@ -27,17 +27,18 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * BinariesDispatchingValve
+ * ContainerResourceDispatchingValve
  * <p/>
- * invokes the <code>ServletContext#getRequestDispatcher(binariesDispatchPath)</code> in order to let the binaries servlet
+ * invokes the <code>ServletContext#getRequestDispatcher(containerResourceDispatchPath)</code> in order to let the dispathced servlet
  * continue request processing with HST provided context attributes.
- * Note that the client request might start with /_cmsinternal/binaries/ but /_cmsinternal is removed from our wrapped
- * request hence we can also for  /_cmsinternal/binaries/ dispatch to the request.getPathInfo();
+ * Note that the client request might start with /_cmsinternal/binaries/ or  for exmaple /_cmsinternal/styles/common.css
+ * but /_cmsinternal is removed from our wrapped request hence we can also for
+ *  _cmsinternal/binaries/ or _cmsinternal/styles dispatch to the request.getPathInfo();
  * </P>
  */
-public class BinariesDispatchingValve extends AbstractBaseOrderableValve {
+public class ContainerResourceDispatchingValve extends AbstractBaseOrderableValve {
 
-    private static Logger log = LoggerFactory.getLogger(BinariesDispatchingValve.class);
+    private static Logger log = LoggerFactory.getLogger(ContainerResourceDispatchingValve.class);
 
     @Override
     public void invoke(ValveContext context) throws ContainerException {
@@ -47,13 +48,9 @@ public class BinariesDispatchingValve extends AbstractBaseOrderableValve {
         try {
             Task chainingTask = null;
             // the dispatchPath is normally just the normal pathInfo unless the client request starts with /_cmsinternal/binaries/xyz
+            // or /_cmsinternal/styles/common.css
             // or it did match some submount (/fr/binaries) its binaries location, which however in general should not happen
-            String binariesDispatchPath = request.getPathInfo();
-            if (binariesDispatchPath == null || !binariesDispatchPath.startsWith("/binaries/")) {
-                final String msg = String.format("Illegal binariesDispatchPath '%s' for BinariesInvokingValve found for '%s'", binariesDispatchPath, request);
-                throw new ContainerException(msg);
-            }
-
+            String containerResourceDispatchPath = request.getPathInfo();
             // to be able to correctly use RequestDispatcher#forward (and have the adjusted pathInfo) we need the unwrapped
             // servlet request.
             HttpServletRequest unwrappedRequest = request;
@@ -67,21 +64,20 @@ public class BinariesDispatchingValve extends AbstractBaseOrderableValve {
             }
             try {
                 if (HDC.isStarted()) {
-                    chainingTask = HDC.getCurrentTask().startSubtask("Dispatching to Binaries Servlet from BinariesInvokingValve");
+                    chainingTask = HDC.getCurrentTask().startSubtask("Dispatching");
+                    chainingTask.setAttribute("dispatchPath", containerResourceDispatchPath);
                 }
-                context.getRequestContext().getServletContext().getRequestDispatcher(binariesDispatchPath).forward(unwrappedRequest, response);
+                context.getRequestContext().getServletContext().getRequestDispatcher(containerResourceDispatchPath).forward(unwrappedRequest, response);
             } finally {
                 if (chainingTask != null) {
                     chainingTask.stop();
                 }
             }
-        } catch (ContainerException e) {
-            throw e;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.warn("Failed to dispatch to binaries servlet.", e);
+                log.warn("Failed to dispatch '{}'.", request, e);
             } else {
-                log.warn("Failed to dispatch to binaries servlet : {}", e.toString());
+                log.warn("Failed to dispatch '{}' : {}", request, e.toString());
             }
         }
         context.invokeNext();

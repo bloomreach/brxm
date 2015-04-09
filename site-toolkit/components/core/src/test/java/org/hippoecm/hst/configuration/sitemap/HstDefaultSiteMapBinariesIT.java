@@ -61,7 +61,7 @@ public class HstDefaultSiteMapBinariesIT extends AbstractTestConfigurations {
         assertTrue(resolvedSiteMapItem.getHstSiteMapItem().isSchemeAgnostic());
         assertEquals("http", resolvedSiteMapItem.getHstSiteMapItem().getScheme());
         assertNull(resolvedSiteMapItem.getRelativeContentPath());
-        assertEquals("Default pipeline for a binary should be 'BinariesPipeline'.","BinariesPipeline", resolvedSiteMapItem.getNamedPipeline());
+        assertEquals("Default pipeline for a binary should be 'ContainerResourcePipeline'.","ContainerResourcePipeline", resolvedSiteMapItem.getNamedPipeline());
     }
 
 
