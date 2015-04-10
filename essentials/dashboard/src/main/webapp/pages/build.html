@@ -16,10 +16,10 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <div class="alert alert-info" ng-hide="REBUILD_PLUGINS">
+        <div class="alert alert-info" ng-show="REBUILD_PLUGINS === undefined || REBUILD_PLUGINS.length == 0">
             There are no changes at this moment that require project rebuild.
         </div>
-        <div ng-show="REBUILD_PLUGINS">
+        <div ng-show="REBUILD_PLUGINS && REBUILD_PLUGINS.length > 0">
             <h3>Rebuild required</h3>
             <p>Rebuilding the project is required for the following plugins:</p>
             <ul class="list-group">
@@ -31,18 +31,18 @@
 
         <h3>Build instructions</h3>
         <p>
-            In order to activate the changes you made, you need to rebuild. You need to do this in a command line
-            terminal. Please follow the instructions below to do so. Hippo's setup application will keep an eye on
-            this process and you will be able to continue setting up your Hippo project after the rebuild succeeds.
+            In order to activate the changes you made, you need to rebuild and restart your project. You need to do
+            this in a command line terminal. Please follow the instructions below to do so. You will be able to
+            continue setting up your Hippo project after a successful rebuild.
         </p>
         <p>
-            Certain features require you to rebuild twice in order have them fully installed into your project. The
-            setup application will indicate this. After rebuilding, you will be directed to the page
+            Certain features require you to rebuild and restart twice in order have them fully installed into your
+            project. The setup application will indicate this. After rebuilding, you will be directed to the page
             <em>Installed features</em>, so you can configure the features you installed.
         </p>
 
         <div class="alert alert-info">
-            You don't need to do this for every single feature you add to the project, it is sufficient to rebuilding
+            You don't need to rebuild for every single feature you add to the project, it is sufficient to rebuild
             after you added a batch of features.
         </div>
         <p>Step 1: In your terminal, stop the running project by pressing Ctrl-C.</p>
