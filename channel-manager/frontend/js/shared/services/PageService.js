@@ -86,12 +86,12 @@
 
           $http.post(pageServiceUrl(url), page)
             .success(function (response) {
-              deferred.resolve(response);
+              console.log("test ", response);
+              deferred.resolve(response.data);
             })
             .error(function (error) {
               deferred.reject(error);
             });
-
           return deferred.promise;
         };
 
