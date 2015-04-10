@@ -32,9 +32,9 @@
                 which plugins require a rebuild of the project.
             </li>
             <li>
-                Please note that if the setup application encounters a preview HST configuration in your repository,
-                it will be deleted automatically and you will lose any pending changes. Such a preview configuration
-                is the result of changes made in the CMS Template Composer that you forgot to publish.
+                Make sure that you publish your changes in the CMS Channel Manager. Otherwise, these changes, which are
+                stored in the preview HST configuration, will be deleted automatically by the setup application, and
+                you will lose any pending changes.
             </li>
         </ul>
 
@@ -76,8 +76,8 @@
                     <div class="form-group" ng-show="projectSettings.templateLanguage=='freemarker'">
                         <label class="control-label">Presentation</label>
                         <p>
-                            When using Freemarker templates, which reside in the repository, the CMS Template Composer
-                            allows you to switch the component template between different variants.
+                            When using Freemarker templates, which reside in the repository, the CMS Channel Manager
+                            allows you to choose the component template from different variants.
                         </p>
                         <div class="checkbox">
                             <label>
