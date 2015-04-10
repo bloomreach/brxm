@@ -1086,6 +1086,7 @@ api/src/main/resources/skin/images/tree-icons.png -text
 api/src/main/resources/skin/images/warning.png -text svneol=unset#image/png
 api/src/main/resources/skin/screen.css svneol=native#text/css
 api/src/main/resources/skin/screen_ie.css -text svneol=unset#text/plain
+api/src/main/styling/images/icons/ajax-loader.svg -text
 api/src/main/styling/images/icons/floppy-times-circle.svg -text
 api/src/main/styling/images/icons/overlay-plus.svg -text
 api/src/main/styling/images/icons/sort-ascending.svg -text

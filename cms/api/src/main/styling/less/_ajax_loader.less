@@ -15,24 +15,49 @@
 /* Wicket Ajaxloader */
 /* ================================================ */
 .hippo-root .wicket-ajax-indicator {
-  position: absolute;
-  bottom: 28px;
+  background-color: @ajax-loader-bgcolor;
   left: 0;
-  display: block;
-  width: @hippo-logo-width;
-  height: @hippo-logo-height;
-  background-color: @hippo-logo-bgcolor;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  width: @ajax-loader-width;
   z-index: 2;
 
-  img {
-    margin-top: 12px;
+  .hi-ajax-loader {
+    display: block;
+    width: 100%;
+    height: auto;
+    -webkit-animation: ajaxloader 1s infinite linear;
   }
 }
 
-.hippo-dialog-picker .wicket-ajax-indicator, .hippo-window .hippo-root .wicket-ajax-indicator {
+.hippo-dialog-picker .wicket-ajax-indicator,
+.hippo-window .hippo-root .wicket-ajax-indicator {
   position: absolute;
   bottom: 16px;
   left: 12px;
   background: transparent;
   top: auto;
+}
+
+@-webkit-keyframes ajaxloader {
+  0% {
+    transform: rotate(0deg);
+    margin-left: -90%;
+  }
+
+  50% {
+    transform: rotate(0deg);
+    margin-left: 0;
+  }
+
+  51% {
+    transform: rotate(180deg);
+    margin-left: 90%;
+  }
+
+  100% {
+    transform: rotate(180deg);
+    margin-left: 0;
+  }
 }

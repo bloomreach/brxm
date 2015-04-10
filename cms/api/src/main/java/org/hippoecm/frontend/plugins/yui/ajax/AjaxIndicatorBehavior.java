@@ -44,7 +44,7 @@ public class AjaxIndicatorBehavior extends AbstractYuiBehavior {
                 r.write("id=\"");
                 r.write(getMarkupId());
                 r.write("\">");
-                r.write(CmsIcon.FLOPPY_TIMES_CIRCLE.getInlineSvg(IconSize.XL));
+                r.write(CmsIcon.AJAX_LOADER.getInlineSvg(IconSize.XL));
                 r.write("</div>");
             }
         };

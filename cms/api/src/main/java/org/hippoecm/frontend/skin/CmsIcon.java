@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public enum CmsIcon {
 
+    AJAX_LOADER,
     DELETE,
     DELETE_HOVER,
     FILE_UNLOCKED,
