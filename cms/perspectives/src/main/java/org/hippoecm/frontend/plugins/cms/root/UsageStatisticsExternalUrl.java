@@ -29,9 +29,8 @@ public class UsageStatisticsExternalUrl {
     private static final String MONTH = "${MONTH}";
     private static final String DAY = "${DAY}";
 
-    // TODO: use cdn.onehippo.com instead of www.connect.acct.onehippo.com
-    private static final String SERVER = "http://www.connect.acct.onehippo.com";
-    private static final String PATH = "/usage-statistics/" + RELEASE_VERSION + "/" + YEAR + "-" + MONTH + "-" + DAY + "/usage-statistics.js";
+    private static final String SERVER = "http://cdn.onehippo.com";
+    private static final String PATH = "/cms-usage-statistics/" + RELEASE_VERSION + "/" + YEAR + "-" + MONTH + "-" + DAY + "/cms-usage-statistics.js";
 
     public static final String SYSTEM_PROPERTY_SERVER = "hippo.usage.statistics.server";
 
@@ -50,7 +49,7 @@ public class UsageStatisticsExternalUrl {
 
         final Calendar now = Calendar.getInstance();
         parameters.put(YEAR, String.valueOf(now.get(Calendar.YEAR)));
-        parameters.put(MONTH, String.valueOf(now.get(Calendar.MONTH)));
+        parameters.put(MONTH, String.valueOf(now.get(Calendar.MONTH) + 1));
         parameters.put(DAY, String.valueOf(now.get(Calendar.DAY_OF_MONTH)));
 
         final String[] search = parameters.keySet().toArray(new String[parameters.size()]);
