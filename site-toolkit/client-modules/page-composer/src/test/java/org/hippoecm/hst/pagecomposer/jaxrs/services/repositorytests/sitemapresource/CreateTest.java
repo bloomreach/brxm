@@ -25,6 +25,7 @@ import javax.ws.rs.core.Response;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -60,9 +61,9 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
                 Response.Status.OK.getStatusCode(), response.getStatus());
 
-        String newId = (String) ((ExtResponseRepresentation) response.getEntity()).getData();
+        SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
 
-        final Node newSitemapItemNode = session.getNodeByIdentifier(newId);
+        final Node newSitemapItemNode = session.getNodeByIdentifier(siteMapPageRepresentation.getId());
         assertEquals("foo", newSitemapItemNode.getName());
 
         String newPageNodeName = "foo-" + session.getNodeByIdentifier(getPrototypePageUUID()).getName();
@@ -86,7 +87,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
 
         // ASSERT NEW NODES ARE LOCKED FOR BOB
         final Session bob = createSession("bob", "bob");
-        Node newNodeByBob = bob.getNodeByIdentifier(newId);
+        Node newNodeByBob = bob.getNodeByIdentifier(siteMapPageRepresentation.getId());
         //  acquiring should fail now
         try {
             helper.acquireLock(newNodeByBob, versionStamp);
@@ -118,9 +119,8 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String newId = (String) ((ExtResponseRepresentation) response.getEntity()).getData();
-
-        final Node newSitemapItemNode = session.getNodeByIdentifier(newId);
+        SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+        final Node newSitemapItemNode = session.getNodeByIdentifier(siteMapPageRepresentation.getId());
         assertEquals("foo", newSitemapItemNode.getName());
 
         String newPageNodeName = "foo-" + session.getNodeByIdentifier(getPrototypePageUUID()).getName();
@@ -146,9 +146,10 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String newId = (String) ((ExtResponseRepresentation) response.getEntity()).getData();
 
-        final Node newSitemapItemNode = session.getNodeByIdentifier(newId);
+        SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+
+        final Node newSitemapItemNode = session.getNodeByIdentifier(siteMapPageRepresentation.getId());
         assertEquals("foo", newSitemapItemNode.getName());
 
         String newPageNodeName = "foo-" + session.getNodeByIdentifier(getPrototypePageUUID()).getName();
@@ -297,8 +298,10 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final Response response = siteMapResource.create(newFoo);
         String expectedPageName = "foo-"+prototypePageNodeName +"-1";
         assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + expectedPageName));
-        String newSitemapItemId = (String) ((ExtResponseRepresentation) response.getEntity()).getData();
-        final Node newSitemapItemNode = session.getNodeByIdentifier(newSitemapItemId);
+
+        SiteMapPageRepresentation newSiteMapPageRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+
+        final Node newSitemapItemNode = session.getNodeByIdentifier(newSiteMapPageRepresentation.getId());
         assertEquals("hst:pages/"+expectedPageName,
                 newSitemapItemNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
     }
@@ -326,8 +329,9 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final Response response = siteMapResource.create(newFoo);
         String expectedPageName = "foo-"+prototypePageNodeName +"-2";
         assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + expectedPageName));
-        String newSitemapItemId = (String) ((ExtResponseRepresentation) response.getEntity()).getData();
-        final Node newSitemapItemNode = session.getNodeByIdentifier(newSitemapItemId);
+        SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+
+        final Node newSitemapItemNode = session.getNodeByIdentifier(siteMapPageRepresentation.getId());
         assertEquals("hst:pages/"+expectedPageName,
                 newSitemapItemNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
     }
@@ -538,6 +542,9 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         String newPageNodeName = "home-homeChild-" + session.getNodeByIdentifier(getPrototypePageUUID()).getName();
         {
             final Response response = siteMapResource.create(homeChild, home.getId());
+            SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+            assertEquals("home/homeChild", siteMapPageRepresentation.getPathInfo());
+            assertEquals("/home/homeChild", siteMapPageRepresentation.getRenderPathInfo());
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
             assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
         }
