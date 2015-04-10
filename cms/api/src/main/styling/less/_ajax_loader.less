@@ -40,24 +40,24 @@
   top: auto;
 }
 
-@-webkit-keyframes ajaxloader {
+@keyframes ajaxloader {
   0% {
-    transform: rotate(0deg);
-    margin-left: -90%;
+    transform: rotateY(0deg);
+    margin-left: -50%;
   }
 
   50% {
-    transform: rotate(0deg);
-    margin-left: 0;
+    transform: rotateY(0deg);
+    margin-left: 50%;
   }
 
   51% {
-    transform: rotate(180deg);
-    margin-left: 90%;
+    transform: rotateY(180deg);
+    margin-left: 50%;
   }
 
   100% {
-    transform: rotate(180deg);
-    margin-left: 0;
+    transform: rotateY(180deg);
+    margin-left: -50%;
   }
 }
