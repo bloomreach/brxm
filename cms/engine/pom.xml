@@ -116,7 +116,6 @@
       <artifactId>guava</artifactId>
     </dependency>
 
-
     <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>
@@ -147,6 +146,7 @@
         <includes>
           <include>**/*.xml</include>
           <include>**/*.ico</include>
+          <include>**/*.js</include>
         </includes>
       </resource>
     </resources>

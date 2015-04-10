@@ -18,41 +18,22 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs;
 import javax.jcr.Node;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
-import org.hippoecm.frontend.dialog.DialogConstants;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.repository.api.WorkflowDescriptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class UnpublishedReferencesDialog extends AbstractWorkflowDialogRestyling<WorkflowDescriptor> {
-
-    static final Logger log = LoggerFactory.getLogger(UnpublishedReferencesDialog.class);
 
     public UnpublishedReferencesDialog(IWorkflowInvoker invoker, ISortableDataProvider<Node, String> provider, IEditorManager mgr) {
         super(null, invoker);
 
         setOutputMarkupId(true);
 
-        add(new UnpublishedReferencesView("docsview", provider, mgr));
-
-        add(CssClass.append("hippo-workflow-dialog"));
-
+        setTitleKey("title");
+        setCssClass("hippo-workflow-dialog");
         setOkLabel(getString("publish"));
-    }
 
-    public IModel<String> getTitle() {
-        return Model.of(getString("title"));
+        add(new UnpublishedReferencesView("docsview", provider, mgr));
     }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.LARGE_AUTO;
-    }
-
 }

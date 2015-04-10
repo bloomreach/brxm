@@ -31,6 +31,7 @@ public enum Icon {
 
     ARROW_DOWN,
     ARROW_UP,
+    ARROW_RIGHT_SQUARE,
     BELL,
     BULLET,
     BULLHORN,
@@ -98,7 +99,8 @@ public enum Icon {
     TRANSLATE,
     TYPE,
     UNLINK,
-    UNLOCKED;
+    UNLOCKED,
+    USER_CIRCLE;
 
     private static final Logger log = LoggerFactory.getLogger(Icon.class);
 

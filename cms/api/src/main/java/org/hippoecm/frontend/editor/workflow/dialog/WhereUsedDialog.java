@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,33 +18,25 @@ package org.hippoecm.frontend.editor.workflow.dialog;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.Dialog;
-import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.editor.workflow.model.ReferringDocumentsProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IEditorManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 
 /**
  * A dialog that shows where a document is used, i.e. what other documents refer to it.
  */
-public class WhereUsedDialog extends Dialog {
-
-    private static final long serialVersionUID = 1L;
-
-    static final Logger log = LoggerFactory.getLogger(WhereUsedDialog.class);
+public class WhereUsedDialog extends Dialog<WorkflowDescriptor> {
 
     public WhereUsedDialog(WorkflowDescriptorModel model, IEditorManager editorMgr) {
         super(model);
 
         setOkVisible(false);
-        setCancelLabel(new StringResourceModel("close", this, null));
+        setCancelLabel(getString("close"));
+        setTitleKey("where-used");
+        setCssClass("hippo-workflow-dialog");
 
         try {
             ReferringDocumentsProvider provider = new ReferringDocumentsProvider(new JcrNodeModel(model.getNode()), true);
@@ -52,17 +44,5 @@ public class WhereUsedDialog extends Dialog {
         } catch (RepositoryException e) {
             throw new WicketRuntimeException("No document node present", e);
         }
-
-        add(CssClass.append("hippo-workflow-dialog"));
     }
-
-    public IModel getTitle() {
-        return new StringResourceModel("where-used", this, null);
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.LARGE_AUTO;
-    }
-
 }

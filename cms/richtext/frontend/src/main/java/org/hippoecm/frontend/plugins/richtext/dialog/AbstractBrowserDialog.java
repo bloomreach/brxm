@@ -57,16 +57,13 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
                 IModel<Node> selectedModel = getSelectedModel();
                 if(isValid && selectedModel != null) {
                     getModelObject().setLinkTarget(selectedModel);
+                    onModelSelected(selectedModel);
                     checkState();
                 } else {
                     setOkEnabled(false);
                 }
             }
 
-            @Override
-            protected void onFolderSelected(final IModel<Node> model) {
-                onModelSelected(model);
-            }
         };
 
         add(controller.create("content"));

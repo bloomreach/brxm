@@ -1138,6 +1138,7 @@ api/src/main/styling/less/_selectable_documents.less -text
 api/src/main/styling/less/_tabs.less -text
 api/src/main/styling/less/_tree.less -text
 api/src/main/styling/less/_typography.less -text
+api/src/main/styling/less/_user_menu.less -text
 api/src/main/styling/less/_variables.less -text
 api/src/main/styling/less/lib/open-sans.less -text
 api/src/main/styling/less/main.less -text
@@ -2269,8 +2270,6 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/BrowserObserve
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/EditPerspective.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/EditorTabsPlugin.html svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/logout/LogoutLink.java -text svneol=unset#text/plain
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/logout/LogoutPlugin.html -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/logout/LogoutPlugin.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin.html -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_de.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_fr.properties -text
@@ -2414,8 +2413,6 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/document-
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/document-32.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/document-48.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/images/document-list-back.png -text svneol=unset#image/png
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/logout/LogoutPerspective_de.properties -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/logout/LogoutPerspective_it.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/root/hippo-cms.ico -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/root/usage-statistics.js -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/TestSuite.java -text

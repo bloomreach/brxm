@@ -51,7 +51,7 @@ public class LoginPlugin extends RenderPlugin {
     private static final String SUPPORTED_BROWSERS = "browsers.supported";
 
     // Sorted by alphabetical order of the language name (see i18n properties), for a more user-friendly form
-    public static final String[] DEFAULT_LOCALES = {"en", "fr", "nl", "de"};
+    public static final String[] DEFAULT_LOCALES = {"en", "nl" };
 
     private ResourceReference editionCss;
     private PageParameters parameters;

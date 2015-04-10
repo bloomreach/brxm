@@ -27,6 +27,7 @@
 .hippo-login-extend {
   background: @login-extend-bgcolor;
   z-index: 1;
+  position: fixed;
 }
 
 .hippo-login-panel {
@@ -38,6 +39,7 @@
   z-index: 2;
   align-self: center;
   left: @login-panel-left;
+  top: -(@login-panel-header-height);
 }
 
 .hippo-login-panel-header {
@@ -46,7 +48,6 @@
 }
 
 .hippo-login-panel-center {
-  padding: 32px;
 
   h2 {
     font-size: 18px;
@@ -55,6 +56,10 @@
     color: @login-panel-center-h2-color;
     padding: 0;
     margin: 0 0 12px;
+  }
+
+  .hippo-login-form-container {
+    padding: 32px;
   }
 
   .hippo-login-form-label {
@@ -89,6 +94,7 @@
   }
 
   .hippo-login-form-buttons input {
+    margin-top: 3px;
     height: 32px;
     box-sizing: border-box;
     background-color: @login-panel-center-button-bgcolor;
@@ -96,6 +102,12 @@
     color: @login-panel-center-button-color;
     border-radius: 4px;
     min-width: 64px;
+
+    &[disabled] {
+      background-color: @button-disabled-bgcolor;
+      border-color: @button-disabled-border;
+      color: @button-disabled-color;
+    }
   }
 }
 
@@ -109,18 +121,17 @@
 
 // Login feedback
 .hippo-login-feedback ul {
-  border: 1px solid @login-panel-feedback-border;
-  color: #69849f;
-  margin-bottom: 12px;
-  font-weight: bold;
+  border-bottom: 1px solid @login-panel-feedback-border;
+  padding: 8px 32px;
   background-color: @login-panel-feedback-bgcolor;
-  padding-left: 20px;
-  padding-top: 4px;
-  padding-right: 4px;
-  height: auto;
 }
 
 .hippo-login-feedback ul li {
-  list-style-type: disc;
-  margin-bottom: 5px;
+  list-style-type: none;
+  text-align: center;
+  padding-bottom: 4px;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
 }

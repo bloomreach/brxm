@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.login;
 
 import java.security.AccessControlException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -26,10 +27,13 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -41,6 +45,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.UserCredentials;
@@ -54,6 +59,9 @@ import org.slf4j.LoggerFactory;
 public class LoginPanel extends Panel {
 
     public static final Logger log = LoggerFactory.getLogger(LoginPanel.class);
+
+    public static final JavaScriptResourceReference PREVENT_RESUBMIT_SCRIPT_REFERENCE =
+            new JavaScriptResourceReference(LoginPanel.class, "PreventResubmit.js");
 
     private static final String LOCALE_COOKIE = "loc";
     private static final int LOCALE_COOKIE_MAXAGE = 365 * 24 * 3600; // expire one year from now
@@ -71,7 +79,7 @@ public class LoginPanel extends Panel {
 
     private final LoginSuccessHandler successHandler;
 
-    protected final Form form;
+    protected final LoginForm form;
     protected String username;
     protected String password;
     protected String selectedLocale;
@@ -113,19 +121,21 @@ public class LoginPanel extends Panel {
         }
     }
 
-    private class LoginForm extends Form {
+    protected class LoginForm extends Form {
 
         protected final FeedbackPanel feedback;
         protected final DropDownChoice<String> locale;
         protected final RequiredTextField<String> usernameTextField;
         protected final PasswordTextField passwordTextField;
+        protected final Button submitButton;
+        protected final List<Component> labels = new ArrayList<>();
 
         public LoginForm(final boolean autoComplete, final List<String> locales) {
             super("login-form");
 
             setOutputMarkupId(true);
 
-            if (locales == null || locales.size() == 0) {
+            if (locales == null || locales.isEmpty()) {
                 throw new IllegalArgumentException("Argument locales can not be null or empty");
             }
 
@@ -134,10 +144,15 @@ public class LoginPanel extends Panel {
             add(feedback = new FeedbackPanel("feedback"));
             feedback.setOutputMarkupId(true);
             feedback.setEscapeModelStrings(false);
+            feedback.setFilter(message -> !message.isRendered());
 
+            addLabelledComponent(new Label("header-label", new ResourceModel("header")));
+
+            addLabelledComponent(new Label("username-label", new ResourceModel("username-label")));
             add(usernameTextField = new RequiredTextField<>("username", PropertyModel.of(LoginPanel.this, "username")));
             usernameTextField.setOutputMarkupId(true);
 
+            addLabelledComponent(new Label("password-label", new ResourceModel("password-label")));
             add(passwordTextField = new PasswordTextField("password", PropertyModel.of(LoginPanel.this, "password")));
             passwordTextField.setResetPassword(false);
 
@@ -153,6 +168,7 @@ public class LoginPanel extends Panel {
             }
             getSession().setLocale(new Locale(selectedLocale));
 
+            addLabelledComponent(new Label("locale-label", new ResourceModel("locale-label")));
             add(locale = new DropDownChoice<>("locale",
                     new PropertyModel<String>(LoginPanel.this, "selectedLocale") {
                         @Override
@@ -176,20 +192,30 @@ public class LoginPanel extends Panel {
             ));
             locale.add(new OnChangeAjaxBehavior() {
                 protected void onUpdate(AjaxRequestTarget target) {
-                    //immediately set the locale when the user changes it
+                    // Store locale in cookie
                     setCookieValue(LOCALE_COOKIE, selectedLocale, LOCALE_COOKIE_MAXAGE);
+                    // and update the session locale
                     getSession().setLocale(new Locale(selectedLocale));
-                    target.add(LoginForm.this);
+
+                    // redraw labels and feedback panel
+                    labels.stream().filter(Component::isVisible).forEach(target::add);
+                    target.add(feedback);
                 }
             });
 
-            add(new Button("submit", new ResourceModel("submit-label")));
+            submitButton = new Button("submit", new ResourceModel("submit-label"));
+            addLabelledComponent(submitButton);
         }
 
         @Override
         public void renderHead(final IHeaderResponse response) {
-            final String script = String.format("$('#%s').focus()", usernameTextField.getMarkupId());
-            response.render(OnDomReadyHeaderItem.forScript(script));
+            final String focusScript = String.format("$('#%s').focus()", usernameTextField.getMarkupId());
+            response.render(OnDomReadyHeaderItem.forScript(focusScript));
+
+            response.render(JavaScriptReferenceHeaderItem.forReference(PREVENT_RESUBMIT_SCRIPT_REFERENCE));
+            final String preventResubmitScript = String.format("if (Hippo && Hippo.PreventResubmit) { " +
+                            "Hippo.PreventResubmit('#%s'); }", form.getMarkupId());
+            response.render(OnDomReadyHeaderItem.forScript(preventResubmitScript));
         }
 
         @Override
@@ -205,6 +231,12 @@ public class LoginPanel extends Panel {
                 PluginUserSession.get().login();
                 loginFailed(LoginException.CAUSE.ACCESS_DENIED);
             }
+        }
+
+        protected void addLabelledComponent(final Component component) {
+            component.setOutputMarkupId(true);
+            add(component);
+            labels.add(component);
         }
     }
 

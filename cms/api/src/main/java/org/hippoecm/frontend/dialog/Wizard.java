@@ -36,10 +36,6 @@ public class Wizard<T> extends AbstractWizard<T> {
     private String titleKey = "dialog.title";
     private IModel<?> titleModel;
 
-    public Wizard() {
-        getForm().get(FEEDBACK_ID).setOutputMarkupId(true);
-    }
-
     @Override
     public IModel<String> getTitle() {
         return Model.of(getString(titleKey, titleModel, StringUtils.EMPTY));

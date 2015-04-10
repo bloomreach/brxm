@@ -87,7 +87,6 @@ public class RootPlugin extends TabsPlugin {
     private ServiceTracker<IRenderService> tracker;
 
     private static class RenderServiceModel extends Model<IRenderService> {
-        private static final long serialVersionUID = 1L;
 
         RenderServiceModel(IRenderService service) {
             super(service);
@@ -116,13 +115,13 @@ public class RootPlugin extends TabsPlugin {
             add(new Pinger("pinger"));
         }
 
-        add(new Label("currentUserName", Model.of(getCurrentUserName())));
+        add(new Label("pageTitle", getString("page.title", null, "Hippo CMS 10")));
+
+        add(new UserMenu("userMenu", getCurrentUser()));
 
         services = new LinkedList<>();
 
         final IDataProvider<IRenderService> provider = new ListDataProvider<IRenderService>(services) {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public IModel<IRenderService> model(IRenderService object) {
                 return new RenderServiceModel(object);
@@ -130,7 +129,6 @@ public class RootPlugin extends TabsPlugin {
         };
 
         view = new AbstractView<IRenderService>("view", provider) {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected void populateItem(Item<IRenderService> item) {
@@ -202,23 +200,6 @@ public class RootPlugin extends TabsPlugin {
         final PageLayoutSettings pageLayoutSettings = getPageLayoutSettings(config);
         add(new PageLayoutBehavior(pageLayoutSettings));
         add(new ResourceLink("faviconLink", ((PluginApplication)getApplication()).getPluginApplicationFavIconReference()));
-    }
-
-    private String getCurrentUserName() {
-        final String userID = getSession().getJcrSession().getUserID();
-        return new User(userID).getDisplayName();
-    }
-
-    private PageLayoutSettings getPageLayoutSettings(final IPluginConfig config) {
-        final IPluginConfig pageLayoutConfig = config.getPluginConfig("layout.page");
-        if (pageLayoutConfig != null) {
-            return new PageLayoutSettings(pageLayoutConfig);
-        } else {
-            log.warn("Could not find page layout settings at node 'layout.page', falling back to built-in settings");
-            PageLayoutSettings settings = new PageLayoutSettings();
-            settings.setFooterHeight(28);
-            return settings;
-        }
     }
 
     @Override
@@ -302,4 +283,20 @@ public class RootPlugin extends TabsPlugin {
     protected void onRemoveRenderService(Item<IRenderService> item, IRenderService renderer) {
     }
 
+    private User getCurrentUser() {
+        final String userID = getSession().getJcrSession().getUserID();
+        return new User(userID);
+    }
+
+    private PageLayoutSettings getPageLayoutSettings(final IPluginConfig config) {
+        final IPluginConfig pageLayoutConfig = config.getPluginConfig("layout.page");
+        if (pageLayoutConfig != null) {
+            return new PageLayoutSettings(pageLayoutConfig);
+        } else {
+            log.warn("Could not find page layout settings at node 'layout.page', falling back to built-in settings");
+            PageLayoutSettings settings = new PageLayoutSettings();
+            settings.setFooterHeight(28);
+            return settings;
+        }
+    }
 }

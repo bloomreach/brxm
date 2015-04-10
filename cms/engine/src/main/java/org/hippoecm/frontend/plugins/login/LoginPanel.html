@@ -16,29 +16,29 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <body>
     <wicket:panel>
+
       <form wicket:id="login-form">
-        <h2>
-            <wicket:message key="header"/>
-        </h2>
         <div class="hippo-login-feedback" wicket:id="feedback">Feedback panel</div>
         <div class="hippo-login-form-container">
+          <h2 wicket:id="header-label" />
+
           <!-- username -->
           <div class="hippo-login-form-label">
-            <label><wicket:message key="username-label"/></label>
+            <label wicket:id="username-label"></label>
           </div>
           <div class="hippo-login-form-input">
             <input class="hippo-form-text" wicket:id="username" type="text" value="foo@goo.moo"/>
           </div>
           <!-- password -->
           <div class="hippo-login-form-label">
-            <label><wicket:message key="password-label"/></label>
+            <label wicket:id="password-label"></label>
           </div>
           <div class="hippo-login-form-input">
             <input class="hippo-form-password" wicket:id="password" type="password" value="password"/>
           </div>
           <!-- locale dropdown-->
           <div class="hippo-login-form-label">
-            <label><wicket:message key="locale-label"/>&nbsp;</label>
+            <label wicket:id="locale-label"></label>
           </div>
           <div class="hippo-login-form-input">
             <select name="locale" wicket:id="locale"></select>

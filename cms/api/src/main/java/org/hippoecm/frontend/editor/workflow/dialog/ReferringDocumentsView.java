@@ -15,17 +15,12 @@
  */
 package org.hippoecm.frontend.editor.workflow.dialog;
 
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.editor.workflow.model.ReferringDocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.service.IEditorManager;
 
 public class ReferringDocumentsView extends SelectableDocumentsView {
-
-    private static final long serialVersionUID = 1L;
 
     public ReferringDocumentsView(String id, ReferringDocumentsProvider provider, IEditorManager editorManager) {
         super(id, new MessageModel(provider), provider, editorManager);
@@ -33,7 +28,6 @@ public class ReferringDocumentsView extends SelectableDocumentsView {
 
     private static class MessageModel extends LoadableDetachableModel<String> {
 
-        private static final long serialVersionUID = 1L;
         private final ReferringDocumentsProvider provider;
 
         private MessageModel(final ReferringDocumentsProvider provider) {
@@ -49,9 +43,9 @@ public class ReferringDocumentsView extends SelectableDocumentsView {
             } else if (provider.size() > 1) {
                 return createMessage("message", provider.size());
             } else if (provider.size() == 1) {
-                return createMessage("message-single", null);
+                return createMessage("message-single");
             } else {
-                return createMessage("message-empty", null);
+                return createMessage("message-empty");
             }
         }
 
