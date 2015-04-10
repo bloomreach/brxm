@@ -27,12 +27,12 @@ import org.hippoecm.hst.core.parameters.Parameter;
  */
 @FieldGroupList({
         @FieldGroup(
-                titleKey = "carousel.documents",
+                titleKey = "group.documents",
                 value = {"document1", "document2", "document3", "document4", "document5", "document6"}
         ),
         @FieldGroup(
-                titleKey = "carousel.settings",
-                value = {"cycle", "interval", "showNavigation"}
+                titleKey = "group.settings",
+                value = {"cycle", "pause", "interval", "showNavigation", "carouselWidth", "carouselHeight", "carouselBackgroundColor"}
         )
 })
 
