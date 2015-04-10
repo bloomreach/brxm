@@ -257,7 +257,7 @@ public class RootPlugin extends TabsPlugin {
     }
 
     private boolean sendUsageStatistics() {
-        boolean result = DEFAULT_SEND_USAGE_STATISTICS_TO_HIPPO;
+        boolean result;
 
         // first check the system property, so sending of usage statistics can always be disabled from the command line
         final String systemPropValue = System.getProperty(SYSPROP_SEND_USAGE_STATISTICS_TO_HIPPO);
