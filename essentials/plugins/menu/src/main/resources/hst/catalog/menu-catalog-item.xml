@@ -25,6 +25,12 @@
   <sv:property sv:name="hst:label" sv:type="String">
     <sv:value>Menu</sv:value>
   </sv:property>
+  <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+    <sv:value>menu</sv:value>
+  </sv:property>
+  <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+    <sv:value>main</sv:value>
+  </sv:property>
   <sv:property sv:name="hst:iconpath" sv:type="String">
     <sv:value>images/essentials/catalog-component-icons/menu.png</sv:value>
   </sv:property>
