@@ -18,10 +18,14 @@ package org.hippoecm.frontend.plugins.cms.root;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.repeater.Item;
@@ -31,11 +35,13 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
+import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
@@ -64,6 +70,15 @@ public class RootPlugin extends TabsPlugin {
 
     static final Logger log = LoggerFactory.getLogger(RootPlugin.class);
 
+    public static final String CONFIG_PINGER_INTERVAL = "pinger.interval";
+    public static final String CONFIG_SEND_USAGE_STATISTICS_TO_HIPPO = "send.usage.statistics.to.hippo";
+    public static final boolean DEFAULT_SEND_USAGE_STATISTICS_TO_HIPPO = true;
+
+    public static final String SYSPROP_SEND_USAGE_STATISTICS_TO_HIPPO = CONFIG_SEND_USAGE_STATISTICS_TO_HIPPO;
+
+    private static final String USAGE_STATISTICS_JS = "usage-statistics.js";
+    private static final String LOGIN_LOGOUT_EVENTS_JS = "login-logout-events.js";
+
     private boolean rendered = false;
     private final ExtWidgetRegistry extWidgetRegistry;
 
@@ -84,10 +99,7 @@ public class RootPlugin extends TabsPlugin {
 
         @Override
         public boolean equals(Object that) {
-            if (that != null && that instanceof RenderServiceModel) {
-                return ((RenderServiceModel) that).getObject() == getObject();
-            }
-            return false;
+            return that instanceof RenderServiceModel && ((RenderServiceModel) that).getObject() == getObject();
         }
     }
 
@@ -97,8 +109,8 @@ public class RootPlugin extends TabsPlugin {
         // keep all feedback messages after each request cycle
         getApplication().getApplicationSettings().setFeedbackMessageCleanupFilter(IFeedbackMessageFilter.NONE);
 
-        if (config.containsKey("pinger.interval")) {
-            add(new Pinger("pinger", config.getAsDuration("pinger.interval")));
+        if (config.containsKey(CONFIG_PINGER_INTERVAL)) {
+            add(new Pinger("pinger", config.getAsDuration(CONFIG_PINGER_INTERVAL)));
         } else {
             add(new Pinger("pinger"));
         }
@@ -219,6 +231,46 @@ public class RootPlugin extends TabsPlugin {
 
         response.render(CmsHeaderItem.get());
         response.render(ExtResourcesHeaderItem.get());
+        if (sendUsageStatistics()) {
+            response.render(createUsageStatisticsReporter());
+        }
+        response.render(createLoginLogoutEvents());
+    }
+
+    private boolean sendUsageStatistics() {
+        boolean result;
+
+        // first check the system property, so sending of usage statistics can always be disabled from the command line
+        final String systemPropValue = System.getProperty(SYSPROP_SEND_USAGE_STATISTICS_TO_HIPPO);
+        if (systemPropValue != null) {
+            result = Boolean.parseBoolean(systemPropValue);
+            log.info("Sending usage statistics to Hippo: {} (set by system property '{}')", result, SYSPROP_SEND_USAGE_STATISTICS_TO_HIPPO);
+        } else {
+            // next, check our configuration property {@link #CONFIG_SEND_USAGE_STATISTICS_TO_HIPPO}
+            result = getPluginConfig().getAsBoolean(CONFIG_SEND_USAGE_STATISTICS_TO_HIPPO, DEFAULT_SEND_USAGE_STATISTICS_TO_HIPPO);
+            log.info("Sending usage statistics to Hippo: {} (set by repository configuration property '{}')", result, CONFIG_SEND_USAGE_STATISTICS_TO_HIPPO);
+        }
+        return result;
+    }
+
+    private HeaderItem createUsageStatisticsReporter() {
+        final Map<String, String> scriptParams = new TreeMap<>();
+        final String url = UsageStatisticsExternalUrl.get();
+        scriptParams.put("externalScriptUrl", url);
+        log.info("Including external script for reporting usage statistics: {}", url);
+
+        final PackageTextTemplate usageStatistics = new PackageTextTemplate(RootPlugin.class, USAGE_STATISTICS_JS);
+        final String javaScript = usageStatistics.asString(scriptParams);
+        return OnLoadHeaderItem.forScript(javaScript);
+    }
+
+    private HeaderItem createLoginLogoutEvents() {
+        final Map<String, String> eventParams = new TreeMap<>();
+        eventParams.put("releaseVersion", new SystemInfoDataProvider().getReleaseVersion());
+
+        final PackageTextTemplate template = new PackageTextTemplate(RootPlugin.class, LOGIN_LOGOUT_EVENTS_JS);
+        final String javaScript = template.asString(eventParams);
+        return OnLoadHeaderItem.forScript(javaScript);
     }
 
     protected String getItemId() {
