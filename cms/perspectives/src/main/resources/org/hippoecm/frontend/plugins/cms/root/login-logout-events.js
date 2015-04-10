@@ -17,6 +17,6 @@ Hippo.Events.publish('login', {
   releaseVersion: '${releaseVersion}'
 });
 
-jQuery('.hippo-perspective-logoutperspective').click(function() {
+jQuery('.hippo-logout > .hippo-button').click(function() {
   Hippo.Events.publish('logout');
 });
