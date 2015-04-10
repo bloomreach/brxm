@@ -47,6 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cms7.services.webfiles.jcr.WebFileBundleImpl.PROPERTY_WEB_FILE_BUNDLE_ANTICACHE;
+import static org.onehippo.cms7.services.webfiles.vault.AbstractWebFilesArchive.logSizeExceededWarning;
 
 public class WebFilesServiceImpl implements WebFilesService {
 
@@ -141,6 +142,10 @@ public class WebFilesServiceImpl implements WebFilesService {
                                   final String bundleName,
                                   final String bundleSubPath,
                                   final File fileOrDirectory) throws IOException, WebServiceException {
+        if (fileOrDirectory.isFile() && fileOrDirectory.length() > maxFileLengthBytes) {
+            logSizeExceededWarning(fileOrDirectory, maxFileLengthBytes);
+            return;
+        }
         final WebFilesFileArchive archive = new WebFilesFileArchive(fileOrDirectory, importedFiles, maxFileLengthBytes);
         try {
             archive.open(true);

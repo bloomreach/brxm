@@ -19,6 +19,7 @@ package org.onehippo.cms7.services.webfiles;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.observation.Event;
 
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.autoreload.AutoReloadService;
@@ -42,6 +43,16 @@ public class WebFilesServiceModule extends AbstractReconfigurableDaemonModule {
         if (config == null) {
             config = new WebFilesWatcherJcrConfig(moduleConfig);
         }
+    }
+
+    @Override
+    protected void onConfigurationChange(final Node moduleConfig) throws RepositoryException {
+        doShutdown();
+        service = null;
+        config = null;
+        watcher = null;
+        super.onConfigurationChange(moduleConfig);
+        doInitialize(session);
     }
 
     @Override
