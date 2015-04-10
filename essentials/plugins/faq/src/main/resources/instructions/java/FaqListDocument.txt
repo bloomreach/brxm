@@ -40,5 +40,10 @@ public class FaqListDocument extends BaseDocument {
         return getLinkedBeans("{{namespace}}:faqdocuments", FaqDocument.class);
     }
 
-
+	/**
+	 *  Additional marker for the template to validate it's working with an FAQ list bean.
+	 */
+	public boolean isFAQ() {
+		return true;
+	}
 }
