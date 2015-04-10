@@ -50,7 +50,7 @@ public class WebFilesServiceModule extends AbstractReconfigurableDaemonModule {
         watchedFiles.includeFiles(config.getIncludedFiles());
         watchedFiles.excludeDirectories(config.getExcludedDirectories());
 
-        service = new WebFilesServiceImpl(watchedFiles);
+        service = new WebFilesServiceImpl(watchedFiles, config.getMaxFileLengthBytes());
         HippoServiceRegistry.registerService(service, WebFilesService.class);
 
         final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);

@@ -15,14 +15,18 @@
  */
 package org.onehippo.cms7.services.webfiles.vault;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.jackrabbit.vault.fs.io.Archive;
 import org.apache.jackrabbit.vault.fs.io.SubArchive;
 import org.apache.jackrabbit.vault.util.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractWebFilesArchive implements Archive {
 
+    private static final Logger log = LoggerFactory.getLogger(AbstractWebFilesArchive.class);
     public Archive.Entry getEntry(String path) throws IOException {
         String[] segs = Text.explode(path, '/');
         Archive.Entry root = getRoot();
@@ -44,5 +48,12 @@ public abstract class AbstractWebFilesArchive implements Archive {
      * @return the root directory in this archive that contains all web files.
      */
     public abstract Entry getBundleRoot();
+
+
+    public static void logSizeExceededWarning(final File file, final long maxFileLengthBytes) {
+        log.warn("Skipping file '{}' of size '{}' because it exceeds or equals  maximum allowed file size '{}'. If larger " +
+                        "files need to be supported, increase the maxFileSizeKb at '{}'",
+                file, file.length()/1024, maxFileLengthBytes/1024, "/hippo:configuration/hippo:modules/webfiles/hippo:moduleconfig/@maxFileLengthKb");
+    }
 
 }

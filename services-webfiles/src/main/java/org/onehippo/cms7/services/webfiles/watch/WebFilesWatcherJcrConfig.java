@@ -37,12 +37,14 @@ public class WebFilesWatcherJcrConfig implements WebFilesWatcherConfig {
     private static final String USE_WATCH_SERVICE_ON_OS_NAMES = "useWatchServiceOnOsNames";
     private static final String WATCHED_MODULES_PROPERTY = "watchedModules";
     private static final String WATCH_DELAY_MILLIS = "watchDelayMillis";
+    private static final String MAX_FILE_LENGTH_KB = "maxFileLengthKb";
 
     private List<String> watchedModules;
     private List<String> includedFiles;
     private List<String> excludedDirs;
     private List<String> useWatchServiceOnOsNames;
     private long watchDelayMillis;
+    private long maxFileLengthBytes;
 
     public WebFilesWatcherJcrConfig(final Node configNode) throws RepositoryException {
         watchedModules = getMultipleStringConfig(configNode, WATCHED_MODULES_PROPERTY, DEFAULT_WATCHED_MODULES);
@@ -50,6 +52,7 @@ public class WebFilesWatcherJcrConfig implements WebFilesWatcherConfig {
         excludedDirs = getMultipleStringConfig(configNode, EXCLUDED_DIRECTORIES, DEFAULT_EXCLUDED_DIRECTORIES);
         useWatchServiceOnOsNames = getMultipleStringConfig(configNode, USE_WATCH_SERVICE_ON_OS_NAMES, DEFAULT_USE_WATCH_SERVICE_ON_OS_NAMES);
         watchDelayMillis = JcrUtils.getLongProperty(configNode, WATCH_DELAY_MILLIS, DEFAULT_WATCH_DELAY_MILLIS);
+        maxFileLengthBytes = 1024 * JcrUtils.getLongProperty(configNode, MAX_FILE_LENGTH_KB, DEFAULT_MAX_FILE_LENGTH_KB);
     }
 
     private List<String> getMultipleStringConfig(final Node configNode, final String propertyName, final String[] defaultValue) {
@@ -90,5 +93,10 @@ public class WebFilesWatcherJcrConfig implements WebFilesWatcherConfig {
     @Override
     public long getWatchDelayMillis() {
         return watchDelayMillis;
+    }
+
+    @Override
+    public long getMaxFileLengthBytes() {
+        return maxFileLengthBytes;
     }
 }

@@ -88,6 +88,9 @@
     <sv:property sv:name="watchDelayMillis" sv:type="Long">
       <sv:value>500</sv:value>
     </sv:property>
+    <sv:property sv:name="maxFileLengthKb" sv:type="Long">
+      <sv:value>256</sv:value>
+    </sv:property>
     <sv:property sv:name="watchedModules" sv:type="String" sv:multiple="true">
       <sv:value>bootstrap/webfiles</sv:value>
     </sv:property>

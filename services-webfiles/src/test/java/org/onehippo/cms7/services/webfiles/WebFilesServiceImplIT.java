@@ -32,12 +32,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.onehippo.cms7.services.webfiles.watch.GlobFileNameMatcher;
+import org.onehippo.cms7.services.webfiles.watch.WebFilesWatcherConfig;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.cms7.services.webfiles.watch.WebFilesWatcherConfig.DEFAULT_MAX_FILE_LENGTH_KB;
 
 public class WebFilesServiceImplIT extends RepositoryTestCase {
 
@@ -58,7 +60,7 @@ public class WebFilesServiceImplIT extends RepositoryTestCase {
         importedFiles = new GlobFileNameMatcher();
         importedFiles.includeFiles("*.css");
         importedFiles.includeFiles("*.js");
-        service = new WebFilesServiceImpl(importedFiles);
+        service = new WebFilesServiceImpl(importedFiles, 1024 * DEFAULT_MAX_FILE_LENGTH_KB);
     }
 
     @After

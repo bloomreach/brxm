@@ -55,9 +55,11 @@ public class WebFilesServiceImpl implements WebFilesService {
     public static final String NT_WEB_RESOURCE_BUNDLE = "webfiles:bundle";
 
     private final GlobFileNameMatcher importedFiles;
+    private final long  maxFileLengthBytes;
 
-    public WebFilesServiceImpl(final GlobFileNameMatcher importedFiles) {
+    public WebFilesServiceImpl(final GlobFileNameMatcher importedFiles, final long maxFileLengthBytes) {
         this.importedFiles = importedFiles;
+        this.maxFileLengthBytes = maxFileLengthBytes;
     }
 
     @Override
@@ -99,7 +101,7 @@ public class WebFilesServiceImpl implements WebFilesService {
             // web files will be replaced completely to sync possible local changes after restart
             log.debug("Auto reload is enabled hence webfiles are (re-)imported directly from filesystem instead of via bootstrap.");
         }
-        final WebFilesFileArchive archive = new WebFilesFileArchive(directory, importedFiles);
+        final WebFilesFileArchive archive = new WebFilesFileArchive(directory, importedFiles, maxFileLengthBytes);
         importJcrWebFileBundle(session, archive);
 
     }
@@ -112,7 +114,7 @@ public class WebFilesServiceImpl implements WebFilesService {
             // web files will be replaced completely to sync possible local changes after restart
            log.debug("Auto reload is enabled hence webfiles are (re-)imported directly from filesystem instead of via bootstrap.");
         } else {
-            final WebFilesZipArchive archive = new WebFilesZipArchive(zip, importedFiles);
+            final WebFilesZipArchive archive = new WebFilesZipArchive(zip, importedFiles, maxFileLengthBytes);
             importJcrWebFileBundle(session, archive);
         }
     }
@@ -139,7 +141,7 @@ public class WebFilesServiceImpl implements WebFilesService {
                                   final String bundleName,
                                   final String bundleSubPath,
                                   final File fileOrDirectory) throws IOException, WebServiceException {
-        final WebFilesFileArchive archive = new WebFilesFileArchive(fileOrDirectory, importedFiles);
+        final WebFilesFileArchive archive = new WebFilesFileArchive(fileOrDirectory, importedFiles, maxFileLengthBytes);
         try {
             archive.open(true);
             final Node webFilesRoot = getWebFilessRoot(session);

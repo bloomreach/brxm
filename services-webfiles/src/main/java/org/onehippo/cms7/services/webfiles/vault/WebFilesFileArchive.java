@@ -31,6 +31,8 @@ import org.apache.jackrabbit.vault.fs.config.MetaInf;
 import org.apache.jackrabbit.vault.fs.config.VaultSettings;
 import org.apache.jackrabbit.vault.util.Constants;
 import org.apache.jackrabbit.vault.util.FileInputSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cms7.services.webfiles.vault.FileNameComparatorUtils.FILE_BASE_NAME_COMPARATOR;
 
@@ -59,13 +61,15 @@ public class WebFilesFileArchive extends AbstractWebFilesArchive {
 
     private final File directory;
     private final FileFilter includedFiles;
+    private final long maxFileLengthBytes;
     private Entry root;
     private Entry jcrRoot;
     private FileEntry bundleRoot;
 
-    public WebFilesFileArchive(final File directory, final FileFilter includedFiles) {
+    public WebFilesFileArchive(final File directory, final FileFilter includedFiles, final long maxFileLengthBytes) {
         this.directory = directory;
         this.includedFiles = includedFiles;
+        this.maxFileLengthBytes = maxFileLengthBytes;
     }
 
     @Override
@@ -91,7 +95,7 @@ public class WebFilesFileArchive extends AbstractWebFilesArchive {
     }
 
     public void open(boolean strict) {
-        bundleRoot = new FileEntry(directory, includedFiles);
+        bundleRoot = new FileEntry(directory, includedFiles, maxFileLengthBytes);
         jcrRoot = new SingleChildEntry(Constants.ROOT_DIR, bundleRoot);
         root = new SingleChildEntry(directory.getName(), jcrRoot);
     }
@@ -140,10 +144,12 @@ public class WebFilesFileArchive extends AbstractWebFilesArchive {
 
         private final File file;
         private final FileFilter includedFiles;
+        private final long maxFileLengthBytes;
 
-        private FileEntry(final File file, final FileFilter includedFiles) {
+        private FileEntry(final File file, final FileFilter includedFiles, final long maxFileLengthBytes) {
             this.file = file;
             this.includedFiles = includedFiles;
+            this.maxFileLengthBytes = maxFileLengthBytes;
         }
 
         public String getName() {
@@ -162,7 +168,11 @@ public class WebFilesFileArchive extends AbstractWebFilesArchive {
             Arrays.sort(files, FILE_BASE_NAME_COMPARATOR);
             final List<Entry> children = new ArrayList<>(files.length);
             for (File file: files) {
-                children.add(new FileEntry(file, includedFiles));
+                if (file.isFile() && file.length() > maxFileLengthBytes) {
+                    logSizeExceededWarning(file, maxFileLengthBytes);
+                    continue;
+                }
+                children.add(new FileEntry(file, includedFiles, maxFileLengthBytes));
             }
             return children;
         }
@@ -170,7 +180,11 @@ public class WebFilesFileArchive extends AbstractWebFilesArchive {
         public Entry getChild(String name) {
             final File child = new File(file, name);
             if (includedFiles.accept(child) && child.exists()) {
-                return new FileEntry(child, includedFiles);
+                if (child.isFile() && child.length() > maxFileLengthBytes) {
+                    logSizeExceededWarning(file, maxFileLengthBytes);
+                    return null;
+                }
+                return new FileEntry(child, includedFiles, maxFileLengthBytes);
             }
             return null;
         }

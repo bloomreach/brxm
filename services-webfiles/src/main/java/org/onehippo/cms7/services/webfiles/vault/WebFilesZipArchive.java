@@ -64,12 +64,14 @@ public class WebFilesZipArchive extends AbstractWebFilesArchive {
 
     private ZipFile zip;
     private final GlobFileNameMatcher includedFileNames;
+    private final long maxFileLengthBytes;
     private JarEntry jcrRoot;
     private Entry bundleRoot;
 
-    public WebFilesZipArchive(final ZipFile zip, final GlobFileNameMatcher includedFileNames) {
+    public WebFilesZipArchive(final ZipFile zip, final GlobFileNameMatcher includedFileNames,  final long maxFileLengthBytes) {
         this.zip = zip;
         this.includedFileNames = includedFileNames;
+        this.maxFileLengthBytes = maxFileLengthBytes;
     }
 
     @Override
@@ -102,7 +104,7 @@ public class WebFilesZipArchive extends AbstractWebFilesArchive {
             final boolean isDirectory = entry.isDirectory();
             final String path = entry.getName();
             final String[] names = Text.explode(path, '/');
-            if (names.length > 0 && isIncluded(names, isDirectory)) {
+            if (names.length > 0 && isIncluded(names, isDirectory, entry.getSize())) {
                 JarEntry je = jcrRoot;
                 for (int i = 0; i < names.length; i++) {
                     if (i == names.length - 1) {
@@ -121,12 +123,16 @@ public class WebFilesZipArchive extends AbstractWebFilesArchive {
         }
     }
 
-    private boolean isIncluded(final String[] names, final boolean lastIsDirectory) {
+    private boolean isIncluded(final String[] names, final boolean lastIsDirectory, final long size) {
         for (int i = 0; i < names.length; i++) {
             final File file = new File(names[i]);
             final boolean isLast = i == names.length - 1;
             final boolean isDirectory = isLast ? lastIsDirectory : true;
             if (!includedFileNames.matches(file.toPath(), isDirectory)) {
+                return false;
+            }
+            if (!isDirectory && size > maxFileLengthBytes) {
+                logSizeExceededWarning(file, maxFileLengthBytes);
                 return false;
             }
         }

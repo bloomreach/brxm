@@ -27,6 +27,7 @@ public class WebFilesWatcherJavaConfig implements WebFilesWatcherConfig {
     private final List<String> excludedDirs;
     private final List<String> useWatchServiceOnOsNames;
     private long watchDelayMillis;
+    private long maxFileLengthBytes;
 
     public WebFilesWatcherJavaConfig() {
         watchedModules = new ArrayList<>();
@@ -34,6 +35,7 @@ public class WebFilesWatcherJavaConfig implements WebFilesWatcherConfig {
         excludedDirs = new ArrayList<>();
         useWatchServiceOnOsNames = new ArrayList<>();
         watchDelayMillis = 0;
+        maxFileLengthBytes = 1024 * DEFAULT_MAX_FILE_LENGTH_KB;
     }
 
     void addWatchedModule(final String module) {
@@ -85,5 +87,10 @@ public class WebFilesWatcherJavaConfig implements WebFilesWatcherConfig {
     @Override
     public long getWatchDelayMillis() {
         return watchDelayMillis;
+    }
+
+    @Override
+    public long getMaxFileLengthBytes() {
+        return maxFileLengthBytes;
     }
 }

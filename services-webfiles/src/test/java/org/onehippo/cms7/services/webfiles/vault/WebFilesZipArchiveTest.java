@@ -38,6 +38,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.onehippo.cms7.services.webfiles.vault.FileNameComparatorUtils.BASE_NAME_COMPARATOR;
+import static org.onehippo.cms7.services.webfiles.watch.WebFilesWatcherConfig.DEFAULT_MAX_FILE_LENGTH_KB;
 
 public class WebFilesZipArchiveTest {
 
@@ -51,7 +52,7 @@ public class WebFilesZipArchiveTest {
         testBundleZip = new ZipFile(testBundleZipFile);
         fileNameMatcher = new GlobFileNameMatcher();
         fileNameMatcher.includeFiles("*");
-        archive = new WebFilesZipArchive(testBundleZip, fileNameMatcher);
+        archive = new WebFilesZipArchive(testBundleZip, fileNameMatcher, 1024 *  DEFAULT_MAX_FILE_LENGTH_KB);
     }
 
     @After
@@ -188,6 +189,15 @@ public class WebFilesZipArchiveTest {
     public void directories_and_files_are_returned_in_alphabetical_order() throws IOException {
         archive.open(true);
         traverseAndCheckOrder(archive.getBundleRoot());
+    }
+
+    @Test
+    public void files_that_exceed_maxFileLengthBytes_are_skipped() throws IOException {
+        archive = new WebFilesZipArchive(testBundleZip, fileNameMatcher, 1);
+        archive.open(true);
+        final Collection<? extends Archive.Entry> cssChildren = archive.getBundleRoot().getChild("css").getChildren();
+        final Archive.Entry[] cssEntries = cssChildren.toArray(new Archive.Entry[0]);
+        assertEquals("css files should be skipped because larger than 1 byte",0, cssEntries.length);
     }
 
     private void traverseAndCheckOrder(Archive.Entry current) throws IOException {

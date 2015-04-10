@@ -26,7 +26,8 @@ public interface WebFilesWatcherConfig {
     String[] DEFAULT_EXCLUDED_DIRECTORIES = {};
     String[] DEFAULT_USE_WATCH_SERVICE_ON_OS_NAMES = {};
     String[] DEFAULT_WATCHED_MODULES = {};
-    Long DEFAULT_WATCH_DELAY_MILLIS = Long.valueOf(500);
+    Long DEFAULT_WATCH_DELAY_MILLIS = 500L;
+    Long DEFAULT_MAX_FILE_LENGTH_KB = 256L;
 
     /**
      * @return the names of the Maven modules that should be watched for changes below the directory
@@ -65,4 +66,8 @@ public interface WebFilesWatcherConfig {
      */
     long getWatchDelayMillis();
 
+    /**
+     * @return the maximum allowed file size too use in web files.
+     */
+    long getMaxFileLengthBytes();
 }

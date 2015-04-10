@@ -26,6 +26,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.webfiles.watch.GlobFileNameMatcher;
+import org.onehippo.cms7.services.webfiles.watch.WebFilesWatcherConfig;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -34,6 +35,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.onehippo.cms7.services.webfiles.vault.FileNameComparatorUtils.FILE_BASE_NAME_COMPARATOR;
+import static org.onehippo.cms7.services.webfiles.watch.WebFilesWatcherConfig.DEFAULT_MAX_FILE_LENGTH_KB;
 
 public class WebFilesFileArchiveTest {
 
@@ -46,7 +48,7 @@ public class WebFilesFileArchiveTest {
         testBundleDir = FileUtils.toFile(getClass().getResource("/testbundle"));
         fileNameMatcher = new GlobFileNameMatcher();
         fileNameMatcher.includeFiles("*");
-        archive = new WebFilesFileArchive(testBundleDir, fileNameMatcher);
+        archive = new WebFilesFileArchive(testBundleDir, fileNameMatcher, 1024 *  DEFAULT_MAX_FILE_LENGTH_KB);
         archive.open(true);
     }
 
@@ -182,7 +184,7 @@ public class WebFilesFileArchiveTest {
     public void only_included_files_are_returned() {
         fileNameMatcher.reset();
         fileNameMatcher.includeFiles("*.css");
-        archive = new WebFilesFileArchive(testBundleDir, fileNameMatcher);
+        archive = new WebFilesFileArchive(testBundleDir, fileNameMatcher, 1024 * 256);
         archive.open(true);
 
         final Archive.Entry bundleRoot = archive.getBundleRoot();
@@ -194,6 +196,24 @@ public class WebFilesFileArchiveTest {
         final Archive.Entry jsDirEntry = bundleRoot.getChild("js");
         final Archive.Entry scriptJs = jsDirEntry.getChild("script.js");
         assertNull("entry for file 'js/script.js' should be excluded;", scriptJs);
+    }
+
+    @Test
+    public void files_that_exceed_maxFileLengthBytes_are_skipped() {
+        fileNameMatcher.reset();
+        fileNameMatcher.includeFiles("*.css");
+        archive = new WebFilesFileArchive(testBundleDir, fileNameMatcher, 1);
+        archive.open(true);
+
+        final Archive.Entry bundleRoot = archive.getBundleRoot();
+
+        final Archive.Entry cssDirEntry = bundleRoot.getChild("css");
+        final Archive.Entry styleCss = cssDirEntry.getChild("style.css");
+        assertNull("entry for file 'css/style.css' should not be included since style.css is too large;", styleCss);
+
+        final Archive.Entry jsDirEntry = bundleRoot.getChild("js");
+        final Archive.Entry scriptJs = jsDirEntry.getChild("script.js");
+        assertNull("entry for file 'js/script.js'should not be included since script.js is too large", scriptJs);
     }
 
     private boolean containsName(final Collection<? extends Archive.Entry> archiveChildren, final String name) {
