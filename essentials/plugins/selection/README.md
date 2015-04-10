@@ -1,4 +1,4 @@
-# Dashboard plugin for Selection forge plugin
+# Dashboard plugin for Selection standard plugin
 
 ## Improvement ideas
 

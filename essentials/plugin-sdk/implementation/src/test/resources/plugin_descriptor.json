@@ -9,8 +9,8 @@
         "type": "feature",
         "vendor": {
             "@type": "vendor",
-            "name": "Detailed Content Blocks documentation",
-            "url": "http://content-blocks.forge.onehippo.org"
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
         },
         "dependencies": [
             {
