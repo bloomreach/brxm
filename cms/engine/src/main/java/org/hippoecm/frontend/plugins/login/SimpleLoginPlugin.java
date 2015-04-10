@@ -28,9 +28,11 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.LoginException;
 
-import static org.hippoecm.frontend.session.LoginException.CAUSE;
+import static org.hippoecm.frontend.session.LoginException.Cause;
 
 public class SimpleLoginPlugin extends LoginPlugin {
+
+    public static final Cause INCORRECT_CAPTCHA = LoginException.newCause("invalid.captcha");
 
     public SimpleLoginPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -43,10 +45,6 @@ public class SimpleLoginPlugin extends LoginPlugin {
     }
 
     protected class CaptchaForm extends LoginPanel {
-
-        {
-            causeKeys.put(CAUSE.INCORRECT_CAPTCHA, "invalid.captcha");
-        }
 
         // Random captcha password to match against
         private String imagePass;
@@ -76,7 +74,7 @@ public class SimpleLoginPlugin extends LoginPlugin {
         @Override
         protected void login() throws LoginException {
             if (useCaptcha && isCaptchaEnabled() && !captchaTextValue.equalsIgnoreCase(imagePass)) {
-                throw new LoginException(CAUSE.INCORRECT_CAPTCHA);
+                throw new LoginException(INCORRECT_CAPTCHA);
             }
 
             super.login();
@@ -87,7 +85,7 @@ public class SimpleLoginPlugin extends LoginPlugin {
         }
 
         @Override
-        protected void loginFailed(final CAUSE cause) {
+        protected void loginFailed(final Cause cause) {
             // Check whether to show captcha or not
             if (useCaptcha && failedAttempts >= allowedAttempts) {
                 createAndAddCaptcha(true);
@@ -142,7 +140,6 @@ public class SimpleLoginPlugin extends LoginPlugin {
             form.add(captchaTextField);
             form.addLabelledComponent(captchaLabel);
         }
-
     }
 
     private static int randomInt(int min, int max) {

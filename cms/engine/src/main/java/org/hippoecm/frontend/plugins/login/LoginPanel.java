@@ -19,7 +19,7 @@ import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.MissingResourceException;
 
 import javax.jcr.SimpleCredentials;
 import javax.servlet.http.Cookie;
@@ -46,7 +46,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
@@ -55,6 +54,8 @@ import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.frontend.session.LoginException.*;
 
 public class LoginPanel extends Panel {
 
@@ -67,16 +68,6 @@ public class LoginPanel extends Panel {
     private static final int LOCALE_COOKIE_MAXAGE = 365 * 24 * 3600; // expire one year from now
     private final static String DEFAULT_KEY = "invalid.login";
 
-    protected final static Map<LoginException.CAUSE, String> causeKeys = new MiniMap<>(10);
-
-    static {
-        causeKeys.put(LoginException.CAUSE.INCORRECT_CREDENTIALS, "invalid.login");
-        causeKeys.put(LoginException.CAUSE.ACCESS_DENIED, "access.denied");
-        causeKeys.put(LoginException.CAUSE.REPOSITORY_ERROR, "repository.error");
-        causeKeys.put(LoginException.CAUSE.PASSWORD_EXPIRED, "password.expired");
-        causeKeys.put(LoginException.CAUSE.ACCOUNT_EXPIRED, "account.expired");
-    }
-
     private final LoginSuccessHandler successHandler;
 
     protected final LoginForm form;
@@ -87,6 +78,10 @@ public class LoginPanel extends Panel {
     public LoginPanel(final String id, final boolean autoComplete, final List<String> locales,
                       final LoginSuccessHandler successHandler) {
         super(id);
+
+        if (locales == null || locales.isEmpty()) {
+            throw new IllegalArgumentException("Argument locales can not be null or empty");
+        }
 
         this.successHandler = successHandler;
 
@@ -107,12 +102,24 @@ public class LoginPanel extends Panel {
         userSession.setLocale(new Locale(selectedLocale));
     }
 
-    protected void loginFailed(final LoginException.CAUSE cause) {
+    protected void loginFailed(final Cause cause) {
         Main main = (Main) Application.get();
         main.resetConnection();
 
-        String key = cause != null && causeKeys.containsKey(cause) ? causeKeys.get(cause) : DEFAULT_KEY;
-        info(getString(key));
+        info(getReason(cause));
+    }
+
+    private String getReason(final Cause cause) {
+        if (cause != null) {
+            try {
+                final String reason = getString(cause.getKey());
+                if (reason != null) {
+                    return reason;
+                }
+            } catch (MissingResourceException ignore) {
+            }
+        }
+        return getString(DEFAULT_KEY);
     }
 
     protected  void loginSuccess() {
@@ -134,10 +141,6 @@ public class LoginPanel extends Panel {
             super("login-form");
 
             setOutputMarkupId(true);
-
-            if (locales == null || locales.isEmpty()) {
-                throw new IllegalArgumentException("Argument locales can not be null or empty");
-            }
 
             add(new AttributeModifier("autocomplete", autoComplete ? "on" : "off"));
 
@@ -229,7 +232,7 @@ public class LoginPanel extends Panel {
             } catch (AccessControlException ace) {
                 // Invalidate the current obtained JCR session and create an anonymous one
                 PluginUserSession.get().login();
-                loginFailed(LoginException.CAUSE.ACCESS_DENIED);
+                loginFailed(Cause.ACCESS_DENIED);
             }
         }
 

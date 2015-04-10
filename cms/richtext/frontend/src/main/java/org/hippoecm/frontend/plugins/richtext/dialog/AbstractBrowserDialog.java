@@ -64,6 +64,13 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
                 }
             }
 
+            @Override
+            protected void onFolderSelected(final IModel<Node> model) {
+                if (breadcrumbs != null) {
+                    breadcrumbs.update(model);
+                }
+                super.onFolderSelected(model);
+            }
         };
 
         add(controller.create("content"));
@@ -85,9 +92,6 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
     }
 
     protected void onModelSelected(IModel<Node> model) {
-        if (breadcrumbs != null) {
-            breadcrumbs.update(model);
-        }
     }
 
     protected IModel<Node> getFolderModel() {
