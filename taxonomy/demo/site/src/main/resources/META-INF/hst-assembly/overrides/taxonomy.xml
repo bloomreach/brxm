@@ -24,31 +24,30 @@
     <property name="taxonomiesContentPath" value="/content/taxonomies"/>
   </bean>
 
-
-  <bean id="customJcrObservationEventListenerItems" class="org.springframework.beans.factory.config.ListFactoryBean">
-    <property name="sourceList">
-      <list>
-        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
-          <property name="nodeAddedEnabled" value="true" />
-          <property name="nodeRemovedEnabled" value="true" />
-          <property name="propertyAddedEnabled" value="true" />
-          <property name="propertyChangedEnabled" value="true" />
-          <property name="propertyRemovedEnabled" value="true" />
-          <property name="absolutePath" value="/content/taxonomies" />
-          <property name="deep" value="true" />
-          <property name="uuids">
-            <null />
-          </property>
-          <property name="noLocal" value="false" />
-          <property name="eventListener">
-            <bean class="org.onehippo.taxonomy.listener.TaxonomyManagerInvalidationListener">
-              <property name="taxonomyManager" ref="org.onehippo.taxonomy.api.TaxonomyManager" />
-            </bean>
-          </property>
-        </bean>
-      </list>
+  <bean  class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject" ref="jcrObservationEventListenerItems"/>
+    <property name="targetMethod" value="add"/>
+    <property name="arguments">
+      <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+        <property name="nodeAddedEnabled" value="true"/>
+        <property name="nodeRemovedEnabled" value="true"/>
+        <property name="propertyAddedEnabled" value="true"/>
+        <property name="propertyChangedEnabled" value="true"/>
+        <property name="propertyRemovedEnabled" value="true"/>
+        <property name="absolutePath" value="/content/taxonomies"/>
+        <property name="deep" value="true"/>
+        <property name="uuids">
+          <null/>
+        </property>
+        <property name="noLocal" value="false"/>
+        <property name="eventListener">
+          <bean class="org.onehippo.taxonomy.listener.TaxonomyManagerInvalidationListener">
+            <property name="taxonomyManager" ref="org.onehippo.taxonomy.api.TaxonomyManager"/>
+          </bean>
+        </property>
+      </bean>
     </property>
   </bean>
-  
+
 </beans>
 
