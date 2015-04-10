@@ -17,7 +17,6 @@ package org.onehippo.taxonomy.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -32,6 +31,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.taxonomy.api.Taxonomies;
 import org.onehippo.taxonomy.api.Taxonomy;
@@ -54,9 +54,8 @@ public class TaxonomyManagerImpl implements TaxonomyManager {
 
     private LoadingCache<String, Taxonomies> taxonomyCache;
 
-
     static Logger log = LoggerFactory.getLogger(TaxonomyManagerImpl.class);
-    private Taxonomies taxonomies;
+
 
     // injected by Spring
     private Repository repository;
@@ -65,35 +64,33 @@ public class TaxonomyManagerImpl implements TaxonomyManager {
     private int cacheSize = DEFAULT_CACHE_SIZE;
     private int expireTimeSeconds = DEFAULT_EXPIRE_TIME;
 
-    @Deprecated
-    @Override
-    public Taxonomies getTaxonomies() {
-        Taxonomies tax = this.taxonomies;
-        if (tax == null) {
-            long start = System.currentTimeMillis();
-            synchronized (this) {
-                buildTaxonomies();
-                tax = this.taxonomies;
-            }
-            log.info("Building taxonomy tree took  {} ms.", (System.currentTimeMillis() - start));
-        }
-        return tax;
-    }
 
     @Override
-    public Taxonomies getTaxonomies(final HstRequestContext context) {
+    public Taxonomies getTaxonomies() {
+        Session pluginSession = null;
         try {
-            return getTaxonomies(context.getSession());
+            // try with context session, otherwise use provided one
+            final Session contextSession = getContextSession();
+            if (contextSession == null) {
+                pluginSession = getPluginSession();
+                return getTaxonomies(pluginSession);
+            }
+            return getTaxonomies(contextSession);
+
         } catch (RepositoryException e) {
-            log.error("Error fetching taxonomies", e);
+            log.error("Error obtaining taxonomy session", e);
+        } finally {
+            if (pluginSession != null) {
+                pluginSession.logout();
+            }
         }
+
         return new NOOPTaxonomiesImpl();
     }
 
-    @Override
-    public Taxonomies getTaxonomies(final Session session) {
-        initCache();
 
+    private Taxonomies getTaxonomies(final Session session) {
+        initCache();
         try {
             return taxonomyCache.get(getUserID(session), () -> buildTaxonomies(session));
         } catch (ExecutionException e) {
@@ -168,48 +165,8 @@ public class TaxonomyManagerImpl implements TaxonomyManager {
 
     }
 
-    @Deprecated
-    private synchronized void buildTaxonomies() {
-        if (this.taxonomies != null) {
-            return;
-        }
-        if (taxonomiesContentPath == null || taxonomiesContentPath.isEmpty()) {
-            log.warn("Cannot build taxonomies: taxonomiesContentPath is not configured");
-            this.taxonomies = new NOOPTaxonomiesImpl();
-            return;
-        }
-
-        try {
-            Node taxonomies = getRootNode(taxonomiesContentPath);
-            if (taxonomies.isNodeType(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CONTAINER)) {
-                this.taxonomies = new TaxonomiesImpl(taxonomies);
-            } else {
-                log.warn("Cannot build taxonomies: taxonomiesContentPath '{}' is not pointing to a node of type '{}'",
-                        this.taxonomiesContentPath, TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CONTAINER);
-                this.taxonomies = new NOOPTaxonomiesImpl();
-            }
-        } catch (PathNotFoundException e) {
-            log.error("Unable to build taxonomies: taxonomiesContentPath '{}' does not resolve to node",
-                    taxonomiesContentPath);
-            this.taxonomies = new NOOPTaxonomiesImpl();
-        } catch (Exception e) {
-            log.error("Unable to build taxonomies: {}", e);
-            this.taxonomies = new NOOPTaxonomiesImpl();
-        }
-
-    }
-
-    protected Node getRootNode(String taxonomiesContentPath) throws RepositoryException {
-        if (credentials == null) {
-            throw new IllegalStateException("A valid credentials as well as repository should be set for TaxonomyManagerImpl.");
-        }
-
-        Session session = this.repository.login(credentials);
-        return (Node)session.getItem(taxonomiesContentPath);
-    }
 
     public synchronized void invalidate(String path) {
-        this.taxonomies = null;
         if (taxonomyCache != null) {
             // invalidate cache
             log.debug("Invalidating Taxonomy cache for path: {}", path);
@@ -232,6 +189,22 @@ public class TaxonomyManagerImpl implements TaxonomyManager {
         }
     }
 
+
+    private Session getContextSession() throws RepositoryException {
+        final HstRequestContext context = RequestContextProvider.get();
+        if (context != null) {
+            return context.getSession();
+        }
+        return null;
+    }
+
+
+    private Session getPluginSession() throws RepositoryException {
+        if (credentials == null) {
+            throw new IllegalStateException("A valid credentials as well as repository should be set for TaxonomyManagerImpl.");
+        }
+        return this.repository.login(credentials);
+    }
 
     private String getUserID(final Session session) {
         return session.getUserID();
