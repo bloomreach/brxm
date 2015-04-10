@@ -28,6 +28,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.ctc.wstx.util.StringUtil;
+
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
@@ -38,6 +41,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.SiteMapTreePickerRepresentation;
@@ -47,9 +51,12 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NotNullValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorBuilder;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
+import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_SITEMAP;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils.findAvailableDocumentRepresentations;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils.getDocumentRepresentationHstConfigUser;
 
@@ -206,7 +213,15 @@ public class SiteMapResource extends AbstractConfigResource {
             @Override
             public Response call() throws Exception {
                 Node newSiteMapItem = siteMapHelper.create(siteMapItem, parentId);
-                return ok("Item created successfully", newSiteMapItem.getIdentifier());
+                String siteMapPathInfo = StringUtils.substringAfter(newSiteMapItem.getPath(), NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_SITEMAP );
+                SiteMapPageRepresentation siteMapPageRepresentation = new SiteMapPageRepresentation();
+                siteMapPageRepresentation.setId(newSiteMapItem.getIdentifier());
+                // siteMapPathInfo without starting /
+                siteMapPageRepresentation.setPathInfo(siteMapPathInfo.substring(1));
+                final Mount mount = getPageComposerContextService().getEditingMount();
+                siteMapPageRepresentation.setRenderPathInfo(mount.getMountPath() + siteMapPathInfo);
+                siteMapPageRepresentation.setParentId(parentId);
+                return ok("Item created successfully", siteMapPageRepresentation);
             }
         }, preValidators.build());
     }
