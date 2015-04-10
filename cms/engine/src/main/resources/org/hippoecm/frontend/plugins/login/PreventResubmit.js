@@ -24,18 +24,18 @@
     Hippo.PreventResubmit = function(formSelector) {
       var el = $(formSelector);
       if (el === null || el.length === 0) {
-        throw new Error('Can not find form element for prevent resubmit behavior with selector ' + formSelector);
+        console.warn("Cannot find form element '" + formSelector + "' to prevent resubmit behavior");
+      } else {
+        el.submitting = false;
+        el.submit(function (e) {
+          if (el.submitting) {
+            e.preventDefault();
+          } else {
+            $(':submit', el).prop('disabled', true);
+            el.submitting = true;
+          }
+        });
       }
-
-      el.submitting = false;
-      el.submit(function(e) {
-        if (el.submitting) {
-          e.preventDefault();
-        } else {
-          $(':submit', el).prop('disabled', true);
-          el.submitting = true;
-        }
-      });
     };
   }
 }(window, jQuery));
