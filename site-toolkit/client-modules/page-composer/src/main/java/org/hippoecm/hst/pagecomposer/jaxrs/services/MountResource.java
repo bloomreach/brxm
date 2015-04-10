@@ -159,7 +159,7 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
 
         String prefix = mount.getVirtualHost().getHostName();
         if (StringUtils.isNotEmpty(mount.getMountPath())) {
-            prefix += "/" + mount.getMountPath();
+            prefix += mount.getMountPath();
         }
         NewPageModelRepresentation newPageModelRepresentation = new NewPageModelRepresentation(prototypePagesRepresentation.getPrototypes(),
                 pages.getPages(), prefix);
