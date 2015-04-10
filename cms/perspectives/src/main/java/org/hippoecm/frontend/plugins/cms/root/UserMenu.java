@@ -64,7 +64,7 @@ public class UserMenu extends Panel {
     public void renderHead(final IHeaderResponse response) {
         response.render(JavaScriptReferenceHeaderItem.forReference(SCRIPT_REFERENCE));
 
-        final String script = String.format("if (Hippo && Hippo.UserMenu) { Hippo.UserMenu.render('%s', '%s'); }",
+        final String script = String.format("if (Hippo && Hippo.UserMenu) { Hippo.UserMenu('%s', '%s'); }",
                 getLinkSelector(), getMenuSelector());
         response.render(OnDomReadyHeaderItem.forScript(script));
 

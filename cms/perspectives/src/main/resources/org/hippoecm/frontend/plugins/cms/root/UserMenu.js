@@ -20,50 +20,63 @@
 
   if (!Hippo.UserMenu) {
 
-    var UserMenuImpl = function () {
-    };
+    Hippo.UserMenu = function(linkSelector, menuSelector) {
+      var link = $(linkSelector),
+          menu = $(menuSelector),
+          timeout = null,
+          delay = 300,
+          isRelated = function(e, el) {
+            var $related = $(e.relatedTarget);
+            return $related.is(el) || $related.closest(el).length;
+          },
+          hideMenuAfterDelay = function() {
+            timeout = window.setTimeout(function() {
+              menu.hide();
+              timeout = null;
+            }, delay);
+          },
+          aboutToHideMenu = function() {
+            return timeout !== null;
+          },
+          cancelHideMenu = function() {
+            if (timeout !== null) {
+              window.clearTimeout(timeout);
+              timeout = null;
+            }
+          };
 
-    UserMenuImpl.prototype = {
-      render : function(linkSelector, menuSelector) {
-        var link = $(linkSelector),
-            menu = $(menuSelector);
-
-        if (link === null || link.length === 0) {
-          throw new Error('Could not find link element for Hippo.UserMenu with selector ' + linkSelector);
-        }
-
-        if (menu === null || menu.length === 0) {
-          throw new Error('Could not find menu element for Hippo.UserMenu with selector ' + menuSelector);
-        }
-
-        link.hover(function(e) {
-          var $related = $(e.relatedTarget);
-          if ($related.is(menu) || $related.closest(menu).length) {
-            // coming form the menu - abort show
-            return;
-          }
-          menu.show();
-
-        }, function(e) {
-          var $related = $(e.relatedTarget);
-          if ($related.is(menu) || $related.closest(menu).length) {
-            // leaving for the menu - abort hide
-            return;
-          }
-          menu.hide();
-        });
-
-        menu.mouseleave(function(e) {
-          var $related = $(e.relatedTarget);
-          if ($related.is(link) || $related.closest(link).length) {
-            // leaving for the link - abort hide;
-            return;
-          }
-          menu.hide();
-        });
+      if (link === null || link.length === 0) {
+        throw new Error('Could not find link element for Hippo.UserMenu with selector ' + linkSelector);
       }
-    };
 
-    Hippo.UserMenu = new UserMenuImpl();
+      if (menu === null || menu.length === 0) {
+        throw new Error('Could not find menu element for Hippo.UserMenu with selector ' + menuSelector);
+      }
+
+      link.mouseenter(function(e) {
+        if (isRelated(e, menu)) {
+          // coming form the menu - abort show
+          return;
+        }
+        cancelHideMenu();
+        menu.show();
+      });
+      link.mouseleave(function(e) {
+        if (aboutToHideMenu() || isRelated(e, menu)) {
+          // leaving for the menu or hide timeout already set - abort hide
+          return;
+        }
+        hideMenuAfterDelay();
+      });
+
+      menu.mouseenter(cancelHideMenu);
+      menu.mouseleave(function(e) {
+        if (aboutToHideMenu() || isRelated(e, link)) {
+          // leaving for the link or hide timeout already set - abort hide;
+          return;
+        }
+        hideMenuAfterDelay();
+      });
+    };
   }
 }(window, jQuery));
