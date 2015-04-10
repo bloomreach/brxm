@@ -51,10 +51,10 @@ public class TaxonomyCategoryResult extends BaseHstComponent {
         String taxonomy = getComponentParameter("root");
         String relPath = getComponentParameter("path");
         
-        if(taxonomy == null || taxonomyManager.getTaxonomies(RequestContextProvider.get()).getTaxonomy(taxonomy) == null) {
+        if(taxonomy == null || taxonomyManager.getTaxonomies().getTaxonomy(taxonomy) == null) {
             request.setAttribute("error", "Cannot find taxonomy " + taxonomy);
         } else {
-            Taxonomy tax = taxonomyManager.getTaxonomies(RequestContextProvider.get()).getTaxonomy(taxonomy);
+            Taxonomy tax = taxonomyManager.getTaxonomies().getTaxonomy(taxonomy);
             if(relPath == null || tax.getCategory(relPath) == null){
                 request.setAttribute("error", "Cannot find taxonomy term for relPath " + relPath);
             } else {
