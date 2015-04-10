@@ -112,7 +112,7 @@ public class HippoQueryImpl implements HippoQuery {
         try {
             log.info("Execution took: '{}' ms. SOLR query = '{}'", (System.currentTimeMillis() - start) , URLDecoder.decode(solrQuery.toString(), "UTF-8"));
         } catch (UnsupportedEncodingException e) {
-            new SolrServerException(e);
+            throw new SolrServerException(e);
         }
 
         return new HippoQueryResultImpl(rsp, new DocumentObjectBinder(), client);
