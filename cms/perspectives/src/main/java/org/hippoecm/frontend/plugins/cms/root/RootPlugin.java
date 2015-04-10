@@ -74,6 +74,8 @@ public class RootPlugin extends TabsPlugin {
     public static final String CONFIG_SEND_USAGE_STATISTICS_TO_HIPPO = "send.usage.statistics.to.hippo";
     public static final boolean DEFAULT_SEND_USAGE_STATISTICS_TO_HIPPO = true;
 
+    public static final String SYSPROP_SEND_USAGE_STATISTICS_TO_HIPPO = CONFIG_SEND_USAGE_STATISTICS_TO_HIPPO;
+
     private static final String USAGE_STATISTICS_JS = "usage-statistics.js";
     private static final String LOGIN_LOGOUT_EVENTS_JS = "login-logout-events.js";
 
@@ -255,14 +257,26 @@ public class RootPlugin extends TabsPlugin {
     }
 
     private boolean sendUsageStatistics() {
-        return getPluginConfig().getAsBoolean(CONFIG_SEND_USAGE_STATISTICS_TO_HIPPO, DEFAULT_SEND_USAGE_STATISTICS_TO_HIPPO);
+        boolean result = DEFAULT_SEND_USAGE_STATISTICS_TO_HIPPO;
+
+        // first check the system property, so sending of usage statistics can always be disabled from the command line
+        final String systemPropValue = System.getProperty(SYSPROP_SEND_USAGE_STATISTICS_TO_HIPPO);
+        if (systemPropValue != null) {
+            result = Boolean.parseBoolean(systemPropValue);
+            log.info("Sending usage statistics to Hippo: {} (set by system property '{}')", result, SYSPROP_SEND_USAGE_STATISTICS_TO_HIPPO);
+        } else {
+            // next, check our configuration property {@link #CONFIG_SEND_USAGE_STATISTICS_TO_HIPPO}
+            result = getPluginConfig().getAsBoolean(CONFIG_SEND_USAGE_STATISTICS_TO_HIPPO, DEFAULT_SEND_USAGE_STATISTICS_TO_HIPPO);
+            log.info("Sending usage statistics to Hippo: {} (set by repository configuration property '{}')", result, CONFIG_SEND_USAGE_STATISTICS_TO_HIPPO);
+        }
+        return result;
     }
 
     private HeaderItem createUsageStatisticsReporter() {
         final Map<String, String> scriptParams = new TreeMap<>();
         final String url = UsageStatisticsExternalUrl.get();
         scriptParams.put("externalScriptUrl", url);
-        log.info("Sending usage statistics to {}", url);
+        log.info("Including external script for reporting usage statistics: {}", url);
 
         final PackageTextTemplate usageStatistics = new PackageTextTemplate(RootPlugin.class, USAGE_STATISTICS_JS);
         final String javaScript = usageStatistics.asString(scriptParams);
