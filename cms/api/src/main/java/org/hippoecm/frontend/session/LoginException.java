@@ -15,34 +15,47 @@
  */
 package org.hippoecm.frontend.session;
 
+import org.apache.wicket.util.io.IClusterable;
+
 /**
  * An {@link Exception} class indicating that a user provided incorrect login details
  */
-@SuppressWarnings("serial")
 public class LoginException extends Exception {
 
-    public enum CAUSE
-    {
-        INCORRECT_CREDENTIALS,
-        ACCESS_DENIED,
-        REPOSITORY_ERROR,
-        INCORRECT_CAPTCHA,
-        PASSWORD_EXPIRED,
-        ACCOUNT_EXPIRED
+    public static Cause newCause(final String key) {
+        return new Cause(key);
     }
 
-    private CAUSE cause;
+    public static class Cause implements IClusterable {
+        private String key;
 
-    public LoginException(CAUSE cause) {
+        public final static Cause INCORRECT_CREDENTIALS = newCause("invalid.login");
+        public final static Cause ACCESS_DENIED         = newCause("access.denied");
+        public final static Cause REPOSITORY_ERROR      = newCause("repository.error");
+        public final static Cause PASSWORD_EXPIRED      = newCause("password.expired");
+        public final static Cause ACCOUNT_EXPIRED       = newCause("account.expired");
+
+        Cause(final String key) {
+            this.key = key;
+        }
+
+        public String getKey() {
+            return key;
+        }
+    }
+
+    private Cause cause;
+
+    public LoginException(Cause cause) {
         this.cause = cause;
     }
 
-    public LoginException(CAUSE cause, Throwable causeException) {
+    public LoginException(Cause cause, Throwable causeException) {
         super(causeException);
         this.cause = cause;
     }
 
-    public CAUSE getLoginExceptionCause() {
+    public Cause getLoginExceptionCause() {
         return this.cause;
     }
 

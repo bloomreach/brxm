@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,7 +56,7 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.frontend.session.LoginException.CAUSE.ACCESS_DENIED;
+import static org.hippoecm.frontend.session.LoginException.Cause;
 
 /**
  * A Wicket {@link org.apache.wicket.Session} that maintains a reference to a JCR {@link javax.jcr.Session}.  It is
@@ -281,11 +281,11 @@ public class PluginUserSession extends UserSession {
         final Throwable rootCause = le.getCause();
 
         if (rootCause instanceof FailedLoginException) {
-            throw new LoginException(LoginException.CAUSE.INCORRECT_CREDENTIALS);
+            throw new LoginException(Cause.INCORRECT_CREDENTIALS);
         } else if (rootCause instanceof CredentialExpiredException) {
-            throw new LoginException(LoginException.CAUSE.PASSWORD_EXPIRED);
+            throw new LoginException(Cause.PASSWORD_EXPIRED);
         } else if (rootCause instanceof AccountExpiredException) {
-            throw new LoginException(LoginException.CAUSE.ACCOUNT_EXPIRED);
+            throw new LoginException(Cause.ACCOUNT_EXPIRED);
         }
     }
 
@@ -306,7 +306,7 @@ public class PluginUserSession extends UserSession {
         }
 
         if (jcrSession == null) {
-            throw new LoginException(ACCESS_DENIED);
+            throw new LoginException(Cause.ACCESS_DENIED);
         }
 
         checkApplicationPermission(jcrSession);
@@ -335,7 +335,7 @@ public class PluginUserSession extends UserSession {
         final String applicationName = getApplicationName(jcrSession);
         final IPluginConfigService application = getApplicationFactory(jcrSession).getApplication(applicationName);
         if (!application.checkPermission(jcrSession)) {
-            throw new LoginException(ACCESS_DENIED);
+            throw new LoginException(Cause.ACCESS_DENIED);
         }
     }
 
