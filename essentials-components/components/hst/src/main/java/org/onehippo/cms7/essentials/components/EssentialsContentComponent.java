@@ -18,8 +18,6 @@ package org.onehippo.cms7.essentials.components;
 
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.parameters.ParametersInfo;
-import org.onehippo.cms7.essentials.components.info.EssentialsContentComponentInfo;
 
 /**
  * Hippo HST component for simple (document detail) request handling, it just fetches sitemap mapped bean.
@@ -29,7 +27,6 @@ import org.onehippo.cms7.essentials.components.info.EssentialsContentComponentIn
  * @see org.onehippo.cms7.essentials.components.EssentialsDocumentComponent
  */
 
-@ParametersInfo(type = EssentialsContentComponentInfo.class)
 public class EssentialsContentComponent extends CommonComponent {
 
     @Override
