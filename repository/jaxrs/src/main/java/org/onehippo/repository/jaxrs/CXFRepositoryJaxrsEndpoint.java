@@ -20,15 +20,28 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.interceptor.Interceptor;
+import org.apache.cxf.jaxrs.JAXRSInvoker;
+import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.message.Message;
 
 public class CXFRepositoryJaxrsEndpoint extends RepositoryJaxrsEndpoint {
 
+    private JAXRSInvoker invoker;
     private List<Interceptor<? extends Message>> inInterceptors;
     private List<Interceptor<? extends Message>> inFaultInterceptors;
     private List<Interceptor<? extends Message>> outInterceptors;
     private List<Interceptor<? extends Message>> outFaultInterceptors;
+
+    public CXFRepositoryJaxrsEndpoint invoker(JAXRSInvoker invoker) {
+        this.invoker = invoker;
+        return this;
+    }
+
+    public JAXRSInvoker getInvoker() {
+        return invoker;
+    }
 
     public CXFRepositoryJaxrsEndpoint(final String address) {
         super(address);
@@ -80,5 +93,15 @@ public class CXFRepositoryJaxrsEndpoint extends RepositoryJaxrsEndpoint {
 
     public List<Interceptor<? extends Message>> getOutFaultInterceptors() {
         return outFaultInterceptors != null ? outFaultInterceptors : Collections.EMPTY_LIST;
+    }
+
+    public void preCreate(JAXRSServerFactoryBean endpointFactory) {
+    }
+
+    public void postCreate(Server server) {
+        server.getEndpoint().getInInterceptors().addAll(getInInterceptors());
+        server.getEndpoint().getInFaultInterceptors().addAll(getInFaultInterceptors());
+        server.getEndpoint().getOutInterceptors().addAll(getOutInterceptors());
+        server.getEndpoint().getOutFaultInterceptors().addAll(getOutFaultInterceptors());
     }
 }
