@@ -1096,6 +1096,7 @@ api/src/main/styling/images/icons/stateorder-hover.svg -text
 api/src/main/styling/images/icons/stateorder-none.svg -text
 api/src/main/styling/images/icons/stateorder-up.svg -text
 api/src/main/styling/images/loading.gif -text
+api/src/main/styling/images/login/loginhead_ce.png -text svneol=unset#image/png
 api/src/main/styling/images/logo/hippo-logo.png -text svneol=unset#image/png
 api/src/main/styling/images/logo/hippo-logo@2x.png -text svneol=unset#image/png
 api/src/main/styling/less/_ajax_loader.less -text
@@ -1965,7 +1966,6 @@ engine/src/main/java/org/hippoecm/frontend/plugins/login/SimpleLoginPlugin_nl.pr
 engine/src/main/java/org/hippoecm/frontend/plugins/login/images/icons/dialog-information-32.png -text svneol=unset#image/png
 engine/src/main/java/org/hippoecm/frontend/plugins/login/images/loginback.png -text svneol=unset#image/png
 engine/src/main/java/org/hippoecm/frontend/plugins/login/images/loginbottom.png -text svneol=unset#image/png
-engine/src/main/java/org/hippoecm/frontend/plugins/login/images/loginhead_ce.png -text svneol=unset#image/png
 engine/src/main/java/org/hippoecm/frontend/plugins/login/images/wadden.png -text svneol=unset#image/png
 engine/src/main/java/org/hippoecm/frontend/service/popup/AjaxPopupService.java -text
 engine/src/main/java/org/hippoecm/frontend/service/popup/AjaxPopupService.properties -text
