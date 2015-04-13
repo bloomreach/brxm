@@ -120,7 +120,6 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
         // When acessing the site over the host of the cms, ALWAYS the context path needs to be included
         Session session = createAdminSession();
         Node hstHostsNode = session.getNode("/hst:hst/hst:hosts");
-        boolean before = hstHostsNode.getProperty("hst:showcontextpath").getBoolean();
         hstHostsNode.setProperty("hst:showcontextpath", false);
         session.save();
         // wait to be sure async jcr event arrived
@@ -153,7 +152,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
             assertEquals("wrong fully qualified url for images/mythumbnail.gif for CMS context" ,"/site/images/mythumbnail.gif", (imageLink.toUrlForm(requestContext, true)));
         }
         // set the value again to original.
-        hstHostsNode.setProperty("hst:showcontextpath", before);
+        hstHostsNode.getProperty("hst:showcontextpath").remove();
         session.save();
         session.logout();
         
