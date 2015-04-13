@@ -27,19 +27,20 @@
       Want to see faceted navigation in action? Click the buttons to add some dummy cars.<br />
       <b>Note:</b> adding more than approximately 1000 cars takes some time.
     </p>
-    <form action="<hst:actionURL/>" method="get">
-       <input type="hidden" name="number" value="5"/>
+    <form action="<hst:actionURL/>" method="POST">
+      <input type="hidden" name="number" value="5"/>
+      <input type="hidden" name="test" value="ha"/>
        <input type="submit" value="Add 5 more random cars"/>
     </form>
-    <form action="<hst:actionURL/>" method="get">
+    <form action="<hst:actionURL/>" method="POST">
         <input type="hidden" name="number" value="25"/>
         <input type="submit" value="Add 25 more random cars"/>
     </form>
-    <form action="<hst:actionURL/>" method="get">
+    <form action="<hst:actionURL/>" method="POST">
         <input type="hidden" name="number" value="100"/>
         <input type="submit" value="Add 100 more random cars"/>
     </form>
-    <form action="<hst:actionURL/>" method="get">
+    <form action="<hst:actionURL/>" method="POST">
         <input type="hidden" name="number" value="250"/>
         <input type="submit" value="Add 250 more random cars"/>
     </form>

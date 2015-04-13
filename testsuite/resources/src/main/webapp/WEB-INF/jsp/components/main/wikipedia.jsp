@@ -100,15 +100,15 @@ ${paramValues.maxDocsPerFolder}
 
   <h2>Quick add wikipedia documents</h2>
 
-  <form action="<hst:actionURL/>" method="get">
+  <form action="<hst:actionURL/>" method="POST">
     <input type="hidden" name="number" value="5"/>
     <input type="submit" value="Add 5 wikipedia docs"/>
   </form>
-  <form action="<hst:actionURL/>" method="get">
+  <form action="<hst:actionURL/>" method="POST">
     <input type="hidden" name="number" value="10"/>
     <input type="submit" value="Add 10 wikipedia docs"/>
   </form>
-  <form action="<hst:actionURL/>" method="get">
+  <form action="<hst:actionURL/>" method="POST">
     <input type="hidden" name="number" value="100"/>
     <input type="submit" value="Add 100 wikipedia docs"/>
   </form>
@@ -116,7 +116,7 @@ ${paramValues.maxDocsPerFolder}
   <br/>
 
   <h2>Custom add wikipedia documents</h2>
-  <form action="<hst:actionURL/>" method="get">
+  <form action="<hst:actionURL/>" method="POST">
     <table>
       <tr>
         <td><b>Number of documents to add:</b>
