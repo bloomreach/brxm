@@ -4,7 +4,7 @@
 <#-- @ftlvariable name="facetLimit" type="java.lang.Integer" -->
 <#-- @ftlvariable name="query" type="java.lang.String" -->
 <@hst.setBundle basename="essentials.facets"/>
-<form action="<@hst.actionURL />" method="get">
+<form action="<@hst.link />" method="get">
   <div class="row form-group">
     <div class="col-xs-8">
     <@fmt.message key='facets.placeholder' var="placeholder"/>
