@@ -86,7 +86,7 @@ public class MatchHostAndUrlIT extends AbstractTestConfigurations {
          * The backing Mount should be live
          */
         @Test
-        public void testMatchNoContextPath() throws Exception {
+        public void testMatchRootContextPath() throws Exception {
             Session session = createSession();
             createHstConfigBackup(session);
             // because hst:hosts contains hst:defaultcontextpath = /site we first need to set that property to ""

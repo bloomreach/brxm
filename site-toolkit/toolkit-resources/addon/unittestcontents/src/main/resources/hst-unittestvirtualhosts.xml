@@ -18,29 +18,14 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:virtualhosts</sv:value>
   </sv:property>
-  <sv:property sv:name="hst:showcontextpath" sv:type="Boolean">
-    <sv:value>true</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:showport" sv:type="Boolean">
-    <sv:value>true</sv:value>
-  </sv:property>
   <sv:property sv:name="hst:homepage" sv:type="String">
     <sv:value>home</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:defaultcontextpath" sv:type="String">
-    <sv:value>/site</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:locale" sv:type="String">
-    <sv:value>en_US</sv:value>
   </sv:property>
   <sv:property sv:name="hst:pagenotfound" sv:type="String">
     <sv:value>pagenotfound</sv:value>
   </sv:property>
-  <sv:property sv:name="hst:versioninpreviewheader" sv:type="Boolean">
-    <sv:value>true</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:scheme" sv:type="String">
-    <sv:value>http</sv:value>
+  <sv:property sv:name="hst:defaultcontextpath" sv:type="String">
+    <sv:value>/site</sv:value>
   </sv:property>
   <sv:property sv:name="hst:defaulthostname" sv:type="String">
     <sv:value>localhost</sv:value>

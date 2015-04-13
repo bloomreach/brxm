@@ -83,19 +83,22 @@ public class VirtualHostsService implements MutableVirtualHosts {
     private List<Mount> registeredMounts = new ArrayList<>();
 
     private String defaultHostName;
+
+    public static final String DEFAULT_HOMEPAGE_SITEMAP_ITEM = "root";
     /**
-     * The homepage for this VirtualHosts. When the backing configuration does not contain a homepage, the value is
-     * <code>null</code>
+     * The homepage for this VirtualHosts.
      */
-    private String homepage;
+    private String homepage = DEFAULT_HOMEPAGE_SITEMAP_ITEM;
+
+    public static final String DEFAULT_PAGE_NOT_FOUND_PATH_INFO = "error";
 
     /**
-     * The pageNotFound for this VirtualHosts. When the backing configuration does not contain a pageNotFound, the
-     * value is <code>null</code>
+     * The pageNotFound for this VirtualHosts.
      */
-    private String pageNotFound;
+    private String pageNotFound = DEFAULT_PAGE_NOT_FOUND_PATH_INFO;
 
 
+    public static final String DEFAULT_LOCALE_STRING = "en_US";
     /**
      * The general locale configured on VirtualHosts. When the backing configuration does not contain a locale, the
      * value is <code>null</code>
@@ -109,17 +112,20 @@ public class VirtualHostsService implements MutableVirtualHosts {
     private boolean versionInPreviewHeader = true;
 
     private boolean virtualHostsConfigured;
-    private String scheme;
+
+    public static final String DEFAULT_SCHEME = "http";
+
+    private String scheme = DEFAULT_SCHEME;
     /**
      * if the request is for example http but https is required, the default response code is SC_MOVED_PERMANENTLY. If nothing
      * needs to be done, set a 200. Not found 404 and not authorized Forbidden
      */
     private int schemeNotMatchingResponseCode = HttpServletResponse.SC_MOVED_PERMANENTLY;
     private boolean contextPathInUrl = true;
-    /**
+   /**
      * if configured, this field will contain the default contextpath through which is hst webapp can be accessed
      */
-    private String defaultContextPath = null;
+    private String defaultContextPath;
     private boolean showPort = true;
 
     /**
@@ -177,8 +183,15 @@ public class VirtualHostsService implements MutableVirtualHosts {
             throw new ModelLoadingException("No hst node found for '"+hstNodeLoadingCache.getRootPath()+"/hst:hosts'. Cannot load model.'");
         }
         ValueProvider vHostConfValueProvider = vhostsNode.getValueProvider();
-        contextPathInUrl = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
-        defaultContextPath = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH);
+
+        if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH)) {
+            contextPathInUrl = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
+        }
+
+        if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH)) {
+            defaultContextPath = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH);
+        }
+
         if (!isValidContextPath(defaultContextPath)) {
             String msg = String.format("Incorrect configured defaultContextPath '%s' for '%s': It must start with a '/' to be used" +
                     "and is not allowed to contain any other '/', but it is '%s'. " +
@@ -225,7 +238,10 @@ public class VirtualHostsService implements MutableVirtualHosts {
                     sites, DEFAULT_CHANNEL_MNGR_SITES_NODE_NAME);
             channelMngrSitesNodeName = sites;
         }
-        showPort = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWPORT);
+
+        if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWPORT)) {
+            showPort = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWPORT);
+        }
 
         if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS)) {
             logUnusedExclusionsProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
@@ -234,11 +250,19 @@ public class VirtualHostsService implements MutableVirtualHosts {
             logUnusedExclusionsProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
         }
 
+        if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SCHEME)) {
+            scheme = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SCHEME);
+        }
 
-        scheme = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SCHEME);
-        locale = vHostConfValueProvider.getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
-        homepage = vHostConfValueProvider.getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
-        pageNotFound = vHostConfValueProvider.getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
+        if (vHostConfValueProvider.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE)) {
+            locale = vHostConfValueProvider.getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
+        }
+        if (vHostConfValueProvider.hasProperty(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE)) {
+            homepage = vHostConfValueProvider.getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
+        }
+        if (vHostConfValueProvider.hasProperty(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND)) {
+            pageNotFound = vHostConfValueProvider.getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
+        }
         if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_SITE_AUTHENTICATION_SKIPPED)) {
             channelMngrSiteAuthenticationSkipped = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_SITE_AUTHENTICATION_SKIPPED);
         } else {
