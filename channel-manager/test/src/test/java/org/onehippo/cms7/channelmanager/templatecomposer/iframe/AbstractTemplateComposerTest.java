@@ -28,6 +28,7 @@ import com.gargoylesoftware.htmlunit.javascript.host.Node;
 import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import com.google.gson.Gson;
 
+import org.hippoecm.frontend.HippoHeaderItem;
 import org.hippoecm.frontend.extjs.ExtUtilsHeaderItem;
 import org.onehippo.cms7.channelmanager.AbstractJavascriptTest;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
@@ -82,7 +83,7 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
     protected void initializeIFrameHead() throws IOException {
         injectJavascript(ExtBundle.class, ExtBundle.EXT_BASE_DEBUG);
         injectJavascript(ExtBundle.class, ExtBundle.EXT_ALL_DEBUG);
-        injectJavascript(ExtUtilsHeaderItem.class, "MessageBus.js");
+        injectJavascript(HippoHeaderItem.class, "js/message-bus.js");
         injectJavascript(ExtUtilsHeaderItem.class, "IFramePanel.js");
         injectJavascript(TemplateComposerApiHeaderItem.class, "IFramePanel.js");
         injectJavascript(InitializationTest.class, "mockIFramePanel.js");
