@@ -5,32 +5,8 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:virtualhosts</sv:value>
   </sv:property>
-  <sv:property sv:name="hst:showcontextpath" sv:type="Boolean">
-    <sv:value>true</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:showport" sv:type="Boolean">
-    <sv:value>true</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:homepage" sv:type="String">
-    <sv:value>root</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:pagenotfound" sv:type="String">
-    <sv:value>error</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:versioninpreviewheader" sv:type="Boolean">
-    <sv:value>true</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:channelmanagersiteauthenticationskipped" sv:type="Boolean">
-    <sv:value>true</sv:value>
-  </sv:property>
   <sv:property sv:name="hst:defaultcontextpath" sv:type="String">
     <sv:value>/site</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:scheme" sv:type="String">
-    <sv:value>http</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:defaulthostname" sv:type="String">
-    <sv:value>localhost</sv:value>
   </sv:property>
   <!-- default locale: You can override it in virtualhosts or mounts by redefining it -->
   <sv:property sv:name="hst:locale" sv:type="String">
