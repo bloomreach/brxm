@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -27,9 +26,9 @@ import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugins.standardworkflow.RenameMessage;
-import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.frontend.plugins.standardworkflow.validators.RenameDocumentValidator;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.StringCodec;
 import org.slf4j.Logger;
@@ -54,8 +53,7 @@ public  class RenameDocumentDialog extends AbstractWorkflowDialog<Void> {
 
         String originalName = nameModel.getObject();
         String originalUriName = uriModel.getObject();
-        final boolean uriModified = !StringUtils.equals(originalName, originalUriName);
-        add(nameUriContainer = new NameUriField("name-url", codecModel, originalUriName, originalName, uriModified));
+        add(nameUriContainer = new NameUriField("name-url", codecModel, originalUriName, originalName));
 
         add(new RenameDocumentValidator(nameUriContainer, action.getModel()) {
             @Override

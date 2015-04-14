@@ -26,7 +26,6 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -554,8 +553,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
             final String originalTargetName = nameModel.getObject();
             final String originalUriName = uriModel.getObject();
-            final boolean uriModified = !StringUtils.equals(originalTargetName, originalUriName);
-            add(nameUriContainer = new NameUriField("name-url", codecModel, originalUriName, originalTargetName, uriModified));
+            add(nameUriContainer = new NameUriField("name-url", codecModel, originalUriName, originalTargetName));
         }
 
         @Override
