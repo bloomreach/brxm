@@ -28,14 +28,14 @@
   </description>
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-content-tagging</artifactId>
-  <version>4.09.00-alpha-1</version>
+  <version>4.09.00-SNAPSHOT</version>
 
   <inceptionYear>2008</inceptionYear>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-tagging/tags/hippo-plugin-content-tagging-4.09.00-alpha-1</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-tagging/tags/hippo-plugin-content-tagging-4.09.00-alpha-1</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-tagging/tags/hippo-plugin-content-tagging-4.09.00-alpha-1</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-tagging/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-tagging/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-tagging/trunk/</url>
   </scm>
 
   <properties>
