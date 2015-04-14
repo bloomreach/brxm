@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>27-alpha-2</version>
+    <version>27-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Plugin Robots.txt Generator</name>
@@ -41,7 +41,7 @@
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugin Robots.txt Generator</notice.project.name>
-    <hippo.hst.version>2.29.00-alpha-1</hippo.hst.version>
+    <hippo.hst.version>2.29.00-SNAPSHOT</hippo.hst.version>
     <taglibs.version>1.1.2</taglibs.version>
   </properties>
 
