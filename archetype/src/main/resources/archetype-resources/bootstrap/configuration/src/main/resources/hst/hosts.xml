@@ -8,13 +8,6 @@
   <sv:property sv:name="hst:defaultcontextpath" sv:type="String">
     <sv:value>/site</sv:value>
   </sv:property>
-  <!-- default locale: You can override it in virtualhosts or mounts by redefining it -->
-  <sv:property sv:name="hst:locale" sv:type="String">
-    <sv:value>en_US</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:diagnosticsenabled" sv:type="Boolean">
-    <sv:value>false</sv:value>
-  </sv:property>
   <sv:node sv:name="dev-localhost">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:virtualhostgroup</sv:value>
