@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.skin.Icon;
 
 public class PanelPluginBreadCrumbBar extends BreadCrumbBar {
     private static final long serialVersionUID = 1L;
@@ -39,7 +41,11 @@ public class PanelPluginBreadCrumbBar extends BreadCrumbBar {
                 final IBreadCrumbParticipant participant, boolean enableLink) {
             super(id);
 
-            add(new Label("sep", "").setRenderBodyOnly(true));
+            HippoIcon icon = HippoIcon.fromSprite("sep", Icon.CHEVRON_RIGHT);
+            icon.addCssClass("breadcrumbs-separator");
+            icon.setVisible(enableLink);
+            add(icon);
+
             BreadCrumbLink link = new AjaxBreadCrumbLink("link", breadCrumbModel) {
                 private static final long serialVersionUID = 1L;
 

@@ -1,12 +1,12 @@
 /*
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,8 +28,8 @@ table.hippo-panel-plugin-body {
 }
 
 .hippo-plugin-panel .hippo-feedback ul {
-  margin-left: 0px;
-  margin-right: 0px
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .hippo-plugin-panel .icons-128 {
@@ -44,23 +44,24 @@ table.hippo-panel-plugin-body {
 }
 
 .hippo-panel-plugin-breadcrumbs {
-  background: url("images/hippo-panels-headerback.png") repeat-x;
-  border-bottom: 1px dotted #afafaf;
+  background-color: @light-shade;
   font-weight: bold;
 }
 
 .hippo-panel-plugin-breadcrumbs-backbutton {
   display: block;
-  padding: 8px;
-  padding-left: 4px;
+  height: 41px;
+  line-height: 41px;
+  padding: 0 16px 0 16px;
+  font-family: @font-family-base;
+  font-weight: normal;
+  font-size: 15px;
+  color: @text-color;
 }
 
 .hippo-panel-plugin-breadcrumbs span a, .hippo-panel-plugin-breadcrumbs span em {
-  font-weight: bold;
   color: #666666;
-  padding: 4px 2px 4px 8px;
-  background: url("images/hippo-panel-plugin-breacrumbs-arrow.png") no-repeat left center;
-  margin-right: 0px;
+  padding: 0;
 }
 
 .hippo-panel-plugin-breadcrumbs a:hover {
@@ -106,3 +107,13 @@ table.hippo-panel-plugin-body {
   border: 1px solid #afafaf
 }
 
+.hippo-panel-plugin-body input[type="submit"],
+.hippo-panel-plugin-body input[type="button"] {
+  .hippo-root.hippo-button();
+}
+
+.hippo-panel-plugin-breadcrumbs-backbutton .breadcrumbs-separator {
+  height: 12px;
+  width: 12px;
+  padding: 0 0 3px 2px;
+}

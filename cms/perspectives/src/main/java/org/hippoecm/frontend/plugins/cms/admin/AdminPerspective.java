@@ -16,25 +16,14 @@
 package org.hippoecm.frontend.plugins.cms.admin;
 
 
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.panelperspective.PanelPluginPerspective;
 
 public class AdminPerspective extends PanelPluginPerspective {
 
-    private static final CssResourceReference PERSPECTIVE_SKIN = new CssResourceReference(AdminPerspective.class, "admin-perspective.css");
-
     public AdminPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
-    }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-        response.render(CssHeaderItem.forReference(PERSPECTIVE_SKIN));
     }
 
     @Override

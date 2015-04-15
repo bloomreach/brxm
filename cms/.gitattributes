@@ -291,7 +291,6 @@ api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/bread
 api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/breadcrumb/PanelPluginBreadCrumbPanel.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/images/hippo-panel-plugin-breacrumbs-arrow.png -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/images/hippo-panels-headerback.png -text
-api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/panel-plugin-perspective.css -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/Perspective.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/Perspective_de.properties -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/Perspective_it.properties -text
@@ -1086,6 +1085,8 @@ api/src/main/resources/skin/images/tree-icons.png -text
 api/src/main/resources/skin/images/warning.png -text svneol=unset#image/png
 api/src/main/resources/skin/screen.css svneol=native#text/css
 api/src/main/resources/skin/screen_ie.css -text svneol=unset#text/plain
+api/src/main/styling/images/admin/groups-128.png -text svneol=unset#image/png
+api/src/main/styling/images/admin/user-128.png -text svneol=unset#image/png
 api/src/main/styling/images/icons/ajax-loader.svg -text
 api/src/main/styling/images/icons/floppy-times-circle.svg -text
 api/src/main/styling/images/icons/overlay-plus.svg -text
@@ -1099,6 +1100,7 @@ api/src/main/styling/images/loading.gif -text
 api/src/main/styling/images/login/loginhead_ce.png -text svneol=unset#image/png
 api/src/main/styling/images/logo/hippo-logo.png -text svneol=unset#image/png
 api/src/main/styling/images/logo/hippo-logo@2x.png -text svneol=unset#image/png
+api/src/main/styling/less/_admin-perspective.less -text
 api/src/main/styling/less/_ajax_loader.less -text
 api/src/main/styling/less/_breadcrumbs.less -text
 api/src/main/styling/less/_buttons.less -text
@@ -1129,6 +1131,7 @@ api/src/main/styling/less/_modal_datepicker.less -text
 api/src/main/styling/less/_modal_doclist.less -text
 api/src/main/styling/less/_modal_section_viewer.less -text
 api/src/main/styling/less/_navigator.less -text
+api/src/main/styling/less/_panel-plugin-perspective.less -text
 api/src/main/styling/less/_perspectives_switcher.less -text
 api/src/main/styling/less/_revision_history.less -text
 api/src/main/styling/less/_rich_text.less -text
@@ -2273,8 +2276,6 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin.htm
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_de.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_fr.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_it.properties -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/admin-perspective.css -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/groups/groups-128.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/groups/groups-16.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/groups/groups-32.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/groups/groups-48.png -text svneol=unset#image/png
@@ -2340,7 +2341,6 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/updater/
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterPanel_it.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterPanel_nl.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/updater/updater-panel-32.png -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/users/user-128.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/users/user-16.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/users/user-32.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/users/user-48.png -text svneol=unset#image/png
