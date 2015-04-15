@@ -15,19 +15,25 @@
 */
 
 .resulttable {
-    width: 100%;}
+  width: 100%;
+}
 
 .resulttable th {
-    font-weight: bold;
-    border-bottom: 1px solid #333;
+  font-weight: bold;
+  border-bottom: 1px solid #d4d6d8;
 }
 
-.resulttable th,  .resulttable td {
-    color: #333;
-    padding: 8px 20px;
-    width: 50%;
+.resulttable th,
+.resulttable td {
+  color: #333;
+  width: 50%;
 }
 
-.resulttable th.count, .resulttable td.count {
-    text-align: right;
+.hippo-poll-results.hippo-editor-compound-field .hippo-editor-field {
+  background-color: white;
+}
+
+.hippo-poll-results .hippo-editor-field-textarea {
+  border: 0;
+  padding: 0;
 }
