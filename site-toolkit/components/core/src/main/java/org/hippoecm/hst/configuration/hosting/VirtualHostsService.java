@@ -103,7 +103,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
      * The general locale configured on VirtualHosts. When the backing configuration does not contain a locale, the
      * value is <code>null</code>
      */
-    private String locale;
+    private String locale = DEFAULT_LOCALE_STRING;
 
     /**
      * Whether the {@link Mount}'s below this VirtualHostsService should show the hst version as a response header
