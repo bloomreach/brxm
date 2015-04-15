@@ -1002,18 +1002,6 @@ table.hippo-defaultcontent td {
   position: absolute;
 }
 
-.hippo-revision-help {
-  background-image: url("images/icons/dialog-information-32.png");
-  background-repeat: no-repeat;
-  background-position: 10px center;
-  padding-left: 70px;
-  padding-top: 8px;
-  min-height: 35px;
-  border: 1px solid #69849f;
-  color: #69849f;
-  background-color: #fff8d5;
-}
-
 /* Reposition the YUI-logger so that it does not block the logout link */
 body.hippo-root div.yui-log-container {
   top: 30px;

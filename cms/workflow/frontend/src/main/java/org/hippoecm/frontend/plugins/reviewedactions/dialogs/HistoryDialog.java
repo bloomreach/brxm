@@ -21,10 +21,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugins.reviewedactions.model.Revision;
 import org.hippoecm.frontend.plugins.reviewedactions.model.RevisionHistory;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
@@ -35,7 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A dialog that shows the revision history of a document.
  */
-public class HistoryDialog extends AbstractDialog<WorkflowDescriptor> {
+public class HistoryDialog extends Dialog<WorkflowDescriptor> {
 
     private static final Logger log = LoggerFactory.getLogger(HistoryDialog.class);
 
@@ -66,6 +67,8 @@ public class HistoryDialog extends AbstractDialog<WorkflowDescriptor> {
                 closeDialog();
             }
         });
+
+        add(CssClass.append("hippo-revision-history"));
     }
 
     public IModel<String> getTitle() {
@@ -74,7 +77,7 @@ public class HistoryDialog extends AbstractDialog<WorkflowDescriptor> {
 
     @Override
     public IValueMap getProperties() {
-        return DialogConstants.MEDIUM;
+        return DialogConstants.MEDIUM_AUTO;
     }
 
 }

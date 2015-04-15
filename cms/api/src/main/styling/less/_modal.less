@@ -567,3 +567,102 @@ table.hippo-window-form {
   padding: 5px;
   font-size: 1.1em;
 }
+
+.hippo-revision-history {
+  .hippo-revision-help {
+    padding: 16px;
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 1px solid @alert-warning-border;
+    border-left: 0;
+    background-color: @alert-warning-bg;
+    color: @alert-warning-text;
+    text-align: center;
+  }
+
+  .hippo-revision-label {
+    padding: 16px;
+  }
+
+  .hippo-history-documents {
+    .hippo-revision-history {
+      tr {
+        height: 41px;
+      }
+
+      thead tr {
+        background-color: @light-shade;
+
+        th:first-child {
+          padding-left: 16px;
+        }
+      }
+
+      tbody tr {
+        background-color: white;
+        border-bottom: 1px solid @light-shade;
+
+        td:first-child {
+          padding-left: 16px;
+        }
+
+        &:last-child {
+          border-bottom: 0;
+        }
+      }
+    }
+  }
+
+  .hippo-list-paging {
+    > td {
+      position: relative;
+      padding: 0;
+      background-color: white;
+
+      .paging-container {
+        border-top: 1px solid @doclist-row-separator-color;
+        width: 100%;
+        height: @doclist-foot-height;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .paging-navigator {
+          font-size: @font-size-small;
+          height: @doclist-paging-button-size;
+
+          em, a {
+            display: inline-block;
+            width: @doclist-paging-button-size - 2;
+            height: @doclist-paging-button-size - 2;
+            line-height: @doclist-paging-button-size - 2;
+            text-align: center;
+            border: 1px solid transparent;
+          }
+
+          a {
+            background-color: @doclist-paging-button-fill;
+            border-color: @doclist-paging-button-stroke;
+            border-radius: 2px;
+            color: @text-color;
+            &:hover {
+              text-decoration: none;
+              color: @doclist-paging-button-hover-color;
+              background-color: @doclist-paging-button-hover-fill;
+            }
+          }
+        }
+      }
+
+      .paging-label {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: @font-size-small - 1;
+        height: @font-size-base;
+        padding-top: (@doclist-foot-height - @font-size-base) / 2;
+        padding-right: @doclist-padding-left-right;
+      }
+    }
+  }
+}
