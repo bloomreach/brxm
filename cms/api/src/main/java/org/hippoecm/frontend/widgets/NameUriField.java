@@ -44,8 +44,8 @@ public class NameUriField extends WebMarkupContainer {
     private final FormComponent nameComponent;
     private final FormComponent urlComponent;
 
-    private boolean editingUrl;
     private boolean modifiedUrl;
+    private boolean editingUrl;
 
     public NameUriField(String id, IModel<StringCodec> codecModel, final String url, final String name) {
         super(id);
@@ -53,7 +53,10 @@ public class NameUriField extends WebMarkupContainer {
 
         nameModel = Model.of(name);
         urlModel = Model.of(url);
-        modifiedUrl = !StringUtils.equals(encode(nameModel.getObject()), urlModel.getObject());
+        if (StringUtils.isNotEmpty(url) && StringUtils.isNotEmpty(name)) {
+            modifiedUrl = !StringUtils.equals(encode(nameModel.getObject()), urlModel.getObject());
+            editingUrl = modifiedUrl;
+        }
 
         add(nameComponent = createNameComponent(nameModel));
         add(urlComponent = createUriComponent(urlModel));
@@ -62,7 +65,7 @@ public class NameUriField extends WebMarkupContainer {
     }
 
     public NameUriField(final String id, final IModel<StringCodec> codecModel) {
-        this(id, codecModel, "", "");
+        this(id, codecModel, null, null);
     }
 
     private FormComponent createNameComponent(final IModel<String> nameModel) {
@@ -95,7 +98,6 @@ public class NameUriField extends WebMarkupContainer {
                 return editingUrl;
             }
         };
-        urlComponent.setRequired(true);
         urlComponent.add(CssClass.append(new AbstractReadOnlyModel<String>() {
             @Override
             public String getObject() {
