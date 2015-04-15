@@ -40,8 +40,11 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.form.validation.IFormValidator;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -49,6 +52,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -251,11 +255,10 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             IModel<String> nameModel = new PropertyModel<>(this, "documentName");
             TextField<String> nameField = new TextField<>("name", nameModel);
             nameField.setRequired(true);
-            final StringResourceModel errorMsgModel = new StringResourceModel("invalid.name", this, null);
             nameField.add(strValue -> {
                 String value = strValue.getValue();
                 if (!isValidName(value)) {
-                    strValue.error(messageSource -> errorMsgModel.getString());
+                    strValue.error(messageSource -> new StringResourceModel("invalid.name", this, null).getString());
                 }
             });
             nameField.setLabel(new StringResourceModel(DIALOG_NAME_LABEL, this, null));
@@ -293,6 +296,33 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                 dateField.setVisible(false);
             }
 
+            add(new IFormValidator() {
+                @Override
+                public FormComponent<?>[] getDependentFormComponents() {
+                    return new FormComponent<?>[]{nameField};
+                }
+
+                @Override
+                public void validate(final Form<?> form) {
+                    try {
+                        // get values from components directly during validation phase
+                        String list = Strings.unescapeMarkup(listField.getValue()).toString();
+                        Date date = dateField.getDate();
+                        HippoNode folder = getFolder(list, date, false);
+                        if (folder == null) {
+                            return;
+                        }
+
+                        String encodedDocumentName = getNodeNameCodec().encode(nameField.getValue());
+                        if (folder.hasNode(encodedDocumentName)) {
+                            form.error(new StringResourceModel("existing.name", Dialog.this, null).getString());
+                        }
+                    } catch (RepositoryException | RemoteException | WorkflowException e) {
+                        log.error("Error occurred while validating new document: "
+                                + e.getClass().getName() + ": " + e.getMessage());
+                    }
+                }
+            });
         }
 
         /**
@@ -337,29 +367,21 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
         @Override
         protected void onOk() {
             Session session = getSession().getJcrSession();
-            HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
+            HippoWorkspace workspace = (HippoWorkspace)session.getWorkspace();
             try {
+                // get the folder node
+                HippoNode folder = getFolder(list, date, true);
+
                 WorkflowManager workflowMgr = workspace.getWorkflowManager();
 
-                // get the folder node
-                HippoNode folderNode = (HippoNode) session.getItem(baseFolder);
-
-                if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(ClassificationType.LISTDATE)) {
-                    folderNode = listFolder(folderNode, list);
-                }
-
-                if (classificationType.equals(ClassificationType.DATE) || classificationType.equals(ClassificationType.LISTDATE)) {
-                    folderNode = createDateFolders(folderNode, date);
-                }
-
                 // get the folder node's workflow
-                Workflow workflow = workflowMgr.getWorkflow("internal", folderNode);
+                Workflow workflow = workflowMgr.getWorkflow("internal", folder);
 
                 if (workflow instanceof FolderWorkflow) {
-                    FolderWorkflow fw = (FolderWorkflow) workflow;
+                    FolderWorkflow fw = (FolderWorkflow)workflow;
 
-                    // create the new document
                     String encodedDocumentName = getNodeNameCodec().encode(documentName);
+                    // create the new document
                     Map<String, String> arguments = new TreeMap<>();
                     arguments.put("name", encodedDocumentName);
                     if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(ClassificationType.LISTDATE)) {
@@ -379,7 +401,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
 
                     // add the not-encoded document name as translation
                     if (!documentName.equals(encodedDocumentName)) {
-                        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) workflowMgr.getWorkflow("core", nodeModel.getNode());
+                        DefaultWorkflow defaultWorkflow = (DefaultWorkflow)workflowMgr.getWorkflow("core", nodeModel.getNode());
                         if (defaultWorkflow != null) {
                             defaultWorkflow.localizeName(documentName);
                         }
@@ -389,7 +411,24 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                 log.error("Error occurred while creating new document: "
                         + e.getClass().getName() + ": " + e.getMessage());
             }
+        }
 
+        private HippoNode getFolder(String list, Date date, final boolean create) throws RepositoryException, RemoteException, WorkflowException {
+            Session session = getSession().getJcrSession();
+            HippoNode folder = (HippoNode)session.getItem(baseFolder);
+
+            if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(ClassificationType.LISTDATE)) {
+                folder = getListFolder(folder, list, create);
+            }
+
+            if (folder == null) {
+                return null;
+            }
+
+            if (classificationType.equals(ClassificationType.DATE) || classificationType.equals(ClassificationType.LISTDATE)) {
+                folder = getDateFolder(folder, date, create);
+            }
+            return folder;
         }
 
         @Override
@@ -442,70 +481,75 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
     /**
      * Get or create folder for classificationType.LIST.
      *
-     * @param parentNode
+     * @param parent
      * @param list
      * @return
      * @throws java.rmi.RemoteException
      * @throws javax.jcr.RepositoryException
      * @throws org.hippoecm.repository.api.WorkflowException
-     *
      */
-    protected HippoNode listFolder(HippoNode parentNode, String list) throws RemoteException, RepositoryException, WorkflowException {
+    protected HippoNode getListFolder(HippoNode parent, String list, boolean create) throws RemoteException, RepositoryException, WorkflowException {
         String listEncoded = getNodeNameCodec().encode(list);
-        HippoNode resultParentNode = parentNode;
-        if (resultParentNode.hasNode(listEncoded)) {
-            resultParentNode = (HippoNode) resultParentNode.getNode(listEncoded);
+        HippoNode resultParent = parent;
+        if (resultParent.hasNode(listEncoded)) {
+            resultParent = (HippoNode)resultParent.getNode(listEncoded);
         } else {
-            final String listEncodedLowerCase = listEncoded.toLowerCase(getLocale());
-            if (resultParentNode.hasNode(listEncodedLowerCase)) {
-                resultParentNode = (HippoNode) resultParentNode.getNode(listEncodedLowerCase);
+            if (create) {
+                resultParent = createFolder(resultParent, listEncoded);
             } else {
-                resultParentNode = createFolder(resultParentNode, listEncoded);
+                return null;
             }
         }
-        return resultParentNode;
+        return resultParent;
     }
 
     /**
      * Get or create folder(s) for classificationType.DATE.
      *
-     * @param parentNode
+     * @param parent
      * @param date
      * @return
      * @throws java.rmi.RemoteException
      * @throws javax.jcr.RepositoryException
      * @throws org.hippoecm.repository.api.WorkflowException
-     *
      */
-    protected HippoNode createDateFolders(HippoNode parentNode, Date date) throws RemoteException, RepositoryException, WorkflowException {
+    protected HippoNode getDateFolder(HippoNode parent, Date date, boolean create) throws RemoteException, RepositoryException, WorkflowException {
         String year = new SimpleDateFormat("yyyy").format(date);
-        HippoNode resultParentNode = parentNode;
-        if (resultParentNode.hasNode(year)) {
-            resultParentNode = (HippoNode) resultParentNode.getNode(year);
+        HippoNode resultParent = parent;
+        if (resultParent.hasNode(year)) {
+            resultParent = (HippoNode)resultParent.getNode(year);
         } else {
-            resultParentNode = createFolder(resultParentNode, year);
+            if (create) {
+                resultParent = createFolder(resultParent, year);
+            } else {
+                return null;
+            }
         }
 
         String month = new SimpleDateFormat("MM").format(date);
-        if (resultParentNode.hasNode(month)) {
-            resultParentNode = (HippoNode) resultParentNode.getNode(month);
+        if (resultParent.hasNode(month)) {
+            resultParent = (HippoNode)resultParent.getNode(month);
         } else {
-            resultParentNode = createFolder(resultParentNode, month);
+            if (create) {
+                resultParent = createFolder(resultParent, month);
+            } else {
+                return null;
+            }
         }
 
-        return resultParentNode;
+        return resultParent;
     }
 
     protected HippoNode createFolder(HippoNode parentNode, String name) throws RepositoryException, RemoteException, WorkflowException {
         Session session = getSession().getJcrSession();
-        HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
+        HippoWorkspace workspace = (HippoWorkspace)session.getWorkspace();
         WorkflowManager workflowMgr = workspace.getWorkflowManager();
 
         // get the folder node's workflow
         Workflow workflow = workflowMgr.getWorkflow("internal", parentNode);
 
         if (workflow instanceof FolderWorkflow) {
-            FolderWorkflow fw = (FolderWorkflow) workflow;
+            FolderWorkflow fw = (FolderWorkflow)workflow;
 
             // create the new folder
             String category = "new-folder";
@@ -518,7 +562,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             }
             fw.add(category, "hippostd:folder", name);
 
-            HippoNode newFolder = (HippoNode) parentNode.getNode(name);
+            HippoNode newFolder = (HippoNode)parentNode.getNode(name);
 
             // give the new folder the same folder types as its parent
             Property parentFolderType = parentNode.getProperty("hippostd:foldertype");
