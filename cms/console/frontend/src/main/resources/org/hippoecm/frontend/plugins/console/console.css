@@ -259,6 +259,8 @@ li.hippo-console-menu-actions-save.session-changes a { background-color: red; }
 .hippo-console-editor .property-remove {font-size: 14px; position: relative; top: 2px;}
 .hippo-console-editor .property-value-container {margin: 4px 0 4px;}
 .hippo-console-editor .property-value {font-size: 12px;}
+.hippo-console-editor .property-value .message {color:#32629b;}
+.hippo-console-editor .property-value .error {color: #F44336;}
 .hippo-console-editor .property-value a {color:#32629b;}
 .hippo-console-editor .property-value-remove {font-size: 14px; position: relative; top: -6px;}
 .hippo-console-editor .property .add-icon {color: #4CAF50; font-size: 18px;}

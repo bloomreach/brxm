@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,13 +27,13 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
@@ -74,37 +74,40 @@ class ReferenceEditor extends Panel {
         private static final long serialVersionUID = 1L;
 
         private static Pattern JCR_IDENTIFIER = Pattern.compile("^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$");
-        
+        private static Pattern COMMA_SEPARATED_JCR_IDENTIFIERS = Pattern.compile("^(\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12},)*\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$");
+
+
         @SuppressWarnings("unused")
         private String linkText = null;
         private JcrNodeModel linkModel = null;
+        private boolean isValidLink = false;
         
         public ReferenceLink(String id, IModel<String> valueModel) {
             super(id, valueModel);
             load();
             
             add(new Label("reference-link-text", new PropertyModel<String>(this, "linkText")));
-            add(new AttributeAppender("style", new AbstractReadOnlyModel<Object>() {
-                @Override
-                public Object getObject() {
-                    return !isValidLink() ? "color:red" : "";
-                }
-            }, " "));
+            if(isValidLink())  {
+                add(CssClass.append("message"));
+            } else {
+                add(CssClass.append("error"));
+            }
         }
 
         @Override
         protected boolean isLinkEnabled() {
-            return isValidLink();
+            return linkModel != null;
         }
 
         private boolean isValidLink() {
-            return linkModel != null;
+            return isValidLink;
         }
 
         //load uuid from parent model and (re)set the linkModel+text if uuid is valid
         private void load() {
             linkText = null;
             linkModel = null;
+            isValidLink = false;
 
             String uuid = getModelObject();
             if (JCR_IDENTIFIER.matcher(uuid).matches()) {
@@ -113,12 +116,16 @@ class ReferenceEditor extends Panel {
                     Node targetNode = session.getNodeByIdentifier(uuid);
                     linkText = targetNode.getPath();
                     linkModel = new JcrNodeModel(targetNode);
+                    isValidLink = true;
                 } catch (ItemNotFoundException e) {
-                    linkText = getString("reference.editor.input.not-found");
+                    linkText = getString("reference.editor.input.not.found");
                 } catch (RepositoryException e) {
                     linkText = getString("reference.editor.input.error");
                     log.error("Error loading node with uuid " + uuid, e);
                 }
+            } else if (COMMA_SEPARATED_JCR_IDENTIFIERS.matcher(uuid).matches()) {
+                linkText = getString("reference.editor.input.multiple.identifiers");
+                isValidLink = true;
             } else {
                 linkText = getString("reference.editor.input.invalid");
             }
