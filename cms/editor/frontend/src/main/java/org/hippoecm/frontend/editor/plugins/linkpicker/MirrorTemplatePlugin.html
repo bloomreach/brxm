@@ -1,44 +1,41 @@
 <!--
-    * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
-    *
-    * Licensed under the Apache License, Version 2.0 (the  "License");
-    * you may not use this file except in compliance with the License.
-    * You may obtain a copy of the License at
-    *
-    * http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
+* Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+*
+* Licensed under the Apache License, Version 2.0 (the  "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
 -->
+
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
-    <wicket:container wicket:id="fragment"/>
+  <wicket:container wicket:id="fragment"/>
 </wicket:panel>
 
 <wicket:fragment wicket:id="edit">
-    <div class="hippo-editor-field-value">
-        <span class="hippo-editor-field-value-container mirrortemplate_link" wicket:id="openLinkPickerLink"></span>
-        <span class="mirrortemplate_button" wicket:id="select"></span>
-        <span class="mirrortemplate_button">
-            <a wicket:id="open" href="#">
-                <span><wicket:message key="open">[Open]</wicket:message></span>
-            </a>
-        </span>
-        <span class="mirrortemplate_button">
-            <a wicket:id="clear" href="#">
-                <span><wicket:message key="clear">[Clear]</wicket:message></span>
-            </a>
-        </span>
-    </div>
+  <div class="hippo-editor-field-value">
+    <div class="hippo-editor-field-value-container mirrortemplate_link" wicket:id="openLinkPickerLink"></div>
+    <div class="mirrortemplate_button simple-link dialog-link" wicket:id="select"></div>
+    <a class="mirrortemplate_button simple-link" wicket:id="open" href="#">
+      <span><wicket:message key="open">[Open]</wicket:message></span>
+    </a>
+    <a class="mirrortemplate_button simple-link" wicket:id="clear" href="#">
+      <span><wicket:message key="clear">[Clear]</wicket:message></span>
+    </a>
+  </div>
 </wicket:fragment>
 <wicket:fragment wicket:id="viewCompare">
-    <a class="hippo-editor-field-value" wicket:id="openLink">
-        <span class="hippo-editor-field-value-container">
-            <span wicket:id="value">[localizedName]</span>
-        </span>
-    </a>
+  <a class="hippo-editor-field-value" wicket:id="openLink">
+    <span class="hippo-editor-field-value-container">
+      <span wicket:id="value">[localizedName]</span>
+    </span>
+  </a>
 </wicket:fragment>
 </html>

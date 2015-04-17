@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-span.mirrortemplate_button a {
-    background-color: #f2f2f2;
-    border: 1px solid black;
-    margin: 3px;
-    padding: 3px;
-    float: left;
-    clear: right;
-    display: block;
+.mirrortemplate_link,
+.mirrortemplate_button {
+  display: inline-block;
+  float: none;
 }
 
-span.mirrortemplate_link {
-    float: left;
-    margin-right: 5px;
+a.mirrortemplate_button span {
+  line-height: 16px;
+  color: #22272F;
 }
