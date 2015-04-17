@@ -12,6 +12,15 @@
           <p>${item.introduction?html}</p>
         </#if>
       </article>
+    <#else>
+      <@hst.link var="link" hippobean=item />
+    <article class="has-edit-button">
+      <@hst.cmseditlink hippobean=item/>
+      <h3><a href="${link}">${item.name}</a></h3>
+      <#if item.introduction??>
+        <p>${item.introduction?html}</p>
+      </#if>s
+    </article>
     </#if>
   </#list>
   <#if cparam.showPagination>
