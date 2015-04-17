@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+    * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -24,17 +24,13 @@
           <img wicket:id="previewImage"/>
         </td>
         <td class="gallerypickerbuttons">
-          <span wicket:id="select" class="gallerypickerlinkspan">[select]</span>
-          <span class="gallerypickerlinkspan">
-            <a wicket:id="open" href="#" >
-              <span><wicket:message key="picker.open">[Open]</wicket:message></span>
-            </a>
-          </span>
-          <span class="gallerypickerlinkspan">
-              <a href="#" wicket:id="remove">
-                  <span wicket:id="remove-link-text"/>
-              </a>
-          </span>
+          <span wicket:id="select" class="simple-link dialog-link">[select]</span>
+          <a class="simple-link" wicket:id="open" href="#" >
+            <span class="button-label"><wicket:message key="picker.open">[Open]</wicket:message></span>
+          </a>
+          <a class="simple-link" href="#" wicket:id="remove">
+            <span class="button-label" wicket:id="remove-link-text"/>
+          </a>
         </td>
       </tr>
     </table>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-span.gallerypickerlinkspan a{
-    background-color: #f2f2f2;
-    border: 1px solid black;
-    margin:3px;
-    padding: 3px;
-    float:left;
-    clear:right;
-    display:block;
-}
 
-td.gallerypickerbuttons {
-    vertical-align:top;
+.hippo-node-field-name-hippogallerypicker-imagelink img,
+.hippo-node-field-name-hippogallerypicker-imagelink .simple-link {
+    margin-right: 4px;
 }
 
 td.hippo-gallery-removed img {
@@ -34,7 +26,6 @@ td.hippo-gallery-removed img {
 td.hippo-gallery-added img {
 	border: 5px solid #ccffcc;
 }
-
 
 .hippo-root .hippo-upload-form select#typeselect {
     margin: 0 15px 0 0;
