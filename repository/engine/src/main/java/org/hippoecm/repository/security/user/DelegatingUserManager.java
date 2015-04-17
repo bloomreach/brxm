@@ -86,6 +86,11 @@ public class DelegatingUserManager implements UserManager {
     }
 
     @Override
+    public User createSystemUser(final String userID, final String intermediatePath) throws AuthorizableExistsException, RepositoryException {
+        return delegatee.createSystemUser(userID, intermediatePath);
+    }
+
+    @Override
     public Group createGroup(String groupID) throws AuthorizableExistsException, RepositoryException {
         return delegatee.createGroup(groupID);
     }

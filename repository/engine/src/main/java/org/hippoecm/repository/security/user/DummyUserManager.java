@@ -17,8 +17,11 @@ package org.hippoecm.repository.security.user;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.apache.jackrabbit.api.security.user.Authorizable;
+import org.apache.jackrabbit.api.security.user.AuthorizableExistsException;
+import org.apache.jackrabbit.api.security.user.User;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.ManagerContext;
 
@@ -63,6 +66,11 @@ public class DummyUserManager extends AbstractUserManager {
     @Override
     public Authorizable getAuthorizableByPath(final String path) throws RepositoryException {
         return null;
+    }
+
+    @Override
+    public User createSystemUser(final String userID, final String intermediatePath) throws AuthorizableExistsException, RepositoryException {
+        throw new UnsupportedRepositoryOperationException();
     }
 
     @Override

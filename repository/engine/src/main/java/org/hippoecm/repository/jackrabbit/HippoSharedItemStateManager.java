@@ -261,7 +261,7 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
         }
 
         @Override
-        public void updatePrepared(final Update update) {
+        public void updatePrepared(final Update update) throws ClusterException {
             if (upstream != null) {
                 upstream.updatePrepared(update);
             }

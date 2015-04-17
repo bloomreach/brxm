@@ -25,6 +25,8 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.apache.jackrabbit.api.security.user.Authorizable;
+import org.apache.jackrabbit.api.security.user.AuthorizableExistsException;
+import org.apache.jackrabbit.api.security.user.User;
 import org.hippoecm.repository.PasswordHelper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.ManagerContext;
@@ -147,6 +149,11 @@ public class RepositoryUserManager extends AbstractUserManager {
     @Override
     public Authorizable getAuthorizableByPath(final String path) throws UnsupportedRepositoryOperationException, RepositoryException {
         throw new UnsupportedRepositoryOperationException();
+    }
+
+    @Override
+    public User createSystemUser(final String userID, final String intermediatePath) throws AuthorizableExistsException, RepositoryException {
+        throw new UnsupportedRepositoryOperationException("Not yet implemented.");
     }
 
     public boolean isAutoSave() {
