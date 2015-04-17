@@ -8,7 +8,7 @@
     <#if hstRequest.requestContext.cmsRequest>
       <link rel="stylesheet" href="<@hst.webfile  path="/css/cms-request.css"/>" type="text/css"/>
     </#if>
-<@hst.headContributions categoryIncludes="htmlHead" xhtml=true/>
+<@hst.headContributions categoryExcludes="htmlBodyEnd" xhtml=true/>
 </head>
 <body>
 <div class="container">
