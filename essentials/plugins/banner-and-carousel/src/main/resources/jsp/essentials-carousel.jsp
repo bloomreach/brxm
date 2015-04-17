@@ -25,7 +25,12 @@
         <div class="item${active}">
           <img src="<hst:link hippobean="${item.image}" />" alt="${fn:escapeXml(item.title)}"/>
           <div class="carousel-caption">
-            <h3><c:out value="${item.title}"/></h3>
+            <c:when test="${item.link ne null}">
+              <a href="<hst:link hippobean="${item.link}"/>"><h3><c:out value="${item.title}"/></h3></a>
+              </c:when>
+              <c:otherwise>
+                <h3><c:out value="${item.title}"/></h3>
+            </c:otherwise>
             <hst:html hippohtml="${item.content}"/>
           </div>
         </div>
