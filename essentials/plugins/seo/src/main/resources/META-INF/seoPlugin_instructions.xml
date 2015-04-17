@@ -19,8 +19,18 @@
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
 
   <instructionSet>
+    <freemarker action="copy" source="instructions/seohelper.ftl" target="{{freemarkerRoot}}/{{namespace}}/seohelper.ftl"/>
+
+    <xml action="copy" source="instructions/hst/seo-component.xml" target="/hst:hst/hst:configurations/hst:default/hst:components"/>
+    <xml action="copy" source="instructions/hst/seo-component-include.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:abstractpages/base"/>
+    <xml action="copy" source="instructions/hst/seo-template.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+
     <xml action="copy" source="instructions/seo-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="instructions/seo.png" target="{{imagesRoot}}/essentials/catalog-component-icons/seo.png"/>
+    <!--
+      Instruction is adding seohelper hst include tag into base-layout.jsp/ftl template
+    -->
+    <execute class="org.onehippo.cms7.essentials.dashboard.seo.SeoIncludeInstruction"/>
   </instructionSet>
 
   <instructionSet group="jsp">

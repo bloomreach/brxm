@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+  -->
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="seohelper">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentclassname" sv:type="String">
+      <sv:value>org.onehippo.forge.seo.support.SEOHelperComponent</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
+      <sv:value>site-dc-copyright-link</sv:value>
+      <sv:value>site-title</sv:value>
+      <sv:value>document-title-bean-props</sv:value>
+      <sv:value>document-keywords-bean-props</sv:value>
+      <sv:value>document-description-bean-props</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
+      <sv:value>http://www.example.com/html/ts/nps/terms_of_use.html</sv:value>
+      <sv:value>Example!</sv:value>
+      <sv:value>title</sv:value>
+      <sv:value>keywords</sv:value>
+      <sv:value>summary</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:template" sv:type="String">
+      <sv:value>seohelper</sv:value>
+    </sv:property>
+  </sv:node>
