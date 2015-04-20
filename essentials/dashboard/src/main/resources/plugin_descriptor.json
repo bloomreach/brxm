@@ -792,14 +792,14 @@
             {
                 "@type": "dependency",
                 "groupId": "org.onehippo.cms7",
-                "artifactId": "hippo-plugin-sitemap-component",
+                "artifactId": "hippo-plugin-sitemap-content",
                 "scope": "compile",
                 "targetPom": "cms"
             },
             {
                 "@type": "dependency",
                 "groupId": "org.onehippo.cms7",
-                "artifactId": "hippo-plugin-sitemap-content",
+                "artifactId": "hippo-plugin-sitemap-component",
                 "scope": "compile",
                 "targetPom": "site"
             }
