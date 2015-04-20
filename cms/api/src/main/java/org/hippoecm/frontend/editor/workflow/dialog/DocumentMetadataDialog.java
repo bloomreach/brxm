@@ -34,7 +34,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.editor.workflow.model.DocumentMetadataEntry;
 import org.hippoecm.repository.HippoStdNodeType;
@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A dialog that shows document metadata.
  */
-public class DocumentMetadataDialog extends AbstractDialog<WorkflowDescriptor> {
+public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
 
     private static final long serialVersionUID = 1L;
     private static final String DATE_STYLE = "MS";
@@ -208,7 +208,7 @@ public class DocumentMetadataDialog extends AbstractDialog<WorkflowDescriptor> {
 
     @Override
     public IValueMap getProperties() {
-        return DialogConstants.MEDIUM;
+        return DialogConstants.MEDIUM_AUTO;
     }
 
 }

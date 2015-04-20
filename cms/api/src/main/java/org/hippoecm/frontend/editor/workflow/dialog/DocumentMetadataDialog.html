@@ -15,18 +15,20 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:extend>
-  <div class="hippo-list-details hippo-list-documents">
+  <div class="hippo-document-information">
     <table>
       <tr wicket:id="metadatalist">
-        <td><span wicket:id="key"></span></td>
+        <td><span wicket:id="key"></span>:</td>
         <td><span wicket:id="value"></span></td>
       </tr>
-    </table>
-    <br/>
-    <b><span wicket:id="publicationheader"></span></b>
-    <table>
+      <tr><td>&nbsp;</td></tr>
+      <tr>
+        <td colspan="2">
+          <b><span wicket:id="publicationheader"></span></b>
+        </td>
+      </tr>
       <tr wicket:id="publicationmetadatalist">
-        <td><span wicket:id="key"></span></td>
+        <td><span wicket:id="key"></span>:</td>
         <td><span wicket:id="value"></span></td>
       </tr>
     </table>
