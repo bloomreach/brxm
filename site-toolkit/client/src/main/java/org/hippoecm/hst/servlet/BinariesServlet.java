@@ -204,7 +204,7 @@ public class BinariesServlet extends HttpServlet {
 
     private BinaryPageFactory binaryPageFactory;
 
-    private class DefaultBinaryPageFactory implements BinaryPageFactory {
+    protected class DefaultBinaryPageFactory implements BinaryPageFactory {
 
         @Override
         public BinaryPage createBinaryPage(final String resourcePath, final Session session) throws RepositoryException{
