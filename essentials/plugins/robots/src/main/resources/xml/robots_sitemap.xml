@@ -24,4 +24,7 @@
   <sv:property sv:name="hst:relativecontentpath" sv:type="String">
     <sv:value>../administration/robots</sv:value>
   </sv:property>
+  <sv:property sv:name="hst:hiddeninchannelmanager" sv:type="Boolean">
+    <sv:value>true</sv:value>
+  </sv:property>
 </sv:node>
