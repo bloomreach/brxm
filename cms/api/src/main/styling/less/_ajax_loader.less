@@ -22,13 +22,24 @@
   top: 0;
   width: @ajax-loader-width;
   z-index: 2;
+  display: none;
 
-  .hi-ajax-loader {
+  .ajax-loader {
     display: block;
     width: 100%;
     height: 3px;
     animation: ajaxloader 1s infinite linear;
+    .at2x("@{images}/loader/ajax-loader.png", 64px, 3px);
+    background-repeat: no-repeat;
   }
+}
+
+.hippo-ajax-show-load .wicket-ajax-indicator {
+  display: block;
+}
+
+.hippo-ajax-show-busy {
+  cursor: wait;
 }
 
 .hippo-dialog-picker .wicket-ajax-indicator,

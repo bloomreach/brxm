@@ -24,8 +24,6 @@ import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
-import org.hippoecm.frontend.service.IconSize;
-import org.hippoecm.frontend.skin.CmsIcon;
 
 public class AjaxIndicatorBehavior extends AbstractYuiBehavior {
 
@@ -38,13 +36,13 @@ public class AjaxIndicatorBehavior extends AbstractYuiBehavior {
             public void afterRender(final Component component) {
                 final Response r = component.getResponse();
 
-                r.write("<div style=\"display:none;\" class=\"");
+                r.write("<div class=\"");
                 r.write(getSpanClass());
                 r.write("\" ");
                 r.write("id=\"");
                 r.write(getMarkupId());
                 r.write("\">");
-                r.write(CmsIcon.AJAX_LOADER.getInlineSvg(IconSize.XL));
+                r.write("<div class=\"ajax-loader\" />");
                 r.write("</div>");
             }
         };
