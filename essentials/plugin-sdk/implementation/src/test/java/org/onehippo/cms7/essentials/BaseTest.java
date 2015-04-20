@@ -22,6 +22,8 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import com.google.common.collect.ImmutableSet;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -35,8 +37,6 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * @version "$Id$"
@@ -85,7 +85,10 @@ public abstract class BaseTest {
         }
         // delete project files:
         if (projectRoot != null) {
-            FileUtils.deleteDirectory(projectRoot.toFile());
+            final File file = projectRoot.toFile();
+            if (file.exists()) {
+                FileUtils.deleteDirectory(file);
+            }
         }
     }
 
