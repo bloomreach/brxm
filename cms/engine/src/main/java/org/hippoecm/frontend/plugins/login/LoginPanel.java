@@ -76,7 +76,7 @@ public class LoginPanel extends Panel {
     protected String selectedLocale;
 
     public LoginPanel(final String id, final boolean autoComplete, final List<String> locales,
-                      final LoginSuccessHandler successHandler) {
+                      final List<Component> redrawOnLocaleChange, final LoginSuccessHandler successHandler) {
         super(id);
 
         if (locales == null || locales.isEmpty()) {
@@ -87,7 +87,7 @@ public class LoginPanel extends Panel {
 
         add(CssClass.append("hippo-login-panel-center"));
 
-        add(form = new LoginForm(autoComplete, locales));
+        add(form = new LoginForm(autoComplete, locales, redrawOnLocaleChange));
     }
 
     protected void login() throws LoginException {
@@ -137,7 +137,7 @@ public class LoginPanel extends Panel {
         protected final Button submitButton;
         protected final List<Component> labels = new ArrayList<>();
 
-        public LoginForm(final boolean autoComplete, final List<String> locales) {
+        public LoginForm(final boolean autoComplete, final List<String> locales, final List<Component> redrawOnLocaleChange) {
             super("login-form");
 
             setOutputMarkupId(true);
@@ -200,9 +200,10 @@ public class LoginPanel extends Panel {
                     // and update the session locale
                     getSession().setLocale(new Locale(selectedLocale));
 
-                    // redraw labels and feedback panel
+                    // redraw labels, feedback panel and provided components
                     labels.stream().filter(Component::isVisible).forEach(target::add);
                     target.add(feedback);
+                    redrawOnLocaleChange.forEach(target::add);
                 }
             });
 

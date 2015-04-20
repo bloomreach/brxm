@@ -16,12 +16,15 @@
 package org.hippoecm.frontend.plugins.login;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.core.request.mapper.AbstractComponentMapper;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Url;
@@ -39,8 +42,11 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.usagestatistics.UsageStatisticsSettings;
 
 public class LoginPlugin extends RenderPlugin {
+
+    public static final String PRIVACY_TERMS_LINK = "http://www.onehippo.com/en/terms-and-conditions";
 
     private static final ResourceReference DEFAULT_FAVICON = new UrlResourceReference(
             Url.parse("skin/images/hippo-cms.ico"));
@@ -77,18 +83,29 @@ public class LoginPlugin extends RenderPlugin {
             editionCss = new CssResourceReference(LoginPlugin.class, "login_" + edition + ".css");
         }
 
+        ExternalLink privacyTerms = new ExternalLink("privacyTerms", PRIVACY_TERMS_LINK) {
+            @Override
+            public boolean isVisible() {
+                return UsageStatisticsSettings.get().isEnabled();
+            }
+        };
+        privacyTerms.setOutputMarkupId(true);
+        add(privacyTerms);
+
         final boolean autoComplete = getPluginConfig().getAsBoolean(AUTOCOMPLETE, true);
         String[] localeArray = getPluginConfig().getStringArray(LOCALES);
         if (localeArray == null) {
             localeArray = DEFAULT_LOCALES;
         }
-        add(createLoginPanel("login-panel", autoComplete, Arrays.asList(localeArray), () -> {
-            if (parameters != null) {
-                setResponsePage(PluginPage.class, parameters);
-            } else {
-                setResponsePage(PluginPage.class);
-            }
-        }));
+        add(createLoginPanel("login-panel", autoComplete, Arrays.asList(localeArray),
+                Collections.singletonList(privacyTerms),
+                () -> {
+                    if (parameters != null) {
+                        setResponsePage(PluginPage.class, parameters);
+                    } else {
+                        setResponsePage(PluginPage.class);
+                    }
+                }));
 
         add(new Label("pinger"));
     }
@@ -132,7 +149,7 @@ public class LoginPlugin extends RenderPlugin {
     }
 
     protected LoginPanel createLoginPanel(final String id, final boolean autoComplete, final List<String> locales,
-                                          final LoginSuccessHandler successHandler) {
-        return new LoginPanel(id, autoComplete, locales, successHandler);
+                                          final List<Component> redrawOnLocaleChange, final LoginSuccessHandler successHandler) {
+        return new LoginPanel(id, autoComplete, locales, redrawOnLocaleChange, successHandler);
     }
 }
