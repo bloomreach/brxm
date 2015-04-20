@@ -10,7 +10,7 @@
     <div class="panel-heading">
         <h3 class="panel-title"><@fmt.message key="blog.moreby" var="moreby"/>${moreby?html}&nbsp;${author.fullName?html}</h3>
     </div>
-    <#if pagebale?? && pageable.total > 0>
+    <#if pageable?? && (pageable.total > 0)>
         <div class="panel-body">
             <#list pageable.items as item>
                 <@hst.link hippobean=item var="link"/>
