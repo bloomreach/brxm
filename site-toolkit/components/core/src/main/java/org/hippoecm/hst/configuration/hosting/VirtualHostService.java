@@ -166,8 +166,10 @@ public class VirtualHostService implements MutableVirtualHost {
             scheme = parentHost != null ? parentHost.getScheme() : virtualHosts.getScheme();
         }
 
-        if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC)) {
+        if (virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC)) {
             schemeAgnostic = virtualHostNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC);
+        } else if (parentHost != null) {
+            schemeAgnostic = parentHost.isSchemeAgnostic();
         }
 
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
