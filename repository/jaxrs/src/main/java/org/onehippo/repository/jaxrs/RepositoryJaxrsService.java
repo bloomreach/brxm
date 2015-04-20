@@ -193,7 +193,7 @@ public final class RepositoryJaxrsService {
             controller.invoke(req, resp);
         } finally {
             if (origBus != bus) {
-                BusFactory.setThreadDefaultBus(null);
+                BusFactory.setThreadDefaultBus(origBus);
             }
         }
     }
