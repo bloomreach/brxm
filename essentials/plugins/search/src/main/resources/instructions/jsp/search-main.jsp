@@ -11,13 +11,20 @@
       </c:when>
       <c:otherwise>
         <c:forEach var="item" items="${pageable.items}" varStatus="status">
-          <c:if test="${hst:isReadable(item, 'title')}">
+          <c:choose>
+            <c:when test="${hst:isReadable(item, 'title')}">
+              <c:set var="linkName" value="${item.title}"/>
+            </c:when>
+            <c:otherwise>
+              <c:set var="linkName" value="${item.localizedName}"/>
+            </c:otherwise>
+          </c:choose>
+
+          <article>
+            <hst:cmseditlink hippobean="${item}"/>
             <hst:link var="link" hippobean="${item}"/>
-            <article>
-              <hst:cmseditlink hippobean="${item}"/>
-              <h3><a href="${link}"><c:out value="${item.title}"/></a></h3>
-            </article>
-          </c:if>
+            <h3><a href="${link}"><c:out value="${linkName}"/></a></h3>
+          </article>
         </c:forEach>
         <c:if test="${cparam.showPagination}">
           <%@ include file="/WEB-INF/jsp/include/pagination.jsp" %>

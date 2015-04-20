@@ -4,26 +4,21 @@
 <c:forEach var="item" items="${pageable.items}">
   <c:choose>
     <c:when test="${hst:isReadable(item, 'title')}">
-      <hst:link var="link" hippobean="${item}"/>
-      <article class="has-edit-button">
-        <hst:cmseditlink hippobean="${item}"/>
-        <h3><a href="${link}"><c:out value="${item.title}"/></a></h3>
-        <c:if test="${hst:isReadable(item, 'introduction')}">
-          <p><c:out value="${item.introduction}"/></p>
-        </c:if>
-      </article>
+      <c:set var="linkName" value="${item.title}"/>
     </c:when>
     <c:otherwise>
-      <hst:link var="link" hippobean="${item}"/>
-      <article class="has-edit-button">
-        <hst:cmseditlink hippobean="${item}"/>
-        <h3><a href="${link}"><c:out value="${item.name}"/></a></h3>
-        <c:if test="${hst:isReadable(item, 'introduction')}">
-          <p><c:out value="${item.introduction}"/></p>
-        </c:if>
-      </article>
+      <c:set var="linkName" value="${item.localizedName}"/>
     </c:otherwise>
   </c:choose>
+
+  <article class="has-edit-button">
+    <hst:cmseditlink hippobean="${item}"/>
+    <hst:link var="link" hippobean="${item}"/>
+    <h3><a href="${link}"><c:out value="${linkName}"/></a></h3>
+    <c:if test="${hst:isReadable(item, 'introduction')}">
+      <p><c:out value="${item.introduction}"/></p>
+    </c:if>
+  </article>
 
 </c:forEach>
 <c:if test="${cparam.showPagination}">

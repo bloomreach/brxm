@@ -4,24 +4,19 @@
 <#if pageable?? && pageable.items?has_content>
   <#list pageable.items as item>
     <#if item.title??>
-      <@hst.link var="link" hippobean=item />
-      <article class="has-edit-button">
-        <@hst.cmseditlink hippobean=item/>
-        <h3><a href="${link}">${item.title?html}</a></h3>
-        <#if item.introduction??>
-          <p>${item.introduction?html}</p>
-        </#if>
-      </article>
+      <#assign linkName=item.title>
     <#else>
-      <@hst.link var="link" hippobean=item />
+      <#assign linkName=item.localizedName>
+    </#if>
+
     <article class="has-edit-button">
       <@hst.cmseditlink hippobean=item/>
-      <h3><a href="${link}">${item.name}</a></h3>
+      <@hst.link var="link" hippobean=item />
+      <h3><a href="${link}">${linkName?html}</a></h3>
       <#if item.introduction??>
         <p>${item.introduction?html}</p>
-      </#if>s
+      </#if>
     </article>
-    </#if>
   </#list>
   <#if cparam.showPagination>
     <#include "../include/pagination.ftl">

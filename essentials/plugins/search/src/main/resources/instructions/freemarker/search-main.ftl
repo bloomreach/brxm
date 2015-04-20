@@ -8,12 +8,16 @@
   <#else>
     <#list pageable.items as item>
       <#if item.title??>
-        <@hst.link var="link" hippobean=item />
-        <article>
-          <@hst.cmseditlink hippobean=item/>
-          <h3><a href="${link}">${item.title?html}</a></h3>
-        </article>
+        <#assign linkName=item.title/>
+      <#else>
+        <#assign linkName=item.localizedName/>
       </#if>
+
+      <article>
+        <@hst.cmseditlink hippobean=item/>
+        <@hst.link var="link" hippobean=item />
+        <h3><a href="${link}">${linkName?html}</a></h3>
+      </article>
     </#list>
     <#if cparam.showPagination>
     <#include "../include/pagination.ftl">
