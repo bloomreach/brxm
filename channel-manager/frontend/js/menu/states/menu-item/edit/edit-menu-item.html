@@ -95,7 +95,7 @@
           <input type="radio" name="destination"
                  data-ng-model="MenuItemCtrl.selectedMenuItem.linkType"
                  value="SITEMAPITEM"
-                 data-ng-click="EditMenuItemFormCtrl.updateLinkDestination(form)">
+                 data-ng-change="EditMenuItemFormCtrl.updateLinkDestination(form)">
           {{ 'INTERNAL_LINK' | translate }}
         </label>
       </div>
@@ -104,7 +104,7 @@
           <input type="radio" name="destination"
                  data-ng-model="MenuItemCtrl.selectedMenuItem.linkType"
                  value="EXTERNAL"
-                 data-ng-click="EditMenuItemFormCtrl.updateLinkDestination(form)">
+                 data-ng-change="EditMenuItemFormCtrl.updateLinkDestination(form)">
           {{ 'EXTERNAL_LINK' | translate }}
         </label>
       </div>
@@ -113,7 +113,7 @@
           <input type="radio" name="destination"
                  data-ng-model="MenuItemCtrl.selectedMenuItem.linkType"
                  value="NONE"
-                 data-ng-click="EditMenuItemFormCtrl.updateLinkDestination(form)">
+                 data-ng-change="EditMenuItemFormCtrl.updateLinkDestination(form)">
           {{ 'NONE' | translate }}
         </label>
       </div>
@@ -160,7 +160,7 @@
                data-ng-attr-placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}"
                data-ng-model="MenuItemCtrl.selectedMenuItem.externalLink"
                data-ng-required="true"
-               data-show-focus="EditMenuItemCtrl.linkToFocus == 'externalLink'"
+               data-show-focus="MenuItemCtrl.selectedMenuItem.linkType == 'EXTERNAL'"
                data-ng-blur="EditMenuItemCtrl.updateLinkDestination(form)"
                data-tooltip="{{ EditMenuItemCtrl.fieldFeedbackMessage.link }}"
                data-tooltip-trigger="show"

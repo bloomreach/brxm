@@ -122,18 +122,17 @@
         EditMenuItemCtrl.updateLinkDestination = function (form) {
           var formItem;
           if ($scope.MenuItemCtrl.selectedMenuItem.linkType === 'NONE') {
-            EditMenuItemCtrl.linkToFocus = 'none';
             EditMenuItemCtrl.saveSelectedMenuItem('linkType');
           } else {
             if ($scope.MenuItemCtrl.selectedMenuItem.linkType === 'SITEMAPITEM') {
               formItem = form.sitemapItem;
-              EditMenuItemCtrl.linkToFocus = 'sitemapLink';
             } else if ($scope.MenuItemCtrl.selectedMenuItem.linkType === 'EXTERNAL') {
               formItem = form.url;
-              EditMenuItemCtrl.linkToFocus = 'externalLink';
+              formItem.$pristine = false;
+              formItem.$dirty = true;
             }
             if (formItem.$dirty && formItem.$valid) {
-              $scope.EditMenuItemCtrl.saveSelectedMenuItem('link');
+              EditMenuItemCtrl.saveSelectedMenuItem('link');
             }
           }
         };
