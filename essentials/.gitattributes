@@ -348,7 +348,6 @@ plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/HstUtils.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/JavaSourceUtils.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/JcrMatcher.java -text
-plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/MarkupCodeUtils.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/PayloadUtils.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/ProjectUtils.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/SourceCodeTemplates.java -text
@@ -417,7 +416,6 @@ plugin-sdk/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-sdk/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/HippoNodeUtilsTest.java -text
 plugin-sdk/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/HstUtilsTest.java -text
 plugin-sdk/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/JavaSourceUtilsTest.java -text
-plugin-sdk/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/MarkupCodeUtilsTest.java -text
 plugin-sdk/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/MavenModelReaderWriterTest.java -text
 plugin-sdk/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/ProjectUtilsTest.java -text
 plugin-sdk/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/TemplateUtilsTest.java -text
@@ -886,18 +884,13 @@ plugins/selection/src/main/resources/xml/single-field-editor-template.xml -text
 plugins/selection/src/main/resources/xml/single-field-node-type.xml -text
 plugins/selection/src/main/resources/xml/valuelistmanager.xml -text
 plugins/seo/pom.xml -text
-plugins/seo/src/main/java/org/onehippo/cms7/essentials/dashboard/seo/SeoIncludeInstruction.java -text
 plugins/seo/src/main/resources/META-INF/resources/feature/seoPlugin/seoPlugin.html -text
 plugins/seo/src/main/resources/META-INF/seoPlugin_instructions.xml -text
 plugins/seo/src/main/resources/META-INF/web-fragment.xml -text
-plugins/seo/src/main/resources/instructions/hst/seo-component-include.xml -text
-plugins/seo/src/main/resources/instructions/hst/seo-component.xml -text
-plugins/seo/src/main/resources/instructions/hst/seo-template.xml -text
 plugins/seo/src/main/resources/instructions/seo-catalog-item.xml -text
 plugins/seo/src/main/resources/instructions/seo.ftl -text
 plugins/seo/src/main/resources/instructions/seo.jsp -text
 plugins/seo/src/main/resources/instructions/seo.png -text
-plugins/seo/src/main/resources/instructions/seohelper.ftl -text
 plugins/seo/src/main/resources/instructions/template-seo-freemarker.xml -text
 plugins/seo/src/main/resources/instructions/template-seo-jsp.xml -text
 plugins/seo/src/test/resources/log4j.xml -text
