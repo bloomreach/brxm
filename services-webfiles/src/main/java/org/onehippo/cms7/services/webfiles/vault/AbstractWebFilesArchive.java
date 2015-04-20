@@ -51,8 +51,8 @@ public abstract class AbstractWebFilesArchive implements Archive {
 
 
     public static void logSizeExceededWarning(final File file, final long maxFileLengthBytes) {
-        log.warn("Skipping file '{}' of size '{}' because it exceeds or equals  maximum allowed file size '{}'. If larger " +
-                        "files need to be supported, increase the maxFileSizeKb at '{}'",
+        log.warn("Skipping file '{}' of {} KB because it exceeds the maximum allowed file length of {} KB. If larger " +
+                        "files need to be supported, increase '{}'",
                 file, file.length()/1024, maxFileLengthBytes/1024, "/hippo:configuration/hippo:modules/webfiles/hippo:moduleconfig/@maxFileLengthKb");
     }
 
