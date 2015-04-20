@@ -1047,32 +1047,24 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     protected void inheritParameters() {
-        // before traversing child components add the parameters from the parent, and if already present, override them
-        // this overriding however is *not* done for containeritemcomponents: They are self contained and do never get their
-        // parametervalues overridden by ancestors: They only get what they don't already have themselves
-        if (type == Type.CONTAINER_ITEM_COMPONENT) {
-            if (parent != null && parent.getParameters() != null) {
-                for (Entry<String, String> entry : parent.getParameters().entrySet()) {
-                    if (parameters.containsKey(entry.getKey())) {
-                        // we already have the parameter, skip
-                        continue;
-                    }
-                    String parameterName = entry.getKey();
-                    parameters.put(parameterName, entry.getValue());
-                    // if the parameter has a prefix that is not yet in parameterNamePrefixSet, add it as well
-                    if (parameterName.indexOf(PARAMETER_PREFIX_NAME_DELIMITER) > -1) {
-                        String prefix = parameterName.substring(0, parameterName.indexOf(PARAMETER_PREFIX_NAME_DELIMITER));
-                        if (!parameterNamePrefixSet.contains(prefix)) {
-                            parameterNamePrefixSet.add(prefix);
-                        }
+        if (parent != null && parent.getParameters() != null) {
+            for (Entry<String, String> entry : parent.getParameters().entrySet()) {
+                if (parameters.containsKey(entry.getKey())) {
+                    log.debug("Skip adding parameter '{}' = '{}' to component {} from ancestor {} because parameter '{}' is" +
+                                    " already present ", entry.getKey(), entry.getValue(), this, parent, entry.getKey());
+                    continue;
+                }
+                String parameterName = entry.getKey();
+                log.debug("Adding inherited parameter '{}' = '{}' to component {} from ancestor {}", parameterName,
+                        entry.getValue(), this, parent);
+                parameters.put(parameterName, entry.getValue());
+                // if the parameter has a prefix that is not yet in parameterNamePrefixSet, add it as well
+                if (parameterName.indexOf(PARAMETER_PREFIX_NAME_DELIMITER) > -1) {
+                    String prefix = parameterName.substring(0, parameterName.indexOf(PARAMETER_PREFIX_NAME_DELIMITER));
+                    if (!parameterNamePrefixSet.contains(prefix)) {
+                        parameterNamePrefixSet.add(prefix);
                     }
                 }
-            }
-        } else {
-            if (parent != null && parent.getParameters() != null) {
-                parameters.putAll(parent.getParameters());
-                // also add the parameter name prefixes from parents
-                parameterNamePrefixSet.addAll(parent.getParameterPrefixes());
             }
         }
         for (HstComponentConfigurationService child : orderedListConfigs) {
