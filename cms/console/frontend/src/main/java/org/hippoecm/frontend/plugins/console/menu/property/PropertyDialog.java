@@ -232,7 +232,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
             protected Iterator<String> getChoices(String input) {
                 List<String> result = new ArrayList<>();
                 for (String propName : choiceModel.getObject().keySet()) {
-                    if (propName.startsWith(input)) {
+                    if (propName.contains(input)) {
                         result.add(propName);
                     }
                 }
