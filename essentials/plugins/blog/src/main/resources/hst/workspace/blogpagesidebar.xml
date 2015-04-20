@@ -23,14 +23,28 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:containercomponent</sv:value>
     </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>91951413-0193-4f55-b8be-e4b935309ca3</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:lastmodified" sv:type="Date">
-      <sv:value>2014-04-15T15:02:10.775+02:00</sv:value>
-    </sv:property>
     <sv:property sv:name="hst:xtype" sv:type="String">
       <sv:value>HST.vBox</sv:value>
     </sv:property>
+    <sv:node sv:name="blogauthorposts">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:containeritemcomponent</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentclassname" sv:type="String">
+        <sv:value>org.onehippo.cms7.essentials.components.EssentialsBlogAuthorPostsComponent</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:iconpath" sv:type="String">
+        <sv:value>images/essentials/catalog-component-icons/blogposts-by-author.png</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:label" sv:type="String">
+        <sv:value>Blogposts by Author</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:template" sv:type="String">
+        <sv:value>blog-author-posts</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:xtype" sv:type="String">
+        <sv:value>HST.Item</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
 </sv:node>
