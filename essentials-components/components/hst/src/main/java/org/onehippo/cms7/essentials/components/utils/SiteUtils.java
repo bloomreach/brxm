@@ -72,6 +72,17 @@ public final class SiteUtils {
         return beanPath;
     }
 
+    public static String relativePathFrom(final String absolutePath, final HstRequestContext context) {
+        final String basePath = context.getSiteContentBasePath();
+
+        if (!absolutePath.substring(1).startsWith(basePath)) {
+            log.warn("Absolute path '{}' is outside the scope of the requested site.", absolutePath);
+            return absolutePath;
+        }
+
+        return absolutePath.substring(1 + basePath.length() + 1); // exclude '/' before and after basePath.
+    }
+
     public static boolean getAnyBooleanParam(HstRequest request, String parameter, boolean defaultValue, final BaseHstComponent component) {
         final String p = getAnyParameter(parameter, request, component);
         if (p == null) {

@@ -35,6 +35,7 @@ import org.onehippo.cms7.essentials.components.model.AuthorEntry;
 import org.onehippo.cms7.essentials.components.model.Authors;
 import org.onehippo.cms7.essentials.components.paging.DefaultPagination;
 import org.onehippo.cms7.essentials.components.paging.Pageable;
+import org.onehippo.cms7.essentials.components.utils.SiteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,14 +65,18 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
                 final int limit = paramInfo.getPageSize();
                 final String sortField = paramInfo.getSortField();
                 final List<HippoBean> beans = new ArrayList<>(limit);
-                final HippoBean scopeBean = getScopeBean(paramInfo.getScope());
+                String scopePath = paramInfo.getScope();
+                if (scopePath != null && scopePath.startsWith("/")) {
+                    scopePath = SiteUtils.relativePathFrom(scopePath, context);
+                }
+                final HippoBean scopeBean = getScopeBean(scopePath);
                 try {
                     for (AuthorEntry author : authors) {
                         final HstQuery hstQuery = ContentBeanUtils.createIncomingBeansQuery(author, scopeBean, getSearchDepth(), clazz, true);
                         hstQuery.setLimit(limit);
                         hstQuery.addOrderByDescending(sortField);
                         final HippoBeanIterator it = hstQuery.execute().getHippoBeans();
-                        while (it.hasNext()) {
+                        while (it.hasNext() && beans.size() < limit) {
                             final HippoBean bean = it.nextHippoBean();
                             if (!document.isSelf(bean)) {
                                 beans.add(bean);
@@ -80,7 +85,6 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
                         if (beans.size() >= limit) {
                             break;
                         }
-
                     }
                     final Pageable<HippoBean> pageable = new DefaultPagination<>(beans);
                     request.setAttribute(REQUEST_ATTR_PAGEABLE, pageable);
