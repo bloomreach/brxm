@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.console.icons;
 
-import javax.jcr.Node;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
@@ -24,8 +22,9 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 
 public class IconLabel extends Label {
 
-    public IconLabel(final String id, final IModel<Node> model) {
-        this(id, JcrNodeIcon.getIconCssClass(model.getObject()));
+    public IconLabel(final String id, final IModel<String> cssClassModel) {
+        super(id, StringUtils.EMPTY);
+        add(CssClass.append(cssClassModel));
     }
 
     public IconLabel(final String id, final String cssClass) {

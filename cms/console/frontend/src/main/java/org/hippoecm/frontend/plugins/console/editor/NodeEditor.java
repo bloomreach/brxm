@@ -36,12 +36,14 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.EmptyDataProvider;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertiesProvider;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugins.console.icons.IconLabel;
+import org.hippoecm.frontend.plugins.console.icons.JcrNodeIcon;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +74,12 @@ class NodeEditor extends Form<Node> {
 
         add(new ToggleHeader("toggle-header-0", "0", "General"));
 
-        add(new IconLabel("nodeIcon", getModel()));
+        add(new IconLabel("nodeIcon", new LoadableDetachableModel<String>() {
+            @Override
+            protected String load() {
+                return JcrNodeIcon.getIconCssClass(getModelObject());
+            }
+        }));
         add(new Label("nodePath", new PropertyModel<String>(this, "nodePath")));
         add(new Label("name", new PropertyModel<String>(this, "name")));
         add(new Label("uuid", new PropertyModel<String>(this, "uuid")));
