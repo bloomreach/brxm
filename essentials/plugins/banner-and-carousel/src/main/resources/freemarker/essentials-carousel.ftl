@@ -31,9 +31,9 @@
                     <img src="<@hst.link hippobean=item.image />" alt="${item.title?html}"/>
                     <div class="carousel-caption">
                         <#if item.link??>
-                          <a href="<@hst.link hippobean=item.link/>"><h3>${item.title?html}</h3></a>
+                            <h3><a href="<@hst.link hippobean=item.link/>">${item.title?html}</a></h3>
                         <#else>
-                          <h3>${item.title?html}</h3>
+                            <h3>${item.title?html}</h3>
                         </#if>
                         <@hst.html hippohtml=item.content/>
                     </div>
