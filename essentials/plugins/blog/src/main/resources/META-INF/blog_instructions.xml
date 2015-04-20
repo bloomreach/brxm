@@ -88,7 +88,6 @@
     <file action="copy" source="jsp/blog-facet.jsp" target="{{jspRoot}}/hstdefault/facet/blog-facet.jsp"/>
     <file action="copy" source="jsp/blog-detail.jsp" target="{{jspRoot}}/{{namespace}}/blog/blog-detail.jsp"/>
     <file action="copy" source="jsp/blog-list.jsp" target="{{jspRoot}}/hstdefault/blog/blog-list.jsp"/>
-    <file action="copy" source="jsp/blog-author.jsp" target="{{jspRoot}}/{{namespace}}/author/blog-author.jsp"/>
   </instructionSet>
 
   <!--
@@ -100,7 +99,6 @@
     <freemarker action="copy" source="freemarker/blog-detail.ftl" target="{{freemarkerRoot}}/{{namespace}}/blog/blog-detail.ftl"/>
     <freemarker action="copy" source="freemarker/blog-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/blog/blog-main.ftl"/>
     <freemarker action="copy" source="freemarker/blog-list.ftl" target="{{freemarkerRoot}}/hstdefault/blog/blog-list.ftl"/>
-    <freemarker action="copy" source="freemarker/blog-author.ftl" target="{{freemarkerRoot}}/{{namespace}}/author/blog-author.ftl"/>
   </instructionSet>
 
   <instructionSet group="extraTemplates">
@@ -157,7 +155,6 @@
 
   <!-- HST TEMPLATES -->
   <instructionSet group="jsp">
-    <xml action="copy" source="hst/template-author-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="hst/template-facet-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="hst/template-blog-author-posts-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="hst/template-blog-main-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
@@ -166,7 +163,6 @@
   </instructionSet>
 
   <instructionSet group="freemarker">
-    <xml action="copy" source="hst/template-author-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="hst/template-blog-author-posts-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="hst/template-facet-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="hst/template-blog-main-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>

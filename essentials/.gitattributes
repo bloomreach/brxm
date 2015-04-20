@@ -540,7 +540,6 @@ plugins/blog/src/main/resources/META-INF/web-fragment.xml -text
 plugins/blog/src/main/resources/content/blog-labels.xml -text
 plugins/blog/src/main/resources/content/facet-labels.xml -text
 plugins/blog/src/main/resources/freemarker/blog-author-posts.ftl -text
-plugins/blog/src/main/resources/freemarker/blog-author.ftl -text
 plugins/blog/src/main/resources/freemarker/blog-detail-variant.ftl -text
 plugins/blog/src/main/resources/freemarker/blog-detail.ftl -text
 plugins/blog/src/main/resources/freemarker/blog-detail.properties -text
@@ -558,8 +557,6 @@ plugins/blog/src/main/resources/hst/catalog/facets.xml -text
 plugins/blog/src/main/resources/hst/page-blog-list.xml -text
 plugins/blog/src/main/resources/hst/page-blog-main.xml -text
 plugins/blog/src/main/resources/hst/page-blog-page.xml -text
-plugins/blog/src/main/resources/hst/template-author-freemarker.xml -text
-plugins/blog/src/main/resources/hst/template-author-jsp.xml -text
 plugins/blog/src/main/resources/hst/template-blog-author-posts-freemarker.xml -text
 plugins/blog/src/main/resources/hst/template-blog-author-posts-jsp.xml -text
 plugins/blog/src/main/resources/hst/template-blog-detail-freemarker.xml -text
@@ -581,7 +578,6 @@ plugins/blog/src/main/resources/java/Account.txt -text
 plugins/blog/src/main/resources/java/Author.txt -text
 plugins/blog/src/main/resources/java/Blogpost.txt -text
 plugins/blog/src/main/resources/jsp/blog-author-posts.jsp -text
-plugins/blog/src/main/resources/jsp/blog-author.jsp -text
 plugins/blog/src/main/resources/jsp/blog-detail.jsp -text
 plugins/blog/src/main/resources/jsp/blog-facet.jsp -text
 plugins/blog/src/main/resources/jsp/blog-list.jsp -text
