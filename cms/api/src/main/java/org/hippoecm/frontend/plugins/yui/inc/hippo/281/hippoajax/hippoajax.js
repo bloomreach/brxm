@@ -30,127 +30,120 @@ YAHOO.namespace('hippo');
 var HippoAjax = YAHOO.hippo.HippoAjax;
 
 if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
-    (function() {
-        "use strict";
+  (function () {
+    "use strict";
 
-        var Dom = YAHOO.util.Dom,
-            Lang = YAHOO.lang,
-            wicketProcessComponent;
+    var Dom = YAHOO.util.Dom,
+      Lang = YAHOO.lang;
 
-        YAHOO.hippo.HippoAjaxImpl = function() {};
+    YAHOO.hippo.HippoAjaxImpl = function () {
+    };
 
-        YAHOO.hippo.HippoAjaxImpl.prototype = {
-            prefix : 'hippo-destroyable-',
-            callbacks : new YAHOO.hippo.HashMap(),
-            _scrollbarWidth : null,
+    YAHOO.hippo.HippoAjaxImpl.prototype = {
+      prefix: 'hippo-destroyable-',
+      callbacks: new YAHOO.hippo.HashMap(),
+      _scrollbarWidth: null,
 
-            loadJavascript : function(url, callback, scope) {
-                var evt = !YAHOO.env.ua.ie ? "onload" : 'onreadystatechange',
-                    element = document.createElement("script");
-                element.type = "text/javascript";
-                element.src = url;
-                if (callback) {
-                    element[evt] = function() {
-                        if (YAHOO.env.ua.ie && (!(/loaded|complete/.test(window.event.srcElement.readyState)))) {
-                            return;
-                        }
-                        callback.call(scope);
-                        element[evt] = null;
-                    };
-                }
-                document.getElementsByTagName("head")[0].appendChild(element);
-            },
-
-            getScrollbarWidth : function() {
-                var inner, outer, w1, w2;
-
-                if (this._scrollbarWidth === null) {
-                    inner = document.createElement('p');
-                    inner.style.width = "100%";
-                    inner.style.height = "200px";
-
-                    outer = document.createElement('div');
-                    outer.style.position = "absolute";
-                    outer.style.top = "0px";
-                    outer.style.left = "0px";
-                    outer.style.visibility = "hidden";
-                    outer.style.width = "200px";
-                    outer.style.height = "150px";
-                    outer.style.overflow = "hidden";
-                    outer.appendChild(inner);
-
-                    document.body.appendChild(outer);
-                    w1 = inner.offsetWidth;
-                    outer.style.overflow = 'scroll';
-                    w2 = inner.offsetWidth;
-                    if (w1 === w2) {
-                        w2 = outer.clientWidth;
-                    }
-
-                    document.body.removeChild(outer);
-
-                    this._scrollbarWidth = w1 - w2;
-                }
-                return this._scrollbarWidth;
-            },
-
-            getScrollbarHeight : function() {
-                //I'm lazy so return scrollbarWidth for now
-                return this.getScrollbarWidth();
-            },
-
-            registerDestroyFunction : function(el, func, context, args) {
-                var id = this.prefix + Dom.generateId();
-                el.HippoDestroyID = id;
-                if (!Lang.isArray(args)) {
-                    args = [args];
-                }
-                this.callbacks.put(id, {func: func, context: context, args: args});
-            },
-
-            callDestroyFunction : function(id) {
-                if (this.callbacks.containsKey(id)) {
-                    var callback = this.callbacks.remove(id);
-                    callback.func.apply(callback.context, callback.args);
-                }
-            },
-
-            cleanupElement: function(el) {
-                var els, i, len;
-
-                els = Dom.getElementsBy(function(node) {
-                    return !Lang.isUndefined(node.HippoDestroyID);
-                }, null, el);
-
-                for (i = 0, len = els.length; i < len; i++) {
-                  this.callDestroyFunction(els[i].HippoDestroyID);
-                }
-
-                if (!Lang.isUndefined(el.HippoDestroyID)) {
-                  this.callDestroyFunction(el.HippoDestroyID);
-                }
+      loadJavascript: function (url, callback, scope) {
+        var evt = !YAHOO.env.ua.ie ? "onload" : 'onreadystatechange',
+          element = document.createElement("script");
+        element.type = "text/javascript";
+        element.src = url;
+        if (callback) {
+          element[evt] = function () {
+            if (YAHOO.env.ua.ie && (!(/loaded|complete/.test(window.event.srcElement.readyState)))) {
+              return;
             }
-        };
+            callback.call(scope);
+            element[evt] = null;
+          };
+        }
+        document.getElementsByTagName("head")[0].appendChild(element);
+      },
 
-        YAHOO.hippo.HippoAjax = HippoAjax = new YAHOO.hippo.HippoAjaxImpl();
+      getScrollbarWidth: function () {
+        var inner, outer, w1, w2;
 
-        wicketProcessComponent = Wicket.Ajax.Call.prototype.processComponent;
-        Wicket.Ajax.Call.prototype.processComponent = function(context, node) {
-            var compId, el;
+        if (this._scrollbarWidth === null) {
+          inner = document.createElement('p');
+          inner.style.width = "100%";
+          inner.style.height = "200px";
 
-            compId = node.getAttribute("id");
-            el = Dom.get(compId);
+          outer = document.createElement('div');
+          outer.style.position = "absolute";
+          outer.style.top = "0px";
+          outer.style.left = "0px";
+          outer.style.visibility = "hidden";
+          outer.style.width = "200px";
+          outer.style.height = "150px";
+          outer.style.overflow = "hidden";
+          outer.appendChild(inner);
 
-            if (el !== null && el !== undefined) {
-                HippoAjax.cleanupElement(el);
-                YAHOO.util.Event.purgeElement(el, true);
-            }
-            wicketProcessComponent.call(this, context, node);
-        };
+          document.body.appendChild(outer);
+          w1 = inner.offsetWidth;
+          outer.style.overflow = 'scroll';
+          w2 = inner.offsetWidth;
+          if (w1 === w2) {
+            w2 = outer.clientWidth;
+          }
 
-    }());
+          document.body.removeChild(outer);
 
-    YAHOO.register("hippoajax", YAHOO.hippo.HippoAjax, {
-        version: "2.8.1", build: "19"
-    });
+          this._scrollbarWidth = w1 - w2;
+        }
+        return this._scrollbarWidth;
+      },
+
+      getScrollbarHeight: function () {
+        return this.getScrollbarWidth();
+      },
+
+      registerDestroyFunction: function (el, func, context, args) {
+        var id = this.prefix + Dom.generateId();
+        el.HippoDestroyID = id;
+        if (!Lang.isArray(args)) {
+          args = [args];
+        }
+        this.callbacks.put(id, {func: func, context: context, args: args});
+      },
+
+      callDestroyFunction: function (id) {
+        if (this.callbacks.containsKey(id)) {
+          var callback = this.callbacks.remove(id);
+          callback.func.apply(callback.context, callback.args);
+        }
+      },
+
+      cleanupElement: function (el) {
+        var els, i, len;
+
+        els = Dom.getElementsBy(function (node) {
+          return node.hasOwnProperty('HippoDestroyID');
+        }, null, el);
+
+        for (i = 0, len = els.length; i < len; i++) {
+          this.callDestroyFunction(els[i].HippoDestroyID);
+        }
+
+        if (!Lang.isUndefined(el.HippoDestroyID)) {
+          this.callDestroyFunction(el.HippoDestroyID);
+        }
+      }
+    };
+
+    YAHOO.hippo.HippoAjax = HippoAjax = new YAHOO.hippo.HippoAjaxImpl();
+
+    Wicket.Event.subscribe(Wicket.Event.Topic.DOM_NODE_REMOVING,
+      function (jqEvent, el, jqXHR, errorThrown, textStatus) {
+        if (el !== null && el !== undefined) {
+          HippoAjax.cleanupElement(el);
+          YAHOO.util.Event.purgeElement(el, true);
+        }
+      }
+    );
+  }());
+
+  YAHOO.register("hippoajax", YAHOO.hippo.HippoAjax, {
+    version: "2.8.1", build: "19"
+  });
 }
