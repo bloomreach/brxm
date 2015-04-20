@@ -1,12 +1,12 @@
 /**
  * Copyright 2001-2015 Hippo B.V. (http://www.onehippo.com)
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
@@ -24,6 +24,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -57,6 +59,7 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -65,7 +68,9 @@ import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.widgets.AjaxDateTimeField;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
@@ -297,6 +302,11 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             }
 
             add(new IFormValidator() {
+
+                private static final String ERROR_SNS_NODE_EXISTS = "error-sns-node-exists";
+                private static final String ERROR_LOCALIZED_NAME_EXISTS = "error-localized-name-exists";
+                private static final String ERROR_VALIDATION_NAMES = "error-validation-names";
+
                 @Override
                 public FormComponent<?>[] getDependentFormComponents() {
                     return new FormComponent<?>[]{nameField};
@@ -313,14 +323,38 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                             return;
                         }
 
-                        String encodedDocumentName = getNodeNameCodec().encode(nameField.getValue());
-                        if (folder.hasNode(encodedDocumentName)) {
-                            form.error(new StringResourceModel("existing.name", Dialog.this, null).getString());
+                        String newNodeName = getNodeNameCodec().encode(nameField.getValue());
+                        String newLocalizedName = nameField.getValue();
+
+                        if (folder.hasNode(newNodeName)) {
+                            showError(form, ERROR_SNS_NODE_EXISTS, newNodeName);
+                        }
+                        if (existedLocalizedName(folder, newLocalizedName)) {
+                            showError(form, ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
                         }
                     } catch (RepositoryException | RemoteException | WorkflowException e) {
-                        log.error("Error occurred while validating new document: "
-                                + e.getClass().getName() + ": " + e.getMessage());
+                        log.error("validation error", e);
+                        showError(form, ERROR_VALIDATION_NAMES);
                     }
+                }
+
+                private void showError(final Form<?> form, final String messge, final Object... arguments) {
+                    form.error(new StringResourceModel(messge, Dialog.this, null, arguments).getObject());
+                }
+
+                protected boolean existedLocalizedName(final Node parentNode, final String localizedName) throws RepositoryException {
+                    final NodeIterator children = parentNode.getNodes();
+                    while (children.hasNext()) {
+                        Node child = children.nextNode();
+                        if (child.isNodeType(HippoStdNodeType.NT_FOLDER) || child.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            NodeTranslator nodeTranslator = new NodeTranslator(new JcrNodeModel(child));
+                            String localizedChildName = nodeTranslator.getNodeName().getObject();
+                            if (StringUtils.equals(localizedChildName, localizedName)) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
                 }
             });
         }
