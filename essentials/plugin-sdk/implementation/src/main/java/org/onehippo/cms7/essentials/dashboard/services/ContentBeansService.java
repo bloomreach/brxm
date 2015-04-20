@@ -35,6 +35,13 @@ import java.util.SortedSet;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.eventbus.EventBus;
+
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -62,13 +69,6 @@ import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.onehippo.cms7.services.contenttype.HippoContentTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicate;
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.eventbus.EventBus;
 
 /**
  * @version "$Id$"
@@ -214,16 +214,16 @@ public class ContentBeansService {
                 hasRelatedDocs = true;
             }
         }
+        if (!hasRelatedDocs) {
+            return;
+        }
         // check related docs existence:
         Map<String, Path> existing = findExitingBeans();
-        if (hasRelatedDocs) {
-            ensureRelatedDocsBean(existing);
-        }
-
+        ensureRelatedDocsBean(existing);
         existing = findExitingBeans();
         final Path relatedPath = existing.get(EssentialConst.RELATEDDOCS_DOCS);
         if (relatedPath == null) {
-            log.warn("Missing related documents bean");
+            log.warn("Missing related documents bean, unable to generate bean methods");
             return;
         }
 
@@ -432,7 +432,7 @@ public class ContentBeansService {
             if (type.equals("String")) {
                 final String cmsType = property.getCmsType();
                 if (!Strings.isNullOrEmpty(cmsType) && cmsType.equals(DOCBASE)) {
-                    type  = DOCBASE;
+                    type = DOCBASE;
                 }
             }
 
@@ -585,7 +585,7 @@ public class ContentBeansService {
         if (data != null && data.size() == 1) {
             final Object next = data.iterator().next();
             if (next instanceof Path) {
-                path = (Path) next;
+                path = (Path)next;
             }
         }
         return path;
@@ -646,7 +646,7 @@ public class ContentBeansService {
             for (EssentialsGeneratedMethod m : generatedMethods) {
                 final Type type = m.getMethodDeclaration().getReturnType2();
                 if (type.isSimpleType()) {
-                    final SimpleType simpleType = (SimpleType) type;
+                    final SimpleType simpleType = (SimpleType)type;
                     final String returnType = simpleType.getName().getFullyQualifiedName();
                     // check if image type and different than new return type
                     if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
@@ -677,7 +677,7 @@ public class ContentBeansService {
                 final String methodName = node.getName().getFullyQualifiedName();
                 final Type type = node.getReturnType2();
                 if (type.isSimpleType()) {
-                    final SimpleType simpleType = (SimpleType) type;
+                    final SimpleType simpleType = (SimpleType)type;
                     final String returnTypeName = simpleType.getName().getFullyQualifiedName();
                     final EssentialsGeneratedMethod method = JavaSourceUtils.extractMethod(methodName, generatedMethods);
                     if (method == null) {
