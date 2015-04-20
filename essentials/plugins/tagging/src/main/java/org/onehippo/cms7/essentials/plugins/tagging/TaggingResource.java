@@ -35,6 +35,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
@@ -48,9 +51,6 @@ import org.onehippo.cms7.essentials.dashboard.utils.PayloadUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
@@ -100,11 +100,18 @@ public class TaggingResource extends BaseResource {
                     final Node editorTemplate = session.getNode(fieldImportPath);
                     templateData.put("fieldLocation", DocumentTemplateUtils.getDefaultPosition(editorTemplate));
                     // import field:
-                    final String fieldData = TemplateUtils.replaceStringPlaceholders(templateTags, templateData);
-                    session.importXML(fieldImportPath, IOUtils.toInputStream(fieldData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+                    final String tagsPath = fieldImportPath + '/' + "tags";
+                    if (!session.nodeExists(tagsPath)) {
+                        final String fieldData = TemplateUtils.replaceStringPlaceholders(templateTags, templateData);
+                        session.importXML(fieldImportPath, IOUtils.toInputStream(fieldData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+                    }
+
                     // import suggest field:
-                    final String suggestData = TemplateUtils.replaceStringPlaceholders(templateSuggest, templateData);
-                    session.importXML(fieldImportPath, IOUtils.toInputStream(suggestData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+                    final String suggestPath = fieldImportPath + '/' + "tagsuggest";
+                    if (!session.nodeExists(suggestPath)) {
+                        final String suggestData = TemplateUtils.replaceStringPlaceholders(templateSuggest, templateData);
+                        session.importXML(fieldImportPath, IOUtils.toInputStream(suggestData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+                    }
                     addedDocuments.add(document);
                     session.save();
                 }
