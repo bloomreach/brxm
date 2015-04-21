@@ -67,10 +67,12 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.AbstractRenderService;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IValidationService;
@@ -325,6 +327,9 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         remove.setVisible(canRemoveItem());
         controls.add(remove);
 
+        final HippoIcon removeIcon = HippoIcon.fromSprite("remove-icon", Icon.TIMES);
+        remove.add(removeIcon);
+
         final int itemIndex = item.getIndex();
         // up arrow button
         MarkupContainer upLink = new AjaxLink("up") {
@@ -340,6 +345,9 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         upLink.setVisible(canReorderItems());
         upLink.setEnabled(itemIndex > 0);
         controls.add(upLink);
+
+        final HippoIcon upIcon = HippoIcon.fromSprite("up-icon", Icon.ARROW_UP);
+        upLink.add(upIcon);
 
         // down arrow button
         MarkupContainer downLink = new AjaxLink("down") {
@@ -364,6 +372,9 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         downLink.setVisible(canReorderItems());
         downLink.setEnabled(itemIndex < provider.size() - 1);
         controls.add(downLink);
+
+        final HippoIcon downIcon = HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN);
+        downLink.add(downIcon);
 
         fragment.add(controls);
         item.add(fragment);
