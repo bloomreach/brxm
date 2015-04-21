@@ -641,8 +641,9 @@ public class Main extends PluginApplication {
 
         @Override
         public void sendRedirect(final String url) {
-            if(containsCRorLF(url))
+            if(containsCRorLF(url)) {
                 throw new IllegalArgumentException("CR or LF detected in redirect URL: possible http response splitting attack");
+            }
             super.sendRedirect(url);
         }
 
