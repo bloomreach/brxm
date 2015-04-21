@@ -105,6 +105,7 @@
         load: function(componentId, pageRequestVariants, lastModifiedTimestamp) {
             if (this.componentVariants !== null) {
                 this.componentVariants.un('invalidated', this.updateUI, this);
+                this._fireInitialPropertiesChangedIfNeeded();
             }
 
             this.componentId = componentId;
