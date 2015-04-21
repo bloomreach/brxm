@@ -28,9 +28,9 @@
             <form novalidate name="newImageSetForm" class="form-horizontal">
                 <essentials-help help-reference="help.imageSet" show-hide-variable="myHelp"></essentials-help>
                 <div class="form-group">
-                    <label class="col-sm-4 control-label">Imageset name:</label>
+                    <label class="col-sm-4 control-label">Image set name</label>
                     <div class="col-sm-4">
-                        <input class="form-control" ng-model="imageSetName" ng-pattern="/^[a-z]{2,}$/" ng-required="true" placeholder="myimageset"/>
+                        <input class="form-control" ng-model="imageSetName" ng-pattern="/^[a-z]{2,}$/" ng-required="true" placeholder="Enter image set name"/>
                     </div>
                     <div class="col-sm-4">
                         <input type="checkbox" ng-model="updateExisting"/> Update existing image sets and regenerate HST beans
@@ -66,9 +66,9 @@
                         <h5>Add Image Variant</h5>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Variant name:</label>
+                        <label class="col-sm-4 control-label">Variant name</label>
                         <div class="col-sm-4">
-                            <input class="form-control" ng-model="imageVariantName" ng-pattern="/^[a-z]{2,}$/" ng-required="true" placeholder="bigimage"/>
+                            <input class="form-control" ng-model="imageVariantName" ng-pattern="/^[a-z]{2,}$/" ng-required="true" placeholder="Enter variant name"/>
                         </div>
                         <div class="col-sm-4">
                             <button ng-disabled="!imageVariantName" class="btn btn-success pull-right" type="button" ng-click="addImageVariant()">Add new image variant</button>
@@ -78,16 +78,16 @@
                         <h5>Edit Image Variant</h5>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Select image variant:</label>
+                        <label class="col-sm-4 control-label">Select image variant</label>
                         <div class="col-sm-4">
-                            <select chosen
-                                    name="selectedImageModel"
-                                    class="chosen-select"
+                            <select name="selectedImageModel"
+                                    class="form-control"
                                     ng-model="selectedImageModel"
                                     ng-options="option.name for option in selectedImageSet.models"
-                                    data-placeholder="Select existing variant"
+                                    placeholder="Select existing variant"
+                                    ng-change="disableSelection()"
+                                    ng-disabled="selectionDisabled"
                                     width="'100%'">
-                                <option value=""></option>
                             </select>
                         </div>
                         <div class="col-sm-4">
@@ -95,7 +95,21 @@
                                     class="btn btn-warning pull-right"
                                     type="button"
                                     ng-click="removeImageVariant(selectedImageModel)">
-                                Delete selected image variant
+                                Delete variant
+                            </button>
+                            <button ng-show="selectedImageModel"
+                                    class="btn btn-default pull-right"
+                                    type="button"
+                                    ng-click="resetVariant()"
+                                    >
+                                Discard Changes
+                            </button>
+                            <button ng-show="selectedImageModel"
+                                    class="btn btn-primary pull-right"
+                                    type="button"
+                                    ng-click="saveVariant()"
+                                    >
+                                Save Changes
                             </button>
                         </div>
                     </div>
@@ -183,10 +197,5 @@
                 </div>
             </form>
         </div>
-
-
-    </div>
-    <div class="panel-footer clearfix">
-        <button class="btn btn-primary pull-right" type="button" ng-disabled="!selectedImageModel" ng-click="save()">Save</button>
     </div>
 </div>

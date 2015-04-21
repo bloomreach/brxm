@@ -51,10 +51,20 @@
             }
             var payload = Essentials.addPayloadData("imageVariantName", $scope.imageVariantName, null);
             Essentials.addPayloadData("selectedImageSet", $scope.selectedImageSet.name, payload);
-            $http.post(endpoint + "/addvariant", payload).success(function (data) {
+            $http.post(endpoint + "/addvariant", payload).success(function () {
                 loadImageSets($scope.selectedImageSet.name, $scope.imageVariantName);
                 $scope.imageVariantName = null;
             });
+        };
+
+        $scope.disableSelection = function() {
+            $scope.selectionDisabled = true;
+        };
+
+        $scope.resetVariant = function() {
+            loadImageSets($scope.selectedImageSet.name);
+            $scope.selectedImageModel = null;
+            $scope.selectionDisabled = false;
         };
 
         $scope.removeImageVariant = function (variant) {
@@ -63,8 +73,14 @@
                 return;
             }
             $http.post(endpoint + "/remove", variant).success(function () {
-                loadImageSets($scope.selectedImageSet.name);
+                $scope.resetVariant();
+            });
+        };
+
+        $scope.saveVariant = function () {
+            $http.post(endpoint + "/update", $scope.selectedImageModel).success(function () {
                 $scope.showBeanrewriterMessage = true;
+                $scope.resetVariant();
             });
         };
 
@@ -80,15 +96,6 @@
         $scope.removeTranslation = function (translation) {
             var idx = $scope.selectedImageModel.translations.indexOf(translation);
             $scope.selectedImageModel.translations.splice(idx, 1);
-        };
-
-        $scope.save = function () {
-            // save only saves translations, advanced settings and height/width:
-            $http.post(endpoint + "/update", $scope.selectedImageModel).success(function () {
-                loadImageSets($scope.selectedImageSet.name);
-                $scope.selectedImageModel = null;
-                $scope.showBeanrewriterMessage = true;
-            });
         };
 
         $scope.init = function () {
@@ -109,6 +116,7 @@
                                 angular.forEach(imageSet.models, function(variant) {
                                     if (variant.name === selectedImageVariantName) {
                                         $scope.selectedImageModel = variant;
+                                        $scope.disableSelection();
                                     }
                                 });
                             }
