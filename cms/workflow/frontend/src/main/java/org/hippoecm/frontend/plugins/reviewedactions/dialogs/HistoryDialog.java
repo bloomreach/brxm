@@ -68,7 +68,7 @@ public class HistoryDialog extends Dialog<WorkflowDescriptor> {
             }
         });
 
-        add(CssClass.append("hippo-revision-history"));
+        add(CssClass.append("hippo-revision-history-dialog"));
     }
 
     public IModel<String> getTitle() {
