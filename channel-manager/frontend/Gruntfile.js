@@ -61,6 +61,15 @@ module.exports = function (grunt) {
         tasks: ['build']
       },
 
+      /*
+       * When the LESS files change, we need to compile them, prefix css rules,
+       * lint the resulting css and provide dist files.
+       */
+      less: {
+        files: ['<%= build.less %>'],
+        tasks: ['less', 'autoprefixer', 'concat:css']
+      },
+
       extjs: {
         files: ['src/main/resources/**/*.{html,js,css,png,svg}'],
         tasks: ['newer:copy:extjs']
@@ -80,6 +89,23 @@ module.exports = function (grunt) {
         files: {
           '<%= build.ngtarget %>/menu/assets/css/menu.css': '<%= build.ngsource %>/menu/assets/less/menu.less'
         }
+      }
+    },
+
+
+    /*
+     * Autoprefixer scans the css for rules that need vendor specific prefixes
+     * like -moz-, -webkit-, -ms- or -o-. These are needed for some css features
+     * to work in older browsers. The supported browsers are listed in the browsers option.
+     */
+    autoprefixer: {
+      options: {
+        browsers: ['last 1 Chrome versions', 'last 1 Firefox versions', 'Safari >= 7', 'Explorer >= 10'],
+        map: true
+      },
+      menu: {
+        src: '<%= build.ngtarget %>/menu/assets/css/menu.css',
+        dest: '<%= build.ngtarget %>/menu/assets/css/menu.css'
       }
     },
 
@@ -198,6 +224,7 @@ module.exports = function (grunt) {
     'declutter',
     'clean',
     'less',
+    'autoprefixer',
     'copy',
     'filerev',
     'usemin'
