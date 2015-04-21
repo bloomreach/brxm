@@ -16,6 +16,7 @@
 package org.hippoecm.repository.util;
 
 import java.util.Arrays;
+import java.util.Stack;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -52,8 +53,8 @@ public class DefaultCopyHandler implements CopyHandler {
 
     static final Logger log = LoggerFactory.getLogger(DefaultCopyHandler.class);
 
-    private Node current;
-    private NodeType[] nodeTypes;
+    private final Stack<Node> nodes = new Stack<>();
+    private final Stack<NodeType[]> nodeTypes = new Stack<>();
 
     public DefaultCopyHandler(Node node) throws RepositoryException {
         JcrUtils.ensureIsCheckedOut(node);
@@ -61,12 +62,17 @@ public class DefaultCopyHandler implements CopyHandler {
     }
 
     protected DefaultCopyHandler setCurrent(Node node) throws RepositoryException {
-        this.current = node;
-        NodeType[] mixinNodeTypes = JcrUtils.getMixinNodeTypes(current);
-        nodeTypes = new NodeType[mixinNodeTypes.length + 1];
-        nodeTypes[0] = JcrUtils.getPrimaryNodeType(current);
-        if (mixinNodeTypes.length > 0) {
-            System.arraycopy(mixinNodeTypes, 0, nodeTypes, 1, mixinNodeTypes.length);
+        nodes.push(node);
+        if (node != null) {
+            NodeType[] mixinNodeTypes = JcrUtils.getMixinNodeTypes(node);
+            NodeType[] nodeTypes = new NodeType[mixinNodeTypes.length + 1];
+            nodeTypes[0] = JcrUtils.getPrimaryNodeType(node);
+            if (mixinNodeTypes.length > 0) {
+                System.arraycopy(mixinNodeTypes, 0, nodeTypes, 1, mixinNodeTypes.length);
+            }
+            this.nodeTypes.push(nodeTypes);
+        } else {
+            nodeTypes.push(null);
         }
         return this;
     }
@@ -74,39 +80,44 @@ public class DefaultCopyHandler implements CopyHandler {
     @Override
     public void startNode(final NodeInfo nodeInfo) throws RepositoryException {
         try {
-            NodeDefinition definition = nodeInfo.getApplicableChildNodeDef(nodeTypes);
-            if (!definition.isProtected()) {
-                final Node childDest;
-                if (definition.isAutoCreated() && nodeInfo.getIndex() == 1 && current.hasNode(nodeInfo.getName())) {
-                    childDest = current.getNode(nodeInfo.getName());
-                } else {
-                    childDest = current.addNode(nodeInfo.getName(), nodeInfo.getNodeTypeName());
+            if (getCurrent() != null) {
+                NodeDefinition definition = nodeInfo.getApplicableChildNodeDef(getCurrentNodeTypes());
+                if (!definition.isProtected()) {
+                    final Node childDest;
+                    if (definition.isAutoCreated() && nodeInfo.getIndex() == 1 && getCurrent().hasNode(nodeInfo.getName())) {
+                        childDest = getCurrent().getNode(nodeInfo.getName());
+                    } else {
+                        childDest = getCurrent().addNode(nodeInfo.getName(), nodeInfo.getNodeTypeName());
+                    }
+                    for (String nodeTypeName : nodeInfo.getMixinNames()) {
+                        childDest.addMixin(nodeTypeName);
+                    }
+                    setCurrent(childDest);
+                    return;
                 }
-                for (String nodeTypeName : nodeInfo.getMixinNames()) {
-                    childDest.addMixin(nodeTypeName);
-                }
-                setCurrent(childDest);
             }
         } catch (ConstraintViolationException cve) {
             log.error("Unable to create node from NodeInfo " + nodeInfo + ": " + cve.toString());
         }
+        setCurrent(null);
     }
 
     @Override
     public void endNode() throws RepositoryException {
-        setCurrent(current.getParent());
+        nodes.pop();
+        nodeTypes.pop();
     }
 
     @Override
     public void setProperty(final PropInfo propInfo) throws RepositoryException {
-        if (propInfo != null && Arrays.binarySearch(PROTECTED, propInfo.getName()) < 0) {
+        if (propInfo != null && getCurrent() != null && Arrays.binarySearch(PROTECTED, propInfo.getName()) < 0) {
             try {
-                PropertyDefinition definition = propInfo.getApplicablePropertyDef(nodeTypes);
+                PropertyDefinition definition = propInfo.getApplicablePropertyDef(getCurrentNodeTypes());
                 if (!definition.isProtected()) {
                     if (propInfo.isMultiple()) {
-                        current.setProperty(propInfo.getName(), propInfo.getValues(), propInfo.getType());
+                        getCurrent().setProperty(propInfo.getName(), propInfo.getValues(), propInfo.getType());
                     } else {
-                        current.setProperty(propInfo.getName(), propInfo.getValue(), propInfo.getType());
+                        getCurrent().setProperty(propInfo.getName(), propInfo.getValue(), propInfo.getType());
                     }
                 }
             } catch (ConstraintViolationException cve) {
@@ -117,6 +128,10 @@ public class DefaultCopyHandler implements CopyHandler {
 
     @Override
     public Node getCurrent() {
-        return current;
+        return nodes.peek();
+    }
+
+    protected NodeType[] getCurrentNodeTypes() {
+        return nodeTypes.peek();
     }
 }
