@@ -133,14 +133,14 @@ public class LockHelper {
      * itself. If there are no unLockable nodes wrt <code>node</code>, then <code>node</code> is returned
      */
     Node getUnLockableNode(final Node node, boolean checkAncestors, boolean checkDescendants) throws RepositoryException {
-        if (!canLock(node)) {
+        if (!canOwn(node)) {
             return node;
         }
         if (checkAncestors) {
             final Node root = node.getSession().getRootNode();
             Node ancestor = node;
             while (!ancestor.isSame(root)) {
-                if (!canLock(ancestor)) {
+                if (!canOwn(ancestor)) {
                     return ancestor;
                 }
                 ancestor = ancestor.getParent();
@@ -161,7 +161,7 @@ public class LockHelper {
      * returns <code>true</code> if the {@link Session} tied to <code>node</code> can lock or already contains a lock
      * on <code>node</code>.  Can also be used to determine if a node can be unlocked.
      */
-    public boolean canLock(final Node node) throws RepositoryException {
+    public boolean canOwn(final Node node) throws RepositoryException {
         if (node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
             final String lockedBy = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
             return node.getSession().getUserID().equals(lockedBy);

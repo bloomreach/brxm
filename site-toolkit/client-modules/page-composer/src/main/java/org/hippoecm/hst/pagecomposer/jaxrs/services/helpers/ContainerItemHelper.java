@@ -27,7 +27,6 @@ import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +83,8 @@ public class ContainerItemHelper extends AbstractHelper {
      * if the container of <code>containerItem</code> is already locked for the user <code>containerItem.getSession()</code> this method does not do
      * anything. If there is no lock yet, a lock for the current session userID gets set on the node. If there is
      * already a lock by another user a ClientException is thrown,
+     *
+     * Note this method does *not* persist the changes.
      */
     public void acquireLock(final Node containerItem, final long versionStamp) throws RepositoryException {
         if (!containerItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
@@ -104,16 +105,18 @@ public class ContainerItemHelper extends AbstractHelper {
      * Locks the container item identified by containerItemId with the given time stamp. Will throw a {@link
      * ClientException} if the item cannot be found, is not a container item or is already locked.
      *
+     * Note this method does *not* persist the changes.
+     *
      * @param containerItemId the identifier of the container item to be locked
      * @param versionStamp    timestamp used for the lock
      * @param session         a user bound session
      * @throws ClientException
      * @throws RepositoryException
      */
-    public void lock(String containerItemId, long versionStamp, Session session) throws RepositoryException, ClientException {
+    public void acquireLock(String containerItemId, long versionStamp, Session session) throws RepositoryException, ClientException {
         try {
             final Node containerItem = pageComposerContextService.getRequestConfigNodeById(containerItemId, NODETYPE_HST_CONTAINERITEMCOMPONENT, session);
-            new HstComponentParameters(containerItem, this).lock(versionStamp);
+            acquireLock(containerItem, versionStamp);
             log.info("Component locked successfully.");
         } catch (ItemNotFoundException e) {
             throw new ClientException("container item with id " + containerItemId + " not found", ITEM_NOT_FOUND);
@@ -123,6 +126,8 @@ public class ContainerItemHelper extends AbstractHelper {
     /**
      * if the container of <code>containerItem</code> is locked by the user, it is unlocked.
      * When the container is not locked, or another user has the lock, a ClientException is thrown.
+     *
+     * Note this method does *not* persist the changes.
      */
     public void releaseLock(Node containerItem) throws RepositoryException {
         if (!containerItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
@@ -136,7 +141,7 @@ public class ContainerItemHelper extends AbstractHelper {
                 HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT, containerItem.getPath()),
                 ClientError.ITEM_NOT_FOUND);
         }
-        if (!lockHelper.canLock(container)) {
+        if (!lockHelper.canOwn(container)) {
             throw new ClientException(String.format("Expected an ancester of '%s' to be locked by user '%s'",
                 containerItem.getPath(), containerItem.getSession().getUserID()),
                 ClientError.ITEM_ALREADY_LOCKED);
@@ -148,15 +153,17 @@ public class ContainerItemHelper extends AbstractHelper {
      * Unlocks the container item identified by containerItemId.  Will throw an exception if the container item
      * is not locked, or is locked by another user.
      *
+     * Note this method does *not* persist the changes.
+     *
      * @param containerItemId   the identifier of the container item to be unlocked
      * @param session           a user bound session
      * @throws RepositoryException
      */
-    public void unlock(String containerItemId, Session session) throws RepositoryException, ClientException {
+    public void releaseLock(String containerItemId, Session session) throws RepositoryException, ClientException {
         try {
             final Node containerItem = pageComposerContextService.getRequestConfigNodeById(containerItemId, NODETYPE_HST_CONTAINERITEMCOMPONENT, session);
-            new HstComponentParameters(containerItem, this).unlock();
-            log.info("Component locked successfully.");
+            releaseLock(containerItem);
+            log.info("Component unlocked successfully.");
         } catch (ItemNotFoundException e) {
             throw new ClientException("container item with id " + containerItemId + " not found", ITEM_NOT_FOUND);
         }
