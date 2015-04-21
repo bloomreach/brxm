@@ -20,6 +20,7 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -179,7 +180,8 @@ public class SiteMapResource extends AbstractConfigResource {
             @Override
             public Response call() throws Exception {
                 siteMapHelper.update(siteMapItem, reapplyPrototype);
-                return ok("Item updated successfully", siteMapItem.getId());
+                final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(siteMapItem.getId(), null);
+                return ok("Item updated successfully", siteMapPageRepresentation);
             }
         }, preValidatorBuilder.build());
     }
@@ -213,14 +215,7 @@ public class SiteMapResource extends AbstractConfigResource {
             @Override
             public Response call() throws Exception {
                 Node newSiteMapItem = siteMapHelper.create(siteMapItem, parentId);
-                String siteMapPathInfo = StringUtils.substringAfter(newSiteMapItem.getPath(), NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_SITEMAP );
-                SiteMapPageRepresentation siteMapPageRepresentation = new SiteMapPageRepresentation();
-                siteMapPageRepresentation.setId(newSiteMapItem.getIdentifier());
-                // siteMapPathInfo without starting /
-                siteMapPageRepresentation.setPathInfo(siteMapPathInfo.substring(1));
-                final Mount mount = getPageComposerContextService().getEditingMount();
-                siteMapPageRepresentation.setRenderPathInfo(mount.getMountPath() + siteMapPathInfo);
-                siteMapPageRepresentation.setParentId(parentId);
+                SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(newSiteMapItem.getIdentifier() , parentId);
                 return ok("Item created successfully", siteMapPageRepresentation);
             }
         }, preValidators.build());
@@ -239,7 +234,8 @@ public class SiteMapResource extends AbstractConfigResource {
             @Override
             public Response call() throws Exception {
                 Node copy = siteMapHelper.duplicate(siteMapItemId);
-                return ok("Item created successfully", copy.getIdentifier());
+                final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(copy.getIdentifier(), null);
+                return ok("Item created successfully", siteMapPageRepresentation);
             }
         }, preValidators.build());
     }
@@ -269,7 +265,8 @@ public class SiteMapResource extends AbstractConfigResource {
             @Override
             public Response call() throws Exception {
                 siteMapHelper.move(id, parentId);
-                return ok("Item moved successfully", id);
+                final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(id, parentId);
+                return ok("Item moved successfully", siteMapPageRepresentation);
             }
         }, preValidators.build());
     }
@@ -293,6 +290,20 @@ public class SiteMapResource extends AbstractConfigResource {
                 return ok("Item deleted successfully", id);
             }
         }, preValidator);
+    }
+
+
+    private SiteMapPageRepresentation createSiteMapPageRepresentation(final String siteMapItemUUID, final String parentId) throws RepositoryException {
+        SiteMapPageRepresentation siteMapPageRepresentation = new SiteMapPageRepresentation();
+        siteMapPageRepresentation.setId(siteMapItemUUID);
+        // siteMapPathInfo without starting /
+        Node siteMapItem = getPageComposerContextService().getRequestContext().getSession().getNodeByIdentifier(siteMapItemUUID);
+        String siteMapPathInfo = StringUtils.substringAfter(siteMapItem.getPath(), NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_SITEMAP );
+        siteMapPageRepresentation.setPathInfo(siteMapPathInfo.substring(1));
+        final Mount mount = getPageComposerContextService().getEditingMount();
+        siteMapPageRepresentation.setRenderPathInfo(mount.getMountPath() + siteMapPathInfo);
+        siteMapPageRepresentation.setParentId(parentId);
+        return siteMapPageRepresentation;
     }
 
 }
