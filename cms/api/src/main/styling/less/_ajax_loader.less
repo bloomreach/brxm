@@ -27,10 +27,10 @@
   .ajax-loader {
     display: block;
     width: 100%;
-    height: 3px;
+    height: @ajax-loader-height;
     animation: ajaxloader 1s infinite linear;
-    background-size: @ajax-loader-width 3px;
-    .at2x("@{images}/loader/ajax-loader.png", @ajax-loader-width, 3px);
+    background-size: @ajax-loader-width @ajax-loader-height;
+    .at2x("@{images}/loader/ajax-loader.png", @ajax-loader-width, @ajax-loader-height);
     background-repeat: no-repeat;
   }
 }
