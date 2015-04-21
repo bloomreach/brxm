@@ -59,9 +59,16 @@ public class ImageCropSettings extends WidgetSettings {
         this.originalHeight = (int) originalImageDimension.getHeight();
         this.thumbnailWidth = (int) thumbnailDimension.getWidth();
         this.thumbnailHeight = (int) thumbnailDimension.getHeight();
-        
+
         this.upscalingEnabled = upscalingEnabled;
         previewVisible = thumbnailWidth <= MAX_PREVIEW_RESOLUTION;
+
+        if (initialX + configuredDimension.getWidth() >= originalWidth) {
+            initialX = 0;
+        }
+        if (initialY + configuredDimension.getHeight() >= originalHeight) {
+            initialY = 0;
+        }
 
         if (configuredDimension.getHeight() > 0 && configuredDimension.getWidth() > 0) {
             fixedDimension = FIXED_BOTH;
