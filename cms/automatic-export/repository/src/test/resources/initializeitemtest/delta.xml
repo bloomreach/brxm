@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport" sv:name="test" h:merge="combine">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:esv="http://www.onehippo.org/jcr/xmlimport" sv:name="test" esv:merge="combine">
   <sv:property sv:name="foo">
     <sv:value>foo</sv:value>
   </sv:property>
-  <sv:property sv:name="bar" h:merge="override">
+  <sv:property sv:name="bar" esv:merge="override">
     <sv:value>bar</sv:value>
   </sv:property>
   <sv:node sv:name="foo">
@@ -26,7 +26,7 @@
       <sv:value>nt:unstructured</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="bar" h:merge="combine">
+  <sv:node sv:name="bar" esv:merge="combine">
     <sv:property sv:name="baz">
        <sv:value>baz</sv:value>
     </sv:property>
