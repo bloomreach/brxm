@@ -207,6 +207,7 @@
             } else {
                 this.layout.setActiveItem(0);
             }
+            this._showBreadcrumb();
         },
 
         update: function(config) {
