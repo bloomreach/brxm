@@ -80,7 +80,7 @@ public class ContainerItemHelperTest {
 
         replay(mocks.toArray());
 
-        helper.lock("id", 0L, session);
+        helper.acquireLock("id", 0L, session);
 
         verify(lockHelper);
     }
@@ -94,7 +94,7 @@ public class ContainerItemHelperTest {
                 .andThrow(new ItemNotFoundException());
         replay(mocks.toArray());
 
-        helper.lock(id, 0L, session);
+        helper.acquireLock(id, 0L, session);
     }
 
 
