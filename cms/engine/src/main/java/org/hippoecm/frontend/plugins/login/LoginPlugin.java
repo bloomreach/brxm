@@ -45,7 +45,7 @@ import org.hippoecm.frontend.usagestatistics.UsageStatisticsSettings;
 
 public class LoginPlugin extends RenderPlugin {
 
-    public static final String PRIVACY_TERMS_LINK = "http://www.onehippo.com/en/terms-and-conditions";
+    public static final String TERMS_AND_CONDITIONS_LINK = "http://www.onehippo.com/tnc";
 
     private static final ResourceReference DEFAULT_FAVICON = new UrlResourceReference(
             Url.parse("skin/images/hippo-cms.ico"));
@@ -82,21 +82,21 @@ public class LoginPlugin extends RenderPlugin {
             editionCss = new CssResourceReference(LoginPlugin.class, "login_" + edition + ".css");
         }
 
-        ExternalLink privacyTerms = new ExternalLink("privacyTerms", PRIVACY_TERMS_LINK) {
+        ExternalLink termsAndConditions = new ExternalLink("termsAndConditions", TERMS_AND_CONDITIONS_LINK) {
             @Override
             public boolean isVisible() {
                 return UsageStatisticsSettings.get().isEnabled();
             }
         };
-        privacyTerms.setOutputMarkupId(true);
-        add(privacyTerms);
+        termsAndConditions.setOutputMarkupId(true);
+        add(termsAndConditions);
 
         final boolean autoComplete = getPluginConfig().getAsBoolean(AUTOCOMPLETE, true);
         String[] localeArray = getPluginConfig().getStringArray(LOCALES);
         if (localeArray == null) {
             localeArray = DEFAULT_LOCALES;
         }
-        add(createLoginPanel("login-panel", autoComplete, Arrays.asList(localeArray), new LoginPluginHandler(privacyTerms)));
+        add(createLoginPanel("login-panel", autoComplete, Arrays.asList(localeArray), new LoginPluginHandler(termsAndConditions)));
 
         add(new Label("pinger"));
     }
