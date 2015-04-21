@@ -14,37 +14,11 @@ Grunt and Bower can be installed with Node Package Manager (provided and install
  $ sudo npm install -g grunt-cli bower
 
 -----------------------------
-Linux-specific instructions
+Nodejs instructions
 -----------------------------
 
-For installing Node.js 0.12 on Linux via package manager, see:
-
-  https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager
-
-or (as currently linked to):
-
-  https://nodesource.com/blog/nodejs-v012-iojs-and-the-nodesource-linux-repositories
-
-  Note for Linux Mint users:
-    The referenced script from the above blog post might fail trying to uninstall the ppa:chris-lea/node.js repository!
-    See also: https://bugs.launchpad.net/linuxmint/+bug/1341617
-    In that case, first manually remove that repository configuration like this:
-
-       $ sudo rm /etc/apt/sources.list.d/chris-lea-node_js-*.list
-
------------------------------
-Windows-specific instructions
------------------------------
-
-You can automate the installation of Node.js using Chocolatey package manager:
-
-    https://chocolatey.org/
-
-The package for Node.js can be installed using:
-
-  $ cinst nodejs.install
-
-Then install Bower and Grunt with NPM as explained before.
+For installing Node.js 0.12 on any OS go to https://nodejs.org/download/
+Download your distribution and if needed follow instructions in their README.
 
 -----
 Build
@@ -67,3 +41,66 @@ Build with snapshot dependencies:
  Note: only effective when your Maven settings.xml file contains a profile
        with this property for the Hippo snapshot repository. For details, see
        http://www.onehippo.org/library/development/build-hippo-cms-from-scratch.html
+
+----------------------
+Front-end Installation
+----------------------
+
+Run the commands below in the api directory.
+
+1. Get latest version of npm
+Before setting up Grunt ensure that your npm is up-to-date by running
+
+    $ npm update -g npm
+
+(this might require `sudo` on certain systems).
+
+2. Install Grunt and Bower
+
+    $ npm install -g grunt-cli bower
+
+(this might require `sudo` on certain systems).
+
+3. Install project dependencies
+Install both npm and bower dependencies
+
+    $ npm install
+    $ bower install
+
+---------------------------------------------
+Useful commands from within the api directory
+---------------------------------------------
+
+Build front-end code:
+
+    $ grunt build
+
+After installing the api module:
+
+    $ grunt watch
+
+This will handle the following cases:
+    * If a change in a LESS file is detected it will recompile all LESS files, copy the theme to the CLASSPATH and (if
+      enabled) live-reload your browser.
+    * If a change in an image is detected it will re-create the SVG sprite and copy all images and icons to the CLASSPATH.
+
+You need to start Wicket in development mode so it picks up Grunt changes
+Run the CMS with Wicket development mode args:
+
+    $ mvn -P cargo.run -Djrebel -Drepo.path=repo -Dcargo.jvm.args='-Dwicket.configuration=development'
+
+---------------------------
+Live reload browser plugins
+---------------------------
+You need a browser extension to use live reload.
+
+Safari:
+http://download.livereload.com/2.0.9/LiveReload-2.0.9.safariextz
+
+Chrome:
+https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei
+
+Firefox:
+http://download.livereload.com/2.0.8/LiveReload-2.0.8.xpi
+
+

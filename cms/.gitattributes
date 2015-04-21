@@ -2,7 +2,6 @@
 /README -text
 api/.bowerrc -text
 api/.csslintrc -text
-api/README.md -text
 api/bower.json -text
 api/package.json -text
 api/pom.xml -text

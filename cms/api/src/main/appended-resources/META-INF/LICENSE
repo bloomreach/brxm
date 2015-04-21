@@ -6,7 +6,7 @@ and license terms. Your use of the code for the these sub-components is subject
 to the terms and conditions of the following licenses.
 
 ------------------------------------------------------------------------------------------------------------------------
-/
+
     This module makes use of, but does not bundle, the GPLv3 licensed ExtJS JavaScript framework
     under the Open Source License Exception for Development, http://www.sencha.com/license
 
