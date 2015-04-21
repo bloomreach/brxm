@@ -23,9 +23,9 @@ import javax.jcr.Node;
 
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.standards.list.ExpandCollapseListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.IListColumnProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
@@ -68,7 +68,8 @@ public abstract class DocumentListingPlugin<T> extends ExpandCollapseListingPlug
         }
 
         private static ListColumn<Node> createNameColumn() {
-            final ListColumn<Node> column = new ListColumn<>(new ResourceModel("doclisting-name"), "name");
+            final ClassResourceModel displayModel = new ClassResourceModel("doclisting-name", DocumentListingPlugin.class);
+            final ListColumn<Node> column = new ListColumn<>(displayModel, "name");
             column.setComparator(NameComparator.getInstance());
             column.setAttributeModifier(DocumentAttributeModifier.getInstance());
             column.setCssClass(DocumentListColumn.NAME.getCssClass());
@@ -76,7 +77,8 @@ public abstract class DocumentListingPlugin<T> extends ExpandCollapseListingPlug
         }
 
         private static ListColumn<Node> createTypeColumn() {
-            final ListColumn<Node> column = new ListColumn<>(new ResourceModel("doclisting-type"), "type");
+            final ClassResourceModel displayModel = new ClassResourceModel("doclisting-type", DocumentListingPlugin.class);
+            final ListColumn<Node> column = new ListColumn<>(displayModel, "type");
             column.setComparator(TypeComparator.getInstance());
             column.setRenderer(TypeRenderer.getInstance());
             column.setCssClass(DocumentListColumn.TYPE.getCssClass());
