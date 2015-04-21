@@ -311,8 +311,8 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
                     Response.Status.OK.getStatusCode(), response.getStatus());
             assertEquals("renamedHome", homeNode.getName());
 
-            assertEquals("Rename of sitemap item should also rename hst page",
-                  "hst:pages/renamedHomepage", homeNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
+            assertEquals("Rename of sitemap item should *not* rename hst page",
+                  "hst:pages/homepage", homeNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
 
             assertEquals(parentPath + "/renamedHome", homeNode.getPath());
 
@@ -321,14 +321,12 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             assertEquals("admin", deletedMarkerNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
             assertEquals("deleted", deletedMarkerNode.getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString());
 
-            // assert old page marked deleted and locked and assert new page locked
+            // assert page is not deleted and *not* locked
             assertTrue(session.nodeExists(configurationsPath + "/hst:pages/homepage"));
-            Node deletedPageMarkerNode = session.getNode(configurationsPath + "/hst:pages/homepage");
-            assertEquals("admin", deletedPageMarkerNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
-            assertEquals("deleted", deletedPageMarkerNode.getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString());
-            assertTrue(session.nodeExists(configurationsPath + "/hst:pages/renamedHomepage"));
-            Node newPagerNode = session.getNode(configurationsPath + "/hst:pages/renamedHomepage");
-            assertEquals("admin", newPagerNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+            Node pageNode = session.getNode(configurationsPath + "/hst:pages/homepage");
+            assertFalse("admin", pageNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
+            assertFalse("deleted", pageNode.hasProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE));
+            assertFalse(session.nodeExists(configurationsPath + "/hst:pages/renamedHomepage"));
         }
         // assert bob cannot rename 'news' to 'home' now as it is locked.
         // also bob cannot rename 'renamedHome' as is locked

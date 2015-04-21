@@ -478,9 +478,8 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final Response renamed = siteMapResource.update(foo);
         assertEquals(Response.Status.OK.getStatusCode(), renamed.getStatus());
 
-        String renamedPageNodeName = "bar-" + session.getNodeByIdentifier(getPrototypePageUUID()).getName();
-        assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + renamedPageNodeName));
-        assertFalse(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
+        // page node name stays the same during rename of sitemap item
+        assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
 
         final Node fooBar = session.getNodeByIdentifier(foo.getId());
         assertEquals("bar", fooBar.getName());

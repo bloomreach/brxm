@@ -74,32 +74,10 @@ public class SiteMapHelper extends AbstractHelper {
         if (modifiedName != null && !modifiedName.equals(siteMapItemNode.getName())) {
             // we do not need to check lock for parent as this is a rename within same parent
             String oldLocation = siteMapItemNode.getPath();
-            String oldSiteMapPathPrefixPart = getSiteMapPathPrefixPart(siteMapItemNode);
             String target = siteMapItemNode.getParent().getPath() + "/" + modifiedName;
             validateTarget(session, target);
             session.move(siteMapItemNode.getPath(), siteMapItemNode.getParent().getPath() + "/" + modifiedName);
             createMarkedDeletedIfLiveExists(session, oldLocation);
-
-            // reApplyPrototype will already rename the page, so only needed when not reapplying
-            if (!reApplyPrototype) {
-                final String configId = JcrUtils.getStringProperty(siteMapItemNode, HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, null);
-                final String prefix = HstNodeTypes.NODENAME_HST_PAGES + "/" + oldSiteMapPathPrefixPart;
-                if (configId != null && configId.startsWith(prefix)) {
-                    String newConfigId = getSiteMapPathPrefixPart(siteMapItemNode) + configId.substring(prefix.length());
-                    final HstComponentConfiguration existingPageConfig = getHstComponentConfiguration(siteMapItemNode);
-                    if (existingPageConfig != null) {
-                        Node existingPage = session.getNodeByIdentifier(existingPageConfig.getCanonicalIdentifier());
-                        if (existingPage != null && existingPage.getPath().startsWith(getPreviewWorkspacePath())) {
-                            Node updatedPage = pagesHelper.rename(existingPage, newConfigId);
-                            if (updatedPage == null) {
-                                throw new ClientException("Failed to rename sitemap item", ClientError.UNKNOWN);
-                            }
-                            siteMapItemNode.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
-                                    HstNodeTypes.NODENAME_HST_PAGES + "/" + updatedPage.getName());
-                        }
-                    }
-                }
-            }
         }
 
         if (reApplyPrototype) {
