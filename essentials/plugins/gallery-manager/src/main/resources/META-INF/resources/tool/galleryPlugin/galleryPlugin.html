@@ -90,26 +90,26 @@
                                     width="'100%'">
                             </select>
                         </div>
-                        <div class="col-sm-4">
-                            <button ng-show="selectedImageModel && !selectedImageModel.readOnly"
-                                    class="btn btn-warning pull-right"
+                        <div class="col-sm-4 text-right">
+                            <button ng-show="selectedImageModel"
+                                    class="btn btn-primary"
                                     type="button"
-                                    ng-click="removeImageVariant(selectedImageModel)">
-                                Delete variant
+                                    ng-click="saveVariant()"
+                                    >
+                                Save Changes
                             </button>
                             <button ng-show="selectedImageModel"
-                                    class="btn btn-default pull-right"
+                                    class="btn btn-default"
                                     type="button"
                                     ng-click="resetVariant()"
                                     >
                                 Discard Changes
                             </button>
-                            <button ng-show="selectedImageModel"
-                                    class="btn btn-primary pull-right"
+                            <button ng-show="selectedImageModel && !selectedImageModel.readOnly"
+                                    class="btn btn-warning"
                                     type="button"
-                                    ng-click="saveVariant()"
-                                    >
-                                Save Changes
+                                    ng-click="removeImageVariant(selectedImageModel)">
+                                Delete variant
                             </button>
                         </div>
                     </div>
