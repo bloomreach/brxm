@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.apache.wicket.markup.html.form.validation.EqualPasswordInputValidator
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.validators.PasswordStrengthValidator;
@@ -56,7 +57,7 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
         final User user = (User) model.getObject();
 
         // add form with markup id setter so it can be updated via ajax
-        form = new Form("form");
+        form = new HippoForm("form");
         form.setOutputMarkupId(true);
         add(form);
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
@@ -53,7 +54,6 @@ import org.slf4j.LoggerFactory;
 
 public class CreateUserPanel extends AdminBreadCrumbPanel {
     private static final String UNUSED = "unused";
-
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(CreateUserPanel.class);
@@ -76,7 +76,7 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
 
         // add form with markup id setter so it can be updated via ajax
         final User user = new User();
-        final Form<User> form = new Form<User>("form", new CompoundPropertyModel<User>(user)) {
+        final Form<User> form = new HippoForm<User>("form", new CompoundPropertyModel<User>(user)) {
 
             @Override
             protected void onValidateModelObjects() {
