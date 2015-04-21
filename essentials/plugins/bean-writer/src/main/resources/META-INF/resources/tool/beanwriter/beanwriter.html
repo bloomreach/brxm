@@ -23,7 +23,7 @@
         </p>
         <div ng-show="imageSets.length > 1">
             <p>
-                <strong>Use the following image set for <span class="alert-info">new methods</span> of image return type:</strong>
+                <strong>Use the following image set for <span class="alert-info">new methods</span> that return image types:</strong>
             </p>
             <ul class="list-group">
                 <li class="list-group-item" ng-repeat="image in imageSets | orderBy:identity" ng-switch="image==selectedImageSet">
@@ -34,7 +34,7 @@
             </ul>
             <p>
                 <input type="checkbox" ng-model="updateImageMethods"/>
-                Update <strong>existing</strong> methods with selected image set, too.
+                Update <strong>existing</strong> methods so they will use the selected imageset too.
             </p>
         </div>
     </div>
