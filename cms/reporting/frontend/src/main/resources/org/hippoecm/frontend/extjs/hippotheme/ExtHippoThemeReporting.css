@@ -48,7 +48,6 @@
 .hippo-reporting-perspective .x-grid3-header {
     background-color: #e1e3e5;
     background-image: none;
-/*    border-bottom: 2px solid #ccc;*/
 }
 
 .hippo-reporting-perspective td.x-grid3-hd-over, td.sort-desc,
@@ -73,7 +72,6 @@
 }
 
 .hippo-reporting-perspective .x-panel-tbar .x-toolbar {
-    /*    background: url(images/toolbar/bg2.gif) bottom;*/
     background-image: none;
     border-bottom: 0 !important;
     padding-bottom: 6px;
