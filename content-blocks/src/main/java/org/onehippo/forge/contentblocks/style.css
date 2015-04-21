@@ -15,60 +15,60 @@
  */
 
 .contentpicker-blocks div.hippo-diff-added {
-	  float: none;
+  float: none;
 }
 
 .contentpicker-blocks div.hippo-diff-removed {
-    float: none;
+  float: none;
 }
 
-.contentpicker-link-list{
-    float:right;
+.contentpicker-link-list {
+  float: right;
 }
 
 .contentpicker-links {
-    float: right;
-    margin-right: 40px;
-    font-weight: bold;
-    font-style: italic;
+  float: right;
+  margin-right: 40px;
+  font-weight: bold;
+  font-style: italic;
 }
 
-.contentpicker-link{
-    padding-bottom: 10px;
+.contentpicker-link {
+  padding-bottom: 10px;
 }
 
 .contentpicker-links select {
-    background-color: #fff;
-    border: 1px solid #000;
+  background-color: #ffffff;
+  border: 1px solid #000000;
 }
 
 .contentpicker-links .hippo-editor-field-input {
-    font-weight:bold;
-    float : right;
+  font-weight: bold;
+  float: right;
 }
 
 .contentpicker-label {
-    text-align: left;
-    font-weight:bold;
-    float: left;
-    margin-left: 5px;
+  text-align: left;
+  font-weight: bold;
+  float: left;
+  margin-left: 5px;
 }
 
 .focus-marker {
-    clear: both;
-    width: 0;
-    height: 0;
-    border-color: #fff;
+  clear: both;
+  width: 0;
+  height: 0;
+  border-color: #ffffff;
 }
 
 .hippo-editor .hippo-editor-field.content-blocks-plugin {
-    overflow: visible;
+  overflow: visible;
 }
 
 .content-block-title {
-    font-weight: bold;
-    font-size: small;
-    padding-top: 5px;
-    padding-left: 8px;
-    padding-bottom: 2px;
+  font-weight: bold;
+  font-size: small;
+  padding-top: 5px;
+  padding-left: 8px;
+  padding-bottom: 2px;
 }
