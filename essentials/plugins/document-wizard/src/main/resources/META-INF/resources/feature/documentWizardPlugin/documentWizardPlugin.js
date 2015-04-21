@@ -22,12 +22,12 @@
             var endpointQueries = $rootScope.REST.documents_template_queries;
             $scope.pluginId = "documentWizardPlugin";
             $scope.valueListPath = null;
-            $scope.documentQuery = "new-document";
+            $scope.documentQuery = null;
             $scope.selectedDocument = null;
             $scope.shortcutName = null;
             $scope.baseFolder = null;
             $scope.classificationType = null;
-            $scope.classificationTypes = ["date", "list"];
+            $scope.classificationTypes = [ "date", "list" ];
             $scope.shortcutLinkLabel = "New document";
             $scope.nameLabel = "New document";
             $scope.dateLabel = "Document date";
@@ -49,7 +49,9 @@
                 Essentials.addPayloadData("baseFolder", $scope.baseFolder, payload);
                 Essentials.addPayloadData("shortcutName", $scope.shortcutName, payload);
                 Essentials.addPayloadData("documentQuery", $scope.documentQuery.value, payload);
-                Essentials.addPayloadData("valueListPath", $scope.valueListPath.value, payload);
+                if ($scope.valueListPath !== null) {
+                    Essentials.addPayloadData("valueListPath", $scope.valueListPath.value, payload);
+                }
                 // labels
                 Essentials.addPayloadData("shortcutLinkLabel", $scope.shortcutLinkLabel, payload);
                 Essentials.addPayloadData("nameLabel", $scope.nameLabel, payload);
@@ -73,6 +75,13 @@
 
             $http.get(endpointQueries).success(function (data) {
                 $scope.queries = data;
+
+                // Set default selection
+                angular.forEach($scope.queries, function(query) {
+                    if (query.key === "new-document") {
+                        $scope.documentQuery = query;
+                    }
+                });
             });
 
             $http.get($rootScope.REST.documents + "selection:valuelist").success(function (data) {
