@@ -42,7 +42,7 @@ public class AjaxIndicatorBehavior extends AbstractYuiBehavior {
                 r.write("id=\"");
                 r.write(getMarkupId());
                 r.write("\">");
-                r.write("<div class=\"ajax-loader\" />");
+                r.write("<div class=\"ajax-loader\"></div>");
                 r.write("</div>");
             }
         };
