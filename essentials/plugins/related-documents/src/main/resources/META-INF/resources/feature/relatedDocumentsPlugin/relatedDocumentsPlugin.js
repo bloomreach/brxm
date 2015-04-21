@@ -21,6 +21,7 @@
             var endpoint = $rootScope.REST.dynamic + 'related-documents';
             $scope.pluginId = "relatedDocumentsPlugin";
             $scope.fieldsAdded = false;
+            $scope.endpoint = $rootScope.REST.root + '/jcrbrowser/folders';
             $scope.addDocs = function () {
                 var documents = [];
                 var searchPaths = [];

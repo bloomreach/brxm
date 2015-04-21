@@ -32,6 +32,7 @@
             $scope.nameLabel = "New document";
             $scope.dateLabel = "Document date";
             $scope.listLabel = "";
+            $scope.endpoint = $rootScope.REST.root + '/jcrbrowser/folders';
 
             $scope.anyOf = function () {
                 return true;
