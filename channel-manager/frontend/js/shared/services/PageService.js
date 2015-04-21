@@ -86,7 +86,6 @@
 
           $http.post(pageServiceUrl(url), page)
             .success(function (response) {
-              console.log("test ", response);
               deferred.resolve(response.data);
             })
             .error(function (error) {
@@ -100,7 +99,7 @@
 
           $http.post(pageServiceUrl('/' + ConfigService.sitemapId + './update'), page)
             .success(function (response) {
-              deferred.resolve(response);
+              deferred.resolve(response.data);
             })
             .error(function (error) {
               deferred.reject(error);

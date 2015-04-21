@@ -107,8 +107,8 @@
             primaryDocumentRepresentation: $scope.page.primaryDocumentRepresentation
           };
 
-          PageService.updatePage(pageModel).then(function () {
-            ContainerService.showPage($scope.mountPath + '/' + pageModel.name);
+          PageService.updatePage(pageModel).then(function (data) {
+            ContainerService.showPage(data.renderPathInfo);
           }, setErrorFeedback);
         };
 
@@ -150,8 +150,8 @@
               document: false
             }
           };
-          PageService.updatePage(pageModel).then(function () {
-            ContainerService.showPage($scope.mountPath + '/' + $scope.page.url);
+          PageService.updatePage(pageModel).then(function (data) {
+            ContainerService.showPage(data.renderPathInfo);
           }, setErrorFeedback);
         };
 
