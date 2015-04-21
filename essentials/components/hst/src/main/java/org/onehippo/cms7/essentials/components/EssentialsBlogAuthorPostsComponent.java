@@ -82,9 +82,8 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
                                 beans.add(bean);
                             }
                         }
-                        if (beans.size() >= limit) {
-                            break;
-                        }
+                        // Only consider the first author, which is expected to be the main author of the blog.
+                        break;
                     }
                     final Pageable<HippoBean> pageable = new DefaultPagination<>(beans);
                     request.setAttribute(REQUEST_ATTR_PAGEABLE, pageable);
