@@ -45,7 +45,7 @@
       <sv:value>reports-perspective-wrapper</sv:value>
     </sv:property>
     <sv:property sv:name="top" sv:type="String">
-      <sv:value>id=reports-perspective-top,body=reports-perspective-top-body,height=31</sv:value>
+      <sv:value>id=reports-perspective-top,body=reports-perspective-top-body,height=41</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
