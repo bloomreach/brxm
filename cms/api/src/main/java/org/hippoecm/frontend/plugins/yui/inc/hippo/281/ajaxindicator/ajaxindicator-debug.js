@@ -55,6 +55,11 @@
         Wicket.Event.subscribe(Wicket.Event.Topic.AJAX_CALL_BEFORE_SEND, $.proxy(this.beforeAjaxCall, this));
         Wicket.Event.subscribe(Wicket.Event.Topic.AJAX_CALL_COMPLETE, $.proxy(this.afterAjaxCall, this));
       }
+
+      if (Ext && Ext.Ajax) {
+        Ext.Ajax.on('beforerequest', this.beforeAjaxCall, this);
+        Ext.Ajax.on('requestcomplete', this.afterAjaxCall, this);
+      }
     },
 
     beforeAjaxCall: function() {
