@@ -33,10 +33,6 @@
   font-style: italic;
 }
 
-.contentpicker-link {
-  padding-bottom: 10px;
-}
-
 .contentpicker-links select {
   background-color: #ffffff;
   border: 1px solid #000000;
@@ -71,4 +67,8 @@
   padding-top: 5px;
   padding-left: 8px;
   padding-bottom: 2px;
+}
+
+.hippo-content-block-controls {
+  margin-top: 8px;
 }

@@ -16,18 +16,20 @@
 
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div class="hippo-editor-field content-blocks-plugin">
-      <h3 class="hippo-editor-field-title">
-        <span wicket:id="name">[ field name ]</span><span class="required" wicket:id="required">*</span>
-      </h3>
-      <div wicket:id="view">
-        <wicket:container wicket:id="fragment"/>
+    <div class="hippo-editor-compound-field">
+      <div class="hippo-editor-field content-blocks-plugin">
+        <h3 class="hippo-editor-field-title">
+          <span wicket:id="name">[ field name ]</span><span class="required" wicket:id="required">*</span>
+        </h3>
+        <div wicket:id="view">
+          <wicket:container wicket:id="fragment"/>
+        </div>
+        <div class="hippo-content-block-controls">
+          <div class="contentpicker-label" wicket:id="addLabel">[Add label]</div>
+          <wicket:container wicket:id="contentpicker-add"/>
+        </div>
+        <div class="focus-marker"><a wicket:id="focusMarker" name="focusMarker" onfocus="this.blur();">&#160;</a></div>
       </div>
-      <div>
-        <div class="contentpicker-label" wicket:id="addLabel">[Add label]</div>
-        <wicket:container wicket:id="contentpicker-add"/>
-      </div>
-      <div class="focus-marker"><a wicket:id="focusMarker" name="focusMarker" onfocus="this.blur();">&#160;</a></div>
     </div>
   </wicket:panel>
 
@@ -35,7 +37,7 @@
     <div class="contentpicker-link-list">
       <div class="contentpicker-links" wicket:id="repeater">
         <div class="contentpicker-link">
-          <a href="#" wicket:id="addItem"><span wicket:id="linkText"></span>&nbsp;&nbsp;</a>
+          <a href="#" wicket:id="addItem"><span wicket:id="linkText"></span></a>
         </div>
       </div>
     </div>
