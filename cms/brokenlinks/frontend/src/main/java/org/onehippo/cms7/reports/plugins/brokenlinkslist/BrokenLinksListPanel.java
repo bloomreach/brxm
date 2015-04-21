@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.onehippo.cms7.reports.plugins.brokenlinkslist;
 
 import java.util.Calendar;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -31,8 +32,6 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.Request;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -48,6 +47,7 @@ import org.onehippo.cms7.reports.plugins.ReportPanel;
 import org.onehippo.cms7.reports.plugins.ReportUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
 import org.wicketstuff.js.ext.data.ExtJsonStore;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtEventListener;
@@ -58,6 +58,9 @@ public class BrokenLinksListPanel extends ReportPanel {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String EVENT_DOCUMENT_SELECTED = "documentSelected";
+    private static final String EVENT_DOCUMENT_SELECTED_PARAM_PATH = "path";
+
     private static final String CONFIG_COLUMNS = "columns";
     private static final String CONFIG_AUTO_EXPAND_COLUMN = "auto.expand.column";
     private static final String TITLE_TRANSLATOR_KEY = "title";
@@ -66,7 +69,8 @@ public class BrokenLinksListPanel extends ReportPanel {
     private static final CssResourceReference BROKENLINKS_CSS = new CssResourceReference(BrokenLinksListPanel.class, "Hippo.Reports.BrokenLinksList.css");
     private static final JavaScriptResourceReference BROKENLINKS_JS = new JavaScriptResourceReference(BrokenLinksListPanel.class, "Hippo.Reports.BrokenLinksList.js");
 
-    private final Logger log = LoggerFactory.getLogger(BrokenLinksListPanel.class);
+    private static final Logger log = LoggerFactory.getLogger(BrokenLinksListPanel.class);
+
     private final IPluginContext context;
     private final int pageSize;
     private final BrokenLinksListColumns columns;
@@ -110,16 +114,39 @@ public class BrokenLinksListPanel extends ReportPanel {
         }
        
         
-        addEventListener("documentSelected", new ExtEventListener() {
+        addEventListener(EVENT_DOCUMENT_SELECTED, new ExtEventListener() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void onEvent(final AjaxRequestTarget ajaxRequestTarget, java.util.Map<java.lang.String,org.json.JSONArray> parameters) {
-                Request request = RequestCycle.get().getRequest();
-                String path = request.getRequestParameters().getParameterValue("path").toString();
-                browseToDocument(path);
+            public void onEvent(final AjaxRequestTarget ajaxRequestTarget, Map<String, JSONArray> parameters) {
+                String path = getParameterOrNull(parameters, EVENT_DOCUMENT_SELECTED_PARAM_PATH);
+                if (path != null) {
+                    browseToDocument(path);
+                }
             }
         });
+    }
+
+    private static String getParameterOrNull(final Map<String, JSONArray> parameters, final String name) {
+        final JSONArray values = parameters.get(name);
+        if (values != null && values.length() > 0 && !values.isNull(0)) {
+            try {
+                return values.getString(0);
+            } catch (JSONException e) {
+                log.warn("Ignoring parameter '{}', element 0 of {} cannot be parsed as a string", name, values.toString(), e);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    protected ExtEventAjaxBehavior newExtEventBehavior(final String event) {
+        switch (event) {
+            case EVENT_DOCUMENT_SELECTED:
+                return new ExtEventAjaxBehavior(EVENT_DOCUMENT_SELECTED_PARAM_PATH);
+            default:
+                return super.newExtEventBehavior(event);
+        }
     }
 
     @Override
