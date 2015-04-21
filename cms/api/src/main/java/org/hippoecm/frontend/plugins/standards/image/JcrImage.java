@@ -63,29 +63,30 @@ public class JcrImage extends Image {
     protected void onComponentTag(ComponentTag tag) {
         super.onComponentTag(tag);
 
-        String url = tag.getAttributes().getString("src");
-        StringBuilder sb = new StringBuilder(url);
-        if (lastModified == null) {
-            sb.append(((url.indexOf("?") >= 0) ? "&amp;" : "?"));
-            sb.append("wicket:antiCache=");
-            sb.append(System.currentTimeMillis());
-        } else {
-            sb.append(((url.indexOf("?") >= 0) ? "&amp;" : "?"));
+        if (lastModified != null) {
+            final String url = tag.getAttributes().getString("src");
+            final StringBuilder sb = new StringBuilder(url);
+            sb.append(((url.contains("?")) ? "&" : "?"));
             sb.append("w:lm=");
             sb.append((lastModified.getMilliseconds() / 1000));
             if (MD != null) {
-                sb.append("&amp;h:pathmd=");
+                sb.append("&h:pathmd=");
                 sb.append(new BigInteger(1, MD.digest(stream.getNodeModel().getItemModel().getPath().getBytes()))
                         .toString(16));
             }
+            tag.put("src", sb.toString());
         }
-        tag.put("src", sb.toString());
         if (width > 0) {
             tag.put("width", width);
         }
         if (height > 0) {
             tag.put("height", height);
         }
+    }
+
+    @Override
+    protected boolean shouldAddAntiCacheParameter() {
+        return lastModified == null;
     }
 
     @Override
