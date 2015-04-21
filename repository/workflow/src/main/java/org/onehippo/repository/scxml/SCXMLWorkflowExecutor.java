@@ -147,7 +147,11 @@ public class SCXMLWorkflowExecutor<T extends SCXMLWorkflowContext, V extends SCX
      */
     protected void handleException(Exception e) throws WorkflowException {
         if (e instanceof WorkflowException) {
-            log.error(e.getMessage(), e);
+            if (log.isDebugEnabled()) {
+                log.warn(e.getMessage(), e);
+            } else {
+                log.warn(e.getMessage());
+            }
             throw (WorkflowException)e;
         }
         else {
@@ -181,10 +185,18 @@ public class SCXMLWorkflowExecutor<T extends SCXMLWorkflowContext, V extends SCX
                 throw new RuntimeException(e);
             }
             if (exCause instanceof WorkflowException) {
-                log.error(exCause.getMessage(), exCause);
+                if (log.isDebugEnabled()) {
+                    log.warn(exCause.getMessage(), exCause);
+                } else {
+                    log.warn(exCause.getMessage());
+                }
                 throw (WorkflowException)exCause;
             }
-            log.error("Workflow {} execution failed", scxmlId, logCause);
+            if (log.isDebugEnabled()) {
+                log.warn("Workflow {} execution failed", scxmlId, logCause);
+            } else {
+                log.warn("Workflow {} execution failed: {}", scxmlId, logCause.getMessage());
+            }
             throw new WorkflowException("Workflow "+scxmlId+" execution failed", exCause);
         }
     }
