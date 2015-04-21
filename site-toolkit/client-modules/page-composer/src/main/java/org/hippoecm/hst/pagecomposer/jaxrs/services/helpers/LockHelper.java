@@ -159,9 +159,9 @@ public class LockHelper {
 
     /**
      * returns <code>true</code> if the {@link Session} tied to <code>node</code> can lock or already contains a lock
-     * on <code>node</code>
+     * on <code>node</code>.  Can also be used to determine if a node can be unlocked.
      */
-    private boolean canLock(final Node node) throws RepositoryException {
+    public boolean canLock(final Node node) throws RepositoryException {
         if (node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
             final String lockedBy = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
             return node.getSession().getUserID().equals(lockedBy);

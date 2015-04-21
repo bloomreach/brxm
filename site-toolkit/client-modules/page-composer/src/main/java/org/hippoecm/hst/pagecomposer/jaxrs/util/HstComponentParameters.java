@@ -193,6 +193,19 @@ public class HstComponentParameters {
         }
     }
 
+    public void unlock() throws RepositoryException {
+        if (RequestContextProvider.get() == null) {
+            node.getSession().save();
+        } else {
+            if (!node.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+                throw new IllegalStateException("Node to be saved must be of type '" + HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT + "' but " +
+                    "was of type '" + node.getPrimaryNodeType().getName() + "'. Skip save");
+            }
+            containerItemHelper.releaseLock(node);
+            HstConfigurationUtils.persistChanges(node.getSession());
+        }
+    }
+
     private void setNodeChanges() throws RepositoryException {
         List<String> prefixes = new ArrayList<String>();
         List<String> names = new ArrayList<String>();

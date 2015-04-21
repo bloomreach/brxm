@@ -121,6 +121,48 @@ public class ContainerItemHelper extends AbstractHelper {
     }
 
     /**
+     * if the container of <code>containerItem</code> is locked by the user, it is unlocked.
+     * When the container is not locked, or another user has the lock, a ClientException is thrown.
+     */
+    public void releaseLock(Node containerItem) throws RepositoryException {
+        if (!containerItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+            throw new ClientException(String.format("Expected node of type '%s' but was of type '%s'",
+                HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT, containerItem.getPrimaryNodeType().getName()),
+                ClientError.INVALID_NODE_TYPE);
+        }
+        Node container = findContainerNode(containerItem);
+        if (container == null) {
+            throw new ClientException(String.format("Expected to find an ancestor of type '%s' for '%s' but non found",
+                HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT, containerItem.getPath()),
+                ClientError.ITEM_NOT_FOUND);
+        }
+        if (!lockHelper.canLock(container)) {
+            throw new ClientException(String.format("Expected an ancester of '%s' to be locked by user '%s'",
+                containerItem.getPath(), containerItem.getSession().getUserID()),
+                ClientError.ITEM_ALREADY_LOCKED);
+        }
+        lockHelper.unlock(container);
+    }
+
+    /**
+     * Unlocks the container item identified by containerItemId.  Will throw an exception if the container item
+     * is not locked, or is locked by another user.
+     *
+     * @param containerItemId   the identifier of the container item to be unlocked
+     * @param session           a user bound session
+     * @throws RepositoryException
+     */
+    public void unlock(String containerItemId, Session session) throws RepositoryException, ClientException {
+        try {
+            final Node containerItem = pageComposerContextService.getRequestConfigNodeById(containerItemId, NODETYPE_HST_CONTAINERITEMCOMPONENT, session);
+            new HstComponentParameters(containerItem, this).unlock();
+            log.info("Component locked successfully.");
+        } catch (ItemNotFoundException e) {
+            throw new ClientException("container item with id " + containerItemId + " not found", ITEM_NOT_FOUND);
+        }
+    }
+
+    /**
      * @return Returns the ancestor node (or itself) of type <code>hst:componentcontainer</code> for <code>configNode</code> and <code>null</code> if
      * <code>configNode</code> does not have an ancestor of type <code>hst:componentcontainer</code>
      */
@@ -145,5 +187,4 @@ public class ContainerItemHelper extends AbstractHelper {
             current = current.getParent();
         }
     }
-
 }
