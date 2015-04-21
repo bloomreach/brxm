@@ -25,7 +25,7 @@ public final class Constants {
     static final String AE_URI = "http://www.onehippo.org/jcr/autoexport/1.0";
 
     static final String SV_PREFIX = "sv";
-    static final String DELTA_PREFIX = "h";
+    static final String DELTA_PREFIX = "esv";
 
     static final String ID = "id";
     static final String QID = "ae:id";
@@ -38,12 +38,12 @@ public final class Constants {
     static final String VALUE = "value";
     static final String QVALUE = "sv:value";
     static final String MERGE = "merge";
-    static final String QMERGE = "h:merge";
+    static final String QMERGE = "esv:merge";
     static final String CDATA = "CDATA";
     static final String TYPE = "type";
     static final String QTYPE = "sv:type";
     static final String FILE = "file";
-    static final String QFILE = "h:file";
+    static final String QFILE = "esv:file";
 
 
     public static final String CONFIG_NODE_PATH = "/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig";
