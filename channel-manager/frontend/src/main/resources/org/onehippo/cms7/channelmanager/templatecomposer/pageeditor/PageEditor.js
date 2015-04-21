@@ -133,11 +133,15 @@
         constructor: function(config) {
             Hippo.ChannelManager.TemplateComposer.API.superclass.constructor.call(this, config);
             this.pageContainer = config.pageContainer;
-            this.addEvents('variantselected', 'containeritemselected');
+            this.addEvents('variantselected', 'containeritemselected', 'channelChanged');
         },
 
         selectedVariant: function(variant) {
             this.fireEvent('variantselected', variant);
+        },
+
+        channelChanged: function() {
+            this.fireEvent('channelChanged');
         },
 
         refreshIFrame: function() {
@@ -240,6 +244,10 @@
                 'edit-document',
                 'documents',
                 'previewCreated'
+            ]);
+
+            this.relayEvents(this.templateComposerApi, [
+                'channelChanged'
             ]);
         },
 
