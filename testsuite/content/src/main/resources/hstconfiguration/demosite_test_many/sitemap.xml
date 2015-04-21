@@ -126,7 +126,7 @@
       <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:components/bodyhome/bodymain/todolist</sv:value>
+      <sv:value>hst:components/bodyhome/content/todolist</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="faceted">
