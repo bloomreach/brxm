@@ -36,7 +36,8 @@ div.relateddocs-link > a.simple-link {
 }
 
 .relateddocs-suggestion-controls .relateddocs-suggestion-input {
-  width: 30px;
+  width: 35px;
+  text-align: center;
   display: inline;
   margin-left: 4px;
   margin-right: 4px;
