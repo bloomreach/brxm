@@ -16,10 +16,9 @@
 package org.hippoecm.frontend.plugins.login;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.core.request.mapper.AbstractComponentMapper;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -97,15 +96,7 @@ public class LoginPlugin extends RenderPlugin {
         if (localeArray == null) {
             localeArray = DEFAULT_LOCALES;
         }
-        add(createLoginPanel("login-panel", autoComplete, Arrays.asList(localeArray),
-                Collections.singletonList(privacyTerms),
-                () -> {
-                    if (parameters != null) {
-                        setResponsePage(PluginPage.class, parameters);
-                    } else {
-                        setResponsePage(PluginPage.class);
-                    }
-                }));
+        add(createLoginPanel("login-panel", autoComplete, Arrays.asList(localeArray), new LoginPluginHandler(privacyTerms)));
 
         add(new Label("pinger"));
     }
@@ -149,7 +140,31 @@ public class LoginPlugin extends RenderPlugin {
     }
 
     protected LoginPanel createLoginPanel(final String id, final boolean autoComplete, final List<String> locales,
-                                          final List<Component> redrawOnLocaleChange, final LoginSuccessHandler successHandler) {
-        return new LoginPanel(id, autoComplete, locales, redrawOnLocaleChange, successHandler);
+                                          final LoginHandler handler) {
+        return new LoginPanel(id, autoComplete, locales, handler);
+    }
+
+    private class LoginPluginHandler implements LoginHandler {
+
+        private final ExternalLink privacyTerms;
+
+        public LoginPluginHandler(final ExternalLink privacyTerms) {
+            this.privacyTerms = privacyTerms;
+        }
+
+        @Override
+        public void localeChanged(final String selectedLocale, final AjaxRequestTarget target) {
+            // show a localized privacy & terms link when the selected locale changes
+            target.add(privacyTerms);
+        }
+
+        @Override
+        public void loginSuccess() {
+            if (parameters != null) {
+                setResponsePage(PluginPage.class, parameters);
+            } else {
+                setResponsePage(PluginPage.class);
+            }
+        }
     }
 }

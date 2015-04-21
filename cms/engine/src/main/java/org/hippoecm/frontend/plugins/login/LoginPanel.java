@@ -55,7 +55,7 @@ import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.frontend.session.LoginException.*;
+import static org.hippoecm.frontend.session.LoginException.Cause;
 
 public class LoginPanel extends Panel {
 
@@ -68,26 +68,25 @@ public class LoginPanel extends Panel {
     private static final int LOCALE_COOKIE_MAXAGE = 365 * 24 * 3600; // expire one year from now
     private final static String DEFAULT_KEY = "invalid.login";
 
-    private final LoginSuccessHandler successHandler;
+    private final LoginHandler handler;
 
     protected final LoginForm form;
     protected String username;
     protected String password;
     protected String selectedLocale;
 
-    public LoginPanel(final String id, final boolean autoComplete, final List<String> locales,
-                      final List<Component> redrawOnLocaleChange, final LoginSuccessHandler successHandler) {
+    public LoginPanel(final String id, final boolean autoComplete, final List<String> locales, final LoginHandler handler) {
         super(id);
 
         if (locales == null || locales.isEmpty()) {
             throw new IllegalArgumentException("Argument locales can not be null or empty");
         }
 
-        this.successHandler = successHandler;
+        this.handler = handler;
 
         add(CssClass.append("hippo-login-panel-center"));
 
-        add(form = new LoginForm(autoComplete, locales, redrawOnLocaleChange));
+        add(form = new LoginForm(autoComplete, locales));
     }
 
     protected void login() throws LoginException {
@@ -123,8 +122,8 @@ public class LoginPanel extends Panel {
     }
 
     protected  void loginSuccess() {
-        if (successHandler != null) {
-            successHandler.loginSuccess();
+        if (handler != null) {
+            handler.loginSuccess();
         }
     }
 
@@ -137,7 +136,7 @@ public class LoginPanel extends Panel {
         protected final Button submitButton;
         protected final List<Component> labels = new ArrayList<>();
 
-        public LoginForm(final boolean autoComplete, final List<String> locales, final List<Component> redrawOnLocaleChange) {
+        public LoginForm(final boolean autoComplete, final List<String> locales) {
             super("login-form");
 
             setOutputMarkupId(true);
@@ -203,7 +202,9 @@ public class LoginPanel extends Panel {
                     // redraw labels, feedback panel and provided components
                     labels.stream().filter(Component::isVisible).forEach(target::add);
                     target.add(feedback);
-                    redrawOnLocaleChange.forEach(target::add);
+                    if (handler != null) {
+                        handler.localeChanged(selectedLocale, target);
+                    }
                 }
             });
 

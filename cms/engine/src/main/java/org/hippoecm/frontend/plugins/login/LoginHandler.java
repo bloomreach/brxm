@@ -15,9 +15,20 @@
  */
 package org.hippoecm.frontend.plugins.login;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.util.io.IClusterable;
 
-public interface LoginSuccessHandler extends IClusterable  {
+public interface LoginHandler extends IClusterable  {
 
+    /**
+     * Called when a user has changed the login locale.
+     * @param selectedLocale the newly selected locale
+     * @param target the current Ajax request target
+     */
+    void localeChanged(final String selectedLocale, final AjaxRequestTarget target);
+
+    /**
+     * Called when a user has logged in successfully.
+     */
     void loginSuccess();
 }
