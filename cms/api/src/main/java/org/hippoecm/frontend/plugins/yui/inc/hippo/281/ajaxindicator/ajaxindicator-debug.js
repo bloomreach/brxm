@@ -25,13 +25,18 @@
   //until after the layout has processed, instead of just the postAjaxEvent
 
 (function(window, $) {
-  var Event = Wicket.Event;
 
   YAHOO.namespace('hippo');
 
   YAHOO.hippo.AjaxIndicator = function(elementId, loadTimeout, busyTimeout) {
     this.body = $('body');
     this.elements = $('body, #' + elementId);
+
+    this.active = true;
+    this.calls = 0;
+
+    this.loadTimer = null;
+    this.busyTimer = null;
 
     this.loadTimeout = loadTimeout || 10;
     this.busyTimeout = busyTimeout || 500;
@@ -40,41 +45,56 @@
     this.loadClass = 'hippo-ajax-show-load';
     this.busyClass = 'hippo-ajax-show-busy';
 
-    Event.subscribe(Event.Topic.AJAX_CALL_BEFORE_SEND, $.proxy(this.show, this));
-    Event.subscribe(Event.Topic.AJAX_CALL_COMPLETE, $.proxy(this.hide, this));
+    this.subscribe();
   };
 
   YAHOO.hippo.AjaxIndicator.prototype = {
-    calls: 0,
-    loadTimer: null,
-    busyTimer: null,
 
-    show: function() {
-      this.calls++;
-
-      if (this.calls === 1) {
-        this.body.addClass(this.waitClass);
-      }
-
-      if (this.loadTimer === null) {
-        this.loadTimer = window.setTimeout($.proxy(function() {
-          this.elements.addClass(this.loadClass);
-        }, this), this.loadTimeout);
-      }
-
-      if (this.busyTimer === null) {
-        this.busyTimer = window.setTimeout($.proxy(function() {
-          this.elements.addClass(this.busyClass);
-        }, this), this.busyTimeout);
+    subscribe: function() {
+      if (Wicket && Wicket.Event) {
+        Wicket.Event.subscribe(Wicket.Event.Topic.AJAX_CALL_BEFORE_SEND, $.proxy(this.beforeAjaxCall, this));
+        Wicket.Event.subscribe(Wicket.Event.Topic.AJAX_CALL_COMPLETE, $.proxy(this.afterAjaxCall, this));
       }
     },
 
-    hide: function() {
+    beforeAjaxCall: function() {
+      this.calls++;
+
+      if (this.calls === 1) {
+        this.show();
+      }
+    },
+
+    afterAjaxCall: function() {
       if (this.calls > 0) {
         this.calls--;
       }
 
       if (this.calls === 0) {
+        this.hide();
+      }
+    },
+
+    show: function() {
+      this.body.addClass(this.waitClass);
+
+      if (this.active) {
+        if (this.loadTimer === null) {
+          this.loadTimer = window.setTimeout($.proxy(function () {
+            this.elements.addClass(this.loadClass);
+          }, this), this.loadTimeout);
+        }
+
+        if (this.busyTimer === null) {
+          this.busyTimer = window.setTimeout($.proxy(function () {
+            this.elements.addClass(this.busyClass);
+          }, this), this.busyTimeout);
+        }
+      }
+    },
+
+    hide: function() {
+      if (this.active) {
         if (this.busyTimer !== null) {
           window.clearTimeout(this.busyTimer);
           this.busyTimer = null;
@@ -86,8 +106,19 @@
         }
 
         this.elements.removeClass(this.busyClass).removeClass(this.loadClass);
-        this.body.removeClass(this.waitClass);
       }
+      this.body.removeClass(this.waitClass);
+    },
+
+    setActive: function(active) {
+      if (this.calls > 0) {
+        if (active) {
+          this.show();
+        } else {
+          this.hide();
+        }
+      }
+      this.active = active;
     }
   };
 }(window, jQuery));

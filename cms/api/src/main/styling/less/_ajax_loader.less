@@ -29,7 +29,8 @@
     width: 100%;
     height: 3px;
     animation: ajaxloader 1s infinite linear;
-    .at2x("@{images}/loader/ajax-loader.png", 64px, 3px);
+    background-size: @ajax-loader-width 3px;
+    .at2x("@{images}/loader/ajax-loader.png", @ajax-loader-width, 3px);
     background-repeat: no-repeat;
   }
 }
