@@ -55,6 +55,7 @@ import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.util.ServletConfigUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.onehippo.cms7.services.ServletContextRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -236,6 +237,9 @@ public class HstSiteConfigServlet extends HttpServlet {
     @Override
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);
+        ServletContextRegistry.register(config.getServletContext());
+        log.debug("Registered servlet context '{}' from {}",
+                getServletContext().getContextPath(), ServletContextRegistry.class.getName());
 
         // If the forceful re-initialization option is not turned on
         // and the component manager were intialized in other web application,
@@ -387,7 +391,9 @@ public class HstSiteConfigServlet extends HttpServlet {
     @Override
     public synchronized void destroy() {
         log.info("Done shutting down!");
-        
+        ServletContextRegistry.unregister(getServletContext());
+        log.debug("Unregistered servlet context '{}' from {}",
+                getServletContext().getContextPath(), ServletContextRegistry.class.getName());
         destroyRepositoryAvailabilityCheckerThread();
         destroyHstSiteConfigurationChangesCheckerThread();
 
