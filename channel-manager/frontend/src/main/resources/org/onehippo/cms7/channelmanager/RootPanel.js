@@ -76,7 +76,6 @@
                 this.toolbar.render(hippoFooter, 0);
 
                 // only show the channel manager breadcrumb when channel manager is active
-                this._initBreadcrumbAnimation();
                 Hippo.Events.subscribe('channel-manager-activated', this._showBreadcrumb, this);
                 Hippo.Events.subscribe('channel-manager-deactivated', this._hideBreadcrumb, this);
             }, this, {single: true});
@@ -126,9 +125,14 @@
         },
 
         _initBreadcrumbAnimation: function() {
-            var toolbar = this.toolbar,
-                toolbarEl = toolbar.getEl(),
-                toolbarWidth;
+            var toolbar, toolbarEl, toolbarWidth;
+
+            if (Ext.isDefined(this.hideBreadcrumbTask) && Ext.isDefined(this.showBreadcrumbTask)) {
+                return;
+            }
+
+            toolbar = this.toolbar;
+            toolbarEl = toolbar.getEl();
 
             this.hideBreadcrumbTask = new Ext.util.DelayedTask(function() {
                 toolbarWidth = toolbarEl.getWidth();
@@ -161,12 +165,14 @@
         },
 
         _hideBreadcrumb: function() {
+            this._initBreadcrumbAnimation();
             this.showBreadcrumbTask.cancel();
             this.toolbar.getEl().removeClass('hippo-breadcrumb-active');
             this.hideBreadcrumbTask.delay(500);
         },
 
         _showBreadcrumb: function() {
+            this._initBreadcrumbAnimation();
             this.hideBreadcrumbTask.cancel();
             this.toolbar.getEl().addClass('hippo-breadcrumb-active');
             this.showBreadcrumbTask.delay(0);
