@@ -403,7 +403,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             if (docs.hasNext()) {
                 Node sibling = docs.nextNode();
                 if (sibling.isSame(docNode)) {
-                    if (!docs.hasNext()) {
+                    if (!docs.hasNext() && getMode() == Mode.EDIT) {
                         Document folder = new Document(handleNode.getParent());
                         Workflow workflow = manager.getWorkflow("internal", folder);
                         if (workflow instanceof FolderWorkflow) {
