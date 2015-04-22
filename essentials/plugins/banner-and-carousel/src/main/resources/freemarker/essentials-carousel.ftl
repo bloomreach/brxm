@@ -45,37 +45,41 @@
             <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
         </#if>
     </div>
-    <style type="text/css">
-        /* Carousel base class */
-        .carousel {
-            height: ${cparam.carouselHeight}px;
-            /*width: ${cparam.carouselWidth}px;*/
-            margin-bottom: 60px;
-        }
 
-        /* Since positioning the image, we need to help out the caption */
-        .carousel-caption {
-            z-index: 10;
-        }
+    <@hst.headContribution category="htmlHead">
+        <style type="text/css">
+            /* Carousel base class */
+            .carousel {
+                height: ${cparam.carouselHeight}px;
+                /*width: ${cparam.carouselWidth}px;*/
+                margin-bottom: 60px;
+            }
 
-        /* Declare heights because of positioning of img element */
-        .carousel .item {
-            height: ${cparam.carouselHeight}px;
-            background-color: ${cparam.carouselBackgroundColor};
-        }
+            /* Since positioning the image, we need to help out the caption */
+            .carousel-caption {
+                z-index: 10;
+            }
 
-        /* center images*/
-        .carousel-inner > .item > img {
-            margin: 0 auto;
-        }
-    </style>
+            /* Declare heights because of positioning of img element */
+            .carousel .item {
+                height: ${cparam.carouselHeight}px;
+                background-color: ${cparam.carouselBackgroundColor};
+            }
 
-    <@hst.headContribution category="htmlBodyEnd">
-    <script type="text/javascript" src="<@hst.webfile path="/js/jquery-2.1.0.min.js"/>"></script>
+            /* center images*/
+            .carousel-inner > .item > img {
+                margin: 0 auto;
+            }
+        </style>
     </@hst.headContribution>
+
     <@hst.headContribution category="htmlBodyEnd">
-    <script type="text/javascript" src="<@hst.webfile path="/js/bootstrap.min.js"/>"></script>
+        <script type="text/javascript" src="<@hst.webfile path="/js/jquery-2.1.0.min.js"/>"></script>
+    </@hst.headContribution>
+
+    <@hst.headContribution category="htmlBodyEnd">
+        <script type="text/javascript" src="<@hst.webfile path="/js/bootstrap.min.js"/>"></script>
     </@hst.headContribution>
 <#elseif editMode>
-  <img src="<@hst.link path='/images/essentials/catalog-component-icons/carousel.png'/>"> Click to edit Carousel
+    <img src="<@hst.link path='/images/essentials/catalog-component-icons/carousel.png'/>"> Click to edit Carousel
 </#if>
