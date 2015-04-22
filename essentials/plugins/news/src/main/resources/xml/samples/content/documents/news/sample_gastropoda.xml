@@ -35,9 +35,6 @@
       <sv:value>mix:referenceable</sv:value>
       <sv:value>hippotranslation:translated</sv:value>
     </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>4c5df868-2c26-492c-99b5-9c16e7a12cd9</sv:value>
-    </sv:property>
     <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
       <sv:value>live</sv:value>
       <sv:value>preview</sv:value>

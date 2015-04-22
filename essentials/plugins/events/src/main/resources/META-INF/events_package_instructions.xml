@@ -95,8 +95,8 @@
     <xml action="copy" source="xml/folderoptions/new-events-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="xml/folderoptions/new-events-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
   </instructionSet>
-  <instructionSet>
-    <file action="copy" binary="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-events-folder-16.png"/>
-  </instructionSet>
+  <!--<instructionSet>-->
+    <!--<file action="copy" binary="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-events-folder-16.png"/>-->
+  <!--</instructionSet>-->
 
 </instructions>

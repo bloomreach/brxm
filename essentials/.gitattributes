@@ -585,6 +585,7 @@ plugins/blog/src/main/resources/jsp/blog-main.jsp -text
 plugins/blog/src/main/resources/xml/data/account-types.xml -text
 plugins/blog/src/main/resources/xml/data/blog-categories.xml -text
 plugins/blog/src/main/resources/xml/folder/blog-author-folder.xml -text
+plugins/blog/src/main/resources/xml/folder/blog-base-folder.xml -text
 plugins/blog/src/main/resources/xml/folder/blog-folder.xml -text
 plugins/blog/src/main/resources/xml/folderoptions/new-blog-document.xml -text
 plugins/blog/src/main/resources/xml/folderoptions/new-blog-folder.xml -text
@@ -646,7 +647,6 @@ plugins/events/src/main/resources/freemarker/eventspage-main-variant.ftl -text
 plugins/events/src/main/resources/freemarker/eventspage-main.ftl -text
 plugins/events/src/main/resources/freemarker/eventspage-main.properties -text
 plugins/events/src/main/resources/freemarker/eventspage-main_nl.properties -text
-plugins/events/src/main/resources/icons/new-folder-16.png -text
 plugins/events/src/main/resources/images/events-list.png -text
 plugins/events/src/main/resources/java/EventsDocument.txt -text
 plugins/events/src/main/resources/jsp/eventslist-main-eventslist.jsp -text
@@ -780,7 +780,6 @@ plugins/news/src/main/resources/freemarker/newspage-main-variant.ftl -text
 plugins/news/src/main/resources/freemarker/newspage-main.ftl -text
 plugins/news/src/main/resources/freemarker/newspage-main.properties -text
 plugins/news/src/main/resources/freemarker/newspage-main_nl.properties -text
-plugins/news/src/main/resources/icons/new-folder-16.png -text
 plugins/news/src/main/resources/images/news-list.png -text
 plugins/news/src/main/resources/java/NewsDocument.txt -text
 plugins/news/src/main/resources/jsp/newslist-main-newslist.jsp -text

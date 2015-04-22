@@ -23,8 +23,8 @@
     <sv:value>hippotranslation:translated</sv:value>
   </sv:property>
   <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-    <sv:value>new-poll-folder</sv:value>
     <sv:value>new-poll-document</sv:value>
+    <sv:value>new-poll-folder</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:id" sv:type="String">
     <sv:value>{{translationId}}</sv:value>

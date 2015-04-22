@@ -55,6 +55,7 @@
     CREATE DATA FOLDERS
   -->
   <instructionSet>
+    <folder template="xml/folder/blog-base-folder.xml" path="/content/documents/{{namespace}}/blog"/>
     <folder template="xml/folder/blog-author-folder.xml" path="/content/documents/{{namespace}}/blog/authors"/>
     <folder template="xml/folder/blog-folder.xml" path="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}"/>
   </instructionSet>

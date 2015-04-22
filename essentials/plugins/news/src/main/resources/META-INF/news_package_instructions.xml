@@ -104,8 +104,8 @@
     <xml action="copy" source="xml/folderoptions/new-news-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="xml/folderoptions/new-news-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
    </instructionSet>
-  <instructionSet>
-    <file action="copy" binary="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-news-folder-16.png"/>
-  </instructionSet>
+  <!--<instructionSet>-->
+    <!--<file action="copy" binary="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-news-folder-16.png"/>-->
+  <!--</instructionSet>-->
 
 </instructions>

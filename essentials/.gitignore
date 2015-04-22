@@ -2239,13 +2239,6 @@ plugins/events/src/main/resources/freemarker/classes
 plugins/events/src/main/resources/freemarker/hippo-plugins.iws
 plugins/events/src/main/resources/freemarker/target
 plugins/events/src/main/resources/hippo-plugins.iws
-plugins/events/src/main/resources/icons/*.iml
-plugins/events/src/main/resources/icons/.DS_Store
-plugins/events/src/main/resources/icons/.idea
-plugins/events/src/main/resources/icons/atlassian-ide-plugin.xml
-plugins/events/src/main/resources/icons/classes
-plugins/events/src/main/resources/icons/hippo-plugins.iws
-plugins/events/src/main/resources/icons/target
 plugins/events/src/main/resources/images/*.iml
 plugins/events/src/main/resources/images/.DS_Store
 plugins/events/src/main/resources/images/.idea
@@ -3031,13 +3024,6 @@ plugins/news/src/main/resources/freemarker/classes
 plugins/news/src/main/resources/freemarker/hippo-plugins.iws
 plugins/news/src/main/resources/freemarker/target
 plugins/news/src/main/resources/hippo-plugins.iws
-plugins/news/src/main/resources/icons/*.iml
-plugins/news/src/main/resources/icons/.DS_Store
-plugins/news/src/main/resources/icons/.idea
-plugins/news/src/main/resources/icons/atlassian-ide-plugin.xml
-plugins/news/src/main/resources/icons/classes
-plugins/news/src/main/resources/icons/hippo-plugins.iws
-plugins/news/src/main/resources/icons/target
 plugins/news/src/main/resources/images/*.iml
 plugins/news/src/main/resources/images/.DS_Store
 plugins/news/src/main/resources/images/.idea
