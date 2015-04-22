@@ -46,7 +46,7 @@ Hippo.Reports.BrokenLinksListPanel = Ext.extend(Hippo.Reports.Portlet, {
             border: false,
             disableSelection: true,
             viewConfig: {
-                scrollOffset: 2
+                forceFit: true
             },
             bbar: self.paging ? new Ext.PagingToolbar({
                 pageSize: self.pageSize,
@@ -81,7 +81,7 @@ Hippo.Reports.BrokenLinksListPanel = Ext.extend(Hippo.Reports.Portlet, {
         });
 
         config = Ext.apply(config, {
-            bodyCssClass: 'hippo-reports-document-list',
+            bodyCssClass: 'hippo-reports-broken-links',
             items:[ grid ]
         });
 
