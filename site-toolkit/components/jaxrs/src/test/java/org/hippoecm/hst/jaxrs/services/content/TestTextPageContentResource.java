@@ -16,6 +16,7 @@
 package org.hippoecm.hst.jaxrs.services.content;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -24,6 +25,7 @@ import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathFactory;
 
+import org.hippoecm.hst.jaxrs.model.content.TextPageRepresentation;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -41,7 +43,38 @@ public class TestTextPageContentResource extends AbstractTestContentResource {
     public void setUp() throws Exception {
         super.setUp();
     }
-    
+
+    @Test
+    public void testGetTextPageResourceAsJSon() throws Exception {
+
+        log.debug("\n****** testGetTextPageResource *******\n");
+
+        MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/Products/HippoCMS");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/Products/HippoCMS");
+        // request json
+        request.addHeader("Accept", "application/json");
+        request.setContent(new byte[0]);
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        invokeJaxrsPipeline(request, response);
+        final String contentAsString = response.getContentAsString();
+        if (log.isDebugEnabled()) {
+            log.debug("Response Content:\n" + contentAsString + "\n");
+        }
+
+        log.info("contentAsString {}", contentAsString);
+        assertFalse("Expected com.fasterxml.jackson.annotation.JsonIgnore to be honored, through JacksonAnnotationIntrospector", contentAsString.contains(TextPageRepresentation.IGNORED));
+        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
+    }
     @Test
     public void testGetTextPageResource() throws Exception {
         
@@ -62,11 +95,13 @@ public class TestTextPageContentResource extends AbstractTestContentResource {
         MockHttpServletResponse response = new MockHttpServletResponse();
         
         invokeJaxrsPipeline(request, response);
-        
+
+        final String contentAsString = response.getContentAsString();
         if (log.isDebugEnabled()) {
-            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
+
+            log.debug("Response Content:\n" + contentAsString + "\n");
         }
-        
+        assertTrue("Expected com.fasterxml.jackson.annotation.JsonIgnore to be ignored, JaxbAnnotationIntrospector", contentAsString.contains(TextPageRepresentation.IGNORED));
         assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
     }
     

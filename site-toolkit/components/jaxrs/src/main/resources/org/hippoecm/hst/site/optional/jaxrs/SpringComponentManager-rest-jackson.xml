@@ -22,7 +22,14 @@
      <property name="annotationIntrospector" ref="jaxrsRestJacksonJaxbIntrospector"/>
   </bean>
 
-  <bean id="jaxrsRestJacksonJaxbIntrospector" class="com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector" />
+  <bean id="jaxrsRestJacksonJaxbIntrospector" class="com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair" factory-method="pair">
+    <constructor-arg>
+      <bean class="com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector"/>
+    </constructor-arg>
+    <constructor-arg>
+      <bean class="com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector"/>
+    </constructor-arg>
+  </bean>
 
   <bean id="jaxrsRestJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
     <property name="mapper" ref="jaxrsRestJacksonObjectMapper" />

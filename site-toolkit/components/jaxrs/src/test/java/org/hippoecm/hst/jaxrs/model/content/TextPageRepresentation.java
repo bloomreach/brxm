@@ -18,6 +18,8 @@ package org.hippoecm.hst.jaxrs.model.content;
 import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.hippoecm.hst.jaxrs.model.beans.TextPage;
 
 /**
@@ -25,10 +27,15 @@ import org.hippoecm.hst.jaxrs.model.beans.TextPage;
  */
 @XmlRootElement(name = "textpage")
 public class TextPageRepresentation extends HippoDocumentRepresentation {
-    
+
+    public static final String IGNORED = "This should be ignored in json output";
+
     private String title;
     private String summary;
     private String bodyContent;
+
+    @JsonIgnore
+    private String ignoredContent  = IGNORED;
 
 	public TextPageRepresentation represent(TextPage textPage) throws RepositoryException {
 		super.represent(textPage);
@@ -63,5 +70,12 @@ public class TextPageRepresentation extends HippoDocumentRepresentation {
     public void setBodyContent(String bodyContent) {
         this.bodyContent = bodyContent;
     }
-	
+
+    public void setIgnoredContent(final String ignoredContent) {
+        this.ignoredContent = ignoredContent;
+    }
+
+    public String getIgnoredContent() {
+        return ignoredContent;
+    }
 }
