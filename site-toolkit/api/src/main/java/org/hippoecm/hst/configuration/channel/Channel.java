@@ -276,7 +276,7 @@ public class Channel implements Serializable {
     }
 
     /**
-     * @return all users that have a lock on the channel or some part of the channel. If no users have a lock, and empty set
+     * @return all *non-system* users that have a lock on the channel or some part of the channel. If no users have a lock, and empty set
      * is returned
      */
     public Set<String> getChangedBySet() {

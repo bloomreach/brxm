@@ -1106,7 +1106,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
             }
             populatePreviewChannel(previewChannel, channel);
             HstNode channelRootConfigNode = hstNodeLoadingCache.getNode(previewHstSite.getConfigurationPath());
-            previewChannel.setChangedBySet(new ChannelLazyLoadingChangedBySet(channelRootConfigNode, previewHstSite, previewChannel));
+            previewChannel.setChangedBySet(new ChannelLazyLoadingChangedBySet(channelRootConfigNode, previewHstSite, previewChannel, hstNodeLoadingCache));
             mount.setChannel(channel, previewChannel);
             mount.setChannelInfo(getChannelInfo(channel), getChannelInfo(previewChannel));
         }

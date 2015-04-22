@@ -20,25 +20,39 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.RepositoryException;
+
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.onehippo.repository.security.SecurityService;
+import org.onehippo.repository.security.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ChannelLazyLoadingChangedBySet implements Set<String> {
+
+    private static final Logger log = LoggerFactory.getLogger(ChannelLazyLoadingChangedBySet.class);
 
     private transient Set<String> delegatee;
     private transient Set<String> usersWithMainConfigNodeChanges;
     private transient final HstSite previewHstSite;
     private transient final Channel channel;
+    private transient final HstNodeLoadingCache hstNodeLoadingCache;
 
-    public ChannelLazyLoadingChangedBySet(final HstNode channelRootConfigNode, final HstSite previewHstSite, final Channel channel) {
+    public ChannelLazyLoadingChangedBySet(final HstNode channelRootConfigNode, final HstSite previewHstSite, final Channel channel,
+                                          final HstNodeLoadingCache hstNodeLoadingCache) {
         for (HstNode mainConfigNode : channelRootConfigNode.getNodes()) {
             if (usersWithMainConfigNodeChanges == null) {
                 usersWithMainConfigNodeChanges = new HashSet<>();
@@ -50,13 +64,14 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
         }
         this.previewHstSite = previewHstSite;
         this.channel = channel;
+        this.hstNodeLoadingCache = hstNodeLoadingCache;
     }
 
-    private void load(){
+    private void load() {
         if (delegatee != null) {
             return;
         }
-        delegatee =  new HashSet<>();
+        delegatee = new HashSet<>();
         if (usersWithMainConfigNodeChanges != null) {
             delegatee.addAll(usersWithMainConfigNodeChanges);
         }
@@ -68,6 +83,31 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
         if (channel.getChannelNodeLockedBy() != null) {
             delegatee.add(channel.getChannelNodeLockedBy());
         }
+
+        if (hstNodeLoadingCache != null && delegatee.size() > 0) {
+            // filter all system users out because they are not manageable through the changed by set of a channel
+            try (HstNodeLoadingCache.LazyCloseableSession lazyCloseableSession = hstNodeLoadingCache.createLazyCloseableSession()) {
+                final SecurityService securityService = ((HippoWorkspace)lazyCloseableSession.getSession().getWorkspace()).getSecurityService();
+
+                final Iterator<String> iterator = delegatee.iterator();
+                while (iterator.hasNext()) {
+                   String userId = iterator.next();
+                    try {
+                        final User user = securityService.getUser(userId);
+                        if (user.isSystemUser()) {
+                            log.debug("Removing system user with Id '{}' from Changed By Set", userId);
+                            iterator.remove();
+                        }
+                    } catch (ItemNotFoundException e) {
+                        log.info("User with userId '{}' does not exist (any more). Do not filter that user Id out because " +
+                                "for sure it is not a system user.", userId);
+                    }
+                }
+            } catch (RepositoryException e) {
+                throw new ModelLoadingException("Repository exception while getting jcr session", e);
+            }
+        }
+
     }
 
     private static Set<String> getAllUsersWithSiteMapItemLock(final HstSite previewHstSite) {
@@ -82,7 +122,7 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
                                                     final Set<String> usersWithLock,
                                                     final String previewConfigurationPath) {
 
-        final boolean inherited = !((CanonicalInfo) item).getCanonicalPath().startsWith(previewConfigurationPath + "/");
+        final boolean inherited = !((CanonicalInfo)item).getCanonicalPath().startsWith(previewConfigurationPath + "/");
         if (inherited) {
             // skip inherited sitemap item changes as that is not supported currently
             return;
@@ -132,7 +172,7 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
             if (!(config instanceof ConfigurationLockInfo)) {
                 continue;
             }
-            final boolean inherited = !((CanonicalInfo) config).getCanonicalPath().startsWith(previewHstSite.getConfigurationPath() + "/");
+            final boolean inherited = !((CanonicalInfo)config).getCanonicalPath().startsWith(previewHstSite.getConfigurationPath() + "/");
             if (inherited) {
                 // skip inherited sitemenu item changes as that is not supported currently
                 continue;
