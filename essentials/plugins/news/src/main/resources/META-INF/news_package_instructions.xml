@@ -94,7 +94,10 @@
     <xml action="copy" source="xml/samples/content/documents/news/sample_medusa.xml" target="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}"/>
     <xml action="copy" source="xml/samples/content/documents/news/sample_harvest.xml" target="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}"/>
     <xml action="copy" source="xml/samples/content/documents/news/sample_gastropoda.xml" target="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}"/>
-    <xml action="copy" source="xml/samples/content/gallery/samples.xml" target="/content/gallery/{{namespace}}"/>
+    <folder path="/content/gallery/{{namespace}}/samples" template="xml/samples/content/gallery/samples.xml"/>
+    <xml action="copy" source="xml/samples/content/gallery/samples/grapes.xml" target="/content/gallery/{{namespace}}/samples"/>
+    <xml action="copy" source="xml/samples/content/gallery/samples/medusa.xml" target="/content/gallery/{{namespace}}/samples"/>
+    <xml action="copy" source="xml/samples/content/gallery/samples/snail.xml" target="/content/gallery/{{namespace}}/samples"/>
   </instructionSet>
 
   <!--
@@ -104,8 +107,5 @@
     <xml action="copy" source="xml/folderoptions/new-news-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="xml/folderoptions/new-news-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
    </instructionSet>
-  <!--<instructionSet>-->
-    <!--<file action="copy" binary="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-news-folder-16.png"/>-->
-  <!--</instructionSet>-->
 
 </instructions>

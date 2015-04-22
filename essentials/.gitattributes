@@ -670,6 +670,9 @@ plugins/events/src/main/resources/xml/samples/content/documents/events/sample_br
 plugins/events/src/main/resources/xml/samples/content/documents/events/sample_introduction_speech.xml -text
 plugins/events/src/main/resources/xml/samples/content/documents/events/sample_workshop.xml -text
 plugins/events/src/main/resources/xml/samples/content/gallery/samples.xml -text
+plugins/events/src/main/resources/xml/samples/content/gallery/samples/blue.xml -text
+plugins/events/src/main/resources/xml/samples/content/gallery/samples/coffee.xml -text
+plugins/events/src/main/resources/xml/samples/content/gallery/samples/pencils.xml -text
 plugins/events/src/test/resources/log4j.xml -text
 plugins/faq/pom.xml -text
 plugins/faq/src/main/resources/META-INF/faqComponentPlugin_instructions.xml -text
@@ -803,6 +806,9 @@ plugins/news/src/main/resources/xml/samples/content/documents/news/sample_gastro
 plugins/news/src/main/resources/xml/samples/content/documents/news/sample_harvest.xml -text
 plugins/news/src/main/resources/xml/samples/content/documents/news/sample_medusa.xml -text
 plugins/news/src/main/resources/xml/samples/content/gallery/samples.xml -text
+plugins/news/src/main/resources/xml/samples/content/gallery/samples/grapes.xml -text
+plugins/news/src/main/resources/xml/samples/content/gallery/samples/medusa.xml -text
+plugins/news/src/main/resources/xml/samples/content/gallery/samples/snail.xml -text
 plugins/news/src/test/resources/log4j.xml -text
 plugins/poll/pom.xml -text
 plugins/poll/src/main/java/org/onehippo/cms7/essentials/plugins/poll/PollInstruction.java -text
