@@ -976,7 +976,8 @@
                     visibleWindowHeight = visibleHeight + window.getFrameHeight(),
                     pageEditorHeight = Ext.getCmp('pageEditorIFrame').getHeight(),
                     windowY = window.getPosition()[1],
-                    maxWindowHeight = pageEditorHeight - windowY,
+                    spaceBetweenWindowAndBottom = 4,
+                    maxWindowHeight = pageEditorHeight - windowY - spaceBetweenWindowAndBottom,
                     newWindowHeight = Math.min(visibleWindowHeight, maxWindowHeight);
                 if (currentWindowHeight !== newWindowHeight) {
                     window.setHeight(newWindowHeight);
