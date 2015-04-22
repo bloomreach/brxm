@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,11 +51,11 @@ public class BrokenLinksListColumns implements IClusterable {
     public static final String COLUMN_PROP_HEADER = "header";
     public static final String COLUMN_PROP_WIDTH = "width";
 
-    public static enum ColumnName { createdBy, creationDate, lastModificationDate, lastModifiedBy, name, path, publicationDate, brokenlinksLinks, brokenlinksBrokenSince, brokenlinksStatus};
+    public enum ColumnName { createdBy, creationDate, lastModificationDate, lastModifiedBy, name, path, publicationDate, brokenlinksLinks, brokenlinksBrokenSince, brokenlinksStatus}
 
     // Supported status codes, meaning there are translations and maybe custom messages for these codes
     private static final List<Integer> SUPPORTED_HTTP_STATUS_CODES = Arrays.asList(301, 400, 401, 403, 404, 405, 414, 415, 500, 502, 503);
-    private static final Map<ColumnName, IBrokenLinkDocumentListColumn> DOCUMENT_COLUMN_MAP = new EnumMap<ColumnName, IBrokenLinkDocumentListColumn>(ColumnName.class);
+    private static final Map<ColumnName, IBrokenLinkDocumentListColumn> DOCUMENT_COLUMN_MAP = new EnumMap<>(ColumnName.class);
 
     static {
         DOCUMENT_COLUMN_MAP.put(ColumnName.createdBy, new StringPropertyColumn("createdBy", HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY));
@@ -77,7 +77,7 @@ public class BrokenLinksListColumns implements IClusterable {
     private final List<ColumnName> columnNames;
 
     public BrokenLinksListColumns(String[] names) {
-        columnNames = new ArrayList<ColumnName>(names.length + 1);
+        columnNames = new ArrayList<>(names.length + 1);
 
         if (names.length == 0) {
             log.warn("No column names specified, expected a comma-separated list with these possible values: {}",
@@ -100,7 +100,7 @@ public class BrokenLinksListColumns implements IClusterable {
     }
 
     public List<IBrokenLinkDocumentListColumn> getAllColumns() {
-        List<IBrokenLinkDocumentListColumn> result = new ArrayList<IBrokenLinkDocumentListColumn>(columnNames.size());
+        List<IBrokenLinkDocumentListColumn> result = new ArrayList<>(columnNames.size());
 
         for (ColumnName columnName: columnNames) {
             final IBrokenLinkDocumentListColumn column = DOCUMENT_COLUMN_MAP.get(columnName);
@@ -122,7 +122,7 @@ public class BrokenLinksListColumns implements IClusterable {
     }
 
     public List<ExtDataField> getAllExtFields() {
-        List<ExtDataField> result = new ArrayList<ExtDataField>(columnNames.size());
+        List<ExtDataField> result = new ArrayList<>(columnNames.size());
 
         for (IBrokenLinkDocumentListColumn column: getAllColumns()) {
             result.add(column.getExtField());
