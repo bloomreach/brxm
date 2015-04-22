@@ -18,12 +18,12 @@ package org.onehippo.forge.contentblocks;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
@@ -76,7 +76,6 @@ import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IValidationService;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.forge.contentblocks.model.ContentBlockComparer;
 import org.onehippo.forge.contentblocks.model.DropDownOption;
@@ -90,8 +89,6 @@ import org.slf4j.LoggerFactory;
  * the Document Editor.
  */
 public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
-
-    private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(ContentBlocksFieldPlugin.class);
 
@@ -119,7 +116,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
     private final int maxItems;
     private final Link<CharSequence> focusMarker;
-
 
     // each validator service id for a started clusters must be unique
     int validatorCount = 0;
@@ -186,7 +182,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         JcrNodeModel prototype = jcrPrototypeStore.getPrototype(cpItemTypeDescriptor.getName(), false);
         String destination = getModelObject().getPath() + "/" + path;
 
-        HippoSession session = (HippoSession) UserSession.get().getJcrSession();
+        Session session = UserSession.get().getJcrSession();
         JcrUtils.copy(session, prototype.getNode().getPath(), destination);
     }
 
@@ -245,9 +241,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     protected Component createAddLinkLabel() {
         final StringResourceModel nrOfItems = new StringResourceModel("nummItems", this, new Model<>(this));
         Label label = new Label("addLabel", nrOfItems) {
-
-            private static final long serialVersionUID = 1L;
-
             @Override
             public boolean isVisible() {
                 // only show current and max items if max items is defined
@@ -313,9 +306,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
         // remove button
         MarkupContainer remove = new AjaxLink("remove") {
-
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void onClick(AjaxRequestTarget target) {
 
@@ -333,9 +323,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         final int itemIndex = item.getIndex();
         // up arrow button
         MarkupContainer upLink = new AjaxLink("up") {
-
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void onClick(AjaxRequestTarget target) {
                 onMoveItemUp(model, target);
@@ -351,9 +338,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
         // down arrow button
         MarkupContainer downLink = new AjaxLink("down") {
-
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void onClick(AjaxRequestTarget target) {
                 IFieldDescriptor field = getFieldHelper().getField();
@@ -469,8 +453,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
     private class DeleteItemDialog extends AbstractDialog<JcrNodeModel> {
 
-        private static final long serialVersionUID = 1L;
-
         private final JcrNodeModel model;
 
         public DeleteItemDialog(JcrNodeModel model) {
@@ -496,8 +478,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
     private static class FocusLink extends Link<CharSequence> {
 
-        private static final long serialVersionUID = 1L;
-
         private FocusLink(final String id) {
             super(id);
             setOutputMarkupId(true);
@@ -519,8 +499,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
      */
     private class AddBlockWithLinks extends Fragment {
 
-        private static final long serialVersionUID = 1L;
-
         public AddBlockWithLinks(final String id, MarkupContainer container) {
             super(id, "addItemsLinks", container);
             setVisibilityAllowed(true);
@@ -532,17 +510,11 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
                 // check if the compounds are configured as list
                 if (!compoundList.isEmpty()) {
 
-                    // reverse the list to sort the items (visually!) in the same order as they are configured
-                    Collections.reverse(compoundList);
-
                     for (final String compound : compoundList) {
 
                         // create markup item with link
                         final WebMarkupContainer item = new WebMarkupContainer(repeatingView.newChildId());
                         final AjaxLink<Void> link = new AjaxLink<Void>("addItem") {
-
-                            private static final long serialVersionUID = 1L;
-
                             @Override
                             public void onClick(AjaxRequestTarget target) {
                                 addItem(compound, target);
@@ -576,9 +548,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
                         // create markup item with link
                         final WebMarkupContainer item = new WebMarkupContainer(repeatingView.newChildId());
                         final AjaxLink<Void> link = new AjaxLink<Void>("addItem") {
-
-                            private static final long serialVersionUID = 1L;
-
                             @Override
                             public void onClick(AjaxRequestTarget target) {
                                 String type = fieldDesc.getTypeDescriptor().getType();
@@ -613,8 +582,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
      */
     private class AddBlockWithDropDown extends Fragment {
 
-        private static final long serialVersionUID = 1L;
-
         public AddBlockWithDropDown(final String id, MarkupContainer container) {
             super(id, "addItemsDropDown", container);
             setVisibilityAllowed(true);
@@ -643,9 +610,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
                 form.add(dropDown);
 
                 add(new AjaxButton("addItem", form) {
-
-                    private static final long serialVersionUID = 1L;
-
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         if (dropDownOptionModel.getItem() != null && dropDownOptionModel.getItem().getValue() != null) {
@@ -675,9 +639,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
                 form.add(dropDown);
 
                 add(new AjaxButton("addItem", form) {
-
-                    private static final long serialVersionUID = 1L;
-
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         if (dropDownOptionModel.getItem() != null && dropDownOptionModel.getItem().getValue() != null) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,15 +22,40 @@
   float: none;
 }
 
+.contentpicker-blocks .hippo-editor-field-subfield-controls {
+  z-index: 1;
+  padding-top: 0;
+}
+
+.hippo-content-block-controls {
+  padding-top: 8px;
+  padding-right: 16px;
+}
+
 .contentpicker-link-list {
-  float: right;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
 }
 
 .contentpicker-links {
-  float: right;
-  margin-right: 40px;
+  margin-left: 16px;
   font-weight: bold;
   font-style: italic;
+}
+
+.contentpicker-links:first-child {
+  margin-left: 0;
 }
 
 .contentpicker-links select {
@@ -69,6 +94,12 @@
   padding-bottom: 2px;
 }
 
-.hippo-content-block-controls {
-  margin-top: 8px;
+.hippo-editor-field-subfield-controls a:active,
+.hippo-editor-field-subfield-controls a:hover {
+  text-decoration: none;
 }
+
+.hippo-editor-field-subfield-controls .remove-link .hi {
+  color: red;
+}
+
