@@ -94,7 +94,6 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/DropDownListWidget.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/DropDownListWidget.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/ExtLinkPicker.java -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/ExtLinkPicker.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/ImageSetPathWidget.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/ImageSetPathWidget.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/InlinePreviewImage.java -text
