@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 Ext.namespace('Hippo.ChannelManager');
 
 Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
+    width: 200,
     id: 'deviceManager',
     displayField: 'name',
     mode: 'local',

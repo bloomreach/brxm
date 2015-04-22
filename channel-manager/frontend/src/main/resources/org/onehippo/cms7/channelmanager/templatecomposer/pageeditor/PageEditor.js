@@ -310,6 +310,7 @@
             var self, variantsComboBox;
             self = this;
             variantsComboBox = new Ext.form.ComboBox({
+                width: 200,
                 id: 'template-composer-toolbar-variants-combo',
                 store: this.globalVariantsStore,
                 displayField: 'comboName',
@@ -540,10 +541,10 @@
                     },
                     {
                         id: 'template-composer-toolbar-components-button',
-                        text: (toolboxVisible ? this.initialConfig.resources['close-components-button'] : this.initialConfig.resources['add-components-button']),
+                        text: this.initialConfig.resources['components-button'],
                         mode: (toolboxVisible ? 'hide' : 'show'),
                         allowDepress: false,
-                        iconCls: 'add-components',
+                        iconCls: 'components',
                         listeners: {
                             click: {
                                 fn: function(button) {
@@ -551,11 +552,11 @@
                                     if (button.mode === 'show') {
                                         toolkitWindow.show();
                                         button.mode = 'hide';
-                                        button.setText(this.initialConfig.resources['close-components-button']);
+                                        button.setIconClass('components-close');
                                     } else {
                                         toolkitWindow.hide();
                                         button.mode = 'show';
-                                        button.setText(this.initialConfig.resources['add-components-button']);
+                                        button.setIconClass('components');
                                     }
                                 },
                                 scope: this

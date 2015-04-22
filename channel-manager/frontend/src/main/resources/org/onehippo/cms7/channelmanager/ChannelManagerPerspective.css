@@ -329,13 +329,11 @@
     padding-right: 0;
 }
 
-.channel-manager .x-btn-small .add-channel,
-.channel-manager .x-btn-small .add-components {
+.channel-manager .x-btn-small .add-channel {
     background-image: url("add.svg");
 }
 
-.channel-manager .x-btn-small .add-channel:hover,
-.channel-manager .x-btn-small .add-components:hover {
+.channel-manager .x-btn-small .add-channel:hover {
     background-image: url("add-blue.svg");
 }
 
@@ -431,6 +429,22 @@
 
 .channel-manager .x-btn-small .collapse:hover {
     background-image: url("templatecomposer/collapse-blue.svg");
+}
+
+.channel-manager .x-btn-small .components {
+    background-image: url("templatecomposer/components.svg");
+}
+
+.channel-manager .x-btn-small .components:hover {
+    background-image: url("templatecomposer/components-blue.svg");
+}
+
+.channel-manager .x-btn-small .components-close {
+    background-image: url("templatecomposer/chevron-up.svg");
+}
+
+.channel-manager .x-btn-small .components-close:hover {
+    background-image: url("templatecomposer/chevron-up-blue.svg");
 }
 
 /* toolkit window */
