@@ -343,7 +343,7 @@ public class TabsPlugin extends RenderPlugin {
         try {
             if (editor.isModified() || !editor.isValid()) {
 
-                OnCloseDialog onCloseDialog = new OnCloseDialog(editor, new OnCloseDialog.Actions() {
+                OnCloseDialog onCloseDialog = new OnCloseDialog(new OnCloseDialog.Actions() {
                     public void revert() {
                         try {
                             editor.discard();
@@ -370,7 +370,7 @@ public class TabsPlugin extends RenderPlugin {
                             log.error(ex.getMessage());
                         }
                     }
-                }, editor.isValid(), (JcrNodeModel) editor.getModel());
+                }, editor.isValid(), (JcrNodeModel) editor.getModel(), editor.getMode());
 
                 IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(),
                         IDialogService.class);
@@ -694,7 +694,7 @@ public class TabsPlugin extends RenderPlugin {
             void close();
         }
 
-        public OnCloseDialog(final IEditor editor, final Actions actions, final boolean isValid, JcrNodeModel model) {
+        public OnCloseDialog(final Actions actions, final boolean isValid, JcrNodeModel model, final IEditor.Mode mode) {
             super(model);
 
             setOkVisible(false);
@@ -749,7 +749,7 @@ public class TabsPlugin extends RenderPlugin {
                 }
             };
             button.setModel(new ResourceModel("save", "Save"));
-            button.setEnabled(editor.getMode() == IEditor.Mode.EDIT);
+            button.setEnabled(mode == IEditor.Mode.EDIT);
             addButton(button);
         }
 
