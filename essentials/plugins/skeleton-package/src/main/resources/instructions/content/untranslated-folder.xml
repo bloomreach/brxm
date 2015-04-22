@@ -24,7 +24,7 @@
     <sv:value>hippo:translated</sv:value>
   </sv:property>
   <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-    <sv:value>new-document</sv:value>
-    <sv:value>new-folder</sv:value>
+    <sv:value>new-resource-bundle</sv:value>
+    <sv:value>new-untranslated-folder</sv:value>
   </sv:property>
 </sv:node>

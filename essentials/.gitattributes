@@ -958,6 +958,8 @@ plugins/skeleton-package/src/main/resources/instructions/jsp/homepage-main.jsp -
 plugins/skeleton-package/src/main/resources/instructions/jsp/imports.jsp -text
 plugins/skeleton-package/src/main/resources/instructions/jsp/pagenotfound-main.jsp -text
 plugins/skeleton-package/src/main/resources/instructions/jsp/pagination.jsp -text
+plugins/skeleton-package/src/main/resources/instructions/xml/folderoptions/new-resource-bundle.xml -text
+plugins/skeleton-package/src/main/resources/instructions/xml/folderoptions/new-untranslated-folder.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/catalog/essentials-catalog.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/menu/main.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/pages/base.xml -text

@@ -25,6 +25,11 @@
   -->
 
   <instructionSet>
+    <xml action="copy" source="instructions/xml/folderoptions/new-resource-bundle.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <xml action="copy" source="instructions/xml/folderoptions/new-untranslated-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+  </instructionSet>
+
+  <instructionSet>
     <folder template="instructions/content/untranslated-folder.xml" path="/content/documents/administration"/>
     <folder template="instructions/content/untranslated-folder.xml" path="/content/documents/administration/labels"/>
     <xml action="copy" source="instructions/content/global-labels.xml" target="/content/documents/administration/labels"/>
