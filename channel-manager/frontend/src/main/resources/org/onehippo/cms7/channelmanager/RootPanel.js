@@ -201,6 +201,12 @@
 
         update: function(config) {
             this.selectCard(config.activeItem);
+
+            if (config.isActivated) {
+                this._showBreadcrumb();
+            } else {
+                this._hideBreadcrumb();
+            }
         },
 
         showChannelManager: function() {

@@ -84,8 +84,6 @@ public class RootPanel extends ExtPanel {
     private PageEditor pageEditor;
     private ExtStoreFuture<Object> channelStoreFuture;
 
-    private boolean redraw = false;
-
     @ExtProperty
     private Integer activeItem = 0;
 
@@ -100,7 +98,7 @@ public class RootPanel extends ExtPanel {
         js.append("} catch(exception) { console.log('Error initializing channel manager. '+exception); } ");
     }
 
-    public RootPanel(final IPluginContext context, final IPluginConfig config, String id) {
+    public RootPanel(final IPluginContext context, final IPluginConfig config, final String id) {
         super(id);
 
         final IPluginConfig channelListConfig = config.getPluginConfig(CONFIG_CHANNEL_LIST);
@@ -161,22 +159,19 @@ public class RootPanel extends ExtPanel {
         add(new ExtLinkPicker(context));
     }
 
-    public void redraw() {
-        redraw = true;
-    }
-
-    public void render(PluginRequestTarget target) {
+    public void render(PluginRequestTarget target, boolean isActivated) {
         pageEditor.render(target);
         channelStore.update();
-        if (redraw) {
+
+        if (target != null) {
             JSONObject update = new JSONObject();
             try {
                 update.put("activeItem", activeItem);
+                update.put("isActivated", isActivated);
             } catch (JSONException e) {
                 throw new RuntimeException("could not populate property updates", e);
             }
             target.appendJavaScript("Ext.getCmp('rootPanel').update(" + update.toString() + ");");
-            redraw = false;
         }
     }
 
@@ -218,7 +213,6 @@ public class RootPanel extends ExtPanel {
 
     public void setActiveCard(CardId rootPanelCard) {
         this.activeItem = rootPanelCard.getTabIndex();
-        redraw();
     }
 
 }
