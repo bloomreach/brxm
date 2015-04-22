@@ -44,17 +44,11 @@
   </wicket:fragment>
 
   <wicket:fragment wicket:id="addItemsDropDown">
-    <div class="contentpicker-links">
-      <div class="contentpicker-link">
-        <input type="submit" wicket:message="value:addInputValue" wicket:id="addItem" class="hippo-editor-field-input"/>
-      </div>
-    </div>
-    <div class="contentpicker-links">
-      <div class="contentpicker-link">
-        <form wicket:id="cpform">
-          <select class="hippo-editor-field-select" wicket:id="itemsDropDown"></select>
-        </form>
-      </div>
+    <div class="contentpicker-dropdown">
+      <form wicket:id="cpform">
+        <select class="hippo-editor-field-select" wicket:id="itemsDropDown"></select>
+      </form>
+      <input type="submit" wicket:message="value:addInputValue" wicket:id="addItem" class="hippo-button"/>
     </div>
   </wicket:fragment>
 
