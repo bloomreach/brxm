@@ -38,8 +38,8 @@ public class ContentDocument extends BaseDocument {
         return getHippoHtml("{{namespace}}:content");
     }
 
-    @HippoEssentialsGenerated(internalName = "{{namespace}}:mypublicationdate")
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:publicationdate")
     public Calendar getPublicationDate() {
-        return getProperty("{{namespace}}:mypublicationdate");
+        return getProperty("{{namespace}}:publicationdate");
     }
 }

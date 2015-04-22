@@ -56,7 +56,7 @@
       <sv:property sv:name="{{namespace}}:introduction" sv:type="String">
         <sv:value>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</sv:value>
       </sv:property>
-      <sv:property sv:name="{{namespace}}:mypublicationdate" sv:type="Date">
+      <sv:property sv:name="{{namespace}}:publicationdate" sv:type="Date">
         <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
       </sv:property>
       <sv:property sv:name="{{namespace}}:title" sv:type="String">
@@ -166,7 +166,7 @@
       <sv:property sv:name="{{namespace}}:introduction" sv:type="String">
         <sv:value>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</sv:value>
       </sv:property>
-      <sv:property sv:name="{{namespace}}:mypublicationdate" sv:type="Date">
+      <sv:property sv:name="{{namespace}}:publicationdate" sv:type="Date">
         <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
       </sv:property>
       <sv:property sv:name="{{namespace}}:title" sv:type="String">
