@@ -59,6 +59,7 @@
       if (Ext && Ext.Ajax) {
         Ext.Ajax.on('beforerequest', this.beforeAjaxCall, this);
         Ext.Ajax.on('requestcomplete', this.afterAjaxCall, this);
+        Ext.Ajax.on('requestexception', this.afterAjaxCall, this);
       }
     },
 
