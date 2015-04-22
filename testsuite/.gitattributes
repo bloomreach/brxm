@@ -75,6 +75,7 @@ components/src/main/java/org/hippoecm/hst/demo/jaxrs/services/util/ResponseUtils
 components/src/main/java/org/hippoecm/hst/demo/linking/CommentsRewriteContextResolver.java -text
 components/src/main/java/org/hippoecm/hst/demo/linking/DemositeResourceContainer.java svneol=native#text/plain
 components/src/main/java/org/hippoecm/hst/demo/linking/ExampleHstLinkProcessor.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/request/CustomContextCredentialsProvider.java -text
 components/src/main/java/org/hippoecm/hst/demo/servlet/DateTimeServlet.java -text
 components/src/main/java/org/hippoecm/hst/demo/servlet/ModifyingHstConfigurationServlet.java -text svneol=unset#text/plain
 components/src/main/java/org/hippoecm/hst/demo/sitemapitemhandler/DummySiteMapHandler.java -text svneol=unset#text/plain
@@ -98,6 +99,7 @@ components/src/main/resources/META-INF/hst-assembly/overrides/channelManagerList
 components/src/main/resources/META-INF/hst-assembly/overrides/commentsRewriteContextResolver.xml -text
 components/src/main/resources/META-INF/hst-assembly/overrides/componentWindowFiltering-valve.xml -text svneol=unset#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/custom-jaxrs-resources.xml -text
+components/src/main/resources/META-INF/hst-assembly/overrides/customExtraBasicPoolingRepository.xml -text svneol=unset#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/customLinkProcessorsExample.xml svneol=native#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/customResourceContainers.xml svneol=native#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/event-listeners.xml svneol=native#text/plain
@@ -177,6 +179,7 @@ content/src/main/resources/hstconfiguration/demosite_test_many/templates.xml -te
 content/src/main/resources/namespaces/demosite/qaimageset.xml -text
 content/src/main/resources/resourcebundles.xml -text
 content/src/main/resources/security/configuser-read-everywhere.xml -text
+content/src/main/resources/security/custom-liveuser.xml -text
 content/src/main/resources/security/group-liveusers.xml -text
 content/src/main/resources/security/group-previewusers.xml -text
 content/src/main/resources/security/group-sitewriters.xml -text

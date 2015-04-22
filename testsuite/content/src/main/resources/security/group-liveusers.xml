@@ -21,6 +21,7 @@
   </sv:property>
   <sv:property sv:name="hipposys:members" sv:type="String" sv:multiple="true">
     <sv:value>liveuser</sv:value>
+    <sv:value>customliveuser</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:securityprovider" sv:type="String">
     <sv:value>internal</sv:value>
