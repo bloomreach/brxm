@@ -612,12 +612,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 log.info("Cannot create a link for node with path '{}'. Return a page not found link", originalNodePath);
                 return createPageNotFoundLink(mount);
             }
-            if (hstLink.isContainerResource()) {
-                // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
-                return hstLink;
-            } else {
-                return postProcess(hstLink);
-            }
+            return postProcess(hstLink);
         }
 
         /**
@@ -703,12 +698,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 for(Mount tryMount : candidateMounts) {
                     HstLink hstLink = resolveToHstLink(rewritePath, tryMount, resolverProperties);
                     if(hstLink != null) {
-                        if (hstLink.isContainerResource()) {
-                            // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
-                            hstLinkList.add(hstLink);
-                        } else {
-                            hstLinkList.add(postProcess(hstLink));
-                        }
+                        hstLinkList.add(postProcess(hstLink));
                     }
                 }
 
@@ -842,11 +832,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     }
 
                     for (HstLink hstLink : collapsedLinks.values()) {
-                        if (hstLink.isContainerResource()) {
-                            hstLinkList.add(hstLink);
-                        } else {
-                            hstLinkList.add(postProcess(hstLink));
-                        }
+                        hstLinkList.add(postProcess(hstLink));
                     }
                 }
             } catch (RewriteContextException e) {
