@@ -478,41 +478,49 @@
 
     _addComponent: function (xtype, record, defaultValue, initialValue) {
 
-      function updateValueInRecord () {
-        var newValue = this.getValue();
-        if (typeof(newValue) === 'undefined' || (typeof(newValue) === 'string' && newValue.length === 0) || newValue === this.defaultValue) {
-          this.setValue(this.defaultValue);
+      function commitValueOrDefault (field) {
+        var newValue = field.getValue();
+        if (typeof(newValue) === 'undefined' || (typeof(newValue) === 'string' && newValue.length === 0) || newValue === field.defaultValue) {
+          field.setValue(field.defaultValue);
         }
+        record.set('value', newValue);
+        record.commit();
+      }
+
+      function updateValue (field) {
+        var newValue = field.getValue();
         record.set('value', newValue);
       }
 
       var propertyFieldConfig = {
-        fieldLabel: record.get('label'),
-        xtype: xtype,
-        value: initialValue,
-        defaultValue: defaultValue,
-        allowBlank: !record.get('required'),
-        name: record.get('name'),
-        listeners: {
-          change: updateValueInRecord,
-          select: updateValueInRecord,
-          specialkey: function (field, event) {
-            if (event.getKey() === event.ENTER) {
-              record.set('value', field.getValue() || defaultValue);
+          fieldLabel: record.get('label'),
+          xtype: xtype,
+          value: initialValue,
+          defaultValue: defaultValue,
+          allowBlank: !record.get('required'),
+          name: record.get('name'),
+          enableKeyEvents: true,
+          listeners: {
+            change: commitValueOrDefault,
+            select: commitValueOrDefault,
+            keyup: updateValue,
+            specialkey: function (field, event) {
+              if (event.getKey() === event.ENTER) {
+                commitValueOrDefault(field);
+              }
+            },
+            afterrender: function (field) {
+              // workaround, the padding-left which gets set on the element, let the right box side disappear,
+              // removing the style attribute after render fixes the layout
+              var formElement = this.el.findParent('.x-form-element');
+              formElement.removeAttribute('style');
             }
-          },
-          afterrender: function (field) {
-            // workaround, the padding-left which gets set on the element, let the right box side disappear,
-            // removing the style attribute after render fixes the layout
-            var formElement = this.el.findParent('.x-form-element');
-            formElement.removeAttribute('style');
           }
-        }
-      };
+        };
 
       if (xtype === 'checkbox') {
         propertyFieldConfig.checked = (initialValue === true || initialValue === 'true' || initialValue === '1' || String(initialValue).toLowerCase() === 'on');
-        propertyFieldConfig.listeners.check = updateValueInRecord;
+        propertyFieldConfig.listeners.check = commitValueOrDefault;
       } else if (xtype === 'linkpicker') {
         propertyFieldConfig.renderStripValue = /^\/?(?:[^\/]+\/)*/g;
         propertyFieldConfig.pickerConfig = {
@@ -586,9 +594,11 @@
       this.store.on('update', this._onPropertiesChanged, this);
     },
 
-    _onPropertiesChanged: function () {
+    _onPropertiesChanged: function (store, record, operation) {
       this._fireVariantDirtyOrPristine();
-      this.firePropertiesChanged();
+      if (operation === Ext.data.Record.COMMIT) {
+        this.firePropertiesChanged();
+      }
     },
 
     _fireVariantDirtyOrPristine: function () {
