@@ -64,7 +64,7 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
         FormComponent fc;
         fc = new RequiredTextField("groupname");
         fc.add(StringValidator.minimumLength(2));
-        fc.add(new GroupValidator());
+        fc.add(new GroupnameValidator());
         form.add(fc);
         
         form.add(new TextField("description"));
@@ -117,7 +117,7 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
         }.setDefaultFormProcessing(false));
     }
 
-    class GroupValidator extends StringValidator {
+    class GroupnameValidator extends StringValidator {
         private static final long serialVersionUID = 1L;
 
         @Override
