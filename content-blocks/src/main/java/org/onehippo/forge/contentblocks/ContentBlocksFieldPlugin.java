@@ -47,9 +47,8 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.editor.prototype.JcrPrototypeStore;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.editor.ITemplateEngine;
@@ -451,28 +450,22 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         return compoundList;
     }
 
-    private class DeleteItemDialog extends AbstractDialog<JcrNodeModel> {
+    private class DeleteItemDialog extends Dialog<JcrNodeModel> {
 
         private final JcrNodeModel model;
 
         public DeleteItemDialog(JcrNodeModel model) {
             this.model = model;
+
             setFocusOnCancel();
+            setSize(DialogConstants.SMALL);
+            setTitleKey("delete-title");
         }
 
         @Override
         protected void onOk() {
             onRemoveItem(model, getRequestCycle().find(AjaxRequestTarget.class));
             redraw();
-        }
-
-        @Override
-        public IValueMap getProperties() {
-            return DialogConstants.SMALL;
-        }
-
-        public IModel<String> getTitle() {
-            return new StringResourceModel("delete-title", this, null);
         }
     }
 

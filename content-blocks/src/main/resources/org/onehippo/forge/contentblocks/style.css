@@ -103,3 +103,11 @@
   color: red;
 }
 
+/* Dialog style */
+.notification {
+  margin: 11px;
+  padding: 12px;
+  text-align: center;
+  background: #ffccaa;
+  border: 1px solid #ff9900;
+}
