@@ -74,6 +74,7 @@ public class MessageInstructionExecutor {
             }  else if (instruction instanceof DirectoryInstruction) {
                 processXmlInstruction(retVal, placeholderData, (DirectoryInstruction) instruction);
             } else {
+                instruction.processPlaceholders(placeholderData);
                 retVal.put(MessageGroup.UNKNOWN, new MessageRestful(instruction.getMessage()));
             }
         }
@@ -84,6 +85,7 @@ public class MessageInstructionExecutor {
 
     private void processXmlInstruction(final Multimap<MessageGroup, Restful> retVal, final Map<String, Object> placeholderData, final ExecuteInstruction instruction) {
         final Instruction executeInstruction = GlobalUtils.newInstance(instruction.getClazz());
+        executeInstruction.processPlaceholders(placeholderData);
         retVal.put(MessageGroup.EXECUTE, new MessageRestful(executeInstruction.getMessage()));
     }
 

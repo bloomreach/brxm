@@ -50,7 +50,7 @@ public class BlogFacetInstruction implements Instruction {
 
 
 
-    private String message = "Created blog facet at: {{facetMessage}}";
+    private String message = "Created blog facet at: /content/documents/{{namespace}}/blogFacets";
 
     @Override
     public String getMessage() {
@@ -112,7 +112,6 @@ public class BlogFacetInstruction implements Instruction {
 
     @Override
     public void processPlaceholders(final Map<String, Object> data) {
-        data.put("facetMessage", "Blog facets");
         final String myMessage = TemplateUtils.replaceTemplateData(message, data);
         if (!Strings.isNullOrEmpty(myMessage)) {
             message = myMessage;
