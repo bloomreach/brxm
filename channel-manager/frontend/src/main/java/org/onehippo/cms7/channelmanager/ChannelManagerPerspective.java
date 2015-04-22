@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.Fragment;
@@ -26,6 +27,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.perspectives.common.ErrorMessagePanel;
@@ -46,9 +48,13 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
 
     private static final CssResourceReference CHANNEL_MANAGER_PERSPECTIVE_CSS = new CssResourceReference(ChannelManagerPerspective.class, "ChannelManagerPerspective.css");
 
+    private static final String EVENT_CHANNEL_MANAGER_ACTIVATED = "channel-manager-activated";
+    private static final String EVENT_CHANNEL_MANAGER_DEACTIVATED = "channel-manager-deactivated";
+
     private RootPanel rootPanel;
     private boolean siteIsUp;
     private List<IRenderService> childservices = new LinkedList<IRenderService>();
+    private boolean isActivated;
 
     public ChannelManagerPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -83,15 +89,46 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     }
 
     @Override
+    public void focus(final IRenderService child) {
+        super.focus(child);
+        if (isActive()) {
+            activate();
+        }
+    }
+
+    @Override
     public void render(final PluginRequestTarget target) {
         super.render(target);
         if (siteIsUp) {
             if (isActive()) {
                 rootPanel.render(target);
+            } else {
+                deactivate();
             }
             for (IRenderService child : childservices) {
                 child.render(target);
             }
+        }
+    }
+
+    private void activate() {
+        if (!this.isActivated) {
+            this.isActivated = true;
+            publishEvent(EVENT_CHANNEL_MANAGER_ACTIVATED);
+        }
+    }
+
+    private void deactivate() {
+        if (this.isActivated) {
+            this.isActivated = false;
+            publishEvent(EVENT_CHANNEL_MANAGER_DEACTIVATED);
+        }
+    }
+
+    private static void publishEvent(final String event) {
+        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+        if (target != null) {
+            target.appendJavaScript("Hippo.Events.publish('" + event + "');");
         }
     }
 

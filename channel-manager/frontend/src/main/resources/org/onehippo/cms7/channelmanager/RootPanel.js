@@ -71,24 +71,14 @@
             }, this, {single: true});
 
             this.on('afterrender', function() {
-                var hippoFooter, perspectiveElement;
-
                 // render the toolbar as the first item in the footer
-                hippoFooter = Ext.getDom('ft');
+                var hippoFooter = Ext.getDom('ft');
                 this.toolbar.render(hippoFooter, 0);
 
                 // only show the channel manager breadcrumb when channel manager is active
-                perspectiveElement = this.el.findParent(".perspective");
-                if (perspectiveElement) {
-                    this._initBreadcrumbAnimation();
-                    Ext.EventManager.addListener(perspectiveElement, 'readystatechange', function(event) {
-                        if (event.active) {
-                            this._showBreadcrumb();
-                        } else {
-                            this._hideBreadcrumb();
-                        }
-                    }, this, { normalized: false });
-                }
+                this._initBreadcrumbAnimation();
+                Hippo.Events.subscribe('channel-manager-activated', this._showBreadcrumb, this);
+                Hippo.Events.subscribe('channel-manager-deactivated', this._hideBreadcrumb, this);
             }, this, {single: true});
 
             // get all child components
@@ -207,7 +197,6 @@
             } else {
                 this.layout.setActiveItem(0);
             }
-            this._showBreadcrumb();
         },
 
         update: function(config) {
