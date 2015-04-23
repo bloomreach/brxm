@@ -1,12 +1,12 @@
 /*
  * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,7 +18,6 @@ package org.onehippo.addon.frontend.gallerypicker.dialog;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,11 +27,9 @@ import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -43,13 +40,10 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
-import org.apache.wicket.util.value.IValueMap;
-import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerDialog;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -58,6 +52,7 @@ import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.yui.upload.validation.DefaultUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.hippoecm.frontend.service.ISettingsService;
@@ -76,7 +71,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class GalleryPickerDialog extends LinkPickerDialog {
-    @SuppressWarnings({"UnusedDeclaration"})
+
     private static Logger log = LoggerFactory.getLogger(GalleryPickerDialog.class);
 
     private static final ResourceReference DIALOG_SKIN = new CssResourceReference(GalleryPickerDialog.class, "GalleryPickerDialog.css");
@@ -93,8 +88,8 @@ public class GalleryPickerDialog extends LinkPickerDialog {
 
         Fragment fragment;
         if (config.getAsBoolean("enable.upload", false)) {
-            fragment = createUploadForm(config);
-        } else{
+            fragment = createUploadForm();
+        } else {
             fragment = new Fragment("fragment", "empty-fragment", this);
         }
         add(fragment);
@@ -118,12 +113,11 @@ public class GalleryPickerDialog extends LinkPickerDialog {
         }};
     }
 
-    @SuppressWarnings("unchecked")
-    private Fragment createUploadForm(final IPluginConfig config) {
+    private Fragment createUploadForm() {
         Fragment fragment = new Fragment("fragment", "upload-fragment", this);
 
         //Show available gallery types
-        typesModel = new LoadableDetachableModel<List<String>>(){
+        typesModel = new LoadableDetachableModel<List<String>>() {
             @Override
             public List<String> load() {
                 return getAllowedGalleryNodeTypes();
@@ -144,7 +138,6 @@ public class GalleryPickerDialog extends LinkPickerDialog {
         uploadField.setOutputMarkupId(true);
 
         final AjaxButton uploadButton = new AjaxButton("uploadButton", uploadForm) {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -156,7 +149,7 @@ public class GalleryPickerDialog extends LinkPickerDialog {
                         createGalleryItem(target, upload);
                     } catch (FileUploadViolationException e) {
                         final String localName = getLocalizeCodec().encode(upload.getClientFileName());
-                        List<String> errors = e.getViolationMessages();
+                        final List<String> errors = e.getViolationMessages();
                         final String errorMessage = StringUtils.join(errors, ";");
                         String errMsg = getExceptionTranslation(e, localName, errorMessage).getObject();
                         log.warn(errMsg);
@@ -175,7 +168,8 @@ public class GalleryPickerDialog extends LinkPickerDialog {
                     final String filename = upload.getClientFileName();
                     final String mimetype = upload.getContentType();
                     final InputStream istream = upload.getInputStream();
-                    WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                    final UserSession session = UserSession.get();
+                    final WorkflowManager manager = session.getWorkflowManager();
                     HippoNode node = null;
                     String localName = null;
                     try {
@@ -187,7 +181,7 @@ public class GalleryPickerDialog extends LinkPickerDialog {
                         String nodeName = getNodeNameCodec().encode(filename);
                         localName = getLocalizeCodec().encode(filename);
                         Document document = workflow.createGalleryItem(nodeName, selectedType);
-                        node = (HippoNode) (((UserSession) Session.get())).getJcrSession().getNodeByIdentifier(document.getIdentity());
+                        node = (HippoNode) session.getJcrSession().getNodeByIdentifier(document.getIdentity());
                         DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                         if (!node.getLocalizedName().equals(localName)) {
                             defaultWorkflow.localizeName(localName);
@@ -231,8 +225,6 @@ public class GalleryPickerDialog extends LinkPickerDialog {
 
         uploadButton.setOutputMarkupId(true);
         uploadField.add(new AjaxEventBehavior("onchange") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected void onEvent(AjaxRequestTarget target) {
                 uploadButton.setEnabled(true);
@@ -245,10 +237,9 @@ public class GalleryPickerDialog extends LinkPickerDialog {
 
         final DropDownChoice typeSelect = new DropDownChoice<String>(
                 "type",
-                new PropertyModel<String>(this, "selectedType"),
+                new PropertyModel<>(this, "selectedType"),
                 typesModel,
-                new TypeChoiceRenderer(this)){
-
+                new TypeChoiceRenderer(this)) {
 
             @Override
             public boolean isVisible() {
@@ -259,15 +250,12 @@ public class GalleryPickerDialog extends LinkPickerDialog {
         typeSelect.setNullValid(false).setRequired(true).setOutputMarkupId(true);
 
         typeSelect.add(new AjaxEventBehavior("onchange") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected void onEvent(AjaxRequestTarget target) {
                 //target.add(GalleryPickerDialog.this);
             }
         });
         uploadForm.add(typeSelect);
-
 
         fragment.add(uploadForm);
         //add(uploadForm);
@@ -276,16 +264,17 @@ public class GalleryPickerDialog extends LinkPickerDialog {
         RequestCycle requestCycle = RequestCycle.get();
         HttpServletRequest httpServletReq = (HttpServletRequest) requestCycle.getRequest().getContainerRequest();
         String ua = httpServletReq.getHeader("User-Agent");
-        if (ua.indexOf("Macintosh") > -1) {
-            uploadField.add(new AttributeAppender("class", true, new Model<String>("browse-button-osx"), " "));
-            uploadButton.add(new AttributeAppender("class", true, new Model<String>("upload-button-osx"), " "));
+        if (ua.contains("Macintosh")) {
+            uploadField.add(CssClass.append("browse-button-osx"));
+            uploadButton.add(CssClass.append("upload-button-osx"));
         }
         return fragment;
     }
 
-    /***
+    /**
      * Validate upload file with file upload validation service
-     * @param upload
+     *
+     * @param upload File upload model
      * @throws FileUploadViolationException
      */
     private void validate(final FileUpload upload) throws FileUploadViolationException {
@@ -297,7 +286,7 @@ public class GalleryPickerDialog extends LinkPickerDialog {
         }
 
         IValidationResult result = validator.getValidationResult();
-        if (!result.isValid()){
+        if (!result.isValid()) {
             List<String> errors = result.getViolations().stream()
                     .map(violation -> violation.getMessage().getObject())
                     .collect(Collectors.toList());
@@ -308,11 +297,6 @@ public class GalleryPickerDialog extends LinkPickerDialog {
     @Override
     public void renderHead(IHeaderResponse response) {
         response.render(CssHeaderItem.forReference(DIALOG_SKIN));
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return new ValueMap("width=855,height=565");
     }
 
     protected GalleryProcessor getGalleryProcessor() {
@@ -341,7 +325,7 @@ public class GalleryPickerDialog extends LinkPickerDialog {
         final WorkflowManager manager = UserSession.get().getWorkflowManager();
         try {
             Node folderNode = getFolderModel().getObject();
-            if (! folderNode.getSession().hasPermission(folderNode.getPath(), "jcr:write")) {
+            if (!folderNode.getSession().hasPermission(folderNode.getPath(), "jcr:write")) {
                 return Collections.emptyList();
             }
             //TODO replace shortcuts with custom workflow category(?)
@@ -359,7 +343,7 @@ public class GalleryPickerDialog extends LinkPickerDialog {
         super.onFolderSelected(model);
 
         AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if(target != null){
+        if (target != null) {
             target.add(GalleryPickerDialog.this);
         }
     }
@@ -367,7 +351,7 @@ public class GalleryPickerDialog extends LinkPickerDialog {
     @Override
     protected void onBeforeRender() {
         super.onBeforeRender();
-        if(typesModel != null && typesModel.getObject().size() >= 1) {
+        if (typesModel != null && typesModel.getObject().size() >= 1) {
             selectedType = typesModel.getObject().get(0);
         }
     }

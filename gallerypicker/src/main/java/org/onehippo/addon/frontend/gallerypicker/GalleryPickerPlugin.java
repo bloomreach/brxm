@@ -1,18 +1,19 @@
-package org.onehippo.addon.frontend.gallerypicker;/*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+/*
+ * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+package org.onehippo.addon.frontend.gallerypicker;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -56,10 +57,9 @@ import org.onehippo.addon.frontend.gallerypicker.dialog.GalleryPickerDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * The org.onehippo.addon.frontend.gallerypicker.GalleryPickerPlugin provides a Wicket dialog that allows a content editor to select
- * an image from the image gallery.
+ * The org.onehippo.addon.frontend.gallerypicker.GalleryPickerPlugin provides a Wicket dialog that allows a content
+ * editor to select an image from the image gallery.
  *
  * @author Jeroen Reijn
  */
@@ -76,7 +76,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
     private static final String HIPPO_GALLERY_STD_GALLERYSET_NODETYPE_NAME = "hippogallery:stdgalleryset";
     private static final String SUPPORTED_PATHS_KEY = "supported.paths";
     private static final CssResourceReference GALLERY_PICKER_CSS =
-            new CssResourceReference(GalleryPickerPlugin.class, GalleryPickerPlugin.class.getSimpleName()+".css");
+            new CssResourceReference(GalleryPickerPlugin.class, GalleryPickerPlugin.class.getSimpleName() + ".css");
 
     private IModel<String> valueModel;
     private JcrNodeModel currentNodeModel;
@@ -125,7 +125,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
                         }
                     }
                 }
-                InlinePreviewImage baseImagePreview = new InlinePreviewImage("baseImage", new Model<String>(path), getWidth(), getHeight());
+                InlinePreviewImage baseImagePreview = new InlinePreviewImage("baseImage", Model.of(path), getWidth(), getHeight());
                 baseImagePreview.setVisible(!Strings.isEmpty(path));
                 fragment.add(baseImagePreview);
                 break;
@@ -138,14 +138,11 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
                 addOpenButton(fragment);
 
                 remove = new AjaxLink<Void>("remove") {
-                    private static final long serialVersionUID = 6966047483487193607L;
-
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         valueModel.setObject(JCR_ROOT_NODE_UUID);
                         triggerModelChanged();
                     }
-
                 };
                 fragment.add(remove);
 
@@ -160,7 +157,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
                 fragment = new Fragment("fragment", "view", this);
         }
 
-        PropertyModel<String> previewImage = new PropertyModel<String>(this, "image.primaryUrl");
+        PropertyModel<String> previewImage = new PropertyModel<>(this, "image.primaryUrl");
         inlinePreviewImage = new InlinePreviewImage("previewImage", previewImage, getWidth(), getHeight());
         inlinePreviewImage.setVisible(isValidDisplaySelection());
         fragment.add(inlinePreviewImage);
@@ -190,20 +187,17 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
         if (node != null) {
             try {
                 Property prop = node.getProperty("hippo:docbase");
-                return new JcrPropertyValueModel<String>(-1, prop.getValue(), new JcrPropertyModel<String>(prop));
+                return new JcrPropertyValueModel<>(-1, prop.getValue(), new JcrPropertyModel<String>(prop));
             } catch (RepositoryException ex) {
                 throw new WicketRuntimeException("Property hippo:docbase is not defined.", ex);
             }
         } else {
-            return new Model<String>("");
+            return Model.of("");
         }
     }
 
     private void addOpenButton(Fragment fragment) {
         AjaxLink openButton = new AjaxLink("open") {
-
-            private static final long serialVersionUID = -7214708709986794120L;
-
             @Override
             public boolean isVisible() {
                 return isValidDisplaySelection();
@@ -221,7 +215,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
     private void open() {
         final IPluginConfig config = getPluginConfig();
         final IPluginContext context = getPluginContext();
-        final IModel<String> displayModel= getPathModel();
+        final IModel<String> displayModel = getPathModel();
         final String browserId = config.getString("browser.id", "service.browse");
         final IBrowseService browseService = context.getService(browserId, IBrowseService.class);
         final String location = config.getString("option.location", displayModel.getObject());
@@ -240,11 +234,9 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
      */
     private IDialogFactory createDialogFactory() {
         return new IDialogFactory() {
-            private static final long serialVersionUID = 1L;
 
             public AbstractDialog<String> createDialog() {
                 return new GalleryPickerDialog(getPluginContext(), getPluginConfig(), new IChainingModel<String>() {
-                    private static final long serialVersionUID = 1L;
 
                     public String getObject() {
                         return valueModel.getObject();
@@ -318,7 +310,6 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
         return valueModel.getObject();
     }
 
-
     /**
      * Check to see if the selected item is indeed a uuid of a imagesetNodeType
      *
@@ -330,7 +321,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
             return false;
         } else {
             try {
-                Node selectedNode = getJCRSession().getNodeByUUID(uuid);
+                Node selectedNode = getJCRSession().getNodeByIdentifier(uuid);
                 if (getNodeTypeName(selectedNode).equals(HIPPO_GALLERY_EXAMPLE_IMAGESET_NODETYPE_NAME) ||
                         getNodeTypeName(selectedNode).equals(HIPPO_GALLERY_STD_GALLERYSET_NODETYPE_NAME) ||
                         selectedNode.getPath().startsWith(GALLERY_ROOT_PATH) ||
@@ -361,8 +352,8 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
     }
 
     /**
-     * This function is similair to list .contains() function, but instead of a exact match it's looking if
-     * the string specified is a start in any of the array items
+     * This function is similar to list .contains() function, but instead of a exact match it's looking if the string
+     * specified is a start in any of the array items
      *
      * @param array
      * @param path
@@ -371,8 +362,9 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
     public static boolean arrayContainsStartWith(String[] array, String path) {
         if (array != null) {
             for (int i = 0; i < array.length; i++) {
-                if (path.startsWith(array[i]))
+                if (path.startsWith(array[i])) {
                     return (i >= 0);
+                }
             }
         }
         return false;
@@ -412,9 +404,6 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
 
     IModel<String> getPathModel() {
         return new LoadableDetachableModel<String>() {
-
-            private static final long serialVersionUID = 6356059402455045185L;
-
             @Override
             protected String load() {
                 return getMirrorPath();
