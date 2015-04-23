@@ -664,6 +664,11 @@
           <executions>
             <execution>
               <id>attach-sources</id>
+              <phase>DISABLE_FORKED_LIFECYCLE_MSOURCES-13</phase>
+            </execution>
+            <execution>
+              <id>attach-sources-no-fork</id>
+              <inherited>true</inherited>
               <goals>
                 <goal>jar-no-fork</goal>
               </goals>
@@ -827,6 +832,26 @@
   </build>
 
   <profiles>
+    <profile>
+      <id>release-profile</id>
+      <build>
+        <plugins>
+          <plugin>
+            <inherited>true</inherited>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources-no-fork</id>
+                <inherited>true</inherited>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <id>clean</id>
       <activation>
