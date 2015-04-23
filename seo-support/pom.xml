@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@
 
   <properties>
     <hippo.hst.version>2.29.00-SNAPSHOT</hippo.hst.version>
-
+    <hippo.commons.version>1.05.00-SNAPSHOT</hippo.commons.version>
     <lib.junit.version>4.8.2</lib.junit.version>
     <lib.easymock.version>3.0</lib.easymock.version>
   </properties>
@@ -76,6 +76,13 @@
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-client</artifactId>
       <version>${hippo.hst.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms7-commons</artifactId>
+      <version>${hippo.commons.version}</version>
       <scope>provided</scope>
     </dependency>
 
