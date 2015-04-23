@@ -79,7 +79,6 @@ module.exports = function (grunt) {
             },
             nolint: {
                 files: {
-                    '<%= build.tmp %>/css/style-test.css':   '<%= build.src %>/less/nolint/style-test.less',
                     '<%= build.tmp %>/css/wicket.css':       '<%= build.src %>/less/nolint/wicket.less',
                     '<%= build.tmp %>/css/workarounds.css':  '<%= build.src %>/less/nolint/workarounds.less'
                 }
@@ -153,8 +152,7 @@ module.exports = function (grunt) {
                 src: [
                     '<%= build.tmp %>/css/open-sans.css',
                     '<%= build.bower %>/normalize.css/normalize.css',
-                    '<%= build.bower %>/jquery-selectric/dist/selectric.css',
-                    '<%= build.tmp %>/css/style-test.css',
+                    '<%= build.bower %>/jquery-selectric/public/selectric.css',
                     '<%= build.tmp %>/css/<%= build.file %>.css',
                     '<%= build.tmp %>/css/wicket.css',
                     '<%= build.tmp %>/css/workarounds.css'
@@ -164,7 +162,7 @@ module.exports = function (grunt) {
             },
             js: {
                 src: [
-                    '<%= build.bower %>/jquery-selectric/dist/jquery.selectric.js'
+                    '<%= build.bower %>/jquery-selectric/public/jquery.selectric.js'
                 ],
                 dest: '<%= build.skin %>/js/<%= build.file %>.js',
                 nonull: true
