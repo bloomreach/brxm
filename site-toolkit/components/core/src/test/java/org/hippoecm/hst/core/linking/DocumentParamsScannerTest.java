@@ -43,14 +43,16 @@ import static org.junit.Assert.assertTrue;
 
 public class DocumentParamsScannerTest {
 
+    private final static ClassLoader classLoader = DocumentParamsScannerTest.class.getClassLoader();
+
     @Test
     public void non_existing_component_class_returns_empty_set_parameters() {
-        assertEquals(0, DocumentParamsScanner.getNames("NonExistingClass").size());
+        assertEquals(0, DocumentParamsScanner.getNames("NonExistingClass", classLoader).size());
     }
 
     @Test
     public void component_without_parametersInfo_returns_empty_set_parameters() {
-        assertEquals(0, DocumentParamsScanner.getNames(GenericHstComponent.class.getName()).size());
+        assertEquals(0, DocumentParamsScanner.getNames(GenericHstComponent.class.getName(), classLoader).size());
     }
 
     public static interface JcrPathParametersInfo {
@@ -66,7 +68,7 @@ public class DocumentParamsScannerTest {
 
     @Test
     public void jcrPath_parameter() {
-        final Set<String> names = DocumentParamsScanner.getNames(JcrPathComponent.class.getName());
+        final Set<String> names = DocumentParamsScanner.getNames(JcrPathComponent.class.getName(), classLoader);
         assertEquals(1, names.size());
         assertTrue(names.contains("news-jcrPath"));
     }
@@ -83,7 +85,7 @@ public class DocumentParamsScannerTest {
 
     @Test
     public void documentLink_parameter() {
-        final Set<String> names = DocumentParamsScanner.getNames(DocumentLinkComponent.class.getName());
+        final Set<String> names = DocumentParamsScanner.getNames(DocumentLinkComponent.class.getName(), classLoader);
         assertEquals(1, names.size());
         assertTrue(names.contains("news-documentLink"));
     }
@@ -104,7 +106,7 @@ public class DocumentParamsScannerTest {
 
     @Test
     public void jcrPath_and_documentLink_parameter_combined() {
-        final Set<String> names = DocumentParamsScanner.getNames(JcrPathDocumentLinkComponent.class.getName());
+        final Set<String> names = DocumentParamsScanner.getNames(JcrPathDocumentLinkComponent.class.getName(), classLoader);
         assertEquals(2, names.size());
         assertTrue(names.contains("news-jcrPath"));
         assertTrue(names.contains("news-documentLink"));
@@ -121,7 +123,7 @@ public class DocumentParamsScannerTest {
 
     @Test
     public void jcrPath_and_documentLink_parameter_inheritance() {
-        final Set<String> names = DocumentParamsScanner.getNames(InheritanceComponent.class.getName());
+        final Set<String> names = DocumentParamsScanner.getNames(InheritanceComponent.class.getName(), classLoader);
         assertEquals(2, names.size());
         assertTrue(names.contains("news-jcrPath"));
         assertTrue(names.contains("news-documentLink"));
@@ -130,12 +132,12 @@ public class DocumentParamsScannerTest {
 
     @Test
     public void component_scanning_cached() {
-        assertTrue(DocumentParamsScanner.getNames(JcrPathComponent.class.getName()) ==
-                DocumentParamsScanner.getNames(JcrPathComponent.class.getName()));
-        assertTrue(DocumentParamsScanner.getNames(DocumentLinkComponent.class.getName()) ==
-                DocumentParamsScanner.getNames(DocumentLinkComponent.class.getName()));
-        assertTrue(DocumentParamsScanner.getNames(JcrPathDocumentLinkComponent.class.getName()) ==
-                DocumentParamsScanner.getNames(JcrPathDocumentLinkComponent.class.getName()));
+        assertTrue(DocumentParamsScanner.getNames(JcrPathComponent.class.getName(), classLoader) ==
+                DocumentParamsScanner.getNames(JcrPathComponent.class.getName(), classLoader));
+        assertTrue(DocumentParamsScanner.getNames(DocumentLinkComponent.class.getName(), classLoader) ==
+                DocumentParamsScanner.getNames(DocumentLinkComponent.class.getName(), classLoader));
+        assertTrue(DocumentParamsScanner.getNames(JcrPathDocumentLinkComponent.class.getName(), classLoader) ==
+                DocumentParamsScanner.getNames(JcrPathDocumentLinkComponent.class.getName(), classLoader));
     }
 
     @Test
@@ -149,7 +151,7 @@ public class DocumentParamsScannerTest {
         expect(componentConfiguration.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
         replay(componentConfiguration);
 
-        final List<String> documentPaths = DocumentParamsScanner.findDocumentPathsRecursive(componentConfiguration);
+        final List<String> documentPaths = DocumentParamsScanner.findDocumentPathsRecursive(componentConfiguration, classLoader);
         assertEquals(2, documentPaths.size());
         assertTrue(documentPaths.contains("/jcrPathNews"));
         assertTrue(documentPaths.contains("/documentLinkNews"));
@@ -176,7 +178,7 @@ public class DocumentParamsScannerTest {
         expect(root.getChildren()).andReturn(ImmutableMap.of("left", child1, "right", child2)).anyTimes();
         replay(root, child1, child2);
 
-        final List<String> documentPaths = DocumentParamsScanner.findDocumentPathsRecursive(root);
+        final List<String> documentPaths = DocumentParamsScanner.findDocumentPathsRecursive(root, classLoader);
         assertEquals(2, documentPaths.size());
         assertTrue(documentPaths.contains("/jcrPathNews"));
         assertTrue(documentPaths.contains("/documentLinkNews"));
@@ -209,7 +211,7 @@ public class DocumentParamsScannerTest {
         expect(root.getChildren()).andReturn(ImmutableMap.of("left", child1, "right", child2)).anyTimes();
         replay(root, child1, child2);
 
-        final List<String> documentPaths = DocumentParamsScanner.findDocumentPathsRecursive(root);
+        final List<String> documentPaths = DocumentParamsScanner.findDocumentPathsRecursive(root, classLoader);
         assertEquals(4, documentPaths.size());
         assertTrue(documentPaths.contains("/jcrPathNews"));
         assertTrue(documentPaths.contains("/documentLinkNews"));

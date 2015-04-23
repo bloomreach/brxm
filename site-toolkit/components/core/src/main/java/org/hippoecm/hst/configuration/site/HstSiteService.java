@@ -262,7 +262,8 @@ public class HstSiteService implements HstSite {
                 return locationMapTreeComponentDocuments;
             }
             locationMapTreeComponentDocuments = new LocationMapTreeComponentDocuments(getSiteMap().getSiteMapItems(),
-                    getComponentsConfiguration(), mountSiteMapConfiguration.getMountContentPath());
+                    getComponentsConfiguration(), mountSiteMapConfiguration.getMountContentPath(),
+                    mountSiteMapConfiguration.getMountContextPath());
             return locationMapTreeComponentDocuments;
         }
     }

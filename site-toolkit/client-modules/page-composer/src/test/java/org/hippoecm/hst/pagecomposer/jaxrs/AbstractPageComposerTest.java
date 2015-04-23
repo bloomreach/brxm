@@ -55,6 +55,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.onehippo.cms7.services.ServletContextRegistry;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -71,6 +72,7 @@ public class AbstractPageComposerTest {
     protected Object hstModelMutex;
     protected MountDecorator mountDecorator;
     private HstConfigurationEventListener listener;
+    protected final MockServletContext servletContext = new MockServletContext();
 
 
     @Before
@@ -78,8 +80,9 @@ public class AbstractPageComposerTest {
         componentManager = new SpringComponentManager(getContainerConfiguration());
         componentManager.setConfigurationResources(getConfigurations());
 
-        final MockServletContext servletContext = new MockServletContext();
         servletContext.setContextPath("/site");
+        ServletContextRegistry.register(servletContext);
+
         componentManager.setServletContext(servletContext);
         componentManager.initialize();
         componentManager.start();
@@ -119,6 +122,7 @@ public class AbstractPageComposerTest {
         session.logout();
         this.componentManager.stop();
         this.componentManager.close();
+        ServletContextRegistry.unregister(servletContext);
         HstServices.setComponentManager(null);
         ModifiableRequestContextProvider.clear();
 

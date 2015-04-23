@@ -238,7 +238,7 @@ public class HstSiteConfigServlet extends HttpServlet {
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);
         ServletContextRegistry.register(config.getServletContext());
-        log.debug("Registered servlet context '{}' from {}",
+        log.debug("Registered servlet context '{}' at {}",
                 getServletContext().getContextPath(), ServletContextRegistry.class.getName());
 
         // If the forceful re-initialization option is not turned on

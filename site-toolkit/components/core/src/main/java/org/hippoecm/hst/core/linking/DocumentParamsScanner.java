@@ -46,26 +46,30 @@ public class DocumentParamsScanner {
     /**
      * Returns the document paths for <code>componentConfiguration</code> including its descendant
      * {@link HstComponentConfiguration}s. A document path is an method from the {@link ParametersInfo} that is
-     * either annotated with {@link JcrPath} or {@link DocumentLink}.
+     * either annotated with {@link JcrPath} or {@link DocumentLink}. The <code>componentConfiguration</code> java
+     * class will be loaded by the provided <code>classLoader</code>
+     *
      * @param componentConfiguration the root {@link HstComponentConfiguration} for which all document paths will be
      *                               returned. <strong>All</strong> as in that also all descendant
      *                               {@link HstComponentConfiguration}s are scanned.
      * @return {@link List} of document paths parameters for the <code>componentConfiguration</code> including all its
      * descendant {@link HstComponentConfiguration}s.
      */
-    public static List<String> findDocumentPathsRecursive(final HstComponentConfiguration componentConfiguration) {
+    public static List<String> findDocumentPathsRecursive(final HstComponentConfiguration componentConfiguration,
+                                                          final ClassLoader classLoader) {
         final ArrayList<String> populate = new ArrayList<>();
-        findDocumentPathsRecursive(componentConfiguration, populate);
+        findDocumentPathsRecursive(componentConfiguration, populate, classLoader);
         return populate;
 
     }
 
     private static void findDocumentPathsRecursive(final HstComponentConfiguration config,
-                                            final List<String> populate) {
+                                                   final List<String> populate,
+                                                   final ClassLoader classLoader) {
 
         final String componentClassName = config.getComponentClassName();
         if (StringUtils.isNotEmpty(componentClassName)) {
-            Set<String> parameterNames = DocumentParamsScanner.getNames(componentClassName);
+            Set<String> parameterNames = getNames(componentClassName, classLoader);
 
             for (String param : parameterNames) {
                 String documentPath = config.getParameter(param);
@@ -84,17 +88,20 @@ public class DocumentParamsScanner {
         }
 
         for (HstComponentConfiguration child : config.getChildren().values()) {
-            findDocumentPathsRecursive(child, populate);
+            findDocumentPathsRecursive(child, populate, classLoader);
         }
     }
 
     /**
      * @param componentClassName the class name for which the {@link ParametersInfo} is scanned
-     * @return {@link java.util.Set} of parameter names that have either {@link JcrPath} or {@link DocumentLink} annotation
-     * present. Returns empty set if and exception occurs (for example <code>componentClassName</code> cannot be instantiated) or no
+     * @return {@link java.util.Set} of parameter names that have either {@link JcrPath} or {@link DocumentLink}
+     * annotation
+     * present. Returns empty set if and exception occurs (for example <code>componentClassName</code> cannot be
+     * instantiated) or no
      * {@link ParametersInfo} is present on <code>componentClassName</code>
      */
-    public static Set<String> getNames(final String componentClassName) {
+    public static Set<String> getNames(final String componentClassName,
+                                       final ClassLoader classLoader) {
 
         Set<String> parameterNames = componentClassToDocumentParameterNamesCache.get(componentClassName);
         if (parameterNames != null) {
@@ -102,10 +109,14 @@ public class DocumentParamsScanner {
         }
 
         try {
+
             parameterNames = new HashSet<>();
-            final Class<?> compClass = Class.forName(componentClassName);
-            HstComponent component = (HstComponent) compClass.newInstance();
-            ParametersInfo parametersInfo = component.getClass().getAnnotation(ParametersInfo.class);
+
+            final Class<?> compClass = Class.forName(componentClassName, true, classLoader);
+
+            // note we *cannot* cast cross context classLoader hence cannot cast to (HstComponent) but only use Object
+            final Object componentClassInstance = compClass.newInstance();
+            ParametersInfo parametersInfo = componentClassInstance.getClass().getAnnotation(ParametersInfo.class);
 
             if (parametersInfo != null) {
                 Class<?> parametersInfoType = parametersInfo.type();
@@ -121,10 +132,16 @@ public class DocumentParamsScanner {
                     }
                 }
             }
-        }  catch (Exception e) {
-            log.warn("Exception while finding documentLink or JcrPath annotations for {}. Return empty: {}",
-                    componentClassName, e.toString());
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Exception while finding documentLink or JcrPath annotations for {}. Return empty: ",
+                        componentClassName, e);
+            } else {
+                log.warn("Exception while finding documentLink or JcrPath annotations for {}. Return empty: {}",
+                        componentClassName, e.toString());
+            }
         }
+
         componentClassToDocumentParameterNamesCache.putIfAbsent(componentClassName, parameterNames);
         return parameterNames;
     }

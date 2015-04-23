@@ -41,6 +41,7 @@ import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.onehippo.cms7.services.ServletContextRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -67,13 +68,16 @@ public abstract class AbstractSpringTestCase
     protected final static Logger log = LoggerFactory.getLogger(AbstractSpringTestCase.class);
     protected ComponentManager componentManager;
 
+    protected final MockServletContext servletContext = new MockServletContext();
+
     @Before
     public void setUp() throws Exception {
         componentManager = new SpringComponentManager(getContainerConfiguration());
         componentManager.setConfigurationResources(getConfigurations());
 
-        final MockServletContext servletContext = new MockServletContext();
         servletContext.setContextPath("/site");
+        ServletContextRegistry.register(servletContext);
+
         componentManager.setServletContext(servletContext);
         componentManager.initialize();
         componentManager.start();
@@ -84,6 +88,7 @@ public abstract class AbstractSpringTestCase
     public void tearDown() throws Exception {
         this.componentManager.stop();
         this.componentManager.close();
+        ServletContextRegistry.unregister(servletContext);
         HstServices.setComponentManager(null);
         // always clear HstRequestContext in case it is set on a thread local
         ModifiableRequestContextProvider.clear();

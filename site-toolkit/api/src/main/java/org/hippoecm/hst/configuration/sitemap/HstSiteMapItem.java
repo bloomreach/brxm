@@ -169,7 +169,7 @@ public interface HstSiteMapItem {
 
     /**
      * <p>
-     * When having more sitemapitem as sibblings, for example foo.xml, foo.html and foo.rss, you might not want all three being used for linkrewriting: Even worse, if
+     * When having more sitemapitem as siblings, for example foo.xml, foo.html and foo.rss, you might not want all three being used for linkrewriting: Even worse, if
      * they all three have the same {@link #getRelativeContentPath()}, we cannot choose which one is the one you want, so, one of the items is used. When configuring
      * a SiteMapItem to return <code>true</code> for isExcludedForLinkRewriting(), you can exclude the item to be used for linkrewriting. Thus, setting the .rss and .xml
      * version to <code>true</code> will make sure that linkrewriting returns you the .html links.

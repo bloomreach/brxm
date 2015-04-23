@@ -1061,7 +1061,8 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     subResolver = getSubLocationMapResolver(
                             resolverProperties.preferredItem,
                             tryMount.getHstSite().getComponentsConfiguration(),
-                            tryMount.getContentPath());
+                            tryMount.getContentPath(),
+                            tryMount.getContextPath());
 
                     subResolver.setRepresentsDocument(resolverProperties.representsDocument);
                     subResolver.setResolvedSiteMapItem(resolverProperties.resolvedSiteMapItem);
@@ -1213,12 +1214,13 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
 
     private LocationMapResolver getSubLocationMapResolver(final HstSiteMapItem preferredItem,
                                                           final HstComponentsConfiguration componentsConfiguration,
-                                                          final String mountContentPath) {
+                                                          final String mountContentPath,
+                                                          final String contextPath) {
         SubLocationMapTreesHolder subLocationMapTreesHolder = loadedSubLocationMapTreesHolder.get(preferredItem);
         if(subLocationMapTreesHolder == null) {
             subLocationMapTreesHolder = new SubLocationMapTreesHolder(
                     new LocationMapTreeSiteMap(preferredItem),
-                    new LocationMapTreeComponentDocuments(preferredItem, componentsConfiguration, mountContentPath)
+                    new LocationMapTreeComponentDocuments(preferredItem, componentsConfiguration, mountContentPath, contextPath)
             );
 
             loadedSubLocationMapTreesHolder.put(preferredItem, subLocationMapTreesHolder);

@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.servlet.ServletContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
@@ -28,6 +30,7 @@ import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.util.PathUtils;
+import org.onehippo.cms7.services.ServletContextRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,35 +43,43 @@ public class LocationMapTreeComponentDocuments implements LocationMapTree {
 
     public LocationMapTreeComponentDocuments(final List<HstSiteMapItem> siteMapItems,
                                              final HstComponentsConfiguration configuration,
-                                             final String mountContentPath) {
+                                             final String mountContentPath,
+                                             final String contextPath) {
         if (configuration == null) {
             return;
         }
         for (HstSiteMapItem siteMapItem : siteMapItems) {
-            add2LocationMap(siteMapItem, configuration, mountContentPath);
+            add2LocationMap(siteMapItem, configuration, mountContentPath, getClassLoader(contextPath));
         }
         optimize();
     }
 
     public LocationMapTreeComponentDocuments(final HstSiteMapItem siteMapItem,
                                              final HstComponentsConfiguration configuration,
-                                             final String mountContentPath) {
+                                             final String mountContentPath,
+                                             final String contextPath) {
         if (configuration == null) {
             return;
         }
-        add2LocationMap(siteMapItem, configuration, mountContentPath);
+        add2LocationMap(siteMapItem, configuration, mountContentPath, getClassLoader(contextPath));
         optimize();
     }
 
 
     private void add2LocationMap(final HstSiteMapItem siteMapItem,
                                  final HstComponentsConfiguration configuration,
-                                 final String mountContentPath) {
+                                 final String mountContentPath,
+                                 final ClassLoader classLoader) {
+
+        if (classLoader == null) {
+            log.info("ClassLoader null. return without populating location map.");
+            return;
+        }
 
         if (siteMapItem.isExcludedForLinkRewriting()) {
             log.debug("'{}' will not be used for linkrewriting as is configured to be excluded for linkrewriting.", siteMapItem);
             for (HstSiteMapItem child : siteMapItem.getChildren()) {
-                add2LocationMap(child, configuration, mountContentPath);
+                add2LocationMap(child, configuration, mountContentPath, classLoader);
             }
             return;
         }
@@ -82,7 +93,7 @@ public class LocationMapTreeComponentDocuments implements LocationMapTree {
             } else {
 
                 // find all extra document paths possibly stored in the components belonging to the page of this siteMapItem
-                final List<String> documentPaths = DocumentParamsScanner.findDocumentPathsRecursive(cc);
+                final List<String> documentPaths = DocumentParamsScanner.findDocumentPathsRecursive(cc, classLoader);
 
                 final Properties siteMapItemParameters = new Properties();
                 for (Map.Entry<String, String> param : siteMapItem.getParameters().entrySet()) {
@@ -119,7 +130,7 @@ public class LocationMapTreeComponentDocuments implements LocationMapTree {
         }
 
         for (HstSiteMapItem child : siteMapItem.getChildren()) {
-            add2LocationMap(child, configuration, mountContentPath);
+            add2LocationMap(child, configuration, mountContentPath, classLoader);
         }
     }
 
@@ -138,6 +149,22 @@ public class LocationMapTreeComponentDocuments implements LocationMapTree {
 
     public LocationMapTreeItem getTreeItem(final String name) {
         return children.get(name);
+    }
+
+
+    /**
+     * @return the {@link ClassLoader} for the webapp belonging to <code>contextPath</code> and <code>null</code> if none found.
+     * If no class loader is found, the LocationMapTreeComponentDocuments cannot be populated and returns with empty
+     * Map<String, LocationMapTreeItem> children
+     */
+    private ClassLoader getClassLoader(final String contextPath) {
+        final ServletContext context = ServletContextRegistry.getContext(contextPath);
+        if (context == null) {
+            log.warn("Cannot populate LocationMapTreeComponentDocuments because cannot find a ClassLoader for contextPath '{}'",
+                    contextPath);
+            return null;
+        }
+        return context.getClassLoader();
     }
 
 

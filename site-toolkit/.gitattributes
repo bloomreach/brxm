@@ -201,17 +201,7 @@ api/src/main/java/org/hippoecm/hst/core/linking/RewriteContextException.java -te
 api/src/main/java/org/hippoecm/hst/core/linking/RewriteContextResolver.java -text
 api/src/main/java/org/hippoecm/hst/core/linking/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/package-info.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/core/parameters/Color.java -text
-api/src/main/java/org/hippoecm/hst/core/parameters/DocumentLink.java -text
-api/src/main/java/org/hippoecm/hst/core/parameters/DropDownList.java -text
-api/src/main/java/org/hippoecm/hst/core/parameters/EmptyPropertyEditor.java -text
-api/src/main/java/org/hippoecm/hst/core/parameters/FieldGroup.java -text
-api/src/main/java/org/hippoecm/hst/core/parameters/FieldGroupList.java -text
 api/src/main/java/org/hippoecm/hst/core/parameters/HstValueType.java -text
-api/src/main/java/org/hippoecm/hst/core/parameters/ImageSetPath.java -text
-api/src/main/java/org/hippoecm/hst/core/parameters/JcrPath.java -text
-api/src/main/java/org/hippoecm/hst/core/parameters/Parameter.java -text
-api/src/main/java/org/hippoecm/hst/core/parameters/ParametersInfo.java -text
 api/src/main/java/org/hippoecm/hst/core/parameters/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/request/ComponentConfiguration.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/request/ContextCredentialsProvider.java svneol=native#text/plain

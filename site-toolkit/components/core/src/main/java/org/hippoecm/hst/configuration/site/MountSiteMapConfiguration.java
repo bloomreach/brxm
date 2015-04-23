@@ -46,6 +46,7 @@ public class MountSiteMapConfiguration {
     private final String[] defaultResourceBundleIds;
     private int hashCode;
     private final String mountContentPath;
+    private final String mountContextPath;
 
     public MountSiteMapConfiguration(Mount mount) {
         parameters = mount.getParameters();
@@ -59,6 +60,7 @@ public class MountSiteMapConfiguration {
         defaultResourceBundleIds = mount.getDefaultResourceBundleIds();
         hashCode = computeHashCode();
         mountContentPath = mount.getContentPath();
+        mountContextPath = mount.getContextPath();
     }
 
     public Map<String, String> getParameters() {
@@ -99,6 +101,10 @@ public class MountSiteMapConfiguration {
 
     public String getMountContentPath() {
         return mountContentPath;
+    }
+
+    public String getMountContextPath() {
+        return mountContextPath;
     }
 
     @Override
@@ -142,6 +148,9 @@ public class MountSiteMapConfiguration {
         if (mountContentPath != null ? !mountContentPath.equals(that.mountContentPath) : that.mountContentPath != null) {
             return false;
         }
+        if (mountContextPath != null ? !mountContextPath.equals(that.mountContextPath) : that.mountContextPath != null) {
+            return false;
+        }
 
         return true;
     }
@@ -162,6 +171,7 @@ public class MountSiteMapConfiguration {
         result = 31 * result + schemeNotMatchingResponseCode;
         result = 31 * result + (defaultResourceBundleIds != null ? Arrays.hashCode(defaultResourceBundleIds) : 0);
         result = 31 * result + (mountContentPath != null ? mountContentPath.hashCode() : 0);
+        result = 31 * result + (mountContextPath != null ? mountContextPath.hashCode() : 0);
         return result;
     }
 }
