@@ -4,11 +4,11 @@ The channel manager allows a webmaster to manage multiple channels inside the CM
 Prerequisites
 -------------
 
- - Java 7
+ - Java 8
  - Maven 3.x
  - Git (http://git-scm.com)
- - NodeJS (http://nodejs.org/) 0.10+
- - Node Package Manager (http://npmjs.org)
+ - NodeJS (http://nodejs.org/) 0.12+
+ - Node Package Manager (comes with node or http://npmjs.org)
  - Grunt (http://gruntjs.org)
  - Bower (http://bower.io)
 
@@ -16,34 +16,11 @@ Grunt and Bower can be installed with Node Package Manager:
 
  $ sudo npm install -g grunt-cli bower
 
+        npm install -g grunt-cli bower //WINDOWS USERS
+
 If Bower fails to download zipped dependencies, make sure it uses decompress-zip >= 0.0.4.
 (e.g. check the file /usr/lib/node_modules/bower/node_modules/decompress-zip/package.json,
 and reinstall Bower if decompress-zip is too old).
-
------------------------------------------
-Windows specific preparation instructions
------------------------------------------
-
-You can automate the installation of NodeJS and NPM using [Chocolatey package manager]
-(https://chocolatey.org).
-
-The package for Node.js can be installed using (this will also install NPM):
-
-    C:\> choco install nodejs.install
-
-__Note:__ Due to a [bug] (http://jira.codehaus.org/browse/MEXEC-137) in the exec-maven-plugin the Maven build of the
-API module will fail as the exec-maven-plugin is unable to find the __grunt__ and __bower__ commands. To fix this do
-the following:
-
-* open folder `C:\Users\USER\AppData\Roaming\npm`
-* copy __grunt.cmd__ to __grunt.bat__
-* copy __bower.cmd__ to __bower.bat__
-
-More information can be found [here] (http://stackoverflow.com/questions/22393785/exec-maven-plugin-says-cannot-run-specified-program-even-though-it-is-on-the-pa/22395703#22395703).
-
-Installation of GIT is also possible using Chocolatey:
-
-    C:\> choco install git.install
 
 
 -----
@@ -61,6 +38,8 @@ Build without testing:
 Build with snapshot dependencies:
 
  $ mvn clean install -Dhippo.snapshots
+
+   mvn clean install "-Dhippo.snapshots" //WINDOWS USERS
 
  Note: only needed when the project refers to SNAPSHOT dependencies!
 
