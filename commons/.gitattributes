@@ -2,6 +2,16 @@
 /LICENSE -text
 /NOTICE -text
 /pom.xml -text
+src/main/java/org/hippoecm/hst/core/parameters/Color.java -text
+src/main/java/org/hippoecm/hst/core/parameters/DocumentLink.java -text
+src/main/java/org/hippoecm/hst/core/parameters/DropDownList.java -text
+src/main/java/org/hippoecm/hst/core/parameters/EmptyPropertyEditor.java -text
+src/main/java/org/hippoecm/hst/core/parameters/FieldGroup.java -text
+src/main/java/org/hippoecm/hst/core/parameters/FieldGroupList.java -text
+src/main/java/org/hippoecm/hst/core/parameters/ImageSetPath.java -text
+src/main/java/org/hippoecm/hst/core/parameters/JcrPath.java -text
+src/main/java/org/hippoecm/hst/core/parameters/Parameter.java -text
+src/main/java/org/hippoecm/hst/core/parameters/ParametersInfo.java -text
 src/main/java/org/hippoecm/hst/security/AuthenticationProvider.java -text
 src/main/java/org/hippoecm/hst/security/Role.java -text
 src/main/java/org/hippoecm/hst/security/TransientRole.java -text
