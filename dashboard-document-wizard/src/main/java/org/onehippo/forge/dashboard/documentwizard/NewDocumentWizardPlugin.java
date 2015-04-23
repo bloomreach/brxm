@@ -326,11 +326,10 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                         String newNodeName = getNodeNameCodec().encode(nameField.getValue());
                         String newLocalizedName = nameField.getValue();
 
-                        if (folder.hasNode(newNodeName)) {
-                            showError(form, ERROR_SNS_NODE_EXISTS, newNodeName);
-                        }
                         if (existedLocalizedName(folder, newLocalizedName)) {
                             showError(form, ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
+                        } else if (folder.hasNode(newNodeName)) {
+                            showError(form, ERROR_SNS_NODE_EXISTS, newNodeName);
                         }
                     } catch (RepositoryException | RemoteException | WorkflowException e) {
                         log.error("validation error", e);
