@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 .hippo-dialog-picker .hippo-modal-feedback {
-    max-height: 65px;
-    overflow-y: auto;
+  max-height: 65px;
+  overflow-y: auto;
 }
 
+.hippo-dialog-picker .upload-wrapper {
+  padding: 8px 16px;
+}

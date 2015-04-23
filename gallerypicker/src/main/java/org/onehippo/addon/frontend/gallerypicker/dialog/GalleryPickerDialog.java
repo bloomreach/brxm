@@ -30,6 +30,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
+import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -55,14 +58,13 @@ import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.yui.upload.validation.DefaultUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
-import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.StringCodec;
-import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.gallery.GalleryWorkflow;
@@ -110,6 +112,13 @@ public class GalleryPickerDialog extends LinkPickerDialog {
     protected FeedbackPanel newFeedbackPanel(final String id) {
         return new FeedbackPanel(id) {{
             setOutputMarkupId(true);
+            IFeedbackMessageFilter filter = new ContainerFeedbackMessageFilter(GalleryPickerDialog.this) {
+                @Override
+                public boolean accept(final FeedbackMessage message) {
+                    return !message.isRendered();
+                }
+            };
+            setFilter(filter);
         }};
     }
 
@@ -178,7 +187,8 @@ public class GalleryPickerDialog extends LinkPickerDialog {
 
                         //TODO replace shortcuts with custom workflow category(?)
                         GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow("shortcuts", folderNode);
-                        String nodeName = getNodeNameCodec().encode(filename);
+
+                        String nodeName = getNodeNameCodec(folderNode).encode(filename);
                         localName = getLocalizeCodec().encode(filename);
                         Document document = workflow.createGalleryItem(nodeName, selectedType);
                         node = (HippoNode) session.getJcrSession().getNodeByIdentifier(document.getIdentity());
@@ -309,16 +319,12 @@ public class GalleryPickerDialog extends LinkPickerDialog {
         return new DefaultGalleryProcessor();
     }
 
-    private StringCodec getNodeNameCodec() {
-        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID, ISettingsService.class);
-        StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
-        return stringCodecFactory.getStringCodec("encoding.node");
+    private StringCodec getNodeNameCodec(final Node node) {
+        return CodecUtils.getNodeNameCodec(getPluginContext(), node);
     }
 
     private StringCodec getLocalizeCodec() {
-        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID, ISettingsService.class);
-        StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
-        return stringCodecFactory.getStringCodec("encoding.display");
+        return CodecUtils.getDisplayNameCodec(getPluginContext());
     }
 
     protected List<String> getAllowedGalleryNodeTypes() {
