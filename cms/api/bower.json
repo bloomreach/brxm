@@ -3,7 +3,7 @@
   "version": "0",
   "private": true,
   "devDependencies": {
-      "jquery-selectric": "1.8.4",
+      "jquery-selectric": "1.9.2",
       "normalize.css": "3.0.2",
       "open-sans-fontface": "1.1.0",
       "retina.js": "1.3.0",

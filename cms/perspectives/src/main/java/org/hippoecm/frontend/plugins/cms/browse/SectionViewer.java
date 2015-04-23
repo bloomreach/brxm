@@ -188,7 +188,11 @@ public class SectionViewer extends Panel implements ICardView {
         super.renderHead(container);
 
         final IHeaderResponse response = container.getHeaderResponse();
-        final String selectricOptions = "{ optionsItemBuilder: '<span class=\"{value}\">{text}</span>' }";
+        final String selectricOptions =
+            "{ " +
+                "optionsItemBuilder: '<span class=\"{value}\">{text}</span>'," +
+                "labelBuilder: '<span title=\"{text}\">{text}</span>'" +
+            "}";
         final String selectricInit = String.format("jQuery('#%s').selectric(%s);", select.getMarkupId(), selectricOptions);
         response.render(OnDomReadyHeaderItem.forScript(selectricInit));
     }
