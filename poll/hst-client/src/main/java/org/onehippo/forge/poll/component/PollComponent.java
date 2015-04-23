@@ -19,6 +19,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.content.annotations.Persistable;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -30,44 +31,25 @@ import org.hippoecm.hst.core.parameters.ParametersInfo;
 @ParametersInfo(type = PollComponentInfo.class)
 public class PollComponent extends BaseHstComponent {
 
-    private final PollProvider pollProvider = new PollProvider(this);
-    
+    private final PollProvider pollProvider = new PollProvider();
+
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response)
-            throws HstComponentException {      
+            throws HstComponentException {
         super.doBeforeRender(request, response);
-
-        pollProvider.doBeforeRender(request, response);
+        PollComponentInfo pollComponentInfo = getComponentParametersInfo(request);
+        pollProvider.doBeforeRender(request, response, pollComponentInfo);
     }
-    
+
+    @Persistable
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-        Session persistableSession = null;
         try {
-            persistableSession = getPersistableSession(request);
-            pollProvider.doAction(request, response, persistableSession);
+            PollComponentInfo pollComponentInfo = getComponentParametersInfo(request);
+            pollProvider.doAction(request, response, pollComponentInfo);
         } catch (RepositoryException e) {
             throw new HstComponentException(e);
-        } finally {
-            if (persistableSession != null) {
-                persistableSession.logout();
-            }
         }
-    }
-
-    /**
-     * In order to obtain the benefits from the parameterInfo annotation (i.e. the parameter configuration pop-up
-     * in the CMS), we override the getParameter function. Parameter names are kept internal to the PollProvider.
-     *
-     * @param name    the name of the parameter
-     * @param request the HST request, representing the poll component instance (including parameters) of interest.
-     * @return        the value of the parameter
-     * @deprecated  use PollComponentInfo pi = getComponentParametersInfo(request) instead and then pi.getPollDataPath(), etc
-     */
-    @Deprecated
-    @Override
-    public String getParameter(String name, HstRequest request) {
-        return PollProvider.getParameter(name, (PollComponentInfo)getComponentParametersInfo(request));
     }
 
 }

@@ -23,7 +23,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.Cookie;
 
-import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
@@ -77,52 +76,23 @@ public class PollProvider {
 
     private static final String POLL_DATA_NODE_PREVIEW = "preview";
 
-    protected final BaseHstComponent component;
-
     // search limit for poll documents, arbitrarily initialized
     private int queryLimit = 100;
 
-    /**
-     * Constructor
-     */
-    public PollProvider(BaseHstComponent component) {
-        super();
-
-        this.component = component;
-    }
-
-    /**
-     * Get a parameter by name from a PollComponentInfo object, normally called by the HST component delegating to this
-     * provider.
-     */
-    public static String getParameter(String name, PollComponentInfo componentInfo) {
-
-        // Retrieve the parameters from the PollComponentInfo
-        String value = null;
-
-        if (name.equals(PARAM_DATA_PATH)) {
-            value = componentInfo.getPollDataPath();
-        } else if (name.equals(PARAM_DOCS_PATH)) {
-            value = componentInfo.getPollDocsPath();
-        } else if (name.equals(PARAM_DOC_POLL_COMPOUND_NAME)) {
-            value = componentInfo.getPollCompoundName();
-        } else if (name.equals(PARAM_DOCS_CLASS)) {
-            value = componentInfo.getPollDocsClass();
-        }
-
-        return value;
-    }
-
     /** Setting for query limit */
     @SuppressWarnings("unused")
-    public void setQueryLimit(int queryLimit) {
+    public void setQueryLimit(final int queryLimit) {
         this.queryLimit = queryLimit;
     }
 
     /**
      * Retrieve vote parameters and cast the vote, saving it in repository.
      */
-    public void doAction(HstRequest request, HstResponse response, Session persistableSession) {
+    public void doAction(final HstRequest request,
+                         final HstResponse response,
+                         final PollComponentInfo pollComponentInfo) throws RepositoryException{
+
+        Session persistableSession = request.getRequestContext().getSession();
 
         final String optionId = preventXSS(request.getParameter(POLL_OPTION));
         if (optionId == null) {
@@ -147,7 +117,7 @@ public class PollProvider {
             return;
         }
 
-        boolean success = this.castVote(request, persistableSession, documentPath, optionId);
+        boolean success = castVote(request, persistableSession, documentPath, optionId, pollComponentInfo);
 
         // preserve selected option to make it available during doBeforeRender.
         response.setRenderParameter(POLL_OPTION, optionId);
@@ -157,20 +127,20 @@ public class PollProvider {
     /***
      * Get the current poll document and put it on request by attribute "pollDocument".
      */
-    public void doBeforeRender(HstRequest request, HstResponse response) {
+    public void doBeforeRender(final HstRequest request, final HstResponse response, final PollComponentInfo pollComponentInfo) {
 
         // prevent backbutton from showing form again
         response.setHeader("Cache-Control","no-cache,no-store,max-age=0");
         response.setHeader("Pragma","no-cache");
         response.setDateHeader("Expires", 0);
 
-        final HippoDocumentBean pollDocument = this.getActivePollDocument(request);
+        final HippoDocumentBean pollDocument = getActivePollDocument(request, pollComponentInfo);
         if (pollDocument != null) {
 
             request.setAttribute(POLL_DOCUMENT, pollDocument);
 
-            final Node pollDataNode = getPollDataNode(request, pollDocument);
-            request.setAttribute(POLL_VOTES, getPollVotesBean(request, pollDocument, pollDataNode));
+            final Node pollDataNode = getPollDataNode(request, pollDocument, pollComponentInfo);
+            request.setAttribute(POLL_VOTES, getPollVotesBean(request, pollDocument, pollDataNode, pollComponentInfo));
 
             // value stored?
             final String persistedValue = getPersistentValue(request, pollDocument.getName());
@@ -213,9 +183,9 @@ public class PollProvider {
      * Get the first document of a searched list of documents containing active
      * poll compounds.
      */
-    public HippoDocumentBean getActivePollDocument(HstRequest request) {
+    public HippoDocumentBean getActivePollDocument(final HstRequest request, final PollComponentInfo pollComponentInfo) {
 
-        final List<HippoDocumentBean> pollDocuments = searchActivePollDocuments(request);
+        final List<HippoDocumentBean> pollDocuments = searchActivePollDocuments(request, pollComponentInfo);
 
         if ((pollDocuments != null) && (pollDocuments.size() > 0)) {
             return pollDocuments.get(0);
@@ -226,15 +196,17 @@ public class PollProvider {
 
     /**
      * Cast a vote to an option of a poll compound in a poll document, and persist it.
-     *
-     * @param request the HST request
+     *  @param request the HST request
      * @param persistableSession JCR session with write rights
      * @param pollDocumentPath the poll document's path, relative from content root
      * @param optionId the id of the option to vote
+     * @param pollComponentInfo
      */
-    public boolean castVote(HstRequest request, Session persistableSession, String pollDocumentPath, String optionId) {
+    public boolean castVote(final HstRequest request, final Session persistableSession,
+                            final String pollDocumentPath, final String optionId,
+                            final PollComponentInfo pollComponentInfo) {
 
-        final Node votesNode = createPollDataVotesNode(request, persistableSession, pollDocumentPath, optionId);
+        final Node votesNode = createPollDataVotesNode(request, persistableSession, pollDocumentPath, optionId, pollComponentInfo);
 
         if (votesNode != null) {
 
@@ -271,12 +243,12 @@ public class PollProvider {
      *
      * @return the node where to store votes, or null if the node could not be created.
      */
-    protected Node createPollDataVotesNode(HstRequest request, Session persistableSession,
-                                    String pollDocumentPath, String optionId) {
+    protected Node createPollDataVotesNode(final HstRequest request, final Session persistableSession,
+                                           final String pollDocumentPath, final String optionId, final PollComponentInfo pollComponentInfo) {
 
         LockHelper lockHelper = new LockHelper();
 
-        final String baseDataPath = getBaseDataPath(request);
+        final String baseDataPath = getBaseDataPath(request, pollComponentInfo);
 
         try {
             final String pollDataPath = getPollDataPath(baseDataPath, pollDocumentPath, request, persistableSession.getRootNode());
@@ -338,7 +310,8 @@ public class PollProvider {
      * @param request HST request
      * @param rootNode JCR root node
      */
-    protected String getPollDataPath(final String baseDataPath, final String pollDocumentPath, final HstRequest request, final Node rootNode) throws RepositoryException {
+    protected String getPollDataPath(final String baseDataPath, final String pollDocumentPath,
+                                     final HstRequest request, final Node rootNode) throws RepositoryException {
 
         // Before 1.08.01, the structure was [base] / [relativepath]
         final String oldStylePath = baseDataPath + "/" + stripSlash(pollDocumentPath);
@@ -354,9 +327,10 @@ public class PollProvider {
     /**
      * Get the node where to save votes for a poll; return null if it doesn't exist.
      */
-    protected Node getPollDataNode(HstRequest request, HippoDocumentBean pollDocument) {
+    protected Node getPollDataNode(final HstRequest request, final HippoDocumentBean pollDocument,
+                                   final PollComponentInfo pollComponentInfo) {
 
-        final String baseDataPath = getBaseDataPath(request);
+        final String baseDataPath = getBaseDataPath(request, pollComponentInfo);
         final String pollDocumentPath = getPollDocumentPath(pollDocument, request);
 
         try {
@@ -380,8 +354,8 @@ public class PollProvider {
     }
 
     /** Get the configured or default base data path where to store votes */
-    protected String getBaseDataPath(HstRequest request) {
-        String baseDataPath = component.getComponentParameter(PARAM_DATA_PATH);
+    protected String getBaseDataPath(HstRequest request, final PollComponentInfo pollComponentInfo) {
+        String baseDataPath = pollComponentInfo.getPollDataPath();
         if (baseDataPath == null || baseDataPath.equals("")) {
             baseDataPath = PARAM_DATA_PATH_DEFAULT;
         }
@@ -413,7 +387,8 @@ public class PollProvider {
     }
 
     /** Persist the value that was voted for. */
-    protected void setPersistentValue(HstRequest request, HstResponse response, String pollDocumentName, String value) {
+    protected void setPersistentValue(final HstRequest request, final HstResponse response,
+                                      final String pollDocumentName, final String value) {
 
         try {
             String name = getCookieName(request, pollDocumentName);
@@ -427,10 +402,10 @@ public class PollProvider {
     }
 
     /** Helper function to keep cookie name in sync between read and write ops. */
-    protected String getCookieName(HstRequest request, String pollDocumentName) {
+    protected String getCookieName(final HstRequest request, final String pollDocumentName) {
 
         String cookieName = POLL_COOKIE_NAME_PREFIX + pollDocumentName.replace(" ", ".");
-        if (component.isPreview(request)) {
+        if (request.getRequestContext().isCmsRequest()) {
             cookieName += ".preview";
         }
 
@@ -441,7 +416,7 @@ public class PollProvider {
      * Get the poll document path, relative from site content root.
      * This is also where to store it's data from the polldata directory.
      */
-    protected  String getPollDocumentPath(HippoDocumentBean pollDocument, HstRequest request) {
+    protected  String getPollDocumentPath(final HippoDocumentBean pollDocument, final HstRequest request) {
         try {
             final String handlePath = stripSlash(pollDocument.getNode().getParent().getPath());
             final String contentBasePath = stripSlash(request.getRequestContext().getSiteContentBasePath());
@@ -495,9 +470,10 @@ public class PollProvider {
     }
 
     /** Get the bean class of the poll documents to search for. */
-    protected Class<? extends HippoDocumentBean> getPollDocumentClass(HstRequest request) {
+    protected Class<? extends HippoDocumentBean> getPollDocumentClass(final HstRequest request,
+                                                                      final PollComponentInfo pollComponentInfo) {
 
-        String beanClass = component.getComponentParameter(PARAM_DOCS_CLASS);
+        String beanClass = pollComponentInfo.getPollDocsClass();
         if (beanClass != null && !beanClass.equals("")) {
             try {
                 return (Class<? extends HippoDocumentBean>) Class.forName(beanClass);
@@ -511,8 +487,9 @@ public class PollProvider {
     }
 
     /** Get the field name of the poll compound within the document. */
-    protected String getPollCompoundName(HstRequest request) {
-        final String pollCompoundName = component.getComponentParameter(PARAM_DOC_POLL_COMPOUND_NAME);
+    protected String getPollCompoundName(final HstRequest request,
+                                         final PollComponentInfo pollComponentInfo) {
+        final String pollCompoundName = pollComponentInfo.getPollCompoundName();
         return (pollCompoundName == null || pollCompoundName.equals(""))
                 ? PARAM_DOC_POLL_COMPOUND_NAME_DEFAULT : pollCompoundName;
     }
@@ -521,9 +498,10 @@ public class PollProvider {
      * Search poll documents that have the property 'poll:active' of the poll
      * compound node of a document set to 'true'.
      */
-    protected List<HippoDocumentBean> searchActivePollDocuments(HstRequest request) {
+    protected List<HippoDocumentBean> searchActivePollDocuments(final HstRequest request,
+                                                                final PollComponentInfo pollComponentInfo) {
 
-        String docsPath = component.getComponentParameter(PARAM_DOCS_PATH);
+        String docsPath = pollComponentInfo.getPollDocsPath();
         if (docsPath == null || docsPath.equals("")) {
             logger.error("Parameter " + PARAM_DOCS_PATH + " must be configured");
             return null;
@@ -534,8 +512,8 @@ public class PollProvider {
         if (scope == null) {
             return null;
         }
-        final  Class<? extends HippoDocumentBean> beanClass = getPollDocumentClass(request);
-        final String pollCompoundName = getPollCompoundName(request);
+        final  Class<? extends HippoDocumentBean> beanClass = getPollDocumentClass(request, pollComponentInfo);
+        final String pollCompoundName = getPollCompoundName(request, pollComponentInfo);
 
         try {
             final HstQuery query = request.getRequestContext().getQueryManager().createQuery(scope, beanClass);
@@ -566,11 +544,12 @@ public class PollProvider {
 
 
     /** Get votes that are stored in repository as a bean for the view. */
-    protected PollVotesBean getPollVotesBean(HstRequest request, HippoDocumentBean pollDocument, Node pollDataNode) {
+    protected PollVotesBean getPollVotesBean(final HstRequest request, final HippoDocumentBean pollDocument,
+                                             final Node pollDataNode, final PollComponentInfo pollComponentInfo) {
 
         PollVotesBean bean = new PollVotesBean();
 
-        final String pollCompoundName = getPollCompoundName(request);
+        final String pollCompoundName = getPollCompoundName(request, pollComponentInfo);
         final Poll pollCompound = pollDocument.getBean(pollCompoundName);
 
         if (pollCompound == null) {
@@ -603,7 +582,7 @@ public class PollProvider {
         return bean;
     }
 
-    protected static String stripSlash(String string) {
+    protected static String stripSlash(final String string) {
         if (string.startsWith("/")) {
             return string.substring(1);
         }
