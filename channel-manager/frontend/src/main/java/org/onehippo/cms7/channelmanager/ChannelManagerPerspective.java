@@ -101,7 +101,7 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
         super.render(target);
         if (siteIsUp) {
             if (isActive()) {
-                rootPanel.render(target, this.isActivated);
+                rootPanel.render(target);
             } else {
                 deactivate();
             }
