@@ -8,7 +8,7 @@
       <sv:value>hst:containeritemcomponent</sv:value>
     </sv:property>
     <sv:property sv:name="hst:componentclassname" sv:type="String">
-      <sv:value>org.onehippo.forge.poll.component.PollComponent</sv:value>
+      <sv:value>org.onehippo.forge.poll.component.PollDocumentComponent</sv:value>
     </sv:property>
     <sv:property sv:name="hst:iconpath" sv:type="String">
       <sv:value>resources/poll/catalog-poll.png</sv:value>

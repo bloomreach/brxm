@@ -15,5 +15,7 @@ addon-repository/src/main/resources/types/compound/option.xml svneol=native#text
 addon-repository/src/main/resources/types/compound/poll.xml svneol=native#text/plain
 addon-repository/src/main/resources/types/polldocument.xml svneol=native#text/plain
 hst-client/pom.xml svneol=native#text/plain
+hst-client/src/main/java/org/onehippo/forge/poll/component/PollDocumentComponent.java -text
+hst-client/src/main/java/org/onehippo/forge/poll/component/PollDocumentComponentInfo.java -text
 hst-client/src/main/resources/META-INF/web-resources/poll/catalog-poll.png -text svneol=unset#image/png
 /pom.xml svneol=native#text/plain
