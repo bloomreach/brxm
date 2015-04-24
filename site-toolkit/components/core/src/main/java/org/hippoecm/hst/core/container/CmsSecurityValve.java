@@ -19,10 +19,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.SignatureException;
 
-import javax.jcr.Credentials;
-import javax.jcr.LoginException;
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
+import javax.jcr.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.sso.CredentialCipher;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_USER_ID_ATTR;
@@ -121,12 +119,17 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                     ((HstMutableRequestContext) requestContext).setSession(jcrSession);
                 }
                 context.invokeNext();
+
+                if (jcrSession != null && jcrSession.hasPendingChanges()) {
+                    log.warn("Request to {} triggered changes in JCR session that were not saved - they will be lost", servletRequest.getPathInfo());
+                }
             } catch (LoginException e) {
                 // the credentials of the current CMS user have changed, so reset the current authentication
                 log.info("Credentials of CMS user '{}' are no longer valid, resetting its HTTP session and starting the SSO handshake again.", getCurrentCmsUser(httpSession));
                 resetAuthentication(httpSession);
                 authenticate(servletRequest, servletResponse, requestContext, httpSession);
-                return;
+            } catch (RepositoryException e) {
+                throw new ContainerException(e);
             } finally {
                 if (jcrSession != null) {
                     jcrSession.logout();

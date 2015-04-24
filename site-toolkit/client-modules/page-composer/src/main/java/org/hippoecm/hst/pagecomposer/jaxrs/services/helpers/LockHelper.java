@@ -57,20 +57,34 @@ public class LockHelper {
      * if the <code>node</code> is already locked for the user <code>node.getSession()</code> this method does not do
      * anything. If there is no lock yet, a lock for the current session userID gets set on the node. If there is
      * already a lock by another user a ClientException is thrown,
+     *
      * @param node the node to lock
      * @param versionStamp if > 0, it will be used as a requirement that the <code>node</code> has the same stamp
      */
     public void acquireLock(final Node node, final long versionStamp) throws RepositoryException {
-        final Node unLockableNode = getUnLockableNode(node, true, true);
+        acquireLock(node, node.getSession().getUserID(), versionStamp);
+    }
+
+    /**
+     * if the <code>node</code> is already locked for the <code>user</code> this method does not do
+     * anything. If there is no lock yet, a lock for the user gets set on the node. If there is
+     * already a lock by another user a ClientException is thrown,
+     *
+     * @param node the node to lock
+     * @param lockFor the user to lock the node for
+     * @param versionStamp if > 0, it will be used as a requirement that the <code>node</code> has the same stamp
+     */
+    public void acquireLock(final Node node, final String lockFor, final long versionStamp) throws RepositoryException {
+        final Node unLockableNode = getUnLockableNode(node, lockFor, true, true);
         if (unLockableNode != null) {
             final String message = String.format("Node '%s' cannot be locked due to someone else who has the lock (possibly a descendant or ancestor that is locked).", node.getPath());
             throw new ClientException(message, ClientError.ITEM_ALREADY_LOCKED, getParameterMap(unLockableNode));
         }
-        doLock(node, versionStamp);
+        doLock(node, lockFor, versionStamp);
     }
 
     /**
-     * @see {@link #acquireLock(javax.jcr.Node, long)} only for the acquireSimpleLock there is no need to check descendant or
+     * @see {@link #acquireLock(javax.jcr.Node, String, long)} only for the acquireSimpleLock there is no need to check descendant or
      * ancestors. It is only the node itself that needs to be checked. This is for example the case for sitemenu nodes
      * where there is no fine-grained locking for the items below it
      * @param node the node to lock
@@ -82,10 +96,10 @@ public class LockHelper {
             final String message = String.format("Node '%s' cannot be locked due to someone else who has the lock.", node.getPath());
             throw new ClientException(message, ClientError.ITEM_ALREADY_LOCKED, getParameterMap(node));
         }
-        doLock(node, versionStamp);
+        doLock(node, node.getSession().getUserID(), versionStamp);
     }
 
-    private void doLock(final Node node, final long versionStamp) throws RepositoryException {
+    private void doLock(final Node node, String lockFor, final long versionStamp) throws RepositoryException {
         if (node.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT)) {
             // due historical reasons, the HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT does not need
             // editable mixin
@@ -101,20 +115,19 @@ public class LockHelper {
             return;
         }
 
-        final Session session = node.getSession();
         if (versionStamp != 0 && node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED)) {
             long existingStamp = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED).getDate().getTimeInMillis();
             if (existingStamp != versionStamp) {
                 Calendar existing = Calendar.getInstance();
                 existing.setTimeInMillis(existingStamp);
                 String msg = String.format("Node '%s' has been modified wrt versionStamp. Cannot acquire lock now for user '%s'.",
-                        node.getPath() , session.getUserID());
+                        node.getPath() , lockFor);
                 log.info(msg);
                 throw new ClientException(msg, ClientError.ITEM_CHANGED);
             }
         }
-        log.info("Node '{}' gets a lock for user '{}'.", node.getPath(), session.getUserID());
-        node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, session.getUserID());
+        log.info("Node '{}' gets a lock for user '{}'.", node.getPath(), lockFor);
+        node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, lockFor);
         if (!node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
             node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, Calendar.getInstance());
         }
@@ -133,14 +146,18 @@ public class LockHelper {
      * itself. If there are no unLockable nodes wrt <code>node</code>, then <code>node</code> is returned
      */
     Node getUnLockableNode(final Node node, boolean checkAncestors, boolean checkDescendants) throws RepositoryException {
-        if (!canOwn(node)) {
+        return getUnLockableNode(node, node.getSession().getUserID(), checkAncestors, checkDescendants);
+    }
+
+    private Node getUnLockableNode(final Node node, final String user, boolean checkAncestors, boolean checkDescendants) throws RepositoryException {
+        if (!canLock(node, user)) {
             return node;
         }
         if (checkAncestors) {
             final Node root = node.getSession().getRootNode();
             Node ancestor = node;
             while (!ancestor.isSame(root)) {
-                if (!canOwn(ancestor)) {
+                if (!canLock(ancestor, user)) {
                     return ancestor;
                 }
                 ancestor = ancestor.getParent();
@@ -148,7 +165,7 @@ public class LockHelper {
         }
         if (checkDescendants) {
             for (Node child : new NodeIterable(node.getNodes())) {
-                Node unLockableDescendant = getUnLockableNode(child, false, true);
+                Node unLockableDescendant = getUnLockableNode(child, user, false, true);
                 if (unLockableDescendant != null) {
                     return unLockableDescendant;
                 }
@@ -158,13 +175,12 @@ public class LockHelper {
     }
 
     /**
-     * returns <code>true</code> if the {@link Session} tied to <code>node</code> can lock or already contains a lock
-     * on <code>node</code>.  Can also be used to determine if a node can be unlocked.
+     * returns <code>true</code> if the user can lock or already contains a lock on <code>node</code>.
      */
-    public boolean canOwn(final Node node) throws RepositoryException {
+    private boolean canLock(final Node node, final String user) throws RepositoryException {
         if (node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
             final String lockedBy = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
-            return node.getSession().getUserID().equals(lockedBy);
+            return user.equals(lockedBy);
         }
         return true;
     }

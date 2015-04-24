@@ -45,15 +45,21 @@ public class ContainerItemHelperTest {
     private LockHelper lockHelper;
     private PageComposerContextService service;
     private List<Object> mocks = new ArrayList<>();
+    private Session session;
 
     private ContainerItemHelper helper;
 
     @Before
     public void setUp() {
-        ModifiableRequestContextProvider.set(new MockHstRequestContext());
         helper = new ContainerItemHelper();
         helper.setLockHelper(lockHelper = mock(LockHelper.class));
         helper.setPageComposerContextService(service = mock(PageComposerContextService.class));
+        session = mock(Session.class);
+        expect(session.getUserID()).andReturn("the-user").anyTimes();
+
+        MockHstRequestContext requestContext = new MockHstRequestContext();
+        requestContext.setSession(session);
+        ModifiableRequestContextProvider.set(requestContext);
     }
 
     @After
@@ -63,8 +69,6 @@ public class ContainerItemHelperTest {
 
     @Test
     public void testLock_calls_lockhelper() throws RepositoryException {
-
-        final Session session = mock(Session.class);
         expect(session.getRootNode()).andReturn(mock(Node.class)).anyTimes();
 
         final Node node = mock(Node.class);
@@ -75,12 +79,12 @@ public class ContainerItemHelperTest {
         expect(node.isNodeType(NODETYPE_HST_CONTAINERCOMPONENT)).andReturn(true).anyTimes();
 
         expect(service.getRequestConfigNodeById("id", NODETYPE_HST_CONTAINERITEMCOMPONENT, session)).andReturn(node);
-        lockHelper.acquireLock(node, 0L);
+        lockHelper.acquireLock(node, "the-user", 0L);
         expectLastCall().once();
 
         replay(mocks.toArray());
 
-        helper.acquireLock("id", 0L, session);
+        helper.acquireLock("id", "the-user", 0L);
 
         verify(lockHelper);
     }
@@ -89,12 +93,11 @@ public class ContainerItemHelperTest {
     public void testLock_throws_if_id_is_not_found() throws RepositoryException {
 
         final String id = "id";
-        final Session session = null;
         expect(service.getRequestConfigNodeById(id, NODETYPE_HST_CONTAINERITEMCOMPONENT, session))
                 .andThrow(new ItemNotFoundException());
         replay(mocks.toArray());
 
-        helper.acquireLock(id, 0L, session);
+        helper.acquireLock(id, "the-user", 0L);
     }
 
 
