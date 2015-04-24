@@ -326,6 +326,7 @@
           afterrender: fixComboLeftPadding,
           select: function (combo, comboRecord) {
             record.set('value', comboRecord.get('path') || defaultValue);
+            record.commit();
           }
         }
       });
@@ -471,6 +472,7 @@
           afterrender: fixComboLeftPadding,
           select: function (combo, comboRecord) {
             record.set('value', comboRecord.get('id') || defaultValue);
+            record.commit();
           }
         }
       });
