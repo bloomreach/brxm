@@ -19,9 +19,6 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:component</sv:value>
   </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>e6a3e9bc-af48-4fba-b513-c987b13a0695</sv:value>
-  </sv:property>
   <sv:property sv:name="hst:referencecomponent" sv:type="String">
     <sv:value>hst:abstractpages/base</sv:value>
   </sv:property>

@@ -23,9 +23,6 @@
     <sv:value>mix:referenceable</sv:value>
     <sv:value>hippotranslation:translated</sv:value>
   </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>c48aff49-0ef7-4808-8a6e-9b1c52f88ad8</sv:value>
-  </sv:property>
   <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
     <sv:value>new-blog-document</sv:value>
     <sv:value>new-blog-folder</sv:value>

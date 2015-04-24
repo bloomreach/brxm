@@ -45,9 +45,6 @@
       <sv:value>mix:referenceable</sv:value>
       <sv:value>hippotranslation:translated</sv:value>
     </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>9aefb6fb-8407-41b3-8c8e-b8ab058e6721</sv:value>
-    </sv:property>
     <sv:property sv:name="{{namespace}}:role" sv:type="String">
       <sv:value>Owner</sv:value>
     </sv:property>

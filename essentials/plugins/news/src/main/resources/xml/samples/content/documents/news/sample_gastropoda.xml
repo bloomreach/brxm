@@ -26,7 +26,6 @@
   <sv:property sv:name="jcr:uuid" sv:type="String">
     <sv:value>aeda2bcd-b21d-4ead-a2e6-c64a2ca051c8</sv:value>
   </sv:property>
-
   <sv:node sv:name="the-gastropoda-news">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>{{namespace}}:newsdocument</sv:value>
