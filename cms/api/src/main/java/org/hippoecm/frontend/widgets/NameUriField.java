@@ -151,6 +151,9 @@ public class NameUriField extends WebMarkupContainer {
     }
 
     private String encode(final String text) {
+        if (text == null) {
+            return null;
+        }
         return codecModel.getObject().encode(text);
     }
 
