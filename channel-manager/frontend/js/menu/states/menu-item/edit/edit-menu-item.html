@@ -59,7 +59,7 @@
     <div class="form-group has-feedback"
          data-ng-class="{
             'has-success': form.title.$dirty && !EditMenuItemCtrl.isSaving.title && form.title.$valid && EditMenuItemCtrl.isSaved.title,
-            'has-error': form.title.$dirty && !EditMenuItemCtrl.isSaving.title && (form.title.$invalid || !EditMenuItemCtrl.isSaved.title)
+            'has-error': (form.title.$dirty || form.title.$touched) && !EditMenuItemCtrl.isSaving.title && (form.title.$invalid || !EditMenuItemCtrl.isSaved.title)
         }">
       <label for="hippo.channel.menu.menuItem.edit.title">{{ 'LABEL' | translate }}</label>
       <input type="text" name="title" class="form-control" id="hippo.channel.menu.menuItem.edit.title"
@@ -145,14 +145,13 @@
             </button>
           </div>
         </span>
-
       </div>
     </div>
     <div class="form-group has-feedback"
          data-ng-show="MenuItemCtrl.selectedMenuItem.linkType === 'EXTERNAL'"
          data-ng-class="{
             'has-success': form.url.$dirty && !EditMenuItemCtrl.isSaving.link && form.url.$valid && EditMenuItemCtrl.isSaved.link,
-            'has-error': (!form.url.$pristine) && (!EditMenuItemCtrl.isSaving.link && (form.url.$invalid || !EditMenuItemCtrl.isSaved.link))
+            'has-error': (form.url.$dirty || form.url.$touched) && (!EditMenuItemCtrl.isSaving.link && (form.url.$invalid || !EditMenuItemCtrl.isSaved.link))
         }">
       <label for="hippo.channel.menu.menuItem.edit.url">{{ 'EXTERNAL_LINK' | translate }}</label>
       <div class="input-group">
@@ -162,9 +161,9 @@
                data-ng-required="true"
                data-show-focus="MenuItemCtrl.selectedMenuItem.linkType == 'EXTERNAL'"
                data-ng-blur="EditMenuItemCtrl.updateLinkDestination(form)"
-               data-tooltip="{{ EditMenuItemCtrl.fieldFeedbackMessage.link }}"
+               data-tooltip="{{ EditMenuItemCtrl.fieldFeedbackMessage.url }}"
                data-tooltip-trigger="show"
-               data-hippo-channel-tooltip-show="form.url.$invalid"
+               data-hippo-channel-tooltip-show="form.url.$invalid && MenuItemCtrl.selectedMenuItem.linkType === 'EXTERNAL'"
                data-tooltip-placement="top">
         <span class="form-control-feedback" data-ng-show="form.url.$dirty">
           <hippo-icon ng-if="EditMenuItemCtrl.isSaving.link"

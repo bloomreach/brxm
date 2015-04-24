@@ -36,17 +36,6 @@
 
         $scope.$watch(function () {
           return $scope.form;
-        }, function () {
-          var deregisterNewItemListener = $rootScope.$on('new-menu-item', afternewItem);
-
-          function afternewItem () {
-            $scope.MenuItemCtrl.selectedMenuItem.title = '';
-            $scope.MenuItemCtrl.selectedMenuItem.isNew = true;
-
-            FormStateService.setDirty(true);
-            deregisterNewItemListener();
-          }
-
           if ($stateParams.selectedDocumentPath) {
             $scope.MenuItemCtrl.selectedMenuItem.link = $scope.MenuItemCtrl.selectedMenuItem.sitemapLink = $stateParams.selectedDocumentPath;
             $scope.EditMenuItemCtrl.linkToFocus = 'sitemapLink';
@@ -122,16 +111,14 @@
         $scope.$watch(function () {
           return $scope.form.url.$error.required;
         }, function () {
-          if (!$scope.form.url.$pristine) {
-            $scope.EditMenuItemCtrl.fieldFeedbackMessage.link = translate('EXTERNAL_LINK_REQUIRED');
-          }
+          $scope.EditMenuItemCtrl.fieldFeedbackMessage.url = translate('EXTERNAL_LINK_REQUIRED');
         });
 
         $scope.$watch(function () {
           return $scope.form.url.$valid;
         }, function (value) {
           if (value) {
-            $scope.EditMenuItemCtrl.fieldFeedbackMessage.link = '';
+            $scope.EditMenuItemCtrl.fieldFeedbackMessage.url = '';
           }
         });
 

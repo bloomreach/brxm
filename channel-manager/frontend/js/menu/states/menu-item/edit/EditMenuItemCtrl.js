@@ -110,10 +110,6 @@
         EditMenuItemCtrl.fieldFeedbackMessage = {};
 
         EditMenuItemCtrl.saveTitle = function (form) {
-          if ($scope.MenuItemCtrl.selectedMenuItem.isNew) {
-            form.title.$dirty = true;
-            delete $scope.MenuItemCtrl.selectedMenuItem.isNew;
-          }
           if (form.title.$dirty && form.title.$valid) {
             EditMenuItemCtrl.saveSelectedMenuItem('title');
           }
