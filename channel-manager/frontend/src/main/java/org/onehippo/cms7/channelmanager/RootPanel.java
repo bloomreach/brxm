@@ -38,8 +38,6 @@ import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
 import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.onehippo.cms7.channelmanager.widgets.ExtLinkPicker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.layout.BorderLayout;
 import org.wicketstuff.js.ext.util.ExtClass;
@@ -53,7 +51,6 @@ import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.HST_CONFIG_E
 public class RootPanel extends ExtPanel {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(RootPanel.class);
 
     private static final PackageResourceReference BREADCRUMB_ARROW = new PackageResourceReference(RootPanel.class, "breadcrumb-arrow.png");
 
@@ -87,7 +84,7 @@ public class RootPanel extends ExtPanel {
     private boolean redraw = false;
 
     @ExtProperty
-    private Integer activeItem = 0;
+    private int activeItem = 0;
 
     @ExtProperty
     @SuppressWarnings("unused")
@@ -100,7 +97,7 @@ public class RootPanel extends ExtPanel {
         js.append("} catch(exception) { console.log('Error initializing channel manager. '+exception); } ");
     }
 
-    public RootPanel(final IPluginContext context, final IPluginConfig config, String id) {
+    public RootPanel(final IPluginContext context, final IPluginConfig config, final String id) {
         super(id);
 
         final IPluginConfig channelListConfig = config.getPluginConfig(CONFIG_CHANNEL_LIST);
@@ -165,18 +162,28 @@ public class RootPanel extends ExtPanel {
         redraw = true;
     }
 
-    public void render(PluginRequestTarget target) {
+    public void render(final PluginRequestTarget target, final boolean showBreadcrumb) {
         pageEditor.render(target);
         channelStore.update();
-        if (redraw) {
-            JSONObject update = new JSONObject();
-            try {
-                update.put("activeItem", activeItem);
-            } catch (JSONException e) {
-                throw new RuntimeException("could not populate property updates", e);
+        if (target != null) {
+            if (redraw) {
+                selectActiveItem(target);
+                redraw = false;
             }
-            target.appendJavaScript("Ext.getCmp('rootPanel').update(" + update.toString() + ");");
-            redraw = false;
+            updateBreadcrumb(showBreadcrumb, target);
+        }
+    }
+
+    private void selectActiveItem(final PluginRequestTarget target) {
+        final String script = String.format("Ext.getCmp('rootPanel').selectCard(%s);", activeItem);
+        target.appendJavaScript(script);
+    }
+
+    private void updateBreadcrumb(final boolean showBreadcrumb, final PluginRequestTarget target) {
+        if (showBreadcrumb) {
+            target.appendJavaScript("Ext.getCmp('rootPanel').showBreadcrumb();");
+        } else {
+            target.appendJavaScript("Ext.getCmp('rootPanel').hideBreadcrumb();");
         }
     }
 

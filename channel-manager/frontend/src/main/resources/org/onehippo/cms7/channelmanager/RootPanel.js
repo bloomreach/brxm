@@ -77,8 +77,8 @@
 
         // only show the channel manager breadcrumb when channel manager is active
         this._initBreadcrumbAnimation();
-        Hippo.Events.subscribe('channel-manager-activated', this._showBreadcrumb, this);
-        Hippo.Events.subscribe('channel-manager-deactivated', this._hideBreadcrumb, this);
+        Hippo.Events.subscribe('channel-manager-activated', this.showBreadcrumb, this);
+        Hippo.Events.subscribe('channel-manager-deactivated', this.hideBreadcrumb, this);
       }, this, {single: true});
 
       // get all child components
@@ -126,9 +126,14 @@
     },
 
     _initBreadcrumbAnimation: function () {
-      var toolbar = this.toolbar,
-        toolbarEl = toolbar.getEl(),
-        toolbarWidth;
+      var toolbar, toolbarEl, toolbarWidth;
+
+      if (Ext.isDefined(this.hideBreadcrumbTask) && Ext.isDefined(this.showBreadcrumbTask)) {
+        return;
+      }
+
+      toolbar = this.toolbar;
+      toolbarEl = toolbar.getEl();
 
       this.hideBreadcrumbTask = new Ext.util.DelayedTask(function () {
         toolbarWidth = toolbarEl.getWidth();
@@ -146,7 +151,6 @@
       this.showBreadcrumbTask = new Ext.util.DelayedTask(function () {
         toolbar.show();
         if (toolbarWidth) {
-          toolbarEl = toolbar.getEl();
           toolbarEl.animate(
             {
               width: {to: toolbarWidth}
@@ -156,17 +160,21 @@
               toolbarEl.setWidth('auto');
             }
           );
+        } else {
+          toolbarEl.setWidth('auto');
         }
       }, this);
     },
 
-    _hideBreadcrumb: function () {
+    hideBreadcrumb: function () {
+      this._initBreadcrumbAnimation();
       this.showBreadcrumbTask.cancel();
       this.toolbar.getEl().removeClass('hippo-breadcrumb-active');
       this.hideBreadcrumbTask.delay(500);
     },
 
-    _showBreadcrumb: function () {
+    showBreadcrumb: function () {
+      this._initBreadcrumbAnimation();
       this.hideBreadcrumbTask.cancel();
       this.toolbar.getEl().addClass('hippo-breadcrumb-active');
       this.showBreadcrumbTask.delay(0);
@@ -197,10 +205,6 @@
       } else {
         this.layout.setActiveItem(0);
       }
-    },
-
-    update: function (config) {
-      this.selectCard(config.activeItem);
     },
 
     showChannelManager: function () {
