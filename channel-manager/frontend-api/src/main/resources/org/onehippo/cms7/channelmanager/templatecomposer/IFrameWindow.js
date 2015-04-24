@@ -56,6 +56,9 @@
                         var messageBus = self.getIFramePanel().iframeToHost;
 
                         messageBus.subscribe('close-reply', function() {
+                            //CMS7-9067 make sure angular is properly destroyed.
+                            Ext.getCmp(self.iframePanelId).setLocation('about:blank');
+
                             isClosing = true;
                             self.close();
                             isClosing = false;

@@ -153,9 +153,7 @@
           // prevent close, process all menu changes first and then trigger the close ourselves
           event.preventDefault();
           MenuService.processAllChanges().then(function () {
-            setTimeout(function() {
-             ContainerService.performClose();
-            }, 500);
+            ContainerService.performClose();
           });
         });
       }
