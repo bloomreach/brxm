@@ -57,6 +57,7 @@
                                 ng-options="option.name for option in imageSets"
                                 data-placeholder="Select existing image set"
                                 width="'100%'">
+                            <option value=""></option><!-- Necessary due to ESSENTIALS-677 -->
                         </select>
                     </div>
                     <div class="col-sm-4"></div>
@@ -141,7 +142,6 @@
                                             ng-model="selectedImageModel.upscaling"
                                             ng-options="v.value as v.description for v in upscalingValues"
                                             width="'100%'">
-                                        <option value=""></option>
                                     </select>
                                 </div>
                                 <div class="col-sm-2"></div>
@@ -153,7 +153,6 @@
                                             ng-model="selectedImageModel.optimize"
                                             ng-options="o.value as o.description for o in optimizeValues"
                                             width="'100%'">
-                                        <option value=""></option>
                                     </select>
                                 </div>
                                 <div class="col-sm-2"></div>
@@ -165,7 +164,6 @@
                                             ng-model="selectedImageModel.compression"
                                             ng-options="c.value as c.description for c in compressionValues"
                                             width="'100%'">
-                                        <option value=""></option>
                                     </select>
                                 </div>
                                 <div class="col-sm-2"></div>

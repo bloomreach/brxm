@@ -61,6 +61,7 @@
                       ng-options="type.name for type in documentTypes"
                       data-placeholder="Choose a document type..."
                       width="'100%'">
+                  <option value=""></option><!-- Necessary due to ESSENTIALS-677 -->
               </select>
             </div>
             <div class="col-sm-4 form-control-static">
@@ -137,7 +138,9 @@
                           ng-selected="copyChoice"
                           ng-options="choice.name for choice in copyChoices"
                           data-placeholder="Select field to copy"
-                          width="'100%'"></select>
+                          width="'100%'">
+                      <option value=""></option><!-- Necessary due to ESSENTIALS-677 -->
+                  </select>
                 </p>
               </div>
             </div>

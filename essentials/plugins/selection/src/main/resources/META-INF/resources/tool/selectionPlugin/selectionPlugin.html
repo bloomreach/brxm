@@ -65,6 +65,7 @@
                                             ng-options="type.name for type in documentTypes | filter:showDocument"
                                             data-placeholder="Choose a document type..."
                                             width="'100%'">
+                                        <option value=""></option><!-- Necessary due to ESSENTIALS-677 -->
                                     </select>
                                 </div>
                             </div>
@@ -151,6 +152,7 @@
                                             ng-options="valueListAsOption(list) for list in valueLists"
                                             data-placeholder="Choose a value list..."
                                             width="'100%'">
+                                        <option value=""></option><!-- Necessary due to ESSENTIALS-677 -->
                                     </select>
                                 </div>
                             </div>

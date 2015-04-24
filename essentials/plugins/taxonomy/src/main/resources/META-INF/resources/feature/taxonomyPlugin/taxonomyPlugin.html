@@ -87,6 +87,7 @@
                                       ng-options="taxonomy.name for taxonomy in taxonomies"
                                       data-placeholder="Select a taxonomy"
                                       width="'100%'">
+                                    <option value=""></option><!-- Necessary due to ESSENTIALS-677 -->
                                 </select>
                             </td>
                             <td>

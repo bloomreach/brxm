@@ -63,6 +63,7 @@
                                 ng-options="option.fullName for option in documentTypes"
                                 data-placeholder="Document type"
                                 width="'100%'">
+                            <option value=""></option><!-- Necessary due to ESSENTIALS-677 -->
                         </select>
                     </div>
                 </div>
@@ -88,6 +89,7 @@
                                 ng-options="option for option in classificationTypes"
                                 data-placeholder="Type"
                                 width="'100%'">
+                            <option value=""></option><!-- Necessary due to ESSENTIALS-677 -->
                         </select>
                     </div>
                 </div>
@@ -106,7 +108,7 @@
                                 ng-options="option.value for option in valueLists"
                                 data-placeholder="Valuelist document"
                                 width="'100%'">
-                            <option value=""></option>
+                            <option value=""></option><!-- Necessary due to ESSENTIALS-677 -->
                         </select>
                     </div>
                 </div>
