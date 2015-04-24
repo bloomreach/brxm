@@ -25,7 +25,7 @@
       <sv:value>nl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Sleutelwoorden wolk</sv:value>
+      <sv:value>Woordenwolk</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
