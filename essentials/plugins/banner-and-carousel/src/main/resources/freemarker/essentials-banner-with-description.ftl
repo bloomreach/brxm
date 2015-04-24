@@ -2,7 +2,7 @@
 
 <#-- @ftlvariable name="document" type="org.example.beans.Banner" -->
 <#if document??>
-    <div class="row">
+    <div>
         <figure>
             <a href="<@hst.link hippobean=document.link />">
                 <img src="<@hst.link hippobean=document.image />" alt="${document.title?html}"/>
