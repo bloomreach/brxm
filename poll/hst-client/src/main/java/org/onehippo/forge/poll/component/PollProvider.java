@@ -63,12 +63,8 @@ public class PollProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(PollProvider.class);
 
-    private static final String PARAM_DOCS_PATH = "poll-docsPath";
-    private static final String PARAM_DATA_PATH = "poll-dataPath";
     private static final String PARAM_DATA_PATH_DEFAULT = "polldata";
-    private static final String PARAM_DOCS_CLASS = "poll-docsClass";
     private static final Class<? extends HippoDocumentBean> PARAM_DOCS_CLASS_DEFAULT = PollDocument.class;
-    private static final String PARAM_DOC_POLL_COMPOUND_NAME = "poll-pollCompoundName";
     private static final String PARAM_DOC_POLL_COMPOUND_NAME_DEFAULT = "poll:poll";
 
     private static final int POLL_COOKIE_MAX_AGE = 3600*24*365;
@@ -503,7 +499,7 @@ public class PollProvider {
 
         String docsPath = pollComponentInfo.getPollDocsPath();
         if (docsPath == null || docsPath.equals("")) {
-            logger.error("Parameter " + PARAM_DOCS_PATH + " must be configured");
+            logger.error("Parameter 'poll-docsPath' must be configured");
             return null;
         }
 
