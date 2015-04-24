@@ -26,9 +26,6 @@ module.exports = function (grunt) {
     require('time-grunt')(grunt);
 
     var buildConfig = require('./build.config.js');
-    function classPathExists() {
-        return fs.existsSync(buildConfig.target + '/classes/');
-    }
 
     grunt.initConfig({
 
@@ -150,7 +147,7 @@ module.exports = function (grunt) {
             },
             css: {
                 src: [
-                    '<%= build.tmp %>/css/open-sans.css',
+                    '<%= build.tmp %>/css/open-sans.csssss',
                     '<%= build.bower %>/normalize.css/normalize.css',
                     '<%= build.bower %>/jquery-selectric/public/selectric.css',
                     '<%= build.tmp %>/css/<%= build.file %>.css',
