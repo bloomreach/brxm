@@ -39,8 +39,10 @@ import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.junit.Before;
+import org.onehippo.cms7.services.ServletContextRegistry;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
 
 /**
  * <p>
@@ -63,6 +65,18 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
         this.hstManager = getComponent(HstManager.class.getName());
         this.siteMapMatcher = getComponent(HstSiteMapMatcher.class.getName());
         this.hstURLFactory = getComponent(HstURLFactory.class.getName());
+
+        if (ServletContextRegistry.getContext("/site2") == null) {
+            ServletContextRegistry.register(new MockServletContext() {
+                public String getContextPath() {
+                    return "/site2";
+                }
+
+                public ClassLoader getClassLoader() {
+                    return AbstractBeanTestCase.class.getClassLoader();
+                }
+            });
+        }
     }
 
     protected ObjectConverter getObjectConverter() {
