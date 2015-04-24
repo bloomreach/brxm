@@ -16,59 +16,175 @@
 /* Console CSS */
 /* ================================================ */
 
-#lt { border-right: 1px solid #666666; border-left: 1px solid #666666; border-bottom: 1px solid #666666; }
+#lt {
+  border-right: 1px solid #666666;
+  border-left: 1px solid #666666;
+  border-bottom: 1px solid #666666;
+}
 
 /* TODO: this will probably break after the work on the CMS root plugin, replace #layout-doc with .layout-doc should be enough */
-#layout-doc > div.yui-layout-unit-center > div.yui-layout-wrap { border-right: 1px solid #666666; border-bottom: 1px solid #666666; }
+#layout-doc > div.yui-layout-unit-center > div.yui-layout-wrap {
+  border-right: 1px solid #666666;
+  border-bottom: 1px solid #666666;
+}
 
-.hippo-root{font-size: 12px; background: white;}
+.hippo-root {
+  font-size: 12px;
+  background: white;
+}
 
-.hippo-root em, .hippo-root strong {font-weight: bold;}
+.hippo-root em, .hippo-root strong {
+  font-weight: bold;
+}
 
 .hippo-root .pending-changes p {
   overflow: auto;
   height: 298px;
 }
 
-.hippo-console-menu-advanced{position: absolute; top: 0; right: 150px;}
-.hippo-console-save{position: absolute; top: 37px; right: 5px;}
-.hippo-console-breadcrumbs{font-weight: normal; background: #32629b; padding-top: 10px; padding-bottom: 10px; padding-left: 563px; margin-top: 10px; height: 21px;}
+.hippo-console-menu-advanced {
+  position: absolute;
+  top: 0;
+  right: 150px;
+}
 
-.hippo-console-tree-add {position: absolute; top: 38px; left: 5px;}
-.hippo-console-tree-add a{cursor: pointer}
-.hippo-console-tree-actions {width: 333px; height: 18px; position: absolute; top: 72px; background: white; left: 21px; border-bottom: 1px solid #666666; padding: 3px;}
+.hippo-console-save {
+  position: absolute;
+  top: 37px;
+  right: 5px;
+}
 
-.hippo-console-breadcrumbs{margin-top: 30px;}
+.hippo-console-breadcrumbs {
+  font-weight: normal;
+  background: #32629b;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 563px;
+  margin-top: 10px;
+  height: 21px;
+}
 
-.hippo-console-tree .hippo-tree{ font-size: 13px; }
+.hippo-console-tree-add {
+  position: absolute;
+  top: 38px;
+  left: 5px;
+}
+
+.hippo-console-tree-add a {
+  cursor: pointer
+}
+
+.hippo-console-tree-actions {
+  width: 333px;
+  height: 18px;
+  position: absolute;
+  top: 72px;
+  background: white;
+  left: 21px;
+  border-bottom: 1px solid #666666;
+  padding: 3px;
+}
+
+.hippo-console-breadcrumbs {
+  margin-top: 30px;
+}
+
+.hippo-console-tree .hippo-tree {
+  font-size: 13px;
+}
 
 /* Styling for tree in Dialog */
-.hippo-window .hippo-console-tree .hippo-tree{ padding-top: 0; padding-bottom: 5px; }
-.hippo-window label { display: block; }
+.hippo-window .hippo-console-tree .hippo-tree {
+  padding-top: 0;
+  padding-bottom: 5px;
+}
 
-.hippo-window .hippo-console-tree { float: left; width: 479px; border-right: 1px solid #e3e3e3; height: 270px; overflow: auto; border: 1px solid #e3e3e3;}
-.hippo-window .hippo-console-tree .hippo-tree div.wicket-tree {width: 463px;}
-.hippo-window .hippo-console-tree .hippo-tree div.wicket-tree {width: 100%;}
+.hippo-window label {
+  display: block;
+}
 
-.hippo-window .window-details { width:450px; float: left; padding-top: 10px; padding-left: 10px; clear:left}
+.hippo-window .hippo-console-tree {
+  float: left;
+  width: 479px;
+  border-right: 1px solid #e3e3e3;
+  height: 270px;
+  overflow: auto;
+  border: 1px solid #e3e3e3;
+}
 
-.hippo-window .xml-dump span.activated p { height: 270px; display:block; overflow: auto; border: 1px solid #666; border-bottom:0; padding-left: 3px;}
-.hippo-window .xml-input textarea { width: 820px; height: 165px; margin-top: 5px; }
-.hippo-window .import-properties p { margin-top: 5px; }
+.hippo-window .hippo-console-tree .hippo-tree div.wicket-tree {
+  width: 463px;
+}
 
-.hippo-window .cnd-export-dump span { height: 317px; display:block; overflow: auto; border: 1px solid #666; border-bottom:0; padding-left: 3px; padding-bottom: 3px;}
+.hippo-window .hippo-console-tree .hippo-tree div.wicket-tree {
+  width: 100%;
+}
 
-.hippo-window form .message { margin-bottom: 10px; font-size: 13px;}
-.hippo-window form fieldset {margin-bottom: 5px;}
+.hippo-window .window-details {
+  width: 450px;
+  float: left;
+  padding-top: 10px;
+  padding-left: 10px;
+  clear: left
+}
 
-.hippo-console-tree .wicket-tree a{color: #666666}
-.hippo-console-tree .wicket-tree a:hover{color: #32629b}
-.hippo-console .wicket-tree *{font-family: monospace}
-.hippo-console .wicket-tree div.row-selected span {font-weight: normal}
+.hippo-window .xml-dump span.activated p {
+  height: 270px;
+  display: block;
+  overflow: auto;
+  border: 1px solid #666666;
+  border-bottom: 0;
+  padding-left: 3px;
+}
+
+.hippo-window .xml-input textarea {
+  width: 820px;
+  height: 165px;
+  margin-top: 5px;
+}
+
+.hippo-window .import-properties p {
+  margin-top: 5px;
+}
+
+.hippo-window .cnd-export-dump span {
+  height: 317px;
+  display: block;
+  overflow: auto;
+  border: 1px solid #666666;
+  border-bottom: 0;
+  padding-left: 3px;
+  padding-bottom: 3px;
+}
+
+.hippo-window form .message {
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.hippo-window form fieldset {
+  margin-bottom: 5px;
+}
+
+.hippo-console-tree .wicket-tree a {
+  color: #666666
+}
+
+.hippo-console-tree .wicket-tree a:hover {
+  color: #32629b
+}
+
+.hippo-console .wicket-tree * {
+  font-family: monospace
+}
+
+.hippo-console .wicket-tree div.row-selected span {
+  font-weight: normal
+}
 
 .hippo-tree .wicket-tree span.plus,
 .hippo-tree .wicket-tree span.minus {
-    background-image: url("tree/tree-console-icons.png");
+  background-image: url("tree/tree-console-icons.png");
 }
 
 .hippo-tree .wicket-tree span.junction,
@@ -76,36 +192,97 @@
 .hippo-tree .wicket-tree span.corner,
 .hippo-tree .wicket-tree span.indent-line,
 .hippo-tree .wicket-tree span.indent-blank {
-    background-image: url("tree/tree-console-icons.png");
-    width: 18px;
+  background-image: url("tree/tree-console-icons.png");
+  width: 18px;
 }
 
-.hippo-console-tree .hippo-tree .wicket-tree span.indent-blank{background: transparent}
-.hippo-console-tree .hippo-tree div.wicket-tree div.row, .hippo-tree div.wicket-tree div.row-selected{padding-top: 0; padding-bottom: 0}
+.hippo-console-tree .hippo-tree .wicket-tree span.indent-blank {
+  background: transparent
+}
 
-.hippo-console-menu-advanced {padding: 10px;}
-.hippo-console-menu-advanced li{float: left; margin-left: 10px; font-size: 11px;}
-.hippo-console-menu-advanced li a:hover{text-decoration: underline}
+.hippo-console-tree .hippo-tree div.wicket-tree div.row, .hippo-tree div.wicket-tree div.row-selected {
+  padding-top: 0;
+  padding-bottom: 0
+}
 
-.hippo-console-tree-add-property{margin-left: 12px;}
+.hippo-console-menu-advanced {
+  padding: 10px;
+}
 
-.hippo-console-tree-add li{float: left; margin-right: 7px;}
-ul.hippo-console-tree-add li.hippo-console-tree-sorter  { margin-right: 0;}
+.hippo-console-menu-advanced li {
+  float: left;
+  margin-left: 10px;
+  font-size: 11px;
+}
 
-.hippo-console-tree-add .hippo-console-tree-add-delete{margin-right: 57px;}
-.hippo-console-tree-sorter li span em, .hippo-console-tree-sorter a, .hippo-console-save a, .hippo-console-tree-add a {padding: 2px; color: white; border: 1px solid white; font-weight: bold; font-size: 11px; display: block; float: left; background: #4587d6; border-radius: 2px;}
+.hippo-console-menu-advanced li a:hover {
+  text-decoration: underline
+}
+
+.hippo-console-tree-add-property {
+  margin-left: 12px;
+}
+
+.hippo-console-tree-add li {
+  float: left;
+  margin-right: 7px;
+}
+
+ul.hippo-console-tree-add li.hippo-console-tree-sorter {
+  margin-right: 0;
+}
+
+.hippo-console-tree-add .hippo-console-tree-add-delete {
+  margin-right: 57px;
+}
+
+.hippo-console-tree-sorter li span em, .hippo-console-tree-sorter a, .hippo-console-save a, .hippo-console-tree-add a {
+  padding: 2px;
+  color: white;
+  border: 1px solid white;
+  font-weight: bold;
+  font-size: 11px;
+  display: block;
+  float: left;
+  background: #4587d6;
+  border-radius: 2px;
+}
 
 .hippo-console-tree-add a,
 .hippo-console-tree-sorter span, .hippo-console-tree-sorter a {
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
 
-li.hippo-console-menu-actions-save.session-changes a { background-color: red; }
-.hippo-console-tree-sorter li span em{padding:2px; border-color: #cccccc; background: #f2f2f2}
-.hippo-console-tree-sorter a:hover, .hippo-console-save a:hover, .hippo-console-tree-add a:hover{color: white; background: #1F3F63; }
-.hippo-console-tree-add{clear: left;}
-.hippo-console-tree-add  li span {display: block; float: left; padding: 2px; font-family: 'trebuchet ms', helvetica, sans-serif; font-size: 11px;}
-.hippo-console-tree-add-delete a:hover{background: red;}
+li.hippo-console-menu-actions-save.session-changes a {
+  background-color: red;
+}
+
+.hippo-console-tree-sorter li span em {
+  padding: 2px;
+  border-color: #cccccc;
+  background: #f2f2f2
+}
+
+.hippo-console-tree-sorter a:hover, .hippo-console-save a:hover, .hippo-console-tree-add a:hover {
+  color: white;
+  background: #1f3f63;
+}
+
+.hippo-console-tree-add {
+  clear: left;
+}
+
+.hippo-console-tree-add li span {
+  display: block;
+  float: left;
+  padding: 2px;
+  font-family: 'trebuchet ms', helvetica, sans-serif;
+  font-size: 11px;
+}
+
+.hippo-console-tree-add-delete a:hover {
+  background: red;
+}
 
 .hippo-console-tree .hippo-tree div.wicket-tree div.row:hover .hippo-tree-dropdown-icon-container,
 .hippo-console-tree .hippo-tree div.wicket-tree div.row-selected:hover .hippo-tree-dropdown-icon-container {
@@ -113,69 +290,80 @@ li.hippo-console-menu-actions-save.session-changes a { background-color: red; }
 }
 
 .hippo-console-tree .wicket-tree span.icon {
-    background: none;
+  background: none;
 }
 
 .hippo-console-tree .wicket-tree span.icon.fa {
-    width: 18px;
-    min-height: 16px;
-    height: 16px;
-    font-size: 15px;
-    margin-top: 0;
-    margin-right: 3px;
-    margin-left: 0;
-    padding-top: 2px;
-    text-align: center;
+  width: 18px;
+  min-height: 16px;
+  height: 16px;
+  font-size: 15px;
+  margin-top: 0;
+  margin-right: 3px;
+  margin-left: 0;
+  padding-top: 2px;
+  text-align: center;
 }
 
 .hippo-console-tree .wicket-tree span.icon.fa + span {
-    position: relative;
-    top: -1px;
+  position: relative;
+  top: -1px;
 }
 
 .jcrnode-default {
-    color: #90CAF9;
+  color: #90caf9;
 }
 
 .jcrnode-hst {
-    color: #673AB7;
+  color: #673ab7;
 }
 
 .jcrnode-conf {
-    color: #009688;
+  color: #009688;
 }
+
 .jcrnode-content {
-    color: #4CAF50;
+  color: #4caf50;
 }
+
 .jcrnode-namespaces {
-    color: #FFA000;
+  color: #ffa000;
 }
+
 .jcrnode-formdata {
-    color: #9E9E9E;
+  color: #9e9e9e;
 }
+
 .jcrnode-webfiles {
-    color: #00BCD4;
+  color: #00bcd4;
 }
+
 .jcrnode-reports {
-    color: #795548;
+  color: #795548;
 }
+
 .jcrnode-log {
-    color: #607D8B;
+  color: #607d8b;
 }
+
 .jcrnode-published {
-    color: #4CAF50;
+  color: #4caf50;
 }
+
 .jcrnode-unpublished {
-    color: #3F51B5;
+  color: #3f51b5;
 }
+
 .jcrnode-draft {
-    color: #795548;
+  color: #795548;
 }
+
 .jcrnode-facnav {
-    color: #00BCD4;
+  color: #00bcd4;
 }
+
 .jcrnode-virtual {
-    color: #FF9800;
+  color: #ff9800;
 }
 
 .hippo-console-tree-add li.hippo-console-tree-sorter span,
@@ -183,7 +371,7 @@ li.hippo-console-menu-actions-save.session-changes a { background-color: red; }
   padding: 4px;
   float: left;
   border-radius: 2px;
-  border: 1px solid #fff;
+  border: 1px solid #ffffff;
   font-family: 'trebuchet ms', helvetica, sans-serif;
   font-size: 11px;
 }
@@ -191,106 +379,337 @@ li.hippo-console-menu-actions-save.session-changes a { background-color: red; }
 .hippo-console-tree-add li.hippo-console-tree-sorter a {
   margin-right: 7px;
 }
-.hippo-console-tree .hippo-tree-dropdown-icon:hover {background-position: 0 0;}
 
-.hippo-console-tree-dropdown {visibility: hidden;}
+.hippo-console-tree .hippo-tree-dropdown-icon:hover {
+  background-position: 0 0;
+}
+
+.hippo-console-tree-dropdown {
+  visibility: hidden;
+}
 
 /* Disabled sorter button */
 .hippo-console-tree-sorter span {
   margin-right: 7px;
-  background-color: #999;
+  background-color: #999999;
   color: #e3e3e3;
 }
+
 .hippo-console-tree-sorter span em {
   font-style: normal;
   text-shadow: none;
 }
 
 /* Enabled sorter button */
-.hippo-console-tree-sorter a {background: #4587D6; }
+.hippo-console-tree-sorter a {
+  background: #4587d6;
+}
 
 .hippo-console-tree-sorter span, .hippo-console-tree-sorter a {
   text-transform: capitalize;
 }
 
-.hippo-console tr td.hippo-global-align-bottom{vertical-align: bottom}
-.hippo-console-menu button{text-align: center; font-size: 12px; font-weight: bold;}
-.hippo-console-logout{position: absolute; right: 20px; top: 10px; font-size: 11px}
-.hippo-console-logout span.name{font-weight: bold; text-transform: capitalize}
-.hippo-console-logout li{display: inline}
-.hippo-console-check{position: absolute; left: 20px; top: 10px; font-size: 11px}
-.hippo-console-check li{display: inline}
-.hippo-console-leftpanel{width: 465px; border: 1px solid #666666;}
-.hippo-console-rightpanel{border: 1px solid #666666;}
-
-
-.hippo-console-breadcrumbs strong span{font-weight: normal; color: white; font-size: 15px; font-family: arial, helvetica, sans-serif; line-height: 20px;}
-.hippo-console-rightpanel{}
-
-.hippo-console-warning{background: #ee3a42; color: white; padding: 10px; border: 4px solid #b3001b;  margin-bottom: 15px; height: 24px; margin-top: 15px; margin-bottom: 15px; }
-.hippo-console-warning p a{font-weight: bold; color: #b3001b}
-.hippo-console-warning p {float: left;}
-
-.hippo-console-save li.hippo-console-menu-actions-save {float: right;}
-.hippo-console-save li.hippo-console-menu-actions-reset {float: right;}
-.hippo-console-save li.hippo-console-menu-actions-save a{padding: 5px; margin-right: 10px}
-.hippo-console-save li.hippo-console-menu-actions-save a:hover{ background: green;}
-.hippo-console-save li.hippo-console-menu-actions-reset a{padding: 5px}
-.hippo-console-save li.hippo-console-menu-actions-reset a:hover{background: red;}
-
-.hippo-console-editor {padding: 20px;}
-.hippo-console-editor h3 {font-size: 14px; color:#32629B; margin: 4px 0 16px; padding: 0 0 4px 0; border-bottom: 1px solid #32629B;}
-.hippo-console-editor h4 {font-size: 14px; color:#32629B; margin: 4px 0 8px;}
-.hippo-console-editor .toggle-header {cursor: pointer; user-select: none; -moz-user-select: none; -webkit-user-select: none; -khtml-user-select: none; -o-user-select: none;}
-.hippo-console-editor .editor-types-table {margin-bottom: 12px;}
-.hippo-console-editor .editor-types-table td {padding: 0 4px 4px 0; font-size: 14px;}
-.hippo-console-editor .editor-types-table .type-name {font-weight: bold;}
-.hippo-console-editor .editor-general-table {margin-bottom: 12px;}
-.hippo-console-editor .editor-general-table td {padding: 0 4px 4px 0; font-size: 14px;}
-.hippo-console-editor .editor-general-table td span.icon {font-size: 2.5em; margin: 0 5px 0 5px;}
-.hippo-console-editor .editor-general-table .general-name {font-weight: bold;}
-.hippo-console-editor .properties { margin-bottom: 16px; }
-.hippo-console-editor .properties-group { padding-left: 16px; }
-.hippo-console-editor .property { margin: 10px 0 10px; }
-.hippo-console-editor .property-name {font-size: 14px; color:#333; font-weight: bold; }
-.hippo-console-editor .property-namespace {font-size: 14px; color: #8d8d8d; font-weight: bold; }
-.hippo-console-editor .property-type {font-size: 14px; color:#666; margin-right: 5px;}
-.hippo-console-editor .property-add {font-size: 14px; position:relative; top:-6px;}
-.hippo-console-editor .property-remove {font-size: 14px; position: relative; top: 2px;}
-.hippo-console-editor .property-value-container {margin: 4px 0 4px;}
-.hippo-console-editor .property-value {font-size: 12px;}
-.hippo-console-editor .property-value .message {color:#32629b;}
-.hippo-console-editor .property-value .error {color: #F44336;}
-.hippo-console-editor .property-value a {color:#32629b;}
-.hippo-console-editor .property-value-remove {font-size: 14px; position: relative; top: -6px;}
-.hippo-console-editor .property .add-icon {color: #4CAF50; font-size: 18px;}
-.hippo-console-editor .property .remove-icon {color: #F44336; font-size: 20px;}
-.hippo-console-editor textarea {width: 95%; font-size: 14px; display: inline-block; margin: 3px 0 3px;}
-.hippo-console-editor .mixin-type {font-size: 14px; margin: 3px 0 3px;}
-.hippo-console-editor .mixin-type .mixin-name {margin-left: 4px; font-weight: bold; color: #666;}
-
-.hippo-console-editor .editor-toggle-icon {vertical-align: top;width: 12px;height: 12px;cursor: pointer;}
-
-.hippo-tree-dropdown-icon { background-image: none; }
-.hippo-tree div.wicket-tree div.row{background-image: none; }
-.hippo-tree div.wicket-tree div.row-selected {background-image: none;}
-.hippo-tree div.wicket-tree div.row-selected a {font-weight: normal; color: black;}
-
-.wicket-modal .hippo-root { padding: 10px; }
-
-.wicket-modal .hippo-modal-feedback ul {
-    margin: 0 10px 10px;
+.hippo-console tr td.hippo-global-align-bottom {
+  vertical-align: bottom
 }
 
-.hippo-modal-feedback ul li.feedbackPanelERROR {display: block; margin:0;}
+.hippo-console-menu button {
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.hippo-console-logout {
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  font-size: 11px
+}
+
+.hippo-console-logout span.name {
+  font-weight: bold;
+  text-transform: capitalize
+}
+
+.hippo-console-logout li {
+  display: inline
+}
+
+.hippo-console-check {
+  position: absolute;
+  left: 20px;
+  top: 10px;
+  font-size: 11px
+}
+
+.hippo-console-check li {
+  display: inline
+}
+
+.hippo-console-leftpanel {
+  width: 465px;
+  border: 1px solid #666666;
+}
+
+.hippo-console-rightpanel {
+  border: 1px solid #666666;
+}
+
+.hippo-console-breadcrumbs strong span {
+  font-weight: normal;
+  color: white;
+  font-size: 15px;
+  font-family: arial, helvetica, sans-serif;
+  line-height: 20px;
+}
+
+.hippo-console-rightpanel {
+}
+
+.hippo-console-warning {
+  background: #ee3a42;
+  color: white;
+  padding: 10px;
+  border: 4px solid #b3001b;
+  margin-bottom: 15px;
+  height: 24px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.hippo-console-warning p a {
+  font-weight: bold;
+  color: #b3001b
+}
+
+.hippo-console-warning p {
+  float: left;
+}
+
+.hippo-console-save li.hippo-console-menu-actions-save {
+  float: right;
+}
+
+.hippo-console-save li.hippo-console-menu-actions-reset {
+  float: right;
+}
+
+.hippo-console-save li.hippo-console-menu-actions-save a {
+  padding: 5px;
+  margin-right: 10px
+}
+
+.hippo-console-save li.hippo-console-menu-actions-save a:hover {
+  background: green;
+}
+
+.hippo-console-save li.hippo-console-menu-actions-reset a {
+  padding: 5px
+}
+
+.hippo-console-save li.hippo-console-menu-actions-reset a:hover {
+  background: red;
+}
+
+.hippo-console-editor {
+  padding: 20px;
+}
+
+.hippo-console-editor h3 {
+  font-size: 14px;
+  color: #32629b;
+  margin: 4px 0 16px;
+  padding: 0 0 4px 0;
+  border-bottom: 1px solid #32629b;
+}
+
+.hippo-console-editor h4 {
+  font-size: 14px;
+  color: #32629b;
+  margin: 4px 0 8px;
+}
+
+.hippo-console-editor .toggle-header {
+  cursor: pointer;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -o-user-select: none;
+}
+
+.hippo-console-editor .editor-types-table {
+  margin-bottom: 12px;
+}
+
+.hippo-console-editor .editor-types-table td {
+  padding: 0 4px 4px 0;
+  font-size: 14px;
+}
+
+.hippo-console-editor .editor-types-table .type-name {
+  font-weight: bold;
+}
+
+.hippo-console-editor .editor-general-table {
+  margin-bottom: 12px;
+}
+
+.hippo-console-editor .editor-general-table td {
+  padding: 0 4px 4px 0;
+  font-size: 14px;
+}
+
+.hippo-console-editor .editor-general-table td span.icon {
+  font-size: 2.5em;
+  margin: 0 5px 0 5px;
+}
+
+.hippo-console-editor .editor-general-table .general-name {
+  font-weight: bold;
+}
+
+.hippo-console-editor .properties {
+  margin-bottom: 16px;
+}
+
+.hippo-console-editor .properties-group {
+  padding-left: 16px;
+}
+
+.hippo-console-editor .property {
+  margin: 10px 0 10px;
+}
+
+.hippo-console-editor .property-name {
+  font-size: 14px;
+  color: #333333;
+  font-weight: bold;
+}
+
+.hippo-console-editor .property-namespace {
+  font-size: 14px;
+  color: #8d8d8d;
+  font-weight: bold;
+}
+
+.hippo-console-editor .property-type {
+  font-size: 14px;
+  color: #666666;
+  margin-right: 5px;
+}
+
+.hippo-console-editor .property-add {
+  font-size: 14px;
+  position: relative;
+  top: -6px;
+}
+
+.hippo-console-editor .property-remove {
+  font-size: 14px;
+  position: relative;
+  top: 2px;
+}
+
+.hippo-console-editor .property-value-container {
+  margin: 4px 0 4px;
+}
+
+.hippo-console-editor .property-value {
+  font-size: 12px;
+}
+
+.hippo-console-editor .property-value .message {
+  color: #32629b;
+}
+
+.hippo-console-editor .property-value .error {
+  color: #f44336;
+}
+
+.hippo-console-editor .property-value a {
+  color: #32629b;
+}
+
+.hippo-console-editor .property-value-remove {
+  font-size: 14px;
+  position: relative;
+  top: -6px;
+}
+
+.hippo-console-editor .property .add-icon {
+  color: #4caf50;
+  font-size: 18px;
+}
+
+.hippo-console-editor .property .remove-icon {
+  color: #f44336;
+  font-size: 20px;
+}
+
+.hippo-console-editor textarea {
+  width: 95%;
+  font-size: 14px;
+  display: inline-block;
+  margin: 3px 0 3px;
+}
+
+.hippo-console-editor .mixin-type {
+  font-size: 14px;
+  margin: 3px 0 3px;
+}
+
+.hippo-console-editor .mixin-type .mixin-name {
+  margin-left: 4px;
+  font-weight: bold;
+  color: #666666;
+}
+
+.hippo-console-editor .editor-toggle-icon {
+  vertical-align: top;
+  width: 12px;
+  height: 12px;
+  cursor: pointer;
+}
+
+.hippo-tree-dropdown-icon {
+  background-image: none;
+}
+
+.hippo-tree div.wicket-tree div.row {
+  background-image: none;
+}
+
+.hippo-tree div.wicket-tree div.row-selected {
+  background-image: none;
+}
+
+.hippo-tree div.wicket-tree div.row-selected a {
+  font-weight: normal;
+  color: black;
+}
+
+.wicket-modal .hippo-root {
+  padding: 10px;
+}
+
+.wicket-modal .hippo-modal-feedback ul {
+  margin: 0 10px 10px;
+}
+
+.hippo-modal-feedback ul li.feedbackPanelERROR {
+  display: block;
+  margin: 0;
+}
 
 body.hippo-root div.yui-log-container {
   top: 72px;
   right: 10px;
 }
+
 /* context menu test123 */
 .hippo-console-contextmenu {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   color: #000000;
   padding: 1px;
   border: 1px solid #666666;
@@ -301,19 +720,23 @@ body.hippo-root div.yui-log-container {
   -moz-box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
   -webkit-box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
 }
+
 .hippo-console-contextmenu li {
   position: relative;
   height: 20px;
 }
+
 .hippo-console-contextmenu li.separator {
   border-bottom: 1px solid #999999;
 }
+
 .hippo-console-contextmenu img {
   position: absolute;
   left: 2px;
   top: 3px;
   z-index: 2;
 }
+
 .hippo-console-contextmenu .icon {
   font-size: 17px;
   margin-top: 1px;
@@ -321,39 +744,51 @@ body.hippo-root div.yui-log-container {
   z-index: 2;
   position: absolute;
 }
+
 .hippo-console-contextmenu .icon.add-icon {
-    color: #4CAF50;
+  color: #4caf50;
 }
+
 .hippo-console-contextmenu .icon.delete-icon {
-    color: #F44336;
+  color: #f44336;
 }
+
 .hippo-console-contextmenu .icon.add-property-icon {
-    color: #3F51B5;
+  color: #3f51b5;
 }
+
 .hippo-console-contextmenu .icon.copy-icon {
-    color: #795548;
+  color: #795548;
 }
+
 .hippo-console-contextmenu .icon.move-icon {
-    color: #03A9F4;
+  color: #03a9f4;
 }
+
 .hippo-console-contextmenu .icon.rename-icon {
-    color: #673AB7;
+  color: #673ab7;
 }
+
 .hippo-console-contextmenu .icon.xml-export-icon {
-    color: #4CAF50;
+  color: #4caf50;
 }
+
 .hippo-console-contextmenu .icon.xml-import-icon {
-    color: #FF5722;
+  color: #ff5722;
 }
+
 .hippo-console-contextmenu .icon.t9ids-icon {
-    color: #009688;
+  color: #009688;
 }
+
 .hippo-console-contextmenu .icon.recompute-icon {
-    color: #009688;
+  color: #009688;
 }
+
 .hippo-console-contextmenu .menu-item {
   position: absolute;
 }
+
 .hippo-console-contextmenu .menu-item a {
   color: #000000;
   width: 148px;
@@ -363,9 +798,11 @@ body.hippo-root div.yui-log-container {
   left: 1px;
   z-index: 1;
 }
+
 .hippo-console-contextmenu .menu-item a:hover {
-  background-color: #ABD5FF;
+  background-color: #abd5ff;
 }
+
 .hippo-console-contextmenu .menu-item a span {
   position: absolute;
   left: 32px;
@@ -375,99 +812,101 @@ body.hippo-root div.yui-log-container {
 /* AutoExport states */
 /* ================= */
 .auto-export-state-unavailable {
-    color: grey;
+  color: grey;
 }
 
 .auto-export-state-disabled {
-    color: red;
+  color: red;
 }
 
 .auto-export-state-enabled {
-    color: green;
+  color: green;
 }
 
 /* Node & Property dialog */
 .wicket-modal .node-dialog .hippo-root {
-    height: 168px;
-    overflow: auto;
-    padding: 15px 20px 0;
+  height: 168px;
+  overflow: auto;
+  padding: 15px 20px 0;
 }
 
 .wicket-modal .property-dialog .hippo-root {
-    height: 218px;
-    padding: 15px 20px 0;
-    overflow: auto;
+  height: 218px;
+  padding: 15px 20px 0;
+  overflow: auto;
 }
 
 .node-dialog form > ul,
 .property-dialog form > ul {
-    padding: 10px 15px 0;
+  padding: 10px 15px 0;
 }
 
 .node-dialog fieldset,
 .property-dialog fieldset {
-    margin-top: 3px;
+  margin-top: 3px;
 }
 
 .node-dialog input[type=text],
 .property-dialog input[type=text] {
-    width: 272px;
+  width: 272px;
 }
 
 .node-dialog li,
 .property-dialog li {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .node-dialog li label,
 .property-dialog li label {
-    font-weight: bold;
-    display: inline;
+  font-weight: bold;
+  display: inline;
 }
 
 .property-dialog li label {
-    margin-right: 10px;
-    margin-left: 20px;
+  margin-right: 10px;
+  margin-left: 20px;
 }
 
 .property-dialog li label:first-of-type {
-    margin-left: 0;
+  margin-left: 0;
 }
 
 .property-dialog li select {
-    min-width: 117px;
+  min-width: 117px;
 }
 
 .property-dialog .add-value {
-    position:absolute;
-    left: 280px;
+  position: absolute;
+  left: 280px;
 }
 
 .property-dialog .property-values {
-    display: table;
-    margin-top: 3px;
+  display: table;
+  margin-top: 3px;
 }
 
 .property-dialog .property-values > div {
-    display: table-row;
+  display: table-row;
 }
 
 .property-dialog .property-values > div > div {
-    display: table-cell;
+  display: table-cell;
 }
 
 .property-dialog li .property-value {
-    padding-bottom: 2px;
+  padding-bottom: 2px;
 }
 
 .property-dialog .property-value-add {
-    margin: 5px 0;
+  margin: 5px 0;
 }
+
 .property-dialog .property-value-add .add-icon {
-  color: #4CAF50;
+  color: #4caf50;
   font-size: 18px;
 }
+
 .property-dialog .property-value-remove.remove-icon {
-  color: #F44336;
+  color: #f44336;
   font-size: 20px;
 }
