@@ -111,7 +111,7 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-services-eventbus</artifactId>
-      <version>${hippo.services.version}</version>
+      <version>${hippo.services.eventbus.version}</version>
       <scope>test</scope>
     </dependency>
 
