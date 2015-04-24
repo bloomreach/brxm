@@ -1,5 +1,5 @@
 <!--
-  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -32,11 +32,11 @@
             <wicket:container wicket:id="action-fragment"/>
           </div>
           <wicket:fragment wicket:id="action-controls">
-            <div class="list-item-actions">
+            <div class="list-item-actions hippo-editor-field-subfield">
               <div class="hippo-editor-field-subfield-controls" wicket:id="controls">
-                <a class="up-16 icon-16" wicket:id="up"></a>
-                <a class="down-16 icon-16" wicket:id="down"></a>
-                <a class="delete-16 icon-16" wicket:id="remove"></a>
+                <a class="up-link" wicket:id="up"><span wicket:id="up-icon"></span></a>
+                <a class="down-link" wicket:id="down"><span wicket:id="down-icon"></span></a>
+                <a class="remove-link" wicket:id="remove"><span wicket:id="remove-icon"></span></a>
               </div>
             </div>
           </wicket:fragment>

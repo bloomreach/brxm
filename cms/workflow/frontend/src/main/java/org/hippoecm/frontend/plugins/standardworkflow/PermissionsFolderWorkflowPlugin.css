@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,7 @@
   clear: left;
   overflow: auto;
   border-bottom: 1px solid #f4f4f4;
+  min-height: 32px;
 }
 
 .query-folder-workflow-list-item span.list-item-category {
@@ -97,6 +98,7 @@
 .list-item-actions {
   height: 17px;
   padding: 5px;
+  position: relative;
 }
 
 .list-item-actions .hippo-editor-field-subfield-controls .up-16 {

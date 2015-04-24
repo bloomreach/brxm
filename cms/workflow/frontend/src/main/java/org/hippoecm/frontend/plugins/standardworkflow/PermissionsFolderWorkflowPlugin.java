@@ -68,6 +68,7 @@ import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.CmsIcon;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -238,6 +239,8 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                         }
                     };
                     controls.add(remove);
+                    final HippoIcon removeIcon = HippoIcon.fromSprite("remove-icon", Icon.TIMES);
+                    remove.add(removeIcon);
 
                     MarkupContainer upLink = new AjaxLink("up") {
                         private static final long serialVersionUID = 1L;
@@ -252,6 +255,8 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                     boolean isFirst = (item.getIndex() == 0);
                     upLink.setEnabled(!isFirst);
                     controls.add(upLink);
+                    final HippoIcon upIcon = HippoIcon.fromSprite("up-icon", Icon.ARROW_UP);
+                    upLink.add(upIcon);
 
                     MarkupContainer downLink = new AjaxLink("down") {
                         private static final long serialVersionUID = 1L;
@@ -266,9 +271,10 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                     boolean isLast = (item.getIndex() == folderTypesList.size() - 1);
                     downLink.setEnabled(!isLast);
                     controls.add(downLink);
+                    final HippoIcon downIcon = HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN);
+                    downLink.add(downIcon);
 
                     item.add(fragment);
-
 
                     item.add(new AttributeAppender("class", new AbstractReadOnlyModel() {
                         private static final long serialVersionUID = 1L;
