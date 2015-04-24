@@ -14,110 +14,110 @@
  * limitations under the License.
  */
 .query-folder-workflow-wrapper {
-    padding: 15px;
+  padding: 15px;
 }
 
 .query-folder-workflow-header {
-    overflow: auto;
+  overflow: auto;
 }
 
 .query-folder-workflow-list {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .query-folder-workflow-list-wrapper {
-    height: 250px;
-    overflow: auto;
-    border-right: 1px solid #afafaf;
-    border-bottom: 1px solid #afafaf;
-    border-left: 1px solid #afafaf;
+  height: 250px;
+  overflow: auto;
+  border-right: 1px solid #afafaf;
+  border-bottom: 1px solid #afafaf;
+  border-left: 1px solid #afafaf;
 }
 
 .query-folder-workflow-header a {
-    float: right;
-    clear: right;
-    display: block;
+  float: right;
+  clear: right;
+  display: block;
 }
 
 .query-folder-workflow-list-header {
-    font-weight: bold;
-    overflow: auto;
-    border: 1px solid #afafaf;
+  font-weight: bold;
+  overflow: auto;
+  border: 1px solid #afafaf;
 }
 
 .query-folder-workflow-list-header span.list-header-category {
-    width: 320px;
-    display: block;
-    float: left;
-    padding: 5px;
-    border-right: 1px solid #afafaf;
+  width: 320px;
+  display: block;
+  float: left;
+  padding: 5px;
+  border-right: 1px solid #afafaf;
 }
 
 .query-folder-workflow-list-header span.list-header-actions {
-    width: 50px;
-    display: block;
-    float: left;
-    padding: 5px;
+  width: 50px;
+  display: block;
+  float: left;
+  padding: 5px;
 }
 
 .query-folder-workflow-list-item {
-    display: block;
-    clear: left;
-    overflow: auto;
-    border-bottom: 1px solid #f4f4f4;
+  display: block;
+  clear: left;
+  overflow: auto;
+  border-bottom: 1px solid #f4f4f4;
 }
 
 .query-folder-workflow-list-item span.list-item-category {
-    width: 310px;
-    display: block;
-    float: left;
-    padding: 7px 5px;
-    margin-right: 15px;
+  width: 310px;
+  display: block;
+  float: left;
+  padding: 7px 5px;
+  margin-right: 15px;
 }
 
 .query-folder-workflow-list-item a.list-item-remove,
 .query-folder-workflow-list-item a.list-item-edit {
-    width: 25%;
-    display: block;
-    float: left;
+  width: 25%;
+  display: block;
+  float: left;
 }
 
 .query-folder-workflow-template-add {
 }
 
 .query-folder-workflow-template-add select {
-    width: 320px;
+  width: 320px;
 }
 
 .query-folder-workflow-template-add h3 {
-    font-weight: bold;
-    margin-bottom: 10px;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .list-item-actions {
-    height: 17px;
-    padding: 5px;
+  height: 17px;
+  padding: 5px;
 }
 
 .list-item-actions .hippo-editor-field-subfield-controls .up-16 {
-    width: 18px;
-    height: 16px;
-    padding: 0;
-    display: block;
-    float: left;
+  width: 18px;
+  height: 16px;
+  padding: 0;
+  display: block;
+  float: left;
 }
 
 .list-item-actions .hippo-editor-field-subfield-controls .delete-16 {
-    margin-left: 4px;
+  margin-left: 4px;
 }
 
 .list-item-actions .hippo-editor-field-subfield-controls .down-16 {
-    width: 18px;
-    height: 16px;
-    padding: 0;
-    display: block;
-    float: left;
-    margin-left: 4px;
+  width: 18px;
+  height: 16px;
+  padding: 0;
+  display: block;
+  float: left;
+  margin-left: 4px;
 }
 
 
