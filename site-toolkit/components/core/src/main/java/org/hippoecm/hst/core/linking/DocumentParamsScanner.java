@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
@@ -113,10 +112,7 @@ public class DocumentParamsScanner {
             parameterNames = new HashSet<>();
 
             final Class<?> compClass = Class.forName(componentClassName, true, classLoader);
-
-            // note we *cannot* cast cross context classLoader hence cannot cast to (HstComponent) but only use Object
-            final Object componentClassInstance = compClass.newInstance();
-            ParametersInfo parametersInfo = componentClassInstance.getClass().getAnnotation(ParametersInfo.class);
+            ParametersInfo parametersInfo = compClass.getAnnotation(ParametersInfo.class);
 
             if (parametersInfo != null) {
                 Class<?> parametersInfoType = parametersInfo.type();
