@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.onehippo.forge.poll.component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -508,7 +509,13 @@ public class PollProvider {
         if (scope == null) {
             return null;
         }
-        final  Class<? extends HippoDocumentBean> beanClass = getPollDocumentClass(request, pollComponentInfo);
+
+        final Class<? extends HippoDocumentBean> beanClass = getPollDocumentClass(request, pollComponentInfo);
+
+        if (beanClass.isAssignableFrom(scope.getClass())) {
+            return Arrays.asList((HippoDocumentBean) scope);
+        }
+
         final String pollCompoundName = getPollCompoundName(request, pollComponentInfo);
 
         try {
