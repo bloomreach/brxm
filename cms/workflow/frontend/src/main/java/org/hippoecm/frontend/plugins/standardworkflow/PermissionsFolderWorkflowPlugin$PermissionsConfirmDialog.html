@@ -15,33 +15,37 @@
   -->
 
 <html xmlns:wicket="http://wicket.apache.org/">
-<wicket:extend>
+  <wicket:extend>
     <div class="query-folder-workflow-wrapper">
-        <div class="query-folder-workflow-list">
-            <div class="query-folder-workflow-list-header">
-                <span class="list-header-category"><wicket:message key="header-category"/></span>
-                <span class="list-header-actions"><wicket:message key="header-actions"/></span>
-            </div>
-            <div class="query-folder-workflow-list-wrapper">
-                <div class="query-folder-workflow-list-item" wicket:id="list-item-repeater">
-                    <span class="list-item-category" wicket:id="list-item-category">Add new...</span>
-                    <wicket:container wicket:id="action-fragment"/>
-                </div>
-                <wicket:fragment wicket:id="action-controls">
-                    <div class="list-item-actions">
-                        <div class="hippo-editor-field-subfield-controls" wicket:id="controls">
-                            <a class="up-16 icon-16" wicket:id="up"></a>
-                            <a class="down-16 icon-16" wicket:id="down"></a>
-                            <a class="delete-16 icon-16" wicket:id="remove"></a>
-                        </div>
-                    </div>
-                </wicket:fragment>
-            </div>
+      <div class="query-folder-workflow-list">
+        <div class="query-folder-workflow-list-header">
+          <span class="list-header-category">
+            <wicket:message key="header-category"/>
+          </span>
+          <span class="list-header-actions">
+            <wicket:message key="header-actions"/>
+          </span>
         </div>
-        <div class="query-folder-workflow-template-add">
-            <h3><span wicket:id="title-query-add">[add]</span></h3>
-            <select wicket:id="query-selection"></select>
+        <div class="query-folder-workflow-list-wrapper">
+          <div class="query-folder-workflow-list-item" wicket:id="list-item-repeater">
+            <span class="list-item-category" wicket:id="list-item-category">Add new...</span>
+            <wicket:container wicket:id="action-fragment"/>
+          </div>
+          <wicket:fragment wicket:id="action-controls">
+            <div class="list-item-actions">
+              <div class="hippo-editor-field-subfield-controls" wicket:id="controls">
+                <a class="up-16 icon-16" wicket:id="up"></a>
+                <a class="down-16 icon-16" wicket:id="down"></a>
+                <a class="delete-16 icon-16" wicket:id="remove"></a>
+              </div>
+            </div>
+          </wicket:fragment>
         </div>
+      </div>
+      <div class="query-folder-workflow-template-add">
+        <h3><span wicket:id="title-query-add">[add]</span></h3>
+        <select wicket:id="query-selection"></select>
+      </div>
     </div>
-</wicket:extend>
+  </wicket:extend>
 </html>
