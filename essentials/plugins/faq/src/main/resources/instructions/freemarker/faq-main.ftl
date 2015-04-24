@@ -1,6 +1,6 @@
 <#include "../include/imports.ftl">
 
-<#-- @ftlvariable name="document" type="{{beansPackage}}.FaqDocument" -->
+<#-- @ftlvariable name="document" type="{{beansPackage}}.FaqItem" -->
 <#if document??>
 <div class="has-edit-button">
 <@hst.cmseditlink hippobean=document/>

@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 
-<%--@elvariable id="document" type="{{beansPackage}}.FaqListDocument"--%>
+<%--@elvariable id="document" type="{{beansPackage}}.FaqList"--%>
 <c:if test="${document ne null}">
   <div class="has-edit-button">
     <c:choose>
@@ -8,7 +8,7 @@
         <hst:cmseditlink hippobean="${document}"/>
         <h1><c:out value="${document.title}"/></h1>
         <div><hst:html hippohtml="${document.description}"/></div>
-        <c:forEach var="faq" items="${document.faqDocuments}">
+        <c:forEach var="faq" items="${document.faqItems}">
           <div>
             <h3><a href="<hst:link hippobean="${faq}"/>"><c:out value="${faq.question}"/></a></h3>
             <hst:html hippohtml="${faq.answer}"/>

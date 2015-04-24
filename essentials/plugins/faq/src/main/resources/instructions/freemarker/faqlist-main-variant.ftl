@@ -1,6 +1,6 @@
 <#include "../../include/imports.ftl">
 
-<#-- @ftlvariable name="document" type="{{beansPackage}}.FaqDocument" -->
+<#-- @ftlvariable name="document" type="{{beansPackage}}.FaqList" -->
 <@hst.defineObjects/>
 <#if document??>
     <#if document.FAQ??>
@@ -9,7 +9,7 @@
             <h1>${document.title?html}</h1>
             <@hst.html hippohtml=document.description/>
             <div class="panel-group" id="faqitems" role="tablist" aria-multiselectable="true">
-                <#list document.faqDocuments as faq>
+                <#list document.faqItems as faq>
                     <div class="panel panel-default">
                         <div class="panel-heading" role="tab" id="heading${faq_index}">
                             <h4 class="panel-title">

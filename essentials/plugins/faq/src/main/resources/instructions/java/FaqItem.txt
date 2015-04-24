@@ -19,9 +19,9 @@ import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 
-@HippoEssentialsGenerated(internalName = "{{namespace}}:faqdocument")
-@Node(jcrType = "{{namespace}}:faqdocument")
-public class FaqDocument extends BaseDocument {
+@HippoEssentialsGenerated(internalName = "{{namespace}}:faqitem")
+@Node(jcrType = "{{namespace}}:faqitem")
+public class FaqItem extends BaseDocument {
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:question")
     public String getQuestion() {

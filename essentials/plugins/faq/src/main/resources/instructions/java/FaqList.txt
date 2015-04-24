@@ -21,9 +21,9 @@ import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 
-@HippoEssentialsGenerated(internalName = "{{namespace}}:faqlistdocument")
-@Node(jcrType = "{{namespace}}:faqlistdocument")
-public class FaqListDocument extends BaseDocument {
+@HippoEssentialsGenerated(internalName = "{{namespace}}:faqlist")
+@Node(jcrType = "{{namespace}}:faqlist")
+public class FaqList extends BaseDocument {
 
 	@HippoEssentialsGenerated(internalName = "{{namespace}}:title")
 	public String getTitle() {
@@ -35,9 +35,9 @@ public class FaqListDocument extends BaseDocument {
 		return getHippoHtml("{{namespace}}:description");
 	}
 
-	@HippoEssentialsGenerated(internalName = "{{namespace}}:faqdocuments")
-    public List<FaqDocument> getFaqDocuments() {
-        return getLinkedBeans("{{namespace}}:faqdocuments", FaqDocument.class);
+	@HippoEssentialsGenerated(internalName = "{{namespace}}:faqitem")
+    public List<FaqItem> getFaqItems() {
+        return getLinkedBeans("{{namespace}}:faqitem", FaqItem.class);
     }
 
 	/**

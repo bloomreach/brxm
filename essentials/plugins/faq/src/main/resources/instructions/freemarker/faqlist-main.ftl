@@ -1,6 +1,6 @@
 <#include "../include/imports.ftl">
 
-<#-- @ftlvariable name="document" type="{{beansPackage}}.FaqListDocument" -->
+<#-- @ftlvariable name="document" type="{{beansPackage}}.FaqList" -->
 <@hst.defineObjects/>
 <#if document??>
     <#if document.FAQ??>
@@ -10,7 +10,7 @@
             <div>
                 <@hst.html hippohtml=document.description/>
             </div>
-            <#list document.faqDocuments as faq>
+            <#list document.faqItems as faq>
                 <div>
                     <h3><a href="<@hst.link hippobean=faq />">${faq.question?html}</a></h3>
                     <@hst.html hippohtml=faq.answer/>

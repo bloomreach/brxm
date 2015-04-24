@@ -15,7 +15,7 @@
   limitations under the License.
   -->
 
-<sv:node sv:name="faqlistdocument" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="faqlist" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposysedit:templatetype</sv:value>
   </sv:property>
@@ -96,7 +96,7 @@
           <sv:value>hippostd:html</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="faqdocuments">
+      <sv:node sv:name="faqitem">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hipposysedit:field</sv:value>
         </sv:property>
@@ -110,7 +110,7 @@
           <sv:value>true</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>{{namespace}}:faqdocuments</sv:value>
+          <sv:value>{{namespace}}:faqitem</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -127,7 +127,7 @@
     </sv:property>
     <sv:node sv:name="hipposysedit:prototype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>{{namespace}}:faqlistdocument</sv:value>
+        <sv:value>{{namespace}}:faqlist</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>mix:referenceable</sv:value>
@@ -171,7 +171,7 @@
           <sv:value/>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="{{namespace}}:faqdocuments">
+      <sv:node sv:name="{{namespace}}:faqitem">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:mirror</sv:value>
         </sv:property>
@@ -279,7 +279,7 @@
               </sv:property>
             </sv:node>
           </sv:node>
-          <sv:node sv:name="faqdocuments">
+          <sv:node sv:name="faqitem">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>frontend:pluginconfig</sv:value>
             </sv:property>
@@ -360,12 +360,12 @@
           </sv:property>
         </sv:node>
       </sv:node>
-      <sv:node sv:name="faqdocuments">
+      <sv:node sv:name="faqitem">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="field" sv:type="String">
-          <sv:value>faqdocuments</sv:value>
+          <sv:value>faqitem</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
           <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
