@@ -25,7 +25,6 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -37,11 +36,8 @@ import org.hippoecm.frontend.model.event.Observer;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.skin.Icon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,12 +104,6 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
         link.setEnabled(isExportAvailable());
         link.setVisible(isLinkVisible());
         add(link);
-
-        // set up icon component
-        final Component icon = HippoIcon.fromSprite("icon", Icon.BULLET, IconSize.M);
-        icon.setOutputMarkupId(true);
-        icon.setVisible(isExportAvailable());
-        link.add(icon);
 
         if (isExportAvailable()) {
             // redraw plugin when config has changed

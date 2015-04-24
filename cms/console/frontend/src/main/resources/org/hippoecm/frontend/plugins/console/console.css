@@ -811,16 +811,8 @@ body.hippo-root div.yui-log-container {
 
 /* AutoExport states */
 /* ================= */
-.auto-export-state-unavailable {
-  color: grey;
-}
-
-.auto-export-state-disabled {
+.auto-export-state-enabled span {
   color: red;
-}
-
-.auto-export-state-enabled {
-  color: green;
 }
 
 /* Node & Property dialog */
