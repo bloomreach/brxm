@@ -17,6 +17,7 @@ package org.hippoecm.repository.standardworkflow;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -38,6 +39,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
@@ -56,8 +58,11 @@ import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.hippoecm.repository.util.DefaultCopyHandler;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeInfo;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.PropInfo;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.util.DateMathParser;
 import org.onehippo.repository.util.JcrConstants;
@@ -893,4 +898,106 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         return result;
     }
 
+    static class ExpandingCopyHandler extends DefaultCopyHandler {
+
+        private final Map<String, String[]> renames;
+        private final ValueFactory factory;
+        private String path;
+
+        ExpandingCopyHandler(final Node handle, final Map<String, String[]> renames, final ValueFactory factory) throws RepositoryException {
+            super(handle);
+            this.renames = renames;
+            this.factory = factory;
+            this.path = ".";
+        }
+
+        @Override
+        public void startNode(final NodeInfo nodeInfo) throws RepositoryException {
+            String[] renamed;
+            String name = nodeInfo.getName();
+            final String nameKey = path + "/_name";
+            if (renames.containsKey(nameKey)) {
+                renamed = renames.get(nameKey);
+                if (renamed.length > 0) {
+                    name = renamed[0];
+                }
+            }
+
+            String primaryType = nodeInfo.getNodeTypeName();
+            final String primaryTypeKey = path + "/jcr:primaryType";
+            if (renames.containsKey(primaryTypeKey)) {
+                renamed = renames.get(primaryTypeKey);
+                if (renamed.length > 0) {
+                    primaryType = renamed[0];
+                }
+            }
+
+            List<String> mixins = Arrays.asList(nodeInfo.getMixinNames());
+            final String mixinTypesKey = path + "/jcr:mixinTypes";
+            if (renames.containsKey(mixinTypesKey)) {
+                String[] values = renames.get(mixinTypesKey);
+                for (int i = 0; i < values.length; i++) {
+                    mixins.add(values[i]);
+                }
+            }
+
+            if (renames.containsKey(path + "/_node/_name") && !renames.containsKey(path + "/" + name)) {
+                path = path + "/_node";
+            } else if (renames.containsKey(path + "/_name")) {
+                path = path + "/_name";
+            } else {
+                path = path + "/" + name;
+            }
+            final NodeInfo childInfo = new NodeInfo(name, nodeInfo.getIndex(), primaryType, mixins.toArray(new String[mixins.size()]));
+            super.startNode(childInfo);
+        }
+
+        @Override
+        public void endNode() throws RepositoryException {
+            super.endNode();
+            path = path.substring(0, path.lastIndexOf('/'));
+        }
+
+        @Override
+        public void setProperty(final PropInfo prop) throws RepositoryException {
+            String name = prop.getName();
+            PropInfo result;
+            // back off one level; not logically correct, but backwards compatible
+            final String propPath = path.substring(0, path.lastIndexOf('/')) + "/" + name;
+            if (prop.isMultiple()) {
+                if (renames.containsKey(propPath) && renames.get(propPath) != null) {
+                    String[] strValues = renames.get(propPath);
+                    Value[] values = new Value[strValues.length];
+                    int i = 0;
+                    for (String strValue : strValues) {
+                        values[i++] = factory.createValue(strValue, prop.getType());
+                    }
+                    result = new PropInfo(name, prop.getType(), values);
+                } else {
+                    Value[] values = prop.getValues();
+                    List<Value> newValues = new LinkedList<>();
+                    for (int i = 0; i < values.length; i++) {
+                        String valueKey = propPath + "[" + i + "]";
+                        if (renames.containsKey(valueKey)) {
+                            for (String substitute : renames.get(valueKey)) {
+                                newValues.add(factory.createValue(substitute, prop.getType()));
+                            }
+                        } else {
+                            newValues.add(values[i]);
+                        }
+                    }
+                    result = new PropInfo(name, prop.getType(), newValues.toArray(new Value[newValues.size()]));
+                }
+            } else {
+                if (renames.containsKey(propPath) && renames.get(propPath) != null && renames.get(propPath).length == 1) {
+                    String strValue = renames.get(propPath)[0];
+                    result = new PropInfo(name, prop.getType(), factory.createValue(strValue, prop.getType()));
+                } else {
+                    result = prop;
+                }
+            }
+
+            super.setProperty(result);
+        }
+    }
 }

@@ -147,16 +147,16 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
 
             @Override
             public void startNode(final NodeInfo nodeInfo) throws RepositoryException {
-                NodeType[] oldMixins = nodeInfo.getMixinTypes();
-                Set<NodeType> mixins = new HashSet<>();
-                for (NodeType mixinType : oldMixins) {
-                    if (Arrays.binarySearch(PROTECTED_MIXINS, mixinType.getName()) >= 0) {
+                String[] oldMixins = nodeInfo.getMixinNames();
+                Set<String> mixins = new HashSet<>();
+                for (String mixin : oldMixins) {
+                    if (Arrays.binarySearch(PROTECTED_MIXINS, mixin) >= 0) {
                         continue;
                     }
-                    mixins.add(mixinType);
+                    mixins.add(mixin);
                 }
-                NodeType[] newMixins = mixins.toArray(new NodeType[mixins.size()]);
-                final NodeInfo newInfo = new NodeInfo(nodeInfo.getName(), nodeInfo.getIndex(), nodeInfo.getNodeType(), newMixins);
+                String[] newMixins = mixins.toArray(new String[mixins.size()]);
+                final NodeInfo newInfo = new NodeInfo(nodeInfo.getName(), nodeInfo.getIndex(), nodeInfo.getNodeTypeName(), newMixins);
                 super.startNode(newInfo);
             }
 

@@ -527,7 +527,7 @@ public class JcrUtils {
         }
         final DefaultCopyHandler chain = new DefaultCopyHandler(destParentNode);
         final NodeInfo nodeInfo = new NodeInfo(srcNode);
-        final NodeInfo newInfo = new NodeInfo(destNodeName, 0, nodeInfo.getNodeType(), nodeInfo.getMixinTypes());
+        final NodeInfo newInfo = new NodeInfo(destNodeName, 0, nodeInfo.getNodeTypeName(), nodeInfo.getMixinNames());
         chain.startNode(newInfo);
         final Node destNode = chain.getCurrent();
         copyToChain(srcNode, chain);

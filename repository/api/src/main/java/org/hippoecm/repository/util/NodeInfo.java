@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,15 +26,28 @@ import javax.jcr.nodetype.NodeType;
 public final class NodeInfo {
 
     private final String name;
-    private final NodeType nodeType;
-    private final NodeType[] mixinTypes;
+
+    private final String nodeTypeName;
+
+    private final String[] mixinNames;
+
     private final int index;
 
-    public NodeInfo(String name, int index, NodeType nodeType, NodeType[] mixinTypes) {
+    public NodeInfo(String name, int index, String nodeTypeName, String[] mixinNames) {
         this.name = name;
-        this.nodeType = nodeType;
+        this.nodeTypeName = nodeTypeName;
+        this.mixinNames = mixinNames;
         this.index = index;
-        this.mixinTypes = mixinTypes;
+    }
+
+    public NodeInfo(String name, int index, NodeType nodeType, NodeType[] mixins) {
+        this.name = name;
+        this.nodeTypeName = nodeType.getName();
+        this.mixinNames = new String[mixins.length];
+        for (int i = 0; i < mixins.length; i++) {
+            mixinNames[i] = mixins[i].getName();
+        }
+        this.index = index;
     }
 
     public NodeInfo(Node child) throws RepositoryException {
@@ -49,37 +62,23 @@ public final class NodeInfo {
         return index;
     }
 
-    public NodeType getNodeType() { return nodeType; }
-
     public String getNodeTypeName() {
-        return nodeType.getName();
-    }
-
-    public NodeType[] getMixinTypes() {
-        return mixinTypes;
+        return nodeTypeName;
     }
 
     public String[] getMixinNames() {
-        final String[] mixinNames = new String[mixinTypes.length];
-        for (int i = 0; i < mixinTypes.length; i++) {
-            mixinNames[i] = mixinTypes[i].getName();
-        }
         return mixinNames;
     }
 
-    public NodeDefinition getApplicableChildNodeDef(NodeType[] parentTypes) {
+    public NodeDefinition getApplicableChildNodeDef(NodeType[] nodeTypes)
+            throws ConstraintViolationException {
         NodeDefinition residualDefinition = null;
-        for (NodeType parentType : parentTypes) {
-            for (NodeDefinition nodeDef : parentType.getChildNodeDefinitions()) {
+        for (NodeType nodeType : nodeTypes) {
+            NodeDefinition[] nodeDefs = nodeType.getChildNodeDefinitions();
+            for (NodeDefinition nodeDef : nodeDefs) {
                 if (nodeDef.getName().equals(getName())) {
-                    if (!hasRequiredPrimaryNodeType(nodeDef)) {
-                        continue;
-                    }
                     return nodeDef;
                 } else if ("*".equals(nodeDef.getName())) {
-                    if (!hasRequiredPrimaryNodeType(nodeDef)) {
-                        continue;
-                    }
                     residualDefinition = nodeDef;
                 }
             }
@@ -87,20 +86,7 @@ public final class NodeInfo {
         if (residualDefinition != null) {
             return residualDefinition;
         }
-        return null;
-    }
-
-    public boolean hasApplicableChildNodeDef(NodeType[] parentTypes) {
-        return getApplicableChildNodeDef(parentTypes) != null;
-    }
-
-    private boolean hasRequiredPrimaryNodeType(final NodeDefinition definition) {
-        for (String primaryNodeTypeName : definition.getRequiredPrimaryTypeNames()) {
-            if (!nodeType.isNodeType(primaryNodeTypeName)) {
-                return false;
-            }
-        }
-        return true;
+        throw new ConstraintViolationException("Cannot set property " + this.getName());
     }
 
     @Override
