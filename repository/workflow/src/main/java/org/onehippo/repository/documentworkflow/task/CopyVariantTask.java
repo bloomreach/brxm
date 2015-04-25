@@ -19,6 +19,7 @@ import java.rmi.RemoteException;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -65,7 +66,8 @@ public class CopyVariantTask extends AbstractDocumentTask {
             throw new WorkflowException("Source document variant (node) is not available.");
         }
 
-        final Node sourceNode = sourceDoc.getNode(getWorkflowContext().getInternalWorkflowSession());
+        final Session workflowSession = getWorkflowContext().getInternalWorkflowSession();
+        final Node sourceNode = sourceDoc.getNode(workflowSession);
         Node targetNode;
 
         boolean saveNeeded = false;
@@ -87,7 +89,7 @@ public class CopyVariantTask extends AbstractDocumentTask {
             targetDoc.setState(getTargetState());
         }
         else {
-            targetNode = targetDoc.getNode(getWorkflowContext().getInternalWorkflowSession());
+            targetNode = targetDoc.getNode(workflowSession);
 
             if (sourceNode.isSame(targetNode)) {
                 throw new WorkflowException(
@@ -97,7 +99,7 @@ public class CopyVariantTask extends AbstractDocumentTask {
         }
 
         if (saveNeeded) {
-            getWorkflowContext().getInternalWorkflowSession().save();
+            workflowSession.save();
         }
 
         dm.getDocuments().put(targetDoc.getState(), targetDoc);

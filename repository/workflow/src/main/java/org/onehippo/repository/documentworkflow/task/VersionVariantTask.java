@@ -19,6 +19,7 @@ import java.rmi.RemoteException;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
@@ -47,10 +48,11 @@ public class VersionVariantTask extends AbstractDocumentTask {
         if (getVariant() == null || !getVariant().hasNode()) {
             throw new WorkflowException("No variant provided");
         }
-        Node targetNode = getVariant().getNode(getWorkflowContext().getInternalWorkflowSession());
+        final Session workflowSession = getWorkflowContext().getInternalWorkflowSession();
+        Node targetNode = getVariant().getNode(workflowSession);
 
         // ensure no pending changes which would fail the checkin
-        targetNode.getSession().save();
+        workflowSession.save();
         return new Document(targetNode.checkin());
     }
 }
