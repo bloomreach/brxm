@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.PropertyDefinition;
 
 import org.onehippo.repository.util.JcrConstants;
@@ -55,10 +56,12 @@ public class DefaultCopyHandler implements CopyHandler {
 
     private final Stack<Node> nodes = new Stack<>();
     private final Stack<NodeType[]> nodeTypes = new Stack<>();
+    protected final NodeTypeManager nodeTypeManager;
 
     public DefaultCopyHandler(Node node) throws RepositoryException {
         JcrUtils.ensureIsCheckedOut(node);
         setCurrent(node);
+        nodeTypeManager = node.getSession().getWorkspace().getNodeTypeManager();
     }
 
     protected DefaultCopyHandler setCurrent(Node node) throws RepositoryException {
@@ -79,25 +82,23 @@ public class DefaultCopyHandler implements CopyHandler {
 
     @Override
     public void startNode(final NodeInfo nodeInfo) throws RepositoryException {
-        try {
-            if (getCurrent() != null) {
-                NodeDefinition definition = nodeInfo.getApplicableChildNodeDef(getCurrentNodeTypes());
-                if (!definition.isProtected()) {
-                    final Node childDest;
-                    if (definition.isAutoCreated() && nodeInfo.getIndex() == 1 && getCurrent().hasNode(nodeInfo.getName())) {
-                        childDest = getCurrent().getNode(nodeInfo.getName());
-                    } else {
-                        childDest = getCurrent().addNode(nodeInfo.getName(), nodeInfo.getNodeTypeName());
-                    }
-                    for (String nodeTypeName : nodeInfo.getMixinNames()) {
-                        childDest.addMixin(nodeTypeName);
-                    }
-                    setCurrent(childDest);
-                    return;
+        if (getCurrent() != null) {
+            final NodeDefinition definition = nodeInfo.getApplicableChildNodeDef(getCurrentNodeTypes());
+            if (definition == null) {
+                log.error("Unable to create node from NodeInfo " + nodeInfo + ": No applicable child node definition");
+            } else if (!definition.isProtected()) {
+                final Node childDest;
+                if (definition.isAutoCreated() && nodeInfo.getIndex() == 1 && getCurrent().hasNode(nodeInfo.getName())) {
+                    childDest = getCurrent().getNode(nodeInfo.getName());
+                } else {
+                    childDest = getCurrent().addNode(nodeInfo.getName(), nodeInfo.getNodeTypeName());
                 }
+                for (String nodeTypeName : nodeInfo.getMixinNames()) {
+                    childDest.addMixin(nodeTypeName);
+                }
+                setCurrent(childDest);
+                return;
             }
-        } catch (ConstraintViolationException cve) {
-            log.error("Unable to create node from NodeInfo " + nodeInfo + ": " + cve.toString());
         }
         setCurrent(null);
     }
@@ -111,17 +112,15 @@ public class DefaultCopyHandler implements CopyHandler {
     @Override
     public void setProperty(final PropInfo propInfo) throws RepositoryException {
         if (propInfo != null && getCurrent() != null && Arrays.binarySearch(PROTECTED, propInfo.getName()) < 0) {
-            try {
-                PropertyDefinition definition = propInfo.getApplicablePropertyDef(getCurrentNodeTypes());
-                if (!definition.isProtected()) {
-                    if (propInfo.isMultiple()) {
-                        getCurrent().setProperty(propInfo.getName(), propInfo.getValues(), propInfo.getType());
-                    } else {
-                        getCurrent().setProperty(propInfo.getName(), propInfo.getValue(), propInfo.getType());
-                    }
+            PropertyDefinition definition = propInfo.getApplicablePropertyDef(getCurrentNodeTypes());
+            if (definition == null) {
+                log.error("Unable to create property from PropInfo " + propInfo + ": No applicable property definition");
+            } else if (!definition.isProtected()) {
+                if (propInfo.isMultiple()) {
+                    getCurrent().setProperty(propInfo.getName(), propInfo.getValues(), propInfo.getType());
+                } else {
+                    getCurrent().setProperty(propInfo.getName(), propInfo.getValue(), propInfo.getType());
                 }
-            } catch (ConstraintViolationException cve) {
-                log.error("Unable to create property from PropInfo " + propInfo);
             }
         }
     }

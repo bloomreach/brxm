@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,15 +15,10 @@
  */
 package org.hippoecm.repository.util;
 
-import java.util.Arrays;
-
 import javax.jcr.PropertyType;
 import javax.jcr.Value;
-import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
-
-import org.onehippo.repository.util.JcrConstants;
 
 public final class PropInfo {
 
@@ -69,8 +64,7 @@ public final class PropInfo {
         return multiple;
     }
 
-    public PropertyDefinition getApplicablePropertyDef(NodeType[] nodeTypes)
-            throws ConstraintViolationException {
+    public PropertyDefinition getApplicablePropertyDef(NodeType[] nodeTypes) {
         PropertyDefinition undefinedResidualDefinition = null;
         PropertyDefinition residualDefinition = null;
         for (NodeType nodeType : nodeTypes) {
@@ -96,13 +90,11 @@ public final class PropInfo {
         if (undefinedResidualDefinition != null) {
             return undefinedResidualDefinition;
         }
-        throw new ConstraintViolationException("Cannot set property " + this.getName());
+        return null;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("PropInfo[").append(getName()).append('(').append(PropertyType.nameFromValue(getType())).append(')').append("]");
-        return sb.toString();
+        return "PropInfo[" + getName() + '(' + PropertyType.nameFromValue(getType()) + ')' + "]";
     }
 }
