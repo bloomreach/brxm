@@ -11,6 +11,7 @@
       <sv:value>liveusers</sv:value>
       <sv:value>previewusers</sv:value>
       <sv:value>sitewriters</sv:value>
+      <sv:value>webmaster</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:role" sv:type="String">
       <sv:value>readonly</sv:value>
