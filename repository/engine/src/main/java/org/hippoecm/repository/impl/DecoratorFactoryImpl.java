@@ -21,6 +21,7 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
+import javax.jcr.lock.LockManager;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -111,5 +112,10 @@ public class DecoratorFactoryImpl extends org.hippoecm.repository.decorating.Dec
     public QueryManager getQueryManagerDecorator(Session session,
                                                  QueryManager queryManager) {
         return new QueryManagerDecorator(this, session, queryManager);
+    }
+
+    @Override
+    public LockManager getLockManagerDecorator(Session session, LockManager lockManager) {
+        return new LockManagerDecorator(session, lockManager);
     }
 }

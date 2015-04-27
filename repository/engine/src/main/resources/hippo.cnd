@@ -151,3 +151,6 @@
 
 // marker mixin to exclude the node from being indexed
 [hippo:skipindex] mixin
+
+[hippo:lockable] mixin
+- hippo:timeout (date)

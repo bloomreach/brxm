@@ -403,8 +403,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             return true;
         }
         if (log.isInfoEnabled()) {
-            log.info("Checking [{}] for user {} absPath: {}",
-                    new Object[] { permsString(permissions), getUserIdAsString(), npRes.getJCRPath(absPath) });
+            log.info("Checking [{}] for user {} absPath: {}", permsString(permissions),
+                    getUserIdAsString(), npRes.getJCRPath(absPath));
         }
 
         // fasttrack read permissions check

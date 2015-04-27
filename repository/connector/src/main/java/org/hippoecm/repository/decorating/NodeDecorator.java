@@ -39,6 +39,7 @@ import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
+import javax.jcr.lock.LockManager;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeDefinition;
@@ -489,8 +490,8 @@ public abstract class NodeDecorator extends ItemDecorator implements HippoNode {
      */
     public Lock lock(boolean isDeep, boolean isSessionScoped) throws UnsupportedRepositoryOperationException,
             LockException, AccessDeniedException, InvalidItemStateException, RepositoryException {
-        Lock lock = node.lock(isDeep, isSessionScoped);
-        return factory.getLockDecorator(session, lock);
+        final LockManager lockManager = session.getWorkspace().getLockManager();
+        return lockManager.lock(getPath(), isDeep, isSessionScoped, Long.MAX_VALUE, null);
     }
 
     /**
@@ -498,8 +499,8 @@ public abstract class NodeDecorator extends ItemDecorator implements HippoNode {
      */
     public Lock getLock() throws UnsupportedRepositoryOperationException, LockException, AccessDeniedException,
             RepositoryException {
-        Lock lock = node.getLock();
-        return factory.getLockDecorator(session, lock);
+        final LockManager lockManager = session.getWorkspace().getLockManager();
+        return lockManager.getLock(getPath());
     }
 
     /**
@@ -507,21 +508,24 @@ public abstract class NodeDecorator extends ItemDecorator implements HippoNode {
      */
     public void unlock() throws UnsupportedRepositoryOperationException, LockException, AccessDeniedException,
             InvalidItemStateException, RepositoryException {
-        node.unlock();
+        final LockManager lockManager = session.getWorkspace().getLockManager();
+        lockManager.unlock(getPath());
     }
 
     /**
      * @inheritDoc
      */
     public boolean holdsLock() throws RepositoryException {
-        return node.holdsLock();
+        final LockManager lockManager = session.getWorkspace().getLockManager();
+        return lockManager.holdsLock(node.getPath());
     }
 
     /**
      * @inheritDoc
      */
     public boolean isLocked() throws RepositoryException {
-        return node.isLocked();
+        final LockManager lockManager = session.getWorkspace().getLockManager();
+        return lockManager.isLocked(getPath());
     }
 
     /**

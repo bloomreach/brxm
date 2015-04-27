@@ -191,6 +191,8 @@ public interface HippoNodeType {
 
     public static final String NT_SKIPINDEX = "hippo:skipindex";
 
+    public static final String NT_LOCKABLE = "hippo:lockable";
+
     public static final String HIPPO_ACTIVE = "hipposys:active";
 
     public static final String HIPPO_SYSTEM = "hipposys:system";
@@ -461,5 +463,7 @@ public interface HippoNodeType {
     public static final String HIPPOSYS_DELTADIRECTIVE = "hipposys:deltadirective";
 
     public static final String HIPPO_IGNORABLE = "hippo:ignorable";
+
+    public static final String HIPPO_TIMEOUT = "hippo:timeout";
 
 }

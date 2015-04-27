@@ -184,7 +184,7 @@ public abstract class WorkspaceDecorator extends AbstractDecorator implements Hi
     }
 
     public LockManager getLockManager() throws UnsupportedRepositoryOperationException, RepositoryException {
-        return workspace.getLockManager();
+        return factory.getLockManagerDecorator(session, workspace.getLockManager());
     }
 
     public void createWorkspace(String name) throws AccessDeniedException, UnsupportedRepositoryOperationException, RepositoryException {

@@ -23,7 +23,7 @@ import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.jcr.ValueFactory;
 import javax.jcr.Workspace;
-import javax.jcr.lock.Lock;
+import javax.jcr.lock.LockManager;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -110,16 +110,6 @@ public interface DecoratorFactory {
     Item getItemDecorator(Session session, Item item);
 
     /**
-     * Creates a lock decorator.
-     *
-     * @param session the session (decorator) instance used to create the
-     *                lock decorator
-     * @param lock    the underlying lock instance
-     * @return lock decorator
-     */
-    Lock getLockDecorator(Session session, Lock lock);
-
-    /**
      * Creates a version decorator.
      *
      * @param session the session (decorator) instance used to create the version
@@ -198,4 +188,13 @@ public interface DecoratorFactory {
      * @return item visitor decorator.
      */
     ItemVisitor getItemVisitorDecorator(Session session, ItemVisitor visitor);
+
+    /**
+     * Creates a LockManager decorator.
+     *
+     * @param session  the session instance used to create the LockManager decorator
+     * @param lockManager the underlying LockManager
+     * @return LockManager decorator.
+     */
+    LockManager getLockManagerDecorator(Session session, LockManager lockManager);
 }

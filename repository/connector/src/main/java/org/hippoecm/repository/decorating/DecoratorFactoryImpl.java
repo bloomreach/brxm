@@ -20,18 +20,15 @@ import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFactory;
 import javax.jcr.Workspace;
-import javax.jcr.lock.Lock;
+import javax.jcr.lock.LockManager;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
-
-import org.apache.jackrabbit.api.XASession;
 
 public abstract class DecoratorFactoryImpl implements DecoratorFactory {
 
@@ -64,10 +61,6 @@ public abstract class DecoratorFactoryImpl implements DecoratorFactory {
 
     public Property getPropertyDecorator(Session session, Property property) {
         return new PropertyDecorator(this, session, property);
-    }
-
-    public Lock getLockDecorator(Session session, Lock lock) {
-        return new LockDecorator(this, session, lock);
     }
 
     public abstract Version getVersionDecorator(Session session, Version version);
@@ -112,5 +105,10 @@ public abstract class DecoratorFactoryImpl implements DecoratorFactory {
     public ItemVisitor getItemVisitorDecorator(Session session,
                                                ItemVisitor visitor) {
         return new ItemVisitorDecorator(this, session, visitor);
+    }
+
+    @Override
+    public LockManager getLockManagerDecorator(Session session, LockManager lockManager) {
+        return new LockManagerDecorator(session, lockManager);
     }
 }

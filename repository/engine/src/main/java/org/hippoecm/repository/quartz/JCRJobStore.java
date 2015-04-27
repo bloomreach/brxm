@@ -48,6 +48,7 @@ import org.hippoecm.repository.api.SynchronousEventListener;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.RepoUtils;
+import org.onehippo.repository.locking.HippoLockManager;
 import org.onehippo.repository.util.JcrConstants;
 import org.quartz.Calendar;
 import org.quartz.CronTrigger;
@@ -810,8 +811,8 @@ public class JCRJobStore implements JobStore {
 
     private boolean lock(Session session, String nodePath) throws RepositoryException {
         log.debug("Trying to obtain lock on " + nodePath);
-        final LockManager lockManager = session.getWorkspace().getLockManager();
-        if (!lockManager.isLocked(nodePath)) {
+        final HippoLockManager lockManager = (HippoLockManager) session.getWorkspace().getLockManager();
+        if (!lockManager.isLocked(nodePath) || lockManager.expireLock(nodePath)) {
             try {
                 ensureIsLockable(session, nodePath);
                 lockManager.lock(nodePath, false, false, lockTimeout, getClusterNodeId(session));

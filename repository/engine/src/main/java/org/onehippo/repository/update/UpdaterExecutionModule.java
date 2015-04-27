@@ -37,6 +37,7 @@ import javax.jcr.observation.EventListener;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.locking.HippoLockManager;
 import org.onehippo.repository.modules.DaemonModule;
 import org.onehippo.repository.modules.ProvidesService;
 import org.slf4j.Logger;
@@ -170,8 +171,8 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
 
         private boolean lock() throws RepositoryException {
             log.debug("Trying to obtain lock");
-            final LockManager lockManager = session.getWorkspace().getLockManager();
-            if (!lockManager.isLocked(UPDATE_PATH)) {
+            final HippoLockManager lockManager = (HippoLockManager) session.getWorkspace().getLockManager();
+            if (!lockManager.isLocked(UPDATE_PATH) || lockManager.expireLock(UPDATE_PATH)) {
                 try {
                     lock = lockManager.lock(UPDATE_PATH, false, false, TWO_MINUTES, getClusterNodeId());
                     log.debug("Lock successfully obtained");
