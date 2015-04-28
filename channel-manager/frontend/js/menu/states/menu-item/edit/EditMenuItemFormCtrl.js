@@ -36,6 +36,7 @@
 
         $scope.$watch(function () {
           return $scope.form;
+        }, function () {
           if ($stateParams.selectedDocumentPath) {
             $scope.MenuItemCtrl.selectedMenuItem.link = $scope.MenuItemCtrl.selectedMenuItem.sitemapLink = $stateParams.selectedDocumentPath;
             $scope.EditMenuItemCtrl.linkToFocus = 'sitemapLink';
