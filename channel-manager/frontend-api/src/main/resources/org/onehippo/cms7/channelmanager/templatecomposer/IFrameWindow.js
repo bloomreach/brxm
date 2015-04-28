@@ -56,12 +56,15 @@
             var messageBus = self.getIFramePanel().iframeToHost;
 
             messageBus.subscribe('close-reply', function () {
-              //CMS7-9067 make sure angular is properly destroyed.
-              Ext.getCmp(self.iframePanelId).setLocation('about:blank');
-
-              isClosing = true;
-              self.close();
-              isClosing = false;
+              // make sure AngularJS in the iframe is properly destroyed by changing the
+              // location to about:blank before removing the iframe element from the DOM
+              var iframePanel = Ext.getCmp(self.iframePanelId);
+              iframePanel.on('locationchanged', function() {
+                isClosing = true;
+                self.close();
+                isClosing = false;
+              }, this, { single: true });
+              iframePanel.setLocation('about:blank');
             });
 
             messageBus.subscribe('browseTo', function (pathInfo) {
