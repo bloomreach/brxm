@@ -99,7 +99,7 @@ public class LockHelper {
         doLock(node, node.getSession().getUserID(), versionStamp);
     }
 
-    private void doLock(final Node node, String lockFor, final long versionStamp) throws RepositoryException {
+    private void doLock(final Node node, final String lockFor, final long versionStamp) throws RepositoryException {
         if (node.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT)) {
             // due historical reasons, the HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT does not need
             // editable mixin

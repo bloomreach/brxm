@@ -91,11 +91,6 @@ public class ContainerItemHelper extends AbstractHelper {
         acquireLock(containerItem, versionStamp, containerItem.getSession().getUserID());
     }
 
-    private void acquireLock(final Node containerItem, final long versionStamp, String lockFor) throws RepositoryException {
-        Node container = getContainerNode(containerItem);
-        lockHelper.acquireLock(container, lockFor, versionStamp);
-    }
-
     /**
      * Locks the container item identified by containerItemId with the given time stamp. Will throw a {@link
      * ClientException} if the item cannot be found, is not a container item or is already locked.
@@ -108,7 +103,7 @@ public class ContainerItemHelper extends AbstractHelper {
      * @throws ClientException
      * @throws RepositoryException
      */
-    public void acquireLock(String containerItemId, String lockFor, long versionStamp) throws RepositoryException, ClientException {
+    public void acquireLock(final String containerItemId, final String lockFor, long versionStamp) throws RepositoryException, ClientException {
         try {
             Session session = RequestContextProvider.get().getSession();
             final Node containerItem = pageComposerContextService.getRequestConfigNodeById(containerItemId, NODETYPE_HST_CONTAINERITEMCOMPONENT, session);
@@ -119,20 +114,19 @@ public class ContainerItemHelper extends AbstractHelper {
         }
     }
 
+    private void acquireLock(final Node containerItem, final long versionStamp, final String lockFor) throws RepositoryException {
+        Node container = getContainerNode(containerItem);
+        lockHelper.acquireLock(container, lockFor, versionStamp);
+    }
+
     /**
      * if the container of <code>containerItem</code> is locked by the user, it is unlocked.
      * When the container is not locked, or another user has the lock, a ClientException is thrown.
      *
      * Note this method does *not* persist the changes.
      */
-    public void releaseLock(Node containerItem) throws RepositoryException {
+    public void releaseLock(final Node containerItem) throws RepositoryException {
         releaseLock(containerItem, containerItem.getSession().getUserID());
-    }
-
-    private void releaseLock(Node containerItem, String lockOwner) throws RepositoryException {
-        Node container = getContainerNode(containerItem);
-        lockHelper.acquireLock(container, lockOwner, 0);
-        lockHelper.unlock(container);
     }
 
     /**
@@ -145,7 +139,8 @@ public class ContainerItemHelper extends AbstractHelper {
      * @param lockOwner         the user owning the lock
      * @throws RepositoryException
      */
-    public void releaseLock(String containerItemId, String lockOwner) throws RepositoryException, ClientException {
+    @SuppressWarnings("UnusedDeclaration")
+    public void releaseLock(final String containerItemId, final String lockOwner) throws RepositoryException, ClientException {
         try {
             Session session = RequestContextProvider.get().getSession();
             final Node containerItem = pageComposerContextService.getRequestConfigNodeById(containerItemId, NODETYPE_HST_CONTAINERITEMCOMPONENT, session);
@@ -154,6 +149,12 @@ public class ContainerItemHelper extends AbstractHelper {
         } catch (ItemNotFoundException e) {
             throw new ClientException("container item with id " + containerItemId + " not found", ITEM_NOT_FOUND);
         }
+    }
+
+    private void releaseLock(final Node containerItem, final String lockOwner) throws RepositoryException {
+        Node container = getContainerNode(containerItem);
+        lockHelper.acquireLock(container, lockOwner, 0);
+        lockHelper.unlock(container);
     }
 
     private static Node getContainerNode(final Node containerItem) throws RepositoryException, ClientException {
