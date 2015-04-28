@@ -260,6 +260,7 @@ client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/filter/ContentBas
 client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/services/DocumentsResource.java -text
 client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/services/ResourceUtil.java -text
 client-modules/cms-rest/src/main/resources/org/hippoecm/hst/cmsrest/SpringComponentManager-cmsrest.xml -text
+client-modules/cms-rest/src/site/site.xml -text
 client-modules/cms-rest/src/test/java/org/hippoecm/hst/cmsrest/AbstractCmsRestTest.java -text
 client-modules/cms-rest/src/test/java/org/hippoecm/hst/cmsrest/VirtualHost127001AugmentedTest.java -text
 client-modules/cms-rest/src/test/java/org/hippoecm/hst/cmsrest/services/DocumentsResourceTest.java -text
@@ -273,12 +274,14 @@ client-modules/google-analytics/hst/src/main/java/org/onehippo/cms7/hst/ga/tags/
 client-modules/google-analytics/hst/src/main/java/org/onehippo/cms7/hst/ga/tags/GoogleAnalyticsTrackDocumentTag.java -text
 client-modules/google-analytics/hst/src/main/resources/META-INF/googleanalytics.tld -text
 client-modules/google-analytics/hst/src/main/resources/META-INF/web-resources/google-analytics.js -text
+client-modules/google-analytics/hst/src/site/site.xml -text
 client-modules/google-analytics/pom.xml -text
 client-modules/google-analytics/repository/pom.xml -text
 client-modules/google-analytics/repository/src/main/java/org/onehippo/cms7/googleanalytics/GoogleAnalyticsServiceImpl.java -text
 client-modules/google-analytics/repository/src/main/resources/google-analytics-configuration.xml -text
 client-modules/google-analytics/repository/src/main/resources/hippoecm-extension.xml -text
 client-modules/google-analytics/repository/src/main/resources/hippogoogleanalytics.cnd -text
+client-modules/google-analytics/repository/src/site/site.xml -text
 client-modules/page-composer/pom.xml -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/builtin/components/StandardContainerComponent.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/api/ChannelEvent.java -text
@@ -980,6 +983,7 @@ components/pom.xml -text svneol=unset#text/plain
 components/resourcebundle-cnd/pom.xml -text
 components/resourcebundle-cnd/src/main/resources/hippoecm-extension.xml -text
 components/resourcebundle-cnd/src/main/resources/resourcebundle.cnd -text
+components/resourcebundle-cnd/src/site/site.xml -text
 components/resourcebundle/pom.xml -text
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/PlaceHolderEmptyResourceBundleFamily.java -text
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/SimpleListResourceBundle.java -text
@@ -987,6 +991,7 @@ components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/DefaultMutableResourceBundleRegistry.java -text
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/HippoRepositoryResourceBundleEventListener.java -text
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/HippoRepositoryResourceBundleFamilyFactory.java -text
+components/resourcebundle/src/site/site.xml -text
 components/resourcebundle/src/test/java/org/hippoecm/hst/resourcebundle/TestDefaultResourceBundleRegistry.java -text
 components/resourcebundle/src/test/java/org/hippoecm/hst/resourcebundle/internal/TestHippoRepositoryResourceBundleFamilyFactory.java -text
 components/resourcebundle/src/test/resources/log4j.xml -text
@@ -1135,8 +1140,10 @@ content-beans/src/test/resources/org/hippoecm/hst/util/TestObjectConverterUtils-
 dependencies/client-dependencies/pom.xml svneol=native#text/plain
 dependencies/client-dependencies/src/site/site.xml -text
 dependencies/cms-dependencies/pom.xml -text
+dependencies/cms-dependencies/src/site/site.xml -text
 dependencies/pom.xml svneol=native#text/plain
 dependencies/repository-dependencies/pom.xml -text
+dependencies/repository-dependencies/src/site/site.xml -text
 dependencies/server-dependencies/pom.xml svneol=native#text/plain
 dependencies/server-dependencies/src/site/site.xml -text
 dependencies/spring-dependencies/pom.xml svneol=native#text/plain
@@ -1144,11 +1151,13 @@ dependencies/spring-dependencies/src/site/site.xml -text
 dependencies/src/site/site.xml -text
 integration/README -text
 integration/pom.xml svneol=native#text/plain
+integration/src/site/site.xml -text
 integration/tests/conf/context.xml -text
 integration/tests/conf/log4j.dtd -text
 integration/tests/conf/log4j.xml -text
 integration/tests/conf/repository.xml -text
 integration/tests/pom.xml -text
+integration/tests/src/site/site.xml -text
 integration/tests/src/test/java/org/hippoecm/hst/integration/AbstractHstIntegrationTest.java -text
 integration/tests/src/test/java/org/hippoecm/hst/integration/HstIntegrationTest.java -text
 integration/tests/src/test/java/org/hippoecm/hst/integration/IntegrationHstManagerImpl.java -text
@@ -1156,6 +1165,7 @@ integration/tests/src/test/resources/org/hippoecm/hst/integration/AbstractHstInt
 integration/war/pom.xml -text
 integration/war/src/main/java/org/hippoecm/hst/servlets/H2ServerServlet.java -text
 integration/war/src/main/webapp/WEB-INF/web.xml -text
+integration/war/src/site/site.xml -text
 mock/pom.xml -text
 mock/src/main/java/org/hippoecm/hst/container/GenericRequestContextWrapper.java -text
 mock/src/main/java/org/hippoecm/hst/container/ModifiableRequestContextProvider.java -text
@@ -1198,6 +1208,7 @@ mock/src/test/resources/log4j.xml -text
 rest-api/pom.xml -text
 rest-api/src/main/java/org/hippoecm/hst/rest/DocumentService.java -text
 rest-api/src/main/java/org/hippoecm/hst/rest/beans/ChannelDocument.java -text
+rest-api/src/site/site.xml -text
 sandbox/WARNINGS -text
 sandbox/ocm/pom.xml svneol=native#text/plain
 sandbox/ocm/src/main/java/org/hippoecm/hst/jackrabbit/ocm/hippo/HippoStdDirectory.java svneol=native#text/plain
@@ -1234,6 +1245,7 @@ solr-client/pom.xml -text
 solr-client/src/main/java/org/hippoecm/hst/solr/HippoSolrClientImpl.java -text
 solr-client/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
 solr-client/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/solr/SpringComponentManager-solr.xml -text
+solr-client/src/site/site.xml -text
 solr-content-beans/pom.xml -text
 solr-content-beans/src/main/java/org/hippoecm/hst/solr/DocumentObjectBinder.java -text
 solr-content-beans/src/main/java/org/hippoecm/hst/solr/HippoSolrClient.java -text
@@ -1250,6 +1262,7 @@ solr-content-beans/src/main/java/org/hippoecm/hst/solr/content/beans/query/impl/
 solr-content-beans/src/main/java/org/hippoecm/hst/solr/content/beans/query/impl/HippoQueryResultImpl.java -text
 solr-content-beans/src/main/java/org/hippoecm/hst/solr/content/beans/query/impl/HitImpl.java -text
 solr-content-beans/src/main/java/org/hippoecm/hst/solr/content/beans/query/impl/HitIteratorImpl.java -text
+solr-content-beans/src/site/site.xml -text
 solr-content-beans/src/test/java/org/hippoecm/hst/solr/PatternTester.java -text
 solr-content-beans/src/test/java/org/hippoecm/hst/solr/TestCompositeCompoundDocumentObjectBinder.java -text
 solr-content-beans/src/test/java/org/hippoecm/hst/solr/TestCompoundDocumentObjectBinder.java -text
@@ -1333,5 +1346,6 @@ toolkit-resources/addon/unittestcontents/src/main/resources/unittestproject-type
 toolkit-resources/addon/unittestcontents/src/site/site.xml -text
 toolkit-resources/addon/unittestspringconfig/pom.xml -text
 toolkit-resources/addon/unittestspringconfig/src/main/resources/org/hippoecm/hst/test/GeneralMultiplePoolingRepository.xml -text
+toolkit-resources/addon/unittestspringconfig/src/site/site.xml -text
 toolkit-resources/pom.xml svneol=native#text/plain
 toolkit-resources/src/site/site.xml -text
