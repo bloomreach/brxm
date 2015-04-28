@@ -90,6 +90,7 @@
       this.on('tabchange', function (panel, tab) {
         if (this.firePropertiesChangedEvents && tab && tab.propertiesForm) {
           tab.propertiesForm.firePropertiesChanged();
+          tab.syncVisibleHeight();
         }
       }, this);
     },
