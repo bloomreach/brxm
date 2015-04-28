@@ -82,7 +82,7 @@ public class LockManagerDecorator extends org.hippoecm.repository.decorating.Loc
         }
         final Lock lock = super.lock(absPath, isDeep, isSessionScoped, timeoutHint, ownerInfo);
         setTimeout(lock, timeoutHint);
-        return new LockDecorator(lock);
+        return new LockDecorator(lock, timeoutHint);
     }
 
     @Override
@@ -116,12 +116,19 @@ public class LockManagerDecorator extends org.hippoecm.repository.decorating.Loc
 
     public class LockDecorator implements HippoLock {
 
-        private final Lock lock;
+        private Lock lock;
         private volatile ScheduledFuture future;
         private final Object monitor = this; // guards future
+        private final long timeout;
 
-        private LockDecorator(final Lock lock) {
+        private LockDecorator(final Lock lock, final long timeout) {
             this.lock = lock;
+            this.timeout = timeout;
+        }
+
+        private LockDecorator(final Lock lock) throws RepositoryException {
+            this.lock = lock;
+            timeout = -1;
         }
 
         @Override
@@ -175,18 +182,18 @@ public class LockManagerDecorator extends org.hippoecm.repository.decorating.Loc
             if (!isLive()) {
                 throw new LockException("Can't start a keep-alive on an unalive lock");
             }
-            long timeout = getSecondsRemaining();
             if (timeout == Long.MAX_VALUE) {
                 throw new LockException("Lock has no timeout");
             }
-            if (timeout < 9) {
-                refresh();
-                timeout = getSecondsRemaining();
-                if (timeout < 9) {
-                    throw new LockException("Too little time remaining before timeout");
-                }
+            if (timeout < 10) {
+                throw new LockException("Timeout must be at least 10 seconds to start keep-alive, was: " + timeout);
             }
-            long delay = timeout - 8;
+            final long secondsRemaining = getSecondsRemaining();
+            long delay = secondsRemaining - 8;
+            if (secondsRemaining < 8) {
+                refresh();
+                delay = timeout - 8;
+            }
             future = executor.schedule(new Runnable() {
                 @Override
                 public void run() {
@@ -194,8 +201,31 @@ public class LockManagerDecorator extends org.hippoecm.repository.decorating.Loc
                         if (future.isCancelled()) {
                             return;
                         }
+                        boolean success = false;
                         try {
                             refresh();
+                            success = true;
+                        } catch(LockException e) {
+                            log.warn("Failed to refresh lock, this might have occurred due to a hick-up; trying to obtain new lock...");
+                            try {
+                                lock = lockManager.lock(lock.getNode().getPath(), lock.isDeep(), lock.isSessionScoped(), timeout, lock.getLockOwner());
+                                setTimeout(lock, timeout);
+                                success = true;
+                            } catch (RepositoryException e1) {
+                                if (log.isDebugEnabled()) {
+                                    log.error("Failed to refresh lock: " + e1);
+                                } else {
+                                    log.error("Failed to refresh lock", e1);
+                                }
+                            }
+                        } catch (RepositoryException e) {
+                            if (log.isDebugEnabled()) {
+                                log.error("Failed to refresh lock", e);
+                            } else {
+                                log.error("Failed to refresh lock: " + e);
+                            }
+                        }
+                        if (success) {
                             try {
                                 startKeepAlive();
                             } catch (RepositoryException e) {
@@ -204,12 +234,6 @@ public class LockManagerDecorator extends org.hippoecm.repository.decorating.Loc
                                 } else {
                                     log.error("Failed to schedule next keep-alive: " + e);
                                 }
-                            }
-                        } catch (RepositoryException e) {
-                            if (log.isDebugEnabled()) {
-                                log.error("Failed to refresh lock", e);
-                            } else {
-                                log.error("Failed to refresh lock: " + e);
                             }
                         }
                     }

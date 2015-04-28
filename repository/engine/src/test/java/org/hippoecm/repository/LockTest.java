@@ -120,4 +120,14 @@ public class LockTest extends RepositoryTestCase {
         assertTrue(lockManager.expireLock("/test"));
         assertFalse(lock.isLive());
     }
+
+    @Test
+    public void testLockKeepAliveReLocksDroppedLock() throws Exception {
+        final HippoLockManager lockManager = (HippoLockManager) session.getWorkspace().getLockManager();
+        final HippoLock lock = lockManager.lock("/test", false, false, 10l, null);
+        lock.startKeepAlive();
+        lockManager.unlock("/test");
+        Thread.sleep(3001l);
+        assertTrue(lockManager.isLocked("/test"));
+    }
 }
