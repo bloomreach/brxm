@@ -19,7 +19,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
   <!-- HST Component Beans -->
-  <bean id="contactBean" class="org.hippoecm.hst.demo.spring.ContactSpring">
+  <bean id="contactBean" class="org.hippoecm.hst.demo.spring.ContactSpring" scope="prototype">
     <property name="mailSender" ref="mailSender" />
     <property name="templateMessage" ref="templateMessage" />
   </bean>
