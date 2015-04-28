@@ -173,7 +173,7 @@ public class SetMembershipsPanel extends Panel {
     }
 
     /**
-     * list view to be nested in the hippoForm.
+     * list view to be nested in the form.
      */
     private final class MembershipsListEditView extends ListView<Group> {
 
