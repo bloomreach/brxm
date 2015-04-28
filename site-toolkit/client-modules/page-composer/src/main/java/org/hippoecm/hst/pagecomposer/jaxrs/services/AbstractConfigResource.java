@@ -158,7 +158,7 @@ public class AbstractConfigResource {
         }
     }
 
-    private void resetSession() {
+    protected void resetSession() {
         final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         if (requestContext != null) {
             try {

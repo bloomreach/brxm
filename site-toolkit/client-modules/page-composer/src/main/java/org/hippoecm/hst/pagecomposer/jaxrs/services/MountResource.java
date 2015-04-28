@@ -43,7 +43,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.container.event.ChannelPublicationEvent;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -57,6 +57,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.PrototypesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.UserRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
@@ -296,7 +297,8 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
             PageComposerContextService context = getPageComposerContextService();
             String liveConfigurationPath = context.getEditingLiveConfigurationPath();
             String previewConfigurationPath = context.getEditingPreviewConfigurationPath();
-            Session session = context.getRequestContext().getSession();
+            final HstRequestContext requestContext = context.getRequestContext();
+            Session session = requestContext.getSession();
 
             List<String> mainConfigNodeNamesToPublish = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
             copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainConfigNodeNamesToPublish);
@@ -306,10 +308,12 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
             pagesHelper.publishChanges(userIds);
             siteMenuHelper.publishChanges(userIds);
 
-            ChannelPublicationEvent event = new ChannelPublicationEvent(
-                    ChannelPublicationEvent.Action.PUBLISH,
+            ChannelEvent event = new ChannelEvent(
+                    ChannelEvent.ChannelEventType.PUBLISH,
                     userIds,
-                    context.getRenderingMountId(), session);
+                    context.getEditingMount(),
+                    context.getEditingPreviewSite(),
+                    requestContext);
             componentManager.publishEvent(event);
 
             HstConfigurationUtils.persistChanges(session);
@@ -318,6 +322,9 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
 
             log.info("Site is published");
             return ok("Site is published");
+        } catch (ClientException e) {
+            resetSession();
+            return logAndReturnClientError(e);
         } catch (RepositoryException e) {
             log.warn("Could not publish preview configuration : ", e);
             return error("Could not publish preview configuration : " + e);
@@ -486,10 +493,12 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
             pagesHelper.discardChanges(userIds);
             siteMenuHelper.discardChanges(userIds);
 
-            ChannelPublicationEvent event = new ChannelPublicationEvent(
-                    ChannelPublicationEvent.Action.DISCARD,
+            ChannelEvent event = new ChannelEvent(
+                    ChannelEvent.ChannelEventType.DISCARD,
                     userIds,
-                    context.getRenderingMountId(), session);
+                    context.getEditingMount(),
+                    context.getEditingPreviewSite(),
+                    requestContext);
             componentManager.publishEvent(event);
 
             HstConfigurationUtils.persistChanges(session);
@@ -498,6 +507,9 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
 
             log.info("Changes of user '{}' for site '{}' are discarded.", session.getUserID(), editingPreviewSite.getName());
             return ok("Changes of user '"+session.getUserID()+"' for site '"+editingPreviewSite.getName()+"' are discarded.");
+        } catch (ClientException e) {
+            resetSession();
+            return logAndReturnClientError(e);
         } catch (RepositoryException e) {
             log.warn("Could not discard preview configuration: ", e);
             return error("Could not discard preview configuration: " + e);
