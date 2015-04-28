@@ -81,7 +81,7 @@ public class AbstractPageComposerTest {
         componentManager.setConfigurationResources(getConfigurations());
 
         servletContext.setContextPath("/site");
-        ServletContextRegistry.register(servletContext);
+        ServletContextRegistry.register(servletContext, ServletContextRegistry.WebAppType.HST);
 
         componentManager.setServletContext(servletContext);
         componentManager.initialize();

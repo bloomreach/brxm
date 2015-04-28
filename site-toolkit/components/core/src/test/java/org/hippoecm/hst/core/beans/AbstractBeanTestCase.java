@@ -75,7 +75,7 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
                 public ClassLoader getClassLoader() {
                     return AbstractBeanTestCase.class.getClassLoader();
                 }
-            });
+            }, ServletContextRegistry.WebAppType.HST);
         }
     }
 

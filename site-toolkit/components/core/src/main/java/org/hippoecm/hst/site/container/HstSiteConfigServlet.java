@@ -237,7 +237,7 @@ public class HstSiteConfigServlet extends HttpServlet {
     @Override
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);
-        ServletContextRegistry.register(config.getServletContext());
+        ServletContextRegistry.register(config.getServletContext(), ServletContextRegistry.WebAppType.HST);
         log.debug("Registered servlet context '{}' at {}",
                 getServletContext().getContextPath(), ServletContextRegistry.class.getName());
 
