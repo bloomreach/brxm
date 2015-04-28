@@ -277,8 +277,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
                 bootstrapSession = DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials);
                 lockSession = DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials);
-                initializationProcessor.lock(lockSession);
-                locked = true;
                 initializeSystemNodeTypes(initializationProcessor, bootstrapSession, jackrabbitRepository.getFileSystem());
                 if (!bootstrapSession.nodeExists("/hippo:configuration")) {
                     log.debug("Initializing configuration content");
@@ -287,6 +285,8 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 } else {
                     log.debug("Initial configuration content already present");
                 }
+                initializationProcessor.lock(lockSession);
+                locked = true;
                 postStartupTasks = contentBootstrap(initializationProcessor, bootstrapSession);
             }
 
