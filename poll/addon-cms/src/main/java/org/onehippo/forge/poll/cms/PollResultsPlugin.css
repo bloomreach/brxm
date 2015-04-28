@@ -14,8 +14,8 @@
  * limitations under the License.
 */
 
-.resulttable {
-  width: 100%;
+.poll-options td {
+  width: 50%;
 }
 
 .resulttable th {
@@ -24,14 +24,17 @@
   padding-bottom: 4px;
 }
 
-.resulttable th,
-.resulttable td {
-  color: #333;
-  width: 50%;
+.resulttable th:first-child,
+.resulttable td:first-child {
+  padding-right: 16px;
 }
 
 .resulttable td {
   padding-top: 4px;
+}
+
+.resulttable .count {
+  text-align: right;
 }
 
 .hippo-poll-results.hippo-editor-compound-field .hippo-editor-field {
