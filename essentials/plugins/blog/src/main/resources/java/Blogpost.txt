@@ -73,12 +73,6 @@ public class Blogpost extends HippoDocument implements Authors {
         return getProperty(INTRODUCTION);
     }
 
-
-    @HippoEssentialsGenerated(internalName = "{{namespace}}:link")
-    public String getLink() {
-        return getProperty(LINK);
-    }
-
     @HippoEssentialsGenerated(internalName = "{{namespace}}:categories")
     public String[] getCategories() {
         return getProperty(CATEGORIES);
