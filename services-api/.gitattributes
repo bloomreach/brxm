@@ -10,3 +10,4 @@ src/main/java/org/onehippo/cms7/services/googleanalytics/GoogleAnalyticsService.
 src/main/java/org/onehippo/cms7/services/webfiles/WebFile.java -text
 src/main/java/org/onehippo/cms7/services/webfiles/WebFileEvent.java -text
 src/main/java/org/onehippo/cms7/services/webfiles/WebFilesService.java -text
+src/test/java/org/onehippo/cms7/services/ServletContextRegistryTest.java -text

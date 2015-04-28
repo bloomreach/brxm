@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@
     <notice.project.name>Hippo CMS7 Services</notice.project.name>
 
     <hippo.commons.version>1.05.00-SNAPSHOT</hippo.commons.version>
+    <easymock.version>3.0</easymock.version>
   </properties>
 
   <scm>
@@ -68,6 +69,12 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.10</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <version>${easymock.version}</version>
       <scope>test</scope>
     </dependency>
 

@@ -24,7 +24,9 @@ import javax.servlet.ServletContext;
 
 /**
  * The ServletContextRegistry provides a central registration of web applications their {@link ServletContext} using
- * their contextPath as key.
+ * their contextPath as key and optionally a {@link WebAppType} which gets set as {@link ServletContext} attribute as follows:
+ * {@link javax.servlet.ServletContext#setAttribute(String, Object)
+ * ServletContext#setAttribute(org.onehippo.cms7.services.ServletContextRegistry.WebAppType, WebAppType)}.
  * <p>
  * ServletContexts can/should be registered/unregistered via init/destroy methods of a {@link javax.servlet.Servlet}
  * or {@link javax.servlet.Filter}, or a {@link javax.servlet.ServletContextListener} its
@@ -37,6 +39,10 @@ import javax.servlet.ServletContext;
  */
 public final class ServletContextRegistry {
 
+    public enum WebAppType {
+        HST, REPO, OTHER
+    }
+
     private static Map<String, ServletContext> registry = new HashMap<>();
 
     /**
@@ -44,12 +50,15 @@ public final class ServletContextRegistry {
      * @throws IllegalStateException if the ServletContext already has been registered by its contextPath
      * @param ctx the servletContext to register
      */
-    public synchronized static void register(ServletContext ctx) {
+    public synchronized static void register(final ServletContext ctx, final WebAppType type) {
         if (registry.containsKey(ctx.getContextPath())) {
             throw new IllegalStateException("ServletContext "+ctx.getContextPath()+" already registered");
         }
         Map<String, ServletContext> newMap = new HashMap<>(registry);
         newMap.put(ctx.getContextPath(), ctx);
+        if (type != null) {
+            ctx.setAttribute(WebAppType.class.getName(), type);
+        }
         registry = Collections.unmodifiableMap(newMap);
     }
 
@@ -58,7 +67,7 @@ public final class ServletContextRegistry {
      * @throws IllegalStateException if the ServletContext has not been registered by its contextPath
      * @param ctx the servletContext to unregister
      */
-    public synchronized static void unregister(ServletContext ctx) {
+    public synchronized static void unregister(final ServletContext ctx) {
         if (!registry.containsKey(ctx.getContextPath())) {
             throw new IllegalStateException("ServletContext "+ctx.getContextPath()+" not registered");
         }
@@ -71,14 +80,31 @@ public final class ServletContextRegistry {
      * @param contextPath The contextPath for which to lookup the ServletContext
      * @return the ServletContext registered under the parameter contextPath
      */
-    public static ServletContext getContext(String contextPath) {
+    public static ServletContext getContext(final String contextPath) {
         return registry.get(contextPath);
     }
 
     /**
-     * @return all currently registered ServletContexts mapped by their contextPath
+     * @return unmodifiable map of all currently registered ServletContexts mapped by their contextPath
      */
     public static Map<String, ServletContext> getContexts() {
         return registry;
+    }
+
+    /**
+     * @return unmodifiable map of  all currently registered ServletContexts of WebAppType <code>type</code> mapped by their contextPath
+     */
+    public static Map<String, ServletContext> getContexts(final WebAppType type) {
+        if (type == null) {
+            throw new IllegalArgumentException("WebAppType argument is not allowed to be null.");
+        }
+        Map<String, ServletContext> newMap = new HashMap<>();
+        for (Map.Entry<String, ServletContext> entry : registry.entrySet()) {
+            final Object attribute = entry.getValue().getAttribute(WebAppType.class.getName());
+            if (attribute == type) {
+                newMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return Collections.unmodifiableMap(newMap);
     }
 }
