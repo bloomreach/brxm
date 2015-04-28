@@ -18,27 +18,23 @@ package org.hippoecm.repository;
 import java.io.File;
 
 import javax.jcr.Credentials;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
-import javax.transaction.NotSupportedException;
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
-
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 
-import org.onehippo.repository.bootstrap.InitializationProcessor;
 import org.hippoecm.repository.api.ReferenceWorkspace;
-import org.onehippo.repository.security.JvmCredentials;
+import org.hippoecm.repository.api.RepositoryMap;
+import org.onehippo.repository.bootstrap.InitializationProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.hippoecm.repository.api.RepositoryMap;
 
 public abstract class HippoRepositoryImpl implements HippoRepository {
 
@@ -105,10 +101,6 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
     public Session login(Credentials credentials, String workspaceName) throws LoginException, RepositoryException {
         if (repository == null) {
             throw new RepositoryException("Repository not initialized yet.");
-        }
-        if (credentials instanceof JvmCredentials) {
-            JvmCredentials jvmCredentials = (JvmCredentials) credentials;
-            credentials = new SimpleCredentials(jvmCredentials.getUserID(), jvmCredentials.getPassword());
         }
         // try to login with credentials
         Session session = repository.login(credentials, workspaceName);

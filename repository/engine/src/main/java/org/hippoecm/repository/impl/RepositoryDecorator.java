@@ -22,10 +22,12 @@ import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.hippoecm.repository.util.RepoUtils;
 import org.onehippo.repository.RepositoryService;
+import org.onehippo.repository.security.JvmCredentials;
 
 /**
  * Simple {@link Repository Repository} decorator.
@@ -56,6 +58,10 @@ public class RepositoryDecorator extends org.hippoecm.repository.decorating.Repo
 
     @Override
     public Session login(Credentials credentials, String workspaceName) throws RepositoryException {
+        if (credentials instanceof JvmCredentials) {
+            JvmCredentials jvmCredentials = (JvmCredentials)credentials;
+            credentials = new SimpleCredentials(jvmCredentials.getUserID(), jvmCredentials.getPassword());
+        }
         Session session = repository.login(credentials, workspaceName);
         return DecoratorFactoryImpl.getSessionDecorator(session, credentials);
     }

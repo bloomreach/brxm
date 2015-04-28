@@ -137,6 +137,22 @@ public class RepositoryLoginTest extends RepositoryTestCase {
         }
     }
 
+    @Test
+    public void testLoginJvmUserRepositoryObtainedViaSession() throws Exception {
+        try {
+            final Session session1 = server.login(JvmCredentials.getCredentials(TESTUSER_JVM));
+            assertEquals(TESTUSER_JVM, session1.getUserID());
+
+            final Session session2 = session1.getRepository().login(JvmCredentials.getCredentials(TESTUSER_JVM));
+            assertEquals(TESTUSER_JVM, session2.getUserID());
+
+            session1.logout();
+            session2.logout();
+        } catch (LoginException e) {
+            fail("Jvm user login failed");
+        }
+    }
+
     @Test(expected = LoginException.class)
     public void testLoginPlainFail() throws Exception {
         Session session = server.login(TESTUSER_ID_PLAIN, "wrongpassword".toCharArray());
