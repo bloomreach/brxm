@@ -45,7 +45,9 @@ public class ServletContextRegistryTest {
 
     @After
     public void tearDown() {
-        ServletContextRegistry.unregister(servletContext);
+        if (ServletContextRegistry.getContexts().containsKey(servletContext.getContextPath())) {
+            ServletContextRegistry.unregister(servletContext);
+        }
     }
 
     @Test
@@ -77,6 +79,11 @@ public class ServletContextRegistryTest {
         assertEquals(1, ServletContextRegistry.getContexts(ServletContextRegistry.WebAppType.HST).size());
         assertEquals(0, ServletContextRegistry.getContexts(ServletContextRegistry.WebAppType.REPO).size());
 
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void register_servlet_context_with_null_type_not_allowed() {
+        ServletContextRegistry.register(servletContext, null);
     }
 
 }

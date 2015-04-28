@@ -49,10 +49,14 @@ public final class ServletContextRegistry {
      * Register a {@link ServletContext}
      * @throws IllegalStateException if the ServletContext already has been registered by its contextPath
      * @param ctx the servletContext to register
+     * @param type the <code>WebAppType</code> to which the <code>ctx</code> belongs. Not allowed to be <code>null</code>
      */
     public synchronized static void register(final ServletContext ctx, final WebAppType type) {
         if (registry.containsKey(ctx.getContextPath())) {
             throw new IllegalStateException("ServletContext "+ctx.getContextPath()+" already registered");
+        }
+        if (type == null) {
+            throw new IllegalArgumentException("WebAppType argument is not allowed to be null.");
         }
         Map<String, ServletContext> newMap = new HashMap<>(registry);
         newMap.put(ctx.getContextPath(), ctx);
