@@ -51,7 +51,7 @@
     scopeId: 'Page',
 
     init: function (data) {
-      this.overlay = $('<div/>').addClass('hst-overlay-root').hide().appendTo(document.body);
+      this.overlay = $('<div></div>').addClass('hst-overlay-root').hide().appendTo(document.body);
       this.preview = data.previewMode;
       this.resources = data.resources;
 
@@ -83,16 +83,12 @@
       }, this);
 
       subscribeIntercepted('showoverlay', function () {
-        this.getOverlay().show();
-        $('.empty-container-placeholder').show();
-        this.requestSync();
-        this.sync();
+        this.showOverlay();
         return false;
       }, this);
 
       subscribeIntercepted('hideoverlay', function () {
-        this.getOverlay().hide();
-        $('.empty-container-placeholder').hide();
+        this.hideOverlay();
         return false;
       }, this);
 
@@ -122,8 +118,7 @@
       }, this);
 
       subscribeIntercepted('resize', function () {
-        this.requestSync();
-        this.sync();
+        this.syncOverlay();
         return false;
       }, this);
 
@@ -270,12 +265,8 @@
     },
 
     renderComponent: function (id, propertiesMap) {
-      var o = this.retrieve(id),
-        self = this;
-      o.renderComponent(id, propertiesMap, function () {
-        self.requestSync();
-        self.sync();
-      });
+      var o = this.retrieve(id);
+      o.renderComponent(id, propertiesMap, this.syncOverlay.bind(this));
     },
 
     checkStateChanges: function () {
@@ -301,6 +292,22 @@
         });
       }
       this.syncRequested = false;
+    },
+
+    syncOverlay: function () {
+      this.requestSync();
+      this.sync();
+    },
+
+    showOverlay: function () {
+      this.overlay.show();
+      $('.empty-container-placeholder').show();
+      this.syncOverlay();
+    },
+
+    hideOverlay: function () {
+      this.overlay.hide();
+      $('.empty-container-placeholder').hide();
     },
 
     getOverlay: function () {
