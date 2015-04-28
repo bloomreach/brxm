@@ -464,7 +464,7 @@ public interface HippoNodeType {
 
     public static final String HIPPO_IGNORABLE = "hippo:ignorable";
 
-    public static final String HIPPO_TIMEOUT = "hippo:timeout";
+    public static final String HIPPO_LOCKEXPIRATIONTIME = "hippo:lockExpirationTime";
 
     public static final String HIPPO_LOCK = "hippo:lock";
 

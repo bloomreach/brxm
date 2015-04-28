@@ -34,7 +34,7 @@ import org.onehippo.repository.locking.HippoLockManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_TIMEOUT;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LOCKEXPIRATIONTIME;
 import static org.hippoecm.repository.api.HippoNodeType.NT_LOCKABLE;
 
 public class LockManagerDecorator extends org.hippoecm.repository.decorating.LockManagerDecorator implements HippoLockManager {
@@ -60,7 +60,7 @@ public class LockManagerDecorator extends org.hippoecm.repository.decorating.Loc
     @Override
     public boolean expireLock(final String absPath) throws LockException, RepositoryException {
         final Node lockNode = session.getNode(absPath);
-        final Calendar timeout = JcrUtils.getDateProperty(lockNode, HIPPO_TIMEOUT, NO_TIMEOUT);
+        final Calendar timeout = JcrUtils.getDateProperty(lockNode, HIPPO_LOCKEXPIRATIONTIME, NO_TIMEOUT);
         if (System.currentTimeMillis() < timeout.getTimeInMillis()) {
             return false;
         }
@@ -98,10 +98,10 @@ public class LockManagerDecorator extends org.hippoecm.repository.decorating.Loc
                 final Calendar timeout = Calendar.getInstance();
                 final long timeoutTime = System.currentTimeMillis() + timeoutHint * 1000;
                 timeout.setTimeInMillis(timeoutTime);
-                lockNode.setProperty(HIPPO_TIMEOUT, timeout);
+                lockNode.setProperty(HIPPO_LOCKEXPIRATIONTIME, timeout);
             } else {
-                if (lockNode.hasProperty(HIPPO_TIMEOUT)) {
-                    lockNode.getProperty(HIPPO_TIMEOUT).remove();
+                if (lockNode.hasProperty(HIPPO_LOCKEXPIRATIONTIME)) {
+                    lockNode.getProperty(HIPPO_LOCKEXPIRATIONTIME).remove();
                 }
             }
             lockNode.getSession().save();

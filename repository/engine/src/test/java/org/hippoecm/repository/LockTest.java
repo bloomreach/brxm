@@ -57,9 +57,9 @@ public class LockTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testLockContainsHippoTimeout() throws Exception {
+    public void testLockContainsHippoExpirationTimeout() throws Exception {
         session.getWorkspace().getLockManager().lock("/test", false, false, 2l, null);
-        assertTrue(session.propertyExists("/test/hippo:timeout"));
+        assertTrue(session.propertyExists("/test/hippo:lockExpirationTime"));
     }
 
     @Test

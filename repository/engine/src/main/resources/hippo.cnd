@@ -116,7 +116,7 @@
 + hippo:translation (hippo:translation) multiple
 
 [hippo:lockable] mixin
-- hippo:timeout (date)
+- hippo:lockExpirationTime (date)
 
 [hippo:lock] > nt:base, mix:lockable, hippo:lockable
 
