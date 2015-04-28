@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,13 +46,13 @@ public class DelegatingFilter implements Filter {
     private String delegateeName;
 
     /**
-     * @deprecated not used any more since CSM 7.10, HST 2.30.00. Instead use sitemap items with
+     * @deprecated not used any more since CMS 10.0, HST 2.30.00. Instead use sitemap items with
      * hst:namedpipeline = PlainFilterChainInvokingPipeline to fall through to next servlet (filter)
      */
     @Deprecated
     public static final String PREFIX_EXCLUSIONS_INIT_PARAM = "prefixExclusions";
     /**
-     * @deprecated not used any more since CSM 7.10, HST 2.30.00. Instead use sitemap items with
+     * @deprecated not used any more since CMS 10.0, HST 2.30.00. Instead use sitemap items with
      * hst:namedpipeline = PlainFilterChainInvokingPipeline to fall through to next servlet (filter)
      */
     @Deprecated

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ public class HstServices {
     
     /**
      * @return Returns the {@link HstRequestProcessor} component to serve requests.
-     * @deprecated since CMS 7.10 (hst 2.30). If needed, use
+     * @deprecated since CMS 10.0 (hst 2.30). If needed, use
      * {@link HstServices#getComponentManager() componentManager.getComponent(HstRequestProcessor.class.getName()}
      */
     @Deprecated

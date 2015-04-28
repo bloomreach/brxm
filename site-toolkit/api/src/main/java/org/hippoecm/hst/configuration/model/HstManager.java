@@ -41,7 +41,7 @@ public interface HstManager {
 
     /**
      * @return the HstURLFactory
-     * @deprecated Since CMS 7.10, HST 2.30.00. No use case any more. If required, the {@link HstSiteMapItemHandlerFactory}
+     * @deprecated Since CMS 10.0, HST 2.30.00. No use case any more. If required, the {@link HstSiteMapItemHandlerFactory}
      * can be fetched through  the HST Spring Component Manager
      */
     @Deprecated
@@ -56,14 +56,14 @@ public interface HstManager {
     
     /**
      * @return the siteMapItemHandler factory which can create {@link HstSiteMapItemHandler} instances
-     * @deprecated Since CMS 7.10, HST 2.30.00. No use case any more. If required, the {@link HstSiteMapItemHandlerFactory}
+     * @deprecated Since CMS 10.0, HST 2.30.00. No use case any more. If required, the {@link HstSiteMapItemHandlerFactory}
      * can be fetched through  the HST Spring Component Manager
      */
     @Deprecated
     HstSiteMapItemHandlerFactory getSiteMapItemHandlerFactory();
 
     /**
-     * @deprecated since CMS 7.10, HST 2.30.00. Use {@link #isHstFilterExcludedPath(String)} instead
+     * @deprecated since CMS 10.0, HST 2.30.00. Use {@link #isHstFilterExcludedPath(String)} instead
      */
     @Deprecated
     boolean isExcludedByHstFilterInitParameter(String pathInfo);

@@ -384,9 +384,9 @@
 - hst:showcontextpath (boolean)
 // whether the port should be visible in the created urls
 - hst:showport (boolean)
-// Not used since 7.10. Use a (hst:default) sitemap item to account for prefixes/suffixes that need special handling.
+// Not used since CMS 10.0. Use a (hst:default) sitemap item to account for prefixes/suffixes that need special handling.
 - hst:prefixexclusions (string) multiple
-// Not used since 7.10. Use a (hst:default) sitemap item to account for prefixes/suffixes that need special handling.
+// Not used since CMS 10.0. Use a (hst:default) sitemap item to account for prefixes/suffixes that need special handling.
 - hst:suffixexclusions (string) multiple
 - hst:scheme (string)
 - hst:schemenotmatchresponsecode (long)

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -144,7 +144,7 @@ public interface HstContainerURLProvider {
      * @return
      * @throws UnsupportedEncodingException
      * @throws ContainerException
-     * @deprecated deprecated since 2.30.00 (CMS 7.10), use
+     * @deprecated deprecated since 2.30.00 (CMS 10.0), use
      * {@link #toURLString(HstContainerURL, org.hippoecm.hst.core.request.HstRequestContext)} instead
      */
     @Deprecated

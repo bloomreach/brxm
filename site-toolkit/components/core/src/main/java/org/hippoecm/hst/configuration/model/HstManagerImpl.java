@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -130,7 +130,7 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
         this.cmsPreviewPrefix = cmsPreviewPrefix;
     }
 
-    /** @deprecated Since CMS 7.10, HST 2.30.00.
+    /** @deprecated Since CMS 10.0, HST 2.30.00.
     */
     @Deprecated
     public void setUrlFactory(HstURLFactory urlFactory) {
@@ -164,7 +164,7 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
     }
 
     /**
-     * @deprecated since CMS 7.10, HST 2.30.00
+     * @deprecated since CMS 10.0, HST 2.30.00
      */
     @Deprecated
     public void setSiteMapItemHandlerFactory(HstSiteMapItemHandlerFactory siteMapItemHandlerFactory) {
@@ -172,7 +172,7 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
     }
 
     /**
-     * @deprecated since CMS 7.10, HST 2.30.00
+     * @deprecated since CMS 10.0, HST 2.30.00
      */
     @Deprecated
     public HstSiteMapItemHandlerFactory getSiteMapItemHandlerFactory() {

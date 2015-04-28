@@ -67,7 +67,7 @@ public interface HstLink {
     void setSubPath(String subPath);
 
     /**
-     * @deprecated since 7.10, HSTTWO 2.30.00. Use {@link #isContainerResource()} instead
+     * @deprecated since CMS 10.0, HSTTWO 2.30.00. Use {@link #isContainerResource()} instead
       */
     @Deprecated
     boolean getContainerResource();

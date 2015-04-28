@@ -65,7 +65,7 @@ public class ResourceBundleUtils {
      * @return
      * @throws java.lang.NullPointerException - if baseName is null 
      * @throws java.util.MissingResourceException - if no Java standard resource bundle for the specified base name can be found
-     * @deprecated since HST 2.30.00 (CMS 7.10.0) Use {@link #getBundle(String, java.util.Locale)} instead since <code>servletRequest</code> is unused
+     * @deprecated since HST 2.30.00 (CMS 10.0) Use {@link #getBundle(String, java.util.Locale)} instead since <code>servletRequest</code> is unused
      */
     @Deprecated
     public static ResourceBundle getBundle(HttpServletRequest servletRequest, String basename, Locale locale) {
@@ -100,7 +100,7 @@ public class ResourceBundleUtils {
      * @param fallbackToJavaResourceBundle
      * @throws java.lang.NullPointerException - if baseName is null 
      * @throws java.util.MissingResourceException - if no Java standard resource bundle for the specified base name can be found
-     * @deprecated since HST 2.30.00 (CMS 7.10.0) Use {@link #getBundle(String, java.util.Locale, boolean)} instead since <code>servletRequest</code> is unused
+     * @deprecated since HST 2.30.00 (CMS 10.0) Use {@link #getBundle(String, java.util.Locale, boolean)} instead since <code>servletRequest</code> is unused
      */
     @Deprecated
     public static ResourceBundle getBundle(HttpServletRequest servletRequest, String basename, Locale locale, boolean fallbackToJavaResourceBundle) {

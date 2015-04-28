@@ -129,13 +129,13 @@ public interface HstNodeTypes {
     String SITEMENUITEM_PROPERTY_ROLES = "hst:roles";
 
     /**
-     * @deprecated Not used since 7.10 (HST 2.30.00). Use a (hst:default) sitemap item to account
+     * @deprecated Not used since CMS 10.0 (HST 2.30.00). Use a (hst:default) sitemap item to account
      * for prefixes/suffixes that need special handling.
      */
     @Deprecated
     String VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS = "hst:prefixexclusions";
     /**
-     * @deprecated Not used since 7.10 (HST 2.30.00). Use a (hst:default) sitemap item to account
+     * @deprecated Not used since CMS 10.0 (HST 2.30.00). Use a (hst:default) sitemap item to account
      * for prefixes/suffixes that need special handling.
      */
     @Deprecated

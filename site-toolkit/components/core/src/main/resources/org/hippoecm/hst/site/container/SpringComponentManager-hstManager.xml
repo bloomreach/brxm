@@ -67,10 +67,10 @@
     <property name="hstEventsDispatcher" ref="hstEventsDispatcher"/>
     <property name="hstNodeLoadingCache" ref="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache" />
     <property name="cmsPreviewPrefix" value="${cms.default.cmspreviewprefix}"/>
-    <!-- Deprecated since CMS 7.10, HST 2.30.00: siteMapItemHandlerFactory property is deprecated on HstManagerImpl -->
+    <!-- Deprecated since CMS 10.0, HST 2.30.00: siteMapItemHandlerFactory property is deprecated on HstManagerImpl -->
     <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />        
     <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
-    <!-- Deprecated since CMS 7.10, HST 2.30.00: siteMapItemHandlerFactory property is deprecated on HstManagerImpl -->
+    <!-- Deprecated since CMS 10.0, HST 2.30.00: siteMapItemHandlerFactory property is deprecated on HstManagerImpl -->
     <property name="siteMapItemHandlerFactory" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory" />
     <property name="pathSuffixDelimiter" value="${container.request.path.suffix.delimiter}" />
     <property name="componentRegistry" ref="org.hippoecm.hst.core.container.HstComponentRegistry" />
