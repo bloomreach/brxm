@@ -132,6 +132,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                     } else {
                         log.warn("Failed to start lock keep-alive: " + e);
                     }
+                    throw new RepositoryException(e);
                 }
                 return true;
             } catch (LockException e) {
