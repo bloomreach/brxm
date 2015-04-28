@@ -54,12 +54,15 @@ public abstract class DestinationDialog extends AbstractDialog implements IWorkf
     private String modelServiceId;
     private ServiceTracker tracker;
     private final IPluginContext context;
-    private String intialPath;
+    private final String intialPath;
+    private final NodeModelWrapper<Node> destination;
 
     public DestinationDialog(IModel<String> title, IModel<String> question, IModel<String> nameModel, final NodeModelWrapper destination,
                              final IPluginContext context, IPluginConfig config) {
         this.title = title;
         this.context = context;
+        this.destination = destination;
+        this.intialPath = getDestinationPath();
 
         if (question != null) {
             add(new Label("question", question));
@@ -84,12 +87,6 @@ public abstract class DestinationDialog extends AbstractDialog implements IWorkf
 
         control.start();
 
-        try {
-            intialPath = ((Node) destination.getChainedModel().getObject()).getPath();
-        } catch (RepositoryException e) {
-            log.error("Failed to get the initial path of the node", e);
-            intialPath = "";
-        }
         modelServiceId = decorated.getString("model.folder");
         tracker = new ServiceTracker<IModelReference>(IModelReference.class) {
 
@@ -114,7 +111,7 @@ public abstract class DestinationDialog extends AbstractDialog implements IWorkf
                             if (model != null && model instanceof JcrNodeModel && ((JcrNodeModel) model).getNode() != null) {
                                 destination.setChainedModel(model);
                             }
-                            DestinationDialog.this.setOkEnabled(isOkEnabled(events));
+                            DestinationDialog.this.setOkEnabled(isOkEnabled());
                         }
                     }, IObserver.class.getName());
                 }
@@ -186,25 +183,19 @@ public abstract class DestinationDialog extends AbstractDialog implements IWorkf
     }
 
     protected boolean isOkEnabled() {
-        return true;
-    }
-
-    protected boolean isOkEnabled(Iterator<? extends IEvent<IModelReference>> events) {
-        while (events.hasNext()) {
-            final Object object = events.next().getSource().getModel().getObject();
-            try {
-                if (intialPath.equals(((Node) object).getPath())) {
-                    return false;
-                }
-            } catch (RepositoryException e) {
-                log.error("Exception while comparing nodes", e);
-            }
-
-        }
-        return true;
+        return !intialPath.equals(getDestinationPath());
     }
 
     protected boolean checkPermissions() {
         return true;
+    }
+
+    private String getDestinationPath() {
+        try {
+            return destination.getChainedModel().getObject().getPath();
+        } catch (RepositoryException e) {
+            log.error("Failed to get path of the destination node", e);
+            return "";
+        }
     }
 }
