@@ -100,6 +100,10 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     public void render(final PluginRequestTarget target) {
         super.render(target);
         if (siteIsUp) {
+            // a hard page refresh should always show the channel manager overview again
+            if (target == null) {
+                rootPanel.setActiveCard(RootPanel.CardId.CHANNEL_MANAGER);
+            }
             if (isActive()) {
                 rootPanel.render(target, this.isActivated);
             } else {

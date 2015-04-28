@@ -76,7 +76,6 @@
         this.toolbar.render(hippoFooter, 0);
 
         // only show the channel manager breadcrumb when channel manager is active
-        this._initBreadcrumbAnimation();
         Hippo.Events.subscribe('channel-manager-activated', this.showBreadcrumb, this);
         Hippo.Events.subscribe('channel-manager-deactivated', this.hideBreadcrumb, this);
       }, this, {single: true});
