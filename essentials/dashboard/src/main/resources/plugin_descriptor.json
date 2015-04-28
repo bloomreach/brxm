@@ -233,7 +233,8 @@
         "introduction": "The Documents Wizard is a convenience feature to easily create new documents in the right folders in the Hippo CMS while working in another part of the CMS.",
         "description": "It provides a link that opens a dialog window where information for the document to be created can be entered. After clicking OK, the document will be created in the right folder. This feature wraps the certified Hippo Dashboard Document Wizard.",
         "imageUrls": [
-            "/essentials/images/screenshots/documentwizard01.png"
+            "/essentials/images/screenshots/documentwizard01.png",
+            "/essentials/images/screenshots/documentwizard02.png"
         ],
         "documentationLink": "http://www.onehippo.org/library/concepts/plugins/dashboard-document-wizard/about.html",
         "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardParameterService",
@@ -813,7 +814,7 @@
         "description": "This feature adds a configurable drag-and-drop Google Maps component.",
         "introduction": "With Google Maps, you can easily place a Google Map on your pages. This Feature will be installed as a drag-and-drop component in the component gallery in the Channel Manager. You can select in the CMS what coordinates, etc. should be shown.",
         "imageUrls": [
-          "/essentials/images/screenshots/googlemaps1.png"
+          "/essentials/images/screenshots/googlemaps01.png"
         ],
         "packageFile": "/META-INF/googlemaps_instructions.xml",
         "restClasses": [],
