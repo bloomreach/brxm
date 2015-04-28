@@ -133,6 +133,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                         log.warn("Failed to start lock keep-alive: " + e);
                     }
                 }
+                return true;
             } catch (LockException e) {
                 log.debug("Obtaining lock failed, reattempting in {} ms", LOCK_ATTEMPT_INTERVAL);
                 try {
