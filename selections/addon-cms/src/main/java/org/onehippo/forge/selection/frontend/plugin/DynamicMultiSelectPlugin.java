@@ -47,6 +47,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginHelper;
+import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -179,6 +180,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
                 modeFragment = populateViewMode(model, valueList);
         }
         add(modeFragment);
+        add(new FieldHint("hint-panel", config.getString("hint")));
     }
 
     @Override
