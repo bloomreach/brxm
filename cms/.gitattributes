@@ -1101,7 +1101,7 @@ api/src/main/styling/images/loader/ajax-loader.png -text svneol=unset#image/png
 api/src/main/styling/images/loader/ajax-loader@2x.png -text svneol=unset#image/png
 api/src/main/styling/images/loading.gif -text
 api/src/main/styling/images/login/login-background.svg -text
-api/src/main/styling/images/login/loginhead_ce.png -text svneol=unset#image/png
+api/src/main/styling/images/login/login-header.svg -text
 api/src/main/styling/images/logo/hippo-logo.png -text svneol=unset#image/png
 api/src/main/styling/images/logo/hippo-logo@2x.png -text svneol=unset#image/png
 api/src/main/styling/less/_admin-perspective.less -text
