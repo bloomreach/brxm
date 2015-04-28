@@ -13,80 +13,80 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-(function() {
-    "use strict";
+(function () {
+  "use strict";
 
-    Ext.namespace('Hippo.ChannelManager.TemplateComposer');
+  Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
-    /**
-     * Window that shows a single IFramePanel. The ID of the enclosed IFramePanel is passed to the iframe
-     * as a query parameter 'parentExtIFramePanelId'.
-     *
-     * The 'close' icon of the window triggers a handshake with the iframe. The host sends a 'close-request'
-     * message to the iframe, to which the iframe should respond with either a 'close-reply-ok' or
-     * 'close-reply-not-ok' message. The former will close the window, the latter will cancel the close.
-     *
-     * @type {*}
-     */
-    Hippo.ChannelManager.TemplateComposer.IFrameWindow = Ext.extend(Ext.Window, {
+  /**
+   * Window that shows a single IFramePanel. The ID of the enclosed IFramePanel is passed to the iframe
+   * as a query parameter 'parentExtIFramePanelId'.
+   *
+   * The 'close' icon of the window triggers a handshake with the iframe. The host sends a 'close-request'
+   * message to the iframe, to which the iframe should respond with either a 'close-reply-ok' or
+   * 'close-reply-not-ok' message. The former will close the window, the latter will cancel the close.
+   *
+   * @type {*}
+   */
+  Hippo.ChannelManager.TemplateComposer.IFrameWindow = Ext.extend(Ext.Window, {
 
-        performCloseHandshake: true,
+    performCloseHandshake: true,
 
-        constructor: function(config) {
-            var isClosing = false,
-                url = config.iframeUrl;
+    constructor: function (config) {
+      var isClosing = false,
+        url = config.iframeUrl;
 
-            this.iframePanelId = Ext.id();
+      this.iframePanelId = Ext.id();
 
-            url = Ext.urlAppend(url, 'parentExtIFramePanelId=' + this.iframePanelId);
-            url = Ext.urlAppend(url, 'antiCache=' + config.antiCache);
+      url = Ext.urlAppend(url, 'parentExtIFramePanelId=' + this.iframePanelId);
+      url = Ext.urlAppend(url, 'antiCache=' + config.antiCache);
 
-            Ext.apply(config, {
-                layout: 'fit',
-                items: [
-                    {
-                        xtype: 'Hippo.ChannelManager.TemplateComposer.IFramePanel',
-                        id: this.iframePanelId,
-                        url: url,
-                        iframeConfig: config.iframeConfig
-                    }
-                ],
-                listeners: {
-                    'afterrender': function(self) {
-                        var messageBus = self.getIFramePanel().iframeToHost;
+      Ext.apply(config, {
+        layout: 'fit',
+        items: [
+          {
+            xtype: 'Hippo.ChannelManager.TemplateComposer.IFramePanel',
+            id: this.iframePanelId,
+            url: url,
+            iframeConfig: config.iframeConfig
+          }
+        ],
+        listeners: {
+          'afterrender': function (self) {
+            var messageBus = self.getIFramePanel().iframeToHost;
 
-                        messageBus.subscribe('close-reply', function() {
-                            //CMS7-9067 make sure angular is properly destroyed.
-                            Ext.getCmp(self.iframePanelId).setLocation('about:blank');
+            messageBus.subscribe('close-reply', function () {
+              //CMS7-9067 make sure angular is properly destroyed.
+              Ext.getCmp(self.iframePanelId).setLocation('about:blank');
 
-                            isClosing = true;
-                            self.close();
-                            isClosing = false;
-                        });
-
-                        messageBus.subscribe('browseTo', function (pathInfo) {
-                            Hippo.ChannelManager.TemplateComposer.Instance.browseTo({ renderPathInfo: pathInfo });
-                            self.close();
-                        });
-                    },
-                    'beforeclose': function(self) {
-                        if (self.performCloseHandshake && !isClosing) {
-                            self.getIFramePanel().hostToIFrame.publish('close-request');
-                            return false;
-                        }
-                    }
-                }
+              isClosing = true;
+              self.close();
+              isClosing = false;
             });
 
-            Hippo.ChannelManager.TemplateComposer.IFrameWindow.superclass.constructor.call(this, config);
-        },
-
-        getIFramePanel: function() {
-            return Ext.getCmp(this.iframePanelId);
+            messageBus.subscribe('browseTo', function (pathInfo) {
+              Hippo.ChannelManager.TemplateComposer.Instance.browseTo({renderPathInfo: pathInfo});
+              self.close();
+            });
+          },
+          'beforeclose': function (self) {
+            if (self.performCloseHandshake && !isClosing) {
+              self.getIFramePanel().hostToIFrame.publish('close-request');
+              return false;
+            }
+          }
         }
+      });
 
-    });
+      Hippo.ChannelManager.TemplateComposer.IFrameWindow.superclass.constructor.call(this, config);
+    },
 
-    Ext.reg('Hippo.ChannelManager.TemplateComposer.IFrameWindow', Hippo.ChannelManager.TemplateComposer.IFrameWindow);
+    getIFramePanel: function () {
+      return Ext.getCmp(this.iframePanelId);
+    }
+
+  });
+
+  Ext.reg('Hippo.ChannelManager.TemplateComposer.IFrameWindow', Hippo.ChannelManager.TemplateComposer.IFrameWindow);
 
 }());
