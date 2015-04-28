@@ -533,7 +533,7 @@ public class UpdaterEditor extends Panel {
             JSONObject json = JSONObject.fromObject(parameters);
             return json != null;
         } catch (JSONException e) {
-            form.error(getString("paramepters-invalid-json"));
+            form.error(getString("parameters-invalid-json"));
             return false;
         }
     }
