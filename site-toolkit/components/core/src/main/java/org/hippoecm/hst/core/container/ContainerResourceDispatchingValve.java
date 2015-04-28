@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * ContainerResourceDispatchingValve
  * <p/>
- * invokes the <code>ServletContext#getRequestDispatcher(containerResourceDispatchPath)</code> in order to let the dispathced servlet
+ * invokes the <code>ServletContext#getRequestDispatcher(containerResourceDispatchPath)</code> in order to let the dispatched servlet
  * continue request processing with HST provided context attributes.
  * Note that the client request might start with /_cmsinternal/binaries/ or  for exmaple /_cmsinternal/styles/common.css
  * but /_cmsinternal is removed from our wrapped request hence we can also for
