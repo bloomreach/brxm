@@ -70,6 +70,7 @@ public class ImageRegeneratePlugin extends RenderPlugin {
         }
 
         isModelModified = new LoadableDetachableModel<Boolean>(){
+            private static final long serialVersionUID = 1L;
             @Override
             protected Boolean load() {
                  try{
@@ -87,6 +88,7 @@ public class ImageRegeneratePlugin extends RenderPlugin {
 
 
         Label regenerateButton = new Label("regenerate-button", new StringResourceModel("regenerate-button-label", this, null)) {
+            private static final long serialVersionUID = 1L;
             @Override
             public boolean isEnabled() {
                 return !isOriginal && !areExceptionsThrown && isModelModified.getObject();
@@ -97,6 +99,7 @@ public class ImageRegeneratePlugin extends RenderPlugin {
         if("edit".equals(mode)){
 
             regenerateButton.add(new AjaxEventBehavior("onclick") {
+                private static final long serialVersionUID = 1L;
                 @Override
                 protected void onEvent(final AjaxRequestTarget target) {
                     regenerateThumbnail();
@@ -105,6 +108,7 @@ public class ImageRegeneratePlugin extends RenderPlugin {
 
 
             regenerateButton.add(CssClass.append(new LoadableDetachableModel<String>(){
+                private static final long serialVersionUID = 1L;
                 @Override
                 protected String load(){
                    return (isOriginal || areExceptionsThrown || !isModelModified.getObject()) ? "regenerate-button inactive" : "regenerate-button active";
@@ -113,6 +117,7 @@ public class ImageRegeneratePlugin extends RenderPlugin {
 
 
             regenerateButton.add(TitleAttribute.append(new LoadableDetachableModel<String>() {
+                private static final long serialVersionUID = 1L;
                 @Override
                 protected String load() {
                     String buttonTipProperty =
@@ -151,10 +156,7 @@ public class ImageRegeneratePlugin extends RenderPlugin {
                 originalImageNode.getProperty(JcrConstants.JCR_LASTMODIFIED).getDate()
             );
 
-        } catch (GalleryException ex) {
-            log.error("Unable to create thumbnail image", ex);
-            error(ex);
-        } catch (RepositoryException ex) {
+        } catch (GalleryException | RepositoryException ex) {
             log.error("Unable to create thumbnail image", ex);
             error(ex);
         }
@@ -164,7 +166,7 @@ public class ImageRegeneratePlugin extends RenderPlugin {
     @Override
     protected void onDetach() {
         isModelModified.detach();
-        super.onDetach();    //To change body of overridden methods use File | Settings | File Templates.
+        super.onDetach();
     }
 
     @Override

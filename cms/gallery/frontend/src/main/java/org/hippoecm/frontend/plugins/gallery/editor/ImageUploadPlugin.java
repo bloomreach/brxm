@@ -21,8 +21,10 @@ import java.util.Calendar;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -47,17 +49,36 @@ public class ImageUploadPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(ImageUploadPlugin.class);
-
+    private static final Logger log = LoggerFactory.getLogger(ImageUploadPlugin.class);
+    private FileUploadForm form;
+    private final String mode;
     public ImageUploadPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        FileUploadForm form = new FileUploadForm("form");
-        add(form);
-        String mode = config.getString("mode", "edit");
-        form.setVisible("edit".equals(mode));
-
+        mode = config.getString("mode", "edit");
+        addNewUploadForm();
         add(new EventStoppingBehavior("onclick"));
+        setOutputMarkupId(true);
+    }
+
+    /**
+     * Reset form so we can upload same image again
+     * after "restore" function is invoked.
+     *
+     */
+    private void resetForm() {
+        final AjaxRequestTarget ajaxRequestTarget = RequestCycle.get().find(AjaxRequestTarget.class);
+        if (ajaxRequestTarget != null && form != null) {
+            remove(form);
+            addNewUploadForm();
+            ajaxRequestTarget.add(this);
+        }
+    }
+
+    private void addNewUploadForm() {
+        form = new FileUploadForm("form", this);
+        form.setVisible("edit".equals(mode));
+        form.setOutputMarkupId(true);
+        add(form);
     }
 
     private class FileUploadForm extends Form {
@@ -65,7 +86,7 @@ public class ImageUploadPlugin extends RenderPlugin {
 
         private SingleFileUploadWidget widget;
 
-        public FileUploadForm(String name) {
+        public FileUploadForm(String name, final ImageUploadPlugin parent) {
             super(name);
             setMultiPart(true);
 
@@ -73,9 +94,11 @@ public class ImageUploadPlugin extends RenderPlugin {
             FileUploadValidationService validator = getPluginContext().getService(serviceId, FileUploadValidationService.class);
 
             add(widget = new SingleFileUploadWidget("fileUploadPanel", getPluginConfig() ,validator) {
+                private static final long serialVersionUID = 1L;
                 @Override
                 protected void onFileUpload(FileUpload fileUpload) throws FileUploadViolationException {
                     handleUpload(fileUpload);
+                    parent.resetForm();
                 }
             });
 
