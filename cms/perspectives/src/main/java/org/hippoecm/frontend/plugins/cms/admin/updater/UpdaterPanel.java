@@ -41,6 +41,7 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -101,6 +102,16 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
                 newUpdater();
             }
         };
+
+        // customize feedbackpanel to display only messages from hippoform
+        FeedbackPanel feedbackPanel = getFeedbackPanel();
+        if (feedbackPanel != null) {
+            feedbackPanel.setFilter(message -> {
+                final Component reporter = message.getReporter();
+                return reporter == UpdaterPanel.this.form;
+            });
+        }
+
         form.add(newButton);
 
         add(form);
