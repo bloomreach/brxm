@@ -82,7 +82,7 @@
 
       frameDocument = this._getFrameDocument();
 
-      if (frameDocument !== undefined && frameDocument.location !== undefined) {
+      if (frameDocument && frameDocument.location !== undefined) {
         href = frameDocument.location.href;
         if (href !== undefined && href !== '' && href !== 'about:blank') {
           return href;
@@ -92,7 +92,8 @@
     },
 
     _getFrameDocument: function () {
-      return this._getFrame().contentDocument;
+      var frame = this._getFrame();
+      return frame ? frame.contentDocument : null;
     },
 
     _getFrame: function () {
@@ -140,7 +141,8 @@
     },
 
     getElement: function (id) {
-      return this._getFrameDocument().getElementById(id);
+      var frameDocument = this._getFrameDocument();
+      return frameDocument ? frameDocument.getElementById(id) : null;
     },
 
     getFrameElement: function () {
@@ -149,7 +151,10 @@
 
     reload: function () {
       this._detachFrame();
-      this._getFrameDocument().location.reload(true);
+      var frameDocument = this._getFrameDocument();
+      if (frameDocument) {
+        frameDocument.location.reload(true);
+      }
     },
 
     createHeadFragment: function () {
@@ -234,31 +239,45 @@
 
     getScrollPosition: function () {
       var frameWindow = this._getFrameWindow();
-      return {
-        x: frameWindow.pageXOffset,
-        y: frameWindow.pageYOffset
-      };
+      if (frameWindow !== null) {
+        return {
+          x: frameWindow.pageXOffset,
+          y: frameWindow.pageYOffset
+        };
+      } else {
+        return {
+          x: 0,
+          y: 0
+        };
+      }
     },
 
     _getFrameWindow: function () {
-      return this._getFrame().contentWindow;
+      var frame = this._getFrame();
+      return frame ? frame.contentWindow : null;
     },
 
     scrollBy: function (x, y) {
-      this._getFrameWindow().scrollBy(x, y);
+      var frameWindow = this._getFrameWindow();
+      if (frameWindow !== null) {
+        frameWindow.scrollBy(x, y);
+      }
     },
 
     getCookies: function () {
-      var result = {};
+      var result = {},
+        frameDocument = this._getFrameDocument();
 
-      Ext.each(this._getFrameDocument().cookie.split(';'), function (keyValue) {
-        var equalsIndex, key, value;
+      if (frameDocument) {
+        Ext.each(frameDocument.cookie.split(';'), function (keyValue) {
+          var equalsIndex, key, value;
 
-        equalsIndex = keyValue.indexOf('=');
-        key = keyValue.substr(0, equalsIndex).trim();
-        value = keyValue.substr(equalsIndex + 1).trim();
-        result[key] = value;
-      }, this);
+          equalsIndex = keyValue.indexOf('=');
+          key = keyValue.substr(0, equalsIndex).trim();
+          value = keyValue.substr(equalsIndex + 1).trim();
+          result[key] = value;
+        }, this);
+      }
 
       return result;
     }
