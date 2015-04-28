@@ -8,7 +8,7 @@
   <c:if test="${hstRequest.requestContext.cmsRequest}">
     <link rel="stylesheet" href="<hst:webfile  path="/css/cms-request.css"/>" type="text/css"/>
   </c:if>
-  <hst:headContributions categoryExcludes="htmlBodyEnd" xhtml="true"/>
+  <hst:headContributions categoryExcludes="htmlBodyEnd, scripts" xhtml="true"/>
 </head>
 <body>
 <div class="container">
@@ -25,6 +25,6 @@
     <hst:include ref="footer"/>
   </div>
 </div>
-<hst:headContributions categoryIncludes="htmlBodyEnd" xhtml="true"/>
+<hst:headContributions categoryIncludes="htmlBodyEnd, scripts" xhtml="true"/>
 </body>
 </html>
