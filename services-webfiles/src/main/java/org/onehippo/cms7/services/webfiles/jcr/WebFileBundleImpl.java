@@ -217,7 +217,7 @@ public class WebFileBundleImpl implements WebFileBundle {
             return get(absPath);
         }
         if (!versionable) {
-            String msg = String.format("Bundle '%s' does not support tagging so cannot return tag '%' for '%s'.",
+            String msg = String.format("Bundle '%s' does not support tagging so cannot return tag '%s' for '%s'.",
                     bundlePath, tagName, absPath);
             throw new WebFileException(msg);
         }
