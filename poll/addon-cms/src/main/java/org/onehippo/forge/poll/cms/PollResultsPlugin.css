@@ -21,12 +21,17 @@
 .resulttable th {
   font-weight: bold;
   border-bottom: 1px solid #d4d6d8;
+  padding-bottom: 4px;
 }
 
 .resulttable th,
 .resulttable td {
   color: #333;
   width: 50%;
+}
+
+.resulttable td {
+  padding-top: 4px;
 }
 
 .hippo-poll-results.hippo-editor-compound-field .hippo-editor-field {
