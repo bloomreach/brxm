@@ -15,31 +15,26 @@
  */
 package org.onehippo.repository.locking;
 
+
 import javax.jcr.RepositoryException;
-import javax.jcr.lock.LockManager;
+import javax.jcr.lock.Lock;
+import javax.jcr.lock.LockException;
 
-public interface HippoLockManager extends LockManager {
+public interface HippoLock extends Lock {
 
     /**
-     * Try to unlock the node at {@code absPath} due to expiration of the lock.
+     * Starts a keep-alive that refreshes the lock before expiring.
+     * The lock timeout must be more than 10 seconds.
      *
-     * @param absPath  the path to the node to expire
-     * @return whether the lock was successfully expired
-     * @throws RepositoryException if an error occurs
+     * @throws LockException if the lock is not live, has no timeout, or has a timeout of less than 10 seconds
+     * @throws RepositoryException if another error occurs
      */
-    boolean expireLock(String absPath) throws RepositoryException;
+    void startKeepAlive() throws LockException, RepositoryException;
 
     /**
-     * @inheritDoc
+     * Stops the previously started keep-alive on this lock.
+     * If no keep-alive is active on this lock this method has no effect.
      */
-    @Override
-    HippoLock getLock(String absPath) throws RepositoryException;
-
-    /**
-     * @inheritDoc
-     */
-    @Override
-    HippoLock lock(String absPath, boolean isDeep, boolean isSessionScoped, long timeoutHint, String ownerInfo)
-            throws RepositoryException;
+    void stopKeepAlive();
 
 }

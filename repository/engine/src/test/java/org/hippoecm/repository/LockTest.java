@@ -22,6 +22,7 @@ import javax.jcr.lock.LockManager;
 
 import org.hippoecm.repository.impl.LockManagerDecorator;
 import org.junit.Test;
+import org.onehippo.repository.locking.HippoLock;
 import org.onehippo.repository.locking.HippoLockManager;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.repository.util.JcrConstants;
@@ -88,7 +89,6 @@ public class LockTest extends RepositoryTestCase {
 
     @Test
     public void testLockSucceedsAfterTimeout() throws Exception {
-        final Session anonSession = session.getRepository().login();
         final LockManager lockManager = session.getWorkspace().getLockManager();
         lockManager.lock("/test", false, false, 2l, null);
         Thread.sleep(1000l);
@@ -96,6 +96,7 @@ public class LockTest extends RepositoryTestCase {
         // but the lock is not released by jackrabbit internally
         LockManagerDecorator.unwrap(lockManager).getLock("/test").refresh();
         Thread.sleep(1001l);
+        final Session anonSession = session.getRepository().login();
         final LockManager anonLockManager = anonSession.getWorkspace().getLockManager();
         anonLockManager.lock("/test", false, false, Long.MAX_VALUE, null);
         anonLockManager.isLocked("/test");
@@ -103,6 +104,20 @@ public class LockTest extends RepositoryTestCase {
 
     @Test
     public void testNodeLockUsesHippoLockManager() throws Exception {
-        assertTrue(session.getNode("/test").lock(false, false) instanceof LockManagerDecorator.LockDecorator);
+        assertTrue(session.getNode("/test").lock(false, false) instanceof HippoLock);
+    }
+
+    @Test
+    public void testLockKeepAliveKeepsLockAlive() throws Exception {
+        final HippoLockManager lockManager = (HippoLockManager) session.getWorkspace().getLockManager();
+        final HippoLock lock = lockManager.lock("/test", false, false, 10l, null);
+        lock.startKeepAlive();
+        Thread.sleep(10001l);
+        assertTrue(lock.isLive());
+        assertFalse(lockManager.expireLock("/test"));
+        lock.stopKeepAlive();
+        Thread.sleep(10001l);
+        assertTrue(lockManager.expireLock("/test"));
+        assertFalse(lock.isLive());
     }
 }

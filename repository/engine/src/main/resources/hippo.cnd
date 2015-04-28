@@ -115,6 +115,11 @@
 [hippo:translated] mixin
 + hippo:translation (hippo:translation) multiple
 
+[hippo:lockable] mixin
+- hippo:timeout (date)
+
+[hippo:lock] > nt:base, mix:lockable, hippo:lockable
+
 // BOOTSTRAP
 
 [hippo:initializeitem] > nt:base
@@ -144,6 +149,7 @@
 - hippo:version (string) multiple // deprecated, no replacement
 - hippo:sequence (double) // deprecated, no replacement
 + * (hippo:initializeitem) = hippo:initializeitem
++ hippo:lock (hippo:lock) = hippo:lock
 
 [hippo:deleted] > hippo:document, mix:versionable
 - hippo:deletedDate (date)
@@ -151,6 +157,3 @@
 
 // marker mixin to exclude the node from being indexed
 [hippo:skipindex] mixin
-
-[hippo:lockable] mixin
-- hippo:timeout (date)

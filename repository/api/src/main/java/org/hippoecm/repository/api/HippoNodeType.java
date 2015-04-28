@@ -466,4 +466,6 @@ public interface HippoNodeType {
 
     public static final String HIPPO_TIMEOUT = "hippo:timeout";
 
+    public static final String HIPPO_LOCK = "hippo:lock";
+
 }

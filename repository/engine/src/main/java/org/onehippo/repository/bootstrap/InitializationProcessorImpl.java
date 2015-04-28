@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,20 +40,23 @@ import javax.jcr.query.QueryManager;
 
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
-import org.onehippo.repository.bootstrap.util.BootstrapConstants;
+import org.onehippo.repository.locking.HippoLock;
+import org.onehippo.repository.locking.HippoLockManager;
 import org.slf4j.Logger;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LOCK;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SEQUENCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_STATUS;
 import static org.hippoecm.repository.util.RepoUtils.getClusterNodeId;
 import static org.onehippo.repository.bootstrap.Extension.EXTENSION_FILE_NAME;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.INIT_FOLDER_PATH;
+import static org.onehippo.repository.bootstrap.util.BootstrapConstants.INIT_LOCK_PATH;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.log;
-import static org.onehippo.repository.util.JcrConstants.MIX_LOCKABLE;
 
 public class InitializationProcessorImpl implements InitializationProcessor {
 
-    private static final long LOCK_ATTEMPT_INTERVAL = 1000 * 2;
+    private static final long LOCK_ATTEMPT_INTERVAL = 1000 * 5;
+    private static final long LOCK_TIMEOUT = Long.getLong("repo.bootstrap.lock.timeout", 30);
 
     private final static String PENDING_INITIALIZE_ITEMS_QUERY = String.format(
             "SELECT * FROM hipposys:initializeitem " +
@@ -77,6 +80,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             return 0;
         }
     };
+
+    private HippoLock lock;
 
     @Override
     public List<Node> loadExtensions(final Session session) throws RepositoryException, IOException {
@@ -112,14 +117,22 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     @Override
     public boolean lock(final Session session) throws RepositoryException {
-        ensureIsLockable(session, INIT_FOLDER_PATH);
-        final LockManager lockManager = session.getWorkspace().getLockManager();
+        ensureIsLockable(session);
+        final HippoLockManager lockManager = (HippoLockManager) session.getWorkspace().getLockManager();
         while (true) {
             log.debug("Attempting to obtain lock");
             try {
-                lockManager.lock(INIT_FOLDER_PATH, false, false, Long.MAX_VALUE, getClusterNodeId(session));
+                lock = lockManager.lock(INIT_LOCK_PATH, false, false, LOCK_TIMEOUT, getClusterNodeId(session));
                 log.debug("Lock successfully obtained");
-                return true;
+                try {
+                    lock.startKeepAlive();
+                } catch (LockException e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Failed to start lock keep-alive", e);
+                    } else {
+                        log.warn("Failed to start lock keep-alive: " + e);
+                    }
+                }
             } catch (LockException e) {
                 log.debug("Obtaining lock failed, reattempting in {} ms", LOCK_ATTEMPT_INTERVAL);
                 try {
@@ -136,7 +149,10 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         try {
             log.debug("Attempting to release lock");
             session.refresh(false);
-            lockManager.unlock(INIT_FOLDER_PATH);
+            if (lock != null) {
+                lock.stopKeepAlive();
+            }
+            lockManager.unlock(INIT_LOCK_PATH);
             log.debug("Lock successfully released");
         } catch (LockException e) {
             log.warn("Current session no longer holds a lock");
@@ -232,9 +248,9 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     private void markMissingInitializeItems(final Session session, final Set<String> itemNames) throws RepositoryException {
-        final Node initializeFolder = session.getNode(BootstrapConstants.INIT_FOLDER_PATH);
+        final Node initializeFolder = session.getNode(INIT_FOLDER_PATH);
         for (Node item : new NodeIterable(initializeFolder.getNodes())) {
-            if (!itemNames.contains(item.getName())) {
+            if (!itemNames.contains(item.getName()) && !item.getName().equals(HIPPO_LOCK)) {
                 log.info("Marking missing initialize item {}", item.getName());
                 InitializeItem.markMissing(item);
             }
@@ -252,10 +268,9 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         return extensions;
     }
 
-    private void ensureIsLockable(final Session session, final String absPath) throws RepositoryException {
-        final Node node = session.getNode(absPath);
-        if (!node.isNodeType(MIX_LOCKABLE)) {
-            node.addMixin(MIX_LOCKABLE);
+    private void ensureIsLockable(final Session session) throws RepositoryException {
+        if (!session.nodeExists(INIT_LOCK_PATH)) {
+            session.getNode(INIT_FOLDER_PATH).addNode(HIPPO_LOCK, HIPPO_LOCK);
             session.save();
         }
     }
