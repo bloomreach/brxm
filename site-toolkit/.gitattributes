@@ -822,6 +822,8 @@ components/core/src/test/java/org/hippoecm/hst/core/container/TestPageErrors.jav
 components/core/src/test/java/org/hippoecm/hst/core/container/TestSecurityValveImpl.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/session/TestHttpSessionEventPublisher.java -text
 components/core/src/test/java/org/hippoecm/hst/core/hosting/CustomMountAndVirtualCmsHostAugmenterIT.java -text
+components/core/src/test/java/org/hippoecm/hst/core/jcr/AbstractRepositoryTestCase.java -text
+components/core/src/test/java/org/hippoecm/hst/core/jcr/JvmCredentialsLoginIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/jcr/LazySessionDelegatingRepositoryIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/jcr/SessionSecurityDelegationIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/AbstractHstLinkRewritingIT.java -text

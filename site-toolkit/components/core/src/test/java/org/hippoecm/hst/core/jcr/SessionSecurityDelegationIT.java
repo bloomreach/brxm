@@ -19,7 +19,6 @@ package org.hippoecm.hst.core.jcr;
 import java.util.Arrays;
 
 import javax.jcr.Credentials;
-import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -27,26 +26,18 @@ import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.security.JvmCredentials;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.security.domain.FacetRule;
-import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class SessionSecurityDelegationIT extends RepositoryTestCase {
+public class SessionSecurityDelegationIT extends AbstractRepositoryTestCase {
 
-
-    private static final String PREVIEW_USER_ID = "previewUser";
-    private static final String PREVIEW_USER_PASS = "previewPass";
-    private static final String LIVE_USER_ID = "liveUser";
-    private static final String LIVE_USER_PASS = "livePass";
-    private static final String TEST_GROUP_ID = "testgroup";
 
     private SessionSecurityDelegationImpl sessionSecurityDelegation;
 
@@ -54,32 +45,12 @@ public class SessionSecurityDelegationIT extends RepositoryTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        ModifiableRequestContextProvider.set(new MockHstRequestContext());
-        Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
-        Node users = config.getNode(HippoNodeType.USERS_PATH);
-        Node groups = config.getNode(HippoNodeType.GROUPS_PATH);
-        // create test user
-        createUserAndGroup(users, groups);
-        session.save();
         sessionSecurityDelegation = new SessionSecurityDelegationImpl();
         sessionSecurityDelegation.setSecurityDelegationEnabled(true);
         sessionSecurityDelegation.setRepository(server.getRepository());
         sessionSecurityDelegation.setPreviewCredentials(new SimpleCredentials(PREVIEW_USER_ID, PREVIEW_USER_PASS.toCharArray()));
-        sessionSecurityDelegation.setLiveCredentials(new SimpleCredentials(LIVE_USER_ID, LIVE_USER_PASS.toCharArray()));
+        sessionSecurityDelegation.setLiveCredentials(JvmCredentials.getCredentials(LIVE_USER_ID));
     }
-
-    @Override
-    @After
-    public void tearDown() throws  Exception {
-        Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
-        Node users = config.getNode(HippoNodeType.USERS_PATH);
-        Node groups = config.getNode(HippoNodeType.GROUPS_PATH);
-        cleanupUserAndGroup(users, groups);
-        session.save();
-        ModifiableRequestContextProvider.clear();
-        super.tearDown();
-    }
-
 
     @Test
     public void assertEqualityDomainRulesExtensions(){
@@ -144,30 +115,6 @@ public class SessionSecurityDelegationIT extends RepositoryTestCase {
         // after clean up sessions get all logout from sessionSecurityDelegation
         assertFalse(live1 == live5);
         sessionSecurityDelegation.cleanupSessionDelegates(RequestContextProvider.get());
-    }
-
-
-    private void createUserAndGroup(final Node users, final Node groups) throws RepositoryException {
-        Node previewUser = users.addNode(PREVIEW_USER_ID, HippoNodeType.NT_USER);
-        previewUser.setProperty(HippoNodeType.HIPPO_PASSWORD, PREVIEW_USER_PASS);
-        Node liveUser = users.addNode(LIVE_USER_ID, HippoNodeType.NT_USER);
-        liveUser.setProperty(HippoNodeType.HIPPO_PASSWORD, LIVE_USER_PASS);
-
-        // create test group with member test
-        Node testGroup = groups.addNode(TEST_GROUP_ID, HippoNodeType.NT_GROUP);
-        testGroup.setProperty(HippoNodeType.HIPPO_MEMBERS, new String[] { PREVIEW_USER_ID, LIVE_USER_ID });
-    }
-
-    private void cleanupUserAndGroup(final Node users, final Node groups) throws RepositoryException {
-        if (users.hasNode(PREVIEW_USER_ID)) {
-            users.getNode(PREVIEW_USER_ID).remove();
-        }
-        if (users.hasNode(LIVE_USER_ID)) {
-            users.getNode(LIVE_USER_ID).remove();
-        }
-        if (groups.hasNode(TEST_GROUP_ID)) {
-            groups.getNode(TEST_GROUP_ID).remove();
-        }
     }
 
 
