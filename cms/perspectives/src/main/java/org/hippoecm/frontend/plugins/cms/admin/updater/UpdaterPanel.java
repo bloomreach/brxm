@@ -47,6 +47,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.io.IOUtils;
+import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
@@ -86,12 +87,14 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
     private Component editor;
     private String path;
 
+    private final Form form;
+
     public UpdaterPanel(final String componentId, final IBreadCrumbModel breadCrumbModel, final IPluginContext context) {
         super(componentId, breadCrumbModel);
 
         this.context = context;
 
-        final Form form = new Form("new-form");
+        form = new HippoForm("new-form");
         final AjaxButton newButton = new AjaxButton("new-button") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
@@ -329,16 +332,17 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
             final Node node = addUpdater(registry, 1);
             session.save();
             setDefaultModel(new JcrNodeModel(node));
-        } catch (RepositoryException e) {
+        } catch (RepositoryException | IOException e) {
             final String message = "An unexpected error occurred: " + e.getMessage();
-            error(message);
-            log.error(message, e);
-        } catch (IOException e) {
-            final String message = "An unexpected error occurred: " + e.getMessage();
-            error(message);
+            showError(message);
             log.error(message, e);
         }
     }
+
+    private void showError(final String message) {
+        form.error(message);
+    }
+
 
     private Node addUpdater(final Node registry, int index) throws IOException, RepositoryException {
         try {

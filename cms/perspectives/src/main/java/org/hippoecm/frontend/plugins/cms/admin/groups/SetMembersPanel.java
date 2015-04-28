@@ -39,6 +39,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.admin.users.UserDataProvider;
@@ -59,6 +60,7 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
 
     private final IModel model;
     private final ListView localList;
+    private final HippoForm form;
 
     public SetMembersPanel(final String id, final IBreadCrumbModel breadCrumbModel,
                            final IModel model) {
@@ -91,9 +93,10 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
 
                     @Override
                     public void onClick(final AjaxRequestTarget target) {
+                        form.clearFeedbackMessages();
                         try {
                             if (group.getMembers().contains(user.getUsername())) {
-                                info(getString("group-member-already-member", model));
+                                showInfo(getString("group-member-already-member", model));
                             } else {
                                 group.addMembership(user.getUsername());
                                 HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
@@ -107,11 +110,11 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
                                                     group.getGroupname());
                                     eventBus.post(event);
                                 }
-                                info(getString("group-member-added", model));
+                                showInfo(getString("group-member-added", model));
                                 localList.removeAll();
                             }
                         } catch (RepositoryException e) {
-                            error(getString("group-member-add-failed", model));
+                            showError(getString("group-member-add-failed", model));
                             log.error("Failed to add member", e);
                         }
                         target.add(SetMembersPanel.this);
@@ -121,7 +124,7 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
             }
         });
 
-        final Form form = new Form("search-form");
+        form = new HippoForm("search-form");
         form.setOutputMarkupId(true);
         add(form);
 
@@ -146,6 +149,14 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
                 target.add(table);
             }
         });
+    }
+
+    private void showError(final String s) {
+        form.error(s);
+    }
+
+    private void showInfo(final String s) {
+        form.info(s);
     }
 
     /**
@@ -174,6 +185,7 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
 
                 @Override
                 public void onClick(AjaxRequestTarget target) {
+                    form.clearFeedbackMessages();
                     try {
                         group.removeMembership(username);
                         HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
@@ -186,10 +198,10 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
                                     .message("removed user " + username + " from group " + group.getGroupname());
                             eventBus.post(event);
                         }
-                        info(getString("group-member-removed", null));
+                        showInfo(getString("group-member-removed", null));
                         localList.removeAll();
                     } catch (RepositoryException e) {
-                        error(getString("group-member-remove-failed", null));
+                        showError(getString("group-member-remove-failed", null));
                         log.error("Failed to remove memberships", e);
                     }
                     target.add(SetMembersPanel.this);

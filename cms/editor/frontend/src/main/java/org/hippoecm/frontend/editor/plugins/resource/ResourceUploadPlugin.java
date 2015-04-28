@@ -22,10 +22,10 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.JcrConstants;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
+import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -45,11 +45,13 @@ public class ResourceUploadPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(ResourceUploadPlugin.class);
+    private final FileUploadForm form;
 
     public ResourceUploadPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        FileUploadForm form = new FileUploadForm("form");
+        form = new FileUploadForm("form");
+
         add(form);
         String mode = config.getString("mode", "edit");
         form.setVisible("edit".equals(mode));
@@ -58,7 +60,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
 
     }
 
-    private class FileUploadForm extends Form {
+    private class FileUploadForm extends HippoForm {
         private static final long serialVersionUID = 1L;
 
         private SingleFileUploadWidget widget;
@@ -72,7 +74,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
 
             add(widget = new SingleFileUploadWidget("fileUploadPanel", getPluginConfig() ,validator) {
                 @Override
-                protected void onFileUpload(FileUpload fileUpload) {
+                protected void onFileUpload(FileUpload fileUpload) throws FileUploadViolationException {
                     handleUpload(fileUpload);
                 }
             });
@@ -95,8 +97,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
      *
      * @param upload the {@link FileUpload} containing the upload information
      */
-    private void handleUpload(FileUpload upload) {
-
+    private void handleUpload(FileUpload upload) throws FileUploadViolationException {
         String fileName = upload.getClientFileName();
         String mimeType = upload.getContentType();
 
@@ -109,12 +110,13 @@ public class ResourceUploadPlugin extends RenderPlugin {
                 InputStream inputStream = node.getProperty(JcrConstants.JCR_DATA).getBinary().getStream();
                 ResourceHelper.handlePdfAndSetHippoTextProperty(node, inputStream);
             }
-        } catch (RepositoryException ex) {
-            error(ex);
-            log.error(ex.getMessage());
-        } catch (IOException ex) {
-            // FIXME: report back to user
-            log.error(ex.getMessage());
+        } catch (RepositoryException | IOException ex) {
+            if (log.isDebugEnabled()) {
+                log.error("Cannot upload resource", ex);
+            } else {
+                log.error("Cannot upload resource: {}", ex.getMessage());
+            }
+            throw new FileUploadViolationException(ex.getMessage());
         }
     }
 

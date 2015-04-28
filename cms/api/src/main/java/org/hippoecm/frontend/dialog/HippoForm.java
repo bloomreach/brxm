@@ -37,10 +37,14 @@ public class HippoForm<T> extends Form<T> {
     @Override
     public void process(IFormSubmitter submittingComponent) {
         // clear feedbacks in form's data prior processing
+        clearFeedbackMessages();
+
+        super.process(submittingComponent);
+    }
+
+    public void clearFeedbackMessages(){
         if (hasFeedbackMessage()) {
             getFeedbackMessages().clear();
         }
-
-        super.process(submittingComponent);
     }
 }

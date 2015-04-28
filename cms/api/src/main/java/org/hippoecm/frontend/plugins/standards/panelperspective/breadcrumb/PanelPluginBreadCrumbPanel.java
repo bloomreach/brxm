@@ -15,12 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb;
 
+import org.apache.wicket.event.IEvent;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.widgets.UpdateFeedbackInfo;
 
 public abstract class PanelPluginBreadCrumbPanel extends BreadCrumbPanel implements IPanelPluginParticipant {
     private static final long serialVersionUID = 1L;
@@ -50,4 +52,16 @@ public abstract class PanelPluginBreadCrumbPanel extends BreadCrumbPanel impleme
     public void render(PluginRequestTarget target) {
     }
 
+    @Override
+    public void onEvent(IEvent event) {
+        // handle notified validation events from wicket fields
+        if(event.getPayload() instanceof UpdateFeedbackInfo) {
+            final UpdateFeedbackInfo ufi = (UpdateFeedbackInfo) event.getPayload();
+            FeedbackPanel feedbackPanel = getFeedbackPanel();
+            if (feedbackPanel.anyMessage()) {
+                // refresh feedbackpanel
+                ufi.getTarget().add(feedbackPanel);
+            }
+        }
+    }
 }

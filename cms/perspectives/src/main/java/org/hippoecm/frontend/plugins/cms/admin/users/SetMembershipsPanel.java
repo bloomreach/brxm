@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -40,6 +41,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
@@ -51,6 +53,7 @@ import org.hippoecm.frontend.plugins.cms.admin.permissions.DomainLinkListPanel;
 import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionBean;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.widgets.UpdateFeedbackInfo;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.event.HippoEventConstants;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -64,6 +67,7 @@ public class SetMembershipsPanel extends Panel {
     private Group selectedGroup;
     private final IModel userModel;
     private final IPluginContext context;
+    private final HippoForm hippoForm;
 
     public SetMembershipsPanel(final String id, final IPluginContext context,
                                final IBreadCrumbModel breadCrumbModel, final IModel<User> userModel) {
@@ -77,24 +81,25 @@ public class SetMembershipsPanel extends Panel {
         final User user = userModel.getObject();
 
         // All local groups
-        Form form = new Form("form");
+        hippoForm = new HippoForm("form");
 
         final WebMarkupContainer localMembershipContainer = new WebMarkupContainer("localMembershipsContainer");
         localMembershipContainer.setOutputMarkupId(true);
-        form.add(localMembershipContainer);
+        hippoForm.add(localMembershipContainer);
 
         final WebMarkupContainer externalMembershipsContainer = new WebMarkupContainer("externalMembershipsContainer");
         externalMembershipsContainer.setOutputMarkupId(true);
-        form.add(externalMembershipsContainer);
+        hippoForm.add(externalMembershipsContainer);
 
-        AjaxButton submit = new AjaxButton("submit", form) {
+        AjaxButton submit = new AjaxButton("submit", hippoForm) {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form form) {
+                hippoForm.clearFeedbackMessages();
                 try {
                     if (selectedGroup.getMembers().contains(user.getUsername())) {
-                        info(getString("user-membership-already-member", new DetachableGroup(selectedGroup)));
+                        showInfo(getString("user-membership-already-member", new DetachableGroup(selectedGroup)), target);
                     } else {
                         selectedGroup.addMembership(user.getUsername());
                         HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
@@ -107,16 +112,16 @@ public class SetMembershipsPanel extends Panel {
                                     .message("added user " + user.getUsername() + " to group " + selectedGroup.getGroupname());
                             eventBus.post(event);
                         }
-                        info(getString("user-membership-added", new DetachableGroup(selectedGroup)));
+                        showInfo(getString("user-membership-added", new DetachableGroup(selectedGroup)), target);
                     }
                 } catch (RepositoryException e) {
-                    error(getString("user-membership-add-failed", new DetachableGroup(selectedGroup)));
+                    showError(getString("user-membership-add-failed", new DetachableGroup(selectedGroup)), target);
                     log.error("Failed to add memberships", e);
                 }
                 target.add(localMembershipContainer);
             }
         };
-        form.add(submit);
+        hippoForm.add(submit);
 
         List<Group> localGroups = Group.getLocalGroups();
         DropDownChoice<Group> ddc = new DropDownChoice<Group>("local-groups", new PropertyModel<Group>(this, "selectedGroup"),
@@ -124,14 +129,14 @@ public class SetMembershipsPanel extends Panel {
         ddc.setNullValid(false);
         ddc.setRequired(true);
 
-        form.add(ddc);
-        add(form);
+        hippoForm.add(ddc);
+        add(hippoForm);
 
         // local memberships
         Label localLabel = new Label("local-memberships-label", new ResourceModel("user-local-memberships"));
         MembershipsListEditView localList =
                 new MembershipsListEditView("local-memberships", user, localMembershipContainer);
-        form.add(localLabel);
+        hippoForm.add(localLabel);
         localMembershipContainer.add(localList);
 
         // external memberships
@@ -139,11 +144,11 @@ public class SetMembershipsPanel extends Panel {
         ListView externalList = new MembershipsListView("external-memberships", "label", user);
         externalLabel.setVisible((user.getExternalMemberships().size() > 0));
         externalList.setVisible((user.getExternalMemberships().size() > 0));
-        form.add(externalLabel);
+        hippoForm.add(externalLabel);
         externalMembershipsContainer.add(externalList);
 
         // add a cancel/back button
-        form.add(new AjaxButton("back-button") {
+        hippoForm.add(new AjaxButton("back-button") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -155,8 +160,20 @@ public class SetMembershipsPanel extends Panel {
         }.setDefaultFormProcessing(false));
     }
 
+    private void showError(final String message, final AjaxRequestTarget target) {
+        hippoForm.error(message);
+        // update feedbackpanel in ViewUserPanel
+        send(SetMembershipsPanel.this, Broadcast.BUBBLE, new UpdateFeedbackInfo(target));
+    }
+
+    private void showInfo(final String message, final AjaxRequestTarget target) {
+        hippoForm.info(message);
+        // update feedbackpanel in ViewUserPanel
+        send(SetMembershipsPanel.this, Broadcast.BUBBLE, new UpdateFeedbackInfo(target));
+    }
+
     /**
-     * list view to be nested in the form.
+     * list view to be nested in the hippoForm.
      */
     private final class MembershipsListEditView extends ListView<Group> {
 
@@ -197,6 +214,7 @@ public class SetMembershipsPanel extends Panel {
 
                 @Override
                 public void onClick(final AjaxRequestTarget target) {
+                    hippoForm.clearFeedbackMessages();
                     try {
                         group.removeMembership(user.getUsername());
                         HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
@@ -211,9 +229,9 @@ public class SetMembershipsPanel extends Panel {
                                                     + " from group " + group.getGroupname());
                             eventBus.post(event);
                         }
-                        info(getString("user-membership-removed", new Model<Group>(group)));
+                        showInfo(getString("user-membership-removed", new Model<Group>(group)), target);
                     } catch (RepositoryException e) {
-                        error(getString("user-membership-remove-failed", new Model<Group>(group)));
+                        showError(getString("user-membership-remove-failed", new Model<Group>(group)), target);
                         log.error("Failed to remove memberships", e);
                     }
                     target.add(updateTarget);
@@ -223,7 +241,7 @@ public class SetMembershipsPanel extends Panel {
     }
 
     /**
-     * list view to be nested in the form.
+     * list view to be nested in the hippoForm.
      */
     private static final class MembershipsListView extends ListView<DetachableGroup> {
         private static final long serialVersionUID = 1L;

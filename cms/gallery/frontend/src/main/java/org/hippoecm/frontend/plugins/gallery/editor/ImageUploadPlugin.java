@@ -74,7 +74,7 @@ public class ImageUploadPlugin extends RenderPlugin {
 
             add(widget = new SingleFileUploadWidget("fileUploadPanel", getPluginConfig() ,validator) {
                 @Override
-                protected void onFileUpload(FileUpload fileUpload) {
+                protected void onFileUpload(FileUpload fileUpload) throws FileUploadViolationException {
                     handleUpload(fileUpload);
                 }
             });
@@ -93,7 +93,7 @@ public class ImageUploadPlugin extends RenderPlugin {
 
     }
 
-    private void handleUpload(FileUpload upload) {
+    private void handleUpload(FileUpload upload) throws FileUploadViolationException {
         String fileName = upload.getClientFileName();
         String mimeType = upload.getContentType();
 
@@ -110,8 +110,13 @@ public class ImageUploadPlugin extends RenderPlugin {
             ImageBinary image = new ImageBinary(node, upload.getInputStream(), fileName, mimeType);
             processor.initGalleryResource(node, image.getStream(), image.getMimeType(), image.getFileName(), Calendar.getInstance());
         } catch (IOException | GalleryException | RepositoryException e) {
-            error(e);
-            log.error(e.getMessage());
+            if (log.isDebugEnabled()) {
+                log.error("Cannot upload image ", e);
+            } else {
+                log.error("Cannot upload image: {}", e.getMessage());
+            }
+            throw new FileUploadViolationException(e.getMessage());
+
         }
     }
 }

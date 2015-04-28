@@ -603,6 +603,7 @@ public class UpdaterEditor extends Panel {
             session.move(node.getPath(), destAbsPath);
             container.setDefaultModel(new JcrNodeModel(session.getNode(destAbsPath)));
         } catch (RepositoryException e) {
+            form.error(e.getMessage());
             log.error("Failed to rename updater", e);
         }
     }
