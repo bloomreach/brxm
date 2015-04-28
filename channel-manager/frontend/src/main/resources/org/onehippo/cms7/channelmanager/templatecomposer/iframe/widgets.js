@@ -782,6 +782,7 @@
 
         refreshComponent: function(response, callback) {
             var emptyElementHeight, intervalCounter, interval, containerElement, componentElement;
+
             containerElement = this.el;
             containerElement.html('');
             emptyElementHeight = containerElement.height();
@@ -806,7 +807,7 @@
             // poll for five seconds to check the component is rendered
             intervalCounter = 0;
             interval = window.setInterval(function() {
-                if (intervalCounter > 50 || containerElement.height() !== emptyElementHeight) {
+                if (intervalCounter > 50 || response === '' || containerElement.height() !== emptyElementHeight) {
                     window.clearInterval(interval);
                     callback();
                 }
