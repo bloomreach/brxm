@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,9 +30,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
@@ -53,13 +51,15 @@ import org.slf4j.LoggerFactory;
  */
 public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
 
-    private static final long serialVersionUID = 1L;
     private static final String DATE_STYLE = "MS";
 
     static final Logger log = LoggerFactory.getLogger(DocumentMetadataDialog.class);
 
     public DocumentMetadataDialog(WorkflowDescriptorModel model) {
         super(model);
+
+        setTitleKey("document-info");
+        setSize(DialogConstants.MEDIUM_AUTO);
 
         setOkVisible(false);
         setCancelLabel(new StringResourceModel("close", this, null));
@@ -200,15 +200,4 @@ public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
         }
         return StringUtils.EMPTY;
     }
-
-
-    public IModel<String> getTitle() {
-        return new StringResourceModel("document-info", this, null);
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.MEDIUM_AUTO;
-    }
-
 }

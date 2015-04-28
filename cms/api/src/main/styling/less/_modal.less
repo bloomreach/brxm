@@ -663,13 +663,15 @@ table.hippo-window-form {
 
 .hippo-document-information {
   overflow-y: hidden;
-  background-color: white;
+  background-color: @white;
 
   table {
-    margin: 16px;
+    width: 100%;
+    padding: 16px;
+    display: block;
 
-    td {
-      padding-left: 4px;
+    td:not(:first-child) {
+      padding-left: 8px;
     }
   }
 }
