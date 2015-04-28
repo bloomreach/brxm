@@ -13,47 +13,47 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-(function() {
-    "use strict";
+(function () {
+  "use strict";
 
-    Ext.namespace('Hippo.ChannelManager.TemplateComposer');
+  Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
-    Hippo.ChannelManager.TemplateComposer.PropertiesEditor = Ext.extend(Ext.Panel, {
+  Hippo.ChannelManager.TemplateComposer.PropertiesEditor = Ext.extend(Ext.Panel, {
 
-        componentId: null,
-        variant: null,
-        propertiesForm: null,
+    componentId: null,
+    variant: null,
+    propertiesForm: null,
 
-        constructor: function(config) {
-            Hippo.ChannelManager.TemplateComposer.PropertiesEditor.superclass.constructor.call(this, config);
-            this.componentId = config.componentId;
-            this.variant = config.variant;
-            this.propertiesForm = config.propertiesForm;
+    constructor: function (config) {
+      Hippo.ChannelManager.TemplateComposer.PropertiesEditor.superclass.constructor.call(this, config);
+      this.componentId = config.componentId;
+      this.variant = config.variant;
+      this.propertiesForm = config.propertiesForm;
 
-            this.addEvents('visibleHeightChanged');
-        },
+      this.addEvents('visibleHeightChanged');
+    },
 
-        load: function() {
-            return this.propertiesForm.load();
-        },
+    load: function () {
+      return this.propertiesForm.load();
+    },
 
-        /**
-         * The visible height is the height that should be visible to the user.
-         * Subclasses should override this method to calculate their visible height and
-         * fire a 'visibleHeightChanged' event whenever their visible height has changed.
-         */
-        syncVisibleHeight: function() {
-            // empty base method
-        },
+    /**
+     * The visible height is the height that should be visible to the user.
+     * Subclasses should override this method to calculate their visible height and
+     * fire a 'visibleHeightChanged' event whenever their visible height has changed.
+     */
+    syncVisibleHeight: function () {
+      // empty base method
+    },
 
-        /**
-         * Marks this editor as 'dirty' or not.
-         * @param isDirty whether to mark this editor as dirty.
-         */
-        markDirty: function(isDirty) {
-            this.propertiesForm.markDirty(isDirty === undefined ? true : isDirty);
-        }
+    /**
+     * Marks this editor as 'dirty' or not.
+     * @param isDirty whether to mark this editor as dirty.
+     */
+    markDirty: function (isDirty) {
+      this.propertiesForm.markDirty(isDirty === undefined ? true : isDirty);
+    }
 
-    });
+  });
 
 }());
