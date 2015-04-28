@@ -98,10 +98,7 @@
     <woodstox.version>4.2.0</woodstox.version>
 
     <mime4j.version>0.6</mime4j.version>
-    <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
-    <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>
     <maven.plugins.jaxb-schemagen.version>1.6</maven.plugins.jaxb-schemagen.version>
-
     <dependency.solr.version>4.9.0</dependency.solr.version>
 
   </properties>
@@ -659,13 +656,6 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>${maven.plugin.site.version}</version>
-      </plugin>
-    </plugins>
   </build>
 
   <reporting>
@@ -688,28 +678,6 @@
             </reports>
           </reportSet>
         </reportSets>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
-        <version>${maven.plugin.jxr.version}</version>
-        <reportSets>
-          <reportSet>
-            <id>src-xref</id>
-            <reports>
-              <report>jxr</report>
-            </reports>
-          </reportSet>
-          <reportSet>
-            <id>test-xref</id>
-            <reports>
-              <report>test-jxr</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-        <configuration>
-          <aggregate>true</aggregate>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>net.sourceforge.maven-taglib</groupId>
