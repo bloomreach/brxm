@@ -15,14 +15,15 @@
 .hippo-developer-extensions {
   background-color: @hippo-dev-extensions-bgcolor;
 
-  li {
-    padding: 3px 4px;
-  }
-
   // AutoExport
   .auto-export-dev-extension {
+    padding: 3px 4px;
 
     position: relative;
+
+    &.auto-export-state-enabled {
+      background-color: @danger-light;
+    }
 
     a {
       display: block;
@@ -38,10 +39,4 @@
       }
     }
   }
-
-  .auto-export-state-enabled a span {
-    color: @danger;
-  }
-
 }
-
