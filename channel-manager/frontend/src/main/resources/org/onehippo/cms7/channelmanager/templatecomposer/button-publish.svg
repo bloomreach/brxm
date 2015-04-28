@@ -21,10 +21,7 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
 <g>
-	<path d="M7.5,2C11.084,2,14,4.916,14,8.5S11.084,15,7.5,15S1,12.084,1,8.5S3.916,2,7.5,2 M7.5,1
-		C3.358,1,0,4.357,0,8.5S3.358,16,7.5,16S15,12.643,15,8.5S11.642,1,7.5,1L7.5,1z"/>
+  <circle cx="7.5" cy="8.5" r="7" stroke="currentColor" fill="transparent"/>
 </g>
-<path d="M0.003,1.969"/>
-<path d="M0.003,1.969"/>
 <polygon points="12,5.523 11.148,5 6.914,11.261 4.787,8.55 4,9.167 7.024,13 "/>
 </svg>
