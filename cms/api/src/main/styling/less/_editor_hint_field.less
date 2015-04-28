@@ -26,11 +26,12 @@
     height: 0;
   }
 
-  a.info {
+  .info {
     display: inline-block;
     height: 16px;
     z-index: 24;
     vertical-align: top;
+    position: relative;
     text-decoration: none;
 
     .hi {
@@ -40,35 +41,34 @@
 
     span {
       display: none;
+      position: absolute;
+      z-index: 25;
+      top: -3px;
+      left: 24px;
+      border: 1px solid @dark-gray;
+      background-color: @white;
+      color: @darkest-shade;
+      padding: 4px 8px;
+      overflow: hidden;
+      width: auto;
+      white-space: nowrap;
+    }
+
+    &:hover span {
+      display: block;
     }
   }
 }
 
-.hippo-editor-field .hippo-hint-field a.info:hover span {
-  display: block;
-  position: relative;
-  z-index: 25;
-  top: -18px;
-  left: 1em;
-  border: 1px solid @dark-gray;
-  background-color: @white;
-  color: @darkest-shade;
-  text-align: left;
-  padding: 4px 8px;
-  margin-left: 8px;
-  overflow: hidden;
-  width: auto;
-  max-width: 400px;
-}
 
 /* horizontal document type layout */
 td:last-child .hippo-editor-field .hippo-hint-field a.info:hover span {
-  left: -225px;
 }
 
 /* two columns document type layout */
-div.col30 .hippo-editor-field .hippo-hint-field a.info:hover span {
-  left: -225px;
+div.col30 .hippo-editor-field .hippo-hint-field a.info span {
+  right: 24px;
+  left: auto;
 }
 
 /* horizontal compound */
