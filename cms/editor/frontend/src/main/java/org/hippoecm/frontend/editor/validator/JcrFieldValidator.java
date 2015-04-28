@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -107,6 +107,7 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                 violations.add(newViolation(new ModelPathElement(field, field.getPath(), 0),
                         getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT)));
             }
+
             while (iter.hasNext()) {
                 IModel childModel = iter.next();
                 if (fieldType.isNode()) {
@@ -123,6 +124,11 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                             violations.addAll(validatorService.getValidator(fieldValidatorType).validate(this, nodeModel, childModel));
                         }
                     }
+                }
+
+                if (required && field.getTypeDescriptor().isType("Date") && childModel.getObject() == null) {
+                    violations.add(newViolation(new ModelPathElement(field, field.getPath(), 0),
+                                getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT)));
                 }
             }
         }
