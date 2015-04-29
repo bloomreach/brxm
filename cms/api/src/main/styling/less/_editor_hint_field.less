@@ -52,31 +52,15 @@
       overflow: hidden;
       width: auto;
       white-space: nowrap;
+
+      .col30 & {
+        right: 24px;
+        left: auto;
+      }
     }
 
     &:hover span {
       display: block;
     }
   }
-}
-
-
-/* horizontal document type layout */
-td:last-child .hippo-editor-field .hippo-hint-field a.info:hover span {
-}
-
-/* two columns document type layout */
-div.col30 .hippo-editor-field .hippo-hint-field a.info span {
-  right: 24px;
-  left: auto;
-}
-
-/* horizontal compound */
-.hippo-editor-field td.even:first-child .hippo-hint-field a.info:hover span {
-  left: 2em;
-}
-
-/* horizontal compound */
-.hippo-editor-field td .hippo-hint-field a.info:hover span {
-  left: -225px;
 }
