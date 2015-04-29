@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -91,9 +91,9 @@ public class RichTextEditorImageService implements IDetachable {
     }
 
     private RichTextImage loadImageItem(Map<String, String> values) {
-        String uuid = values.get(RichTextEditorImageLink.UUID);
-        String type = values.get(RichTextEditorImageLink.TYPE);
+        final String uuid = values.get(RichTextEditorImageLink.UUID);
         if (!Strings.isEmpty(uuid)) {
+            final String type = values.get(RichTextEditorImageLink.TYPE);
             try {
                 return factory.loadImageItem(uuid, type);
             } catch (RichTextException e) {

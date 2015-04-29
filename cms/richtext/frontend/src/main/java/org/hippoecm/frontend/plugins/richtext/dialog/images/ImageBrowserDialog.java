@@ -92,7 +92,6 @@ import org.slf4j.LoggerFactory;
 
 public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImageLink> implements IHeaderContributor {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ImageBrowserDialog.class);
 
     private static final ResourceReference DIALOG_SKIN = new CssResourceReference(ImageBrowserDialog.class, "ImageBrowserDialog.css");
@@ -102,13 +101,14 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
     private static final String EXCLUDED_IMAGE_VARIANTS = "excluded.image.variants";
     private static final String INCLUDED_IMAGE_VARIANTS = "included.image.variants";
 
-    public final static List<String> ALIGN_OPTIONS = Arrays.asList("top", "middle", "bottom", "left", "right");
+    public static final List<String> ALIGN_OPTIONS = Arrays.asList("top", "middle", "bottom", "left", "right");
+
     private final FileUploadValidationService validator;
 
     DropDownChoice<String> type;
 
-    private LinkedHashMap<String, String> nameTypeMap;
-    private IModel<RichTextEditorImageLink> imageModel;
+    private final LinkedHashMap<String, String> nameTypeMap;
+    private final IModel<RichTextEditorImageLink> imageModel;
     private boolean uploadSelected;
     private AjaxButton uploadButton;
     private Component uploadTypeSelector;
@@ -119,6 +119,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
 
     public ImageBrowserDialog(IPluginContext context, final IPluginConfig config, final IModel<RichTextEditorImageLink> model) {
         super(context, config, model);
+
         imageModel = model;
 
         galleryTypesModel = new LoadableDetachableModel<List<String>>() {
@@ -131,11 +132,9 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
 
         add(createUploadForm());
 
-        if (nameTypeMap == null) {
-            nameTypeMap = new LinkedHashMap<>();
-        }
-        type = new DropDownChoice<>("type", new StringPropertyModel(model, RichTextEditorImageLink.TYPE), new ArrayList<>(nameTypeMap.keySet()), new IChoiceRenderer<String>() {
-            private static final long serialVersionUID = 1L;
+        nameTypeMap = new LinkedHashMap<>();
+
+        type = new DropDownChoice<>("type", new StringPropertyModel(model, RichTextEditorImageLink.TYPE), Collections.emptyList(), new IChoiceRenderer<String>() {
 
             public Object getDisplayValue(String object) {
                 return nameTypeMap.get(object);
@@ -147,7 +146,6 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
 
         });
         type.add(new AjaxFormComponentUpdatingBehavior("onChange") {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
@@ -155,11 +153,14 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
             }
         });
         type.setOutputMarkupId(true);
-        type.setNullValid(false);
+
+        // disable the type selector to prevent Wicket from initializing the drop down incorrectly
+        // when a new image is uploaded (the form submit of the upload sets the model to null)
+        type.setEnabled(false);
+
         add(type);
 
         add(new ThrottledTextFieldWidget("alt", new StringPropertyModel(model, RichTextEditorImageLink.ALT)) {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
@@ -169,7 +170,6 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
 
         DropDownChoice<String> align = new DropDownChoice<>("align", new StringPropertyModel(model,
                 RichTextEditorImageLink.ALIGN), ALIGN_OPTIONS, new IChoiceRenderer<String>() {
-            private static final long serialVersionUID = 1L;
 
             public Object getDisplayValue(String object) {
                 return new StringResourceModel(object, ImageBrowserDialog.this, null).getString();
@@ -181,7 +181,6 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
 
         });
         align.add(new AjaxFormComponentUpdatingBehavior("onChange") {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
@@ -208,6 +207,8 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
     }
 
     protected void onModelSelected(IModel<Node> model) {
+        type.setEnabled(true);
+
         setTypeChoices(model.getObject());
 
         if (type != null) {
@@ -260,11 +261,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
     }
 
     private void setTypeChoices(final Node imageSetNode) {
-        if (nameTypeMap == null) {
-            nameTypeMap = new LinkedHashMap<>();
-        } else {
-            nameTypeMap.clear();
-        }
+        nameTypeMap.clear();
 
         Set<Map.Entry<String, String>> sortedEntries = new TreeSet<>(new Comparator<Map.Entry<String, String>>() {
             @Override
@@ -345,7 +342,6 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
         uploadTypeSelector.setOutputMarkupId(true);
 
         uploadButton = new AjaxButton("uploadButton", uploadForm) {
-            private static final long serialVersionUID = 1L;
 
             @Override
             public boolean isEnabled() {
@@ -443,8 +439,6 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
 
         uploadButton.setOutputMarkupId(true);
         uploadField.add(new AjaxEventBehavior("onchange") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected void onEvent(AjaxRequestTarget target) {
                 uploadSelected = true;
