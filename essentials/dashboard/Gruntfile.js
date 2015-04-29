@@ -17,6 +17,25 @@
 module.exports = function (grunt) {
     'use strict';
 
+    function readDeclutterConfig () {
+        return grunt.file.readJSON('declutter.config.json');
+    }
+
+    function readDeclutteredComponentFiles () {
+        var declutterConfig = readDeclutterConfig(),
+            components = Object.keys(declutterConfig),
+            declutteredFiles = [];
+
+        components.forEach(function (component) {
+            var componentRules = declutterConfig[component];
+            componentRules.forEach(function (rule) {
+                declutteredFiles.push(component + '/' + rule);
+            });
+        });
+
+        return declutteredFiles;
+    }
+
     // display execution time of each task
     require('time-grunt')(grunt);
 
@@ -46,28 +65,27 @@ module.exports = function (grunt) {
                         expand: true,
                         cwd: '<%= build.bower %>',
                         dest: '<%= build.dashboardtarget %>',
-                        src: [
-                            'angular/**',
-                            'angular-animate/**',
-                            'angular-sanitize/**',
-                            'angular-bootstrap/**',
-                            'angular-chosen-localytics/**',
-                            'angular-ui-router/**',
-                            'angular-ui-tree/**',
-                            'chosen/**',
-                            'es5-shim/**',
-                            'hippo-theme/**',
-                            'jquery/**'
-                        ]
+                        src: readDeclutteredComponentFiles()
                     }
                 ]
             }
+        },
+
+        // only use a sub-set of files in Bower components
+        declutter: {
+            options: {
+                rules: readDeclutterConfig()
+            },
+            files: [
+                '<%= build.bower %>/*'
+            ]
         }
     });
 
     grunt.registerTask('build', 'Build everything', [
         'clean:target',
         'jshint',
+        'declutter',
         'copy:components'
     ]);
 };

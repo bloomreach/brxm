@@ -1,0 +1,19 @@
+{
+  "angular": ["angular.js"],
+  "angular-bootstrap": ["ui-bootstrap-tpls.js"],
+  "angular-chosen-localytics": ["chosen.js"],
+  "angular-mocks": [],
+  "angular-sanitize": ["angular-sanitize.min.js"],
+  "angular-ui-router": ["release/angular-ui-router.js"],
+  "angular-ui-tree": ["dist/angular-ui-tree.min.js"],
+  "chosen": ["chosen.jquery.js"],
+  "es5-shim": [],
+  "google-code-prettify": ["src/prettify.js"],
+  "hippo-theme": [
+    "dist/css/main.css",
+    "dist/js/main.js",
+    "dist/images/*"
+  ],
+  "jasmine-jquery": [],
+  "jquery": ["dist/jquery.js"]
+}

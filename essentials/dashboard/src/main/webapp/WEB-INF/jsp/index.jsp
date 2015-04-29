@@ -34,6 +34,7 @@
 
   <%-- HIPPO THEME DEPS --%>
   <script src="${pageContext.request.contextPath}/js/lib/angular-ui-tree.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/google-code-prettify/src/prettify.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/hippo-theme/dist/js/main.js?v=${project.version}"></script>
 
   <%-- ESSENTIALS --%>
