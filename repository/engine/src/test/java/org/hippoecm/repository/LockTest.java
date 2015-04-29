@@ -129,5 +129,6 @@ public class LockTest extends RepositoryTestCase {
         lockManager.unlock("/test");
         Thread.sleep(3001l);
         assertTrue(lockManager.isLocked("/test"));
+        lock.stopKeepAlive();
     }
 }

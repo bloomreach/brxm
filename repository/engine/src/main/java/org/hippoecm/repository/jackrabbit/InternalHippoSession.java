@@ -16,6 +16,7 @@
 package org.hippoecm.repository.jackrabbit;
 
 import java.io.IOException;
+import java.util.concurrent.ScheduledExecutorService;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -64,4 +65,5 @@ public interface InternalHippoSession extends JackrabbitSession, NamespaceResolv
 
     ItemManager getItemManager();
 
+    ScheduledExecutorService getExecutor();
 }

@@ -28,6 +28,7 @@ import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
 import javax.jcr.lock.LockManager;
 
+import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.locking.HippoLock;
 import org.onehippo.repository.locking.HippoLockManager;
@@ -44,10 +45,12 @@ public class LockManagerDecorator extends org.hippoecm.repository.decorating.Loc
     static {
         NO_TIMEOUT.setTimeInMillis(Long.MAX_VALUE);
     }
-    private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+
+    private final ScheduledExecutorService executor;
 
     public LockManagerDecorator(final Session session, final LockManager lockManager) {
         super(session, lockManager);
+        executor = ((InternalHippoSession) SessionDecorator.unwrap(session)).getExecutor();
     }
 
     public static LockManager unwrap(LockManager lockManager) {
