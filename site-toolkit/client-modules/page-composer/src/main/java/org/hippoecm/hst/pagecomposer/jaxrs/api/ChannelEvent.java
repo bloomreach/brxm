@@ -22,13 +22,25 @@ import java.util.List;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
- * ChannelEvent which is put on the internal HST Guava event bus for synchronous events dispatching where listeners to this
- * event can inject logic or short-circuit processing by throwing a {@link org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException}
+ * {@link org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent} which is put on the internal HST Guava event bus for
+ * <code>synchronous</code> events dispatching where listeners to this event can inject logic or short-circuit
+ * processing by setting a {@link java.lang.RuntimeException}
+ * through {@link org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent#setException(java.lang.RuntimeException)}. When a
+ * {@link java.lang.RuntimeException} is set on this
+ * {@link org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent} by a listener, the
+ * {@link org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource#publishSynchronousEvent} will rethrow the
+ * exception. The reason that this has to be done via this ChannelEvent object is that Guava
+ * {@link com.google.common.eventbus.EventBus} always catches an exception thrown by a listener, even when injecting a
+ * custom {@link com.google.common.eventbus.SubscriberExceptionHandler}
  */
 public class ChannelEvent extends EventObject {
+
+    private static final Logger log = LoggerFactory.getLogger(ChannelEvent.class);
 
     public enum ChannelEventType {
         PUBLISH,
@@ -37,9 +49,10 @@ public class ChannelEvent extends EventObject {
 
     private final ChannelEventType channelEventType;
     private final List<String> userIds;
-    private final HstRequestContext requestContext;
-    private final Mount editingMount;
-    private final HstSite editingPreviewSite;
+    private transient final HstRequestContext requestContext;
+    private transient final Mount editingMount;
+    private transient final HstSite editingPreviewSite;
+    private transient RuntimeException exception;
 
     public ChannelEvent(final ChannelEventType channelEventType,
                         final List<String> userIds,
@@ -86,6 +99,19 @@ public class ChannelEvent extends EventObject {
         return editingPreviewSite;
     }
 
+    public RuntimeException getException() {
+        return exception;
+    }
+
+    public void setException(final RuntimeException exception) {
+        if (this.exception != null) {
+            log.debug("Skipping exception '{}' for ChannelEvent {} because already an exception set.", exception.toString(),
+                    this);
+            return;
+        }
+        this.exception = exception;
+    }
+
     @Override
     public String toString() {
         return "ChannelEvent{" +
@@ -94,6 +120,7 @@ public class ChannelEvent extends EventObject {
                 ", editingMount=" + editingMount +
                 ", editingPreviewSite=" + editingPreviewSite +
                 ", request=" + requestContext.getServletRequest() +
+                ", exception=" + exception +
                 '}';
     }
 }

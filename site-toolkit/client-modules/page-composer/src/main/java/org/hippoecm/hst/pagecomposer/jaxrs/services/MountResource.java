@@ -43,12 +43,10 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
-import org.hippoecm.hst.core.container.ComponentManager;
-import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtIdsRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.NewPageModelRepresentation;
@@ -74,7 +72,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Path("/hst:mount/")
-public class MountResource extends AbstractConfigResource implements ComponentManagerAware {
+public class MountResource extends AbstractConfigResource {
     private static Logger log = LoggerFactory.getLogger(MountResource.class);
 
     private static final String PUBLISH_ACTION = "publishMount";
@@ -85,7 +83,6 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
     private SiteMenuHelper siteMenuHelper;
     private PagesHelper pagesHelper;
     private LockHelper lockHelper = new LockHelper();
-    private ComponentManager componentManager;
 
     public void setSiteMapHelper(final SiteMapHelper siteMapHelper) {
         this.siteMapHelper = siteMapHelper;
@@ -99,10 +96,6 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
         this.pagesHelper = pagesHelper;
     }
 
-    @Override
-    public void setComponentManager(ComponentManager componentManager) {
-        this.componentManager = componentManager;
-    }
 
     @GET
     @Path("/pagemodel/{pageId}/")
@@ -185,8 +178,9 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
     }
 
     /**
-     * If the {@link Mount} that this request belongs to does not have a preview configuration, it will 
+     * If the {@link Mount} that this request belongs to does not have a preview configuration, it will
      * be created. If it already has a preview configuration, just an ok {@link Response} is returned.
+     *
      * @return ok {@link Response} when editing can start, and error {@link Response} otherwise
      */
     @POST
@@ -223,13 +217,14 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
         Session session = getPageComposerContextService().getRequestContext().getSession();
         JcrUtils.copy(session, liveConfigurationPath, previewConfigurationPath);
 
-        String liveChannelPath =  getPageComposerContextService().getEditingLiveChannelPath();
+        String liveChannelPath = getPageComposerContextService().getEditingLiveChannelPath();
         String previewChannelPath = liveChannelPath + "-preview";
         JcrUtils.copy(session, liveChannelPath, previewChannelPath);
     }
 
     /**
      * If the {@link Mount} that this request belongs to has a preview configuration, it will be discarded.
+     *
      * @return ok {@link Response} when the discard completed, error {@link Response} otherwise
      */
     @POST
@@ -251,8 +246,9 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
     }
 
     /**
-     * If the {@link Mount} that this request belongs to does not have a preview configuration, it will 
+     * If the {@link Mount} that this request belongs to does not have a preview configuration, it will
      * be created. If it already has a preview configuration, just an ok {@link Response} is returned.
+     *
      * @return ok {@link Response} when editing can start, and error {@link Response} otherwise
      */
     @POST
@@ -314,7 +310,8 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
                     context.getEditingMount(),
                     context.getEditingPreviewSite(),
                     requestContext);
-            componentManager.publishEvent(event);
+
+            publishSynchronousEvent(event);
 
             HstConfigurationUtils.persistChanges(session);
 
@@ -325,9 +322,9 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
         } catch (ClientException e) {
             resetSession();
             return logAndReturnClientError(e);
-        } catch (RepositoryException e) {
-            log.warn("Could not publish preview configuration : ", e);
-            return error("Could not publish preview configuration : " + e);
+        } catch (Exception e) {
+            resetSession();
+            return logAndReturnServerError(e);
         }
     }
 
@@ -335,6 +332,7 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
     /**
      * Creates a document in the repository using the WorkFlowManager
      * The post parameters should contain the 'path', 'docType' and 'name' of the document.
+     *
      * @param params The POST parameters
      * @return response JSON with the status of the result
      */
@@ -362,8 +360,9 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
     /**
      * Method that returns a {@link Response} containing the list of document of (sub)type <code>docType</code> that
      * belong to the content of the site that is currently composed.
-     * @param docType         the docType the found documents must be of. The documents can also be a subType of
-     *                        docType
+     *
+     * @param docType the docType the found documents must be of. The documents can also be a subType of
+     *                docType
      * @return An ok Response containing the list of documents or an error response in case an exception occurred
      */
     @POST
@@ -382,7 +381,7 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
         try {
             Session session = requestContext.getSession();
 
-            Node contentRoot = (Node) session.getItem(canonicalContentPath);
+            Node contentRoot = (Node)session.getItem(canonicalContentPath);
 
             String statement = "//element(*," + docType + ")[@hippo:paths = '" + contentRoot.getIdentifier() + "' and @hippo:availability = 'preview' and not(@jcr:primaryType='nt:frozenNode')]";
             QueryManager queryMngr = session.getWorkspace().getQueryManager();
@@ -419,8 +418,9 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
 
     /**
      * Delete the preview nodes of a channel, i.e. the preview configuration and the preview channel.
-     *
+     * <p/>
      * This method erases uncommitted changes and should therefore be used very carefully.
+     *
      * @return An ok Response containing the list of documents or an error response in case an exception occurred
      */
     @POST
@@ -499,20 +499,21 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
                     context.getEditingMount(),
                     context.getEditingPreviewSite(),
                     requestContext);
-            componentManager.publishEvent(event);
+
+            publishSynchronousEvent(event);
 
             HstConfigurationUtils.persistChanges(session);
 
             postChannelEvent(DISCARD_ACTION, liveConfigurationPath, previewConfigurationPath, userIds);
 
             log.info("Changes of user '{}' for site '{}' are discarded.", session.getUserID(), editingPreviewSite.getName());
-            return ok("Changes of user '"+session.getUserID()+"' for site '"+editingPreviewSite.getName()+"' are discarded.");
+            return ok("Changes of user '" + session.getUserID() + "' for site '" + editingPreviewSite.getName() + "' are discarded.");
         } catch (ClientException e) {
             resetSession();
             return logAndReturnClientError(e);
-        } catch (RepositoryException e) {
-            log.warn("Could not discard preview configuration: ", e);
-            return error("Could not discard preview configuration: " + e);
+        } catch (Exception e) {
+            resetSession();
+            return logAndReturnServerError(e);
         }
     }
 
@@ -699,9 +700,9 @@ public class MountResource extends AbstractConfigResource implements ComponentMa
                 String currentUserId = session.getUserID();
                 final HippoEvent event = new HippoEvent("channel-manager");
                 event.category("channel-manager").action(action).user(currentUserId)
-                    .set("liveConfigurationPath", liveConfigurationPath)
-                    .set("previewConfigurationPath", previewConfigurationPath)
-                    .set("contributors", StringUtils.join(contributors, ','));
+                        .set("liveConfigurationPath", liveConfigurationPath)
+                        .set("previewConfigurationPath", previewConfigurationPath)
+                        .set("contributors", StringUtils.join(contributors, ','));
                 eventBus.post(event);
             } catch (RepositoryException e) {
                 log.warn("Failed to get the current jcr session ID from request context.", e);

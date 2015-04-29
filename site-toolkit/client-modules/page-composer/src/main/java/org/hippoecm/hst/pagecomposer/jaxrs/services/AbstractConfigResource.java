@@ -26,7 +26,10 @@ import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -36,14 +39,20 @@ import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AbstractConfigResource {
+public class AbstractConfigResource implements ComponentManagerAware {
 
     private static Logger log = LoggerFactory.getLogger(AbstractConfigResource.class);
 
     private PageComposerContextService pageComposerContextService;
+    private ComponentManager componentManager;
 
     public void setPageComposerContextService(PageComposerContextService pageComposerContextService) {
         this.pageComposerContextService = pageComposerContextService;
+    }
+
+    @Override
+    public void setComponentManager(ComponentManager componentManager) {
+        this.componentManager = componentManager;
     }
 
     public final PageComposerContextService getPageComposerContextService() {
@@ -125,6 +134,13 @@ public class AbstractConfigResource {
         } catch (Exception e) {
             resetSession();
             return logAndReturnServerError(e);
+        }
+    }
+
+    protected void publishSynchronousEvent(final ChannelEvent event) throws ClientException {
+        componentManager.publishEvent(event);
+        if (event.getException() != null) {
+            throw event.getException();
         }
     }
 

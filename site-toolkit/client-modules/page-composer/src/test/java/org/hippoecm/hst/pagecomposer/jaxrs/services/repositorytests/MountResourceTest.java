@@ -15,23 +15,36 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
+import com.google.common.eventbus.Subscribe;
+
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResourceAccessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
+import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class MountResourceTest extends AbstractMountResourceTest {
@@ -94,7 +107,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
         final ContainerComponentResource containerComponentResource = createContainerResource();
         final Response response = containerComponentResource.createContainerItem(catalogItemUUID, 0);
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+        assertEquals(((ExtResponseRepresentation)response.getEntity()).getMessage(),
                 Response.Status.OK.getStatusCode(), response.getStatus());
 
         // reload model through new request, and then modify a container
@@ -185,7 +198,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
         final ContainerComponentResource containerComponentResource = createContainerResource();
         final Response response = containerComponentResource.createContainerItem(catalogItemUUID, 0);
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+        assertEquals(((ExtResponseRepresentation)response.getEntity()).getMessage(),
                 Response.Status.OK.getStatusCode(), response.getStatus());
 
         // reload model through new request, and then modify a container
@@ -206,6 +219,250 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
         usersWithLockedContainers = pccs.getEditingPreviewChannel().getChangedBySet();
         assertTrue(usersWithLockedContainers.isEmpty());
+
+    }
+
+
+    public static class ChannelEventListener {
+
+        private List<ChannelEvent> processed = new ArrayList<>();
+        private boolean locksOnConfigurationPresentDuringEventDispatching;
+        @Subscribe
+        public void onChannelEvent(ChannelEvent event) throws RepositoryException {
+            final Session session = event.getRequestContext().getSession();
+
+            // to assure that the event publishSynchronousEvent(event); in MountResource happens *AFTER* all locks are
+            // removed without yet saving by the calls 1-5 below, we need to validate that the locks in preview are all gone!
+
+            // 1 : copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainConfigNodeNamesToPublish);
+            // 2 : publishChannelChanges(session, userIds);
+
+            // 3 : siteMapHelper.publishChanges(userIds);
+            // 4 : pagesHelper.publishChanges(userIds);
+            // 5 : siteMenuHelper.publishChanges(userIds);
+
+            locksOnConfigurationPresentDuringEventDispatching = lockForPresentBelow(session, event.getEditingPreviewSite().getConfigurationPath());
+            processed.add(event);
+        }
+
+        public List<ChannelEvent> getProcessed() {
+            return processed;
+        }
+    }
+
+    private static boolean lockForPresentBelow(final Session session, final String rootPath) throws RepositoryException {
+        final Node start = session.getNode(rootPath);
+        return checkRecursiveForLock(start);
+
+    }
+
+    private static boolean checkRecursiveForLock(final Node current) throws RepositoryException {
+        if (current.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+            return true;
+        }
+        for (Node child : new NodeIterable(current.getNodes())) {
+            boolean hasLock = checkRecursiveForLock(child);
+            if (hasLock) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Test
+    public void publish_mount_with_ChannelEventListener() throws Exception {
+        final ChannelEventListener listener = new ChannelEventListener();
+        try {
+            HstServices.getComponentManager().registerEventSubscriber(listener);
+            createSomePreviewChanges();
+
+            assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
+
+            mountResource.publish();
+
+            assertEquals(1, listener.getProcessed().size());
+            // during the event dispatching, the locks should already have been removed from preview!
+            assertFalse("during event dispatching locks should be already removed!",
+                    listener.locksOnConfigurationPresentDuringEventDispatching);
+        } finally {
+            HstServices.getComponentManager().unregisterEventSubscriber(listener);
+        }
+    }
+
+    @Test
+     public void discard_mount_with_ChannelEventListener() throws Exception {
+        final ChannelEventListener listener = new ChannelEventListener();
+        try {
+            HstServices.getComponentManager().registerEventSubscriber(listener);
+            createSomePreviewChanges();
+            assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
+            mountResource.discardChanges();
+            assertEquals(1, listener.getProcessed().size());
+
+            // during the event dispatching, the locks should already have been removed from preview!
+            assertFalse("during event dispatching locks should be already removed!",
+                    listener.locksOnConfigurationPresentDuringEventDispatching);
+        } finally {
+            HstServices.getComponentManager().unregisterEventSubscriber(listener);
+        }
+
+    }
+
+    public static class ChannelEventListenerSettingClientException {
+        private ChannelEvent handledEvent;
+        @Subscribe
+        public void onChannelEvent(ChannelEvent event) throws RepositoryException {
+            this.handledEvent = event;
+            event.setException(new ClientException("ClientException message", ClientError.UNKNOWN));
+        }
+    }
+
+    @Test
+    public void publish_mount_with_ChannelEventListener_that_sets_ClientException_does_not_result_in_publication_but_bad_request() throws Exception {
+        final ChannelEventListenerSettingClientException listener = new ChannelEventListenerSettingClientException();
+        try {
+            HstServices.getComponentManager().registerEventSubscriber(listener);
+            createSomePreviewChanges();
+
+            assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
+
+            Response response = mountResource.publish();
+
+            assertNotNull(listener.handledEvent.getException());
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+            assertEquals(listener.handledEvent.getException().toString(), ((ExtResponseRepresentation) response.getEntity()).getMessage());
+
+            // session contains not more changes as should be reset
+            assertFalse(session.hasPendingChanges());
+
+            // locks should still be present since publication failed
+            assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
+
+        } finally {
+            HstServices.getComponentManager().unregisterEventSubscriber(listener);
+        }
+    }
+
+
+    @Test
+    public void discard_mount_with_ChannelEventListener_that_sets_ClientException_does_not_result_in_discard_but_bad_request() throws Exception {
+        final ChannelEventListenerSettingClientException listener = new ChannelEventListenerSettingClientException();
+        try {
+            HstServices.getComponentManager().registerEventSubscriber(listener);
+            createSomePreviewChanges();
+
+            assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
+
+            Response response = mountResource.discardChanges();
+
+            assertNotNull(listener.handledEvent.getException());
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+            assertEquals(listener.handledEvent.getException().toString(), ((ExtResponseRepresentation) response.getEntity()).getMessage());
+
+            // session contains not more changes as should be reset
+            assertFalse(session.hasPendingChanges());
+
+            // locks should still be present since discard failed
+            assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
+
+        } finally {
+            HstServices.getComponentManager().unregisterEventSubscriber(listener);
+        }
+    }
+
+    public static class ChannelEventListenerSettingIllegalStateException {
+        @Subscribe
+        public void onChannelEvent(ChannelEvent event) throws RepositoryException {
+            event.setException(new IllegalStateException("IllegalStateException message"));
+        }
+    }
+
+    @Test
+    public void publish_mount_with_ChannelEventListener_that_sets_IllegalStateException_does_not_result_in_publication_but_server_error() throws Exception {
+        final ChannelEventListenerSettingIllegalStateException listener = new ChannelEventListenerSettingIllegalStateException();
+        try {
+            HstServices.getComponentManager().registerEventSubscriber(listener);
+            createSomePreviewChanges();
+
+            assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
+
+            Response response = mountResource.publish();
+
+            assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+
+            assertEquals("IllegalStateException message", ((ExtResponseRepresentation)response.getEntity()).getMessage());
+            // session contains not more changes as should be reset
+            assertFalse(session.hasPendingChanges());
+
+            // locks should still be present since publication failed
+            assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
+
+        } finally {
+            HstServices.getComponentManager().unregisterEventSubscriber(listener);
+        }
+    }
+
+
+    @Test
+    public void discard_mount_with_ChannelEventListener_that_sets_IllegalStateException_does_not_result_in_discard_but_server_error() throws Exception {
+        final ChannelEventListenerSettingIllegalStateException listener = new ChannelEventListenerSettingIllegalStateException();
+        try {
+            HstServices.getComponentManager().registerEventSubscriber(listener);
+            createSomePreviewChanges();
+
+            assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
+
+            Response response = mountResource.discardChanges();
+
+            assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+            assertEquals("IllegalStateException message", ((ExtResponseRepresentation) response.getEntity()).getMessage());
+
+            // session contains not more changes as should be reset
+            assertFalse(session.hasPendingChanges());
+
+            // locks should still be present since discard failed
+            assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
+
+        } finally {
+            HstServices.getComponentManager().unregisterEventSubscriber(listener);
+        }
+    }
+
+    private void createSomePreviewChanges() throws Exception {
+        movePagesFromCommonToUnitTestProject();
+        createWorkspaceWithTestContainer();
+        addReferencedContainerForHomePage();
+        String catalogItemUUID = addCatalogItem();
+        session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(200);
+
+        mockNewRequest(session, "localhost", "");
+        mountResource.startEdit();
+
+        // reload model through new request, and then modify a container
+        // give time for jcr events to evict model
+        Thread.sleep(200);
+
+        mockNewRequest(session, "localhost", "");
+
+        final PageComposerContextService pccs = mountResource.getPageComposerContextService();
+        final String previewConfigurationPath = pccs.getRequestContext().getResolvedMount().getMount().getHstSite().getConfigurationPath();
+
+        final String previewContainerNodeUUID = session.getNode(previewConfigurationPath)
+                .getNode("hst:workspace/hst:containers/testcontainer").getIdentifier();
+        pccs.getRequestContext().setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, previewContainerNodeUUID);
+
+        final ContainerComponentResource containerComponentResource = createContainerResource();
+        final Response response = containerComponentResource.createContainerItem(catalogItemUUID, 0);
+        assertEquals(((ExtResponseRepresentation)response.getEntity()).getMessage(),
+                Response.Status.OK.getStatusCode(), response.getStatus());
+
+        // reload model through new request, and then modify a container
+        // give time for jcr events to evict model
+        Thread.sleep(200);
+
+        mockNewRequest(session, "localhost", "/home");
 
     }
 

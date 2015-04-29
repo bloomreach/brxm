@@ -19,7 +19,6 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.mock.core.container.MockComponentManager;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
@@ -27,8 +26,8 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
+import org.hippoecm.hst.site.HstServices;
 import org.junit.Before;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 public abstract class AbstractMountResourceTest extends AbstractPageComposerTest {
 
@@ -54,7 +53,7 @@ public abstract class AbstractMountResourceTest extends AbstractPageComposerTest
         final SiteMenuHelper siteMenuHelper = new SiteMenuHelper();
         siteMenuHelper.setPageComposerContextService(pageComposerContextService);
         resource.setSiteMenuHelper(siteMenuHelper);
-        resource.setComponentManager(new MockComponentManager());
+        resource.setComponentManager(HstServices.getComponentManager());
         return resource;
     }
 
