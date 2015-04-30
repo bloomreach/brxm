@@ -42,7 +42,10 @@ public class WorkflowEventListener {
     public void onEvent(final HippoWorkflowEvent event) {
         if (log.isInfoEnabled()) {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.putAll(event.getValues());
+            for (Object key : event.getValues().keySet()) {
+                final Object value = event.get((String) key);
+                jsonObject.put(key, value instanceof Throwable ? value.toString() : value);
+            }
             log.info(jsonObject.toString());
         }
     }
