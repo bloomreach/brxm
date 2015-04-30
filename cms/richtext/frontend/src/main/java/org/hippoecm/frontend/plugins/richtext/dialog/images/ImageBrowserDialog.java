@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
@@ -59,8 +61,12 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.lang.Bytes;
+import org.apache.wicket.util.upload.FileUploadBase;
+import org.apache.wicket.util.upload.FileUploadException;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
@@ -116,6 +122,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
     private String galleryType;
 
     private boolean okSucceeded = false;
+    private HippoForm uploadForm;
 
     public ImageBrowserDialog(IPluginContext context, final IPluginConfig config, final IModel<RichTextEditorImageLink> model) {
         super(context, config, model);
@@ -331,8 +338,8 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
 
     @SuppressWarnings("unchecked")
     private Component createUploadForm() {
-        Form<?> uploadForm = new Form("uploadForm");
-
+        uploadForm = new HippoForm("uploadForm");
+        uploadForm.setMultiPart(true);
         uploadForm.setOutputMarkupId(true);
         final FileUploadField uploadField = new FileUploadField("uploadField");
         uploadField.setOutputMarkupId(true);
@@ -354,7 +361,6 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-
                 final FileUpload upload = uploadField.getFileUpload();
                 if (upload != null) {
                     try {
@@ -364,17 +370,23 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
                         final String localName = getLocalizeCodec().encode(upload.getClientFileName());
                         List<String> errors = e.getViolationMessages().stream().collect(Collectors.toList());
                         final String errorMessage = StringUtils.join(errors, ";");
-                        error(getExceptionTranslation(e, localName, errorMessage).getObject());
+                        showError(getExceptionTranslation(e, localName, errorMessage).getObject());
 
                         if (log.isDebugEnabled()) {
                             log.error("Failed to validate uploading file '{}': {}", localName, errorMessage);
                         }
                     }
                 } else {
-                    error("Please select a file to upload");
+                    showError("Please select a file to upload");
                 }
             }
 
+            @Override
+            protected void onError(AjaxRequestTarget target, Form<?> form)
+            {
+                // update feedback to display errors
+                target.add(feedback);
+            }
             private void createGalleryItem(final AjaxRequestTarget target, final FileUpload upload) {
                 try {
                     String filename = upload.getClientFileName();
@@ -579,5 +591,47 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
         }
 
         return types;
+    }
+
+    @Override
+    protected void onFileUploadException(final FileUploadException e,
+                                         final Map<String, Object> model) {
+        final Map<String, Object> myModel = new HashMap<>();
+
+        if (e instanceof FileUploadBase.SizeLimitExceededException ||
+            e instanceof FileUploadBase.FileSizeLimitExceededException) {
+            myModel.put("actualSize", Bytes.bytes(getActualFileSize(e)));
+            myModel.put("maxSize", model.get("maxSize"));
+            final String message = getString("file.validation.size", Model.ofMap(myModel));
+            showError(message);
+        } else {
+            showError(getString("file.upload.error"));
+        }
+
+        if (log.isDebugEnabled()) {
+            log.error("Failed to upload file", e);
+        } else {
+            log.error("Failed to upload file: {}", e.getMessage());
+        }
+    }
+
+    private long getActualFileSize(final FileUploadException e) {
+        if (e instanceof FileUploadBase.SizeLimitExceededException) {
+            return ((FileUploadBase.SizeLimitExceededException)e).getActualSize();
+        } else if (e instanceof FileUploadBase.FileSizeLimitExceededException) {
+            return ((FileUploadBase.FileSizeLimitExceededException)e).getActualSize();
+        }
+        throw new IllegalArgumentException("Invalid argument, must be either FileUploadBase.SizeLimitExceededException or FileUploadBase.FileSizeLimitExceededException");
+    }
+
+    private void showError(final String s) {
+        // ignore if the message existed before
+        final List<FeedbackMessage> messages = uploadForm.getFeedbackMessages().messages(null);
+        for (FeedbackMessage msg : messages) {
+            if (msg.getMessage().equals(s)) {
+                return;
+            }
+        }
+        uploadForm.error(s);
     }
 }
