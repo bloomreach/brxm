@@ -37,6 +37,7 @@
       <sv:value>/hst:hst/hst:channels/*-preview</sv:value>
       <sv:value>/hst:hst/hst:channels/*-preview/**</sv:value>
       <sv:value>/webfiles/**</sv:value>
+      <sv:value>/**/hippo:lockExpirationTime</sv:value>
     </sv:property>
     <sv:property sv:name="autoexport:filteruuidpaths" sv:type="String" sv:multiple="true">
       <sv:value>/hst:hst</sv:value>
