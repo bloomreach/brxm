@@ -122,8 +122,8 @@ public class Main extends PluginApplication {
     public final static String OUTPUT_WICKETPATHS = "output-wicketpaths";
     public final static String PLUGIN_APPLICATION_NAME_PARAMETER = "config";
     /**
-     * Custom Wicket {@link IRequestCycleListener} class names parameter
-     * which can be comma or whitespace-separated string to set multiple {@link IRequestCycleListener}s.
+     * Custom Wicket {@link IRequestCycleListener} class names parameter which can be comma or whitespace-separated
+     * string to set multiple {@link IRequestCycleListener}s.
      */
     public final static String REQUEST_CYCLE_LISTENERS_PARAM = "wicket.request.cycle.listeners";
 
@@ -599,7 +599,7 @@ public class Main extends PluginApplication {
      * </P>
      */
     private void addRequestCycleListeners() {
-        String [] listenerClassNames = StringUtils.split(getConfigurationParameter(REQUEST_CYCLE_LISTENERS_PARAM, null), " ,\t\r\n");
+        String[] listenerClassNames = StringUtils.split(getConfigurationParameter(REQUEST_CYCLE_LISTENERS_PARAM, null), " ,\t\r\n");
         RequestCycleListenerCollection requestCycleListenerCollection = getRequestCycleListeners();
 
         if (listenerClassNames == null || listenerClassNames.length == 0) {
@@ -641,7 +641,7 @@ public class Main extends PluginApplication {
 
         @Override
         public void sendRedirect(final String url) {
-            if(containsCRorLF(url)) {
+            if (containsCRorLF(url)) {
                 throw new IllegalArgumentException("CR or LF detected in redirect URL: possible http response splitting attack");
             }
             super.sendRedirect(url);
@@ -656,8 +656,9 @@ public class Main extends PluginApplication {
 
             for (int i = 0; i < length; ++i) {
                 char c = s.charAt(i);
-                if('\n' == c || '\r' == c)
+                if ('\n' == c || '\r' == c) {
                     return true;
+                }
             }
 
             return false;
