@@ -197,13 +197,13 @@ public class EnhancedSystemViewImporter implements Importer {
         NodeDefinition def = conflicting.getDefinition();
         Name ntName = nodeInfo.getNodeTypeName();
 
-        if (def.isAutoCreated() && conflicting.isNodeType(ntName)) {
-            log.debug("Overwriting autocreated node {}", conflicting.safeGetJCRPath());
-            conflicting.remove();
-            return nodeInfo;
-        }
         if (nodeInfo.mergeCombine() || nodeInfo.mergeOverlay()) {
             nodeInfo.setOrigin(conflicting);
+            return nodeInfo;
+        }
+        if (def.isAutoCreated() && ntName != null && conflicting.isNodeType(ntName)) {
+            log.debug("Overwriting autocreated node {}", conflicting.safeGetJCRPath());
+            conflicting.remove();
             return nodeInfo;
         }
         if (nodeInfo.mergeSkip()) {
