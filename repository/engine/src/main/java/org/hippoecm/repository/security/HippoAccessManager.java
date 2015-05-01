@@ -507,7 +507,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         // because the getItemState(id) call below will recursively call us (canRead(id)) again
         // we allow that call to succeed here by caching read access in the inprocessNodeReadAccess instance variable,
         // which will be returned from getAccessFromCache(NodeId) if set instead of looking it up in the
-        // backing cache. Note: the HippoAccessManager itself is thread safe.
+        // backing cache. Note: the HippoAccessManager itself is accessed thread safe.
         // This way we can then use the item state to do the work of determining if the read access is indeed allowed
         // after which we put the real result in the cache before returning.
         // if we wouldn't do this we'd have an infinite loop on our hands
