@@ -102,12 +102,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     /**
      * Intermediate readAccess state for current thread {@link #canRead(NodeId)} processing
      */
-    private static final ThreadLocal<Set<NodeId>> inprocessNodeReadAccess = new ThreadLocal<Set<NodeId>>() {
-        @Override
-        protected Set<NodeId> initialValue() {
-            return new HashSet<>();
-        }
-    };
+    private final Set<NodeId> inprocessNodeReadAccess = new HashSet<>();
 
     /**
      * Subject whose access rights this AccessManager should reflect
@@ -510,14 +505,14 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         }
 
         // because the getItemState(id) call below will recursively call us (canRead(id)) again
-        // we allow that call to succeed here by caching read access (true) in the ThreadLocal inprocessNodeReadAccess
-        // per NodeId, which will be returned from getAccessFromCache(NodeId) if set instead of looking it up in the
-        // backing cache.
+        // we allow that call to succeed here by caching read access in the inprocessNodeReadAccess instance variable,
+        // which will be returned from getAccessFromCache(NodeId) if set instead of looking it up in the
+        // backing cache. Note: the HippoAccessManager itself is thread safe.
         // This way we can then use the item state to do the work of determining if the read access is indeed allowed
         // after which we put the real result in the cache before returning.
         // if we wouldn't do this we'd have an infinite loop on our hands
         try {
-            addInprocessReadAccess(id);
+            inprocessNodeReadAccess.add(id);
 
             if (log.isDebugEnabled()) {
                 log.debug("Checking canRead for node: {}", npRes.getJCRPath(hierMgr.getPath(id)));
@@ -566,24 +561,12 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             return false;
         }
         finally {
-            removeInprocessReadAccess(id);
+            inprocessNodeReadAccess.remove(id);
         }
     }
 
-    private void addInprocessReadAccess(NodeId id) {
-        inprocessNodeReadAccess.get().add(id);
-    }
-
-    private void removeInprocessReadAccess(NodeId id) {
-        inprocessNodeReadAccess.get().remove(id);
-    }
-
-    private boolean hasInprocessReadAccess(NodeId id) {
-        return inprocessNodeReadAccess.get().contains(id);
-    }
-
     private Boolean getAccessFromCache(NodeId id) {
-        if (hasInprocessReadAccess(id)) {
+        if (inprocessNodeReadAccess.contains(id)) {
             return Boolean.TRUE;
         }
         if (id instanceof HippoNodeId) {
