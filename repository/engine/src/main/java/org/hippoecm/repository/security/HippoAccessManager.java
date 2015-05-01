@@ -100,6 +100,16 @@ import org.slf4j.LoggerFactory;
 public class HippoAccessManager implements AccessManager, AccessControlManager, ItemStateListener {
 
     /**
+     * Intermediate readAccess state for current thread {@link #canRead(NodeId)} processing
+     */
+    private static final ThreadLocal<Set<NodeId>> inprocessNodeReadAccess = new ThreadLocal<Set<NodeId>>() {
+        @Override
+        protected Set<NodeId> initialValue() {
+            return new HashSet<>();
+        }
+    };
+
+    /**
      * Subject whose access rights this AccessManager should reflect
      */
     private Subject subject;
@@ -500,60 +510,82 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         }
 
         // because the getItemState(id) call below will recursively call us (canRead(id)) again
-        // we provisionally allow that call to succeed here by adding the value 'true' to the cache
-        // so that we can then use that item state to do the work of determining if the read access is indeed allowed
+        // we allow that call to succeed here by caching read access (true) in the ThreadLocal inprocessNodeReadAccess
+        // per NodeId, which will be returned from getAccessFromCache(NodeId) if set instead of looking it up in the
+        // backing cache.
+        // This way we can then use the item state to do the work of determining if the read access is indeed allowed
         // after which we put the real result in the cache before returning.
         // if we wouldn't do this we'd have an infinite loop on our hands
-        addAccessToCache(id, true);
-
-        if (log.isDebugEnabled()) {
-            log.debug("Checking canRead for node: {}", npRes.getJCRPath(hierMgr.getPath(id)));
-        }
-
-        NodeState nodeState;
         try {
-            nodeState = (NodeState) getItemState(id);
-        } catch (NoSuchItemStateException e) {
-            log.info("Node with id '{}' not found, denying access", id);
-            log.debug("Trace: ", e);
-            removeAccessFromCache(id);
-            return false;
-        }
-        if (nodeState.getStatus() == NodeState.STATUS_NEW && !(nodeState.getId() instanceof HippoNodeId)) {
-            // allow read to new nodes in own session
-            // the write check is done on save
-            addAccessToCache(id, true);
-            return true;
-        }
+            addInprocessReadAccess(id);
 
-        // make sure all parent nodes are readable
-        // if node is not readable because of parent, don't cache as we can't invalidate
-        if (!rootNodeId.equals(id) && !(id instanceof HippoNodeId)) {
-            if (!canRead(nodeState.getParentId())) {
+            if (log.isDebugEnabled()) {
+                log.debug("Checking canRead for node: {}", npRes.getJCRPath(hierMgr.getPath(id)));
+            }
+
+            NodeState nodeState;
+            try {
+                nodeState = (NodeState) getItemState(id);
+            } catch (NoSuchItemStateException e) {
+                log.info("Node with id '{}' not found, denying access", id);
+                log.debug("Trace: ", e);
                 removeAccessFromCache(id);
                 return false;
             }
-        }
+            if (nodeState.getStatus() == NodeState.STATUS_NEW && !(nodeState.getId() instanceof HippoNodeId)) {
+                // allow read to new nodes in own session
+                // the write check is done on save
+                addAccessToCache(id, true);
+                return true;
+            }
 
-        Set<FacetAuthPrincipal> faps = subject.getPrincipals(FacetAuthPrincipal.class);
-        for (FacetAuthPrincipal fap : faps) {
-            Set<String> privs = fap.getPrivileges();
-            if (privs.contains("jcr:read")) {
-                if (isNodeInDomain(nodeState, fap, true)) {
-                    addAccessToCache(id, true);
-                    return true;
+            // make sure all parent nodes are readable
+            // if node is not readable because of parent, don't cache as we can't invalidate
+            if (!rootNodeId.equals(id) && !(id instanceof HippoNodeId)) {
+                if (!canRead(nodeState.getParentId())) {
+                    removeAccessFromCache(id);
+                    return false;
                 }
             }
-        }
 
-        addAccessToCache(id, false);
-        if (log.isInfoEnabled()) {
-            log.info("DENIED read : {}", npRes.getJCRPath(hierMgr.getPath(id)));
+            Set<FacetAuthPrincipal> faps = subject.getPrincipals(FacetAuthPrincipal.class);
+            for (FacetAuthPrincipal fap : faps) {
+                Set<String> privs = fap.getPrivileges();
+                if (privs.contains("jcr:read")) {
+                    if (isNodeInDomain(nodeState, fap, true)) {
+                        addAccessToCache(id, true);
+                        return true;
+                    }
+                }
+            }
+
+            addAccessToCache(id, false);
+            if (log.isInfoEnabled()) {
+                log.info("DENIED read : {}", npRes.getJCRPath(hierMgr.getPath(id)));
+            }
+            return false;
         }
-        return false;
+        finally {
+            removeInprocessReadAccess(id);
+        }
+    }
+
+    private void addInprocessReadAccess(NodeId id) {
+        inprocessNodeReadAccess.get().add(id);
+    }
+
+    private void removeInprocessReadAccess(NodeId id) {
+        inprocessNodeReadAccess.get().remove(id);
+    }
+
+    private boolean hasInprocessReadAccess(NodeId id) {
+        return inprocessNodeReadAccess.get().contains(id);
     }
 
     private Boolean getAccessFromCache(NodeId id) {
+        if (hasInprocessReadAccess(id)) {
+            return Boolean.TRUE;
+        }
         if (id instanceof HippoNodeId) {
             return readVirtualAccessCache.get(id);
         } else {
