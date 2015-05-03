@@ -40,7 +40,7 @@ public class ExpandingCopyHandlerTest extends RepositoryTestCase {
         source = test.addNode("source");
         source.setProperty("prop", "value");
         source.setProperty("multiprop", new String[] { "value1", "value2" });
-        source.addNode("node").setProperty("prop", "value");
+        source.addNode("child").setProperty("prop", "value");
         target = test.addNode("target");
     }
 
@@ -48,7 +48,7 @@ public class ExpandingCopyHandlerTest extends RepositoryTestCase {
     public void testCopyWithNodeNameSubstitutes() throws Exception {
         final Map<String, String[]> substitutes = new HashMap<String, String[]>() {{
             put("./_name", new String[] { "substitute" });
-            put("./_name/_name", new String[] { "substitute" });
+            put("./child/_name", new String[] { "substitute" });
         }};
         ExpandingCopyHandler handler = new ExpandingCopyHandler(target, substitutes, session.getValueFactory());
         JcrUtils.copyTo(source, handler);
@@ -59,80 +59,31 @@ public class ExpandingCopyHandlerTest extends RepositoryTestCase {
     @Test
     public void testCopyWithPropertyValueSubstitutes() throws Exception {
         final Map<String, String[]> substitutes = new HashMap<String, String[]>() {{
-            put("./source/prop", new String[] { "substitute" });
-            put("./source/node/prop", new String[] { "substitute" });
-        }};
-        ExpandingCopyHandler handler = new ExpandingCopyHandler(target, substitutes, session.getValueFactory());
-        JcrUtils.copyTo(source, handler);
-        assertEquals("substitute", session.getProperty("/test/target/source/prop").getString());
-        assertEquals("substitute", session.getProperty("/test/target/source/node/prop").getString());
-    }
-
-    /**
-     * For backward compatibility, the properties of the source root can be relative to . instead of ./source
-     */
-    @Test
-    public void testCopyWithPropertyValueSubstitutesBackwardCompatibility() throws Exception {
-        final Map<String, String[]> substitutes = new HashMap<String, String[]>() {{
             put("./prop", new String[] { "substitute" });
+            put("./child/prop", new String[] { "substitute" });
         }};
         ExpandingCopyHandler handler = new ExpandingCopyHandler(target, substitutes, session.getValueFactory());
         JcrUtils.copyTo(source, handler);
         assertEquals("substitute", session.getProperty("/test/target/source/prop").getString());
+        assertEquals("substitute", session.getProperty("/test/target/source/child/prop").getString());
     }
 
     @Test
-    public void testCopyWithBothNodeNameAndPropertyValueSubstitutes() throws Exception {
+    public void testCopyNodeNameAndPropertyValueSubstitutesAlsoMatchesWildcard() throws Exception {
         final Map<String, String[]> substitutes = new HashMap<String, String[]>() {{
-            put("./_name", new String[] { "substitute" });
-            put("./_name/prop", new String[] { "substitute" });
-            put("./_name/_name", new String[] { "substitute" });
-            put("./_name/_name/prop", new String[] { "substitute" });
-        }};
-        ExpandingCopyHandler handler = new ExpandingCopyHandler(target, substitutes, session.getValueFactory());
-        JcrUtils.copyTo(source, handler);
-        assertTrue(session.nodeExists("/test/target/substitute"));
-        assertTrue(session.nodeExists("/test/target/substitute/substitute"));
-        assertEquals("substitute", session.getProperty("/test/target/substitute/prop").getString());
-        assertEquals("substitute", session.getProperty("/test/target/substitute/substitute/prop").getString());
-    }
-
-    @Test
-    public void testCopyWithBothNodeNameAndPropertyValueSubstitutesAlsoMatchesOriginalNodeNames() throws Exception {
-        final Map<String, String[]> substitutes = new HashMap<String, String[]>() {{
-            put("./_name", new String[] { "substitute" });
-            put("./source/prop", new String[] { "substitute" });
-            put("./source/_name", new String[] { "substitute" });
-            put("./source/node/prop", new String[] { "substitute" });
-        }};
-        ExpandingCopyHandler handler = new ExpandingCopyHandler(target, substitutes, session.getValueFactory());
-        JcrUtils.copyTo(source, handler);
-        assertTrue(session.nodeExists("/test/target/substitute"));
-        assertTrue(session.nodeExists("/test/target/substitute/substitute"));
-        assertEquals("substitute", session.getProperty("/test/target/substitute/prop").getString());
-        assertEquals("substitute", session.getProperty("/test/target/substitute/substitute/prop").getString());
-    }
-
-    @Test
-    public void testCopyWithBothNodeNameAndPropertyValueSubstitutesMatchAny() throws Exception {
-        final Map<String, String[]> substitutes = new HashMap<String, String[]>() {{
-            put("./_name", new String[] { "substitute" });
-            put("./_node/prop", new String[] { "substitute" });
             put("./_node/_name", new String[] { "substitute" });
-            put("./_node/_node/prop", new String[] { "substitute" });
+            put("./_node/prop", new String[] { "substitute" });
         }};
         ExpandingCopyHandler handler = new ExpandingCopyHandler(target, substitutes, session.getValueFactory());
         JcrUtils.copyTo(source, handler);
-        assertTrue(session.nodeExists("/test/target/substitute"));
-        assertTrue(session.nodeExists("/test/target/substitute/substitute"));
-        assertEquals("substitute", session.getProperty("/test/target/substitute/prop").getString());
-        assertEquals("substitute", session.getProperty("/test/target/substitute/substitute/prop").getString());
+        assertTrue(session.nodeExists("/test/target/source/substitute"));
+        assertEquals("substitute", session.getProperty("/test/target/source/substitute/prop").getString());
     }
 
     @Test
     public void testCopyWithMultiPropertyValueSubstitution() throws Exception {
         final Map<String, String[]> substitutes = new HashMap<String, String[]>() {{
-            put("./source/multiprop", new String[] { "substitute1", "substitute2" });
+            put("./multiprop", new String[] { "substitute1", "substitute2" });
         }};
         ExpandingCopyHandler handler = new ExpandingCopyHandler(target, substitutes, session.getValueFactory());
         JcrUtils.copyTo(source, handler);
@@ -145,7 +96,7 @@ public class ExpandingCopyHandlerTest extends RepositoryTestCase {
     @Test
     public void testCopyWithMultiPropertyValueIndexedSubstitution() throws Exception {
         final Map<String, String[]> substitutes = new HashMap<String, String[]>() {{
-            put("./source/multiprop[1]", new String[] { "substitute" });
+            put("./multiprop[1]", new String[] { "substitute" });
         }};
         ExpandingCopyHandler handler = new ExpandingCopyHandler(target, substitutes, session.getValueFactory());
         JcrUtils.copyTo(source, handler);

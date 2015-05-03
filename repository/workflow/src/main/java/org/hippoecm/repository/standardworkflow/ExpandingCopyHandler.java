@@ -53,11 +53,13 @@ class ExpandingCopyHandler extends DefaultCopyHandler {
             final String origName = nodeInfo.getName();
             String name = origName;
 
+            path.push(origName);
+
             for (Map.Entry<String, String[]> entry : renames.entrySet()) {
                 final String key = entry.getKey();
                 final String[] substitutes = entry.getValue();
                 if (key.endsWith("/_name") && substitutes != null && substitutes.length > 0) {
-                    if (path.matchKey(key, substitutes[0], false)) {
+                    if (path.matchKey(key, substitutes[0])) {
                         name = substitutes[0];
                         lastSubstituteName = name;
                         break;
@@ -70,7 +72,7 @@ class ExpandingCopyHandler extends DefaultCopyHandler {
                 final String key = entry.getKey();
                 final String[] substitutes = entry.getValue();
                 if (key.endsWith("/jcr:primaryType") && substitutes != null && substitutes.length > 0) {
-                    if (path.matchKey(key, name, true)) {
+                    if (path.matchKey(key, name)) {
                         primaryType = nodeTypeManager.getNodeType(substitutes[0]);
                         break;
                     }
@@ -82,7 +84,7 @@ class ExpandingCopyHandler extends DefaultCopyHandler {
                 final String key = entry.getKey();
                 final String[] substitutes = entry.getValue();
                 if (key.endsWith("/jcr:mixinTypes") && substitutes != null && substitutes.length > 0) {
-                    if (path.matchKey(key, name, true)) {
+                    if (path.matchKey(key, name)) {
                         for (String substitute : substitutes) {
                             mixins.add(nodeTypeManager.getNodeType(substitute));
                         }
@@ -92,16 +94,13 @@ class ExpandingCopyHandler extends DefaultCopyHandler {
             }
 
             nodeInfo = new NodeInfo(name, nodeInfo.getIndex(), primaryType, mixins.toArray(new NodeType[mixins.size()]));
-            if (nodeInfo.hasApplicableChildNodeDef(getCurrentNodeTypes())) {
-                path.push(origName, name);
-            } else {
+            if (!nodeInfo.hasApplicableChildNodeDef(getCurrentNodeTypes())) {
                 // no applicable child node definition
                 // this happens for instance when trying to rename hippo:translation nodes which shouldn't be renamed
                 if (origName.equals(name)) {
                     throw new ConstraintViolationException("Cannot change types: conflict with parent node type");
                 }
                 nodeInfo = new NodeInfo(origName, nodeInfo.getIndex(), primaryType, mixins.toArray(new NodeType[mixins.size()]));
-                path.push(origName, null);
             }
         }
         super.startNode(nodeInfo);
@@ -124,7 +123,7 @@ class ExpandingCopyHandler extends DefaultCopyHandler {
             String[] substitutes = null;
             for (Map.Entry<String, String[]> entry : renames.entrySet()) {
                 final String key = entry.getKey();
-                if (key.endsWith("/" + name) && path.matchKey(key, lastSubstituteName, true)) {
+                if (key.endsWith("/" + name) && path.matchKey(key, lastSubstituteName)) {
                     substitutes = entry.getValue();
                     break;
                 }
@@ -145,7 +144,7 @@ class ExpandingCopyHandler extends DefaultCopyHandler {
                         substitutes = null;
                         for (Map.Entry<String, String[]> entry : renames.entrySet()) {
                             final String key = entry.getKey();
-                            if (key.endsWith("/" + name + "[" + i + "]") && path.matchKey(key, lastSubstituteName, true)) {
+                            if (key.endsWith("/" + name + "[" + i + "]") && path.matchKey(key, lastSubstituteName)) {
                                 substitutes = entry.getValue();
                                 break;
                             }
@@ -171,42 +170,30 @@ class ExpandingCopyHandler extends DefaultCopyHandler {
 
     private static class Path {
         private final Stack<String> names = new Stack<>();
-        private final Stack<String> substitutes = new Stack<>();
 
-        private Path() {
-            push(".", ".");
-        }
-
-        private void push(final String name, final String substitute) {
+        private void push(final String name) {
             names.push(name);
-            substitutes.push(substitute);
         }
 
         private void pop() {
             names.pop();
-            substitutes.pop();
         }
 
-        private boolean matchKey(final String keyPath, final String substitute, final boolean property) {
+        private boolean matchKey(final String keyPath, final String substitute) {
             final String[] elements = keyPath.split("/");
-            // backward compatibility: properties on the first level may be matched relative to ./
-            if (names.size() == 2 && elements.length == 2 && property) {
-                return elements[0].equals(".") && names.get(0).equals(".");
-            }
             if (names.size() != elements.length-1) {
                 return false;
             }
             for (int i = 0; i < elements.length-1; i++) {
+                if (i == 0 && elements[i].equals(".")) {
+                    // matches root
+                    continue;
+                }
                 if (elements[i].equals("_node")) {
                     // matches any
                     continue;
                 }
-                if (elements[i].equals("_name")) {
-                    if (substitute == null || !substitute.equals(substitutes.get(i))) {
-                        // matches substitute
-                        return false;
-                    }
-                } else if (!elements[i].equals(names.get(i))) {
+                if (!elements[i].equals(names.get(i))) {
                     return false;
                 }
             }

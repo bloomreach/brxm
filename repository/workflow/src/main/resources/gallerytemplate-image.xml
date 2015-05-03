@@ -23,8 +23,6 @@
     <sv:value>$name</sv:value>
     <sv:value>./_node/_name</sv:value>
     <sv:value>$name</sv:value>
-    <sv:value>./_node/_node/hippogallery:thumbnail/jcr:lastModified</sv:value>
-    <sv:value>$now</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:language" sv:type="String">
     <sv:value>xpath</sv:value>
