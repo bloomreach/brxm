@@ -25,7 +25,7 @@
 
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-dashboard-document-wizard</artifactId>
-  <version>1.06.00</version>
+  <version>1.06.01-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <inceptionYear>2010</inceptionYear>
@@ -39,9 +39,9 @@
   </description>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/tags/hippo-plugin-dashboard-document-wizard-1.06.00</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/tags/hippo-plugin-dashboard-document-wizard-1.06.00</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/tags/hippo-plugin-dashboard-document-wizard-1.06.00</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/trunk/</url>
   </scm>
 
   <issueManagement>
