@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>28-SNAPSHOT</version>
+    <version>27</version>
   </parent>
 
   <name>Hippo Plugin SEO Support</name>
@@ -38,8 +38,8 @@
   </scm>
 
   <properties>
-    <hippo.hst.version>2.30.01-SNAPSHOT</hippo.hst.version>
-    <hippo.commons.version>1.05.01-SNAPSHOT</hippo.commons.version>
+    <hippo.hst.version>2.30.00</hippo.hst.version>
+    <hippo.commons.version>1.05.00</hippo.commons.version>
     <lib.junit.version>4.8.2</lib.junit.version>
     <lib.easymock.version>3.0</lib.easymock.version>
   </properties>
