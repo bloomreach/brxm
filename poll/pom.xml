@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>27-SNAPSHOT</version>
+    <version>27</version>
   </parent>
 
   <name>Hippo Plugin Poll</name>
@@ -43,10 +43,10 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugin Poll</notice.project.name>
 
-    <hippo.cms.version>2.27.00-SNAPSHOT</hippo.cms.version>
-    <hippo.repository.version>2.27.00-SNAPSHOT</hippo.repository.version>
-    <hippo.hst.version>2.29.00-SNAPSHOT</hippo.hst.version>
-    <hippo.commons.version>1.05.00-SNAPSHOT</hippo.commons.version>
+    <hippo.cms.version>2.28.00</hippo.cms.version>
+    <hippo.repository.version>2.28.00</hippo.repository.version>
+    <hippo.hst.version>2.30.00</hippo.hst.version>
+    <hippo.commons.version>1.05.00</hippo.commons.version>
   </properties>
 
   <repositories>
