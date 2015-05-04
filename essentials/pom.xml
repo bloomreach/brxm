@@ -27,7 +27,7 @@
   <name>Hippo Essentials</name>
   <description>Hippo Essentials</description>
   <artifactId>hippo-essentials</artifactId>
-  <version>1.03.00-SNAPSHOT</version>
+  <version>1.03.00</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -58,9 +58,9 @@
 
   </properties>
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/tags/hippo-essentials-1.03.00</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/tags/hippo-essentials-1.03.00</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/tags/hippo-essentials-1.03.00</url>
   </scm>
   <distributionManagement>
     <repository>
