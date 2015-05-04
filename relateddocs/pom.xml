@@ -27,15 +27,15 @@
   <description>Hippo Plugin Related Documents</description>
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-relateddocs</artifactId>
-  <version>2.11.00-SNAPSHOT</version>
+  <version>2.11.00</version>
   <packaging>jar</packaging>
   
   <inceptionYear>2009</inceptionYear>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/trunk/</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/trunk/</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/tags/hippo-plugin-relateddocs-2.11.00</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/tags/hippo-plugin-relateddocs-2.11.00</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/tags/hippo-plugin-relateddocs-2.11.00</url>
   </scm>
   
   <properties>
