@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,14 +32,12 @@ import org.onehippo.repository.api.annotation.WorkflowAction;
  * interface itself defines no workflow actions, but any {@link Workflow} instance should be cast to a document-specific
  * interface. The implementation of these document-specific workflows can be provided at run-time to the repository.
  * Therefor there is no standard set of workflows available.  There are a number of  commonly available workflows, but
- * these are not mandatory.  See all known sub-interfaces of the {@link Workflow} interface, or {@link
- * org.hippoecm.repository.standardworkflow.FolderWorkflow} for an example.
+ * these are not mandatory.  See all known sub-interfaces of the {@link Workflow} interface, or
+ * org.hippoecm.repository.standardworkflow.FolderWorkflow for an example.
  * <p/>
  * Implementors of this interface should never return subclasses of the {@link Document} class in their interface.  It
  * is allowed to return an instance of a subclass of a {@link Document}, but the repository will force recreating the
  * object returned as a direct instance of an {@link Document}.
- *
- * @see org.hippoecm.repository.standardworkflow.FolderWorkflow
  */
 public interface Workflow extends Remote, Serializable {
 

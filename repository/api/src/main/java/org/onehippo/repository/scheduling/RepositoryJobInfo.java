@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ public class RepositoryJobInfo {
 
     /**
      * Set the value of an attribute. Attributes will be available to the {@link RepositoryJob}
-     * during execution via the {@link RepositoryJobExecutionContext#}
+     * during execution via the {@link RepositoryJobExecutionContext}
      */
     public void setAttribute(String name, String value) {
         attributes.put(name, value);

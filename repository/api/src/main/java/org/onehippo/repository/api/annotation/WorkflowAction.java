@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,13 +34,13 @@ public @interface WorkflowAction {
     /**
      * Returns true if the workflow action should be logged by the system.
      * The default value is true.
-     * @return
+     * @return true if the workflow action should be logged by the system.
      */
     public boolean loggable() default true;
 
     /**
      * Returns true if the workflow action can potentially make changes to the session.
-     * @return
+     * @return true if the workflow action can potentially make changes to the session.
      */
     public boolean mutates() default true;
 }

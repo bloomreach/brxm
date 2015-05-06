@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,15 +25,13 @@ public interface WorkflowDescriptor {
     /**
      * Obtain the human-interpretable display name of this workflow.
      *
-     * @return 
      * @throws RepositoryException
-     * @returns A description of the workflow
+     * @return A description of the workflow
      */
     public String getDisplayName() throws RepositoryException;
 
     /**
      * Obtain the workflow interfaces implemented by this workflow.
-     * @return 
      * @throws ClassNotFoundException
      * @throws RepositoryException 
      */
@@ -44,15 +42,13 @@ public interface WorkflowDescriptor {
      * An example is the plugin class name to be used by a frontend application to access the workflow.
      *
      * @param name 
-     * @return 
      * @throws RepositoryException
-     * @returns A String value, can be null.
+     * @return A String value, can be null.
      */
     public String getAttribute(String name) throws RepositoryException;
 
     /**
      * 
-     * @return
      * @throws javax.jcr.RepositoryException
      */
     public Map<String,Serializable> hints() throws RepositoryException;

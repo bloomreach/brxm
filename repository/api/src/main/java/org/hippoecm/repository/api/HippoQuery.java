@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,10 +36,6 @@ import javax.jcr.version.VersionException;
  */
 public interface HippoQuery extends Query {
     /**
-     * 
-     */
-
-    /**
      * This query language is not yet available as public API, but reserved for future use.
      */
     public static final String HIPPOQL = "HIPPOQL";
@@ -55,7 +51,6 @@ public interface HippoQuery extends Query {
      * 
      * @param absPath
      * @param type
-     * @return
      * @throws javax.jcr.ItemExistsException
      * @throws javax.jcr.PathNotFoundException
      * @throws javax.jcr.version.VersionException
@@ -69,7 +64,6 @@ public interface HippoQuery extends Query {
 
     /**
      * 
-     * @return
      * @throws javax.jcr.RepositoryException
      */
     public String[] getArguments() throws RepositoryException;

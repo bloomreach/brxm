@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -54,7 +54,6 @@ public interface WorkflowManager {
      * Obtains a reference to the workflow for the document as indicated by the javax.jcr.Node in the specified category.
      * @param category category in which to look for the workflow
      * @param item the document or request for which to obtain the workflow
-     * @return
      * @throws javax.jcr.RepositoryException
      */
     public WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException;
@@ -63,7 +62,6 @@ public interface WorkflowManager {
      * Obtains a reference to the workflow for the document as indicated Document instance in the specified category.
      * @param category category in which to look for the workflow
      * @param document the document for which to obtain the workflow
-     * @return
      * @throws javax.jcr.RepositoryException
      */
     public WorkflowDescriptor getWorkflowDescriptor(String category, Document document) throws RepositoryException;
@@ -82,7 +80,6 @@ public interface WorkflowManager {
      * Obtains the workflow for the document as indicated Document instance in the specified category.
      * @param category category in which to look for the workflow
      * @param document the document for which to obtain the workflow
-     * @return
      * @throws org.hippoecm.repository.api.MappingException
      * @throws javax.jcr.RepositoryException
      */

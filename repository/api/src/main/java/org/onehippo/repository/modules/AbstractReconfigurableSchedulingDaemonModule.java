@@ -201,7 +201,6 @@ public abstract class AbstractReconfigurableSchedulingDaemonModule extends Abstr
      * Returns true only when the scheduling daemon is enabled. By default, it is enabled.
      *
      * @param moduleConfig
-     * @return
      */
     protected boolean isSchedulerEnabled(Node moduleConfig) throws RepositoryException {
         return true;
@@ -210,7 +209,6 @@ public abstract class AbstractReconfigurableSchedulingDaemonModule extends Abstr
     /**
      * Returns the scheduled task job info.
      * @param moduleConfig
-     * @return
      */
     protected abstract RepositoryJobInfo getRepositoryJobInfo(Node moduleConfig) throws RepositoryException;
 
@@ -218,7 +216,6 @@ public abstract class AbstractReconfigurableSchedulingDaemonModule extends Abstr
      * Returns the scheduled task job trigger.
      * @param moduleConfig
      * @param jobInfo
-     * @return
      * @throws RepositoryException
      */
     protected abstract RepositoryJobTrigger getRepositoryJobTrigger(Node moduleConfig, RepositoryJobInfo jobInfo) throws RepositoryException;

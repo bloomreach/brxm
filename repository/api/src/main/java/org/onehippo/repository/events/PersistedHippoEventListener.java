@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,10 @@ import org.onehippo.cms7.event.HippoEvent;
  * {@link HippoEvent HippoEvents} after they occurred in the repository, across a repository cluster.
  * <p>
  *   Such a listener must be registered as listener on the {@link PersistedHippoEventsService} through the
- *   {@link }HippoServicesRegistry}, like for example:
+ *   {@link org.onehippo.cms7.services.HippoServiceRegistry}, like for example:
  *   <pre>
  *   <code>
- *       HippoServicesRegistry.registerService(myPersistedHippoEventListener, PersistedHippoEventsService.class);
+ *       HippoServiceRegistry.registerService(myPersistedHippoEventListener, PersistedHippoEventsService.class);
  *   </code>
  *   </pre>
  * </p>

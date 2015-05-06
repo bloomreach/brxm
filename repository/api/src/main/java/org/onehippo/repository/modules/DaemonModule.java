@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@ import javax.jcr.Session;
  * are started by the repository on startup. You can register your own
  * DaemonModule by declaring it in /hippo:configuration/hippo:modules
  *
- * @see {@link ProvidesService}
- * @see {@link RequiresService}
- * @see {@link ConfigurableDaemonModule}
+ * @see ProvidesService
+ * @see RequiresService
+ * @see ConfigurableDaemonModule
  */
 public interface DaemonModule {
 

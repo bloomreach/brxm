@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -598,7 +598,7 @@ public class JcrUtils {
      * Retrieve the primary node type.  Can handle frozen nodes as well as regular nodes.
      *
      * @param node
-     * @return
+     * @return the primary node type
      * @throws RepositoryException
      */
     public static NodeType getPrimaryNodeType(Node node) throws RepositoryException {
@@ -614,7 +614,7 @@ public class JcrUtils {
      * Retrieve the mixin node types present on a node.  Can handle frozen nodes as well as regular nodes.
      *
      * @param node
-     * @return
+     * @return the mixin node types present on a node
      * @throws RepositoryException
      */
     public static NodeType[] getMixinNodeTypes(Node node) throws RepositoryException {

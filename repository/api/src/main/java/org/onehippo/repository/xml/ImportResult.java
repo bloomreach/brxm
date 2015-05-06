@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import javax.jcr.Node;
 
 /**
  * Encapsulates different aspects of the result of importing an enhanced system view xml document.
- * @see {@link org.hippoecm.repository.api.HippoSession#importEnhancedSystemViewXML(String, java.io.InputStream, int, int, ContentResourceLoader)}
+ * @see org.hippoecm.repository.api.HippoSession#importEnhancedSystemViewXML(String, java.io.InputStream, int, int, ContentResourceLoader)
  */
 public interface ImportResult {
 

@@ -686,7 +686,6 @@ public class StringCodecFactory {
         /**
          *
          * @param name
-         * @return
          */
         public static String encodeColon(String name) {
             return name.replaceAll(colon, colonISO9075);
@@ -695,7 +694,6 @@ public class StringCodecFactory {
         /**
          *
          * @param name
-         * @return
          */
         public static String decodeColon(String name) {
             return name.replaceAll(colonISO9075, colon);

@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,8 +43,8 @@ public class ZipFileContentResourceLoader implements ContentResourceLoader {
     /**
      * Returns a URL in jar URL scheme.
      * 
-     * @see http://en.wikipedia.org/wiki/URI_scheme
-     * @see https://www.iana.org/assignments/uri-schemes/prov/jar
+     * @see <a href="http://en.wikipedia.org/wiki/URI_scheme">http://en.wikipedia.org/wiki/URI_scheme</a>
+     * @see <a href="https://www.iana.org/assignments/uri-schemes/prov/jar">https://www.iana.org/assignments/uri-schemes/prov/jar</a>
      */
     @Override
     public URL getResource(String path) throws MalformedURLException {

@@ -82,10 +82,6 @@ public abstract class WorkflowImpl implements Remote, Workflow
         return node;
     }
 
-    /**
-     * 
-     * @return
-     */
     final protected WorkflowContext getWorkflowContext() {
         return context;
     }
