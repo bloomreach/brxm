@@ -43,7 +43,6 @@ public final class UrlSafeBase64 {
 
     /**
      * @param string
-     * @return
      * @throws IllegalArgumentException
      */
     public static byte[] decode(String string) throws IllegalArgumentException {

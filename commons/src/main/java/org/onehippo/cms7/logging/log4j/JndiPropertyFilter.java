@@ -45,7 +45,6 @@ public class JndiPropertyFilter extends AbstractPropertyFilter {
 
     /**
      * Return whether the lookup occurs in a J2EE container.
-     * @return
      */
     public boolean isResourceRef() {
         return resourceRef;

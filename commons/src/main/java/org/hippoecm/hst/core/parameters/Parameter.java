@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 /**
  * Annotation indicating that a getter method returns the value of an HST parameter.
  *
- * @see {@link ParametersInfo}
+ * @see ParametersInfo
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})

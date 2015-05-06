@@ -46,7 +46,7 @@ import org.apache.log4j.spi.LoggingEvent;
  * with the specified property value. In this case, the logging event will be accepted when the runtime property value doesn't match.
  * </P>
  *
- * @see {@link org.apache.log4j.spi.Filter}
+ * @see org.apache.log4j.spi.Filter
  */
 public abstract class AbstractPropertyFilter extends Filter {
 
@@ -127,9 +127,8 @@ public abstract class AbstractPropertyFilter extends Filter {
 
     /**
      * Returns the deciding option whether or not the log message should be logged if a match is found.
-     * @return
-     * @see {@link org.apache.log4j.spi.Filter#ACCEPT}
-     * @see {@link org.apache.log4j.spi.Filter#DENY}
+     * @see org.apache.log4j.spi.Filter#ACCEPT
+     * @see org.apache.log4j.spi.Filter#DENY
      */
     public int getOnMatch() {
         return onMatch;
@@ -139,8 +138,8 @@ public abstract class AbstractPropertyFilter extends Filter {
      * Sets the deciding option whether or not the log message should be logged.
      * Allowed option is either {@link org.apache.log4j.spi.Filter#ACCEPT} or {@link org.apache.log4j.spi.Filter#DENY}.
      * @param onMatch
-     * @see {@link org.apache.log4j.spi.Filter#ACCEPT}
-     * @see {@link org.apache.log4j.spi.Filter#DENY}
+     * @see org.apache.log4j.spi.Filter#ACCEPT
+     * @see org.apache.log4j.spi.Filter#DENY
      */
     public void setOnMatch(int onMatch) {
         this.onMatch = onMatch;
@@ -148,9 +147,8 @@ public abstract class AbstractPropertyFilter extends Filter {
 
     /**
      * Returns string representation of the option flag whether or not the log message should be logged if a match is found.
-     * @return
-     * @see {@link org.apache.log4j.spi.Filter#ACCEPT}
-     * @see {@link org.apache.log4j.spi.Filter#DENY}
+     * @see org.apache.log4j.spi.Filter#ACCEPT
+     * @see org.apache.log4j.spi.Filter#DENY
      */
     public String getOnMatchOption() {
         if (ACCEPT == onMatch) {
@@ -166,8 +164,8 @@ public abstract class AbstractPropertyFilter extends Filter {
      * Sets string representation of the option flag whether or not the log message should be logged.
      * Allowed option is either 'ACCEPT' or 'DENY'.
      * @param onMatchOption
-     * @see {@link org.apache.log4j.spi.Filter#ACCEPT}
-     * @see {@link org.apache.log4j.spi.Filter#DENY}
+     * @see org.apache.log4j.spi.Filter#ACCEPT
+     * @see org.apache.log4j.spi.Filter#DENY
      */
     public void setOnMatchOption(String onMatchOption) {
         if (!"ACCEPT".equals(onMatchOption) && !"DENY".equals(onMatchOption) && !"NEUTRAL".equals(onMatchOption)) {
@@ -187,7 +185,6 @@ public abstract class AbstractPropertyFilter extends Filter {
      * Finds the property value by the name from the underlying environment.
      * @param event
      * @param name
-     * @return
      */
     abstract protected String getProperty(LoggingEvent event, String name);
 }

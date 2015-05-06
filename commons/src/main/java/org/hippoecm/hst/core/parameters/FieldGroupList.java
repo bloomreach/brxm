@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
 public @interface FieldGroupList {
 
     /**
-     * @return the array of {@FieldGroup}s that should be rendered in the array order.
+     * @return the array of {@link FieldGroup}s that should be rendered in the array order.
      */
     FieldGroup[] value();
 

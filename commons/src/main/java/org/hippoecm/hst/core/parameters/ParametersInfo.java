@@ -30,17 +30,19 @@ import java.lang.annotation.Target;
  * For example you can write your org.hippoecm.hst.core.component.HstComponent for a search as follows:
  * <blockquote>
  * <pre>
- * {@code
- * @ParametersInfo(type = SearchInfo.class)
- *    public class Search extends BaseHstComponent {
+ * <code>
+ * &#64;ParametersInfo(type = SearchInfo.class)
+ * public class Search extends BaseHstComponent {
  *    public static final Logger log = LoggerFactory.getLogger(SearchNoParameterInfo.class);
- *    @Override
+ *    &#64;Override
  *    public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
  *      SearchInfo info = getParametersInfo(request);
+ *    }
  * }
+ * </code>
  * </pre>
  * </blockquote>
- * </p>  
+ * </p>
  */
 @Retention(RetentionPolicy.RUNTIME)  
 @Target({ElementType.TYPE})
