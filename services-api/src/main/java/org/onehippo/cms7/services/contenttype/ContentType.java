@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -133,17 +133,17 @@ public interface ContentType {
     Map<String, ContentTypeChild> getChildren();
 
     /**
-     * A convenient method to directly access a defined {@link ContentTypeProperty or {@link ContentTypeChild} element by its name.
+     * A convenient method to directly access a defined {@link ContentTypeProperty} or {@link ContentTypeChild} element by its name.
      * <p>
-     * Note that a {#isDerivedType} ContentType is allowed to have both a property and child element by the same name.
+     * Note that a {@link #isDerivedType()} ContentType is allowed to have both a property and child element by the same name.
      * In that case this method will only provide access to the child element by that name (see also JCR-2.0 5.1.8).
      * The same named property element in that case can still be accessed through {@link #getProperties()}.
      * <br/>
      * For not {@link #isDerivedType()} ContentTypes duplicate named properties and children are not supported, so in that case this method can be relied
      * upon to access all defined ContentTypeItem elements
      * </p>
-     * @param name the name of a defined {@link ContentTypeProperty or {@link ContentTypeChild} element
-     * @return a {@link ContentTypeProperty or {@link ContentTypeChild} element by that name
+     * @param name the name of a defined {@link ContentTypeProperty} or {@link ContentTypeChild} element
+     * @return a {@link ContentTypeProperty} or {@link ContentTypeChild} element by that name
      */
     ContentTypeItem getItem(String name);
 }

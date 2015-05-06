@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ public interface ContentTypeItem {
     String getItemType();
 
     /**
-     * @return The underlying {@link EffectiveNodeTypeItem#getType) for this item; in case of a {@link #isMultiTyped()} returning only the first item definition its type
+     * @return The underlying {@link EffectiveNodeTypeItem#getType} for this item; in case of a {@link #isMultiTyped()} returning only the first item definition its type
      */
     String getEffectiveType();
 

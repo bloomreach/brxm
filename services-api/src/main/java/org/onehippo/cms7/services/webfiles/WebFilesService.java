@@ -38,7 +38,7 @@ public interface WebFilesService {
      * @param session the JCR session used to access web files.
      * @param bundleName the name of the web files bundle.
      * @return a JCR-based web files implementation for <code>bundleName</code>.
-     * @throw WebFileException if the {@link WebFileBundle} for <code>bundleName</code> cannot be found
+     * @throws WebFileException if the {@link WebFileBundle} for <code>bundleName</code> cannot be found
      */
     WebFileBundle getJcrWebFileBundle(Session session, String bundleName) throws WebFileException;
 

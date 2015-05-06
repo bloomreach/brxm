@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -172,7 +172,6 @@ public final class HippoServiceRegistry {
      * singletons to be upgraded to non-singleton situations.
      *
      * @param ifaceClass
-     * @return
      */
     public synchronized static <T> T getService(Class<T> ifaceClass) {
         return getNamedServiceInternal(ifaceClass, ifaceClass.getName());
@@ -182,7 +181,6 @@ public final class HippoServiceRegistry {
      * Retrieve a list of whiteboard services by it's default (class) name.
      *
      * @param ifaceClass
-     * @return
      */
     public synchronized static List<HippoServiceRegistration> getRegistrations(Class ifaceClass) {
         return getUnnamedServicesInternal(ifaceClass);
