@@ -46,7 +46,7 @@ public interface HstContainerURLProvider {
     /**
      * Returns the parameter name component separator.
      * 
-     * @return
+     * @return the parameter name component separator.
      */
     String getParameterNameComponentSeparator();
 
@@ -56,7 +56,6 @@ public interface HstContainerURLProvider {
      * @param servletRequest
      * @param servletResponse
      * @param resolvedMount
-     * @return
      */
     HstContainerURL parseURL(HttpServletRequest servletRequest, HttpServletResponse servletResponse, ResolvedMount resolvedMount);
     
@@ -68,7 +67,6 @@ public interface HstContainerURLProvider {
      * @param mount
      * @param requestPath
      * @param queryParams
-     * @return
      */
     HstContainerURL parseURL(HstRequestContext requestContext, ResolvedMount mount, String requestPath, Map<String, String []> queryParams);
     
@@ -80,7 +78,6 @@ public interface HstContainerURLProvider {
      * @param mount
      * @param requestPath
      * @param queryParams
-     * @return
      */
     HstContainerURL parseURL(HttpServletRequest request, ResolvedMount mount, String requestPath, Map<String, String []> queryParams);
 
@@ -93,7 +90,6 @@ public interface HstContainerURLProvider {
      * @param requestPath
      * @param queryParams
      * @param requestCharacterEncoding
-     * @return
      */
     HstContainerURL parseURL(ResolvedMount mount, String contextPath, String requestPath, Map<String, String []> queryParams, String requestCharacterEncoding);
 
@@ -103,7 +99,6 @@ public interface HstContainerURLProvider {
      * 
      * @param baseContainerURL
      * @param pathInfo
-     * @return
      */
     HstContainerURL createURL(HstContainerURL baseContainerURL, String pathInfo);
     
@@ -113,7 +108,6 @@ public interface HstContainerURLProvider {
      * @param mount
      * @param baseURL
      * @param path
-     * @return
      */
     HstContainerURL createURL(Mount mount, HstContainerURL baseURL, String path);
      
@@ -123,7 +117,6 @@ public interface HstContainerURLProvider {
      * 
      * @param baseContainerURL
      * @param hstUrl
-     * @return
      */
     HstContainerURL createURL(HstContainerURL baseContainerURL, HstURL hstUrl);
     
@@ -141,7 +134,6 @@ public interface HstContainerURLProvider {
      * 
      * @param containerURL
      * @param requestContext
-     * @return
      * @throws UnsupportedEncodingException
      * @throws ContainerException
      * @deprecated deprecated since 2.30.00 (CMS 10.0), use
@@ -155,7 +147,6 @@ public interface HstContainerURLProvider {
      * 
      * @param containerURL
      * @param requestContext
-     * @return
      * @throws UnsupportedEncodingException
      * @throws ContainerException
      */
@@ -170,7 +161,6 @@ public interface HstContainerURLProvider {
      * @param containerURL
      * @param requestContext
      * @param contextPath
-     * @return
      * @throws UnsupportedEncodingException
      * @throws ContainerException
      */

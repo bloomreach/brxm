@@ -49,7 +49,6 @@ public interface ContentRewriter<T> {
      * @param contentNode
      * @param requestContext
      * @param targetMountAlias
-     * @return
      */
     T rewrite(T content, Node contentNode, HstRequestContext requestContext, String targetMountAlias);
     
@@ -59,7 +58,6 @@ public interface ContentRewriter<T> {
      * @param contentNode
      * @param requestContext
      * @param targetMount
-     * @return
      */
     T rewrite(T content, Node contentNode, HstRequestContext requestContext, Mount targetMount);
     

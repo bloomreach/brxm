@@ -29,7 +29,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
  * Note: the {@link ResolvedSiteMapItem} is accessible by every <code>HstComponent</code> instance through the <code>HstRequestContext</code>
  * <p/>
  * When no <code>HstSiteMapItem</code> can be found to match the <code>pathInfo</code>, the implementation can return null for the 
- * {@link #match(String, HstSite)}, but is also allowed to return some catch all <code>ResolvedSiteMapItem</code>
+ * {@link #match(String, ResolvedMount)} , but is also allowed to return some catch all <code>ResolvedSiteMapItem</code>
  */
 public interface HstSiteMapMatcher {
     

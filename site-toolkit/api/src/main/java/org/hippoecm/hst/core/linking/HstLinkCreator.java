@@ -111,7 +111,7 @@ public interface HstLinkCreator {
     
    
     /**
-     * @see {@link #createCanonical(Node, HstRequestContext)}.
+     * @see #createCanonical(Node, HstRequestContext)
      * When specifying a preferredItem, we try to create a canonical link wrt this preferredItem. If the link cannot be created for this preferredItem,
      * a fallback to {@link #createCanonical(Node, HstRequestContext)} without preferredItem is done.
      * 
@@ -211,7 +211,7 @@ public interface HstLinkCreator {
      * @param requestContext the current request context
      * @param mountAlias the alias of the {@link Mount} for which the link should be created for
      * @return the {@link HstLink} for the jcr <code>node</code> and the <code>mountAlias</code> or <code>null</code>  when there cannot be found an {@link Mount} for the alias
-     * @see {@link #create(Node, Mount)} 
+     * @see #create(Node, Mount)
      */
     HstLink create(Node node, HstRequestContext requestContext, String mountAlias);
     
@@ -240,7 +240,7 @@ public interface HstLinkCreator {
      * @param mountAlias the alias of the {@link Mount} for which the link should be created for
      * @param type the type that should be contained in the {@link Mount#getTypes()} where the {@link Mount} is the mount belonging to the returned {@link HstLink}
      * @return the {@link HstLink} for the jcr <code>node</code> and the <code>mountAlias</code> or <code>null</code> when no link for the node can be made in the <code>{@link Mount}</code> belonging to the alias or when there belongs no {@link Mount} to the alias
-     * @see {@link #create(Node, Mount)} 
+     * @see #create(Node, Mount)
      */
     HstLink create(Node node, HstRequestContext requestContext, String mountAlias, String type);
     

@@ -32,19 +32,16 @@ public interface LazySession extends Session {
     
     /**
      * Returns the last refreshed time millis.
-     * @return
      */
     long lastRefreshed();
     
     /**
      * Returns the last logged in time mills
-     * @return
      */
     long lastLoggedIn();
     
     /**
      * Returns the pending time millis after when the session should be refreshed.
-     * @return
      */
     long getRefreshPendingAfter();
 

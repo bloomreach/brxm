@@ -28,14 +28,12 @@ public interface WrapperElement extends Serializable, Cloneable
     
     /**
      * Return the tag name of the head contribution element
-     * @return
      */
     String getTagName();
     
     /**
      * Checks if the head contribution element has the attribute specified by the attribute name
      * @param name
-     * @return
      */
     boolean hasAttribute(String name);
     
@@ -43,14 +41,12 @@ public interface WrapperElement extends Serializable, Cloneable
      * Returns the attribute value of the head contribution element specified by the attribute name.
      * Returns null if there's no attribute specified by the attribute name.
      * @param name
-     * @return
      */
     String getAttribute(String name);
     
     /**
      * Returns unmodifiable attribute map of the head contribution element.
      * Returns an empty unmodifiable attribute map if there's no attribute.
-     * @return
      */
     Map<String, String> getAttributeMap();
     
@@ -66,13 +62,11 @@ public interface WrapperElement extends Serializable, Cloneable
      * Removes the attribute from the head contribution element specified by the attribute name.
      * Returns the attribute value if the attribute exists, or returns null if the attribute doesn't exist.
      * @param name
-     * @return
      */
     String removeAttribute(String name);
     
     /**
      * Returns the text content of the head contribution element.
-     * @return
      */
     String getTextContent();
     

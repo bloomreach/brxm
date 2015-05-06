@@ -32,7 +32,7 @@ public interface MutableMount extends Mount {
     void setChannelInfo(ChannelInfo info, ChannelInfo previewInfo);
 
     /**
-     * Sets the {@Channel} info for this {@link Mount}. If the  {@link Mount} impl does not support
+     * Sets the {@link Channel} info for this {@link Mount}. If the  {@link Mount} impl does not support
      * {@link #setChannel(Channel, Channel)}, it can
      * throw an {@link UnsupportedOperationException}
      * @param channel the channel to set, not allowed to be <code>null</code>

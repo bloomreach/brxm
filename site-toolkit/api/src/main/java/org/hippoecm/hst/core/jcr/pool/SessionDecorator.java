@@ -33,7 +33,6 @@ public interface SessionDecorator
      * Decorates the session and returns another decorated session.
      * 
      * @param session
-     * @return
      */
     Session decorate(Session session);
     
@@ -43,7 +42,6 @@ public interface SessionDecorator
      * 
      * @param session
      * @param userID
-     * @return
      */
     Session decorate(Session session, String userID);
     

@@ -33,7 +33,6 @@ public interface ResourceBundleFamilyFactory {
     /**
      * Creates and returns a resource bundle family based on the specified basename.
      * @param basename
-     * @return
      */
     ResourceBundleFamily createBundleFamily(String basename);
 

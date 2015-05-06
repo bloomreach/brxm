@@ -41,8 +41,6 @@ public interface HstResponse extends HttpServletResponse {
     
     /**
      * Creates a HST Render URL targeting the HstComponent.
-     *  
-     * @return
      */
     HstURL createRenderURL();
     
@@ -50,21 +48,16 @@ public interface HstResponse extends HttpServletResponse {
      * Creates a HST Navigational Render URL
      * 
      * @param pathInfo the path to be navigated
-     * @return
      */
     HstURL createNavigationalURL(String pathInfo);
     
     /**
      * Creates a HST Action URL targeting the HstComponent.
-     *  
-     * @return
      */
     HstURL createActionURL();
 
     /**
      * Creates a HST Resource URL targeting the current HstComponent.
-     *  
-     * @return
      */
     HstURL createResourceURL();
     
@@ -72,7 +65,6 @@ public interface HstResponse extends HttpServletResponse {
      * Creates a HST Resource URL targeting the HstComponent indicated by referenceNamespace.
      * 
      * @param referenceNamespace
-     * @return
      */
     HstURL createResourceURL(String referenceNamespace);
 
@@ -87,7 +79,6 @@ public interface HstResponse extends HttpServletResponse {
      * such as JavaScript variables or function names, to ensure they are unique 
      * in the context of the HST-managed page.
      * The namespace value must be constant for the lifetime of the HstComponentWindow. 
-     * @return
      */
     String getNamespace();
     
@@ -171,7 +162,6 @@ public interface HstResponse extends HttpServletResponse {
      * This method checks all the parent component reponses have the property.
      * 
      * @param keyHint
-     * @return
      */
     boolean containsHeadElement(String keyHint);
     
@@ -215,7 +205,6 @@ public interface HstResponse extends HttpServletResponse {
     
     /**
      * Returns the flushable child content window names.
-     * @return
      */
     List<String> getChildContentNames();
     
@@ -228,7 +217,7 @@ public interface HstResponse extends HttpServletResponse {
      * the invocation will be just ignored with no operation.
      * </P>
      *
-     * @see {@link javax.servlet.http,HttpServletResponse#sendRedirect(String)}
+     * @see javax.servlet.http,HttpServletResponse#sendRedirect(String)
      * @param location the redirect location URL
      */
     void sendRedirect(String location) throws IOException;
@@ -323,7 +312,6 @@ public interface HstResponse extends HttpServletResponse {
     
     /**
      * Returns the wrapper element for the rendered content
-     * @return
      */
     Element getWrapperElement();
 

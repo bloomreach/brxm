@@ -168,7 +168,6 @@ public interface VirtualHosts {
 
     /**
      * @param uuid
-     * @return
      */
     Mount getMountByIdentifier(String uuid);
 
@@ -233,14 +232,12 @@ public interface VirtualHosts {
 
     /**
      * The list of available blueprints
-     * @return
      */
     List<Blueprint> getBlueprints();
 
     /**
      * Retrieve a blue print from it's ID.
      * @param id
-     * @return
      */
     Blueprint getBlueprint(String id);
 
@@ -267,7 +264,6 @@ public interface VirtualHosts {
      *
      * @param channel
      * @param <T>
-     * @return
      * @throws ChannelException
      */
     <T extends ChannelInfo> T getChannelInfo(Channel channel) throws ChannelException;

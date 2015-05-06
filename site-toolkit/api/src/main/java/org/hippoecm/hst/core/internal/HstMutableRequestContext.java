@@ -124,7 +124,7 @@ public interface HstMutableRequestContext extends HstRequestContext {
 
     /**
      * @param cmsRequest when the request is a cmsRequest have this parameter equal to <code>true</code>
-     * @see {@link #isCmsRequest()}
+     * @see #isCmsRequest()
      */
     public void setCmsRequest(boolean cmsRequest);
 

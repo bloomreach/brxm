@@ -25,7 +25,6 @@ public interface Counter extends Serializable {
     
     /**
      * Gets the current counter value, regardless whether it's enabled or not.
-     * @return
      */
     long getValue();
     

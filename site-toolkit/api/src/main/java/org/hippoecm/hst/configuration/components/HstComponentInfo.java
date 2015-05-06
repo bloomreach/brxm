@@ -24,7 +24,7 @@ import org.hippoecm.hst.core.component.HstURL;
  * Basic information interface for component configuration.
  * </P>
  * 
- * @see {@link HstComponentConfiguration}
+ * @see HstComponentConfiguration
  * @version $Id$
  */
 public interface HstComponentInfo {
@@ -69,7 +69,6 @@ public interface HstComponentInfo {
 
     /**
      * Optional mode parameter to determine which technology should used for rendering asynchronous component. e.g., 'ajax', 'esi', etc.
-     * @return
      */
     String getAsyncMode();
 

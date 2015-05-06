@@ -26,7 +26,7 @@ public interface Pipelines
     /**
      * Returns the default pipeline.
      * 
-     * @return
+     * @return the default pipeline.
      */
     Pipeline getDefaultPipeline();
     
@@ -34,7 +34,7 @@ public interface Pipelines
      * Returns the specified pipeline by the name.
      * 
      * @param name
-     * @return
+     * @return the specified pipeline by the name.
      */
     Pipeline getPipeline(String name);
     

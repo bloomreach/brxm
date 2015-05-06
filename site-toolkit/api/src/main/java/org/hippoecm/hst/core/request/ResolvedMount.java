@@ -32,7 +32,7 @@ public interface ResolvedMount {
 
     /**
      * @return the {@link ResolvedVirtualHost} for this {@link ResolvedMount}
-     * @deprecate since 2.28.00 (CMS 7.9). Use {@link #getMount()) and then {@link org.hippoecm.hst.configuration.hosting.Mount#getVirtualHost()}
+     * @deprecated since 2.28.00 (CMS 7.9). Use {@link #getMount()) and then {@link org.hippoecm.hst.configuration.hosting.Mount#getVirtualHost()}
      * to get the the virtualhost. This method is deprecated because in case of a preview decorated mount, via the
      * {@link ResolvedVirtualHost} you get to the undecorated hosts and mounts
      */
@@ -111,13 +111,13 @@ public interface ResolvedMount {
     
     /**
      * Returns true if subject based jcr session should be used for this Mount 
-     * @return
+     * @return true if subject based jcr session should be used for this Mount
      */
     boolean isSubjectBasedSession();
     
     /**
      * Returns true if subject based jcr session should be statefully managed. 
-     * @return
+     * @return true if subject based jcr session should be statefully managed.
      */
     boolean isSessionStateful();
     

@@ -29,13 +29,11 @@ public interface Task {
 
     /**
      * returns the task name
-     * @return
      */
     String getName();
 
     /**
      * Returns attribute map which is unmodifiable. So, do not try to put or remove items directly from the returned map.
-     * @return
      */
     Map<String, Object> getAttributeMap();
 
@@ -72,7 +70,6 @@ public interface Task {
     /**
      * Starts and returns a child subtask with the name.
      * @param name
-     * @return
      */
     Task startSubtask(String name);
 
@@ -83,19 +80,16 @@ public interface Task {
 
     /**
      * Returns the child tasks collection
-     * @return
      */
     Collection<Task> getChildTasks();
 
     /**
      * Returns true if the task was started but not stopped.
-     * @return
      */
     boolean isRunning();
 
     /**
      * Returns the task execution duration time in milliseconds
-     * @return
      */
     long getDurationTimeMillis();
 }

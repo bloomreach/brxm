@@ -61,7 +61,7 @@ public interface HstSiteMenuItem extends CommonMenuItem{
     
     /**
      * The value of the local (no parameters inherited from ancestor items) parameter with possible property placeholders substituted
-     * @see {@link #getParameter(String)}, only this method returns parameters without inheritance
+     * @see #getParameter(String) , only this method returns parameters without inheritance
      * @param name the name of the parameter
      * @return the value of the parameter or <code>null</code> when not present or has unresolved property placeholders
      */
@@ -71,13 +71,13 @@ public interface HstSiteMenuItem extends CommonMenuItem{
      * Parameters are inherited from ancestor sitemenu items. When this sitemenu item configures the same parameter as an ancestor, the
      * value from the ancestor is overwritten. 
      * 
-     * @see {@link #getParameter(String)}, only now the entire parameters map is returned.
+     * @see #getParameter(String) , only now the entire parameters map is returned.
      * @return the Map of parameters contained in this <code>HstSiteMenu</code>. If no parameters present, and empty map is returned
      */
     Map<String, String> getParameters();
     
     /**
-     * @see {@link #getParameters()}, only this method returns parameters without inheritance
+     * @see #getParameters() , only this method returns parameters without inheritance
      * @return the Map of parameters contained in this <code>HstSiteMapItem</code>. If no parameters present, and empty map is returned
      */
     Map<String, String> getLocalParameters();

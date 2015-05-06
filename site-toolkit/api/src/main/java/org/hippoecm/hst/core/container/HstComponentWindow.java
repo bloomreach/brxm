@@ -78,8 +78,6 @@ public interface HstComponentWindow {
     
     /**
      * Whether it has component exceptions or not
-     * 
-     * @return
      */
     boolean hasComponentExceptions();
     
@@ -127,14 +125,14 @@ public interface HstComponentWindow {
     String getNamedResourceServer();
     
     /**
-     * @see {@link org.hippoecm.hst.configuration.components.HstComponentConfiguration#getParameter(String)}
+     * @see org.hippoecm.hst.configuration.components.HstComponentConfiguration#getParameter(String)
      * @param name the name of the parameter
      * @return the configured parameter value for this <code>name</code> and <code>null</code> if not existing
      */
     String getParameter(String name);
     
     /**
-     * @see {@link org.hippoecm.hst.configuration.components.HstComponentConfiguration#getLocalParameter(String)}
+     * @see org.hippoecm.hst.configuration.components.HstComponentConfiguration#getLocalParameter(String)
      * @param paramName the name of the parameter
      * @return the configured parameter value for this <code>name</code> and <code>null</code> if not existing
      */
@@ -182,37 +180,14 @@ public interface HstComponentWindow {
      */
     HstResponseState getResponseState();
     
-    /**
-     * 
-     * @return
-     */
     HstComponentInfo getComponentInfo();
     
-    /**
-     * 
-     * @param name
-     * @return
-     */
     Object getAttribute(String name);
     
-    /**
-     * 
-     * @param name
-     * @param value
-     */
     void setAttribute(String name, Object value);
     
-    /**
-     * 
-     * @param name
-     * @return
-     */
     Object removeAttribute(String name);
     
-    /**
-     * 
-     * @return
-     */
     Enumeration<String> getAttributeNames();
 
     /**

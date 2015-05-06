@@ -30,13 +30,13 @@ public interface HstContainerConfig {
 
     /**
      * Returns the servletContext of the web application where the HstComponents are located.
-     * @return
+     * @return the servletContext of the web application where the HstComponents are located.
      */
     ServletContext getServletContext();
     
     /**
      * Returns the classloader of the web application where the HstComponents are located.
-     * @return
+     * @return the classloader of the web application where the HstComponents are located.
      */
     ClassLoader getContextClassLoader();
     

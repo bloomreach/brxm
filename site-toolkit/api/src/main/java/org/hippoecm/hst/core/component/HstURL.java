@@ -92,13 +92,11 @@ public interface HstURL {
     
     /**
      * Returns string representation of this url.
-     * @return
      */
     String toString();
     
     /**
      * Returns the parameter map of this url.
-     * @return
      */
     Map<String, String[]> getParameterMap();
     

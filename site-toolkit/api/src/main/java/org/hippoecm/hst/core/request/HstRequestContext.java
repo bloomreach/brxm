@@ -206,19 +206,19 @@ public interface HstRequestContext {
     
     /**
      * Returns attribute map which is unmodifiable. So, do not try to put or remove items directly from the returned map.
-     * @return
+     * @return attribute map which is unmodifiable. So, do not try to put or remove items directly from the returned map.
      */
     Map<String, Object> getAttributes();
     
     /**
      * Returns the matched virtual host object 
-     * @return
+     * @return the matched virtual host object
      */
     VirtualHost getVirtualHost();
     
     /**
-     * Returns the container configuration
-     * @return
+     * Returns the matched virtual host object
+     * @return the matched virtual host object
      */
     ContainerConfiguration getContainerConfiguration();
     
@@ -230,7 +230,7 @@ public interface HstRequestContext {
     
     /**
      * Returns the context credentials provider
-     * @return
+     * @return the context credentials provider
      */
     ContextCredentialsProvider getContextCredentialsProvider();
     

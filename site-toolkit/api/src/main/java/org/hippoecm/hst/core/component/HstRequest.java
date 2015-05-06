@@ -48,7 +48,6 @@ public interface HstRequest extends HttpServletRequest {
       
     /**
      * Returns the current request context
-     * @return
      */
     HstRequestContext getRequestContext();
     
@@ -74,25 +73,21 @@ public interface HstRequest extends HttpServletRequest {
      * If the request type is in the action lifecycle, the reference namespace parameter will be just ignored
      * and the operation will be equivalent to {@link #getParameterMap()}.
      * @param referenceNamespace
-     * @return
      */
     Map<String, String []> getParameterMap(String referenceNamespace);
     
     /**
      * Returns the attribute map of this component window.
-     * @return
      */
     Map<String, Object> getAttributeMap();
     
     /**
      * Returns the attribute map of the specified reference namespace component window.
-     * @return
      */
     Map<String, Object> getAttributeMap(String referenceNamespace);
     
     /**
      * Returns the resource ID which was set by the resource HST URL.
-     * @return
      */
     String getResourceID();
     
@@ -100,7 +95,6 @@ public interface HstRequest extends HttpServletRequest {
      * Returns the lifecycle phase of the current HST request.
      * 
      * @see {@link #ACTION_PHASE}, {@link #RENDER_PHASE}, and {@link #RESOURCE_PHASE}. 
-     * @return
      */
     String getLifecyclePhase();
     

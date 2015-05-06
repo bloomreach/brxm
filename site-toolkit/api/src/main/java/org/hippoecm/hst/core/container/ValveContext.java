@@ -38,29 +38,29 @@ public interface ValveContext
     
     /**
      * Returns the HstComponent container configuration.
-     * 
-     * @return
+     *
+     * @return the HstComponent container configuration.
      */
     HstContainerConfig getRequestContainerConfig();
     
     /**
      * Returns the current request context.
-     * 
-     * @return
+     *
+     * @return the current request context.
      */
     HstRequestContext getRequestContext();
 
     /**
      * Returns the current servlet request.
-     * 
-     * @return
+     *
+     * @return the current servlet request.
      */
     HttpServletRequest getServletRequest();
 
     /**
      * Returns the current servlet response.
-     * 
-     * @return
+     *
+     * @return the current servlet response.
      */
     HttpServletResponse getServletResponse();
 
@@ -84,8 +84,8 @@ public interface ValveContext
     
     /**
      * Returns the root {@link HstComponentWindow} instance that is used to process the current request.
-     * 
-     * @return
+     *
+     * @return the root {@link HstComponentWindow} instance that is used to process the current request.
      */
     HstComponentWindow getRootComponentWindow();
 
@@ -107,7 +107,6 @@ public interface ValveContext
      * <p>
      * The rootComponentRenderingWindow must always be a descendant of or the same as {@link #getRootComponentWindow()}
      * </p>
-     * @return
      */
     HstComponentWindow getRootComponentRenderingWindow();
 

@@ -39,7 +39,7 @@ public interface Filter extends BaseFilter {
     
     /**
      * The negated version of {@link #addContains(String, String)}
-     * @see {@link #addContains(String, String)}
+     * @see #addContains(String, String)
      * @param scope the scope to search in. <code>scope = "."</code> means searching in the entire node/document. <code>scope = "example:title"</code> only 
      * searches in the property "example:title". <code>scope</code> is also allowed to be a path to a property in a descendant node, for example  <code>scope = "address/example:street"</code>. The 
      * latter is equivalent to  <code>scope = "address/@example:street"</code> 
@@ -287,20 +287,20 @@ public interface Filter extends BaseFilter {
     void addLike(String fieldAttributeName, String value) throws FilterException ;
 
     /**
-     * @see {@link #addLike(String, String)}
+     * @see #addLike(String, String)
      * @deprecated since 7.9.0 use {@link #addLike(String, String)} instead as the Object param was stringified anyway
      */
     @Deprecated
     void addLike(String fieldAttributeName, Object value) throws FilterException ;
 
     /**
-     * @see {@link #addLike(String, String)} only now inverted
+     * @see #addLike(String, String) only now inverted
      *
      */
     void addNotLike(String fieldAttributeName, String value) throws FilterException ;
 
     /**
-     * @see {@link #addLike(String, String)} only now inverted
+     * @see #addLike(String, String) only now inverted
      *
      * @deprecated since 7.9.0 use {@link #addNotLike(String, String)} instead as the Object param was stringified anyway
      */

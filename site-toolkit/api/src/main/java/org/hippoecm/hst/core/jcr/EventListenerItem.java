@@ -27,55 +27,48 @@ public interface EventListenerItem {
     /**
      * Returns the {@link EventListener} instance.
      * 
-     * @return
      */
     EventListener getEventListener();
     
     /**
      * Returns the event type for the event listener.
-     * @see {@link javax.jcr.observation.Event}
-     * @see {@link javax.jcr.observation.ObservationManager#addEventListener(EventListener, int, String, boolean, String[], String[], boolean)}
-     * @return
+     * @see javax.jcr.observation.Event
+     * @see javax.jcr.observation.ObservationManager#addEventListener(EventListener, int, String, boolean, String[], String[], boolean)
      */
     int getEventTypes();
     
     /**
      * Returns the absolute path for the event listener.
      * 
-     * @see {@link javax.jcr.observation.ObservationManager#addEventListener(EventListener, int, String, boolean, String[], String[], boolean)}
-     * @return
+     * @see javax.jcr.observation.ObservationManager#addEventListener(EventListener, int, String, boolean, String[], String[], boolean)
      */
     String getAbsolutePath();
     
     /**
      * Flag to check the event listener be registered with <CODE>deep</CODE> option. 
      *
-     * @see {@link javax.jcr.observation.ObservationManager#addEventListener(EventListener, int, String, boolean, String[], String[], boolean)}
-     * @return
+     * @see javax.jcr.observation.ObservationManager#addEventListener(EventListener, int, String, boolean, String[], String[], boolean)
      */
     boolean isDeep();
 
     /**
      * Returns the UUID array for the event listener.
      * 
-     * @see {@link javax.jcr.observation.ObservationManager#addEventListener(EventListener, int, String, boolean, String[], String[], boolean)}
-     * @return
+     * @see javax.jcr.observation.ObservationManager#addEventListener(EventListener, int, String, boolean, String[], String[], boolean)
      */
     String [] getUuids();
 
     /**
      * Returns the node type name array for the event listener.
      * 
-     * @see {@link javax.jcr.observation.ObservationManager#addEventListener(EventListener, int, String, boolean, String[], String[], boolean)}
-     * @return
+     * @see javax.jcr.observation.ObservationManager#addEventListener(EventListener, int, String, boolean, String[], String[], boolean)
      */
     String [] getNodeTypeNames();
     
     /**
      * Flag to check the event listener be registered with <CODE>noLocal</CODE> option.
      * 
-     * @see {@link javax.jcr.observation.ObservationManager#addEventListener(EventListener, int, String, boolean, String[], String[], boolean)}
-     * @return
+     * @see javax.jcr.observation.ObservationManager#addEventListener(EventListener, int, String, boolean, String[], String[], boolean)
      */
     boolean isNoLocal();
     

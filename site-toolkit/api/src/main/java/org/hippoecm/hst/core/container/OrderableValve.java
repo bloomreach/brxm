@@ -31,21 +31,21 @@ public interface OrderableValve extends Valve {
 
     /**
      * Returns the valve name.
-     * @return
+     * @return the valve name.
      */
     public String getValveName();
 
     /**
      * Returns postrequisite valve names that should follow this valve.
      * The return can have multiple valve names, separated by ' ', ',', '\t', '\r' or '\n'
-     * @return
+     * @return postrequisite valve names that should follow this valve.
      */
     public String getBeforeValves();
 
     /**
      * Returns prerequisite valve names that should follow this valve.
      * The return can have multiple valve names, separated by ' ', ',', '\t', '\r' or '\n'
-     * @return
+     * @return prerequisite valve names that should follow this valve.
      */
     public String getAfterValves();
 

@@ -48,8 +48,7 @@ public interface PoolingRepository extends Repository, PoolingRepositoryMBean {
     /**
      * Returns the resource lifecycle management implementation of this pool.
      * 
-     * @see {@link ResourceLifecycleManagement}
-     * @return
+     * @see ResourceLifecycleManagement
      */
     ResourceLifecycleManagement getResourceLifecycleManagement(); 
     
@@ -61,7 +60,6 @@ public interface PoolingRepository extends Repository, PoolingRepositoryMBean {
      * Otherwise, it returns null.
      * 
      * @param credentials
-     * @return
      * @throws LoginException
      * @throws RepositoryException
      */
@@ -83,14 +81,11 @@ public interface PoolingRepository extends Repository, PoolingRepositoryMBean {
 
     /**
      * Returns pooling counter.
-     * @return
      */
     PoolingCounter getPoolingCounter();
     
     /**
      * Returns true if pooling repository is initialized to be available and not closed.
-     * 
-     * @return
      */
     boolean isActive();
     

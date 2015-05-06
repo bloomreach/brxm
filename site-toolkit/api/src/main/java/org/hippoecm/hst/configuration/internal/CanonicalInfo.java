@@ -26,7 +26,7 @@ public interface CanonicalInfo {
     String getCanonicalIdentifier();
 
     /**
-     * @see {@link #getCanonicalIdentifier()} only now the path
+     * @see #getCanonicalIdentifier() only now the path
      */
     String getCanonicalPath();
 

@@ -23,7 +23,7 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
 /**
  * HstParameterInfoProxyFactory is a factory interface for creating a proxy for an interface that is referred to by a {@link ParametersInfo} annotation.
  * The {@link ParametersInfo} annotation is used to annotate {@link HstComponent} classes. The interface referred to by the {@link ParametersInfo} annotation
- * is returned as proxy by the {@link #createParameterInfoProxy(ParametersInfo, ComponentConfiguration, HstRequest)} method. The getters in the interface that are 
+ * is returned as proxy by the {@link #createParameterInfoProxy(ParametersInfo, ComponentConfiguration, HstRequest, HstParameterValueConverter)} method. The getters in the interface that are
  * annotated with the {@link Parameter} annotation  are delegated through the proxy to the backing {@link ComponentConfiguration} 
  */
 
@@ -38,7 +38,7 @@ public interface HstParameterInfoProxyFactory {
      * @param request the {@link HstRequest}
      * @param converter the HstParameterValueConverter that does the actual conversion
      * @return proxy instance of the interface T
-     * @throw {@link IllegalArgumentException} if {@link ParametersInfo#type()} does not return an interface or when <code>parameterValueConverter</code> is <code>null</code>
+     * @throw IllegalArgumentException if {@link ParametersInfo#type()} does not return an interface or when <code>parameterValueConverter</code> is <code>null</code>
      */
     <T> T createParameterInfoProxy(ParametersInfo parametersInfo, ComponentConfiguration componentConfig,
             HstRequest request, HstParameterValueConverter converter);

@@ -31,7 +31,7 @@ public interface HstContainerURL {
     /**
      * Returns the current response's character encoding.
      * 
-     * @return
+     * @return the current response's character encoding.
      */
     String getCharacterEncoding();
 
@@ -45,7 +45,7 @@ public interface HstContainerURL {
     /**
      * Returns the current container's servlet context path.
      * 
-     * @return
+     * @return the current container's servlet context path.
      */
     String getContextPath();
 
@@ -80,7 +80,7 @@ public interface HstContainerURL {
      * Returns the reference namespace of the current action window if it exists.
      * Returns null if there's no action window in the currernt request.
      * 
-     * @return
+     * @return the reference namespace of the current action window if it exists; null if there's no action window in the currernt request.
      */
     String getActionWindowReferenceNamespace();
 
@@ -96,7 +96,7 @@ public interface HstContainerURL {
      * Returns the reference namespace of the current resource serving window if it exists.
      * Returns null if there's no resource serving window in the currernt request.
      * 
-     * @return
+     * @return the reference namespace of the current resource serving window if it exists; null if there's no resource serving window in the currernt request.
      */
     String getResourceWindowReferenceNamespace();
 
@@ -126,7 +126,7 @@ public interface HstContainerURL {
      * Returns the resource ID if the current request is for serving resource in a component window.
      * Otherwise, it returns null.
      * 
-     * @return
+     * @return the resource ID if the current request is for serving resource in a component window. Otherwise, it returns null.
      */
     String getResourceId();
 
@@ -164,7 +164,7 @@ public interface HstContainerURL {
     /**
      * Returns the render parameter map.
      * 
-     * @return
+     * @return the render parameter map.
      */
     Map<String, String[]> getParameterMap();
 
@@ -222,7 +222,7 @@ public interface HstContainerURL {
     /**
      * Returns the action parameter map.
      * 
-     * @return
+     * @return the action parameter map.
      */
     Map<String, String[]> getActionParameterMap();
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,14 +29,14 @@ public interface ResourceBundleRegistry {
     /**
      * Returns the resource bundle based on the specific basename for the default locale.
      * @param basename
-     * @return
+     * @return the resource bundle based on the specific basename for the default locale.
      */
     ResourceBundle getBundle(String basename);
 
     /**
      * Returns the resource bundle based on the specific basename for the default locale.
      * @param basename
-     * @return
+     * @return the resource bundle based on the specific basename for the default locale.
      */
     ResourceBundle getBundleForPreview(String basename);
 
@@ -44,7 +44,7 @@ public interface ResourceBundleRegistry {
      * Returns the resource bundle based on the specific basename and locale.
      * @param basename
      * @param locale
-     * @return
+     * @return the resource bundle based on the specific basename and locale.
      */
     ResourceBundle getBundle(String basename, Locale locale);
 
@@ -52,7 +52,7 @@ public interface ResourceBundleRegistry {
      * Returns the resource bundle based on the specific basename and locale.
      * @param basename
      * @param locale
-     * @return
+     * @return the resource bundle based on the specific basename and locale.
      */
     ResourceBundle getBundleForPreview(String basename, Locale locale);
 

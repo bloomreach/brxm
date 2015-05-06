@@ -38,7 +38,7 @@ public interface HstSiteMenuItemConfiguration {
     
     /**
      * When a sitemenu item has an external link (http://...) configured, it is retrieved by this method. When no external link is configured, <code>null</code> is 
-     * returned. When an external link is configured, the {@ #getSiteMapItemPath()} is ignored
+     * returned. When an external link is configured, the {@link #getSiteMapItemPath()} is ignored
      * @return the configured external link or <code>null</code> if non is configured
      */
     String getExternalLink();
@@ -85,8 +85,8 @@ public interface HstSiteMenuItemConfiguration {
      * 
      * Parameters are inherited from ancestor HstSiteMenuItemConfiguration's. When this HstSiteMenuItemConfiguration configures the same parameter as an ancestor, the
      * value from the ancestor is overwritten. 
-     * 
-     * Implementations should return an unmodifiable map, for example {@link java.util.Collections$UnmodifiableMap} to avoid 
+     *
+     * Implementations should return an unmodifiable map, for example {@link java.util.Collections.UnmodifiableMap} to avoid
      * client code changing configurationn
      * 
      * @param name the name of the parameter
@@ -96,7 +96,7 @@ public interface HstSiteMenuItemConfiguration {
     
     /**
      * The value of the local parameter, where there are no parameters inherited from ancestor items
-     * @see {@link #getParameter(String)}, only this method returns parameters without inheritance
+     * @see #getParameter(String) , only this method returns parameters without inheritance
      * @param name the name of the parameter
      * @return the value of the parameter or <code>null</code> when not present
      */
@@ -106,13 +106,13 @@ public interface HstSiteMenuItemConfiguration {
      * Parameters are inherited from ancestor HstSiteMenuItemConfiguration's. When this HstSiteMenuItemConfiguration configures the same parameter as an ancestor, the
      * value from the ancestor is overwritten. 
      * 
-     * @see {@link #getParameter(String)}, only now the entire parameters map is returned.
+     * @see #getParameter(String) , only now the entire parameters map is returned.
      * @return the Map of parameters contained in this <code>HstSiteMenu</code>. If no parameters present, and empty map is returned
      */
     Map<String, String> getParameters();
     
     /**
-     * @see {@link #getParameters()}, only this method returns parameters (unmodifiable map) without inheritance
+     * @see #getParameters() , only this method returns parameters (unmodifiable map) without inheritance
      * @return the Map of parameters contained in this <code>HstSiteMenuItemConfiguration</code>. If no parameters present, and empty map is returned
      */
     Map<String, String> getLocalParameters();

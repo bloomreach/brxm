@@ -60,7 +60,7 @@ public interface SessionSecurityDelegation {
      * @throws RepositoryException
      * @throws IllegalStateException if <code>securityDelegationEnabled</code> is false or in case the created sessions are not of type {@link org.hippoecm.repository.api.HippoSession}
      * or when there is not <code>HstRequestContext</code> available
-     * @see {@link #createLiveSecurityDelegate(javax.jcr.Credentials, boolean)}
+     * @see #createLiveSecurityDelegate(javax.jcr.Credentials, boolean)
      */
     Session getOrCreateLiveSecurityDelegate(Credentials delegate, String key) throws RepositoryException, IllegalStateException;
 
@@ -84,7 +84,7 @@ public interface SessionSecurityDelegation {
      * @throws RepositoryException
      * @throws IllegalStateException if <code>securityDelegationEnabled</code> is false or in case the created sessions are not of type {@link org.hippoecm.repository.api.HippoSession}
      * or when there is not <code>HstRequestContext</code> available
-     * @see {@link #createLiveSecurityDelegate(javax.jcr.Credentials, boolean)}
+     * @see #createLiveSecurityDelegate(javax.jcr.Credentials, boolean)
      */
     Session getOrCreatePreviewSecurityDelegate(Credentials delegate, String key) throws RepositoryException, IllegalStateException;
 

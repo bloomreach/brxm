@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,33 +30,33 @@ public interface ResourceBundleFamily {
 
     /**
      * Returns the resource bundle base name.
-     * @return
+     * @return the resource bundle base name
      */
     String getBasename();
 
     /**
      * Returns the default resource bundle for live mode.
-     * @return
+     * @return the default resource bundle for live mode
      */
     ResourceBundle getDefaultBundle();
 
     /**
      * Returns the default resource bundle for preview mode.
-     * @return
+     * @return the default resource bundle for preview mode.
      */
     ResourceBundle getDefaultBundleForPreview();
 
     /**
      * Returns a localized resource bundle for the specific locale for live mode.
      * @param locale
-     * @return
+     * @return a localized resource bundle for the specific locale for live mode.
      */
     ResourceBundle getLocalizedBundle(Locale locale);
 
     /**
      * Returns a localized resource bundle for the specific locale for preview mode.
      * @param locale
-     * @return
+     * @return a localized resource bundle for the specific locale for preview mode.
      */
     ResourceBundle getLocalizedBundleForPreview(Locale locale);
 

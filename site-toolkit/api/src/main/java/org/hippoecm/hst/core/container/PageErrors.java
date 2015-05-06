@@ -32,26 +32,26 @@ public interface PageErrors {
     
     /**
      * Returns true if there's no component exceptions.
-     * @return
+     * @return true if there's no component exceptions.
      */
     public boolean isEmpty();
     
     /**
      * Returns collection of <CODE>HstComponentInfo</CODE> which causes exceptions.
-     * @return
+     * @return collection of <CODE>HstComponentInfo</CODE> which causes exceptions.
      */
     public Collection<HstComponentInfo> getComponentInfos();
     
     /**
      * Returns collection of <CODE>HstComponentException</CODE> caused by the specific component. 
      * @param componentInfo
-     * @return
+     * @return collection of <CODE>HstComponentException</CODE> caused by the specific component.
      */
     public Collection<HstComponentException> getComponentExceptions(HstComponentInfo componentInfo);
     
     /**
      * Returns all component exceptions.
-     * @return
+     * @return all component exceptions.
      */
     public Collection<HstComponentException> getAllComponentExceptions();
     

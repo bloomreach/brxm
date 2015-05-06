@@ -47,8 +47,6 @@ public interface MultipleRepository extends Repository {
     
     /**
      * Returns the internal repository map.
-     * 
-     * @return
      */
     Map<Credentials, Repository> getRepositoryMap();
     
@@ -56,7 +54,6 @@ public interface MultipleRepository extends Repository {
      * Checks if it contains the internal repository which has the specified credentials.
      * 
      * @param credentials
-     * @return
      */
     boolean containsRepositoryByCredentials(Credentials credentials);
     
@@ -64,14 +61,12 @@ public interface MultipleRepository extends Repository {
      * Returns the internal repository which has the specified credentials as its default credentials.
      * 
      * @param credentials
-     * @return
      */
     Repository getRepositoryByCredentials(Credentials credentials);
     
     /**
      * Returns the resource lifecycle management implementation.
-     * @see {@link ResourceLifecycleManagement}
-     * @return
+     * @see ResourceLifecycleManagement
      */
     ResourceLifecycleManagement [] getResourceLifecycleManagements();
 

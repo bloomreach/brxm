@@ -28,7 +28,6 @@ public interface ChannelManagerEvent {
     /**
      * Returns a blueprint object which is being used during the channel creation.
      * If the event is not triggered on channel creation, it returns null.
-     * @return
      */
     Blueprint getBlueprint();
 
@@ -36,19 +35,16 @@ public interface ChannelManagerEvent {
      * Returns the ID of the channel which is being created or updated.
      * If a channel is created, you must use this method to get the ID of the created channel.
      * Otherwise, this method will return the same value as <CODE>getChannel().getId()</CODE>.
-     * @return
      */
     String getChannelId();
 
     /**
      * Returns the channel which was used as an input during channel creation or update.
-     * @return
      */
     Channel getChannel();
 
     /**
      * Returns the HST Configuration root node. e.g., /hst:hst
-     * @return
      */
     Node getConfigRootNode();
 
