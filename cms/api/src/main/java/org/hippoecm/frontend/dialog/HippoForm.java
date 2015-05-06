@@ -22,7 +22,7 @@ import org.apache.wicket.model.IModel;
 
 /**
  * The HippoForm is used to manually clear old feedback messages prior processing because
- * {@link org.hippoecm.frontend.plugins.cms.root.RootPlugin#RootPlugin} configured to keep all feedback messages
+ * {@code org.hippoecm.frontend.plugins.cms.root.RootPlugin#RootPlugin} configured to keep all feedback messages
  * after each request cycle.
  */
 public class HippoForm<T> extends Form<T> {

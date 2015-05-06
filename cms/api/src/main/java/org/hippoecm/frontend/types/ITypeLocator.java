@@ -28,7 +28,6 @@ public interface ITypeLocator extends IDetachable {
      * Retrieves the list of types that descend from the specified type.
      * 
      * @param type
-     * @return
      * @throws StoreException
      */
     List<ITypeDescriptor> getSubTypes(String type) throws StoreException;

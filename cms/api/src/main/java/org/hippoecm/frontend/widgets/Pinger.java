@@ -35,7 +35,6 @@ public class Pinger extends Label {
      * Starts a default ping wicket components which uses a default frequency between ping intervals.
      * After the elapse of each interval a roundtrip to the server is made using an Ajax call.
      * @param id the wicket id to use
-     * @param duration the time to wait between ping interfals
      */
     public Pinger(String id) {
         super(id);
@@ -47,7 +46,7 @@ public class Pinger extends Label {
      * After the elapse of each interval a roundtrip to the server is made using an Ajax call.
      * When the duration is negative, this wicket component behaves like a plain Label widget.
      * @param id the wicket id to use
-     * @param duration the time to wait between ping interfals
+     * @param interval the time to wait between ping interfals
      */
     public Pinger(String id, Duration interval) {
         super(id);

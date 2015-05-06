@@ -89,7 +89,6 @@ public class TranslatorUtils {
      * of the node type 'hippostd:translations' at ${docType-path}/editor:templates/${first-frontend:plugincluster}/${translator.id}
      *
      * @param typeNode the node referring to a document type at /hippo:namespaces/${projectName}/${docType}
-     * @return
      * @throws TranslatorException
      */
     public static IPluginConfig getTranslationsConfig(final Node typeNode) throws TranslatorException {

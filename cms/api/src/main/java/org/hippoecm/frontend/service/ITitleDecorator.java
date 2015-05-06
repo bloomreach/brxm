@@ -44,7 +44,6 @@ public interface ITitleDecorator extends IconProvider {
      * icons when these are not of the specified size.
      *
      * @param type
-     * @return
      */
     ResourceReference getIcon(IconSize type);
 

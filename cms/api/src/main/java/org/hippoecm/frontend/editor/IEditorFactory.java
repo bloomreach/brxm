@@ -33,7 +33,6 @@ public interface IEditorFactory extends IClusterable {
      * @param manager
      * @param nodeModel
      * @param mode
-     * @return
      * @throws EditorException
      */
     IEditor<Node> newEditor(IEditorContext manager, IModel<Node> nodeModel, IEditor.Mode mode, IPluginConfig parameters)

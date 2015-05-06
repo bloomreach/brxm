@@ -28,7 +28,7 @@ import org.hippoecm.frontend.service.IRenderService;
  * Entries at the top level are available as variables to plugins when the cluster is instantiated.
  * Suppose the cluster config has the key "mykey", value "myvalue".  A plugin config contains
  * the key "pluginKey" with value "${mykey}.extra".  When the instantiated {@link IPlugin} invokes
- * {@link IPluginConfig#getString("mykey")}, the value "myvalue.extra" will be returned.
+ * {@link IPluginConfig#getString(String)}, the value "myvalue.extra" will be returned.
  * <p>
  * In addition to these variables, the "cluster.id" variable has a value that is unique to the
  * instantiated cluster.  It can be used to create cluster-specific service names.

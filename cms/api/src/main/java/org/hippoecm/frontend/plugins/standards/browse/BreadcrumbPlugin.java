@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @deprecated This plugin is deprecated since 10.0.x and replaced by the {@link NodeBreadcrumbWidget}. This widget is
- * included by default in the {@link LinkPickerDialog } and {@link AbstractBrowserDialog} which means that the
+ * included by default in the {@code LinkPickerDialog} and {@code AbstractBrowserDialog} which means that the
  * complete breadcrumb plugin configuration can be removed. The <em>root.paths</em> property should be moved to
  * cluster node of the picker, e.g. cms-pickers/documents, and a value <em>root.paths</em> should be added to the
  * <em>frontend:properties</em> property if this cluster node.

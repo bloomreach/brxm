@@ -41,7 +41,7 @@ import java.util.List;
  * and resize events.
  * </li>
  * <li>
- * UNITS: Array of {@UnitSettings} representing the units for this wireframe. These should be set by the same
+ * UNITS: Array of {@link UnitSettings} representing the units for this wireframe. These should be set by the same
  * IPluginConfig object as the {@link WireframeSettings}.<br/>
  * The easiest way to configure units is storing the html and configuration all in the same place as the wireframe's
  * html and configuration. If we use an {@link IPluginConfig} for configuration, we can add a StringArray property

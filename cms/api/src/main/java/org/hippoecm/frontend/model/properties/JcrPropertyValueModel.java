@@ -136,7 +136,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
     /**
      * Determines the type of the property. If the type is not yet defined, the type will be resolved based on the value.
      * If the value is <code>null</code> the type of property is determined based on the {@link javax.jcr.nodetype.PropertyDefinition}.
-     * @see {@link javax.jcr.PropertyType} for the resulting values.
+     * @see javax.jcr.PropertyType for the resulting values.
      * @return an integer representing the type of property.
      */
     public int getType() {

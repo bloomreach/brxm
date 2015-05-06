@@ -25,7 +25,7 @@ public interface IBehaviorService extends IClusterable {
 
     /**
      * The behavior that should be added to the component at relative path {@link #getComponentPath()}.
-     * Returned behaviors should implement {@link #equals(Object)} and {@link #hashCode()} such that
+     * Returned behaviors should implement {@code #equals(Object)} and {@code #hashCode()} such that
      * multiple requests yield equivalent results.
      * 
      * @return the {@link Behavior} to be attached to the component.

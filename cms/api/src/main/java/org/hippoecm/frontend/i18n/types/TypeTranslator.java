@@ -303,7 +303,6 @@ public class TypeTranslator extends NodeTypeModelWrapper {
      * 'frontend:plugin' at <code>/hippo:namespaces/${projectName}/${docType}/editor:templates/_default_/translator</code>
      *
      * @param propertyName
-     * @return
      */
     protected String translate(final String propertyName){
         if (translations == null){

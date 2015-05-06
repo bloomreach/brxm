@@ -38,7 +38,7 @@ public class FileUploadViolationException extends Exception{
     /**
      * Return a list violation messages in the exception or an empty list if violation is not found
      *
-     * @return
+     * @return a list violation messages in the exception or an empty list if violation is not found
      */
     public List<String> getViolationMessages() {
         return Collections.unmodifiableList(violationMessages);

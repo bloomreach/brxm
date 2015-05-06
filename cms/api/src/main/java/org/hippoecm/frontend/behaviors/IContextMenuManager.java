@@ -23,7 +23,7 @@ import org.apache.wicket.Component;
  * manager is notified.  Other context menu managers (and their sub-trees) are excluded
  * from the hierarchical search.
  * <p>
- * The interface can be set on a {@link Component} or one of it's {@link Behavior}s.
+ * The interface can be set on a {@link Component} or one of it's {@link org.apache.wicket.behavior.Behavior}s.
  * When an ancestor context menu manager searches for context menu's, it 
  */
 public interface IContextMenuManager {

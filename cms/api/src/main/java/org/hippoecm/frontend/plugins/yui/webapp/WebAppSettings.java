@@ -18,7 +18,7 @@ package org.hippoecm.frontend.plugins.yui.webapp;
 import java.io.Serializable;
 
 /**
- * Setting for {@link WebAppbehavior}.
+ * Setting for {@link WebAppBehavior}.
  * 
  * Wicket-Ajax is loaded by default.
  */

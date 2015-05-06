@@ -52,7 +52,6 @@ public class FileUploadWidgetSettings implements IClusterable {
 
     /**
      * Maximal width of allowed upload images.
-     * @return
      */
     public long getMaxWidth() {
         return maxWidth;
@@ -60,8 +59,6 @@ public class FileUploadWidgetSettings implements IClusterable {
 
     /**
      * Maximal height of allowed upload images.
-     *
-     * @return
      */
     public long getMaxHeight() {
         return maxHeight;
@@ -69,7 +66,6 @@ public class FileUploadWidgetSettings implements IClusterable {
 
     /**
      * Maximal file size of allowed upload files.
-     * @return
      */
     public long getMaxFileSize() {
         return maxFileSize;
@@ -77,8 +73,6 @@ public class FileUploadWidgetSettings implements IClusterable {
 
     /**
      * The url to receive uploading files. This setting is used for multi-files uploads only.
-     *
-     * @return
      */
     public String getUploadUrl() {
         return uploadUrl;
@@ -104,8 +98,6 @@ public class FileUploadWidgetSettings implements IClusterable {
 
     /**
      * The url to notify on the completion of uploading. This setting is used for multi-files uploads only.
-     *
-     * @return
      */
     public String getUploadDoneNotificationUrl() {
         return uploadDoneNotificationUrl;
@@ -113,7 +105,6 @@ public class FileUploadWidgetSettings implements IClusterable {
 
     /**
      * The maximal number of files to upload. This setting is used for multi-files uploads only.
-     * @return
      */
     public long getMaxNumberOfFiles() {
         return maxNumberOfFiles;

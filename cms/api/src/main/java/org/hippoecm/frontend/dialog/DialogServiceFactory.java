@@ -76,7 +76,6 @@ public class DialogServiceFactory implements IServiceFactory<IDialogService> {
 
     /**
      * Internal method to give the home page access to the dialog window.
-     * @return
      */
     public Component getComponent() {
         return rootService;

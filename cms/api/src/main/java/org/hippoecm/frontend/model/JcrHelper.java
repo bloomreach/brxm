@@ -90,7 +90,6 @@ public class JcrHelper {
      * given a version of a child, the oldest version of the parent that contains the child is returned.
      *
      * @param version
-     * @return
      * @throws ItemNotFoundException
      * @throws RepositoryException
      */
@@ -172,7 +171,6 @@ public class JcrHelper {
      * Determine whether the node is a virtual root node (facet search or facet navigation)
      *
      * @param node
-     * @return
      * @throws RepositoryException
      */
     public static boolean isVirtualRoot(final Node node) throws RepositoryException {

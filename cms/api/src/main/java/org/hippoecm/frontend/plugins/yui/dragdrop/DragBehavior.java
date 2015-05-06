@@ -61,7 +61,6 @@ public abstract class DragBehavior extends AbstractDragDropBehavior {
 
     /**
      * Lookup and return the IModel that will be used to drop on the dropBehavior
-     * @return
      */
     abstract protected IModel getDragModel();
 

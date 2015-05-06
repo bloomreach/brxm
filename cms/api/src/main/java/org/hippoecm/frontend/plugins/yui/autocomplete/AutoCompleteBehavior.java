@@ -61,7 +61,6 @@ public abstract class AutoCompleteBehavior extends AbstractYuiAjaxBehavior {
 
     /**
      * Determines which javascript class is used
-     * @return
      */
     protected String getClientClassname() {
         return "YAHOO.hippo.HippoAutoComplete";

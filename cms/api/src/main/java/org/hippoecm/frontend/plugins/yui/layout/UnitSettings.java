@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  *   </li>
  *   <li>
  *   BODY: a {@link YuiId} value representing the unit's body element.  The body should not be configured when the unit
- *      wraps a {@link Component} with a {@link UnitBehavior}.  When neither body nor UnitBehavior is present, a body
+ *      wraps a {@link org.apache.wicket.Component} with a {@link UnitBehavior}.  When neither body nor UnitBehavior is present, a body
  *      element will be generated.
  *   </li>
  *   <li>

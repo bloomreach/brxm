@@ -49,7 +49,7 @@ import org.wicketstuff.js.ext.util.ExtProperty;
  * <p>
  * <strong>MyExtWidget.java:</strong>
  * <pre>
- * @ExtClass("MyExtWidget")
+ * {@literal @}ExtClass("MyExtWidget")
  * public class MyExtWidget extends ExtWidget {
  *
  *     public MyExtWidget(IPluginContext context, IPluginConfig config) {
@@ -57,7 +57,7 @@ import org.wicketstuff.js.ext.util.ExtProperty;
  *         add(JavascriptPackageResource.getHeaderContribution(MyExtWidget.class, "MyExtWidget.js"));
  *     }
  *
- *     @Override
+ *     {@literal @}Override
  *     protected void onRenderProperties(final JSONObject properties) throws JSONException {
  *         super.onRenderProperties(properties);
  *         properties.put("exampleProperty", "somevalue");

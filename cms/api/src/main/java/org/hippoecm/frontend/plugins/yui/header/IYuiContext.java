@@ -53,14 +53,14 @@ public interface IYuiContext extends IHeaderContributor {
     void addModule(YuiNamespace namespace, String module);
 
     /**
-     * Add a static {@link TextTemplate} to the response. The model provided by the parameters <code>Map</code> is final.
+     * Add a static {@code TextTemplate} to the response. The model provided by the parameters <code>Map</code> is final.
      *
      * @param clazz
      *            Class that acts as context
      * @param filename
      *            Name of file relative to provided class
      * @param parameters
-     *            Parameters that will be interpolated with the {@link TextTemplate}
+     *            Parameters that will be interpolated with the {@code TextTemplate}
      */
     void addTemplate(Class<?> clazz, String filename, Map<String, Object> parameters);
 
@@ -68,7 +68,7 @@ public interface IYuiContext extends IHeaderContributor {
      * Add a static template to the response.
      * 
      * @param template
-     *            {@link TextTemplate} that will be added to the response.
+     *            {@code TextTemplate} that will be added to the response.
      */
     @Deprecated
     void addTemplate(FinalTextTemplate template);
