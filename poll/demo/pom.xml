@@ -25,7 +25,7 @@
   <name>Hippo Plugin Poll Demo</name>
   <description>Hippo Plugin Poll Demo</description>
   <artifactId>hippo-plugin-poll-demo</artifactId>
-  <version>1.09.01-SNAPSHOT</version>
+  <version>1.09.00-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <scm>
@@ -35,6 +35,7 @@
   </scm>
 
   <properties>
+    <hippo.plugin.poll.version>1.09.01-SNAPSHOT</hippo.plugin.poll.version>
     <taglibs.version>1.2.1</taglibs.version>
     <commons.lang.version>2.6</commons.lang.version>
   </properties>
