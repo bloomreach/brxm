@@ -26,7 +26,7 @@
   <name>Hippo Plugin Dashboard Document Wizard Demo</name>
   <description>Hippo Plugin Dashboard Document Wizard Demo</description>
   <artifactId>hippo-plugin-dashboard-document-wizard-demo</artifactId>
-  <version>1.06.00-SNAPSHOT</version>
+  <version>1.06.01-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <scm>
