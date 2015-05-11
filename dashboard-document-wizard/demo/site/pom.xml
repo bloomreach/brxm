@@ -29,14 +29,6 @@
   <packaging>war</packaging>
   <dependencies>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials.sdk</groupId>
-      <artifactId>api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.essentials.components</groupId>
-      <artifactId>hst</artifactId>
-    </dependency>
-    <dependency>
       <groupId>javax.servlet.jsp</groupId>
       <artifactId>jsp-api</artifactId>
       <version>${jsp-api.version}</version>

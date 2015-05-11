@@ -20,9 +20,7 @@ import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
-import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 
-@HippoEssentialsGenerated(internalName = "dashboarddocumentwizarddemo:newsdocument")
 @Node(jcrType="dashboarddocumentwizarddemo:newsdocument")
 public class NewsDocument extends HippoDocument {
 
@@ -45,7 +43,6 @@ public class NewsDocument extends HippoDocument {
      *
      * @return the title
      */
-    @HippoEssentialsGenerated(internalName = "dashboarddocumentwizarddemo:title")
     public String getTitle() {
         return getProperty(TITLE);
     }
@@ -55,7 +52,6 @@ public class NewsDocument extends HippoDocument {
      *
      * @return the date
      */
-    @HippoEssentialsGenerated(internalName = "dashboarddocumentwizarddemo:date")
     public Calendar getDate() {
         return getProperty(DATE);
     }
@@ -65,7 +61,6 @@ public class NewsDocument extends HippoDocument {
      *
      * @return the introduction
      */
-    @HippoEssentialsGenerated(internalName = "dashboarddocumentwizarddemo:introduction")
     public String getIntroduction() {
         return getProperty(INTRODUCTION);
     }
@@ -75,7 +70,6 @@ public class NewsDocument extends HippoDocument {
      *
      * @return the image
      */
-    @HippoEssentialsGenerated(internalName = "dashboarddocumentwizarddemo:image")
     public HippoGalleryImageSet getImage() {
         return getLinkedBean(IMAGE, HippoGalleryImageSet.class);
     }
@@ -85,7 +79,6 @@ public class NewsDocument extends HippoDocument {
      *
      * @return the content
      */
-    @HippoEssentialsGenerated(internalName = "dashboarddocumentwizarddemo:content")
     public HippoHtml getContent() {
         return getHippoHtml(CONTENT);
     }
@@ -95,7 +88,6 @@ public class NewsDocument extends HippoDocument {
      *
      * @return the location
      */
-    @HippoEssentialsGenerated(internalName = "dashboarddocumentwizarddemo:location")
     public String getLocation() {
         return getProperty(LOCATION);
     }
@@ -105,7 +97,6 @@ public class NewsDocument extends HippoDocument {
      *
      * @return the author
      */
-    @HippoEssentialsGenerated(internalName = "dashboarddocumentwizarddemo:author")
     public String getAuthor() {
         return getProperty(AUTHOR);
     }
@@ -115,7 +106,6 @@ public class NewsDocument extends HippoDocument {
      *
      * @return the source
      */
-    @HippoEssentialsGenerated(internalName = "dashboarddocumentwizarddemo:source")
     public String getSource() {
         return getProperty(SOURCE);
     }

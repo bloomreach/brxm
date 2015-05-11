@@ -26,7 +26,7 @@
   <name>Hippo Plugin Dashboard Document Wizard Demo</name>
   <description>Hippo Plugin Dashboard Document Wizard Demo</description>
   <artifactId>hippo-plugin-dashboard-document-wizard-demo</artifactId>
-  <version>1.06.01-SNAPSHOT</version>
+  <version>1.06.00-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <scm>
@@ -36,8 +36,7 @@
   </scm>
 
   <properties>
-
-    <essentials.version>1.02.06</essentials.version>
+    <hippo.plugin.dashboard-document-wizard.version>1.06.01-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.1</taglibs.version>
     <commons.lang.version>2.6</commons.lang.version>
@@ -59,21 +58,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>org.onehippo.cms7.essentials.sdk</groupId>
-        <artifactId>api</artifactId>
-        <version>${essentials.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7.essentials.components</groupId>
-        <artifactId>cms</artifactId>
-        <version>${essentials.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7.essentials.components</groupId>
-        <artifactId>hst</artifactId>
-        <version>${essentials.version}</version>
-      </dependency>
 
       <!-- other predefined runtime scope versioned dependencies -->
       <dependency>
@@ -134,7 +118,6 @@
         <module>bootstrap</module>
         <module>cms</module>
         <module>site</module>
-        <module>essentials</module>
       </modules>
     </profile>
 
@@ -171,13 +154,6 @@
                   <type>war</type>
                   <properties>
                     <context>/site</context>
-                  </properties>
-                </deployable>
-                <deployable>
-                  <location>${project.basedir}/essentials/target/essentials.war</location>
-                  <type>war</type>
-                  <properties>
-                    <context>/essentials</context>
                   </properties>
                 </deployable>
               </deployables>

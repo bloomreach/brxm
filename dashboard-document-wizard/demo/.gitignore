@@ -14,11 +14,6 @@ cms/.classpath
 cms/.project
 cms/.settings
 cms/target
-essentials/.classpath
-essentials/.project
-essentials/.settings
-essentials/overlays
-essentials/target
 site/.classpath
 site/.project
 site/.settings
