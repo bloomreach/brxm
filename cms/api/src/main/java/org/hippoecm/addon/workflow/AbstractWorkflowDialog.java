@@ -57,6 +57,9 @@ public abstract class AbstractWorkflowDialog<T> extends AbstractDialog<T> {
     protected void onOk() {
         try {
             invoker.invokeWorkflow();
+        } catch (WorkflowSNSException e) {
+            log.warn("Could not execute workflow due to same-name-sibling issue: " + e.getMessage());
+            handleExceptionTranslation(e, e.getExistedName());
         } catch (WorkflowException e) {
             log.warn("Could not execute workflow: " + e.getMessage());
             handleExceptionTranslation(e);
@@ -70,11 +73,11 @@ public abstract class AbstractWorkflowDialog<T> extends AbstractDialog<T> {
         }
     }
 
-    private void handleExceptionTranslation(final Throwable e) {
+    private void handleExceptionTranslation(final Throwable e, final Object... parameters) {
         List<String> errors = new ArrayList<>();
         Throwable t = e;
         while(t != null) {
-            final String translatedMessage = getExceptionTranslation(t).getObject();
+            final String translatedMessage = getExceptionTranslation(t, parameters).getObject();
             if (translatedMessage != null && !errors.contains(translatedMessage)) {
                 errors.add(translatedMessage);
             }

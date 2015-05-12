@@ -17,15 +17,9 @@
 package org.hippoecm.frontend.plugins.standardworkflow.validators;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.form.validation.IFormValidator;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.api.HippoNodeType;
 
 abstract class DocumentFormValidator implements IFormValidator {
 
@@ -34,18 +28,7 @@ abstract class DocumentFormValidator implements IFormValidator {
      * <code>localizedName</code>
      */
     protected boolean existedLocalizedName(final Node parentNode, final String localizedName) throws RepositoryException {
-        final NodeIterator children = parentNode.getNodes();
-        while(children.hasNext()) {
-            Node child = children.nextNode();
-            if (child.isNodeType(HippoStdNodeType.NT_FOLDER) || child.isNodeType(HippoNodeType.NT_HANDLE)) {
-                NodeTranslator nodeTranslator = new NodeTranslator(new JcrNodeModel(child));
-                String localizedChildName = nodeTranslator.getNodeName().getObject();
-                if (StringUtils.equals(localizedChildName, localizedName)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return SameNameSiblingsUtil.existedLocalizedName(parentNode, localizedName);
     }
 
     protected abstract void showError(final String key, Object... parameters);

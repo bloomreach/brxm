@@ -30,6 +30,7 @@ import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -47,6 +48,7 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.MenuDescription;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.addon.workflow.WorkflowSNSException;
 import org.hippoecm.editor.type.JcrTypeStore;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -55,6 +57,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
 import org.hippoecm.frontend.plugins.standards.image.CachingImage;
+import org.hippoecm.frontend.plugins.standardworkflow.validators.SameNameSiblingsUtil;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.service.IconSize;
@@ -312,6 +315,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
 
         protected String executeNonAvailableTranslation(TranslationWorkflow workflow) throws Exception {
             javax.jcr.Session session = UserSession.get().getJcrSession();
+            validateSameNameSiblings(session, folders);
 
             for (int i = 0; i < (folders.size() - 1); i++) {
                 FolderTranslation folder = folders.get(i);
@@ -362,6 +366,54 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 }
             }
             return null;
+        }
+
+        /**
+         * Validate whether the translation folders existed before, including following cases:
+         * <ul>
+         *     <li>SNS at JCR level by checking Node#hasNode() method</li>
+         *     <li>
+         *         Folder or document having their localized names are the same with localized names of existing nodes.
+         *         Localized names of a node with hippo:translated mixin are stored in its children hippo:translation nodes
+         *     </li>
+         * </ul>
+         *
+         * An exception of type {@link WorkflowSNSException} will be thrown if there's any SNS issue.
+         * @param session
+         * @param folders
+         */
+        private void validateSameNameSiblings(final Session session, final List<FolderTranslation> folders)
+                throws WorkflowSNSException, RepositoryException {
+
+            // walk up from the document to find the first translated ancestor folder
+            int index = folders.size() - 1;
+            while (index >= 0 && folders.get(index).isEditable()) {
+                index--;
+            }
+            if (index < 0){
+                log.error("Invalid 'folders' parameter. At least the root folder must be translated.");
+                return;
+            }
+
+            FolderTranslation translatedAncestor = folders.get(index);
+            final Node translatedAncestorNode = session.getNodeByIdentifier(translatedAncestor.getId());
+            final Node targetTranslatedAncestorNode = new HippoTranslatedNode(translatedAncestorNode).getTranslation(language);
+
+            if (targetTranslatedAncestorNode == null) {
+                log.error("Inconsistent 'folders' parameter. The folder '{}' is marked as non-editable but is not translated", translatedAncestor.getName());
+                return;
+            }
+            FolderTranslation firstUntranslatedFolder = folders.get(index + 1);
+            String targetUrlName = firstUntranslatedFolder.getUrlfr();
+            String targetLocalizedName = firstUntranslatedFolder.getNamefr();
+            if (targetTranslatedAncestorNode.hasNode(targetUrlName)) {
+                throw new WorkflowSNSException("A folder with name '" + targetUrlName + "' already exists", targetUrlName);
+            }
+            // check for duplicated localized name
+            if (SameNameSiblingsUtil.existedLocalizedName(targetTranslatedAncestorNode, targetLocalizedName)) {
+                throw new WorkflowSNSException("A folder/doc with localized name '" + targetLocalizedName + "' already exists", targetLocalizedName);
+            }
+            // No SNS issue!
         }
 
         private Document getTranslatedVariant(final Document translatedDocument) throws RepositoryException {
