@@ -71,6 +71,7 @@ public class UpdaterExecutor implements EventListener {
     private final UpdaterInfo updaterInfo;
     private final UpdaterExecutionReport report;
     private volatile boolean cancelled;
+    private int lastUpdateCount = 0;
 
     public UpdaterExecutor(Node updaterNode, final Session session) throws Exception {
         this.session = session;
@@ -416,7 +417,7 @@ public class UpdaterExecutor implements EventListener {
     }
 
     private void commitBatchIfNeeded() throws RepositoryException {
-        final boolean batchCompleted = report.getUpdateCount() % updaterInfo.getBatchSize() == 0;
+        final boolean batchCompleted = report.getUpdateCount() != lastUpdateCount && report.getUpdateCount() % updaterInfo.getBatchSize() == 0;
         if (batchCompleted || report.isFinished()) {
             if (updaterInfo.isDryRun()) {
                 session.refresh(false);
@@ -433,6 +434,7 @@ public class UpdaterExecutor implements EventListener {
             saveReport();
         }
         if (batchCompleted) {
+            lastUpdateCount = report.getUpdateCount();
             throttle(updaterInfo.getThrottle());
         }
     }
