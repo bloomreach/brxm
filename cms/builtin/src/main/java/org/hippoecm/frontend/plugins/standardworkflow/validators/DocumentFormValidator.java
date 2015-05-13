@@ -28,7 +28,7 @@ abstract class DocumentFormValidator implements IFormValidator {
      * <code>localizedName</code>
      */
     protected boolean existedLocalizedName(final Node parentNode, final String localizedName) throws RepositoryException {
-        return SameNameSiblingsUtil.existedLocalizedName(parentNode, localizedName);
+        return SameNameSiblingsUtil.hasChildWithLocalizedName(parentNode, localizedName);
     }
 
     protected abstract void showError(final String key, Object... parameters);

@@ -36,9 +36,9 @@ public final class SameNameSiblingsUtil {
      * Return true if <code>parentNode</code> contains a child having the same localized name with the specified
      * <code>localizedName</code>
      */
-    public static boolean existedLocalizedName(final Node parentNode, final String localizedName) throws RepositoryException {
+    public static boolean hasChildWithLocalizedName(final Node parentNode, final String localizedName) throws RepositoryException {
         final NodeIterator children = parentNode.getNodes();
-        while(children.hasNext()) {
+        while (children.hasNext()) {
             Node child = children.nextNode();
             if (child.isNodeType(HippoStdNodeType.NT_FOLDER) || child.isNodeType(HippoNodeType.NT_HANDLE)) {
                 NodeTranslator nodeTranslator = new NodeTranslator(new JcrNodeModel(child));

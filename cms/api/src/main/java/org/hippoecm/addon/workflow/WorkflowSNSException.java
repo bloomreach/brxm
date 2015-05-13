@@ -25,7 +25,7 @@ import org.hippoecm.repository.api.WorkflowException;
  * Exception to notify same-name-siblings error
  */
 public class WorkflowSNSException extends WorkflowException {
-    private final String existedName;
+    private final String conflictingName;
 
     public WorkflowSNSException(final String message) {
         this(message, StringUtils.EMPTY);
@@ -35,17 +35,17 @@ public class WorkflowSNSException extends WorkflowException {
         this(message, StringUtils.EMPTY, e);
     }
 
-    public WorkflowSNSException(final String message, final String existedName) {
+    public WorkflowSNSException(final String message, final String conflictingName) {
         super(message);
-        this.existedName = existedName;
+        this.conflictingName = conflictingName;
     }
 
-    public WorkflowSNSException(final String message, final String existedName, final Exception reason) {
+    public WorkflowSNSException(final String message, final String conflictingName, final Exception reason) {
         super(message, reason);
-        this.existedName = existedName;
+        this.conflictingName = conflictingName;
     }
 
-    public String getExistedName(){
-        return existedName;
+    public String getConflictingName(){
+        return conflictingName;
     }
 }

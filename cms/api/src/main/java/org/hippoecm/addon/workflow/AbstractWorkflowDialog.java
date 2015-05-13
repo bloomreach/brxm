@@ -59,7 +59,7 @@ public abstract class AbstractWorkflowDialog<T> extends AbstractDialog<T> {
             invoker.invokeWorkflow();
         } catch (WorkflowSNSException e) {
             log.warn("Could not execute workflow due to same-name-sibling issue: " + e.getMessage());
-            handleExceptionTranslation(e, e.getExistedName());
+            handleExceptionTranslation(e, e.getConflictingName());
         } catch (WorkflowException e) {
             log.warn("Could not execute workflow: " + e.getMessage());
             handleExceptionTranslation(e);
