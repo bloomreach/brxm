@@ -36,6 +36,7 @@ public class FileUploadWidgetSettings implements IClusterable {
     private String uploadDoneNotificationUrl;
     private long maxNumberOfFiles;
     private String[] allowedExtensions;
+    private boolean autoUpload;
 
     public FileUploadWidgetSettings(final IPluginConfig pluginConfig, final FileUploadValidationService validator) {
         loadConfig(pluginConfig, validator);
@@ -112,5 +113,13 @@ public class FileUploadWidgetSettings implements IClusterable {
 
     public String[] getAllowedExtensions(){
         return this.allowedExtensions;
+    }
+
+    public boolean isAutoUpload() {
+        return autoUpload;
+    }
+
+    public final void setAutoUpload(final boolean autoUpload) {
+        this.autoUpload = autoUpload;
     }
 }
