@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,12 +58,9 @@ import org.slf4j.LoggerFactory;
 
 public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
 
-    private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(TemplateListPlugin.class);
 
     abstract class Category implements IDataProvider<ITypeDescriptor> {
-        private static final long serialVersionUID = 1L;
 
         private final ITemplateEngine engine;
         private final List<String> editableTypes;
@@ -79,7 +76,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
         void load() {
             if (list == null) {
                 ITypeDescriptor containingType = TemplateListPlugin.this.getModelObject();
-                SortedMap<String, ITypeDescriptor> types = new TreeMap<String, ITypeDescriptor>();
+                SortedMap<String, ITypeDescriptor> types = new TreeMap<>();
                 for (String type : editableTypes) {
                     try {
                         ITypeDescriptor descriptor = engine.getType(type);
@@ -101,7 +98,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                         log.error("Failed to obtain descriptor for " + type);
                     }
                 }
-                list = new ArrayList<ITypeDescriptor>(types.values());
+                list = new ArrayList<>(types.values());
             }
         }
 
@@ -119,7 +116,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
 
         @Override
         public IModel<ITypeDescriptor> model(ITypeDescriptor object) {
-            return new Model<ITypeDescriptor>(object);
+            return new Model<>(object);
         }
 
         @Override
@@ -151,8 +148,6 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
 
             final String name = item.getModelObject().getName();
             item.add(new Behavior() {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public void onComponentTag(final Component component, final ComponentTag tag) {
                     Object classes = tag.getUserData("class");
@@ -205,7 +200,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
         }
 
         typeName = typeName.substring(0, typeName.indexOf(':'));
-        return ((prefix.equals(typeName)) ? true : false);
+        return prefix.equals(typeName);
     }
 
     abstract class CategorySection extends Section {
@@ -248,7 +243,6 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
             final List<String> editableTypes = engine.getEditableTypes();
             if (editableTypes instanceof IObservable) {
                 context.registerService(new IObserver<IObservable>() {
-                    private static final long serialVersionUID = 1L;
 
                     public IObservable getObservable() {
                         return (IObservable) editableTypes;
@@ -265,34 +259,26 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
             String typeName = containingType.getName();
             final String prefix = typeName.substring(0, typeName.indexOf(':'));
 
-            final List<Section> sections = new ArrayList<Section>(5);
+            final List<Section> sections = new ArrayList<>(5);
             sections.add(new CategorySection(engine, editableTypes, "primitive") {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 boolean isTypeInCategory(ITypeDescriptor descriptor) {
-                    return ((!descriptor.isNode() && !descriptor.isMixin()) ? true : false);
+                    return !descriptor.isNode() && !descriptor.isMixin();
                 }
             });
             sections.add(new CategorySection(engine, editableTypes, "compound") {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 boolean isTypeInCategory(ITypeDescriptor descriptor) {
-                    return ((descriptor.isNode() && !hasPrefix(descriptor, prefix) && !descriptor.isMixin()) ? true : false);
+                    return descriptor.isNode() && !hasPrefix(descriptor, prefix) && !descriptor.isMixin();
                 }
             });
             sections.add(new CategorySection(engine, editableTypes, "custom") {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 boolean isTypeInCategory(ITypeDescriptor descriptor) {
-                    return ((descriptor.isNode() && hasPrefix(descriptor, prefix) && !descriptor.isMixin()) ? true : false);
+                    return descriptor.isNode() && hasPrefix(descriptor, prefix) && !descriptor.isMixin();
                 }
             });
             sections.add(new CategorySection(engine, editableTypes, "mixins") {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 boolean isTypeInCategory(ITypeDescriptor descriptor) {
                     return descriptor.isMixin();
@@ -302,20 +288,16 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
             active = sections.get(0);
 
             fragment.add(new ListView<Section>("categories", sections) {
-                private static final long serialVersionUID = 1L;
 
                 @Override
                 protected void populateItem(ListItem<Section> item) {
                     final Section section = item.getModelObject();
 
                     MarkupContainer container = new WebMarkupContainer("container") {
-                        private static final long serialVersionUID = 1L;
-
                         @Override
                         public boolean isVisible() {
                             return active == section;
                         }
-
                     };
 
                     SectionView<?> templateView = section.createView("templates");
@@ -323,8 +305,6 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                     item.add(container);
 
                     AjaxLink<Void> link = new AjaxLink<Void>("link") {
-                        private static final long serialVersionUID = 1L;
-
                         @Override
                         public void onClick(AjaxRequestTarget target) {
                             active = section;
@@ -343,10 +323,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                     }));
                     item.add(link);
                 }
-
             });
-
         }
     }
-
 }

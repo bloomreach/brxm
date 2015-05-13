@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.widgets.AbstractView;
 
 public abstract class SectionView<T> extends AbstractView<T> {
-    private static final long serialVersionUID = 1L;
 
     public SectionView(String id, IDataProvider<T> provider) {
         super(id, provider);
@@ -38,8 +37,6 @@ public abstract class SectionView<T> extends AbstractView<T> {
     public void populateItem(Item<T> item) {
         final T type = item.getModelObject();
         AjaxLink<Void> link = new AjaxLink<Void>("template") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void onClick(AjaxRequestTarget target) {
                 onClickItem(type);
