@@ -40,6 +40,7 @@
             return menuData.items;
           }, function () {
             MenuItemCtrl.treeItems = menuData.items;
+            $scope.$broadcast('menu-items-changed');
 
             // merge pending changes into newly loaded tree
             if (MenuItemCtrl.treeItems.length > 0 && MenuItemCtrl.selectedMenuItem) {

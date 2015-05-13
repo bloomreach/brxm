@@ -37,6 +37,15 @@
         $scope.$watch(function () {
           return $scope.form;
         }, function () {
+          var deregisterNewItemListener = $rootScope.$on('new-menu-item', afternewItem);
+
+          function afternewItem () {
+            $scope.MenuItemCtrl.selectedMenuItem.title = '';
+
+            FormStateService.setDirty(true);
+            deregisterNewItemListener();
+          }
+
           if ($stateParams.selectedDocumentPath) {
             $scope.MenuItemCtrl.selectedMenuItem.link = $scope.MenuItemCtrl.selectedMenuItem.sitemapLink = $stateParams.selectedDocumentPath;
             $scope.EditMenuItemCtrl.linkToFocus = 'sitemapLink';
@@ -131,7 +140,7 @@
 
         $scope.$on('container:before-close', function () {
           if ($scope.form.$dirty) {
-            saveFieldIfDirty('title', 'title');
+            $scope.EditMenuItemCtrl.saveTitle($scope.form);
             saveFieldIfDirty('sitemapItem', 'link');
             saveFieldIfDirty('url', 'link');
           }
@@ -140,9 +149,7 @@
         $scope.$on('container:close', function (event) {
           // prevent close, process all menu changes first and then trigger the close ourselves
           event.preventDefault();
-          MenuService.processAllChanges().then(function () {
-            ContainerService.performClose();
-          });
+          MenuService.processAllChanges();
         });
       }
     ]);
