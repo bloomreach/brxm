@@ -16,7 +16,6 @@
 package org.hippoecm.repository.impl;
 
 import java.util.Calendar;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -209,16 +208,20 @@ public class LockManagerDecorator extends org.hippoecm.repository.decorating.Loc
                             refresh();
                             success = true;
                         } catch(LockException e) {
-                            log.warn("Failed to refresh lock, this might have occurred due to a hick-up; trying to obtain new lock...");
+                            if (log.isDebugEnabled()) {
+                                log.warn("Failed to refresh lock, this might have occurred due to a hiccup; trying to obtain new lock...", e);
+                            } else {
+                                log.warn("Failed to refresh lock, this might have occurred due to a hiccup; trying to obtain new lock... ({})", e);
+                            }
                             try {
                                 lock = lockManager.lock(lock.getNode().getPath(), lock.isDeep(), lock.isSessionScoped(), timeout, lock.getLockOwner());
                                 setTimeout(lock, timeout);
                                 success = true;
                             } catch (RepositoryException e1) {
                                 if (log.isDebugEnabled()) {
-                                    log.error("Failed to refresh lock: " + e1);
-                                } else {
                                     log.error("Failed to refresh lock", e1);
+                                } else {
+                                    log.error("Failed to refresh lock: " + e1);
                                 }
                             }
                         } catch (RepositoryException e) {
