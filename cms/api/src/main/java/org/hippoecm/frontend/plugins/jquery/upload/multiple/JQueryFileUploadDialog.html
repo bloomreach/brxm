@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,10 +16,12 @@
   -->
 
 <html xmlns:wicket="http://wicket.apache.org">
-    <wicket:panel>
-        <div wicket:id="fileUploadBar" id="fileUploadToolbar"/>
-        <wicket:container wicket:id="uploadTemplate"></wicket:container>
-        <wicket:container wicket:id="downloadTemplate"></wicket:container>
-    </wicket:panel>
-
+  <wicket:extend>
+    <div class="hippo-dialog-container">
+      <!--Begin of jquery file upload widget-->
+      <div wicket:id="uploadPanel" class="uploadpanel"></div>
+      <!--End of jquery file upload widget-->
+      <wicket:child/>
+    </div>
+  </wicket:extend>
 </html>

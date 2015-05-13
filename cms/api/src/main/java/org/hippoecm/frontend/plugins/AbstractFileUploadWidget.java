@@ -19,22 +19,20 @@ package org.hippoecm.frontend.plugins;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.util.upload.FileItem;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadWidgetSettings;
+import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author cngo
- * @version $Id$
- * @since 2015-01-05
- */
 public abstract class AbstractFileUploadWidget extends Panel {
     private static final Logger log = LoggerFactory.getLogger(AbstractFileUploadWidget.class);
 
@@ -48,6 +46,9 @@ public abstract class AbstractFileUploadWidget extends Panel {
         this.validator = validator;
     }
 
+    public String getUploadScript(){
+        return StringUtils.EMPTY;
+    }
     /**
      * Validate file upload item against the file upload validation service defined in
      * {@link #AbstractFileUploadWidget(String, IPluginConfig, FileUploadValidationService)} then call {@link #onFileUpload(FileUpload)}
@@ -84,4 +85,10 @@ public abstract class AbstractFileUploadWidget extends Panel {
      * @throws FileUploadViolationException
      */
     protected abstract void onFileUpload(FileUpload fileUpload) throws FileUploadViolationException;
+
+    protected void onUploadError(final FileUploadInfo fileUploadInfo) {}
+
+    protected void onAfterUpload(final FileItem file, final FileUploadInfo fileUploadInfo) {}
+
+    protected void onFinished() {}
 }

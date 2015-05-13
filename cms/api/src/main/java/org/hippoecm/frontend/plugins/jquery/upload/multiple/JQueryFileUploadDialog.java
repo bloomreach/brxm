@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.frontend.plugins.jquery.upload;
+package org.hippoecm.frontend.plugins.jquery.upload.multiple;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +30,7 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.yui.upload.validation.DefaultUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.slf4j.Logger;
@@ -48,7 +49,6 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
     private static final Logger log = LoggerFactory.getLogger(JQueryFileUploadDialog.class);
 
     public static final String FILEUPLOAD_WIDGET_ID = "uploadPanel";
-    public static final String UPLOADING_SCRIPT = "jqueryFileUploadImpl.uploadFiles()";
     private final IPluginContext pluginContext;
     private final IPluginConfig pluginConfig;
 
@@ -68,7 +68,7 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
         uploadButton = new AjaxButton(DialogConstants.BUTTON, new StringResourceModel("button-upload-label", this, null)){
             @Override
             protected String getOnClickScript(){
-                return UPLOADING_SCRIPT;
+                return fileUploadWidget.getUploadScript();
             }
         };
         uploadButton.add(new InputBehavior(new KeyType[]{KeyType.Enter}, EventType.click));
@@ -130,7 +130,9 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
      * Called when uploading files has done.
      */
     protected void onFinished() {
-        log.debug("Finished uploading");
+        if (log.isDebugEnabled()) {
+            log.debug("Finished uploading files");
+        }
     }
 
     protected FileUploadValidationService getValidator() {
@@ -139,6 +141,8 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
 
         if (validator == null) {
             validator = new DefaultUploadValidationService();
+            log.warn("Cannot load image validation service with the id '{}'. Using the default service '{}'",
+                    serviceId, validator.getClass().getName());
         }
         return validator;
     }

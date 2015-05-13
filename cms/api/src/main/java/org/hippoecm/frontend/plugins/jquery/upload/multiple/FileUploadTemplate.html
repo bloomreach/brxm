@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,8 +16,7 @@
   -->
 
 <html xmlns:wicket="http://wicket.apache.org">
-
-<wicket:panel>
+  <wicket:panel>
     <!-- The template to display files available for upload -->
 <script id="template-upload" type="text/x-tmpl">
 {% for (var i=0, file; file=o.files[i]; i++) { %}
@@ -39,5 +38,5 @@
     </tr>
 {% } %}
 </script>
-</wicket:panel>
+  </wicket:panel>
 </html>

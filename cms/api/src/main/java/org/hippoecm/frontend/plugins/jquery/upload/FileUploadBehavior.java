@@ -19,47 +19,34 @@ package org.hippoecm.frontend.plugins.jquery.upload;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import org.apache.wicket.util.template.PackageTextTemplate;
 
 /**
  * Contributes all CSS/JS resources needed by http://blueimp.github.com/jQuery-File-Upload/
  */
-public class FileUploadBehavior extends AbstractAjaxBehavior {
+abstract public class FileUploadBehavior extends AbstractAjaxBehavior {
     private static final long serialVersionUID = 1L;
 
-    public static final String[] JQUERY_FILEUPLOAD_CSS={
-            "css/jquery.fileupload.css",
-            "css/jquery.fileupload-ui.css",
-            "css/jquery.fileupload-ui-hippo.css"
-    };
+    private static final String JQUERY_FILEUPLOAD_CSS = "css/jquery.fileupload.css";
 
     public static final String[] JQUERY_FILEUPLOAD_SCRIPTS={
             "js/jquery.ui.widget.js",
-            "js/tmpl.js",
-            "js/load-image.js",
-            "js/load-image-meta.js",
-            "js/canvas-to-blob.js",
             "js/jquery.iframe-transport.js",
             "js/jquery.fileupload.js",
             "js/jquery.fileupload-process.js",
-            "js/jquery.fileupload-image.js",
-            "js/jquery.fileupload-validate.js",
-            "js/jquery.fileupload-ui.js"
+            "js/jquery.fileupload-validate.js"
     };
-    public static final String CONFIG_JS = "js/main.js";
 
-    public static final String STARTUP_SCRIPT = "jqueryFileUploadImpl.init();";
+    private static final String AUTOUPLOAD_PARAM = "autoUpload";
+    private static final String REGEX_ANYFILE = ".*";
 
-    private final FileUploadWidgetSettings settings;
+    protected final FileUploadWidgetSettings settings;
 
     public FileUploadBehavior(final FileUploadWidgetSettings settings) {
         this.settings = settings;
@@ -68,25 +55,31 @@ public class FileUploadBehavior extends AbstractAjaxBehavior {
     @Override
     public void renderHead(Component component, IHeaderResponse response) {
         super.renderHead(component, response);
-
-        for(String css : JQUERY_FILEUPLOAD_CSS){
-            response.render(CssHeaderItem.forReference(
-                    new CssResourceReference(FileUploadBehavior.class, css)));
-        }
-
         response.render(JavaScriptHeaderItem.forReference(
                 component.getApplication().getJavaScriptLibrarySettings().getJQueryReference()));
 
+        renderCSS(response);
+        renderScripts(response);
+
+        renderWidgetConfig(response, configureParameters(component));
+    }
+
+    protected void renderCSS(final IHeaderResponse response) {
+        response.render(CssHeaderItem.forReference(
+                new CssResourceReference(FileUploadBehavior.class, JQUERY_FILEUPLOAD_CSS)));
+    }
+
+    protected void renderScripts(final IHeaderResponse response) {
         for(String js : JQUERY_FILEUPLOAD_SCRIPTS){
             response.render(JavaScriptHeaderItem.forReference(
                     new JavaScriptResourceReference(FileUploadBehavior.class, js)));
         }
-
-        configureWidget(component, response);
     }
 
-    private void configureWidget(final Component component, final IHeaderResponse response) {
-        PackageTextTemplate jsTmpl = new PackageTextTemplate(FileUploadBehavior.class, CONFIG_JS);
+    /**
+     * Set parameters that will be used in the jquery-fileupload initialization. See jquery.fileupload.js/options
+     */
+    protected Map<String, Object> configureParameters(final Component component) {
         Map<String, Object> variables = new HashMap<>();
 
         variables.put("componentMarkupId", component.getMarkupId());
@@ -96,30 +89,27 @@ public class FileUploadBehavior extends AbstractAjaxBehavior {
 
         variables.put("maxNumberOfFiles", settings.getMaxNumberOfFiles());
 
-        // accepted image file extensions
-        final String acceptFileTypes = StringUtils.join(settings.getAllowedExtensions(), "|");
+        // disable client-side file extension validation, accepted any files
+        String acceptFileTypes = REGEX_ANYFILE;
         variables.put("acceptFileTypes", acceptFileTypes);
-
-        //the url to be notified when uploading has done
-        variables.put("fileUploadDoneUrl", settings.getUploadDoneNotificationUrl());
 
         // Get settings to configure the file upload widget
         variables.put(FileUploadWidgetSettings.MAX_WIDTH_PROP, settings.getMaxWidth());
         variables.put(FileUploadWidgetSettings.MAX_HEIGHT_PROP, settings.getMaxHeight());
         variables.put(FileUploadWidgetSettings.MAX_FILESIZE_PROP, settings.getMaxFileSize());
-
-        String s = jsTmpl.asString(variables);
-        response.render(JavaScriptHeaderItem.forScript(s, "fileupload"));
-
-        // call the configuration after all DOM elements are loaded
-        response.render(OnDomReadyHeaderItem.forScript(STARTUP_SCRIPT));
+        variables.put(AUTOUPLOAD_PARAM, settings.isAutoUpload());
+        return variables;
     }
+
+    /**
+     * Load the jquery-file-upload config script and run the startup method
+     */
+    abstract protected void renderWidgetConfig(final IHeaderResponse response, final Map<String, Object> variables);
 
     /**
      * Called when a request to a behavior is received.
      */
     @Override
     public void onRequest() {
-
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package org.hippoecm.frontend.plugins.jquery.upload;
+package org.hippoecm.frontend.plugins.jquery.upload.multiple;
 
 import org.apache.wicket.markup.html.panel.Panel;
 
 /**
  * This panel contributes the JavaScript template that is used by
- * jQuery-File-Upload to show which files are scheduled for upload.
+ * jQuery-File-Upload to show which files were just uploaded
+ * and can be downloaded.
  */
-public class FileUploadTemplate extends Panel {
+public class FileDownloadTemplate extends Panel {
     private static final long serialVersionUID = 1L;
 
-    public FileUploadTemplate(String id) {
+    public FileDownloadTemplate(String id) {
         super(id);
     }
 }
