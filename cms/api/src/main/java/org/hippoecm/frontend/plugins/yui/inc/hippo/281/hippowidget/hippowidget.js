@@ -19,7 +19,7 @@
  * Hippowidgets register with their ancestor layout units for rendering, resizing en destroying
  * </p>
  * @namespace YAHOO.hippo
- * @requires yahoo, dom, layoutmanager, hippoajax
+ * @requires yahoo, dom, layoutmanager, hippoajax, hippodom
  * @module hippowidget
  * @beta
  */
@@ -27,10 +27,13 @@
 YAHOO.namespace('hippo');
 
 (function() {
+    'use strict';
+
     if (!YAHOO.hippo.Widget) {
 
         var Dom = YAHOO.util.Dom,
             Lang = YAHOO.lang,
+            HippoDom = YAHOO.hippo.Dom,
             exists = function(_o) {
                 return !Lang.isUndefined(_o) && _o !== null;
             };
@@ -75,7 +78,7 @@ YAHOO.namespace('hippo');
 
             this.el = Dom.get(id);
             this.unit = null;
-            this.helper = new YAHOO.hippo.DomHelper();
+            this.helper = HippoDom;
 
             if (Lang.isFunction(this.config.calculateWidthAndHeight)) {
                 this.calculateWidthAndHeight = this.config.calculateWidthAndHeight;

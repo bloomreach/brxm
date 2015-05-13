@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 
 /**
  * @description
@@ -30,8 +29,12 @@
 YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
-    (function() {
-        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang, HippoDom = YAHOO.hippo.Dom,
+    ( function() {
+        'use strict';
+
+        var Dom = YAHOO.util.Dom,
+            Lang = YAHOO.lang,
+            HippoDom = YAHOO.hippo.Dom,
             Event = YAHOO.util.Event;
 
         YAHOO.widget.Layout.prototype._setupBodyElements =  function() {
@@ -62,6 +65,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             wireframes      : new YAHOO.hippo.HashMap(),
             throttler       : new Wicket.Throttler(true),
             throttleDelay   : 0,
+            triggerCleanup  : false,
             resizeEvent     : null,
             registrations   : new YAHOO.hippo.FunctionQueue('event-registrations'),
 
@@ -74,7 +78,11 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 }
 
                 this.resizeEvent = new YAHOO.util.CustomEvent('rootResizeEvent');
-                Wicket.Event.subscribe('/ajax/call/success', Wicket.bind(this.render, this));
+
+                Wicket.Event.subscribe(Wicket.Event.Topic.AJAX_CALL_SUCCESS, Wicket.bind(this.render, this));
+                Wicket.Event.subscribe(Wicket.Event.Topic.DOM_NODE_REMOVING, Wicket.bind(function() {
+                    this.triggerCleanup = true;
+                }, this));
             },
 
             /**
@@ -82,7 +90,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
              * layouts do not register a window.resize themselves I guess
              */
             resize : function() {
-                if(this.throttleDelay > 0) {
+                if (this.throttleDelay > 0) {
                     var me = this;
                     this.throttler.throttle('resize-root', this.throttleDelay, function() {
                         me._resize();
@@ -104,6 +112,11 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             render : function() {
+                if (this.triggerCleanup) {
+                    this.cleanupWireframes();
+                    this.triggerCleanup = false;
+                }
+
                 if (!this.registrations.isEmpty()) {
                     this.registrations.handleQueue();
                 }
@@ -166,10 +179,10 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             getWireframe : function(id) {
-               if (this.root !== null && id === this.root.id) {
-                   return this.root;
-               }
-               return this.wireframes.get(id);
+                if (this.root !== null && id === this.root.id) {
+                    return this.root;
+                }
+                return this.wireframes.get(id);
             },
 
             cleanupWireframes : function() {
@@ -416,7 +429,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             removeChild : function(c) {
-              this.children.remove(c.id);
+                this.children.remove(c.id);
             },
 
             prepareConfig : function() {
@@ -683,8 +696,12 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             prepareConfig : function() {
-                this.margins  = new YAHOO.hippo.DomHelper().getMargin(Dom.get(this.id));
-                this.config.width = Dom.get(this.id).offsetWidth - this.margins.w; //Width of the outer element
+                var el = Dom.get(this.id);
+                if (el === null) {
+                    throw new Error('Could not find root element of grid with id: ' + this.id);
+                }
+                this.margins  = HippoDom.getMargin(el);
+                this.config.width = el.offsetWidth - this.margins.w; //Width of the outer element
                 this.config.height = Dom.getClientHeight() - this.margins.h;
             },
 
@@ -713,7 +730,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             if (Lang.isNumber(config.headerHeight) && config.headerHeight > 0) {
                 header = {position: 'top', body: 'hd', height: config.headerHeight, scroll: config.headerScroll, resize: config.headerResize, grids: true};
                 if (config.headerGutter !== null) {
-                  header.gutter = config.headerGutter;
+                    header.gutter = config.headerGutter;
                 }
                 units.push(header);
             }
@@ -734,7 +751,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             if (Lang.isNumber(config.footerHeight) && config.footerHeight > 0) {
                 footer = {position: 'bottom', body: 'ft', height: config.footerHeight, scroll: config.footerScroll, resize: config.footerResize, grids: true};
                 if (config.footerGutter !== null) {
-                  footer.gutter = config.footerGutter;
+                    footer.gutter = config.footerGutter;
                 }
                 units.push(footer);
             }
@@ -765,7 +782,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             prepareConfig : function() {
                 var el = Dom.get(this.id);
-                this.margins  = new YAHOO.hippo.DomHelper().getMargin(el);
+                this.margins  = HippoDom.getMargin(el);
                 this.config.width = el.clientWidth - this.margins.w; //Width of the outer element
                 this.config.height = el.clientHeight - this.margins.h;
             },
@@ -781,8 +798,9 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
         YAHOO.hippo.Wireframe = function(id, config) {
             YAHOO.hippo.Wireframe.superclass.constructor.apply(this, arguments);
             this.margins = null;
-            this.domHelper = new YAHOO.hippo.DomHelper();
+            this.domHelper = HippoDom; // here for backwards compatibility
             this.parent = null;
+            this.unitId = null;
         };
 
         YAHOO.extend(YAHOO.hippo.Wireframe, YAHOO.hippo.BaseWireframe, {
@@ -792,8 +810,20 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
                 if (this.config.linkedWithParent) {
                     this.parent = YAHOO.hippo.LayoutManager.getWireframe(this.config.parentId);
-                    this.parent.registerChild(this);
-                    this.config.parent = this.parent.layout;
+                    if (this.parent !== null) {
+                        this.parent.registerChild(this);
+                        this.config.parent = this.parent.layout;
+
+                        // Find unit element
+                        var unit = Dom.get(this.id);
+                        while (unit !== null) {
+                            if (Dom.hasClass(unit, 'yui-layout-unit')) {
+                                this.unitId = unit.id;
+                                break;
+                            }
+                            unit = unit.parentNode || null;
+                        }
+                    }
                 }
 
                 this.initDimensions();
@@ -811,9 +841,8 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     unit = this.config.units[i];
                     if (unit.resize) {
                         dim = this.readDimension(unit.position);
-                        if (dim) {
+                        if (dim.w > 0) {
                             this.config.units[i].width = dim.w;
-                            this.config.units[i].height = dim.h;
                         }
                     }
                 }
@@ -826,42 +855,79 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             getDimensions : function() {
-                var dim, margin, myParent, parentMargin, u;
+                var unit, dim, el = Dom.get(this.id);
 
-                dim = {};
-                if (this.config.linkedWithParent && this.parent !== null) {
-
-                    margin = {w:0, h:0};
-                    myParent = Dom.get(this.id).parentNode;
-                    while (myParent !== null) {
-                        parentMargin = this.domHelper.getMargin(myParent);
-                        margin.w += parentMargin.w;
-                        margin.h += parentMargin.h;
-
-                        if (Dom.hasClass(myParent, 'yui-layout-unit')) {
-                            //unit found, wrap it up
-                            dim.w = this.domHelper.getWidth(myParent);
-                            dim.h = this.domHelper.getHeight(myParent);
-                            dim.w -= margin.w;
-                            dim.h -= margin.h;
-
-                            if (this.parent !== null) {
-                                u = this.parent.layout.getUnitById(myParent.id);
-                                if (u !== null) {
-                                    dim.w -= (u._gutter.left + u._gutter.right);
-                                    dim.h -= (u._gutter.top + u._gutter.bottom);
-                                }
-                            }
-                            return dim;
-                        }
-                        myParent = myParent.parentNode;
-                    }
+                if (el === null) {
+                    console.error("Can find element with id " + this.id);
+                    return { w:0, h:0 };
                 }
-                //fallback
-                myParent = Dom.get(this.id).parentNode;
-                dim.w = this.domHelper.getWidth(myParent);
-                dim.h = this.domHelper.getHeight(myParent);
+
+                if (!this.config.linkedWithParent || this.unitId === null) {
+                    // Either not linked with parent layout or parent unit was not found
+                    return HippoDom.getDim(el.parentNode);
+                }
+
+                // Calculate space occupied by parent elements in unit
+                unit = Dom.get(this.unitId);
+                dim = HippoDom.getDim(unit);
+
+                if (this.margins === null) {
+                    this.margins = this.calculateMargins(el, unit);
+                }
+
+                this.margins.forEach(function(margin) {
+                    if (Lang.isFunction(margin)) {
+                        dim = margin(dim);
+                    } else {
+                        dim.w -= margin.w;
+                        dim.h -= margin.h;
+                    }
+                });
                 return dim;
+            },
+
+            calculateMargins : function(el, unit) {
+                var margins = [],
+                  margin = { w:0, h:0},
+                  childMargin = { w:0, h:0};
+
+                function subtractSiblingHeight(el) {
+                    return function(_dim) {
+                        Dom.getChildren(el.parentNode).forEach(function(sibling) {
+                            var siblingDim;
+                            if (sibling !== el) {
+                                siblingDim = HippoDom.getOuterDim(sibling);
+                                _dim.h -= siblingDim.h;
+                            }
+                        });
+
+                        return _dim;
+                    };
+                }
+
+                while (el !== null && el.id !== unit.id) {
+                    childMargin = HippoDom.getMargin(el);
+                    margin.w += childMargin.w;
+                    margin.h += childMargin.h;
+
+                    if (Dom.getStyle(el, 'overflow') === 'auto') {
+                        //use this elements dimensions relative to the units size
+                        margins.push(subtractSiblingHeight(el));
+                    }
+
+                    if (Dom.hasClass(el, 'yui-layout-wrap')) {
+                        margin.w += HippoDom.getLeft(el);
+                        margin.h += HippoDom.getTop(el);
+                    }
+
+                    el = el.parentNode;
+                }
+
+                if (margin.w !== 0 || margin.h !== 0) {
+                    margins.push(margin);
+                }
+
+                return margins;
             }
 
         });
@@ -926,78 +992,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 }
             }
         });
-
-        YAHOO.hippo.DomHelper = function() {
-        };
-
-        YAHOO.hippo.DomHelper.prototype = {
-            getMargin : function(element) {
-                var margins = {w:0, h:0};
-                margins.w += this.getBorderWidth(element);
-                margins.w += this.getMarginWidth(element);
-                margins.w += this.getPaddingWidth(element);
-
-                margins.h += this.getBorderHeight(element);
-                margins.h += this.getMarginHeight(element);
-                margins.h += this.getPaddingHeight(element);
-                return margins;
-            },
-
-            getWidth : function(el) {
-                return this.asInt(el, 'width');
-            },
-
-            getHeight : function(el) {
-                return this.asInt(el, 'height');
-            },
-
-            getBorderWidth: function(el) {
-                var x = this.asInt(el, 'border-left-width');
-                x += this.asInt(el, 'border-right-width');
-                return x;
-            },
-
-            getBorderHeight: function(el) {
-                var y = this.asInt(el, 'border-top-width');
-                y += this.asInt(el, 'border-bottom-width');
-                return y;
-            },
-
-            getMarginWidth: function(el) {
-                var x = this.asInt(el, 'margin-left');
-                x += this.asInt(el, 'margin-right');
-                return x;
-            },
-
-            getMarginHeight: function(el) {
-                var y = this.asInt(el, 'margin-top');
-                y += this.asInt(el, 'margin-bottom');
-                return y;
-            },
-
-            getPaddingWidth: function(el) {
-                var x = this.asInt(el, 'padding-left');
-                x += this.asInt(el, 'padding-right');
-                return x;
-            },
-
-            getPaddingHeight: function(el) {
-                var y = this.asInt(el, 'padding-top');
-                y += this.asInt(el, 'padding-bottom');
-                return y;
-            },
-
-            asInt : function(el, style) {
-                var x = Dom.getStyle(el, style);
-                if(Lang.isString(x) && x.length>2) {
-                    x = x.substr(0, x.indexOf('px'));
-                    //FF3 on Ubuntu thinks the border is something like 0.81236666 so we round it
-                    return Math.round(x);
-                }
-                return 0;
-            }
-
-        };
     }());
 
     YAHOO.hippo.LayoutManager = new YAHOO.hippo.LayoutManagerImpl();
@@ -1009,9 +1003,13 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 //PATCH
 
 ( function() {
-    var Event = YAHOO.util.Event, Lang = YAHOO.lang;
+    'use strict';
 
-    YAHOO.widget.Layout.prototype.destroy = function() {
+    var Event = YAHOO.util.Event,
+        Lang = YAHOO.lang,
+        Widget = YAHOO.widget;
+
+    Widget.Layout.prototype.destroy = function() {
         var par, u, i;
 
         par = this.get('parent');
@@ -1030,7 +1028,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
         Event.purgeElement(this.get('element'));
 
-        delete YAHOO.widget.Layout._instances[this.get('id')];
+        delete Widget.Layout._instances[this.get('id')];
         //Brutal Object Destroy
         for (i in this) {
             if (this.hasOwnProperty(i)) {
@@ -1040,7 +1038,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
         }
     };
 
-    YAHOO.widget.LayoutUnit.prototype.destroy = function(force) {
+    Widget.LayoutUnit.prototype.destroy = function(force) {
         var par, wrap, body, i;
 
         if (this._resize) {
@@ -1066,16 +1064,16 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
         wrap = this.get('wrap');
         if (wrap) {
-            delete YAHOO.widget.LayoutUnit._instances[wrap.id];
+            delete Widget.LayoutUnit._instances[wrap.id];
         }
         body = this.get('body');
         if (body) {
-            delete YAHOO.widget.LayoutUnit._instances[body];
+            delete Widget.LayoutUnit._instances[body];
         }
 
         Event.purgeElement(this.get('element'));
 
-        delete YAHOO.widget.LayoutUnit._instances[this.get('id')];
+        delete Widget.LayoutUnit._instances[this.get('id')];
         //Brutal Object Destroy
         for (i in this) {
             if (Lang.hasOwnProperty(this, i)) {

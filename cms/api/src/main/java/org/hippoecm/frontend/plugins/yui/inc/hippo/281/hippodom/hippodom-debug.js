@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -32,17 +32,17 @@ YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
     ( function() {
-        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
+        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang, HippoDom;
 
-        YAHOO.hippo.Dom = function() {
+        HippoDom = function() {
         };
 
-        YAHOO.hippo.Dom.resolveElement = function(_id) {
+        HippoDom.resolveElement = function(_id) {
             var pathEls, baseId, element, yuiId, children, traverse;
             pathEls = _id.split(':');
             if (pathEls.length > 0) {
                 baseId = pathEls[0];
-                element = YAHOO.util.Dom.get(baseId);
+                element = Dom.get(baseId);
                 if (element !== null && element !== undefined && pathEls.length > 1) {
                     yuiId = pathEls[1];
                     children = [];
@@ -56,7 +56,7 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
                                 return;
                             }
                             if (node.hasChildNodes()) {
-                                childNodes = Dom.getChildrenBy(node, YAHOO.hippo.Dom.isValidChildNode);
+                                childNodes = Dom.getChildrenBy(node, Dom.isValidChildNode);
                                 for (i = 0, len = childNodes.length; i < len; i++) {
                                     traverse(childNodes[i]);
                                 }
@@ -77,7 +77,7 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
             return null;
         };
 
-        YAHOO.hippo.Dom.enhance = function(el, id) {
+        HippoDom.enhance = function(el, id) {
             if(el === null || el === undefined) {
                 return;
             }
@@ -89,15 +89,37 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
             }
         };
 
-        YAHOO.hippo.Dom.isValidChildNode = function(node) {
-            if (node.nodeType === 1 && (node.prefix === null || node.prefix === undefined || node.prefix === 'html')
-                    && (!node.getAttribute("id") || node.getAttribute("yui:id"))) {
+        HippoDom.isValidChildNode = function(node) {
+            if (node.nodeType === 1 && (node.prefix === null || node.prefix === undefined || node.prefix === 'html') &&
+                    (!node.getAttribute("id") || node.getAttribute("yui:id"))) {
                 return true;
             }
             return false;
         };
-        
-        YAHOO.hippo.Dom.getMargin = function(element) {
+
+        // return visible width/height including padding, border and scrollbar, excluding margin
+        HippoDom.getDim = function(element) {
+            return {
+                w: element.offsetWidth,
+                h: element.offsetHeight
+            };
+        };
+
+        HippoDom.getOuterDim = function(element) {
+            return {
+                w: element.offsetWidth + HippoDom.getMarginWidth(element),
+                h: element.offsetHeight + HippoDom.getMarginHeight(element)
+            };
+        };
+
+        HippoDom.getWidthAndHeight = function(element) {
+            return {
+                w: this.getWidth(element),
+                h: this.getHeight(element)
+            };
+        };
+
+        HippoDom.getMargin = function(element) {
             var margins = {w:0, h:0};
             margins.w += this.getBorderWidth(element);
             margins.w += this.getMarginWidth(element);
@@ -108,51 +130,59 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
             margins.h += this.getPaddingHeight(element);
             return margins;
         };
-            
-        YAHOO.hippo.Dom.getWidth = function(el) {
+
+        HippoDom.getWidth = function(el) {
             return this.asInt(el, 'width');
         };
-            
-        YAHOO.hippo.Dom.getHeight = function(el) {
+
+        HippoDom.getHeight = function(el) {
             return this.asInt(el, 'height');
         };
 
-        YAHOO.hippo.Dom.getBorderWidth= function(el) {
+        HippoDom.getBorderWidth= function(el) {
             var x = this.asInt(el, 'border-left-width');
             x += this.asInt(el, 'border-right-width');
             return x;
         };
 
-        YAHOO.hippo.Dom.getBorderHeight= function(el) {
+        HippoDom.getBorderHeight= function(el) {
             var y = this.asInt(el, 'border-top-width');
             y += this.asInt(el, 'border-bottom-width');
             return y;
         };
 
-        YAHOO.hippo.Dom.getMarginWidth= function(el) {
+        HippoDom.getMarginWidth= function(el) {
             var x = this.asInt(el, 'margin-left');
             x += this.asInt(el, 'margin-right');
             return x;
         };
-        YAHOO.hippo.Dom.getMarginHeight= function(el) {
+        HippoDom.getMarginHeight= function(el) {
             var y = this.asInt(el, 'margin-top');
             y += this.asInt(el, 'margin-bottom');
             return y;
         };
 
-        YAHOO.hippo.Dom.getPaddingWidth= function(el) {
+        HippoDom.getPaddingWidth= function(el) {
             var x = this.asInt(el, 'padding-left');
             x += this.asInt(el, 'padding-right');
             return x;
         };
 
-        YAHOO.hippo.Dom.getPaddingHeight= function(el) {
+        HippoDom.getPaddingHeight= function(el) {
             var y = this.asInt(el, 'padding-top');
             y += this.asInt(el, 'padding-bottom');
             return y;
         };
 
-        YAHOO.hippo.Dom.asInt = function(el, style) {
+        HippoDom.getLeft = function(el) {
+            return this.asInt(el, 'left');
+        };
+
+        HippoDom.getTop = function(el) {
+            return this.asInt(el, 'top');
+        };
+
+        HippoDom.asInt = function(el, style) {
             var x = Dom.getStyle(el, style);
             if(Lang.isString(x) && x.length>2) {
                 x = x.substr(0, x.indexOf('px'));
@@ -161,7 +191,9 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
             }
             return 0;
         };
-        
+
+        YAHOO.hippo.Dom = HippoDom;
+
     }());
 
     YAHOO.register("hippodom", YAHOO.hippo.Dom, {
