@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -34,6 +35,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -47,8 +49,11 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.TypeException;
@@ -315,12 +320,15 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                     link.add(CssClass.append(new LoadableDetachableModel<String>() {
                         @Override
                         protected String load() {
-                            if (active == section) {
-                                return "focus";
-                            }
-                            return "";
+                            return active == section ? "focus" : StringUtils.EMPTY;
                         }
                     }));
+                    link.add(HippoIcon.fromSprite("categoryIcon", new AbstractReadOnlyModel<Icon>() {
+                        @Override
+                        public Icon getObject() {
+                            return active == section ? Icon.CARET_DOWN : Icon.CARET_RIGHT;
+                        }
+                    }, IconSize.S));
                     item.add(link);
                 }
             });

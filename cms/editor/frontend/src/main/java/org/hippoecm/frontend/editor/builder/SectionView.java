@@ -21,6 +21,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.widgets.AbstractView;
 
 public abstract class SectionView<T> extends AbstractView<T> {
@@ -43,6 +45,7 @@ public abstract class SectionView<T> extends AbstractView<T> {
             }
         };
         link.add(new Label("template-name", getNameModel(type)));
+        link.add(HippoIcon.fromSprite("icon", Icon.GEAR));
         item.add(link);
     }
 

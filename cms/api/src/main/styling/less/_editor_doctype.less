@@ -35,17 +35,27 @@
   }
 }
 
+.template-type-right {
+  background-color: @white;
+}
+
 .hippo-editor-template-field-edit {
-  padding: 10px 15px 5px;
+  padding: 3px;
+  border-left: 1px solid @light-gray;
+
+  .hippo-editor-template-field-edit {
+    padding: 0 12px;
+    margin-bottom: 0;
+    border-left: 0;
+  }
 
   .hippo-editor-field-title {
     color: @darker-shade;
     display: block;
-    font-family: Tahoma, Arial, Helvetica, sans-serif;
-    font-size: 11px;
-    font-style: normal;
+    font-size: 13px;
     font-weight: bold;
-    margin: 7px 10px;
+    margin-right: 0;
+    margin-top: 12px;
   }
 
   input[type=checkbox] {
@@ -72,8 +82,30 @@
 
   .hippo-editor-field-subfield {
     background: white;
-    border: 1px solid @dark-shade;
-    padding-right: 5px;
+    border: 1px solid @light-gray;
+    padding: 4px;
+  }
+
+  .section-view {
+    > h2 {
+      padding-left: 14px;
+      margin-bottom: 4px;
+      font-size: 13px;
+      box-sizing: border-box;
+      height: 32px;
+      background-color: @light-gray;
+      display: flex;
+
+      > a {
+        align-items: center;
+        display: inline-flex;
+        color: @text-color;
+
+        > span {
+          padding-left: 4px;
+        }
+      }
+    }
   }
 }
 
@@ -84,17 +116,20 @@
 }
 
 .hippo-editor-template-field-controls {
-  background-color: white;
-  height: 20px;
-  padding-left: 5px;
-  padding-right: 5px;
+  background-color: @white;
+  height: 32px;
+  padding-left: 8px;
+  padding-right: 8px;
+  display: flex;
+  flex-flow: row-reverse nowrap;
+  align-items: center;
 
   &.active {
     background-color: @primary;
-  }
 
-  ul {
-    float: right;
+    .hippo-preview-document & {
+      background-color: @white;
+    }
   }
 
   li {
@@ -109,6 +144,7 @@
 
       &:hover {
         background-color: white;
+        text-decoration: none;
       }
     }
   }
@@ -136,20 +172,32 @@
 }
 
 .hippo-editor-template-field-new {
-  height: 200px;
+  max-height: 300px;
   overflow: auto;
+  padding-left: 12px;
+  margin-top: 4px;
+  margin-bottom: 8px;
 
   li {
     list-style-type: none;
-    margin-bottom: 5px;
-    padding-bottom: 2px;
-    padding-top: 4px;
+    margin-bottom: 4px;
+    padding-top: 2px;
+
+    &:first-child {
+      margin-top: 8px;
+    }
+    &:last-child {
+      margin-bottom: 8px;
+    }
 
     span em,
     a {
-      background: url("@{images_legacy}/icons/workflow-16.png") no-repeat;
-      display: inline;
-      padding-left: 20px;
+      color: @text-color;
+      display: inline-flex;
+
+      > span {
+        padding-left: 4px;
+      }
     }
 
     a:hover {

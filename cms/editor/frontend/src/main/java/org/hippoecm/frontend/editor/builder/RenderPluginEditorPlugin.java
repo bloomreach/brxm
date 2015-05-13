@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,11 +28,11 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -56,6 +56,7 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
@@ -66,8 +67,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAware {
-
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(RenderPluginEditorPlugin.class);
 
@@ -95,7 +94,6 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
         // add transitions from parent container
         container.add(new RefreshingView<ILayoutTransition>("transitions") {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected Iterator<IModel<ILayoutTransition>> getItemModels() {
@@ -107,7 +105,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
                     }
 
                     public IModel<ILayoutTransition> next() {
-                        return new Model<ILayoutTransition>(transitionIter.next());
+                        return new Model<>(transitionIter.next());
                     }
 
                     public void remove() {
@@ -121,7 +119,6 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
             protected void populateItem(Item<ILayoutTransition> item) {
                 final ILayoutTransition transition = item.getModelObject();
                 AjaxLink<Void> link = new AjaxLink<Void>("link") {
-                    private static final long serialVersionUID = 1L;
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
@@ -136,14 +133,13 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
                 };
                 link.setVisible(editable);
-                link.add(new AttributeAppender("class", new Model<String>(transition.getName()), " "));
+                link.add(CssClass.append(transition.getName()));
                 item.add(link);
             }
 
         });
 
         container.add(new AjaxLink("remove") {
-            private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
@@ -161,27 +157,16 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
         }.setVisible(editable));
 
-        container.add(new AttributeAppender("class", new IModel() {
-            private static final long serialVersionUID = 1L;
-
-            public Object getObject() {
-                if (builderContext.hasFocus()) {
-                    return "active";
-                }
-                return "";
+        container.add(CssClass.append(new AbstractReadOnlyModel<String>() {
+            @Override
+            public String getObject() {
+                return builderContext.hasFocus() ? "active" : StringUtils.EMPTY;
             }
-
-            public void setObject(Object object) {
-            }
-
-            public void detach() {
-            }
-        }, " "));
+        }));
         add(container);
 
         if (editable) {
             add(new AjaxEventBehavior("onclick") {
-                private static final long serialVersionUID = 1L;
 
                 @Override
                 protected void onEvent(AjaxRequestTarget target) {
@@ -197,7 +182,6 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
             });
 
             builderContext.addBuilderListener(new IBuilderListener() {
-                private static final long serialVersionUID = 1L;
 
                 public void onBlur() {
                     AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
@@ -225,7 +209,6 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
         final IPluginConfig editedConfig = builderContext.getEditablePluginConfig();
         getPluginContext().registerService(configObserver = new IObserver<IPluginConfig>() {
-            private static final long serialVersionUID = 1L;
 
             public IPluginConfig getObservable() {
                 return editedConfig;
@@ -283,7 +266,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
     @Override
     public List<ILayoutAware> getChildren() {
         if (trackers != null) {
-            List<ILayoutAware> children = new LinkedList<ILayoutAware>();
+            List<ILayoutAware> children = new LinkedList<>();
             for (Map.Entry<String, ChildTracker> entry : trackers.entrySet()) {
                 children.add(entry.getValue().getService());
             }
@@ -364,7 +347,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
     }
 
     protected void registerChildTrackers() {
-        trackers = new LinkedHashMap<String, ChildTracker>();
+        trackers = new LinkedHashMap<>();
 
         IPluginConfig bare = builderContext.getEditablePluginConfig();
         IPluginConfig effective = getEffectivePluginConfig();
@@ -407,7 +390,6 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
      * services to reposition themselves.
      */
     protected class ChildTracker extends ServiceTracker<ILayoutAware> {
-        private static final long serialVersionUID = 1L;
 
         private ILayoutAware service;
         private ILayoutPad pad;
@@ -465,7 +447,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
         final ITemplateEngine templateEngine = context.getService(config.getString(ITemplateEngine.ENGINE),
                 ITemplateEngine.class);
 
-        final List<String> subTypeNames = new ArrayList<String>();
+        final List<String> subTypeNames = new ArrayList<>();
         for (ITypeDescriptor subType : subTypes) {
             try {
                 final IClusterConfig template = templateEngine.getTemplate(subType, IEditor.Mode.VIEW);
