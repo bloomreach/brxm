@@ -29,17 +29,6 @@
     dataType: 'json',
 
     done: function (e, data) {
-      var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload'),
-        files = that.getFilesFromResponse(data);
-      if (data.context) {
-        data.context.each(function (index) {
-          var file = files[index] || {error: 'Empty file upload result'};
-          if (file.error) {
-            console.error(file.error)
-          }
-        });
-      }
-
       // a wicket ajax callback to refresh container
       ${callbackRefreshScript}
     }
