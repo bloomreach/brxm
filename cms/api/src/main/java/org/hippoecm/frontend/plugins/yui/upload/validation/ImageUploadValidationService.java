@@ -24,6 +24,8 @@ import org.apache.sanselan.Sanselan;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.editor.plugins.resource.MimeTypeHelper;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,5 +110,17 @@ public class ImageUploadValidationService extends DefaultUploadValidationService
     protected String getDefaultMaxFileSize() {
         return DEFAULT_MAX_FILE_SIZE;
 
+    }
+
+    public static FileUploadValidationService getValidationService(final IPluginConfig pluginConfig, final IPluginContext pluginContext) {
+        String serviceId = pluginConfig.getString(FileUploadValidationService.VALIDATE_ID, "service.gallery.image.validation");
+        FileUploadValidationService validator = pluginContext.getService(serviceId, FileUploadValidationService.class);
+
+        if (validator == null) {
+            validator = new DefaultUploadValidationService();
+            log.warn("Cannot load image validation service with id '{}', using the default service '{}'",
+                    serviceId, validator.getClass().getName());
+        }
+        return validator;
     }
 }

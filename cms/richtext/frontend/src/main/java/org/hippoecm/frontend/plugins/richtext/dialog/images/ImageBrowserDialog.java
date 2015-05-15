@@ -56,7 +56,6 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
-import org.apache.wicket.util.upload.FileItem;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.HippoForm;
@@ -73,8 +72,8 @@ import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
 import org.hippoecm.frontend.plugins.jquery.upload.single.JQuerySingleFileUploadWidget;
 import org.hippoecm.frontend.plugins.richtext.dialog.AbstractBrowserDialog;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorImageLink;
-import org.hippoecm.frontend.plugins.yui.upload.validation.DefaultUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
+import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.widgets.ThrottledTextFieldWidget;
@@ -129,7 +128,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
                 return loadGalleryTypes();
             }
         };
-        validator = getValidationService();
+        validator = ImageUploadValidationService.getValidationService(getPluginConfig(), getPluginContext());
 
         add(createUploadForm());
 
@@ -271,17 +270,6 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
         if (ImageBrowserDialog.this.hasFeedbackMessage()) {
             ImageBrowserDialog.this.getFeedbackMessages().clear();
         }
-    }
-
-    private FileUploadValidationService getValidationService() {
-        String serviceId = getPluginConfig().getString(FileUploadValidationService.VALIDATE_ID, "service.gallery.image.validation");
-        FileUploadValidationService validator = getPluginContext().getService(serviceId, FileUploadValidationService.class);
-        if (validator == null) {
-            validator = new DefaultUploadValidationService();
-            log.warn("Cannot load image validation service with id '{}', using the default service '{}'",
-                    serviceId, validator.getClass().getName());
-        }
-        return validator;
     }
 
     protected void onModelSelected(IModel<Node> model) {

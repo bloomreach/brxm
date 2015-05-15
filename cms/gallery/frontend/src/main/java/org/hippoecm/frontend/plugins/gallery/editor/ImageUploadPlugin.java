@@ -21,11 +21,7 @@ import java.util.Calendar;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -35,8 +31,9 @@ import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
-import org.hippoecm.frontend.plugins.jquery.upload.SingleFileUploadWidget;
+import org.hippoecm.frontend.plugins.jquery.upload.single.FileUploadPanel;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
+import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,85 +47,34 @@ public class ImageUploadPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(ImageUploadPlugin.class);
-    private FileUploadForm form;
     private final String mode;
     public ImageUploadPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
         mode = config.getString("mode", "edit");
-        addNewUploadForm();
+        add(createFileUploadPanel());
         add(new EventStoppingBehavior("onclick"));
         setOutputMarkupId(true);
     }
 
-    /**
-     * Reset form so we can upload same image again
-     * after "restore" function is invoked.
-     *
-     */
-    private void resetForm() {
-        final AjaxRequestTarget ajaxRequestTarget = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (ajaxRequestTarget != null && form != null) {
-            remove(form);
-            addNewUploadForm();
-            ajaxRequestTarget.add(this);
-        }
-    }
-
-    private void addNewUploadForm() {
-        form = new FileUploadForm("form", this);
-        form.setVisible("edit".equals(mode));
-        form.setOutputMarkupId(true);
-        add(form);
-    }
-
-    private class FileUploadForm extends Form {
-        private static final long serialVersionUID = 1L;
-
-        private SingleFileUploadWidget widget;
-
-        public FileUploadForm(String name, final ImageUploadPlugin parent) {
-            super(name);
-            setMultiPart(true);
-
-            String serviceId = getPluginConfig().getString(FileUploadValidationService.VALIDATE_ID, "service.gallery.image.validation");
-            FileUploadValidationService validator = getPluginContext().getService(serviceId, FileUploadValidationService.class);
-
-            add(widget = new SingleFileUploadWidget("fileUploadPanel", getPluginConfig() ,validator) {
-                private static final long serialVersionUID = 1L;
-                @Override
-                protected void onFileUpload(FileUpload fileUpload) throws FileUploadViolationException {
-                    handleUpload(fileUpload);
-                    parent.resetForm();
-                }
-            });
-
-            setMaxSize(Bytes.bytes(widget.getSettings().getMaxFileSize()));
-        }
-
-        @Override
-        protected void onSubmit() {
-            try {
-                widget.onSubmit();
-            } catch (FileUploadViolationException e) {
-                e.getViolationMessages().forEach(this::error);
+    private FileUploadPanel createFileUploadPanel() {
+        final FileUploadValidationService validator = ImageUploadValidationService.getValidationService(getPluginConfig(), getPluginContext());
+        final FileUploadPanel panel = new FileUploadPanel("fileupload", getPluginConfig(), validator) {
+            @Override
+            public void onFileUpload(final FileUpload fileUpload) throws FileUploadViolationException {
+                handleUpload(fileUpload);
             }
-        }
-
+        };
+        panel.setVisible("edit".equals(mode));
+        return panel;
     }
 
     private void handleUpload(FileUpload upload) throws FileUploadViolationException {
         String fileName = upload.getClientFileName();
         String mimeType = upload.getContentType();
-
-        String serviceId = getPluginConfig().getString("gallery.processor.id", "gallery.processor.service");
-        GalleryProcessor processor = getPluginContext().getService(serviceId, GalleryProcessor.class);
-        if (processor == null) {
-            processor = new DefaultGalleryProcessor();
-        }
+        final GalleryProcessor processor = getGalleryProcessor();
 
         JcrNodeModel nodeModel = (JcrNodeModel) getDefaultModel();
         Node node = nodeModel.getNode();
-
         try {
             ImageBinary image = new ImageBinary(node, upload.getInputStream(), fileName, mimeType);
             processor.initGalleryResource(node, image.getStream(), image.getMimeType(), image.getFileName(), Calendar.getInstance());
@@ -139,7 +85,17 @@ public class ImageUploadPlugin extends RenderPlugin {
                 log.error("Cannot upload image: {}", e.getMessage());
             }
             throw new FileUploadViolationException(e.getMessage());
-
         }
+    }
+
+    private GalleryProcessor getGalleryProcessor() {
+        String serviceId = getPluginConfig().getString("gallery.processor.id", "service.gallery.processor");
+        GalleryProcessor processor = getPluginContext().getService(serviceId, GalleryProcessor.class);
+        if (processor == null) {
+            processor = new DefaultGalleryProcessor();
+            log.warn("Cannot load gallery processor service service with the id '{}'. Using the default service '{}'",
+                    serviceId, processor.getClass().getName());
+        }
+        return processor;
     }
 }

@@ -1,5 +1,5 @@
 <!--
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,11 +14,9 @@
  *  limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-<wicket:panel>
-    <form wicket:id="form">
-        <div class="resource-values resource-upload">
-            <div wicket:id="fileUploadPanel">[file-upload-panel]</div>
-        </div>
-    </form>
-</wicket:panel>
+  <wicket:panel>
+    <wicket:container wicket:id="fileupload">
+      [Display the FileUploadPanel]
+    </wicket:container>
+  </wicket:panel>
 </html>

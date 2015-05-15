@@ -32,6 +32,8 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.editor.plugins.resource.InvalidMimeTypeException;
 import org.hippoecm.frontend.editor.plugins.resource.MimeTypeHelper;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceException;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidationResult;

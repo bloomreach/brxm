@@ -23,14 +23,13 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
-import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
-import org.hippoecm.frontend.plugins.jquery.upload.SingleFileUploadWidget;
+import org.hippoecm.frontend.plugins.jquery.upload.single.FileUploadPanel;
+import org.hippoecm.frontend.plugins.yui.upload.validation.DefaultUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
@@ -45,51 +44,35 @@ public class ResourceUploadPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(ResourceUploadPlugin.class);
-    private final FileUploadForm form;
+    private final String mode;
 
     public ResourceUploadPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        form = new FileUploadForm("form");
-
-        add(form);
-        String mode = config.getString("mode", "edit");
-        form.setVisible("edit".equals(mode));
-
+        mode = config.getString("mode", "edit");
+        add(createFileUploadPanel());
         add(new EventStoppingBehavior("onclick"));
-
     }
 
-    private class FileUploadForm extends HippoForm {
-        private static final long serialVersionUID = 1L;
-
-        private SingleFileUploadWidget widget;
-
-        public FileUploadForm(String name) {
-            super(name);
-            setMultiPart(true);
-
-            String serviceId = getPluginConfig().getString(FileUploadValidationService.VALIDATE_ID, "service.gallery.asset.validation");
-            FileUploadValidationService validator = getPluginContext().getService(serviceId, FileUploadValidationService.class);
-
-            add(widget = new SingleFileUploadWidget("fileUploadPanel", getPluginConfig() ,validator) {
-                @Override
-                protected void onFileUpload(FileUpload fileUpload) throws FileUploadViolationException {
-                    handleUpload(fileUpload);
-                }
-            });
-
-            setMaxSize(Bytes.bytes(widget.getSettings().getMaxFileSize()));
-        }
-
-        @Override
-        protected void onSubmit() {
-            try {
-                widget.onSubmit();
-            } catch (FileUploadViolationException e) {
-                e.getViolationMessages().forEach(this::error);
+    private FileUploadPanel createFileUploadPanel() {
+        final FileUploadPanel panel = new FileUploadPanel("fileupload", getPluginConfig(), getValidationService()) {
+            @Override
+            public void onFileUpload ( final FileUpload fileUpload) throws FileUploadViolationException {
+                handleUpload(fileUpload);
             }
+        };
+        panel.setVisible("edit".equals(mode));
+        return panel;
+    }
+
+    private FileUploadValidationService getValidationService() {
+        String serviceId = getPluginConfig().getString(FileUploadValidationService.VALIDATE_ID, "service.gallery.asset.validation");
+        FileUploadValidationService validator = getPluginContext().getService(serviceId, FileUploadValidationService.class);
+        if (validator == null) {
+            validator = new DefaultUploadValidationService();
+            log.warn("Cannot load asset validation service with id '{}', using the default service '{}'",
+                    serviceId, validator.getClass().getName());
         }
+        return validator;
     }
 
     /**
