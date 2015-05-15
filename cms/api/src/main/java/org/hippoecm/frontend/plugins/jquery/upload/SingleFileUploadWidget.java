@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.jquery.upload;
 
 import java.util.List;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -27,9 +26,7 @@ import org.hippoecm.frontend.plugins.AbstractFileUploadWidget;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 
 /**
- * @author cngo
- * @version $Id$
- * @since 2015-01-05
+ * Single file upload using Wicket file-upload mechanism
  */
 public abstract class SingleFileUploadWidget extends AbstractFileUploadWidget {
 

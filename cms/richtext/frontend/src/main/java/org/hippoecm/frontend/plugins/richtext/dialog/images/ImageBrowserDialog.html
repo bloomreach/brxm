@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -14,41 +14,41 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-<wicket:panel>
+  <wicket:panel>
     <wicket:extend>
-        <form wicket:id="uploadForm">
-            <div class="upload-wrapper">
-                <label for="upload">
-                    <wicket:message key="select-file-label"/>
-                </label>
-                <input wicket:id="uploadField" size="60" id="upload" type="file" class="browse-button"/>
-                <span wicket:id="uploadTypeSelector"><select wicket:id="galleryType">[ ImageSet dropdown ]</select></span>
-                <input wicket:id="uploadButton" type="submit" value="Upload" class="upload-button"/>
-            </div>
-        </form>
 
-        <div wicket:id="content">[content]</div>
-
-        <div class="hippo-picker-properties ">
-            <div class="hippo-dialog-align">
-                <label>
-                    <wicket:message key="align-label">Align:</wicket:message>
-                </label>
-                <select wicket:id="align">[ Align dropdown ]</select>
-            </div>
-            <div class="hippo-dialog-type">
-                <label>
-                    <wicket:message key="type-label">Type:</wicket:message>
-                </label>
-                <select wicket:id="type">[ type dropdown ]</select>
-            </div>
-            <div class="hippo-dialog-alt">
-                <label>
-                    <wicket:message key="alt-text-label">Alternative text:</wicket:message>
-                </label>
-                <div wicket:id="alt" class="text-input">[Alt text box]</div>
-            </div>
+      <form wicket:id="uploadForm">
+        <div class="upload-wrapper">
+          <!--Begin of jquery file upload widget-->
+          <div wicket:id="uploadPanel" class="uploadpanel"></div>
+          <span wicket:id="uploadTypeSelector"><select wicket:id="galleryType">[ ImageSet dropdown ]</select></span>
+          <input wicket:id="uploadButton" type="button" class="upload-button"/>
+          <!--End of jquery file upload widget-->
         </div>
+      </form>
+
+      <div wicket:id="content">[content]</div>
+
+      <div class="hippo-picker-properties ">
+        <div class="hippo-dialog-align">
+          <label>
+            <wicket:message key="align-label">Align:</wicket:message>
+          </label>
+          <select wicket:id="align">[ Align dropdown ]</select>
+        </div>
+        <div class="hippo-dialog-type">
+          <label>
+            <wicket:message key="type-label">Type:</wicket:message>
+          </label>
+          <select wicket:id="type">[ type dropdown ]</select>
+        </div>
+        <div class="hippo-dialog-alt">
+          <label>
+            <wicket:message key="alt-text-label">Alternative text:</wicket:message>
+          </label>
+          <div wicket:id="alt" class="text-input">[Alt text box]</div>
+        </div>
+      </div>
     </wicket:extend>
-</wicket:panel>
+  </wicket:panel>
 </html>

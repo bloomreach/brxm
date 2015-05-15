@@ -19,7 +19,6 @@
 
 (function () {
   'use strict';
-  console.log("Init jquery-fileupload widget '${componentMarkupId}'");
 
   $('#${componentMarkupId}').fileupload({
     autoUpload: ${autoUpload},
@@ -46,19 +45,20 @@
     }
   }).bind('fileuploadadd', function (e, data) {
     var widget = $('#${componentMarkupId}').data("blueimp-fileupload");
-
     if (data && data.files && data.files.length > 0) {
       showSelectedFile(data.files[0].name);
-      enableUploadButton();
+      // store selected file
+      widget.uploaddata = data;
+
+      // notify server on file-change event
+      ${callbackFileOnChangeScript}
     }
-    // store selected file
-    widget.uploaddata = data;
   }).bind('fileuploadsubmit', function (e, data) {
+    var widget = $('#${componentMarkupId}').data("blueimp-fileupload");
     // remove stored file that has been uploaded
-    this.uploaddata = null;
+    widget.uploaddata = null;
 
     clearSelectedFile();
-    disableUploadButton();
   });
 })();
 
@@ -71,12 +71,4 @@ function showSelectedFile (filename) {
  */
 function clearSelectedFile () {
   $('#${componentMarkupId}').find('#selected-file').text('');
-}
-
-function enableUploadButton () {
-  $('.upload-wrapper .upload-button').prop('disabled', false);
-}
-
-function disableUploadButton () {
-  $('.upload-wrapper .upload-button').prop('disabled', true);
 }

@@ -30,7 +30,7 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 /**
  * Contributes all CSS/JS resources needed by http://blueimp.github.com/jQuery-File-Upload/
  */
-abstract public class FileUploadBehavior extends AbstractAjaxBehavior {
+public abstract class FileUploadBehavior extends AbstractAjaxBehavior {
     private static final long serialVersionUID = 1L;
 
     private static final String JQUERY_FILEUPLOAD_CSS = "css/jquery.fileupload.css";

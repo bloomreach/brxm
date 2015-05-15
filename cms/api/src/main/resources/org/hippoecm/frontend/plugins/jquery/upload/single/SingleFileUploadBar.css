@@ -1,0 +1,28 @@
+.fileupload-buttonbar .fileinput-button {
+  display: flex;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.fileupload-buttonbar .fileinput-button * {
+  padding: 0 0.5em;
+  flex-grow: 0;
+  display: inline-table;
+}
+
+.fileupload-buttonbar .fileinput-button input {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+
+#selected-file.ellipsis {
+  max-width: 500px;
+  padding-left: 0.5em;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

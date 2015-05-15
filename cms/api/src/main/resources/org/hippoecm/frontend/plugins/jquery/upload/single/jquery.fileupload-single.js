@@ -36,7 +36,6 @@
   $.blueimp.fileupload.prototype.options.processQueue = [];
 
   $.widget('blueimp.fileupload', $.blueimp.fileupload, {
-
     getFilesFromResponse: function (data) {
       if (data.result && $.isArray(data.result.files)) {
         return data.result.files;
@@ -44,10 +43,8 @@
       return [];
     },
 
-    // Call to upload the selected file
     uploadFile: function () {
       if (this.uploaddata && this.uploaddata.submit) {
-        // console.log("uploading file");
         this.uploaddata.submit();
       }
     }
