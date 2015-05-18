@@ -72,6 +72,10 @@ public interface HstComponent {
      */
     void destroy() throws HstComponentException;
 
+    /**
+     * Returns the ComponentConfiguration for this component or <code>null</code>
+     * if not implemented by a subclass
+     */
     default ComponentConfiguration getComponentConfiguration() {
         return null;
     }
