@@ -807,6 +807,7 @@ components/core/src/test/java/org/hippoecm/hst/core/component/TestHstResponse.ja
 components/core/src/test/java/org/hippoecm/hst/core/container/AbstractContainerURLProviderIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/AbstractPipelineTestCase.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/AsynchronousComponentWindowRendererIT.java -text
+components/core/src/test/java/org/hippoecm/hst/core/container/ContainerEventDispatchingIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/ContainerURLProviderIT.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/DefaultPipelineIT.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/FactoryComponentInstanceCreationIT.java -text
