@@ -705,7 +705,7 @@
     <example><![CDATA[
       <div>
         <hst:html hippohtml="${document.body}" fullyQualifiedLinks="true" />
-        <hst:html formatttedhtml="${document.formattedhtml}" />
+        <hst:html formattedhtml="${document.formattedhtml}" />
         <hst:html text="${document.intro}" />
       </div>
       ]]></example>
