@@ -562,7 +562,7 @@ public class ChannelManagerImpl implements ChannelManager {
             throw new ChannelException("Invalid channel URL: '" + channel.getUrl() + "'");
         }
 
-        if (!"http".equals(uri.getScheme()) && !"https".equals(uri.getScheme())) {
+        if (!isSupportedScheme(uri.getScheme())) {
             throw new ChannelException(
                     "Illegal channel URL scheme: '" + uri.getScheme() + "'. Only 'http' and 'https' is currently supported");
         }
@@ -572,6 +572,16 @@ public class ChannelManagerImpl implements ChannelManager {
         }
 
         return uri;
+    }
+
+    private boolean isSupportedScheme(final String scheme) {
+        if (scheme == null) {
+            return false;
+        }
+        if (scheme.equals("http") || scheme.equals("https")) {
+            return true;
+        }
+        return false;
     }
 
     /**
