@@ -135,9 +135,10 @@ public final class FolderTranslationView extends ExtPanel {
             public void onEvent(final AjaxRequestTarget target, Map<String, JSONArray> parameters) {
                 if (parameters.containsKey(POST_PARAM_T9ID)) {
                     JSONArray values = parameters.get(POST_PARAM_T9ID);
-                    if (values.length() > 0) {
+                    if (values != null && values.length() > 0 && !values.isNull(0)) {
                         try {
-                            onSelect(values.getString(0));
+                            String t9id = values.getString(0);
+                            onSelect("null".equals(t9id) ? null : t9id);
                         } catch (JSONException e) {
                             throw new RuntimeException("Could not retrieve t9id from select-folder event", e);
                         }
