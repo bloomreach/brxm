@@ -30,22 +30,21 @@
       'hippo.channel.menu.MenuService',
       function ($rootScope, $scope, $stateParams, $filter, FormStateService, ContainerService, FocusService, MenuService) {
         var EditMenuItemFormCtrl = this,
-          translate = $filter('translate');
+          translate = $filter('translate'),
+          deregisterNewItemListener = $rootScope.$on('new-menu-item', afternewItem);
 
         EditMenuItemFormCtrl.focus = FocusService.focusElementWithId;
+
+        function afternewItem () {
+          $scope.MenuItemCtrl.selectedMenuItem.title = '';
+
+          FormStateService.setDirty(true);
+          deregisterNewItemListener();
+        }
 
         $scope.$watch(function () {
           return $scope.form;
         }, function () {
-          var deregisterNewItemListener = $rootScope.$on('new-menu-item', afternewItem);
-
-          function afternewItem () {
-            $scope.MenuItemCtrl.selectedMenuItem.title = '';
-
-            FormStateService.setDirty(true);
-            deregisterNewItemListener();
-          }
-
           if ($stateParams.selectedDocumentPath) {
             $scope.MenuItemCtrl.selectedMenuItem.link = $scope.MenuItemCtrl.selectedMenuItem.sitemapLink = $stateParams.selectedDocumentPath;
             $scope.EditMenuItemCtrl.linkToFocus = 'sitemapLink';
