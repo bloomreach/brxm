@@ -69,7 +69,7 @@ public interface RewriteContextResolver {
      * @throws RewriteContextException in case not a proper RewriteContext can be returned. The {@link org.hippoecm.hst.core.linking.HstLinkCreator}
      * will in case of this exception return a {@link HstLink#isNotFound() hstLink#isNotFound() == true}.
      * @throws java.lang.RuntimeException in case if an unexpected runtime exception that cannot be handled with
-     * {@link   RewriteContextException
+     * {@link   RewriteContextException}
      */
     @SuppressWarnings("DuplicateThrows")
     RewriteContext resolve(Node node,Mount mount,HstRequestContext context,

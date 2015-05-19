@@ -48,7 +48,7 @@ public interface PooledSession extends Session {
     
     /**
      * Returns the last refreshed time millis.
-     * @return
+     * @return the last refreshed time millis.
      */
     long lastRefreshed();
 

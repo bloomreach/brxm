@@ -94,7 +94,9 @@ public interface HstRequest extends HttpServletRequest {
     /**
      * Returns the lifecycle phase of the current HST request.
      * 
-     * @see {@link #ACTION_PHASE}, {@link #RENDER_PHASE}, and {@link #RESOURCE_PHASE}. 
+     * @see #ACTION_PHASE
+     * @see #RENDER_PHASE
+     * @see #RESOURCE_PHASE
      */
     String getLifecyclePhase();
     

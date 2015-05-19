@@ -42,7 +42,6 @@ public interface HstRequestProcessor {
 
     /**
      * Returns the current request container config object used in the current request processing context.
-     * @return
      */
     HstContainerConfig getCurrentHstContainerConfig();
 

@@ -29,7 +29,7 @@ public interface ResourceLifecycleManagement {
     /**
      * Returns true if resource lifecycle management is turned on or forced to be turned on.
      * 
-     * @return
+     * @return true if resource lifecycle management is turned on or forced to be turned on.
      */
     boolean isActive();
     
@@ -43,14 +43,14 @@ public interface ResourceLifecycleManagement {
     /**
      * Returns true if resource lifecycle management is forced to be turned on.
      * 
-     * @return
+     * @return true if resource lifecycle management is forced to be turned on.
      */
     boolean isAlwaysActive();
     
     /**
      * Forces to turn on or off the resource lifecycle management.
      * 
-     * @param active
+     * @param alwaysActive
      */
     void setAlwaysActive(boolean alwaysActive);
     

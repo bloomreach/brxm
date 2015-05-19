@@ -29,7 +29,7 @@ public interface SimpleObjectConverter {
      * 
      * @param session
      * @param path
-     * @return
+     * @return a mapped object for the JCR node indicated by the path.
      */
     Object getObject(Session session, String path);
     

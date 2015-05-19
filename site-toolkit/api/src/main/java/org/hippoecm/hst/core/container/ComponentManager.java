@@ -116,7 +116,6 @@ public interface ComponentManager
      * @param <T>
      * @param name
      * @param addonModuleNames
-     * @return
      * @throws ModuleNotFoundException thrown when module is not found by the addonModuleNames
      */
     <T> T getComponent(String name, String ... addonModuleNames);
@@ -184,7 +183,7 @@ public interface ComponentManager
     
     /**
      * Returns the container configuration
-     * @return
+     * @return the container configuration
      */
     ContainerConfiguration getContainerConfiguration();
     

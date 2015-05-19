@@ -32,7 +32,7 @@ public interface ChannelManager {
      * to persist the channel.
      * </p>
      * <p>
-     * The persisted channel can be retrieved again via {@link org.hippoecm.hst.configuration.hosting.VirtualHosts#getChannelById(String)}
+     * The persisted channel can be retrieved again via {@link org.hippoecm.hst.configuration.hosting.VirtualHosts#getChannelById(String, String)}
      * with the returned channel ID.
      * </p>
      *

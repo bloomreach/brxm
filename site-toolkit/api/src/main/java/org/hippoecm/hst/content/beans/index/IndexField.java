@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  * <code>
  *     public class NewsBean extends BaseBean{
  *
- *         @IndexField
+ *         {@literal @}IndexField
  *         public  String getAuthor() {
  *             // return author
  *         }
@@ -47,7 +47,7 @@ import java.lang.annotation.Target;
  * <code>
  *     public class NewsBean extends BaseBean{
  *
- *         @IndexField(name="writer")
+ *         {@literal @}IndexField(name="writer")
  *         public  String getAuthor() {
  *             // return author
  *         }
@@ -77,7 +77,7 @@ import java.lang.annotation.Target;
  *        public  void setPath(String path) {
  *            // set path
  *        }
- *        @IndexField
+ *        {@literal @}IndexField
  *        public Author getAuthor() {
  *            // return author
  *        }
@@ -95,7 +95,7 @@ import java.lang.annotation.Target;
  *            // set path
  *         }
  *
- *         @IndexField
+ *         {@literal @}IndexField
  *         public String getName() {
  *             // return name
  *         }
@@ -105,7 +105,7 @@ import java.lang.annotation.Target;
  *
  *     public interface IdendifiableContentBean {
  *
- *        @IndexField(name="id", ignoreInCompound = true)
+ *        {@literal @}IndexField(name="id", ignoreInCompound = true)
  *        public String getPath();
  *
  *        public void setPath(String path);

@@ -81,8 +81,7 @@ public interface HstManager {
 
     /**
      * Returns the request path suffix delimiter.
-     * @return
-     */
+c     */
     String getPathSuffixDelimiter();
 
     /**

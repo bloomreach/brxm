@@ -153,10 +153,10 @@ public interface VirtualHost {
      * The hostname is the HttpServeltRequest request.getServerName() (proxies must have <code>ProxyPreserveHost On</code>)
      * The portnumber is as follows:
      * <ul>
-     *   <li>when {@link #isPortVisible()} is <code>false</code>, there is no portnumber</li>
+     *   <li>when {@code #isPortVisible()} is <code>false</code>, there is no portnumber</li>
      *   <li>otherwise:
      *       <ul>
-     *          <li><code>port = {@link #getPortNumber()}</code></li>
+     *          <li><code>port = {@code #getPortNumber()}</code></li>
      *          <li><code>if (port == 0) {port = request.getServerPort()}</code></li>
      *          <li>if(port == 80 && "http".equals(scheme)) || (port == 443 && "https".equals(scheme)): no portnumber will be in baseUrl
      *       </ul>

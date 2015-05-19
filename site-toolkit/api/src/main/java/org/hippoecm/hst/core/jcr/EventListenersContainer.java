@@ -56,7 +56,6 @@ public interface EventListenersContainer {
      * <EM>Note: Implementations could return a copied list of the event listener items.
      *           So, the return should not be assumed as a mutable list.</EM>
      * </P>
-     * @return
      */
     List<EventListenerItem> getEventListenerItems();
     

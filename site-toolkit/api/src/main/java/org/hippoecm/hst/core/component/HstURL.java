@@ -60,7 +60,6 @@ public interface HstURL {
     
     /**
      * Returns the url type: render, action or resource
-     * @return
      */
     String getType();
     
@@ -125,7 +124,7 @@ public interface HstURL {
     
     /**
      * Returns the resource ID
-     * @return String
+     * @return  the resource ID
      */
     String getResourceID();
         

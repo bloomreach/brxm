@@ -25,8 +25,6 @@ public interface UnderlyingServiceAware {
 
     /**
      * Returns the originating {@link Service} instance.
-     * 
-     * @return
      */
     Service getUnderlyingService();
     

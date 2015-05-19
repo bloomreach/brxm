@@ -162,7 +162,6 @@ public interface ContainerConfiguration {
     /**
      * Get an array of strings associated with the given configuration key. 
      * @param key
-     * @return
      */
     String[] getStringArray(String key);
     
@@ -174,7 +173,6 @@ public interface ContainerConfiguration {
     
     /**
      * Checks if the container is running under development mode
-     * @return
      */
     boolean isDevelopmentMode();
     

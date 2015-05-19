@@ -41,7 +41,6 @@ public interface ClasspathResourceScanner {
      * @param annotationType
      * @param matchSuperClass
      * @param locationPatterns
-     * @return
      */
     public Set<String> scanClassNamesAnnotatedBy(Class<? extends Annotation> annotationType, boolean matchSuperClass, String ... locationPatterns);
     

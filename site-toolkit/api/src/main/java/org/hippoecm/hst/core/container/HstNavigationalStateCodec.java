@@ -29,7 +29,6 @@ public interface HstNavigationalStateCodec {
      * 
      * @param value
      * @param characterEncoding
-     * @return
      * @throws UnsupportedEncodingException
      */
     String encodeParameters(String value, String characterEncoding) throws UnsupportedEncodingException;
@@ -39,7 +38,6 @@ public interface HstNavigationalStateCodec {
      * 
      * @param value
      * @param characterEncoding
-     * @return
      * @throws UnsupportedEncodingException
      */
     String decodeParameters(String value, String characterEncoding) throws UnsupportedEncodingException;

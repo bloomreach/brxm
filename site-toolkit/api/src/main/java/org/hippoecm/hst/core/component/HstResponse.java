@@ -211,7 +211,7 @@ public interface HstResponse extends HttpServletResponse {
     /**
      * Sends a temporary redirect response to the client using the specified redirect location URL.
      * <P>
-     * In either {@link HstComponent#doAction(HstRequest, HstResponse)} or {@link HstComponent#doBeforeRender(HstRequest, HstResponse)},
+     * In either {@link HstComponent#doAction(HstRequest, HstResponse)} or {@link HstComponent#doBeforeRender(HstRequest, HstResponse)} ,
      * the invocation on this method could be effective.
      * If the invocation on this method is done in other methods,
      * the invocation will be just ignored with no operation.

@@ -28,7 +28,7 @@ public interface HstContainerRequest extends HttpServletRequest {
     
     /**
      * Returns path suffix splitted from the request URI by the specified path suffix delimiter. 
-     * @return
+     * @return path suffix splitted from the request URI by the specified path suffix delimiter.
      */
     String getPathSuffix();
     

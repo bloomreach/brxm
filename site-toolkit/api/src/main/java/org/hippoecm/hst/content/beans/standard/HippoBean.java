@@ -227,7 +227,7 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
     /**
      * Same as {@link #getLinkedBean(String, Class)} only now all linked beans found at <code>relPath</code> are returned.
      * When no linked beans found, an empty list is returned.
-     * @see {@link #getLinkedBean(String, Class)}
+     * @see #getLinkedBean(String, Class)
      */
     <T extends HippoBean> List<T> getLinkedBeans(String relPath, Class<T> beanMappingClass);
 

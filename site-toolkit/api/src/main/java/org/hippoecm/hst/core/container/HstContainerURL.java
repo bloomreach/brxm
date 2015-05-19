@@ -181,7 +181,6 @@ public interface HstContainerURL {
      * in the array returned by <code>getParameterValues</code>.</p>
      * 
      * @param name
-     * @return
      */
     String getParameter(String name);
 
@@ -190,7 +189,6 @@ public interface HstContainerURL {
      * all of the values the given render parameter has, or 
      * <code>null</code> if the render parameter does not exist.
      * @param name
-     * @return
      */
     String[] getParameterValues(String name);
 
