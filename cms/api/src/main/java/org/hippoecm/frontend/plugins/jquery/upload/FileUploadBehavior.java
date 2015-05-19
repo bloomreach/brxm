@@ -33,16 +33,6 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 public abstract class FileUploadBehavior extends AbstractAjaxBehavior {
     private static final long serialVersionUID = 1L;
 
-    private static final String JQUERY_FILEUPLOAD_CSS = "css/jquery.fileupload.css";
-
-    public static final String[] JQUERY_FILEUPLOAD_SCRIPTS={
-            "js/jquery.ui.widget.js",
-            "js/jquery.iframe-transport.js",
-            "js/jquery.fileupload.js",
-            "js/jquery.fileupload-process.js",
-            "js/jquery.fileupload-validate.js"
-    };
-
     private static final String AUTOUPLOAD_PARAM = "autoUpload";
     private static final String REGEX_ANYFILE = ".*";
 
@@ -65,15 +55,9 @@ public abstract class FileUploadBehavior extends AbstractAjaxBehavior {
     }
 
     protected void renderCSS(final IHeaderResponse response) {
-        response.render(CssHeaderItem.forReference(
-                new CssResourceReference(FileUploadBehavior.class, JQUERY_FILEUPLOAD_CSS)));
     }
 
     protected void renderScripts(final IHeaderResponse response) {
-        for(String js : JQUERY_FILEUPLOAD_SCRIPTS){
-            response.render(JavaScriptHeaderItem.forReference(
-                    new JavaScriptResourceReference(FileUploadBehavior.class, js)));
-        }
     }
 
     /**

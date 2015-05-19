@@ -33,30 +33,11 @@ public class GalleryFileUploadBehavior extends FileUploadBehavior {
     public static final String CONFIG_JS = "fileupload-gallery-config.js";
 
     public static final String[] JQUERY_FILEUPLOAD_UI_EXT_SCRIPTS = {
-            "js/tmpl.js",
-            "js/load-image.js",
-            "js/load-image-meta.js",
-            "js/canvas-to-blob.js",
-            "js/jquery.fileupload-image.js",
-            "js/jquery.fileupload-ui.js",
             "multiple/jquery.fileupload-ui-gallery.js"
-    };
-
-    private static final String[] JQUERY_FILEUPLOAD_UI_CSS = {
-            "css/jquery.fileupload-ui.css",
-            "css/jquery.fileupload-ui-hippo.css"
     };
 
     public GalleryFileUploadBehavior(final FileUploadWidgetSettings settings) {
         super(settings);
-    }
-
-    protected void renderCSS(final IHeaderResponse response) {
-        super.renderCSS(response);
-        for(String css : JQUERY_FILEUPLOAD_UI_CSS){
-            response.render(CssHeaderItem.forReference(
-                    new CssResourceReference(FileUploadBehavior.class, css)));
-        }
     }
 
     protected void renderScripts(final IHeaderResponse response) {

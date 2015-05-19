@@ -789,7 +789,6 @@ api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/righ
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/top-bottom.gif -text
 api/src/main/resources/org/hippoecm/frontend/js/future.js -text
 api/src/main/resources/org/hippoecm/frontend/js/global.js -text
-api/src/main/resources/org/hippoecm/frontend/plugins/jquery/upload/img/loading.gif -text
 api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-128.png -text svneol=unset#image/png
 api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-16.png -text svneol=unset#image/png
 api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-24.png -text svneol=unset#image/png
@@ -1127,6 +1126,7 @@ api/src/main/styling/less/_hippo_logo.less -text
 api/src/main/styling/less/_hippo_menu.less -text
 api/src/main/styling/less/_icons.less -text
 api/src/main/styling/less/_image_gallery.less -text
+api/src/main/styling/less/_jquery-file-upload.less -text
 api/src/main/styling/less/_legacy.less -text
 api/src/main/styling/less/_login.less -text
 api/src/main/styling/less/_mixins.less -text

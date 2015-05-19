@@ -43,7 +43,7 @@ public class SingleFileUploadBar extends Panel {
     private static final long serialVersionUID = 1L;
     static private final Logger log = LoggerFactory.getLogger(SingleFileUploadBar.class);
 
-    private static final CssResourceReference CSS = new CssResourceReference(SingleFileUploadBar.class, "SingleFileUploadBar.css");;
+//    private static final CssResourceReference CSS = new CssResourceReference(SingleFileUploadBar.class, "SingleFileUploadBar.css");;
 
     private static final String JQUERY_FILEUPLOAD_SINGLE_JS = "jquery.fileupload-single.js";
     private static final String CONFIG_JS = "widget-config.js";
@@ -115,10 +115,5 @@ public class SingleFileUploadBar extends Panel {
      * @param variables
      */
     protected void onConfigureParameters(final Map<String, Object> variables) {
-    }
-
-    @Override
-    public void renderHead(IHeaderResponse response) {
-        response.render(CssHeaderItem.forReference(CSS));
     }
 }
