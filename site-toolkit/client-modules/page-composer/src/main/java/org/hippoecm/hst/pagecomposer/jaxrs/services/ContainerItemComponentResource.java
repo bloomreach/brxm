@@ -52,7 +52,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyR
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
-import org.hippoecm.hst.pagecomposer.jaxrs.util.MissingParametersInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
