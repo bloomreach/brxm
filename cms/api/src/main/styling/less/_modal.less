@@ -122,17 +122,30 @@
         display: block;
         margin-left: 8px;
       }
+
+      textarea {
+        width: 100%;
+      }
+    }
+
+    input,
+    select,
+    textarea {
+      border: 1px solid @light-gray;
     }
 
     input,
     select {
       flex-grow: 1;
       height: 30px;
-      border: 1px solid @light-gray;
     }
 
     input {
       padding: 0 8px 0 8px;
+    }
+
+    textarea {
+      padding: 8px;
     }
   }
 
