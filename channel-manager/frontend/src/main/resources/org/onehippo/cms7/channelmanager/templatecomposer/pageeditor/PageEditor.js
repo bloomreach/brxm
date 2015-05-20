@@ -1004,7 +1004,12 @@
                 lastModifiedTimestamp = record.get('lastModifiedTimestamp');
             componentPropertiesPanel.load(componentId, pageRequestVariants, lastModifiedTimestamp);
             if (this.propertiesWindow) {
-                this.propertiesWindow.setTitle(record.get('name'));
+                if(record.json !== undefined && record.json.label !== undefined){
+                    this.propertiesWindow.setTitle(record.json.label);
+                }else{
+                    this.propertiesWindow.setTitle(record.get('name'));
+                }
+
                 this.propertiesWindow.show();
             }
         },
