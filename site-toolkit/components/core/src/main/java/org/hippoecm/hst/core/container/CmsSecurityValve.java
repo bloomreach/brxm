@@ -246,11 +246,6 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
         if (servletRequest.getParameterMap().containsKey("retry") && key == null) {
             // endless redirect loop protection, for example in case the decryption of credentials keeps failing
-            try {
-                servletResponse.sendError(HttpServletResponse.SC_CONFLICT);
-            } catch (IOException e) {
-                throw new ContainerException(e);
-            }
             sendError(servletResponse, HttpServletResponse.SC_CONFLICT);
             return;
         }
