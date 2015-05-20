@@ -18,7 +18,7 @@
 
     Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
-    function invalidatePreviousHstSession(composerRestMountUrl, cmsUser) {
+    function setHstSession(composerRestMountUrl, cmsUser) {
         var url = composerRestMountUrl + '/cafebabe-cafe-babe-cafe-babecafebabe./keepalive/?FORCE_CLIENT_HOST=true';
         Ext.Ajax.request({
             url: url,
@@ -222,7 +222,7 @@
                 }.createDelegate(this));
             }
 
-            invalidatePreviousHstSession(this.pageContainer.getComposerRestMountUrl(), config.cmsUser);
+            setHstSession(this.pageContainer.getComposerRestMountUrl(), config.cmsUser);
 
             this.initUI(config);
 
