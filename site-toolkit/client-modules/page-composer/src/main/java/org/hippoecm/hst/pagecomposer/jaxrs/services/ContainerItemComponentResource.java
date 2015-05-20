@@ -119,7 +119,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response retainVariants(final String[] variants,
-                                   final @HeaderParam("versionStamp") long versionStamp) {
+                                   final @HeaderParam("X-lastModifiedTimestamp") long versionStamp) {
         try {
             Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
             Set<String> removedVariants = doRetainVariants(containerItem, variants, versionStamp);
@@ -255,7 +255,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Path("/{variant}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response setParameters(final @PathParam("variant") String variant,
-                                  final @HeaderParam("versionStamp") long versionStamp,
+                                  final @HeaderParam("X-lastModifiedTimestamp") long versionStamp,
                                   final MultivaluedMap<String, String> params) {
         try {
             final Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
@@ -289,7 +289,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response setParametersAndRenameVariant(final @PathParam("oldVariant") String oldVariant,
                                                   final @PathParam("newVariant") String newVariant,
-                                                  final @HeaderParam("versionStamp") long versionStamp,
+                                                  final @HeaderParam("X-lastModifiedTimestamp") long versionStamp,
                                                   final MultivaluedMap<String, String> params) {
         try {
             final Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
@@ -349,7 +349,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Path("/{variant}/default")
     @Produces(MediaType.APPLICATION_JSON)
     public Response createVariant(final @PathParam("variant") String variant,
-                                  final @HeaderParam("versionStamp") long versionStamp) {
+                                  final @HeaderParam("X-lastModifiedTimestamp") long versionStamp) {
 
         try {
             Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
@@ -399,7 +399,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Path("/{variant}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteVariant(final @PathParam("variant") String variant,
-                                  final @HeaderParam("versionStamp") long versionStamp) {
+                                  final @HeaderParam("X-lastModifiedTimestamp") long versionStamp) {
         try {
             Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
             HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);

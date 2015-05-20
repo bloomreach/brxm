@@ -61,7 +61,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createContainerItem(final @PathParam("itemUUID") String itemUUID,
-                                        final @QueryParam("versionStamp") long versionStamp) throws ContainerException {
+                                        final @QueryParam("lastModifiedTimestamp") long versionStamp) throws ContainerException {
 
         if (itemUUID == null) {
             throw new ContainerException("There must be a uuid of the containeritem to copy from ");
@@ -129,7 +129,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateContainer(final @PathParam("itemUUID") String itemUUID,
-                                    final @QueryParam("versionStamp") long versionStamp,
+                                    final @QueryParam("lastModifiedTimestamp") long versionStamp,
                                     final PostRepresentation<ContainerRepresentation> post) {
 
         ContainerRepresentation container = post.getData();
@@ -187,7 +187,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @Path("/delete/{itemUUID}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteContainerItem(final @PathParam("itemUUID") String itemUUID,
-                                        final @QueryParam("versionStamp") long versionStamp) {
+                                        final @QueryParam("lastModifiedTimestamp") long versionStamp) {
         HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         try {
             Session session = requestContext.getSession();
