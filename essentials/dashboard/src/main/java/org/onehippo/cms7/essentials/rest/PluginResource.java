@@ -309,14 +309,14 @@ public class PluginResource extends BaseResource {
 
 
     private String autoSetupIfPossible(final Plugin plugin) {
-        final PluginParameterService pluginParameters = PluginParameterServiceFactory.getParameterService(plugin);
-        final ProjectSettings settings = pluginStore.getProjectSettings();
+        if (plugin.getInstallState() != InstallState.ONBOARD || !plugin.hasGeneralizedSetUp()) {
+            return null; // auto-setup not possible
+        }
 
-        if (plugin.getInstallState() != InstallState.ONBOARD
-                || !plugin.hasGeneralizedSetUp()
-                || (settings.isConfirmParams() && pluginParameters.hasGeneralizedSetupParameters())) {
-            // auto-setup not possible
-            return null;
+        final ProjectSettings settings = pluginStore.getProjectSettings();
+        final PluginParameterService pluginParameters = PluginParameterServiceFactory.getParameterService(plugin);
+        if (settings.isConfirmParams() && pluginParameters.hasGeneralizedSetupParameters()) {
+            return null; // skip auto-setup if per-plugin parameters are requested and the plugin actually has parameters
         }
 
         final Map<String, Object> properties = new HashMap<>();
