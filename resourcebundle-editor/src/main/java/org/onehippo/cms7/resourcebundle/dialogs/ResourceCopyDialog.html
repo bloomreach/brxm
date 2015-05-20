@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,37 +16,29 @@
   -->
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:extend>
-    <table class="hippo-window-form">
-        <thead>
-        <tr>
-            <td>
-                <span wicket:id="key-label"></span>
-            </td>
-            <td>
-                <input wicket:id="key-value" type="text"/>
-            </td>
-        </tr>
-        </thead>
-        <tbody>
-        <tr wicket:id="repeater">
-            <td>
-                <span wicket:id="value-label"></span> (<span wicket:id="value-set-label"></span>)
-            </td>
-            <td>
-                <input wicket:id="value-set-value" type="text" size="100"/>
-            </td>
-        </tr>
-        </tbody>
-        <tfoot>
-        <tr>
-            <td>
-                <span wicket:id="desc-label"></span>
-            </td>
-            <td>
-                <textarea wicket:id="desc-value" rows="10" cols="100"></textarea>
-            </td>
-        </tr>
-        </tfoot>
-    </table>
+  <div class="hippo-dialog-body">
+    <div class="label">
+      <span wicket:id="key-label"></span>
+    </div>
+    <div class="input">
+      <input wicket:id="key-value" type="text"/>
+    </div>
+
+    <div wicket:id="repeater">
+      <div class="label">
+        <span wicket:id="value-label"></span> (<span wicket:id="value-set-label"></span>):
+      </div>
+      <div class="input">
+        <input wicket:id="value-set-value" type="text"/>
+      </div>
+    </div>
+
+    <div class="label">
+      <span wicket:id="desc-label"></span>
+    </div>
+    <div class="input">
+      <textarea wicket:id="desc-value" rows="10"></textarea>
+    </div>
+  </div>
 </wicket:extend>
 </html>

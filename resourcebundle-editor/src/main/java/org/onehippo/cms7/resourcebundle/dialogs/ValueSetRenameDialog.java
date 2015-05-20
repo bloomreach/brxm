@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,9 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.apache.wicket.util.value.IValueMap;
+import org.hippoecm.frontend.dialog.Dialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.onehippo.cms7.resourcebundle.ResourceBundlePlugin;
 import org.onehippo.cms7.resourcebundle.data.Bundle;
 import org.onehippo.cms7.resourcebundle.data.ValueSet;
@@ -33,7 +35,7 @@ import org.onehippo.cms7.resourcebundle.validators.ValueSetNameValidator;
 /**
  * @version "$Id$"
  */
-public class ValueSetRenameDialog extends AbstractDialog<String> {
+public class ValueSetRenameDialog extends Dialog<String> {
 
     private static final long serialVersionUID = 1L;
     private ResourceBundlePlugin plugin;
@@ -73,5 +75,10 @@ public class ValueSetRenameDialog extends AbstractDialog<String> {
     public ValueSet getValueSet() {
         selectedValueSet.setDisplayName(newName);
         return selectedValueSet;
+    }
+
+    @Override
+    public IValueMap getProperties() {
+        return DialogConstants.MEDIUM_AUTO;
     }
 }
