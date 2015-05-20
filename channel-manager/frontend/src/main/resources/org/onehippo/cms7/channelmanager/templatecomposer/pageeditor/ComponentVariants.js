@@ -139,7 +139,7 @@
                         headers: {
                             'FORCE_CLIENT_HOST': 'true',
                             'Content-Type': 'application/json',
-                            'X-lastModifiedTimestamp': this.lastModifiedTimestamp
+                            'lastModifiedTimestamp': this.lastModifiedTimestamp
                         },
                         params: Ext.util.JSON.encode(variantIds),
                         scope: this,
