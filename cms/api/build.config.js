@@ -24,6 +24,10 @@ module.exports = {
     images:     'target/classes/org/hippoecm/frontend/skin/images',
     skin:       'target/classes/skin/hippo-cms',
     src:        'src/main/styling',
+    fileupload: {
+        src:    'src/main/resources/org/hippoecm/frontend/plugins/jquery/upload',
+        target: 'target/classes/org/hippoecm/frontend/plugins/jquery/upload'
+    },
     target:     'target',
     tmp:        'target/.tmp'
 };

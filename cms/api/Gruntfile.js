@@ -171,7 +171,6 @@ module.exports = function (grunt) {
           '<%= build.bower %>/jquery-file-upload/js/jquery.fileupload-process.js',
           '<%= build.bower %>/jquery-file-upload/js/jquery.fileupload-validate.js',
           '<%= build.bower %>/jquery-file-upload/js/jquery.fileupload-image.js',
-          '<%= build.bower %>/jquery-file-upload/js/jquery.fileupload-ui.js',
           '<%= build.bower %>/jquery-file-upload/js/jquery.iframe-transport.js'
         ],
         dest: '<%= build.skin %>/js/<%= build.file %>.js',
@@ -184,6 +183,22 @@ module.exports = function (grunt) {
         files: {
           '<%= build.skin %>/js/<%= build.file %>.min.js': ['<%= concat.js.dest %>']
         }
+      },
+      static_mappings: {
+        files: [
+          {
+            src: '<%= build.bower %>/jquery-file-upload/js/jquery.fileupload-ui.js',
+            dest: '<%= build.fileupload.target %>/multiple/jquery.fileupload-ui.js'
+          },
+          {
+            src: '<%= build.fileupload.src %>/multiple/jquery.fileupload-ui-gallery.js',
+            dest: '<%= build.fileupload.target %>/multiple/jquery.fileupload-ui-gallery.js'
+          },
+          {
+            src: '<%= build.fileupload.src %>/single/jquery.fileupload-single.js',
+            dest: '<%= build.fileupload.target %>/single/jquery.fileupload-single.js'
+          }
+        ]
       }
     },
 

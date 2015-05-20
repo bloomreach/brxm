@@ -19,11 +19,9 @@ package org.hippoecm.frontend.plugins.jquery.upload.multiple;
 import java.util.Map;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadBehavior;
@@ -33,6 +31,8 @@ public class GalleryFileUploadBehavior extends FileUploadBehavior {
     public static final String CONFIG_JS = "fileupload-gallery-config.js";
 
     public static final String[] JQUERY_FILEUPLOAD_UI_EXT_SCRIPTS = {
+            // the jquery.fileupload-ui.js file is fetched by bower
+            "multiple/jquery.fileupload-ui.js",
             "multiple/jquery.fileupload-ui-gallery.js"
     };
 
@@ -40,6 +40,7 @@ public class GalleryFileUploadBehavior extends FileUploadBehavior {
         super(settings);
     }
 
+    @Override
     protected void renderScripts(final IHeaderResponse response) {
         super.renderScripts(response);
         // insert other scripts for multi-file upload purposes

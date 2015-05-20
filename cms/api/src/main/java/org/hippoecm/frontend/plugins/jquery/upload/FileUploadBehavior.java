@@ -21,11 +21,7 @@ import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
-import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
 /**
  * Contributes all CSS/JS resources needed by http://blueimp.github.com/jQuery-File-Upload/
@@ -45,8 +41,6 @@ public abstract class FileUploadBehavior extends AbstractAjaxBehavior {
     @Override
     public void renderHead(Component component, IHeaderResponse response) {
         super.renderHead(component, response);
-        response.render(JavaScriptHeaderItem.forReference(
-                component.getApplication().getJavaScriptLibrarySettings().getJQueryReference()));
 
         renderCSS(response);
         renderScripts(response);
