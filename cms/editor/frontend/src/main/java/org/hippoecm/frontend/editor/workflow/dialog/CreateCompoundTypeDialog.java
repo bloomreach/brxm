@@ -36,7 +36,7 @@ public class CreateCompoundTypeDialog extends CreateTypeDialog {
         TextFieldWidget nameComponent;
 
         TypeDetailStep(NewCompoundTypeAction action) {
-            super(new ResourceModel("type-detail-title"), new ResourceModel("type-detail-summary"));
+            super(new ResourceModel("type-detail-title"), new ResourceModel("compound-type-detail-summary"));
             add(nameComponent = new TextFieldWidget("name", new PropertyModel(action, "name")));
         }
 
