@@ -17,8 +17,11 @@ package org.hippoecm.frontend.editor.workflow.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -35,6 +38,7 @@ import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,7 +110,7 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
                 entries = new ArrayList<>();
                 numResults = 0;
                 final IModel<Node> model = getChainedModel();
-                List<Node> nodes = getReferrersSortedByName(model.getObject(), retrieveUnpublished, getLimit());
+                SortedSet<Node> nodes = getReferrersSortedByName(model.getObject(), retrieveUnpublished, getLimit());
                 numResults = nodes.size();
                 for(Node node : nodes) {
                     entries.add(new JcrNodeModel(node));
@@ -117,53 +121,89 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
         }
     }
 
-    static List<Node> getReferrersSortedByName(Node handle, boolean retrieveUnpublished, int resultMaxCount) throws RepositoryException {
-        List<Node> referrers = new ArrayList<>();
+    static SortedSet<Node> getReferrersSortedByName(Node handle, boolean retrieveUnpublished, int resultMaxCount) throws RepositoryException {
         if (handle.isNodeType(HippoNodeType.NT_DOCUMENT)) {
             handle = handle.getParent();
         }
         if (!handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-            return Collections.emptyList();
+            return Collections.emptySortedSet();
         }
 
-        String uuid = handle.getIdentifier();
-        QueryManager queryManager = handle.getSession().getWorkspace().getQueryManager();
-        String statement = createReferrersStatement(retrieveUnpublished, uuid, 5);
-        HippoQuery query = (HippoQuery) queryManager.createQuery(statement, Query.XPATH);
-        query.setLimit(1000);
-        QueryResult result = query.execute();
+        Comparator<Node> comparator = (Node node1, Node node2) -> {
+            try {
+                if (node1.getIdentifier().equals(node2.getIdentifier())) {
+                    return 0;
+                }
 
-        for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
-            if(referrers.size() >= resultMaxCount) {
-                break;
+                int nameCompareResult = node1.getName().compareTo(node2.getName());
+                if (nameCompareResult != 0) {
+                    return nameCompareResult;
+                } else {
+                    return node1.getIdentifier().compareTo(node2.getIdentifier());
+                }
+            } catch (RepositoryException e) {
+                // ignore, should not happen
+                return 0;
             }
-            referrers.add(iter.nextNode());
-        }
+        };
+        TreeSet<Node> referrers = new TreeSet<>(comparator);
+        String uuid = handle.getIdentifier();
+
+        StringBuilder queryBuilder =
+                new StringBuilder("//element(*,hippo:facetselect)[@hippo:docbase='").append(uuid).append("']");
+        addReferrers(handle, retrieveUnpublished, resultMaxCount, queryBuilder.toString(), referrers);
+
+        queryBuilder =
+                new StringBuilder("//element(*,hippo:mirror)[@hippo:docbase='").append(uuid).append("']");
+        addReferrers(handle, retrieveUnpublished, resultMaxCount, queryBuilder.toString(), referrers);
+
         return referrers;
     }
 
-    static String createReferrersStatement(final boolean retrieveUnpublished, final String uuid, final int maxDocbaseDepth) {
-        if (maxDocbaseDepth == 0) {
-            throw new IllegalArgumentException("maxDocbaseDepth must be at least 1");
-        }
-        StringBuilder statement;
-        if (retrieveUnpublished) {
-            statement = new StringBuilder("//element(*,hippo:handle)[*/hippo:availability='preview' and (");
-        } else {
-            statement = new StringBuilder("//element(*,hippo:handle)[*/hippo:availability='live' and (");
-        }
-        // we check at most maxDocbaseDepth levels deep for referring links
-        for (int i = 0; i < maxDocbaseDepth; i++) {
-            if (i > 0) {
-                statement.append(" or ");
+    static void addReferrers(Node handle, boolean retrieveUnpublished, int resultMaxCount, String queryStatement, TreeSet<Node> referrers) throws RepositoryException {
+        QueryManager queryManager = handle.getSession().getWorkspace().getQueryManager();
+        HippoQuery query = (HippoQuery) queryManager.createQuery(queryStatement, Query.XPATH);
+        query.setLimit(1000);
+        QueryResult result = query.execute();
+        String rootUuid = handle.getSession().getRootNode().getIdentifier();
+
+        for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
+            if (referrers.size() >= resultMaxCount) {
+                break;
             }
-            for (int j = 0 ; j <= i; j++) {
-                statement.append("*/");
+
+            Node current = iter.nextNode();
+            while (!current.getIdentifier().equals(rootUuid)) {
+                if (current.isNodeType(HippoNodeType.NT_DOCUMENT) && hasCorrectAvailability(current, retrieveUnpublished)) {
+                    Node parent = current.getParent();
+                    if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        referrers.add(parent);
+                        break;
+                    }
+                }
+
+                current = current.getParent();
             }
-            statement.append("@hippo:docbase='").append(uuid).append("'");
         }
-        statement.append(")] order by @jcr:name ascending");
-        return statement.toString();
+    }
+
+    static boolean hasCorrectAvailability(Node node, boolean retrieveUnpublished) throws RepositoryException {
+        String[] availabilityArray = JcrUtils.getMultipleStringProperty(node, "hippo:availability", null);
+        if (availabilityArray == null) {
+            return false;
+        }
+
+        // iterating over all strings in case the node is a not-yet-converted 7.8 style document
+        for (String availability: availabilityArray) {
+            if (availability.equals("live")) {
+                return true;
+            }
+            if (retrieveUnpublished && availability.equals("preview")) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }
