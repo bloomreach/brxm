@@ -18,7 +18,7 @@
 
     Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
-    function setHstSession(composerRestMountUrl, cmsUser) {
+    function synchronizeSiteUser(composerRestMountUrl, cmsUser) {
         var url = composerRestMountUrl + '/cafebabe-cafe-babe-cafe-babecafebabe./keepalive/?FORCE_CLIENT_HOST=true';
         Ext.Ajax.request({
             url: url,
@@ -222,7 +222,7 @@
                 }.createDelegate(this));
             }
 
-            setHstSession(this.pageContainer.getComposerRestMountUrl(), config.cmsUser);
+            synchronizeSiteUser(this.pageContainer.getComposerRestMountUrl(), config.cmsUser);
 
             this.initUI(config);
 
@@ -1007,7 +1007,7 @@
                 if(record.json !== undefined && record.json.label !== undefined){
                     this.propertiesWindow.setTitle(record.json.label);
                 }else{
-                    this.propertiesWindow.setTitle(record.get('name'));
+                this.propertiesWindow.setTitle(record.get('name'));
                 }
 
                 this.propertiesWindow.show();
