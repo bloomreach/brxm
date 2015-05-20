@@ -98,7 +98,7 @@
       </sv:node>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="banner2.jpg">
+  <sv:node sv:name="banner2.png">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:handle</sv:value>
     </sv:property>
@@ -121,10 +121,10 @@
         <sv:value>preview</sv:value>
       </sv:property>
       <sv:property sv:name="hippogallery:description" sv:type="String">
-        <sv:value>Description for banner2.jpg</sv:value>
+        <sv:value>Description for banner2.png</sv:value>
       </sv:property>
       <sv:property sv:name="hippogallery:filename" sv:type="String">
-        <sv:value>banner2.jpg</sv:value>
+        <sv:value>banner2.png</sv:value>
       </sv:property>
       <sv:node sv:name="hippogallery:thumbnail">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
