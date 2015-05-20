@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -106,7 +106,8 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
                 entries = new ArrayList<>();
                 numResults = 0;
                 final IModel<Node> model = getChainedModel();
-                List<Node> nodes = getReferrersSortedByName(model.getObject());
+                List<Node> nodes = getReferrersSortedByName(model.getObject(), retrieveUnpublished, getLimit());
+                numResults = nodes.size();
                 for(Node node : nodes) {
                     entries.add(new JcrNodeModel(node));
                 }
@@ -116,7 +117,7 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
         }
     }
 
-    protected List<Node> getReferrersSortedByName(Node handle) throws RepositoryException {
+    static List<Node> getReferrersSortedByName(Node handle, boolean retrieveUnpublished, int resultMaxCount) throws RepositoryException {
         List<Node> referrers = new ArrayList<>();
         if (handle.isNodeType(HippoNodeType.NT_DOCUMENT)) {
             handle = handle.getParent();
@@ -124,18 +125,16 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
         if (!handle.isNodeType(HippoNodeType.NT_HANDLE)) {
             return Collections.emptyList();
         }
+
         String uuid = handle.getIdentifier();
         QueryManager queryManager = handle.getSession().getWorkspace().getQueryManager();
         String statement = createReferrersStatement(retrieveUnpublished, uuid, 5);
         HippoQuery query = (HippoQuery) queryManager.createQuery(statement, Query.XPATH);
         query.setLimit(1000);
         QueryResult result = query.execute();
-        numResults = (int) result.getNodes().getSize();
-        if (numResults >= 1000) {
-            numResults = -1;
-        }
+
         for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
-            if(referrers.size() >= getLimit()) {
+            if(referrers.size() >= resultMaxCount) {
                 break;
             }
             referrers.add(iter.nextNode());
