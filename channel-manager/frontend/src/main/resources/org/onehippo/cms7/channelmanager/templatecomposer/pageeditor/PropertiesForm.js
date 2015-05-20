@@ -187,7 +187,7 @@
       form.submit({
         headers: {
           'FORCE_CLIENT_HOST': 'true',
-          'X-lastModifiedTimestamp': this.lastModifiedTimestamp
+          'lastModifiedTimestamp': this.lastModifiedTimestamp
         },
         params: uncheckedValues,
         url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/rename/' + encodeURIComponent(this.newVariantId) + '?FORCE_CLIENT_HOST=true',
