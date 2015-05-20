@@ -309,18 +309,29 @@ public class Main extends PluginApplication {
                 final List<StringValue> keyParams = requestParameters.getParameterValues("key");
                 final List<StringValue> destinationUrlParams = requestParameters.getParameterValues("destinationUrl");
 
-                if (userCredentials != null && keyParams.size() > 0 && destinationUrlParams.size() > 0) {
+                if (userCredentials != null && destinationUrlParams.size() > 0) {
 
                     requestTarget = new IRequestHandler() {
 
                         @Override
                         public void respond(IRequestCycle requestCycle) {
-                            String key = keyParams.get(0).toString();
                             String destinationUrl = destinationUrlParams.get(0).toString();
+                            WebResponse response = (WebResponse) RequestCycle.get().getResponse();
+                            if (keyParams == null || keyParams.get(0) == null) {
+                                // redirect to destinationURL and include marker that it is a retry. This way
+                                // the destination can choose to not redirect for SSO handshake again if it still does not
+                                // have a key
+                                if (destinationUrl.contains("?")) {
+                                    response.sendRedirect(destinationUrl + "&retry");
+                                } else {
+                                    response.sendRedirect(destinationUrl + "?retry");
+                                }
+                                return;
+                            }
+                            String key = keyParams.get(0).toString();
                             CredentialCipher cipher = CredentialCipher.getInstance();
                             String encryptedString = cipher.getEncryptedString(key, (SimpleCredentials) userCredentials.getJcrCredentials());
 
-                            WebResponse response = (WebResponse) RequestCycle.get().getResponse();
                             if (destinationUrl.contains("?")) {
                                 response.sendRedirect(destinationUrl + "&cred=" + encryptedString);
                             } else {
