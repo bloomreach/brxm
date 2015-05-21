@@ -19,7 +19,7 @@
 
 .selectric {
   border: 0;
-  border-radius: unit(@forms-select-border-radius, px);
+  border-radius: @forms-select-border-radius;
   height: 25px;
   background-color: @forms-select-bgcolor;
 
@@ -35,7 +35,7 @@
     height: 25px;
     line-height: 25px;
     background-color: @forms-select-button-color;
-    border-radius: 0 unit(@forms-select-border-radius, px) unit(@forms-select-border-radius, px) 0;
+    border-radius: 0 @forms-select-border-radius @forms-select-border-radius 0;
 
     &:after {
       border-color: @forms-select-arrow-color transparent;
@@ -59,7 +59,7 @@
 
 .selectric-items {
   .remove-outline();
-  border-radius: unit(@forms-select-border-radius, px);
+  border-radius: @forms-select-border-radius;
   background-color: @forms-select-items-bgcolor;
 
   li {
@@ -71,7 +71,7 @@
       background-color: @forms-select-items-hover-bgcolor;
 
       &:last-child {
-        border-radius: 0 0 unit(@forms-select-border-radius, px) unit(@forms-select-border-radius, px);
+        border-radius: 0 0 @forms-select-border-radius @forms-select-border-radius;
       }
     }
   }

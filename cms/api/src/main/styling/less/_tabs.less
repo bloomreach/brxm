@@ -12,12 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// TabsPlugin Document switcher
-
-@tab-width: @document-tab-width;
-@tab-height: @document-tab-height;
-@tab-padding-left: 8;
-
 .hippo-tabs-documents {
   width: 100%;
   min-width: 0;
@@ -30,10 +24,10 @@
 
     > li {
       flex: 1;
-      height: unit(@footer-height, px);
+      height: @footer-height;
       display: flex;
       align-items: stretch;
-      max-width: unit(@tab-width, px);
+      max-width: @tab-width;
       min-width: 0;
       border-right: 1px solid @document-tab-border-color;
 
@@ -49,7 +43,7 @@
           align-items: center;
 
           min-width: 0;
-          padding-left: unit(@tab-padding-left, px);
+          padding-left: @tab-padding-left;
 
           color: @document-tab-title-color;
           text-decoration: none;

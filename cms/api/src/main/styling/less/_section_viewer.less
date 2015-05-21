@@ -19,7 +19,7 @@
 
   .section-selection {
     background-color: @section-selection-bgcolor;
-    height: unit(@sections-select-height, px);
+    height: @sections-select-height;
     display: flex;
 
     .section-selection-form {
@@ -30,7 +30,7 @@
   }
 
   .section-view {
-    height: ~"calc(100% - @{sections-select-height}px)";
+    height: ~"calc(100% - @{sections-select-height})";
 
     &.unselected {
       display: none;
@@ -44,9 +44,8 @@
       }
 
       .section-top {
-        min-height: unit(@sections-top-height, px);
-        height: unit(@sections-top-height, px);
-
+        min-height: @sections-top-height;
+        height: @sections-top-height;
         background-color: @sections-top-bgcolor;
         margin: 0;
         padding: 0;
@@ -68,8 +67,8 @@
       }
 
       .section-bottom {
-        min-height: unit(@sections-bottom-height, px);
-        height: unit(@sections-bottom-height, px);
+        min-height: @sections-bottom-height;
+        height: @sections-bottom-height;
         border-top: 1px solid @sections-border-color;
         white-space: nowrap;
 

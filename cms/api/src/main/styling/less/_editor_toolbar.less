@@ -22,13 +22,13 @@
   background-color: @editor-toolbar-bgcolor;
   float: left;
   width: 100%;
-  height: unit(@editor-toolbar-height, px);
+  height: @editor-toolbar-height;
 
   .hippo-toolbar-section {
 
     > li {
       float: left;
-      height: unit(@editor-toolbar-height, px);
+      height: @editor-toolbar-height;
 
       &:first-child > span {
         > a {
@@ -45,7 +45,7 @@
         text-decoration: none;
         padding-left: 12px;
         padding-right: 8px;
-        font-size: unit(@editor-toolbar-fontsize, px);
+        font-size: @editor-toolbar-fontsize;
       }
 
       &.menu-item:hover {
@@ -83,7 +83,7 @@
       // Buttons like 'Edit' & 'Save'
       .menu-action {
         display: block;
-        height: unit(@editor-toolbar-height, px);
+        height: @editor-toolbar-height;
 
         > span {
           float: left;
@@ -111,7 +111,7 @@
       // Dropdown buttons like 'Publication'
       .hippo-toolbar-section-button {
         display: block;
-        height: unit(@editor-toolbar-height, px);
+        height: @editor-toolbar-height;
         padding-right: 12px;
 
         > span {
@@ -177,9 +177,9 @@
       margin-left: 12px;
       color: @editor-toolbar-color;
       white-space: nowrap;
-      font-size: unit(@editor-toolbar-fontsize, px);
+      font-size: @editor-toolbar-fontsize;
       // Firefox will render the label 1px lower than Chrome/Safari if line-height is not set to (font-size - 1)
-      line-height: unit(@editor-toolbar-fontsize - 1, px);
+      line-height: @editor-toolbar-fontsize - 1;
 
       .menu-action-text {
         position: relative;

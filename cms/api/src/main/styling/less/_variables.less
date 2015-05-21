@@ -25,45 +25,27 @@
 // the font-size of a container element (not yet sure which ones specifically apart from the divs in the tree) is an
 // even number of px.
 @font-size-svg-fix:                  12px;
-@font-size-base:                     13px;
 @font-size-extjs:                    12px;
-@font-size-large:                    ceil((@font-size-base * 1.10)); // ~15px
-@font-size-small:                    ceil((@font-size-base * 0.85)); // ~12px
-@font-size-tiny:                     ceil((@font-size-base * 0.75)); // ~10px
-
-@font-size-h1:                       floor((@font-size-base * 2.6)); // ~33px
-@font-size-h2:                       floor((@font-size-base * 2.15)); // ~27px
-@font-size-h3:                       ceil((@font-size-base * 1.7)); // ~23px
-@font-size-h4:                       ceil((@font-size-base * 1.25)); // ~17px
-@font-size-h5:                       @font-size-base;
-@font-size-h6:                       ceil((@font-size-base * 0.85)); // ~12px
 
 // Line height
 @line-height-base:                   1.2;
-@line-height-computed:               ceil(@font-size-base * @line-height-base); // ~16px
-
-// Scaffolding
-@body-bgcolor:                       @white;
-@text-color:                         @darkest-shade;
-@link-color:                         @primary;
-@link-hover-color:                   @darker-shade;
 
 // Login
-@login-extend-bgcolor:               #0287C1;
-@login-panel-bgcolor:                #f3f3f3;
-@login-panel-border:                 #9ba0a5;
+@login-extend-bgcolor:               @primary;
+@login-panel-bgcolor:                @lightest-shade;
+@login-panel-border:                 @dark-shade;
 @login-panel-width:                  305px;
 @login-panel-left:                   80px;
 @login-panel-header-height:          84px;
 @login-panel-header-bgcolor:         @white;
-@login-panel-center-h2-color:        #3d4451;
-@login-panel-center-input-border:    #c1c1c1;
-@login-panel-center-button-border:   #0086f8;
-@login-panel-center-button-bgcolor:  #0086f8;
+@login-panel-center-h2-color:        @darker-shade;
+@login-panel-center-input-border:    @dark-gray;
+@login-panel-center-button-border:   @primary;
+@login-panel-center-button-bgcolor:  @primary;
 @login-panel-center-button-color:    @white;
-@login-panel-footer-color:           #9ba0a5;
+@login-panel-footer-color:           @dark-shade;
 @login-panel-feedback-border:        @dark-gray;
-@login-panel-feedback-bgcolor:       #fff8d5;
+@login-panel-feedback-bgcolor:       @warning-light;
 
 // Main menu
 @main-menu-width:                    64px;
@@ -114,10 +96,10 @@
 
 // Footer
 @footer-bgcolor:                     @light-shade;
-@footer-height:                      40;
+@footer-height:                      40px;
 
 // Document tabs
-@document-tab-width:                 250;
+@document-tab-width:                 250px;
 @document-tab-height:                @footer-height;
 @document-tab-hover-bgcolor:         @light-shade;
 @document-tab-hover-close-color:     @black;
@@ -128,16 +110,21 @@
 @document-tab-close-color:           @dark-gray;
 @document-tab-close-hover-color:     @primary;
 
+// TabsPlugin Document switcher, px)
+@tab-width: @document-tab-width;
+@tab-height: @document-tab-height;
+@tab-padding-left: 8px;
+
 // Navigator
 @navigator-bgcolor:                  @white;
 @navigator-border-color:             @light-shade;
 
 // Section viewer
 @section-selection-bgcolor:          @light-shade;
-@sections-select-height:             41;
-@sections-top-height:                40;
-@sections-top-search-result-height:  64;
-@sections-bottom-height:             41;
+@sections-select-height:             41px;
+@sections-top-height:                40px;
+@sections-top-search-result-height:  64px;
+@sections-bottom-height:             41px;
 @sections-border-color:              @light-shade;
 @sections-top-bgcolor:               @white;
 
@@ -204,14 +191,12 @@
 // Editor toolbar
 @editor-toolbar-bgcolor:             @light-shade;
 @editor-toolbar-border-color:        @dark-gray;
-@editor-toolbar-fontsize:            15;
-@editor-toolbar-height:              41;
+@editor-toolbar-fontsize:            15px;
+@editor-toolbar-height:              41px;
 @editor-toolbar-color:               @darker-shade;
 @editor-toolbar-hover-color:         @primary;
 @editor-toolbar-active-color:        @darker-shade;
 @editor-toolbar-active-bgcolor:      @lightest-shade;
-@editor-toolbar-item-minwidth:       90;
-@editor-toolbar-item-margin-right:   12;
 
 // Editor validation
 @validation-title-color:             @danger;
@@ -225,7 +210,7 @@
 @ckeditor-button-border-color:       @dark-gray;
 
 // Hippo dropdown/context menu
-@hippo-menu-fontsize:                13;
+@hippo-menu-fontsize:                @font-size-base;
 @hippo-menu-bgcolor:                 @light-shade;
 @hippo-menu-enabled-color:           @darkest-shade;
 @hippo-menu-enabled-hover-color:     @primary;
@@ -234,7 +219,7 @@
 
 // Form elements
 @forms-select-bgcolor:               @white;
-@forms-select-border-radius:         3;
+@forms-select-border-radius:         3px;
 @forms-select-button-color:          @dark-gray;
 @forms-select-button-hover-color:    @dark-shade;
 @forms-select-arrow-color:           @white;
@@ -248,7 +233,7 @@
 @datepicker-fontsize:                13px;
 @datepicker-button-bgcolor:          @lighter-shade;
 @datepicker-button-border:           @light-gray;
-@datepicker-button-border-radius:    3;
+@datepicker-button-border-radius:    3px;
 
 // Hippo icon default colors
 @hippo-icon-delete-enabled:          @danger;
