@@ -241,6 +241,9 @@
         <sv:property sv:name="field" sv:type="String">
           <sv:value>contentblocks</sv:value>
         </sv:property>
+        <sv:property sv:name="hint" sv:type="String">
+          <sv:value>Add a video, image or textblock</sv:value>
+        </sv:property>
         <sv:property sv:name="mode" sv:type="String">
           <sv:value>${mode}</sv:value>
         </sv:property>
