@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -31,6 +32,8 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.form.palette.Palette;
 import org.apache.wicket.extensions.markup.html.form.palette.component.Recorder;
+import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
@@ -45,6 +48,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginHelper;
 import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
@@ -59,8 +63,13 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.diff.LCS;
 import org.hippoecm.frontend.plugins.standards.diff.LCS.Change;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.types.IFieldDescriptor;
+import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.ModelPath;
+import org.hippoecm.frontend.validation.ModelPathElement;
+import org.hippoecm.frontend.validation.Violation;
 import org.onehippo.forge.selection.frontend.model.ValueList;
 import org.onehippo.forge.selection.frontend.plugin.sorting.SortHelper;
 import org.onehippo.forge.selection.frontend.provider.IValueListProvider;
@@ -100,11 +109,15 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
 
     private final SortHelper sortHelper = new SortHelper();
 
+    private IEditor.Mode mode;
+
     /**
      * Constructor.
      */
     public DynamicMultiSelectPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        this.mode = IEditor.Mode.fromString(config.getString(ITemplateEngine.MODE, "view"));
 
         helper = new FieldPluginHelper(context, config);
 
@@ -120,6 +133,8 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
             required.setVisible(false);
         }
         add(required);
+
+        add(new FieldHint("hint-panel", config.getString("hint")));
 
         // configured provider
         final IValueListProvider selectedProvider = context.getService(config.getString(IValueListProvider.SERVICE),
@@ -152,8 +167,8 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
                         + "' not found in plugin configuration. " + config.toString());
             }
 
-            log.warn("The configuration node name '" + CONFIG_VALUELIST_OPTIONS + "' is deprecated. Rename it to '"
-            + CONFIG_CLUSTER_OPTIONS + "'. " + options.toString());
+            log.warn("The configuration node name '{}' is deprecated. Rename it to '{}'. options={}",
+                    new String[] {CONFIG_VALUELIST_OPTIONS, CONFIG_CLUSTER_OPTIONS, options.toString()});
         }
 
         final Locale locale = SelectionUtils.getLocale(SelectionUtils.getNode(model));
@@ -165,7 +180,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
         for (org.onehippo.forge.selection.frontend.model.ListItem item : valueList) {
             keys.add(item.getKey());
         }
-        final IModel choicesModel = new Model<ArrayList<String>>(keys);
+        final IModel choicesModel = new Model<>(keys);
 
         Fragment modeFragment;
         final String mode = config.getString(ITemplateEngine.MODE);
@@ -180,7 +195,56 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
                 modeFragment = populateViewMode(model, valueList);
         }
         add(modeFragment);
-        add(new FieldHint("hint-panel", config.getString("hint")));
+    }
+
+    @Override
+    public void render(final PluginRequestTarget target) {
+
+        if (isActive()) {
+            if (IEditor.Mode.EDIT == mode) {
+                IModel<IValidationResult> validationModel = helper.getValidationModel();
+                if (validationModel != null && validationModel.getObject() != null) {
+                    boolean valid = isFieldValid(validationModel.getObject());
+                    if (!valid) {
+                        target.appendJavaScript("Wicket.$('" + getMarkupId() + "').setAttribute('class', 'invalid');");
+                    }
+                }
+            }
+        }
+
+        super.render(target);
+    }
+
+    protected FieldPluginHelper getFieldHelper() {
+        return helper;
+    }
+
+    /**
+     * Checks if a field has any violations attached to it.
+     *
+     * @param validation The IValidationResult that contains all violations that occurred for this editor
+     * @return true if there are no violations present or non of the validation belong to the current field
+     */
+    protected boolean isFieldValid(final IValidationResult validation) {
+        if (!validation.isValid()) {
+            IFieldDescriptor field = getFieldHelper().getField();
+            if (field == null) {
+                return false;
+            }
+            for (Violation violation : validation.getViolations()) {
+                Set<ModelPath> paths = violation.getDependentPaths();
+                for (ModelPath path : paths) {
+                    if (path.getElements().length > 0) {
+                        ModelPathElement first = path.getElements()[0];
+                        if (first.getField().equals(field)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        IFeedbackMessageFilter filter = new ContainerFeedbackMessageFilter(this);
+        return !getSession().getFeedbackMessages().hasMessage(filter);
     }
 
     @Override
@@ -219,7 +283,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
     }
 
     protected Fragment populateCompareMode(final IPluginContext context, final IPluginConfig config,
-                                         final JcrMultiPropertyValueModel<String> model, final ValueList valueList) {
+                                           final JcrMultiPropertyValueModel<String> model, final ValueList valueList) {
         final Fragment modeFragment;
         modeFragment = new Fragment("mode", "view", this);
 
@@ -256,7 +320,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
     }
 
     protected Fragment populateEditMode(final IPluginConfig config, final JcrMultiPropertyValueModel<String> model,
-                                      final ValueList valueList, final IModel choicesModel) {
+                                        final ValueList valueList, final IModel choicesModel) {
         final Fragment modeFragment;
         modeFragment = new Fragment("mode", "edit", this);
 
@@ -274,7 +338,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
     }
 
     protected Fragment addList(final IPluginConfig config, final JcrMultiPropertyValueModel<String> model,
-                             final ValueList valueList, final IModel choicesModel) {
+                               final ValueList valueList, final IModel choicesModel) {
         final Fragment typeFragment;
         typeFragment = new Fragment("type", "edit-select", this);
 
@@ -311,7 +375,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
     }
 
     protected Fragment addPalette(final IPluginConfig config, final JcrMultiPropertyValueModel<String> model,
-                                final ValueList valueList, final IModel choicesModel) {
+                                  final ValueList valueList, final IModel choicesModel) {
         final Fragment typeFragment;
         typeFragment = new Fragment("type", "edit-palette", this);
 
@@ -368,7 +432,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
     }
 
     protected Fragment addCheckboxes(final JcrMultiPropertyValueModel<String> model, final ValueList valueList,
-                                   final IModel choicesModel) {
+                                     final IModel choicesModel) {
         final Fragment typeFragment;
         typeFragment = new Fragment("type", "edit-checkboxes", this);
 
@@ -500,10 +564,10 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
             Label label = new Label("viewitem", choices.getLabel(change.getValue()));
             switch (change.getType()) {
                 case ADDED:
-                    label.add(new AttributeAppender("class", new Model<String>("hippo-diff-added"), " "));
+                    label.add(new AttributeAppender("class", new Model<>("hippo-diff-added"), " "));
                     break;
                 case REMOVED:
-                    label.add(new AttributeAppender("class", new Model<String>("hippo-diff-removed"), " "));
+                    label.add(new AttributeAppender("class", new Model<>("hippo-diff-removed"), " "));
                     break;
             }
             item.add(label);
