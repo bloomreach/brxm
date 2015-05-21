@@ -157,6 +157,10 @@
           <sv:property sv:name="hipposysedit:type" sv:type="String">
             <sv:value>DynamicDropdown</sv:value>
           </sv:property>
+          <sv:property sv:name="hipposysedit:validators" sv:type="String" sv:multiple="true">
+            <sv:value>non-empty</sv:value>
+            <sv:value>required</sv:value>
+          </sv:property>
         </sv:node>
         <sv:node sv:name="dynamicdropdown_observable">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -318,6 +322,10 @@
           <sv:property sv:name="hipposysedit:type" sv:type="String">
             <sv:value>DynamicDropdown</sv:value>
           </sv:property>
+          <sv:property sv:name="hipposysedit:validators" sv:type="String" sv:multiple="true">
+            <sv:value>non-empty</sv:value>
+            <sv:value>required</sv:value>
+          </sv:property>
         </sv:node>
         <sv:node sv:name="multicheckboxes">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -340,6 +348,10 @@
           </sv:property>
           <sv:property sv:name="hipposysedit:type" sv:type="String">
             <sv:value>DynamicDropdown</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:validators" sv:type="String" sv:multiple="true">
+            <sv:value>non-empty</sv:value>
+            <sv:value>required</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="multipalette">
@@ -364,6 +376,10 @@
           <sv:property sv:name="hipposysedit:type" sv:type="String">
             <sv:value>DynamicDropdown</sv:value>
           </sv:property>
+          <sv:property sv:name="hipposysedit:validators" sv:type="String" sv:multiple="true">
+            <sv:value>non-empty</sv:value>
+            <sv:value>required</sv:value>
+          </sv:property>
         </sv:node>
       </sv:node>
     </sv:node>
@@ -381,6 +397,7 @@
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>d7659247-e1ea-401a-8485-504f4a8a87b2</sv:value>
         </sv:property>
+        <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
@@ -449,9 +466,11 @@
           <sv:value>wicket.model</sv:value>
           <sv:value>model.compareTo</sv:value>
           <sv:value>engine</sv:value>
+          <sv:value>validator.id</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:services" sv:type="String" sv:multiple="true">
           <sv:value>wicket.id</sv:value>
+          <sv:value>validator.id</sv:value>
         </sv:property>
         <sv:property sv:name="type" sv:type="String">
           <sv:value>selectiondemo:textdocument</sv:value>
@@ -676,6 +695,9 @@
           <sv:property sv:name="field" sv:type="String">
             <sv:value>dynamicdropdown_observable</sv:value>
           </sv:property>
+          <sv:property sv:name="hint" sv:type="String">
+            <sv:value>After choosing a continent you can choose a country in the next Dropdown.</sv:value>
+          </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
           </sv:property>
@@ -687,9 +709,6 @@
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hint" sv:type="String">
-            <sv:value>After choosing a continent you can choose a country in the next Dropdown.</sv:value>
           </sv:property>
           <sv:node sv:name="cluster.options">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -716,6 +735,9 @@
           <sv:property sv:name="field" sv:type="String">
             <sv:value>dynamicdropdown_observer</sv:value>
           </sv:property>
+          <sv:property sv:name="hint" sv:type="String">
+            <sv:value>Choose a continent first in the Dropdown above, then select a country here.</sv:value>
+          </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
           </sv:property>
@@ -727,9 +749,6 @@
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hint" sv:type="String">
-            <sv:value>Choose a continent first in the Dropdown above, then select a country here.</sv:value>
           </sv:property>
           <sv:node sv:name="cluster.options">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -821,14 +840,14 @@
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>frontend:pluginconfig</sv:value>
             </sv:property>
+            <sv:property sv:name="showDefault" sv:type="String">
+              <sv:value>false</sv:value>
+            </sv:property>
             <sv:property sv:name="sortComparator" sv:type="String">
               <sv:value>org.onehippo.forge.selection.frontend.plugin.sorting.GroupKeyLabelListItemComparator</sv:value>
             </sv:property>
             <sv:property sv:name="sortOrder" sv:type="String">
               <sv:value>ascending</sv:value>
-            </sv:property>
-            <sv:property sv:name="showDefault" sv:type="String">
-              <sv:value>false</sv:value>
             </sv:property>
             <sv:property sv:name="valuelistProvider" sv:type="String">
               <sv:value>service.valuelist.cars</sv:value>
@@ -933,6 +952,9 @@
           </sv:property>
           <sv:property sv:name="field" sv:type="String">
             <sv:value>multiselectlist</sv:value>
+          </sv:property>
+          <sv:property sv:name="hint" sv:type="String">
+            <sv:value>DynamicMultiSelect - Supporting hints!</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -1167,6 +1189,7 @@
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>33cf1ad1-9457-496b-a155-22d74d2bc890</sv:value>
         </sv:property>
+        <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
@@ -1214,9 +1237,11 @@
           <sv:value>wicket.model</sv:value>
           <sv:value>model.compareTo</sv:value>
           <sv:value>engine</sv:value>
+          <sv:value>validator.id</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:services" sv:type="String" sv:multiple="true">
           <sv:value>wicket.id</sv:value>
+          <sv:value>validator.id</sv:value>
         </sv:property>
         <sv:property sv:name="type" sv:type="String">
           <sv:value>selectiondemo:textdocument</sv:value>
