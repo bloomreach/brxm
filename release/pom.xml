@@ -59,7 +59,7 @@
     <hippo.utilities.version>1.04.00</hippo.utilities.version>
 
     <!-- Hippo standard plugin versions -->
-    <hippo.plugin.content-blocks.version>1.12.00</hippo.plugin.content-blocks.version>
+    <hippo.plugin.content-blocks.version>1.12.01-SNAPSHOT</hippo.plugin.content-blocks.version>
     <hippo.plugin.content-tagging.version>4.09.00</hippo.plugin.content-tagging.version>
     <hippo.plugin.dashboard-document-wizard.version>1.06.00</hippo.plugin.dashboard-document-wizard.version>
     <hippo.plugin.gallerypicker.version>1.14.00</hippo.plugin.gallerypicker.version>
