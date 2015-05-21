@@ -56,6 +56,7 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.compare.IComparer;
 import org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.TransparentFragment;
+import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.ChildNodeProvider;
 import org.hippoecm.frontend.model.JcrItemModel;
@@ -142,6 +143,8 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         Label required = new Label("required", "*");
         required.setVisible(field != null && (field.getValidators().contains("required")|| field.isMandatory()));
         add(required);
+
+        add(new FieldHint("hint-panel", config.getString("hint")));
 
         add(createAddLinkLabel());
 
