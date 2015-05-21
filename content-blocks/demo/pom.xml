@@ -26,13 +26,13 @@
   <name>Hippo Plugin Content Blocks Demo</name>
   <description>Demo for the Hippo Plugin Content Blocks</description>
   <artifactId>hippo-plugin-content-blocks-demo</artifactId>
-  <version>1.12.00</version>
+  <version>1.12.01-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/demo/tags/hippo-plugin-content-blocks-demo-1.12.00</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/demo/tags/hippo-plugin-content-blocks-demo-1.12.00</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/demo/tags/hippo-plugin-content-blocks-demo-1.12.00</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/demo/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/demo/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/demo/trunk/</url>
   </scm>
 
   <properties>
