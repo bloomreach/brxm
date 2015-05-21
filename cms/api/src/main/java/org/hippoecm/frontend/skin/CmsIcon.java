@@ -56,8 +56,7 @@ public enum CmsIcon {
         final String iconPath = ICONS_DIR + getFileName() + ".svg";
         final PackageResourceReference reference = new PackageResourceReference(CmsIcon.class, iconPath);
         try {
-            return "<svg class=\"" + getCssClasses(size) + IconUtil.cssClassesAsString(cssClasses) + "\" "
-                    + StringUtils.substringAfter(IconUtil.svgAsString(reference), "<svg ");
+            return IconUtil.svgAsString(reference, getCssClasses(size), IconUtil.cssClassesAsString(cssClasses));
         } catch (ResourceStreamNotFoundException|IOException e) {
             log.warn("Cannot find inline svg of {}", name(), e);
             return "";

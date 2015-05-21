@@ -126,7 +126,11 @@ public enum Icon {
      * @see Icon#getCssClasses(IconSize)
      */
     public String getSpriteReference(IconSize size, String... cssClasses) {
-        return "<svg class=\"" + getCssClasses(size) + IconUtil.cssClassesAsString(cssClasses) + "\">" +
+        String extraCssClasses = IconUtil.cssClassesAsString(cssClasses);
+        if (StringUtils.isNotEmpty(extraCssClasses)) {
+            extraCssClasses = " " + extraCssClasses;
+        }
+        return "<svg class=\"" + getCssClasses(size) + extraCssClasses + "\">" +
                 "<use xlink:href=\"#" + getSpriteId(size) + "\" /></svg>";
     }
 

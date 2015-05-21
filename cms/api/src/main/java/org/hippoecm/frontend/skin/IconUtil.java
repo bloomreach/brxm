@@ -17,6 +17,8 @@
 package org.hippoecm.frontend.skin;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -31,23 +33,45 @@ public class IconUtil {
     private IconUtil() {
     }
 
-    public static String svgAsString(PackageResourceReference reference) throws ResourceStreamNotFoundException, IOException {
+    public static String svgAsString(PackageResourceReference reference, String... cssClasses) throws ResourceStreamNotFoundException, IOException {
         final PackageResource resource = reference.getResource();
         final IResourceStream resourceStream = resource.getResourceStream();
         if (resourceStream == null) {
-            throw new ResourceStreamNotFoundException("Cannot find SVG icon " + resource.toString());
+            throw new ResourceStreamNotFoundException("Cannot find SVG icon " + resource);
         }
-        String data = IOUtils.toString(resourceStream.getInputStream());
+        String svgAsString = IOUtils.toString(resourceStream.getInputStream());
+
+        int rootIndex = svgAsString.indexOf("<svg");
+        if (rootIndex == -1) {
+            throw new IllegalArgumentException("Cannot find SVG root element in " + resource);
+        }
+
         //skip everything (comments, xml declaration and dtd definition) before <svg element
-        return data.substring(data.indexOf("<svg "));
+        svgAsString = svgAsString.substring(rootIndex);
+
+        //append css classes if present
+        final String cssClassesAsString = cssClassesAsString(cssClasses);
+        if (StringUtils.isNotEmpty(cssClassesAsString)) {
+            //check if class attribute is present and part of <svg element
+            final int classAttributeIndex = svgAsString.indexOf("class=\"");
+            if (classAttributeIndex > -1 && classAttributeIndex < svgAsString.indexOf(">")) {
+                int insertCssClassesAt = classAttributeIndex + 7;
+                svgAsString = svgAsString.substring(0, insertCssClassesAt) + cssClassesAsString + " " +
+                        svgAsString.substring(insertCssClassesAt);
+            } else {
+                svgAsString = "<svg class=\"" + cssClassesAsString + "\"" + svgAsString.substring(4);
+            }
+        }
+
+        return svgAsString;
     }
 
     public static String cssClassesAsString(String... cssClasses) {
-        String result = ArrayUtils.isEmpty(cssClasses) ? StringUtils.EMPTY : " " + StringUtils.join(cssClasses, " ");
-        if (StringUtils.isBlank(result)) {
-            result = StringUtils.EMPTY;
+        if (ArrayUtils.isEmpty(cssClasses)) {
+            return StringUtils.EMPTY;
         }
-        return result;
+
+        return Arrays.stream(cssClasses).filter(StringUtils::isNotBlank).collect(Collectors.joining(" "));
     }
 
 }

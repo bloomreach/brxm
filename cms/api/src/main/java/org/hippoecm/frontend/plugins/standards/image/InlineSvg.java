@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.standards.image;
 
 import java.io.IOException;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -51,10 +50,7 @@ public class InlineSvg extends WebComponent {
     @Override
     protected void onComponentTag(final ComponentTag tag) {
         try {
-            String svgData = IconUtil.svgAsString(reference);
-            if (ArrayUtils.isNotEmpty(extraCssClasses)) {
-                svgData = "<svg class=\"" + IconUtil.cssClassesAsString(extraCssClasses) + "\" " + svgData.substring(5);
-            }
+            String svgData = IconUtil.svgAsString(reference, extraCssClasses);
             RequestCycle.get().getResponse().write(svgData);
         } catch (IOException | ResourceStreamNotFoundException e) {
             log.error(String.format("Failed to load svg image[%s]", reference.getName()), e);
