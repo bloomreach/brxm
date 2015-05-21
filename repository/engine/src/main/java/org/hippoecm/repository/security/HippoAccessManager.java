@@ -178,11 +178,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     private boolean initialized = false;
 
     /**
-     * Flag whether current user is anonymous
-     */
-    private boolean isAnonymous = false;
-
-    /**
      * Flag whether current user is a regular user
      */
     private boolean isUser = false;
@@ -239,10 +234,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         // Shortcuts for checks
         isSystem = !subject.getPrincipals(SystemPrincipal.class).isEmpty();
         isUser = !subject.getPrincipals(UserPrincipal.class).isEmpty();
-        isAnonymous = !subject.getPrincipals(AnonymousPrincipal.class).isEmpty();
 
         // prefetch userId
-        userIds = new ArrayList<String>();
+        userIds = new ArrayList<>();
         if (isSystem) {
             for (SystemPrincipal principal : subject.getPrincipals(SystemPrincipal.class)) {
                 userIds.add(principal.getName());
@@ -251,7 +245,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             for (UserPrincipal principal : subject.getPrincipals(UserPrincipal.class)) {
                 userIds.add(principal.getName());
             }
-        } else if (isAnonymous) {
+        } else if (!subject.getPrincipals(AnonymousPrincipal.class).isEmpty()) {
             userIds.add(subject.getPrincipals(AnonymousPrincipal.class).iterator().next().getName());
         }
         if (userIds.size() == 0) {
@@ -278,18 +272,16 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         }
 
         final Set<AuthorizationFilterPrincipal> filterPrincipals = subject.getPrincipals(AuthorizationFilterPrincipal.class);
-        if (filterPrincipals.isEmpty() && userIds.size() == 1) {
-            readAccessCache = HippoAccessCache.getInstance(userIds.get(0), cacheSize);
-        } else {
+        if (!filterPrincipals.isEmpty() || userIds.size() != 1) {
             initializeExtendedFacetRules(filterPrincipals);
-            readAccessCache = new HippoAccessCache(cacheSize);
         }
-        readVirtualAccessCache = new WeakHashMap<HippoNodeId, Boolean>();
+        readAccessCache = new HippoAccessCache(cacheSize);
+        readVirtualAccessCache = new WeakHashMap<>();
 
         // we're done
         initialized = true;
 
-        log.info("Initialized HippoAccessManager for user " + getUserIdAsString() + " with cache size " + cacheSize);
+        log.info("Initialized HippoAccessManager for user {} with cache size {}", getUserIdAsString(), cacheSize);
     }
 
     private void initializeExtendedFacetRules(final Set<AuthorizationFilterPrincipal> filterPrincipals) throws RepositoryException {
@@ -501,7 +493,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         // check cache
         Boolean allowRead = getAccessFromCache(id);
         if (allowRead != null) {
-            return allowRead.booleanValue();
+            return allowRead;
         }
 
         // because the getItemState(id) call below will recursively call us (canRead(id)) again
@@ -676,7 +668,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                     if (checkRead) {
                         Boolean allowRead = getAccessFromCache(docState.getNodeId());
                         if (allowRead != null) {
-                            return allowRead.booleanValue();
+                            return allowRead;
                         }
                     }
                     return isNodeInDomain(docState, fap, checkRead);
@@ -886,7 +878,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
         Boolean isInstance = ntIOCache.get(nodeStateType, nodeType);
         if (isInstance != null) {
-            return isInstance.booleanValue();
+            return isInstance;
         }
 
         // get iterator over all types
@@ -1347,16 +1339,14 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
         /**
          * Fetch cache value
-         * @param
          * @return cached value or null when not in cache
          */
         synchronized public Boolean get(String type, String instanceOfType) {
-            Boolean bool = null;
             Map<String, Boolean> typeMap = map.get(instanceOfType);
             if (typeMap != null) {
                 return typeMap.get(type);
             }
-            return bool;
+            return null;
         }
 
         /**
@@ -1664,34 +1654,34 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * @return a string representation of the permissions
      */
     private String permsString(int permissions) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         // narrow down permissions
         if ((permissions & Permission.READ) != 0) {
-            buf.append("re");
+            sb.append("re");
         } else {
-            buf.append("--");
+            sb.append("--");
         }
         if ((permissions & Permission.ADD_NODE) != 0) {
-            buf.append("an");
+            sb.append("an");
         } else {
-            buf.append("--");
+            sb.append("--");
         }
         if ((permissions & Permission.REMOVE_NODE) != 0) {
-            buf.append("rn");
+            sb.append("rn");
         } else {
-            buf.append("--");
+            sb.append("--");
         }
         if ((permissions & Permission.SET_PROPERTY) != 0) {
-            buf.append("sp");
+            sb.append("sp");
         } else {
-            buf.append("--");
+            sb.append("--");
         }
         if ((permissions & Permission.REMOVE_PROPERTY) != 0) {
-            buf.append("rp");
+            sb.append("rp");
         } else {
-            buf.append("--");
+            sb.append("--");
         }
-        return buf.toString();
+        return sb.toString();
     }
 }
