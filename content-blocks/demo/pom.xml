@@ -36,7 +36,7 @@
   </scm>
 
   <properties>
-    <hippo.plugin.content-blocks.version>1.12.01-SNAPSHOT</hippo.plugin.content-blocks.version>
+    <!--<hippo.plugin.content-blocks.version>1.12.01-SNAPSHOT</hippo.plugin.content-blocks.version>-->
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.1</taglibs.version>
     <commons.lang.version>2.6</commons.lang.version>
