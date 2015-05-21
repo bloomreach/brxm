@@ -1110,6 +1110,7 @@ api/src/main/styling/less/_buttons.less -text
 api/src/main/styling/less/_ckeditor.less -text
 api/src/main/styling/less/_dashboard.less -text
 api/src/main/styling/less/_datepicker.less -text
+api/src/main/styling/less/_debugger.less -text
 api/src/main/styling/less/_doclist.less -text
 api/src/main/styling/less/_editor.less -text
 api/src/main/styling/less/_editor_doctype.less -text
@@ -1118,6 +1119,7 @@ api/src/main/styling/less/_editor_hint_field.less -text
 api/src/main/styling/less/_editor_linkpicker.less -text
 api/src/main/styling/less/_editor_preview.less -text
 api/src/main/styling/less/_editor_toolbar.less -text
+api/src/main/styling/less/_fonts.less -text
 api/src/main/styling/less/_footer.less -text
 api/src/main/styling/less/_form_elements.less -text
 api/src/main/styling/less/_globals.less -text
@@ -1148,10 +1150,7 @@ api/src/main/styling/less/_tree.less -text
 api/src/main/styling/less/_typography.less -text
 api/src/main/styling/less/_user_menu.less -text
 api/src/main/styling/less/_variables.less -text
-api/src/main/styling/less/lib/open-sans.less -text
 api/src/main/styling/less/main.less -text
-api/src/main/styling/less/nolint/wicket.less -text
-api/src/main/styling/less/nolint/workarounds.less -text
 api/src/test/java/org/hippoecm/frontend/editor/plugins/resource/PdfParserTest.java -text
 api/src/test/java/org/hippoecm/frontend/editor/workflow/model/ReferringDocumentsProviderTest.java -text
 api/src/test/java/org/hippoecm/frontend/model/TraceMonitorTest.java -text

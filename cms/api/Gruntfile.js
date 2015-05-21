@@ -46,7 +46,7 @@ module.exports = function (grunt) {
           livereload: false
         },
         files: ['<%= build.src %>/**/*.less'],
-        tasks: ['less', 'autoprefixer', 'csslint', 'concat', 'clean:tmp']
+        tasks: ['less', 'autoprefixer', 'csslint', 'concat:css', 'clean:tmp']
       },
       reloadCompiledCss: {
         files: ['<%= build.skin %>/**/*.css']
@@ -72,17 +72,6 @@ module.exports = function (grunt) {
       main: {
         files: {
           '<%= build.tmp %>/css/<%= build.file %>.css': '<%= build.src %>/less/main.less'
-        }
-      },
-      nolint: {
-        files: {
-          '<%= build.tmp %>/css/wicket.css': '<%= build.src %>/less/nolint/wicket.less',
-          '<%= build.tmp %>/css/workarounds.css': '<%= build.src %>/less/nolint/workarounds.less'
-        }
-      },
-      vendors: {
-        files: {
-          '<%= build.tmp %>/css/open-sans.css': '<%= build.src %>/less/lib/open-sans.less'
         }
       },
       extjs: {
@@ -147,14 +136,11 @@ module.exports = function (grunt) {
       },
       css: {
         src: [
-          '<%= build.tmp %>/css/open-sans.css',
           '<%= build.bower %>/normalize.css/normalize.css',
           '<%= build.bower %>/jquery-selectric/public/selectric.css',
           '<%= build.bower %>/jquery-file-upload/css/jquery.fileupload.css',
           '<%= build.bower %>/jquery-file-upload/css/jquery.fileupload-ui.css',
-          '<%= build.tmp %>/css/<%= build.file %>.css',
-          '<%= build.tmp %>/css/wicket.css',
-          '<%= build.tmp %>/css/workarounds.css'
+          '<%= build.tmp %>/css/<%= build.file %>.css'
         ],
         dest: '<%= build.skin %>/css/<%= build.file %>.css',
         nonull: true
