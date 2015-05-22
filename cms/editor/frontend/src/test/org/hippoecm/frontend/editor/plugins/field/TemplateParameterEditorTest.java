@@ -39,7 +39,6 @@ import org.junit.Test;
 import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.getCurrentArguments;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.createNiceMock;
