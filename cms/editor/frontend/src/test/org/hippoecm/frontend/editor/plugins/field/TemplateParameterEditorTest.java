@@ -28,20 +28,25 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
+import org.easymock.Capture;
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.PropertyDescriptor;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
+import static org.easymock.EasyMock.and;
+import static org.easymock.EasyMock.capture;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.getCurrentArguments;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.createNiceMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+
 
 public class TemplateParameterEditorTest {
 
@@ -104,36 +109,44 @@ public class TemplateParameterEditorTest {
     }
 
     private IClusterConfig createMockClusterConfig(final List<String> propertyNames, final boolean isMultiple) {
-        IClusterConfig clusterConfig = mock(IClusterConfig.class);
+        IClusterConfig clusterConfig = createNiceMock(IClusterConfig.class);
         final List<PropertyDescriptor> mockProperties = new ArrayList<>();
 
         propertyNames.forEach(name -> mockProperties.add(new PropertyDescriptor(name, PropertyType.STRING, isMultiple)));
 
-        when(clusterConfig.getPropertyDescriptors()).thenReturn(mockProperties);
+        expect(clusterConfig.getPropertyDescriptors()).andReturn(mockProperties).anyTimes();
+
+        replay(clusterConfig);
         return clusterConfig;
     }
 
     private IPluginConfig createMockPluginConfig() {
-        IPluginConfig mockConfig = mock(IPluginConfig.class);
+        IPluginConfig mockConfig = createNiceMock(IPluginConfig.class);
 
-        when(mockConfig.getName()).thenReturn("mock-plugin-config");
+        expect(mockConfig.getName()).andReturn("mock-plugin-config").anyTimes();
 
-        when(mockConfig.getStringArray(Mockito.any())).then(invocation -> {
-            final Object[] args = invocation.getArguments();
-            if (args != null && args.length == 1) {
-                return propertyValues.get(args[0]);
-            }
-            return null;
-        });
+        final Capture<String> keyArgument = new Capture<>();
 
-        doAnswer(invocation -> {
-            final Object[] args = invocation.getArguments();
-            if (args != null && args.length == 2) {
-                propertyValues.put(args[0], args[1]);
-            }
-            return null;
-        }).when(mockConfig).put(Mockito.any(), Mockito.any());
+        expect(mockConfig.getStringArray(
+                and(
+                        capture(keyArgument),
+                        isA(String.class)
+                )))
+            .andAnswer(() -> (String[]) propertyValues.get(keyArgument.getValue())).anyTimes();
 
+        final Capture<Object> valueArgument = new Capture<>();
+        expect(mockConfig.put(
+                and(
+                        capture(keyArgument),
+                        isA(String.class)
+                ),
+                capture(valueArgument)))
+            .andAnswer(() -> {
+                propertyValues.put(keyArgument.getValue(), valueArgument.getValue());
+                return null;
+            }).anyTimes();
+
+        replay(mockConfig);
         return mockConfig;
     }
 }
