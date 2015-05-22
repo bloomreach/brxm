@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ public class TemplateParameterEditor extends Panel {
                 if (property.isMultiple()) {
                     item.add(new MultipleTextFieldWidget("value", model, cluster, property.getName(), editable));
                 } else {
-                    final IModel<String> valueModel = new PropertyModel<String>(TemplateParameterEditor.this.getDefaultModel(), "[" + property + "]");
+                    final IModel<String> valueModel = new PropertyModel<String>(TemplateParameterEditor.this.getDefaultModel(), "[" + property.getName() + "]");
                     if (editable) {
                         item.add(new TextFieldWidget("value", new IModel<String>() {
 
