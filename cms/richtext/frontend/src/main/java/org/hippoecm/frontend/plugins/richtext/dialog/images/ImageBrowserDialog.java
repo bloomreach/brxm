@@ -192,6 +192,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
         align.setNullValid(false);
         add(align);
 
+        initSelection();
         checkState();
     }
 

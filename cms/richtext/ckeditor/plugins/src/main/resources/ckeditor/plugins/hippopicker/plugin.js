@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -242,7 +242,6 @@
         function isInternalImage(element) {
             return !element.isReadOnly()
                     && element.is('img')
-                    && element.hasAttribute('data-facetselect')
                     && element.hasAttribute('data-type')
                     && element.hasAttribute('data-uuid');
         }

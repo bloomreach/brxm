@@ -86,6 +86,7 @@ public class LinkPickerDialog extends Dialog<String> {
         };
 
         add(controller.create("content"));
+        controller.initSelection();
 
         addOrReplace(breadcrumbs = new NodeBreadcrumbWidget(Dialog.BOTTOM_LEFT_ID, null, controller.getRootPaths()) {
             @Override

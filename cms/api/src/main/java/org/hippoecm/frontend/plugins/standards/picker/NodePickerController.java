@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -122,8 +122,6 @@ public abstract class NodePickerController implements IDetachable {
             }, IObserver.class.getName());
         }
 
-        loadInitialModel();
-
         renderer = context.getService(clusterConfig.getString("wicket.id"), IRenderService.class);
         renderer.bind(null, id);
         return renderer.getComponent();
@@ -146,7 +144,7 @@ public abstract class NodePickerController implements IDetachable {
      *
      * TODO: We should try and see if the last-visited model is visible in the browser, if not, go on to default model
      **/
-    private void loadInitialModel() {
+    public void initSelection() {
         IModel<Node> initialModel = getInitialModel();
         if(isValidSelection(initialModel)) {
             selectionModelReference.setModel(initialModel);

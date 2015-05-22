@@ -84,6 +84,10 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
         breadcrumbs.update(controller.getFolderModel());
     }
 
+    protected void initSelection() {
+        controller.initSelection();
+    }
+
     @Override
     protected FeedbackPanel newFeedbackPanel(final String id) {
         return new FeedbackPanel(id, new ContainerFeedbackMessageFilter(this)) {{
