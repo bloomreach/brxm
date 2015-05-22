@@ -138,6 +138,9 @@ public final class FolderTranslationView extends ExtPanel {
                     if (values != null && values.length() > 0 && !values.isNull(0)) {
                         try {
                             String t9id = values.getString(0);
+                            // The conditional operator snippet below is to circumvent a bug on Wicket-ExtJS (WICKETEXTJS-60),
+                            // in which the "null" string is put in the value rather than the JSONObject.NULL. Once this
+                            // bug is fixed, it can be removed.
                             onSelect("null".equals(t9id) ? null : t9id);
                         } catch (JSONException e) {
                             throw new RuntimeException("Could not retrieve t9id from select-folder event", e);
