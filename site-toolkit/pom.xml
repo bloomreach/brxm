@@ -90,7 +90,7 @@
     <hippo.services.version>1.05.00</hippo.services.version>
     <hippo.services.eventbus.version>1.05.00</hippo.services.eventbus.version>
 
-    <htmlcleaner.version>2.2</htmlcleaner.version>
+    <htmlcleaner.version>2.12</htmlcleaner.version>
 
     <geronimo-stax-api_1.2_spec.version>1.1</geronimo-stax-api_1.2_spec.version>
     <stax.version>1.2.0</stax.version>
