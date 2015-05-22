@@ -187,6 +187,13 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
     }
 
     @Override
+    protected void populateViewItem(Item<IRenderService> item, final JcrPropertyValueModel model) {
+        Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);
+        item.add(fragment);
+    }
+
+    @Deprecated
+    @Override
     protected void populateViewItem(Item<IRenderService> item) {
         Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);
         item.add(fragment);
@@ -254,6 +261,13 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         item.add(fragment);
     }
 
+    @Override
+    protected void populateCompareItem(Item<IRenderService> item, final JcrPropertyValueModel newModel, final JcrPropertyValueModel oldModel) {
+        Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);
+        item.add(fragment);
+    }
+
+    @Deprecated
     @Override
     protected void populateCompareItem(Item<IRenderService> item) {
         Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);

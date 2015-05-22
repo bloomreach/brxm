@@ -170,6 +170,13 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
     }
 
     @Override
+    protected void populateViewItem(Item<IRenderService> item, final JcrNodeModel model) {
+        Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);
+        item.add(fragment);
+    }
+
+    @Deprecated
+    @Override
     protected void populateViewItem(Item<IRenderService> item) {
         Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);
         item.add(fragment);
@@ -247,6 +254,13 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         item.add(fragment);
     }
 
+    @Override
+    protected void populateCompareItem(Item<IRenderService> item, final JcrNodeModel newModel, final JcrNodeModel oldModel) {
+        Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);
+        item.add(fragment);
+    }
+
+    @Deprecated
     @Override
     protected void populateCompareItem(Item<IRenderService> item) {
         Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);

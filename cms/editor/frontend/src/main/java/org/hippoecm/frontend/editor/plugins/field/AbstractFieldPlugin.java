@@ -111,7 +111,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     private FieldPluginHelper helper;
     private TemplateController<P, C> templateController;
     private boolean managedValidation = false;
-    private Map<Object, ValidationFilter> listeners = new HashMap<Object, ValidationFilter>();
+    private Map<Object, ValidationFilter> listeners = new HashMap<>();
     private ValidationFilter filter;
 
     // compare mode
@@ -135,7 +135,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                 private static final long serialVersionUID = 1L;
 
                 public void onEvent(Iterator events) {
-                    for (ValidationFilter listener : new ArrayList<ValidationFilter>(listeners.values())) {
+                    for (ValidationFilter listener : new ArrayList<>(listeners.values())) {
                         IValidationResult validationResult = helper.getValidationModel().getObject();
                         if (validationResult != null) {
                             listener.onValidation(validationResult);
@@ -169,13 +169,13 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         }
 
         if (IEditor.Mode.COMPARE == mode) {
-            comparingController = new ComparingController<P, C>(context, config, this, getComparer(), getItemId());
+            comparingController = new ComparingController<>(context, config, this, getComparer(), getItemId());
         } else {
             IModel<IValidationResult> validationModel = null;
             if (IEditor.Mode.EDIT == mode) {
                 validationModel = helper.getValidationModel();
             }
-            templateController = new TemplateController<P, C>(context, config, validationModel, this,
+            templateController = new TemplateController<>(context, config, validationModel, this,
                     getItemId());
 
             provider = getProvider(getModel());
@@ -427,9 +427,11 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                                             IRenderService renderer) {
         super.onAddRenderService(item, renderer);
 
+        final ComparingController.ItemEntry itemEntry = (comparingController != null) ? comparingController.getFieldItem(renderer) : null;
+        final FieldItem itemRenderer = (templateController != null) ? templateController.getFieldItem(renderer) : null;
+
         switch (mode) {
             case EDIT:
-                final FieldItem itemRenderer = templateController.getFieldItem(renderer);
                 final IFieldDescriptor field = getFieldHelper().getField();
                 if (managedValidation && field != null && field.isMultiple()) {
                     item.setOutputMarkupId(true);
@@ -456,10 +458,13 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                 populateEditItem(item, model);
                 break;
             case COMPARE:
-                populateCompareItem(item);
+                C newModel = (itemEntry!= null && (C) itemEntry.newModel != null) ? (C) itemEntry.newModel : null;
+                C oldModel = (itemEntry!= null && (C) itemEntry.oldModel != null) ? (C) itemEntry.oldModel : null;
+                populateCompareItem(item, newModel, oldModel);
                 break;
             case VIEW:
-                populateViewItem(item);
+                C viewModel = (itemRenderer != null ) ? (C) itemRenderer.getModel() : null;
+                populateViewItem(item, viewModel);
                 break;
         }
     }
@@ -474,9 +479,17 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     protected void populateEditItem(org.apache.wicket.markup.repeater.Item<IRenderService> item, C model) {
     }
 
+    protected void populateViewItem(org.apache.wicket.markup.repeater.Item<IRenderService> item, C model) {
+    }
+
+    protected void populateCompareItem(org.apache.wicket.markup.repeater.Item<IRenderService> item, C newModel, C oldModel) {
+    }
+
+    @Deprecated
     protected void populateViewItem(org.apache.wicket.markup.repeater.Item<IRenderService> item) {
     }
 
+    @Deprecated
     protected void populateCompareItem(org.apache.wicket.markup.repeater.Item<IRenderService> item) {
     }
 
@@ -489,7 +502,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         String caption = getPluginConfig().getString("caption");
         String captionKey = field != null ? field.getName() : caption;
         if (captionKey == null) {
-            return new Model<String>("undefined");
+            return new Model<>("undefined");
         }
         if (caption == null && field != null && field.getName().length() >= 1) {
             caption = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
