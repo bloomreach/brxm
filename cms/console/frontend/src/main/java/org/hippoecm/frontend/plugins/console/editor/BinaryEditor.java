@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -42,6 +43,7 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.console.dialog.BinaryUploadDialog;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,15 +59,28 @@ public class BinaryEditor extends Panel {
     public BinaryEditor(String id, JcrPropertyModel model, final IPluginContext pluginContext) {
         super(id);
         final IResourceStream stream = new BinaryResourceStream(model);
+
         // download
-        final Link downloadLink = new ResourceLink("binary-download-link", new ResourceStreamResource() {
+        ResourceStreamResource resource = new ResourceStreamResource() {
             @Override
             public IResourceStream getResourceStream() {
                 return stream;
             }
-        });
+        };
+        try {
+            final Node node = model.getProperty().getParent().getParent();
+            StringBuilder fileName = new StringBuilder(node.getName());
+            if (isExtractedTextProperty(model.getProperty())) {
+                fileName.append(".txt");
+            }
+            resource.setFileName(fileName.toString());
+        } catch (RepositoryException e) {
+            log.error("Unexpected exception while determining download filename", e);
+        }
+        final Link downloadLink = new ResourceLink("binary-download-link", resource);
         downloadLink.add(new Label("binary-download-text", "download (" + getSizeString(stream.length()) + ")"));
         add(downloadLink);
+
         // upload
         IDialogFactory factory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -97,6 +112,15 @@ public class BinaryEditor extends Panel {
         return sizeString;
     }
 
+    private static boolean isExtractedTextProperty(Property property) {
+        try {
+            return property.getName().equals(HippoNodeType.HIPPO_TEXT);
+        } catch (RepositoryException e) {
+            log.error("Unexpected exception while determining whether property contains extracted text", e);
+            return false;
+        }
+    }
+
     private static class BinaryResourceStream extends AbstractResourceStream {
 
         private transient InputStream is;
@@ -109,8 +133,12 @@ public class BinaryEditor extends Panel {
         @Override
         public String getContentType() {
             try {
-                final Node node = model.getProperty().getParent();
-                return JcrUtils.getStringProperty(node, "jcr:mimeType", "unknown");
+                if (BinaryEditor.isExtractedTextProperty(model.getProperty())) {
+                    return "text/plain";
+                } else {
+                    final Node node = model.getProperty().getParent();
+                    return JcrUtils.getStringProperty(node, "jcr:mimeType", "unknown");
+                }
             } catch (RepositoryException e) {
                 log.error("Unexpected exception while determining mime type", e);
             }
