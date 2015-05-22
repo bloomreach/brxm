@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
+// Bootstrap variables and mixins
+@import "../../../../target/bower_components/bootstrap/less/variables.less";
+@import "../../../../target/bower_components/bootstrap/less/mixins.less";
+
+// Hippo Theme variables and mixins
+@import "../../../../target/bower_components/hippo-theme/src/less/_variables.less";
+@import "../../../../target/bower_components/hippo-theme/src/less/_mixins.less";
+
 // Variable overrides
 @import "_variables";
 @import "_mixins";
 
+@import '../../../../target/bower_components/bootstrap/less/buttons';
 @import "../../../../target/bower_components/retina.js/src/retina";
 
 @import "_legacy";

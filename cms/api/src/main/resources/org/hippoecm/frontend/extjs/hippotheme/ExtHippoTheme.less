@@ -4,7 +4,17 @@
  * licensing@sencha.com
  * http://www.sencha.com/license
  */
-@import "../../../../../../styling/less/_variables.less";
+
+// Bootstrap variables and mixins
+@import "../../../../../../../../target/bower_components/bootstrap/less/variables.less";
+@import "../../../../../../../../target/bower_components/bootstrap/less/mixins.less";
+
+// Hippo Theme variables and mixins
+@import "../../../../../../../../target/bower_components/hippo-theme/src/less/_variables.less";
+@import "../../../../../../../../target/bower_components/hippo-theme/src/less/_mixins.less";
+
+// Variable overrides
+@import "../../../../../../styling/less/_variables";
 
 .ext-el-mask {
   background-color: #000;

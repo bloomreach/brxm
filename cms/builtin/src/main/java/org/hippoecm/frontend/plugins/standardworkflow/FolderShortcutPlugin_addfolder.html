@@ -15,6 +15,11 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div wicket:id="link" class="add-root-folder" wicket:message="title:new-folder-label">+ <wicket:message key="new-folder-label"/></div>
+    <div class="add-root-folder">
+      <a wicket:id="link" class="btn btn-default btn-block btn-sm" wicket:message="title:new-folder-label">
+        +
+        <wicket:message key="new-folder-label"/>
+      </a>
+    </div>
   </wicket:panel>
 </html>
