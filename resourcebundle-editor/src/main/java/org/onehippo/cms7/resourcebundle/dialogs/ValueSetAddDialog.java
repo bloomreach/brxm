@@ -21,7 +21,6 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.onehippo.cms7.resourcebundle.ResourceBundlePlugin;
@@ -29,12 +28,8 @@ import org.onehippo.cms7.resourcebundle.data.Bundle;
 import org.onehippo.cms7.resourcebundle.data.ValueSet;
 import org.onehippo.cms7.resourcebundle.validators.ValueSetNameValidator;
 
-/**
- * @version "$Id$"
- */
 public class ValueSetAddDialog extends Dialog<String> {
 
-    private static final long serialVersionUID = 1L;
     private final ResourceBundlePlugin plugin;
     private ValueSet valueSet;
 
@@ -42,6 +37,8 @@ public class ValueSetAddDialog extends Dialog<String> {
 
         this.plugin = plugin;
         valueSet = bundle.newValueSet();
+
+        setSize(DialogConstants.MEDIUM_AUTO);
 
         add(new Label("label", new StringResourceModel("dialog.valueset.add.label", plugin, null)));
         add(new TextField<>("name", new PropertyModel<String>(valueSet, "displayName")).setRequired(true)
@@ -57,10 +54,5 @@ public class ValueSetAddDialog extends Dialog<String> {
 
     public ValueSet getValueSet() {
         return valueSet;
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.MEDIUM_AUTO;
     }
 }

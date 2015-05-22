@@ -25,7 +25,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.onehippo.cms7.resourcebundle.ResourceBundlePlugin;
@@ -39,6 +38,8 @@ public class ResourceEditDialog extends Dialog<Resource> {
     public ResourceEditDialog(final ResourceBundlePlugin plugin, final Resource resource) {
         this.plugin = plugin;
 
+        setSize(DialogConstants.MEDIUM_AUTO);
+
         final String valueLabel = new StringResourceModel("dialog.resource.value.label", plugin, null).getObject();
 
         add(new Label("key-label", new StringResourceModel("dialog.resource.key.label", plugin, null)));
@@ -46,7 +47,7 @@ public class ResourceEditDialog extends Dialog<Resource> {
             .add(plugin.makeTitle(plugin, "dialog.resource.edit.key.hint")));
 
         add(new Label("desc-label", new StringResourceModel("dialog.resource.desc.label", plugin, null)));
-        add(new TextArea<>("desc-value", new PropertyModel<String>(resource, "description")));
+        add(new TextArea<>("desc-value", new PropertyModel<>(resource, "description")));
 
         add(new ListView<ValueSet>("repeater", resource.getBundle().getValueSets()) {
             private static final long serialVersionUID = 1L;
@@ -77,10 +78,5 @@ public class ResourceEditDialog extends Dialog<Resource> {
 
     public IModel<String> getTitle() {
         return new StringResourceModel("dialog.resource.edit.title", plugin, null);
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.MEDIUM_AUTO;
     }
 }

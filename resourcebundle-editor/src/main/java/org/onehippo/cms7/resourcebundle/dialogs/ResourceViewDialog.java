@@ -21,7 +21,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.onehippo.cms7.resourcebundle.ResourceBundlePlugin;
@@ -34,6 +33,8 @@ public class ResourceViewDialog extends Dialog<Resource> {
 
     public ResourceViewDialog(final ResourceBundlePlugin plugin, final Resource resource) {
         this.plugin = plugin;
+
+        setSize(DialogConstants.MEDIUM_AUTO);
 
         final String valueLabel = new StringResourceModel("dialog.resource.value.label", plugin, null).getObject();
 
@@ -62,10 +63,5 @@ public class ResourceViewDialog extends Dialog<Resource> {
 
     public IModel<String> getTitle() {
         return new StringResourceModel("dialog.resource.view.title", plugin, null);
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.MEDIUM_AUTO;
     }
 }

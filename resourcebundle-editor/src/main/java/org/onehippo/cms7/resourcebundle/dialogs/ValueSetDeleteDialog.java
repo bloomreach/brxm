@@ -23,24 +23,20 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.onehippo.cms7.resourcebundle.ResourceBundlePlugin;
 import org.onehippo.cms7.resourcebundle.data.Bundle;
 import org.onehippo.cms7.resourcebundle.data.ValueSet;
 
-/**
- * @version "$Id$"
- */
 public class ValueSetDeleteDialog extends Dialog<String> {
 
-    private static final long serialVersionUID = 1L;
     private ResourceBundlePlugin plugin;
     private ValueSet selectedValueSet;
 
-
     public ValueSetDeleteDialog(final ResourceBundlePlugin plugin, Bundle bundle) {
+
+        setSize(DialogConstants.MEDIUM_AUTO);
 
         List<ValueSet> valueSets = bundle.getMutableValueSets();
 
@@ -48,10 +44,10 @@ public class ValueSetDeleteDialog extends Dialog<String> {
         this.selectedValueSet = valueSets.get(0);
 
         add(new Label("label", new StringResourceModel("dialog.valueset.delete.label", plugin, null)));
-        add(new DropDownChoice<ValueSet>("dropdown",
-                                         new PropertyModel<ValueSet>(this, "selectedValueSet"),
-                                         valueSets,
-                                         plugin.getValueSetRenderer())
+        add(new DropDownChoice<>("dropdown",
+                                 new PropertyModel<>(this, "selectedValueSet"),
+                                 valueSets,
+                                 plugin.getValueSetRenderer())
             .setNullValid(false)
             .setRequired(true)
         );
@@ -66,10 +62,5 @@ public class ValueSetDeleteDialog extends Dialog<String> {
 
     public ValueSet getValueSet() {
         return selectedValueSet;
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.MEDIUM_AUTO;
     }
 }

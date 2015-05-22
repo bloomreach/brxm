@@ -25,7 +25,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.onehippo.cms7.resourcebundle.ResourceBundlePlugin;
@@ -43,6 +42,8 @@ public class ResourceCopyDialog extends Dialog<Resource> {
     public ResourceCopyDialog(final ResourceBundlePlugin plugin, Bundle bundle, Resource originalResource) {
         this.plugin = plugin;
 
+        setSize(DialogConstants.MEDIUM_AUTO);
+
         isAdd = originalResource == null;
         resource = isAdd ? bundle.newResource() : bundle.copyResource(originalResource);
         final String valueLabel = new StringResourceModel("dialog.resource.value.label", plugin, null).getObject();
@@ -52,7 +53,7 @@ public class ResourceCopyDialog extends Dialog<Resource> {
                 .add(new ResourceKeyValidator(plugin, resource)));
 
         add(new Label("desc-label", new StringResourceModel("dialog.resource.desc.label", plugin, null)));
-        add(new TextArea<>("desc-value", new PropertyModel<String>(resource, "description")));
+        add(new TextArea<>("desc-value", new PropertyModel<>(resource, "description")));
 
         add(new ListView<ValueSet>("repeater", bundle.getValueSets()) {
             private static final long serialVersionUID = 1L;
@@ -88,10 +89,5 @@ public class ResourceCopyDialog extends Dialog<Resource> {
 
     protected Resource getResource() {
         return resource;
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.MEDIUM_AUTO;
     }
 }

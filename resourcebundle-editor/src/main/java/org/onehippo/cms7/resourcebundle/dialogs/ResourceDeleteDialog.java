@@ -19,7 +19,6 @@ package org.onehippo.cms7.resourcebundle.dialogs;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.onehippo.cms7.resourcebundle.ResourceBundlePlugin;
@@ -32,6 +31,8 @@ public class ResourceDeleteDialog extends Dialog<Resource> {
     public ResourceDeleteDialog(final ResourceBundlePlugin plugin, final Resource resource) {
         this.plugin = plugin;
 
+        setSize(DialogConstants.MEDIUM_AUTO);
+
         // interpolate the string
         String warning = new StringResourceModel("dialog.resource.delete.warning", plugin, null).getObject();
         warning = warning.replaceAll("\\$\\{key\\}", resource.getKey());
@@ -42,10 +43,5 @@ public class ResourceDeleteDialog extends Dialog<Resource> {
 
     public IModel<String> getTitle() {
         return new StringResourceModel("dialog.resource.delete.title", plugin, null);
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.MEDIUM_AUTO;
     }
 }

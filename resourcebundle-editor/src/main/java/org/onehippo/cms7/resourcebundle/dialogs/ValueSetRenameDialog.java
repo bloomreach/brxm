@@ -24,7 +24,6 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.onehippo.cms7.resourcebundle.ResourceBundlePlugin;
@@ -32,33 +31,31 @@ import org.onehippo.cms7.resourcebundle.data.Bundle;
 import org.onehippo.cms7.resourcebundle.data.ValueSet;
 import org.onehippo.cms7.resourcebundle.validators.ValueSetNameValidator;
 
-/**
- * @version "$Id$"
- */
 public class ValueSetRenameDialog extends Dialog<String> {
 
-    private static final long serialVersionUID = 1L;
     private ResourceBundlePlugin plugin;
     private ValueSet selectedValueSet;
     private String newName;
 
     public ValueSetRenameDialog(final ResourceBundlePlugin plugin, Bundle bundle) {
 
+        setSize(DialogConstants.MEDIUM_AUTO);
+
         List<ValueSet> valueSets = bundle.getMutableValueSets();
         this.plugin = plugin;
         selectedValueSet = valueSets.get(0);
         newName = "";
 
-        final TextField<String> newNameField = new TextField<String>("name", new PropertyModel<String>(this, "newName"));
+        final TextField<String> newNameField = new TextField<>("name", new PropertyModel<>(this, "newName"));
         newNameField.setRequired(true);
         newNameField.add(new ValueSetNameValidator(plugin, selectedValueSet));
         newNameField.setOutputMarkupId(true);
 
         add(new Label("label", new StringResourceModel("dialog.valueset.rename.label", plugin, null)));
         add(new DropDownChoice<>("dropdown",
-                new PropertyModel<ValueSet>(this, "selectedValueSet"),
-                valueSets,
-                plugin.getValueSetRenderer())
+                                 new PropertyModel<>(this, "selectedValueSet"),
+                                 valueSets,
+                                 plugin.getValueSetRenderer())
                 .setNullValid(false)
                 .setRequired(true)
         );
@@ -75,10 +72,5 @@ public class ValueSetRenameDialog extends Dialog<String> {
     public ValueSet getValueSet() {
         selectedValueSet.setDisplayName(newName);
         return selectedValueSet;
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.MEDIUM_AUTO;
     }
 }
