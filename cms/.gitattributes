@@ -1119,7 +1119,6 @@ api/src/main/styling/less/_editor_hint_field.less -text
 api/src/main/styling/less/_editor_linkpicker.less -text
 api/src/main/styling/less/_editor_preview.less -text
 api/src/main/styling/less/_editor_toolbar.less -text
-api/src/main/styling/less/_fonts.less -text
 api/src/main/styling/less/_footer.less -text
 api/src/main/styling/less/_form_elements.less -text
 api/src/main/styling/less/_globals.less -text
