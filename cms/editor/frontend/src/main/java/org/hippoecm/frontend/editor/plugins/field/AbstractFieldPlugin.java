@@ -149,6 +149,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         mode = IEditor.Mode.fromString(config.getString(ITemplateEngine.MODE, "view"));
         if (IEditor.Mode.COMPARE == mode) {
             if (config.containsKey("model.compareTo")) {
+                @SuppressWarnings("unchecked")
                 IModelReference<Node> compareToModelRef = context.getService(config.getString("model.compareTo"),
                         IModelReference.class);
                 if (compareToModelRef != null) {
@@ -382,7 +383,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     protected boolean canRemoveItem() {
         IFieldDescriptor field = helper.getField();
-        if (IEditor.Mode.EDIT != mode || (field == null)) {
+        if (IEditor.Mode.EDIT != mode || field == null) {
             return false;
         }
         if (!field.isMultiple() && !field.getValidators().contains("optional")) {
@@ -427,17 +428,18 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                                             IRenderService renderer) {
         super.onAddRenderService(item, renderer);
 
-        final ComparingController.ItemEntry itemEntry = (comparingController != null) ? comparingController.getFieldItem(renderer) : null;
-        final FieldItem itemRenderer = (templateController != null) ? templateController.getFieldItem(renderer) : null;
+        final FieldItem<C> itemRenderer = templateController != null ? templateController.getFieldItem(renderer) : null;
+        final C itemModel = itemRenderer != null ? itemRenderer.getModel() : null;
 
         switch (mode) {
+            case VIEW:
+                populateViewItem(item, itemModel);
+                break;
             case EDIT:
                 final IFieldDescriptor field = getFieldHelper().getField();
-                if (managedValidation && field != null && field.isMultiple()) {
+                if (managedValidation && field != null && field.isMultiple() && itemRenderer != null) {
                     item.setOutputMarkupId(true);
                     ValidationFilter listener = new ValidationFilter() {
-                        private static final long serialVersionUID = 1L;
-
                         @Override
                         public void onValidation(IValidationResult result) {
                             boolean valid = itemRenderer.isValid();
@@ -454,17 +456,14 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                     addValidationFilter(item, listener);
                     item.add(new CssClassAppender(listener));
                 }
-                C model = (C) itemRenderer.getModel();
-                populateEditItem(item, model);
+                populateEditItem(item, itemModel);
                 break;
             case COMPARE:
-                C newModel = (itemEntry!= null && (C) itemEntry.newModel != null) ? (C) itemEntry.newModel : null;
-                C oldModel = (itemEntry!= null && (C) itemEntry.oldModel != null) ? (C) itemEntry.oldModel : null;
+                final ComparingController<P, C>.ItemEntry itemEntry = comparingController != null
+                        ? comparingController.getFieldItem(renderer) : null;
+                final C newModel = (itemEntry != null) ? itemEntry.newModel : null;
+                final C oldModel = (itemEntry != null) ? itemEntry.oldModel : null;
                 populateCompareItem(item, newModel, oldModel);
-                break;
-            case VIEW:
-                C viewModel = (itemRenderer != null ) ? (C) itemRenderer.getModel() : null;
-                populateViewItem(item, viewModel);
                 break;
         }
     }
@@ -485,10 +484,16 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     protected void populateCompareItem(org.apache.wicket.markup.repeater.Item<IRenderService> item, C newModel, C oldModel) {
     }
 
+    /**
+     * @deprecated Deprecated in favor of {@link #populateViewItem(org.apache.wicket.markup.repeater.Item, IModel)}
+     */
     @Deprecated
     protected void populateViewItem(org.apache.wicket.markup.repeater.Item<IRenderService> item) {
     }
 
+    /**
+     * @deprecated Deprecated in favor of {@link #populateCompareItem(org.apache.wicket.markup.repeater.Item, IModel, IModel)}
+     */
     @Deprecated
     protected void populateCompareItem(org.apache.wicket.markup.repeater.Item<IRenderService> item) {
     }

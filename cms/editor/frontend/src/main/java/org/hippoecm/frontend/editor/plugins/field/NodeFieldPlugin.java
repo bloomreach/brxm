@@ -175,6 +175,9 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         item.add(fragment);
     }
 
+    /**
+     * @deprecated Deprecated in favor of {@link #populateViewItem(Item, JcrNodeModel)}
+     */
     @Deprecated
     @Override
     protected void populateViewItem(Item<IRenderService> item) {
@@ -260,6 +263,9 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         item.add(fragment);
     }
 
+    /**
+     * @deprecated Deprecated in favor of {@link #populateCompareItem(Item, JcrNodeModel, JcrNodeModel)}
+     */
     @Deprecated
     @Override
     protected void populateCompareItem(Item<IRenderService> item) {

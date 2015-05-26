@@ -192,6 +192,9 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         item.add(fragment);
     }
 
+    /**
+     * @deprecated Deprecated in favor of {@link #populateViewItem(Item, JcrPropertyValueModel)}
+     */
     @Deprecated
     @Override
     protected void populateViewItem(Item<IRenderService> item) {
@@ -267,6 +270,9 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         item.add(fragment);
     }
 
+    /**
+     * @deprecated Deprecated in favor of {@link #populateCompareItem(Item, JcrPropertyValueModel, JcrPropertyValueModel)}
+     */
     @Deprecated
     @Override
     protected void populateCompareItem(Item<IRenderService> item) {
