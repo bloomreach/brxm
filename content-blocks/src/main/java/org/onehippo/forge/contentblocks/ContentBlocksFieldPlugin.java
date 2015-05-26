@@ -385,7 +385,9 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
             item.add(itemTitle);
         }
     }
-
+    /**
+    * @deprecated Deprecated in favor of {@link #populateViewItem(Item, JcrNodeModel)}
+    */
     @Deprecated
     @Override
     protected void populateViewItem(Item<IRenderService> item) {
@@ -418,6 +420,9 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         }
     }
 
+    /**
+     * @deprecated Deprecated in favor of {@link #populateCompareItem(Item, JcrNodeModel, JcrNodeModel)}
+     */
     @Deprecated
     @Override
     protected void populateCompareItem(Item<IRenderService> item) {
