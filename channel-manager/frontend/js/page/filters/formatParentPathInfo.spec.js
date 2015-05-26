@@ -31,6 +31,9 @@ describe('formatParentPathInfo test cases', function () {
     it('should not add an additional slash when the input already ends with a slash', function () {
       expect(formatParentPathInfo('test')).toBe('test/');
     });
+    it('undefined input must return an empty string', function () {
+      expect(formatParentPathInfo(undefined)).toBe('');
+    });
     it('null input must return an empty string', function () {
       expect(formatParentPathInfo(null)).toBe('');
     });

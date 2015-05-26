@@ -26,7 +26,7 @@
   angular.module('hippo.channel.page')
     .filter('formatParentPathInfo', function () {
       return function (value) {
-        if (value === null || value === '') {
+        if (value === undefined || value === null || value === '') {
           return "";
         }
         if (value.charAt(value.length - 1) !== '/') {
