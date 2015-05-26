@@ -38,6 +38,7 @@ public class SiteMapItemRepresentation {
     private String name;
     private String id;
     private String pathInfo;
+    private String parentPathInfo;
     private boolean isHomePage;
     private String pageTitle;
     private Map<String, String> localParameters;
@@ -89,6 +90,10 @@ public class SiteMapItemRepresentation {
             this.isHomePage = true;
         }
 
+        if (item.getParentItem() != null) {
+            parentPathInfo = HstSiteMapUtils.getPath(item.getParentItem(), null);
+        }
+
         pageTitle = item.getPageTitle();
         componentConfigurationId = item.getComponentConfigurationId();
         final HstComponentConfiguration page = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration(componentConfigurationId);
@@ -118,7 +123,6 @@ public class SiteMapItemRepresentation {
         return this;
 
     }
-
 
     private boolean hasContainerItemInPageDefinition(final HstComponentConfiguration root) {
         if (root == null) {
@@ -170,6 +174,14 @@ public class SiteMapItemRepresentation {
 
     public void setPathInfo(final String pathInfo) {
         this.pathInfo = pathInfo;
+    }
+
+    public String getParentPathInfo() {
+        return parentPathInfo;
+    }
+
+    public void setParentPathInfo(final String parentPathInfo) {
+        this.parentPathInfo = parentPathInfo;
     }
 
     public String getComponentConfigurationId() {
