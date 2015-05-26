@@ -197,6 +197,7 @@
               ];
               $scope.page.id = currentPage.id;
               $scope.page.title = currentPage.pageTitle;
+              $scope.page.parentPathInfo = currentPage.parentPathInfo;
               $scope.page.availableDocumentRepresentations = defaultRepresentation.concat(currentPage.availableDocumentRepresentations);
 
               if (currentPage.primaryDocumentRepresentation) {
