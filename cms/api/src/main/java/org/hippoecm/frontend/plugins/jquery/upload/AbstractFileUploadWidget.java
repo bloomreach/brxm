@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.frontend.plugins;
+package org.hippoecm.frontend.plugins.jquery.upload;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +24,6 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.util.upload.FileItem;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
-import org.hippoecm.frontend.plugins.jquery.upload.FileUploadWidgetSettings;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.hippoecm.frontend.validation.IValidationResult;

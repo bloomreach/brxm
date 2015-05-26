@@ -69,7 +69,7 @@ import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
-import org.hippoecm.frontend.plugins.jquery.upload.single.JQuerySingleFileUploadWidget;
+import org.hippoecm.frontend.plugins.jquery.upload.single.SingleFileUploadWidget;
 import org.hippoecm.frontend.plugins.richtext.dialog.AbstractBrowserDialog;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorImageLink;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
@@ -115,7 +115,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
     private String galleryType;
 
     private boolean okSucceeded = false;
-    private JQuerySingleFileUploadWidget fileUploadWidget;
+    private SingleFileUploadWidget fileUploadWidget;
     
     public ImageBrowserDialog(IPluginContext context, final IPluginConfig config, final IModel<RichTextEditorImageLink> model) {
         super(context, config, model);
@@ -229,7 +229,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
         uploadButton.setOutputMarkupId(true);
         uploadForm.add(this.uploadButton);
 
-        fileUploadWidget = new JQuerySingleFileUploadWidget(FILEUPLOAD_WIDGET_ID, getPluginConfig(), validator) {
+        fileUploadWidget = new SingleFileUploadWidget(FILEUPLOAD_WIDGET_ID, getPluginConfig(), validator) {
             @Override
             protected void onFileUpload(final FileUpload fileUpload) throws FileUploadViolationException {
                 clearOldFeedbackMessages();

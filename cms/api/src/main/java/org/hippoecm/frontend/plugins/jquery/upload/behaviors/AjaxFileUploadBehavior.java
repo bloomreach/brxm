@@ -46,7 +46,6 @@ import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
 public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
     private static final Logger log = LoggerFactory.getLogger(AjaxFileUploadBehavior.class);
-    private static final long serialVersionUID = 1L;
 
     public static final String APPLICATION_JSON = "application/json";
 
@@ -94,9 +93,9 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
             }
             setResponse(servletWebRequest, allUploadedFiles);
         } catch (FileUploadException e) {
-            log.error("Error handling file upload request", e);
-            String responseContent = String.format("{\"error\": \"%s\"}", "Error handling file upload request");
-            setResponse(servletWebRequest, responseContent);
+            final String message = "Error handling file upload request";
+            log.error(message, e);
+            setResponse(servletWebRequest, message);
         }
     }
 
@@ -213,7 +212,6 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
      * http://blueimp.github.com/jQuery-File-Upload/ docs for more info.
      *
      * @param request
-     * @return
      */
     protected boolean wantsHtml(ServletWebRequest request) {
         String acceptHeader = request.getHeader("Accept");

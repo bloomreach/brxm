@@ -27,7 +27,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
 import org.apache.wicket.util.upload.FileItem;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.AbstractFileUploadWidget;
+import org.hippoecm.frontend.plugins.jquery.upload.AbstractFileUploadWidget;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.AjaxCallbackUploadDoneBehavior;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.AjaxFileUploadBehavior;
@@ -40,11 +40,10 @@ import org.slf4j.LoggerFactory;
  * The multi-files upload widget
  */
 public abstract class FileUploadWidget extends AbstractFileUploadWidget {
-    private static final long serialVersionUID = 1L;
+
+    private static final Logger log = LoggerFactory.getLogger(FileUploadWidget.class);
 
     private static final String UPLOADING_SCRIPT_TEMPLATE = "$('#${componentMarkupId}').data('blueimp-fileupload').uploadFiles()";
-
-    final Logger log = LoggerFactory.getLogger(FileUploadWidget.class);
 
     private long fileUploadCounter = 0;
     private int nNumberOfFiles = 0;

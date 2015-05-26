@@ -22,12 +22,14 @@ import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.AbstractFileUploadWidget;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 
 /**
  * Single file upload using Wicket file-upload mechanism
+ *
+ * @deprecated since version 2.28.01, this widget is deprecated by {@link org.hippoecm.frontend.plugins.jquery.upload.single.SingleFileUploadWidget}
  */
+@Deprecated
 public abstract class SingleFileUploadWidget extends AbstractFileUploadWidget {
 
     public static final String COMPONENT_FILE_INPUT_ID = "fileInput";

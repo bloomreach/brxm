@@ -438,19 +438,6 @@
                 <exclude>brokenlinks/repository/src/main/resources/*.xml</exclude>
                 <exclude>translations/repository/src/main/resources/*.xml</exclude>
                 <exclude>workflow/repository/src/main/resources/*.xml</exclude>
-                <!-- JQuery File Upload -->
-                <exclude>api/src/main/resources/org/hippoecm/frontend/plugins/jquery/upload/js/canvas-to-blob.js</exclude>
-                <exclude>api/src/main/resources/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload.js</exclude>
-                <exclude>api/src/main/resources/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload-image.js</exclude>
-                <exclude>api/src/main/resources/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload-process.js</exclude>
-                <exclude>api/src/main/resources/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload-ui.js</exclude>
-                <exclude>api/src/main/resources/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload-validate.js</exclude>
-                <exclude>api/src/main/resources/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.iframe-transport.js</exclude>
-                <exclude>api/src/main/resources/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.ui.widget.js</exclude>
-                <exclude>api/src/main/resources/org/hippoecm/frontend/plugins/jquery/upload/js/load-image.js</exclude>
-                <exclude>api/src/main/resources/org/hippoecm/frontend/plugins/jquery/upload/js/load-image-meta.js</exclude>
-                <exclude>api/src/main/resources/org/hippoecm/frontend/plugins/jquery/upload/js/tmpl.js</exclude>
-                <exclude>api/src/main/resources/org/hippoecm/frontend/plugins/jquery/upload/css/*.css</exclude>
                 <!--  files without license header  -->
                 <exclude>api/.bowerrc</exclude>
                 <exclude>api/.csslintrc</exclude>

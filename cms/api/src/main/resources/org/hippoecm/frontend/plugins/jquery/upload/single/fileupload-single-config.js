@@ -20,7 +20,9 @@
 (function () {
   'use strict';
 
-  $('#${componentMarkupId}').fileupload({
+  var widgetElement = $('#${componentMarkupId}');
+
+  widgetElement.fileupload({
     autoUpload: ${autoUpload},
     url: '${url}',
     maxNumberOfFiles: 1,
@@ -33,7 +35,7 @@
       ${callbackRefreshScript}
     }
   }).bind('fileuploadadd', function (e, data) {
-    var widget = $('#${componentMarkupId}').data("blueimp-fileupload");
+    var widget = widgetElement.data("blueimp-fileupload");
     if (data && data.files && data.files.length > 0) {
       showSelectedFile(data.files[0].name);
       // store selected file
@@ -43,21 +45,22 @@
       ${callbackFileOnChangeScript}
     }
   }).bind('fileuploadsubmit', function (e, data) {
-    var widget = $('#${componentMarkupId}').data("blueimp-fileupload");
+    var widget = widgetElement.data("blueimp-fileupload");
     // remove stored file that has been uploaded
     widget.uploaddata = null;
 
     clearSelectedFile();
   });
+
+  function showSelectedFile (filename) {
+    widgetElement.find('#selected-file').text(filename);
+  }
+
+  /**
+   * Clear the span element displaying selected file
+   */
+  function clearSelectedFile () {
+    widgetElement.find('#selected-file').text('');
+  }
 })();
 
-function showSelectedFile (filename) {
-  $('#${componentMarkupId}').find('#selected-file').text(filename);
-}
-
-/**
- * Clear the span element displaying selected file
- */
-function clearSelectedFile () {
-  $('#${componentMarkupId}').find('#selected-file').text('');
-}

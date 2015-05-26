@@ -22,12 +22,10 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.event.Broadcast;
-import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadBehavior;
@@ -40,13 +38,10 @@ import org.slf4j.LoggerFactory;
  * Create an unique instance of jquery-file-upload widget. It does not work for multiple instances jquery-file-upload
  */
 public class SingleFileUploadBar extends Panel {
-    private static final long serialVersionUID = 1L;
     static private final Logger log = LoggerFactory.getLogger(SingleFileUploadBar.class);
 
-//    private static final CssResourceReference CSS = new CssResourceReference(SingleFileUploadBar.class, "SingleFileUploadBar.css");;
-
     private static final String JQUERY_FILEUPLOAD_SINGLE_JS = "jquery.fileupload-single.js";
-    private static final String CONFIG_JS = "widget-config.js";
+    private static final String CONFIG_JS = "fileupload-single-config.js";
 
     public SingleFileUploadBar(final String id, final FileUploadWidgetSettings settings) {
         super(id);

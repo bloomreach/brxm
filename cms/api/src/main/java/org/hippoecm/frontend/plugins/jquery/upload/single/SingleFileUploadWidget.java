@@ -27,7 +27,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
 import org.apache.wicket.util.upload.FileItem;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.AbstractFileUploadWidget;
+import org.hippoecm.frontend.plugins.jquery.upload.AbstractFileUploadWidget;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.AjaxCallbackUploadDoneBehavior;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.AjaxFileUploadBehavior;
@@ -40,9 +40,8 @@ import org.slf4j.LoggerFactory;
 /**
  * The single-file-upload widget using jquery-file-upload
  */
-public abstract class JQuerySingleFileUploadWidget extends AbstractFileUploadWidget {
-    private static final long serialVersionUID = 1L;
-    final Logger log = LoggerFactory.getLogger(JQuerySingleFileUploadWidget.class);
+public abstract class SingleFileUploadWidget extends AbstractFileUploadWidget {
+    final Logger log = LoggerFactory.getLogger(SingleFileUploadWidget.class);
 
     private final String UPLOADING_SCRIPT_TEMPLATE = "$('#${componentMarkupId}').data('blueimp-fileupload').uploadFile();";
 
@@ -50,15 +49,15 @@ public abstract class JQuerySingleFileUploadWidget extends AbstractFileUploadWid
     private AbstractAjaxBehavior ajaxCallbackDoneBehavior;
     private AjaxFileUploadBehavior ajaxFileUploadBehavior;
 
-    public JQuerySingleFileUploadWidget(final String uploadPanel, final IPluginConfig pluginConfig, final FileUploadValidationService validator,
-                                        final boolean autoUpload) {
+    public SingleFileUploadWidget(final String uploadPanel, final IPluginConfig pluginConfig, final FileUploadValidationService validator,
+                                  final boolean autoUpload) {
         super(uploadPanel, pluginConfig, validator);
         this.settings.setAutoUpload(autoUpload);
 
         createComponents();
     }
 
-    public JQuerySingleFileUploadWidget(final String uploadPanel, final IPluginConfig pluginConfig, final FileUploadValidationService validator) {
+    public SingleFileUploadWidget(final String uploadPanel, final IPluginConfig pluginConfig, final FileUploadValidationService validator) {
         super(uploadPanel, pluginConfig, validator);
         createComponents();
     }
@@ -88,16 +87,16 @@ public abstract class JQuerySingleFileUploadWidget extends AbstractFileUploadWid
         add(ajaxFileUploadBehavior = new AjaxFileUploadBehavior(this) {
             @Override
             protected void process(final FileUpload fileUpload) throws FileUploadViolationException {
-                JQuerySingleFileUploadWidget.this.process(fileUpload);
+                SingleFileUploadWidget.this.process(fileUpload);
             }
 
             @Override
             protected void onAfterUpload(final FileItem file, final FileUploadInfo fileUploadInfo) {
-                JQuerySingleFileUploadWidget.this.onAfterUpload(file, fileUploadInfo);
+                SingleFileUploadWidget.this.onAfterUpload(file, fileUploadInfo);
             }
 
             protected void onUploadError(final FileUploadInfo fileUploadInfo) {
-                JQuerySingleFileUploadWidget.this.onUploadError(fileUploadInfo);
+                SingleFileUploadWidget.this.onUploadError(fileUploadInfo);
             }
         });
 
@@ -106,14 +105,14 @@ public abstract class JQuerySingleFileUploadWidget extends AbstractFileUploadWid
             protected void onNotify(final int numberOfUploadedFiles) {
                 if (numberOfUploadedFiles != 1) {
                     log.error("The widget '{}' should be used for uploading only a single file. Please use {} for multiple file uploads",
-                            JQuerySingleFileUploadWidget.class.getName(), FileUploadWidget.class.getName());
+                            SingleFileUploadWidget.class.getName(), FileUploadWidget.class.getName());
                 }
             }
         });
 
         fileUploadBar = new SingleFileUploadBar("fileUploadBar", settings) {
             protected void onChange(final AjaxRequestTarget target) {
-                JQuerySingleFileUploadWidget.this.onChange(target);
+                SingleFileUploadWidget.this.onChange(target);
             }
         };
         add(fileUploadBar);

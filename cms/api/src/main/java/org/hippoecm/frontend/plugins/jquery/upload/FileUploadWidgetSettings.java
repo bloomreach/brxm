@@ -26,6 +26,7 @@ public class FileUploadWidgetSettings implements IClusterable {
     public static final String MAX_HEIGHT_PROP = "max.height";
     public static final String MAX_FILESIZE_PROP = "max.file.size";
     public static final String FILEUPLOAD_MAX_ITEMS = "fileupload.maxItems";
+    public static final String AUTOUPLOAD_PROP = "autoUpload";
 
     private static final long DEFAULT_MAX_NUMBER_OF_FILES = 25;
 
@@ -115,10 +116,20 @@ public class FileUploadWidgetSettings implements IClusterable {
         return this.allowedExtensions;
     }
 
+    /**
+     * The setting used in {@link FileUploadBehavior} to determine when selecting a file, the widget should upload it
+     * automatically or wait until the upload script is called.
+     *
+     * @see AbstractFileUploadWidget#getUploadScript()
+     * @see org.hippoecm.frontend.plugins.jquery.upload.single.SingleFileUploadWidget#SingleFileUploadWidget(String, IPluginConfig, FileUploadValidationService, boolean)
+     */
     public boolean isAutoUpload() {
         return autoUpload;
     }
 
+    /**
+     * @see #isAutoUpload()
+     */
     public final void setAutoUpload(final boolean autoUpload) {
         this.autoUpload = autoUpload;
     }

@@ -38,8 +38,7 @@ public class FileUploadInfo {
     }
 
     /**
-     * Return either an empty list or a list of error messages occurred in uploading
-     * @return
+     * @return Either an empty list if there's no error or a list of error messages occurred in uploading
      */
     public List<String> getErrorMessages() {
         return Collections.unmodifiableList(errorMessages);

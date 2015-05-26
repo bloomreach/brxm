@@ -24,12 +24,9 @@ import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 
 /**
- * Contributes all CSS/JS resources needed by http://blueimp.github.com/jQuery-File-Upload/
+ * Contributes all JS resources needed by the <a href="http://blueimp.github.com/jQuery-File-Upload/">JQuery-File-Upload</a>
  */
 public abstract class FileUploadBehavior extends AbstractAjaxBehavior {
-    private static final long serialVersionUID = 1L;
-
-    private static final String AUTOUPLOAD_PARAM = "autoUpload";
     private static final String REGEX_ANYFILE = ".*";
 
     protected final FileUploadWidgetSettings settings;
@@ -42,13 +39,8 @@ public abstract class FileUploadBehavior extends AbstractAjaxBehavior {
     public void renderHead(Component component, IHeaderResponse response) {
         super.renderHead(component, response);
 
-        renderCSS(response);
         renderScripts(response);
-
         renderWidgetConfig(response, configureParameters(component));
-    }
-
-    protected void renderCSS(final IHeaderResponse response) {
     }
 
     protected void renderScripts(final IHeaderResponse response) {
@@ -75,7 +67,7 @@ public abstract class FileUploadBehavior extends AbstractAjaxBehavior {
         variables.put(FileUploadWidgetSettings.MAX_WIDTH_PROP, settings.getMaxWidth());
         variables.put(FileUploadWidgetSettings.MAX_HEIGHT_PROP, settings.getMaxHeight());
         variables.put(FileUploadWidgetSettings.MAX_FILESIZE_PROP, settings.getMaxFileSize());
-        variables.put(AUTOUPLOAD_PARAM, settings.isAutoUpload());
+        variables.put(FileUploadWidgetSettings.AUTOUPLOAD_PROP, settings.isAutoUpload());
         return variables;
     }
 

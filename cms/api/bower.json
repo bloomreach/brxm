@@ -3,7 +3,7 @@
   "private": true,
   "devDependencies": {
     "hippo-theme": "./target/dependency/hippo-theme.zip",
-    "jquery-file-upload": "~9.9.3",
+    "jquery-file-upload": "9.9.4",
     "jquery-selectric": "1.9.2",
     "normalize.css": "3.0.2",
     "open-sans-fontface": "1.1.0",
