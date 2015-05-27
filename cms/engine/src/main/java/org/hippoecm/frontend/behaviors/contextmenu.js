@@ -25,9 +25,7 @@
     return null;
   }
 
-  if (typeof Hippo === 'undefined') {
-    Hippo = {};
-  }
+  var Hippo = window.Hippo || {};
 
   Hippo.Set = function () {
     this.entries = [];
@@ -111,22 +109,34 @@
     var menu = YUID.get(id);
     var ul = YUID.getElementsByClassName('hippo-toolbar-menu-item', 'ul', menu);
 
-    //reset container and append menu for correct size calculation
+    // reset container and append menu for correct size calculation
+    YUID.removeClass(menu, 'scrollable-context-menu');
+    YUID.setStyle(menu, 'visibility', 'hidden');
     container.innerHTML = '';
     container.appendChild(menu);
 
     var viewWidth = YUID.getViewportWidth();
     var viewHeight = YUID.getViewportHeight();
     var region = YUID.getRegion(ul);
-    var menuWidth = region[0].width,
-      menuHeight = region[0].height;
+    var menuWidth = region[0].width;
+    var menuHeight = region[0].height;
+    var menuBottom = posY + menuHeight;
 
-    if (posY + menuHeight > viewHeight) {
-      posY -= menuHeight;
+    if (menuBottom > viewHeight) {
+      posY -= menuBottom - viewHeight;
+    }
+
+    if (posY < 0) {
+      posY = 0;
+      YUID.addClass(menu, 'scrollable-context-menu');
     }
 
     if (posX + menuWidth > viewWidth) {
       posX -= menuWidth;
+    }
+
+    if (posX < 0) {
+      posX = 0;
     }
 
     YUID.setXY(container, [posX, posY]);
