@@ -129,8 +129,9 @@
     </attribute>
     <attribute>
       <description>
-        Whether or not to escape &amp;,&gt;,&lt;,", and ' to be safely used as a tag attribute (e.g, href, src, etc.) value.
-        By default, this is set to true.
+        Whether or not to escape &amp;,&gt;,&lt;,", and '. When escapeXml = true, the
+        renderURL can be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default escapeXml is set to true.
       </description>
       <name>escapeXml</name>
       <required>false</required>
@@ -181,8 +182,9 @@
     </attribute>
     <attribute>
       <description>
-        Whether or not to escape &amp;,&gt;,&lt;,", and ' to be safely used as a tag attribute (e.g, href, src, etc.) value.
-        By default, this is set to true.
+        Whether or not to escape &amp;,&gt;,&lt;,", and '. When escapeXml = true, the
+        actionURL can be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default escapeXml is set to true.
       </description>
       <name>escapeXml</name>
       <required>false</required>
@@ -222,10 +224,13 @@
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.Boolean</type>
     </attribute>
-    <attribute>
-      <description>
         Whether or not to escape &amp;,&gt;,&lt;,", and ' to be safely used as a tag attribute (e.g, href, src, etc.) value.
         By default, this is set to true.
+    <attribute>
+      <description>
+        Whether or not to escape &amp;,&gt;,&lt;,", and '. When escapeXml = true, the
+        resourceURL can be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default escapeXml is set to true.
       </description>
       <name>escapeXml</name>
       <required>false</required>
@@ -258,8 +263,9 @@
     </attribute>
     <attribute>
       <description>
-        Whether or not to escape &amp;,&gt;,&lt;,", and ' to be safely used as a tag attribute (e.g, href, src, etc.) value.
-        By default, this is set to true.
+        Whether or not to escape &amp;,&gt;,&lt;,", and '. When escapeXml = true, the
+        componentRenderingURL can be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default escapeXml is set to true.
       </description>
       <name>escapeXml</name>
       <required>false</required>
@@ -386,8 +392,9 @@
     </attribute>
     <attribute>
       <description>
-        Whether or not to escape &amp;,&gt;,&lt;,", and ' to be safely used as a tag attribute (e.g, href, src, etc.) value.
-        By default, this is set to true.
+        Whether or not to escape &amp;,&gt;,&lt;,", and '. When escapeXml = true, the
+        link can be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default escapeXml is set to true.
       </description>
       <name>escapeXml</name>
       <required>false</required>
@@ -483,8 +490,9 @@
     </attribute>
     <attribute>
       <description>
-        Whether or not to escape &amp;,&gt;,&lt;,", and ' to be safely used as a tag attribute (e.g, href, src, etc.) value.
-        By default, this is set to true.
+        Whether or not to escape &amp;,&gt;,&lt;,", and '. When escapeXml = true, the
+        webfile can be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default escapeXml is set to true.
       </description>
       <name>escapeXml</name>
       <required>false</required>
