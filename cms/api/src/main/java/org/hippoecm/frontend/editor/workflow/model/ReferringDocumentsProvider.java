@@ -16,11 +16,14 @@
 package org.hippoecm.frontend.editor.workflow.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -111,7 +114,7 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
                 entries = new ArrayList<>();
                 numResults = 0;
                 final IModel<Node> model = getChainedModel();
-                List<Node> nodes = getReferrersSortedByName(model.getObject(), retrieveUnpublished, getLimit());
+                SortedSet<Node> nodes = getReferrersSortedByName(model.getObject(), retrieveUnpublished, getLimit());
                 numResults = nodes.size();
                 for(Node node : nodes) {
                     entries.add(new JcrNodeModel(node));
@@ -122,12 +125,12 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
         }
     }
 
-    static List<Node> getReferrersSortedByName(Node handle, final boolean retrieveUnpublished, final int resultMaxCount) throws RepositoryException {
+    static SortedSet<Node> getReferrersSortedByName(Node handle, final boolean retrieveUnpublished, final int resultMaxCount) throws RepositoryException {
         if (handle.isNodeType(HippoNodeType.NT_DOCUMENT)) {
             handle = handle.getParent();
         }
         if (!handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-            return Collections.emptyList();
+            return Collections.emptySortedSet();
         }
 
         final Map<String, Node> referrers = new HashMap<>();
@@ -148,7 +151,7 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
                 new StringBuilder("//element(*,hippo:mirror)[@hippo:docbase='").append(uuid).append("']");
         addReferrers(handle, requiredAvailability, resultMaxCount, queryBuilder.toString(), referrers);
 
-        return getSortedReferrers(new ArrayList(referrers.values()));
+        return getSortedReferrers(referrers.values());
     }
 
 
@@ -159,6 +162,7 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
         query.setLimit(1000);
         final QueryResult result = query.execute();
         final Node root = handle.getSession().getRootNode();
+
 
         for (Node hit : new NodeIterable(result.getNodes())) {
             if (referrers.size() >= resultMaxCount) {
@@ -186,19 +190,16 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
         return ArrayUtils.contains(availabilityArray, requiredAvailability);
     }
 
-    private static List<Node> getSortedReferrers(final ArrayList<Node> nodes) throws RepositoryException {
-        try {
-            Collections.sort(nodes, (o1, o2) -> {
-                try {
-                    return o1.getName().compareTo(o2.getName());
-                } catch (RepositoryException e) {
-                    throw new RepositoryRuntimeException(e);
-                }
-            });
-        } catch (RepositoryRuntimeException e) {
-            throw (RepositoryException)e.getCause();
-        }
-        return nodes;
+    private static SortedSet<Node> getSortedReferrers(final Collection<Node> nodes) throws RepositoryException {
+        final TreeSet<Node> sorted = new TreeSet<>((o1, o2) -> {
+            try {
+                return o1.getName().compareTo(o2.getName());
+            } catch (RepositoryException e) {
+                throw new RepositoryRuntimeException(e);
+            }
+        });
+        sorted.addAll(nodes);
+        return sorted;
     }
 
 
