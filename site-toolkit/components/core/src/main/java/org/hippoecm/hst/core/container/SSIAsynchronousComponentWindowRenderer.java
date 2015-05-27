@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.container;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
+import org.hippoecm.hst.util.XmlUtils;
 import org.w3c.dom.Comment;
 
 /**
@@ -28,7 +29,7 @@ public class SSIAsynchronousComponentWindowRenderer extends AbstractAsynchronous
     @Override
     public void processWindowBeforeRender(HstComponentWindow window, HstRequest request, HstResponse response) {
         HstURL compUrl = createAsyncComponentRenderingURL(request, response);
-        final Comment ssiComment = response.createComment("#include virtual=\"" + compUrl + "\" ");
+        final Comment ssiComment = response.createComment("#include virtual=\"" + XmlUtils.encode(compUrl.toString()) + "\" ");
         response.addPreamble(ssiComment);
     }
 }
