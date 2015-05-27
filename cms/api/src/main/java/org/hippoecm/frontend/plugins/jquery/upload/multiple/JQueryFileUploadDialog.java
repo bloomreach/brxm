@@ -31,8 +31,8 @@ import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
-import org.hippoecm.frontend.plugins.yui.upload.validation.DefaultUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
+import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,15 +136,7 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
     }
 
     protected FileUploadValidationService getValidator() {
-        String serviceId = pluginConfig.getString(FileUploadValidationService.VALIDATE_ID, "service.gallery.image.validation");
-        FileUploadValidationService validator = pluginContext.getService(serviceId, FileUploadValidationService.class);
-
-        if (validator == null) {
-            validator = new DefaultUploadValidationService();
-            log.warn("Cannot load image validation service with the id '{}'. Using the default service '{}'",
-                    serviceId, validator.getClass().getName());
-        }
-        return validator;
+        return ImageUploadValidationService.getValidationService(pluginContext, pluginConfig);
     }
 
     @Override

@@ -34,6 +34,7 @@ import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.single.FileUploadPanel;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,27 +45,26 @@ import org.slf4j.LoggerFactory;
  */
 public class ImageUploadPlugin extends RenderPlugin {
 
-    private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(ImageUploadPlugin.class);
-    private final String mode;
+    private final IEditor.Mode mode;
+
     public ImageUploadPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
-        mode = config.getString("mode", "edit");
+        mode = IEditor.Mode.fromString(config.getString("mode", "edit"));
         add(createFileUploadPanel());
         add(new EventStoppingBehavior("onclick"));
         setOutputMarkupId(true);
     }
 
     private FileUploadPanel createFileUploadPanel() {
-        final FileUploadValidationService validator = ImageUploadValidationService.getValidationService(getPluginConfig(), getPluginContext());
-        final FileUploadPanel panel = new FileUploadPanel("fileupload", getPluginConfig(), validator) {
+        final FileUploadValidationService validator = ImageUploadValidationService.getValidationService(getPluginContext(), getPluginConfig());
+        final FileUploadPanel panel = new FileUploadPanel("fileUpload", getPluginConfig(), validator) {
             @Override
             public void onFileUpload(final FileUpload fileUpload) throws FileUploadViolationException {
                 handleUpload(fileUpload);
             }
         };
-        panel.setVisible("edit".equals(mode));
+        panel.setVisible(IEditor.Mode.EDIT == mode);
         return panel;
     }
 

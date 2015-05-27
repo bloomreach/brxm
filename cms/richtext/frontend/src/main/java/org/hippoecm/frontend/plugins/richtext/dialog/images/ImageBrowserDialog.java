@@ -128,7 +128,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
                 return loadGalleryTypes();
             }
         };
-        validator = ImageUploadValidationService.getValidationService(getPluginConfig(), getPluginContext());
+        validator = ImageUploadValidationService.getValidationService(getPluginContext(), getPluginConfig());
 
         add(createUploadForm());
 

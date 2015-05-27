@@ -26,6 +26,7 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.editor.plugins.resource.MimeTypeHelper;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.validation.IValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,11 +34,12 @@ public class ImageUploadValidationService extends DefaultUploadValidationService
 
     private static final Logger log = LoggerFactory.getLogger(ImageUploadValidationService.class);
 
+    public static final String DEFAULT_IMAGE_VALIDATION_SERVICE_ID = "service.gallery.image.validation";
     public static final int DEFAULT_MAX_WIDTH = 1920;
     public static final int DEFAULT_MAX_HEIGHT = 1280;
     public static final String DEFAULT_MAX_FILE_SIZE = "4mb";
-    public static final String[] DEFAULT_EXTENSIONS_ALLOWED = new String[] {"*.jpg", "*.jpeg", "*.gif", "*.png", "*.svg"};
 
+    public static final String[] DEFAULT_EXTENSIONS_ALLOWED = new String[] {"*.jpg", "*.jpeg", "*.gif", "*.png", "*.svg"};
     private static final String MAX_WIDTH = "max.width";
     private static final String MAX_HEIGHT = "max.height";
 
@@ -61,7 +63,6 @@ public class ImageUploadValidationService extends DefaultUploadValidationService
             }
         });
     }
-
 
     private void validateSizes(final FileUpload upload) {
         String fileName = upload.getClientFileName();
@@ -109,18 +110,13 @@ public class ImageUploadValidationService extends DefaultUploadValidationService
     @Override
     protected String getDefaultMaxFileSize() {
         return DEFAULT_MAX_FILE_SIZE;
-
     }
 
-    public static FileUploadValidationService getValidationService(final IPluginConfig pluginConfig, final IPluginContext pluginContext) {
-        String serviceId = pluginConfig.getString(FileUploadValidationService.VALIDATE_ID, "service.gallery.image.validation");
-        FileUploadValidationService validator = pluginContext.getService(serviceId, FileUploadValidationService.class);
-
-        if (validator == null) {
-            validator = new DefaultUploadValidationService();
-            log.warn("Cannot load image validation service with id '{}', using the default service '{}'",
-                    serviceId, validator.getClass().getName());
-        }
-        return validator;
+    /**
+     * Get the validation service specified by the parameter {@link IValidationService#VALIDATE_ID} in the plugin config.
+     * If no service id configuration is found, the service with id {@link ImageUploadValidationService#DEFAULT_IMAGE_VALIDATION_SERVICE_ID} is used.
+     */
+    public static FileUploadValidationService getValidationService(final IPluginContext pluginContext, final IPluginConfig pluginConfig) {
+        return DefaultUploadValidationService.getValidationService(pluginContext, pluginConfig, DEFAULT_IMAGE_VALIDATION_SERVICE_ID);
     }
 }

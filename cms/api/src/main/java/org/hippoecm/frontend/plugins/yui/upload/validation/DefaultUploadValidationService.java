@@ -23,18 +23,18 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
-import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.settings.IApplicationSettings;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.editor.plugins.resource.InvalidMimeTypeException;
 import org.hippoecm.frontend.editor.plugins.resource.MimeTypeHelper;
-import org.hippoecm.frontend.editor.plugins.resource.ResourceException;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidationResult;
 import org.hippoecm.frontend.validation.Violation;
@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultUploadValidationService implements FileUploadValidationService {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultUploadValidationService.class);
+    private static FileUploadValidationService defaultValidationService = new DefaultUploadValidationService();
 
     protected interface Validator extends IClusterable {
         void validate(FileUpload upload);
@@ -219,4 +220,29 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
         return DEFAULT_EXTENSIONS_ALLOWED;
     }
 
+    /**
+     * Return the static instance of the default {@link FileUploadValidationService}
+     */
+    public static final FileUploadValidationService get() {
+        return defaultValidationService;
+    }
+
+    /**
+     * Get the validation service specified by the parameter {@link IValidationService#VALIDATE_ID} in the plugin config.
+     * If no service id configuration is found, the service with id <code>defaultValidationServiceId</code> is used.
+     * If it cannot find this service, the default service from {@link #get()} is returned.
+     *
+     * @see #get()
+     */
+    public static FileUploadValidationService getValidationService(final IPluginContext pluginContext, final IPluginConfig pluginConfig, final String defaultValidationServiceId) {
+        String serviceId = pluginConfig.getString(FileUploadValidationService.VALIDATE_ID, defaultValidationServiceId);
+        FileUploadValidationService validator = pluginContext.getService(serviceId, FileUploadValidationService.class);
+
+        if (validator == null) {
+            validator = DefaultUploadValidationService.get();
+            log.warn("Cannot load validation service with id '{}', using the default service '{}'",
+                    serviceId, validator.getClass().getName());
+        }
+        return validator;
+    }
 }

@@ -41,9 +41,9 @@ import org.slf4j.LoggerFactory;
  */
 public class ResourceUploadPlugin extends RenderPlugin {
 
-    private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(ResourceUploadPlugin.class);
+    public static final String DEFAULT_ASSET_VALIDATION_SERVICE_ID = "service.gallery.asset.validation";
+
     private final String mode;
 
     public ResourceUploadPlugin(IPluginContext context, IPluginConfig config) {
@@ -54,7 +54,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
     }
 
     private FileUploadPanel createFileUploadPanel() {
-        final FileUploadPanel panel = new FileUploadPanel("fileupload", getPluginConfig(), getValidationService()) {
+        final FileUploadPanel panel = new FileUploadPanel("fileUpload", getPluginConfig(), getValidationService()) {
             @Override
             public void onFileUpload ( final FileUpload fileUpload) throws FileUploadViolationException {
                 handleUpload(fileUpload);
@@ -65,14 +65,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
     }
 
     private FileUploadValidationService getValidationService() {
-        String serviceId = getPluginConfig().getString(FileUploadValidationService.VALIDATE_ID, "service.gallery.asset.validation");
-        FileUploadValidationService validator = getPluginContext().getService(serviceId, FileUploadValidationService.class);
-        if (validator == null) {
-            validator = new DefaultUploadValidationService();
-            log.warn("Cannot load asset validation service with id '{}', using the default service '{}'",
-                    serviceId, validator.getClass().getName());
-        }
-        return validator;
+        return DefaultUploadValidationService.getValidationService(getPluginContext(), getPluginConfig(), DEFAULT_ASSET_VALIDATION_SERVICE_ID);
     }
 
     /**
