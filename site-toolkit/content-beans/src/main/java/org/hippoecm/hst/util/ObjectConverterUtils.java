@@ -186,8 +186,10 @@ public class ObjectConverterUtils {
      * @throws IOException
      * @throws SAXException
      * @throws ParserConfigurationException
+     * @deprecated since HSTTWO 2.30.01
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public static List<Class<? extends HippoBean>> getAnnotatedClasses(final URL url) throws IOException, SAXException, ParserConfigurationException {
         List<Class<? extends HippoBean>> annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
         
