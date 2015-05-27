@@ -426,7 +426,7 @@ public class InitializeItem {
         }
 
         for (String propertyName : INIT_ITEM_PROPERTIES) {
-            copyProperty(tempItemNode, itemNode, propertyName);
+            initProperty(tempItemNode, itemNode, propertyName);
         }
 
         final ContentFileInfo info = itemNode.hasProperty(HIPPO_CONTENTRESOURCE) ? ContentFileInfo.readInfo(itemNode) : null;
@@ -537,13 +537,17 @@ public class InitializeItem {
         return properties;
     }
 
-    private void copyProperty(Node source, Node target, String propertyName) throws RepositoryException {
+    private void initProperty(Node source, Node target, String propertyName) throws RepositoryException {
         final Property property = JcrUtils.getPropertyIfExists(source, propertyName);
         if (property != null) {
             if (property.getDefinition().isMultiple()) {
                 target.setProperty(propertyName, property.getValues(), property.getType());
             } else {
                 target.setProperty(propertyName, property.getValue());
+            }
+        } else {
+            if (target.hasProperty(propertyName)) {
+                target.getProperty(propertyName).remove();
             }
         }
     }
