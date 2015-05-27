@@ -168,6 +168,11 @@
       padding: 0;
     }
 
+    > .hippo-editor-field-subfield {
+      padding: 16px 8px;
+      border: 1px solid @editor-subfield-border;
+    }
+
     .hippo-editor-field-subfield & {
       margin-bottom: 0;
     }
@@ -190,7 +195,6 @@
 }
 
 .hippo-editor-field-subfield {
-  margin-bottom: 8px;
   position: relative;
 
   &:last-child {
@@ -261,6 +265,7 @@
 }
 
 .simple-link {
+  margin-top: 8px;
   background: transparent;
   border-radius: 5px;
   border: 1px solid @dark-gray;
