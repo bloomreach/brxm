@@ -27,7 +27,8 @@ import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 
 /**
- * The panel utilizing {@link SingleFileUploadWidget} to upload a single file automatically upon selection.
+ * The panel utilizing {@link SingleFileUploadWidget} to upload a single file automatically upon selection. It can be
+ * reused by putting either in a div or a wicket:container (recommended because it removed a redundant div tag).
  */
 public abstract class FileUploadPanel extends Panel {
 
