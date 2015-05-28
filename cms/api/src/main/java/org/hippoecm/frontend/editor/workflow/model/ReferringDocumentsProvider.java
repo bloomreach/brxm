@@ -161,20 +161,23 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
         final HippoQuery query = (HippoQuery) queryManager.createQuery(queryStatement, Query.XPATH);
         query.setLimit(1000);
         final QueryResult result = query.execute();
+        final Node root = handle.getSession().getRootNode();
+
 
         for (Node hit : new NodeIterable(result.getNodes())) {
             if (referrers.size() >= resultMaxCount) {
                 break;
             }
-
             Node current = hit;
-            while (current.getDepth() > 0) {
+            while (!current.isSame(root)) {
+
                 Node parent = current.getParent();
                 if (parent.isNodeType(HippoNodeType.NT_HANDLE) &&
                         current.isNodeType(HippoNodeType.NT_DOCUMENT) &&
                         hasCorrectAvailability(current, requiredAvailability)) {
                     referrers.put(parent.getIdentifier(), parent);
                     break;
+
                 }
                 current = current.getParent();
             }
