@@ -315,7 +315,7 @@ public class BinaryPage implements Serializable {
         return result;
     }
 
-    public static class CacheKey {
+    public static class CacheKey implements Serializable {
 
         private final String sessionUserID;
         private final String resourcePath;
