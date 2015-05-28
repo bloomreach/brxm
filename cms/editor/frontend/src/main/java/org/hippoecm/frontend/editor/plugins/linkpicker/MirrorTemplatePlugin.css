@@ -13,13 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-.mirrortemplate_link,
-.mirrortemplate_button {
+.mirrortemplate_link {
   display: inline-block;
-  float: none;
-}
-
-a.mirrortemplate_button span {
-  line-height: 16px;
-  color: #22272F;
+  overflow: visible;
 }
