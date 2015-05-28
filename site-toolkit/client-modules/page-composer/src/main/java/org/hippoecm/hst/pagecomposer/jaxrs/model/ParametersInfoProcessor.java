@@ -106,7 +106,7 @@ public class ParametersInfoProcessor {
 
     public static void setValueForProperties(final List<ContainerItemComponentPropertyRepresentation> properties,
                                              final String prefix,
-                                             final HstComponentParameters componentParameters, String contentPath) {
+                                             final HstComponentParameters componentParameters, final String contentPath) {
         for (ContainerItemComponentPropertyRepresentation prop : properties) {
             setValueForProperty(prop, prefix, componentParameters, contentPath);
         }
@@ -114,18 +114,32 @@ public class ParametersInfoProcessor {
 
     public static void setValueForProperty(final ContainerItemComponentPropertyRepresentation property,
                                            final String prefix,
-                                           final HstComponentParameters componentParameters, String contentPath) {
+                                           final HstComponentParameters componentParameters, final String contentPath) {
         String value = componentParameters.getValue(prefix, property.getName());
         if (value != null && !value.isEmpty()) {
             property.setValue(value);
-            if(property.getType().equals("linkpicker")) {
-                final DocumentRepresentation docRepresentation = DocumentUtils.getDocumentRepresentationHstConfigUser(value, contentPath);
+            if(property.getType().equals(ParameterType.JCR_PATH.xtype)) {
+                final String relPath = assertRelativePath(value, contentPath);
+                final DocumentRepresentation docRepresentation = DocumentUtils.getDocumentRepresentationHstConfigUser(relPath, contentPath);
                 final String displayName = docRepresentation.getDisplayName();
                 if(displayName != null && !displayName.isEmpty()) {
                     property.setDisplayValue(displayName);
                 }
             }
         }
+    }
+
+    private static String assertRelativePath(final String value, final String contentPath) {
+        String relativePath;
+        if (value.startsWith(contentPath + "/")) {
+            relativePath = value.substring((contentPath + "/").length());
+        } else {
+            relativePath = value;
+        }
+        if(relativePath.startsWith("/")) {
+            relativePath = relativePath.substring(1);
+        }
+        return relativePath;
     }
 
     private static Map<String, ContainerItemComponentPropertyRepresentation> createPropertyMap(final String contentPath, final Class<?> classType, final ResourceBundle[] resourceBundles) {
