@@ -44,7 +44,7 @@
     constructor: function (config) {
       this.pickerConfig = config.pickerConfig;
       this.defaultValue = config.defaultValue;
-      this.renderStripValue = config.renderStripValue;
+      this.displayValue = config.displayValue;
       this.renderTextFieldInvalid = false;
       this.setValue(this.defaultValue);
 
@@ -93,8 +93,11 @@
       }
     },
 
-    picked: function (value) {
-      var newValue = Ext.isDefined(value) ? value : '';
+    picked: function (value, displayValue) {
+      var newValue = Ext.isDefined(value) ? value : '',
+          newDisplayValue = Ext.isDefined(displayValue) ? displayValue : '';
+
+      this.displayValue = newDisplayValue;
       this.setValue(newValue);
       this.updateClearButton();
       this.fireEvent('select', this, newValue);
@@ -112,11 +115,7 @@
     setValue: function (value) {
       Hippo.ChannelManager.ExtLinkPicker.superclass.setValue.apply(this, arguments);
       if (this.rendered) {
-        var valueToRender = this.getValue();
-        if (Ext.isDefined(this.renderStripValue)) {
-          valueToRender = valueToRender.replace(this.renderStripValue, '');
-        }
-        this.renderTextField.dom.value = valueToRender;
+        this.renderTextField.dom.value = this.displayValue;
       }
     },
 
@@ -147,16 +146,11 @@
 
       this.el.dom.style.display = "none";
 
-      var value = this.getValue();
-      if (Ext.isDefined(this.renderStripValue)) {
-        value = value.replace(this.renderStripValue, '');
-      }
-
       this.renderTextField = Ext.DomHelper.insertBefore(this.el, {
         tag: 'input',
         type: 'text',
         readonly: 'readonly',
-        value: value,
+        value: this.displayValue,
         width: this.el.getWidth()
       }, true);
       this.renderTextField.addClass('x-form-text');

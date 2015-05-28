@@ -281,6 +281,7 @@
       var defaultValue = record.get('defaultValue'),
         value = record.get('value'),
         xtype = record.get('type'),
+        displayValue = record.get('displayValue'),
         field;
 
       if (Ext.isEmpty(value)) {
@@ -295,7 +296,7 @@
           field = this._addComboBox(record, defaultValue, value);
           break;
         default:
-          field = this._addComponent(xtype, record, defaultValue, value);
+          field = this._addComponent(xtype, record, defaultValue, value, displayValue);
       }
 
       return field;
@@ -478,7 +479,7 @@
       });
     },
 
-    _addComponent: function (xtype, record, defaultValue, initialValue) {
+    _addComponent: function (xtype, record, defaultValue, initialValue, displayValue) {
 
       function commitValueOrDefault (field) {
         var newValue = field.getValue();
@@ -499,6 +500,7 @@
           xtype: xtype,
           value: initialValue,
           defaultValue: defaultValue,
+          displayValue: displayValue,
           allowBlank: !record.get('required'),
           name: record.get('name'),
           enableKeyEvents: true,
@@ -524,7 +526,6 @@
         propertyFieldConfig.checked = (initialValue === true || initialValue === 'true' || initialValue === '1' || String(initialValue).toLowerCase() === 'on');
         propertyFieldConfig.listeners.check = commitValueOrDefault;
       } else if (xtype === 'linkpicker') {
-        propertyFieldConfig.renderStripValue = /^\/?(?:[^\/]+\/)*/g;
         propertyFieldConfig.pickerConfig = {
           configuration: record.get('pickerConfiguration'),
           remembersLastVisited: record.get('pickerRemembersLastVisited'),
@@ -575,7 +576,7 @@
           fields: [
             'name', 'value', 'initialValue', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation', 'defaultValue',
             'pickerConfiguration', 'pickerInitialPath', 'pickerRemembersLastVisited', 'pickerPathIsRelative', 'pickerRootPath', 'pickerSelectableNodeTypes',
-            'dropDownListValues', 'dropDownListDisplayValues', 'hiddenInChannelManager', 'groupLabel'
+            'dropDownListValues', 'dropDownListDisplayValues', 'hiddenInChannelManager', 'groupLabel', 'displayValue'
           ],
           url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/' + this.locale + '?FORCE_CLIENT_HOST=true'
         });

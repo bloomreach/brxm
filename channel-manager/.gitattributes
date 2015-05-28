@@ -73,6 +73,8 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/common/CommonBundle.java
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditorResourceBehaviour.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/model/AbsoluteRelativePathModel.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/model/DocumentLinkInfo.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/model/DocumentLinkModel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/model/UuidFromPathModel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin.java -text

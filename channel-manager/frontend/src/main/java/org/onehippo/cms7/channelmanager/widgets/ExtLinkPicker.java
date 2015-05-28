@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,8 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.onehippo.cms7.channelmanager.model.AbsoluteRelativePathModel;
+import org.onehippo.cms7.channelmanager.model.DocumentLinkInfo;
+import org.onehippo.cms7.channelmanager.model.DocumentLinkModel;
 import org.onehippo.cms7.channelmanager.model.UuidFromPathModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,14 +108,14 @@ public class ExtLinkPicker extends ExtObservable {
 
                 // decorator pattern for path models: UUID-to-path model decorates the absolute-to-relative model,
                 // which decorates the picked model.
-                PickedPathModel pickedPathModel = new PickedPathModel();
-                IModel<String> absRelPathModel = new AbsoluteRelativePathModel(pickedPathModel, current, isRelativePath, rootPath);
+                PickedNodeModel pickedNodeModel = new PickedNodeModel();
+                IModel<String> absRelPathModel = new DocumentLinkModel(pickedNodeModel, current, isRelativePath, rootPath);
                 IModel<String> uuidFromPathModel = new UuidFromPathModel(absRelPathModel);
 
                 final IDialogFactory dialogFactory = createDialogFactory(context, pickerConfig, uuidFromPathModel);
                 final IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
 
-                pickedPathModel.enableEvents();
+                pickedNodeModel.enableEvents();
 
                 final DialogAction action = new DialogAction(dialogFactory, dialogService);
                 action.execute();
@@ -195,11 +196,11 @@ public class ExtLinkPicker extends ExtObservable {
     /**
      * Model that fires a 'picked' event when events are enabled and a new path is set. By default, events are disabled.
      */
-    public class PickedPathModel extends Model<String> {
+    public class PickedNodeModel extends Model<DocumentLinkInfo> {
 
         private boolean enabledEvents;
 
-        public PickedPathModel() {
+        public PickedNodeModel() {
             enabledEvents = false;
         }
 
@@ -208,17 +209,18 @@ public class ExtLinkPicker extends ExtObservable {
         }
 
         @Override
-        public void setObject(String path) {
-            super.setObject(path);
+        public void setObject(DocumentLinkInfo documentLinkInfo) {
+            super.setObject(documentLinkInfo);
 
             if (enabledEvents) {
                 // notify the client that a new path has been picked
                 AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                 if (target == null) {
-                    log.warn("Cannot invoke callback for picked path '{}': no ajax request target available", path);
+                    log.warn("Cannot invoke callback for picked path '{}': no ajax request target available", documentLinkInfo.getPath());
                     return;
                 }
-                target.prependJavaScript("Hippo.ChannelManager.ExtLinkPickerFactory.Instance.fireEvent('picked', '" + path + "')");
+                target.prependJavaScript("Hippo.ChannelManager.ExtLinkPickerFactory.Instance.fireEvent('picked', '"
+                        + documentLinkInfo.getPath() + "', '" + documentLinkInfo.getDocumentName() + "')");
             }
         }
 
