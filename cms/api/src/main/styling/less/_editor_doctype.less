@@ -12,7 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Document type preview styling
+.hippo-preview-document-wrapper {
+
+  .template-type-right-body {
+    border-left: 0;
+  }
+
+  .template-type-wrapper {
+    margin: 0;
+  }
+}
+
 // Document type editor styling
+.template-type-wrapper {
+  margin: -32px;
+}
+
 .hippo-editor-template-editor {
   padding-top: 4px;
   padding-left: 4px;
@@ -45,12 +61,34 @@
   background-color: @white;
 }
 
-.hippo-editor-template-field-edit {
-  padding: 3px;
+.template-type-right-body {
   border-left: 1px solid @light-gray;
+  box-sizing: border-box;
+  min-height: 100%;
+  padding-bottom: 12px;
+}
+
+.hippo-editor-template-field-title {
+  padding-top: 6px;
+  color: @dark-shade;
+  font-size: 15px;
+  line-height: 18px;
+}
+
+.hippo-editor-template-field-edit {
+
+  > div.even,
+  > div.odd {
+    padding: 3px;
+    border-top: 1px solid @light-gray;
+
+    &:first-child {
+      border-top: 0;
+    }
+  }
 
   .hippo-editor-template-field-edit {
-    padding: 0 12px;
+    padding: 0 9px;
     margin-bottom: 0;
     border-left: 0;
   }
@@ -61,29 +99,38 @@
     font-size: 13px;
     font-weight: bold;
     margin-right: 0;
-    margin-top: 12px;
+    margin-top: 11px;
+    margin-bottom: 7px;
+    line-height: 1;
+
+    > label {
+      text-transform: capitalize;
+      &::after {
+        content: ':';
+      }
+    }
   }
 
   input[type=checkbox] {
-    width: 20px;
+    width: 100%;
   }
 
   table {
-    margin-top: 5px;
+    margin-top: 16px;
+    display: block;
   }
 
   td {
     color: @darker-shade;
-    padding: 2px;
+    padding: 2px 4px 2px 2px;
   }
 
   .disabled {
     color: @dark-shade;
-    padding: 2px;
   }
 
   .ordered {
-    margin-top: 5px;
+    margin-top: 0;
   }
 
   .hippo-editor-field-subfield {
@@ -93,9 +140,14 @@
   }
 
   .section-view {
+    margin-top: 3px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
     > h2 {
-      padding-left: 14px;
-      margin-bottom: 4px;
+      padding-left: 12px;
       font-size: 13px;
       box-sizing: border-box;
       height: 32px;
@@ -113,6 +165,11 @@
       }
     }
   }
+
+  .category-selected + .section-view {
+    margin-top: 0;
+  }
+
 }
 
 .hippo-editor-template-field {
@@ -178,11 +235,9 @@
 }
 
 .hippo-editor-template-field-new {
-  max-height: 300px;
+  max-height: 220px;
   overflow: auto;
-  padding-left: 12px;
-  margin-top: 4px;
-  margin-bottom: 8px;
+  padding-left: 10px;
 
   li {
     list-style-type: none;
@@ -202,7 +257,7 @@
       display: inline-flex;
 
       > span {
-        padding-left: 4px;
+        padding-left: 2px;
       }
     }
 
@@ -216,11 +271,12 @@
   div {
     float: left;
     overflow: hidden;
-    width: 80%;
+    width: 83%;
   }
 
   a {
     float: right;
-    width: 15%;
+    width: 9%;
+    margin-top: 4px;
   }
 }

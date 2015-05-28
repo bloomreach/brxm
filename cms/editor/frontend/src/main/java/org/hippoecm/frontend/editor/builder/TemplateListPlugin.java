@@ -298,6 +298,13 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                 protected void populateItem(ListItem<Section> item) {
                     final Section section = item.getModelObject();
 
+                    item.add(CssClass.append(new AbstractReadOnlyModel<String>() {
+                        @Override
+                        public String getObject() {
+                            return active == section ? "category-selected" : StringUtils.EMPTY;
+                        }
+                    }));
+
                     MarkupContainer container = new WebMarkupContainer("container") {
                         @Override
                         public boolean isVisible() {
