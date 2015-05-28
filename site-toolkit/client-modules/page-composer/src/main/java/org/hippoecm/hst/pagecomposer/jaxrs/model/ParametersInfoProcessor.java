@@ -44,6 +44,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PropertyRepresentationFactory;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +79,7 @@ public class ParametersInfoProcessor {
 
         HstComponentParameters componentParameters = new HstComponentParameters(containerItemNode, containerItemHelper);
 
-        setValueForProperties(properties, prefix, componentParameters);
+        setValueForProperties(properties, prefix, componentParameters, contentPath);
 
         if (propertyPresentationFactories != null) {
             int index = 0;
@@ -105,21 +106,27 @@ public class ParametersInfoProcessor {
 
     public static void setValueForProperties(final List<ContainerItemComponentPropertyRepresentation> properties,
                                              final String prefix,
-                                             final HstComponentParameters componentParameters) {
+                                             final HstComponentParameters componentParameters, String contentPath) {
         for (ContainerItemComponentPropertyRepresentation prop : properties) {
-            setValueForProperty(prop, prefix, componentParameters);
+            setValueForProperty(prop, prefix, componentParameters, contentPath);
         }
     }
 
     public static void setValueForProperty(final ContainerItemComponentPropertyRepresentation property,
                                            final String prefix,
-                                           final HstComponentParameters componentParameters) {
+                                           final HstComponentParameters componentParameters, String contentPath) {
         String value = componentParameters.getValue(prefix, property.getName());
         if (value != null && !value.isEmpty()) {
             property.setValue(value);
+            if(property.getType().equals("linkpicker")) {
+                final DocumentRepresentation docRepresentation = DocumentUtils.getDocumentRepresentationHstConfigUser(value, contentPath);
+                final String displayName = docRepresentation.getDisplayName();
+                if(displayName != null && !displayName.isEmpty()) {
+                    property.setDisplayValue(displayName);
+                }
+            }
         }
     }
-
 
     private static Map<String, ContainerItemComponentPropertyRepresentation> createPropertyMap(final String contentPath, final Class<?> classType, final ResourceBundle[] resourceBundles) {
         // although below the classType.getMethods() returns methods in random order (not in jdk 6 but it does in jdk 7 which is according spec)
