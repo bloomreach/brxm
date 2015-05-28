@@ -15,7 +15,7 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <wicket:container wicket:id="fragment" />
+    <wicket:container wicket:id="fragment"/>
   </wicket:panel>
   <wicket:fragment wicket:id="edit">
     <table border="0" cellpadding="0" cellspacing="0">
@@ -24,11 +24,13 @@
           <img wicket:id="previewImage"/>
         </td>
         <td class="gallerypickerbuttons">
-          <span wicket:id="select" class="simple-link dialog-link">[select]</span>
-          <a class="simple-link" wicket:id="open" href="#" >
-            <span class="button-label"><wicket:message key="picker.open">[Open]</wicket:message></span>
+          <button wicket:id="select" class="btn btn-default btn-sm">[select]</button>
+          <a class="btn btn-default btn-sm" wicket:id="open">
+            <span class="button-label">
+              <wicket:message key="picker.open">[Open]</wicket:message>
+            </span>
           </a>
-          <a class="simple-link" href="#" wicket:id="remove">
+          <a class="btn btn-default btn-sm" href="#" wicket:id="remove">
             <span class="button-label" wicket:id="remove-link-text"/>
           </a>
         </td>
