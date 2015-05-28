@@ -14,35 +14,44 @@
     * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-    <wicket:panel>
-        <div wicket:id="relateddoc-view" class="hippo-editor-field"></div>
+  <wicket:panel>
+    <div wicket:id="relateddoc-view" class="hippo-editor-field"></div>
 
-        <wicket:fragment wicket:id="empty">
-        </wicket:fragment>
+    <wicket:fragment wicket:id="empty">
+    </wicket:fragment>
 
-        <wicket:fragment wicket:id="relateddoc-suggestions">
-            <h3 class="hippo-editor-field-title"><wicket:message key="documents_suggestions" /></h3>
-            <div class="hippo-editor-field-subfield" wicket:id="view">
-                <div class="hippo-editor-field-item">
-                    <div class="hippo-editor-field-value">
-                        <div class="hippo-editor-field-value-container relateddocs-link">
-                            <a wicket:id="link"> <span
-                                    wicket:id="link-text">[ name of the related doc ]</span> </a>
-                            <a wicket:id="preview" class="simple-link"><wicket:message key="document_view" /></a>
-                        </div>
-                    </div>
-                </div>
+    <wicket:fragment wicket:id="relateddoc-suggestions">
+      <h3 class="hippo-editor-field-title">
+        <wicket:message key="documents_suggestions"/>
+      </h3>
+      <div class="hippo-editor-field-subfield" wicket:id="view">
+        <div class="hippo-editor-field-item">
+          <div class="hippo-editor-field-value">
+            <div class="hippo-editor-field-value-container relateddocs-link">
+              <a wicket:id="link">
+                <span wicket:id="link-text">[ name of the related doc ]</span>
+              </a>
+              <a wicket:id="preview" class="simple-link">
+                <wicket:message key="document_view"/>
+              </a>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <span wicket:id="browse" class="simple-link dialog-link relateddocs-select-button">BROWSE</span>
+      <span wicket:id="browse" class="simple-link dialog-link relateddocs-select-button">BROWSE</span>
 
-            <div class="relateddocs-suggestion-controls">
-                <span><wicket:message key="suggestions" /></span>
-                <form wicket:id="suggestions-form" class="relateddoc-suggestion-form">
-                    <input wicket:id="count" class="hippo-editor-field-value-container relateddocs-suggestion-input" value="5" />
-                </form>
-                <a wicket:id="refreshlink" class="relateddocs-refresh"><wicket:message key="refreshlink" /></a>
-            </div>
-        </wicket:fragment>
-    </wicket:panel>
+      <div class="relateddocs-suggestion-controls">
+        <span>
+          <wicket:message key="suggestions"/>
+        </span>
+        <form wicket:id="suggestions-form" class="relateddoc-suggestion-form">
+          <input wicket:id="count" class="hippo-editor-field-value-container relateddocs-suggestion-input" value="5"/>
+        </form>
+        <a wicket:id="refreshlink" class="relateddocs-refresh">
+          <wicket:message key="refreshlink"/>
+        </a>
+      </div>
+    </wicket:fragment>
+  </wicket:panel>
 </html>
