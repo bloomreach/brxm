@@ -65,7 +65,8 @@ public class ResourceUploadPlugin extends RenderPlugin {
     }
 
     private FileUploadValidationService getValidationService() {
-        return DefaultUploadValidationService.getValidationService(getPluginContext(), getPluginConfig(), DEFAULT_ASSET_VALIDATION_SERVICE_ID);
+        return DefaultUploadValidationService.getValidationService(getPluginContext(), getPluginConfig(),
+                DEFAULT_ASSET_VALIDATION_SERVICE_ID);
     }
 
     /**

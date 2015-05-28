@@ -38,8 +38,8 @@ public class ImageUploadValidationService extends DefaultUploadValidationService
     public static final int DEFAULT_MAX_WIDTH = 1920;
     public static final int DEFAULT_MAX_HEIGHT = 1280;
     public static final String DEFAULT_MAX_FILE_SIZE = "4mb";
-
     public static final String[] DEFAULT_EXTENSIONS_ALLOWED = new String[] {"*.jpg", "*.jpeg", "*.gif", "*.png", "*.svg"};
+
     private static final String MAX_WIDTH = "max.width";
     private static final String MAX_HEIGHT = "max.height";
 
@@ -52,14 +52,10 @@ public class ImageUploadValidationService extends DefaultUploadValidationService
         maxWidth = params.getInt(MAX_WIDTH, DEFAULT_MAX_WIDTH);
         maxHeight = params.getInt(MAX_HEIGHT, DEFAULT_MAX_HEIGHT);
 
-        addValidator(new Validator() {
-
-            @Override
-            public void validate(FileUpload upload) {
-                // SVG files do not have a fixed size so they are always OK
-                if (!MimeTypeHelper.isSvgMimeType(upload.getContentType())) {
-                    validateSizes(upload);
-                }
+        addValidator(upload -> {
+            // SVG files do not have a fixed size so they are always OK
+            if (!MimeTypeHelper.isSvgMimeType(upload.getContentType())) {
+                validateSizes(upload);
             }
         });
     }
@@ -70,11 +66,7 @@ public class ImageUploadValidationService extends DefaultUploadValidationService
         Dimension dim;
         try {
             dim = Sanselan.getImageSize(upload.getInputStream(), fileName);
-        } catch (IOException e) {
-            addViolation("image.validation.metadata.error", fileName);
-            log.error("Error validating dimensions for file " + fileName, e);
-            return;
-        } catch (ImageReadException e) {
+        } catch (IOException | ImageReadException e) {
             addViolation("image.validation.metadata.error", fileName);
             log.error("Error validating dimensions for file " + fileName, e);
             return;
@@ -114,9 +106,12 @@ public class ImageUploadValidationService extends DefaultUploadValidationService
 
     /**
      * Get the validation service specified by the parameter {@link IValidationService#VALIDATE_ID} in the plugin config.
-     * If no service id configuration is found, the service with id {@link ImageUploadValidationService#DEFAULT_IMAGE_VALIDATION_SERVICE_ID} is used.
+     * If no service id configuration is found, the service with id
+     * {@link ImageUploadValidationService#DEFAULT_IMAGE_VALIDATION_SERVICE_ID} is used.
      */
-    public static FileUploadValidationService getValidationService(final IPluginContext pluginContext, final IPluginConfig pluginConfig) {
-        return DefaultUploadValidationService.getValidationService(pluginContext, pluginConfig, DEFAULT_IMAGE_VALIDATION_SERVICE_ID);
+    public static FileUploadValidationService getValidationService(final IPluginContext pluginContext,
+                                                                   final IPluginConfig pluginConfig) {
+        return DefaultUploadValidationService.getValidationService(pluginContext, pluginConfig,
+                DEFAULT_IMAGE_VALIDATION_SERVICE_ID);
     }
 }

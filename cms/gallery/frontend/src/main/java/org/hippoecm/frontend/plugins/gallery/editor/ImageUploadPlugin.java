@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 public class ImageUploadPlugin extends RenderPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(ImageUploadPlugin.class);
+
     private final IEditor.Mode mode;
 
     public ImageUploadPlugin(final IPluginContext context, IPluginConfig config) {

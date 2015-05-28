@@ -44,7 +44,6 @@ import org.slf4j.LoggerFactory;
 public class DefaultUploadValidationService implements FileUploadValidationService {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultUploadValidationService.class);
-    private static FileUploadValidationService defaultValidationService = new DefaultUploadValidationService();
 
     protected interface Validator extends IClusterable {
         void validate(FileUpload upload);
@@ -63,8 +62,8 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
     }
 
     public DefaultUploadValidationService(IValueMap params) {
-        validators = new LinkedList<Validator>();
-        allowedExtensions = new LinkedList<String>();
+        validators = new LinkedList<>();
+        allowedExtensions = new LinkedList<>();
 
         if (params.containsKey(EXTENSIONS_ALLOWED)) {
             setAllowedExtensions(params.getStringArray(EXTENSIONS_ALLOWED));
@@ -74,28 +73,11 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
 
         values = params;
 
-        addValidator(new Validator() {
+        addValidator(this::validateExtension);
 
-            @Override
-            public void validate(FileUpload upload) {
-                validateExtension(upload);
-            }
-        });
+        addValidator(this::validateMaxFileSize);
 
-        addValidator(new Validator() {
-
-            @Override
-            public void validate(FileUpload upload) {
-                validateMaxFileSize(upload);
-            }
-        });
-
-        addValidator(new Validator() {
-            @Override
-            public void validate(final FileUpload upload) {
-                validateMimeType(upload);
-            }
-        });
+        addValidator(this::validateMimeType);
     }
 
     protected final void addValidator(Validator validator) {
@@ -145,7 +127,7 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
                     addViolation("file.validation.extension.disallowed", fileName, extension, allowed);
                     if (log.isDebugEnabled()) {
                         log.debug("File '{}' has extension {} which is not allowed. Allowed extensions are {}.",
-                                  new Object[] {fileName, extension, allowed});
+                                  fileName, extension, allowed);
                     }
                 }
             }
@@ -162,7 +144,7 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
 
             if (log.isDebugEnabled()) {
                 log.debug("File '{}' has size {} which is too big. The maximum size allowed is {}",
-                          new Object[]{upload.getClientFileName(), fileSize.toString(), maxFileSize.toString()});
+                          upload.getClientFileName(), fileSize.toString(), maxFileSize.toString());
             }
         }
     }
@@ -221,25 +203,19 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
     }
 
     /**
-     * Return the static instance of the default {@link FileUploadValidationService}
-     */
-    public static final FileUploadValidationService get() {
-        return defaultValidationService;
-    }
-
-    /**
      * Get the validation service specified by the parameter {@link IValidationService#VALIDATE_ID} in the plugin config.
      * If no service id configuration is found, the service with id <code>defaultValidationServiceId</code> is used.
-     * If it cannot find this service, the default service from {@link #get()} is returned.
-     *
-     * @see #get()
+     * If it cannot find this service, a new default service is returned.
      */
-    public static FileUploadValidationService getValidationService(final IPluginContext pluginContext, final IPluginConfig pluginConfig, final String defaultValidationServiceId) {
+    public static FileUploadValidationService getValidationService(final IPluginContext pluginContext,
+                                                                   final IPluginConfig pluginConfig,
+                                                                   final String defaultValidationServiceId) {
+
         String serviceId = pluginConfig.getString(FileUploadValidationService.VALIDATE_ID, defaultValidationServiceId);
         FileUploadValidationService validator = pluginContext.getService(serviceId, FileUploadValidationService.class);
 
         if (validator == null) {
-            validator = DefaultUploadValidationService.get();
+            validator = new DefaultUploadValidationService();
             log.warn("Cannot load validation service with id '{}', using the default service '{}'",
                     serviceId, validator.getClass().getName());
         }
