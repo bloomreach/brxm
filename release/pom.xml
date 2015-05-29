@@ -70,7 +70,7 @@
     <hippo.plugin.selections.version>2.09.01-SNAPSHOT</hippo.plugin.selections.version>
     <hippo.plugin.seo-support.version>1.02.00</hippo.plugin.seo-support.version>
     <hippo.plugin.sitemap.version>1.07.00</hippo.plugin.sitemap.version>
-    <hippo.plugin.taxonomy.version>1.12.00</hippo.plugin.taxonomy.version>
+    <hippo.plugin.taxonomy.version>1.12.01-SNAPSHOT</hippo.plugin.taxonomy.version>
 
   </properties>
 
