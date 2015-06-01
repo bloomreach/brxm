@@ -106,6 +106,12 @@ public class ParametersInfoProcessor {
 
     public static void setValueForProperties(final List<ContainerItemComponentPropertyRepresentation> properties,
                                              final String prefix,
+                                             final HstComponentParameters componentParameters) {
+        setValueForProperties(properties, prefix, componentParameters, null);
+    }
+
+    public static void setValueForProperties(final List<ContainerItemComponentPropertyRepresentation> properties,
+                                             final String prefix,
                                              final HstComponentParameters componentParameters, final String contentPath) {
         for (ContainerItemComponentPropertyRepresentation prop : properties) {
             setValueForProperty(prop, prefix, componentParameters, contentPath);
@@ -114,11 +120,17 @@ public class ParametersInfoProcessor {
 
     public static void setValueForProperty(final ContainerItemComponentPropertyRepresentation property,
                                            final String prefix,
+                                           final HstComponentParameters componentParameters) {
+        setValueForProperty(property, prefix, componentParameters, null);
+    }
+
+    public static void setValueForProperty(final ContainerItemComponentPropertyRepresentation property,
+                                           final String prefix,
                                            final HstComponentParameters componentParameters, final String contentPath) {
-        String value = componentParameters.getValue(prefix, property.getName());
+        final String value = componentParameters.getValue(prefix, property.getName());
         if (value != null && !value.isEmpty()) {
             property.setValue(value);
-            if(property.getType().equals(ParameterType.JCR_PATH.xtype)) {
+            if(contentPath != null && !contentPath.isEmpty() && property.getType().equals(ParameterType.JCR_PATH.xtype)) {
                 final String relPath = assertRelativePath(value, contentPath);
                 final DocumentRepresentation docRepresentation = DocumentUtils.getDocumentRepresentationHstConfigUser(relPath, contentPath);
                 final String displayName = docRepresentation.getDisplayName();
