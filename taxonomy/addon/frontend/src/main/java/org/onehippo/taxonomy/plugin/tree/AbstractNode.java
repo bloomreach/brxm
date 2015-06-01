@@ -37,6 +37,11 @@ public abstract class AbstractNode implements TreeNode, IDetachable {
     private List<CategoryNode> children = null;
     private Comparator<Category> categoryComparator;
 
+    /**
+     * @deprecated Use {@link #AbstractNode(IModel, String, Comparator)} instead.
+     * @param taxonomyModel
+     * @param language
+     */
     public AbstractNode(IModel<Taxonomy> taxonomyModel, String language) {
         this(taxonomyModel, language, null);
     }
@@ -58,7 +63,7 @@ public abstract class AbstractNode implements TreeNode, IDetachable {
             List<CategoryNode> tempChildren = new LinkedList<CategoryNode>();
 
             for (Category category : categories) {
-                tempChildren.add(new CategoryNode(new CategoryModel(taxonomyModel, category.getKey()), language));
+                tempChildren.add(new CategoryNode(new CategoryModel(taxonomyModel, category.getKey()), language, categoryComparator));
             }
 
             children = tempChildren;
@@ -102,4 +107,7 @@ public abstract class AbstractNode implements TreeNode, IDetachable {
         taxonomyModel.detach();
     }
 
+    public Comparator<Category> getCategoryComparator() {
+        return categoryComparator;
+    }
 }

@@ -246,13 +246,7 @@ public class TaxonomyBrowser extends Panel {
      */
     protected Comparator<Category> getCategoryComparator(final IPluginConfig config, final String locale) {
         Comparator<Category> categoryComparator = null;
-
-        String sortOptions = "name";
-
-        IPluginConfig params = config.getPluginConfig("cluster.options");
-        if (params != null) {
-            sortOptions = params.getString("category.sort.options", sortOptions);
-        }
+        String sortOptions = config.getString("category.sort.options", null);
 
         if (StringUtils.equalsIgnoreCase("name", sortOptions)) {
             categoryComparator = new CategoryNameComparator(locale);

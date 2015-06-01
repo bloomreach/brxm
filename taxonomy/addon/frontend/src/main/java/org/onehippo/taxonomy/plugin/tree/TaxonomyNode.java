@@ -29,6 +29,11 @@ public class TaxonomyNode extends AbstractNode {
 
     private IModel<Taxonomy> model;
 
+    /**
+     * @deprecated Use {@link #TaxonomyNode(IModel, String, Comparator)} instead.
+     * @param model
+     * @param language
+     */
     public TaxonomyNode(IModel<Taxonomy> model, String language) {
         this(model, language, null);
     }

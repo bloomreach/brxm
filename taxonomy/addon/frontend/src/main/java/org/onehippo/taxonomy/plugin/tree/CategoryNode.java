@@ -15,6 +15,7 @@
  */
 package org.onehippo.taxonomy.plugin.tree;
 
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.tree.TreeNode;
@@ -28,8 +29,17 @@ public class CategoryNode extends AbstractNode {
     AbstractNode parent;
     CategoryModel model;
 
+    /**
+     * @deprecated Use {@link #CategoryNode(CategoryModel, String, Comparator)} isntead.
+     * @param model
+     * @param language
+     */
     public CategoryNode(CategoryModel model, String language) {
-        super(model.getTaxonomyModel(), language);
+        this(model, language, null);
+    }
+
+    public CategoryNode(CategoryModel model, String language, Comparator<Category> categoryComparator) {
+        super(model.getTaxonomyModel(), language, categoryComparator);
         this.model = model;
 
         final Category category = getCategory();
@@ -38,9 +48,9 @@ public class CategoryNode extends AbstractNode {
         }
         Category parentCat = category.getParent();
         if (parentCat == null) {
-            parent = new TaxonomyNode(model.getTaxonomyModel(), language);
+            parent = new TaxonomyNode(model.getTaxonomyModel(), language, categoryComparator);
         } else {
-            parent = new CategoryNode(new CategoryModel(model.getTaxonomyModel(), parentCat.getKey()), language);
+            parent = new CategoryNode(new CategoryModel(model.getTaxonomyModel(), parentCat.getKey()), language, categoryComparator);
         }
     }
 

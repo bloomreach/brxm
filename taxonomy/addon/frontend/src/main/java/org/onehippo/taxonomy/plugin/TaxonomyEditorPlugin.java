@@ -211,9 +211,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                         EditableCategory category = taxonomy.getCategoryByKey(key);
                         TreeNode node;
                         if (category != null) {
-                            node = new CategoryNode(new CategoryModel(taxonomyModel, key), currentLanguageSelection.getLanguageCode());
+                            node = new CategoryNode(new CategoryModel(taxonomyModel, key), currentLanguageSelection.getLanguageCode(), categoryComparator);
                         } else {
-                            node = new TaxonomyNode(taxonomyModel, currentLanguageSelection.getLanguageCode());
+                            node = new TaxonomyNode(taxonomyModel, currentLanguageSelection.getLanguageCode(), categoryComparator);
                         }
                         try {
                             String newKey = getKey();
@@ -222,7 +222,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                             } else {
                                 taxonomy.addCategory(newKey, getName(), currentLanguageSelection.getLanguageCode());
                             }
-                            TreeNode child = new CategoryNode(new CategoryModel(taxonomyModel, newKey), currentLanguageSelection.getLanguageCode());
+                            TreeNode child = new CategoryNode(new CategoryModel(taxonomyModel, newKey), currentLanguageSelection.getLanguageCode(), categoryComparator);
                             tree.getTreeState().selectNode(child, true);
                             key = newKey;
                         } catch (TaxonomyException e) {
@@ -584,13 +584,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
      */
     protected Comparator<Category> getCategoryComparator(final IPluginConfig config, final String locale) {
         Comparator<Category> categoryComparator = null;
-
-        String sortOptions = "name";
-
-        IPluginConfig params = config.getPluginConfig("cluster.options");
-        if (params != null) {
-            sortOptions = params.getString("category.sort.options", sortOptions);
-        }
+        String sortOptions = config.getString("category.sort.options", null);
 
         if (StringUtils.equalsIgnoreCase("name", sortOptions)) {
             categoryComparator = new CategoryNameComparator(locale);
