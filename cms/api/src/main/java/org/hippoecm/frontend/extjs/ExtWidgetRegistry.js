@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,11 @@
             Hippo.ExtWidgetRegistry.superclass.constructor.call(this, config);
         },
 
+        initComponent: function() {
+            Hippo.ExtWidgetRegistry.superclass.initComponent.apply(this, arguments);
+            this.addEvents('registered');
+        },
+
         /**
          * Registers a new Ext widget. The xtype and class of the widget will also be registered with Ext, so there is no
          * need to explicitly call Ext.reg(xtype, cls).
@@ -42,6 +47,7 @@
             }
             Ext.reg(widgetConfig.xtype, cls);
             this.configs[widgetConfig.xtype] = widgetConfig;
+            this.fireEvent('registered', config.xtype);
         },
 
         createWidgetConfig: function(config) {
