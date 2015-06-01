@@ -100,9 +100,9 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     private static final int MAX_ITEMS_UNLIMITED = Integer.MAX_VALUE;
     private static final CssResourceReference CSS = new CssResourceReference(ContentBlocksFieldPlugin.class, "style.css");
 
-    public static final String FRAGMENT_ID = "fragment";
-    public static final String EDIT_FRAGMENT_ID = "edit-fragment";
-    public static final String VIEW_FRAGMENT_ID = "view-fragment";
+    private static final String FRAGMENT_ID = "fragment";
+    private static final String EDIT_FRAGMENT_ID = "edit-fragment";
+    private static final String VIEW_FRAGMENT_ID = "view-fragment";
 
     private static final String PROVIDER_COMPOUND = "cpItemsPath";
     private final String providerCompoundType;
@@ -365,25 +365,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         fragment.add(controls);
         item.add(fragment);
 
-        // add translated name of compound as item title
-        IModel<String> compoundName = null;
-        if (showCompoundNames) {
-            try {
-                final String nodeType = model.getNode().getPrimaryNodeType().getName();
-                compoundName = new TypeTranslator(new JcrNodeTypeModel(nodeType)).getTypeName();
-            } catch (RepositoryException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-        if (compoundName != null) {
-            item.add(new Label(ITEM_TITLE, compoundName));
-        }
-        else {
-            // add invisible dummy
-            final Label itemTitle = new Label(ITEM_TITLE, StringUtils.EMPTY);
-            itemTitle.setVisible(false);
-            item.add(itemTitle);
-        }
+        addCompoundNameAsTitle(item, model, null/*oldModel*/);
     }
     /**
     * @deprecated Deprecated in favor of {@link #populateViewItem(Item, JcrNodeModel)}
@@ -399,25 +381,8 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     protected void populateViewItem(Item<IRenderService> item, final JcrNodeModel model) {
         Fragment fragment = new TransparentFragment(FRAGMENT_ID, VIEW_FRAGMENT_ID, this);
         item.add(fragment);
-        // add translated name of compound as item title
-        IModel<String> compoundName = null;
-        if (showCompoundNames) {
-            try {
-                final String nodeType = model.getNode().getPrimaryNodeType().getName();
-                compoundName = new TypeTranslator(new JcrNodeTypeModel(nodeType)).getTypeName();
-            } catch (RepositoryException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-        if (compoundName != null) {
-            item.add(new Label(ITEM_TITLE, compoundName));
-        }
-        else {
-            // add invisible dummy
-            final Label itemTitle = new Label(ITEM_TITLE, StringUtils.EMPTY);
-            itemTitle.setVisible(false);
-            item.add(itemTitle);
-        }
+
+        addCompoundNameAsTitle(item, model, null/*oldModel*/);
     }
 
     /**
@@ -430,29 +395,12 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         item.add(fragment);
     }
 
-        @Override
+    @Override
     protected void populateCompareItem(Item<IRenderService> item, final JcrNodeModel newModel, final JcrNodeModel oldModel) {
         Fragment fragment = new TransparentFragment(FRAGMENT_ID, VIEW_FRAGMENT_ID, this);
         item.add(fragment);
-        // add translated name of compound as item title
-        IModel<String> compoundName = null;
-        if (showCompoundNames && (newModel != null || oldModel != null)) {
-            try {
-                final String nodeType = (newModel != null) ? newModel.getNode().getPrimaryNodeType().getName() : oldModel.getNode().getPrimaryNodeType().getName();
-                compoundName = new TypeTranslator(new JcrNodeTypeModel(nodeType)).getTypeName();
-            } catch (RepositoryException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-        if (compoundName != null) {
-            item.add(new Label(ITEM_TITLE, compoundName));
-        }
-        else {
-            // add invisible dummy
-            final Label itemTitle = new Label(ITEM_TITLE, StringUtils.EMPTY);
-            itemTitle.setVisible(false);
-            item.add(itemTitle);
-        }
+
+        addCompoundNameAsTitle(item, newModel, oldModel);
     }
 
     private void addItem(final String type, final AjaxRequestTarget target) {
@@ -508,6 +456,29 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         }
 
         return compoundList;
+    }
+
+    /**
+     * Add translated name of compound as item title.
+     */
+    protected void addCompoundNameAsTitle(final Item<IRenderService> item, final JcrNodeModel newModel, final JcrNodeModel oldModel) {
+
+        if (showCompoundNames && (newModel != null || oldModel != null)) {
+            try {
+                final String nodeType = (newModel != null) ? newModel.getNode().getPrimaryNodeType().getName() : oldModel.getNode().getPrimaryNodeType().getName();
+                final IModel<String> compoundName = new TypeTranslator(new JcrNodeTypeModel(nodeType)).getTypeName();
+                item.add(new Label(ITEM_TITLE, compoundName));
+
+                return;
+            } catch (RepositoryException e) {
+                log.error("Cannot add compound name as title", e);
+            }
+        }
+
+        // add invisible dummy
+        final Label itemTitle = new Label(ITEM_TITLE, StringUtils.EMPTY);
+        itemTitle.setVisible(false);
+        item.add(itemTitle);
     }
 
     private class DeleteItemDialog extends Dialog<JcrNodeModel> {
