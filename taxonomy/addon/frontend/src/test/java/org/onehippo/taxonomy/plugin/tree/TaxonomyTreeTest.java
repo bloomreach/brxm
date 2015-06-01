@@ -17,6 +17,8 @@ package org.onehippo.taxonomy.plugin.tree;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Comparator;
+
 import org.apache.wicket.model.IModel;
 import org.junit.Test;
 import org.onehippo.taxonomy.api.Category;
@@ -46,7 +48,9 @@ public class TaxonomyTreeTest extends AbstractTaxonomyTest {
     public void setUp() throws Exception {
         super.setUp();
         IModel taxonomyModel = new TaxModel();
-        treeModel = new TaxonomyTreeModel(taxonomyModel, "en");
+        final String locale = "en";
+        Comparator<Category> categoryComparator = new CategoryNameComparator(locale);
+        treeModel = new TaxonomyTreeModel(taxonomyModel, locale, categoryComparator);
     }
 
     @Test

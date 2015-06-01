@@ -15,13 +15,11 @@
  */
 package org.onehippo.taxonomy.plugin.tree;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import javax.swing.tree.TreeNode;
 
@@ -37,34 +35,35 @@ public abstract class AbstractNode implements TreeNode, IDetachable {
     final String language;
     private IModel<Taxonomy> taxonomyModel;
     private List<CategoryNode> children = null;
+    private Comparator<Category> categoryComparator;
 
     public AbstractNode(IModel<Taxonomy> taxonomyModel, String language) {
+        this(taxonomyModel, language, null);
+    }
+
+    public AbstractNode(IModel<Taxonomy> taxonomyModel, String language, Comparator<Category> categoryComparator) {
         this.taxonomyModel = taxonomyModel;
         this.language = language;
+        this.categoryComparator = categoryComparator;
     }
 
     List<CategoryNode> getChildren() {
         if (children == null) {
-            SortedMap<String, List<CategoryNode>> nodes = new TreeMap<String, List<CategoryNode>>();
-            final List<? extends Category> categories = getCategories();
+            final List<? extends Category> categories = new LinkedList<Category>(getCategories());
+
+            if (categoryComparator != null) {
+                Collections.sort(categories, categoryComparator);
+            }
+
+            List<CategoryNode> tempChildren = new LinkedList<CategoryNode>();
+
             for (Category category : categories) {
-                String name = category.getInfo(language).getName();
-                List<CategoryNode> siblings;
-                if (nodes.containsKey(name)) {
-                    siblings = nodes.get(name);
-                } else {
-                    siblings = new ArrayList<CategoryNode>(1);
-                    nodes.put(name, siblings);
-                }
-                siblings.add(new CategoryNode(new CategoryModel(taxonomyModel, category.getKey()), language));
+                tempChildren.add(new CategoryNode(new CategoryModel(taxonomyModel, category.getKey()), language));
             }
-            children = new ArrayList<CategoryNode>(nodes.size());
-            for (List<CategoryNode> siblings : nodes.values()) {
-                for (CategoryNode node : siblings) {
-                    children.add(node);
-                }
-            }
+
+            children = tempChildren;
         }
+
         return children;
     }
 

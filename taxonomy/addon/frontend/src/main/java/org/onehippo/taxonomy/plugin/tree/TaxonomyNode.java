@@ -15,6 +15,7 @@
  */
 package org.onehippo.taxonomy.plugin.tree;
 
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.tree.TreeNode;
@@ -29,7 +30,11 @@ public class TaxonomyNode extends AbstractNode {
     private IModel<Taxonomy> model;
 
     public TaxonomyNode(IModel<Taxonomy> model, String language) {
-        super(model, language);
+        this(model, language, null);
+    }
+
+    public TaxonomyNode(IModel<Taxonomy> model, String language, Comparator<Category> categoryComparator) {
+        super(model, language, categoryComparator);
         this.model = model;
     }
 

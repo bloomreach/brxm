@@ -18,6 +18,7 @@ package org.onehippo.taxonomy.plugin;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -26,6 +27,7 @@ import javax.jcr.Node;
 import javax.swing.tree.TreeNode;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
@@ -61,12 +63,14 @@ import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
+import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.plugin.api.EditableCategory;
 import org.onehippo.taxonomy.plugin.api.EditableCategoryInfo;
 import org.onehippo.taxonomy.plugin.api.TaxonomyException;
 import org.onehippo.taxonomy.plugin.model.CategoryModel;
 import org.onehippo.taxonomy.plugin.model.JcrTaxonomy;
+import org.onehippo.taxonomy.plugin.tree.CategoryNameComparator;
 import org.onehippo.taxonomy.plugin.tree.CategoryNode;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyNode;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTree;
@@ -137,8 +141,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         };
         final IModel<Taxonomy> taxonomyModel = new Model<Taxonomy>(taxonomy);
         String currentLanguageCode = currentLanguageSelection.getLanguageCode();
+        final Comparator<Category> categoryComparator = getCategoryComparator(config, currentLanguageCode);
         tree = new
-                TaxonomyTree("tree", new TaxonomyTreeModel(taxonomyModel, currentLanguageCode), currentLanguageCode) {
+                TaxonomyTree("tree", new TaxonomyTreeModel(taxonomyModel, currentLanguageCode, categoryComparator), currentLanguageCode) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -569,6 +574,29 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
      */
     protected Form<?> getContainerForm() {
         return container;
+    }
+
+    /**
+     * Return <code>Category</code> comparator to be used when sorting sibling category nodes.
+     * @param config
+     * @param locale
+     * @return
+     */
+    protected Comparator<Category> getCategoryComparator(final IPluginConfig config, final String locale) {
+        Comparator<Category> categoryComparator = null;
+
+        String sortOptions = "name";
+
+        IPluginConfig params = config.getPluginConfig("cluster.options");
+        if (params != null) {
+            sortOptions = params.getString("category.sort.options", sortOptions);
+        }
+
+        if (StringUtils.equalsIgnoreCase("name", sortOptions)) {
+            categoryComparator = new CategoryNameComparator(locale);
+        }
+
+        return categoryComparator;
     }
 
     private final class DescriptionModel implements IModel<String> {

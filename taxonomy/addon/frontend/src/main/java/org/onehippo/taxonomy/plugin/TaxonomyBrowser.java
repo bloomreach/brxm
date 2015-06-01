@@ -15,10 +15,12 @@
  */
 package org.onehippo.taxonomy.plugin;
 
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.tree.TreeNode;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -35,12 +37,14 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.CategoryInfo;
 import org.onehippo.taxonomy.plugin.api.TaxonomyHelper;
 import org.onehippo.taxonomy.plugin.model.CategoryModel;
 import org.onehippo.taxonomy.plugin.model.Classification;
 import org.onehippo.taxonomy.plugin.model.TaxonomyModel;
+import org.onehippo.taxonomy.plugin.tree.CategoryNameComparator;
 import org.onehippo.taxonomy.plugin.tree.CategoryNode;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTree;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTreeModel;
@@ -71,7 +75,8 @@ public class TaxonomyBrowser extends Panel {
         this.preferredLocale = preferredLocale;
 
         String treeLocale = getPreferredLocale();
-        TaxonomyTree tree = new TaxonomyTree("tree", new TaxonomyTreeModel(taxonomyModel, treeLocale), treeLocale) {
+        final Comparator<Category> categoryComparator = getCategoryComparator(taxonomyModel.getPluginConfig(), treeLocale);
+        TaxonomyTree tree = new TaxonomyTree("tree", new TaxonomyTreeModel(taxonomyModel, treeLocale, categoryComparator), treeLocale) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -231,6 +236,29 @@ public class TaxonomyBrowser extends Panel {
             r += s;
         }
         return r;
+    }
+
+    /**
+     * Return <code>Category</code> comparator to be used when sorting sibling category nodes.
+     * @param config
+     * @param locale
+     * @return
+     */
+    protected Comparator<Category> getCategoryComparator(final IPluginConfig config, final String locale) {
+        Comparator<Category> categoryComparator = null;
+
+        String sortOptions = "name";
+
+        IPluginConfig params = config.getPluginConfig("cluster.options");
+        if (params != null) {
+            sortOptions = params.getString("category.sort.options", sortOptions);
+        }
+
+        if (StringUtils.equalsIgnoreCase("name", sortOptions)) {
+            categoryComparator = new CategoryNameComparator(locale);
+        }
+
+        return categoryComparator;
     }
 
     private List<String> getKeys() {

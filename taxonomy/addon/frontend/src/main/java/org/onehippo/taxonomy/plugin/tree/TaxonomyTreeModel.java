@@ -15,9 +15,12 @@
  */
 package org.onehippo.taxonomy.plugin.tree;
 
+import java.util.Comparator;
+
 import javax.swing.tree.DefaultTreeModel;
 
 import org.apache.wicket.model.IModel;
+import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
 
 public class TaxonomyTreeModel extends DefaultTreeModel {
@@ -26,7 +29,11 @@ public class TaxonomyTreeModel extends DefaultTreeModel {
     private String language;
 
     public TaxonomyTreeModel(IModel<Taxonomy> root, String language) {
-        super(new TaxonomyNode(root, language));
+        this(root, language, null);
+    }
+
+    public TaxonomyTreeModel(IModel<Taxonomy> root, String language, Comparator<Category> categoryComparator) {
+        super(new TaxonomyNode(root, language, categoryComparator));
         this.language = language;
     }
 

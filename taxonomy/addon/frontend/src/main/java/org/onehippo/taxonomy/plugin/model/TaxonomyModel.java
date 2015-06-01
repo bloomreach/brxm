@@ -30,13 +30,23 @@ public class TaxonomyModel extends LoadableDetachableModel<Taxonomy> {
     static final Logger log = LoggerFactory.getLogger(TaxonomyModel.class);
 
     private final IPluginContext context;
+    private final IPluginConfig config;
     private final String serviceId;
     private final String taxonomyName;
 
     public TaxonomyModel(IPluginContext context, IPluginConfig config) {
         this.context = context;
+        this.config = config;
         serviceId = config.getString(ITaxonomyService.SERVICE_ID, ITaxonomyService.DEFAULT_SERVICE_TAXONOMY_ID);
         taxonomyName = config.getString(ITaxonomyService.TAXONOMY_NAME);
+    }
+
+    public IPluginContext getPluginContext() {
+        return context;
+    }
+
+    public IPluginConfig getPluginConfig() {
+        return config;
     }
 
     @Override
