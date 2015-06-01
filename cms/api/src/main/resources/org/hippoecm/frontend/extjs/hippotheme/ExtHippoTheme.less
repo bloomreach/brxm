@@ -16,6 +16,23 @@
 // Variable overrides
 @import "../../../../../../styling/less/_variables";
 
+// Vendor styling
+@import '../../../../../../../../target/bower_components/bootstrap/less/buttons';
+
+.btn {
+  box-sizing: border-box;
+  border-radius: @border-radius-buttons;
+  background-image: none !important;
+
+  a {
+    color: inherit;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
 .ext-el-mask {
   background-color: #000;
 }
