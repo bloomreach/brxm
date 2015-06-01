@@ -20,12 +20,12 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>10.0.1</version>
+    <version>10.0.2-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Plugin Taxonomy Demo</name>
   <artifactId>hippo-plugin-taxonomy-demo</artifactId>
-  <version>1.12.00-SNAPSHOT</version>
+  <version>1.12.01-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <scm>
@@ -35,7 +35,6 @@
   </scm>
 
   <properties>
-    <forge.taxonomy.version>1.12.01-SNAPSHOT</forge.taxonomy.version>
     <taglibs.version>1.2.1</taglibs.version>
     <junit.version>4.5</junit.version>
     <commons.lang.version>2.6</commons.lang.version>
