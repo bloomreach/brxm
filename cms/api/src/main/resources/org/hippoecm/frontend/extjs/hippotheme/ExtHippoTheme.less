@@ -4,18 +4,14 @@
  * licensing@sencha.com
  * http://www.sencha.com/license
  */
-
 // Bootstrap variables and mixins
 @import "../../../../../../../../target/bower_components/bootstrap/less/variables.less";
 @import "../../../../../../../../target/bower_components/bootstrap/less/mixins.less";
-
 // Hippo Theme variables and mixins
 @import "../../../../../../../../target/bower_components/hippo-theme/src/less/_variables.less";
 @import "../../../../../../../../target/bower_components/hippo-theme/src/less/_mixins.less";
-
 // Variable overrides
 @import "../../../../../../styling/less/_variables";
-
 // Vendor styling
 @import '../../../../../../../../target/bower_components/bootstrap/less/buttons';
 
@@ -30,6 +26,28 @@
     &:hover {
       text-decoration: none;
     }
+  }
+}
+
+.eo-chart-store-button.x-btn {
+  .x-btn-text {
+    .btn;
+    .btn-default;
+    .btn-xs;
+    height: auto;
+    border-radius: @border-radius-buttons;
+  }
+
+  .x-btn-tl,
+  .x-btn-tr,
+  .x-btn-tc,
+  .x-btn-ml,
+  .x-btn-mr,
+  .x-btn-mc,
+  .x-btn-bl,
+  .x-btn-br,
+  .x-btn-bc {
+    background-image: none;
   }
 }
 
