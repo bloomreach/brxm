@@ -72,8 +72,17 @@
   }
 }
 
+#context-menu-container {
+  text-align: left;
+  position: absolute;
+  z-index: 10000;
+  color: #000;
+  left: -1000px;
+  top: -1000px;
+}
+
 .scrollable-context-menu {
-  height: 99vh;
+  height: ~"calc(100vh - @{top-bar-height} - @{bottom-bar-height})";
   overflow-x: hidden;
   overflow-y: auto;
   display: block;

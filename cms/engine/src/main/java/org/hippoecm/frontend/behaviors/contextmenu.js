@@ -17,6 +17,10 @@
 (function () {
   'use strict';
 
+  var TOP_BAR_HEIGHT = 41,
+    BOTTOM_BAR_HEIGHT = 40,
+    CONTEXT_LINK_SIZE = 16;
+
   function byClass (name, tag, root) {
     var found = YAHOO.util.Dom.getElementsByClassName(name, tag, root);
     if (!YAHOO.lang.isUndefined(found.length) && found.length > 0) {
@@ -69,8 +73,8 @@
   var menus = new Hippo.Set();
 
   Hippo.ContextMenu = {
-    currentContentLink: null,
-    currentContentXY: [0, 0],
+    currentContextLink: null,
+    currentContextXY: [0, 0],
     isShowing: false
   };
 
@@ -99,8 +103,9 @@
   };
 
   Hippo.ContextMenu.renderInTree = function (id) {
-    var xy = this.getContextPosition(id);
-    this.renderAtPosition(id, xy[0] + 13, xy[1] - 13);
+    var x = this.currentContextXY[0] + CONTEXT_LINK_SIZE,
+      y = this.currentContextXY[1];
+    this.renderAtPosition(id, x, y);
   };
 
   Hippo.ContextMenu.renderAtPosition = function (id, posX, posY) {
@@ -116,7 +121,7 @@
     container.appendChild(menu);
 
     var viewWidth = YUID.getViewportWidth();
-    var viewHeight = YUID.getViewportHeight();
+    var viewHeight = YUID.getViewportHeight() - BOTTOM_BAR_HEIGHT;
     var region = YUID.getRegion(ul);
     var menuWidth = region[0].width;
     var menuHeight = region[0].height;
@@ -126,8 +131,8 @@
       posY -= menuBottom - viewHeight;
     }
 
-    if (posY < 0) {
-      posY = 0;
+    if (posY < TOP_BAR_HEIGHT) {
+      posY = TOP_BAR_HEIGHT;
       YUID.addClass(menu, 'scrollable-context-menu');
     }
 
@@ -159,18 +164,19 @@
       }
       var pos = this.getContextPosition(id);
       YUID.setXY(el, pos);
-      this.currentContentLink = el;
-      this.currentContentXY = pos;
+      this.currentContextLink = el;
+      this.currentContextXY = pos;
     }
     this.isShowing = true;
   };
 
   Hippo.ContextMenu.hideContextLink = function (id) {
-    var el = this.currentContentLink || byClass('hippo-tree-dropdown-icon-container', 'a', id);
+    var el = this.currentContextLink || byClass('hippo-tree-dropdown-icon-container', 'a', id);
     if (el !== null) {
       YAHOO.util.Dom.removeClass(el, 'container-selected');
     }
     this.isShowing = false;
+    this.currentContextLink = null;
   };
 
   Hippo.ContextMenu.getContextPosition = function (id) {
@@ -198,8 +204,8 @@
 
   // Render the context menu at the stored position
   Hippo.ContextMenu.redraw = function () {
-    if (Hippo.ContextMenu.currentContentLink !== null) {
-      YAHOO.util.Dom.setX(Hippo.ContextMenu.currentContentLink, Hippo.ContextMenu.currentContentXY[0]);
+    if (Hippo.ContextMenu.currentContextLink !== null) {
+      YAHOO.util.Dom.setX(Hippo.ContextMenu.currentContextLink, Hippo.ContextMenu.currentContextXY[0]);
     }
   };
 

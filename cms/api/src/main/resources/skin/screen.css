@@ -973,17 +973,6 @@ span.down-16 {
   background-image: url("images/icons/document-new-16.png")
 }
 
-#context-menu-container {
-  text-align: left;
-  position: absolute;
-  display: block;
-  z-index: 10000;
-  color: #000;
-  padding: 3px;
-  left: -1000px;
-  top: -1000px;
-}
-
 #global-feedback-container {
   border: 1px solid #e3e3e3;
   background-color: #FFF6E0;
