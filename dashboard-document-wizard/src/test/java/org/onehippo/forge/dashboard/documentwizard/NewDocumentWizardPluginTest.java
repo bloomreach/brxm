@@ -1,5 +1,5 @@
 /**
- * Copyright 2001-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2001-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +18,19 @@ package org.onehippo.forge.dashboard.documentwizard;
 
 import org.testng.annotations.Test;
 
-import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
 
 public class NewDocumentWizardPluginTest {
     
-    private static String[] INVALID_NAMES = {"", " ", ".", "..", "asdf/asdf", "]asdf", "asdf}", "as|df", "as:df", "asdf "};
     private static String[] VALID_NAMES = {"a", "()()()", "An'a!!", "An'a!!", "a aa", "It's ama-zing"};
+    private static String[] MORE_VALID_NAMES = {"", " ", ".", "..", "asdf/asdf", "]asdf", "asdf}", "as|df", "as:df", "asdf "};
 
     @Test
     public void testNameValidation() {
-        for (String name : INVALID_NAMES) {
-            assertFalse(NewDocumentWizardPlugin.isValidName(name));
-        }
         for (String name : VALID_NAMES) {
+            assertTrue(NewDocumentWizardPlugin.isValidName(name));
+        }
+        for (String name : MORE_VALID_NAMES) {
             assertTrue(NewDocumentWizardPlugin.isValidName(name));
         }
     }

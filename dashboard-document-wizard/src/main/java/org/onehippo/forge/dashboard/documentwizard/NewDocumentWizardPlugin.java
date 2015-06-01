@@ -67,13 +67,13 @@ import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.widgets.AjaxDateTimeField;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.StringCodec;
-import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -199,7 +199,6 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
 
         private final IPluginContext context;
         private final IPluginConfig config;
-        private final Component parent;
         private final String documentType;
         private final String query;
         private final String baseFolder;
@@ -212,12 +211,11 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
         /**
          * @param context plugin context
          * @param config  plugin config
-         * @param parent  parent component
+         * @param parent  parent component (no longer used)
          */
-        public Dialog(final IPluginContext context, final IPluginConfig config, Component parent) {
+        public Dialog(final IPluginContext context, final IPluginConfig config, @SuppressWarnings("unused") Component parent) {
             this.context = context;
             this.config = config;
-            this.parent = parent;
 
             // get values from the shortcut configuration
             documentType = config.getString(PARAM_DOCUMENT_TYPE);
@@ -262,6 +260,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             nameField.setRequired(true);
             nameField.add(strValue -> {
                 String value = strValue.getValue();
+                //noinspection ConstantConditions
                 if (!isValidName(value)) {
                     strValue.error(messageSource -> new StringResourceModel("invalid.name", this, null).getString());
                 }
@@ -494,29 +493,27 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
      * Determine whether the a document name is valid.
      *
      * @param value the document name
-     * @return whether the name is a valid JCR nodename
+     * @return whether the name is a valid document name
      */
-    protected static boolean isValidName(final String value) {
-        if (!value.trim().equals(value)) {
-            return false;
-        }
-        if (".".equals(value) || "..".equals(value)) {
-            return false;
-        }
-        return value.matches("[^\\[\\]\\|/:\\}\\{]+");
+    protected static boolean isValidName(@SuppressWarnings("unused") final String value) {
+        // HIPPLUG-1109: by default, all name values are considered valid.
+        // The name value is input to the node name codec, which encodes a valid node name.
+        return true;
     }
 
     protected StringCodec getNodeNameCodec() {
-        return new StringCodecFactory.UriEncoding();
+        final String locale = getSession().getLocale().toString();
+        return CodecUtils.getNodeNameCodecModel(getPluginContext(), locale).getObject();
     }
 
 
     /**
      * Get or create folder for classificationType.LIST.
      *
-     * @param parent
-     * @param list
-     * @return
+     * @param parent parent folder in which the list-based folder is to be found/created.
+     * @param list list-based name of the folder
+     * @param create flag indicating whether the folder should be created if it doesn't exist
+     * @return node representing the list-based folder
      * @throws java.rmi.RemoteException
      * @throws javax.jcr.RepositoryException
      * @throws org.hippoecm.repository.api.WorkflowException
@@ -539,9 +536,10 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
     /**
      * Get or create folder(s) for classificationType.DATE.
      *
-     * @param parent
-     * @param date
-     * @return
+     * @param parent parent folder in which the date-based folder is to be found/created.
+     * @param date date for which to find/create the folder(s).
+     * @param create flag indicating whether the folders should be created if they don't exist
+     * @return node representing the date-based folder
      * @throws java.rmi.RemoteException
      * @throws javax.jcr.RepositoryException
      * @throws org.hippoecm.repository.api.WorkflowException
