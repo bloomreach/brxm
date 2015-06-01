@@ -493,8 +493,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     /**
      * Returns the current editable category instance
      * which is being edited.
-     *
-     * @return
      */
     protected EditableCategory getCategory() {
         return taxonomy.getCategoryByKey(key);
@@ -569,8 +567,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
      * If you want to add custom UI components for your custom category fields, you might want to override this plugin
      * and invoke this method in the constructor to add the custom UI components.
      * </P>
-     *
-     * @return
      */
     protected Form<?> getContainerForm() {
         return container;
@@ -578,13 +574,10 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
     /**
      * Return <code>Category</code> comparator to be used when sorting sibling category nodes.
-     * @param config
-     * @param locale
-     * @return
      */
     protected Comparator<Category> getCategoryComparator(final IPluginConfig config, final String locale) {
         Comparator<Category> categoryComparator = null;
-        String sortOptions = config.getString("category.sort.options", null);
+        final String sortOptions = config.getString("category.sort.options");
 
         if (StringUtils.equalsIgnoreCase("name", sortOptions)) {
             categoryComparator = new CategoryNameComparator(locale);

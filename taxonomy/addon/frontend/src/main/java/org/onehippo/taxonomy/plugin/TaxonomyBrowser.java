@@ -113,7 +113,7 @@ public class TaxonomyBrowser extends Panel {
                         category = category.getParent();
                         name = TaxonomyHelper.getCategoryName(category, getPreferredLocale()) + " > " + name;
                     }
-                    labelModel = new Model<String>(name);
+                    labelModel = new Model<>(name);
                 } else {
                     labelModel = new ResourceModel("invalid.taxonomy.category");
                 }
@@ -194,7 +194,7 @@ public class TaxonomyBrowser extends Panel {
     /**
      * Adds labels from the category into the category detail fragment.
      * <p>
-     * This method can be overriden if you want to customize the category detail fragment.
+     * This method can be overridden if you want to customize the category detail fragment.
      * e.g., adding one or more fields in the category detail fragment.
      * </p>
      */
@@ -240,13 +240,10 @@ public class TaxonomyBrowser extends Panel {
 
     /**
      * Return <code>Category</code> comparator to be used when sorting sibling category nodes.
-     * @param config
-     * @param locale
-     * @return
      */
     protected Comparator<Category> getCategoryComparator(final IPluginConfig config, final String locale) {
         Comparator<Category> categoryComparator = null;
-        String sortOptions = config.getString("category.sort.options", null);
+        final String sortOptions = config.getString("category.sort.options");
 
         if (StringUtils.equalsIgnoreCase("name", sortOptions)) {
             categoryComparator = new CategoryNameComparator(locale);
