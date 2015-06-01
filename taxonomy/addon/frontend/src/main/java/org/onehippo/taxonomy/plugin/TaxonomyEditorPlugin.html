@@ -19,18 +19,52 @@
     <div wicket:id="toolbar-container-holder">
       <div class="hippo-toolbar">
         <ul class="hippo-toolbar-section">
-          <li class="icon-16"><a wicket:id="add-category"
-            class="menu-action" href="#"> <span
-              class="menu-action-icon"><img
-                wicket:id="add-category-icon" /></span> <span
-              class="menu-action-text"><wicket:message
-                  key="add-category-text" /></span>
-          </a></li>
+          <li class="icon-16">
+            <a wicket:id="add-category" class="menu-action" href="#">
+              <span class="menu-action-icon">
+                <img wicket:id="add-category-icon" />
+              </span>
+              <span class="menu-action-text">
+                <wicket:message key="add-category-text" />
+              </span>
+            </a>
+          </li>
+          <li class="icon-16">
+            <a wicket:id="remove-category" class="menu-action" href="#">
+              <span class="menu-action-icon">
+                <img wicket:id="remove-category-icon" />
+              </span>
+              <span class="menu-action-text">
+                <wicket:message key="remove-category-text" />
+              </span>
+            </a>
+          </li>
+          <li class="icon-16">
+            <a wicket:id="moveup-category" class="menu-action" href="#">
+              <span class="menu-action-icon">
+                <img wicket:id="moveup-category-icon" />
+              </span>
+              <span class="menu-action-text">
+                <wicket:message key="moveup-category-text" />
+              </span>
+            </a>
+          </li>
+          <li class="icon-16">
+            <a wicket:id="movedown-category" class="menu-action" href="#">
+              <span class="menu-action-icon">
+                <img wicket:id="movedown-category-icon" />
+              </span>
+              <span class="menu-action-text">
+                <wicket:message key="movedown-category-text" />
+              </span>
+            </a>
+          </li>
         </ul>
       </div>
     </div>
-    <div class="taxonomy-tree" wicket:id="tree">[
-      TAXONOMY TREE HERE ]</div>
+    <div class="taxonomy-tree" wicket:id="tree">
+      [ TAXONOMY TREE HERE ]
+    </div>
     <div class="taxonomy-category">
       <div wicket:id="container-holder">
         <div style="clear: both;" />

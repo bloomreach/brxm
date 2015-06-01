@@ -15,11 +15,13 @@
  */
 package org.onehippo.taxonomy.plugin.tree;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.tree.TreeNode;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
@@ -58,6 +60,26 @@ public class TaxonomyNode extends AbstractNode {
 
     public boolean isLeaf() {
         return false;
+    }
+
+    public CategoryNode findCategoryNodeByKey(final String key) {
+        List<CategoryNode> categoryNodes = new ArrayList<CategoryNode>();
+        findCategoryNodesByKey(this, key, categoryNodes);
+        return categoryNodes.isEmpty() ? null : categoryNodes.get(0);
+    }
+
+    private static void findCategoryNodesByKey(final AbstractNode node, final String key, List<CategoryNode> categoryNodes) {
+        for (CategoryNode categoryNode : node.getChildren()) {
+            if (!categoryNodes.isEmpty()) {
+                break;
+            }
+
+            if (StringUtils.equals(key, categoryNode.getCategory().getKey())) {
+                categoryNodes.add(categoryNode);
+            } else {
+                findCategoryNodesByKey(categoryNode, key, categoryNodes);
+            }
+        }
     }
 
     @Override

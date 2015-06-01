@@ -52,8 +52,12 @@ public abstract class AbstractNode implements TreeNode, IDetachable {
         this.categoryComparator = categoryComparator;
     }
 
-    List<CategoryNode> getChildren() {
-        if (children == null) {
+    public List<CategoryNode> getChildren() {
+        return getChildren(false);
+    }
+
+    public List<CategoryNode> getChildren(boolean refresh) {
+        if (children == null || refresh) {
             final List<? extends Category> categories = new LinkedList<Category>(getCategories());
 
             if (categoryComparator != null) {

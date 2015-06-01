@@ -32,6 +32,7 @@ import org.apache.commons.collections.map.LazyMap;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.standards.sort.NodeSortAction;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.taxonomy.api.Category;
@@ -52,6 +53,8 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(JcrCategory.class);
+
+    private NodeSortAction nodeSortAction;
 
     public JcrCategory(final IModel<Node> nodeModel,
                        final boolean editable,
@@ -326,4 +329,32 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
         }
     }
 
+    @Override
+    public boolean canMoveUp() {
+        return getNodeSortAction().canMoveUp();
+    }
+
+    @Override
+    public boolean moveUp() throws TaxonomyException {
+        return getNodeSortAction().moveUp();
+    }
+
+    @Override
+    public boolean canMoveDown() {
+        return getNodeSortAction().canMoveDown();
+    }
+
+    @Override
+    public boolean moveDown() throws TaxonomyException {
+        return getNodeSortAction().moveDown();
+    }
+
+    private NodeSortAction getNodeSortAction() {
+        if (nodeSortAction == null) {
+            nodeSortAction = new NodeSortAction();
+            nodeSortAction.setModel(getNodeModel());
+        }
+
+        return nodeSortAction;
+    }
 }

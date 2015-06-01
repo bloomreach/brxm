@@ -70,6 +70,7 @@ import org.onehippo.taxonomy.plugin.api.EditableCategoryInfo;
 import org.onehippo.taxonomy.plugin.api.TaxonomyException;
 import org.onehippo.taxonomy.plugin.model.CategoryModel;
 import org.onehippo.taxonomy.plugin.model.JcrTaxonomy;
+import org.onehippo.taxonomy.plugin.tree.AbstractNode;
 import org.onehippo.taxonomy.plugin.tree.CategoryNameComparator;
 import org.onehippo.taxonomy.plugin.tree.CategoryNode;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyNode;
@@ -96,6 +97,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     private Form<?> container;
     private MarkupContainer holder;
     private MarkupContainer toolbarHolder;
+    private TaxonomyTreeModel treeModel;
     private TaxonomyTree tree;
     private final boolean useUrlKeyEncoding;
 
@@ -142,8 +144,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         final IModel<Taxonomy> taxonomyModel = new Model<Taxonomy>(taxonomy);
         String currentLanguageCode = currentLanguageSelection.getLanguageCode();
         final Comparator<Category> categoryComparator = getCategoryComparator(config, currentLanguageCode);
+        treeModel = new TaxonomyTreeModel(taxonomyModel, currentLanguageCode, categoryComparator);
         tree = new
-                TaxonomyTree("tree", new TaxonomyTreeModel(taxonomyModel, currentLanguageCode, categoryComparator), currentLanguageCode) {
+                TaxonomyTree("tree", treeModel, currentLanguageCode) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -240,8 +243,103 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                 "res/new-category-16.png")));
         if (!editing) {
             addCategory.add(new AttributeAppender("class", new Model<String>("disabled"), " "));
+            addCategory.setVisible(false);
         }
         toolbarHolder.add(addCategory);
+
+        AjaxLink<Void> removeCategory = new AjaxLink<Void>("remove-category") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isEnabled() {
+                return editing;
+            }
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+            }
+
+        };
+        removeCategory.add(new Image("remove-category-icon", new PackageResourceReference(TaxonomyEditorPlugin.class,
+                "res/remove-category-16.png")));
+        // TODO: remove not implemented yet, so disable it.
+        //if (!editing) {
+            removeCategory.add(new AttributeAppender("class", new Model<String>("disabled"), " "));
+            removeCategory.setVisible(false);
+        //}
+        toolbarHolder.add(removeCategory);
+
+        AjaxLink<Void> moveupCategory = new AjaxLink<Void>("moveup-category") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isEnabled() {
+                return editing;
+            }
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                try {
+                    EditableCategory category = taxonomy.getCategoryByKey(key);
+                    TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
+                    CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
+
+                    if (category != null && categoryNode != null) {
+                        if (category.moveUp()) {
+                            ((AbstractNode) categoryNode.getParent()).getChildren(true);
+                            treeModel.reload(categoryNode.getParent());
+                            redraw();
+                        }
+                    }
+                } catch (TaxonomyException e) {
+                    error(e.getMessage());
+                }
+            }
+
+        };
+        moveupCategory.add(new Image("moveup-category-icon", new PackageResourceReference(TaxonomyEditorPlugin.class,
+                "res/moveup-category-16.png")));
+        if (!editing || categoryComparator != null) {
+            moveupCategory.add(new AttributeAppender("class", new Model<String>("disabled"), " "));
+            moveupCategory.setVisible(false);
+        }
+        toolbarHolder.add(moveupCategory);
+
+        AjaxLink<Void> movedownCategory = new AjaxLink<Void>("movedown-category") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isEnabled() {
+                return editing;
+            }
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                try {
+                    EditableCategory category = taxonomy.getCategoryByKey(key);
+                    TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
+                    CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
+
+                    if (category != null && categoryNode != null) {
+                        if (category.moveDown()) {
+                            ((AbstractNode) categoryNode.getParent()).getChildren(true);
+                            treeModel.reload(categoryNode.getParent());
+                            redraw();
+                        }
+                    }
+                } catch (TaxonomyException e) {
+                    error(e.getMessage());
+                }
+            }
+
+        };
+        movedownCategory.add(new Image("movedown-category-icon", new PackageResourceReference(TaxonomyEditorPlugin.class,
+                "res/movedown-category-16.png")));
+        if (!editing || categoryComparator != null) {
+            movedownCategory.add(new AttributeAppender("class", new Model<String>("disabled"), " "));
+            movedownCategory.setVisible(false);
+        }
+        toolbarHolder.add(movedownCategory);
 
         container = new Form("container") {
             private static final long serialVersionUID = 1L;

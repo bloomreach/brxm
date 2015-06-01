@@ -32,4 +32,12 @@ public interface EditableCategory extends Category {
     EditableCategory addCategory(String key, String name, String locale, final IModel<Taxonomy> taxonomyModel) throws TaxonomyException;
 
     void remove() throws TaxonomyException;
+
+    boolean canMoveUp();
+
+    boolean moveUp() throws TaxonomyException;
+
+    boolean canMoveDown();
+
+    boolean moveDown() throws TaxonomyException;
 }
