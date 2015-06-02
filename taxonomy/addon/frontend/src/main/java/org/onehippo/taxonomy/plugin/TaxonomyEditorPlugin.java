@@ -51,9 +51,11 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.hippoecm.addon.workflow.ConfirmDialog;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -278,16 +280,40 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
+                IDialogService dialogService = getDialogService();
+                dialogService.show(
+                        new ConfirmDialog(
+                                new StringResourceModel("remove-category-confirm-title", this, null), 
+                                new StringResourceModel("remove-category-confirm-message", this, null)) {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public void invokeWorkflow() throws Exception {
+                        try {
+                            EditableCategory category = taxonomy.getCategoryByKey(key);
+                            TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
+                            CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
+
+                            if (category != null && categoryNode != null) {
+                                category.remove();
+                                ((AbstractNode) categoryNode.getParent()).getChildren(true);
+                                treeModel.reload(categoryNode.getParent());
+                                redraw();
+                            }
+                        } catch (TaxonomyException e) {
+                            error(e.getMessage());
+                        }
+                    }
+                });
             }
 
         };
         removeCategory.add(new Image("remove-category-icon", new PackageResourceReference(TaxonomyEditorPlugin.class,
                 "res/remove-category-16.png")));
-        // TODO: remove not implemented yet, so disable it.
-        //if (!editing) {
+        if (!editing) {
             removeCategory.add(new AttributeAppender("class", new Model<String>("disabled"), " "));
             removeCategory.setVisible(false);
-        //}
+        }
         toolbarHolder.add(removeCategory);
 
         moveupCategory = new AjaxLink<Void>("moveup-category") {
