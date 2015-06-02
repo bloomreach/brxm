@@ -39,7 +39,6 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -167,7 +166,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
             }
 
         };
-        final IModel<Taxonomy> taxonomyModel = new Model<Taxonomy>(taxonomy);
+        final IModel<Taxonomy> taxonomyModel = new Model<>(taxonomy);
         String currentLanguageCode = currentLanguageSelection.getLanguageCode();
         final Comparator<Category> categoryComparator = getCategoryComparator(config, currentLanguageCode);
         treeModel = new TaxonomyTreeModel(taxonomyModel, currentLanguageCode, categoryComparator);
@@ -292,12 +291,12 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 IDialogService dialogService = getDialogService();
-                final List<String> keys = new ArrayList<String>();
-                final Model<String> classificationIdModel = new Model<String>();
+                final List<String> keys = new ArrayList<>();
+                final Model<String> classificationIdModel = new Model<>();
                 final Classification classification = new Classification(keys, classificationIdModel);
-                final IModel<Classification> classificationModel = new Model<Classification>(classification);
+                final IModel<Classification> classificationModel = new Model<>(classification);
 
-                TaxonomyModel taxonomyModel = null;
+                TaxonomyModel taxonomyModel;
 
                 try {
                     taxonomyModel = new TaxonomyModel(context, config, null, taxonomy.getName(),
@@ -471,10 +470,8 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                         if (category.moveUp()) {
                             ((AbstractNode) categoryNode.getParent()).getChildren(true);
                             treeModel.reload(categoryNode.getParent());
-                            setMenuActionEnabled(moveupCategory,
-                                    category instanceof EditableCategory && ((EditableCategory) category).canMoveUp());
-                            setMenuActionEnabled(movedownCategory,
-                                    category instanceof EditableCategory && ((EditableCategory) category).canMoveDown());
+                            setMenuActionEnabled(moveupCategory, category.canMoveUp());
+                            setMenuActionEnabled(movedownCategory, category.canMoveDown());
                             redraw();
                         }
                     }
@@ -510,10 +507,8 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                         if (category.moveDown()) {
                             ((AbstractNode) categoryNode.getParent()).getChildren(true);
                             treeModel.reload(categoryNode.getParent());
-                            setMenuActionEnabled(moveupCategory,
-                                    category instanceof EditableCategory && ((EditableCategory) category).canMoveUp());
-                            setMenuActionEnabled(movedownCategory,
-                                    category instanceof EditableCategory && ((EditableCategory) category).canMoveDown());
+                            setMenuActionEnabled(moveupCategory, category.canMoveUp());
+                            setMenuActionEnabled(movedownCategory, category.canMoveDown());
                             redraw();
                         }
                     }
@@ -557,9 +552,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
             }
         };
 
-        ChoiceRenderer<LanguageSelection> choiceRenderer = new ChoiceRenderer<LanguageSelection>("displayName", "languageCode");
+        ChoiceRenderer<LanguageSelection> choiceRenderer = new ChoiceRenderer<>("displayName", "languageCode");
         DropDownChoice<LanguageSelection> languageSelectionChoice =
-                new DropDownChoice<LanguageSelection>("language", new PropertyModel<LanguageSelection>(this, "currentLanguageSelection"), availableLanguageSelections, choiceRenderer);
+                new DropDownChoice<>("language", new PropertyModel<>(this, "currentLanguageSelection"), availableLanguageSelections, choiceRenderer);
         languageSelectionChoice.add(new OnChangeAjaxBehavior() {
             private static final long serialVersionUID = 1L;
 
@@ -577,7 +572,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
         if (editing) {
             MarkupContainer name = new Fragment("name", "fragmentname", this);
-            FormComponent<String> nameField = new TextField<String>("widget", new NameModel());
+            FormComponent<String> nameField = new TextField<>("widget", new NameModel());
             nameField.add(new OnChangeAjaxBehavior() {
                 private static final long serialVersionUID = 1L;
 
@@ -592,7 +587,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
             container.add(new TextAreaWidget("description", new DescriptionModel()));
         } else {
             container.add(new Label("name", new NameModel()));
-            TextField<String> myKey = new TextField<String>("key");
+            TextField<String> myKey = new TextField<>("key");
             myKey.setVisible(false);
             container.add(myKey);
             container.add(new MultiLineLabel("description", new DescriptionModel()));
@@ -814,7 +809,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
     private List<IModel<String>> getSynonymList() {
         String[] synonyms = synonymModel.getObject();
-        List<IModel<String>> list = new ArrayList<IModel<String>>(synonyms.length);
+        List<IModel<String>> list = new ArrayList<>(synonyms.length);
         for (int i = 0; i < synonyms.length; i++) {
             final int j = i;
             list.add(new IModel<String>() {
@@ -840,7 +835,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     }
 
     private List<LanguageSelection> getAvailableLanguageSelections() {
-        List<LanguageSelection> languageSelections = new ArrayList<LanguageSelection>();
+        List<LanguageSelection> languageSelections = new ArrayList<>();
 
         for (String locale : taxonomy.getLocales()) {
             try {
@@ -1034,9 +1029,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
     protected void setMenuActionEnabled(final AjaxLink<Void> menuAction, boolean enabled) {
         if (enabled) {
-            menuAction.add(new AttributeModifier("class", new Model<String>(MENU_ACTION_STYLE_CLASS)));
+            menuAction.add(new AttributeModifier("class", new Model<>(MENU_ACTION_STYLE_CLASS)));
         } else {
-            menuAction.add(new AttributeModifier("class", new Model<String>(DISABLED_MENU_ACTION_STYLE_CLASS)));
+            menuAction.add(new AttributeModifier("class", new Model<>(DISABLED_MENU_ACTION_STYLE_CLASS)));
         }
     }
 
