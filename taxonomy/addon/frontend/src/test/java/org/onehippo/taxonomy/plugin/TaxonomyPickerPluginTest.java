@@ -53,6 +53,10 @@ public class TaxonomyPickerPluginTest extends AbstractTaxonomyTest  {
             return new JcrTaxonomy(new JcrNodeModel("/test/taxonomy"), false, this);
         }
 
+        public Taxonomy getTaxonomy(Node taxonomyDocumentNode) {
+            return new JcrTaxonomy(new JcrNodeModel("/test/taxonomy"), false, this);
+        }
+
         @Override
         public List<JcrCategoryFilter> getCategoryFilters() {
             return Collections.emptyList();

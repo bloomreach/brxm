@@ -49,14 +49,15 @@ public class TaxonomyPlugin extends Plugin implements ITaxonomyService {
     public static final String CONFIG_CATEGORY_FILTERS = "taxonomy.category.filters";
 
     private String contentPath;
-    private String state;
+    private String defaultTaxonomyDocumentVariantState;
     private final List<JcrCategoryFilter> categoryFilters;
 
     public TaxonomyPlugin(final IPluginContext context,
                           final IPluginConfig config) {
         super(context, config);
         this.contentPath = config.getString("taxonomy.root");
-        this.state = config.getString("taxonomy.state", "published");
+
+        this.defaultTaxonomyDocumentVariantState = config.getString("taxonomy.state", "published");
 
         final String filters = config.getString(CONFIG_CATEGORY_FILTERS);
         if (filters != null) {
@@ -86,13 +87,18 @@ public class TaxonomyPlugin extends Plugin implements ITaxonomyService {
         context.registerService(this, config.getString(ITaxonomyService.SERVICE_ID, ITaxonomyService.DEFAULT_SERVICE_TAXONOMY_ID));
     }
 
+    @Override
     public Taxonomy getTaxonomy(String name) {
         try {
             Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
-            Node node = ((Node) session.getItem(contentPath + "/" + name));
-            Node child = selectChild(node);
-            if (child != null) {
-                return newTaxonomy(new JcrNodeModel(child), false);
+            Node taxonomyHandleNode = ((Node) session.getItem(contentPath + "/" + name));
+
+            if (taxonomyHandleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                Node taxonomyDocumentNode = findDefaultTaxonomyDocumentVariantNode(taxonomyHandleNode);
+
+                if (taxonomyDocumentNode != null) {
+                    return getTaxonomy(taxonomyDocumentNode);
+                }
             }
         } catch (RepositoryException ex) {
             if (log.isDebugEnabled()) {
@@ -106,6 +112,11 @@ public class TaxonomyPlugin extends Plugin implements ITaxonomyService {
     }
 
     @Override
+    public Taxonomy getTaxonomy(Node taxonomyDocumentNode) {
+        return newTaxonomy(new JcrNodeModel(taxonomyDocumentNode), false);
+    }
+
+    @Override
     public List<JcrCategoryFilter> getCategoryFilters() {
         return categoryFilters;
     }
@@ -114,21 +125,26 @@ public class TaxonomyPlugin extends Plugin implements ITaxonomyService {
         return new JcrTaxonomy(model, editing, this);
     }
 
+    @Override
     public List<String> getTaxonomies() {
         List<String> result = new LinkedList<>();
+
         try {
             Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
             NodeIterator nodes = ((Node) session.getItem(contentPath)).getNodes();
+
             while (nodes.hasNext()) {
                 Node node = nodes.nextNode();
+
                 if (node != null) {
                     try {
-                    if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        Node child = selectChild(node);
-                        if (child != null) {
-                            result.add(node.getName());
+                        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            Node child = findDefaultTaxonomyDocumentVariantNode(node);
+
+                            if (child != null) {
+                                result.add(node.getName());
+                            }
                         }
-                    }
                     } catch (ItemNotFoundException infe) {
                         log.error("Error accessing a child of {}", node.getPath(), infe);
                     }
@@ -137,22 +153,27 @@ public class TaxonomyPlugin extends Plugin implements ITaxonomyService {
         } catch (RepositoryException e) {
             log.error("Failed to list taxonomies", e);
         }
+
         return result;
     }
 
-    private Node selectChild(Node parent) throws RepositoryException {
-        NodeIterator children = parent.getNodes(parent.getName());
+    private Node findDefaultTaxonomyDocumentVariantNode(final Node taxonomyDocumentHandleNode) throws RepositoryException {
+        NodeIterator children = taxonomyDocumentHandleNode.getNodes(taxonomyDocumentHandleNode.getName());
+
         while (children.hasNext()) {
             Node child = children.nextNode();
+
             if (child != null) {
                 if (child.isNodeType(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TAXONOMY)) {
                     String childState = child.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
-                    if (childState.equals(state)) {
+
+                    if (childState.equals(defaultTaxonomyDocumentVariantState)) {
                         return child;
                     }
                 }
             }
         }
+
         return null;
     }
 }

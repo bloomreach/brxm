@@ -66,6 +66,7 @@ import org.hippoecm.addon.workflow.ConfirmDialog;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ISettingsService;
@@ -186,6 +187,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                             key = category.getKey();
                             setMenuActionEnabled(addCategory, true);
                             setMenuActionEnabled(removeCategory, true);
+                            setMenuActionEnabled(moveCategory, true);
                             setMenuActionEnabled(moveupCategory,
                                     category instanceof EditableCategory && ((EditableCategory) category).canMoveUp());
                             setMenuActionEnabled(movedownCategory,
@@ -195,6 +197,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                             key = null;
                             setMenuActionEnabled(addCategory, true);
                             setMenuActionEnabled(removeCategory, false);
+                            setMenuActionEnabled(moveCategory, false);
                             setMenuActionEnabled(moveupCategory, false);
                             setMenuActionEnabled(movedownCategory, false);
                             redraw();
@@ -292,12 +295,22 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
+                IDialogService dialogService = getDialogService();
                 final List<String> keys = new ArrayList<String>();
                 final Model<String> classificationIdModel = new Model<String>();
                 final Classification classification = new Classification(keys, classificationIdModel);
                 final IModel<Classification> classificationModel = new Model<Classification>(classification);
-                IDialogService dialogService = getDialogService();
-                final TaxonomyModel taxonomyModel = new TaxonomyModel(context, config, null, taxonomy.getName());
+
+                TaxonomyModel taxonomyModel = null;
+
+                try {
+                    taxonomyModel = new TaxonomyModel(context, config, null, taxonomy.getName(),
+                            new JcrNodeModel(taxonomy.getJcrNode()));
+                } catch (RepositoryException e) {
+                    log.error("Failed to read taxonomy document variant node model.", e);
+                    return;
+                }
+
                 dialogService.show(new TaxonomyPickerDialog(context, config, classificationModel,
                         currentLanguageSelection.getLanguageCode(), taxonomyModel, true) {
                     private static final long serialVersionUID = 1L;
@@ -305,7 +318,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                     protected void onOk() {
                         final String destParentCategoryKey = getCurrentCategoryKey();
 
-                        if (destParentCategoryKey != null) {
+                        if (StringUtils.equals(key, destParentCategoryKey)) {
+                            error(new StringResourceModel("cannot-move-category-to-itself", TaxonomyEditorPlugin.this, null, new NameModel()).getString());
+                        } else if (destParentCategoryKey != null) {
                             try {
                                 EditableCategory destParentCategory = taxonomy.getCategoryByKey(destParentCategoryKey);
                                 EditableCategory srcCategory = taxonomy.getCategoryByKey(key);
@@ -317,6 +332,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                                     srcCategory.move(destParentCategory);
                                     destParentCategoryNode.getChildren(true);
                                     treeModel.reload(destParentCategoryNode);
+                                    tree.getTreeState().expandNode(destParentCategoryNode);
                                     ((AbstractNode) srcCategoryNode.getParent()).getChildren(true);
                                     treeModel.reload(srcCategoryNode.getParent());
                                     redraw();
@@ -534,11 +550,13 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
             setMenuActionEnabled(addCategory, true);
             setMenuActionEnabled(removeCategory, false);
+            setMenuActionEnabled(moveCategory, false);
             setMenuActionEnabled(moveupCategory, false);
             setMenuActionEnabled(movedownCategory, false);
         } else {
             setMenuActionEnabled(addCategory, false);
             setMenuActionEnabled(removeCategory, false);
+            setMenuActionEnabled(moveCategory, false);
             setMenuActionEnabled(moveupCategory, false);
             setMenuActionEnabled(movedownCategory, false);
         }

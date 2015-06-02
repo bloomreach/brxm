@@ -15,8 +15,11 @@
  */
 package org.onehippo.taxonomy.plugin.model;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.onehippo.taxonomy.api.Taxonomy;
@@ -32,13 +35,18 @@ public class TaxonomyModel extends LoadableDetachableModel<Taxonomy> {
     private final IPluginContext context;
     private final IPluginConfig config;
     private final String serviceId;
-    private final String taxonomyName;
+    private String taxonomyName;
+    private final JcrNodeModel taxonomyDocumentNodeModel;
 
     public TaxonomyModel(IPluginContext context, IPluginConfig config) {
         this(context, config, null, null);
     }
 
     public TaxonomyModel(IPluginContext context, IPluginConfig config, String serviceId, String taxonomyName) {
+        this(context, config, serviceId, taxonomyName, null);
+    }
+
+    public TaxonomyModel(IPluginContext context, IPluginConfig config, String serviceId, String taxonomyName, JcrNodeModel taxonomyDocumentNodeModel) {
         this.context = context;
         this.config = config;
 
@@ -48,11 +56,20 @@ public class TaxonomyModel extends LoadableDetachableModel<Taxonomy> {
             this.serviceId = config.getString(ITaxonomyService.SERVICE_ID, ITaxonomyService.DEFAULT_SERVICE_TAXONOMY_ID);
         }
 
-        if (taxonomyName != null) {
+        if (taxonomyDocumentNodeModel != null) {
+            try {
+                this.taxonomyName = taxonomyDocumentNodeModel.getNode().getName();
+            } catch (RepositoryException e) {
+                log.error("Failed to get the taxonomy variant node name.", e);
+                this.taxonomyName = taxonomyName;
+            }
+        } else if (taxonomyName != null) {
             this.taxonomyName = taxonomyName;
         } else {
             this.taxonomyName = config.getString(ITaxonomyService.TAXONOMY_NAME);
         }
+
+        this.taxonomyDocumentNodeModel = taxonomyDocumentNodeModel;
     }
 
     public IPluginContext getPluginContext() {
@@ -65,26 +82,31 @@ public class TaxonomyModel extends LoadableDetachableModel<Taxonomy> {
 
     @Override
     protected Taxonomy load() {
-        if (StringUtils.isBlank(taxonomyName)) {
-            log.info("No configured/chosen taxonomy name. Found '{}'", taxonomyName);
-            return null;
-        }
+        if (taxonomyDocumentNodeModel != null) {
+            return context.getService(serviceId, ITaxonomyService.class).getTaxonomy(taxonomyDocumentNodeModel.getNode());
+        } else {
+            if (StringUtils.isBlank(taxonomyName)) {
+                log.info("No configured/chosen taxonomy name. Found '{}'", taxonomyName);
+                return null;
+            }
 
-        return context.getService(serviceId, ITaxonomyService.class).getTaxonomy(taxonomyName);
+            return context.getService(serviceId, ITaxonomyService.class).getTaxonomy(taxonomyName);
+        }
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof TaxonomyModel) {
             TaxonomyModel that = (TaxonomyModel) obj;
-            return that.serviceId.equals(serviceId) && that.taxonomyName.equals(taxonomyName);
+            return StringUtils.equals(that.serviceId, serviceId) && StringUtils.equals(that.taxonomyName, taxonomyName);
         }
+
         return false;
     }
 
     @Override
     public int hashCode() {
-        return serviceId.hashCode() ^ taxonomyName.hashCode() ^ 8767243;
+        return StringUtils.defaultString(serviceId).hashCode() ^ StringUtils.defaultString(taxonomyName).hashCode() ^ 8767243;
     }
 
 }

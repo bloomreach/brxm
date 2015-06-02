@@ -17,6 +17,8 @@ package org.onehippo.taxonomy.plugin;
 
 import java.util.List;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.util.io.IClusterable;
 import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.plugin.api.JcrCategoryFilter;
@@ -42,10 +44,20 @@ public interface ITaxonomyService extends IClusterable {
     static final String TAXONOMY_NAME = "taxonomy.name";
 
     /**
+     * Get {@link Taxonomy} instance by the name,
+     * selecting the taxonomy document variant based on the configured 'taxonomy.state' property.
      * @param name
      * @return the taxonomy of the specified name.
      */
     Taxonomy getTaxonomy(String name);
+
+    /**
+     * Get {@link Taxonomy} instance by the name,
+     * based on the given taxonomy document variant node.
+     * @param taxonomyDocumentNode
+     * @return the taxonomy of the specified name.
+     */
+    Taxonomy getTaxonomy(Node taxonomyDocumentNode);
 
     /**
      * @return the list of names of the available taxonomies
