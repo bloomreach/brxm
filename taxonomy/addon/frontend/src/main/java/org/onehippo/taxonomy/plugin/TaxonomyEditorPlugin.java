@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -279,10 +279,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         };
         addCategory.add(new Image("add-category-icon", new PackageResourceReference(TaxonomyEditorPlugin.class,
                 "res/new-category-16.png")));
-        if (!editing) {
-            addCategory.add(new AttributeAppender("class", new Model<String>("disabled"), " "));
-            addCategory.setVisible(false);
-        }
         toolbarHolder.add(addCategory);
 
         moveCategory = new AjaxLink<Void>("move-category") {
@@ -365,12 +361,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         };
         moveCategory.add(new Image("move-category-icon", new PackageResourceReference(TaxonomyEditorPlugin.class,
                 "res/move-category-16.png")));
-        if (!editing) {
-            moveCategory.add(new AttributeAppender("class", new Model<String>("disabled"), " "));
-            moveCategory.setVisible(false);
-        }
         toolbarHolder.add(moveCategory);
-
 
         removeCategory = new AjaxLink<Void>("remove-category") {
             private static final long serialVersionUID = 1L;
@@ -459,10 +450,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         };
         removeCategory.add(new Image("remove-category-icon", new PackageResourceReference(TaxonomyEditorPlugin.class,
                 "res/remove-category-16.png")));
-        if (!editing) {
-            removeCategory.add(new AttributeAppender("class", new Model<String>("disabled"), " "));
-            removeCategory.setVisible(false);
-        }
         toolbarHolder.add(removeCategory);
 
         moveupCategory = new AjaxLink<Void>("moveup-category") {
