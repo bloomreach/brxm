@@ -289,56 +289,77 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                final EditableCategory category = taxonomy.getCategoryByKey(key);
-                final String categoryName = category.getInfo(currentLanguageSelection.getLanguageCode()).getName();
-
                 IDialogService dialogService = getDialogService();
-                final Set<String> referringDocumentHandlePaths = getClassifiedDocumentHandlesByCategoryKey(key, 10);
 
-                if (referringDocumentHandlePaths.isEmpty()) {
-                    dialogService.show(
-                            new ConfirmDialog(
-                                    new StringResourceModel("remove-category-confirm-title", this, null), 
-                                    new StringResourceModel("remove-category-confirm-message", this, null, new NameModel())) {
-                        private static final long serialVersionUID = 1L;
+                final TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
+                final CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
 
-                        @Override
-                        public void invokeWorkflow() throws Exception {
-                            try {
-                                final EditableCategory category = taxonomy.getCategoryByKey(key);
-                                TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
-                                CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
-
-                                if (category != null && categoryNode != null) {
-                                    category.remove();
-                                    ((AbstractNode) categoryNode.getParent()).getChildren(true);
-                                    treeModel.reload(categoryNode.getParent());
-                                    redraw();
-                                }
-                            } catch (TaxonomyException e) {
-                                error(e.getMessage());
-                            }
-                        }
-                    });
-                } else {
+                if (!categoryNode.isLeaf()) {
                     dialogService.show(
                             new ConfirmDialog(
                                     new StringResourceModel("cannot-remove-category-title", this, null), 
-                                    new StringResourceModel("cannot-remove-category-message", this, null, new NameModel()),
-                                    new Model<>(StringUtils.join(referringDocumentHandlePaths, "\n")),
-                                    null) {
+                                    new StringResourceModel("cannot-remove-nonleaf-category-message", this, null, new NameModel()),
+                                    null, null) {
                         private static final long serialVersionUID = 1L;
                         {
-                            setCancelEnabled(false);
+                            setCancelVisible(false);
                         }
                         @Override
                         public void invokeWorkflow() throws Exception {
                         }
                         @Override
                         public IValueMap getProperties() {
-                            return DialogConstants.LARGE;
+                            return DialogConstants.SMALL;
                         }
                     });
+                } else {
+                    final Set<String> referringDocumentHandlePaths = getClassifiedDocumentHandlesByCategoryKey(key, 10);
+
+                    if (referringDocumentHandlePaths.isEmpty()) {
+                        dialogService.show(
+                                new ConfirmDialog(
+                                        new StringResourceModel("remove-category-confirm-title", this, null), 
+                                        new StringResourceModel("remove-category-confirm-message", this, null, new NameModel())) {
+                            private static final long serialVersionUID = 1L;
+
+                            @Override
+                            public void invokeWorkflow() throws Exception {
+                                try {
+                                    final EditableCategory category = taxonomy.getCategoryByKey(key);
+                                    TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
+                                    CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
+
+                                    if (category != null && categoryNode != null) {
+                                        category.remove();
+                                        ((AbstractNode) categoryNode.getParent()).getChildren(true);
+                                        treeModel.reload(categoryNode.getParent());
+                                        redraw();
+                                    }
+                                } catch (TaxonomyException e) {
+                                    error(e.getMessage());
+                                }
+                            }
+                        });
+                    } else {
+                        dialogService.show(
+                                new ConfirmDialog(
+                                        new StringResourceModel("cannot-remove-category-title", this, null), 
+                                        new StringResourceModel("cannot-remove-category-message", this, null, new NameModel()),
+                                        new Model<>(StringUtils.join(referringDocumentHandlePaths, "\n")),
+                                        null) {
+                            private static final long serialVersionUID = 1L;
+                            {
+                                setCancelVisible(false);
+                            }
+                            @Override
+                            public void invokeWorkflow() throws Exception {
+                            }
+                            @Override
+                            public IValueMap getProperties() {
+                                return DialogConstants.LARGE;
+                            }
+                        });
+                    }
                 }
             }
 
@@ -937,7 +958,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         }
     }
 
-    private Set<String> getClassifiedDocumentHandlesByCategoryKey(final String key, final int maxItems) {
+    protected Set<String> getClassifiedDocumentHandlesByCategoryKey(final String key, final int maxItems) {
         Set<String> handleNodePaths = new LinkedHashSet<String>();
 
         try {
@@ -946,12 +967,14 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
             QueryResult result = query.execute();
             Node handle;
             Node variant;
+            String docPath;
             for (NodeIterator nodeIt = result.getNodes(); nodeIt.hasNext(); ) {
                 variant = nodeIt.nextNode();
                 if (variant != null && variant.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                     handle = variant.getParent();
                     if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        handleNodePaths.add(handle.getPath());
+                        docPath = StringUtils.removeStart(handle.getPath(), "/content/documents/");
+                        handleNodePaths.add(docPath);
                         if (maxItems > 0 && maxItems <= handleNodePaths.size()) {
                             break;
                         }
