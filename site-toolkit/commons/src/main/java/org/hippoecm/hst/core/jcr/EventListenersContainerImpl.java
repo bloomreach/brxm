@@ -28,6 +28,7 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
+import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.ObservationManager;
 
@@ -189,7 +190,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                 }
 
                 try {
-                    this.observationManager.addEventListener(eventListener, eventTypes, absolutePath, isDeep, uuids,
+                    observationManager.addEventListener(new ClassLoaderDecoratingEventListener(eventListener), eventTypes, absolutePath, isDeep, uuids,
                             nodeTypeNames, noLocal);
                 } catch (RepositoryException e) {
                     if (log.isDebugEnabled()) {
@@ -305,8 +306,8 @@ public class EventListenersContainerImpl implements EventListenersContainer {
         if (eventListenersContainerSessionChecker != null) {
             if (eventListenersContainerSessionChecker.isAlive()) {
                 try {
-                    this.eventListenersContainerSessionChecker.interrupt();
-                    this.eventListenersContainerSessionChecker.join(10000L);
+                    eventListenersContainerSessionChecker.interrupt();
+                    eventListenersContainerSessionChecker.join(10000L);
                    log.debug("EventListenersContainerSessionChecker is interrupted on stop: {}", this.eventListenersContainerSessionChecker);
                 } catch (Exception e) {
 
@@ -348,7 +349,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                         }
                     }
                     else {
-                        this.observationManager.removeEventListener(eventListener);
+                        observationManager.removeEventListener(new ClassLoaderDecoratingEventListener(eventListener));
                     }
                 } catch (Exception e) {
                     if (log.isWarnEnabled()) {
@@ -423,6 +424,53 @@ public class EventListenersContainerImpl implements EventListenersContainer {
             }
             
             log.debug("EventListenersContainerSessionChecker stops running: {}", this);
+        }
+    }
+
+    private class ClassLoaderDecoratingEventListener implements EventListener {
+
+        private final EventListener delegatee;
+
+        private ClassLoaderDecoratingEventListener(EventListener delegatee) {
+            this.delegatee = delegatee;
+        }
+
+        @Override
+        public void onEvent(final EventIterator events) {
+            final ClassLoader currentCL = Thread.currentThread().getContextClassLoader();
+            try {
+                Thread.currentThread().setContextClassLoader(EventListenersContainerImpl.class.getClassLoader());
+                delegatee.onEvent(events);
+            } finally {
+                Thread.currentThread().setContextClassLoader(currentCL);
+            }
+        }
+
+        /**
+         * equals and hashcode are very important because on a remove of an EventListener, we create a new
+         * ClassLoaderDecoratingEventListener wrapping the delegatee. Therefor the equals and hashcode are based
+         * on the delegatee
+         */
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            final ClassLoaderDecoratingEventListener that = (ClassLoaderDecoratingEventListener)o;
+
+            if (!delegatee.equals(that.delegatee)) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return delegatee.hashCode();
         }
     }
 

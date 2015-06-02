@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,20 +15,12 @@
  */
 package org.hippoecm.hst.core.jcr;
 
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.makeThreadSafe;
-import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
@@ -42,9 +34,22 @@ import javax.jcr.observation.EventListener;
 import javax.jcr.observation.EventListenerIterator;
 import javax.jcr.observation.ObservationManager;
 
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.easymock.EasyMock.anyBoolean;
+import static org.easymock.EasyMock.anyInt;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.makeThreadSafe;
+import static org.easymock.EasyMock.replay;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * TestEventListenersContainer
@@ -223,10 +228,10 @@ public class TestEventListenersContainerImpl {
     @Ignore
     private class MockObservationManager implements ObservationManager {
         
-        private Map<String, EventListener> absPathListenersMap = Collections.synchronizedMap(new HashMap<String, EventListener>());
+        private Set<EventListener> listeners = Collections.synchronizedSet(new HashSet<>());
         
         public void addEventListener(EventListener listener, int eventTypes, String absPath, boolean isDeep, String[] uuid, String[] nodeTypeName, boolean noLocal) throws RepositoryException {
-            absPathListenersMap.put(absPath, listener);
+            listeners.add(listener);
         }
 
         public EventListenerIterator getRegisteredEventListeners() throws RepositoryException {
@@ -234,11 +239,11 @@ public class TestEventListenersContainerImpl {
         }
 
         public void removeEventListener(EventListener listener) throws RepositoryException {
-            absPathListenersMap.remove(((MockEventListener) listener).getAbsPath());
+            listeners.remove(listener);
         }
         
         public int size() {
-            return absPathListenersMap.size();
+            return listeners.size();
         }
 
         public EventJournal getEventJournal() throws RepositoryException {
@@ -271,5 +276,49 @@ public class TestEventListenersContainerImpl {
             return absPath;
         }
     }
-    
+
+    @Test
+    public void whenAddingEventListenerThrowsExceptionOtherListenersAreStillRegistered() throws RepositoryException {
+        Repository mockRepository = EasyMock.createMock(Repository.class);
+        Session mockSession = EasyMock.createMock(Session.class);
+        Workspace mockWorkSpace = EasyMock.createMock(Workspace.class);
+        ObservationManager mockObservationManager = EasyMock.createMock(ObservationManager.class);
+
+        EventListenerItem badListenerItem = EasyMock.createNiceMock(EventListenerItem.class);
+        EventListenerItem goodListenerItem = EasyMock.createNiceMock(EventListenerItem.class);
+        EventListener badListener = EasyMock.createNiceMock(EventListener.class);
+        EventListener goodListener = EasyMock.createNiceMock(EventListener.class);
+
+        List<EventListenerItem> firstBadThenGoodListenerItem = Arrays.asList(badListenerItem, goodListenerItem);
+
+        EventListenersContainerImpl container = new EventListenersContainerImpl("testcontainer");
+        container.setRepository(mockRepository);
+        container.setEventListenerItems(firstBadThenGoodListenerItem);
+
+        // get observation manager
+        EasyMock.expect(mockRepository.login()).andReturn(mockSession);
+        EasyMock.expect(mockSession.getWorkspace()).andReturn(mockWorkSpace);
+        EasyMock.expect(mockWorkSpace.getObservationManager()).andReturn(mockObservationManager);
+
+        // register a bad listener that throws an exception
+        EasyMock.expect(badListenerItem.getEventListener()).andReturn(badListener);
+        EasyMock.expect(badListenerItem.getEventTypes()).andReturn(1);
+        mockObservationManager.addEventListener(anyObject(EventListener.class), anyInt(), anyObject(String.class), anyBoolean(), anyObject(String[].class), anyObject(String[].class), anyBoolean());
+        EasyMock.expectLastCall().andThrow(new RepositoryException("Generated test error"));
+
+        // register a good listener
+        EasyMock.expect(goodListenerItem.getEventListener()).andReturn(goodListener);
+        EasyMock.expect(goodListenerItem.getEventTypes()).andReturn(1);
+        EasyMock.expect(mockSession.itemExists(anyObject(String.class))).andReturn(false);
+        mockObservationManager.addEventListener(anyObject(EventListener.class), anyInt(), anyObject(String.class), anyBoolean(), anyObject(String[].class), anyObject(String[].class), anyBoolean());
+
+        // replay
+        EasyMock.replay(mockRepository, mockSession, mockWorkSpace, mockObservationManager, badListenerItem, goodListenerItem, badListener, goodListener);
+        container.doInit();
+
+        // verify that the good listener is registered even though the bad listener threw an exception
+        EasyMock.verify(goodListenerItem);
+    }
+
+
 }
