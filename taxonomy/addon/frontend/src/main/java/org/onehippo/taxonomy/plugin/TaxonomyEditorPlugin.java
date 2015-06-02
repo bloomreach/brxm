@@ -324,6 +324,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         };
         moveupCategory.add(new Image("moveup-category-icon", new PackageResourceReference(TaxonomyEditorPlugin.class,
                 "res/moveup-category-16.png")));
+        if (categoryComparator != null) {
+            moveupCategory.setVisible(false);
+        }
         toolbarHolder.add(moveupCategory);
 
         movedownCategory = new AjaxLink<Void>("movedown-category") {
@@ -360,6 +363,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         };
         movedownCategory.add(new Image("movedown-category-icon", new PackageResourceReference(TaxonomyEditorPlugin.class,
                 "res/movedown-category-16.png")));
+        if (categoryComparator != null) {
+            movedownCategory.setVisible(false);
+        }
         toolbarHolder.add(movedownCategory);
 
         // Select the root tree node, and enable or disable toolbar menu actions.
