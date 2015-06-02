@@ -28,6 +28,7 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
@@ -86,8 +87,13 @@ import org.slf4j.LoggerFactory;
  */
 public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
-    private static final Logger log = LoggerFactory.getLogger(TaxonomyEditorPlugin.class);
     private static final long serialVersionUID = 1L;
+
+    private static final Logger log = LoggerFactory.getLogger(TaxonomyEditorPlugin.class);
+
+    private static final String MENU_ACTION_STYLE_CLASS = "menu-action";
+    private static final String DISABLED_ACTION_STYLE_CLASS = "taxonomy-disabled-action";
+    private static final String DISABLED_MENU_ACTION_STYLE_CLASS = MENU_ACTION_STYLE_CLASS + " " + DISABLED_ACTION_STYLE_CLASS;
 
     private List<LanguageSelection> availableLanguageSelections;
     private LanguageSelection currentLanguageSelection;
@@ -100,6 +106,11 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     private TaxonomyTreeModel treeModel;
     private TaxonomyTree tree;
     private final boolean useUrlKeyEncoding;
+
+    private AjaxLink<Void> addCategory;
+    private AjaxLink<Void> removeCategory;
+    private AjaxLink<Void> moveupCategory;
+    private AjaxLink<Void> movedownCategory;
 
     /**
      * Constructor which adds all the UI components.
@@ -157,28 +168,38 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                     @Override
                     protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode node) {
                         if (node instanceof CategoryNode) {
-                            key = ((CategoryNode) node).getCategory().getKey();
-                        } else {
+                            final Category category = ((CategoryNode) node).getCategory();
+                            key = category.getKey();
+                            setMenuActionEnabled(addCategory, true);
+                            setMenuActionEnabled(removeCategory, true);
+                            setMenuActionEnabled(moveupCategory,
+                                    category instanceof EditableCategory && ((EditableCategory) category).canMoveUp());
+                            setMenuActionEnabled(movedownCategory,
+                                    category instanceof EditableCategory && ((EditableCategory) category).canMoveDown());
+                            redraw();
+                        } else if (node instanceof TaxonomyNode) {
                             key = null;
+                            setMenuActionEnabled(addCategory, true);
+                            setMenuActionEnabled(removeCategory, false);
+                            setMenuActionEnabled(moveupCategory, false);
+                            setMenuActionEnabled(movedownCategory, false);
+                            redraw();
+                        } else {
+                            log.error("Unexpected tree node: " + node);
                         }
-                        redraw();
                         super.onNodeLinkClicked(target, node);
                     }
 
                 };
         tree.setOutputMarkupId(true);
         add(tree);
-        if (editing) {
-            TreeNode rootNode = (TreeNode) tree.getModelObject().getRoot();
-            tree.getTreeState().selectNode(rootNode, true);
-        }
 
         holder = new WebMarkupContainer("container-holder");
         holder.setOutputMarkupId(true);
 
         toolbarHolder = new WebMarkupContainer("toolbar-container-holder");
         toolbarHolder.setOutputMarkupId(true);
-        AjaxLink<Void> addCategory = new AjaxLink<Void>("add-category") {
+        addCategory = new AjaxLink<Void>("add-category") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -247,7 +268,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         }
         toolbarHolder.add(addCategory);
 
-        AjaxLink<Void> removeCategory = new AjaxLink<Void>("remove-category") {
+        removeCategory = new AjaxLink<Void>("remove-category") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -269,7 +290,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         //}
         toolbarHolder.add(removeCategory);
 
-        AjaxLink<Void> moveupCategory = new AjaxLink<Void>("moveup-category") {
+        moveupCategory = new AjaxLink<Void>("moveup-category") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -288,6 +309,10 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                         if (category.moveUp()) {
                             ((AbstractNode) categoryNode.getParent()).getChildren(true);
                             treeModel.reload(categoryNode.getParent());
+                            setMenuActionEnabled(moveupCategory,
+                                    category instanceof EditableCategory && ((EditableCategory) category).canMoveUp());
+                            setMenuActionEnabled(movedownCategory,
+                                    category instanceof EditableCategory && ((EditableCategory) category).canMoveDown());
                             redraw();
                         }
                     }
@@ -299,13 +324,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         };
         moveupCategory.add(new Image("moveup-category-icon", new PackageResourceReference(TaxonomyEditorPlugin.class,
                 "res/moveup-category-16.png")));
-        if (!editing || categoryComparator != null) {
-            moveupCategory.add(new AttributeAppender("class", new Model<String>("disabled"), " "));
-            moveupCategory.setVisible(false);
-        }
         toolbarHolder.add(moveupCategory);
 
-        AjaxLink<Void> movedownCategory = new AjaxLink<Void>("movedown-category") {
+        movedownCategory = new AjaxLink<Void>("movedown-category") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -324,6 +345,10 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                         if (category.moveDown()) {
                             ((AbstractNode) categoryNode.getParent()).getChildren(true);
                             treeModel.reload(categoryNode.getParent());
+                            setMenuActionEnabled(moveupCategory,
+                                    category instanceof EditableCategory && ((EditableCategory) category).canMoveUp());
+                            setMenuActionEnabled(movedownCategory,
+                                    category instanceof EditableCategory && ((EditableCategory) category).canMoveDown());
                             redraw();
                         }
                     }
@@ -335,11 +360,23 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         };
         movedownCategory.add(new Image("movedown-category-icon", new PackageResourceReference(TaxonomyEditorPlugin.class,
                 "res/movedown-category-16.png")));
-        if (!editing || categoryComparator != null) {
-            movedownCategory.add(new AttributeAppender("class", new Model<String>("disabled"), " "));
-            movedownCategory.setVisible(false);
-        }
         toolbarHolder.add(movedownCategory);
+
+        // Select the root tree node, and enable or disable toolbar menu actions.
+        if (editing) {
+            TreeNode rootNode = (TreeNode) tree.getModelObject().getRoot();
+            tree.getTreeState().selectNode(rootNode, true);
+
+            setMenuActionEnabled(addCategory, true);
+            setMenuActionEnabled(removeCategory, false);
+            setMenuActionEnabled(moveupCategory, false);
+            setMenuActionEnabled(movedownCategory, false);
+        } else {
+            setMenuActionEnabled(addCategory, false);
+            setMenuActionEnabled(removeCategory, false);
+            setMenuActionEnabled(moveupCategory, false);
+            setMenuActionEnabled(movedownCategory, false);
+        }
 
         container = new Form("container") {
             private static final long serialVersionUID = 1L;
@@ -569,6 +606,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     protected void redraw() {
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         if (target != null) {
+            target.add(toolbarHolder);
             target.add(holder);
         } else {
             super.redraw();
@@ -823,4 +861,13 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
             return super.toString() + " [ " + languageCode + ", " + displayName + " }";
         }
     }
+
+    protected void setMenuActionEnabled(final AjaxLink<Void> menuAction, boolean enabled) {
+        if (enabled) {
+            menuAction.add(new AttributeModifier("class", new Model<String>(MENU_ACTION_STYLE_CLASS)));
+        } else {
+            menuAction.add(new AttributeModifier("class", new Model<String>(DISABLED_MENU_ACTION_STYLE_CLASS)));
+        }
+    }
+
 }

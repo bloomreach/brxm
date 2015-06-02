@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,10 +29,10 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.LazyMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.standards.sort.NodeSortAction;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.taxonomy.api.Category;
@@ -53,8 +53,6 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(JcrCategory.class);
-
-    private NodeSortAction nodeSortAction;
 
     public JcrCategory(final IModel<Node> nodeModel,
                        final boolean editable,
@@ -331,30 +329,110 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
 
     @Override
     public boolean canMoveUp() {
-        return getNodeSortAction().canMoveUp();
+        int index = -1;
+        int count = 0;
+
+        try {
+            final Node self = getNode();
+            final Node parent = self.getParent();
+            Node sibling;
+            for (NodeIterator nodeIt = parent.getNodes(); nodeIt.hasNext(); ) {
+                sibling = nodeIt.nextNode();
+                if (sibling != null && sibling.isNodeType(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY)) {
+                    if (sibling.isSame(self)) {
+                        index = count;
+                        return index > 0;
+                    }
+                    count++;
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("Could not determine the category node can be moved up.", e);
+        }
+
+        return false;
     }
 
     @Override
     public boolean moveUp() throws TaxonomyException {
-        return getNodeSortAction().moveUp();
+        try {
+            Node prevSibling = null;
+            final Node self = getNode();
+            final Node parent = self.getParent();
+            Node sibling;
+            for (NodeIterator nodeIt = parent.getNodes(); nodeIt.hasNext(); ) {
+                sibling = nodeIt.nextNode();
+                if (sibling != null && sibling.isNodeType(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY)) {
+                    if (!sibling.isSame(self)) {
+                        prevSibling = sibling;
+                    } else {
+                        if (prevSibling == null) {
+                            return false;
+                        } else {
+                            parent.orderBefore(
+                                    StringUtils.substringAfterLast(self.getPath(), "/"),
+                                    StringUtils.substringAfterLast(prevSibling.getPath(), "/"));
+                            return true;
+                        }
+                    }
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("Could not move up the category node.", e);
+        }
+
+        return false;
     }
 
     @Override
     public boolean canMoveDown() {
-        return getNodeSortAction().canMoveDown();
+        int index = -1;
+        int count = 0;
+
+        try {
+            final Node self = getNode();
+            final Node parent = self.getParent();
+            Node sibling;
+            for (NodeIterator nodeIt = parent.getNodes(); nodeIt.hasNext(); ) {
+                sibling = nodeIt.nextNode();
+                if (sibling != null && sibling.isNodeType(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY)) {
+                    if (sibling.isSame(self)) {
+                        index = count;
+                    }
+                    count++;
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("Could not determine the category node can be moved down.", e);
+        }
+
+        return index != -1 && index < count - 1;
     }
 
     @Override
     public boolean moveDown() throws TaxonomyException {
-        return getNodeSortAction().moveDown();
-    }
-
-    private NodeSortAction getNodeSortAction() {
-        if (nodeSortAction == null) {
-            nodeSortAction = new NodeSortAction();
-            nodeSortAction.setModel(getNodeModel());
+        try {
+            final Node self = getNode();
+            boolean selfFound = false;
+            final Node parent = self.getParent();
+            Node sibling;
+            for (NodeIterator nodeIt = parent.getNodes(); nodeIt.hasNext(); ) {
+                sibling = nodeIt.nextNode();
+                if (sibling != null && sibling.isNodeType(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY)) {
+                    if (sibling.isSame(self)) {
+                        selfFound = true;
+                    } else if (selfFound) {
+                        parent.orderBefore(
+                                StringUtils.substringAfterLast(sibling.getPath(), "/"),
+                                StringUtils.substringAfterLast(self.getPath(), "/"));
+                        return true;
+                    }
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("Could not move down the category node.", e);
         }
 
-        return nodeSortAction;
+        return false;
     }
 }

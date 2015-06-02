@@ -221,3 +221,17 @@ div.taxonomy-details a:hover {
     float: left;
     width: 400px;
 }
+
+.taxonomy-disabled-action {
+    border: 1px solid #e3e3e3;
+    color: #bdbdbd;
+    cursor: default;
+    pointer-events: none;
+}
+
+.taxonomy-disabled-action:hover {
+    border: 1px solid #e3e3e3;
+    color: #bdbdbd;
+    cursor: default;
+    pointer-events: none;
+}
