@@ -33,9 +33,12 @@
       <ul class="hippo-editor-template-css" wicket:id="css">
         <li><div class="hippo-editor-field-subfield" wicket:id="editor"></div><a wicket:id="remove">[X]</a></li>
       </ul>
-      <div style="clear: both; width: 100%">
-        <a wicket:id="add-css"><wicket:message key="add-css" /></a>
-      </div>
+      <a wicket:id="add-css" class="add-link btn btn-default btn-sm">
+        <span wicket:id="icon"/>
+        <span class="button-label">
+          <wicket:message key="add-css" />
+        </span>
+      </a>
     </div>
   </wicket:panel>
 </html>

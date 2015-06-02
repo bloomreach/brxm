@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,13 +29,13 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.render.AbstractRenderService;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class FieldPluginEditor extends Panel {
-
-    private static final long serialVersionUID = 1L;
 
     private CssProvider cssProvider;
 
@@ -47,14 +47,13 @@ public class FieldPluginEditor extends Panel {
         cssProvider = new CssProvider();
 
         if (editable) {
-            add(new TextFieldWidget("caption-editor", new PropertyModel<String>(model, "caption")));
-            add(new TextAreaWidget("hint-editor", new PropertyModel<String>(model, "hint")));
+            add(new TextFieldWidget("caption-editor", new PropertyModel<>(model, "caption")));
+            add(new TextAreaWidget("hint-editor", new PropertyModel<>(model, "hint")));
         } else {
             add(new Label("caption-editor", new PropertyModel<String>(model, "caption")));
             add(new Label("hint-editor", new PropertyModel<String>(model, "hint")));
         }
         add(new RefreshingView<String>("css") {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected Iterator<IModel<String>> getItemModels() {
@@ -69,8 +68,6 @@ public class FieldPluginEditor extends Panel {
                     item.add(new Label("editor", item.getModel()));
                 }
                 item.add(new AjaxLink<Void>("remove") {
-                    private static final long serialVersionUID = 1L;
-
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         cssProvider.remove(item.getIndex());
@@ -79,19 +76,20 @@ public class FieldPluginEditor extends Panel {
                 }.setVisible(editable));
             }
         });
-        add(new AjaxLink<Void>("add-css") {
-            private static final long serialVersionUID = 1L;
 
+        final AjaxLink<Void> addCssLink = new AjaxLink<Void>("add-css") {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 cssProvider.addNew();
                 target.add(FieldPluginEditor.this);
             }
-        }.setVisible(editable));
+        };
+        addCssLink.setVisible(editable);
+        addCssLink.add(HippoIcon.fromSprite("icon", Icon.PLUS));
+        add(addCssLink);
     }
 
     private class CssProvider implements IClusterable {
-        private static final long serialVersionUID = 1L;
 
         final List<CssModel> cssModels;
 
@@ -99,12 +97,12 @@ public class FieldPluginEditor extends Panel {
             IPluginConfig config = (IPluginConfig) getDefaultModelObject();
             final String[] classes = config.getStringArray(AbstractRenderService.CSS_ID);
             if (classes != null) {
-                cssModels = new ArrayList<CssModel>(classes.length);
+                cssModels = new ArrayList<>(classes.length);
                 for (String className : classes) {
                     cssModels.add(new CssModel(className));
                 }
             } else {
-                cssModels = new ArrayList<CssModel>();
+                cssModels = new ArrayList<>();
             }
         }
 
@@ -141,13 +139,12 @@ public class FieldPluginEditor extends Panel {
             IPluginConfig config = (IPluginConfig) getDefaultModelObject();
             String[] values = new String[cssModels.size()];
             for (int i = 0; i < cssModels.size(); i++) {
-                values[i] = (String) cssModels.get(i).getObject();
+                values[i] = cssModels.get(i).getObject();
             }
             config.put(AbstractRenderService.CSS_ID, values);
         }
 
         private class CssModel implements IModel<String> {
-            private static final long serialVersionUID = 1L;
 
             String className;
 
@@ -156,7 +153,7 @@ public class FieldPluginEditor extends Panel {
             }
 
             public void setObject(String object) {
-                className = (String) object;
+                className = object;
                 save();
             }
 
