@@ -17,8 +17,13 @@
 <wicket:panel>
     <div wicket:id="values" class="hippo-editor-field-subfield-with-button">
         <input wicket:id="value" class="hippo-editor-field-subfield-input"/>
-        <a wicket:id="delete" class="delete-16 icon-16 hippo-editor-field-subfield-button"></a>
+        <a wicket:id="delete" class="delete-button">
+            <span wicket:id="icon" />
+        </a>
     </div>
-    <a class="add-16 icon-16" wicket:id="add"></a>
+    <a class="add-link btn btn-default btn-sm" wicket:id="add">
+        <span wicket:id="icon"/>
+        <span class="button-label"><wicket:message key="add-label"/></span>
+    </a>
 </wicket:panel>
 </html>

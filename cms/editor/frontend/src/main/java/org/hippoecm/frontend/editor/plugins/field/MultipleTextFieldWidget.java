@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,26 +30,23 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.skin.Icon;
 
 public class MultipleTextFieldWidget extends Panel {
-
-    private static final long serialVersionUID = 1L;
 
     public MultipleTextFieldWidget(String id, final IModel<IPluginConfig> model, final IClusterConfig cluster, final String name, final boolean editable) {
         super(id, model);
         setOutputMarkupId(true);
+
+        add(CssClass.append("hippo-multiple-text-field-widget"));
 
         IPluginConfig config = model.getObject();
         final ListView<String> list = new MultipleValueListView(name, config, cluster, editable);
         add(list);
 
         AjaxButton button = new AjaxButton("add") {
-            private static final long serialVersionUID = 1L;
-
-            {
-                setVisible(editable);
-            }
-
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 List<String> values = list.getModelObject();
@@ -58,13 +55,15 @@ public class MultipleTextFieldWidget extends Panel {
                 target.add(MultipleTextFieldWidget.this);
             }
         };
+        button.setVisible(editable);
         button.setDefaultFormProcessing(false);
         add(button);
+
+        button.add(HippoIcon.fromSprite("icon", Icon.PLUS));
     }
 
     private class MultipleValueListView extends ListView<String> {
 
-        private static final long serialVersionUID = 1L;
         private final boolean editable;
 
         public MultipleValueListView(final String name, final IPluginConfig config, final IClusterConfig cluster, final boolean editable) {
@@ -78,43 +77,36 @@ public class MultipleTextFieldWidget extends Panel {
             final IModel<List<String>> listModel = (IModel<List<String>>) getModel();
             final MultipleValueListItemModel itemModel = new MultipleValueListItemModel(index, listModel);
             item.add(new TextField<String>("value", itemModel) {
-                private static final long serialVersionUID = 1L;
-
                 {
                     setFlag(FLAG_CONVERT_EMPTY_INPUT_STRING_TO_NULL, false);
                     setType(String.class);
                     setEnabled(editable);
                     add(new AjaxFormComponentUpdatingBehavior("onchange") {
-
                         @Override
                         protected void onUpdate(AjaxRequestTarget target) {
                             target.add(MultipleTextFieldWidget.this);
                         }
                     });
                 }
-
             });
+
             AjaxButton button = new AjaxButton("delete") {
-                private static final long serialVersionUID = 1L;
-
-                {
-                    setVisible(editable);
-                }
-
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    List<String> values = listModel.getObject();
-                    values.remove(item.getIndex());
-                    listModel.setObject(values);
+                    List<String> list = MultipleValueListView.this.getModelObject();
+                    list.remove(item.getIndex());
+                    MultipleValueListView.this.setModelObject(list);
                     target.add(MultipleTextFieldWidget.this);
                 }
             };
+            button.setVisible(editable);
             button.setDefaultFormProcessing(false);
+            button.add(HippoIcon.fromSprite("icon", Icon.TIMES));
             item.add(button);
         }
     }
 
-    private class MultipleValueListModel implements IModel<List<? extends String>> {
+    private class MultipleValueListModel implements IModel<List<String>> {
 
         private final String name;
         private final IPluginConfig config;
@@ -127,7 +119,7 @@ public class MultipleTextFieldWidget extends Panel {
         }
 
         @Override
-        public List<? extends String> getObject() {
+        public List<String> getObject() {
             final List<String> values = new ArrayList<>();
             final String[] valuesArray = config.getStringArray(name);
             if (valuesArray != null) {
@@ -142,7 +134,7 @@ public class MultipleTextFieldWidget extends Panel {
         }
 
         @Override
-        public void setObject(List<? extends String> object) {
+        public void setObject(List<String> object) {
             config.put(name, object.toArray(new String[object.size()]));
         }
 
