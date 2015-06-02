@@ -20,10 +20,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
 import javax.swing.tree.TreeNode;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -54,9 +60,11 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.addon.workflow.ConfirmDialog;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -64,6 +72,7 @@ import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
 import org.onehippo.taxonomy.api.Category;
@@ -280,31 +289,57 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
+                final EditableCategory category = taxonomy.getCategoryByKey(key);
+                final String categoryName = category.getInfo(currentLanguageSelection.getLanguageCode()).getName();
+
                 IDialogService dialogService = getDialogService();
-                dialogService.show(
-                        new ConfirmDialog(
-                                new StringResourceModel("remove-category-confirm-title", this, null), 
-                                new StringResourceModel("remove-category-confirm-message", this, null)) {
-                    private static final long serialVersionUID = 1L;
+                final Set<String> referringDocumentHandlePaths = getClassifiedDocumentHandlesByCategoryKey(key, 10);
 
-                    @Override
-                    public void invokeWorkflow() throws Exception {
-                        try {
-                            EditableCategory category = taxonomy.getCategoryByKey(key);
-                            TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
-                            CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
+                if (referringDocumentHandlePaths.isEmpty()) {
+                    dialogService.show(
+                            new ConfirmDialog(
+                                    new StringResourceModel("remove-category-confirm-title", this, null), 
+                                    new StringResourceModel("remove-category-confirm-message", this, null, new NameModel())) {
+                        private static final long serialVersionUID = 1L;
 
-                            if (category != null && categoryNode != null) {
-                                category.remove();
-                                ((AbstractNode) categoryNode.getParent()).getChildren(true);
-                                treeModel.reload(categoryNode.getParent());
-                                redraw();
+                        @Override
+                        public void invokeWorkflow() throws Exception {
+                            try {
+                                final EditableCategory category = taxonomy.getCategoryByKey(key);
+                                TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
+                                CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
+
+                                if (category != null && categoryNode != null) {
+                                    category.remove();
+                                    ((AbstractNode) categoryNode.getParent()).getChildren(true);
+                                    treeModel.reload(categoryNode.getParent());
+                                    redraw();
+                                }
+                            } catch (TaxonomyException e) {
+                                error(e.getMessage());
                             }
-                        } catch (TaxonomyException e) {
-                            error(e.getMessage());
                         }
-                    }
-                });
+                    });
+                } else {
+                    dialogService.show(
+                            new ConfirmDialog(
+                                    new StringResourceModel("cannot-remove-category-title", this, null), 
+                                    new StringResourceModel("cannot-remove-category-message", this, null, new NameModel()),
+                                    new Model<String>(StringUtils.join(referringDocumentHandlePaths, "\n")),
+                                    null) {
+                        private static final long serialVersionUID = 1L;
+                        {
+                            setCancelEnabled(false);
+                        }
+                        @Override
+                        public void invokeWorkflow() throws Exception {
+                        }
+                        @Override
+                        public IValueMap getProperties() {
+                            return DialogConstants.LARGE;
+                        }
+                    });
+                }
             }
 
         };
@@ -902,4 +937,32 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         }
     }
 
+    private Set<String> getClassifiedDocumentHandlesByCategoryKey(final String key, final int maxItems) {
+        Set<String> handleNodePaths = new LinkedHashSet<String>();
+
+        try {
+            String stmt = "//element(*, hippotaxonomy:classifiable)[@hippotaxonomy:keys = '" + key + "']";
+            Query query = getModelObject().getSession().getWorkspace().getQueryManager().createQuery(stmt, Query.XPATH);
+            QueryResult result = query.execute();
+            Node handle;
+            Node variant;
+            for (NodeIterator nodeIt = result.getNodes(); nodeIt.hasNext(); ) {
+                variant = nodeIt.nextNode();
+                if (variant != null && variant.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                    handle = variant.getParent();
+                    if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        handleNodePaths.add(handle.getPath());
+                        if (maxItems > 0 && maxItems <= handleNodePaths.size()) {
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to retrieve all the classified documents by key, '{}'.", key);
+        }
+
+        return handleNodePaths;
+      
+    }
 }
