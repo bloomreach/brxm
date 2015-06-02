@@ -325,7 +325,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                             new ConfirmDialog(
                                     new StringResourceModel("cannot-remove-category-title", this, null), 
                                     new StringResourceModel("cannot-remove-category-message", this, null, new NameModel()),
-                                    new Model<String>(StringUtils.join(referringDocumentHandlePaths, "\n")),
+                                    new Model<>(StringUtils.join(referringDocumentHandlePaths, "\n")),
                                     null) {
                         private static final long serialVersionUID = 1L;
                         {
