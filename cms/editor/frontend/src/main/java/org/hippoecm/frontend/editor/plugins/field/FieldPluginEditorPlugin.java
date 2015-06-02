@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,6 +14,10 @@
  *  limitations under the License.
  */
 package org.hippoecm.frontend.editor.plugins.field;
+
+import java.util.Iterator;
+
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -41,12 +45,7 @@ import org.hippoecm.frontend.types.TypeDescriptorEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.RepositoryException;
-import java.util.Iterator;
-
 public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
-
-    private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(FieldPluginEditorPlugin.class);
 
@@ -55,20 +54,19 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
     private static final String FIELD_EDITOR = "fieldEditor";
 
     class PropertyEditor extends RenderService<IPluginConfig> {
-        private static final long serialVersionUID = 1L;
 
         private ITypeDescriptor type;
         private IPluginConfig edited;
         private IModel<IFieldDescriptor> fieldModel;
         private boolean shown = true;
 
-        public PropertyEditor(IPluginContext context, IPluginConfig properties, IPluginConfig edited, ITypeDescriptor type, boolean edit) throws TemplateEngineException {
+        public PropertyEditor(IPluginContext context, IPluginConfig properties, IPluginConfig edited,
+                              ITypeDescriptor type, boolean edit) throws TemplateEngineException {
             super(context, properties);
 
             this.type = type;
             this.edited = edited;
             context.registerService(new IObserver<IPluginConfig>() {
-                private static final long serialVersionUID = 1L;
 
                 public IPluginConfig getObservable() {
                     return PropertyEditor.this.edited;
@@ -82,8 +80,6 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
             }, IObserver.class.getName());
 
             fieldModel = new LoadableDetachableModel<IFieldDescriptor>() {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 protected IFieldDescriptor load() {
                     if (PropertyEditor.this.type != null) {
@@ -91,13 +87,11 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
                     }
                     return null;
                 }
-
             };
             add(new FieldEditor(FIELD_EDITOR, type, fieldModel, edit));
-            add(new FieldPluginEditor(FIELD_PLUGIN_EDITOR, new Model<IPluginConfig>(edited), edit));
+            add(new FieldPluginEditor(FIELD_PLUGIN_EDITOR, new Model<>(edited), edit));
 
             context.registerService(new IObserver<ITypeDescriptor>() {
-                private static final long serialVersionUID = 1L;
 
                 public ITypeDescriptor getObservable() {
                     return PropertyEditor.this.type;
@@ -164,7 +158,7 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
                     log.error("failed to add child node to plugin config", ex);
                 }
             }
-            return new Model<IPluginConfig>(edited.getPluginConfig("cluster.options"));
+            return new Model<>(edited.getPluginConfig("cluster.options"));
         }
 
     }
@@ -186,7 +180,6 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
                                         type, edit);
             helper.show(getBuilderContext().hasFocus());
             getBuilderContext().addBuilderListener(new IBuilderListener() {
-                private static final long serialVersionUID = 1L;
 
                 public void onFocus() {
                     helper.show(true);
