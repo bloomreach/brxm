@@ -56,12 +56,15 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +83,6 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
     protected IClusterControl previewControl;
     private IObserver configObserver;
     private Map<String, ChildTracker> trackers;
-    private WebMarkupContainer container;
 
     public RenderPluginEditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -89,8 +91,16 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
         builderContext = new BuilderContext(context, config);
         final boolean editable = (builderContext.getMode() == Mode.EDIT);
 
-        container = new WebMarkupContainer("head");
+        final WebMarkupContainer container = new WebMarkupContainer("head");
         container.setOutputMarkupId(true);
+        add(container);
+
+        add(CssClass.append(new AbstractReadOnlyModel<String>() {
+            @Override
+            public String getObject() {
+                return builderContext.hasFocus() ? "active" : StringUtils.EMPTY;
+            }
+        }));
 
         // add transitions from parent container
         container.add(new RefreshingView<ILayoutTransition>("transitions") {
@@ -133,20 +143,25 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
                 };
                 link.setVisible(editable);
-                link.add(CssClass.append(transition.getName()));
+
+                final String name = transition.getName();
+                final Icon icon = getTransitionIconByName(name);
+
+                link.add(CssClass.append(name));
+                link.add(TitleAttribute.append(name));
+                link.add(HippoIcon.fromSprite("icon", icon));
                 item.add(link);
             }
 
         });
 
-        container.add(new AjaxLink("remove") {
+        final AjaxLink removeLink = new AjaxLink("remove") {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
                 if (validateDelete()) {
                     builderContext.delete();
                 }
-
             }
 
             @Override
@@ -155,15 +170,11 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
                 attributes.getAjaxCallListeners().add(new EventStoppingDecorator());
             }
 
-        }.setVisible(editable));
+        };
+        removeLink.setVisible(editable);
+        removeLink.add(HippoIcon.fromSprite("icon", Icon.TIMES_CIRCLE));
+        container.add(removeLink);
 
-        container.add(CssClass.append(new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                return builderContext.hasFocus() ? "active" : StringUtils.EMPTY;
-            }
-        }));
-        add(container);
 
         if (editable) {
             add(new AjaxEventBehavior("onclick") {
@@ -178,7 +189,6 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
                     super.updateAjaxAttributes(attributes);
                     attributes.getAjaxCallListeners().add(new EventStoppingDecorator());
                 }
-
             });
 
             builderContext.addBuilderListener(new IBuilderListener() {
@@ -186,17 +196,16 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
                 public void onBlur() {
                     AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                     if (target != null) {
-                        target.add(container);
+                        target.add(RenderPluginEditorPlugin.this);
                     }
                 }
 
                 public void onFocus() {
                     AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                     if (target != null) {
-                        target.add(container);
+                        target.add(RenderPluginEditorPlugin.this);
                     }
                 }
-
             });
         }
     }
@@ -267,9 +276,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
     public List<ILayoutAware> getChildren() {
         if (trackers != null) {
             List<ILayoutAware> children = new LinkedList<>();
-            for (Map.Entry<String, ChildTracker> entry : trackers.entrySet()) {
-                children.add(entry.getValue().getService());
-            }
+            trackers.forEach((id, childTracker) -> children.add(childTracker.getService()));
             return children;
         }
         return Collections.emptyList();
@@ -482,4 +489,21 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
         return srm.getObject();
     }
 
+    private Icon getTransitionIconByName(final String name) {
+        switch (name) {
+            case "up": {
+                return Icon.CHEVRON_UP_CIRCLE;
+            }
+            case "down": {
+                return Icon.CHEVRON_DOWN_CIRCLE;
+            }
+            case "left": {
+                return Icon.CHEVRON_DOWN_CIRCLE;
+            }
+            case "right": {
+                return Icon.CHEVRON_DOWN_CIRCLE;
+            }
+        }
+        return null;
+    }
 }

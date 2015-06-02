@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,11 +15,19 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div class="hippo-editor-template-field"> 
+    <div class="hippo-editor-template-field">
       <div class="hippo-editor-template-field-controls" wicket:id="head">
         <ul>
-          <li wicket:id="transitions"><a wicket:id="link">&nbsp;</a></li>
-          <li><a class="remove-field-16" wicket:id="remove">&nbsp;</a></li>
+          <li wicket:id="transitions">
+            <a wicket:id="link">
+              <span wicket:id="icon" />
+            </a>
+          </li>
+          <li>
+            <a class="remove-field" wicket:id="remove">
+              <span wicket:id="icon"/>
+            </a>
+          </li>
         </ul>
       </div>
       <div class="hippo-editor-preview" wicket:id="preview">[ item goes here ]</div>
