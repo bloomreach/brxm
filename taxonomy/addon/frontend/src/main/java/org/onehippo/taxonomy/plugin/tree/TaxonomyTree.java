@@ -38,7 +38,22 @@ public class TaxonomyTree extends ContextMenuTree {
     public TaxonomyTree(String id, TreeModel model, String preferredLanguage) {
         super(id, model);
         this.preferredLanguage = preferredLanguage;
-        getTreeState().expandNode(getModelObject().getRoot());
+        expandNode((AbstractNode) getModelObject().getRoot());
+    }
+
+    public void expandNode(final AbstractNode node) {
+        getTreeState().expandNode(node);
+    }
+
+    public void expandAllToNode(final AbstractNode node) {
+        expandNode(node);
+
+        AbstractNode root = (AbstractNode) getModelObject().getRoot();
+        AbstractNode parent = node;
+
+        for (parent = (AbstractNode) parent.getParent(); parent != null && parent != root; parent = (AbstractNode) parent.getParent()) {
+            expandNode(parent);
+        }
     }
 
     @Override

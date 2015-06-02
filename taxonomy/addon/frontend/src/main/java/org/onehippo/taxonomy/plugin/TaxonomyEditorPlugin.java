@@ -250,7 +250,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                     @Override
                     protected void onOk() {
                         EditableCategory category = taxonomy.getCategoryByKey(key);
-                        TreeNode node;
+                        AbstractNode node;
                         if (category != null) {
                             node = new CategoryNode(new CategoryModel(taxonomyModel, key), currentLanguageSelection.getLanguageCode(), categoryComparator);
                         } else {
@@ -269,7 +269,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                         } catch (TaxonomyException e) {
                             error(e.getMessage());
                         }
-                        tree.getTreeState().expandNode(node);
+                        tree.expandNode(node);
                         tree.markNodeChildrenDirty(node);
                         redraw();
                     }
@@ -332,7 +332,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                                     srcCategory.move(destParentCategory);
                                     destParentCategoryNode.getChildren(true);
                                     treeModel.reload(destParentCategoryNode);
-                                    tree.getTreeState().expandNode(destParentCategoryNode);
+                                    tree.expandAllToNode(destParentCategoryNode);
                                     ((AbstractNode) srcCategoryNode.getParent()).getChildren(true);
                                     treeModel.reload(srcCategoryNode.getParent());
                                     redraw();
@@ -1059,6 +1059,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         try {
             String stmt = "//element(*, hippotaxonomy:classifiable)[@hippotaxonomy:keys = '" + key + "']";
             Query query = getModelObject().getSession().getWorkspace().getQueryManager().createQuery(stmt, Query.XPATH);
+            query.setLimit(maxItems);
             QueryResult result = query.execute();
             Node handle;
             Node variant;
