@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.admin.updater;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,11 +24,10 @@ import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.observation.Event;
-import javax.swing.event.TreeModelEvent;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -46,7 +46,6 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.io.IOUtils;
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -55,10 +54,14 @@ import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugins.cms.browse.tree.CmsJcrTree;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.standards.tree.icon.DefaultTreeNodeIconProvider;
+import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.widgets.JcrTree;
+import org.hippoecm.frontend.skin.Icon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,18 +75,21 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
     private static final String UPDATE_HISTORY_PATH = UPDATE_PATH + "/hippo:history";
 
     private static final Label EMPTY_EDITOR = new Label("updater-editor");
-    private static final Map<String, String> TREE_LABELS = new HashMap<String, String>(3);
+    private static final Map<String, String> CUSTOM_NODE_LABELS;
 
     static {
-        TREE_LABELS.put("hippo:registry", "Registry");
-        TREE_LABELS.put("hippo:queue", "Queue");
-        TREE_LABELS.put("hippo:history", "History");
+        Map<String, String> aMap = new HashMap<>();
+        aMap.put("hippo:registry", "Registry");
+        aMap.put("hippo:queue", "Queue");
+        aMap.put("hippo:history", "History");
+        CUSTOM_NODE_LABELS = Collections.unmodifiableMap(aMap);
     }
 
     private final IPluginContext context;
 
-    private final JcrTree tree;
+    private final CmsJcrTree tree;
     private final JcrTreeModel treeModel;
+    private final Label title;
 
     private Component editor;
     private String path;
@@ -116,16 +122,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
 
         add(form);
 
-        treeModel = new JcrTreeModel(new JcrTreeNode(new JcrNodeModel(UPDATE_PATH), null)) {
-
-            @Override
-            protected TreeModelEvent newTreeModelEvent(final Event event) throws RepositoryException {
-                if (event.getPath().equals(getNodePath())) {
-                    updateUI();
-                }
-                return super.newTreeModelEvent(event);
-            }
-        };
+        treeModel = new JcrTreeModel(new JcrTreeNode(new JcrNodeModel(UPDATE_PATH), null));
         context.registerService(treeModel, IObserver.class.getName());
 
         breadCrumbModel.addListener(new IBreadCrumbModelListener() {
@@ -146,7 +143,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
             }
         });
 
-        tree = new JcrTree("updater-tree", treeModel) {
+        tree = new CmsJcrTree("updater-tree", treeModel, newTreeNodeTranslator(), newTreeNodeIconProvider()) {
 
             @Override
             protected void populateTreeItem(final WebMarkupContainer item, final int level) {
@@ -159,7 +156,20 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
 
             @Override
             protected void onNodeLinkClicked(final AjaxRequestTarget target, final TreeNode clickedNode) {
-                UpdaterPanel.this.setDefaultModel(((IJcrTreeNode) clickedNode).getNodeModel());
+                if (clickedNode instanceof IJcrTreeNode) {
+                    ITreeState state = getTreeState();
+                    if (state.isNodeExpanded(clickedNode)) {
+                        // super has already switched selection.
+                        if (!state.isNodeSelected(clickedNode)) {
+                            state.collapseNode(clickedNode);
+                        }
+                    } else {
+                        state.expandNode(clickedNode);
+                    }
+
+                    IJcrTreeNode treeNodeModel = (IJcrTreeNode) clickedNode;
+                    UpdaterPanel.this.setDefaultModel(treeNodeModel.getNodeModel());
+                }
             }
 
             @Override
@@ -168,15 +178,6 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
                 treeModel.setTreeState(state);
                 state.expandAll();
                 return state;
-            }
-
-            @Override
-            protected ResourceReference getNodeIcon(final TreeNode node) {
-                final IModel<Node> nodeModel = ((IJcrTreeNode) node).getNodeModel();
-                if (nodeModel == null) {
-                    return super.getNodeIcon(node);
-                }
-                return isUpdater(nodeModel.getObject()) ? super.getItem() : super.getFolderOpen();
             }
 
             @Override
@@ -196,19 +197,25 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
             }
 
             @Override
-            public String renderNode(final TreeNode treeNode) {
-                Node node = ((IJcrTreeNode) treeNode).getNodeModel().getObject();
+            public String renderNode(TreeNode treeNode, int level) {
+                final String customNodeName = getCustomNodeName((IJcrTreeNode) treeNode);
+                return StringUtils.isEmpty(customNodeName) ? super.renderNode(treeNode, level) : customNodeName;
+            }
+
+            private String getCustomNodeName(final IJcrTreeNode treeNode) {
+                Node node = treeNode.getNodeModel().getObject();
                 if (node != null) {
                     try {
                         final String nodeName = node.getName();
-                        final String label = TREE_LABELS.get(nodeName);
-                        return label != null ? label : nodeName;
+                        final String label = CUSTOM_NODE_LABELS.get(nodeName);
+                        if (label != null) {
+                            return label;
+                        }
                     } catch (RepositoryException e) {
                         log.error("Failed to render tree node", e);
-                        return "<error>";
                     }
                 }
-                return "<null>";
+                return null;
             }
         };
         tree.setRootLess(true);
@@ -216,17 +223,37 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
         add(tree);
 
         editor = EMPTY_EDITOR;
+        editor.setOutputMarkupId(true);
         add(editor);
 
-        final Label title = new Label("updater-title", new AbstractReadOnlyModel<String>() {
+        title = new Label("updater-title", new AbstractReadOnlyModel<String>() {
             @Override
             public String getObject() {
                 return getUpdaterTitle();
             }
         });
+        title.setOutputMarkupId(true);
         add(title);
 
         setOutputMarkupId(true);
+    }
+
+    private ITreeNodeIconProvider newTreeNodeIconProvider() {
+        return new DefaultTreeNodeIconProvider() {
+            @Override
+            public HippoIcon getNodeIcon(final String id, final TreeNode treeNode, final ITreeState state) {
+                final IModel<Node> nodeModel = ((IJcrTreeNode) treeNode).getNodeModel();
+                if (isUpdater(nodeModel.getObject())) {
+                    return HippoIcon.fromSprite(id, Icon.FILE_TEXT);
+                } else {
+                    return super.getNodeIcon(id, treeNode, state);
+                }
+            }
+        };
+    }
+
+    private CmsJcrTree.ITreeNodeTranslator newTreeNodeTranslator() {
+        return new CmsJcrTree.TreeNodeTranslator();
     }
 
     private String getUpdaterTitle() {
@@ -249,34 +276,32 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
     @Override
     protected void onModelChanged() {
         super.onModelChanged();
-        updateUI();
+        updateUI(RequestCycle.get().find(AjaxRequestTarget.class));
     }
 
-    private void updateUI() {
-        expandAndSelectNodeInTree();
-        updateEditor();
+    private void updateUI(final AjaxRequestTarget target) {
+        expandAndSelectNodeInTree(target);
+        updateEditor(target);
+        target.add(title);
         path = null;
-        RequestCycle.get().find(AjaxRequestTarget.class).add(this);
     }
 
-    private void updateEditor() {
+    private void updateEditor(final AjaxRequestTarget target) {
         if (isQueuedUpdater()) {
             replace(editor = new UpdaterQueueEditor(getDefaultModel(), context, this));
-        }
-        else if (isRegisteredUpdater()) {
+        } else if (isRegisteredUpdater()) {
             replace(editor = new UpdaterRegistryEditor(getDefaultModel(), context, this));
-        }
-        else if (isArchivedUpdater()) {
+        } else if (isArchivedUpdater()) {
             replace(editor = new UpdaterHistoryEditor(getDefaultModel(), context, this));
-        }
-        else {
+        } else {
             if (editor != EMPTY_EDITOR) {
                 replace(editor = EMPTY_EDITOR);
             }
         }
+        target.add(editor);
     }
 
-    private void expandAndSelectNodeInTree() {
+    private void expandAndSelectNodeInTree(final AjaxRequestTarget target) {
         final JcrNodeModel model = (JcrNodeModel) getDefaultModel();
         final TreePath treePath = treeModel.lookup(model);
         final ITreeState treeState = tree.getTreeState();
@@ -287,6 +312,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
             }
         }
         treeState.selectNode(treePath.getLastPathComponent(), true);
+        tree.updateTree(target);
     }
 
     private String getNodePath() {

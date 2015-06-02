@@ -265,91 +265,144 @@
   visibility: hidden;
 }
 
-.updater-feedback {
-  position: relative;
-  height:450px;
-  border:1px #EEE solid;
-  font-size: 1.2em;
-  display: block;
-  overflow-x: auto;
-  overflow-y: auto;
-  padding: 4px;
+.updater-shorter {
+  min-height:160px;
 }
 
-.updater-feedback-shorter {
-  height:160px;
-}
-
-.updater-tree {
-  margin: 10px;
-  width: 150px;
-  padding: 10px;
-  border: solid;
-  border-color: #AFAFAF;
-  border-width: 1px;
-  height: 800px;
-}
-
-.updater-tree .hippo-tree {
-  width: auto;
-}
-
-.updater-tree div.hippo-tree div.wicket-tree {
-  height: 800px;
-  overflow-y: auto;
-  line-height: 1.5em;
-}
-
-.updater-details {
-  margin: 10px;
-  width: 95%;
-  border: solid;
-  border-color: #AFAFAF;
-  border-width: 1px;
-  padding: 10px;
-  height: 830px;
-}
-
-.updater-tree .node-link {
-  width: 50px;
-}
-
-.updater-tree .hippo-tree .wicket-tree .row-selected {
-  background: #FFE29A;
-}
-
-.updater-tree .row-selected .node-link .icon {
-  padding: 0;
-}
-
-.updater-tree .row-selected .node-link span {
-  background-color: #ffe29a;
-  padding: 0 3px 0 0;
-}
-
-.updater-details form td {
-  vertical-align: top;
-}
-
-.updater-details form input[type=submit] {
-  margin-right: 5px;
-}
-
-.updater-details form input[type=text] {
+.hippo-panel-plugin-body.updater-editor-plugin {
+  position: absolute;
+  height: 100%;
   width: 100%;
-}
+  display: flex;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  flex-flow: column;
 
-.updater-details form textarea {
-  width: 100%;
-  resize: vertical;
-}
+  > * {
+    display: flex;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+  }
 
-.updater-details form textarea[name="radios:description:textarea"] {
-  height: 80px;
-}
+  .updater-left {
+    min-width: 200px;
+    max-width: 200px;
+    margin-left: 5px;
+  }
 
-.updater-details form textarea[name="radios:parameters:textarea"] {
-  height: 30px;
+  > .updater-editor-main {
+    height: ~"calc(100% - 32px)";
+
+    .updater-tree {
+      overflow: auto;
+      border: 1px solid @dark-shade;
+      padding: 0;
+
+      > div.hippo-tree > div.wicket-tree .row-selected {
+        background: @primary;
+      }
+    }
+
+    .updater-details {
+      display: flex;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+
+      flex: 1 0 auto;
+      -webkit-flex: 1 0 auto;
+      -ms-flex: 1 0 auto;
+      overflow: auto;
+      border: 1px solid @dark-shade;
+      padding: 5px 5px;
+
+      form {
+        display: flex;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+
+        flex: 1 0 auto;
+        -webkit-flex: 1 0 auto;
+        -ms-flex: 1 0 auto;
+        flex-flow: column;
+
+        table {
+          width: 100%;
+          > tr {
+            height: 20px;
+          }
+        }
+
+        input[type=text], textarea {
+          width: 100%;
+          border: 1px solid @dark-shade;
+          padding: 0;
+        }
+
+        textarea {
+          resize: vertical;
+        }
+
+        textarea[name="radios:description:textarea"] {
+          height: 80px;
+          max-height: 200px;
+        }
+
+        textarea[name="radios:parameters:textarea"] {
+          height: 30px;
+          max-height: 200px;
+        }
+
+        table, .hippo-modal-feedback, .toolbar, .script-edit-link {
+          flex: none;
+          -webkit-flex: none;
+          -ms-flex: none;
+          margin: 10px 0;
+        }
+
+        .hippo-modal-feedback {
+          margin: 0;
+          overflow: auto;
+          .feedbackPanel {
+            margin: 0;
+          }
+        }
+
+        .script{
+          flex: 1 1 auto;
+          -webkit-flex: 1 1 auto;
+          -ms-flex: 1 1 auto;
+          overflow: auto;
+        }
+
+        .log-output {
+          display: flex;
+          display: -webkit-flex;
+          display: -ms-flexbox;
+
+          flex-flow: column;
+          margin: 10px 0;
+
+          > .log-title {
+            flex: none;
+            -webkit-flex: none;
+            -ms-flex: none;
+          }
+
+          > .updater-feedback {
+            flex: 1 1 auto;
+            -webkit-flex: 1 1 auto;
+            -ms-flex: 1 1 auto;
+            border:1px solid @light-gray;
+            font-size: 1.2em;
+            display: block;
+            overflow-x: auto;
+            overflow-y: auto;
+            padding: 4px;
+          }
+        }
+      }
+    }
+  }
 }
 
 .updater-details .labelcell {
@@ -364,7 +417,7 @@
 }
 
 .updater-editor-visible {
-  height: 300px !important;
+  height: auto !important;
   visibility: visible;
 }
 
@@ -374,7 +427,7 @@
 }
 
 .updater-registry-editor-visible {
-  height: 500px !important;
+  height: auto !important;
   visibility: visible;
 }
 

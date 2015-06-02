@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
 
-    Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+    Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -23,13 +23,17 @@
         $._toggleUpdaterScriptEditor = function() {
           var regEditor = $('.updater-registry-editor');
           var nonRegEditor = $('.updater-editor');
-          var feedback = $('.updater-feedback');
+          var feedback = $('.log-output');
           var toggleLink = $('#update-editor-toggle');
+          var updaterScript = $('.script');
           if (regEditor && regEditor.length) {
             regEditor.toggleClass('updater-registry-editor-visible');
           } else if (nonRegEditor && nonRegEditor.length) {
             nonRegEditor.toggleClass('updater-editor-visible');
-            feedback.toggleClass('updater-feedback-shorter');
+            feedback.toggleClass('updater-shorter');
+          }
+          if (updaterScript) {
+            updaterScript.toggleClass('updater-shorter');
           }
           if (toggleLink.text() !== '>>>') {
             toggleLink.text('>>>');
@@ -44,7 +48,7 @@
     <wicket:panel>
       <form wicket:id="updater-form">
         <div wicket:id="feedback" class="hippo-modal-feedback">[info/warn/error messages]</div>
-        <div>
+        <div class="toolbar">
             <input type="submit" value="Save" wicket:id="save-button"/>
             <input type="submit" value="Dry run" wicket:id="dryrun-button"/>
             <input type="submit" value="Execute" wicket:id="execute-button"/>
@@ -52,20 +56,19 @@
             <input type="submit" value="Stop" wicket:id="stop-button"/>
             <input type="submit" value="Delete" wicket:id="delete-button"/>
         </div>
-        <p>&nbsp;</p>
-        <span wicket:id="radios">
-            <table width="100%">
-                <tr wicket:id="name"/>
-                <tr wicket:id="description"/>
+        <div wicket:id="radios">
+            <table>
+                <wicket:container wicket:id="name"/>
+                <wicket:container wicket:id="description"/>
                 <tr><td><span wicket:id="select"/></td></tr>
-                <tr wicket:id="path"/>
-                <tr wicket:id="query"/>
-                <tr wicket:id="parameters"/>
-                <tr wicket:id="batch-size"/>
-                <tr wicket:id="throttle"/>
-                <tr wicket:id="dryrun"/>
+                <wicket:container wicket:id="path"/>
+                <wicket:container wicket:id="query"/>
+                <wicket:container wicket:id="parameters"/>
+                <wicket:container wicket:id="batch-size"/>
+                <wicket:container wicket:id="throttle"/>
+                <wicket:container wicket:id="dryrun"/>
             </table>
-        </span>
+        </div>
         <script>
           var changeSelection = function () {
             $('.updater-details input[type=radio]').closest('tr').find('input[type=text]').prop('disabled', true);
@@ -76,16 +79,13 @@
           });
           changeSelection();
         </script>
-        <p>&nbsp;</p>
-        <p>
+        <p class="script-edit-link">
           Script <a id="update-editor-toggle" href="javascript:void(0)" onclick="return $._toggleUpdaterScriptEditor();">&gt;&gt;&gt;</a>
         </p>
-        <p>&nbsp;</p>
-        <fieldset id="script">
+        <fieldset id="script" class="script">
           <textarea wicket:id="script-editor"></textarea>
         </fieldset>
-        <p>&nbsp;</p>
-        <div wicket:id="updater-output"/>
+        <div wicket:id="updater-output" class="log-output"/>
       </form>
     </wicket:panel>
   </body>
