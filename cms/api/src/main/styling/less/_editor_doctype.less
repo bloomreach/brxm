@@ -22,6 +22,22 @@
   .template-type-wrapper {
     margin: 0;
   }
+
+  .hippo-editor-template-field-controls {
+    display: none;
+  }
+
+  .hippo-editor-template-editor {
+    &.active,
+    .active {
+      > .hippo-editor-template-field {
+        border-color: @light-gray;
+        > .hippo-editor-template-field-controls {
+          background-color: @dark-gray;
+        }
+      }
+    }
+  }
 }
 
 // Document type editor styling
@@ -30,16 +46,45 @@
 }
 
 .hippo-editor-template-editor {
-  padding-top: 4px;
-  padding-left: 4px;
+  padding: 3px;
+
+  &.active,
+  .active {
+    > .hippo-editor-template-field {
+      border-color: @primary;
+      > .hippo-editor-template-field-controls {
+        background-color: @primary;
+      }
+    }
+  }
+
+  .hippo-editor-field {
+    margin-bottom: 9px;
+    margin-top: 7px;
+    padding: 0 5px;
+  }
+
+  .hippo-editor-field-title {
+    margin-bottom: 0;
+
+    &,
+    span {
+      font-size: 13px;
+      line-height: 13px;
+      font-weight: bold;
+    }
+
+    span:first-child::after {
+      content: ':';
+    }
+  }
 
   .hippo-editor-field-textarea {
-    margin: 4px;
+    margin: 0;
   }
 
   .hippo-editor-field-subfield {
-    margin: 7px 10px;
-    padding-right: 5px;
+    margin-top: 6px;
 
     .hippo-editor-field {
       padding: 4px 8px;
@@ -50,10 +95,29 @@
     margin: 0;
 
     > .hippo-editor-field {
+      margin-top: 0;
+      margin-bottom: 0;
+      padding: 16px 8px;
+
       > .hippo-editor-field-subfield {
         margin: 0;
+        border: 0;
+        padding: 0;
+
+        .hippo-editor-field {
+          padding-left: 0;
+          padding-right: 0;
+        }
+
+        .hippo-editor-compound-field > .hippo-editor-field {
+          padding: 16px 8px;
+        }
       }
     }
+  }
+
+  .hippo-hint-field {
+    top: -4px;
   }
 }
 
@@ -66,6 +130,35 @@
   box-sizing: border-box;
   min-height: 100%;
   padding-bottom: 12px;
+
+  .hippo-multiple-text-field-widget {
+    &.hippo-editor-field-subfield {
+      border: 0;
+      padding: 0;
+    }
+
+    .hippo-editor-field-subfield-with-button {
+      padding: 4px;
+      border: 1px solid @light-gray;
+      margin-bottom: 4px;
+
+      &:hover .delete-button {
+        opacity: 1;
+      }
+    }
+
+    .hippo-editor-field-subfield-input {
+      margin: 0;
+      width: ~'calc(100% - 24px)';
+    }
+  }
+
+  .delete-button {
+    opacity: 0;
+    cursor: pointer;
+    color: @danger;
+    float: right;
+  }
 }
 
 .hippo-editor-template-field-title {
@@ -104,15 +197,10 @@
     line-height: 1;
 
     > label {
-      text-transform: capitalize;
       &::after {
         content: ':';
       }
     }
-  }
-
-  input[type=checkbox] {
-    width: 100%;
   }
 
   table {
@@ -169,17 +257,33 @@
   .category-selected + .section-view {
     margin-top: 0;
   }
-
 }
 
 .hippo-editor-template-field {
   background-color: transparent;
   border: 1px solid @light-gray;
   padding: 0;
+
+  .hippo-editor-template-field-controls + div {
+    padding: 3px;
+  }
+
+  .hippo-editor-preview {
+    > .even,
+    > .odd {
+      padding-bottom: 3px;
+      border-bottom: 0;
+      margin-bottom: 0;
+
+      &:last-child {
+        padding-bottom: 0;
+      }
+    }
+  }
 }
 
 .hippo-editor-template-field-controls {
-  background-color: @white;
+  background-color: @dark-gray;
   height: 32px;
   padding-left: 8px;
   padding-right: 8px;
@@ -187,42 +291,30 @@
   flex-flow: row-reverse nowrap;
   align-items: center;
 
-  &.active {
-    background-color: @primary;
-
-    .hippo-preview-document & {
-      background-color: @white;
-    }
-  }
-
   li {
     display: inline;
 
     a {
-      background-position: center center;
-      display: block;
-      float: left;
-      height: 16px;
-      width: 16px;
+      fill: @dark-shade;
+      color: @white;
 
       &:hover {
-        background-color: white;
+        color: @primary;
         text-decoration: none;
       }
+
+      // TODO: Remove once correct icons are present in HippoTheme
+      &.right .hi {
+        transform: rotate(270deg);
+      }
+      &.left .hi {
+        transform: rotate(90deg);
+      }
     }
-  }
 
-  .delete-16 {
-    float: right;
-    width: 49px;
-  }
-
-  .up {
-    background-image: url("@{images_legacy}/icons/arrow-sort-up-16.png")
-  }
-
-  .down {
-    background-image: url("@{images_legacy}/icons/arrow-sort-down-16.png")
+    .remove-field:hover {
+      color: @danger;
+    }
   }
 
   .left {
@@ -235,7 +327,7 @@
 }
 
 .hippo-editor-template-field-new {
-  max-height: 220px;
+  max-height: 208px;
   overflow: auto;
   padding-left: 10px;
 
