@@ -435,4 +435,16 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
 
         return false;
     }
+
+    @Override
+    public void move(EditableCategory destCategory) throws TaxonomyException {
+        try {
+            Node srcNode = getNode();
+            Node destParentNode = ((JcrCategory) destCategory).getNode();
+            String destNodePath = StringUtils.removeEnd(destParentNode.getPath(), "/") + "/" + srcNode.getName();
+            srcNode.getSession().move(srcNode.getPath(), destNodePath);
+        } catch (RepositoryException e) {
+            throw new TaxonomyException("Could not move category", e);
+        }
+    }
 }

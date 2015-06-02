@@ -81,7 +81,9 @@ import org.onehippo.taxonomy.plugin.api.EditableCategory;
 import org.onehippo.taxonomy.plugin.api.EditableCategoryInfo;
 import org.onehippo.taxonomy.plugin.api.TaxonomyException;
 import org.onehippo.taxonomy.plugin.model.CategoryModel;
+import org.onehippo.taxonomy.plugin.model.Classification;
 import org.onehippo.taxonomy.plugin.model.JcrTaxonomy;
+import org.onehippo.taxonomy.plugin.model.TaxonomyModel;
 import org.onehippo.taxonomy.plugin.tree.AbstractNode;
 import org.onehippo.taxonomy.plugin.tree.CategoryNameComparator;
 import org.onehippo.taxonomy.plugin.tree.CategoryNode;
@@ -119,6 +121,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     private final boolean useUrlKeyEncoding;
 
     private AjaxLink<Void> addCategory;
+    private AjaxLink<Void> moveCategory;
     private AjaxLink<Void> removeCategory;
     private AjaxLink<Void> moveupCategory;
     private AjaxLink<Void> movedownCategory;
@@ -278,6 +281,65 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
             addCategory.setVisible(false);
         }
         toolbarHolder.add(addCategory);
+
+        moveCategory = new AjaxLink<Void>("move-category") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isEnabled() {
+                return editing;
+            }
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                final List<String> keys = new ArrayList<String>();
+                final Model<String> classificationIdModel = new Model<String>();
+                final Classification classification = new Classification(keys, classificationIdModel);
+                final IModel<Classification> classificationModel = new Model<Classification>(classification);
+                IDialogService dialogService = getDialogService();
+                final TaxonomyModel taxonomyModel = new TaxonomyModel(context, config, null, taxonomy.getName());
+                dialogService.show(new TaxonomyPickerDialog(context, config, classificationModel,
+                        currentLanguageSelection.getLanguageCode(), taxonomyModel, true) {
+                    private static final long serialVersionUID = 1L;
+                    @Override
+                    protected void onOk() {
+                        final String destParentKey = getCategoryKeyOfDetails();
+
+                        if (StringUtils.isNotBlank(destParentKey)) {
+                            try {
+                                EditableCategory destParentCategory = taxonomy.getCategoryByKey(destParentKey);
+                                EditableCategory srcCategory = taxonomy.getCategoryByKey(key);
+                                TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
+                                CategoryNode destParentCategoryNode = taxonomyRoot.findCategoryNodeByKey(destParentKey);
+                                CategoryNode srcCategoryNode = taxonomyRoot.findCategoryNodeByKey(key);
+
+                                if (srcCategory != null && srcCategoryNode != null && destParentCategoryNode != null) {
+                                    srcCategory.move(destParentCategory);
+                                    destParentCategoryNode.getChildren(true);
+                                    treeModel.reload(destParentCategoryNode);
+                                    ((AbstractNode) srcCategoryNode.getParent()).getChildren(true);
+                                    treeModel.reload(srcCategoryNode.getParent());
+                                    redraw();
+                                }
+                            } catch (TaxonomyException e) {
+                                error(e.getMessage());
+                            }
+                        }
+
+                        super.onOk();
+                    }
+                });
+            }
+
+        };
+        moveCategory.add(new Image("move-category-icon", new PackageResourceReference(TaxonomyEditorPlugin.class,
+                "res/move-category-16.png")));
+        if (!editing) {
+            moveCategory.add(new AttributeAppender("class", new Model<String>("disabled"), " "));
+            moveCategory.setVisible(false);
+        }
+        toolbarHolder.add(moveCategory);
+
 
         removeCategory = new AjaxLink<Void>("remove-category") {
             private static final long serialVersionUID = 1L;

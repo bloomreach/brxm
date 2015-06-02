@@ -35,10 +35,24 @@ public class TaxonomyModel extends LoadableDetachableModel<Taxonomy> {
     private final String taxonomyName;
 
     public TaxonomyModel(IPluginContext context, IPluginConfig config) {
+        this(context, config, null, null);
+    }
+
+    public TaxonomyModel(IPluginContext context, IPluginConfig config, String serviceId, String taxonomyName) {
         this.context = context;
         this.config = config;
-        serviceId = config.getString(ITaxonomyService.SERVICE_ID, ITaxonomyService.DEFAULT_SERVICE_TAXONOMY_ID);
-        taxonomyName = config.getString(ITaxonomyService.TAXONOMY_NAME);
+
+        if (serviceId != null) {
+            this.serviceId = serviceId;
+        } else {
+            this.serviceId = config.getString(ITaxonomyService.SERVICE_ID, ITaxonomyService.DEFAULT_SERVICE_TAXONOMY_ID);
+        }
+
+        if (taxonomyName != null) {
+            this.taxonomyName = taxonomyName;
+        } else {
+            this.taxonomyName = config.getString(ITaxonomyService.TAXONOMY_NAME);
+        }
     }
 
     public IPluginContext getPluginContext() {

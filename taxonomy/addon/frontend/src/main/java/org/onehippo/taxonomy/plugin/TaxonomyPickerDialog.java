@@ -56,8 +56,22 @@ public class TaxonomyPickerDialog extends AbstractDialog<Classification> {
      * @param model
      * @param preferredLocale
      */
-    public TaxonomyPickerDialog(final IPluginContext context, final IPluginConfig config, IModel<Classification> model,
-                                String preferredLocale) {
+     public TaxonomyPickerDialog(final IPluginContext context, final IPluginConfig config, IModel<Classification> model,
+             String preferredLocale) {
+         this(context, config, model, preferredLocale, new TaxonomyModel(context, config), false);
+     }
+
+     /**
+      * Constructor which adds UI components in the dialog.
+      * The main UI component in this dialog is the taxonomy browser.
+      * @param context
+      * @param config
+      * @param model
+      * @param preferredLocale
+      * @param taxonomyModel
+      */
+     public TaxonomyPickerDialog(final IPluginContext context, final IPluginConfig config, IModel<Classification> model,
+             String preferredLocale, final TaxonomyModel taxonomyModel, final boolean detailsReadOnly) {
         super(model);
 
         setOkEnabled(true);
@@ -73,7 +87,7 @@ public class TaxonomyPickerDialog extends AbstractDialog<Classification> {
             }
 
             add(browser = new TaxonomyBrowser("content", new Model<>(model.getObject()),
-                    new TaxonomyModel(context, config), preferredLocale));
+                     taxonomyModel, preferredLocale, detailsReadOnly));
         }
     }
 
@@ -94,5 +108,13 @@ public class TaxonomyPickerDialog extends AbstractDialog<Classification> {
     protected void onOk() {
         setModelObject((Classification) browser.getDefaultModelObject());
         super.onOk();
+    }
+
+    protected String getCategoryKeyOfDetails() {
+        if (browser instanceof TaxonomyBrowser) {
+            return ((TaxonomyBrowser) browser).getCategoryKeyOfDetails();
+        }
+
+        return null;
     }
 }

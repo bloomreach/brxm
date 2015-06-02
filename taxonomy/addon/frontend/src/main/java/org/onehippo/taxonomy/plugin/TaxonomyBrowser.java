@@ -63,16 +63,27 @@ public class TaxonomyBrowser extends Panel {
     WebMarkupContainer container;
     MarkupContainer details;
     private String preferredLocale;
+    private String categoryKeyOfDetails;
+    private boolean detailsReadOnly;
 
     /**
      * Constructor which organizes the UI components in this panel.
      */
     public TaxonomyBrowser(String id, IModel<Classification> model, final TaxonomyModel taxonomyModel, String preferredLocale) {
+        this(id, model, taxonomyModel, preferredLocale, false);
+    }
+
+    /**
+     * Constructor which organizes the UI components in this panel.
+     */
+    public TaxonomyBrowser(String id, IModel<Classification> model, final TaxonomyModel taxonomyModel, String preferredLocale, final boolean detailsReadOnly) {
         super(id, model);
 
         this.taxonomyModel = taxonomyModel;
 
         this.preferredLocale = preferredLocale;
+
+        this.detailsReadOnly = detailsReadOnly;
 
         String treeLocale = getPreferredLocale();
         final Comparator<Category> categoryComparator = getCategoryComparator(taxonomyModel.getPluginConfig(), treeLocale);
@@ -191,6 +202,10 @@ public class TaxonomyBrowser extends Panel {
         return null;
     }
 
+    public String getCategoryKeyOfDetails() {
+        return categoryKeyOfDetails;
+    }
+
     /**
      * Adds labels from the category into the category detail fragment.
      * <p>
@@ -221,6 +236,7 @@ public class TaxonomyBrowser extends Panel {
 
     private void setDetails(Category taxonomyItem) {
         container.addOrReplace(details = newDetails("details", new CategoryModel(taxonomyModel, taxonomyItem.getKey())));
+        categoryKeyOfDetails = taxonomyItem.getKey();
     }
 
     protected Details newDetails(String id, CategoryModel model) {
@@ -281,12 +297,15 @@ public class TaxonomyBrowser extends Panel {
     protected class Details extends Panel {
         private static final long serialVersionUID = 1L;
 
+        private String categoryKey;
+
         public Details(String id, CategoryModel model) {
             super(id);
 
             setOutputMarkupId(true);
 
             Category category = model.getObject();
+            categoryKey = category.getKey();
             addCategoryDetailFields(this, category);
 
             add(new AjaxLink<Category>("add", model) {
@@ -306,12 +325,11 @@ public class TaxonomyBrowser extends Panel {
                 @Override
                 public boolean isVisible() {
                     String key = getModelObject().getKey();
-                    return !getKeys().contains(key);
+                    return !detailsReadOnly && !getKeys().contains(key);
                 }
-
             });
 
-             add(new AjaxLink<Category>("makecanonical", model) {
+            add(new AjaxLink<Category>("makecanonical", model) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -320,19 +338,21 @@ public class TaxonomyBrowser extends Panel {
                     setCanonicalKey(key);
 
                     target.add(container);
-        }
+                }
 
                 @Override
                 public boolean isVisible() {
                     String key = getModelObject().getKey();
                     boolean canonical = getCanonicalKey()!=null && getCanonicalKey().equals(key);
                     boolean selected = getKeys().contains(key);
-                    return selected && !canonical && isCanonised();
+                    return !detailsReadOnly && selected && !canonical && isCanonised();
                 }
-
             });
         }
 
+        public String getCategoryKey() {
+            return categoryKey;
+        }
     }
 
 }

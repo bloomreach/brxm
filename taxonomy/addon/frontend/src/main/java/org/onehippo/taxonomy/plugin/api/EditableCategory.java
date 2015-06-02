@@ -40,4 +40,6 @@ public interface EditableCategory extends Category {
     boolean canMoveDown();
 
     boolean moveDown() throws TaxonomyException;
+
+    void move(EditableCategory destNode) throws TaxonomyException;
 }
