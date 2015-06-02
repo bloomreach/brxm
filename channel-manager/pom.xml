@@ -41,7 +41,7 @@
     <hippo.commons.version>1.05.00</hippo.commons.version>
     <hippo.addon-hst-configuration-editor.version>1.15.00</hippo.addon-hst-configuration-editor.version>
     <hippo.frontend.plugins.version>1.02.00</hippo.frontend.plugins.version>
-    <hippo.frontend.theme.version>1.02.02-SNAPSHOT</hippo.frontend.theme.version>
+    <hippo.frontend.theme.version>1.02.03-SNAPSHOT</hippo.frontend.theme.version>
 
     <commons-lang.version>2.6</commons-lang.version>
 
