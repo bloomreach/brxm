@@ -21,11 +21,11 @@
       <div class="taxonomy-container" wicket:id="container">
         <div wicket:id="details" class="taxonomy-details"/>
         <div class="taxonomy-selected">
-                <h3>
-                    <wicket:message key="taxonomy-selected-header">Selected Categories</wicket:message>
-                </h3>
+          <h3>
+            <span wicket:id="selected-categories-label">Selected Categories</span>
+          </h3>
           <br/>
-                <span class="taxonomy-canon" wicket:id="canon">No canonical category selected</span>
+            <span class="taxonomy-canon" wicket:id="canon">No canonical category selected</span>
           <ul>
             <li wicket:id="list">
               <span wicket:id="label"></span> <a wicket:id="remove" class="remove">X</a>

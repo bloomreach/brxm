@@ -110,11 +110,19 @@ public class TaxonomyPickerDialog extends AbstractDialog<Classification> {
         super.onOk();
     }
 
-    protected String getCategoryKeyOfDetails() {
+    protected String getCurrentCategoryKey() {
         if (browser instanceof TaxonomyBrowser) {
-            return ((TaxonomyBrowser) browser).getCategoryKeyOfDetails();
+            return ((TaxonomyBrowser) browser).getCurrentCategoryKey();
         }
 
         return null;
+    }
+
+    protected boolean isTaxonomyRootSelected() {
+        if (browser instanceof TaxonomyBrowser) {
+            return ((TaxonomyBrowser) browser).isTaxonomyRootSelected();
+        }
+
+        return false;
     }
 }

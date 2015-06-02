@@ -303,14 +303,14 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                     private static final long serialVersionUID = 1L;
                     @Override
                     protected void onOk() {
-                        final String destParentKey = getCategoryKeyOfDetails();
+                        final String destParentCategoryKey = getCurrentCategoryKey();
 
-                        if (StringUtils.isNotBlank(destParentKey)) {
+                        if (destParentCategoryKey != null) {
                             try {
-                                EditableCategory destParentCategory = taxonomy.getCategoryByKey(destParentKey);
+                                EditableCategory destParentCategory = taxonomy.getCategoryByKey(destParentCategoryKey);
                                 EditableCategory srcCategory = taxonomy.getCategoryByKey(key);
                                 TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
-                                CategoryNode destParentCategoryNode = taxonomyRoot.findCategoryNodeByKey(destParentKey);
+                                CategoryNode destParentCategoryNode = taxonomyRoot.findCategoryNodeByKey(destParentCategoryKey);
                                 CategoryNode srcCategoryNode = taxonomyRoot.findCategoryNodeByKey(key);
 
                                 if (srcCategory != null && srcCategoryNode != null && destParentCategoryNode != null) {
@@ -319,6 +319,21 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                                     treeModel.reload(destParentCategoryNode);
                                     ((AbstractNode) srcCategoryNode.getParent()).getChildren(true);
                                     treeModel.reload(srcCategoryNode.getParent());
+                                    redraw();
+                                }
+                            } catch (TaxonomyException e) {
+                                error(e.getMessage());
+                            }
+                        } else if (isTaxonomyRootSelected()) {
+                            try {
+                                EditableCategory srcCategory = taxonomy.getCategoryByKey(key);
+                                TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
+                                CategoryNode srcCategoryNode = taxonomyRoot.findCategoryNodeByKey(key);
+
+                                if (srcCategory != null && srcCategoryNode != null) {
+                                    srcCategory.move(taxonomy);
+                                    taxonomyRoot.getChildren(true);
+                                    treeModel.reload(taxonomyRoot);
                                     redraw();
                                 }
                             } catch (TaxonomyException e) {

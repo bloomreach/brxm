@@ -46,6 +46,7 @@ import org.onehippo.taxonomy.plugin.model.Classification;
 import org.onehippo.taxonomy.plugin.model.TaxonomyModel;
 import org.onehippo.taxonomy.plugin.tree.CategoryNameComparator;
 import org.onehippo.taxonomy.plugin.tree.CategoryNode;
+import org.onehippo.taxonomy.plugin.tree.TaxonomyNode;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTree;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTreeModel;
 
@@ -63,7 +64,8 @@ public class TaxonomyBrowser extends Panel {
     WebMarkupContainer container;
     MarkupContainer details;
     private String preferredLocale;
-    private String categoryKeyOfDetails;
+    private String currentCategoryKey;
+    private boolean taxonomyRootSelected;
     private boolean detailsReadOnly;
 
     /**
@@ -93,8 +95,14 @@ public class TaxonomyBrowser extends Panel {
             @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode node) {
                 if (node instanceof CategoryNode) {
+                    taxonomyRootSelected = false;
+                    final Category category = ((CategoryNode) node).getCategory();
+                    currentCategoryKey = category.getKey();
                     setDetails(((CategoryNode) node).getCategory());
                     target.add(container);
+                } else if (node instanceof TaxonomyNode) {
+                    taxonomyRootSelected = true;
+                    currentCategoryKey = null;
                 }
                 super.onNodeLinkClicked(target, node);
             }
@@ -159,6 +167,10 @@ public class TaxonomyBrowser extends Panel {
         container.add(lv);
         container.add(details = new EmptyDetails("details", "emptyDetails", this));
 
+        Label selectedCategoriesLabel = new Label("selected-categories-label", new StringResourceModel("taxonomy-selected-header", this, null, null));
+        selectedCategoriesLabel.setVisible(!detailsReadOnly);
+        container.add(selectedCategoriesLabel);
+
         final IModel<CanonicalCategory> canonicalNameModel = new LoadableDetachableModel<CanonicalCategory>() {
 
             @Override
@@ -202,8 +214,12 @@ public class TaxonomyBrowser extends Panel {
         return null;
     }
 
-    public String getCategoryKeyOfDetails() {
-        return categoryKeyOfDetails;
+    public String getCurrentCategoryKey() {
+        return currentCategoryKey;
+    }
+
+    public boolean isTaxonomyRootSelected() {
+        return taxonomyRootSelected;
     }
 
     /**
@@ -236,7 +252,6 @@ public class TaxonomyBrowser extends Panel {
 
     private void setDetails(Category taxonomyItem) {
         container.addOrReplace(details = newDetails("details", new CategoryModel(taxonomyModel, taxonomyItem.getKey())));
-        categoryKeyOfDetails = taxonomyItem.getKey();
     }
 
     protected Details newDetails(String id, CategoryModel model) {

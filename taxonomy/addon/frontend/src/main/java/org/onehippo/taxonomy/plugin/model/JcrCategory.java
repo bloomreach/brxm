@@ -42,6 +42,7 @@ import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
 import org.onehippo.taxonomy.plugin.ITaxonomyService;
 import org.onehippo.taxonomy.plugin.api.EditableCategory;
 import org.onehippo.taxonomy.plugin.api.EditableCategoryInfo;
+import org.onehippo.taxonomy.plugin.api.EditableTaxonomy;
 import org.onehippo.taxonomy.plugin.api.TaxonomyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -441,6 +442,18 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
         try {
             Node srcNode = getNode();
             Node destParentNode = ((JcrCategory) destCategory).getNode();
+            String destNodePath = StringUtils.removeEnd(destParentNode.getPath(), "/") + "/" + srcNode.getName();
+            srcNode.getSession().move(srcNode.getPath(), destNodePath);
+        } catch (RepositoryException e) {
+            throw new TaxonomyException("Could not move category", e);
+        }
+    }
+
+    @Override
+    public void move(EditableTaxonomy taxonomy) throws TaxonomyException {
+        try {
+            Node srcNode = getNode();
+            Node destParentNode = ((JcrTaxonomy) taxonomy).getNode();
             String destNodePath = StringUtils.removeEnd(destParentNode.getPath(), "/") + "/" + srcNode.getName();
             srcNode.getSession().move(srcNode.getPath(), destNodePath);
         } catch (RepositoryException e) {
