@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.core.jcr.GenericEventListener;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,16 +68,6 @@ public class PoolingRepositorySessionMustBeLoggedOutListener extends GenericEven
             log.debug("Event received. Invalidating session pools.");
             doInvalidation();
         }
-    }
-
-    @Override
-    protected boolean isEventOnSkippedPath(Event event) throws RepositoryException {
-        String eventPath = event.getPath();
-        if (eventPath.endsWith("/"+ HippoNodeType.HIPPO_PASSKEY)) {
-            // we skip this property as it gets written if people login in the cms with remember me enabled
-            return true;
-        }
-        return super.isEventOnSkippedPath(event);
     }
 
     private void doInvalidation() {
