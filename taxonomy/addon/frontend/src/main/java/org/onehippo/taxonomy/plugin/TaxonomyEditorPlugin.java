@@ -1039,23 +1039,19 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         Set<String> handleNodePaths = new LinkedHashSet<String>();
 
         try {
-            String stmt = "//element(*, hippotaxonomy:classifiable)[@hippotaxonomy:keys = '" + key + "']";
+            String stmt = "//element(*, hippotaxonomy:classifiable)[@hippotaxonomy:keys = '" + key + "']/..";
             Query query = getModelObject().getSession().getWorkspace().getQueryManager().createQuery(stmt, Query.XPATH);
             query.setLimit(maxItems);
             QueryResult result = query.execute();
             Node handle;
-            Node variant;
             String docPath;
             for (NodeIterator nodeIt = result.getNodes(); nodeIt.hasNext(); ) {
-                variant = nodeIt.nextNode();
-                if (variant != null && variant.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                    handle = variant.getParent();
-                    if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        docPath = StringUtils.removeStart(handle.getPath(), "/content/documents/");
-                        handleNodePaths.add(docPath);
-                        if (maxItems > 0 && maxItems <= handleNodePaths.size()) {
-                            break;
-                        }
+                handle = nodeIt.nextNode();
+                if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    docPath = StringUtils.removeStart(handle.getPath(), "/content/documents/");
+                    handleNodePaths.add(docPath);
+                    if (maxItems > 0 && maxItems <= handleNodePaths.size()) {
+                        break;
                     }
                 }
             }
