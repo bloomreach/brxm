@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -134,12 +134,9 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
                 return state;
             }
         }
-        
-        
-        
+
         List<OrderBy> orderByList = null;
         if(sortbys != null) {
-
             orderByList = new ArrayList<OrderBy>();
             if(sortorders != null && sortorders.length != sortbys.length) {
                 log.warn("When using multivalued '{}', and '{}', then both should have equal number of values (or delete property "+FacNavNodeType.HIPPOFACNAV_FACETSORTORDER+" at all)", FacNavNodeType.HIPPOFACNAV_FACETSORTBY, FacNavNodeType.HIPPOFACNAV_FACETSORTORDER);
@@ -156,10 +153,8 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
                         // default orderby is ascending
                         orderByList.add(new OrderBy(propertyName.toString()));
                     }
-                } catch (IllegalNameException e){
-                    log.warn("Skipping illegal name as sortby : " + sortbys[i] + " because : " +  e.getMessage());
-                } catch (NamespaceException e) {
-                    log.warn("Skipping illegal name as sortby : " + sortbys[i] + " because : " +  e.getMessage());
+                } catch (IllegalNameException|NamespaceException|IllegalArgumentException e) {
+                    log.warn("Skipping illegal name \"{}\" as sortby for facet node {} because: ", sortbys[i], nodeId, e.getMessage());
                 }
             }
         }
