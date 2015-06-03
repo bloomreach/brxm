@@ -140,18 +140,19 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
     <T> T getBean(String relPath);
     
     /**
-     * @See {@link #getBean(String)}. Now, only if a bean found of type <code>beanMappingClass</code>, it is returned, and otherwise <code>null</code> is returned.
+     * Only if a bean found of type <code>beanMappingClass</code>, it is returned, and otherwise <code>null</code> is returned.
      * @param <T>
      * @param relPath a path that does not start with a "/"
-     * @param beanMappingClass the class {@link T} that the child bean must be off
+     * @param beanMappingClass the class <code>T</code> that the child bean must inherit from
      * @return returns the <code>HippoBean</code> of (sub)type beanMappingClass with relative path <code>relPath</code>
      * to this bean, or <code>null</code> when it does not exist, is not of (sub)type beanMappingClass, or when the relPath is not a valid relative path
+     * @see #getBean(String)
      */
     <T extends HippoBean> T getBean(String relPath, Class<T> beanMappingClass);
       
     /**
      * <p>
-     * Returns all the child beans as a {@link List} with elements of type {@link T}. When a child bean
+     * Returns all the child beans as a {@link List} with elements of type <code>T</code>. When a child bean
      * is found that is not of type <code>beanMappingClass</code>, it is skipped
      * </p>
      * <p>
@@ -159,14 +160,14 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * <code>List<HippoBean> beans = getBeans(HippoBean.class);</code>
      * </p>
      * @param <T> the return type of the child bean
-     * @param beanMappingClass the class {@link T} that the child beans must be off
+     * @param beanMappingClass the class <code>T</code> that the child beans must inherit from
      * @return List<HippoBean> where the backing jcr nodes have the name childNodeName
      */
     <T extends HippoBean> List<T> getChildBeans(Class<T> beanMappingClass);
     
     /**
-     * Returns all the child beans of name <code>childNodeName</code> as a {@link List} with elements of type {@link T}. When a found bean is not of type {@link T} a
-     * {@link ClassCastException} is thrown. 
+     * Returns all the child beans of name <code>childNodeName</code> as a {@link List} with elements of type
+     * <code>T</code>. When a found bean is not of type <code>T</code> a {@link ClassCastException} is thrown.
      * @param <T> the return type of the child bean
      * @param childNodeName
      * @return List<HippoBean> where the backing jcr nodes have the name childNodeName
@@ -176,7 +177,7 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
     
     /**
      * <p>
-     * Returns all the child beans of name <code>childNodeName</code> as a {@link List} with elements of type {@link T}. When a child bean
+     * Returns all the child beans of name <code>childNodeName</code> as a {@link List} with elements of type <code>T</code>. When a child bean
      * is found that is not of type <code>beanMappingClass</code>, it is skipped
      * </p>
      * <p>If the <code>beanMappingClass</code> is <code>null</code>, it is ignored. Then, this method returns the same a {@link #getChildBeansByName(String)} and
@@ -184,7 +185,7 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * </p>
      * @param <T> the return type of the child bean
      * @param childNodeName
-     * @param beanMappingClass the class {@link T} that the child beans must be off. 
+     * @param beanMappingClass the class <code>T</code> that the child beans must inherit from
      * @return List<HippoBean> where the backing jcr nodes have the name childNodeName
      */
     <T extends HippoBean> List<T> getChildBeansByName(String childNodeName, Class<T> beanMappingClass);
@@ -196,7 +197,7 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * jcrPrimaryNodeType. If so, we return the bean for this 'Document'.
      * 
      * @param <T> the return type of the {@link List} elements
-     * @param jcrPrimaryNodeType the primary type the child beans should be off
+     * @param jcrPrimaryNodeType the primary type the child beans should inherit from
      * @return List<HippoBean> where the backing jcr nodes are of type jcrPrimaryNodeType
      */
     <T> List<T> getChildBeans(String jcrPrimaryNodeType);
@@ -313,13 +314,13 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * When the nodes being compared have the same canonical node (physical equivalence) this method returns true.
      * If there is no canonical node the virtual jcr path is used to compare the items: if these paths are the same, true is returned
      * 
-     * <b>Note: this method compares the jcr path of the backing canonical jcr nodes. The {@link #equals(Object)} tests
-     * the jcr node path, which might be a virtual path. So this method can return true while {@link #equals(Object)} returns false</b>
+     * <b>Note: this method compares the jcr path of the backing canonical jcr nodes. All implementing classes override
+     * {@link Object#equals(Object)} to compare the jcr node path, which might be a virtual path. So this method can
+     * return true while {@link Object#equals(Object)} returns false</b>
      * 
      * @param compare the object to compare to
      * @return <code>true</code> if the object compared has the same canonical node or the same virtual path when they don't have a canonical
      */
-    
     boolean equalCompare(Object compare);
     
     /**
@@ -333,12 +334,12 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * returns true when mydocument and otherdocument have the same canonical node
      * If there is no canonical node the virtual jcr path is used to compare the items: if these paths are the same, true is returned
      * 
-     * <b>Note: this method compares the jcr path of the backing canonical jcr nodes. The {@link #equals(Object)} tests
-     * the jcr node path, which might be a virtual path. So this method can return true while {@link #equals(Object)} returns false</b>
+     * <b>Note: this method compares the jcr path of the backing canonical jcr nodes. All implementing classes override
+     * {@link Object#equals(Object)} to compare the jcr node path, which might be a virtual path. So this method can
+     * return true while {@link Object#equals(Object)} returns false</b>
      * 
-     * @return a ComparatorMap in which you can compare HippoBean's via the get(Object o)
+     * @return a ComparatorMap in which you can compare HippoBeans via the get(Object o)
      */
     Map<Object,Object> getEqualComparator();
-    
-    
+
 }
