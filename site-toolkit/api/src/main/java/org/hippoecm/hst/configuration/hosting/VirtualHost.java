@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface VirtualHost {
 
-
     /**
      * The hostName of this VirtualHost. <b>Note</b> that this hostName might contain wildcards, for example www.onehippo.*
      * @return The composite hostName of this VirtualHost, thus including parent VirtualHosts if present
@@ -67,7 +66,6 @@ public interface VirtualHost {
     List<VirtualHost> getChildHosts();
 
     /**
-     *
      * @param portNumber
      * @return the
      */
@@ -139,7 +137,6 @@ public interface VirtualHost {
      */
     int getSchemeNotMatchingResponseCode();
 
-
     /**
      * @return the homepage for this virtual host or <code>null</code> when not present
      */
@@ -149,7 +146,7 @@ public interface VirtualHost {
      * Returns the base of the <code>URL</code> as seen by for example a browser. The base URL is consists of <code>scheme + hostname + portnumber</code>
      * for example 'http://www.hippoecm.org:8081'
      *
-     * The scheme is 'http' by default, unless {@link # getScheme()} returns something else
+     * The scheme is 'http' by default, unless {@link #getScheme()} returns something else
      * The hostname is the HttpServeltRequest request.getServerName() (proxies must have <code>ProxyPreserveHost On</code>)
      * The portnumber is as follows:
      * <ul>
@@ -166,7 +163,6 @@ public interface VirtualHost {
      * @param request the HttpServletRequest
      * @return the <code>URL</code> until the context path, thus <code>scheme + hostname + portnumber</code>, for example 'http://www.hippoecm.org:8081'
      */
-
     String getBaseURL(HttpServletRequest request);
 
     /**
