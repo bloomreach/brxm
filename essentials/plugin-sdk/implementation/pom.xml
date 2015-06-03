@@ -36,8 +36,8 @@
       <artifactId>hippo-services-contenttype</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-services</artifactId>
+      <groupId>com.wordnik</groupId>
+      <artifactId>swagger-annotations_2.10</artifactId>
     </dependency>
     <dependency>
       <groupId>com.wordnik</groupId>
@@ -46,7 +46,6 @@
     <dependency>
       <groupId>javax.ws.rs</groupId>
       <artifactId>javax.ws.rs-api</artifactId>
-      <version>2.0.1</version>
     </dependency>
     <dependency>
       <groupId>javax.inject</groupId>
@@ -84,55 +83,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-modules</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-api</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.wicket</groupId>
-          <artifactId>wicket</artifactId>
-        </exclusion>
-        <exclusion>
-          <artifactId>wicket-extensions</artifactId>
-          <groupId>org.apache.wicket</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>xercesImpl</artifactId>
-          <groupId>xerces</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>wicket-datetime</artifactId>
-          <groupId>org.apache.wicket</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>wicket-extjs</artifactId>
-          <groupId>org.wicketstuff</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>wicket-core</artifactId>
-          <groupId>org.apache.wicket</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>wicketstuff-input-events</artifactId>
-          <groupId>org.wicketstuff</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>yui-2.xx-sources</artifactId>
-          <groupId>org.onehippo.yui</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>htmldiff</artifactId>
-          <groupId>org.hippoecm</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
@@ -144,19 +94,10 @@
       <artifactId>org.eclipse.jdt.core</artifactId>
       <exclusions>
         <exclusion>
-          <artifactId>org.eclipse.equinox.app</artifactId>
           <groupId>org.eclipse.equinox</groupId>
+          <artifactId>org.eclipse.equinox.app</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-impl</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
@@ -167,72 +108,29 @@
       <artifactId>commons-io</artifactId>
     </dependency>
 
-
     <!-- TEST -->
-    <dependency>
-      <artifactId>tika-parsers</artifactId>
-      <groupId>org.apache.tika</groupId>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-content-beans</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- LOGGING-->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <scope>provided</scope>
-    </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-editor-common</artifactId>
+      <artifactId>hippo-repository-provider</artifactId>
+      <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-bundle-compatible</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-asl</artifactId>
+      <version>${jackson.version}</version>
+      <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.codehaus.jackson</groupId>
-      <artifactId>jackson-core-asl</artifactId>
-    </dependency>
+
   </dependencies>
 
   <build>

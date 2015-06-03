@@ -36,7 +36,6 @@
 
     <!--***START temporary override of versions*** -->
     <!-- ***END temporary override of versions*** -->
-    <maven.plugin.release.version>2.5</maven.plugin.release.version>
 
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.1</taglibs.version>
@@ -45,10 +44,6 @@
     <easymock.version>3.1</easymock.version>
     <filesync.override>false</filesync.override>
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
-    <jaxb-api.version>2.2.6</jaxb-api.version>
-
-    <cargo.tomcat.major.version>7</cargo.tomcat.major.version>
-    <cargo.tomcat.full.version>7.0.42</cargo.tomcat.full.version>
 
     <!-- Tells Sonar to run the unit tests -->
     <sonar.dynamicAnalysis>true</sonar.dynamicAnalysis>
@@ -62,20 +57,6 @@
     <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk</developerConnection>
     <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk</url>
   </scm>
-  <distributionManagement>
-    <repository>
-      <name>Hippo Maven 2 Repository</name>
-      <id>hippo-maven2</id>
-      <url>https://maven.onehippo.com/content/repositories/releases</url>
-      <uniqueVersion>false</uniqueVersion>
-    </repository>
-    <snapshotRepository>
-      <id>hippo-maven2-snapshots</id>
-      <name>Hippo Maven 2 Snapshots Repository</name>
-      <url>https://maven.onehippo.com/content/repositories/snapshots</url>
-      <uniqueVersion>false</uniqueVersion>
-    </snapshotRepository>
-  </distributionManagement>
 
   <modules>
     <module>components</module>
@@ -86,22 +67,16 @@
   </modules>
 
   <repositories>
-    <!--
-        <repository>
-          <id>hippo-maven2-private</id>
-          <name>Hippo maven 2 private repository.</name>
-          <url>https://maven.onehippo.com/maven2-private</url>
-        </repository>
-        <repository>
-          <id>hippo-maven2-private-snapshots</id>
-          <name>Hippo maven 2 private repository snapshots</name>
-          <url>https://maven.onehippo.com/maven2-private-snapshots</url>
-        </repository>
-    -->
     <repository>
       <id>hippo</id>
-      <name>Hippo maven 2 repository.</name>
+      <name>Hippo Maven 2</name>
       <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
     </repository>
   </repositories>
 
@@ -163,14 +138,6 @@
     <defaultGoal>package</defaultGoal>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <target>1.8</target>
-            <source>1.8</source>
-          </configuration>
-        </plugin>
         <!-- redefine again default Hippo LICENSE and NOTICE file handling configuration like as defined
              in root cms7-project pom but is 'nullified' again in parent cms7-release pom. -->
         <plugin>

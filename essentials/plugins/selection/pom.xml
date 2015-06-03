@@ -28,6 +28,11 @@
   <description>Hippo Essentials Selection Plugin</description>
   <artifactId>hippo-essentials-plugin-selection</artifactId>
 
+  <properties>
+    <dom4j.version>1.6.1</dom4j.version>
+    <jaxen.version>1.1.6</jaxen.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
@@ -38,8 +43,14 @@
       <artifactId>hippo-essentials-plugin-sdk-implementation</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-plugin-selections-hst-client</artifactId>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <version>${dom4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+      <version>${jaxen.version}</version>
     </dependency>
   </dependencies>
 

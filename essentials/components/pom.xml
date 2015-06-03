@@ -29,9 +29,6 @@
   <description>Hippo Essentials Components</description>
   <artifactId>hippo-essentials-components</artifactId>
   <packaging>pom</packaging>
-  <properties>
-    <junit.version>4.11</junit.version>
-  </properties>
 
   <modules>
     <module>cms</module>
