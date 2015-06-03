@@ -176,8 +176,10 @@ public interface Filter extends BaseFilter {
     void addGreaterOrEqualThan(String fieldAttributeName, Object value) throws FilterException ;
 
     /**
-     * <p><strong>note:</strong> supported resolutions are {@link DateTools.Resolution#YEAR}, {@link DateTools.Resolution#MONTH},
-     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#HOUR}
+     * <p><strong>note:</strong> supported resolutions are {@link org.hippoecm.repository.util.DateTools.Resolution#YEAR},
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
      * </p>
      * @see #addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution)
      * but now no upper bound
