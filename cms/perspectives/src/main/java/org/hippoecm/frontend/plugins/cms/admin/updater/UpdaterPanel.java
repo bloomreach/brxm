@@ -75,14 +75,14 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
     private static final String UPDATE_HISTORY_PATH = UPDATE_PATH + "/hippo:history";
 
     private static final Label EMPTY_EDITOR = new Label("updater-editor");
-    private static final Map<String, String> CUSTOM_NODE_LABELS;
+    private static final Map<String, String> CUSTOM_NODE_LABELS = createNodeNameMap();
 
-    static {
-        Map<String, String> aMap = new HashMap<>();
-        aMap.put("hippo:registry", "Registry");
-        aMap.put("hippo:queue", "Queue");
-        aMap.put("hippo:history", "History");
-        CUSTOM_NODE_LABELS = Collections.unmodifiableMap(aMap);
+    private static Map<String, String> createNodeNameMap() {
+        final Map<String, String> map = new HashMap<>();
+        map.put("hippo:registry", "Registry");
+        map.put("hippo:queue", "Queue");
+        map.put("hippo:history", "History");
+        return Collections.unmodifiableMap(map);
     }
 
     private final IPluginContext context;
@@ -258,13 +258,13 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
 
     private String getUpdaterTitle() {
         if (isQueuedUpdater()) {
-            return "Monitoring updater run " + getUpdaterName();
+            return "Monitoring updater run '" + getUpdaterName() + "'";
         }
         if (isRegisteredUpdater()) {
-            return "Editing updater " + getUpdaterName();
+            return "Editing updater '" + getUpdaterName() + "'";
         }
         if (isArchivedUpdater()) {
-            return "Viewing updater run " + getUpdaterName();
+            return "Viewing updater run '" + getUpdaterName() + "'";
         }
         return getTitle(null).getObject();
     }
