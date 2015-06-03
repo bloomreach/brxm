@@ -19,6 +19,7 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.extensions.markup.html.tree.AbstractTree;
 import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
 import org.apache.wicket.markup.ComponentTag;
@@ -99,7 +100,7 @@ public abstract class CmsJcrTree extends ContextMenuTree {
     @Override
     protected Component newNodeIcon(final MarkupContainer parent, final String id, final TreeNode node) {
         if (treeNodeIconService != null) {
-            return new NodeIconContainer(id, node);
+            return new NodeIconContainer(id, node, this, treeNodeIconService);
         }
         return super.newNodeIcon(parent, id, node);
     }
@@ -157,18 +158,23 @@ public abstract class CmsJcrTree extends ContextMenuTree {
         return parent == null || parent.getChildAt(parent.getChildCount() - 1).equals(node);
     }
 
-    private class NodeIconContainer extends Panel {
+    public static class NodeIconContainer extends Panel {
 
         private final TreeNode node;
+        private final AbstractTree tree;
+        private final ITreeNodeIconProvider treeNodeIconService;
 
-        private NodeIconContainer(final String id, final TreeNode node) {
+        public NodeIconContainer(final String id, final TreeNode node, final AbstractTree tree,
+                                  final ITreeNodeIconProvider treeNodeIconService) {
             super(id);
             this.node = node;
+            this.tree = tree;
+            this.treeNodeIconService = treeNodeIconService;
         }
 
         @Override
         protected void onBeforeRender() {
-            addOrReplace(treeNodeIconService.getNodeIcon("icon", this.node, getTreeState()));
+            addOrReplace(treeNodeIconService.getNodeIcon("icon", node, tree.getTreeState()));
             super.onBeforeRender();
         }
     }

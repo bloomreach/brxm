@@ -20,7 +20,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 
-public abstract class WicketTreeHelperBehavior extends AbstractYuiBehavior {
+public class WicketTreeHelperBehavior extends AbstractYuiBehavior {
     private static final long serialVersionUID = 1L;
     
   
@@ -50,6 +50,8 @@ public abstract class WicketTreeHelperBehavior extends AbstractYuiBehavior {
         return "YAHOO.hippo.TreeHelper.render('" + getWicketId() + "');";
     }
 
-    protected abstract String getWicketId();
+    protected String getWicketId() {
+        return getComponent().getMarkupId();
+    }
 
 }

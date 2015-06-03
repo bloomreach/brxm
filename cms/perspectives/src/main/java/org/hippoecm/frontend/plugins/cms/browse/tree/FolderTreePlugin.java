@@ -95,7 +95,7 @@ public class FolderTreePlugin extends RenderPlugin {
         this.rootNode = new FolderTreeNode(rootModel, folderTreeConfig);
         treeModel = new JcrTreeModel(rootNode);
         context.registerService(treeModel, IObserver.class.getName());
-        tree = new CmsJcrTree("tree", treeModel, newTreeNodeTranslator(config), newTreeNodeIconProvider()) {
+        tree = new CmsJcrTree("tree", treeModel, newTreeNodeTranslator(config), newTreeNodeIconProvider(context, config)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -214,11 +214,8 @@ public class FolderTreePlugin extends RenderPlugin {
         return new TreeNodeTranslator();
     }
 
-    protected ITreeNodeIconProvider newTreeNodeIconProvider() {
-        IPluginContext context = getPluginContext();
-        IPluginConfig config = getPluginConfig();
-
-        final List<ITreeNodeIconProvider> providers = new LinkedList<ITreeNodeIconProvider>();
+    public static ITreeNodeIconProvider newTreeNodeIconProvider(IPluginContext context, IPluginConfig config) {
+        final List<ITreeNodeIconProvider> providers = new LinkedList<>();
         providers.add(new DefaultTreeNodeIconProvider());
         providers.addAll(context.getServices(ITreeNodeIconProvider.class.getName(), ITreeNodeIconProvider.class));
         if (config.containsKey("tree.icon.id")) {
