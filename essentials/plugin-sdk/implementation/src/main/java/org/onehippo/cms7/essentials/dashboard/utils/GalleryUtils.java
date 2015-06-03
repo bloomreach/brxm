@@ -29,7 +29,6 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.slf4j.Logger;
@@ -156,8 +155,8 @@ public final class GalleryUtils {
         HippoNodeUtils.setNodeType(imageNode, getImagesetName(prefix, name));
         // add default height and width (otherwise error is thrown within template editor)
         final Node originalImage = imageNode.getNode("hipposysedit:prototypes/hipposysedit:prototype/hippogallery:original");
-        originalImage.setProperty(HippoGalleryNodeType.IMAGE_WIDTH, 0L);
-        originalImage.setProperty(HippoGalleryNodeType.IMAGE_HEIGHT, 0L);
+        originalImage.setProperty(HIPPOGALLERY_IMAGE_WIDTH, 0L);
+        originalImage.setProperty(HIPPOGALLERY_IMAGE_HEIGHT, 0L);
         // change translation nodes:
         final NodeIterator translationNodes = imageNode.getNodes("hippo:translation");
         while(translationNodes.hasNext()){
@@ -176,7 +175,7 @@ public final class GalleryUtils {
     /**
      * Create a new image variant. We'll copy an existing one so all defaults are there
      *
-     * @param session             the JCR session
+     * @param context             the plugin context
      * @param prefix              the imageset prefix
      * @param imageSetName        the imageset name
      * @param variantName         the imageset name

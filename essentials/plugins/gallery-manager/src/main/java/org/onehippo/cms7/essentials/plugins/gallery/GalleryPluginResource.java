@@ -37,7 +37,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
@@ -80,6 +79,7 @@ public class GalleryPluginResource extends BaseResource {
     public static final String HIPPOSYSEDIT_PROTOTYPE = "hipposysedit:prototype";
     private static Logger log = LoggerFactory.getLogger(GalleryPluginResource.class);
     public static final String PROCESSOR_PATH = "/hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService";
+    public static final String HIPPOGALLERY_IMAGE_SET = "hippogallery:imageset";
 
     @Inject
     private EventBus eventBus;
@@ -349,13 +349,13 @@ public class GalleryPluginResource extends BaseResource {
         final List<GalleryModel> models = new ArrayList<>();
         final PluginContext context = PluginContextFactory.getContext();
         try {
-            final List<String> existingImageSets = CndUtils.getNodeTypesOfType(context, HippoGalleryNodeType.IMAGE_SET, true);
+            final List<String> existingImageSets = CndUtils.getNodeTypesOfType(context, HIPPOGALLERY_IMAGE_SET, true);
 
             for (String existingImageSet : existingImageSets) {
                 final String[] ns = NS_PATTERN.split(existingImageSet);
                 final List<ImageModel> imageModels = loadImageSet(ns[0], ns[1], context);
                 final GalleryModel galleryModel = new GalleryModel(existingImageSet);
-                if (existingImageSet.equals(HippoGalleryNodeType.IMAGE_SET)) {
+                if (existingImageSet.equals(HIPPOGALLERY_IMAGE_SET)) {
                     galleryModel.setReadOnly(true);
                     // mm: for time being, we'll not return internal imageset
                     continue;
@@ -503,7 +503,7 @@ public class GalleryPluginResource extends BaseResource {
             final String uri = GalleryUtils.getGalleryURI(context, prefix);
             // Check whether node type already exists
             if (CndUtils.nodeTypeExists(context, nodeType)) {
-                if (CndUtils.isNodeOfSuperType(context, nodeType, HippoGalleryNodeType.IMAGE_SET)) {
+                if (CndUtils.isNodeOfSuperType(context, nodeType, HIPPOGALLERY_IMAGE_SET)) {
 
                     return createErrorMessage("ImageSet already exists: " + nodeType, response);
                 } else {
