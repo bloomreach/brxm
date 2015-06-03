@@ -274,14 +274,10 @@
   height: 100%;
   width: 100%;
   display: flex;
-  display: -webkit-flex;
-  display: -ms-flexbox;
   flex-flow: column;
 
   > * {
     display: flex;
-    display: -webkit-flex;
-    display: -ms-flexbox;
   }
 
   .updater-left {
@@ -305,24 +301,16 @@
 
     .updater-details {
       display: flex;
-      display: -webkit-flex;
-      display: -ms-flexbox;
 
       flex: 1 0 auto;
-      -webkit-flex: 1 0 auto;
-      -ms-flex: 1 0 auto;
       overflow: auto;
       border: 1px solid @dark-shade;
-      padding: 5px 5px;
+      padding: 5px;
 
       form {
         display: flex;
-        display: -webkit-flex;
-        display: -ms-flexbox;
 
         flex: 1 0 auto;
-        -webkit-flex: 1 0 auto;
-        -ms-flex: 1 0 auto;
         flex-flow: column;
 
         table {
@@ -354,8 +342,6 @@
 
         table, .hippo-modal-feedback, .toolbar, .script-edit-link {
           flex: none;
-          -webkit-flex: none;
-          -ms-flex: none;
           margin: 10px 0;
         }
 
@@ -369,29 +355,21 @@
 
         .script{
           flex: 1 1 auto;
-          -webkit-flex: 1 1 auto;
-          -ms-flex: 1 1 auto;
           overflow: auto;
         }
 
         .log-output {
           display: flex;
-          display: -webkit-flex;
-          display: -ms-flexbox;
 
           flex-flow: column;
           margin: 10px 0;
 
           > .log-title {
             flex: none;
-            -webkit-flex: none;
-            -ms-flex: none;
           }
 
           > .updater-feedback {
             flex: 1 1 auto;
-            -webkit-flex: 1 1 auto;
-            -ms-flex: 1 1 auto;
             border:1px solid @light-gray;
             font-size: 1.2em;
             display: block;
