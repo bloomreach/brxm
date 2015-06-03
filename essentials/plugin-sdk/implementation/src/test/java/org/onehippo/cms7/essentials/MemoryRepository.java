@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -54,11 +55,8 @@ public class MemoryRepository {
         initialize();
 
         session = getSession();
-        NodeTypeManagerImpl mgr = (NodeTypeManagerImpl) session.getWorkspace().getNodeTypeManager();
         for (String fileName : CND_FILE_NAMES) {
-            //log.debug("Registering CND file *{}*", fileName);
-            InputStream stream = getClass().getResourceAsStream(fileName);
-            mgr.registerNodeTypes(stream, "text/x-jcr-cnd", true);
+            registerNodeTypes(fileName);
         }
 
         //add namespace:
@@ -92,6 +90,12 @@ public class MemoryRepository {
         //session.logout();
     }
 
+    public void registerNodeTypes(String fileName) throws RepositoryException, IOException {
+        NodeTypeManagerImpl mgr = (NodeTypeManagerImpl)session.getWorkspace().getNodeTypeManager();
+        //log.debug("Registering CND file *{}*", fileName);
+        InputStream stream = getClass().getResourceAsStream(fileName);
+        mgr.registerNodeTypes(stream, "text/x-jcr-cnd", true);
+    }
 
     private void initialize() throws Exception {
         storageDirectory = new File(System.getProperty("java.io.tmpdir"), "jcr");

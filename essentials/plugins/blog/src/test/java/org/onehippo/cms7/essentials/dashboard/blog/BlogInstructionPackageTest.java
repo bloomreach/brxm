@@ -45,6 +45,8 @@ public class BlogInstructionPackageTest extends BaseRepositoryTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        repository.registerNodeTypes("/test-hippofacnav.cnd");
+        repository.registerNodeTypes("/test-selection-types.cnd");
         jspDirectory = new File(getContext().getPlaceholderData().get(EssentialConst.PLACEHOLDER_JSP_ROOT)
                 + File.separator + "essentials" + File.separator +"blog");
         createHstRootConfig();
