@@ -19,8 +19,8 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:head>
     <script type="text/javascript">
-      $(document).ready(function() {
-        $._toggleUpdaterScriptEditor = function() {
+      $(document).ready(function () {
+        Hippo.toggleUpdaterScriptEditor = function () {
           var regEditor = $('.updater-registry-editor');
           var nonRegEditor = $('.updater-editor');
           var feedback = $('.log-output');
@@ -49,43 +49,46 @@
       <form wicket:id="updater-form">
         <div wicket:id="feedback" class="hippo-modal-feedback">[info/warn/error messages]</div>
         <div class="toolbar">
-            <input type="submit" value="Save" wicket:id="save-button"/>
-            <input type="submit" value="Dry run" wicket:id="dryrun-button"/>
-            <input type="submit" value="Execute" wicket:id="execute-button"/>
-            <input type="submit" value="Undo" wicket:id="undo-button"/>
-            <input type="submit" value="Stop" wicket:id="stop-button"/>
-            <input type="submit" value="Delete" wicket:id="delete-button"/>
+          <input type="submit" value="Save" wicket:id="save-button"/>
+          <input type="submit" value="Dry run" wicket:id="dryrun-button"/>
+          <input type="submit" value="Execute" wicket:id="execute-button"/>
+          <input type="submit" value="Undo" wicket:id="undo-button"/>
+          <input type="submit" value="Stop" wicket:id="stop-button"/>
+          <input type="submit" value="Delete" wicket:id="delete-button"/>
         </div>
         <div wicket:id="radios">
-            <table>
-                <wicket:container wicket:id="name"/>
-                <wicket:container wicket:id="description"/>
-                <tr><td><span wicket:id="select"/></td></tr>
-                <wicket:container wicket:id="path"/>
-                <wicket:container wicket:id="query"/>
-                <wicket:container wicket:id="parameters"/>
-                <wicket:container wicket:id="batch-size"/>
-                <wicket:container wicket:id="throttle"/>
-                <wicket:container wicket:id="dryrun"/>
-            </table>
+          <table class="updater-editor-parameters">
+            <wicket:container wicket:id="name"/>
+            <wicket:container wicket:id="description"/>
+            <tr>
+              <td><span wicket:id="select"/></td>
+            </tr>
+            <wicket:container wicket:id="path"/>
+            <wicket:container wicket:id="query"/>
+            <wicket:container wicket:id="parameters"/>
+            <wicket:container wicket:id="batch-size"/>
+            <wicket:container wicket:id="throttle"/>
+            <wicket:container wicket:id="dryrun"/>
+          </table>
         </div>
         <script>
           var changeSelection = function () {
             $('.updater-details input[type=radio]').closest('tr').find('input[type=text]').prop('disabled', true);
             $('.updater-details input[type=radio]:checked').closest('tr').find('input[type=text]').prop('disabled', false);
           };
-          $('.updater-details input[type=radio]').on('change', function() {
+          $('.updater-details input[type=radio]').on('change', function () {
             changeSelection();
           });
           changeSelection();
         </script>
         <p class="script-edit-link">
-          Script <a id="update-editor-toggle" href="javascript:void(0)" onclick="return $._toggleUpdaterScriptEditor();">&gt;&gt;&gt;</a>
+          Script
+          <a id="update-editor-toggle" href="javascript:void(0)" onclick="return Hippo.toggleUpdaterScriptEditor();">&gt;&gt;&gt;</a>
         </p>
         <fieldset id="script" class="script">
           <textarea wicket:id="script-editor"></textarea>
         </fieldset>
-        <div wicket:id="updater-output" class="log-output"/>
+        <wicket:container wicket:id="updater-output"/>
       </form>
     </wicket:panel>
   </body>

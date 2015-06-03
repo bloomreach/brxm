@@ -16,7 +16,8 @@
 
 .hippo-panel-plugin-body h2 {
   font-size: 20px;
-  color: #0d496f;
+  font-weight: normal;
+  color: @darkest-shade;
   margin-top: 0;
   margin-bottom: 15px;
 }
@@ -266,10 +267,11 @@
 }
 
 .updater-shorter {
-  min-height:160px;
+  flex: 1 0 auto;
+  height: 0;
 }
 
-.hippo-panel-plugin-body.updater-editor-plugin {
+.updater-editor-plugin {
   position: absolute;
   height: 100%;
   width: 100%;
@@ -283,7 +285,28 @@
   .updater-left {
     min-width: 200px;
     max-width: 200px;
-    margin-left: 5px;
+    border-right: 1px solid @dark-gray;
+  }
+
+  .updater-editor-top > .updater-left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-bottom: 1px solid @dark-gray;
+
+    > input {
+      flex: 1 1 auto;
+      margin: 0 8px;
+    }
+  }
+
+  .updater-editor-top-right {
+    padding: 8px;
+
+    h2 {
+      margin: 0;
+    }
   }
 
   > .updater-editor-main {
@@ -291,11 +314,16 @@
 
     .updater-tree {
       overflow: auto;
-      border: 1px solid @dark-shade;
-      padding: 0;
+      border-right: 1px solid @dark-gray;
+      padding: 4px 0 0 0;
 
-      > div.hippo-tree > div.wicket-tree .row-selected {
-        background: @primary;
+      > div.hippo-tree > div.wicket-tree {
+        .row {
+          padding-left: 5px;
+        }
+        .row-selected {
+          background: @primary;
+        }
       }
     }
 
@@ -303,46 +331,33 @@
       display: flex;
 
       flex: 1 0 auto;
-      overflow: auto;
-      border: 1px solid @dark-shade;
-      padding: 5px;
+      padding: 0 8px 8px 8px;
 
       form {
+        width: 100%;
+
         display: flex;
+        flex-direction: column;
 
-        flex: 1 0 auto;
-        flex-flow: column;
-
-        table {
+        > * {
           width: 100%;
-          > tr {
-            height: 20px;
-          }
+          min-width: 100%;
+          max-width: 100%;
         }
 
-        input[type=text], textarea {
-          width: 100%;
-          border: 1px solid @dark-shade;
-          padding: 0;
+        .hippo-modal-feedback {
+          flex: 0 0 auto;
+          padding-bottom: 4px;
         }
 
-        textarea {
-          resize: vertical;
+        .toolbar {
+          flex: 0 0 auto;
+          padding-bottom: 8px;
         }
 
-        textarea[name="radios:description:textarea"] {
-          height: 80px;
-          max-height: 200px;
-        }
-
-        textarea[name="radios:parameters:textarea"] {
-          height: 30px;
-          max-height: 200px;
-        }
-
-        table, .hippo-modal-feedback, .toolbar, .script-edit-link {
-          flex: none;
-          margin: 10px 0;
+        .script-edit-link, .log-title {
+          flex: 0 0 auto;
+          padding: 8px 0 2px 0;
         }
 
         .hippo-modal-feedback {
@@ -353,30 +368,62 @@
           }
         }
 
-        .script{
-          flex: 1 1 auto;
-          overflow: auto;
+        .updater-editor-parameters {
+          flex: 0 0 auto;
+
+          input[type=text], textarea {
+            box-sizing: border-box;
+            width: 100%;
+            border: 1px solid @light-gray;
+            padding: 4px;
+            margin: 0 0 4px 0;
+          }
+
+          textarea {
+            resize: vertical;
+          }
+
+          textarea[name="radios:description:textarea"] {
+            height: 40px;
+            max-height: 200px;
+          }
+
+          textarea[name="radios:parameters:textarea"] {
+            height: 40px;
+            max-height: 200px;
+          }
         }
 
-        .log-output {
-          display: flex;
+        .script {
+          max-width: 100px;
 
-          flex-flow: column;
-          margin: 10px 0;
+          overflow: auto;
+          resize: vertical;
 
-          > .log-title {
-            flex: none;
+          &.updater-shorter {
+            border: 1px solid @light-gray;
+            min-height: 110px;
           }
 
-          > .updater-feedback {
-            flex: 1 1 auto;
-            border:1px solid @light-gray;
-            font-size: 1.2em;
-            display: block;
-            overflow-x: auto;
-            overflow-y: auto;
-            padding: 4px;
+          .CodeMirror {
+            width: auto;
+            height: auto;
           }
+        }
+
+        .updater-feedback {
+          flex: 1 0 auto;
+          box-sizing: border-box;
+
+          border: 1px solid @light-gray;
+          padding: 4px;
+
+          max-width: 100px;
+
+          height: 380px;
+          resize: vertical;
+
+          overflow: auto;
         }
       }
     }
@@ -387,6 +434,8 @@
   width: 125px;
   overflow: hidden;
   white-space: nowrap;
+  vertical-align: top;
+  padding-top: 5px;
 }
 
 .updater-editor {

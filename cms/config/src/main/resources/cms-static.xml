@@ -1091,7 +1091,7 @@
         <sv:value>hippo-panel-plugin-wrapper</sv:value>
       </sv:property>
       <sv:property sv:name="top" sv:type="String">
-        <sv:value>id=hippo-panel-plugin-perspective-top,body=hippo-panel-plugin-perspective-top-body,height=60</sv:value>
+        <sv:value>id=hippo-panel-plugin-perspective-top,body=hippo-panel-plugin-perspective-top-body,height=41</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
