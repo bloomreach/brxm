@@ -260,14 +260,16 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                             }
                             try {
                                 String newKey = getKey();
+                                Category newCategory;
                                 if (category != null) {
-                                    category.addCategory(newKey, getName(), currentLanguageSelection.getLanguageCode(), taxonomyModel);
+                                    newCategory = category.addCategory(newKey, getName(), currentLanguageSelection.getLanguageCode(), taxonomyModel);
                                 } else {
-                                    taxonomy.addCategory(newKey, getName(), currentLanguageSelection.getLanguageCode());
+                                    newCategory = taxonomy.addCategory(newKey, getName(), currentLanguageSelection.getLanguageCode());
                                 }
                                 TreeNode child = new CategoryNode(new CategoryModel(taxonomyModel, newKey), currentLanguageSelection.getLanguageCode(), categoryComparator);
                                 tree.getTreeState().selectNode(child, true);
                                 key = newKey;
+                                updateToolbarForCategory(newCategory);
                             } catch (TaxonomyException e) {
                                 error(e.getMessage());
                             }
@@ -327,6 +329,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                                         tree.expandAllToNode(destParentCategoryNode);
                                         ((AbstractNode) srcCategoryNode.getParent()).getChildren(true);
                                         treeModel.reload(srcCategoryNode.getParent());
+                                        updateToolbarForCategory(srcCategory);
                                         redraw();
                                     }
                                 } catch (TaxonomyException e) {
@@ -342,6 +345,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                                         srcCategory.move(taxonomy);
                                         taxonomyRoot.getChildren(true);
                                         treeModel.reload(taxonomyRoot);
+                                        updateToolbarForCategory(srcCategory);
                                         redraw();
                                     }
                                 } catch (TaxonomyException e) {
