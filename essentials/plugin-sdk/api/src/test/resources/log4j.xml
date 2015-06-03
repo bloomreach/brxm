@@ -50,9 +50,6 @@
   <!-- ====================================================================== -->
   <!-- L O G G E R S                                                          -->
   <!-- ====================================================================== -->
-  <category name="DataNucleus">
-    <level value="fatal"/>
-  </category>
   <category name="org.quartz">
     <level value="warn"/>
   </category>
@@ -68,9 +65,6 @@
 
   <category name="org.springframework">
     <level value="warn"/>
-  </category>
-  <category name="org.datanucleus">
-    <level value="error"/>
   </category>
   <category name="org.onehippo">
     <level value="error"/>
@@ -94,7 +88,7 @@
   </category>
 
   <category name="org.onehippo.cms7.essentials">
-    <level value="debug"/>
+    <level value="warn"/>
   </category>
 
   <root>

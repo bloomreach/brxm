@@ -41,49 +41,6 @@
   </dependencies>
   <build>
     <defaultGoal>package</defaultGoal>
-    <resources>
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/main/java</directory>
-        <includes>
-          <include>**/*.woff</include>
-          <include>**/*.xml</include>
-          <include>**/*.eot</include>
-          <include>**/*.ttf</include>
-          <include>**/*.svg</include>
-          <include>**/*.html</include>
-          <include>**/*.css</include>
-          <include>**/*.png</include>
-          <include>**/*.gif</include>
-          <include>**/*.js</include>
-          <include>**/*.properties</include>
-        </includes>
-      </resource>
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/main/resources</directory>
-        <includes>
-          <include>**/*.cnd</include>
-          <include>**/*.txt</include>
-          <include>**/*.xml</include>
-          <include>**/*.html</include>
-          <include>**/*.js</include>
-          <include>**/*.MF</include>
-          <include>**/*.jsp</include>
-          <include>**/*.ftl</include>
-          <include>**/*.png</include>
-          <include>**/*.properties</include>
-        </includes>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-      </plugin>
-    </plugins>
-
   </build>
-
 
 </project>

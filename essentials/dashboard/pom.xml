@@ -147,45 +147,16 @@
     <finalName>dashboard</finalName>
     <resources>
       <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
         <filtering>true</filtering>
         <directory>src/main/webapp/WEB-INF/jsp</directory>
         <includes>
           <include>**/*.jsp</include>
         </includes>
       </resource>
-      <resource>
-        <filtering>false</filtering>
-        <directory>src/main/resources</directory>
-      </resource>
-      <resource>
-        <filtering>false</filtering>
-        <directory>src/main/java</directory>
-        <includes>
-          <include>**/*.xml</include>
-          <include>**/*.properties</include>
-        </includes>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </resource>
     </resources>
-    <testResources>
-      <testResource>
-        <filtering>false</filtering>
-        <directory>src/test/resources</directory>
-      </testResource>
-      <testResource>
-        <filtering>false</filtering>
-        <directory>src/test/java</directory>
-        <includes>
-          <include>**</include>
-        </includes>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </testResource>
-    </testResources>
   </build>
-
 
 </project>

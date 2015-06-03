@@ -73,7 +73,6 @@ components/hst/src/main/java/org/onehippo/cms7/essentials/components/utils/Compo
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/utils/SiteUtils.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/utils/query/HstQueryBuilder.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/utils/query/QueryBuilder.java -text
-components/hst/src/test/resources/log4j.xml -text
 components/pom.xml -text
 dashboard-dependencies/pom.xml -text
 dashboard/.bowerrc -text
@@ -103,7 +102,6 @@ dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/RestList.java -t
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/StatusRestful.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/SystemInfo.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/TranslationRestful.java -text
-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/jaxb.properties -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/JcrBrowserResource.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/JcrNode.java -text
 dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/JcrProperty.java -text
@@ -529,14 +527,12 @@ plugins/banner-and-carousel/src/main/resources/xml/data/banner_entry_1.xml -text
 plugins/banner-and-carousel/src/main/resources/xml/data/banner_entry_2.xml -text
 plugins/banner-and-carousel/src/main/resources/xml/data/banner_images.xml -text
 plugins/banner-and-carousel/src/main/resources/xml/namespaces/bannerdocument.xml -text
-plugins/banner-and-carousel/src/test/resources/log4j.xml -text
 plugins/bean-writer/pom.xml -text
 plugins/bean-writer/src/main/java/org/onehippo/cms7/essentials/beanwriter/rest/BeanWriterResource.java -text
 plugins/bean-writer/src/main/java/org/onehippo/cms7/essentials/beanwriter/rest/MyRestList.java -text
 plugins/bean-writer/src/main/resources/META-INF/resources/tool/beanwriter/beanwriter.html -text
 plugins/bean-writer/src/main/resources/META-INF/resources/tool/beanwriter/beanwriter.js -text
 plugins/bean-writer/src/main/resources/META-INF/web-fragment.xml -text
-plugins/bean-writer/src/test/resources/log4j.xml -text
 plugins/blog/pom.xml -text
 plugins/blog/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogDaemonModuleInstruction.java -text
 plugins/blog/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogFacetInstruction.java -text
@@ -623,7 +619,6 @@ plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/conten
 plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/contentblocks/Compound.java -text
 plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/contentblocks/ContentBlockModel.java -text
 plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/contentblocks/DocumentType.java -text
-plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/contentblocks/jaxb.properties -text
 plugins/content-blocks/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/updater/UpdateRequest.java -text
 plugins/content-blocks/src/main/resources/META-INF/resources/feature/contentBlocks/contentBlocks.html -text
 plugins/content-blocks/src/main/resources/META-INF/resources/feature/contentBlocks/contentBlocks.js -text
@@ -637,6 +632,7 @@ plugins/content-blocks/src/main/resources/content_blocks_template.xml -text
 plugins/content-blocks/src/test/java/org/onehippo/cms7/essentials/plugins/contentblocks/ContentBlocksTest.java -text
 plugins/content-blocks/src/test/resources/contentblocks-compare.json -text
 plugins/content-blocks/src/test/resources/contentblocks.json -text
+plugins/content-blocks/src/test/resources/log4j.xml -text
 plugins/content-blocks/src/test/resources/template.xml -text
 plugins/document-wizard/pom.xml -text
 plugins/document-wizard/src/main/java/org/onehippo/cms7/essentials/plugins/docwiz/DocumentWizardParameterService.java -text
@@ -644,7 +640,6 @@ plugins/document-wizard/src/main/java/org/onehippo/cms7/essentials/plugins/docwi
 plugins/document-wizard/src/main/resources/META-INF/resources/feature/documentWizardPlugin/documentWizardPlugin.html -text
 plugins/document-wizard/src/main/resources/META-INF/resources/feature/documentWizardPlugin/documentWizardPlugin.js -text
 plugins/document-wizard/src/main/resources/META-INF/web-fragment.xml -text
-plugins/document-wizard/src/test/resources/log4j.xml -text
 plugins/events/pom.xml -text
 plugins/events/src/main/resources/META-INF/events_package_instructions.xml -text
 plugins/events/src/main/resources/META-INF/resources/feature/eventsPlugin/eventsPlugin.html -text
@@ -683,7 +678,6 @@ plugins/events/src/main/resources/xml/samples/content/gallery/samples.xml -text
 plugins/events/src/main/resources/xml/samples/content/gallery/samples/blue.xml -text
 plugins/events/src/main/resources/xml/samples/content/gallery/samples/coffee.xml -text
 plugins/events/src/main/resources/xml/samples/content/gallery/samples/pencils.xml -text
-plugins/events/src/test/resources/log4j.xml -text
 plugins/faq/pom.xml -text
 plugins/faq/src/main/resources/META-INF/faqComponentPlugin_instructions.xml -text
 plugins/faq/src/main/resources/META-INF/resources/feature/faqPlugin/faqPlugin.html -text
@@ -726,7 +720,6 @@ plugins/gallery-manager/src/main/resources/META-INF/resources/tool/galleryPlugin
 plugins/gallery-manager/src/main/resources/META-INF/resources/tool/galleryPlugin/galleryPlugin.js -text
 plugins/gallery-manager/src/main/resources/META-INF/web-fragment.xml -text
 plugins/gallery-manager/src/main/resources/image_set_updater.xml -text
-plugins/gallery-manager/src/test/resources/log4j.xml -text
 plugins/google-maps/pom.xml -text
 plugins/google-maps/src/main/resources/META-INF/googlemaps_instructions.xml -text
 plugins/google-maps/src/main/resources/META-INF/resources/feature/googlemapsPlugin/googlemapsPlugin.html -text
@@ -765,7 +758,6 @@ plugins/list/src/main/resources/jsp/list-component.jsp -text
 plugins/list/src/main/resources/xml/hst/catalog/list.xml -text
 plugins/list/src/main/resources/xml/hst/templates/list-component-freemarker.xml -text
 plugins/list/src/main/resources/xml/hst/templates/list-component-jsp.xml -text
-plugins/list/src/test/resources/log4j.xml -text
 plugins/menu/pom.xml -text
 plugins/menu/src/main/resources/META-INF/menu_instructions.xml -text
 plugins/menu/src/main/resources/META-INF/resources/feature/menuPlugin/menuPlugin.html -text
@@ -780,7 +772,6 @@ plugins/menu/src/main/resources/hst/menu-template-freemarker.xml -text
 plugins/menu/src/main/resources/hst/menu-template-jsp.xml -text
 plugins/menu/src/main/resources/images/menu.png -text
 plugins/menu/src/main/resources/jsp/essentials-menu.jsp -text
-plugins/menu/src/test/resources/log4j.xml -text
 plugins/news/pom.xml -text
 plugins/news/src/main/resources/META-INF/news_package_instructions.xml -text
 plugins/news/src/main/resources/META-INF/resources/feature/newsPlugin/newsPlugin.html -text
@@ -819,7 +810,6 @@ plugins/news/src/main/resources/xml/samples/content/gallery/samples.xml -text
 plugins/news/src/main/resources/xml/samples/content/gallery/samples/grapes.xml -text
 plugins/news/src/main/resources/xml/samples/content/gallery/samples/medusa.xml -text
 plugins/news/src/main/resources/xml/samples/content/gallery/samples/snail.xml -text
-plugins/news/src/test/resources/log4j.xml -text
 plugins/poll/pom.xml -text
 plugins/poll/src/main/java/org/onehippo/cms7/essentials/plugins/poll/PollInstruction.java -text
 plugins/poll/src/main/resources/META-INF/poll_plugin_instructions.xml -text
@@ -829,7 +819,6 @@ plugins/poll/src/main/resources/xml/new-poll-document.xml -text
 plugins/poll/src/main/resources/xml/new-poll-folder.xml -text
 plugins/poll/src/main/resources/xml/poll-example.xml -text
 plugins/poll/src/main/resources/xml/poll-folder.xml -text
-plugins/poll/src/test/resources/log4j.xml -text
 plugins/pom.xml -text
 plugins/related-documents/pom.xml -text
 plugins/related-documents/src/main/java/org/onehippo/cms7/essentials/plugins/relateddocuments/RelatedDocumentsParameterService.java -text
@@ -855,7 +844,6 @@ plugins/rest-services/src/main/resources/content_mount.xml -text
 plugins/rest-services/src/main/resources/plain_mount.xml -text
 plugins/rest-services/src/main/resources/spring-content-rest-api.xml -text
 plugins/rest-services/src/main/resources/spring-plain-rest-api.xml -text
-plugins/rest-services/src/test/resources/log4j.xml -text
 plugins/robots/pom.xml -text
 plugins/robots/src/main/java/org/onehippo/cms7/essentials/plugins/robots/RobotsInstruction.java -text
 plugins/robots/src/main/resources/META-INF/resources/feature/robotsPlugin/robotsPlugin.html -text
@@ -863,7 +851,6 @@ plugins/robots/src/main/resources/META-INF/robots_plugin_instructions.xml -text
 plugins/robots/src/main/resources/META-INF/web-fragment.xml -text
 plugins/robots/src/main/resources/xml/robots_content.xml -text
 plugins/robots/src/main/resources/xml/robots_sitemap.xml -text
-plugins/robots/src/test/resources/log4j.xml -text
 plugins/search/pom.xml -text
 plugins/search/src/main/resources/META-INF/resources/feature/searchPlugin/searchPlugin.html -text
 plugins/search/src/main/resources/META-INF/searchPlugin_instructions.xml -text
@@ -904,7 +891,6 @@ plugins/seo/src/main/resources/instructions/seo.jsp -text
 plugins/seo/src/main/resources/instructions/seo.png -text
 plugins/seo/src/main/resources/instructions/template-seo-freemarker.xml -text
 plugins/seo/src/main/resources/instructions/template-seo-jsp.xml -text
-plugins/seo/src/test/resources/log4j.xml -text
 plugins/simple-content/pom.xml -text
 plugins/simple-content/src/main/resources/META-INF/resources/feature/simpleContent/simpleContent.html -text
 plugins/simple-content/src/main/resources/META-INF/simpleContent_instructions.xml -text
@@ -1016,7 +1002,6 @@ plugins/taxonomy/src/main/java/org/onehippo/cms7/essentials/plugins/taxonomy/Tax
 plugins/taxonomy/src/main/resources/META-INF/resources/feature/taxonomyPlugin/taxonomyPlugin.html -text
 plugins/taxonomy/src/main/resources/META-INF/resources/feature/taxonomyPlugin/taxonomyPlugin.js -text
 plugins/taxonomy/src/main/resources/META-INF/web-fragment.xml -text
-plugins/taxonomy/src/test/resources/log4j.xml -text
 plugins/video/pom.xml -text
 plugins/video/src/main/resources/META-INF/resources/feature/videoComponentPlugin/videoComponentPlugin.html -text
 plugins/video/src/main/resources/META-INF/videoComponentPlugin_instructions.xml -text
