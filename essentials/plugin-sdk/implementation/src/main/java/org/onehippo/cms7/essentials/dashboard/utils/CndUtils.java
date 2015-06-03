@@ -31,7 +31,6 @@ import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.slf4j.Logger;
@@ -143,32 +142,6 @@ public final class CndUtils {
         } finally {
             GlobalUtils.cleanupSession(session);
         }
-    }
-
-    public static boolean unRegisterDocumentType(
-            final PluginContext context,
-
-            final String prefix,
-            final String name
-    ) throws RepositoryException {
-        final Session session = context.createSession();
-        final Workspace workspace = session.getWorkspace();
-        final NodeTypeManager manager = workspace.getNodeTypeManager();
-
-        try {
-
-
-            // NOTE: we need to do this otherwise exception is thrown:
-            // TODO: classloading issue, not possible :(
-            NodeTypeRegistry.disableCheckForReferencesInContentException = true;
-            log.info("NodeTypeRegistry.disableCheckForReferencesInContentException {}", NodeTypeRegistry.disableCheckForReferencesInContentException);
-            manager.unregisterNodeType(prefix + ':' + name);
-        } finally {
-            NodeTypeRegistry.disableCheckForReferencesInContentException = false;
-            GlobalUtils.cleanupSession(session);
-
-        }
-        return true;
     }
 
     /**
