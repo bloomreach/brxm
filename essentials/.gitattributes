@@ -320,7 +320,6 @@ plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/m
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/DependencyRestful.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/DocumentRestful.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginDescriptorRestful.java -text
-plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginNamespaceMapper.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/RepositoryRestful.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/SnapshotRestful.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/VendorRestful.java -text
