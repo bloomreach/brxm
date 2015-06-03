@@ -1,12 +1,12 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,8 +21,6 @@ import org.hippoecm.frontend.model.event.EventCollection;
 
 public class DocumentCollectionModel extends ObservableModel<DocumentCollection> implements IChangeListener {
 
-    private static final long serialVersionUID = 1L;
-
     public DocumentCollectionModel(DocumentCollection collection) {
         super(collection);
     }
@@ -32,7 +30,7 @@ public class DocumentCollectionModel extends ObservableModel<DocumentCollection>
         super.startObservation();
         DocumentCollection collection = getObject();
         if (collection != null) {
-            getObject().addListener(this);
+            collection.addListener(this);
         }
     }
 
@@ -40,7 +38,7 @@ public class DocumentCollectionModel extends ObservableModel<DocumentCollection>
     public void stopObservation() {
         DocumentCollection collection = getObject();
         if (collection != null) {
-            getObject().removeListener(this);
+            collection.removeListener(this);
         }
         super.stopObservation();
     }

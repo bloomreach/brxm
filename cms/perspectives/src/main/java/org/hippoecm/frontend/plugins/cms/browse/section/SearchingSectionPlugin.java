@@ -24,7 +24,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.HTML5Attributes;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -41,7 +40,6 @@ import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.OnEnterAjaxBehavior;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
-import org.hippoecm.frontend.model.IChangeListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -64,76 +62,6 @@ import org.slf4j.LoggerFactory;
 public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSection {
 
     private static final Logger log = LoggerFactory.getLogger(SearchingSectionPlugin.class);
-
-    private final class SubmittingTextField extends TextField<String> implements IFormSubmittingComponent {
-        private SubmittingTextField(String id, IModel<String> model) {
-            super(id, model);
-
-            add(new HTML5Attributes());
-
-            add(new OnEnterAjaxBehavior() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected void onSubmit(AjaxRequestTarget target) {
-                    updateSearch(true);
-                }
-
-                @Override
-                protected void onError(AjaxRequestTarget target) {
-                }
-            });
-        }
-
-        @Override
-        public Component setDefaultFormProcessing(final boolean defaultFormProcessing) {
-            return this;
-        }
-
-        @Override
-        public boolean getDefaultFormProcessing() {
-            return true;
-        }
-
-        @Override
-        public void onSubmit() {
-        }
-
-        @Override
-        public void onAfterSubmit() {
-        }
-
-        @Override
-        public void onError() {
-        }
-    }
-
-    private class FolderModelService extends ModelReference<Node> {
-        private static final long serialVersionUID = 1L;
-
-        FolderModelService(IPluginConfig config, IModel<Node> document) {
-            super(config.getString("model.folder"), document);
-        }
-
-        public void updateModel(IModel<Node> model) {
-            if (collection.getType() == DocumentCollectionType.SEARCHRESULT
-                    || (getModel() != null && getModel().equals(scopeModel))) {
-                scopeModel = model;
-            }
-            super.setModel(model);
-        }
-
-        @Override
-        public void setModel(IModel<Node> model) {
-            if (model == null) {
-                throw new IllegalArgumentException("invalid folder model null");
-            } else if (model.getObject() == null) {
-                log.warn("Node no longer exists");
-                return;
-            }
-            onFolderChange(model);
-        }
-    }
 
     private static final IModel<BrowserSearchResult> NO_RESULTS = new Model<>(null);
 
@@ -158,17 +86,9 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         folderService = new FolderModelService(config, new JcrNodeModel(rootPath));
         collection.setFolder(folderService.getModel());
 
-        collection.addListener(new IChangeListener() {
-            private static final long serialVersionUID = 1L;
-
-            public void onChange() {
-                redrawSearch();
-            }
-
-        });
+        collection.addListener(this::redrawSearch);
 
         final Form form = new Form("form") {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected void onBeforeRender() {
@@ -187,8 +107,6 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         form.add(tx);
 
         final AjaxSubmitLink browseLink = new AjaxSubmitLink("toggle") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 if (collection.getType() == DocumentCollectionType.SEARCHRESULT) {
@@ -198,22 +116,18 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                     updateSearch(true);
                 }
             }
-
         };
         browseLink.add(createSearchIcon("search-icon", collection));
         form.add(browseLink);
 
         WebMarkupContainer scopeContainer = new WebMarkupContainer("scope-container") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public boolean isVisible() {
                 return collection.getType() == DocumentCollectionType.SEARCHRESULT;
             }
-
         };
+
         final AjaxLink scopeLink = new AjaxLink("scope") {
-            private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
@@ -223,7 +137,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             @Override
             public boolean isEnabled() {
                 if (collection.getType() == DocumentCollectionType.SEARCHRESULT) {
-                    JcrNodeModel rootModel = new JcrNodeModel(rootPath);
+                    IModel<Node> rootModel = new JcrNodeModel(rootPath);
                     return !rootModel.equals(scopeModel) && !scopeModel.equals(folderService.getModel());
                 }
                 return false;
@@ -258,7 +172,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             @Override
             public boolean isEnabled() {
                 if (collection.getType() == DocumentCollectionType.SEARCHRESULT) {
-                    JcrNodeModel rootModel = new JcrNodeModel(rootPath);
+                    IModel<Node> rootModel = new JcrNodeModel(rootPath);
                     return !rootModel.equals(folderService.getModel());
                 }
                 return false;
@@ -270,12 +184,12 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
         sectionTop = new WebMarkupContainer("section-top");
         sectionTop.setOutputMarkupId(true);
-        sectionTop.add(new AttributeAppender("class", new AbstractReadOnlyModel<String>() {
+        sectionTop.add(CssClass.append(new AbstractReadOnlyModel<String>() {
             @Override
             public String getObject() {
                 return collection.getType() == DocumentCollectionType.SEARCHRESULT ? "search-result" : "";
             }
-        }, " "));
+        }));
         sectionTop.add(form);
         add(sectionTop);
     }
@@ -376,6 +290,10 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             folder = BrowserHelper.getParent(folder);
         }
 
+        if (folderIsSame(folder)) {
+            return;
+        }
+
         folderService.updateModel(folder);
         collection.setFolder(folder);
 
@@ -428,8 +346,84 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         return HippoIcon.fromSprite(id, iconModel);
     }
 
+    private boolean folderIsSame(IModel<Node> folder) {
+        IModel<Node> folderServiceModel = folderService.getModel();
+        if (folderServiceModel == null) {
+            return folder == null;
+        }
+        return folderServiceModel.equals(folder);
+    }
+
+    private class SubmittingTextField extends TextField<String> implements IFormSubmittingComponent {
+        private SubmittingTextField(String id, IModel<String> model) {
+            super(id, model);
+
+            add(new HTML5Attributes());
+
+            add(new OnEnterAjaxBehavior() {
+
+                @Override
+                protected void onSubmit(AjaxRequestTarget target) {
+                    updateSearch(true);
+                }
+
+                @Override
+                protected void onError(AjaxRequestTarget target) {
+                }
+            });
+        }
+
+        @Override
+        public Component setDefaultFormProcessing(final boolean defaultFormProcessing) {
+            return this;
+        }
+
+        @Override
+        public boolean getDefaultFormProcessing() {
+            return true;
+        }
+
+        @Override
+        public void onSubmit() {
+        }
+
+        @Override
+        public void onAfterSubmit() {
+        }
+
+        @Override
+        public void onError() {
+        }
+    }
+
+    private class FolderModelService extends ModelReference<Node> {
+
+        FolderModelService(IPluginConfig config, IModel<Node> document) {
+            super(config.getString("model.folder"), document);
+        }
+
+        public void updateModel(IModel<Node> model) {
+            if (collection.getType() == DocumentCollectionType.SEARCHRESULT
+                    || (getModel() != null && getModel().equals(scopeModel))) {
+                scopeModel = model;
+            }
+            super.setModel(model);
+        }
+
+        @Override
+        public void setModel(IModel<Node> model) {
+            if (model == null) {
+                throw new IllegalArgumentException("invalid folder model null");
+            } else if (model.getObject() == null) {
+                log.warn("Node no longer exists");
+                return;
+            }
+            onFolderChange(model);
+        }
+    }
+
     private static class SearchScopeModel extends LoadableDetachableModel<String> {
-        private static final long serialVersionUID = 1L;
+
         private final AjaxLink scopeLink;
 
         public SearchScopeModel(final AjaxLink scopeLink) {
