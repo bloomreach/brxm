@@ -54,7 +54,6 @@ import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
-import org.onehippo.forge.selection.hst.manager.ValueListManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +64,7 @@ public class SelectionResource extends BaseResource {
 
     private static Logger log = LoggerFactory.getLogger(SelectionResource.class);
     public static final String MULTISELECT_PLUGIN_CLASS = "org.onehippo.forge.selection.frontend.plugin.DynamicMultiSelectPlugin";
-    public static final String VALUELIST_MANAGER_ID = ValueListManager.class.getName();
+    public static final String VALUELIST_MANAGER_ID = "org.onehippo.forge.selection.hst.manager.ValueListManager";
     private static final String VALUELIST_XPATH = "/beans/beans:bean[@id=\""
             + VALUELIST_MANAGER_ID + "\"]/beans:constructor-arg/beans:map";
 
