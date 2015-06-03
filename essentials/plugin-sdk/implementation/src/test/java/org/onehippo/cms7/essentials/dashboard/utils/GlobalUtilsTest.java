@@ -20,9 +20,11 @@ import java.io.InputStream;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
+import org.onehippo.repository.testutils.ExecuteOnLogLevel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 
@@ -50,14 +52,16 @@ public class GlobalUtilsTest extends BaseTest {
         // test new instance from string:
         myString = GlobalUtils.newInstance(String.class.getName());
         assertTrue(myString != null);
+
+        ExecuteOnLogLevel.fatal((Runnable) () -> {
         // not found exception
-        myString = GlobalUtils.newInstance("com.foo.Bar.Baz");
-        assertTrue(myString == null);
+            assertNull(GlobalUtils.newInstance("com.foo.Bar.Baz"));
+        }, GlobalUtils.class.getName());
+
+        ExecuteOnLogLevel.fatal((Runnable) () -> {
         // cast exception
-        myString = GlobalUtils.newInstance(Integer.class.getName());
-        assertTrue(myString == null);
-
-
+            assertNull(GlobalUtils.newInstance(Integer.class.getName()));
+        }, GlobalUtils.class.getName());
     }
 
     @Test

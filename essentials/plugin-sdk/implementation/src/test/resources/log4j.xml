@@ -142,9 +142,11 @@
     <level value="warn"/>
   </logger>
   <logger name="org.onehippo.cms7.essentials">
-    <level value="debug"/>
+    <level value="warn"/>
   </logger>
-
+  <logger name="org.onehippo.repository.testutils.ExecuteOnLogLevel">
+    <level value="warn"/>
+  </logger>
 
   <root>
     <level value="debug"/>
