@@ -120,7 +120,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 if (!this.registrations.isEmpty()) {
                     this.registrations.handleQueue();
                 }
-                this.cleanupWireframes();
             },
 
             addRoot : function(id, Clazz, config) {
