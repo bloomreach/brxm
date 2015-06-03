@@ -152,7 +152,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         add(form);
 
         final IModel<Section> selectModel = new Model<>(null);
-        select = new DropDownChoice<>("select", selectModel, sections,
+        select = new DropDownChoice<Section>("select", selectModel, sections,
                 new IChoiceRenderer<Section>() {
                     @Override
                     public Object getDisplayValue(final Section section) {
@@ -164,7 +164,16 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                         return section.extension;
                     }
                 }
-        );
+        ) {
+            @Override
+            public boolean isEnabled(){
+                if (sections != null){
+                    final List<Section> choices = sections.getObject();
+                    return choices != null && choices.size() > 1;
+                }
+                return false;
+            }
+        };
         select.add(new AjaxFormComponentUpdatingBehavior("onchange") {
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
