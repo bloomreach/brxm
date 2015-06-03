@@ -31,10 +31,8 @@ public interface HippoFolderBean extends HippoBean, HippoTranslated {
     List<HippoFolderBean> getFolders();
     
     /**
-     * 
-     * @param sorted if true, the list of folder will be returned sorted by their default {@link HippoBean#compareTo(HippoBean)}
+     * @param sorted if true, the list of folder will be returned sorted by their default {@link HippoBean#compareTo(Object)}
      * @return the sorted list of <code>HippoFolderBean</code> below this <code>HippoFolderBean</code> and an empty list if no folders present
-     *
      */
     List<HippoFolderBean> getFolders(boolean sorted);
     
@@ -45,7 +43,7 @@ public interface HippoFolderBean extends HippoBean, HippoTranslated {
     
     /**
      * This method returns the {@link List} of {@link HippoDocumentBean}s in the order they are in the repository. If you need the {@link List} to be sorted according 
-     * the {@link HippoDocumentBean#compareTo(HippoBean)}, use {@link #getDocuments(boolean))} with arg <code>true</code>
+     * the {@link HippoDocumentBean#compareTo(Object)}, use {@link #getDocuments(boolean)} with arg <code>true</code>
      * <b>note</b> when only a subset of the documents is needed, and the total number is large, better use {@link #getDocumentIterator(Class)} as this is a lazy proxied iterator
      * @return the list of {@link HippoDocumentBean}s below this {@link HippoFolderBean} and an empty list if no documents present
      */
@@ -71,10 +69,10 @@ public interface HippoFolderBean extends HippoBean, HippoTranslated {
     List<HippoDocumentBean> getDocuments(int from, int to, boolean sorted);
     
     /**
-     * This method enables to get the {@link List} of {@link HippoDocumentBean}s according their {@link HippoBean#compareTo(HippoBean)}. If you need the {@link List} to be ordered the way the documents are ordered in the repository, use {@link #getDocuments()}.
+     * This method enables to get the {@link List} of {@link HippoDocumentBean}s according their {@link HippoBean#compareTo(Object)}. If you need the {@link List} to be ordered the way the documents are ordered in the repository, use {@link #getDocuments()}.
      * <b>note</b> when only a subset of unsorted documents is needed, and the total number is large, better use {@link #getDocumentIterator(Class)} as this is a lazy proxied iterator
      * @param sorted indicates whether the List should be sorted
-     * @return if <code>sorted</code> is true, the sorted list of {@link HippoDocumentBean}s below this {@link HippoFolderBean}, where the sorting is according {@link HippoBean#compareTo(HippoBean)},  If <code>sorted</code> is false, the same list as {@link #getDocuments()} is returned. An empty list is returned if no documents are present. 
+     * @return if <code>sorted</code> is true, the sorted list of {@link HippoDocumentBean}s below this {@link HippoFolderBean}, where the sorting is according {@link HippoBean#compareTo(Object)},  If <code>sorted</code> is false, the same list as {@link #getDocuments()} is returned. An empty list is returned if no documents are present.
      */
     List<HippoDocumentBean> getDocuments(boolean sorted);
     
@@ -96,6 +94,5 @@ public interface HippoFolderBean extends HippoBean, HippoTranslated {
      * @return A lazy loading iterator returning documents in this folder of type <T>
      */
     <T> HippoDocumentIterator<T> getDocumentIterator(Class<T> beanMappingClass);
-    
-      
+
 }
