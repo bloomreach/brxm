@@ -21,8 +21,8 @@ import java.util.List;
 public interface HippoAvailableTranslationsBean<K extends HippoBean> {
 
     /**
-     * It returns the available translations. 
-     * @return the {@link List} of available locale's and an empty {@link List} is no locale's are present
+     * Returns the available translations.
+     * @return the {@link List} of available locales and an empty {@link List} is no locales are present
      */
     List<String> getAvailableLocales();
     
@@ -33,15 +33,15 @@ public interface HippoAvailableTranslationsBean<K extends HippoBean> {
     boolean hasTranslation(String locale);
     
     /**
-     * @return the List of all {@link K}'s and an empty {@link List} if no translations found
-     * @throws ClassCastException when the bean for <code>locale</code> cannot be cast to <K>
+     * @return the {@link List} of all translations or an empty {@link List} if no translations found
+     * @throws ClassCastException when the bean for <code>locale</code> cannot be cast to <code>K</code>
      */
     List<K> getTranslations() throws ClassCastException;
 
     /**
      * @param locale the locale for the translation
-     * @return returns {@link K} for <code>locale</code> and <code>null</code> if not present
-     * @throws ClassCastException when the bean for <code>locale</code> cannot be cast to <K>
+     * @return returns translation for <code>locale</code> and <code>null</code> if not present
+     * @throws ClassCastException when the bean for <code>locale</code> cannot be cast to <code>K</code>
      */
      K getTranslation(String locale) throws ClassCastException;
 
