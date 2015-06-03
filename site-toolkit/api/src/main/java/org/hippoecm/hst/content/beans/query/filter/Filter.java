@@ -73,8 +73,11 @@ public interface Filter extends BaseFilter {
      * @param start the date to start from (including)
      * @param end the date to end  (including)
      * @param resolution the resolution to use to compare dates. The higher the Resolution (year is highest) the better the performance.
-     *                   supported resolutions are {@link DateTools.Resolution#YEAR}, {@link DateTools.Resolution#MONTH},
-     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#HOUR}
+     *                   supported resolutions are
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#YEAR},
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
      * @throws FilterException
      */
     void addBetween(String fieldAttributeName, Calendar start, Calendar end, DateTools.Resolution resolution) throws FilterException;
@@ -98,11 +101,14 @@ public interface Filter extends BaseFilter {
     void addNotBetween(String fieldAttributeName, Object value1, Object value2) throws FilterException;
 
     /**
-     * <p><strong>note:</strong> supported resolutions are {@link DateTools.Resolution#YEAR}, {@link DateTools.Resolution#MONTH},
-     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#HOUR}
+     * <p><strong>note:</strong> supported resolutions are
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#YEAR},
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
      * </p>
-     * @see  #addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) addBetween(
-     * String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now negated
+     * @see #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
+     * addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now negated
      */
     void addNotBetween(String fieldAttributeName, Calendar start, Calendar end, DateTools.Resolution resolution) throws FilterException;
 
@@ -129,8 +135,11 @@ public interface Filter extends BaseFilter {
      * date rounded to days (eg 20130128) has the same value as <code>calendar</code> rounded to days, will match.
      * </p>
      * <p>
-     * supported resolutions are {@link DateTools.Resolution#YEAR}, {@link DateTools.Resolution#MONTH},
-     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#HOUR}
+     * supported resolutions are
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#YEAR},
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
      * </p>
      */
     void addEqualTo(String fieldAttributeName, Calendar calendar, DateTools.Resolution resolution) throws FilterException;
@@ -151,11 +160,14 @@ public interface Filter extends BaseFilter {
     void addNotEqualToCaseInsensitive(String fieldAttributeName, String value) throws FilterException;
 
     /**
-     *
-     * <p><strong>note:</strong> supported resolutions are {@link DateTools.Resolution#YEAR}, {@link DateTools.Resolution#MONTH},
-     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#HOUR}
+     * <p><strong>note:</strong> supported resolutions are
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#YEAR},
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
      * </p>
-     * @see #addEqualTo(String, java.util.Calendar, DateTools.Resolution) addEqualTo(String, java.util.Calendar, DateTools.Resolution) only now negated
+     * @see #addEqualTo(String, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
+     * addEqualTo(String, java.util.Calendar, DateTools.Resolution) only now negated
      */
     void addNotEqualTo(String fieldAttributeName, Calendar calendar, DateTools.Resolution resolution) throws FilterException;
 
@@ -176,13 +188,14 @@ public interface Filter extends BaseFilter {
     void addGreaterOrEqualThan(String fieldAttributeName, Object value) throws FilterException ;
 
     /**
-     * <p><strong>note:</strong> supported resolutions are {@link org.hippoecm.repository.util.DateTools.Resolution#YEAR},
+     * <p><strong>note:</strong> supported resolutions are
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#YEAR},
      * {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
      * {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
      * {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
      * </p>
-     * @see #addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution)
-     * but now no upper bound
+     * @see #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
+     * addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no upper bound
      */
     void addGreaterOrEqualThan(String fieldAttributeName, Calendar calendar, DateTools.Resolution resolution) throws FilterException;
 
@@ -192,22 +205,25 @@ public interface Filter extends BaseFilter {
      * </p>
      * <p>
      *     <strong>note</strong> that for range queries on calendar/date instances where the granularity of, say Day, is enough, you
-     *     <strong>should</strong> use {@link #addGreaterThan(String, java.util.Calendar, DateTools.Resolution)}
+     *     <strong>should</strong> use {@link #addGreaterThan(String, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)}
      *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
      * @param fieldAttributeName the name of the attribute, eg "example:date"
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
-     * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
+     * @throws FilterException when <code>fieldAttributeName</code> or <code>value</code> is of invalid type/value or is <code>null</code>
      */
     void addGreaterThan(String fieldAttributeName, Object value) throws FilterException ;
 
     /**
-     * <p><strong>note:</strong> supported resolutions are {@link DateTools.Resolution#YEAR}, {@link DateTools.Resolution#MONTH},
-     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#HOUR}
+     * <p><strong>note:</strong> supported resolutions are
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#YEAR},
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
      * </p>
-     * @see #addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) addBetween(
-     * String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no upper bound and lower bound not included
+     * @see #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
+     * addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no upper bound and lower bound not included
      */
     void addGreaterThan(String fieldAttributeName, Calendar calendar, DateTools.Resolution resolution) throws FilterException;
 
@@ -217,7 +233,7 @@ public interface Filter extends BaseFilter {
      * </p>
      * <p>
      *     <strong>note</strong> that for range queries on calendar/date instances where the granularity of, say Day, is enough, you
-     *     <strong>should</strong> use {@link #addLessOrEqualThan(String, java.util.Calendar, DateTools.Resolution)}
+     *     <strong>should</strong> use {@link #addLessOrEqualThan(String, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)}
      *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
@@ -228,11 +244,14 @@ public interface Filter extends BaseFilter {
     void addLessOrEqualThan(String fieldAttributeName, Object value) throws FilterException ;
 
     /**
-     * <p><strong>note:</strong> supported resolutions are {@link DateTools.Resolution#YEAR}, {@link DateTools.Resolution#MONTH},
-     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#HOUR}
+     * <p><strong>note:</strong> supported resolutions are
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#YEAR},
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
      * </p>
-     * @see #addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) addBetween(
-     * String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no lower bound
+     * @see #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
+     * addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no lower bound
      */
     void addLessOrEqualThan(String fieldAttributeName, Calendar calendar, DateTools.Resolution resolution) throws FilterException;
 
@@ -242,7 +261,7 @@ public interface Filter extends BaseFilter {
      * </p>
      * <p>
      *     <strong>note</strong> that for range queries on calendar/date instances where the granularity of, say Day, is enough, you
-     *     <strong>should</strong> use {@link #addLessThan(String, java.util.Calendar, DateTools.Resolution)}
+     *     <strong>should</strong> use {@link #addLessThan(String, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)}
      *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
@@ -253,11 +272,14 @@ public interface Filter extends BaseFilter {
     void addLessThan(String fieldAttributeName, Object value) throws FilterException ;
 
     /**
-     * <p><strong>note:</strong> supported resolutions are {@link DateTools.Resolution#YEAR}, {@link DateTools.Resolution#MONTH},
-     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#HOUR}
+     * <p><strong>note:</strong> supported resolutions are
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#YEAR},
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
+     * {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
      * </p>
-     * @see #addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) #addBetween(
-     * String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no lower bound and upper bound not included
+     * @see #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
+     * addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no lower bound and upper bound not included
      */
     void addLessThan(String fieldAttributeName, Calendar calendar, DateTools.Resolution resolution) throws FilterException;
 
@@ -290,7 +312,7 @@ public interface Filter extends BaseFilter {
 
     /**
      * @see #addLike(String, String)
-     * @deprecated since 7.9.0 use {@link #addLike(String, String)} instead as the Object param was stringified anyway
+     * @deprecated Since 7.9.0 use {@link #addLike(String, String)} instead as the Object param was stringified anyway
      */
     @Deprecated
     void addLike(String fieldAttributeName, Object value) throws FilterException ;
@@ -304,7 +326,7 @@ public interface Filter extends BaseFilter {
     /**
      * @see #addLike(String, String) only now inverted
      *
-     * @deprecated since 7.9.0 use {@link #addNotLike(String, String)} instead as the Object param was stringified anyway
+     * @deprecated Since 7.9.0 use {@link #addNotLike(String, String)} instead as the Object param was stringified anyway
      */
     @Deprecated
     void addNotLike(String fieldAttributeName, Object value) throws FilterException ;
@@ -343,7 +365,7 @@ public interface Filter extends BaseFilter {
     Filter addAndFilter(BaseFilter filter);
 
     /**
-     * negates the current filter
+     * Negates the current filter
      */
     Filter negate();
 }
