@@ -35,11 +35,11 @@ public interface ContentRewriter<T> {
     T rewrite(T content, HstRequestContext requestContext);
 
     /**
-     * Rewrites the <code>content</code> for {@link Node} <code<contentNode</code>.
+     * Rewrites the <code>content</code> for {@link Node} <code>contentNode</code>.
      * @param content content object. It can be type of String or whatever, depending on the implementation and the context.
-     * @param contentNode the {@link Node} that contains the  <code>content</code>
+     * @param contentNode the {@link Node} that contains the <code>content</code>
      * @param requestContext the {@link HstRequestContext}
-     * @return the rewritten content {@link T}
+     * @return the rewritten content <code>T</code>
      */
     T rewrite(T content, Node contentNode, HstRequestContext requestContext);
     

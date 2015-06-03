@@ -33,8 +33,6 @@ public interface HstURLFactory {
 
     /**
      * Returns the HstContainerURLProvider.
-     * 
-     * @return HstContainerURLProvider
      */
     HstContainerURLProvider getContainerURLProvider();
 
@@ -45,7 +43,6 @@ public interface HstURLFactory {
      * @param referenceNamespace the reference namespace of the HstComponent's window.
      * @param base the base HstContainer URL
      * @param requestContext the current HstRequestContext
-     * @return HstContainerURLProvider
      */
     HstURL createURL(String type, String referenceNamespace, HstContainerURL base, HstRequestContext requestContext);
     
@@ -60,13 +57,11 @@ public interface HstURLFactory {
      * @param requestContext the current HstRequestContext
      * @param contextPath the context path for the URL to create. If it is <code>null</code> the 
      * contextPath from the {@link ResolvedMount} will be used. If is is EMPTY string, the contextPath will be set to empty ""
-     * @return HstContainerURLProvider
      */
     HstURL createURL(String type, String referenceNamespace, HstContainerURL base, HstRequestContext requestContext, String contextPath);
     
     /**
      * Returns the flag if parameter namespacing is ignored or not. It returns false by default.
-     * @return
      */
     boolean isReferenceNamespaceIgnored();
     

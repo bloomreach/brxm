@@ -21,7 +21,6 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.site.HstSite;
 
 /**
  * Implementations that know how to rewrite a link for a nodetype containing resources, 
@@ -41,12 +40,11 @@ public interface ResourceContainer {
    String resolveToPathInfo(Node resourceContainerNode, Node resourceNode, Mount mount);
     
     /**
-     * This is the reverse of {@link #resolvePathInfo(Node, Node, HstSite)}. If this ResourceContainer can resolve
+     * This is the reverse of {@link #resolveToPathInfo(Node, Node, Mount)}. If this ResourceContainer can resolve
      * the pathInfo to a resource node of type {@link #getNodeType()}, it returns the resourceNode. If it cannot resolve the
      * pathInfo, <code>null</null> is returned
      * @param session
      * @param pathInfo : the path from the url after the context and servlet path. It starts with a slash
-     * @param object 
      * @return the resourceNode or <code>null</code> if this resource container does not know how to resolve this pathInfo
      */
     Node resolveToResourceNode(Session session, String pathInfo);

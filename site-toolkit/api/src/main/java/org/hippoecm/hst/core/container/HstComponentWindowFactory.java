@@ -37,7 +37,6 @@ public interface HstComponentWindowFactory {
     
     /**
      * Returns the reference namespace separator.
-     * @return
      */
     String getReferenceNameSeparator();
 

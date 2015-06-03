@@ -38,7 +38,7 @@ public interface HstParameterInfoProxyFactory {
      * @param request the {@link HstRequest}
      * @param converter the HstParameterValueConverter that does the actual conversion
      * @return proxy instance of the interface T
-     * @throw IllegalArgumentException if {@link ParametersInfo#type()} does not return an interface or when <code>parameterValueConverter</code> is <code>null</code>
+     * @throws IllegalArgumentException if {@link ParametersInfo#type()} does not return an interface or when <code>parameterValueConverter</code> is <code>null</code>
      */
     <T> T createParameterInfoProxy(ParametersInfo parametersInfo, ComponentConfiguration componentConfig,
             HstRequest request, HstParameterValueConverter converter);

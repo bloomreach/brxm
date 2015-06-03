@@ -52,7 +52,6 @@ public interface PageErrorHandler {
      * @param pageErrors
      * @param hstRequest
      * @param hstResponse
-     * @return
      */
     Status handleComponentExceptions(PageErrors pageErrors, HstRequest hstRequest, HstResponse hstResponse);
     

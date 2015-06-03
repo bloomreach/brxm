@@ -87,9 +87,9 @@ public interface HeadElement extends Serializable, Cloneable
      * Returns an empty collection if there's no child head elements.
      */
     Collection<HeadElement> getChildHeadElements();
-    
+
     /**
-     * {@inheritDoc}
+     * @see Object#clone()
      */
     Object clone() throws CloneNotSupportedException;
 }

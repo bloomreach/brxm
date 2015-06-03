@@ -217,7 +217,7 @@ public interface HstResponse extends HttpServletResponse {
      * the invocation will be just ignored with no operation.
      * </P>
      *
-     * @see javax.servlet.http,HttpServletResponse#sendRedirect(String)
+     * @see javax.servlet.http.HttpServletResponse#sendRedirect(String)
      * @param location the redirect location URL
      */
     void sendRedirect(String location) throws IOException;

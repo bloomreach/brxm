@@ -40,7 +40,7 @@ public interface SiteMapItemHandlerConfiguration {
      * is replaced with it's value. If it cannot be resolved, the property won't be in the map. If the property is of type String[], all properties having a property placeholder
      * are resolved. If a property placeholder cannot be resolved, that item in the array will be <code>null</code>
      * @param <T>
-     * @param hstResolvedSiteMapItem
+     * @param resolvedSiteMapItem
      * @param mappingClass the class the property values should be of
      * @return  Returns the map of all resolved properties of type T into a map and an empty map if there are no properties of type T or there are only properties
      * with unresolvable placeholders

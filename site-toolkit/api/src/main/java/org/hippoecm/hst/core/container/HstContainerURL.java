@@ -51,8 +51,6 @@ public interface HstContainerURL {
 
     /**
      * Returns the current request after the context path but before the queryString. This is thus the servletPath plus pathInfo. 
-     * 
-     * @return 
      */
     String getRequestPath();
 

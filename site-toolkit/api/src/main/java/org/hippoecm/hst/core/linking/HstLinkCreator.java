@@ -232,7 +232,7 @@ public interface HstLinkCreator {
      * 
      * </p>
      * <p>
-     * The difference with {@link #create(Node, HstRequestContext, String))} is that this method does not look for a {@link Mount} with a common <code>type</code> as for the {@link Mount} from the current request. It does
+     * The difference with {@link #create(Node, HstRequestContext, String)} is that this method does not look for a {@link Mount} with a common <code>type</code> as for the {@link Mount} from the current request. It does
      * look for a {@link Mount} which at least has <code>type</code> as its {@link Mount#getTypes()} 
      * </p>
      * @param node the jcr node

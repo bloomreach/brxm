@@ -27,14 +27,12 @@ public interface ContextCredentialsProvider {
     /**
      * Returns the default credentials for this request context if available. Otherwise, returns null.
      * @param requestContext
-     * @return
      */
     Credentials getDefaultCredentials(HstRequestContext requestContext);
     
     /**
      * Returns the writable credentials for this request context if available. Otherwise, returns null.
      * @param requestContext
-     * @return
      */
     Credentials getWritableCredentials(HstRequestContext requestContext);
 

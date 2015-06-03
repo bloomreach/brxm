@@ -40,7 +40,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  * this only has effect if and only if the <code>addComponentWindowFilter</code> is invoked (in a {@link
  * org.hippoecm.hst.core.container.Valve}) <strong>before</strong> the <code>ContextResolvingValve</code> is executed,
  * as the <code>ContextResolvingValve</code> is in charge of creating the {@link org.hippoecm.hst.core.container.HstComponentWindow}
- * instances. {@link } </p>
+ * instances.</p>
  */
 public interface HstComponentWindowFilter {
 

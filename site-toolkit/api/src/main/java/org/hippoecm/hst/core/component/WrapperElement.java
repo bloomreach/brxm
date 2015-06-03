@@ -77,7 +77,7 @@ public interface WrapperElement extends Serializable, Cloneable
     void setTextContent(String textContent);
     
     /**
-     * {@inheritDoc}
+     * @see Object#clone()
      */
     Object clone() throws CloneNotSupportedException;
 }

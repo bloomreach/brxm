@@ -27,8 +27,8 @@ public interface PageCacheKey extends Serializable {
      * <p>
      *  All the combined attributes will make up the final {@link PageCacheKey}. Note that the <b>ORDER</b> in which the
      *  attributes are set <b>DO</b> influence the final created cachekey. Make sure that your added keyFragment object
-     *  have a decent{@link #hashCode()} and {@link #equals(Object)} implementation that is also efficient as it will
-     *  be used when storing objects in a cache with key {@link PageCacheKey}.
+     *  have a decent{@link Object#hashCode()} and {@link Object#equals(Object)} implementation that is also efficient
+     *  as it will be used when storing objects in a cache with key {@link PageCacheKey}.
      * </p>
      * <p>
      *     The <code>subKey</code> can best be prefixed by namespacing (FQN of class calling the setAttribute) to

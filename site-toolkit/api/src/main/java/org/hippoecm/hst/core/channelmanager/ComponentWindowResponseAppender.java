@@ -21,7 +21,7 @@ import org.hippoecm.hst.core.container.HstComponentWindow;
 
 /**
  * When a request is in {@link org.hippoecm.hst.core.request.HstRequestContext#isCmsRequest()} mode, extra info, for
- * example html comments or response headers, can be rendered per component window. The {@Link #append}
+ * example html comments or response headers, can be rendered per component window. The {@link #process}
  * gets invoked before the actual {@link HstComponentWindow} writes to the {@link javax.servlet.http.HttpServletResponse}
  */
 public interface ComponentWindowResponseAppender {
