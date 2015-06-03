@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -19,55 +19,65 @@
     <div wicket:id="toolbar-container-holder">
       <div class="hippo-toolbar-menu">
         <ul class="hippo-toolbar-section">
-          <li class="icon-16">
-            <a wicket:id="add-category" class="menu-action" href="#">
-              <span class="menu-action-icon">
-                <img wicket:id="add-category-icon" />
-              </span>
-              <span class="menu-action-text">
-                <wicket:message key="add-category-text" />
-              </span>
-            </a>
+          <li class="menu-item">
+            <span>
+              <a wicket:id="add-category" class="menu-action" href="#">
+                <span class="menu-action-icon">
+                  <img wicket:id="add-category-icon" />
+                </span>
+                <span class="menu-action-text">
+                  <wicket:message key="add-category-text" />
+                </span>
+              </a>
+            </span>
           </li>
-          <li class="icon-16">
-            <a wicket:id="remove-category" class="menu-action" href="#">
-              <span class="menu-action-icon">
-                <img wicket:id="remove-category-icon" />
-              </span>
-              <span class="menu-action-text">
-                <wicket:message key="remove-category-text" />
-              </span>
-            </a>
+          <li class="menu-item">
+            <span>
+              <a wicket:id="remove-category" class="menu-action" href="#">
+                <span class="menu-action-icon">
+                  <img wicket:id="remove-category-icon" />
+                </span>
+                <span class="menu-action-text">
+                  <wicket:message key="remove-category-text" />
+                </span>
+              </a>
+            </span>
           </li>
-          <li class="icon-16">
-            <a wicket:id="move-category" class="menu-action" href="#">
-              <span class="menu-action-icon">
-                <img wicket:id="move-category-icon" />
-              </span>
-              <span class="menu-action-text">
-                <wicket:message key="move-category-text" />
-              </span>
-            </a>
+          <li class="menu-item">
+            <span>
+              <a wicket:id="move-category" class="menu-action" href="#">
+                <span class="menu-action-icon">
+                  <img wicket:id="move-category-icon" />
+                </span>
+                <span class="menu-action-text">
+                  <wicket:message key="move-category-text" />
+                </span>
+              </a>
+            </span>
           </li>
-          <li class="icon-16">
-            <a wicket:id="moveup-category" class="menu-action" href="#">
-              <span class="menu-action-icon">
-                <img wicket:id="moveup-category-icon" />
-              </span>
-              <span class="menu-action-text">
-                <wicket:message key="moveup-category-text" />
-              </span>
-            </a>
+          <li class="menu-item">
+            <span>
+              <a wicket:id="moveup-category" class="menu-action" href="#">
+                <span class="menu-action-icon">
+                  <img wicket:id="moveup-category-icon" />
+                </span>
+                <span class="menu-action-text">
+                  <wicket:message key="moveup-category-text" />
+                </span>
+              </a>
+            </span>
           </li>
-          <li class="icon-16">
-            <a wicket:id="movedown-category" class="menu-action" href="#">
-              <span class="menu-action-icon">
-                <img wicket:id="movedown-category-icon" />
-              </span>
-              <span class="menu-action-text">
-                <wicket:message key="movedown-category-text" />
-              </span>
-            </a>
+          <li class="menu-item">
+            <span>
+              <a wicket:id="movedown-category" class="menu-action" href="#">
+                <span class="menu-action-icon">
+                  <img wicket:id="movedown-category-icon" />
+                </span>
+                <span class="menu-action-text">
+                  <wicket:message key="movedown-category-text" />
+                </span>
+              </a>
+            </span>
           </li>
         </ul>
       </div>
@@ -135,12 +145,17 @@
             <tr>
               <td><wicket:message key="synonyms" />:</td>
               <td class="hippo-editor-field">
-                <div class="hippo-editor-field-subfield event"
-                  wicket:id="view">
-                  <div class="hippo-editor-field-subfield-controls">
-                    <a class="up-16 icon-16" wicket:id="up"></a>
-                    <a class="down-16 icon-16" wicket:id="down"></a>
-                    <a class="delete-16 icon-16" wicket:id="remove"></a>
+                <div class="hippo-editor-field-subfield event" wicket:id="view">
+                  <div class="hippo-editor-field-subfield-controls" wicket:id="controls">
+                    <a class="up-link" wicket:id="up">
+                      <span wicket:id="up-icon"></span>
+                    </a>
+                    <a class="down-link" wicket:id="down">
+                      <span wicket:id="down-icon"></span>
+                    </a>
+                    <a class="remove-link" wicket:id="remove">
+                      <span wicket:id="remove-icon"></span>
+                    </a>
                   </div>
                   <div class="hippo-editor-field-subfield-item">
                     <div class="hippo-editor-field-value">
@@ -150,7 +165,10 @@
                     </div>
                   </div>
                 </div>
-                <a class="add-16 icon-16" wicket:id="add"></a>
+                <a class="add-link btn btn-default btn-sm" wicket:id="add">
+                  <span wicket:id="add-icon"></span>
+                  <span class="button-label" wicket:id="add-label"></span>
+                </a>
               </td>
             </tr>
           </table>

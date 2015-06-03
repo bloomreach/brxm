@@ -42,7 +42,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugin Taxonomy</notice.project.name>
 
-    <hippo.cms.version>2.28.00</hippo.cms.version>
+    <hippo.cms.version>2.28.01-SNAPSHOT</hippo.cms.version>
     <hippo.repository.version>2.28.00</hippo.repository.version>
     <hippo.hst.version>2.30.00</hippo.hst.version>
 
@@ -109,6 +109,12 @@
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-api</artifactId>
+        <version>${hippo.cms.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-perspectives</artifactId>
         <version>${hippo.cms.version}</version>
         <scope>provided</scope>
       </dependency>

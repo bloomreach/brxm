@@ -2,12 +2,7 @@
 /LICENSE -text
 /NOTICE -text
 addon/frontend/pom.xml svneol=native#text/plain
-addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/res/move-category-16.png -text
-addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/res/movedown-category-16.png -text
-addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/res/moveup-category-16.png -text
-addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/res/new-category-16.png -text svneol=unset#image/png
 addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/res/picker-back.gif -text
-addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/res/remove-category-16.png -text svneol=unset#image/png
 addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/tree/CategoryNameComparator.java -text
 addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/tree/folder-closed.gif -text
 addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/tree/folder-open.gif -text

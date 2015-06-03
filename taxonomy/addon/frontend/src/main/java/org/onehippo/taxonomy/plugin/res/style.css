@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,15 @@
  */
 .taxonomy-tree {
     height: auto;
-    width: 50em;
     overflow: auto;
-    float: left;
     clear: both;
 }
 
 .taxonomy-tree .hippo-tree {
+  box-sizing: border-box;
   border: 1px solid #e3e3e3;
-  margin-right: 5px;
-  margin-left: 3px;
+  padding: 4px 0px;
+  margin-bottom: 12px;
 }
 
 .taxonomy-tree .hippo-tree .wicket-tree {
@@ -34,20 +33,6 @@
     white-space: nowrap;
     width: 100%;
     height: auto;
-}
-
-.taxonomy-tree .hippo-tree div.row, .taxonomy-tree .hippo-tree div.row-selected {
-    padding: 0;
-}
-
-.taxonomy-tree .hippo-tree .wicket-tree .row {
-    overflow: visible;
-    width: 100%;
-}
-
-.taxonomy-tree .hippo-tree .wicket-tree .row-selected {
-    overflow: visible;
-    width: 100%;
 }
 
 .taxonomy-tree-popup {
@@ -161,25 +146,22 @@ div.taxonomy-details a:hover {
   margin-top: 2px;
 }
 
-.taxonomy-editor .taxonomy-category {
-    width: 400px;
-    float: left;
-}
-
 .taxonomy-editor table {
     border: 1px solid #e3e3e3;
     width: 100%;
 }
 
-.taxonomy-editor td {
-    text-align: right;
+.taxonomy-editor  td,
+.taxonomy-details td {
+    text-align: left;
     vertical-align: top;
     margin: 5px;
     padding: 10px;
 }
 
-.taxonomy-editor td.hippo-editor-field {
-    text-align: left;
+.taxonomy-editor  tr td:first-child,
+.taxonomy-details tr td:first-child {
+    text-align: right;
 }
 
 .taxonomy-palette-picker table.palette {
@@ -213,17 +195,16 @@ div.taxonomy-details a:hover {
 
 .taxonomy-current-canon {
     padding-bottom: 8px;
-    padding-bottom: 8px;
     display: block;
 }
 
-.taxonomy-category {
-    float: left;
-    width: 400px;
+.taxonomy-category tr td:first-child,
+.taxonomy-details  tr td:first-child {
+    padding-top: 10px;
+    width: 100px;
 }
 
 .taxonomy-disabled-action {
-    border: 1px solid #e3e3e3;
     color: #bdbdbd;
     cursor: default;
     pointer-events: none;
@@ -244,4 +225,14 @@ div.taxonomy-details a:hover {
     font-weight: bold;
     padding: 10px;
     text-align: center;
+}
+
+.hippo-toolbar-menu .hippo-toolbar-section > li .menu-action .menu-action-icon .hi-times-circle,
+.hippo-toolbar-menu .hippo-toolbar-section > li.menu-item:hover a.menu-action .menu-action-icon .hi-times-circle {
+    color: #ffffff;
+}
+
+.hippo-preview-document .taxonomy-editor .hippo-editor-field select {
+    border: 1px solid #d4d6d8;
+    padding: 8px;
 }

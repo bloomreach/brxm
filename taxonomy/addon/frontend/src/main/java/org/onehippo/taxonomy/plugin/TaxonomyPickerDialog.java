@@ -24,6 +24,8 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin;
+import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.onehippo.taxonomy.plugin.model.Classification;
 import org.onehippo.taxonomy.plugin.model.TaxonomyModel;
 import org.slf4j.Logger;
@@ -86,8 +88,10 @@ public class TaxonomyPickerDialog extends AbstractDialog<Classification> {
                 log.warn("Invalid taxonomy picker type " + viewType + ", falling back to 'tree'");
             }
 
+            ITreeNodeIconProvider iconProvider = FolderTreePlugin.newTreeNodeIconProvider(context, config);
+
             add(browser = new TaxonomyBrowser("content", new Model<>(model.getObject()),
-                     taxonomyModel, preferredLocale, detailsReadOnly));
+                     taxonomyModel, preferredLocale, detailsReadOnly, iconProvider));
         }
     }
 

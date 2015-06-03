@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.List;
 import javax.swing.tree.TreeNode;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -38,6 +37,10 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.plugins.cms.browse.tree.yui.WicketTreeHelperBehavior;
+import org.hippoecm.frontend.plugins.cms.browse.tree.yui.WicketTreeHelperSettings;
+import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.CategoryInfo;
 import org.onehippo.taxonomy.plugin.api.TaxonomyHelper;
@@ -72,13 +75,14 @@ public class TaxonomyBrowser extends Panel {
      * Constructor which organizes the UI components in this panel.
      */
     public TaxonomyBrowser(String id, IModel<Classification> model, final TaxonomyModel taxonomyModel, String preferredLocale) {
-        this(id, model, taxonomyModel, preferredLocale, false);
+        this(id, model, taxonomyModel, preferredLocale, false, null);
     }
 
     /**
      * Constructor which organizes the UI components in this panel.
      */
-    public TaxonomyBrowser(String id, IModel<Classification> model, final TaxonomyModel taxonomyModel, String preferredLocale, final boolean detailsReadOnly) {
+    public TaxonomyBrowser(String id, IModel<Classification> model, final TaxonomyModel taxonomyModel,
+                           String preferredLocale, final boolean detailsReadOnly, final ITreeNodeIconProvider iconProvider) {
         super(id, model);
 
         this.taxonomyModel = taxonomyModel;
@@ -87,9 +91,15 @@ public class TaxonomyBrowser extends Panel {
 
         this.detailsReadOnly = detailsReadOnly;
 
-        String treeLocale = getPreferredLocale();
+        final IPluginConfig treeHelperMockConfig = new JavaPluginConfig();
+        treeHelperMockConfig.put("workflow.enabled", false);
+        final WicketTreeHelperBehavior treeHelperBehavior
+                = new WicketTreeHelperBehavior(new WicketTreeHelperSettings(treeHelperMockConfig));
+
+        final String treeLocale = getPreferredLocale();
         final Comparator<Category> categoryComparator = getCategoryComparator(taxonomyModel.getPluginConfig(), treeLocale);
-        TaxonomyTree tree = new TaxonomyTree("tree", new TaxonomyTreeModel(taxonomyModel, treeLocale, categoryComparator), treeLocale) {
+        final TaxonomyTreeModel treeModel = new TaxonomyTreeModel(taxonomyModel, treeLocale, categoryComparator);
+        final TaxonomyTree tree = new TaxonomyTree("tree", treeModel, treeLocale, iconProvider) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -108,11 +118,13 @@ public class TaxonomyBrowser extends Panel {
             }
 
             @Override
-            protected void decorateNodeLink(final MarkupContainer nodeLink, final TreeNode node, final int level) {
-                super.decorateNodeLink(nodeLink, node, level);
-                nodeLink.add(new AttributeModifier("class", "node-link"));
+            public void onTargetRespond(final AjaxRequestTarget target, boolean dirty) {
+                if (dirty) {
+                    target.appendJavaScript(treeHelperBehavior.getRenderString());
+                }
             }
         };
+        tree.add(treeHelperBehavior);
         add(tree);
 
         container = new WebMarkupContainer("container");

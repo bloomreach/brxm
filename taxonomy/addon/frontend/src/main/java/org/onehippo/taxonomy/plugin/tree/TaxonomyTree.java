@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,12 +20,21 @@ import java.util.Locale;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.request.Response;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.hippoecm.frontend.plugins.cms.browse.tree.CmsJcrTree;
+import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
+import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.widgets.ContextMenuTree;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.plugin.api.TaxonomyHelper;
@@ -34,10 +43,12 @@ public class TaxonomyTree extends ContextMenuTree {
     private static final long serialVersionUID = 1L;
 
     private String preferredLanguage;
+    private final ITreeNodeIconProvider treeNodeIconService;
 
-    public TaxonomyTree(String id, TreeModel model, String preferredLanguage) {
+    public TaxonomyTree(String id, TreeModel model, String preferredLanguage, ITreeNodeIconProvider treeNodeIconService) {
         super(id, model);
         this.preferredLanguage = preferredLanguage;
+        this.treeNodeIconService = treeNodeIconService;
         expandNode((AbstractNode) getModelObject().getRoot());
     }
 
@@ -139,5 +150,49 @@ public class TaxonomyTree extends ContextMenuTree {
         }
 
         return super.getLocale();
+    }
+
+    @Override
+    protected Component newNodeIcon(final MarkupContainer parent, final String id, final TreeNode node) {
+        if (treeNodeIconService != null) {
+            return new CmsJcrTree.NodeIconContainer(id, node, this, treeNodeIconService);
+        }
+        return super.newNodeIcon(parent, id, node);
+    }
+
+    /**
+     * code copied from org.hippoecm.frontend.plugins.cms.browse.tree.CmsJcrTree
+     */
+    @Override
+    protected MarkupContainer newJunctionImage(final MarkupContainer parent, final String id,
+                                               final TreeNode node)
+    {
+        return (MarkupContainer)new WebMarkupContainer(id)
+        {
+            private static final long serialVersionUID = 1L;
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            protected void onComponentTag(final ComponentTag tag)
+            {
+                super.onComponentTag(tag);
+
+                final Icon icon = node.isLeaf() ? Icon.BULLET :
+                        isNodeExpanded(node) ? Icon.CARET_DOWN : Icon.CARET_RIGHT;
+                final String cssClassOuter = isNodeLast(node) ? "junction-last" : "junction";
+
+                final Response response = RequestCycle.get().getResponse();
+                response.write("<span class=\"" + cssClassOuter + "\">");
+                response.write(icon.getSpriteReference(IconSize.S));
+                response.write("</span>");
+            }
+
+            private boolean isNodeLast(TreeNode node) {
+                TreeNode parent = node.getParent();
+                return parent == null || parent.getChildAt(parent.getChildCount() - 1).equals(node);
+            }
+        }.setRenderBodyOnly(true);
     }
 }
