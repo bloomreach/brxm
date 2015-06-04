@@ -24,6 +24,7 @@ import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -74,8 +75,12 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
     private static final String UPDATE_REGISTRY_PATH = UPDATE_PATH + "/hippo:registry";
     private static final String UPDATE_HISTORY_PATH = UPDATE_PATH + "/hippo:history";
 
+    private static final int REGISTRY_NODE_INDEX = 0;
+    private static final int HISTORY_NODE_INDEX = 2;
+
     private static final Label EMPTY_EDITOR = new Label("updater-editor");
     private static final Map<String, String> CUSTOM_NODE_LABELS = createNodeNameMap();
+
 
     private static Map<String, String> createNodeNameMap() {
         final Map<String, String> map = new HashMap<>();
@@ -87,7 +92,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
 
     private final IPluginContext context;
 
-    private final CmsJcrTree tree;
+    private final UpdaterTree tree;
     private final JcrTreeModel treeModel;
     private final Label title;
 
@@ -95,6 +100,104 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
     private String path;
 
     private final Form form;
+
+    private class UpdaterTree extends CmsJcrTree {
+
+        public UpdaterTree(final String id, final JcrTreeModel treeModel, final ITreeNodeTranslator treeNodeTranslator,
+                           final ITreeNodeIconProvider iconService) {
+            super(id, treeModel, treeNodeTranslator, iconService);
+        }
+
+        @Override
+        protected void populateTreeItem(final WebMarkupContainer item, final int level) {
+            super.populateTreeItem(item, level);
+            final Component nodeLink = item.get("nodeLink");
+            if (nodeLink != null) {
+                nodeLink.add(CssClass.append("node-link"));
+            }
+        }
+
+        @Override
+        protected void onNodeLinkClicked(final AjaxRequestTarget target, final TreeNode clickedNode) {
+            if (clickedNode instanceof IJcrTreeNode) {
+                ITreeState state = getTreeState();
+                if (state.isNodeExpanded(clickedNode)) {
+                    // super has already switched selection.
+                    if (!state.isNodeSelected(clickedNode)) {
+                        state.collapseNode(clickedNode);
+                    }
+                } else {
+                    state.expandNode(clickedNode);
+                }
+
+                IJcrTreeNode treeNodeModel = (IJcrTreeNode) clickedNode;
+                UpdaterPanel.this.setDefaultModel(treeNodeModel.getNodeModel());
+            }
+        }
+
+        @Override
+        protected ITreeState newTreeState() {
+            DefaultTreeState state = new DefaultTreeState();
+            treeModel.setTreeState(state);
+            state.expandAll();
+            return state;
+        }
+
+        @Override
+        protected Component newJunctionLink(final MarkupContainer parent, final String id, final String imageId, final TreeNode node) {
+            final MarkupContainer junctionLink = new WebMarkupContainer(id) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void onComponentTag(ComponentTag tag) {
+                    super.onComponentTag(tag);
+                    tag.put("onclick", "return false");
+                }
+            };
+            junctionLink.add(new Label("image"));
+
+            return junctionLink;
+        }
+
+        @Override
+        public String renderNode(TreeNode treeNode, int level) {
+            final String customNodeName = getCustomNodeName((IJcrTreeNode) treeNode);
+            return StringUtils.isEmpty(customNodeName) ? super.renderNode(treeNode, level) : customNodeName;
+        }
+
+        private String getCustomNodeName(final IJcrTreeNode treeNode) {
+            Node node = treeNode.getNodeModel().getObject();
+            if (node != null) {
+                try {
+                    final String nodeName = node.getName();
+                    final String label = CUSTOM_NODE_LABELS.get(nodeName);
+                    if (label != null) {
+                        return label;
+                    }
+                } catch (RepositoryException e) {
+                    log.error("Failed to render tree node", e);
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Expand the child node at the given <code>index</code>
+         *
+         * @param index Index of the child node, counting from 0.
+         */
+        public void expandNode(final int index) {
+            ITreeState state = tree.getTreeState();
+            final TreeModel thisTreeModel = (TreeModel) getDefaultModel().getObject();
+            final TreeNode root = (TreeNode) thisTreeModel.getRoot();
+            if (root != null) {
+                final TreeNode childNode = root.getChildAt(index);
+                if (childNode != null && (childNode instanceof JcrTreeNode) && !state.isNodeExpanded(childNode)) {
+                    state.expandNode(childNode);
+                }
+            }
+        }
+    }
 
     public UpdaterPanel(final String componentId, final IBreadCrumbModel breadCrumbModel, final IPluginContext context) {
         super(componentId, breadCrumbModel);
@@ -143,84 +246,14 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
             }
         });
 
-        tree = new CmsJcrTree("updater-tree", treeModel, newTreeNodeTranslator(), newTreeNodeIconProvider()) {
-
-            @Override
-            protected void populateTreeItem(final WebMarkupContainer item, final int level) {
-                super.populateTreeItem(item, level);
-                final Component nodeLink = item.get("nodeLink");
-                if (nodeLink != null) {
-                    nodeLink.add(CssClass.append("node-link"));
-                }
-            }
-
-            @Override
-            protected void onNodeLinkClicked(final AjaxRequestTarget target, final TreeNode clickedNode) {
-                if (clickedNode instanceof IJcrTreeNode) {
-                    ITreeState state = getTreeState();
-                    if (state.isNodeExpanded(clickedNode)) {
-                        // super has already switched selection.
-                        if (!state.isNodeSelected(clickedNode)) {
-                            state.collapseNode(clickedNode);
-                        }
-                    } else {
-                        state.expandNode(clickedNode);
-                    }
-
-                    IJcrTreeNode treeNodeModel = (IJcrTreeNode) clickedNode;
-                    UpdaterPanel.this.setDefaultModel(treeNodeModel.getNodeModel());
-                }
-            }
-
-            @Override
-            protected ITreeState newTreeState() {
-                DefaultTreeState state = new DefaultTreeState();
-                treeModel.setTreeState(state);
-                state.expandAll();
-                return state;
-            }
-
-            @Override
-            protected Component newJunctionLink(final MarkupContainer parent, final String id, final String imageId, final TreeNode node) {
-                final MarkupContainer junctionLink = new WebMarkupContainer(id) {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected void onComponentTag(ComponentTag tag) {
-                        super.onComponentTag(tag);
-                        tag.put("onclick", "return false");
-                    }
-                };
-                junctionLink.add(new Label("image"));
-
-                return junctionLink;
-            }
-
-            @Override
-            public String renderNode(TreeNode treeNode, int level) {
-                final String customNodeName = getCustomNodeName((IJcrTreeNode) treeNode);
-                return StringUtils.isEmpty(customNodeName) ? super.renderNode(treeNode, level) : customNodeName;
-            }
-
-            private String getCustomNodeName(final IJcrTreeNode treeNode) {
-                Node node = treeNode.getNodeModel().getObject();
-                if (node != null) {
-                    try {
-                        final String nodeName = node.getName();
-                        final String label = CUSTOM_NODE_LABELS.get(nodeName);
-                        if (label != null) {
-                            return label;
-                        }
-                    } catch (RepositoryException e) {
-                        log.error("Failed to render tree node", e);
-                    }
-                }
-                return null;
-            }
-        };
+        tree = new UpdaterTree("updater-tree", treeModel, newTreeNodeTranslator(), newTreeNodeIconProvider());
         tree.setRootLess(true);
         tree.setOutputMarkupId(true);
         add(tree);
+
+        // Expand registry and history nodes
+        tree.expandNode(REGISTRY_NODE_INDEX);
+        tree.expandNode(HISTORY_NODE_INDEX);
 
         editor = EMPTY_EDITOR;
         editor.setOutputMarkupId(true);

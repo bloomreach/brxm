@@ -23,14 +23,12 @@
         Hippo.toggleUpdaterScriptEditor = function () {
           var regEditor = $('.updater-registry-editor');
           var nonRegEditor = $('.updater-editor');
-          var feedback = $('.log-output');
           var toggleLink = $('#update-editor-toggle');
           var updaterScript = $('.script');
           if (regEditor && regEditor.length) {
             regEditor.toggleClass('updater-registry-editor-visible');
           } else if (nonRegEditor && nonRegEditor.length) {
             nonRegEditor.toggleClass('updater-editor-visible');
-            feedback.toggleClass('updater-shorter');
           }
           if (updaterScript) {
             updaterScript.toggleClass('updater-shorter');

@@ -277,6 +277,7 @@
   width: 100%;
   display: flex;
   flex-flow: column;
+  overflow: hidden;
 
   > * {
     display: flex;
@@ -329,6 +330,7 @@
 
     .updater-details {
       display: flex;
+      overflow-y: auto;
 
       flex: 1 0 auto;
       padding: 0 8px 8px 8px;
@@ -398,11 +400,11 @@
           max-width: 100px;
 
           overflow: auto;
-          resize: vertical;
 
           &.updater-shorter {
             border: 1px solid @light-gray;
             min-height: 110px;
+            resize: vertical;
           }
 
           .CodeMirror {
@@ -420,7 +422,7 @@
 
           max-width: 100px;
 
-          height: 380px;
+          height: 100px;
           resize: vertical;
 
           overflow: auto;
