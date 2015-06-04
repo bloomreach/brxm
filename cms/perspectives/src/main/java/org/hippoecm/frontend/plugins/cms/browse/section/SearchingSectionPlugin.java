@@ -255,31 +255,37 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         }
 
         boolean toBrowseMode = false;
-        if (collection.getType() == DocumentCollectionType.SEARCHRESULT && !BrowserHelper.isFolder(document)) {
-            toBrowseMode = true;
-            Node docNode = document.getObject();
-            if (docNode != null) {
-                BrowserSearchResult bsr = collection.getSearchResult().getObject();
-                QueryResult result = bsr.getQueryResult();
-                try {
-                    NodeIterator nodes = result.getNodes();
-                    while (nodes.hasNext()) {
-                        Node node = nodes.nextNode();
-                        if (node != null && node.getDepth() > 0) {
-                            Node parent = node.getParent();
-                            if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                                if (parent.isSame(docNode)) {
-                                    return;
-                                }
-                            } else {
-                                if (node.isSame(docNode)) {
-                                    return;
+        if (collection.getType() == DocumentCollectionType.SEARCHRESULT) {
+            if (!BrowserHelper.isFolder(document)) {
+                toBrowseMode = true;
+                Node docNode = document.getObject();
+                if (docNode != null) {
+                    BrowserSearchResult bsr = collection.getSearchResult().getObject();
+                    QueryResult result = bsr.getQueryResult();
+                    try {
+                        NodeIterator nodes = result.getNodes();
+                        while (nodes.hasNext()) {
+                            Node node = nodes.nextNode();
+                            if (node != null && node.getDepth() > 0) {
+                                Node parent = node.getParent();
+                                if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                                    if (parent.isSame(docNode)) {
+                                        return;
+                                    }
+                                } else {
+                                    if (node.isSame(docNode)) {
+                                        return;
+                                    }
                                 }
                             }
                         }
+                    } catch (RepositoryException ex) {
+                        log.error("Error processing query results", ex);
+                        return;
                     }
-                } catch (RepositoryException ex) {
-                    log.error("Error processing query results", ex);
+                }
+            } else {
+                if (document.equals(folderService.getModel())) {
                     return;
                 }
             }
@@ -288,10 +294,6 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         IModel<Node> folder = document;
         while (!BrowserHelper.isFolder(folder)) {
             folder = BrowserHelper.getParent(folder);
-        }
-
-        if (folderIsSame(folder)) {
-            return;
         }
 
         folderService.updateModel(folder);
@@ -344,14 +346,6 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             }
         };
         return HippoIcon.fromSprite(id, iconModel);
-    }
-
-    private boolean folderIsSame(IModel<Node> folder) {
-        IModel<Node> folderServiceModel = folderService.getModel();
-        if (folderServiceModel == null) {
-            return folder == null;
-        }
-        return folderServiceModel.equals(folder);
     }
 
     private class SubmittingTextField extends TextField<String> implements IFormSubmittingComponent {
