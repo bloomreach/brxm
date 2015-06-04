@@ -41,7 +41,7 @@
   <properties>
     <hippo.release.version>10.0.2-SNAPSHOT</hippo.release.version>
 
-    <hippo.addon-hst-configuration-editor.version>1.15.00</hippo.addon-hst-configuration-editor.version>
+    <hippo.addon-hst-configuration-editor.version>1.15.01-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
     <hippo.addon-channel-manager.version>2.28.01-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-search-service.version>1.04.00</hippo.addon-search-service.version>
     <hippo.commons.version>1.05.00</hippo.commons.version>
