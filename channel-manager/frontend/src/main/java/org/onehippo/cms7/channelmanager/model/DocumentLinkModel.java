@@ -84,15 +84,17 @@ public class DocumentLinkModel implements IModel<String> {
     }
 
     private String getDocumentName(final String path) {
-        final javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+        if(path.startsWith(rootPath)) {
+            final javax.jcr.Session session = ((UserSession)Session.get()).getJcrSession();
 
-        try {
-            final Node node = session.getNode(path);
-            if (node instanceof HippoNode) {
-                return ((HippoNode)node).getLocalizedName();
+            try {
+                final Node node = session.getNode(path);
+                if (node instanceof HippoNode) {
+                    return ((HippoNode)node).getLocalizedName();
+                }
+            } catch (RepositoryException e) {
+                log.warn("Cannot retrieve node with path '" + path + "'", e);
             }
-        } catch (RepositoryException e) {
-            log.warn("Cannot retrieve node with path '" + path + "'", e);
         }
 
         return StringUtils.EMPTY;
