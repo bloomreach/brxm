@@ -36,6 +36,7 @@ import org.junit.Test;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getProperties;
+import static org.junit.Assert.fail;
 
 public class ParametersInfoProcessorTest {
 
@@ -671,9 +672,14 @@ public class ParametersInfoProcessorTest {
     }
 
     @Test
-    public void assertUnusedMethods() throws NoSuchMethodException {
-        ParametersInfoProcessor.class.getMethod("setValueForProperties", List.class, String.class, HstComponentParameters.class);
-        ParametersInfoProcessor.class.getMethod("setValueForProperty", ContainerItemComponentPropertyRepresentation.class, String.class, HstComponentParameters.class);
+    public void assert_methods_setValueForX_are_not_removed_since_in_use_by_downstream_projects() {
+        try {
+            ParametersInfoProcessor.class.getMethod("setValueForProperties", List.class, String.class, HstComponentParameters.class);
+            ParametersInfoProcessor.class.getMethod("setValueForProperty", ContainerItemComponentPropertyRepresentation.class, String.class, HstComponentParameters.class);
+        } catch (NoSuchMethodException e) {
+            fail(String.format("Although method unused with HST, it is in used by downstream projects and is not allowed to be " +
+                    "removed : %s", e.toString()));
+        }
     }
 
 }
