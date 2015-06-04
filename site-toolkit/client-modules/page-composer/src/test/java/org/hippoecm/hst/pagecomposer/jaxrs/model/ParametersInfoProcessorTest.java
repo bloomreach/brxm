@@ -677,7 +677,7 @@ public class ParametersInfoProcessorTest {
             ParametersInfoProcessor.class.getMethod("setValueForProperties", List.class, String.class, HstComponentParameters.class);
             ParametersInfoProcessor.class.getMethod("setValueForProperty", ContainerItemComponentPropertyRepresentation.class, String.class, HstComponentParameters.class);
         } catch (NoSuchMethodException e) {
-            fail(String.format("Although method unused with HST, it is in used by downstream projects and is not allowed to be " +
+            fail(String.format("Although the method is not used in HST, it is used by downstream projects and is not allowed to be " +
                     "removed : %s", e.toString()));
         }
     }
