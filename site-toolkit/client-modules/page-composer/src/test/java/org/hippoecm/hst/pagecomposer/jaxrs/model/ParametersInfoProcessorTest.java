@@ -30,6 +30,7 @@ import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -667,6 +668,12 @@ public class ParametersInfoProcessorTest {
     private void assertNameAndGroupLabel(ContainerItemComponentPropertyRepresentation property, String name, String groupLabel) {
         assertEquals("name", name, property.getName());
         assertEquals("group label", groupLabel, property.getGroupLabel());
+    }
+
+    @Test
+    public void assertUnusedMethods() throws NoSuchMethodException {
+        ParametersInfoProcessor.class.getMethod("setValueForProperties", List.class, String.class, HstComponentParameters.class);
+        ParametersInfoProcessor.class.getMethod("setValueForProperty", ContainerItemComponentPropertyRepresentation.class, String.class, HstComponentParameters.class);
     }
 
 }

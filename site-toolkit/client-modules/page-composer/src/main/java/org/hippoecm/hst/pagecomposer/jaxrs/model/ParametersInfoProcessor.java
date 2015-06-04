@@ -104,6 +104,10 @@ public class ParametersInfoProcessor {
         return properties;
     }
 
+    /**
+     * Method used by downstream projects.
+     */
+    @SuppressWarnings("UnusedDeclaration")
     public static void setValueForProperties(final List<ContainerItemComponentPropertyRepresentation> properties,
                                              final String prefix,
                                              final HstComponentParameters componentParameters) {
@@ -118,6 +122,10 @@ public class ParametersInfoProcessor {
         }
     }
 
+    /**
+     * Method used by downstream projects.
+     */
+    @SuppressWarnings("UnusedDeclaration")
     public static void setValueForProperty(final ContainerItemComponentPropertyRepresentation property,
                                            final String prefix,
                                            final HstComponentParameters componentParameters) {
