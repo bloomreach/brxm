@@ -146,6 +146,13 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
             }
             for(int i = 0; i < sortbys.length; i++) {
                 try {
+                    if (sortbys[i].equals("")) {
+                        log.warn("Skipping illegal name \"\" as sortby for facet node {}", nodeId);
+                        // we always need to populate the count
+                        populateCount(state, 0);
+                        return state;
+                    }
+
                     Name propertyName = resolveName(NodeNameCodec.encode(sortbys[i]));
                     if(sortorders != null && "descending".equals(sortorders[i])) {
                         orderByList.add(new OrderBy(propertyName.toString(), true));
@@ -153,8 +160,11 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
                         // default orderby is ascending
                         orderByList.add(new OrderBy(propertyName.toString()));
                     }
-                } catch (IllegalNameException|NamespaceException|IllegalArgumentException e) {
+                } catch (IllegalNameException|NamespaceException e) {
                     log.warn("Skipping illegal name \"{}\" as sortby for facet node {} because: ", sortbys[i], nodeId, e.getMessage());
+                    // we always need to populate the count
+                    populateCount(state, 0);
+                    return state;
                 }
             }
         }
@@ -198,10 +208,11 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
                     inheritParentFilters(childNodeId, state);
                     state.addChildNodeEntry(childName, childNodeId);
                     
-                } catch (IllegalNameException e){
+                } catch (IllegalNameException|NamespaceException e) {
                     log.warn("Skipping illegal name as facet : " + facetNodeView.facet + " because : " +  e.getMessage());
-                } catch (NamespaceException e) {
-                    log.warn("Skipping illegal name as facet : " + facetNodeView.facet + " because : " +  e.getMessage());
+                    // we always need to populate the count
+                    populateCount(state, 0);
+                    return state;
                 }
             }
         } catch (IllegalArgumentException e) {
@@ -249,8 +260,8 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
             
             facetedResult = facetedEngine.view(null, initialQuery, facetedContext, new ArrayList<KeyValue<String, String>>(), null, (context != null ? context.getParameterQuery(facetedEngine) : null),
                 null, inheritedFilterMap , hitsRequested);
-            
-         
+
+
         } catch (IllegalArgumentException e) {
             log.warn("Cannot get the faceted result: '"+e.getMessage()+"'");
             // we always need to populate the count
