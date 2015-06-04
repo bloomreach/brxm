@@ -498,10 +498,10 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
                 return Icon.CHEVRON_DOWN_CIRCLE;
             }
             case "left": {
-                return Icon.CHEVRON_DOWN_CIRCLE;
+                return Icon.CHEVRON_LEFT_CIRCLE;
             }
             case "right": {
-                return Icon.CHEVRON_DOWN_CIRCLE;
+                return Icon.CHEVRON_RIGHT_CIRCLE;
             }
         }
         return null;
