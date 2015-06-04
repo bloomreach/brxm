@@ -299,15 +299,33 @@
       color: @white;
 
       &:hover {
-        color: @primary;
+        fill: @primary;
         text-decoration: none;
       }
-
     }
 
-    .remove-field:hover {
-      color: @danger;
+    .remove-button .hi {
+      fill: @dark-shade;
+
+      &:hover {
+        fill: @danger;
+      }
     }
+  }
+}
+
+.active > .hippo-editor-template-field > .hippo-editor-template-field-controls {
+
+  .hi {
+    fill: #1764C2;
+
+    &:hover {
+      fill: @info;
+    }
+  }
+
+  .remove-button .hi:hover {
+    fill: @danger;
   }
 }
 
