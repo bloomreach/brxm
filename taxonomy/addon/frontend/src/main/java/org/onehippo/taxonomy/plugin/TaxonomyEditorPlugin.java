@@ -216,6 +216,10 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         tree.add(treeHelperBehavior);
         add(tree);
 
+        // Select the root tree node
+        TreeNode rootNode = (TreeNode) tree.getModelObject().getRoot();
+        tree.getTreeState().selectNode(rootNode, true);
+
         holder = new WebMarkupContainer("container-holder");
         holder.setOutputMarkupId(true);
 
@@ -223,296 +227,23 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         toolbarHolder.setOutputMarkupId(true);
 
         if (editing) {
-            addCategory = new AjaxLink<Void>("add-category") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void onClick(AjaxRequestTarget target) {
-                    IDialogService dialogService = getDialogService();
-                    dialogService.show(new NewCategoryDialog(taxonomyModel) {
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        protected boolean useKeyUrlEncoding() {
-                            return useUrlKeyEncoding;
-                        }
-
-                        @Override
-                        protected StringCodec getNodeNameCodec() {
-                            final ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID, ISettingsService.class);
-                            final StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
-                            final StringCodec stringCodec = stringCodecFactory.getStringCodec("encoding.node");
-                            if (stringCodec == null) {
-                                // fallback to non-configured
-                                return new StringCodecFactory.UriEncoding();
-                            }
-                            return stringCodec;
-                        }
-
-                        @Override
-                        protected void onOk() {
-                            EditableCategory category = taxonomy.getCategoryByKey(key);
-                            AbstractNode node;
-                            if (category != null) {
-                                node = new CategoryNode(new CategoryModel(taxonomyModel, key), currentLanguageSelection.getLanguageCode(), categoryComparator);
-                            } else {
-                                node = new TaxonomyNode(taxonomyModel, currentLanguageSelection.getLanguageCode(), categoryComparator);
-                            }
-                            try {
-                                String newKey = getKey();
-                                Category newCategory;
-                                if (category != null) {
-                                    newCategory = category.addCategory(newKey, getName(), currentLanguageSelection.getLanguageCode(), taxonomyModel);
-                                } else {
-                                    newCategory = taxonomy.addCategory(newKey, getName(), currentLanguageSelection.getLanguageCode());
-                                }
-                                TreeNode child = new CategoryNode(new CategoryModel(taxonomyModel, newKey), currentLanguageSelection.getLanguageCode(), categoryComparator);
-                                tree.getTreeState().selectNode(child, true);
-                                key = newKey;
-                                updateToolbarForCategory(newCategory);
-                            } catch (TaxonomyException e) {
-                                error(e.getMessage());
-                            }
-                            tree.expandNode(node);
-                            tree.markNodeChildrenDirty(node);
-                            redraw();
-                        }
-                    });
-                }
-
-            };
-            addCategory.add(HippoIcon.fromSprite("add-category-icon", Icon.PLUS));
+            addCategory = new AddButton(taxonomyModel, categoryComparator);
             toolbarHolder.add(addCategory);
 
-            moveCategory = new AjaxLink<Void>("move-category") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void onClick(AjaxRequestTarget target) {
-                    IDialogService dialogService = getDialogService();
-                    final List<String> keys = new ArrayList<>();
-                    final Model<String> classificationIdModel = new Model<>();
-                    final Classification classification = new Classification(keys, classificationIdModel);
-                    final IModel<Classification> classificationModel = Model.of(classification);
-
-                    TaxonomyModel taxonomyModel;
-
-                    try {
-                        taxonomyModel = new TaxonomyModel(context, config, null, taxonomy.getName(),
-                                new JcrNodeModel(taxonomy.getJcrNode()));
-                    } catch (RepositoryException e) {
-                        log.error("Failed to read taxonomy document variant node model.", e);
-                        return;
-                    }
-
-                    dialogService.show(new TaxonomyPickerDialog(context, config, classificationModel,
-                            currentLanguageSelection.getLanguageCode(), taxonomyModel, true) {
-                        private static final long serialVersionUID = 1L;
-                        @Override
-                        protected void onOk() {
-                            final String destParentCategoryKey = getCurrentCategoryKey();
-
-                            if (StringUtils.equals(key, destParentCategoryKey)) {
-                                error(new StringResourceModel("cannot-move-category-to-itself", TaxonomyEditorPlugin.this, null, new NameModel()).getString());
-                            } else if (destParentCategoryKey != null) {
-                                try {
-                                    EditableCategory destParentCategory = taxonomy.getCategoryByKey(destParentCategoryKey);
-                                    EditableCategory srcCategory = taxonomy.getCategoryByKey(key);
-                                    TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
-                                    CategoryNode destParentCategoryNode = taxonomyRoot.findCategoryNodeByKey(destParentCategoryKey);
-                                    CategoryNode srcCategoryNode = taxonomyRoot.findCategoryNodeByKey(key);
-
-                                    if (srcCategory != null && srcCategoryNode != null && destParentCategoryNode != null) {
-                                        srcCategory.move(destParentCategory);
-                                        destParentCategoryNode.getChildren(true);
-                                        treeModel.reload(destParentCategoryNode);
-                                        tree.expandAllToNode(destParentCategoryNode);
-                                        ((AbstractNode) srcCategoryNode.getParent()).getChildren(true);
-                                        treeModel.reload(srcCategoryNode.getParent());
-                                        updateToolbarForCategory(srcCategory);
-                                        redraw();
-                                    }
-                                } catch (TaxonomyException e) {
-                                    error(e.getMessage());
-                                }
-                            } else if (isTaxonomyRootSelected()) {
-                                try {
-                                    EditableCategory srcCategory = taxonomy.getCategoryByKey(key);
-                                    TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
-                                    CategoryNode srcCategoryNode = taxonomyRoot.findCategoryNodeByKey(key);
-
-                                    if (srcCategory != null && srcCategoryNode != null) {
-                                        srcCategory.move(taxonomy);
-                                        taxonomyRoot.getChildren(true);
-                                        treeModel.reload(taxonomyRoot);
-                                        updateToolbarForCategory(srcCategory);
-                                        redraw();
-                                    }
-                                } catch (TaxonomyException e) {
-                                    error(e.getMessage());
-                                }
-                            }
-
-                            super.onOk();
-                        }
-                    });
-                }
-
-            };
-            moveCategory.add(HippoIcon.fromSprite("move-category-icon", Icon.MOVE_INTO));
+            moveCategory = new MoveButton(context, config);
             toolbarHolder.add(moveCategory);
 
-
-            removeCategory = new AjaxLink<Void>("remove-category") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void onClick(AjaxRequestTarget target) {
-                    IDialogService dialogService = getDialogService();
-
-                    final TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
-                    final CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
-
-                    if (!categoryNode.isLeaf()) {
-                        dialogService.show(
-                                new ConfirmDialog(
-                                        new StringResourceModel("cannot-remove-category-title", this, null),
-                                        new StringResourceModel("cannot-remove-nonleaf-category-message", this, null, new NameModel()),
-                                        null, null) {
-                                    private static final long serialVersionUID = 1L;
-                                    {
-                                        setCancelVisible(false);
-                                    }
-                                    @Override
-                                    public void invokeWorkflow() throws Exception {
-                                    }
-                                    @Override
-                                    public IValueMap getProperties() {
-                                        return DialogConstants.SMALL;
-                                    }
-                                });
-                    } else {
-                        final Set<String> referringDocumentHandlePaths = getClassifiedDocumentHandlesByCategoryKey(key, 10);
-
-                        if (referringDocumentHandlePaths.isEmpty()) {
-                            dialogService.show(
-                                    new ConfirmDialog(
-                                            new StringResourceModel("remove-category-confirm-title", this, null),
-                                            new StringResourceModel("remove-category-confirm-message", this, null, new NameModel())) {
-                                        private static final long serialVersionUID = 1L;
-
-                                        @Override
-                                        public void invokeWorkflow() throws Exception {
-                                            try {
-                                                final EditableCategory category = taxonomy.getCategoryByKey(key);
-                                                TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
-                                                CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
-
-                                                if (category != null && categoryNode != null) {
-                                                    category.remove();
-                                                    ((AbstractNode) categoryNode.getParent()).getChildren(true);
-                                                    treeModel.reload(categoryNode.getParent());
-                                                    redraw();
-                                                }
-                                            } catch (TaxonomyException e) {
-                                                error(e.getMessage());
-                                            }
-                                        }
-                                    });
-                        } else {
-                            dialogService.show(
-                                    new ConfirmDialog(
-                                            new StringResourceModel("cannot-remove-category-title", this, null),
-                                            new StringResourceModel("cannot-remove-category-message", this, null, new NameModel()),
-                                            new Model<>(StringUtils.join(referringDocumentHandlePaths, "\n")),
-                                            null) {
-                                        private static final long serialVersionUID = 1L;
-                                        {
-                                            setCancelVisible(false);
-                                        }
-                                        @Override
-                                        public void invokeWorkflow() throws Exception {
-                                        }
-                                        @Override
-                                        public IValueMap getProperties() {
-                                            return DialogConstants.LARGE;
-                                        }
-                                    });
-                        }
-                    }
-                }
-
-            };
-            removeCategory.add(HippoIcon.fromSprite("remove-category-icon", Icon.TIMES_CIRCLE));
+            removeCategory = new RemoveButton();
             toolbarHolder.add(removeCategory);
 
-            moveupCategory = new AjaxLink<Void>("moveup-category") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void onClick(AjaxRequestTarget target) {
-                    try {
-                        EditableCategory category = taxonomy.getCategoryByKey(key);
-                        TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
-                        CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
-
-                        if (category != null && categoryNode != null) {
-                            if (category.moveUp()) {
-                                ((AbstractNode) categoryNode.getParent()).getChildren(true);
-                                treeModel.reload(categoryNode.getParent());
-                                updateToolbarForCategory(category);
-                                redraw();
-                            }
-                        }
-                    } catch (TaxonomyException e) {
-                        error(e.getMessage());
-                    }
-                }
-
-            };
-            moveupCategory.add(HippoIcon.fromSprite("moveup-category-icon", Icon.ARROW_UP));
-            if (categoryComparator != null) {
-                moveupCategory.setVisible(false);
-            }
+            moveupCategory = new MoveUpButton(categoryComparator);
             toolbarHolder.add(moveupCategory);
 
-            movedownCategory = new AjaxLink<Void>("movedown-category") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void onClick(AjaxRequestTarget target) {
-                    try {
-                        EditableCategory category = taxonomy.getCategoryByKey(key);
-                        TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
-                        CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
-
-                        if (category != null && categoryNode != null) {
-                            if (category.moveDown()) {
-                                ((AbstractNode) categoryNode.getParent()).getChildren(true);
-                                treeModel.reload(categoryNode.getParent());
-                                updateToolbarForCategory(category);
-                                redraw();
-                            }
-                        }
-                    } catch (TaxonomyException e) {
-                        error(e.getMessage());
-                    }
-                }
-
-            };
-            movedownCategory.add(HippoIcon.fromSprite("movedown-category-icon", Icon.ARROW_DOWN));
-            if (categoryComparator != null) {
-                movedownCategory.setVisible(false);
-            }
+            movedownCategory = new MoveDownButton(categoryComparator);
             toolbarHolder.add(movedownCategory);
-
-            // Select the root tree node, and enable or disable toolbar menu actions.
-            TreeNode rootNode = (TreeNode) tree.getModelObject().getRoot();
-            tree.getTreeState().selectNode(rootNode, true);
 
             updateToolbarForCategory(null);
         } else {
-            // hide the toolbar in view mode.
             toolbarHolder.setVisible(false);
         }
 
@@ -744,8 +475,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     protected void redraw() {
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         if (target != null) {
-            if (toolbarHolder.iterator().hasNext())
-            target.add(toolbarHolder);
+            if (toolbarHolder.size() > 0) {
+                target.add(toolbarHolder);
+            }
             target.add(holder);
         } else {
             super.redraw();
@@ -1042,6 +774,315 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         }
 
         return handleNodePaths;
+
+    }
+
+    private class AddButton extends AjaxLink<Void> {
+
+        private final IModel<Taxonomy> taxonomyModel;
+        private final Comparator<Category> categoryComparator;
+
+        public AddButton(final IModel<Taxonomy> taxonomyModel, final Comparator<Category> categoryComparator) {
+            super("add-category");
+
+            this.taxonomyModel = taxonomyModel;
+            this.categoryComparator = categoryComparator;
+
+            add(HippoIcon.fromSprite("add-category-icon", Icon.PLUS));
+        }
+
+        @Override
+        public void onClick(AjaxRequestTarget target) {
+            IDialogService dialogService = getDialogService();
+            dialogService.show(new NewCategoryDialog(taxonomyModel) {
+
+                @Override
+                protected boolean useKeyUrlEncoding() {
+                    return useUrlKeyEncoding;
+                }
+
+                @Override
+                protected StringCodec getNodeNameCodec() {
+                    final ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID, ISettingsService.class);
+                    final StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
+                    final StringCodec stringCodec = stringCodecFactory.getStringCodec("encoding.node");
+                    if (stringCodec == null) {
+                        // fallback to non-configured
+                        return new StringCodecFactory.UriEncoding();
+                    }
+                    return stringCodec;
+                }
+
+                @Override
+                protected void onOk() {
+                    EditableCategory category = taxonomy.getCategoryByKey(key);
+                    AbstractNode node;
+                    if (category != null) {
+                        node = new CategoryNode(new CategoryModel(taxonomyModel, key), currentLanguageSelection.getLanguageCode(), categoryComparator);
+                    } else {
+                        node = new TaxonomyNode(taxonomyModel, currentLanguageSelection.getLanguageCode(), categoryComparator);
+                    }
+                    try {
+                        String newKey = getKey();
+                        Category newCategory;
+                        if (category != null) {
+                            newCategory = category.addCategory(newKey, getName(), currentLanguageSelection.getLanguageCode(), taxonomyModel);
+                        } else {
+                            newCategory = taxonomy.addCategory(newKey, getName(), currentLanguageSelection.getLanguageCode());
+                        }
+                        TreeNode child = new CategoryNode(new CategoryModel(taxonomyModel, newKey), currentLanguageSelection.getLanguageCode(), categoryComparator);
+                        tree.getTreeState().selectNode(child, true);
+                        key = newKey;
+                        updateToolbarForCategory(newCategory);
+                    } catch (TaxonomyException e) {
+                        error(e.getMessage());
+                    }
+                    tree.expandNode(node);
+                    tree.markNodeChildrenDirty(node);
+                    redraw();
+                }
+            });
+        }
+
+    }
+
+    private class MoveButton extends AjaxLink<Void> {
+
+        private final IPluginContext context;
+        private final IPluginConfig config;
+
+        public MoveButton(final IPluginContext context, final IPluginConfig config) {
+            super("move-category");
+
+            this.context = context;
+            this.config = config;
+
+            add(HippoIcon.fromSprite("move-category-icon", Icon.MOVE_INTO));
+        }
+
+        @Override
+        public void onClick(AjaxRequestTarget target) {
+            IDialogService dialogService = getDialogService();
+            final List<String> keys = new ArrayList<>();
+            final Model<String> classificationIdModel = new Model<>();
+            final Classification classification = new Classification(keys, classificationIdModel);
+            final IModel<Classification> classificationModel = Model.of(classification);
+
+            TaxonomyModel taxonomyModel;
+
+            try {
+                taxonomyModel = new TaxonomyModel(context, config, null, taxonomy.getName(),
+                        new JcrNodeModel(taxonomy.getJcrNode()));
+            } catch (RepositoryException e) {
+                log.error("Failed to read taxonomy document variant node model.", e);
+                return;
+            }
+
+            dialogService.show(new TaxonomyPickerDialog(context, config, classificationModel,
+                    currentLanguageSelection.getLanguageCode(), taxonomyModel, true) {
+
+                @Override
+                protected void onOk() {
+                    final String destParentCategoryKey = getCurrentCategoryKey();
+
+                    if (StringUtils.equals(key, destParentCategoryKey)) {
+                        error(new StringResourceModel("cannot-move-category-to-itself", TaxonomyEditorPlugin.this, null, new NameModel()).getString());
+                    } else if (destParentCategoryKey != null) {
+                        try {
+                            EditableCategory destParentCategory = taxonomy.getCategoryByKey(destParentCategoryKey);
+                            EditableCategory srcCategory = taxonomy.getCategoryByKey(key);
+                            TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
+                            CategoryNode destParentCategoryNode = taxonomyRoot.findCategoryNodeByKey(destParentCategoryKey);
+                            CategoryNode srcCategoryNode = taxonomyRoot.findCategoryNodeByKey(key);
+
+                            if (srcCategory != null && srcCategoryNode != null && destParentCategoryNode != null) {
+                                srcCategory.move(destParentCategory);
+                                destParentCategoryNode.getChildren(true);
+                                treeModel.reload(destParentCategoryNode);
+                                tree.expandAllToNode(destParentCategoryNode);
+                                ((AbstractNode) srcCategoryNode.getParent()).getChildren(true);
+                                treeModel.reload(srcCategoryNode.getParent());
+                                updateToolbarForCategory(srcCategory);
+                                redraw();
+                            }
+                        } catch (TaxonomyException e) {
+                            error(e.getMessage());
+                        }
+                    } else if (isTaxonomyRootSelected()) {
+                        try {
+                            EditableCategory srcCategory = taxonomy.getCategoryByKey(key);
+                            TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
+                            CategoryNode srcCategoryNode = taxonomyRoot.findCategoryNodeByKey(key);
+
+                            if (srcCategory != null && srcCategoryNode != null) {
+                                srcCategory.move(taxonomy);
+                                taxonomyRoot.getChildren(true);
+                                treeModel.reload(taxonomyRoot);
+                                updateToolbarForCategory(srcCategory);
+                                redraw();
+                            }
+                        } catch (TaxonomyException e) {
+                            error(e.getMessage());
+                        }
+                    }
+
+                    super.onOk();
+                }
+            });
+        }
+
+    }
+
+    private class RemoveButton extends AjaxLink<Void> {
+
+        public RemoveButton() {
+            super("remove-category");
+            add(HippoIcon.fromSprite("remove-category-icon", Icon.TIMES_CIRCLE));
+        }
+
+        @Override
+        public void onClick(AjaxRequestTarget target) {
+            IDialogService dialogService = getDialogService();
+
+            final TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
+            final CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
+
+            if (!categoryNode.isLeaf()) {
+                dialogService.show(
+                        new ConfirmDialog(
+                                new StringResourceModel("cannot-remove-category-title", this, null),
+                                new StringResourceModel("cannot-remove-nonleaf-category-message", this, null, new NameModel()),
+                                null, null) {
+                            private static final long serialVersionUID = 1L;
+                            {
+                                setCancelVisible(false);
+                            }
+                            @Override
+                            public void invokeWorkflow() throws Exception {
+                            }
+                            @Override
+                            public IValueMap getProperties() {
+                                return DialogConstants.SMALL;
+                            }
+                        });
+            } else {
+                final Set<String> referringDocumentHandlePaths = getClassifiedDocumentHandlesByCategoryKey(key, 10);
+
+                if (referringDocumentHandlePaths.isEmpty()) {
+                    dialogService.show(
+                            new ConfirmDialog(
+                                    new StringResourceModel("remove-category-confirm-title", this, null),
+                                    new StringResourceModel("remove-category-confirm-message", this, null, new NameModel())) {
+                                private static final long serialVersionUID = 1L;
+
+                                @Override
+                                public void invokeWorkflow() throws Exception {
+                                    try {
+                                        final EditableCategory category = taxonomy.getCategoryByKey(key);
+                                        TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
+                                        CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
+
+                                        if (category != null && categoryNode != null) {
+                                            category.remove();
+                                            ((AbstractNode) categoryNode.getParent()).getChildren(true);
+                                            treeModel.reload(categoryNode.getParent());
+                                            redraw();
+                                        }
+                                    } catch (TaxonomyException e) {
+                                        error(e.getMessage());
+                                    }
+                                }
+                            });
+                } else {
+                    dialogService.show(
+                            new ConfirmDialog(
+                                    new StringResourceModel("cannot-remove-category-title", this, null),
+                                    new StringResourceModel("cannot-remove-category-message", this, null, new NameModel()),
+                                    new Model<>(StringUtils.join(referringDocumentHandlePaths, "\n")),
+                                    null) {
+                                private static final long serialVersionUID = 1L;
+                                {
+                                    setCancelVisible(false);
+                                }
+                                @Override
+                                public void invokeWorkflow() throws Exception {
+                                }
+                                @Override
+                                public IValueMap getProperties() {
+                                    return DialogConstants.LARGE;
+                                }
+                            });
+                }
+            }
+        }
+
+    }
+
+    private class MoveUpButton extends AjaxLink<Void> {
+
+        public MoveUpButton(final Comparator<Category> categoryComparator) {
+            super("moveup-category");
+
+            add(HippoIcon.fromSprite("moveup-category-icon", Icon.ARROW_UP));
+
+            if (categoryComparator != null) {
+                setVisible(false);
+            }
+        }
+
+        @Override
+        public void onClick(AjaxRequestTarget target) {
+            try {
+                EditableCategory category = taxonomy.getCategoryByKey(key);
+                TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
+                CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
+
+                if (category != null && categoryNode != null) {
+                    if (category.moveUp()) {
+                        ((AbstractNode) categoryNode.getParent()).getChildren(true);
+                        treeModel.reload(categoryNode.getParent());
+                        updateToolbarForCategory(category);
+                        redraw();
+                    }
+                }
+            } catch (TaxonomyException e) {
+                error(e.getMessage());
+            }
+        }
+
+    }
+
+    private class MoveDownButton extends AjaxLink<Void> {
+
+        public MoveDownButton(final Comparator<Category> categoryComparator) {
+            super("movedown-category");
+
+            add(HippoIcon.fromSprite("movedown-category-icon", Icon.ARROW_DOWN));
+
+            if (categoryComparator != null) {
+                setVisible(false);
+            }
+        }
+
+        @Override
+        public void onClick(AjaxRequestTarget target) {
+            try {
+                EditableCategory category = taxonomy.getCategoryByKey(key);
+                TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
+                CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
+
+                if (category != null && categoryNode != null) {
+                    if (category.moveDown()) {
+                        ((AbstractNode) categoryNode.getParent()).getChildren(true);
+                        treeModel.reload(categoryNode.getParent());
+                        updateToolbarForCategory(category);
+                        redraw();
+                    }
+                }
+            } catch (TaxonomyException e) {
+                error(e.getMessage());
+            }
+        }
 
     }
 }
