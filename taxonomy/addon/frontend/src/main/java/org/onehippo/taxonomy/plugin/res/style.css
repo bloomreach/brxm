@@ -22,7 +22,7 @@
 .taxonomy-tree .hippo-tree {
   box-sizing: border-box;
   border: 1px solid #e3e3e3;
-  padding: 4px 0px;
+  padding: 4px 0;
   margin-bottom: 12px;
 }
 
@@ -72,7 +72,7 @@
 
 .taxonomy-tree .row-selected .node-link span {
     background-color: #ffe29a;
-    padding: 3px 3px 3px 0px;
+    padding: 3px 3px 3px 0;
 }
 
 .taxonomy-container {
@@ -184,8 +184,6 @@ div.taxonomy-details a:hover {
 }
 
 .taxonomy-canon {
-    background: url('application_key.png') no-repeat;
-    background-position: left center;
     display: block;
     vertical-align: middle;
     padding-left: 20px;
