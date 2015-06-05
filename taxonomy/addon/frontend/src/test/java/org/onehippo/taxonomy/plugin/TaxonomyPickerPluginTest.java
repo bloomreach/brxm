@@ -30,6 +30,8 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
+import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
+import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.taxonomy.api.Taxonomy;
@@ -103,6 +105,10 @@ public class TaxonomyPickerPluginTest extends AbstractTaxonomyTest  {
     @Test
     public void testPickerDialog() throws Exception {
         start(config);
+
+        // The restyled tree adds a head contribution (treehelper.js). In order to make the test pass, the page
+        // therefore needs to have a YUI Manager behavior, which is what we do here.
+        home.add(new WebAppBehavior(new WebAppSettings()));
 
         // open dialog
         tester.clickLink("root:edit:dialog-link");
