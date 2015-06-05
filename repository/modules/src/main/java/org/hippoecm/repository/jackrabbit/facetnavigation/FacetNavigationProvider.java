@@ -148,9 +148,7 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
                 try {
                     if (sortbys[i].equals("")) {
                         log.warn("Skipping illegal name \"\" as sortby for facet node {}", nodeId);
-                        // we always need to populate the count
-                        populateCount(state, 0);
-                        return state;
+                        continue;
                     }
 
                     Name propertyName = resolveName(NodeNameCodec.encode(sortbys[i]));
@@ -162,9 +160,6 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
                     }
                 } catch (IllegalNameException|NamespaceException e) {
                     log.warn("Skipping illegal name \"{}\" as sortby for facet node {} because: ", sortbys[i], nodeId, e.getMessage());
-                    // we always need to populate the count
-                    populateCount(state, 0);
-                    return state;
                 }
             }
         }
@@ -210,9 +205,6 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
                     
                 } catch (IllegalNameException|NamespaceException e) {
                     log.warn("Skipping illegal name as facet : " + facetNodeView.facet + " because : " +  e.getMessage());
-                    // we always need to populate the count
-                    populateCount(state, 0);
-                    return state;
                 }
             }
         } catch (IllegalArgumentException e) {
