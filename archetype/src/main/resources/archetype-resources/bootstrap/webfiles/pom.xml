@@ -12,6 +12,15 @@
   <description>${projectName} Bootstrap Web Files</description>
   <artifactId>${artifactId}-bootstrap-webfiles</artifactId>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+      <artifactId>hst-client-dependencies</artifactId>
+      <type>pom</type>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
