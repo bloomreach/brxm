@@ -24,6 +24,8 @@ import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.observation.Event;
+import javax.swing.event.TreeModelEvent;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -72,9 +74,6 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
     private static final String UPDATE_QUEUE_PATH = UPDATE_PATH + "/hippo:queue";
     private static final String UPDATE_REGISTRY_PATH = UPDATE_PATH + "/hippo:registry";
     private static final String UPDATE_HISTORY_PATH = UPDATE_PATH + "/hippo:history";
-
-    private static final int REGISTRY_NODE_INDEX = 0;
-    private static final int HISTORY_NODE_INDEX = 2;
 
     private static final Label EMPTY_EDITOR = new Label("updater-editor");
     private static final Map<String, String> CUSTOM_NODE_LABELS = createNodeNameMap();
@@ -169,19 +168,14 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
         }
 
         /**
-         * Expand the child node at the given <code>index</code>
-         *
-         * @param index Index of the child node, counting from 0.
+         * Expand all children of root
          */
-        public void expandNode(final int index) {
+        public void expandChildrenOfRoot() {
             ITreeState state = tree.getTreeState();
             final TreeModel thisTreeModel = (TreeModel) getDefaultModel().getObject();
             final TreeNode root = (TreeNode) thisTreeModel.getRoot();
             if (root != null) {
-                final TreeNode childNode = root.getChildAt(index);
-                if (childNode != null && (childNode instanceof JcrTreeNode) && !state.isNodeExpanded(childNode)) {
-                    state.expandNode(childNode);
-                }
+                Collections.list(root.children()).forEach(child -> state.expandNode(child));
             }
         }
     }
@@ -212,7 +206,15 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
 
         add(form);
 
-        treeModel = new JcrTreeModel(new JcrTreeNode(new JcrNodeModel(UPDATE_PATH), null));
+        treeModel = new JcrTreeModel(new JcrTreeNode(new JcrNodeModel(UPDATE_PATH), null)) {
+            @Override
+            protected TreeModelEvent newTreeModelEvent(final Event event) throws RepositoryException {
+                if (StringUtils.equals(event.getPath(), getNodePath())) {
+                    updateUI();
+                }
+                return super.newTreeModelEvent(event);
+            }
+        };
         context.registerService(treeModel, IObserver.class.getName());
 
         breadCrumbModel.addListener(new IBreadCrumbModelListener() {
@@ -238,9 +240,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
         tree.setOutputMarkupId(true);
         add(tree);
 
-        // Expand registry and history nodes
-        tree.expandNode(REGISTRY_NODE_INDEX);
-        tree.expandNode(HISTORY_NODE_INDEX);
+        tree.expandChildrenOfRoot();
 
         editor = EMPTY_EDITOR;
         editor.setOutputMarkupId(true);
@@ -296,10 +296,11 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
     @Override
     protected void onModelChanged() {
         super.onModelChanged();
-        updateUI(RequestCycle.get().find(AjaxRequestTarget.class));
+        updateUI();
     }
 
-    private void updateUI(final AjaxRequestTarget target) {
+    private void updateUI() {
+        final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         expandAndSelectNodeInTree(target);
         updateEditor(target);
         target.add(title);
