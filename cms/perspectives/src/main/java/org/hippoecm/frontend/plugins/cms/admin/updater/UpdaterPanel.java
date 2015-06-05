@@ -30,7 +30,6 @@ import javax.swing.tree.TreePath;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
@@ -38,7 +37,6 @@ import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModelListener;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -136,27 +134,16 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
         }
 
         @Override
+        protected void onJunctionLinkClicked(AjaxRequestTarget target, TreeNode node) {
+            updateTree(target);
+        }
+
+        @Override
         protected ITreeState newTreeState() {
             DefaultTreeState state = new DefaultTreeState();
             treeModel.setTreeState(state);
             state.expandAll();
             return state;
-        }
-
-        @Override
-        protected Component newJunctionLink(final MarkupContainer parent, final String id, final String imageId, final TreeNode node) {
-            final MarkupContainer junctionLink = new WebMarkupContainer(id) {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected void onComponentTag(ComponentTag tag) {
-                    super.onComponentTag(tag);
-                    tag.put("onclick", "return false");
-                }
-            };
-            junctionLink.add(new Label("image"));
-
-            return junctionLink;
         }
 
         @Override
