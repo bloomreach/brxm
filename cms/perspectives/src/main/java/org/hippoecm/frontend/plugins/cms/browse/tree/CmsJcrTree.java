@@ -129,33 +129,7 @@ public abstract class CmsJcrTree extends ContextMenuTree {
     protected MarkupContainer newJunctionImage(final MarkupContainer parent, final String id,
                                                final TreeNode node)
     {
-        return (MarkupContainer)new WebMarkupContainer(id)
-        {
-            private static final long serialVersionUID = 1L;
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            protected void onComponentTag(final ComponentTag tag)
-            {
-                super.onComponentTag(tag);
-
-                final Icon icon = node.isLeaf() ? Icon.BULLET :
-                        isNodeExpanded(node) ? Icon.CARET_DOWN : Icon.CARET_RIGHT;
-                final String cssClassOuter = isNodeLast(node) ? "junction-last" : "junction";
-
-                final Response response = RequestCycle.get().getResponse();
-                response.write("<span class=\"" + cssClassOuter + "\">");
-                response.write(icon.getSpriteReference(IconSize.S));
-                response.write("</span>");
-            }
-        }.setRenderBodyOnly(true);
-    }
-
-    private boolean isNodeLast(TreeNode node) {
-        TreeNode parent = node.getParent();
-        return parent == null || parent.getChildAt(parent.getChildCount() - 1).equals(node);
+        return new CaretJunctionImage(id, node, isNodeExpanded(node));
     }
 
     public static class NodeIconContainer extends Panel {
@@ -179,4 +153,35 @@ public abstract class CmsJcrTree extends ContextMenuTree {
         }
     }
 
+    public static class CaretJunctionImage extends WebMarkupContainer {
+
+        private final TreeNode node;
+        private final boolean isExpanded;
+
+        public CaretJunctionImage(final String id, final TreeNode node, final boolean isExpanded) {
+            super(id);
+            this.node = node;
+            this.isExpanded = isExpanded;
+            setRenderBodyOnly(true);
+        }
+
+        @Override
+        protected void onComponentTag(final ComponentTag tag) {
+            super.onComponentTag(tag);
+
+            final Icon icon = node.isLeaf() ? Icon.BULLET :
+                    isExpanded ? Icon.CARET_DOWN : Icon.CARET_RIGHT;
+            final String cssClassOuter = isNodeLast() ? "junction-last" : "junction";
+
+            final Response response = RequestCycle.get().getResponse();
+            response.write("<span class=\"" + cssClassOuter + "\">");
+            response.write(icon.getSpriteReference(IconSize.S));
+            response.write("</span>");
+        }
+
+        private boolean isNodeLast() {
+            TreeNode parent = node.getParent();
+            return parent == null || parent.getChildAt(parent.getChildCount() - 1).equals(node);
+        }
+    }
 }
