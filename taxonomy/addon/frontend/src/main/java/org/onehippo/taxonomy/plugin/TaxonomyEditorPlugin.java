@@ -815,31 +815,34 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
                 @Override
                 protected void onOk() {
-                    EditableCategory category = taxonomy.getCategoryByKey(key);
+                    EditableCategory parentCategory = taxonomy.getCategoryByKey(key);
                     AbstractNode node;
-                    if (category != null) {
+                    if (parentCategory != null) {
                         node = new CategoryNode(new CategoryModel(taxonomyModel, key), currentLanguageSelection.getLanguageCode(), categoryComparator);
                     } else {
                         node = new TaxonomyNode(taxonomyModel, currentLanguageSelection.getLanguageCode(), categoryComparator);
                     }
                     try {
                         String newKey = getKey();
-                        Category newCategory;
-                        if (category != null) {
-                            newCategory = category.addCategory(newKey, getName(), currentLanguageSelection.getLanguageCode(), taxonomyModel);
-                        } else {
-                            newCategory = taxonomy.addCategory(newKey, getName(), currentLanguageSelection.getLanguageCode());
-                        }
+                        Category childCategory = addChildCategory(parentCategory, newKey);
                         TreeNode child = new CategoryNode(new CategoryModel(taxonomyModel, newKey), currentLanguageSelection.getLanguageCode(), categoryComparator);
                         tree.getTreeState().selectNode(child, true);
                         key = newKey;
-                        updateToolbarForCategory(newCategory);
+                        updateToolbarForCategory(childCategory);
                     } catch (TaxonomyException e) {
                         error(e.getMessage());
                     }
                     tree.expandNode(node);
                     tree.markNodeChildrenDirty(node);
                     redraw();
+                }
+
+                private Category addChildCategory(final EditableCategory category, final String newKey) throws TaxonomyException {
+                    if (category != null) {
+                        return category.addCategory(newKey, getName(), currentLanguageSelection.getLanguageCode(), taxonomyModel);
+                    } else {
+                        return taxonomy.addCategory(newKey, getName(), currentLanguageSelection.getLanguageCode());
+                    }
                 }
             });
         }
