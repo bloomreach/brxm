@@ -62,19 +62,6 @@
     overflow: visible;
 }
 
-.taxonomy-tree .node-link {
-    width: 50px;
-}
-
-.taxonomy-tree .row-selected .node-link span.icon {
-    padding: 0;
-}
-
-.taxonomy-tree .row-selected .node-link span {
-    background-color: #ffe29a;
-    padding: 3px 3px 3px 0;
-}
-
 .taxonomy-container {
     width: 500px;
     height: 385px;
@@ -103,20 +90,6 @@ div.taxonomy-details a:hover {
     text-decoration: underline;
 }
 
-.taxonomy-selected-list-in-documenttype {
-    padding: 6px;
-}
-
-.taxonomy-selected-list-in-documenttype li {
-    margin-bottom: 5px;
-    border-bottom: dashed #C9C9C9 1px;
-    padding: 4px;
-}
-
-.taxonomy-field {
-    margin-bottom: 6px;
-}
-
 .taxonomy-selected {
     margin-left: 10px;
     margin-top: 15px;
@@ -132,11 +105,6 @@ div.taxonomy-details a:hover {
 
 .taxonomy-container table {
     margin-bottom: 10px;
-}
-
-.taxonomy-item-add {
-    color: red;
-    font-weight: bold;
 }
 
 .taxonomy-editor .hippo-toolbar {
@@ -162,6 +130,7 @@ div.taxonomy-details a:hover {
 .taxonomy-editor  tr td:first-child,
 .taxonomy-details tr td:first-child {
     text-align: right;
+    width: 100px;
 }
 
 .taxonomy-palette-picker table.palette {
@@ -196,25 +165,6 @@ div.taxonomy-details a:hover {
     display: block;
 }
 
-.taxonomy-category tr td:first-child,
-.taxonomy-details  tr td:first-child {
-    padding-top: 10px;
-    width: 100px;
-}
-
-.taxonomy-disabled-action {
-    color: #bdbdbd;
-    cursor: default;
-    pointer-events: none;
-}
-
-.taxonomy-disabled-action:hover {
-    border: 1px solid #e3e3e3;
-    color: #bdbdbd;
-    cursor: default;
-    pointer-events: none;
-}
-
 .taxonomy-picker-form .hippo-dialog-feedback ul.feedbackPanel {
     background-color: #fff8d5;
     border: 1px solid #69849f;
@@ -225,9 +175,25 @@ div.taxonomy-details a:hover {
     text-align: center;
 }
 
+/* Adjustments to the reused toolbar */
+.taxonomy-editor .hippo-toolbar-menu {
+    border-left: 0;
+}
+.taxonomy-editor .hippo-toolbar-menu .hippo-toolbar-section > li:first-child > span > a {
+    margin-left: 0;
+}
+
 .hippo-toolbar-menu .hippo-toolbar-section > li .menu-action .menu-action-icon .hi-times-circle,
 .hippo-toolbar-menu .hippo-toolbar-section > li.menu-item:hover a.menu-action .menu-action-icon .hi-times-circle {
     color: #ffffff;
+}
+
+/* enforce disabled styling of buttons (.taxonomy-disabled-action) */
+.taxonomy-editor .hippo-toolbar-menu .hippo-toolbar-section > li > span > a.taxonomy-disabled-action,
+.taxonomy-editor .hippo-toolbar-menu .hippo-toolbar-section > li > span > a.taxonomy-disabled-action .menu-action-icon svg,
+.taxonomy-editor .hippo-toolbar-menu .hippo-toolbar-section > li.menu-item:hover a.menu-action.taxonomy-disabled-action .menu-action-icon svg,
+.taxonomy-editor .hippo-toolbar-menu .hippo-toolbar-section > li.menu-item:hover a.menu-action.taxonomy-disabled-action .menu-action-text {
+    color: #bdbdbd;
 }
 
 .hippo-preview-document .taxonomy-editor .hippo-editor-field select {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.onehippo.taxonomy.api.CategoryInfo;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
 
 public class CategoryInfoImpl extends AbstractJCRService implements CategoryInfo {
-    private static final long serialVersionUID = 1L;
 
     private String name;
     private String language;

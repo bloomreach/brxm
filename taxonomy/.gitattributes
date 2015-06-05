@@ -2,10 +2,7 @@
 /LICENSE -text
 /NOTICE -text
 addon/frontend/pom.xml svneol=native#text/plain
-addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/res/picker-back.gif -text
 addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/tree/CategoryNameComparator.java -text
-addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/tree/folder-closed.gif -text
-addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/tree/folder-open.gif -text
 addon/pom.xml svneol=native#text/plain
 addon/repository/pom.xml svneol=native#text/plain
 addon/repository/src/main/resources/classifiable-dao-service.xml svneol=native#text/plain

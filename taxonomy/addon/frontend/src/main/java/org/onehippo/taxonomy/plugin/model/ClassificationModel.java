@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
 public class ClassificationModel extends Model<Classification> {
-    private static final long serialVersionUID = 1L;
 
     private ClassificationDao dao;
     private IModel<Node> nodeModel;

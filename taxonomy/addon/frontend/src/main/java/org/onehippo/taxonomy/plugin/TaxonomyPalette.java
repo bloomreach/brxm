@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TaxonomyPalette extends Panel {
-    private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(TaxonomyPalette.class);
 
@@ -50,7 +49,6 @@ public class TaxonomyPalette extends Panel {
         this.preferredLocale = preferredLocale;
 
         IModel<List<String>> choices = new IModel<List<String>>() {
-            private static final long serialVersionUID = 1L;
 
             public List<String> getObject() {
                 return model.getObject().getKeys();
@@ -76,7 +74,6 @@ public class TaxonomyPalette extends Panel {
 
         add(new Palette<String>("palette", choices, new Model<LinkedList<String>>(options),
                 new IChoiceRenderer<String>() {
-                    private static final long serialVersionUID = 1L;
 
                     public Object getDisplayValue(String object) {
                         final Category cat = taxonomyModel.getObject().getCategoryByKey(object);
@@ -100,9 +97,6 @@ public class TaxonomyPalette extends Panel {
             protected Recorder newRecorderComponent() {
                 Recorder recorder = super.newRecorderComponent();
                 recorder.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-
-                    private static final long serialVersionUID = 1L;
-
                     @Override
                     protected void onUpdate(AjaxRequestTarget target) {
                     }

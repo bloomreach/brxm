@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.plugin.model.CategoryModel;
 
 public class CategoryNode extends AbstractNode {
-    private static final long serialVersionUID = 1L;
 
     AbstractNode parent;
     CategoryModel model;

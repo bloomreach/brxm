@@ -80,15 +80,9 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
     public static final String HIPPOTRANSLATION_TRANSLATED = "hippotranslation:translated";
     public static final String HIPPOTRANSLATION_LOCALE = "hippotranslation:locale";
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-    private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(TaxonomyPickerPlugin.class);
 
     private class CategoryListView extends RefreshingView<String> {
-
-        private static final long serialVersionUID = 1L;
 
         public CategoryListView(String id) {
             super(id);
@@ -141,8 +135,6 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
     }
 
     private class CategoryCompareView extends ListView<Change<String>> {
-
-        private static final long serialVersionUID = 1L;
 
         public CategoryCompareView(String id, IModel<List<Change<String>>> changeModel) {
             super(id, changeModel);
@@ -210,8 +202,6 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
             final ClassificationModel model = new ClassificationModel(dao, getModel());
             IDialogFactory dialogFactory = new IDialogFactory() {
 
-                private static final long serialVersionUID = 1L;
-
                 public AbstractDialog<Classification> createDialog() {
                     return createPickerDialog(model, getPreferredLocale());
                 }
@@ -219,7 +209,6 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
             add(new DialogLink("edit", new ResourceModel("edit"), dialogFactory, getDialogService())).setEnabled(getTaxonomy() != null);
         } else if (dao != null && mode == Mode.COMPARE && config.containsKey("model.compareTo")) {
             IModel<List<Change<String>>> changesModel = new LoadableDetachableModel<List<Change<String>>>() {
-                private static final long serialVersionUID = 1L;
 
                 @SuppressWarnings("unchecked")
                 @Override

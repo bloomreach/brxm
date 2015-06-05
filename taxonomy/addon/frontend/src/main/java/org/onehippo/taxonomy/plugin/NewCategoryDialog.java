@@ -79,8 +79,6 @@ public abstract class NewCategoryDialog extends AbstractDialog<Taxonomy> {
             }
         });
         nameField.add(new OnChangeAjaxBehavior() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 target.add(keyField);

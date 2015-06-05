@@ -37,9 +37,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugins.cms.browse.tree.yui.WicketTreeHelperBehavior;
-import org.hippoecm.frontend.plugins.cms.browse.tree.yui.WicketTreeHelperSettings;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.CategoryInfo;
@@ -58,10 +55,6 @@ import org.onehippo.taxonomy.plugin.tree.TaxonomyTreeModel;
  * @version $Id$
  */
 public class TaxonomyBrowser extends Panel {
-    private static final long serialVersionUID = 1L;
-
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     TaxonomyModel taxonomyModel;
     WebMarkupContainer container;
@@ -91,16 +84,10 @@ public class TaxonomyBrowser extends Panel {
 
         this.detailsReadOnly = detailsReadOnly;
 
-        final IPluginConfig treeHelperMockConfig = new JavaPluginConfig();
-        treeHelperMockConfig.put("workflow.enabled", false);
-        final WicketTreeHelperBehavior treeHelperBehavior
-                = new WicketTreeHelperBehavior(new WicketTreeHelperSettings(treeHelperMockConfig));
-
         final String treeLocale = getPreferredLocale();
         final Comparator<Category> categoryComparator = getCategoryComparator(taxonomyModel.getPluginConfig(), treeLocale);
         final TaxonomyTreeModel treeModel = new TaxonomyTreeModel(taxonomyModel, treeLocale, categoryComparator);
         final TaxonomyTree tree = new TaxonomyTree("tree", treeModel, treeLocale, iconProvider) {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode node) {
@@ -116,22 +103,13 @@ public class TaxonomyBrowser extends Panel {
                 }
                 super.onNodeLinkClicked(target, node);
             }
-
-            @Override
-            public void onTargetRespond(final AjaxRequestTarget target, boolean dirty) {
-                if (dirty) {
-                    target.appendJavaScript(treeHelperBehavior.getRenderString());
-                }
-            }
         };
-        tree.add(treeHelperBehavior);
         add(tree);
 
         container = new WebMarkupContainer("container");
         container.setOutputMarkupId(true);
 
         ListView<String> lv = new ListView<String>("list", getKeys()) {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected void populateItem(ListItem<String> item) {
@@ -151,7 +129,6 @@ public class TaxonomyBrowser extends Panel {
                 item.add(new Label("label", labelModel));
 
                 item.add(new AjaxLink<String>("remove", item.getModel()) {
-                    private static final long serialVersionUID = 1L;
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
@@ -312,17 +289,13 @@ public class TaxonomyBrowser extends Panel {
     }
 
     class EmptyDetails extends Fragment {
-        private static final long serialVersionUID = 1L;
-
         public EmptyDetails(String id, String markupId, MarkupContainer markupProvider) {
             super(id, markupId, markupProvider);
             setOutputMarkupId(true);
         }
-
     }
 
     protected class Details extends Panel {
-        private static final long serialVersionUID = 1L;
 
         private String categoryKey;
 
@@ -336,8 +309,6 @@ public class TaxonomyBrowser extends Panel {
             addCategoryDetailFields(this, category);
 
             add(new AjaxLink<Category>("add", model) {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     String key = getModelObject().getKey();
@@ -357,8 +328,6 @@ public class TaxonomyBrowser extends Panel {
             });
 
             add(new AjaxLink<Category>("makecanonical", model) {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     String key = getModelObject().getKey();

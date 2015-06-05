@@ -27,23 +27,33 @@ import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.tree.CmsJcrTree;
+import org.hippoecm.frontend.plugins.cms.browse.tree.yui.WicketTreeHelperBehavior;
+import org.hippoecm.frontend.plugins.cms.browse.tree.yui.WicketTreeHelperSettings;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.hippoecm.frontend.widgets.ContextMenuTree;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.plugin.api.TaxonomyHelper;
 
 public class TaxonomyTree extends ContextMenuTree {
-    private static final long serialVersionUID = 1L;
 
     private String preferredLanguage;
     private final ITreeNodeIconProvider treeNodeIconService;
+    private final WicketTreeHelperBehavior treeHelperBehavior;
 
     public TaxonomyTree(String id, TreeModel model, String preferredLanguage, ITreeNodeIconProvider treeNodeIconService) {
         super(id, model);
         this.preferredLanguage = preferredLanguage;
         this.treeNodeIconService = treeNodeIconService;
-        expandNode((AbstractNode) getModelObject().getRoot());
+        this.treeHelperBehavior = createTreeHelperWithoutWorkflow();
+
+        add(treeHelperBehavior);
+
+        final AbstractNode rootNode = (AbstractNode) getModelObject().getRoot();
+        expandNode(rootNode);
+        getTreeState().selectNode(rootNode, true);
     }
 
     public void expandNode(final AbstractNode node) {
@@ -62,28 +72,8 @@ public class TaxonomyTree extends ContextMenuTree {
     }
 
     @Override
-    protected ResourceReference getFolderOpen() {
-        if (isEnabled()) {
-            return super.getFolderOpen();
-        } else {
-            return new PackageResourceReference(TaxonomyTree.class, "folder-open.gif");
-        }
-    }
-
-    @Override
-    protected ResourceReference getFolderClosed() {
-        if (isEnabled()) {
-            return super.getFolderClosed();
-        } else {
-            return new PackageResourceReference(TaxonomyTree.class, "folder-closed.gif");
-        }
-    }
-
-    @Override
     protected ITreeState newTreeState() {
         return new DefaultTreeState() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void selectNode(Object node, boolean selected) {
                 super.selectNode(node, true);
@@ -94,7 +84,6 @@ public class TaxonomyTree extends ContextMenuTree {
     @Override
     protected MarkupContainer newLink(MarkupContainer parent, String id, final ILinkCallback callback) {
         MarkupContainer result = super.newLink(parent, id, new ILinkCallback() {
-            private static final long serialVersionUID = 1L;
 
             public void onClick(AjaxRequestTarget target) {
                 if (TaxonomyTree.this.isEnabled()) {
@@ -159,4 +148,17 @@ public class TaxonomyTree extends ContextMenuTree {
         return new CmsJcrTree.CaretJunctionImage(id, node, isNodeExpanded(node));
     }
 
+    @Override
+    public void onTargetRespond(final AjaxRequestTarget target, boolean dirty) {
+        if (dirty) {
+            target.appendJavaScript(treeHelperBehavior.getRenderString());
+        }
+    }
+
+    private WicketTreeHelperBehavior createTreeHelperWithoutWorkflow() {
+        final IPluginConfig treeHelperDummyConfig = new JavaPluginConfig();
+        treeHelperDummyConfig.put("workflow.enabled", false);
+
+        return new WicketTreeHelperBehavior(new WicketTreeHelperSettings(treeHelperDummyConfig));
+    }
 }

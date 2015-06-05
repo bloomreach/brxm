@@ -66,11 +66,9 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin;
-import org.hippoecm.frontend.plugins.cms.browse.tree.yui.WicketTreeHelperBehavior;
-import org.hippoecm.frontend.plugins.cms.browse.tree.yui.WicketTreeHelperSettings;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.skin.Icon;
@@ -104,15 +102,12 @@ import org.slf4j.LoggerFactory;
  */
 public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
-    private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(TaxonomyEditorPlugin.class);
 
     private static final String MENU_ACTION_STYLE_CLASS = "menu-action";
     private static final String DISABLED_ACTION_STYLE_CLASS = "taxonomy-disabled-action";
     private static final String DISABLED_MENU_ACTION_STYLE_CLASS = MENU_ACTION_STYLE_CLASS + " " + DISABLED_ACTION_STYLE_CLASS;
 
-    private List<LanguageSelection> availableLanguageSelections;
     private LanguageSelection currentLanguageSelection;
     private JcrTaxonomy taxonomy;
     private String key;
@@ -123,12 +118,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     private TaxonomyTreeModel treeModel;
     private TaxonomyTree tree;
     private final boolean useUrlKeyEncoding;
-
-    private AjaxLink<Void> addCategory;
-    private AjaxLink<Void> moveCategory;
-    private AjaxLink<Void> removeCategory;
-    private AjaxLink<Void> moveupCategory;
-    private AjaxLink<Void> movedownCategory;
 
     /**
      * Constructor which adds all the UI components.
@@ -146,11 +135,10 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
         taxonomy = newTaxonomy(getModel(), editing, service);
 
-        availableLanguageSelections = getAvailableLanguageSelections();
+        final List<LanguageSelection> availableLanguageSelections = getAvailableLanguageSelections();
         currentLanguageSelection = new LanguageSelection(getLocale(), getLocale());
 
         synonymModel = new IModel<String[]>() {
-            private static final long serialVersionUID = 1L;
 
             public String[] getObject() {
                 EditableCategoryInfo info = taxonomy.getCategoryByKey(key).getInfo(currentLanguageSelection.getLanguageCode());
@@ -171,54 +159,36 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
         };
 
-        final IPluginConfig treeHelperMockConfig = new JavaPluginConfig();
-        treeHelperMockConfig.put("workflow.enabled", false);
-        final WicketTreeHelperBehavior treeHelperBehavior
-                = new WicketTreeHelperBehavior(new WicketTreeHelperSettings(treeHelperMockConfig));
-
         final IModel<Taxonomy> taxonomyModel = Model.of(taxonomy);
         String currentLanguageCode = currentLanguageSelection.getLanguageCode();
         final Comparator<Category> categoryComparator = getCategoryComparator(config, currentLanguageCode);
         treeModel = new TaxonomyTreeModel(taxonomyModel, currentLanguageCode, categoryComparator);
-        tree = new
-                TaxonomyTree("tree", treeModel, currentLanguageCode, FolderTreePlugin.newTreeNodeIconProvider(context, config)) {
-                    private static final long serialVersionUID = 1L;
+        final ITreeNodeIconProvider treeNodeIconProvider = FolderTreePlugin.newTreeNodeIconProvider(context, config);
+        tree = new TaxonomyTree("tree", treeModel, currentLanguageCode, treeNodeIconProvider) {
 
-                    @Override
-                    protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode node) {
-                        if (node instanceof CategoryNode) {
-                            final Category category = ((CategoryNode) node).getCategory();
-                            key = category.getKey();
-                            if (editing) {
-                                updateToolbarForCategory(category);
-                            }
-                            redraw();
-                        } else if (node instanceof TaxonomyNode) {
-                            key = null;
-                            if (editing) {
-                                updateToolbarForCategory(null);
-                            }
-                            redraw();
-                        } else {
-                            log.error("Unexpected tree node: " + node);
-                        }
-                        super.onNodeLinkClicked(target, node);
+            @Override
+            protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode node) {
+                if (node instanceof CategoryNode) {
+                    final Category category = ((CategoryNode) node).getCategory();
+                    key = category.getKey();
+                    if (editing) {
+                        updateToolbarForCategory(category);
                     }
-
-                    @Override
-                    public void onTargetRespond(final AjaxRequestTarget target, boolean dirty) {
-                        if (dirty) {
-                            target.appendJavaScript(treeHelperBehavior.getRenderString());
-                        }
+                    redraw();
+                } else if (node instanceof TaxonomyNode) {
+                    key = null;
+                    if (editing) {
+                        updateToolbarForCategory(null);
                     }
-                };
+                    redraw();
+                } else {
+                    log.error("Unexpected tree node: " + node);
+                }
+                super.onNodeLinkClicked(target, node);
+            }
+        };
         tree.setOutputMarkupId(true);
-        tree.add(treeHelperBehavior);
         add(tree);
-
-        // Select the root tree node
-        TreeNode rootNode = (TreeNode) tree.getModelObject().getRoot();
-        tree.getTreeState().selectNode(rootNode, true);
 
         holder = new WebMarkupContainer("container-holder");
         holder.setOutputMarkupId(true);
@@ -227,20 +197,11 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         toolbarHolder.setOutputMarkupId(true);
 
         if (editing) {
-            addCategory = new AddButton(taxonomyModel, categoryComparator);
-            toolbarHolder.add(addCategory);
-
-            moveCategory = new MoveButton(context, config);
-            toolbarHolder.add(moveCategory);
-
-            removeCategory = new RemoveButton();
-            toolbarHolder.add(removeCategory);
-
-            moveupCategory = new MoveUpButton(categoryComparator);
-            toolbarHolder.add(moveupCategory);
-
-            movedownCategory = new MoveDownButton(categoryComparator);
-            toolbarHolder.add(movedownCategory);
+            toolbarHolder.add(new AddButton(taxonomyModel, categoryComparator));
+            toolbarHolder.add(new MoveButton(context, config));
+            toolbarHolder.add(new RemoveButton());
+            toolbarHolder.add(new MoveUpButton(categoryComparator));
+            toolbarHolder.add(new MoveDownButton(categoryComparator));
 
             updateToolbarForCategory(null);
         } else {
@@ -248,7 +209,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         }
 
         container = new Form("container") {
-            private static final long serialVersionUID = 1L;
 
             @Override
             public boolean isVisible() {
@@ -260,8 +220,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         DropDownChoice<LanguageSelection> languageSelectionChoice =
                 new DropDownChoice<>("language", new PropertyModel<>(this, "currentLanguageSelection"), availableLanguageSelections, choiceRenderer);
         languageSelectionChoice.add(new OnChangeAjaxBehavior() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 redraw();
@@ -278,8 +236,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
             MarkupContainer name = new Fragment("name", "fragmentname", this);
             FormComponent<String> nameField = new TextField<>("widget", new NameModel());
             nameField.add(new OnChangeAjaxBehavior() {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     tree.markNodeDirty(getSelectedNode());
@@ -298,8 +254,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         }
 
         container.add(new RefreshingView<String>("view") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected Iterator<IModel<String>> getItemModels() {
                 return getSynonymList().iterator();
@@ -312,8 +266,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                 item.add(controls);
 
                 final AjaxLink upControl = new AjaxLink("up") {
-                    private static final long serialVersionUID = 1L;
-
                     @Override
                     public boolean isEnabled() {
                         return item.getIndex() > 0;
@@ -334,8 +286,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                 controls.add(upControl);
 
                 final AjaxLink downControl = new AjaxLink("down") {
-                    private static final long serialVersionUID = 1L;
-
                     @Override
                     public boolean isEnabled() {
                         String[] synonyms = synonymModel.getObject();
@@ -357,8 +307,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                 controls.add(downControl);
 
                 final AjaxLink removeControl = new AjaxLink("remove") {
-                    private static final long serialVersionUID = 1L;
-
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         String[] synonyms = synonymModel.getObject();
@@ -385,8 +333,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         });
 
         final AjaxLink addSynonymLink = new AjaxLink("add") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public boolean isVisible() {
                 return editing;
@@ -519,7 +465,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         for (int i = 0; i < synonyms.length; i++) {
             final int j = i;
             list.add(new IModel<String>() {
-                private static final long serialVersionUID = 1L;
 
                 public String getObject() {
                     String[] synonyms = synonymModel.getObject();
@@ -594,7 +539,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     }
 
     private final class DescriptionModel implements IModel<String> {
-        private static final long serialVersionUID = 1L;
 
         public String getObject() {
             EditableCategory category = getCategory();
@@ -619,7 +563,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     }
 
     private final class NameModel implements IModel<String> {
-        private static final long serialVersionUID = 1L;
 
         public String getObject() {
             EditableCategory category = getCategory();
@@ -645,7 +588,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     }
 
     private final class KeyModel implements IModel<String> {
-        private static final long serialVersionUID = 1L;
 
         public String getObject() {
             return key;
@@ -662,7 +604,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
     protected final class LanguageSelection implements Serializable {
 
-        private static final long serialVersionUID = 1L;
         private String languageCode;
         private String displayName;
 
@@ -734,14 +675,17 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     }
 
     private void updateToolbarForCategory(final Category category) {
-        setMenuActionEnabled(addCategory, true);
-        setMenuActionEnabled(removeCategory, category != null);
-        setMenuActionEnabled(moveCategory, category != null);
-        setMenuActionEnabled(moveupCategory, category instanceof EditableCategory && ((EditableCategory) category).canMoveUp());
-        setMenuActionEnabled(movedownCategory, category instanceof EditableCategory && ((EditableCategory) category).canMoveDown());
+        setMenuActionEnabled(AddButton.ID,      true);
+        setMenuActionEnabled(RemoveButton.ID,   category != null);
+        setMenuActionEnabled(MoveButton.ID,     category != null);
+        setMenuActionEnabled(MoveUpButton.ID,   category instanceof EditableCategory && ((EditableCategory) category).canMoveUp());
+        setMenuActionEnabled(MoveDownButton.ID, category instanceof EditableCategory && ((EditableCategory) category).canMoveDown());
     }
 
-    protected void setMenuActionEnabled(final AjaxLink<Void> menuAction, boolean enabled) {
+    protected void setMenuActionEnabled(final String actionId, boolean enabled) {
+        @SuppressWarnings("unchecked")
+        final AjaxLink<Void> menuAction = (AjaxLink<Void>)toolbarHolder.get(actionId);
+
         if (enabled) {
             menuAction.add(new AttributeModifier("class", Model.of(MENU_ACTION_STYLE_CLASS)));
         } else {
@@ -779,11 +723,12 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
     private class AddButton extends AjaxLink<Void> {
 
+        public static final String ID = "add-category";
         private final IModel<Taxonomy> taxonomyModel;
         private final Comparator<Category> categoryComparator;
 
         public AddButton(final IModel<Taxonomy> taxonomyModel, final Comparator<Category> categoryComparator) {
-            super("add-category");
+            super(ID);
 
             this.taxonomyModel = taxonomyModel;
             this.categoryComparator = categoryComparator;
@@ -851,11 +796,12 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
     private class MoveButton extends AjaxLink<Void> {
 
+        public static final String ID = "move-category";
         private final IPluginContext context;
         private final IPluginConfig config;
 
         public MoveButton(final IPluginContext context, final IPluginConfig config) {
-            super("move-category");
+            super(ID);
 
             this.context = context;
             this.config = config;
@@ -938,8 +884,10 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
     private class RemoveButton extends AjaxLink<Void> {
 
+        public static final String ID = "remove-category";
+
         public RemoveButton() {
-            super("remove-category");
+            super(ID);
             add(HippoIcon.fromSprite("remove-category-icon", Icon.TIMES_CIRCLE));
         }
 
@@ -956,7 +904,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                                 new StringResourceModel("cannot-remove-category-title", this, null),
                                 new StringResourceModel("cannot-remove-nonleaf-category-message", this, null, new NameModel()),
                                 null, null) {
-                            private static final long serialVersionUID = 1L;
                             {
                                 setCancelVisible(false);
                             }
@@ -976,7 +923,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                             new ConfirmDialog(
                                     new StringResourceModel("remove-category-confirm-title", this, null),
                                     new StringResourceModel("remove-category-confirm-message", this, null, new NameModel())) {
-                                private static final long serialVersionUID = 1L;
 
                                 @Override
                                 public void invokeWorkflow() throws Exception {
@@ -1003,7 +949,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                                     new StringResourceModel("cannot-remove-category-message", this, null, new NameModel()),
                                     new Model<>(StringUtils.join(referringDocumentHandlePaths, "\n")),
                                     null) {
-                                private static final long serialVersionUID = 1L;
                                 {
                                     setCancelVisible(false);
                                 }
@@ -1023,8 +968,10 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
     private class MoveUpButton extends AjaxLink<Void> {
 
+        public static final String ID = "moveup-category";
+
         public MoveUpButton(final Comparator<Category> categoryComparator) {
-            super("moveup-category");
+            super(ID);
 
             add(HippoIcon.fromSprite("moveup-category-icon", Icon.ARROW_UP));
 
@@ -1057,8 +1004,10 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
     private class MoveDownButton extends AjaxLink<Void> {
 
+        public static final String ID = "movedown-category";
+
         public MoveDownButton(final Comparator<Category> categoryComparator) {
-            super("movedown-category");
+            super(ID);
 
             add(HippoIcon.fromSprite("movedown-category-icon", Icon.ARROW_DOWN));
 

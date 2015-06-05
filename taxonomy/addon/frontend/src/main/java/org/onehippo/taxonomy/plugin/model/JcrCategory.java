@@ -51,7 +51,6 @@ import org.slf4j.LoggerFactory;
  * Category model object on top of a JCR node of type hippotaxonomy:category.
  */
 public class JcrCategory extends TaxonomyObject implements EditableCategory {
-    private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(JcrCategory.class);
 

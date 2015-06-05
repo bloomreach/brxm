@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,6 @@ import org.onehippo.taxonomy.plugin.model.JcrHelper;
  * The multiple property where selected keys are stored is configurable in 'fieldPath' parameter.
  */
 public class MixinClassificationDaoPlugin extends Plugin implements ClassificationDao {
-    private static final long serialVersionUID = 1L;
 
     // Name of the multiple property where selected keys are stored
     public static final String CONFIG_FIELD_PATH = "fieldPath";
