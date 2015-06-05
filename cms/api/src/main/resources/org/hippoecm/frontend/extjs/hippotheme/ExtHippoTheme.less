@@ -13,43 +13,7 @@
 // Variable overrides
 @import "../../../../../../styling/less/_variables";
 // Vendor styling
-@import '../../../../../../../../target/bower_components/bootstrap/less/buttons';
-
-.btn {
-  box-sizing: border-box;
-  border-radius: @button-border-radius;
-  background-image: none !important;
-
-  a {
-    color: inherit;
-
-    &:hover {
-      text-decoration: none;
-    }
-  }
-}
-
-.eo-chart-store-button.x-btn {
-  .x-btn-text {
-    .btn;
-    .btn-default;
-    .btn-xs;
-    height: auto;
-    border-radius: @button-border-radius;
-  }
-
-  .x-btn-tl,
-  .x-btn-tr,
-  .x-btn-tc,
-  .x-btn-ml,
-  .x-btn-mr,
-  .x-btn-mc,
-  .x-btn-bl,
-  .x-btn-br,
-  .x-btn-bc {
-    background-image: none;
-  }
-}
+@import "../../../../../../../../target/bower_components/bootstrap/less/buttons";
 
 .ext-el-mask {
   background-color: #000;
@@ -373,29 +337,26 @@ textarea.x-form-focus,
 
 .x-btn {
   font: normal 11px tahoma, arial, helvetica, sans-serif;
-}
 
-.x-btn button {
-  font: normal 11px tahoma, arial, helvetica, sans-serif;
-  color: #333;
-  padding: 0;
-}
+  .x-btn-tl,
+  .x-btn-tr,
+  .x-btn-tc,
+  .x-btn-ml,
+  .x-btn-mr,
+  .x-btn-mc,
+  .x-btn-bl,
+  .x-btn-br,
+  .x-btn-bc {
+    height: 0;
+    width: 0;
+    background-image: none;
 
-.x-btn em {
-  font-style: normal;
-  font-weight: normal;
-}
-
-.x-btn-tl, .x-btn-tr, .x-btn-tc, .x-btn-ml, .x-btn-mr, .x-btn-mc, .x-btn-bl, .x-btn-br, .x-btn-bc {
-  background-image: url(images/button/btn.gif);
-}
-
-.x-btn-click .x-btn-text, .x-btn-menu-active .x-btn-text, .x-btn-pressed .x-btn-text {
-  color: #000;
-}
-
-.x-btn-disabled * {
-  color: gray;
+    i {
+      height: 0;
+      width: 0;
+      background-image: none;
+    }
+  }
 }
 
 .x-btn-mc em.x-btn-arrow {
@@ -406,7 +367,10 @@ textarea.x-form-focus,
   background-image: url(images/button/s-arrow.gif);
 }
 
-.x-btn-over .x-btn-mc em.x-btn-split, .x-btn-click .x-btn-mc em.x-btn-split, .x-btn-menu-active .x-btn-mc em.x-btn-split, .x-btn-pressed .x-btn-mc em.x-btn-split {
+.x-btn-over .x-btn-mc em.x-btn-split,
+.x-btn-click .x-btn-mc em.x-btn-split,
+.x-btn-menu-active .x-btn-mc em.x-btn-split,
+.x-btn-pressed .x-btn-mc em.x-btn-split {
   background-image: url(images/button/s-arrow-o.gif);
 }
 
@@ -418,7 +382,10 @@ textarea.x-form-focus,
   background-image: url(images/button/s-arrow-b.gif);
 }
 
-.x-btn-over .x-btn-mc em.x-btn-split-bottom, .x-btn-click .x-btn-mc em.x-btn-split-bottom, .x-btn-menu-active .x-btn-mc em.x-btn-split-bottom, .x-btn-pressed .x-btn-mc em.x-btn-split-bottom {
+.x-btn-over .x-btn-mc em.x-btn-split-bottom,
+.x-btn-click .x-btn-mc em.x-btn-split-bottom,
+.x-btn-menu-active .x-btn-mc em.x-btn-split-bottom,
+.x-btn-pressed .x-btn-mc em.x-btn-split-bottom {
   background-image: url(images/button/s-arrow-bo.gif);
 }
 
@@ -469,7 +436,12 @@ textarea.x-form-focus,
   background-image: url(images/toolbar/bg.gif);
 }
 
-.x-toolbar td, .x-toolbar span, .x-toolbar input, .x-toolbar div, .x-toolbar select, .x-toolbar label {
+.x-toolbar td,
+.x-toolbar span,
+.x-toolbar input,
+.x-toolbar div,
+.x-toolbar select,
+.x-toolbar label {
   font: normal 11px tahoma, arial, helvetica, sans-serif;
 }
 
@@ -485,8 +457,10 @@ textarea.x-form-focus,
   background-image: url(images/button/s-arrow-noline.gif);
 }
 
-.x-toolbar .x-btn-over .x-btn-mc em.x-btn-split, .x-toolbar .x-btn-click .x-btn-mc em.x-btn-split,
-.x-toolbar .x-btn-menu-active .x-btn-mc em.x-btn-split, .x-toolbar .x-btn-pressed .x-btn-mc em.x-btn-split {
+.x-toolbar .x-btn-over .x-btn-mc em.x-btn-split,
+.x-toolbar .x-btn-click .x-btn-mc em.x-btn-split,
+.x-toolbar .x-btn-menu-active .x-btn-mc em.x-btn-split,
+.x-toolbar .x-btn-pressed .x-btn-mc em.x-btn-split {
   background-image: url(images/button/s-arrow-o.gif);
 }
 
@@ -494,8 +468,10 @@ textarea.x-form-focus,
   background-image: url(images/button/s-arrow-b-noline.gif);
 }
 
-.x-toolbar .x-btn-over .x-btn-mc em.x-btn-split-bottom, .x-toolbar .x-btn-click .x-btn-mc em.x-btn-split-bottom,
-.x-toolbar .x-btn-menu-active .x-btn-mc em.x-btn-split-bottom, .x-toolbar .x-btn-pressed .x-btn-mc em.x-btn-split-bottom {
+.x-toolbar .x-btn-over .x-btn-mc em.x-btn-split-bottom,
+.x-toolbar .x-btn-click .x-btn-mc em.x-btn-split-bottom,
+.x-toolbar .x-btn-menu-active .x-btn-mc em.x-btn-split-bottom,
+.x-toolbar .x-btn-pressed .x-btn-mc em.x-btn-split-bottom {
   background-image: url(images/button/s-arrow-bo.gif);
 }
 
@@ -1584,48 +1560,6 @@ a.x-menu-item {
     .x-toolbar-left-row .x-toolbar-cell:first-child {
       padding-left: @modal-footer-padding;
     }
-
-    .x-btn {
-      border: 1px solid @button-border;
-      border-collapse: separate;
-      border-radius: @button-border-radius;
-
-      &:hover,
-      &:focus {
-        background-color: @button-focus-bgcolor;
-        border-color: @button-focus-border;
-        color: @button-focus-color;
-      }
-
-      em {
-        padding: 0 4px;
-      }
-
-      button {
-        color: inherit;
-        font: normal @font-size-base @font-family-base;
-        height: 22px;
-      }
-
-    }
-
-    .x-btn-tl,
-    .x-btn-tc,
-    .x-btn-tr,
-    .x-btn-ml,
-    .x-btn-mc,
-    .x-btn-mr,
-    .x-btn-bl,
-    .x-btn-bc,
-    .x-btn-br {
-      background: none;
-      width: auto;
-      height: auto;
-      i {
-        width: 0;
-        height: 0;
-      }
-    }
   }
 }
 
@@ -1678,8 +1612,10 @@ body.x-body-masked .x-window-plain .x-window-mc {
   background-color: #fff;
 }
 
-.x-html-editor-tb .x-btn-text {
+.x-html-editor-tb .x-btn button {
   background-image: url(images/editor/tb-sprite.gif);
+  background-color: transparent;
+  border: none;
 }
 
 .x-panel-noborder .x-panel-header-noborder {
