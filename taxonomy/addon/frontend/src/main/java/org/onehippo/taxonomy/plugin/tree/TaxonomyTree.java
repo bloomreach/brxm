@@ -25,8 +25,6 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.tree.CmsJcrTree;
@@ -145,7 +143,12 @@ public class TaxonomyTree extends ContextMenuTree {
 
     @Override
     protected MarkupContainer newJunctionImage(final MarkupContainer parent, final String id, final TreeNode node) {
-        return new CmsJcrTree.CaretJunctionImage(id, node, isNodeExpanded(node));
+        return new CmsJcrTree.CaretJunctionImage(id, node) {
+            @Override
+            public boolean isExpanded(final TreeNode node) {
+                return isNodeExpanded(node);
+            }
+        };
     }
 
     @Override
