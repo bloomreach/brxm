@@ -70,7 +70,7 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
 
     @Override
     public void init(final ServletConfig config) throws ServletException {
-        super.init();
+        super.init(config);
 
         configureLoggerLibrary();
 
