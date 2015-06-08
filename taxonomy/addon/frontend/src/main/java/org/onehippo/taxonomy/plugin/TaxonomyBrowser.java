@@ -58,10 +58,10 @@ public class TaxonomyBrowser extends Panel {
 
     TaxonomyModel taxonomyModel;
     WebMarkupContainer container;
-    MarkupContainer details;
+    MarkupContainer emptyDetails;
     private String preferredLocale;
     private String currentCategoryKey;
-    private boolean taxonomyRootSelected;
+    private boolean taxonomyRootSelected = true;
     private boolean detailsReadOnly;
 
     /**
@@ -92,15 +92,16 @@ public class TaxonomyBrowser extends Panel {
             @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode node) {
                 if (node instanceof CategoryNode) {
-                    taxonomyRootSelected = false;
                     final Category category = ((CategoryNode) node).getCategory();
+                    taxonomyRootSelected = false;
                     currentCategoryKey = category.getKey();
-                    setDetails(((CategoryNode) node).getCategory());
-                    target.add(container);
+                    container.addOrReplace(newDetails("details", new CategoryModel(taxonomyModel, currentCategoryKey)));
                 } else if (node instanceof TaxonomyNode) {
                     taxonomyRootSelected = true;
                     currentCategoryKey = null;
+                    container.addOrReplace(emptyDetails);
                 }
+                target.add(container);
                 super.onNodeLinkClicked(target, node);
             }
         };
@@ -154,7 +155,7 @@ public class TaxonomyBrowser extends Panel {
             }
         };
         container.add(lv);
-        container.add(details = new EmptyDetails("details", "emptyDetails", this));
+        container.add(emptyDetails = new EmptyDetails("details", "emptyDetails", this));
 
         Label selectedCategoriesLabel = new Label("selected-categories-label", new StringResourceModel("taxonomy-selected-header", this, null, null));
         selectedCategoriesLabel.setVisible(!detailsReadOnly);
@@ -237,10 +238,6 @@ public class TaxonomyBrowser extends Panel {
      */
     protected String getPreferredLocale() {
         return preferredLocale;
-    }
-
-    private void setDetails(Category taxonomyItem) {
-        container.addOrReplace(details = newDetails("details", new CategoryModel(taxonomyModel, taxonomyItem.getKey())));
     }
 
     protected Details newDetails(String id, CategoryModel model) {
