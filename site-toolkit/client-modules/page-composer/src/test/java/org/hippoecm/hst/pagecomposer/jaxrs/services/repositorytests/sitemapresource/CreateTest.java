@@ -152,8 +152,8 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final Node newSitemapItemNode = session.getNodeByIdentifier(siteMapPageRepresentation.getId());
         assertEquals("foo", newSitemapItemNode.getName());
 
-        String newPageNodeName = "foo-" + session.getNodeByIdentifier(getPrototypePageUUID()).getName();
-        Node newPageNode = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/"+newPageNodeName);
+        String expectedNewPageNodeName = "foo-" + session.getNodeByIdentifier(getPrototypePageUUID()).getName();
+        Node newPageNode = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/"+expectedNewPageNodeName);
         assertTrue(newPageNode.hasNode("main/container1/x"));
         assertTrue(newPageNode.hasNode("main/container1/y"));
         assertTrue(newPageNode.hasNode("main/container2/z"));
@@ -538,14 +538,14 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
 
         // page node name is the sitemap pathInfo with slashes replaced by '-'
-        String newPageNodeName = "home-homeChild-" + session.getNodeByIdentifier(getPrototypePageUUID()).getName();
+        String expectedNewPageNodeName = "home-homeChild-" + session.getNodeByIdentifier(getPrototypePageUUID()).getName();
         {
             final Response response = siteMapResource.create(homeChild, home.getId());
             SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
             assertEquals("home/homeChild", siteMapPageRepresentation.getPathInfo());
             assertEquals("/home/homeChild", siteMapPageRepresentation.getRenderPathInfo());
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-            assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
+            assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + expectedNewPageNodeName));
         }
         // assert parent *not* locked and bob can add sibling child.
         // after this, neither bob nor admin are allowed to rename 'home' any more
@@ -589,7 +589,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             final Response success = siteMapResource.update(renameHome);
             assertEquals(Response.Status.OK.getStatusCode(), success.getStatus());
             // page for newHomeChild still available on old place
-            assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
+            assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + expectedNewPageNodeName));
         }
     }
 
