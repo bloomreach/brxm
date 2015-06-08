@@ -58,7 +58,7 @@ public class TaxonomyBrowser extends Panel {
 
     TaxonomyModel taxonomyModel;
     WebMarkupContainer container;
-    MarkupContainer emptyDetails;
+    private final MarkupContainer emptyDetails;
     private String preferredLocale;
     private String currentCategoryKey;
     private boolean taxonomyRootSelected = true;
@@ -79,10 +79,10 @@ public class TaxonomyBrowser extends Panel {
         super(id, model);
 
         this.taxonomyModel = taxonomyModel;
-
         this.preferredLocale = preferredLocale;
-
         this.detailsReadOnly = detailsReadOnly;
+
+        emptyDetails = new EmptyDetails("details", "emptyDetails", this);
 
         final String treeLocale = getPreferredLocale();
         final Comparator<Category> categoryComparator = getCategoryComparator(taxonomyModel.getPluginConfig(), treeLocale);
@@ -155,7 +155,7 @@ public class TaxonomyBrowser extends Panel {
             }
         };
         container.add(lv);
-        container.add(emptyDetails = new EmptyDetails("details", "emptyDetails", this));
+        container.add(emptyDetails);
 
         Label selectedCategoriesLabel = new Label("selected-categories-label", new StringResourceModel("taxonomy-selected-header", this, null, null));
         selectedCategoriesLabel.setVisible(!detailsReadOnly);
