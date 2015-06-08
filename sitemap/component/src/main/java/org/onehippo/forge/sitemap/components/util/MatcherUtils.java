@@ -30,6 +30,11 @@ public final class MatcherUtils {
     private static final Pattern ANY_OR_DEFAULT = Pattern.compile("(_default_|_any_)");
     private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("(\\$\\{\\d\\})");
 
+    // RegExp matching (optional-prefix:)property(optional-spaces)=(optional-spaces)value
+    private static final Pattern PROPERTY_VALUE_PATTERN = Pattern.compile("([\\w]+:?[\\w]+)[\\s]*=[\\s]*([\\w]+)");
+
+    private static final String COMMA_SEPARATING_REG_EXP = "[\\s]*,[\\s]*";
+
     private MatcherUtils() {} // Hide constructor of utility class
 
     /**
@@ -117,7 +122,7 @@ public final class MatcherUtils {
      */
     public static Map<Integer, String> extractPlaceholderValues(final String stringWithPlaceholders,
                                                                 final String stringToParse) {
-        Map<Integer, String> result = new HashMap<Integer, String>();
+        Map<Integer, String> result = new HashMap<>();
 
         Pattern matcherPattern = buildPatternWithCaptureGroupsFromStringWithPlaceholders(stringWithPlaceholders);
         Matcher matcher = matcherPattern.matcher(stringToParse);
@@ -136,6 +141,42 @@ public final class MatcherUtils {
         return result;
     }
 
+    public static String replaceDefaultAndAnyMatchersWithMatchedNodes(final String path,
+                                                                      final List<String> matchedNodes) {
+        String newPath = path;
+        for (String matchedNode : matchedNodes) {
+            Matcher matcher = ANY_OR_DEFAULT.matcher(newPath);
+            if (matcher.find()) {
+                newPath = matcher.replaceFirst(matchedNode);
+            }
+        }
+        return newPath;
+    }
+
+    /**
+     * Get the comma separated values from a string.
+     */
+    public static String[] getCommaSeparatedValues(final String values) {
+        if (values == null) {
+            return new String[]{};
+        }
+        return values.trim().split(COMMA_SEPARATING_REG_EXP);
+    }
+
+    /**
+     * Get a property/value pair for a string of format 'property=value'.
+     *
+     * @return null if the argument is not a 'property=value' string, else the property and value in a 2-string array
+     */
+    public static String[] parsePropertyValue(final String propertyAndValue) {
+        Matcher matcher = PROPERTY_VALUE_PATTERN.matcher(propertyAndValue);
+        if (!matcher.matches()) {
+            return null;
+        }
+
+        return new String[] {matcher.group(1), matcher.group(2)};
+    }
+
     /**
      * Parses a String with placeholders and returns a list of placeholder numbers in the order that they appear in
      * the String.
@@ -143,7 +184,7 @@ public final class MatcherUtils {
      * @return {@link Integer[]} with the order in which placeholder appear in the String
      */
     private static Integer[] resolveOrderOfPlaceholders(final String stringWithPlaceholders) {
-        List<Integer> placeholderList = new ArrayList<Integer>();
+        List<Integer> placeholderList = new ArrayList<>();
 
         Matcher placeholderMatcher = Pattern.compile("(\\$\\{(\\d)\\})").matcher(stringWithPlaceholders);
         while (placeholderMatcher.find()) {
@@ -164,17 +205,4 @@ public final class MatcherUtils {
         String resultingPattern = matcher.replaceAll("(.*)");
         return Pattern.compile(resultingPattern);
     }
-
-    public static String replaceDefaultAndAnyMatchersWithMatchedNodes(final String path,
-                                                                      final List<String> matchedNodes) {
-        String newPath = path;
-        for (String matchedNode : matchedNodes) {
-            Matcher matcher = ANY_OR_DEFAULT.matcher(newPath);
-            if (matcher.find()) {
-                newPath = matcher.replaceFirst(matchedNode);
-            }
-        }
-        return newPath;
-    }
-
 }

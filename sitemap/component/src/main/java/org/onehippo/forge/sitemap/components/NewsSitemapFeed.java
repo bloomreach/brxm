@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
@@ -41,6 +39,7 @@ import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.forge.sitemap.components.model.news.NewsUrlset;
 import org.onehippo.forge.sitemap.components.model.news.info.Publication;
+import org.onehippo.forge.sitemap.components.util.MatcherUtils;
 import org.onehippo.forge.sitemap.generator.DefaultNewsInformationProvider;
 import org.onehippo.forge.sitemap.generator.NewsSitemapGenerator;
 
@@ -193,28 +192,27 @@ public class NewsSitemapFeed extends BaseHstComponent {
     }
 
     /**
-     * Takes an input string with comma seperated property criteria (in the format prop1=condition1,prop2=condiion2...)
+     * Takes an input string with comma separated property criteria (in the format prop1=condition1,prop2=condiion2...)
      * and returns a map with key = property and value = criterion
      *
-     * @param propertyCriteria comma seperated list of property criteria
+     * @param propertyCriteria comma separated list of property criteria
      * @return {@link Map} containing the property criteria
      */
     private static Map<String, String> parsePropertyCriteria(final String propertyCriteria) {
         if (StringUtils.isEmpty(propertyCriteria)) {
             return Collections.emptyMap();
         }
-        String[] criteria = propertyCriteria.trim().split("[\\s]*,[\\s]*");
-        Pattern propertyCriterionPattern = Pattern.compile("([\\w]+)[\\s]*=[\\s]*([\\w]+)");
-        Map<String, String> propertiesWithCriteria = new HashMap<String, String>();
+        final String[] criteria = MatcherUtils.getCommaSeparatedValues(propertyCriteria);
+        final Map<String, String> propertiesWithCriteria = new HashMap<>();
         for (final String criterion : criteria) {
-            Matcher propertyCriterionMatcher = propertyCriterionPattern.matcher(criterion);
-            if (!propertyCriterionMatcher.matches()) {
-                throw new HstComponentException("Criterion does not match pattern \"property=condition\"");
+
+            final String[] propertyValuePair = MatcherUtils.parsePropertyValue(criterion);
+            if (propertyValuePair == null) {
+                throw new HstComponentException("Criterion '" + criterion + "' doet not have format 'property=value'");
             }
-            String property = propertyCriterionMatcher.group(1);
-            String condition = propertyCriterionMatcher.group(2);
-            propertiesWithCriteria.put(property, condition);
+            propertiesWithCriteria.put(propertyValuePair[0], propertyValuePair[1]);
         }
+
         return propertiesWithCriteria;
     }
 }

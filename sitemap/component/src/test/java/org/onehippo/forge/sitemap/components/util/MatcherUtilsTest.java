@@ -21,8 +21,6 @@ import java.util.Map;
 import org.junit.Test;
 
 import junit.framework.Assert;
-import static org.onehippo.forge.sitemap.components.util.MatcherUtils.extractPlaceholderValues;
-import static org.onehippo.forge.sitemap.components.util.MatcherUtils.replacePlaceholdersWithMatchedNodes;
 
 /**
  *
@@ -44,7 +42,7 @@ public class MatcherUtilsTest {
         String input = "dada --- ${1}/${2}/${3} dumtidum";
         String expected = "dada --- a/g/l dumtidum";
         String[] matchedNodes = {"a", "g", "l"};
-        Assert.assertEquals(expected, replacePlaceholdersWithMatchedNodes(input, Arrays.asList(matchedNodes)));
+        Assert.assertEquals(expected, MatcherUtils.replacePlaceholdersWithMatchedNodes(input, Arrays.asList(matchedNodes)));
     }
 
     @Test
@@ -57,9 +55,56 @@ public class MatcherUtilsTest {
 
     @Test
     public void testExtractPlaceholderValues() throws Exception {
-        Map<Integer, String> result = extractPlaceholderValues("${3}://${1}/lfaskdjflkas/${2}", "a://b/lfaskdjflkas/c");
+        Map<Integer, String> result = MatcherUtils.extractPlaceholderValues("${3}://${1}/lfaskdjflkas/${2}", "a://b/lfaskdjflkas/c");
         Assert.assertEquals(result.get(1), "b");
         Assert.assertEquals(result.get(2), "c");
         Assert.assertEquals(result.get(3), "a");
+    }
+
+    @Test
+    public void testGetCommaSeparatedValues() throws Exception {
+
+        final String input = "  value1, \n\t value2  ,value3 , value4,value5";
+        final String[] expected = new String[]{"value1","value2","value3","value4","value5"};
+        final String[] actual = MatcherUtils.getCommaSeparatedValues(input);
+
+        Assert.assertEquals("Lengths of resulting arrays don't match", 5, actual.length);
+        Assert.assertEquals(expected[0], actual[0]);
+        Assert.assertEquals(expected[1], actual[1]);
+        Assert.assertEquals(expected[2], actual[2]);
+        Assert.assertEquals(expected[3], actual[3]);
+        Assert.assertEquals(expected[4], actual[4]);
+
+    }
+
+    @Test
+    public void testParsePropertyValueOK() throws Exception {
+
+        final String input1 = "property=value";
+        final String input2 = "property = value";
+        final String input3 = "property \t\n = \t\n value";
+        final String[] expectedA = new String[]{"property","value"};
+
+        assertPropertyValue(input1, expectedA);
+        assertPropertyValue(input2, expectedA);
+        assertPropertyValue(input3, expectedA);
+
+        final String input4 = "namespace:property=value";
+        final String input5 = "namespace:property = value";
+        final String input6 = "namespace:property \t\n = \t\n value";
+        final String[] expectedB = new String[]{"namespace:property","value"};
+
+        assertPropertyValue(input4, expectedB);
+        assertPropertyValue(input5, expectedB);
+        assertPropertyValue(input6, expectedB);
+    }
+
+    private void assertPropertyValue(final String input, final String[] expected) {
+
+        final String[] actual = MatcherUtils.parsePropertyValue(input);
+
+        Assert.assertEquals(2, actual.length);
+        Assert.assertEquals(expected[0], actual[0]);
+        Assert.assertEquals(expected[1], actual[1]);
     }
 }
