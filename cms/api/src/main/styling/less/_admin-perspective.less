@@ -266,11 +266,6 @@
   visibility: hidden;
 }
 
-.updater-shorter {
-  flex: 1 0 auto;
-  height: 0;
-}
-
 .updater-editor-plugin {
   position: absolute;
   height: 100%;
@@ -357,6 +352,14 @@
           padding-bottom: 8px;
         }
 
+        .labelcell {
+          width: 125px;
+          overflow: hidden;
+          white-space: nowrap;
+          vertical-align: top;
+          padding-top: 5px;
+        }
+
         .script-edit-link, .log-title {
           flex: 0 0 auto;
           padding: 8px 0 2px 0;
@@ -396,70 +399,47 @@
           }
         }
 
-        .script {
+        .updater-editor-script {
+          flex: 1 1 auto;
+
           max-width: 100px;
+          overflow: hidden;
 
-          overflow: auto;
+          border: 0;
 
-          &.updater-shorter {
-            border: 1px solid @light-gray;
-            min-height: 110px;
-            resize: vertical;
+          &.updater-editor-script-visible:not(:last-child) {
+            flex-shrink: 0;
           }
 
           .CodeMirror {
-            width: auto;
-            height: auto;
+
+            .updater-editor {
+              visibility: hidden;
+
+              &.updater-editor-visible {
+                border: 1px solid @light-gray;
+                visibility: visible;
+              }
+            }
           }
         }
 
         .updater-feedback {
-          flex: 1 0 auto;
+          flex: 1 1 auto;
           box-sizing: border-box;
 
           border: 1px solid @light-gray;
           padding: 4px;
 
           max-width: 100px;
-
-          height: 100px;
-          resize: vertical;
-
           overflow: auto;
         }
       }
+
+      pre {
+        overflow: hidden;
+      }
+
     }
   }
-}
-
-.updater-details .labelcell {
-  width: 125px;
-  overflow: hidden;
-  white-space: nowrap;
-  vertical-align: top;
-  padding-top: 5px;
-}
-
-.updater-editor {
-  height: 1px !important;
-  visibility: hidden;
-}
-
-.updater-editor-visible {
-  height: auto !important;
-  visibility: visible;
-}
-
-.updater-registry-editor {
-  height: 1px !important;
-  visibility: hidden;
-}
-
-.updater-registry-editor-visible {
-  height: auto !important;
-  visibility: visible;
-}
-
-.updater-details pre {
-  overflow: hidden;
 }

@@ -20,25 +20,55 @@
   <wicket:head>
     <script type="text/javascript">
       $(document).ready(function () {
-        Hippo.toggleUpdaterScriptEditor = function () {
-          var regEditor = $('.updater-registry-editor');
-          var nonRegEditor = $('.updater-editor');
+
+        function syncCodeMirrorHeight() {
+          var editor, editorContainer, feedback, totalHeight;
+
+          editor = $('.updater-editor');
+
+          if (editor.length) {
+            editorContainer = $('.updater-editor-script-visible');
+            feedback = $('.updater-feedback');
+            if (feedback.length) {
+              totalHeight = editorContainer.height() + feedback.height();
+              editor.outerHeight(totalHeight / 2);
+              // flexbox will give the feedback panel the remaining height
+            } else {
+              editor.outerHeight(editorContainer.height());
+            }
+          }
+        }
+
+        function toggleScriptLink() {
           var toggleLink = $('#update-editor-toggle');
-          var updaterScript = $('.script');
-          if (regEditor && regEditor.length) {
-            regEditor.toggleClass('updater-registry-editor-visible');
-          } else if (nonRegEditor && nonRegEditor.length) {
-            nonRegEditor.toggleClass('updater-editor-visible');
-          }
-          if (updaterScript) {
-            updaterScript.toggleClass('updater-shorter');
-          }
           if (toggleLink.text() !== '>>>') {
             toggleLink.text('>>>');
           } else {
             toggleLink.text('<<<');
           }
         }
+
+        function toggleEditor() {
+          var script = $('.updater-editor-script'),
+            editor = $('.updater-editor');
+
+          script.toggleClass('updater-editor-script-visible');
+          editor.toggleClass('updater-editor-visible');
+
+          syncCodeMirrorHeight();
+
+          if (editor.hasClass('updater-editor-visible')) {
+            $(window).on('resize', syncCodeMirrorHeight);
+          } else {
+            $(window).off('resize', syncCodeMirrorHeight);
+          }
+        }
+
+        Hippo.toggleUpdaterScriptEditor = function () {
+          toggleScriptLink();
+          toggleEditor();
+        }
+
       });
     </script>
   </wicket:head>
@@ -83,8 +113,8 @@
           Script
           <a id="update-editor-toggle" href="javascript:void(0)" onclick="return Hippo.toggleUpdaterScriptEditor();">&gt;&gt;&gt;</a>
         </p>
-        <fieldset id="script" class="script">
-          <textarea wicket:id="script-editor"></textarea>
+        <fieldset id="updater-editor-script" class="updater-editor-script">
+          <textarea wicket:id="script-editor" class="hippo-global-hideme"></textarea>
         </fieldset>
         <wicket:container wicket:id="updater-output"/>
       </form>
