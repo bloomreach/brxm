@@ -25,11 +25,13 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.repository.util.JcrUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -46,7 +48,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
 
     private void initContext() throws Exception {
         // call below will init request context
-        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+        getSiteMapItemRepresentation(session, "home");
     }
 
     @Test
@@ -105,6 +107,46 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         assertTrue(((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
         assertTrue(session.nodeExists(componentConfiguration.getCanonicalStoredLocation()));
         assertFalse(session.getNode(componentConfiguration.getCanonicalStoredLocation()).hasProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE));
+    }
+
+    @Ignore
+    @Test
+    public void delete_item_with_descendant_items_should_also_remove_page_for_descendants() throws Exception {
+        initContext();
+        final String prototypeUUID = getPrototypePageUUID();
+        final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", prototypeUUID);
+        final SiteMapResource siteMapResource = createResource();
+        final Response newFooResponse = siteMapResource.create(newFoo);
+
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/foo"));
+        String expectedNewPageFooNodeName = "foo-" + session.getNodeByIdentifier(prototypeUUID).getName();
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/"+expectedNewPageFooNodeName));
+
+
+        // create 'bar' below 'foo'
+        // first have to re-init the context to have the above added page to be part of the hst model
+        initContext();
+        SiteMapPageRepresentation siteMapPageFooRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) newFooResponse.getEntity()).getData();
+        final SiteMapItemRepresentation newBar = createSiteMapItemRepresentation("bar", prototypeUUID);
+        siteMapResource.create(newBar, siteMapPageFooRepresentation.getId());
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/foo/bar"));
+        String expectedNewPageBarNodeName = "foo-bar-" + session.getNodeByIdentifier(prototypeUUID).getName();
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/"+expectedNewPageBarNodeName));
+
+        // now deleting 'foo' should also delete 'bar' PLUS its page because 'bar' is below 'foo'
+        // first re-init the context
+        initContext();
+        siteMapResource.delete(siteMapPageFooRepresentation.getId());
+
+        assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/foo"));
+        assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/"+expectedNewPageFooNodeName));
+        assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/foo/bar"));
+        assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/" + expectedNewPageBarNodeName));
+
+    }
+
+    @Test
+    public void delete_item_with_descendant_items_should_also_mark_page_for_descendants_deleted_when_descendants_are_live() throws Exception {
 
     }
 
