@@ -47,8 +47,8 @@
 .hippo-panel-plugin .icons-128 {
   background-position: left center;
   background-repeat: no-repeat;
-  border-bottom: 1px solid #AFAFAF;
-  border-top: 1px solid #AFAFAF;
+  border-bottom: 1px solid #afafaf;
+  border-top: 1px solid #afafaf;
   min-height: 128px;
   padding-bottom: 10px;
   padding-left: 150px;
@@ -125,7 +125,7 @@
 }
 
 .hippo-controlpanel-table-default tr td a {
-  color: #0467B4
+  color: #0467b4
 }
 
 .hippo-controlpanel-table-default tr td:hover {
@@ -183,11 +183,11 @@
 }
 
 .hippo-controlpanel-actions-top {
-    border-bottom: 1px solid #afafaf;
-    border-top: none;
-    text-align: left;
-    padding-top: 2px;
-    margin-bottom: 5px
+  border-bottom: 1px solid #afafaf;
+  border-top: none;
+  text-align: left;
+  padding-top: 2px;
+  margin-bottom: 5px
 }
 
 .hippo-controlpanel-actions {
@@ -258,7 +258,7 @@
 .groovy-basic-shell {
   background-color: white;
   height: 320px;
-  width:720px;
+  width: 720px;
   position: relative !important;
 }
 
@@ -411,15 +411,12 @@
             flex-shrink: 0;
           }
 
-          .CodeMirror {
+          .CodeMirror .updater-editor {
+            visibility: hidden;
 
-            .updater-editor {
-              visibility: hidden;
-
-              &.updater-editor-visible {
-                border: 1px solid @light-gray;
-                visibility: visible;
-              }
+            &.updater-editor-visible {
+              border: 1px solid @light-gray;
+              visibility: visible;
             }
           }
         }
@@ -439,7 +436,6 @@
       pre {
         overflow: hidden;
       }
-
     }
   }
 }
