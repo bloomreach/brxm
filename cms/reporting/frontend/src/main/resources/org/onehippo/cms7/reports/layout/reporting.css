@@ -1,12 +1,12 @@
 /*
  * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,11 +34,8 @@
 }
 
 .reports-perspective-top a.reports-refresh-button {
-  background: url("images/refresh.gif") no-repeat 3px center;
-  border: 1px solid #a9a9a9;
-  margin-left: 5px;
-  margin-right: 20px;
-  padding: 2px 6px 2px 22px;
+  background: url("images/refresh.gif") no-repeat 3px center #ffffff;
+  padding-left: 22px;
 }
 
 .reports-perspective-top a.reports-refresh-button:hover {
