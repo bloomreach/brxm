@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 public enum Icon {
 
     ARROW_DOWN,
+    ARROW_FAT_DOWN_CIRCLE,
     ARROW_UP,
     ARROW_RIGHT_SQUARE,
     BELL,
