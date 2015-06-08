@@ -126,7 +126,13 @@ public abstract class CmsJcrTree extends ContextMenuTree {
     protected MarkupContainer newJunctionImage(final MarkupContainer parent, final String id,
                                                final TreeNode node)
     {
-        return new CaretJunctionImage(id, node);
+        return new CaretJunctionImage(id, node) {
+
+            @Override
+            public boolean isExpanded(final TreeNode node) {
+                return isNodeExpanded(node);
+            }
+        };
     }
 
     public static class NodeIconContainer extends Panel {
@@ -150,7 +156,7 @@ public abstract class CmsJcrTree extends ContextMenuTree {
         }
     }
 
-    public class CaretJunctionImage extends WebMarkupContainer {
+    public abstract static class CaretJunctionImage extends WebMarkupContainer {
 
         private final TreeNode node;
 
@@ -165,7 +171,7 @@ public abstract class CmsJcrTree extends ContextMenuTree {
             super.onComponentTag(tag);
 
             final Icon icon = node.isLeaf() ? Icon.BULLET :
-                    isNodeExpanded(node) ? Icon.CARET_DOWN : Icon.CARET_RIGHT;
+                    isExpanded(node) ? Icon.CARET_DOWN : Icon.CARET_RIGHT;
             final String cssClassOuter = isNodeLast() ? "junction-last" : "junction";
 
             final Response response = RequestCycle.get().getResponse();
@@ -178,5 +184,7 @@ public abstract class CmsJcrTree extends ContextMenuTree {
             TreeNode parent = node.getParent();
             return parent == null || parent.getChildAt(parent.getChildCount() - 1).equals(node);
         }
+
+        public abstract boolean isExpanded(TreeNode node);
     }
 }
