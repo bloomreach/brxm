@@ -134,7 +134,20 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore/>
+                  </action>
+                </pluginExecution>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <goals>
+                      <goal>regex-property</goal>
+                    </goals>
+                    <versionRange>[0.0,)</versionRange>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore/>
                   </action>
                 </pluginExecution>
               </pluginExecutions>
