@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.servlet.ServletConfig;
@@ -205,6 +206,25 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
             path = request.getAttribute(ContainerConstants.DISPATCH_URI_PROTOCOL) + path;
         }
         return path;
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Because the default FreemarkerServlet deduced the request locale from the global {@code config} member,
+     * we should check if the request already has a proper locale (determined by the current request context) first.
+     * </p>
+     */
+    @Override
+    protected Locale deduceLocale(String templatePath, HttpServletRequest request, HttpServletResponse response)
+            throws ServletException {
+        final Locale reqLocale = request.getLocale();
+
+        if (reqLocale != null) {
+            return reqLocale;
+        }
+
+        return super.deduceLocale(templatePath, request, response);
     }
 
     @Override
