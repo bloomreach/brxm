@@ -44,8 +44,6 @@ import org.hippoecm.frontend.widgets.ContextMenuTree;
 
 public abstract class CmsJcrTree extends ContextMenuTree {
 
-    private static final long serialVersionUID = 1L;
-
     public interface ITreeNodeTranslator extends IClusterable {
         String getName(TreeNode treeNode, int level);
 
@@ -55,7 +53,6 @@ public abstract class CmsJcrTree extends ContextMenuTree {
     }
 
     public static class TreeNodeTranslator implements ITreeNodeTranslator {
-        private static final long serialVersionUID = 1L;
 
         public String getName(TreeNode treeNode, int level) {
             return getTitleName(treeNode);
@@ -129,7 +126,7 @@ public abstract class CmsJcrTree extends ContextMenuTree {
     protected MarkupContainer newJunctionImage(final MarkupContainer parent, final String id,
                                                final TreeNode node)
     {
-        return new CaretJunctionImage(id, node, isNodeExpanded(node));
+        return new CaretJunctionImage(id, node);
     }
 
     public static class NodeIconContainer extends Panel {
@@ -153,15 +150,13 @@ public abstract class CmsJcrTree extends ContextMenuTree {
         }
     }
 
-    public static class CaretJunctionImage extends WebMarkupContainer {
+    public class CaretJunctionImage extends WebMarkupContainer {
 
         private final TreeNode node;
-        private final boolean isExpanded;
 
-        public CaretJunctionImage(final String id, final TreeNode node, final boolean isExpanded) {
+        public CaretJunctionImage(final String id, final TreeNode node) {
             super(id);
             this.node = node;
-            this.isExpanded = isExpanded;
             setRenderBodyOnly(true);
         }
 
@@ -170,7 +165,7 @@ public abstract class CmsJcrTree extends ContextMenuTree {
             super.onComponentTag(tag);
 
             final Icon icon = node.isLeaf() ? Icon.BULLET :
-                    isExpanded ? Icon.CARET_DOWN : Icon.CARET_RIGHT;
+                    isNodeExpanded(node) ? Icon.CARET_DOWN : Icon.CARET_RIGHT;
             final String cssClassOuter = isNodeLast() ? "junction-last" : "junction";
 
             final Response response = RequestCycle.get().getResponse();
