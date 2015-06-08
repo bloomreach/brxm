@@ -125,7 +125,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         WebMarkupContainer scopeContainer = new WebMarkupContainer("scope-container") {
             @Override
             public boolean isVisible() {
-                return hasSearchResult();
+                return hasSearchResult() && !rootModel.equals(scopeModel);
             }
         };
 
@@ -156,7 +156,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         WebMarkupContainer allContainer = new WebMarkupContainer("all-container") {
             @Override
             public boolean isVisible() {
-                return hasSearchResult() && !rootModel.equals(scopeModel);
+                return hasSearchResult();
             }
         };
         final AjaxLink allLink = new AjaxLink("all") {
