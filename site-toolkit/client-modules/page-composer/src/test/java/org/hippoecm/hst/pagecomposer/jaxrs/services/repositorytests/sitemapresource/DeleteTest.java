@@ -22,7 +22,9 @@ import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
@@ -31,10 +33,12 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.repository.util.JcrUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hippoecm.hst.configuration.HstNodeTypes.EDITABLE_PROPERTY_STATE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -165,7 +169,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         String expectedNewPageBarNodeName = "foo-bar-" + session.getNodeByIdentifier(prototypeUUID).getName();
 
         final Node container = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/" + expectedNewPageBarNodeName + "/main/container1");
-        container.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, "JohnDoe");
+        container.setProperty(GENERAL_PROPERTY_LOCKED_BY, "JohnDoe");
         session.save();
         Thread.sleep(200);
 
@@ -261,6 +265,33 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
             assertTrue(session.nodeExists(absPath));
             assertFalse(session.getNode(absPath).hasProperty(EDITABLE_PROPERTY_STATE));
         }
+    }
+
+    @Ignore
+    @Test
+    public void delete_of_page_that_is_live_results_in_channel_having_changes() throws Exception {
+        initContext();
+        final String prototypeUUID = getPrototypePageUUID();
+        final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", prototypeUUID);
+        final SiteMapResource siteMapResource = createResource();
+        final Response newFooResponse = siteMapResource.create(newFoo);
+
+        SiteMapPageRepresentation siteMapPageFooRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) newFooResponse.getEntity()).getData();
+        initContext();
+        mountResource.publish();
+        // reload model and context
+        initContext();
+        siteMapResource.delete(siteMapPageFooRepresentation.getId());
+        initContext();
+
+        final String absSiteMapFooPath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/foo";
+        assertTrue(session.getNode(absSiteMapFooPath).hasProperty(EDITABLE_PROPERTY_STATE));
+        assertEquals("deleted", session.getNode(absSiteMapFooPath).getProperty(EDITABLE_PROPERTY_STATE).getString());
+        assertTrue(session.getNode(absSiteMapFooPath).hasProperty(GENERAL_PROPERTY_LOCKED_BY));
+        assertEquals("admin", session.getNode(absSiteMapFooPath).getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
+
+        final Channel channel = RequestContextProvider.get().getResolvedMount().getMount().getChannel();
+        assertEquals("There should be 'admin' in the changed by set.", 1, channel.getChangedBySet().size());
     }
 
     @Test
