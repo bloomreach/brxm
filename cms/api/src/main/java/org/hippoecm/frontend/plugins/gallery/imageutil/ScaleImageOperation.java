@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -270,36 +270,20 @@ public class ScaleImageOperation extends AbstractImageOperation {
 
             final int originalWidth = reader.getWidth(0);
             final int originalHeight = reader.getHeight(0);
-            final double resizeRatio = calculateResizeRatio(originalWidth, originalHeight, width, height);
 
-            int targetWidth;
-            int targetHeight;
-
-            if (resizeRatio >= 1.0d && !upscaling) {
-                targetWidth = originalWidth;
-                targetHeight = originalHeight;
+            if (isOriginalVariant()) {
+                scaledWidth = originalWidth;
+                scaledHeight = originalHeight;
+                scaledData = new AutoDeletingTmpFileInputStream(tmpFile);
+                deleteTmpFile = false;
             } else {
-                // scale the image
-                targetWidth = (int) Math.max(originalWidth * resizeRatio, 1);
-                targetHeight = (int) Math.max(originalHeight * resizeRatio, 1);
+                BufferedImage scaledImage = getScaledImage(reader, originalWidth, originalHeight);
+                ByteArrayOutputStream scaledOutputStream = ImageUtils.writeImage(writer, scaledImage, compressionQuality);
+
+                scaledWidth = scaledImage.getWidth();
+                scaledHeight = scaledImage.getHeight();
+                scaledData = new ByteArrayInputStream(scaledOutputStream.toByteArray());
             }
-            if (log.isDebugEnabled()) {
-                log.debug("Resizing image of {}x{} to {}x{}", new Object[]{originalWidth, originalHeight, targetWidth, targetHeight});
-            }
-
-            BufferedImage scaledImage;
-
-            synchronized (scalingLock) {
-                BufferedImage originalImage = reader.read(0);
-                scaledImage = ImageUtils.scaleImage(originalImage, targetWidth, targetHeight, strategy);
-            }
-
-            scaledWidth = scaledImage.getWidth();
-            scaledHeight = scaledImage.getHeight();
-
-            ByteArrayOutputStream scaledOutputStream = ImageUtils.writeImage(writer, scaledImage, compressionQuality);
-            scaledData = new ByteArrayInputStream(scaledOutputStream.toByteArray());
-
         } finally {
             if (imageInputStream != null) {
                 imageInputStream.close();
@@ -310,6 +294,35 @@ public class ScaleImageOperation extends AbstractImageOperation {
                 tmpFile.delete();
             }
         }
+    }
+
+    private BufferedImage getScaledImage(final ImageReader reader, final int originalWidth, final int originalHeight)
+            throws IOException {
+
+        final double resizeRatio = calculateResizeRatio(originalWidth, originalHeight, width, height);
+
+        int targetWidth;
+        int targetHeight;
+
+        if (resizeRatio >= 1.0d && !upscaling) {
+            targetWidth = originalWidth;
+            targetHeight = originalHeight;
+        } else {
+            // scale the image
+            targetWidth = (int) Math.max(originalWidth * resizeRatio, 1);
+            targetHeight = (int) Math.max(originalHeight * resizeRatio, 1);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Resizing image of {}x{} to {}x{}", originalWidth, originalHeight, targetWidth, targetHeight);
+        }
+
+        BufferedImage scaledImage;
+
+        synchronized (scalingLock) {
+            BufferedImage originalImage = reader.read(0);
+            scaledImage = ImageUtils.scaleImage(originalImage, targetWidth, targetHeight, strategy);
+        }
+        return scaledImage;
     }
 
     private File writeToTmpFile(InputStream data) throws IOException {
