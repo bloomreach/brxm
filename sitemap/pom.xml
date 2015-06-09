@@ -28,14 +28,14 @@
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-sitemap</artifactId>
   <packaging>pom</packaging>
-  <version>1.07.01-SNAPSHOT</version>
+  <version>1.07.01</version>
 
   <inceptionYear>2009</inceptionYear>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/sitemap/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/sitemap/trunk/</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/sitemap/trunk/</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/sitemap/tags/hippo-plugin-sitemap-1.07.01</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/sitemap/tags/hippo-plugin-sitemap-1.07.01</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/sitemap/tags/hippo-plugin-sitemap-1.07.01</url>
   </scm>
 
   <properties>
