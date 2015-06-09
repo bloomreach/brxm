@@ -270,6 +270,9 @@ public class PagesHelper extends AbstractHelper {
     }
 
     public void delete(final Node sitemapItemNodeToDelete) throws RepositoryException {
+        for (Node child : new NodeIterable(sitemapItemNodeToDelete.getNodes())) {
+            delete(child);
+        }
         final String componentConfigId = getStringProperty(sitemapItemNodeToDelete, SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, null);
         if (componentConfigId == null) {
             log.debug("No component id configured for '{}'. No page to delete.", sitemapItemNodeToDelete.getPath());

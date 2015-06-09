@@ -31,10 +31,10 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.repository.util.JcrUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hippoecm.hst.configuration.HstNodeTypes.EDITABLE_PROPERTY_STATE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -65,7 +65,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
 
         assertTrue(session.nodeExists(componentConfiguration.getCanonicalStoredLocation()));
         assertEquals("deleted",
-                session.getNode(componentConfiguration.getCanonicalStoredLocation()).getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString());
+                session.getNode(componentConfiguration.getCanonicalStoredLocation()).getProperty(EDITABLE_PROPERTY_STATE).getString());
     }
 
     @Test
@@ -106,10 +106,9 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
         assertTrue(((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
         assertTrue(session.nodeExists(componentConfiguration.getCanonicalStoredLocation()));
-        assertFalse(session.getNode(componentConfiguration.getCanonicalStoredLocation()).hasProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE));
+        assertFalse(session.getNode(componentConfiguration.getCanonicalStoredLocation()).hasProperty(EDITABLE_PROPERTY_STATE));
     }
 
-    @Ignore
     @Test
     public void delete_item_with_descendant_items_should_also_remove_page_for_descendants() throws Exception {
         initContext();
@@ -121,7 +120,6 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/foo"));
         String expectedNewPageFooNodeName = "foo-" + session.getNodeByIdentifier(prototypeUUID).getName();
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/"+expectedNewPageFooNodeName));
-
 
         // create 'bar' below 'foo'
         // first have to re-init the context to have the above added page to be part of the hst model
@@ -141,13 +139,128 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/foo"));
         assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/"+expectedNewPageFooNodeName));
         assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/foo/bar"));
-        assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/" + expectedNewPageBarNodeName));
+        assertFalse("page for 'bar' should also had been deleted",
+                session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/" + expectedNewPageBarNodeName));
 
     }
 
     @Test
-    public void delete_item_with_descendant_items_should_also_mark_page_for_descendants_deleted_when_descendants_are_live() throws Exception {
+    public void delete_item_with_descendant_items_fails_if_a_descendant_has_a_page_with_a_lock_by_other_user() throws Exception {
+        initContext();
+        final String prototypeUUID = getPrototypePageUUID();
+        final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", prototypeUUID);
+        final SiteMapResource siteMapResource = createResource();
+        final Response newFooResponse = siteMapResource.create(newFoo);
+        // create 'bar' below 'foo'
+        // first have to re-init the context to have the above added page to be part of the hst model
+        initContext();
+        SiteMapPageRepresentation siteMapPageFooRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) newFooResponse.getEntity()).getData();
+        final SiteMapItemRepresentation newBar = createSiteMapItemRepresentation("bar", prototypeUUID);
+        siteMapResource.create(newBar, siteMapPageFooRepresentation.getId());
 
+        // publish changes for free locks
+        initContext();
+        mountResource.publish();
+        // lock a container on the page belonging to 'bar'
+        String expectedNewPageBarNodeName = "foo-bar-" + session.getNodeByIdentifier(prototypeUUID).getName();
+
+        final Node container = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/" + expectedNewPageBarNodeName + "/main/container1");
+        container.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, "JohnDoe");
+        session.save();
+        Thread.sleep(200);
+
+        // reload model and context
+        initContext();
+        // the deletion will result in a client error because one container on a page has been locked. Hence, the
+        // delete call should not have removed the sitemap nodes (or have marked them as deleted)
+        siteMapResource.delete(siteMapPageFooRepresentation.getId());
+
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/foo"));
+        assertFalse(session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/foo").hasProperty(EDITABLE_PROPERTY_STATE));
+        String expectedNewPageFooNodeName = "foo-" + session.getNodeByIdentifier(prototypeUUID).getName();
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/" + expectedNewPageFooNodeName));
+        assertFalse(session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/" + expectedNewPageFooNodeName).hasProperty(EDITABLE_PROPERTY_STATE));
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/foo/bar"));
+        assertFalse(session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/foo/bar").hasProperty(EDITABLE_PROPERTY_STATE));
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/" + expectedNewPageBarNodeName));
+        assertFalse(session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/" + expectedNewPageBarNodeName).hasProperty(EDITABLE_PROPERTY_STATE));
+    }
+
+    @Test
+    public void delete_item_with_descendant_items_should_also_mark_page_for_descendants_deleted_when_descendants_are_live() throws Exception {
+        initContext();
+        final String prototypeUUID = getPrototypePageUUID();
+        final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", prototypeUUID);
+        final SiteMapResource siteMapResource = createResource();
+        final Response newFooResponse = siteMapResource.create(newFoo);
+        // create 'bar' below 'foo'
+        // first have to re-init the context to have the above added page to be part of the hst model
+        initContext();
+        SiteMapPageRepresentation siteMapPageFooRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) newFooResponse.getEntity()).getData();
+        final SiteMapItemRepresentation newBar = createSiteMapItemRepresentation("bar", prototypeUUID);
+        siteMapResource.create(newBar, siteMapPageFooRepresentation.getId());
+
+        // publish changes for free locks
+        initContext();
+        mountResource.publish();
+        // reload model and context
+        initContext();
+        // the deletion will result in items marked 'deleted' because live still has them. Only removed item should be the
+        // child of sitemap item 'foo' since 'foo' is marked deleted already
+        siteMapResource.delete(siteMapPageFooRepresentation.getId());
+        final String absSiteMapFooPath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/foo";
+        String expectedNewPageFooNodeName = "foo-" + session.getNodeByIdentifier(prototypeUUID).getName();
+        final String absPageFooPath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/" + expectedNewPageFooNodeName;
+        String expectedNewPageBarNodeName = "foo-bar-" + session.getNodeByIdentifier(prototypeUUID).getName();
+        final String absPageBarPath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/" + expectedNewPageBarNodeName;
+
+        for (String absPath : new String[]{absSiteMapFooPath, absPageFooPath, absPageBarPath}) {
+            assertTrue(session.nodeExists(absPath));
+            assertTrue(session.getNode(absPath).hasProperty(EDITABLE_PROPERTY_STATE));
+            assertEquals("deleted", session.getNode(absPath).getProperty(EDITABLE_PROPERTY_STATE).getString());
+        }
+
+        final String absSiteMapFooBarPath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/foo/bar";
+        assertFalse("child of deleted marked item should have been deleted", session.nodeExists(absSiteMapFooBarPath));
+
+    }
+
+    @Test
+    public void discard_delete_with_descendant_items_should_also_discard_page_for_descendants_deleted_when_descendants_are_live() throws Exception {
+        initContext();
+        final String prototypeUUID = getPrototypePageUUID();
+        final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", prototypeUUID);
+        final SiteMapResource siteMapResource = createResource();
+        final Response newFooResponse = siteMapResource.create(newFoo);
+        // create 'bar' below 'foo'
+        // first have to re-init the context to have the above added page to be part of the hst model
+        initContext();
+        SiteMapPageRepresentation siteMapPageFooRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) newFooResponse.getEntity()).getData();
+        final SiteMapItemRepresentation newBar = createSiteMapItemRepresentation("bar", prototypeUUID);
+        siteMapResource.create(newBar, siteMapPageFooRepresentation.getId());
+
+        // publish changes for free locks
+        initContext();
+        mountResource.publish();
+        // reload model and context
+        initContext();
+        // the deletion will result in items marked 'deleted' because live still has them. Only removed item should be the
+        // child of sitemap item 'foo' since 'foo' is marked deleted already
+        siteMapResource.delete(siteMapPageFooRepresentation.getId());
+        initContext();
+        mountResource.discardChanges();
+        // all nodes should be copied-back from live
+        final String absSiteMapFooPath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/foo";
+        final String absSiteMapFooBarPath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/foo/bar";
+        String expectedNewPageFooNodeName = "foo-" + session.getNodeByIdentifier(prototypeUUID).getName();
+        final String absPageFooPath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/" + expectedNewPageFooNodeName;
+        String expectedNewPageBarNodeName = "foo-bar-" + session.getNodeByIdentifier(prototypeUUID).getName();
+        final String absPageBarPath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/" + expectedNewPageBarNodeName;
+
+        for (String absPath : new String[]{absSiteMapFooPath, absSiteMapFooBarPath, absPageFooPath, absPageBarPath}) {
+            assertTrue(session.nodeExists(absPath));
+            assertFalse(session.getNode(absPath).hasProperty(EDITABLE_PROPERTY_STATE));
+        }
     }
 
     @Test
@@ -199,7 +312,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
 
         try {
             final Node deletedNode = session.getNodeByIdentifier(home.getId());
-            assertEquals("deleted", deletedNode.getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString());
+            assertEquals("deleted", deletedNode.getProperty(EDITABLE_PROPERTY_STATE).getString());
 
             final Session bob = createSession("bob", "bob");
             Node deleteHomeNodeByBob = bob.getNodeByIdentifier(home.getId());
