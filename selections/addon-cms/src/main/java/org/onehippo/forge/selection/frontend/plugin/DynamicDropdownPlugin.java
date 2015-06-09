@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +51,7 @@ import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.event.Observer;
+import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -84,7 +85,7 @@ import org.slf4j.LoggerFactory;
  * regular option elements. Groups and options without a group are shown in  the order they are encountered in the
  * {@link org.onehippo.forge.selection.frontend.model.ValueList} used.
  */
-public class DynamicDropdownPlugin extends RenderPlugin<String>  {
+public class DynamicDropdownPlugin extends RenderPlugin<String> {
 
     private static final String SERVICE_VALUELIST_DEFAULT = "service.valuelist.default";
 
@@ -98,13 +99,19 @@ public class DynamicDropdownPlugin extends RenderPlugin<String>  {
     public DynamicDropdownPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        // check the cnd for multiple, this is not supported (NB: check doesn't work for relaxed cnd)
+        // check the cnd for being multiple, this is not supported (NB: check doesn't work for relaxed cnd)
         try {
-            final boolean multiple = getValueModel().getJcrPropertymodel().getProperty().getDefinition().isMultiple();
-            if (multiple) {
-                throw new IllegalStateException(this.getClass().getName() + " does not support fields that are multiple, " +
-                        "please use " + DynamicMultiSelectPlugin.class.getName() + " for that." +
-                        " Field name is " + getValueModel().getJcrPropertymodel().getProperty().getDefinition().getName() + ".");
+            final JcrPropertyModel jcrPropertyModel = getValueModel().getJcrPropertymodel();
+            if ((jcrPropertyModel != null) && (jcrPropertyModel.getProperty() != null)) {
+                final boolean multiple = jcrPropertyModel.getProperty().getDefinition().isMultiple();
+                if (multiple) {
+                    throw new IllegalStateException(this.getClass().getName() + " does not support fields that are multiple: " +
+                            "please use " + DynamicMultiSelectPlugin.class.getName() + " for that." +
+                            " Field name is " + jcrPropertyModel.getProperty().getDefinition().getName() + ".");
+                }
+            } else {
+                log.debug("JCR property model (or it's property) in {} is null while trying to determine if multiple. " +
+                        "Config={}", this.getClass().getName(), config);
             }
         } catch (RepositoryException e) {
             throw new InstantiationError("Error instantiating " + this.getClass().getName() + ": " + e.getMessage());
@@ -113,7 +120,7 @@ public class DynamicDropdownPlugin extends RenderPlugin<String>  {
         // when this is an observable, register a model service with an observable value model
         final String observableId = config.getString(Config.OBSERVABLE_ID);
         if (StringUtils.isNotEmpty(observableId)) {
-            final ModelReference<String> service = new ModelReference<String>(observableId, new ObservableValueModel(getValueModel()));
+            final ModelReference<String> service = new ModelReference<>(observableId, new ObservableValueModel(getValueModel()));
             log.debug("Creating model service with observableId as name {}", observableId);
             service.init(context);
         }
@@ -268,7 +275,7 @@ public class DynamicDropdownPlugin extends RenderPlugin<String>  {
             }
 
             public IModel<String> getModel(String option) {
-                return new Model<String>(option);
+                return new Model<>(option);
             }
         };
 
@@ -321,7 +328,7 @@ public class DynamicDropdownPlugin extends RenderPlugin<String>  {
                     IModel<String> baseModel = baseRef.getModel();
                     if (baseModel == null) {
                         log.info("base model service provides null model");
-                        baseModel = new Model<String>(null);
+                        baseModel = new Model<>(null);
                     }
                     IModel<String> baseLabel = new ValueLabelModel(valueList, baseModel);
                     IModel<String> curLabel = new ValueLabelModel(valueList, getValueModel());
@@ -356,10 +363,10 @@ public class DynamicDropdownPlugin extends RenderPlugin<String>  {
             log.warn("DynamicDropdownPlugin: value list provider can not be found by name '{}'",
                     getPluginConfig().getString(Config.VALUELIST_PROVIDER));
 
-            DropDownChoice<String> dummyChoice = new DropDownChoice<String>("selectDropdown");
+            DropDownChoice<String> dummyChoice = new DropDownChoice<>("selectDropdown");
             dummyChoice.setVisibilityAllowed(false);
             add(dummyChoice);
-            Label valueLabel = new Label("selectLabel", new Model<String>("-"));
+            Label valueLabel = new Label("selectLabel", new Model<>("-"));
             add(valueLabel);
             return null;
         }
@@ -372,7 +379,7 @@ public class DynamicDropdownPlugin extends RenderPlugin<String>  {
     }
 
     private List<InternalSelectItem> getInternalDropdownModel(ValueList valueList) {
-        List<InternalSelectItem> selectItems = new ArrayList<InternalSelectItem>(valueList.size());
+        List<InternalSelectItem> selectItems = new ArrayList<>(valueList.size());
 
         final Boolean showDefault = getPluginConfig().getAsBoolean(Config.SHOW_DEFAULT, true);
         if (showDefault) {
@@ -380,7 +387,7 @@ public class DynamicDropdownPlugin extends RenderPlugin<String>  {
                     new StringResourceModel("choose.one", DynamicDropdownPlugin.this, null).getString()));
         }
 
-        Map<String, InternalSelectOptionGroup> groupsSoFar = new HashMap<String, InternalSelectOptionGroup>();
+        final Map<String, InternalSelectOptionGroup> groupsSoFar = new HashMap<>();
         for (ListItem listItem : valueList) {
             if (isGroupItem(listItem)) {
                 InternalSelectOptionGroup groupForThisItem = groupsSoFar.get(listItem.getGroup());
@@ -437,7 +444,7 @@ public class DynamicDropdownPlugin extends RenderPlugin<String>  {
 
         public InternalSelectOptionGroup(String label) {
             super(label);
-            this.options = new ArrayList<String>();
+            this.options = new ArrayList<>();
         }
 
         public void add(String option) {
@@ -463,7 +470,7 @@ public class DynamicDropdownPlugin extends RenderPlugin<String>  {
             container.add(new AttributeModifier("label", new StringResourceModel(optionGroup.getLabel(), this, null,
                     optionGroup.getLabel())));
             // the SelectOptions widget is a repeating view. This widget will thus replace the tag to which it is bound
-            SelectOptions<String> optionGroupCmpt = new SelectOptions<String>("optionGroupItems", optionGroup
+            SelectOptions<String> optionGroupCmpt = new SelectOptions<>("optionGroupItems", optionGroup
                     .getOptions(), optionRenderer);
             container.add(optionGroupCmpt);
             add(container);
@@ -481,8 +488,7 @@ public class DynamicDropdownPlugin extends RenderPlugin<String>  {
 
         public OptionFragment(String id, String markupId, InternalSelectOption selectOption) {
             super(id, markupId, DynamicDropdownPlugin.this);
-            SelectOption<String> wicketSelectOption = new SelectOption<String>("option", new Model<String>(selectOption
-                    .getValue()));
+            SelectOption<String> wicketSelectOption = new SelectOption<String>("option", new Model<>(selectOption.getValue()));
             wicketSelectOption.add(new Label("optionLabel", selectOption.getLabel()));
             add(wicketSelectOption);
         }
