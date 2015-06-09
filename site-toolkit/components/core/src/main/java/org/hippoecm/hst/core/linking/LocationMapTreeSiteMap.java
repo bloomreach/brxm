@@ -60,10 +60,7 @@ public class LocationMapTreeSiteMap implements LocationMapTree {
         final String normPath = PathUtils.normalizePath(siteMapItem.getRelativeContentPath());
 
         if (siteMapItem.isExcludedForLinkRewriting()){
-            log.debug("'{}' will not be used for linkrewriting as is configured to be excluded for linkrewriting.", siteMapItem);
-            for(HstSiteMapItem child : siteMapItem.getChildren()) {
-                add2LocationMap(child);
-            }
+            log.debug("'{}' will not be used for link rewriting as is configured to be excluded for link rewriting.", siteMapItem);
             return;
         }
 
