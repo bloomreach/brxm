@@ -7,7 +7,7 @@
   <c:when test="${not empty requestScope.pageable}">
     <c:choose>
       <c:when test="${requestScope.pageable.total == 0}">
-        <h3>No results for: <c:out value="${query}"/></h3>
+        <h3>No results for: <c:out value="${requestScope.query}"/></h3>
       </c:when>
       <c:otherwise>
         <c:forEach var="item" items="${requestScope.pageable.items}" varStatus="status">

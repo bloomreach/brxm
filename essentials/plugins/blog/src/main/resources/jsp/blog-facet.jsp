@@ -28,7 +28,7 @@
             <c:forEach items="${facetvalue.folders}" var="item" varStatus="index">
               <c:choose>
                 <c:when test="${item.leaf and item.count gt 0}">
-                  <hst:facetnavigationlink remove="${item}" current="${facets}" var="removeLink"/>
+                  <hst:facetnavigationlink remove="${item}" current="${requestScope.facets}" var="removeLink"/>
                   <li class="active">
                     <a href="${removeLink}"><c:out value="${item.name}"/>&nbsp;
                       <span class="alert-danger"><fmt:message key='facets.remove' var="remove"/><c:out value="${remove}"/></span>
