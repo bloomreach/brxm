@@ -12,29 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// WebKit-style focus
-.tab-focus() {
-  // Default
-  outline: thin dotted;
-  // WebKit
-  outline: 5px auto -webkit-focus-ring-color;
-  outline-offset: -2px;
-}
-
-.font-size(@sizeValue) {
-  @remValue: @sizeValue;
-  @pxValue: (@sizeValue * 10);
-  font-size: ~"@{pxValue}px";
-  font-size: ~"@{remValue}rem";
-}
-
-.line-height(@sizeValue) {
-  @remValue: @sizeValue;
-  @pxValue: (@sizeValue * 10);
-  line-height: ~"@{pxValue}px";
-  line-height: ~"@{remValue}rem";
-}
-
 .truncate() {
   white-space: nowrap;
   overflow: hidden;
@@ -51,10 +28,6 @@
   background: linear-gradient(to right, red 50%, yellow 50%);
   // The rectangle in which to repeat. It can be fully wide in this case
   background-size: 100% 100%;
-}
-
-.remove-outline() {
-  outline: 0 none;
 }
 
 .empty-background() {
@@ -81,12 +54,4 @@
 
         .hippo-editor-field-bg((@i + 1));
     }
-}
-
-.calculated-line-height(@fontsize, @lineheightModifier: 0.7) {
-  /*
-    Calculate line-height such that it is equal to the distance from
-    the top to the bottom of the capital Z letter in the 'Open Sans' font family
-  */
-  line-height: ceil(@fontsize * @lineheightModifier);
 }
