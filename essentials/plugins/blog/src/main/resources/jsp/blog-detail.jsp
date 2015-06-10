@@ -2,14 +2,14 @@
 
 <%--@elvariable id="document" type="{{beansPackage}}.Blogpost"--%>
 <div class="has-edit-button">
-<hst:cmseditlink hippobean="${document}"/>
-<h1><c:out value="${document.title}"/></h1>
-<h2>by: <c:out value="${document.author}"/></h2>
+<hst:cmseditlink hippobean="${requestScope.document}"/>
+<h1><c:out value="${requestScope.document.title}"/></h1>
+<h2>by: <c:out value="${requestScope.document.author}"/></h2>
 <strong>
-  <c:if test="${document.publicationDate ne null}">
-    <fmt:formatDate type="date" pattern="yyyy-MM-dd" value="${document.publicationDate.time}"/>
+  <c:if test="${requestScope.document.publicationDate ne null}">
+    <fmt:formatDate type="date" pattern="yyyy-MM-dd" value="${requestScope.document.publicationDate.time}"/>
   </c:if>
 </strong>
-<p><c:out value="${document.introduction}"/></p>
-<div><hst:html hippohtml="${document.content}"/></div>
+<p><c:out value="${requestScope.document.introduction}"/></p>
+<div><hst:html hippohtml="${requestScope.document.content}"/></div>
 </div>

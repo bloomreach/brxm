@@ -8,7 +8,7 @@
   <div class="row form-group">
     <div class="col-xs-8">
       <fmt:message key='facets.placeholder' var="placeholder"/>
-      <input type="search" value="<c:out value='${query}'/>" name="query" class="form-control"
+      <input type="search" value="<c:out value='${requestScope.query}'/>" name="query" class="form-control"
              placeholder="${fn:escapeXml(placeholder)}">
     </div>
     <div class="col-xs-4">
@@ -18,10 +18,10 @@
     </div>
   </div>
 </form>
-<c:if test="${facets ne null}">
+<c:if test="${requestScope.facets ne null}">
   <c:set var="facetLimit" value="50"/>
   <ul class="nav nav-list">
-    <c:forEach var="facetvalue" items="${facets.folders}">
+    <c:forEach var="facetvalue" items="${requestScope.facets.folders}">
       <c:if test="${not empty facetvalue.folders}">
         <li><label class="nav-header"><c:out value="${facetvalue.name}"/></label>
           <ul class="nav nav-list">
@@ -50,6 +50,6 @@
   </ul>
 </c:if>
 <%--@elvariable id="editMode" type="java.lang.Boolean"--%>
-<c:if test="${editMode and facets eq null}">
+<c:if test="${requestScope.editMode and requestScope.facets eq null}">
   <img src="<hst:link path='/images/essentials/catalog-component-icons/facets.png'/>"> Click to edit Facets
 </c:if>

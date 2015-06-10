@@ -2,38 +2,38 @@
 
 <%--@elvariable id="document" type="{{beansPackage}}.EventsDocument"--%>
 
-<hst:link var="link" hippobean="${document}"/>
+<hst:link var="link" hippobean="${requestScope.document}"/>
 <article class="has-edit-button">
-  <hst:cmseditlink hippobean="${document}"/>
-  <h3><a href="${link}"><c:out value="${document.title}"/></a></h3>
-  <c:if test="${hst:isReadable(document, 'date.time')}">
+  <hst:cmseditlink hippobean="${requestScope.document}"/>
+  <h3><a href="${link}"><c:out value="${requestScope.document.title}"/></a></h3>
+  <c:if test="${hst:isReadable(requestScope.document, 'date.time')}">
     <p>
-      <fmt:formatDate value="${document.date.time}" type="both" dateStyle="medium" timeStyle="short"/>
+      <fmt:formatDate value="${requestScope.document.date.time}" type="both" dateStyle="medium" timeStyle="short"/>
     </p>
   </c:if>
-  <c:if test="${hst:isReadable(document, 'enddate.time')}">
+  <c:if test="${hst:isReadable(requestScope.document, 'enddate.time')}">
     <p>
-      <fmt:formatDate value="${document.enddate.time}" type="both" dateStyle="medium" timeStyle="short"/>
+      <fmt:formatDate value="${requestScope.document.enddate.time}" type="both" dateStyle="medium" timeStyle="short"/>
     </p>
   </c:if>
 
-  <c:if test="${not empty document.location}">
-    <p><c:out value="${document.location}"/></p>
+  <c:if test="${not empty requestScope.document.location}">
+    <p><c:out value="${requestScope.document.location}"/></p>
   </c:if>
 
-  <c:if test="${not empty document.introduction}">
-    <p><c:out value="${document.introduction}"/></p>
+  <c:if test="${not empty requestScope.document.introduction}">
+    <p><c:out value="${requestScope.document.introduction}"/></p>
   </c:if>
 
-  <c:if test="${hst:isReadable(document, 'image.original')}">
-    <hst:link var="img" hippobean="${document.image.original}"/>
+  <c:if test="${hst:isReadable(requestScope.document, 'image.original')}">
+    <hst:link var="img" hippobean="${requestScope.document.image.original}"/>
     <figure>
-      <img src="${img}" title="${fn:escapeXml(document.image.fileName)}"
-           alt="${fn:escapeXml(document.image.fileName)}"/>
-      <figcaption><c:out value="${document.image.description}"/></figcaption>
+      <img src="${img}" title="${fn:escapeXml(requestScope.document.image.fileName)}"
+           alt="${fn:escapeXml(requestScope.document.image.fileName)}"/>
+      <figcaption><c:out value="${requestScope.document.image.description}"/></figcaption>
     </figure>
   </c:if>
 
-  <hst:html hippohtml="${document.content}"/>
+  <hst:html hippohtml="${requestScope.document.content}"/>
 
 </article>

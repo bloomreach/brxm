@@ -2,8 +2,8 @@
 
 <%--@elvariable id="cparam" type="org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo"--%>
 <c:choose>
-  <c:when test="${not empty cparam.apiKey}">
-    <c:set var="mapsUrl">https://maps.googleapis.com/maps/api/js?key=${fn:escapeXml(cparam.apiKey)}</c:set>
+  <c:when test="${not empty requestScope.cparam.apiKey}">
+    <c:set var="mapsUrl">https://maps.googleapis.com/maps/api/js?key=${fn:escapeXml(requestScope.cparam.apiKey)}</c:set>
   </c:when>
   <c:otherwise>
     <c:set var="mapsUrl">https://maps.googleapis.com/maps/api/js</c:set>
@@ -21,14 +21,14 @@
 
 <hst:headContribution keyHint="initializeGoogleMaps" category="htmlBodyEnd">
   <script type="text/javascript">
-    initializeGoogleMaps("${fn:escapeXml(cparam.address)}", ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, "${cparam.mapType}");
+    initializeGoogleMaps("${fn:escapeXml(requestScope.cparam.address)}", ${requestScope.cparam.longitude}, ${requestScope.cparam.latitude}, ${requestScope.cparam.zoomFactor}, "${requestScope.cparam.mapType}");
   </script>
 </hst:headContribution>
 
-<c:if test="${cmsrequest}">
+<c:if test="${requestScope.cmsrequest}">
   <script type="text/javascript">
-    initializeGoogleMaps("${fn:escapeXml(cparam.address)}", ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, "${cparam.mapType}");
+    initializeGoogleMaps("${fn:escapeXml(requestScope.cparam.address)}", ${requestScope.cparam.longitude}, ${requestScope.cparam.latitude}, ${requestScope.cparam.zoomFactor}, "${requestScope.cparam.mapType}");
   </script>
 </c:if>
 
-<div id="map-canvas" style="width: ${cparam.width}px; height: ${cparam.height}px;"></div>
+<div id="map-canvas" style="width: ${requestScope.cparam.width}px; height: ${requestScope.cparam.height}px;"></div>

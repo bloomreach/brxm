@@ -1,56 +1,56 @@
 <%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 
-<c:if test="${not empty title}">
+<c:if test="${not empty requestScope.title}">
   <hst:headContribution category="SEO" keyHint="hst.seo.document.title">
-    <title><c:out value="${title}"/></title>
+    <title><c:out value="${requestScope.title}"/></title>
   </hst:headContribution>
 </c:if>
 
-<c:if test="${not empty metaKeywords}">
+<c:if test="${not empty requestScope.metaKeywords}">
   <hst:headContribution category="SEO" keyHint="hst.seo.document.keywords">
-    <meta name="keywords" content="${fn:escapeXml(metaKeywords)}"/>
+    <meta name="keywords" content="${fn:escapeXml(requestScope.metaKeywords)}"/>
   </hst:headContribution>
 </c:if>
 
-<c:if test="${not empty metaDescription}">
+<c:if test="${not empty requestScope.metaDescription}">
   <hst:headContribution category="SEO" keyHint="hst.seo.document.description">
-    <meta name="description" content="${fn:escapeXml(metaDescription)}"/>
+    <meta name="description" content="${fn:escapeXml(requestScope.metaDescription)}"/>
   </hst:headContribution>
 </c:if>
 
-<c:if test="${not empty dublinCoreSchemaLink}">
+<c:if test="${not empty requestScope.dublinCoreSchemaLink}">
   <hst:headContribution category="SEO" keyHint="hst.seo.schema.dc">
-    <link rel="schema.DC" href="${fn:escapeXml(dublinCoreSchemaLink)}"/>
+    <link rel="schema.DC" href="${fn:escapeXml(requestScope.dublinCoreSchemaLink)}"/>
   </hst:headContribution>
 </c:if>
 
-<c:if test="${not empty dublinCoreTermsLink}">
+<c:if test="${not empty requestScope.dublinCoreTermsLink}">
   <hst:headContribution category="SEO" keyHint="hst.seo.dc.terms">
-    <link rel="schema.DCTERMS" href="${fn:escapeXml(dublinCoreTermsLink)}"/>
+    <link rel="schema.DCTERMS" href="${fn:escapeXml(requestScope.dublinCoreTermsLink)}"/>
   </hst:headContribution>
 </c:if>
 
-<c:if test="${not empty dublinCoreCopyrightLink}">
+<c:if test="${not empty requestScope.dublinCoreCopyrightLink}">
   <hst:headContribution category="SEO" keyHint="hst.seo.dc.copyright">
-    <link rel="DC.rights copyright" href="${fn:escapeXml(dublinCoreCopyrightLink)}"/>
+    <link rel="DC.rights copyright" href="${fn:escapeXml(requestScope.dublinCoreCopyrightLink)}"/>
   </hst:headContribution>
 </c:if>
 
-<c:if test="${not empty dublinCoreLanguage}">
+<c:if test="${not empty requestScope.dublinCoreLanguage}">
   <hst:headContribution category="SEO" keyHint="hst.seo.dc.language">
-    <meta scheme="DCTERMS.RFC3066" name="DC.language" content="${fn:escapeXml(dublinCoreLanguage)}"/>
+    <meta scheme="DCTERMS.RFC3066" name="DC.language" content="${fn:escapeXml(requestScope.dublinCoreLanguage)}"/>
   </hst:headContribution>
 </c:if>
 
-<c:if test="${not empty dublinCoreTermsCreated}">
+<c:if test="${not empty requestScope.dublinCoreTermsCreated}">
   <hst:headContribution category="SEO" keyHint="hst.seo.dc.terms.created">
-    <meta name="DCTERMS.created" content="${fn:escapeXml(dublinCoreTermsCreated)}"/>
+    <meta name="DCTERMS.created" content="${fn:escapeXml(requestScope.dublinCoreTermsCreated)}"/>
   </hst:headContribution>
 </c:if>
 
-<c:if test="${not empty dublinCoreTermsModified}">
+<c:if test="${not empty requestScope.dublinCoreTermsModified}">
   <hst:headContribution category="SEO" keyHint="hst.seo.dc.terms.modified">
-    <meta name="DCTERMS.modified" content="${fn:escapeXml(dublinCoreTermsModified)}"/>
+    <meta name="DCTERMS.modified" content="${fn:escapeXml(requestScope.dublinCoreTermsModified)}"/>
   </hst:headContribution>
 </c:if>
 
