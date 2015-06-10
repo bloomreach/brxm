@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.onehippo.cms7.services.search.commons.query.InitialQueryImpl;
 import org.onehippo.cms7.services.search.commons.query.QueryImpl;
 import org.onehippo.cms7.services.search.query.QueryBuilder;
+import org.onehippo.cms7.services.search.query.QueryUtils;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
@@ -57,11 +58,12 @@ public class TestJcrQueryBuilder extends RepositoryTestCase {
         }.build();
 
         String queryAsString = getQueryAsString(query);
-        assertEquals("//*["+ COMMON_SCOPE +" and (@a = 'a' and (@b = 'b'))]" + COMMON_ORDERBY, queryAsString);
+        assertEquals("//*[" + COMMON_SCOPE + " and (@a = 'a' and (@b = 'b'))]" + COMMON_ORDERBY, queryAsString);
     }
-    
+
     /**
      * Combine some AND-ed filters
+     *
      * @throws Exception
      */
     @Test
@@ -78,11 +80,12 @@ public class TestJcrQueryBuilder extends RepositoryTestCase {
 
         String queryAsString = getQueryAsString(query);
         //*[(@hippo:paths='cafebabe-cafe-babe-cafe-babecafebabe') and ((jcr:contains(.,'contains') or jcr:contains(.,'contains*')) and (@a = 'a') and (@b = 'b') and (@c = 'c'))] order by @jcr:score descending
-        assertEquals("//*["+ COMMON_SCOPE +" and ((jcr:contains(.,'contains') or jcr:contains(.,'contains*')) and (@a = 'a') and (@b = 'b') and (@c = 'c'))]" + COMMON_ORDERBY, queryAsString);
+        assertEquals("//*[" + COMMON_SCOPE + " and ((jcr:contains(.,'contains') or jcr:contains(.,'contains*')) and (@a = 'a') and (@b = 'b') and (@c = 'c'))]" + COMMON_ORDERBY, queryAsString);
     }
 
     /**
      * Combine some OR-ed filters
+     *
      * @throws Exception
      */
     @Test
@@ -98,7 +101,7 @@ public class TestJcrQueryBuilder extends RepositoryTestCase {
         }.build();
 
         String queryAsString = getQueryAsString(query);
-        assertEquals("//*["+ COMMON_SCOPE +" and ((jcr:contains(.,'contains') or jcr:contains(.,'contains*')) or (@a = 'a') or (@b = 'b') or (@c = 'c'))]" + COMMON_ORDERBY, queryAsString);
+        assertEquals("//*[" + COMMON_SCOPE + " and ((jcr:contains(.,'contains') or jcr:contains(.,'contains*')) or (@a = 'a') or (@b = 'b') or (@c = 'c'))]" + COMMON_ORDERBY, queryAsString);
     }
 
     @Test
@@ -111,7 +114,7 @@ public class TestJcrQueryBuilder extends RepositoryTestCase {
         }.build();
 
         String queryAsString = getQueryAsString(query);
-        assertEquals("//*["+ COMMON_SCOPE + "] order by @a ascending", queryAsString);
+        assertEquals("//*[" + COMMON_SCOPE + "] order by @a ascending", queryAsString);
     }
 
     @Test
@@ -124,7 +127,45 @@ public class TestJcrQueryBuilder extends RepositoryTestCase {
         }.build();
 
         String queryAsString = getQueryAsString(query);
-        assertEquals("//*["+ COMMON_SCOPE + "] order by @a descending", queryAsString);
+        assertEquals("//*[" + COMMON_SCOPE + "] order by @a descending", queryAsString);
     }
 
+    @Test
+    public void test_empty_value_for_TextContraint() throws Exception {
+        QueryImpl query = new QueryBuilder() {
+            protected QueryImpl build() {
+                InitialQueryImpl initialQuery = new InitialQueryImpl();
+                return initialQuery.from("/").where(text("a").isEqualTo(""));
+            }
+        }.build();
+
+        String queryAsString = getQueryAsString(query);
+        assertEquals("//*[" + COMMON_SCOPE + " and (@a = '')]" + COMMON_ORDERBY, queryAsString);
+    }
+    @Test
+     public void test_empty_value_for_TextContraint_via_QueryUtils() throws Exception {
+        QueryImpl query = new QueryBuilder() {
+            protected QueryImpl build() {
+                InitialQueryImpl initialQuery = new InitialQueryImpl();
+                return initialQuery.from("/").where(QueryUtils.text("a").isEqualTo(""));
+            }
+        }.build();
+
+        String queryAsString = getQueryAsString(query);
+        assertEquals("//*[" + COMMON_SCOPE + " and (@a = '')]" + COMMON_ORDERBY, queryAsString);
+    }
+
+    @Test
+    public void test_quotes_value_for_TextContraint() throws Exception {
+        QueryImpl query = new QueryBuilder() {
+            protected QueryImpl build() {
+                InitialQueryImpl initialQuery = new InitialQueryImpl();
+                return initialQuery.from("/").where(text("a").isEqualTo("''")).and(text("b").isEqualTo("''"));
+            }
+        }.build();
+
+        String queryAsString = getQueryAsString(query);
+        assertEquals("//*[" + COMMON_SCOPE + " and (@a = '''' and (@b = ''''))]" + COMMON_ORDERBY, queryAsString);
+
+    }
 }

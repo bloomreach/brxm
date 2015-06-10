@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,8 @@ public final class TextConstraint implements Constraint {
 
     @Override
     public String toString() {
-        return "(text " + (property == null ? "[any]" : property ) + (type == Type.EQUAL ? " = " : " contains ") + value + ")";
+        return "(text " + (property == null ? "[any]" : property ) + (type == Type.EQUAL ? " = " : " contains ") +
+                ((value.length() == 0) ? "''" : value)   + ")";
     }
 
     @Override

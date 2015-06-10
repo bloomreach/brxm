@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -205,5 +205,23 @@ public class QueryTest {
                         text().contains("haha")).or(date("publication").from(new Date()));
             }
         }.complete();
+    }
+
+    @Test
+    public void test_empty_value_for_TextContraint() {
+        QueryImpl query =  new InitialQueryImpl().where(QueryUtils.text("a").isEqualTo(""));
+        final StringQueryVisitor visitor = new StringQueryVisitor();
+        query.accept(visitor);
+        assertEquals(" where (text a = '')",
+                visitor.getString());
+    }
+
+    @Test
+    public void test_quotes_value_for_TextContraint() {
+        QueryImpl query =  new InitialQueryImpl().where(QueryUtils.text("a").isEqualTo("''"));
+        final StringQueryVisitor visitor = new StringQueryVisitor();
+        query.accept(visitor);
+        assertEquals(" where (text a = '')",
+                visitor.getString());
     }
 }
