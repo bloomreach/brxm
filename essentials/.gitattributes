@@ -209,27 +209,27 @@ dashboard/src/main/webapp/images/screenshots/news04.png -text
 dashboard/src/main/webapp/images/screenshots/poll01.png -text
 dashboard/src/main/webapp/images/screenshots/poll02.png -text
 dashboard/src/main/webapp/images/screenshots/poll03.png -text
-dashboard/src/main/webapp/images/screenshots/relateddocuments01.png -text
+dashboard/src/main/webapp/images/screenshots/relateddocuments01.png -text svneol=unset#image/png
 dashboard/src/main/webapp/images/screenshots/relateddocuments02.png -text svneol=unset#image/png
-dashboard/src/main/webapp/images/screenshots/robots01.png -text
-dashboard/src/main/webapp/images/screenshots/robots02.png -text
-dashboard/src/main/webapp/images/screenshots/search01.png -text
-dashboard/src/main/webapp/images/screenshots/search02.png -text
-dashboard/src/main/webapp/images/screenshots/selections01.png -text
+dashboard/src/main/webapp/images/screenshots/robots01.png -text svneol=unset#image/png
+dashboard/src/main/webapp/images/screenshots/robots02.png -text svneol=unset#image/png
+dashboard/src/main/webapp/images/screenshots/search01.png -text svneol=unset#image/png
+dashboard/src/main/webapp/images/screenshots/search02.png -text svneol=unset#image/png
+dashboard/src/main/webapp/images/screenshots/selections01.png -text svneol=unset#image/png
 dashboard/src/main/webapp/images/screenshots/selections02.png -text svneol=unset#image/png
 dashboard/src/main/webapp/images/screenshots/selections03.png -text svneol=unset#image/png
-dashboard/src/main/webapp/images/screenshots/seo01.png -text
-dashboard/src/main/webapp/images/screenshots/simplecontent01.png -text
+dashboard/src/main/webapp/images/screenshots/seo01.png -text svneol=unset#image/png
+dashboard/src/main/webapp/images/screenshots/simplecontent01.png -text svneol=unset#image/png
 dashboard/src/main/webapp/images/screenshots/simplecontent02.png -text svneol=unset#image/png
 dashboard/src/main/webapp/images/screenshots/simplecontent03.png -text svneol=unset#image/png
-dashboard/src/main/webapp/images/screenshots/tagging01.png -text
+dashboard/src/main/webapp/images/screenshots/tagging01.png -text svneol=unset#image/png
 dashboard/src/main/webapp/images/screenshots/tagging02.png -text svneol=unset#image/png
-dashboard/src/main/webapp/images/screenshots/taxonomy01.png -text
+dashboard/src/main/webapp/images/screenshots/taxonomy01.png -text svneol=unset#image/png
 dashboard/src/main/webapp/images/screenshots/taxonomy02.png -text svneol=unset#image/png
 dashboard/src/main/webapp/images/screenshots/taxonomy03.png -text svneol=unset#image/png
-dashboard/src/main/webapp/images/screenshots/video01.png -text
-dashboard/src/main/webapp/images/screenshots/video02.png -text
-dashboard/src/main/webapp/images/screenshots/video03.png -text
+dashboard/src/main/webapp/images/screenshots/video01.png -text svneol=unset#image/png
+dashboard/src/main/webapp/images/screenshots/video02.png -text svneol=unset#image/png
+dashboard/src/main/webapp/images/screenshots/video03.png -text svneol=unset#image/png
 dashboard/src/main/webapp/js/Essentials.js -text
 dashboard/src/main/webapp/js/app.js -text
 dashboard/src/main/webapp/js/controllers.js -text
