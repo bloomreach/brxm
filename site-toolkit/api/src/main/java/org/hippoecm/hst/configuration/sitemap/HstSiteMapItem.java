@@ -380,4 +380,13 @@ public interface HstSiteMapItem {
      *  is a container resource, see {@link #isContainerResource()}, is not shown either
      */
     boolean isHiddenInChannelManager();
+
+    /**
+     * Returns <code>true</code> when this {@link HstSiteMapItem} is marked as deleted. A {@link HstSiteMapItem} that is marked
+     * to be deleted won't take part in matching or linkrewriting. A child  {@link HstSiteMapItem} will also be marked as deleted
+     * if its parent is marked deleted.
+     * @return <code>true</code> when this {@link HstSiteMapItem} is marked as deleted.
+     */
+    boolean isMarkedDeleted();
+
 }

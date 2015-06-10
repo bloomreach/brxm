@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -65,6 +65,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     private String lockedBy;
     private Calendar lockedOn;
     private Calendar lastModified;
+    private boolean markedDeleted;
 
     public MockHstComponentConfiguration(String id) {
         this.id = id;
@@ -340,5 +341,13 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
 
     public void setLastModified(final Calendar lastModified) {
         this.lastModified = lastModified;
+    }
+
+    public boolean isMarkedDeleted() {
+        return markedDeleted;
+    }
+
+    public void setMarkedDeleted(final boolean markedDeleted) {
+        this.markedDeleted = markedDeleted;
     }
 }

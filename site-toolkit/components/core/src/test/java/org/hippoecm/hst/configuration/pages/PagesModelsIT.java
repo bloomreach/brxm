@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.junit.Test;
 
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class PagesModelsIT extends AbstractTestConfigurations {
@@ -195,7 +196,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
     }
 
     @Test
-    public void test_marked_deleted_nodes_are_ignored()  throws Exception {
+    public void test_marked_deleted_hstconfiguration_nodes_are_present_in_model()  throws Exception {
         Node homePage = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/homepage");
         homePage.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
         homePage.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
@@ -206,8 +207,12 @@ public class PagesModelsIT extends AbstractTestConfigurations {
 
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
-        assertNull(hstSite.getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage"));
-        assertNull(hstSite.getComponentsConfiguration().getComponentConfiguration("hst:pages/standardoverview/body"));
-        assertNull(hstSite.getComponentsConfiguration().getComponentConfiguration("hst:pages/standardoverview").getChildByName("body"));
+        assertNotNull(hstSite.getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage"));
+        assertNotNull(hstSite.getComponentsConfiguration().getComponentConfiguration("hst:pages/standardoverview/body"));
+        assertNotNull(hstSite.getComponentsConfiguration().getComponentConfiguration("hst:pages/standardoverview").getChildByName("body"));
+        assertTrue(hstSite.getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage").isMarkedDeleted());
+        assertTrue(hstSite.getComponentsConfiguration().getComponentConfiguration("hst:pages/standardoverview/body").isMarkedDeleted());
+        assertFalse(hstSite.getComponentsConfiguration().getComponentConfiguration("hst:pages/standardoverview").isMarkedDeleted());
+
     }
 }

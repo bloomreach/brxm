@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,8 +46,8 @@ public class MoveTest extends AbstractSiteMapResourceTest {
         SiteMapResource siteMapResource = createResource();
         final Response move = siteMapResource.move(home.getId(), news.getId());
         Assert.assertEquals(Response.Status.OK.getStatusCode(), move.getStatus());
-
-        assertNull(getSiteMapItemRepresentation(session, "home"));
+        assertEquals("'home' sitemap item is moved hence _default_ should match instead",
+                "_default_", getSiteMapItemRepresentation(session, "home").getPathInfo());
         final SiteMapItemRepresentation newsHome = getSiteMapItemRepresentation(session, "news/home");
         assertNotNull(newsHome);
 

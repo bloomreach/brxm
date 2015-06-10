@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -33,7 +32,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.repository.util.JcrUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -41,7 +39,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.EDITABLE_PROPERTY_STAT
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -267,7 +265,6 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         }
     }
 
-    @Ignore
     @Test
     public void delete_of_page_that_is_live_results_in_channel_having_changes() throws Exception {
         initContext();
@@ -328,9 +325,11 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
         assertTrue(((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
 
-        // a refetch for deleted item should return null as not present in hst model any more
-        assertNull(getSiteMapItemRepresentation(session, "home"));
-
+        // a refetch for deleted item should not return return the home sitemap item any more since it is marked for deletion
+        final SiteMapItemRepresentation homeAgain = getSiteMapItemRepresentation(session, "home");
+        assertEquals("_default_", homeAgain.getPathInfo());
+        // assert the 'home' page sitemap item is nonetheless still part of the hst in memory model:
+        assertNotNull(RequestContextProvider.get().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSiteMapItem("home"));
     }
 
     @Test
@@ -362,7 +361,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
     }
 
     @Test
-    public void test_fail_to_delete_deleted_item() throws Exception {
+    public void deleting_marked_deleted_item_passes_without_change() throws Exception {
 
         final SiteMapResource siteMapResource = createResource();
         String homeId;
@@ -377,8 +376,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
             getSiteMapItemRepresentation(session, "home");
             final Response deleteAgain = siteMapResource.delete(homeId);
             final ExtResponseRepresentation representation = (ExtResponseRepresentation) deleteAgain.getEntity();
-            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), deleteAgain.getStatus());
-            assertThat(representation.getErrorCode(), is(ClientError.ITEM_NOT_IN_PREVIEW.name()));
+            assertEquals(Response.Status.OK.getStatusCode(), deleteAgain.getStatus());
         }
     }
 }

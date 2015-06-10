@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,20 +22,25 @@ import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
+import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import junit.framework.Assert;
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class SiteMapModelsIT extends AbstractTestConfigurations {
@@ -251,20 +256,52 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
     }
 
     @Test
-    public void test_marked_deleted_nodes_are_ignored()  throws Exception {
+    public void marked_deleted_nodes_are_part_of_hst_model_but_ignored_while_matching()  throws Exception {
+
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        ResolvedSiteMapItem matchedItemForHomePage = mount.matchSiteMapItem("/");
+        ResolvedSiteMapItem matchedItemForNewsFoo = mount.matchSiteMapItem("/news/foo");
+        assertEquals("home",matchedItemForHomePage.getHstSiteMapItem().getId());
+        assertEquals("news/_default_",matchedItemForNewsFoo.getHstSiteMapItem().getId());
+
         final Node home = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home");
         home.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
         home.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
         final Node newsDefault = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news/_default_");
         newsDefault.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
         newsDefault.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
+
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+        session.save();
+        invalidator.eventPaths(pathsToBeChanged);
+
+        mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        final HstSite hstSite = mount.getMount().getHstSite();
+        final HstSiteMap siteMap = hstSite.getSiteMap();
+        assertNotNull(siteMap.getSiteMapItem("home"));
+        assertNotNull(siteMap.getSiteMapItem("news").getChild("_default_"));
+        assertTrue(siteMap.getSiteMapItem("home").isMarkedDeleted());
+        assertTrue(siteMap.getSiteMapItem("news").getChild("_default_").isMarkedDeleted());
+
+        // matching again "/" and "/news/foo" should not result in same sitemap items because they are excluded from matching
+        matchedItemForHomePage = mount.matchSiteMapItem("/");
+        matchedItemForNewsFoo = mount.matchSiteMapItem("/news/foo");
+        assertFalse("home".equals(matchedItemForHomePage.getHstSiteMapItem().getId()));
+        assertFalse("news/_default_".equals(matchedItemForNewsFoo.getHstSiteMapItem().getId()));
+    }
+
+    @Test
+    public void marked_deleted_nodes_their_children_are_marked_deleted_as_well()  throws Exception {
+        final Node news = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news");
+        news.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+        news.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
         session.save();
 
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         final HstSiteMap siteMap = hstSite.getSiteMap();
-        assertNull(siteMap.getSiteMapItem("home"));
-        assertNull(siteMap.getSiteMapItem("news").getChild("_default_"));
-
+        assertTrue(siteMap.getSiteMapItem("news").isMarkedDeleted());
+        assertTrue(siteMap.getSiteMapItem("news").getChild("_default_").isMarkedDeleted());
     }
 }

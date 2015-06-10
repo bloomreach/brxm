@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstComponentFatalException;
 import org.hippoecm.hst.core.component.HstComponentMetadata;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HstComponentWindowFactoryImpl
@@ -33,6 +35,8 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  * @version $Id$
  */
 public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory {
+
+    private static final Logger log = LoggerFactory.getLogger(HstComponentWindowFactoryImpl.class);
 
     protected String referenceNameSeparator = "_";
 
@@ -49,7 +53,6 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
     }
 
     public HstComponentWindow create(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HstComponentConfiguration compConfig, HstComponentFactory compFactory, HstComponentWindow parentWindow) throws HstComponentException {
-
         String referenceName = compConfig.getReferenceName();
         StringBuilder referenceNamespaceBuilder = new StringBuilder();
 
@@ -118,6 +121,10 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
             }
             for (Map.Entry<String, HstComponentConfiguration> entry : childCompConfigMap.entrySet()) {
                 HstComponentConfiguration childCompConfig = entry.getValue();
+                if (childCompConfig.isMarkedDeleted()) {
+                    log.debug("Skipping child component {} because it is marked to be deleted.", childCompConfig);
+                    continue;
+                }
                 String tag = childCompConfig.getComponentFilterTag();
                 if (matchTag) {
                     if (tag == null || !filter.contains(tag)) {

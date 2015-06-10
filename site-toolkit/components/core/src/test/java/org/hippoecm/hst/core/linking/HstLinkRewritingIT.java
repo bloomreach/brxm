@@ -34,6 +34,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAPITEM;
 
@@ -110,6 +111,28 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
         assertEquals("wrong absolute link for News/News1", "/site/news/News1.html", (newsLink.toUrlForm(requestContext, false)));
         assertEquals("wrong fully qualified url for News/News1", "http://localhost:8080/site/news/News1.html", (newsLink.toUrlForm(requestContext, true)));
 
+    }
+
+    @Test
+    public void sitemap_item_marked_as_deleted_is_skipped_from_link_rewriting() throws Exception {
+        Session session = createAdminSession();
+        try {
+            createHstConfigBackup(session);
+            final Node newsDefault = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news/_default_.html");
+            newsDefault.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+            newsDefault.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
+            session.save();
+            HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/home");
+            ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
+            Object newsBean = obm.getObject("/unittestcontent/documents/unittestproject/News/News1");
+            HstLink newsLink = linkCreator.create((HippoBean) newsBean, requestContext);
+            assertFalse("since news/_default_.html is marked as 'deleted' is should not for linkrewriting", "news/News1.html".equals(newsLink.getPath()));
+        } finally {
+            restoreHstConfigBackup(session);
+            if (session != null) {
+                session.logout();
+            }
+        }
     }
 
     @Test

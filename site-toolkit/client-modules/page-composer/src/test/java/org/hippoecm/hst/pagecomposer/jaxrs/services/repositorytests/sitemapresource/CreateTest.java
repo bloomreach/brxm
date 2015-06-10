@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -444,7 +444,8 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             assertEquals("deleted", fooToHomeNode.getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString());
 
             final Session bob = createSession("bob", "bob");
-            assertNull(getSiteMapItemRepresentation(bob, "home"));
+            assertEquals("'home' sitemap item is marked deleted hence _default_ should match instead",
+                    "_default_", getSiteMapItemRepresentation(bob, "home").getPathInfo());
             Node homeNodeByBob = bob.getNodeByIdentifier(foo.getId());
             try {
                 helper.acquireLock(homeNodeByBob, versionStamp);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
@@ -549,11 +550,16 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:sitemap").remove();
         session.save();
         final SiteMapResource siteMapResource = createResource();
-        final SiteMapItemRepresentation aboutUs = getSiteMapItemRepresentation(session, "about-us");
-        assertNull(aboutUs);
-        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+        try {
+            final SiteMapItemRepresentation aboutUs = getSiteMapItemRepresentation(session, "about-us");
+            fail("'about-us' sitemap item AND all wildcard matchers AND pageNotFound sitemap item have been removed " +
+                    "and thus 'about-us' is not expected to match");
+        } catch (NotFoundException e){
+            // expected
+        }
 
-        // 'about-us' is part of the non-workspace sitemap and should thus fail!
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+        // 'about-us' is not part any more of the non-workspace sitemap and thus rename to 'about-us' should pass
         home.setName("about-us");
         Response correctResponse = siteMapResource.update(home);
         assertEquals(Response.Status.OK.getStatusCode(), correctResponse.getStatus());

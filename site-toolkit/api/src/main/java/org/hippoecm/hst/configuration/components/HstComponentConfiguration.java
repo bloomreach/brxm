@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -311,4 +311,12 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      */
     Calendar getLastModified();
 
+    /**
+     * <code>true</code> when this {@link HstComponentConfiguration} is marked as deleted. An {@link HstComponentConfiguration} that
+     * has an ancestor that is marked as deleted will itself also be marked as deleted. A marked deleted component item will
+     * be part of the HST model via {@link HstComponentsConfiguration#getComponentConfigurations()} but should be skipped
+     * during execution.
+     * @return <code>true</code> when this {@link HstComponentConfiguration} is marked as deleted.
+     */
+    boolean isMarkedDeleted();
 }

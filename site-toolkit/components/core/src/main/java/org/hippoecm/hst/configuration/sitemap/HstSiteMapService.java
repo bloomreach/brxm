@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -75,10 +75,6 @@ public class HstSiteMapService implements HstSiteMap, CanonicalInfo {
 
         // initialize all sitemap items
         for(HstNode child : siteMapNode.getCompositeChildren().values()) {
-            if ("deleted".equals(child.getValueProvider().getString(HstNodeTypes.EDITABLE_PROPERTY_STATE))) {
-                log.debug("SKipping marked deleted node {}", child.getValueProvider().getPath());
-                continue;
-            }
             if(HstNodeTypes.NODETYPE_HST_SITEMAPITEM.equals(child.getNodeTypeName())) {
                 try {
                     HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, mountSiteMapConfiguration, siteMapItemHandlersConfiguration , null, this, 1);

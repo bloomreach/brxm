@@ -146,23 +146,15 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
 
     public SiteMapItemRepresentation getSiteMapItemRepresentation(final Session requestSession,
                                                                   final String siteMapItemPath) throws Exception {
-        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "home");
+        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", siteMapItemPath);
         ((HstMutableRequestContext) ctx).setSession(requestSession);
         final PageComposerContextService pageComposerContextService = mountResource.getPageComposerContextService();
         final HstSite site = pageComposerContextService.getEditingPreviewSite();
 
-
-        final HstSiteMap siteMap = site.getSiteMap();
-        final String[] elems = siteMapItemPath.split("/");
-        HstSiteMapItem siteMapItemToRepresent = siteMap.getSiteMapItem(elems[0]);
-        int pos = 1;
-        while (elems.length > pos && siteMapItemToRepresent != null) {
-            siteMapItemToRepresent = siteMapItemToRepresent.getChild(elems[1]);
-            pos++;
-        }
+        HstSiteMapItem siteMapItemToRepresent = ctx.getResolvedSiteMapItem().getHstSiteMapItem();
 
         // override the config identifier to have sitemap id
-        ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, ((CanonicalInfo) siteMap).getCanonicalIdentifier());
+        ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, ((CanonicalInfo) site.getSiteMap()).getCanonicalIdentifier());
 
          if (siteMapItemToRepresent == null) {
             return null;

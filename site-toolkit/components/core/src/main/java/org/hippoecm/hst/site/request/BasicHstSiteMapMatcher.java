@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         HstSiteMapItem hstSiteMapItem = siteMap.getSiteMapItem(elements[0]);
         
         HstSiteMapItem matchedSiteMapItem = null;
-        if(hstSiteMapItem != null) {
+        if(hstSiteMapItem != null && !hstSiteMapItem.isMarkedDeleted()) {
             matchedSiteMapItem =  resolveMatchingSiteMap(hstSiteMapItem, params, 1, elements);
         }
         
@@ -84,6 +84,9 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             params.clear();
             // check for partial wildcard (*.xxx) matcher first
             for(HstSiteMapItem item : siteMap.getSiteMapItems()) {
+                if (item.isMarkedDeleted()) {
+                    continue;
+                }
                 HstSiteMapItemService service = (HstSiteMapItemService)item;
                 if(service.containsWildCard() && service.patternMatch(elements[0], service.getPrefix(), service.getPostfix())) {
                     String parameter = getStrippedParameter((HstSiteMapItemService)service, elements[0]);
@@ -102,7 +105,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             params.clear();
             // check for a wildcard (*) matcher :
             hstSiteMapItem = siteMap.getSiteMapItem(WILDCARD);
-            if(hstSiteMapItem != null) {
+            if(hstSiteMapItem != null && !hstSiteMapItem.isMarkedDeleted()) {
                 params.put(String.valueOf(params.size()+1), elements[0]);
                 matchedSiteMapItem =  resolveMatchingSiteMap(hstSiteMapItem, params, 1, elements);
             }
@@ -113,6 +116,9 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             params.clear();
          // check for partial wildcard (**.xxx) matcher first
             for(HstSiteMapItem item : siteMap.getSiteMapItems()) {
+                if (item.isMarkedDeleted()) {
+                    continue;
+                }
                 HstSiteMapItemService service = (HstSiteMapItemService)item;
                 if(service.containsAny() && service.patternMatch(pathInfo, service.getPrefix(), service.getPostfix())) {
                     String parameter = getStrippedParameter((HstSiteMapItemService)service, pathInfo);
@@ -129,7 +135,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             params.clear();
             // check for a wildcard (**) matcher :
             HstSiteMapItem hstSiteMapItemAny = siteMap.getSiteMapItem(ANY);
-            if(hstSiteMapItemAny == null) {
+            if(hstSiteMapItemAny == null || hstSiteMapItemAny.isMarkedDeleted()) {
                 log.info("Did not find a matching sitemap item for path '{}', Mount '{}' and Host '"+resolvedMount.getMount().getVirtualHost().getHostName()+"'" +
                         ". Return null", pathInfo, resolvedMount.getMount().getParent() == null ? "hst:root" : resolvedMount.getMount().getMountPath() );
                 throw new NotFoundException("PathInfo '"+pathInfo+"' could not be matched");
@@ -167,20 +173,20 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
            return hstSiteMapItemService;
        }
        HstSiteMapItem s; 
-       if( (s = hstSiteMapItemService.getChild(elements[position])) != null && !checkedSiteMapItems.contains(s)) {
+       if( (s = hstSiteMapItemService.getChild(elements[position])) != null && !checkedSiteMapItems.contains(s) && !s.isMarkedDeleted()) {
            if (s.isAny() || s.isWildCard()) {
                // this can happen when the pathInfo to match contains _default_ or _any_  : It is a corner case
                params.put(String.valueOf(params.size()+1), getStrippedParameter((HstSiteMapItemService)s, elements[position]));
            }
            return traverseInToSiteMapItem(s, params, ++position, elements, checkedSiteMapItems);
-       } else if( (s = hstSiteMapItemService.getWildCardPatternChild(elements[position], checkedSiteMapItems)) != null ) {
+       } else if( (s = hstSiteMapItemService.getWildCardPatternChild(elements[position], checkedSiteMapItems)) != null  && !s.isMarkedDeleted()) {
            String parameter = getStrippedParameter((HstSiteMapItemService)s, elements[position]);
            params.put(String.valueOf(params.size()+1), parameter);
            return traverseInToSiteMapItem(s, params, ++position, elements, checkedSiteMapItems);
-       } else if( (s = hstSiteMapItemService.getChild(WILDCARD)) != null && !checkedSiteMapItems.contains(s)) {
+       } else if( (s = hstSiteMapItemService.getChild(WILDCARD)) != null && !checkedSiteMapItems.contains(s) && !s.isMarkedDeleted()) {
            params.put(String.valueOf(params.size()+1), elements[position]);
            return traverseInToSiteMapItem(s, params, ++position, elements, checkedSiteMapItems);
-       } else if( (s = hstSiteMapItemService.getAnyPatternChild(elements, position, checkedSiteMapItems)) != null ) {
+       } else if( (s = hstSiteMapItemService.getAnyPatternChild(elements, position, checkedSiteMapItems)) != null && !s.isMarkedDeleted()) {
            StringBuffer remainder = new StringBuffer(elements[position]);
            while(++position < elements.length) {
                remainder.append("/").append(elements[position]);
@@ -189,7 +195,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
            params.put(String.valueOf(params.size()+1), parameter);
            return s;
        } 
-       else if(hstSiteMapItemService.getChild(ANY) != null ) {
+       else if(hstSiteMapItemService.getChild(ANY) != null && !hstSiteMapItemService.getChild(ANY).isMarkedDeleted()) {
            StringBuffer remainder = new StringBuffer(elements[position]);
            while(++position < elements.length) {
                remainder.append("/").append(elements[position]);

@@ -177,6 +177,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private String lockedBy;
     private Calendar lockedOn;
     private Calendar lastModified;
+    private Boolean markedDeleted;
 
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
@@ -347,15 +348,19 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             lastModified = (lastModified == null) ? parent.getLastModified() : lastModified;
         }
 
+        if (node.getValueProvider().hasProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE)) {
+            if ("deleted".equals(node.getValueProvider().getString(HstNodeTypes.EDITABLE_PROPERTY_STATE))) {
+                markedDeleted = true;
+            }
+        } else if (parent != null) {
+            markedDeleted = parent.isMarkedDeleted();
+        }
+
         if (isCatalogItem) {
             // do not load children 
             return;
         }
         for (HstNode child : node.getNodes()) {
-            if ("deleted".equals(child.getValueProvider().getString(HstNodeTypes.EDITABLE_PROPERTY_STATE))) {
-                log.debug("SKipping marked deleted node {}", child.getValueProvider().getPath());
-                continue;
-            }
             HstComponentConfigurationService childComponent = loadChildComponent(child, rootNodeName,
                     rootConfigurationPathPrefix, referableContainers);
             if (childComponent == null) {
@@ -665,6 +670,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return lastModified;
     }
 
+    @Override
+    public boolean isMarkedDeleted() {
+        return markedDeleted == null ? false : markedDeleted;
+    }
 
     private HstComponentConfigurationService deepCopy(HstComponentConfigurationService parent, String newId,
                                                       HstComponentConfigurationService child, List<HstComponentConfiguration> populated,
@@ -706,6 +715,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.lockedBy = child.lockedBy;
         copy.lockedOn = child.lockedOn;
         copy.lastModified = child.lastModified;
+        copy.markedDeleted = child.markedDeleted;
         for (HstComponentConfigurationService descendant : child.orderedListConfigs) {
             String descId = StringPool.get(copy.id + descendant.id);
             HstComponentConfigurationService copyDescendant = deepCopy(copy, descId, descendant, populated,
@@ -731,7 +741,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if (this.getReferenceComponent() != null) {
             HstComponentConfigurationService referencedComp = (HstComponentConfigurationService) rootComponentConfigurations
                     .get(this.getReferenceComponent());
-            if (referencedComp != null) {
+            if (referencedComp != null && !referencedComp.isMarkedDeleted()) {
                 if (referencedComp == this) {
                     throw new ModelLoadingException("There is a component referencing itself: this is not allowed. The site configuration cannot be loaded. Incorrect ComponentId = " + this.getId());
                 }

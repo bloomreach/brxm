@@ -50,7 +50,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.ANY;
-import static org.hippoecm.hst.configuration.HstNodeTypes.EDITABLE_PROPERTY_STATE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_CACHEABLE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCALE;
@@ -146,7 +145,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
 
     private Set<String> users;
 
-    private boolean isExcludedForLinkRewriting;
+    private boolean excludedForLinkRewriting;
 
     private boolean isWildCard;
 
@@ -188,6 +187,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
     private final String [] resourceBundleIds;
     private boolean containerResource;
     private boolean hiddenInChannelManager;
+    private boolean markedDeleted;
 
     HstSiteMapItemService(final HstNode node,
                           final MountSiteMapConfiguration mountSiteMapConfiguration,
@@ -207,7 +207,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         // there can be completely different paths for the root sitemap node than for the inherited sitemap items.
         HstNode crNode = node;
         StringBuilder idBuilder = new StringBuilder("/").append(crNode.getValueProvider().getName());
-        while(crNode.getParent().getNodeTypeName().equals(NODETYPE_HST_SITEMAPITEM)) {
+        while (crNode.getParent().getNodeTypeName().equals(NODETYPE_HST_SITEMAPITEM)) {
             crNode = crNode.getParent();
             idBuilder.insert(0, crNode.getValueProvider().getName()).insert(0, "/");
         }
@@ -453,21 +453,34 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
                     SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING, GENERAL_PROEPRTY_SCHEME_AGNOSTIC
             );
 
-            isExcludedForLinkRewriting = true;
+            excludedForLinkRewriting = true;
             schemeAgnostic = true;
             namedPipeline = CONTAINER_RESOURCE_PIPELINE_NAME;
         }
 
-        if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER)) {
-            hiddenInChannelManager = node.getValueProvider().getBoolean(SITEMAPITEM_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER);
-        } else if(parentItem != null) {
-            hiddenInChannelManager = parentItem.isHiddenInChannelManager();
+        if (node.getValueProvider().hasProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE)) {
+            if ("deleted".equals(node.getValueProvider().getString(HstNodeTypes.EDITABLE_PROPERTY_STATE))) {
+                markedDeleted = true;
+            }
+        } else if (parentItem != null) {
+            markedDeleted = parentItem.isMarkedDeleted();
         }
 
-        if(node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING)) {
-            isExcludedForLinkRewriting = node.getValueProvider().getBoolean(SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING);
-        } else if (parentItem != null) {
-            isExcludedForLinkRewriting = parentItem.isExcludedForLinkRewriting();
+        if (markedDeleted) {
+            hiddenInChannelManager = true;
+            excludedForLinkRewriting = true;
+        } else {
+            if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER)) {
+                hiddenInChannelManager = node.getValueProvider().getBoolean(SITEMAPITEM_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER);
+            } else if(parentItem != null) {
+                hiddenInChannelManager = parentItem.isHiddenInChannelManager();
+            }
+
+            if(node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING)) {
+                excludedForLinkRewriting = node.getValueProvider().getBoolean(SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING);
+            } else if (parentItem != null) {
+                excludedForLinkRewriting = parentItem.isExcludedForLinkRewriting();
+            }
         }
 
         if(node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_NAMEDPIPELINE)) {
@@ -527,10 +540,6 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         }
 
         for(HstNode child : node.getNodes()) {
-            if ("deleted".equals(child.getValueProvider().getString(EDITABLE_PROPERTY_STATE))) {
-                log.debug("SKipping marked deleted node {}", child.getValueProvider().getPath());
-                continue;
-            }
             if(NODETYPE_HST_SITEMAPITEM.equals(child.getNodeTypeName())) {
                 try {
                     HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, mountSiteMapConfiguration,  siteMapItemHandlersConfiguration , this, this.hstSiteMap, depth + 1);
@@ -866,7 +875,11 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
     }
 
     public boolean isExcludedForLinkRewriting() {
-        return isExcludedForLinkRewriting;
+        return excludedForLinkRewriting;
+    }
+
+    public boolean isMarkedDeleted() {
+        return markedDeleted;
     }
 
     /**
