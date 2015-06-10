@@ -9,11 +9,7 @@
   "chosen": ["chosen.jquery.js"],
   "es5-shim": [],
   "google-code-prettify": ["src/prettify.js"],
-  "hippo-theme": [
-    "dist/css/main.css",
-    "dist/js/main.js",
-    "dist/images/*"
-  ],
+  "hippo-theme": ["dist/**"],
   "jasmine-jquery": [],
   "jquery": ["dist/jquery.js"]
 }
