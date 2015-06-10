@@ -382,7 +382,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
       this.name = id.indexOf(':') > -1 ? id.substr(id.indexOf(':') + 1) : id;
 
-      this.DIM_COOKIE = 'hippocms7-layout-sizes';
+      this.DIM_COOKIE = 'hippocms10-layout-sizes';
     };
 
     YAHOO.hippo.BaseWireframe.prototype = {
@@ -531,18 +531,24 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
       },
 
       onEndResizeUnit: function (o, unit) {
-        var sizes, minWidth, newWidth, offset, diff;
+        var sizes, minWidth, newWidth, offset, diff, offsetWidth;
 
         //if the width of this unit is bigger than the layout width, it will
         //overlap neighboring units. A 20px margin is used.
         //Added check for minWidth as well
         sizes = unit.get('parent').getSizes();
+
+        if (sizes.doc.w <= 0) {
+          return;
+        }
+
         minWidth = unit.get('minWidth');
         newWidth = unit.get('width');
         offset = minWidth !== null ? minWidth : 20;
+        offsetWidth = sizes.doc.w - offset;
 
-        if ((sizes.doc.w - offset) < newWidth) {
-          unit.set('width', sizes.doc.w - offset);
+        if (offsetWidth >= minWidth && offsetWidth < newWidth) {
+          unit.set('width', offsetWidth);
         } else {
           //else check if the new width isn't rendering nested layout's units invisible.
           //if a number less than zero is returned, it resembles the offset of the least
@@ -553,7 +559,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             unit.set('width', (newWidth - diff) + 20);
           }
         }
-
       },
 
       newWidthIsOk: function () {
