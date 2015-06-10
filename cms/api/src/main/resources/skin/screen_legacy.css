@@ -2170,3 +2170,9 @@ body.hippo-root div.yui-log-container {
 .hippo-referring-documents-list .hippo-list-paging .paging-label {
     margin-top: 0;
 }
+
+/* Wicket AutoComplete */
+.wicket-aa-container div.wicket-aa ul li,
+.wicket-aa-container div.wicket-aa ul li.selected {
+    padding: 1px 0;
+}

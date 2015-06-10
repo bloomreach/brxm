@@ -33,17 +33,11 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
-import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
-import org.apache.wicket.extensions.ajax.markup.html.autocomplete.DefaultCssAutoCompleteTextField;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -55,13 +49,15 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.widgets.AutoCompleteTextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +100,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
         this.modelReference = modelReference;
         final IModel<Node> model = modelReference.getModel();
 
-        getParent().add(new AttributeAppender("class", Model.of("property-dialog"), " "));
+        getParent().add(CssClass.append("property-dialog"));
 
         // list defined properties for automatic completion
         choiceModel = new LoadableDetachableModel<Map<String, List<PropertyDefinition>>>() {
@@ -216,40 +212,6 @@ public class PropertyDialog extends AbstractDialog<Node> {
         });
         add(ddChoice);
 
-        // text field for property name
-        AutoCompleteSettings settings = new AutoCompleteSettings();
-        settings.setAdjustInputWidth(false);
-        settings.setUseSmartPositioning(true);
-        settings.setShowCompleteListOnFocusGain(true);
-        settings.setShowListOnEmptyInput(true);
-        // Setting a max height will trigger a correct recalculation of the height when the list of items is filtered
-        settings.setMaxHeightInPx(400);
-
-        final AutoCompleteTextField<String> nameField = new AutoCompleteTextField<String>("name",
-                new PropertyModel<>(this, "name"), settings) {
-
-            @Override
-            protected Iterator<String> getChoices(String input) {
-                List<String> result = new ArrayList<>();
-                for (String propName : choiceModel.getObject().keySet()) {
-                    if (propName.contains(input)) {
-                        result.add(propName);
-                    }
-                }
-                return result.iterator();
-            }
-
-            @Override
-            public void renderHead(final IHeaderResponse response) {
-                super.renderHead(response);
-                response.render(CssHeaderItem.forReference(new CssResourceReference(
-                        DefaultCssAutoCompleteTextField.class, "DefaultCssAutoCompleteTextField.css")));
-            }
-        };
-
-        nameField.setRequired(true);
-        add(nameField);
-
         values = new LinkedList<>();
         values.add("");
 
@@ -292,7 +254,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
                     }
                 };
 
-                deleteLink.add(new AttributeModifier("title", getString("property.value.remove")));
+                deleteLink.add(TitleAttribute.set(getString("property.value.remove")));
                 deleteLink.add(new InputBehavior(new KeyType[] {KeyType.Enter}, EventType.click) {
                     @Override
                     protected String getTarget() {
@@ -316,7 +278,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
                 return isMultiple;
             }
         };
-        addLink.add(new AttributeModifier("title", getString("property.value.add")));
+        addLink.add(TitleAttribute.set(getString("property.value.add")));
         addLink.add(new InputBehavior(new KeyType[] {KeyType.Enter}, EventType.click) {
             @Override
             protected String getTarget() {
@@ -337,18 +299,42 @@ public class PropertyDialog extends AbstractDialog<Node> {
             }
         });
 
-        // dynamic update of related components when name is updated
-        nameField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        // text field for property name
+        AutoCompleteSettings settings = new AutoCompleteSettings();
+        settings.setAdjustInputWidth(false);
+        settings.setUseSmartPositioning(true);
+        settings.setShowCompleteListOnFocusGain(true);
+        settings.setShowListOnEmptyInput(true);
+        // Setting a max height will trigger a correct recalculation of the height when the list of items is filtered
+        settings.setMaxHeightInPx(400);
+
+        final TextField<String> nameField = new AutoCompleteTextFieldWidget<String>("name",
+                PropertyModel.of(this, "name"), settings) {
 
             @Override
-            protected void onUpdate(AjaxRequestTarget target) {
+            protected Iterator<String> getChoices(String input) {
+                List<String> result = new ArrayList<>();
+                for (String propName : choiceModel.getObject().keySet()) {
+                    if (propName.contains(input)) {
+                        result.add(propName);
+                    }
+                }
+                return result.iterator();
+            }
+
+            @Override
+            protected void onUpdate(final AjaxRequestTarget target) {
+                super.onUpdate(target);
+
                 target.add(ddChoice);
                 target.add(checkBox);
                 target.add(valuesContainer);
                 focusOnLatestValue = true;
             }
-        });
+        };
 
+        nameField.setRequired(true);
+        add(nameField);
         setFocus(nameField);
     }
 

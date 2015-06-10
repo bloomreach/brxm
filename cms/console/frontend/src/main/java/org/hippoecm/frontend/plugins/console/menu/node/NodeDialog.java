@@ -29,28 +29,22 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
-import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
-import org.apache.wicket.extensions.ajax.markup.html.autocomplete.DefaultCssAutoCompleteTextField;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.widgets.AutoCompleteTextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NodeDialog extends AbstractDialog<Node> {
-
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(NodeDialog.class);
 
@@ -62,12 +56,15 @@ public class NodeDialog extends AbstractDialog<Node> {
 
     private final IModelReference<Node> modelReference;
 
+    private final TextField<String> typeField;
+    private final TextField<String> nameField;
+
     public NodeDialog(IModelReference<Node> modelReference) {
         this.modelReference = modelReference;
         final IModel<Node> nodeModel = modelReference.getModel();
         setModel(nodeModel);
 
-        getParent().add(new AttributeAppender("class", Model.of("node-dialog"), " "));
+        getParent().add(CssClass.append("node-dialog"));
 
         // list defined child node names and types for automatic completion
         final Node node = nodeModel.getObject();
@@ -79,7 +76,7 @@ public class NodeDialog extends AbstractDialog<Node> {
                         if (!nt.isAbstract()) {
                             addNodeType(nd, nt);
                         }
-                        for (NodeType subnt : getDescendentNodeTypes(nt)) {
+                        for (NodeType subnt : getDescendantNodeTypes(nt)) {
                             addNodeType(nd, subnt);
                         }
                     }
@@ -92,7 +89,7 @@ public class NodeDialog extends AbstractDialog<Node> {
                             if (!cnt.isAbstract()) {
                                 addNodeType(nd, cnt);
                             }
-                            for (NodeType subnt : getDescendentNodeTypes(cnt)) {
+                            for (NodeType subnt : getDescendantNodeTypes(cnt)) {
                                 addNodeType(nd, subnt);
                             }
                         }
@@ -112,8 +109,6 @@ public class NodeDialog extends AbstractDialog<Node> {
         settings.setMaxHeightInPx(400);
 
         final Model<String> typeModel = new Model<String>() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public String getObject() {
                 if (name != null && namesToTypes.containsKey(name)) {
@@ -136,11 +131,9 @@ public class NodeDialog extends AbstractDialog<Node> {
                 type = s;
             }
         };
-        final AutoCompleteTextField<String> typeField = new AutoCompleteTextField<String>("type", typeModel, settings) {
-            private static final long serialVersionUID = 1L;
-
+        typeField = new AutoCompleteTextFieldWidget<String>("type", typeModel, settings) {
             @Override
-            protected Iterator<String> getChoices(String input) {
+            protected Iterator<String> getChoices(final String input) {
                 Collection<String> result = new TreeSet<>();
                 if (!Strings.isEmpty(name)) {
                     if (namesToTypes.get(name) != null) {
@@ -151,9 +144,7 @@ public class NodeDialog extends AbstractDialog<Node> {
                     }
                 }
                 else {
-                    for (Collection<String> types : namesToTypes.values()) {
-                        result.addAll(types);
-                    }
+                    namesToTypes.values().forEach(result::addAll);
                 }
                 Iterator<String> resultIter = result.iterator();
                 while (resultIter.hasNext()) {
@@ -165,18 +156,16 @@ public class NodeDialog extends AbstractDialog<Node> {
             }
 
             @Override
-            public void renderHead(final IHeaderResponse response) {
-                super.renderHead(response);
-                response.render(CssHeaderItem.forReference(new CssResourceReference(
-                        DefaultCssAutoCompleteTextField.class, "DefaultCssAutoCompleteTextField.css")));
+            protected void onUpdate(final AjaxRequestTarget target) {
+                if (isVisibleInHierarchy()) {
+                    target.add(nameField);
+                }
             }
         };
         typeField.setRequired(true);
         add(typeField);
 
         final Model<String> nameModel = new Model<String>() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public String getObject() {
                 if (type != null && typesToNames.containsKey(type)) {
@@ -207,9 +196,7 @@ public class NodeDialog extends AbstractDialog<Node> {
                 name = s;
             }
         };
-        final AutoCompleteTextField<String> nameField = new AutoCompleteTextField<String>("name", nameModel, settings) {
-            private static final long serialVersionUID = 1L;
-
+        nameField = new AutoCompleteTextFieldWidget<String>("name", nameModel, settings) {
             @Override
             protected Iterator<String> getChoices(String input) {
                 Collection<String> result = new TreeSet<>();
@@ -227,25 +214,15 @@ public class NodeDialog extends AbstractDialog<Node> {
                 }
                 return result.iterator();
             }
+
+            @Override
+            protected void onUpdate(final AjaxRequestTarget target) {
+                if (isVisibleInHierarchy()) {
+                    target.add(typeField);
+                }
+            }
         };
         nameField.setRequired(true);
-        nameField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                target.add(typeField);
-            }
-        });
-
-        typeField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                target.add(nameField);
-            }
-        });
 
         add(setFocus(nameField));
     }
@@ -262,8 +239,9 @@ public class NodeDialog extends AbstractDialog<Node> {
         }
     }
 
+    @Override
     public IModel<String> getTitle() {
-        return new Model<>("Add a new Node");
+        return Model.of("Add a new Node");
     }
 
     @Override
@@ -271,7 +249,7 @@ public class NodeDialog extends AbstractDialog<Node> {
         return DialogConstants.SMALL;
     }
 
-    private Collection<NodeType> getDescendentNodeTypes(NodeType nt) {
+    private Collection<NodeType> getDescendantNodeTypes(NodeType nt) {
         Collection<NodeType> result = new HashSet<>();
         NodeTypeIterator subNodeTypes = nt.getDeclaredSubtypes();
         while (subNodeTypes.hasNext()) {
@@ -279,7 +257,7 @@ public class NodeDialog extends AbstractDialog<Node> {
             if (!subNodeType.isAbstract()) {
                 result.add(subNodeType);
             }
-            result.addAll(getDescendentNodeTypes(subNodeType));
+            result.addAll(getDescendantNodeTypes(subNodeType));
         }
         return result;
     }
