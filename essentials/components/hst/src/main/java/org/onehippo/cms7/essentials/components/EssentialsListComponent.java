@@ -38,7 +38,7 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.ContentBeanUtils;
-import org.onehippo.cms7.essentials.components.info.EssentialsDocumentListComponentInfo;
+import org.onehippo.cms7.essentials.components.info.EssentialsListComponentInfo;
 import org.onehippo.cms7.essentials.components.info.EssentialsPageable;
 import org.onehippo.cms7.essentials.components.info.EssentialsSortable;
 import org.onehippo.cms7.essentials.components.paging.DefaultPagination;
@@ -56,7 +56,7 @@ import com.google.common.base.Strings;
  *
  * @version "$Id$"
  */
-@ParametersInfo(type = EssentialsDocumentListComponentInfo.class)
+@ParametersInfo(type = EssentialsListComponentInfo.class)
 public class EssentialsListComponent extends CommonComponent {
 
     private static Logger log = LoggerFactory.getLogger(EssentialsListComponent.class);
@@ -65,7 +65,7 @@ public class EssentialsListComponent extends CommonComponent {
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
         super.doBeforeRender(request, response);
-        final EssentialsDocumentListComponentInfo paramInfo = getComponentParametersInfo(request);
+        final EssentialsListComponentInfo paramInfo = getComponentParametersInfo(request);
         final String path = getScopePath(paramInfo);
         log.debug("Calling EssentialsListComponent for documents path:  [{}]", path);
         final HippoBean scope = getSearchScope(request, path);
@@ -134,7 +134,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @param componentInfo instance of EssentialsDocumentListComponentInfo
      * @param <T>           component info class.
      */
-    protected <T extends EssentialsDocumentListComponentInfo> void applyOrdering(final HstRequest request, final HstQuery query, final T componentInfo) {
+    protected <T extends EssentialsListComponentInfo> void applyOrdering(final HstRequest request, final HstQuery query, final T componentInfo) {
         final String sortField = componentInfo.getSortField();
         if (Strings.isNullOrEmpty(sortField)) {
             return;
@@ -148,7 +148,7 @@ public class EssentialsListComponent extends CommonComponent {
     }
 
 
-    protected <T extends EssentialsDocumentListComponentInfo> Pageable<? extends HippoBean> doSearch(final HstRequest request, final T paramInfo, final HippoBean scope) {
+    protected <T extends EssentialsListComponentInfo> Pageable<? extends HippoBean> doSearch(final HstRequest request, final T paramInfo, final HippoBean scope) {
         try {
             final HstQuery build = buildQuery(request, paramInfo, scope);
             if (build != null) {
@@ -170,7 +170,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @param <T>       type of component info interface
      * @return pageable search results, or null if search failed.
      */
-    protected <T extends EssentialsDocumentListComponentInfo>
+    protected <T extends EssentialsListComponentInfo>
     Pageable<HippoBean> doFacetedSearch(final HstRequest request, final T paramInfo, final HippoBean scope) {
 
         Pageable<HippoBean> pageable = DefaultPagination.emptyCollection();
@@ -202,7 +202,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @param scope     the scope of the query
      * @return the HST query to execute
      */
-    protected <T extends EssentialsDocumentListComponentInfo> HstQuery buildQuery(final HstRequest request, final T paramInfo, final HippoBean scope) {
+    protected <T extends EssentialsListComponentInfo> HstQuery buildQuery(final HstRequest request, final T paramInfo, final HippoBean scope) {
         final QueryBuilder builder = new HstQueryBuilder(this, request);
         final String documentTypes = paramInfo.getDocumentTypes();
         final String[] types = SiteUtils.parseCommaSeparatedValue(documentTypes);
@@ -221,7 +221,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @return the pageable result
      * @throws QueryException query exception when query fails
      */
-    protected <T extends EssentialsDocumentListComponentInfo> Pageable<HippoBean> executeQuery(final HstRequest request, final T paramInfo, final HstQuery query) throws QueryException {
+    protected <T extends EssentialsListComponentInfo> Pageable<HippoBean> executeQuery(final HstRequest request, final T paramInfo, final HstQuery query) throws QueryException {
         final int pageSize = getPageSize(request, paramInfo);
         final int page = getCurrentPage(request);
         query.setLimit(pageSize);
@@ -238,7 +238,7 @@ public class EssentialsListComponent extends CommonComponent {
                 page);
     }
 
-    protected <T extends EssentialsDocumentListComponentInfo> void applyExcludeScopes(final HstRequest request, final HstQuery query, final T paramInfo) {
+    protected <T extends EssentialsListComponentInfo> void applyExcludeScopes(final HstRequest request, final HstQuery query, final T paramInfo) {
         // just an extension point for time being
     }
 
@@ -361,7 +361,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @param paramInfo the settings of the component
      * @return the scope of the query
      */
-    protected String getScopePath(final EssentialsDocumentListComponentInfo paramInfo) {
+    protected String getScopePath(final EssentialsListComponentInfo paramInfo) {
         if (paramInfo == null) {
             log.warn("Component parameter was null for:  {}", getClass().getName());
             return null;
