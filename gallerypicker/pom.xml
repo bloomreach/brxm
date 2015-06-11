@@ -39,7 +39,7 @@
 
   <properties>
     <hippo.repository.version>2.28.00</hippo.repository.version>
-    <hippo.cms.version>2.28.00</hippo.cms.version>
+    <hippo.cms.version>2.28.02-SNAPSHOT</hippo.cms.version>
 
     <lib.commons-lang.version>2.6</lib.commons-lang.version>
     <lib.easymock.version>2.4</lib.easymock.version>
