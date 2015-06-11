@@ -15,7 +15,12 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <wicket:child/>
+    <wicket:container wicket:id="top-fragment">[ Link Picker top section ]</wicket:container>
+
+    <wicket:fragment wicket:id="empty-fragment"></wicket:fragment>
+
     <div wicket:id="content">[ Content here ]</div>
+
+    <wicket:child/>
   </wicket:extend>
 </html>

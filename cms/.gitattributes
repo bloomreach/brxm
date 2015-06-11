@@ -1121,6 +1121,7 @@ api/src/main/styling/less/_editor_preview.less -text
 api/src/main/styling/less/_editor_toolbar.less -text
 api/src/main/styling/less/_footer.less -text
 api/src/main/styling/less/_form_elements.less -text
+api/src/main/styling/less/_gallery_upload_panel.less -text
 api/src/main/styling/less/_globals.less -text
 api/src/main/styling/less/_hippo_dev_extensions.less -text
 api/src/main/styling/less/_hippo_logo.less -text
@@ -2484,7 +2485,6 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/broken-im
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/AbstractAjaxDialogBehavior.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/AbstractBrowserDialog.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/AbstractRichTextEditorDialog.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImageBrowserDialog.css -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImageBrowserDialog.html svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImageBrowserDialog.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImageBrowserDialog.properties -text

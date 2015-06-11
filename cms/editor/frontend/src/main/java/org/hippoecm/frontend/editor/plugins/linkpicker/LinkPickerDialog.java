@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.Dialog;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 public class LinkPickerDialog extends Dialog<String> {
 
     static final Logger log = LoggerFactory.getLogger(LinkPickerDialog.class);
+    private static final String EMPTY_FRAGMENT_ID = "empty-fragment";
 
     private final IPluginContext context;
     private final IPluginConfig config;
@@ -95,6 +97,18 @@ public class LinkPickerDialog extends Dialog<String> {
             }
         });
         breadcrumbs.update(controller.getFolderModel());
+    }
+
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
+        add(createTopFragment("top-fragment"));
+    }
+    /**
+     * Override this method to customize the top section in the link-picker dialog
+     */
+    protected Fragment createTopFragment(final String id) {
+        return new Fragment(id, EMPTY_FRAGMENT_ID, this);
     }
 
     @Override

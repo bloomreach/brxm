@@ -16,6 +16,7 @@
 
 package org.hippoecm.frontend.i18n;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -28,8 +29,11 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.FrontendNodeType;
@@ -40,11 +44,6 @@ import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 
-/**
- * @author cngo
- * @version $Id$
- * @since 2015-02-05
- */
 public class TranslatorUtils {
 
     public static final String EDITOR_TEMPLATES_NODETYPE = "editor:templates";
@@ -182,5 +181,35 @@ public class TranslatorUtils {
             }
         }
         return new TranslationSelectionStrategy<>(criteria.keySet()).select(list).getModel();
+    }
+
+
+    /**
+     * Create a model containing the translated message for the given exception and its parameters. The message will be
+     * loaded from the component's resource properties files with following syntax:
+     * <pre>
+     * {@code
+     *  exception,type\=${exception-class-path},message\=${exception-message}=<your-localized-message>
+     * }
+     * </pre>
+     *
+     * @param component  the component having translated resource files
+     * @param t  the throwable exception
+     * @param parameters parameters used in the message template storing in resource files
+     * @return
+     */
+    public static IModel<String> getExceptionTranslation(final Component component,
+                                                         final Throwable t, final Object... parameters) {
+        String key = "exception,type=${type},message=${message}";
+        HashMap<String, String> details = new HashMap<>();
+        details.put("type", t.getClass().getName());
+        details.put("message", t.getMessage());
+        StackTraceElement[] elements = t.getStackTrace();
+        if (elements.length > 0) {
+            StackTraceElement top = elements[0];
+            details.put("clazz", top.getClassName());
+            key += ",class=${clazz}";
+        }
+        return new StringResourceModel(key, component, new Model<>(details), t.getLocalizedMessage(), parameters);
     }
 }

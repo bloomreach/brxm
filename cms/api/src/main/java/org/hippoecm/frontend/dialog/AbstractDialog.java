@@ -61,6 +61,7 @@ import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandle
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.i18n.TranslatorUtils;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
@@ -213,17 +214,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     }
 
     protected IModel<String> getExceptionTranslation(final Throwable t, final Object... parameters) {
-        String key = "exception,type=${type},message=${message}";
-        HashMap<String, String> details = new HashMap<>();
-        details.put("type", t.getClass().getName());
-        details.put("message", t.getMessage());
-        StackTraceElement[] elements = t.getStackTrace();
-        if (elements.length > 0) {
-            StackTraceElement top = elements[0];
-            details.put("clazz", top.getClassName());
-            key += ",class=${clazz}";
-        }
-        return new StringResourceModel(key, AbstractDialog.this, new Model<>(details), t.getLocalizedMessage(), parameters);
+        return TranslatorUtils.getExceptionTranslation(AbstractDialog.this, t, parameters);
     }
 
     protected PersistentFeedbackMessagesModel fmm;

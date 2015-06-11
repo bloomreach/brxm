@@ -16,8 +16,6 @@
 
 package org.hippoecm.frontend.plugins.richtext.dialog.images;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,59 +30,32 @@ import java.util.TreeSet;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.dialog.HippoForm;
-import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
+import org.hippoecm.frontend.editor.plugins.linkpicker.GalleryUploadPanel;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
-import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
-import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
-import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
-import org.hippoecm.frontend.plugins.jquery.upload.single.SingleFileUploadWidget;
 import org.hippoecm.frontend.plugins.richtext.dialog.AbstractBrowserDialog;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorImageLink;
-import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
-import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
-import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.widgets.ThrottledTextFieldWidget;
-import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.StringCodec;
-import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.gallery.GalleryWorkflow;
-import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,46 +63,31 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
 
     private static final Logger log = LoggerFactory.getLogger(ImageBrowserDialog.class);
 
-    private static final ResourceReference DIALOG_SKIN = new CssResourceReference(ImageBrowserDialog.class, "ImageBrowserDialog.css");
     private static final String CONFIG_PREFERRED_IMAGE_VARIANT = "preferred.image.variant";
     private static final String DEFAULT_PREFERRED_IMAGE_VARIANT = "hippogallery:original";
-    private static final String GALLERY_TYPE_SELECTOR_ID = "galleryType";
     private static final String EXCLUDED_IMAGE_VARIANTS = "excluded.image.variants";
     private static final String INCLUDED_IMAGE_VARIANTS = "included.image.variants";
 
-    public static final List<String> ALIGN_OPTIONS = Arrays.asList("top", "middle", "bottom", "left", "right");
-    private static final String FILEUPLOAD_WIDGET_ID = "uploadPanel";
+    public static final List<String> ALIGN_OPTIONS = createAlignOptions();
+    private Component uploadPanel;
 
-    private final FileUploadValidationService validator;
+    private static List<String> createAlignOptions() {
+        return Collections.unmodifiableList(Arrays.asList("top", "middle", "bottom", "left", "right"));
+    }
 
     DropDownChoice<String> type;
 
     private final LinkedHashMap<String, String> nameTypeMap;
     private final IModel<RichTextEditorImageLink> imageModel;
-    private boolean uploadSelected;
-    private AjaxButton uploadButton;
-    private Component uploadTypeSelector;
-    private final LoadableDetachableModel<List<String>> galleryTypesModel;
-    private String galleryType;
 
     private boolean okSucceeded = false;
-    private SingleFileUploadWidget fileUploadWidget;
-    
+
     public ImageBrowserDialog(IPluginContext context, final IPluginConfig config, final IModel<RichTextEditorImageLink> model) {
         super(context, config, model);
 
         imageModel = model;
 
-        galleryTypesModel = new LoadableDetachableModel<List<String>>() {
-            @Override
-            protected List<String> load() {
-                return loadGalleryTypes();
-            }
-        };
-        validator = ImageUploadValidationService.getValidationService(getPluginContext(), getPluginConfig());
-
-        add(createUploadForm());
-
+        add(uploadPanel = createUploadPanel());
         nameTypeMap = new LinkedHashMap<>();
 
         type = new DropDownChoice<>("type", new StringPropertyModel(model, RichTextEditorImageLink.TYPE), Collections.emptyList(), new IChoiceRenderer<String>() {
@@ -196,80 +152,33 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
         checkState();
     }
 
-    private Component createUploadForm() {
-        final HippoForm uploadForm = new HippoForm("uploadForm");
-        uploadForm.setOutputMarkupId(true);
-
-        // we use a container to enable Ajax-based (in)visibility while not meddling with the selected upload file.
-        uploadTypeSelector = new WebMarkupContainer("uploadTypeSelector").add(createTypeSelector());
-        uploadTypeSelector.setOutputMarkupId(true);
-        uploadForm.add(uploadTypeSelector);
-
-        uploadButton = new AjaxButton("uploadButton", new StringResourceModel("button-upload-label", this, null)){
-            @Override
-            protected String getOnClickScript(){
-                return fileUploadWidget.getUploadScript();
-            }
+    private Component createUploadPanel() {
+        return new GalleryUploadPanel("upload-panel", new PropertyModel<>(this, "selectedFolderNode"),
+                getPluginContext(), getPluginConfig(), getGalleryProcessor()) {
 
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                uploadSelected = false;
-                target.add(this);
-            }
+            protected void createGalleryItem(final FileUpload upload, final String galleryType) {
+                super.createGalleryItem(upload, galleryType);
 
-            @Override
-            public boolean isEnabled() {
-                if (uploadSelected) {
-                    List<String> galleryTypes = galleryTypesModel.getObject();
-                    return galleryTypes.size() > 0; // disable upload if the current folder has no gallery types at all
-                }
-                return false;
-            }
-        };
-        uploadButton.setOutputMarkupId(true);
-        uploadForm.add(this.uploadButton);
-
-        fileUploadWidget = new SingleFileUploadWidget(FILEUPLOAD_WIDGET_ID, getPluginConfig(), validator) {
-            @Override
-            protected void onFileUpload(final FileUpload fileUpload) throws FileUploadViolationException {
-                clearOldFeedbackMessages();
-                createGalleryItem(fileUpload);
-            }
-
-            @Override
-            protected void onUploadError(final FileUploadInfo fileUploadInfo) {
-                clearOldFeedbackMessages();
-
-                final List<String> errorMessages = fileUploadInfo.getErrorMessages();
-                if (!errorMessages.isEmpty()) {
-                    errorMessages.forEach(ImageBrowserDialog.this::error);
-                    log.error("file {} contains errors: {}", fileUploadInfo.getFileName(), StringUtils.join(errorMessages, ";"));
-                }
-            }
-
-            @Override
-            protected void onChange(final AjaxRequestTarget target) {
-                uploadSelected = true;
-                if (uploadButton != null) {
-                    target.add(uploadButton);
+                // manually refresh feedback panel on an ajax request
+                AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+                if (target != null){
+                    target.add(feedback);
                 }
             }
         };
-        uploadForm.add(this.fileUploadWidget);
-
-        //OMG: ugly workaround.. Input[type=file] is rendered differently on OSX in all browsers..
-        HttpServletRequest httpServletReq = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
-        String ua = httpServletReq.getHeader("User-Agent");
-        if (ua.contains("Macintosh")) {
-            uploadButton.add(new AttributeAppender("class", new Model<>("upload-button-osx")));
-        }
-
-        return uploadForm;
     }
 
-    private void clearOldFeedbackMessages() {
-        if (ImageBrowserDialog.this.hasFeedbackMessage()) {
-            ImageBrowserDialog.this.getFeedbackMessages().clear();
+    /**
+     * Return the selected node in the tree folder
+     * @return
+     */
+    public Node getSelectedFolderNode() {
+        IModel<Node> folderModel = getFolderModel();
+        if (folderModel != null) {
+            return folderModel.getObject();
+        } else {
+            return null;
         }
     }
 
@@ -291,8 +200,8 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
 
     /**
      * This is the callback to enable/disable the OK button of the image browser dialog. We abuse it here as a signal
-     * that a new folder may have been selected. If so, the drop-down menu for selecting the target gallery type for
-     * uploaded images may need to be adjusted.
+     * that a new folder may have been selected. If so, refresh the upload-panel which contains the drop-down of
+     * gallery types.
      *
      * @param isset pass-through parameter
      */
@@ -301,12 +210,11 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
         super.setOkEnabled(isset);
 
         // function is called by parent constructor, when our constructor hasn't run yet...
-        if (uploadTypeSelector != null && uploadButton != null) {
+        if (uploadPanel != null) {
 
             AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
             if (target != null) {
-                target.add(uploadTypeSelector);
-                target.add(uploadButton);
+                target.add(uploadPanel);
             }
         }
     }
@@ -395,67 +303,6 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
         return result;
     }
 
-    private void createGalleryItem(final FileUpload upload) {
-        try {
-            String filename = upload.getClientFileName();
-            String mimetype;
-
-            mimetype = upload.getContentType();
-            InputStream istream = upload.getInputStream();
-            WorkflowManager manager = UserSession.get().getWorkflowManager();
-            HippoNode node = null;
-            String localName = null;
-            try {
-                //Get the selected folder from the folderReference Service
-                Node folderNode = getFolderModel().getObject();
-
-                //TODO replace shortcuts with custom workflow category(?)
-                String nodeName = getNodeNameCodec(folderNode).encode(filename);
-                localName = getLocalizeCodec().encode(filename);
-                GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow("gallery", folderNode);
-                Document document = workflow.createGalleryItem(nodeName, getGalleryType());
-                node = (HippoNode) UserSession.get().getJcrSession().getNodeByIdentifier(document.getIdentity());
-                DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                if (!node.getLocalizedName().equals(localName)) {
-                    defaultWorkflow.localizeName(localName);
-                }
-            } catch (WorkflowException | RepositoryException ex) {
-                log.error(ex.getMessage());
-                error(getExceptionTranslation(ex, localName).getObject());
-            }
-            if (node != null) {
-                try {
-                    getGalleryProcessor().makeImage(node, istream, mimetype, filename);
-                    node.getSession().save();
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
-                    fileUploadWidget.error(getExceptionTranslation(ex));
-                    try {
-                        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                        defaultWorkflow.delete();
-                    } catch (WorkflowException | RepositoryException e) {
-                        log.error(e.getMessage());
-                    }
-                    try {
-                        node.getSession().refresh(false);
-                    } catch (RepositoryException e) {
-                        // deliberate ignore
-                    }
-                } catch (GalleryException ex) {
-                    log.error(ex.getMessage());
-                    error(getExceptionTranslation(ex));
-                }
-            }
-        } catch (IOException ex) {
-            log.info("upload of image truncated");
-            error("Unable to read the uploaded image");
-        }
-        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null){
-            target.add(feedback);
-        }
-    }
-
     @Override
     protected void onOk() {
         RichTextEditorImageLink image = getModelObject();
@@ -478,11 +325,6 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
     }
 
     @Override
-    public void renderHead(IHeaderResponse response) {
-        response.render(CssHeaderItem.forReference(DIALOG_SKIN));
-    }
-
-    @Override
     public IValueMap getProperties() {
         return new ValueMap("width=855,height=525");
     }
@@ -495,69 +337,5 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
             return processor;
         }
         return new DefaultGalleryProcessor();
-    }
-
-    private StringCodec getNodeNameCodec(Node node) {
-        return CodecUtils.getNodeNameCodec(getPluginContext(), node);
-    }
-
-    private StringCodec getLocalizeCodec() {
-        return CodecUtils.getDisplayNameCodec(getPluginContext());
-    }
-
-    private String getGalleryType() {
-        List<String> galleryTypes = galleryTypesModel.getObject();
-
-        if (galleryType == null || galleryTypes.indexOf(galleryType) < 0) {
-            if (galleryTypes.size() > 0) {
-                galleryType = galleryTypes.get(0);
-            }
-        }
-        return galleryType;
-    }
-
-    /**
-     * Create the galleryTypeSelector, only shown in the UI if there actually is something to choose from. Send changes
-     * to the backend using Ajax, in order to remember old choices while navigating through the gallery.
-     *
-     * @return the type selector component
-     */
-    @SuppressWarnings("unchecked")
-    private Component createTypeSelector() {
-        getGalleryType(); // initialize the galleryType value
-        return new DropDownChoice<String>(GALLERY_TYPE_SELECTOR_ID, new PropertyModel(this, "galleryType"),
-                galleryTypesModel, new TypeChoiceRenderer(this)) {
-            @Override
-            public boolean isVisible() {
-                return getChoices().size() > 1;
-            }
-        }
-                .setNullValid(false)
-                .add(new AjaxFormComponentUpdatingBehavior("onchange") {
-                    @Override
-                    protected void onUpdate(AjaxRequestTarget target) {
-                        // required because abstract, but all we need is to have galleryType set, which happens underwater.
-                    }
-                });
-    }
-
-    /**
-     * Load gallery types from repo-based configuration (target folder)
-     *
-     * @return list of supported type names for the current folder.
-     */
-    private List<String> loadGalleryTypes() {
-        List<String> types = new ArrayList<>();
-        WorkflowManager manager = UserSession.get().getWorkflowManager();
-
-        try {
-            Node folderNode = getFolderModel().getObject();
-            GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow("gallery", folderNode);
-            types = workflow.getGalleryTypes();
-        } catch (Exception e) {
-            log.error("Failed to load gallery types", e);
-        }
-
-        return types;
     }
 }

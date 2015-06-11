@@ -56,6 +56,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-editor-frontend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>net.sourceforge.htmlcleaner</groupId>
       <artifactId>htmlcleaner</artifactId>
       <version>${sf.htmlcleaner.version}</version>
