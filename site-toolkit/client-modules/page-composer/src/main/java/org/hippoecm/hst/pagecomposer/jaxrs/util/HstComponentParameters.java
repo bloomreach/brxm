@@ -178,31 +178,30 @@ public class HstComponentParameters {
     public void save(long versionStamp) throws RepositoryException, IllegalStateException {
         setNodeChanges();
         lock(versionStamp);
-    }
-
-    public void lock(long versionStamp) throws RepositoryException, IllegalStateException {
         if (RequestContextProvider.get() == null) {
             node.getSession().save();
         } else {
+            HstConfigurationUtils.persistChanges(node.getSession());
+        }
+    }
+
+    public void lock(long versionStamp) throws RepositoryException, IllegalStateException {
+        if (RequestContextProvider.get() != null) {
             if (!node.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
                 throw new IllegalStateException("Node to be saved must be of type '" + HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT + "' but " +
                         "was of type '" + node.getPrimaryNodeType().getName() + "'. Skip save");
             }
             containerItemHelper.acquireLock(node, versionStamp);
-            HstConfigurationUtils.persistChanges(node.getSession());
         }
     }
 
     public void unlock() throws RepositoryException {
-        if (RequestContextProvider.get() == null) {
-            node.getSession().save();
-        } else {
+        if (RequestContextProvider.get() != null) {
             if (!node.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
                 throw new IllegalStateException("Node to be saved must be of type '" + HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT + "' but " +
-                    "was of type '" + node.getPrimaryNodeType().getName() + "'. Skip save");
+                        "was of type '" + node.getPrimaryNodeType().getName() + "'. Skip save");
             }
             containerItemHelper.releaseLock(node);
-            HstConfigurationUtils.persistChanges(node.getSession());
         }
     }
 
