@@ -15,7 +15,6 @@
 .section-search-input {
   width: 100%;
   box-sizing: border-box;
-  padding: 8px 8px 4px 8px;
 
   > input {
     width: 100%;
@@ -36,14 +35,14 @@
   > a {
     //ie10: 'make clickable' workaround
     display: inline-block;
-    .empty-background();
-
     position: relative;
     right: 24px;
+    .empty-background();
 
     .hi {
       color: @search-input-icon-color;
     }
+
     &:hover .hi {
       color: @search-input-icon-hover-color;
     }
@@ -53,9 +52,10 @@
 .section-search-scopes {
   width: 100%;
   box-sizing: border-box;
-  padding: 0 8px;
+  .clearfix();
 
-  > div {
+  .hippo-search-active-scope,
+  .hippo-search-inactive-scope {
     float: left;
     border-radius: 4px;
     padding: 4px;
@@ -79,9 +79,4 @@
       color: @primary;
     }
   }
-}
-
-.section-viewer .section-view.selected .section-top.search-result {
-  min-height: @sections-top-search-result-height;
-  height: @sections-top-search-result-height;
 }

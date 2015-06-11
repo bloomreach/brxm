@@ -16,71 +16,67 @@
   height: 100%;
   min-height: 100%;
   max-height: 100%;
+}
 
-  .section-selection {
-    background-color: @section-selection-bgcolor;
-    height: @sections-select-height;
-    display: flex;
+.section-selection {
+  background-color: @section-selection-bgcolor;
+  height: @sections-select-height;
+  display: flex;
+}
 
-    .section-selection-form {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 8px;
-    }
+.section-selection-form {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+}
+
+.section-view {
+  height: ~"calc(100% - @{sections-select-height})";
+
+  &.unselected {
+    display: none;
   }
 
-  .section-view {
-    height: ~"calc(100% - @{sections-select-height})";
+  > div {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
 
-    &.unselected {
-      display: none;
+  .section-top {
+    flex: 0 0 auto;
+    background-color: @sections-top-bgcolor;
+    border-bottom: 1px solid @sections-border-color;
+    margin: 0;
+    padding: 8px;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  .section-center {
+    flex: auto;
+    overflow: auto;
+    // IE10 scrollbars
+    -ms-flex-preferred-size: 0;
+    padding-top: 4px;
+  }
+
+  .section-center:only-child {
+    max-height: 100%;
+  }
+
+  .section-bottom {
+    flex: 0 0 auto;
+    border-top: 1px solid @sections-border-color;
+    white-space: nowrap;
+
+    .add-root-folder {
+      margin: 7px;
     }
 
-    &.selected {
-      > div {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-      }
-
-      .section-top {
-        min-height: @sections-top-height;
-        height: @sections-top-height;
-        background-color: @sections-top-bgcolor;
-        margin: 0;
-        padding: 0;
-        border: 0;
-        white-space: nowrap;
-        text-align: center;
-      }
-
-      .section-center {
-        flex: auto;
-        overflow: auto;
-        // IE10 scrollbars
-        -ms-flex-preferred-size: 0;
-      }
-
-      .section-center:only-child {
-        padding-top: 4px;
-        max-height: 100%;
-      }
-
-      .section-bottom {
-        min-height: @sections-bottom-height;
-        height: @sections-bottom-height;
-        border-top: 1px solid @sections-border-color;
-        white-space: nowrap;
-
-        .add-root-folder {
-          margin: 7px;
-
-          .btn {
-            text-overflow: ellipsis;
-            overflow: hidden;
-          }
-        }
-      }
+    .btn {
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
   }
 }
