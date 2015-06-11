@@ -58,7 +58,7 @@ public class Wizard<T> extends AbstractWizard<T> {
     @Override
     protected Component newButtonBar(final String id) {
         final Component buttonBar = super.newButtonBar(id);
-        final AttributeModifier buttonCssClass = CssClass.append("hippo-button");
+        final AttributeModifier buttonCssClass = CssClass.append("btn btn-default");
         buttonBar.get("cancel").add(buttonCssClass);
         buttonBar.get("previous").add(buttonCssClass);
         buttonBar.get("next").add(buttonCssClass);
