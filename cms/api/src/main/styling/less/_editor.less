@@ -82,12 +82,7 @@
 
 .hippo-editor-field {
   margin-bottom: 32px;
-
-  &:after {
-    content: "";
-    display: table;
-    clear: both;
-  }
+  .clearfix();
 
   .dialog-link,
   .hippo-editor-field-textarea,
@@ -159,8 +154,7 @@
     padding: 16px 8px;
     border: 1px solid @editor-compound-field-border;
 
-    > .hippo-editor-field-title > span {
-      font-size: 18px;
+    > .hippo-editor-field-title {
       margin-bottom: 8px;
     }
 
@@ -172,10 +166,6 @@
       padding: 16px 8px;
       border: 1px solid @editor-subfield-border;
     }
-
-    .hippo-editor-field-subfield & {
-      margin-bottom: 0;
-    }
   }
 }
 
@@ -186,12 +176,8 @@
   font-weight: normal;
   margin-bottom: 8px;
   margin-right: 4px;
-
-  &,
-  & span {
-    display: inline-block;
-    font-size: 18px;
-  }
+  display: inline-block;
+  font-size: 18px;
 }
 
 .hippo-editor-field-subfield {
@@ -207,17 +193,13 @@
   }
 
   .hippo-editor-field-title {
+    font-size: 13px;
+    font-weight: bold;
     margin-bottom: 5px;
 
     + .hippo-hint-field {
       top: -1px;
     }
-  }
-
-  .hippo-editor-field-title,
-  .hippo-editor-field-title span {
-    display: inline-block;
-    font-size: 13px;
   }
 
   .hippo-editor-field-subfield-input {

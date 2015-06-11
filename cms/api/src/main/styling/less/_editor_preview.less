@@ -17,7 +17,6 @@
 }
 
 .hippo-preview-document-wrapper {
-
   .hippo-preview-document {
     padding: @editor-padding;
   }
@@ -85,10 +84,6 @@
     > .hippo-editor-field {
       border: none;
 
-      > .hippo-editor-field-title {
-        font-weight: normal;
-      }
-
       > .hippo-editor-field-subfield {
         border: none;
         border-bottom: 1px solid @editor-subfield-border;
@@ -99,13 +94,9 @@
         }
       }
     }
-
-    .hippo-editor-field-title {
-      font-weight: bold;
-    }
   }
 
-  .hippo-property-field-name-string.hippo-property-field-type-string.hippo-property-field-multiple .hippo-editor-field-value {
+  .hippo-property-field-type-string.hippo-property-field-multiple .hippo-editor-field-value {
     padding-left: 2px;
 
     > .hippo-editor-field-value-container {

@@ -66,17 +66,6 @@
 
   .hippo-editor-field-title {
     margin-bottom: 0;
-
-    &,
-    span {
-      font-size: 13px;
-      line-height: 13px;
-      font-weight: bold;
-    }
-
-    span:first-child::after {
-      content: ':';
-    }
   }
 
   .hippo-editor-field-textarea {
@@ -184,20 +173,12 @@
   }
 
   .hippo-editor-field-title {
-    color: @darker-shade;
     display: block;
+    margin-right: 0;
+    margin-top: 12px;
+    line-height: 1;
     font-size: 13px;
     font-weight: bold;
-    margin-right: 0;
-    margin-top: 11px;
-    margin-bottom: 7px;
-    line-height: 1;
-
-    > label {
-      &::after {
-        content: ':';
-      }
-    }
   }
 
   table {
