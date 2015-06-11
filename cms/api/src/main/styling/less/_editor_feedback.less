@@ -13,50 +13,38 @@
 // limitations under the License.
 
 .hippo-editor-feedback {
-  clear: left;
-  float: left;
-  margin: 0;
-  overflow-y: auto;
-  padding: 0;
   width: 100%;
+  box-sizing: border-box;
+  border-left: 8px solid mix(@feedback-error-color, @dark-gray);
+  background-color: @feedback-error-color;
+  float: left;
 
   &.hippo-hidden {
-    height: 0;
+    display: none;
   }
 
-  &.shown {
-    height: 49px;
+  // This margin creates a pixel of space for the bottom border
+  margin-bottom: 1px;
+
+  // Draw the bottom border using :after, otherwise it will not completely cover the left border
+  &:after {
+    content: "";
+    border-bottom: 1px solid mix(@feedback-error-color, @dark-gray);
+    left: 0;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
   }
 
-  ul {
-    background-color: white;
-    border: none;
-    margin: 0;
-    padding: 15px 8px 14px 0;
+  ul > li {
+    padding: 8px 8px 0 32px;
+    line-height: 14px;
 
-    li {
-      display: list-item;
-      height: 20px;
-      margin: 0;
-      padding: 0;
-      width: 100%;
+    &:first-child {
+      padding-top: 10px;
     }
-  }
-
-  // TODO: fix styling of error panel
-  .feedbackPanelINFO .feedbackPanelINFO,
-  .feedbackPanelERROR .feedbackPanelERROR {
-    font-size: 14px;
-    padding-left: 54px;
-    line-height: 20px
-
-  }
-  .feedbackPanelINFO .feedbackPanelINFO {
-    background: url("@{images_legacy}/icons/dialog-information-16.png") no-repeat 33px center !important;
-  }
-
-  .feedbackPanelERROR .feedbackPanelERROR {
-    background: url("@{images_legacy}/warning.png") no-repeat 33px center !important;
-    color: @feedback-error-color;
+    &:last-child {
+      padding-bottom: 10px;
+    }
   }
 }
