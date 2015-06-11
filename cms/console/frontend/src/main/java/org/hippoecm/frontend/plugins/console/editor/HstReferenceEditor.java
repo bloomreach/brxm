@@ -113,6 +113,8 @@ class HstReferenceEditor extends Panel {
                 if (StringUtils.isNotBlank(title)) {
                     this.add(TitleAttribute.set(title));
                 }
+            } catch (IllegalArgumentException e) {
+                linkText = "The value is not correct: " + e.getMessage();
             } catch (PathNotFoundException e) {
                 linkText = "(Reference not found. Might be used in inheriting structure though.)";
             } catch (RepositoryException e) {
@@ -181,6 +183,8 @@ class HstReferenceEditor extends Panel {
         private Node getHstReferencedNode() throws RepositoryException {
 
             final String propertyValue = getModelObject();
+            checkValue(propertyValue);
+
             // first try: hst configuration nodes in the current hst:workspace or hst:configuration group
             Node currentHstConfiguration = propertyModel.getProperty().getParent();
             Node root = currentHstConfiguration.getSession().getRootNode();
@@ -224,6 +228,14 @@ class HstReferenceEditor extends Panel {
             }
 
             throw new PathNotFoundException();
+        }
+
+        private void checkValue(final String propertyValue) {
+            if(propertyValue != null) {
+                if(propertyValue.startsWith("/")) {
+                    throw new IllegalArgumentException("Value may not start with a forward slash.");
+                }
+            }
         }
 
         /**
