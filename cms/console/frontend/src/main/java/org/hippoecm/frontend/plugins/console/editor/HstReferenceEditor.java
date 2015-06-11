@@ -102,24 +102,29 @@ class HstReferenceEditor extends Panel {
         private void load() {
             linkText = null;
             linkModel = null;
-            if (StringUtils.isBlank(getModelObject())) {
+
+            final String relativeNodePath = getModelObject();
+            if (StringUtils.isBlank(relativeNodePath)) {
                 return;
             }
-            try {
-                final Node targetNode = getHstReferencedNode();
-                linkModel = new JcrNodeModel(targetNode);
-                linkText = targetNode.getPath();
-                final String title = determineTitle(targetNode);
-                if (StringUtils.isNotBlank(title)) {
-                    this.add(TitleAttribute.set(title));
+
+            if (relativeNodePath.startsWith("/")) {
+                linkText = "The value is not correct: Value may not start with a forward slash.";
+            } else {
+                try {
+                    final Node targetNode = getHstReferencedNode(relativeNodePath);
+                    linkModel = new JcrNodeModel(targetNode);
+                    linkText = targetNode.getPath();
+                    final String title = determineTitle(targetNode);
+                    if (StringUtils.isNotBlank(title)) {
+                        this.add(TitleAttribute.set(title));
+                    }
+                } catch (PathNotFoundException e) {
+                    linkText = "(Reference not found. Might be used in inheriting structure though.)";
+                } catch (RepositoryException e) {
+                    linkText = "Repository Exception: " + e.getMessage();
+                    log.error("Error loading target node by reference " + getModelObject());
                 }
-            } catch (IllegalArgumentException e) {
-                linkText = "The value is not correct: " + e.getMessage();
-            } catch (PathNotFoundException e) {
-                linkText = "(Reference not found. Might be used in inheriting structure though.)";
-            } catch (RepositoryException e) {
-                linkText = "Repository Exception: " + e.getMessage();
-                log.error("Error loading target node by reference " + getModelObject());
             }
         }
 
@@ -176,14 +181,12 @@ class HstReferenceEditor extends Panel {
         /**
          * Get the hst configuration node that a hst property refers to
          *
+         * @param relativePath the relative path to the requested node
          * @return the requested node
          * @throws javax.jcr.PathNotFoundException when the referenced node cannot be found
          * @throws javax.jcr.RepositoryException   for any unexpected repository problem
          */
-        private Node getHstReferencedNode() throws RepositoryException {
-
-            final String propertyValue = getModelObject();
-            checkValue(propertyValue);
+        private Node getHstReferencedNode(final String relativePath) throws RepositoryException {
 
             // first try: hst configuration nodes in the current hst:workspace or hst:configuration group
             Node currentHstConfiguration = propertyModel.getProperty().getParent();
@@ -191,12 +194,12 @@ class HstReferenceEditor extends Panel {
             Node templateNode;
             do {
                 if (currentHstConfiguration.getPrimaryNodeType().isNodeType(NODE_HST_WORKSPACE)) {
-                    templateNode = getConfigurationNode(currentHstConfiguration, propertyValue);
+                    templateNode = getConfigurationNode(currentHstConfiguration, relativePath);
                     if (templateNode != null) {
                         return templateNode;
                     }
                 } else if (currentHstConfiguration.getPrimaryNodeType().isNodeType(NODE_HST_CONFIGURATION)) {
-                    templateNode = getConfigurationNode(currentHstConfiguration, propertyValue);
+                    templateNode = getConfigurationNode(currentHstConfiguration, relativePath);
                     if (templateNode != null) {
                         return templateNode;
                     } else {
@@ -211,7 +214,7 @@ class HstReferenceEditor extends Panel {
                 final Value[] inheritFromPaths = currentHstConfiguration.getProperty(PROPERY_HST_INHERITSFROM).getValues();
                 for (Value inheritsFromPath : inheritFromPaths) {
                     Node inheritedHstConfiguration = currentHstConfiguration.getNode(inheritsFromPath.getString());
-                    templateNode = getConfigurationNode(inheritedHstConfiguration, propertyValue);
+                    templateNode = getConfigurationNode(inheritedHstConfiguration, relativePath);
                     if (templateNode != null) {
                         return templateNode;
                     }
@@ -221,21 +224,13 @@ class HstReferenceEditor extends Panel {
             // third try: hst configuration nodes from hst:default group
             final Node hstDefaultConfiguration = UserSession.get().getJcrSession().getNode(PATH_HST_DEFAULT);
             if (hstDefaultConfiguration.hasNode(NODE_HST_TEMPLATES)) {
-                templateNode = getConfigurationNode(hstDefaultConfiguration, propertyValue);
+                templateNode = getConfigurationNode(hstDefaultConfiguration, relativePath);
                 if (templateNode != null) {
                     return templateNode;
                 }
             }
 
             throw new PathNotFoundException();
-        }
-
-        private void checkValue(final String propertyValue) {
-            if(propertyValue != null) {
-                if(propertyValue.startsWith("/")) {
-                    throw new IllegalArgumentException("Value may not start with a forward slash.");
-                }
-            }
         }
 
         /**
