@@ -42,7 +42,10 @@
       .fixed-width(32px);
 
       // shift the icons a little to the right
-      padding: @doclist-padding-icon (@doclist-padding-icon - @doclist-icon-shift-right);
+      padding-top: @doclist-padding-icon;
+      padding-right: @doclist-padding-icon - @doclist-icon-shift-right;
+      padding-bottom: @doclist-padding-icon;
+      padding-left: @doclist-padding-icon + @doclist-icon-shift-right;
 
       + .doclisting-name {
         border-left: 0;
