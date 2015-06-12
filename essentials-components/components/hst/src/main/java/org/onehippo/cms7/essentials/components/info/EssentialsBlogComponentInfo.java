@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,5 @@
 
 package org.onehippo.cms7.essentials.components.info;
 
-/**
- * @version "$Id$"
- */
-public interface EssentialsBlogComponentInfo extends EssentialsDocumentListComponentInfo {
-
-/*
-    @Parameter(name = "showTagCloud", required = false, displayName = "Show tag cloud")
-    Boolean showTagCloud();
-
-    @Parameter(name = "Show author list", required = false, displayName = "Show author list")
-    Boolean showAuthorList();
-*/
-
+public interface EssentialsBlogComponentInfo extends EssentialsListComponentInfo {
 }
