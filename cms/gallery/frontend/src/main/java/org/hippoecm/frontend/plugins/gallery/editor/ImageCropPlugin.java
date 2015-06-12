@@ -37,6 +37,7 @@ import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
@@ -53,7 +54,7 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
     public ImageCropPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        String mode = config.getString("mode", "edit");
+        IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode", "edit"));
         final IModel<Node> jcrImageNodeModel = getModel();
         GalleryProcessor _processor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);
         final GalleryProcessor processor = _processor == null ? new DefaultGalleryProcessor() : _processor;
@@ -92,7 +93,7 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
         Label cropButton = new Label("crop-button", new StringResourceModel("crop-button-label", this, null));
         cropButton.setVisible("edit".equals(mode) && !isOriginal);
 
-        if ("edit".equals(mode)) {
+        if (IEditor.Mode.EDIT == mode) {
             if (!isOriginal && !areExceptionsThrown
                     && !isOriginalImageWidthSmallerThanThumbWidth
                     && !isOriginalImageHeightSmallerThanThumbHeight) {

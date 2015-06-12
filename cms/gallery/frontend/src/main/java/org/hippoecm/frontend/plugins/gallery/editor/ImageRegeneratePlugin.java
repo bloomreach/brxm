@@ -34,6 +34,7 @@ import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ public class ImageRegeneratePlugin extends RenderPlugin {
     public ImageRegeneratePlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        String mode = config.getString("mode", "edit");
+        final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode", "edit"));
         galleryProcessor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);
 
         isOriginal = true;
@@ -96,7 +97,7 @@ public class ImageRegeneratePlugin extends RenderPlugin {
         };
         regenerateButton.setVisible("edit".equals(mode) && !isOriginal);
 
-        if("edit".equals(mode)){
+        if(IEditor.Mode.EDIT == mode){
 
             regenerateButton.add(new AjaxEventBehavior("onclick") {
                 private static final long serialVersionUID = 1L;

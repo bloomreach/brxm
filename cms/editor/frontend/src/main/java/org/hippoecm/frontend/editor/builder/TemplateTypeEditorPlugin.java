@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.ITypeDescriptor;
@@ -117,7 +118,8 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
             context.registerService(factory, engineId);
 
             final IModel<String> selectedPluginModel = new SelectedPluginModel(selectedPluginService);
-            builder = new TemplateBuilder(typeName, !"edit".equals(config.getString("mode")), context,
+            boolean readonly = IEditor.Mode.EDIT != IEditor.Mode.fromString(config.getString("mode", "view"));
+            builder = new TemplateBuilder(typeName, readonly, context,
                                           selectedExtensionPointModel, selectedPluginModel);
 
             context.registerService(builder, getServiceId(TemplateBuilderConstants.MODEL_BUILDER));
@@ -160,7 +162,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
         }
 
         try {
-            String mode = config.getString("mode");
+            final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"));
 
             Map<String, String> builderParameters = new TreeMap<String, String>();
             builderParameters.put("wicket.helper.id", config.getString("wicket.helper.id"));

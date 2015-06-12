@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ public class FacetSelectTemplatePlugin extends RenderPlugin<Node> {
 
     private static final String EMPTY_LINK_TEXT = "[...]";
 
-    private final String mode;
+    private final IEditor.Mode mode;
 
     public FacetSelectTemplatePlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -109,7 +110,7 @@ public class FacetSelectTemplatePlugin extends RenderPlugin<Node> {
             }
         };
 
-        mode = config.getString("mode", "view");
+        mode = IEditor.Mode.fromString(config.getString("mode", "view"));
         try {
             IDataProvider<Integer> provider = new IDataProvider<Integer>() {
                 private static final long serialVersionUID = 1L;
@@ -161,7 +162,7 @@ public class FacetSelectTemplatePlugin extends RenderPlugin<Node> {
                 public void detach() {
                 }
             };
-            if ("edit".equals(mode)) {
+            if (IEditor.Mode.EDIT == mode) {
                 final JcrPropertyValueModel<String> docbaseModel = new JcrPropertyValueModel<String>(new JcrPropertyModel<String>(node
                         .getProperty("hippo:docbase")));
 

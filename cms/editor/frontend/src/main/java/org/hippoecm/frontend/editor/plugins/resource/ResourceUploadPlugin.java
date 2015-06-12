@@ -31,6 +31,7 @@ import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.single.FileUploadPanel;
 import org.hippoecm.frontend.plugins.yui.upload.validation.DefaultUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,11 +45,11 @@ public class ResourceUploadPlugin extends RenderPlugin {
     static final Logger log = LoggerFactory.getLogger(ResourceUploadPlugin.class);
     public static final String DEFAULT_ASSET_VALIDATION_SERVICE_ID = "service.gallery.asset.validation";
 
-    private final String mode;
+    private final IEditor.Mode mode;
 
     public ResourceUploadPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        mode = config.getString("mode", "edit");
+        mode = IEditor.Mode.fromString(config.getString("mode", "edit"));
         add(createFileUploadPanel());
         add(new EventStoppingBehavior("onclick"));
     }
@@ -60,7 +61,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
                 handleUpload(fileUpload);
             }
         };
-        panel.setVisible("edit".equals(mode));
+        panel.setVisible(IEditor.Mode.EDIT == mode);
         return panel;
     }
 

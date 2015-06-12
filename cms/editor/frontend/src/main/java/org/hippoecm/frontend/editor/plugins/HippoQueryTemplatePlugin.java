@@ -36,6 +36,7 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -49,7 +50,7 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
 
     static final Logger log = LoggerFactory.getLogger(HippoQueryTemplatePlugin.class);
 
-    private final String mode;
+    private final IEditor.Mode mode;
     private String language;
     private String statement;
     private String incorrectquery = "";
@@ -92,11 +93,11 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
             log.error(e.getMessage());
         }
 
-        mode = config.getString("mode", "view");
-        Fragment fragment = new Fragment("fragment", mode, this);
+        mode = IEditor.Mode.fromString(config.getString("mode", "view"));
+        Fragment fragment = new Fragment("fragment", mode.toString(), this);
         add(fragment);
 
-        if ("edit".equals(mode)) {
+        if (IEditor.Mode.EDIT == mode) {
             fragment.add(new TextFieldWidget("language", new PropertyModel(this, "language")) {
                 private static final long serialVersionUID = 1L;
 

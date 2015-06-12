@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.slf4j.Logger;
@@ -39,7 +40,7 @@ public class BooleanValueTemplatePlugin extends RenderPlugin<Boolean> {
         super(context, config);
 
         IModel<Boolean> valueModel = getModel();
-        if ("edit".equals(config.getString("mode", "view"))) {
+        if (IEditor.Mode.EDIT == IEditor.Mode.fromString(config.getString("mode", "view"))) {
             add(new BooleanFieldWidget("value", valueModel));
         } else {
             Fragment fragment = new Fragment("value", "view", this);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.datetime.DateFieldWidget;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_DATE;
@@ -53,8 +54,8 @@ public class DatePickerPlugin extends RenderPlugin<Date> {
         JcrPropertyValueModel<Date> valueModel = new JcrPropertyValueModel<Date>(
                 new JcrPropertyModel(dateNode.getProperty(HIPPOSTD_DATE)));
 
-        String mode = config.getString("mode", "view");
-        add("view".equals(mode) ? new View("value", dateNode, valueModel) : new DateFieldWidget("value",
+        final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode", "view"));
+        add(IEditor.Mode.VIEW == mode ? new View("value", dateNode, valueModel) : new DateFieldWidget("value",
                 valueModel, context, config));
     }
 
