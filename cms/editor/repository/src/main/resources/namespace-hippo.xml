@@ -565,6 +565,7 @@
           <sv:value>cluster.name</sv:value>
           <sv:value>nodetypes</sv:value>
           <sv:value>base.uuid</sv:value>
+          <!--TODO: Insert base.path value here (see hippoecm-extension.xml, CMS7-9211)-->
           <sv:value>last.visited.key</sv:value>
           <sv:value>last.visited.enabled</sv:value>
           <sv:value>last.visited.nodetypes</sv:value>

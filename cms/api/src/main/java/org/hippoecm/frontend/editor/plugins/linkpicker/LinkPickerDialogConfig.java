@@ -17,12 +17,15 @@ package org.hippoecm.frontend.editor.plugins.linkpicker;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettings;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.slf4j.Logger;
@@ -53,8 +56,31 @@ public class LinkPickerDialogConfig {
     }
 
     private static String getPickerBaseUuid(IPluginConfig config, final JcrPropertyValueModel model) {
+        String baseUuid = null;
+
         if (config.containsKey(NodePickerControllerSettings.BASE_UUID)) {
-            return config.getString(NodePickerControllerSettings.BASE_UUID);
+            baseUuid = config.getString(NodePickerControllerSettings.BASE_UUID);
+        }
+
+        // if base.uuid is blank but base.path is set, try to find the base.uuid from the base.path config.
+        if (StringUtils.isBlank(baseUuid) && config.containsKey(NodePickerControllerSettings.BASE_PATH)) {
+            final String basePath = config.getString(NodePickerControllerSettings.BASE_PATH);
+
+            if (StringUtils.isNotBlank(basePath)) {
+                try {
+                    final Session session = UserSession.get().getJcrSession();
+                    if (session.nodeExists(basePath)) {
+                        final Node baseNode = session.getNode(basePath);
+                        baseUuid = baseNode.getIdentifier();
+                    }
+                } catch (RepositoryException e) {
+                    log.error("Failed to retrieve node identifier from the configured base.path, '{}'.", basePath, e);
+                }
+            }
+        }
+
+        if (StringUtils.isNotBlank(baseUuid)) {
+            return baseUuid;
         } else if (isLanguageContextAware(config)) {
             try {
                 return getTranslatedBaseUuid(model);

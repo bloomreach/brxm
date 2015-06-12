@@ -28,6 +28,7 @@ public class NodePickerControllerSettings implements IClusterable {
     private static final String FOLDER_SERVICE_KEY      = "model.folder";
 
     public static final String BASE_UUID                = "base.uuid";
+    public static final String BASE_PATH                = "base.path";
     public static final String SELECTABLE_NODETYPES     = "nodetypes";
 
     public static final String LAST_VISITED_KEY         = "last.visited.key";

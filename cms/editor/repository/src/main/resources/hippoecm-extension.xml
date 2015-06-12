@@ -690,5 +690,21 @@
     </sv:property>
   </sv:node>
 
+  <!--TODO: Move change for CMS7-9211 to namespace-hippo.xml and reload on startup-->
+  <sv:node sv:name="hippo-cms-patch-hippo-mirror-for-base-path-property">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>22.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces/hippo/mirror/editor:templates/_default_/frontend:properties</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropadd" sv:type="String">
+      <sv:value>base.path</sv:value>
+    </sv:property>
+  </sv:node>
+
 </sv:node>
 
