@@ -170,7 +170,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
             builderParameters.put("model.type", typeModelId);
             builderParameters.put("model.plugin", selectedPluginId);
             PreviewClusterConfig template = new PreviewClusterConfig(builder.getTemplate(), builderParameters,
-                                                                     "edit".equals(mode));
+                                                                     IEditor.Mode.EDIT == mode);
 
             context.getService(clusterModelId, IModelReference.class).setModel(new Model<IClusterConfig>(builder.getTemplate()));
             context.getService(typeModelId, IModelReference.class).setModel(
@@ -179,7 +179,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
 
             IPluginConfig parameters = new JavaPluginConfig();
             parameters.put(ITemplateEngine.ENGINE, engineId);
-            parameters.put(ITemplateEngine.MODE, mode);
+            parameters.put(ITemplateEngine.MODE, mode.toString());
             parameters.put(RenderService.WICKET_ID, config.getString("template"));
 
             final IClusterControl control = context.newCluster(template, parameters);
