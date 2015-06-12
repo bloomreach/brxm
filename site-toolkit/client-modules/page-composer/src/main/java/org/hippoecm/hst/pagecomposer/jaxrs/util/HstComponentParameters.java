@@ -205,7 +205,7 @@ public class HstComponentParameters {
         }
     }
 
-    private void setNodeChanges() throws RepositoryException {
+    public void setNodeChanges() throws RepositoryException {
         List<String> prefixes = new ArrayList<String>();
         List<String> names = new ArrayList<String>();
         List<String> values = new ArrayList<String>();
