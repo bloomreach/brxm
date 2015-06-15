@@ -44,7 +44,7 @@ public class ImageRegeneratePlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(ImageRegeneratePlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(ImageRegeneratePlugin.class);
 
     private static final CssResourceReference SKIN = new CssResourceReference(ImageCropPlugin.class, "regenerate-plugin.css");
 
@@ -56,7 +56,7 @@ public class ImageRegeneratePlugin extends RenderPlugin {
     public ImageRegeneratePlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode", "edit"));
+        final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.EDIT);
         galleryProcessor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);
 
         isOriginal = true;

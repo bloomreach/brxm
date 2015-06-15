@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 package org.hippoecm.frontend.service;
 
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Interface that represents an editor for a particular document.
@@ -30,7 +30,23 @@ public interface IEditor<T> extends IClusterable {
     enum Mode {
         VIEW, EDIT, COMPARE;
 
-        public static Mode fromString(String mode) {
+        public static Mode fromString(final String mode) {
+            final Mode result = fromStringOrNull(mode);
+            if (result == null) {
+                throw new IllegalArgumentException("Unknown mode: '" + mode + "'");
+            }
+            return result;
+        }
+
+        public static Mode fromString(final String mode, final Mode defaultValue) {
+            final Mode result = fromStringOrNull(mode);
+            if (result == null) {
+                return defaultValue;
+            }
+            return result;
+        }
+
+        private static Mode fromStringOrNull(final String mode) {
             if ("view".equals(mode)) {
                 return VIEW;
             } else if ("edit".equals(mode)) {
@@ -38,7 +54,7 @@ public interface IEditor<T> extends IClusterable {
             } else if ("compare".equals(mode)) {
                 return COMPARE;
             }
-            throw new IllegalArgumentException("Unknown mode " + mode);
+            return null;
         }
 
         @Override

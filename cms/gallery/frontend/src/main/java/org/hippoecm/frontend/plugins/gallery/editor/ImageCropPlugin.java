@@ -54,10 +54,11 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
     public ImageCropPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode", "edit"));
+        final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.EDIT);
         final IModel<Node> jcrImageNodeModel = getModel();
-        GalleryProcessor _processor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);
-        final GalleryProcessor processor = _processor == null ? new DefaultGalleryProcessor() : _processor;
+
+        final GalleryProcessor configuredProcessor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);
+        final GalleryProcessor processor = configuredProcessor == null ? new DefaultGalleryProcessor() : configuredProcessor;
 
         boolean isOriginal = true;
         boolean isOriginalImageWidthSmallerThanThumbWidth = false;

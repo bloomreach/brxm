@@ -49,7 +49,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
 
     public ResourceUploadPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        mode = IEditor.Mode.fromString(config.getString("mode", "edit"));
+        mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.EDIT);
         add(createFileUploadPanel());
         add(new EventStoppingBehavior("onclick"));
     }
@@ -61,7 +61,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
                 handleUpload(fileUpload);
             }
         };
-        panel.setVisible(IEditor.Mode.EDIT == mode);
+        panel.setVisible(mode == IEditor.Mode.EDIT);
         return panel;
     }
 

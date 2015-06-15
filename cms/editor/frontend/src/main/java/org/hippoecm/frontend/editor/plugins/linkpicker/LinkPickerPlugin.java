@@ -81,7 +81,8 @@ public class LinkPickerPlugin extends RenderPlugin<String> {
             }
         };
 
-        if (IEditor.Mode.EDIT == IEditor.Mode.fromString(config.getString("mode", "view"))) {
+        final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
+        if (mode == IEditor.Mode.EDIT) {
             IDialogFactory dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
 

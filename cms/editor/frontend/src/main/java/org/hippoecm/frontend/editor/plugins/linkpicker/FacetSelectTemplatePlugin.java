@@ -110,7 +110,7 @@ public class FacetSelectTemplatePlugin extends RenderPlugin<Node> {
             }
         };
 
-        mode = IEditor.Mode.fromString(config.getString("mode", "view"));
+        mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
         try {
             IDataProvider<Integer> provider = new IDataProvider<Integer>() {
                 private static final long serialVersionUID = 1L;

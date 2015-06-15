@@ -39,8 +39,9 @@ public class BooleanValueTemplatePlugin extends RenderPlugin<Boolean> {
     public BooleanValueTemplatePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        IModel<Boolean> valueModel = getModel();
-        if (IEditor.Mode.EDIT == IEditor.Mode.fromString(config.getString("mode", "view"))) {
+        final IModel<Boolean> valueModel = getModel();
+        final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
+        if (mode == IEditor.Mode.EDIT) {
             add(new BooleanFieldWidget("value", valueModel));
         } else {
             Fragment fragment = new Fragment("value", "view", this);

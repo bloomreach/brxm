@@ -118,7 +118,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
             context.registerService(factory, engineId);
 
             final IModel<String> selectedPluginModel = new SelectedPluginModel(selectedPluginService);
-            boolean readonly = IEditor.Mode.EDIT != IEditor.Mode.fromString(config.getString("mode", "view"));
+            boolean readonly = IEditor.Mode.EDIT != IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
             builder = new TemplateBuilder(typeName, readonly, context,
                                           selectedExtensionPointModel, selectedPluginModel);
 

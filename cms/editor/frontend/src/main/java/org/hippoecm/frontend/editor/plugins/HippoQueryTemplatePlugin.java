@@ -93,11 +93,11 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
             log.error(e.getMessage());
         }
 
-        mode = IEditor.Mode.fromString(config.getString("mode", "view"));
+        mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
         Fragment fragment = new Fragment("fragment", mode.toString(), this);
         add(fragment);
 
-        if (IEditor.Mode.EDIT == mode) {
+        if (mode == IEditor.Mode.EDIT) {
             fragment.add(new TextFieldWidget("language", new PropertyModel(this, "language")) {
                 private static final long serialVersionUID = 1L;
 

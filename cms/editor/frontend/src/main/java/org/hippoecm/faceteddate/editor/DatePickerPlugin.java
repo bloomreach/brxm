@@ -54,9 +54,12 @@ public class DatePickerPlugin extends RenderPlugin<Date> {
         JcrPropertyValueModel<Date> valueModel = new JcrPropertyValueModel<Date>(
                 new JcrPropertyModel(dateNode.getProperty(HIPPOSTD_DATE)));
 
-        final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode", "view"));
-        add(IEditor.Mode.VIEW == mode ? new View("value", dateNode, valueModel) : new DateFieldWidget("value",
-                valueModel, context, config));
+        final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
+        if (mode == IEditor.Mode.VIEW) {
+            add(new View("value", dateNode, valueModel));
+        } else {
+            add(new DateFieldWidget("value", valueModel, context, config));
+        }
     }
 
     class View extends Fragment {
