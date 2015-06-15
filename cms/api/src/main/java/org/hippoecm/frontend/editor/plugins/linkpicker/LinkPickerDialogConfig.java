@@ -74,7 +74,7 @@ public class LinkPickerDialogConfig {
                         baseUuid = baseNode.getIdentifier();
                     }
                 } catch (RepositoryException e) {
-                    log.error("Failed to retrieve node identifier from the configured base.path, '{}'.", basePath, e);
+                    log.warn("Failed to retrieve node identifier from the configured base.path, '{}'.", basePath, e);
                 }
             }
         }
