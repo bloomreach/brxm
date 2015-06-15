@@ -336,6 +336,13 @@ textarea.x-form-focus,
 .x-btn {
   font: normal 11px tahoma, arial, helvetica, sans-serif;
 
+  &.btn,
+  &.btn button {
+    // Override extjs script styling on buttons
+    width: auto !important;
+    height: auto !important;
+  }
+
   .x-btn-tl,
   .x-btn-tr,
   .x-btn-tc,
