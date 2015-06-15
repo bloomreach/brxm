@@ -17,62 +17,63 @@
 /* Channel manager specific font */
 .channel-manager .x-toolbar button,
 .channel-manager .x-toolbar input {
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
-    font-size: 14px !important;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-size: 14px !important;
 }
 
 #hippo-channelmanager-breadcrumb button,
 .channel-manager .channel-group-handle,
 .channel-manager .channel-name {
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
-    font-size: 12px !important;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-size: 12px !important;
 }
 
 .page-editor-panel > .x-panel-bwrap > .x-panel-body {
-    border-bottom: 2px solid #565B65;
+  border-bottom: 2px solid #565b65;
 }
 
 /* toolbar */
 .x-panel .x-panel-tbar .channel-manager-toolbar.x-toolbar {
-    background: #E0E0E0 none;
-    padding: 0 8px;
-    border-bottom: none;
+  background: #e0e0e0 none;
+  padding: 0 8px;
+  border-bottom: none;
 }
 
 #hippo-channelmanager-breadcrumb.x-toolbar {
-    background: transparent;
-    border-bottom: none;
+  background: transparent;
+  border-bottom: none;
 }
 
 /* do not gray out 'disabled' breadcrumb items */
 #hippo-channelmanager-breadcrumb.x-toolbar .x-item-disabled {
-    opacity: 1;
+  opacity: 1;
 }
+
 #hippo-channelmanager-breadcrumb.x-toolbar .x-item-disabled * {
-    color: #333 !important;
+  color: #333333 !important;
 }
 
 /* highlight the breadcrumb when it becomes active */
 #hippo-channelmanager-breadcrumb.x-toolbar.hippo-breadcrumb-active {
-    background: #f3f3f3;
+  background: #f3f3f3;
 }
 
 #pageEditorIFrame .x-panel-tbar .channel-manager-toolbar.x-toolbar {
-    border-bottom: 2px solid #565B65;
+  border-bottom: 2px solid #565b65;
 }
 
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-text {
-    margin: 0 4px;
-    height: 40px;
-    line-height: 40px;
+  margin: 0 4px;
+  height: 40px;
+  line-height: 40px;
 }
 
-.channel-manager .x-btn-text:hover {
-    color: #0086f8;
+.channel-manager .x-btn:not(.btn) .x-btn-text:hover {
+  color: #0086f8;
 }
 
 .channel-manager .x-toolbar .x-btn-text-icon .x-btn-text {
-    padding-left: 22px;
+  padding-left: 22px;
 }
 
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tl,
@@ -84,77 +85,77 @@
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-bl,
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-br,
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-bc {
-    background-position: 500px 500px;
+  background-position: 500px 500px;
 }
 
 .channel-manager .channel-manager-toolbar .x-btn-mc {
-    border: none;
-    background: none;
-    text-align: left;
+  border: none;
+  background: none;
+  text-align: left;
 }
 
 .channel-manager .channel-manager-toolbar .toolbarMenuIcon .x-btn-mc {
-    background: none;
-    border: 0;
+  background: none;
+  border: 0;
 }
 
 /* breadcrumb */
 #hippo-channelmanager-breadcrumb {
-    -webkit-flex: 0 0 auto;
-    -ms-flex: 0 0 auto;
-    flex: 0 0 auto;
-    padding: 0;
+  -webkit-flex: 0 0 auto;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+  padding: 0;
 }
 
 #hippo-channelmanager-breadcrumb .x-toolbar-left {
-    width: auto;
+  width: auto;
 }
 
 #hippo-channelmanager-breadcrumb .x-btn-text {
-    height: 40px;
-    margin: 0 5px;
-    padding-left: 25px;
-    background: url('breadcrumb-arrow.svg') no-repeat left center transparent;
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 12px;
+  height: 40px;
+  margin: 0 5px;
+  padding-left: 25px;
+  background: url('breadcrumb-arrow.svg') no-repeat left center transparent;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 12px;
 }
 
 #hippo-channelmanager-breadcrumb .x-toolbar-left {
-    padding: 0 10px;
-    width: auto;
+  padding: 0 10px;
+  width: auto;
 }
 
 #hippo-channelmanager-breadcrumb .x-toolbar-left .x-toolbar-cell:first-child .x-btn-text {
-    background: none;
-    padding-left: 0;
-    margin-left: 2px;
+  background: none;
+  padding-left: 0;
+  margin-left: 2px;
 }
 
 #hippo-channelmanager-breadcrumb .x-btn-over .x-btn-mc {
-    background-image: none;
+  background-image: none;
 }
 
 #hippo-channelmanager-breadcrumb .x-btn-over .x-btn-text {
-    color: #0086f8;
+  color: #0086f8;
 }
 
 .channel-manager .x-toolbar .breadcrumb-item {
-    opacity: 1;
+  opacity: 1;
 }
 
 .channel-manager .x-toolbar .breadcrumb-item .x-btn-text {
-    font-weight: bold;
-    padding-left: 8px;
-    color: #666666;
+  font-weight: bold;
+  padding-left: 8px;
+  color: #666666;
 }
 
 .channel-manager .x-toolbar .breadcrumb-item.x-btn-over td {
-    background-image: none;
+  background-image: none;
 }
 
 .channel-manager .x-toolbar .breadcrumb-item.x-btn-over button {
-    color: #666666;
-    text-decoration: underline;
+  color: #666666;
+  text-decoration: underline;
 }
 
 /* notification window */
@@ -167,284 +168,280 @@
 .channel-manager .x-notification .x-window-bl,
 .x-notification .x-window-bc,
 .x-notification .x-window-br {
-    background-image: none;
+  background-image: none;
 }
 
 .x-notification {
-    margin-top: 3px;
+  margin-top: 3px;
 }
 
 .channel-manager .x-notification .x-window-header {
-    padding: 0 0 1px 0
+  padding: 0 0 1px 0
 }
 
 .channel-manager .x-notification .x-window-body {
-    padding: 10px 12px;
-    border: 1px solid #CCC7B0;
-    background-color: #FFFADA;
+  padding: 10px 12px;
+  border: 1px solid #ccc7b0;
+  background-color: #fffada;
 }
 
 /* channel properties window */
 .channel-manager .hide-channel-properties {
-    display: none
+  display: none
 }
 
 .channel-manager .channel-properties {
-    display: block;
-    position: relative;
-    width: 300px;
+  position: relative;
+}
+
+.channel-manager .channel-properties td {
+  vertical-align: middle;
 }
 
 .channel-manager .channel-properties .fieldgroup {
-    border-bottom: 16px solid #fff;
+  border-bottom: 16px solid #ffffff;
 }
 
 .channel-manager .channel-properties .fieldgrouptitle {
-    font-weight: bold;
-    border-bottom: 13px solid #fff;
+  font-weight: bold;
+  border-bottom: 13px solid #ffffff;
 }
 
 .channel-manager .channel-properties tr > td.key {
-    width: 80px;
-    min-width: 80px;
-    max-width: 80px;
-    padding: 0 10px 11px 0;
+  width: 80px;
+  min-width: 80px;
+  max-width: 80px;
+  padding: 0 10px 11px 0;
 }
 
 .channel-manager .channel-properties tr > td.value {
-    padding: 0 0 11px 0;
-    vertical-align: middle;
+  padding: 0 0 11px 0;
+  vertical-align: middle;
 }
 
 .channel-manager .channel-properties tr > td.help {
-    padding: 0 0 10px 11px;
-    vertical-align: middle;
+  padding: 0 0 10px 11px;
+  vertical-align: middle;
 }
 
 .channel-manager .channel-properties .help-icon {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    margin-right: 4px;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 4px;
 }
 
 .channel-manager .channel-properties .help-icon > a {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    background: url(icon-i.png) no-repeat center;
-    position: relative;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: url(icon-i.png) no-repeat center;
+  position: relative;
 }
 
 .channel-manager .channel-properties .help-icon > a span {
-    display: none;
+  display: none;
 }
 
 .channel-manager .channel-properties .help-icon > a:hover {
-    background: url(icon-i-hover.png) no-repeat center;
-    cursor: default;
+  background: url(icon-i-hover.png) no-repeat center;
+  cursor: default;
 }
 
 .channel-manager .channel-properties .help-icon > a:hover span {
-    display: block;
-    position: absolute;
-    top: 2em;
-    right: 0;
-    white-space: pre;
-    border: 1px solid #ffa41c;
-    background-color: #fff8d4;
-    color: #000;
-    padding: 4px;
-    z-index: 10000;
+  display: block;
+  position: absolute;
+  top: 2em;
+  right: 0;
+  white-space: pre;
+  border: 1px solid #ffa41c;
+  background-color: #fff8d4;
+  color: #000000;
+  padding: 4px;
+  z-index: 10000;
 }
 
 .channel-manager .channel-properties input {
-    width: 180px;
+  width: 180px;
 }
 
 .channel-manager .channel-properties select {
-    width: 186px;
-    max-width: 186px;
+  width: 186px;
+  max-width: 186px;
 }
 
 .channel-manager .channel-properties .channel-preview-name {
-    display: inline-block;
-    margin-right: 6px;
-    max-width: 124px;
+  display: inline-block;
+  max-width: 110px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  line-height: 22px;
 }
 
 .channel-manager .channel-properties .channel-preview-image {
-    display: inline-block;
-    margin-right: 6px;
-    max-width: 124px;
-    margin-bottom: 5px;
-    overflow: hidden;
-}
-
-.channel-manager .channel-properties .channel-widget-buttons {
-    position: absolute;
-    right: 24px;
+  display: inline-block;
+  margin-right: 6px;
+  max-width: 124px;
+  margin-bottom: 5px;
+  overflow: hidden;
 }
 
 .channel-manager .channel-properties .channel-remove-button {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    margin-right: 4px;
+  display: inline-block;
+  vertical-align: middle;
+  width: 10px;
+  height: 10px;
+  margin-right: 4px;
+  margin-left: 4px;
+}
+
+.channel-manager .channel-properties .channel-widget-buttons {
+  float: right;
+  vertical-align: middle;
 }
 
 .channel-manager .channel-properties .channel-remove-button > a {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    background: url(icon-close-gray-small.png) no-repeat center;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: url(icon-close-gray-small.png) no-repeat center;
 }
 
 .channel-manager .channel-properties .channel-remove-button > a:hover {
-    background: url(icon-close-red-small.png) no-repeat center;
-}
-
-.channel-manager .channel-properties a.channel-select-button,
-.channel-manager .channel-properties .channel-select-button > a {
-    display: inline-block;
-    background-color: #f2f2f2;
-    border: 1px solid #999;
-    padding: 2px;
-}
-
-.channel-manager .channel-properties a.channel-select-button:hover,
-.channel-manager .channel-properties .channel-select-button > a:hover {
-    background-color: #fff6e0
+  background: url(icon-close-red-small.png) no-repeat center;
 }
 
 .channel-manager .channel-properties-window .x-window-body {
-    overflow: auto
+  overflow: auto;
+  background: #ffffff;
 }
 
 .channel-manager .x-window-footer {
-    padding-right: 0;
+  padding-right: 0;
 }
 
 .channel-manager .x-window-footer .x-toolbar-cell {
-    padding-right: 0;
+  padding-right: 0;
 }
 
 .channel-manager .x-btn-small .add-channel {
-    background-image: url("add.svg");
+  background-image: url("add.svg");
 }
 
 .channel-manager .x-btn-small .add-channel:hover {
-    background-image: url("add-blue.svg");
+  background-image: url("add-blue.svg");
 }
 
 .channel-manager .x-btn-small .edit-channel {
-    background-image: url("templatecomposer/button-edit.svg");
+  background-image: url("templatecomposer/button-edit.svg");
 }
 
 .channel-manager .x-btn-small .edit-channel {
-    background-image: url("templatecomposer/button-edit.svg");
+  background-image: url("templatecomposer/button-edit.svg");
 }
 
 .channel-manager .x-btn-small .edit-channel:hover {
-    background-image: url("templatecomposer/button-edit-blue.svg");
+  background-image: url("templatecomposer/button-edit-blue.svg");
 }
 
 .channel-manager .x-btn-small .btn-pages {
-    background-image: url("templatecomposer/button-pages.svg");
+  background-image: url("templatecomposer/button-pages.svg");
 }
 
 .channel-manager .x-btn-small .btn-pages:hover {
-    background-image: url("templatecomposer/button-pages-blue.svg");
+  background-image: url("templatecomposer/button-pages-blue.svg");
 }
 
 .channel-manager .x-btn-small .publish-channel {
-    background-image: url("templatecomposer/button-publish.svg");
+  background-image: url("templatecomposer/button-publish.svg");
 }
 
 .channel-manager .x-btn-small .publish-channel:hover {
-    background-image: url("templatecomposer/button-publish-blue.svg");
+  background-image: url("templatecomposer/button-publish-blue.svg");
 }
 
 .channel-manager .x-btn-small .save-close-channel {
-    background-image: url("templatecomposer/button-save-close.svg");
+  background-image: url("templatecomposer/button-save-close.svg");
 }
 
 .channel-manager .x-btn-small .save-close-channel:hover {
-    background-image: url("templatecomposer/button-save-close-blue.svg");
+  background-image: url("templatecomposer/button-save-close-blue.svg");
 }
 
 .channel-manager .x-btn-small .save-channel {
-    background-image: url("templatecomposer/button-save.svg");
+  background-image: url("templatecomposer/button-save.svg");
 }
 
 .channel-manager .x-btn-small .save-channel:hover {
-    background-image: url("templatecomposer/button-save-blue.svg");
+  background-image: url("templatecomposer/button-save-blue.svg");
 }
 
 .channel-manager .x-btn-small .discard-channel {
-    background-image: url("templatecomposer/button-discard.svg");
+  background-image: url("templatecomposer/button-discard.svg");
 }
 
 .channel-manager .x-btn-small .discard-channel:hover {
-    background-image: url("templatecomposer/button-discard-blue.svg");
+  background-image: url("templatecomposer/button-discard-blue.svg");
 }
 
 .channel-manager .x-btn-small .remove-lock {
-    background-image: url("templatecomposer/button-remove-lock.svg");
+  background-image: url("templatecomposer/button-remove-lock.svg");
 }
 
 .channel-manager .x-btn-small .remove-lock:hover {
-   background-image: url("templatecomposer/button-remove-lock-blue.svg");
+  background-image: url("templatecomposer/button-remove-lock-blue.svg");
 }
 
 .channel-manager .x-btn-small .page-settings,
 .channel-manager .x-btn-small .channel-settings {
-    background-image: url("templatecomposer/gear.svg");
+  background-image: url("templatecomposer/gear.svg");
 }
 
 .channel-manager .x-btn-small .page-settings:hover,
 .channel-manager .x-btn-small .channel-settings:hover {
-    background-image: url("templatecomposer/gear-blue.svg");
+  background-image: url("templatecomposer/gear-blue.svg");
 }
 
 .channel-manager .x-btn-small .channel-gear {
-    background-image: url("templatecomposer/button-url-navigation.svg");
+  background-image: url("templatecomposer/button-url-navigation.svg");
 }
 
 .channel-manager .x-btn-small .channel-gear:hover {
-    background-image: url("templatecomposer/button-url-navigation-blue.svg");
+  background-image: url("templatecomposer/button-url-navigation-blue.svg");
 }
 
 .channel-manager .x-btn-small .expand {
-    background-image: url("templatecomposer/expand.svg");
+  background-image: url("templatecomposer/expand.svg");
 }
 
 .channel-manager .x-btn-small .expand:hover {
-    background-image: url("templatecomposer/expand-blue.svg");
+  background-image: url("templatecomposer/expand-blue.svg");
 }
 
 .channel-manager .x-btn-small .collapse {
-    background-image: url("templatecomposer/collapse.svg");
+  background-image: url("templatecomposer/collapse.svg");
 }
 
 .channel-manager .x-btn-small .collapse:hover {
-    background-image: url("templatecomposer/collapse-blue.svg");
+  background-image: url("templatecomposer/collapse-blue.svg");
 }
 
 .channel-manager .x-btn-small .components {
-    background-image: url("templatecomposer/components.svg");
+  background-image: url("templatecomposer/components.svg");
 }
 
 .channel-manager .x-btn-small .components:hover {
-    background-image: url("templatecomposer/components-blue.svg");
+  background-image: url("templatecomposer/components-blue.svg");
 }
 
 .channel-manager .x-btn-small .components-close {
-    background-image: url("templatecomposer/chevron-up.svg");
+  background-image: url("templatecomposer/chevron-up.svg");
 }
 
 .channel-manager .x-btn-small .components-close:hover {
-    background-image: url("templatecomposer/chevron-up-blue.svg");
+  background-image: url("templatecomposer/chevron-up-blue.svg");
 }
 
 /* toolkit window */
@@ -457,348 +454,300 @@
 .channel-manager .icon-toolbar-window .x-window-bl,
 .icon-toolbar-window .x-window-bc,
 .icon-toolbar-window .x-window-br {
-    background-image: none;
+  background-image: none;
 }
 
 .channel-manager .icon-toolbar-window .x-window-header {
-    padding: 0;
+  padding: 0;
 }
 
 .channel-manager .icon-toolbar-window .x-panel {
-    background: #F6F6F6;
+  background: #f6f6f6;
 }
 
 .channel-manager .x-window .x-window-ml,
 .channel-manager .x-window .x-window-mr {
-    padding: 0;
+  padding: 0;
 }
 
 .channel-manager .icon-toolbar-window .x-window-body {
-    border-bottom: 1px solid #565B65;
+  border-bottom: 1px solid #565b65;
 }
 
 /* template composer icon toolbar-grid */
 .channel-manager .toolbar-window {
-    overflow: hidden;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-    position: relative;
-    background: #f6f6f6;
+  overflow: hidden;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  background: #f6f6f6;
 }
 
 .channel-manager .toolbar-window li {
-    list-style-type: none;
+  list-style-type: none;
 }
 
 .channel-manager .toolbar {
-    float: left;
-    padding: 0;
-    margin: 0;
-    white-space: nowrap;
-    background: #f6f6f6;
+  float: left;
+  padding: 0;
+  margin: 0;
+  white-space: nowrap;
+  background: #f6f6f6;
 }
 
 .channel-manager .toolbar .toolbar-item {
-    display: inline-block;
-    vertical-align: top;
-    width: 128px;
-    margin-left: auto;
-    margin-right: auto;
+  display: inline-block;
+  vertical-align: top;
+  width: 128px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .channel-manager .toolbar .item {
-    cursor: default;
-    margin: 8px auto;
-    padding: 0;
+  cursor: default;
+  margin: 8px auto;
+  padding: 0;
 }
 
 .channel-manager .toolbar .icon {
-    text-align: center;
-    height: 36px;
+  text-align: center;
+  height: 36px;
 }
 
 .channel-manager .toolbar .name {
-    text-align: center;
-    word-spacing: 128px;
-    display: block;
-    white-space: normal;
+  text-align: center;
+  word-spacing: 128px;
+  display: block;
+  white-space: normal;
 }
 
 .channel-manager .toolbar-window .scroll-arrow {
-    z-index: 100;
-    cursor: pointer;
-    position: absolute;
-    width: 24px;
-    height: 100%;
-    text-align: center;
+  z-index: 100;
+  cursor: pointer;
+  position: absolute;
+  width: 24px;
+  height: 100%;
+  text-align: center;
 }
 
 .channel-manager .toolbar-window .scroll-left {
-    left: 0;
-    background: url(templatecomposer/component-toolbar-arrow-left.svg) no-repeat center center transparent;
+  left: 0;
+  background: url(templatecomposer/component-toolbar-arrow-left.svg) no-repeat center center transparent;
 }
 
 .channel-manager .toolbar-window .scroll-right {
-    right: 0;
-    background: url(templatecomposer/component-toolbar-arrow-right.svg) no-repeat center center transparent;
+  right: 0;
+  background: url(templatecomposer/component-toolbar-arrow-right.svg) no-repeat center center transparent;
 }
 
 .channel-manager .toolbar-window .scroll-left:hover {
-    background: url(templatecomposer/component-toolbar-arrow-left-hover.svg) no-repeat center center transparent;
+  background: url(templatecomposer/component-toolbar-arrow-left-hover.svg) no-repeat center center transparent;
 }
 
 .channel-manager .toolbar-window .scroll-right:hover {
-    background: url(templatecomposer/component-toolbar-arrow-right-hover.svg) no-repeat center center transparent;
+  background: url(templatecomposer/component-toolbar-arrow-right-hover.svg) no-repeat center center transparent;
 }
 
 .channel-manager .x-grid3-cell-inner a {
-    color: #3764a0;
+  color: #3764a0;
 }
 
 .channel-manager .x-grid3-cell-inner a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .channel-manager .x-grid3-col-url {
-    position: relative;
+  position: relative;
 }
 
 .channel-manager .x-grid3-col-url a.show-live {
-    display: inline;
+  display: inline;
 }
 
 .channel-manager .x-grid3-col-url a.show-preview {
-    display: inline;
-    padding: 0 0 0 7px;
-    position: absolute;
-    right: 5px;
-    background-color: #fff;
+  display: inline;
+  padding: 0 0 0 7px;
+  position: absolute;
+  right: 5px;
+  background-color: #ffffff;
 }
 
 #componentPropertiesWindow .field-group-title {
-    display: block;
-    font-weight: bold;
-    margin: 20px 0 5px;
-    padding-top: 20px;
-    border-top: 1px solid #d4d6d8;
+  display: block;
+  font-weight: bold;
+  margin: 20px 0 5px;
+  padding-top: 20px;
+  border-top: 1px solid #d4d6d8;
 }
 
 #componentPropertiesWindow .field-group-title:first-child {
-    margin: 0 0 5px;
-    padding-top: 0;
-    border: none;
+  margin: 0 0 5px;
+  padding-top: 0;
+  border: none;
 }
 
 #componentPropertiesWindow .create-document-link {
-    font-size: 12px;
+  font-size: 12px;
 }
 
 #componentPropertiesWindow .x-panel-body,
 #componentPropertiesWindow .x-panel-footer {
-    background-color: #F2F2F2;
+  background-color: #f2f2f2;
 }
 
 #componentPropertiesWindow .x-panel-footer {
-    font-size: 13px;
-    padding: 0 12px 16px 12px;
+  font-size: 13px;
+  padding: 0 12px 16px 12px;
 }
 
 #componentPropertiesWindow .x-panel-footer .x-toolbar-cell {
-    padding: 0 4px;
-}
-
-#componentPropertiesWindow .x-panel-footer .x-btn {
-    border: 1px solid #B8BCBF;
-    border-collapse: separate;
-    border-radius: 4px;
-}
-
-#componentPropertiesWindow .x-panel-footer .x-btn:not(.x-item-disabled):hover,
-#componentPropertiesWindow .x-panel-footer .x-btn:not(.x-item-disabled):focus {
-    background-color: #39434C;
-    border-color: #39434C;
-    color: #ffffff;
-}
-
-#componentPropertiesWindow .x-panel-footer .x-btn em {
-    padding: 0 4px;
-}
-
-#componentPropertiesWindow .x-panel-footer .x-btn button {
-    color: inherit;
-    font: normal 13px "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    height: 22px;
-}
-
-#componentPropertiesWindow .x-panel-footer .x-btn-tl,
-#componentPropertiesWindow .x-panel-footer .x-btn-tc,
-#componentPropertiesWindow .x-panel-footer .x-btn-tr,
-#componentPropertiesWindow .x-panel-footer .x-btn-ml,
-#componentPropertiesWindow .x-panel-footer .x-btn-mc,
-#componentPropertiesWindow .x-panel-footer .x-btn-mr,
-#componentPropertiesWindow .x-panel-footer .x-btn-bl,
-#componentPropertiesWindow .x-panel-footer .x-btn-bc,
-#componentPropertiesWindow .x-panel-footer .x-btn-br {
-    background: none;
-    width: auto;
-    height: auto;
-}
-
-#componentPropertiesWindow .x-panel-footer .x-btn-tl i,
-#componentPropertiesWindow .x-panel-footer .x-btn-tc i,
-#componentPropertiesWindow .x-panel-footer .x-btn-tr i,
-#componentPropertiesWindow .x-panel-footer .x-btn-ml i,
-#componentPropertiesWindow .x-panel-footer .x-btn-mc i,
-#componentPropertiesWindow .x-panel-footer .x-btn-mr i,
-#componentPropertiesWindow .x-panel-footer .x-btn-bl i,
-#componentPropertiesWindow .x-panel-footer .x-btn-bc i,
-#componentPropertiesWindow .x-panel-footer .x-btn-br i {
-    width: 0;
-    height: 0;
+  padding: 0 4px;
 }
 
 #createDocumentForm .x-panel-body {
-    padding: 16px;
+  padding: 16px;
 }
 
 .channel-manager-mask.ext-el-mask {
-    background: url(loading.gif) no-repeat center;
-    -moz-opacity: 1;
-    opacity: 1;
-    filter: none;
+  background: url(loading.gif) no-repeat center;
+  -moz-opacity: 1;
+  opacity: 1;
+  filter: none;
 }
 
 #pageEditorIFrame .ext-el-mask {
-    background: url(loading.gif) no-repeat center;
-    -moz-opacity: 0.9;
-    opacity: 0.9;
-    filter: alpha(opacity=90);
+  background: url(loading.gif) no-repeat center;
+  -moz-opacity: 0.9;
+  opacity: 0.9;
+  filter: alpha(opacity=90);
 }
 
 .channel-manager .channel-group-handle {
-    height: 16px;
-    margin: 12px 0 32px 14px;
-    padding: 2px 0 0 20px;
-    cursor: pointer;
+  height: 16px;
+  margin: 12px 0 32px 14px;
+  padding: 2px 0 0 20px;
+  cursor: pointer;
 }
+
 .channel-manager .channel-group-handle.expanded {
-    background: url(channels/triangle-expanded.svg) no-repeat;
+  background: url(channels/triangle-expanded.svg) no-repeat;
 }
+
 .channel-manager .channel-group-handle.collapsed {
-    background: url(channels/triangle-collapsed.svg) no-repeat;
+  background: url(channels/triangle-collapsed.svg) no-repeat;
 }
 
 .channel-manager ul.channel-group {
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-flex-wrap: wrap;
-    -ms-flex-wrap: wrap;
-    flex-wrap: wrap;
-    padding-left: 24px;
-    border-bottom: 1px solid #ebeced;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  padding-left: 24px;
+  border-bottom: 1px solid #ebeced;
 }
 
 .channel-manager ul.channel-group:last-child {
-    border-bottom-width: 0;
+  border-bottom-width: 0;
 }
 
 .channel-manager ul.channel-group li {
-    -webkit-flex: 0 0 150px;
-    -ms-flex: 0 0 150px;
-    flex: 0 0 150px;
-    display: block;
-    margin-bottom: 28px;
-    text-align: center;
-    overflow: hidden;
-    cursor: pointer;
+  -webkit-flex: 0 0 150px;
+  -ms-flex: 0 0 150px;
+  flex: 0 0 150px;
+  display: block;
+  margin-bottom: 28px;
+  text-align: center;
+  overflow: hidden;
+  cursor: pointer;
 }
 
 .channel-manager ul.channel-group li.x-view-selected {
-    background-color: rgba(100, 100, 100, .15);
-    -moz-border-radius: 8px;
-    -webkit-border-radius: 8px;
-    border-top: 1px solid rgba(0, 0, 0, .15);
+  background-color: rgba(100, 100, 100, .15);
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  border-top: 1px solid rgba(0, 0, 0, .15);
 }
 
 .channel-manager .channel .channel-icon-stack {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 
 .channel-manager .channel .channel-type-icon {
-    display: block;
+  display: block;
 }
 
 .channel-manager .channel .channel-modified-icon {
-    position: absolute;
-    background: url(channels/channel-modified.svg) no-repeat;
-    width: 32px;
-    height: 32px;
-    left: 0;
-    bottom: -2px;
+  position: absolute;
+  background: url(channels/channel-modified.svg) no-repeat;
+  width: 32px;
+  height: 32px;
+  left: 0;
+  bottom: -2px;
 }
 
 .channel-manager .channel .channel-region-icon {
-    vertical-align: middle;
+  vertical-align: middle;
 }
 
 .channel-manager .channel .channel-name {
-    color: #000;
-    padding-left: 4px;
+  color: #000000;
+  padding-left: 4px;
 }
 
 .channel-manager .channel .lockedBy {
-    display: inline-block;
-    font-size: 10px;
-    color: #9ba0a5;
+  display: inline-block;
+  font-size: 10px;
+  color: #9ba0a5;
 }
 
 /* channel icon panel overview switch buttons */
 .channel-manager-toolbar .x-toolbar-right .x-btn-noicon .x-btn-text {
-    padding-top: 3px;
-    line-height: 34px;
-    border-bottom: 3px solid transparent;
+  padding-top: 3px;
+  line-height: 34px;
+  border-bottom: 3px solid transparent;
 }
 
 .channel-manager-toolbar .x-toolbar-right .x-btn-pressed.x-btn-noicon .x-btn-text {
-    color: #0086F8;
-    border-bottom: 3px solid #0086F8;
+  color: #0086f8;
+  border-bottom: 3px solid #0086f8;
 }
 
 .channel-manager-toolbar .x-toolbar-right .xtb-spacer {
-    width: 16px;
+  width: 16px;
 }
 
 .channel-manager .x-btn-small .icon-view {
-    padding-top: 3px;
-    background-image: url("channels/icon-view.svg");
-    border-bottom: 3px solid transparent;
+  padding-top: 3px;
+  background-image: url("channels/icon-view.svg");
+  border-bottom: 3px solid transparent;
 }
 
 .channel-manager .x-btn-pressed .x-btn-small .icon-view,
 .channel-manager .x-btn-small .icon-view:hover {
-    background-image: url("channels/icon-view-active.svg");
+  background-image: url("channels/icon-view-active.svg");
 }
 
 .channel-manager .x-btn-pressed .x-btn-small .icon-view {
-    border-bottom: 3px solid #0086F8;
+  border-bottom: 3px solid #0086f8;
 }
 
 .channel-manager .x-btn-small .list-view {
-    padding-top: 3px;
-    background-image: url("channels/list-view.svg");
-    border-bottom: 3px solid transparent;
+  padding-top: 3px;
+  background-image: url("channels/list-view.svg");
+  border-bottom: 3px solid transparent;
 }
 
 .channel-manager .x-btn-pressed .x-btn-small .list-view,
 .channel-manager .x-btn-small .list-view:hover {
-    background-image: url("channels/list-view-active.svg");
+  background-image: url("channels/list-view-active.svg");
 }
 
 .channel-manager .x-btn-pressed .x-btn-small .list-view {
-    border-bottom: 3px solid #0086F8;
+  border-bottom: 3px solid #0086f8;
 }
 
 .channel-manager-toolbar .x-btn-tl,
@@ -817,154 +766,154 @@
 #hippo-channelmanager-breadcrumb .x-btn-bl,
 #hippo-channelmanager-breadcrumb .x-btn-bc,
 #hippo-channelmanager-breadcrumb .x-btn-br {
-    display: none;
+  display: none;
 }
 
 .channel-manager-toolbar .x-btn-mc {
-    background: none;
-    border: none;
+  background: none;
+  border: none;
 }
 
 .channel-manager-toolbar .x-toolbar-right #template-composer-toolbar-variants-label,
 .channel-manager-toolbar .x-toolbar-right #template-composer-toolbar-alter-ego-button .x-btn-text {
-    font-size: 11px !important;
-    padding: 0;
-    position: relative;
-    top: 1px;
+  font-size: 11px !important;
+  padding: 0;
+  position: relative;
+  top: 1px;
 }
 
 .channel-manager-toolbar .x-toolbar-right .x-btn-mc .icon-view {
-    width: 26px;
+  width: 26px;
 }
 
 .channel-manager-toolbar .x-toolbar-right .x-btn-mc .list-view {
-    width: 24px;
+  width: 24px;
 }
 
 #channelIconPanel .x-toolbar {
-    padding-left: 5px;
+  padding-left: 5px;
 }
 
 #channelOverview .x-toolbar .x-toolbar-right {
-    padding-bottom: 1px;
+  padding-bottom: 1px;
 }
 
 .x-combo-list-item {
-    text-align: left;
+  text-align: left;
 }
 
 .channel-manager #channel-grid-panel {
-    overflow: auto;
+  overflow: auto;
 }
 
 .channel-manager-fullscreen {
-    position: fixed;
-    top: 0;
-    left: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
 .component-properties-editor > .x-panel-bwrap > .x-panel-body,
 .component-properties-editor > .x-panel-bwrap > .x-panel-body > .x-box-inner {
-    overflow-y: auto;
+  overflow-y: auto;
 }
 
 .templateComposerPropertiesForm form {
-    overflow-x: hidden !important;
+  overflow-x: hidden !important;
 }
 
 .ext-gecko .x-window-body .templateComposerPropertiesForm .x-form-item {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .ext-gecko .x-window-body .templateComposerPropertiesForm .x-form-item .x-form-element {
-    padding-left: 0;
+  padding-left: 0;
 }
 
 #x-form-el-contentRoot .x-form-field-wrap {
-    display: inline;
+  display: inline;
 }
 
 #x-form-el-contentRoot .x-form-text {
-    width: 425px !important;
+  width: 425px !important;
 }
 
 .channel-manager-window-manage-changes {
-    text-align: left;
+  text-align: left;
 }
 
 .channel-manager-window-manage-changes .x-grid3-td-checker,
 .channel-manager-window-manage-changes .x-grid3-row-selected .x-grid3-td-checker {
-    background-image: none;
+  background-image: none;
 }
 
 .channel-manager-window-manage-changes td.x-grid3-hd-over .x-grid3-hd-inner {
-    background: inherit;
+  background: inherit;
 }
 
 .channel-manager-window-manage-changes .x-btn-small .publish-changes {
-    background-image: url("templatecomposer/button-publish.svg");
+  background-image: url("templatecomposer/button-publish.svg");
 }
 
 .channel-manager-window-manage-changes .x-btn-small .publish-changes:hover {
-    background-image: url("templatecomposer/button-publish-blue.svg");
+  background-image: url("templatecomposer/button-publish-blue.svg");
 }
 
 .channel-manager-window-manage-changes .x-btn-small .discard-changes {
-    background-image: url("templatecomposer/button-discard.svg");
+  background-image: url("templatecomposer/button-discard.svg");
 }
 
 .channel-manager-window-manage-changes .x-btn-small .discard-changes:hover {
-    background-image: url("templatecomposer/button-discard-blue.svg");
+  background-image: url("templatecomposer/button-discard-blue.svg");
 }
 
 /* Dropdowns */
 .channel-manager .x-toolbar .xtb-text {
-    padding: 0;
+  padding: 0;
 }
 
 .channel-manager .channel-manager-toolbar .x-toolbar-cell .x-form-field-wrap {
-    margin: 8px;
+  margin: 8px;
 }
 
 .channel-manager .channel-manager-toolbar .x-toolbar-cell .x-form-field-wrap .x-form-text {
-    height: 24px !important;
-    padding: 0 12px;
-    line-height: 24px;
-    border: none;
-    background: #ffffff;
-    border-radius: 3px 0 0 3px;
+  height: 24px !important;
+  padding: 0 12px;
+  line-height: 24px;
+  border: none;
+  background: #ffffff;
+  border-radius: 3px 0 0 3px;
 }
 
 .channel-manager .channel-manager-toolbar .x-toolbar-cell .x-form-field-wrap .x-form-trigger {
-    height: 24px;
-    width: 23px;
-    border: none;
-    border-radius: 0 3px 3px 0;
-    background: url('templatecomposer/trigger.svg') no-repeat center center #bbbec0;
+  height: 24px;
+  width: 23px;
+  border: none;
+  border-radius: 0 3px 3px 0;
+  background: url('templatecomposer/trigger.svg') no-repeat center center #bbbec0;
 }
 
 .x-combo-list {
-    border-radius: 3px;
-    border: none !important;
-    border-top: 1px solid transparent !important;
-    box-shadow: 0 0 0 0 #000000,
-                10px 10px 30px -15px #000000,
-                0 10px 30px -15px #000000,
-                -10px 10px 30px -15px #000000;
+  border-radius: 3px;
+  border: none !important;
+  border-top: 1px solid transparent !important;
+  box-shadow: 0 0 0 0 #000000,
+  10px 10px 30px -15px #000000,
+  0 10px 30px -15px #000000,
+  -10px 10px 30px -15px #000000;
 }
 
 .x-combo-list .x-combo-list-item {
-    padding: 4px;
-    border: none;
+  padding: 4px;
+  border: none;
 }
 
 .x-combo-list .x-combo-list-item.x-combo-selected {
-    color: #ffffff;
-    border: none !important;
-    background-color: #444954;
+  color: #ffffff;
+  border: none !important;
+  background-color: #444954;
 }
 
 .x-shadow,
 .x-ie-shadow {
-    display: none !important;
+  display: none !important;
 }
