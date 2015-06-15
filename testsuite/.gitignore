@@ -52,6 +52,7 @@ intranet-bootstrap/content/.classpath
 intranet-bootstrap/content/.project
 intranet-bootstrap/content/.settings
 intranet-bootstrap/content/target
+intranet-bootstrap/webfiles/*.iml
 intranet-bootstrap/webfiles/.classpath
 intranet-bootstrap/webfiles/.project
 intranet-bootstrap/webfiles/.settings
