@@ -16,7 +16,7 @@
 (function ($) {
   "use strict";
 
-  var EXTERNAL_SCRIPT_URL = '${externalScriptUrl}',
+  var EXTERNAL_SCRIPT_URL = window.location.protocol + '//' + '${externalScriptUrl}',
     EXTERNAL_LOAD_TIMEOUT_MS = 10000,
     eventQueue = [];
 

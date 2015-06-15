@@ -29,7 +29,7 @@ public class UsageStatisticsExternalUrl {
     private static final String MONTH = "${MONTH}";
     private static final String DAY = "${DAY}";
 
-    private static final String SERVER = "http://cdn.onehippo.com";
+    private static final String SERVER = "cdn.onehippo.com";
     private static final String PATH = "/s/" + RELEASE_VERSION + "/" + YEAR + "-" + MONTH + "-" + DAY + "/cms.js";
 
     public static final String SYSTEM_PROPERTY_SERVER = "hippo.usage.statistics.server";
