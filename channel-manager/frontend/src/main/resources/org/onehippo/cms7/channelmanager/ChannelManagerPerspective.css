@@ -235,17 +235,12 @@
   display: inline-block;
   width: 16px;
   height: 16px;
-  background: url(icon-i.png) no-repeat center;
+  background: url('info-circle-s.svg') no-repeat center;
   position: relative;
 }
 
 .channel-manager .channel-properties .help-icon > a span {
   display: none;
-}
-
-.channel-manager .channel-properties .help-icon > a:hover {
-  background: url(icon-i-hover.png) no-repeat center;
-  cursor: default;
 }
 
 .channel-manager .channel-properties .help-icon > a:hover span {
@@ -254,8 +249,8 @@
   top: 2em;
   right: 0;
   white-space: pre;
-  border: 1px solid #ffa41c;
-  background-color: #fff8d4;
+  border: 1px solid #b8bcbf;
+  background-color: #ffffff;
   color: #000000;
   padding: 4px;
   z-index: 10000;
