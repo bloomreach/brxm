@@ -192,10 +192,12 @@
 
 .channel-manager .channel-properties {
   position: relative;
+  padding: 8px;
 }
 
 .channel-manager .channel-properties td {
   vertical-align: middle;
+  border: 0;
 }
 
 .channel-manager .channel-properties .fieldgroup {
