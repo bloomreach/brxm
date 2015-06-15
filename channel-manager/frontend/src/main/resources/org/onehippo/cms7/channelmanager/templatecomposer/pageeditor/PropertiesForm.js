@@ -81,6 +81,7 @@
       if (this.variant.id !== 'hippo-default') {
         this.deleteButton = new Ext.Button({
           text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-delete'],
+          cls: 'btn btn-default',
           handler: function () {
             Ext.Ajax.request({
               method: 'DELETE',
@@ -99,6 +100,7 @@
       }
 
       this.saveButton = new Ext.Button({
+        cls: 'btn btn-default',
         text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-save'],
         handler: this._submitForm,
         scope: this,
@@ -106,6 +108,7 @@
       });
       buttons.push(this.saveButton);
       buttons.push({
+        cls: 'btn btn-default',
         text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-close'],
         scope: this,
         handler: function () {
@@ -393,6 +396,7 @@
         layout: 'fit',
         buttons: [
           {
+            cls: 'btn btn-default',
             text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-new-document-button'],
             handler: function () {
               var createDocForm = Ext.getCmp('createDocumentForm').getForm();
@@ -426,6 +430,7 @@
       });
       createDocumentWindow.addButton(
         {
+          cls: 'btn btn-default',
           text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-new-document-button-cancel']
         },
         function () {
