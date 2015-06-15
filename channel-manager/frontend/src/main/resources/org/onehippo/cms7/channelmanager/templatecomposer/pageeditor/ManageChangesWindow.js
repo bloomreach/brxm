@@ -79,6 +79,7 @@
             });
 
             this.publishButton = new Ext.Toolbar.Button({
+                cls: 'btn btn-default',
                 text: this.resources['manage-changes-publish-button'],
                 iconCls: 'publish-changes',
                 disabled: true,
@@ -92,6 +93,7 @@
             });
 
             this.discardButton = new Ext.Toolbar.Button({
+                cls: 'btn btn-default',
                 text: this.resources['manage-changes-discard-button'],
                 iconCls: 'discard-changes',
                 disabled: true,
@@ -105,6 +107,7 @@
             });
 
             closeButton = new Ext.Toolbar.Button({
+                cls: 'btn btn-default',
                 text: this.resources['manage-changes-close-button'],
                 listeners: {
                     click: {
