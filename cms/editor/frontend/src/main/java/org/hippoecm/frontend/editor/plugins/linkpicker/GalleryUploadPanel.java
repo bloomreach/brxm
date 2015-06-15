@@ -60,7 +60,6 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.gallery.GalleryWorkflow;
@@ -70,16 +69,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Panel of a single file upload form which is used to upload image to the gallery
+ * Panel of a single file upload form, which is used to upload image to the gallery.
+ * The panel's model holds the node representing the folder into which the image is about to be uploaded.
  */
 public abstract class GalleryUploadPanel extends Panel {
     private static final Logger log = LoggerFactory.getLogger(GalleryUploadPanel.class);
 
     private static final String FILEUPLOAD_WIDGET_ID = "uploadPanel";
     private final IPluginContext context;
-    private final IPluginConfig config;
 
-    private Component uploadTypeSelector;
     private AjaxButton uploadButton;
     private final LoadableDetachableModel<List<String>> galleryTypesModel;
     private final FileUploadValidationService validator;
@@ -95,7 +93,6 @@ public abstract class GalleryUploadPanel extends Panel {
         super(id, model);
 
         this.context = context;
-        this.config = config;
         this.galleryProcessor = galleryProcessor;
 
         galleryTypesModel = new LoadableDetachableModel<List<String>>() {
@@ -113,11 +110,7 @@ public abstract class GalleryUploadPanel extends Panel {
     private Component createUploadForm(final IPluginConfig config) {
         final HippoForm uploadForm = new HippoForm("uploadForm");
         uploadForm.setOutputMarkupId(true);
-
-        // we use a container to enable Ajax-based (in)visibility while not meddling with the selected upload file.
-        uploadTypeSelector = new WebMarkupContainer("uploadTypeSelector").add(createTypeSelector());
-        uploadTypeSelector.setOutputMarkupId(true);
-        uploadForm.add(uploadTypeSelector);
+        uploadForm.add(new WebMarkupContainer("uploadTypeSelector").add(createTypeSelector()));
 
         uploadButton = new AjaxButton("uploadButton", new StringResourceModel("button-upload-label", this, null)){
             @Override
@@ -203,8 +196,8 @@ public abstract class GalleryUploadPanel extends Panel {
                 Node folderNode = (Node) getDefaultModelObject();
 
                 //TODO replace shortcuts with custom workflow category(?)
-                String nodeName = getNodeNameCodec(folderNode).encode(filename);
-                localName = getLocalizeCodec().encode(filename);
+                String nodeName = CodecUtils.getNodeNameCodec(context, folderNode).encode(filename);
+                localName = CodecUtils.getDisplayNameCodec(context).encode(filename);
                 GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow("gallery", folderNode);
                 Document document = workflow.createGalleryItem(nodeName, galleryType);
                 node = (HippoNode) UserSession.get().getJcrSession().getNodeByIdentifier(document.getIdentity());
@@ -214,7 +207,7 @@ public abstract class GalleryUploadPanel extends Panel {
                 }
             } catch (WorkflowException | RepositoryException ex) {
                 log.error(ex.getMessage());
-                error(getExceptionTranslation(ex, localName).getObject());
+                error(TranslatorUtils.getExceptionTranslation(this, ex, localName).getObject());
             }
             if (node != null) {
                 try {
@@ -222,7 +215,7 @@ public abstract class GalleryUploadPanel extends Panel {
                     node.getSession().save();
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage());
-                    GalleryUploadPanel.this.error(getExceptionTranslation(ex));
+                    error(TranslatorUtils.getExceptionTranslation(this, ex));
                     try {
                         DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                         defaultWorkflow.delete();
@@ -236,17 +229,13 @@ public abstract class GalleryUploadPanel extends Panel {
                     }
                 } catch (GalleryException ex) {
                     log.error(ex.getMessage());
-                    error(getExceptionTranslation(ex));
+                    error(TranslatorUtils.getExceptionTranslation(this, ex));
                 }
             }
         } catch (IOException ex) {
             log.info("upload of image truncated");
             error("Unable to read the uploaded image");
         }
-    }
-
-    private IModel<String> getExceptionTranslation(final Throwable t, final Object... parameters) {
-        return TranslatorUtils.getExceptionTranslation(this, t, parameters);
     }
 
     /**
@@ -317,13 +306,5 @@ public abstract class GalleryUploadPanel extends Panel {
         }
 
         return types;
-    }
-
-    private StringCodec getNodeNameCodec(Node node) {
-        return CodecUtils.getNodeNameCodec(context, node);
-    }
-
-    private StringCodec getLocalizeCodec() {
-        return CodecUtils.getDisplayNameCodec(context);
     }
 }

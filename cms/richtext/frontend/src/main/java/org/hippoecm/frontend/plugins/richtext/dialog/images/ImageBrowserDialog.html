@@ -14,32 +14,30 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:panel>
-    <wicket:extend>
-      <div wicket:id="upload-panel">[Upload form panel]</div>
+  <wicket:extend>
+    <div wicket:id="upload-panel">[Upload form panel]</div>
 
-      <div wicket:id="content">[content]</div>
+    <div wicket:id="content">[content]</div>
 
-      <div class="hippo-picker-properties ">
-        <div class="hippo-dialog-align">
-          <label>
-            <wicket:message key="align-label">Align:</wicket:message>
-          </label>
-          <select wicket:id="align">[ Align dropdown ]</select>
-        </div>
-        <div class="hippo-dialog-type">
-          <label>
-            <wicket:message key="type-label">Type:</wicket:message>
-          </label>
-          <select wicket:id="type">[ type dropdown ]</select>
-        </div>
-        <div class="hippo-dialog-alt">
-          <label>
-            <wicket:message key="alt-text-label">Alternative text:</wicket:message>
-          </label>
-          <div wicket:id="alt" class="text-input">[Alt text box]</div>
-        </div>
+    <div class="hippo-picker-properties ">
+      <div class="hippo-dialog-align">
+        <label>
+          <wicket:message key="align-label">Align:</wicket:message>
+        </label>
+        <select wicket:id="align">[ Align dropdown ]</select>
       </div>
-    </wicket:extend>
-  </wicket:panel>
+      <div class="hippo-dialog-type">
+        <label>
+          <wicket:message key="type-label">Type:</wicket:message>
+        </label>
+        <select wicket:id="type">[ type dropdown ]</select>
+      </div>
+      <div class="hippo-dialog-alt">
+        <label>
+          <wicket:message key="alt-text-label">Alternative text:</wicket:message>
+        </label>
+        <div wicket:id="alt" class="text-input">[Alt text box]</div>
+      </div>
+    </div>
+  </wicket:extend>
 </html>
