@@ -277,10 +277,12 @@
 
 .channel-manager .channel-properties .channel-preview-image {
   display: inline-block;
-  margin-right: 6px;
-  max-width: 124px;
-  margin-bottom: 5px;
-  overflow: hidden;
+  max-width: 110px;
+  line-height: 22px;
+}
+
+.channel-manager .channel-properties .channel-preview-image img {
+  vertical-align: middle;
 }
 
 .channel-manager .channel-properties .channel-remove-button {
