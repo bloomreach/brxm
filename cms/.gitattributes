@@ -1865,6 +1865,7 @@ editor/repository/src/main/resources/namespace-hipposysedit_it.xml -text
 editor/repository/src/main/resources/namespace-system.xml svneol=native#text/plain
 editor/repository/src/main/resources/namespace-system_de.xml -text
 editor/repository/src/main/resources/namespace-system_it.xml -text
+editor/repository/src/main/resources/new-namespace-hippostd-modify-patch2.xml svneol=native#text/plain
 editor/repository/src/main/resources/new-namespace.xml -text
 editor/repository/src/main/resources/new-namespace_de.xml -text
 editor/repository/src/main/resources/new-namespace_it.xml -text
