@@ -195,33 +195,15 @@
   padding: 8px;
 }
 
+.channel-manager .channel-properties th {
+  font-weight: bold;
+}
 .channel-manager .channel-properties td {
   vertical-align: middle;
   border: 0;
 }
 
-.channel-manager .channel-properties .fieldgroup {
-  border-bottom: 16px solid #ffffff;
-}
-
-.channel-manager .channel-properties .fieldgrouptitle {
-  font-weight: bold;
-  border-bottom: 13px solid #ffffff;
-}
-
-.channel-manager .channel-properties tr > td.key {
-  width: 80px;
-  min-width: 80px;
-  max-width: 80px;
-  padding: 0 10px 11px 0;
-}
-
-.channel-manager .channel-properties tr > td.value {
-  padding: 0 0 11px 0;
-  vertical-align: middle;
-}
-
-.channel-manager .channel-properties tr > td.help {
+.channel-manager .channel-properties .help {
   padding: 0 0 10px 11px;
   vertical-align: middle;
 }
@@ -267,48 +249,35 @@
   max-width: 186px;
 }
 
+.channel-properties-value {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  align-items: center;
+}
+
 .channel-manager .channel-properties .channel-preview-name {
-  display: inline-block;
-  max-width: 110px;
+  flex: 1 1 auto;
+  display: block;
+  max-width: 123px;
   overflow: hidden;
-  white-space: nowrap;
   text-overflow: ellipsis;
-  vertical-align: middle;
-  line-height: 22px;
 }
 
-.channel-manager .channel-properties .channel-preview-image {
-  display: inline-block;
-  max-width: 110px;
-  line-height: 22px;
-}
-
-.channel-manager .channel-properties .channel-preview-image img {
-  vertical-align: middle;
+.channel-manager .channel-properties .channel-preview-image-wrapper {
+  flex: 1 1 auto;
 }
 
 .channel-manager .channel-properties .channel-remove-button {
-  display: inline-block;
-  vertical-align: middle;
-  width: 10px;
-  height: 10px;
-  margin-right: 4px;
-  margin-left: 4px;
-}
-
-.channel-manager .channel-properties .channel-widget-buttons {
-  float: right;
-  vertical-align: middle;
-}
-
-.channel-manager .channel-properties .channel-remove-button > a {
-  display: inline-block;
+  flex: 0 0 10px;
+  margin: 0 4px;
   width: 10px;
   height: 10px;
   background: url(icon-close-gray-small.png) no-repeat center;
 }
 
-.channel-manager .channel-properties .channel-remove-button > a:hover {
+.channel-manager .channel-properties .channel-remove-button:hover {
   background: url(icon-close-red-small.png) no-repeat center;
 }
 
