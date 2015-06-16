@@ -27,6 +27,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.ITypeDescriptor;
@@ -87,13 +88,13 @@ public class ComparePlugin extends RenderPlugin {
                 parameters.put(RenderService.WICKET_ID, getPluginConfig().getString("template"));
                 parameters.put(ITemplateEngine.ENGINE, engineId);
 
-                String editorMode = getPluginConfig().getString("mode", "view");
-                if (IEditor.Mode.fromString(editorMode) == IEditor.Mode.COMPARE &&
+                final Mode editorMode = Mode.fromString(getPluginConfig().getString("mode"), Mode.VIEW);
+                if (editorMode == Mode.COMPARE &&
                         template.getReferences().contains("model.compareTo")) {
-                    parameters.put(ITemplateEngine.MODE, "compare");
+                    parameters.put(ITemplateEngine.MODE, Mode.COMPARE.toString());
                     parameters.put("model.compareTo", getPluginConfig().get("model.compareTo"));
                 } else {
-                    parameters.put(ITemplateEngine.MODE, "view");
+                    parameters.put(ITemplateEngine.MODE, Mode.VIEW.toString());
                 }
 
                 cluster = context.newCluster(template, parameters);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
@@ -35,7 +34,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.image.JcrImage;
 import org.hippoecm.frontend.plugins.standards.util.ByteSizeFormatter;
-import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 import org.hippoecm.frontend.resource.JcrResource;
 import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.frontend.service.IEditor;
@@ -58,7 +56,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
     public ImageDisplayPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode", "view"));
+        IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
         if (mode == IEditor.Mode.COMPARE && config.containsKey("model.compareTo")) {
             IModelReference<Node> baseModelRef = context.getService(config.getString("model.compareTo"),
                     IModelReference.class);

@@ -146,8 +146,8 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             }, IObserver.class.getName());
 
         }
-        mode = IEditor.Mode.fromString(config.getString(ITemplateEngine.MODE, "view"));
-        if (IEditor.Mode.COMPARE == mode) {
+        mode = IEditor.Mode.fromString(config.getString(ITemplateEngine.MODE), IEditor.Mode.VIEW);
+        if (mode == IEditor.Mode.COMPARE) {
             if (config.containsKey("model.compareTo")) {
                 @SuppressWarnings("unchecked")
                 IModelReference<Node> compareToModelRef = context.getService(config.getString("model.compareTo"),

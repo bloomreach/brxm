@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public class ValueTemplatePlugin extends RenderPlugin<String> {
         super(context, config);
 
         final StringConverter stringModel = new StringConverter((JcrPropertyValueModel) getModel());
-        IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode", "view"));
+        IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
         if (IEditor.Mode.EDIT == mode) {
             TextFieldWidget widget = new TextFieldWidget("value", stringModel);
             if (config.getString("size") != null) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
@@ -54,7 +55,7 @@ public class MixinPlugin extends RenderPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(MixinPlugin.class);
 
-    protected String mode;
+    protected Mode mode;
 
     private List<MixinModel> available;
     private Map<String, IClusterControl> controllers;
@@ -64,9 +65,9 @@ public class MixinPlugin extends RenderPlugin {
 
         controllers = new HashMap<String, IClusterControl>();
 
-        mode = config.getString(ITemplateEngine.MODE, "view");
-        if ("compare".equals(mode)) {
-            mode = "view";
+        mode = Mode.fromString(config.getString(ITemplateEngine.MODE), Mode.VIEW);
+        if (mode == Mode.COMPARE) {
+            mode = Mode.VIEW;
         }
 
         ITemplateEngine engine = context.getService(config.getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
@@ -122,7 +123,7 @@ public class MixinPlugin extends RenderPlugin {
 
                 };
                 checkbox.setOutputMarkupId(true);
-                checkbox.setEnabled("edit".equals(mode) && !model.isPrimaryNodeType());
+                checkbox.setEnabled(mode == Mode.EDIT && !model.isPrimaryNodeType());
                 item.add(checkbox);
                 item.add(new Label("label", new TypeTranslator(new JcrNodeTypeModel(model.getMixin())).getTypeName()) {
                     private static final long serialVersionUID = 1L;

@@ -23,6 +23,7 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.datetime.DateFieldWidget;
+import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class DatePickerPlugin extends RenderPlugin<Date> {
@@ -30,16 +31,28 @@ public class DatePickerPlugin extends RenderPlugin<Date> {
     private static final long serialVersionUID = 1L;
 
     public static final String DATESTYLE = "LS";
+
+    /**
+     * @deprecated use {@link Mode#EDIT} instead. This constant will be removed in CMS 11
+     */
+    @Deprecated
     public static final String EDIT = "edit";
-    public static final String MODE = "mode";
+
+    /***
+     * @deprecated use {@link Mode#VIEW} instead. This constant will be removed in CMS 11
+     */
+    @Deprecated
     public static final String VIEW = "view";
+
+    public static final String MODE = "mode";
     public static final String VALUE = "value";
 
     public DatePickerPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         IModel<Date> valueModel = getModel();
-        if (EDIT.equals(config.getString(MODE, VIEW))) {
+        final Mode mode = Mode.fromString(config.getString(MODE), Mode.VIEW);
+        if (mode == Mode.EDIT) {
             add(new DateFieldWidget(VALUE, valueModel, context, config));
         } else {
             add(new DateLabel(VALUE, valueModel, new StyleDateConverter(DATESTYLE, true)));

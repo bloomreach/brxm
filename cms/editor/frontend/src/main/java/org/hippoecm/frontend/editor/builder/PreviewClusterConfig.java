@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.AbstractClusterDecorator;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
@@ -112,7 +113,7 @@ public class PreviewClusterConfig extends AbstractClusterDecorator {
         previewWrapper.put("model.effective", config);
 
         previewWrapper.put("plugin.id", config.getName());
-        previewWrapper.put("builder.mode", editable ? "edit" : "view");
+        previewWrapper.put("builder.mode", editable ? IEditor.Mode.EDIT.toString() : IEditor.Mode.VIEW.toString());
         previewWrapper.putAll(parameters);
 
         if (config.get("wicket.id") != null) {

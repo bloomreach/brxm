@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
     public ImageDisplayPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode", "view"));
+        IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
         if (mode == IEditor.Mode.COMPARE && config.containsKey("model.compareTo")) {
             IModelReference<Node> baseModelRef = context.getService(config.getString("model.compareTo"),
                     IModelReference.class);

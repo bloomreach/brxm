@@ -45,7 +45,7 @@ public class TextTemplatePlugin extends RenderPlugin<String> {
         super(context, config);
 
         final IModel<String> valueModel = getModel();
-        IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode", "view"));
+        IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
         if (IEditor.Mode.EDIT == mode) {
             TextAreaWidget widget = new TextAreaWidget("value", valueModel);
             if (config.getString("rows") != null) {
@@ -73,7 +73,7 @@ public class TextTemplatePlugin extends RenderPlugin<String> {
     @Override
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
-        IEditor.Mode mode = IEditor.Mode.fromString(getPluginConfig().getString("mode", "view"));
+        IEditor.Mode mode = IEditor.Mode.fromString(getPluginConfig().getString("mode"), IEditor.Mode.VIEW);
         if (IEditor.Mode.COMPARE == mode) {
             response.render(CssHeaderItem.forReference(DIFF_CSS));
         }

@@ -52,8 +52,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.frontend.service.IEditor.Mode.fromString;
-
 
 public class MirrorTemplatePlugin extends RenderPlugin<Node> {
 
@@ -78,7 +76,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     }
 
     private void init(final IPluginConfig config) {
-        Mode mode = fromString(config.getString(ITemplateEngine.MODE, "view"));
+        final Mode mode = Mode.fromString(config.getString(ITemplateEngine.MODE), Mode.VIEW);
         switch (mode) {
             case EDIT:
                 fragment = new Fragment("fragment", "edit", this);

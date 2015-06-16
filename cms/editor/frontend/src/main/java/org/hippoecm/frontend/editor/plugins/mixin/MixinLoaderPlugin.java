@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
@@ -41,7 +42,7 @@ public class MixinLoaderPlugin extends RenderPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(MixinLoaderPlugin.class);
 
-    protected String mode;
+    protected IEditor.Mode mode;
 
     private Map<String, IClusterControl> controllers;
 
@@ -50,7 +51,7 @@ public class MixinLoaderPlugin extends RenderPlugin {
 
         controllers = new HashMap<String, IClusterControl>();
 
-        mode = config.getString(ITemplateEngine.MODE, "view");
+        mode = IEditor.Mode.fromString(config.getString(ITemplateEngine.MODE), IEditor.Mode.VIEW);
 
         addExtensionPoint("mixins");
 
@@ -111,7 +112,7 @@ public class MixinLoaderPlugin extends RenderPlugin {
             parameters = new JavaPluginConfig(parameters);
         }
         parameters.put("wicket.id", getServiceName("mixins"));
-        parameters.put("mode", mode);
+        parameters.put("mode", mode.toString());
         parameters.put("engine", getPluginConfig().get("engine"));
         parameters.put("wicket.model", getPluginConfig().get("wicket.model"));
         parameters.put("model.compareTo", getPluginConfig().get("model.compareTo"));

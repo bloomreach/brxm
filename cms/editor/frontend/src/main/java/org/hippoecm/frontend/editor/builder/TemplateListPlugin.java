@@ -51,6 +51,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.skin.Icon;
@@ -238,11 +239,11 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
     public TemplateListPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        String mode = getPluginConfig().getString("mode", "view");
-        Fragment fragment = new Fragment("fragment", mode, this);
+        final IEditor.Mode mode = IEditor.Mode.fromString(getPluginConfig().getString("mode"), IEditor.Mode.VIEW);
+        Fragment fragment = new Fragment("fragment", mode.toString(), this);
         add(fragment);
 
-        if ("edit".equals(mode)) {
+        if (mode == IEditor.Mode.EDIT) {
             final ITemplateEngine engine = context.getService(config.getString(ITemplateEngine.ENGINE),
                     ITemplateEngine.class);
             final List<String> editableTypes = engine.getEditableTypes();

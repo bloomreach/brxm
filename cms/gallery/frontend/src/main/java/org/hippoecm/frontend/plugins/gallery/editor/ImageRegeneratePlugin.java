@@ -95,9 +95,9 @@ public class ImageRegeneratePlugin extends RenderPlugin {
                 return !isOriginal && !areExceptionsThrown && isModelModified.getObject();
             }
         };
-        regenerateButton.setVisible("edit".equals(mode) && !isOriginal);
+        regenerateButton.setVisible(mode == IEditor.Mode.EDIT && !isOriginal);
 
-        if(IEditor.Mode.EDIT == mode){
+        if(mode == IEditor.Mode.EDIT) {
 
             regenerateButton.add(new AjaxEventBehavior("onclick") {
                 private static final long serialVersionUID = 1L;

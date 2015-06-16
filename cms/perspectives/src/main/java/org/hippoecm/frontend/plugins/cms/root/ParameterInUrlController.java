@@ -48,7 +48,7 @@ class ParameterInUrlController extends UrlControllerBehavior implements IObserve
     private static final Logger log = LoggerFactory.getLogger(ParameterInUrlController.class);
 
     private static final String MODE_PARAM = "mode";
-    private static final String MODE_VALUE_EDIT = "edit";
+    private static final String MODE_VALUE_EDIT = IEditor.Mode.EDIT.toString();
     private static final String PATH_PARAM = "path";
     private static final String UUID_PARAM = "uuid";
     private static final String URL_PARAMETERS = "parameters";

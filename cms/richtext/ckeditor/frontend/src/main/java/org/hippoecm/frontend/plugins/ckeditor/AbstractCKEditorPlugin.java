@@ -73,8 +73,7 @@ public abstract class AbstractCKEditorPlugin<ModelType> extends RenderPlugin {
     }
 
     private IEditor.Mode getMode() {
-        final String modeName = getPluginConfig().getString("mode", IEditor.Mode.VIEW.name().toLowerCase());
-        return IEditor.Mode.fromString(modeName);
+        return IEditor.Mode.fromString(getPluginConfig().getString("mode"), IEditor.Mode.VIEW);
     }
 
     private Panel createPanel(final IEditor.Mode mode, final String defaultEditorConfigJson) {

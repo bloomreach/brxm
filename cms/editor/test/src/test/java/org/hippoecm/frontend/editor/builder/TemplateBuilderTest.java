@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -419,7 +419,7 @@ public class TemplateBuilderTest extends EditorTestCase {
         parameters.put("wicket.id", "service.root");
         parameters.put("wicket.model", "service.model");
         parameters.put("engine", "service.engine");
-        parameters.put("mode", "edit");
+        parameters.put("mode", IEditor.Mode.EDIT.toString());
         IClusterControl cluster = context.newCluster(template, parameters);
         cluster.start();
 
@@ -455,7 +455,7 @@ public class TemplateBuilderTest extends EditorTestCase {
         parameters.put("wicket.id", "service.root");
         parameters.put("wicket.model", "service.model");
         parameters.put("engine", "service.engine");
-        parameters.put("mode", "edit");
+        parameters.put("mode", IEditor.Mode.EDIT.toString());
         IClusterControl cluster = context.newCluster(template, parameters);
         cluster.start();
 

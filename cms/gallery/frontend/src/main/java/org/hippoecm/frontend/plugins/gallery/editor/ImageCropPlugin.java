@@ -92,9 +92,9 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
         }
 
         Label cropButton = new Label("crop-button", new StringResourceModel("crop-button-label", this, null));
-        cropButton.setVisible("edit".equals(mode) && !isOriginal);
+        cropButton.setVisible(mode == IEditor.Mode.EDIT && !isOriginal);
 
-        if (IEditor.Mode.EDIT == mode) {
+        if (mode == IEditor.Mode.EDIT) {
             if (!isOriginal && !areExceptionsThrown
                     && !isOriginalImageWidthSmallerThanThumbWidth
                     && !isOriginalImageHeightSmallerThanThumbHeight) {
