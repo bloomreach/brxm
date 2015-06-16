@@ -33,13 +33,13 @@ public class DatePickerPlugin extends RenderPlugin<Date> {
     public static final String DATESTYLE = "LS";
 
     /**
-     * @deprecated use {@link Mode#EDIT} instead. This constant will be removed in CMS 11
+     * @deprecated use {@link Mode#EDIT} instead.
      */
     @Deprecated
     public static final String EDIT = "edit";
 
     /***
-     * @deprecated use {@link Mode#VIEW} instead. This constant will be removed in CMS 11
+     * @deprecated use {@link Mode#VIEW} instead.
      */
     @Deprecated
     public static final String VIEW = "view";

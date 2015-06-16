@@ -77,7 +77,7 @@ public class ComparePlugin extends RenderPlugin {
     }
 
     protected void createTemplate() {
-        IModel model = getDefaultModel();
+        final IModel model = getDefaultModel();
         if (model != null && model.getObject() != null) {
             try {
                 ITypeDescriptor type = engine.getType(model);
@@ -89,8 +89,7 @@ public class ComparePlugin extends RenderPlugin {
                 parameters.put(ITemplateEngine.ENGINE, engineId);
 
                 final Mode editorMode = Mode.fromString(getPluginConfig().getString("mode"), Mode.VIEW);
-                if (editorMode == Mode.COMPARE &&
-                        template.getReferences().contains("model.compareTo")) {
+                if (editorMode == Mode.COMPARE && template.getReferences().contains("model.compareTo")) {
                     parameters.put(ITemplateEngine.MODE, Mode.COMPARE.toString());
                     parameters.put("model.compareTo", getPluginConfig().get("model.compareTo"));
                 } else {

@@ -41,36 +41,39 @@ public class ValueTemplatePlugin extends RenderPlugin<String> {
         super(context, config);
 
         final StringConverter stringModel = new StringConverter((JcrPropertyValueModel) getModel());
-        IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
-        if (IEditor.Mode.EDIT == mode) {
-            TextFieldWidget widget = new TextFieldWidget("value", stringModel);
-            if (config.getString("size") != null) {
-                widget.setSize(config.getString("size"));
-            }
-            if (config.getString("maxlength") != null) {
-                widget.setMaxlength(config.getString("maxlength"));
-            }
-            add(widget);
-        } else if (IEditor.Mode.COMPARE == mode) {
-            final IModel<?> baseModel = context.getService(config.getString("model.compareTo"), IModelReference.class)
-                    .getModel();
-            final IModel<String> stringBaseModel = new LoadableDetachableModel<String>() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected String load() {
-                    return Strings.toString(baseModel.getObject());
+        final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
+        switch (mode) {
+            case EDIT:
+                TextFieldWidget widget = new TextFieldWidget("value", stringModel);
+                if (config.getString("size") != null) {
+                    widget.setSize(config.getString("size"));
                 }
-
-                @Override
-                public void detach() {
-                    super.detach();
-                    baseModel.detach();
+                if (config.getString("maxlength") != null) {
+                    widget.setMaxlength(config.getString("maxlength"));
                 }
-            };
-            add(new Label("value", new TextDiffModel(stringBaseModel, stringModel)).setEscapeModelStrings(false));
-        } else {
-            add(new Label("value", stringModel));
+                add(widget);
+                break;
+            case COMPARE:
+                final IModel<?> baseModel = context.getService(config.getString("model.compareTo"), IModelReference.class)
+                        .getModel();
+                final IModel<String> stringBaseModel = new LoadableDetachableModel<String>() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected String load() {
+                        return Strings.toString(baseModel.getObject());
+                    }
+
+                    @Override
+                    public void detach() {
+                        super.detach();
+                        baseModel.detach();
+                    }
+                };
+                add(new Label("value", new TextDiffModel(stringBaseModel, stringModel)).setEscapeModelStrings(false));
+                break;
+            default:
+                add(new Label("value", stringModel));
         }
     }
 

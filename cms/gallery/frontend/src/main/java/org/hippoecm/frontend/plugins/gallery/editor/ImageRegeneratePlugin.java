@@ -98,7 +98,7 @@ public class ImageRegeneratePlugin extends RenderPlugin {
         };
         regenerateButton.setVisible(mode == IEditor.Mode.EDIT && !isOriginal);
 
-        if(mode == IEditor.Mode.EDIT) {
+        if (mode == IEditor.Mode.EDIT) {
 
             regenerateButton.add(new AjaxEventBehavior("onclick") {
                 private static final long serialVersionUID = 1L;

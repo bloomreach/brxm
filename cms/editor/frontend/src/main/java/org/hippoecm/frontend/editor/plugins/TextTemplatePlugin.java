@@ -45,23 +45,25 @@ public class TextTemplatePlugin extends RenderPlugin<String> {
         super(context, config);
 
         final IModel<String> valueModel = getModel();
-        IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
-        if (IEditor.Mode.EDIT == mode) {
-            TextAreaWidget widget = new TextAreaWidget("value", valueModel);
-            if (config.getString("rows") != null) {
-                widget.setRows(config.getString("rows"));
-            }
-            add(widget);
-        } else if (IEditor.Mode.COMPARE == mode) {
+        final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
+        switch (mode) {
+            case EDIT:
+                TextAreaWidget widget = new TextAreaWidget("value", valueModel);
+                if (config.getString("rows") != null) {
+                    widget.setRows(config.getString("rows"));
+                }
+                add(widget);
+                break;
+            case COMPARE:
+                final IModel<String> baseModel = context.getService(config.getString("model.compareTo"),
+                        IModelReference.class).getModel();
 
-            final IModel<String> baseModel = context.getService(config.getString("model.compareTo"),
-                    IModelReference.class).getModel();
-
-            IModel<String> compareModel = new HtmlDiffModel(new NewLinesToBrModel(baseModel),
-                    new NewLinesToBrModel(valueModel), getDiffService(context));
-            add(new Label("value", compareModel).setEscapeModelStrings(false));
-        } else {
-            add(new Label("value", new NewLinesToBrModel(valueModel)).setEscapeModelStrings(false));
+                IModel<String> compareModel = new HtmlDiffModel(new NewLinesToBrModel(baseModel),
+                        new NewLinesToBrModel(valueModel), getDiffService(context));
+                add(new Label("value", compareModel).setEscapeModelStrings(false));
+                break;
+            default:
+                add(new Label("value", new NewLinesToBrModel(valueModel)).setEscapeModelStrings(false));
         }
     }
 
