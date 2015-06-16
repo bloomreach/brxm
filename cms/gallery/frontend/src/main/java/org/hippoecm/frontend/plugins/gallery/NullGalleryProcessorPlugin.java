@@ -28,13 +28,14 @@ import org.hippoecm.frontend.plugins.gallery.model.NullGalleryProcessor;
  */
 public class NullGalleryProcessorPlugin extends Plugin {
 
-    private static final long serialVersionUID = 1L;
+    public static final String DEFAULT_ASSET_GALLERY_PROCESSOR_SERVICE_ID = "asset.gallery.processor";
 
     public NullGalleryProcessorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         NullGalleryProcessor processor = new NullGalleryProcessor();
-        context.registerService(processor, config.getString(GalleryProcessor.GALLERY_PROCESSOR_ID, "identity.gallery.processor"));
+        context.registerService(processor, config.getString(GalleryProcessor.GALLERY_PROCESSOR_ID,
+                DEFAULT_ASSET_GALLERY_PROCESSOR_SERVICE_ID));
     }
 
 }
