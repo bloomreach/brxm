@@ -34,7 +34,6 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
@@ -114,16 +113,6 @@ class UploadForm extends Form<Node> {
         return description;
     }
 
-    protected GalleryProcessor getGalleryProcessor() {
-        IPluginContext context = uploadDialog.pluginContext;
-        GalleryProcessor processor = context.getService(uploadDialog.pluginConfig.getString("gallery.processor.id",
-                "service.gallery.processor"), GalleryProcessor.class);
-        if (processor != null) {
-            return processor;
-        }
-        return new DefaultGalleryProcessor();
-    }
-
     @Override
     protected void onSubmit() {
         final FileUpload upload = uploadField.getFileUpload();
@@ -154,7 +143,8 @@ class UploadForm extends Form<Node> {
                 }
                 if (node != null) {
                     try {
-                        GalleryProcessor processor = getGalleryProcessor();
+                        final GalleryProcessor processor = DefaultGalleryProcessor.getGalleryProcessor(uploadDialog.pluginContext,
+                                uploadDialog.pluginConfig);
                         processor.makeImage(node, istream, mimetype, filename);
                         node.getSession().save();
                         uploadDialog.getWizardModel().next();

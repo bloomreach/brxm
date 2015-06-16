@@ -57,8 +57,7 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
         final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.EDIT);
         final IModel<Node> jcrImageNodeModel = getModel();
 
-        final GalleryProcessor configuredProcessor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);
-        final GalleryProcessor processor = configuredProcessor == null ? new DefaultGalleryProcessor() : configuredProcessor;
+        final GalleryProcessor processor = DefaultGalleryProcessor.getGalleryProcessor(context, getPluginConfig());
 
         boolean isOriginal = true;
         boolean isOriginalImageWidthSmallerThanThumbWidth = false;

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,11 @@ import org.apache.wicket.util.io.IClusterable;
 
 public interface GalleryProcessor extends IClusterable {
 
-    public void makeImage(Node node, InputStream istream, String mimeType, String filename) throws GalleryException,
+    String GALLERY_PROCESSOR_ID = "gallery.processor.id";
+
+    String DEFAULT_GALLERY_PROCESSOR_SERVICE_ID = "service.gallery.processor";
+
+    void makeImage(Node node, InputStream istream, String mimeType, String filename) throws GalleryException,
             RepositoryException;
 
     /**
@@ -36,16 +40,16 @@ public interface GalleryProcessor extends IClusterable {
      *
      */
     @Deprecated
-    public void validateResource(Node node, String fileName) throws GalleryException, RepositoryException;
+    void validateResource(Node node, String fileName) throws GalleryException, RepositoryException;
 
-    public void initGalleryResource(Node node, InputStream data, String mimeType, String fileName, Calendar lastModified)
+    void initGalleryResource(Node node, InputStream data, String mimeType, String fileName, Calendar lastModified)
             throws GalleryException, RepositoryException;
 
-    public Dimension getDesiredResourceDimension(Node node) throws GalleryException, RepositoryException;
+    Dimension getDesiredResourceDimension(Node node) throws GalleryException, RepositoryException;
 
-    public boolean isUpscalingEnabled(Node node) throws GalleryException, RepositoryException;
+    boolean isUpscalingEnabled(Node node) throws GalleryException, RepositoryException;
 
-    public Map<String, ScalingParameters> getScalingParametersMap() throws RepositoryException;
+    Map<String, ScalingParameters> getScalingParametersMap() throws RepositoryException;
 
 }
 

@@ -155,7 +155,8 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             }
 
             try {
-                getGalleryProcessor().makeImage(node, is, mimeType, fileName);
+                GalleryProcessor galleryProcessor = DefaultGalleryProcessor.getGalleryProcessor(getPluginContext(), getPluginConfig());
+                galleryProcessor.makeImage(node, is, mimeType, fileName);
                 node.getSession().save();
                 onGalleryItemCreation(node);
                 newItems.add(node.getPath());
@@ -195,16 +196,6 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             }
         }
         newItems.clear();
-    }
-
-    protected GalleryProcessor getGalleryProcessor() {
-        IPluginContext context = getPluginContext();
-        GalleryProcessor processor = context.getService(getPluginConfig().getString("gallery.processor.id",
-                "service.gallery.processor"), GalleryProcessor.class);
-        if (processor != null) {
-            return processor;
-        }
-        return new DefaultGalleryProcessor();
     }
 
     protected IDataProvider<StdWorkflow> createListDataProvider() {

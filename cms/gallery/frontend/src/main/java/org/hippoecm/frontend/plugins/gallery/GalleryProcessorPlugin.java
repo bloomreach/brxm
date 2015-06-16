@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
+import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 
 public class GalleryProcessorPlugin extends Plugin {
 
@@ -31,7 +32,8 @@ public class GalleryProcessorPlugin extends Plugin {
         if (config.containsKey("gallery.thumbnail.size")) {
             processor.setThumbnailSize(config.getInt("gallery.thumbnail.size"));
         }
-        context.registerService(processor, config.getString("gallery.processor.id", "gallery.processor.service"));
+        context.registerService(processor, config.getString(GalleryProcessor.GALLERY_PROCESSOR_ID,
+                GalleryProcessor.DEFAULT_GALLERY_PROCESSOR_SERVICE_ID));
     }
 
 }

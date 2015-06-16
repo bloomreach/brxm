@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,12 +18,13 @@ package org.hippoecm.frontend.plugins.gallery;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.NullGalleryProcessor;
 
 /**
- * Registers an {@link org.hippoecm.frontend.plugins.gallery.model.NullGalleryProcessor} service. The configuration option 'gallery.processor.id' specifies
- * the CMS service id of this gallery processor. If no service id is specified, the service id
- * 'identity.gallery.processor' is used.
+ * Registers an {@link org.hippoecm.frontend.plugins.gallery.model.NullGalleryProcessor} service. The configuration
+ * option {@link GalleryProcessor#GALLERY_PROCESSOR_ID} specifies the CMS service id of this gallery processor. If no
+ * service id is specified, the service id 'identity.gallery.processor' is used.
  */
 public class NullGalleryProcessorPlugin extends Plugin {
 
@@ -33,7 +34,7 @@ public class NullGalleryProcessorPlugin extends Plugin {
         super(context, config);
 
         NullGalleryProcessor processor = new NullGalleryProcessor();
-        context.registerService(processor, config.getString("gallery.processor.id", "identity.gallery.processor"));
+        context.registerService(processor, config.getString(GalleryProcessor.GALLERY_PROCESSOR_ID, "identity.gallery.processor"));
     }
 
 }

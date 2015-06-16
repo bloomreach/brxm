@@ -30,6 +30,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
@@ -57,7 +58,7 @@ public class ImageRegeneratePlugin extends RenderPlugin {
         super(context, config);
 
         final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.EDIT);
-        galleryProcessor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);
+        galleryProcessor = DefaultGalleryProcessor.getGalleryProcessor(context, getPluginConfig());
 
         isOriginal = true;
         areExceptionsThrown = false;

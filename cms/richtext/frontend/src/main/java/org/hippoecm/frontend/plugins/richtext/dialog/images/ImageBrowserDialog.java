@@ -153,8 +153,11 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
     }
 
     private Component createUploadPanel() {
+        final IPluginContext context = getPluginContext();
+        final IPluginConfig config = getPluginConfig();
+        final GalleryProcessor processor = DefaultGalleryProcessor.getGalleryProcessor(context, config);
         return new GalleryUploadPanel("upload-panel", new PropertyModel<>(this, "selectedFolderNode"),
-                getPluginContext(), getPluginConfig(), getGalleryProcessor()) {
+                context, config, processor) {
 
             @Override
             protected void createGalleryItem(final FileUpload upload, final String galleryType) {
@@ -329,13 +332,4 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
         return new ValueMap("width=855,height=525");
     }
 
-    protected GalleryProcessor getGalleryProcessor() {
-        IPluginContext context = getPluginContext();
-        GalleryProcessor processor = context.getService(getPluginConfig().getString("gallery.processor.id",
-                "service.gallery.processor"), GalleryProcessor.class);
-        if (processor != null) {
-            return processor;
-        }
-        return new DefaultGalleryProcessor();
-    }
 }

@@ -47,6 +47,8 @@ import org.hippoecm.frontend.editor.plugins.resource.InvalidMimeTypeException;
 import org.hippoecm.frontend.editor.plugins.resource.MimeTypeHelper;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.model.JcrHelper;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -365,8 +367,40 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
         return true;
     }
 
-  @Override
+    @Override
     public Map<String, ScalingParameters> getScalingParametersMap() {
         return new HashMap<String, ScalingParameters>();
+    }
+
+
+    /**
+     * Get the gallery processor service identified by the parameter {@link GalleryProcessor#GALLERY_PROCESSOR_ID} in
+     * the plugin config. If no service id configuration is found, the service with id
+     * {@link GalleryProcessor#DEFAULT_GALLERY_PROCESSOR_SERVICE_ID} is used.
+     */
+    public static GalleryProcessor getGalleryProcessor(final IPluginContext pluginContext,
+                                                       final IPluginConfig pluginConfig) {
+        return getGalleryProcessor(pluginContext, pluginConfig, DEFAULT_GALLERY_PROCESSOR_SERVICE_ID);
+    }
+
+    /**
+     * Get the gallery processor service specified by the parameter {@link GalleryProcessor#GALLERY_PROCESSOR_ID} in the
+     * plugin config. If no service id configuration is found, the service with id <code>defaultServiceId</code> is used.
+     * If the service with this default id is not found, a new instance of the {@link DefaultGalleryProcessor} is returned.
+     */
+    public static GalleryProcessor getGalleryProcessor(final IPluginContext pluginContext,
+                                                       final IPluginConfig pluginConfig,
+                                                       final String defaultServiceId) {
+
+        String serviceId = pluginConfig.getString(GALLERY_PROCESSOR_ID, defaultServiceId);
+        GalleryProcessor processor = pluginContext.getService(serviceId, GalleryProcessor.class);
+
+        if (processor == null) {
+            processor = new DefaultGalleryProcessor();
+            log.warn("Cannot load gallery processor service with id '{}', using the default service '{}'",
+                    serviceId, processor.getClass().getName());
+        }
+        return processor;
+
     }
 }

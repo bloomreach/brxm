@@ -72,7 +72,7 @@ public class ImageUploadPlugin extends RenderPlugin {
     private void handleUpload(FileUpload upload) throws FileUploadViolationException {
         String fileName = upload.getClientFileName();
         String mimeType = upload.getContentType();
-        final GalleryProcessor processor = getGalleryProcessor();
+        final GalleryProcessor processor = DefaultGalleryProcessor.getGalleryProcessor(getPluginContext(), getPluginConfig());
 
         JcrNodeModel nodeModel = (JcrNodeModel) getDefaultModel();
         Node node = nodeModel.getNode();
@@ -87,16 +87,5 @@ public class ImageUploadPlugin extends RenderPlugin {
             }
             throw new FileUploadViolationException(e.getMessage());
         }
-    }
-
-    private GalleryProcessor getGalleryProcessor() {
-        String serviceId = getPluginConfig().getString("gallery.processor.id", "service.gallery.processor");
-        GalleryProcessor processor = getPluginContext().getService(serviceId, GalleryProcessor.class);
-        if (processor == null) {
-            processor = new DefaultGalleryProcessor();
-            log.warn("Cannot load gallery processor service service with the id '{}'. Using the default service '{}'",
-                    serviceId, processor.getClass().getName());
-        }
-        return processor;
     }
 }
