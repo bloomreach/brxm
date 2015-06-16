@@ -96,7 +96,7 @@ public class ScalingGalleryProcessorPlugin extends Plugin {
 
         final GalleryProcessor processor = createScalingGalleryProcessor(config);
         final String id = config.getString(GalleryProcessor.GALLERY_PROCESSOR_ID,
-                GalleryProcessor.DEFAULT_GALLERY_PROCESSOR_SERVICE_ID);
+                GalleryProcessor.DEFAULT_GALLERY_PROCESSOR_ID);
 
         context.registerService(processor, id);
     }

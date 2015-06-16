@@ -29,7 +29,7 @@ public interface GalleryProcessor extends IClusterable {
 
     String GALLERY_PROCESSOR_ID = "gallery.processor.id";
 
-    String DEFAULT_GALLERY_PROCESSOR_SERVICE_ID = "service.gallery.processor";
+    String DEFAULT_GALLERY_PROCESSOR_ID = "service.gallery.processor";
 
     void makeImage(Node node, InputStream istream, String mimeType, String filename) throws GalleryException,
             RepositoryException;

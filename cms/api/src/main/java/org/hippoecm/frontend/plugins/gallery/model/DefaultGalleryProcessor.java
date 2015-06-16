@@ -376,11 +376,11 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
     /**
      * Get the gallery processor service identified by the parameter {@link GalleryProcessor#GALLERY_PROCESSOR_ID} in
      * the plugin config. If no service id configuration is found, the service with id
-     * {@link GalleryProcessor#DEFAULT_GALLERY_PROCESSOR_SERVICE_ID} is used.
+     * {@link GalleryProcessor#DEFAULT_GALLERY_PROCESSOR_ID} is used.
      */
     public static GalleryProcessor getGalleryProcessor(final IPluginContext pluginContext,
                                                        final IPluginConfig pluginConfig) {
-        return getGalleryProcessor(pluginContext, pluginConfig, DEFAULT_GALLERY_PROCESSOR_SERVICE_ID);
+        return getGalleryProcessor(pluginContext, pluginConfig, DEFAULT_GALLERY_PROCESSOR_ID);
     }
 
     /**

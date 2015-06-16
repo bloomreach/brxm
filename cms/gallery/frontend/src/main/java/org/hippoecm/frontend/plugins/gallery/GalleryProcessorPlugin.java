@@ -23,8 +23,6 @@ import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 
 public class GalleryProcessorPlugin extends Plugin {
 
-    private static final long serialVersionUID = 1L;
-
     public GalleryProcessorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
@@ -33,7 +31,7 @@ public class GalleryProcessorPlugin extends Plugin {
             processor.setThumbnailSize(config.getInt("gallery.thumbnail.size"));
         }
         context.registerService(processor, config.getString(GalleryProcessor.GALLERY_PROCESSOR_ID,
-                GalleryProcessor.DEFAULT_GALLERY_PROCESSOR_SERVICE_ID));
+                GalleryProcessor.DEFAULT_GALLERY_PROCESSOR_ID));
     }
 
 }

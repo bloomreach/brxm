@@ -24,7 +24,7 @@ import org.hippoecm.frontend.plugins.gallery.model.NullGalleryProcessor;
 /**
  * Registers an {@link org.hippoecm.frontend.plugins.gallery.model.NullGalleryProcessor} service. The configuration
  * option {@link GalleryProcessor#GALLERY_PROCESSOR_ID} specifies the CMS service id of this gallery processor. If no
- * service id is specified, the service id 'identity.gallery.processor' is used.
+ * service id is specified, the service id {@link NullGalleryProcessorPlugin#DEFAULT_ASSET_GALLERY_PROCESSOR_SERVICE_ID} is used.
  */
 public class NullGalleryProcessorPlugin extends Plugin {
 
