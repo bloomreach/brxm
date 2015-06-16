@@ -191,6 +191,7 @@
     <module>components</module>
     <module>dependencies</module>
     <module>resources</module>
+    <module>usage-statistics-logger</module>
     <module>cms</module>
     <module>site</module>
     <module>intranet</module>
