@@ -206,6 +206,12 @@ ul.x-tab-strip-bottom {
   border-color: #b3b3b3;
 }
 
+.x-form-check-wrap input {
+  vertical-align: middle;
+  position: relative;
+  top: 1px;
+}
+
 .x-form-field {
   font: @font-size-extjs @font-family-base;
 }
@@ -276,6 +282,7 @@ textarea.x-form-focus,
 }
 
 .x-form-invalid, textarea.x-form-invalid {
+  background-image: none;
   background-color: @danger-light;
   border-color: @danger;
 }
@@ -286,11 +293,13 @@ textarea.x-form-focus,
 }
 
 .x-form-invalid.x-form-composite .x-form-invalid {
+  background-image: none;
   background-color: @danger-light;
   border-color: @danger;
 }
 
 .x-form-inner-invalid, textarea.x-form-inner-invalid {
+  background-image: none;
   background-color: @danger-light;
 }
 
