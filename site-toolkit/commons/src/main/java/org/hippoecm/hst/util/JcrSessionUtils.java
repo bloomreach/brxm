@@ -35,7 +35,7 @@ public class JcrSessionUtils {
     }
 
     /**
-     * @param prune Wheter only to return the first matching modified node in
+     * @param prune Whether only to return the first matching modified node in
      *              a subtree (true), or provide a depth search for all modified
      *              nodes (false)
      * @return String array of all events path
