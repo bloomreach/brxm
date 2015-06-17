@@ -109,7 +109,6 @@ frontend/src/main/resources/org/onehippo/cms7/channelmanager/ChannelManagerPersp
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.properties -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_de.properties -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_fr.properties -text
-frontend/src/main/resources/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_it.properties -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_nl.properties -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/ExtStoreFuture.js -text
 frontend/src/main/resources/org/onehippo/cms7/channelmanager/RootPanel.js -text
