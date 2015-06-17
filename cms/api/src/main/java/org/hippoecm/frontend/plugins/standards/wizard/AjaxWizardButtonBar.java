@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,8 +28,6 @@ import wicket.contrib.input.events.InputBehavior;
 import wicket.contrib.input.events.key.KeyType;
 
 public class AjaxWizardButtonBar extends WizardButtonBar {
-    private static final long serialVersionUID = 1L;
-
 
     public AjaxWizardButtonBar(String id, final Wizard wizard) {
         super(id, wizard);
@@ -44,12 +42,14 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
     }
 
     private class CancelButton extends AjaxWizardButton {
-        private static final long serialVersionUID = 1L;
 
         public CancelButton(final Wizard wizard) {
             super("cancel", wizard, "cancel");
-            
+
             add(new InputBehavior(new KeyType[] {KeyType.Escape}, EventType.click));
+
+            // Skip form validation on cancel button
+            setDefaultFormProcessing(false);
         }
 
         @Override
@@ -62,11 +62,10 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
             IWizardModel wizardModel = getWizardModel();
             wizardModel.cancel();
         }
-
     }
 
     private class NextButton extends AjaxWizardButton {
-        private static final long serialVersionUID = 1L;
+
         private final Wizard wizard;
 
         public NextButton(final Wizard wizard) {
@@ -97,16 +96,18 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
 
             target.add(wizard);
         }
-
     }
 
     private static class PreviousButton extends AjaxWizardButton {
-        private static final long serialVersionUID = 1L;
+
         private final Wizard wizard;
 
         public PreviousButton(final Wizard wizard) {
             super("previous", wizard, "prev");
             this.wizard = wizard;
+
+            // Skip form validation on previous button
+            setDefaultFormProcessing(false);
         }
 
         @Override
@@ -122,7 +123,6 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
     }
 
     private class FinishButton extends AjaxWizardButton {
-        private static final long serialVersionUID = 1L;
 
         public FinishButton(final Wizard wizard) {
             super("finish", wizard, "finish");
@@ -149,7 +149,6 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
                 error(getLocalizer().getString(
                         "org.apache.wicket.extensions.wizard.FinishButton.step.did.not.complete", this));
             }
-            // target.add(wizard);
         }
     }
 }
