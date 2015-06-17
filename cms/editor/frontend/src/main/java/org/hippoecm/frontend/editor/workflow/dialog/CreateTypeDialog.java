@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,37 +16,32 @@
 package org.hippoecm.frontend.editor.workflow.dialog;
 
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
-import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.util.value.IValueMap;
-import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.dialog.AbstractWizard;
+import org.hippoecm.frontend.dialog.DialogConstants;
+import org.hippoecm.frontend.dialog.Wizard;
 import org.hippoecm.frontend.editor.workflow.action.Action;
 
-public abstract class CreateTypeDialog extends AbstractWizard {
-
-    private static final long serialVersionUID = 1L;
+public abstract class CreateTypeDialog extends Wizard {
 
     private Action action;
     private FeedbackPanel feedback;
 
     public CreateTypeDialog(Action action) {
         this.action = action;
+
+        setSize(DialogConstants.MEDIUM_AUTO);
+
         final IFeedbackMessageFilter[] filters = new IFeedbackMessageFilter[2];
         filters[0] = new ContainerFeedbackMessageFilter(action);
         filters[1] = new ContainerFeedbackMessageFilter(this);
-        this.feedback = new FeedbackPanel(FEEDBACK_ID, new IFeedbackMessageFilter() {
-            private static final long serialVersionUID = 1L;
-
-            public boolean accept(FeedbackMessage message) {
-                for (IFeedbackMessageFilter filter : filters) {
-                    if (filter.accept(message)) {
-                        return true;
-                    }
+        this.feedback = new FeedbackPanel(FEEDBACK_ID, message -> {
+            for (IFeedbackMessageFilter filter : filters) {
+                if (filter.accept(message)) {
+                    return true;
                 }
-                return false;
             }
+            return false;
         });
         feedback.setOutputMarkupId(true);
 
@@ -66,9 +61,4 @@ public abstract class CreateTypeDialog extends AbstractWizard {
         super.onFinish();
         action.execute();
     }
-
-    public IValueMap getProperties() {
-        return new ValueMap("width=500,height=325");
-    }
-
 }
