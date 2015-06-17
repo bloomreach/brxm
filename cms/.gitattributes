@@ -1115,6 +1115,7 @@ api/src/main/styling/less/_modal.less -text
 api/src/main/styling/less/_modal_datepicker.less -text
 api/src/main/styling/less/_modal_doclist.less -text
 api/src/main/styling/less/_modal_section_viewer.less -text
+api/src/main/styling/less/_modal_wizard.less -text
 api/src/main/styling/less/_navigator.less -text
 api/src/main/styling/less/_panel-plugin-perspective.less -text
 api/src/main/styling/less/_perspectives_switcher.less -text

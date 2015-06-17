@@ -660,16 +660,6 @@ div.wicket-modal div.wicket-tree {
   border: 0;
 }
 
-/* select layout wizard step */
-.create-type-select-layout td {
-  text-align: center;
-  height: 80px;
-}
-
-.create-type-select-layout .selected {
-  background-color: #ccc;
-}
-
 .hippo-root .hippo-list-simple-container input[type="text"],
 .hippo-root .hippo-list-simple-container input[type="button"] {
   padding: 3px;
