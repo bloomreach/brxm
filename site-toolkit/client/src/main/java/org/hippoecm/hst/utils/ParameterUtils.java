@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
@@ -65,10 +66,16 @@ public class ParameterUtils {
         public Object convert(String parameterValue, Class<?> returnType) {
             try {
                 if (returnType == Date.class) {
+                    if (StringUtils.isBlank(parameterValue)) {
+                        return null;
+                    }
                     return DateUtils.parseDate(parameterValue, ISO8601_DATETIME_PATTERNS);
                 } else if (returnType == Calendar.class) {
-                    Calendar cal = Calendar.getInstance();
-                    Date date = DateUtils.parseDate(parameterValue, ISO8601_DATETIME_PATTERNS);
+                    if (StringUtils.isBlank(parameterValue)) {
+                        return null;
+                    }
+                    final Date date = DateUtils.parseDate(parameterValue, ISO8601_DATETIME_PATTERNS);
+                    final Calendar cal = Calendar.getInstance();
                     cal.setTime(date);
                     return cal;
                 }

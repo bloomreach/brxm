@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.hst.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.Calendar;
 
@@ -99,6 +100,15 @@ public class ParameterUtilsTest {
         assertEquals("T11:59:59", DateFormatUtils.format(since, ParameterUtils.ISO_TIME_FORMAT));
     }
 
+    @Test
+    public void emptyDateParameterReturnsNull() throws Exception {
+        EasyMock.expect(componentConfig.getParameter("dateWithoutDefaultValue", resolvedSiteMapItem)).andReturn("").anyTimes();
+        EasyMock.replay(componentConfig);
+        SearchInfo searchInfo = ParameterUtils.getParametersInfo(component, componentConfig, request);
+        Calendar date = searchInfo.getDateWithoutDefaultValue();
+        assertNull("Empty date parameter should return null", date);
+    }
+
     @ParametersInfo(type=SearchInfo.class)
     public class TestSearchComponent implements HstComponent {
 
@@ -132,10 +142,14 @@ public class ParameterUtilsTest {
     public interface SearchInfo {
 
         @Parameter(name = "queryOption")
-        public String getQueryOption();
+        String getQueryOption();
 
         @Parameter(name = "since", defaultValue = "2012-1-27", displayName = "Since")
-        public Calendar getSince();
+        Calendar getSince();
+
+        @Parameter(name = "dateWithoutDefaultValue")
+        Calendar getDateWithoutDefaultValue();
+
     }
 
 }
