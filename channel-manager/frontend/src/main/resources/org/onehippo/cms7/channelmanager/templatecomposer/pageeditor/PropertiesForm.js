@@ -539,6 +539,8 @@
           rootPath: record.get('pickerRootPath'),
           selectableNodeTypes: record.get('pickerSelectableNodeTypes')
         };
+      } else if (xtype === 'datefield') {
+        propertyFieldConfig.format = 'Y-m-d';
       }
 
       return this.add(propertyFieldConfig);
