@@ -24,6 +24,10 @@
     log.appendTo(document.body);
   }
 
+  function createCookie (name, value) {
+    document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+  }
+
   // mock the segment.com API
   window.analytics = {
 
@@ -44,12 +48,17 @@
 
     track: function (name, params) {
       var paramsText = params ? JSON.stringify(params) : '';
+
       log.append(
         '<div class="qa-usage-statistics-event">' +
         '  <div class="qa-usage-statistics-event-name">' + name + '</div>' +
         '  <div class="qa-usage-statistics-event-params">' + paramsText + '</div>' +
         '</div>'
       );
+
+      createCookie("qa-usage-statistics-event-name-last", name);
+      createCookie("qa-usage-statistics-event-params-last", paramsText);
+
       console.log("TRACK EVENT: " + name + " " + paramsText);
     }
 
