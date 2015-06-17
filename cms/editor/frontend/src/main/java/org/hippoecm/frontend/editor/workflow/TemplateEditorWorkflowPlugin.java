@@ -23,103 +23,157 @@ import javax.jcr.nodetype.NodeTypeTemplate;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
+import org.hippoecm.addon.workflow.IWorkflowInvoker;
+import org.hippoecm.addon.workflow.StdWorkflow;
+import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.TemplateEditorWorkflow;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
-import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
 import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.frontend.widgets.RequiredTextFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowDescriptor;
+import org.hippoecm.repository.api.WorkflowException;
 
-public class TemplateEditorWorkflowPlugin extends CompatibilityWorkflowPlugin {
+public class TemplateEditorWorkflowPlugin extends RenderPlugin<WorkflowDescriptor> {
 
-    private static final long serialVersionUID = 1L;
+    private static final String NODETYPE = HippoNodeType.HIPPOSYSEDIT_NODETYPE + "/" + HippoNodeType.HIPPOSYSEDIT_NODETYPE;
 
     public TemplateEditorWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new WorkflowAction("create", new StringResourceModel("create-namespace", this, null)) {
+        final IModel<String> titleModel = new StringResourceModel("create-namespace", this, null);
+        final WorkflowDescriptorModel descriptorModel = (WorkflowDescriptorModel) getModel();
+        final IModel<Namespace> namespaceModel = Model.of(new Namespace());
+        final NamespaceWorkflow workflow = new NamespaceWorkflow("create", titleModel, context, descriptorModel, namespaceModel);
 
-            public String url;
-            public String prefix;
-
-            @Override
-            protected Dialog createRequestDialog() {
-                return new NamespaceDialog(this);
-            }
-
-            @Override
-            protected Component getIcon(final String id) {
-                final HippoIconStack icon = new HippoIconStack(id, IconSize.M);
-                icon.addFromSprite(Icon.GEAR);
-                icon.addFromCms(CmsIcon.OVERLAY_PLUS, IconSize.M, HippoIconStack.Position.TOP_LEFT);
-                return icon;
-            }
-
-            @Override
-            protected String execute(Workflow wf) throws Exception {
-                NamespaceValidator.checkName(prefix);
-                NamespaceValidator.checkURI(url);
-
-                TemplateEditorWorkflow workflow = (TemplateEditorWorkflow) wf;
-                String nsPath = workflow.createNamespace(prefix, url);
-
-                Session session = UserSession.get().getJcrSession();
-                if (session.itemExists(nsPath + "/basedocument")) {
-                    Node baseDocNode = session.getNode(nsPath + "/basedocument");
-                    NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
-                    if (!ntMgr.hasNodeType(prefix + ":basedocument")) {
-                        NodeTypeTemplate ntTpl = ntMgr.createNodeTypeTemplate();
-                        ntTpl.setName(prefix + ":basedocument");
-                        if (baseDocNode.hasNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE + "/" + HippoNodeType.HIPPOSYSEDIT_NODETYPE)) {
-                            Node draft = baseDocNode.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE + "/" + HippoNodeType.HIPPOSYSEDIT_NODETYPE);
-                            if (draft.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
-                                Value[] supers = draft.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
-                                String[] superStrings = new String[supers.length];
-                                for (int i = 0; i < supers.length; i++) {
-                                    superStrings[i] = supers[i].getString();
-                                }
-                                ntTpl.setDeclaredSuperTypeNames(superStrings);
-                            }
-                        }
-                        ntTpl.setOrderableChildNodes(true);
-                        ntMgr.registerNodeType(ntTpl, false);
-                    }
-                }
-
-                return null;
-            }
-        });
+        add(workflow);
     }
 
-    public class NamespaceDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
-        private static final long serialVersionUID = 1L;
+    private static class NamespaceWorkflow<K extends Workflow> extends StdWorkflow<K> {
 
-        public NamespaceDialog(CompatibilityWorkflowPlugin.WorkflowAction action) {
-            action.super();
-            add(setFocus(new TextFieldWidget("prefix", new PropertyModel(action, "prefix"))));
-            add(new TextFieldWidget("url", new PropertyModel(action, "url")));
+        private final IModel<Namespace> namespaceModel;
+
+        public NamespaceWorkflow(final String id, final IModel<String> name, final IPluginContext pluginContext,
+                                 final WorkflowDescriptorModel model, IModel<Namespace> namespaceModel) {
+            super(id, name, pluginContext, model);
+
+            this.namespaceModel = namespaceModel;
         }
 
         @Override
-        public IModel<String> getTitle() {
-            return new StringResourceModel("create-namespace", TemplateEditorWorkflowPlugin.this, null);
+        protected Dialog createRequestDialog() {
+            return new NamespaceDialog(this, namespaceModel, getTitle());
         }
 
         @Override
-        public IValueMap getProperties() {
-            return DialogConstants.SMALL;
+        protected Component getIcon(final String id) {
+            final HippoIconStack icon = new HippoIconStack(id, IconSize.M);
+            icon.addFromSprite(Icon.GEAR);
+            icon.addFromCms(CmsIcon.OVERLAY_PLUS, IconSize.M, HippoIconStack.Position.TOP_LEFT);
+            return icon;
+        }
+
+        @Override
+        protected String execute(Workflow wf) throws Exception {
+            final Session session = UserSession.get().getJcrSession();
+            final NodeTypeManager typeManager = session.getWorkspace().getNodeTypeManager();
+            final TemplateEditorWorkflow workflow = (TemplateEditorWorkflow) wf;
+
+            final String prefix = namespaceModel.getObject().getPrefix();
+            final String url = namespaceModel.getObject().getUrl();
+
+            final String namespacePath = workflow.createNamespace(prefix, url);
+            final String baseDocPath = namespacePath + "/basedocument";
+            final String baseDocTypeName = prefix + ":basedocument";
+
+            if (!session.itemExists(baseDocPath)) {
+                throw new WorkflowException("Namespace created at " + namespacePath + " is missing a basedocument node");
+            }
+
+            if (!typeManager.hasNodeType(baseDocTypeName)) {
+                final Node baseDocNode = session.getNode(baseDocPath);
+                final NodeTypeTemplate baseDocTemplate = typeManager.createNodeTypeTemplate();
+                baseDocTemplate.setName(baseDocTypeName);
+
+                if (baseDocNode.hasNode(NODETYPE)) {
+                    Node draft = baseDocNode.getNode(NODETYPE);
+                    if (draft.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
+                        Value[] supers = draft.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
+                        String[] superStrings = new String[supers.length];
+                        for (int i = 0; i < supers.length; i++) {
+                            superStrings[i] = supers[i].getString();
+                        }
+                        baseDocTemplate.setDeclaredSuperTypeNames(superStrings);
+                    }
+                }
+                baseDocTemplate.setOrderableChildNodes(true);
+                typeManager.registerNodeType(baseDocTemplate, false);
+            }
+
+            return null;
+        }
+    }
+
+    private static class Namespace implements IClusterable {
+
+        private String url;
+        private String prefix;
+
+        public String getPrefix() {
+            return prefix;
+        }
+
+        public void setPrefix(final String prefix) {
+            this.prefix = prefix;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(final String url) {
+            this.url = url;
+        }
+    }
+
+    private static class NamespaceDialog extends AbstractWorkflowDialogRestyling<Namespace> {
+
+        public NamespaceDialog(final IWorkflowInvoker invoker, final IModel<Namespace> namespaceModel,
+                               final IModel<String> titleModel) {
+            super(invoker, namespaceModel, titleModel);
+
+            final PropertyModel<String> prefixModel = PropertyModel.of(namespaceModel, "prefix");
+            final Model<String> prefixLabel = Model.of(getString("prefix"));
+            final TextFieldWidget prefixField = new RequiredTextFieldWidget("prefix", prefixModel, prefixLabel);
+
+            prefixField.getFocusComponent().add(NamespaceValidator.createNameValidator());
+            add(prefixField);
+
+            final PropertyModel<String> urlModel = PropertyModel.of(namespaceModel, "url");
+            final Model<String> urlLabel = Model.of(getString("url"));
+            final TextFieldWidget urlField = new RequiredTextFieldWidget("url", urlModel, urlLabel);
+
+            urlField.getFocusComponent().add(NamespaceValidator.createUrlValidator());
+            add(urlField);
+
+            setFocus(prefixField);
+            setSize(DialogConstants.SMALL_AUTO);
         }
     }
 }
