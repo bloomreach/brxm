@@ -195,8 +195,15 @@
   padding: 8px;
 }
 
+.channel-manager .channel-properties th,
+.channel-manager .channel-properties td {
+  /* Fix text cutoff in IE10 */
+  line-height: 1.3;
+}
+
 .channel-manager .channel-properties th {
   font-weight: bold;
+
 }
 .channel-manager .channel-properties td {
   vertical-align: middle;
@@ -254,23 +261,23 @@
   display: -ms-flexbox;
   display: flex;
   -webkit-flex-direction: row;
-      -ms-flex-direction: row;
-          flex-direction: row;
+  -ms-flex-direction: row;
+      flex-direction: row;
   -webkit-flex-wrap: nowrap;
-      -ms-flex-wrap: nowrap;
-          flex-wrap: nowrap;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
   -webkit-justify-content: flex-end;
-      -ms-flex-pack: end;
-          justify-content: flex-end;
+  -ms-flex-pack: end;
+      justify-content: flex-end;
   -webkit-align-items: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+      align-items: center;
 }
 
 .channel-manager .channel-properties .channel-preview-name {
   -webkit-flex: 1 1 auto;
-      -ms-flex: 1 1 auto;
-          flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+      flex: 1 1 auto;
   display: block;
   max-width: 123px;
   overflow: hidden;
@@ -279,14 +286,18 @@
 
 .channel-manager .channel-properties .channel-preview-image-wrapper {
   -webkit-flex: 1 1 auto;
-      -ms-flex: 1 1 auto;
-          flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+      flex: 1 1 auto;
+  display: block;
+  max-width: 123px;
+}
+
+.channel-manager .channel-properties img {
+  display: block;
 }
 
 .channel-manager .channel-properties .channel-remove-button {
-  -webkit-flex: 0 0 10px;
-      -ms-flex: 0 0 10px;
-          flex: 0 0 10px;
+  display: inline-block;
   margin: 0 4px;
   width: 10px;
   height: 10px;
@@ -598,7 +609,7 @@
   -moz-opacity: 1;
   opacity: 1;
   -webkit-filter: none;
-          filter: none;
+  filter: none;
 }
 
 #pageEditorIFrame .ext-el-mask {
