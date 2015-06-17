@@ -26,6 +26,6 @@ public class RequiredTextFieldWidget extends TextFieldWidget {
     public RequiredTextFieldWidget(String id, IModel<String> model, IModel<String> labelModel) {
         super(id, model, labelModel);
 
-        getFocusComponent().setRequired(true);
+        getFormComponent().setRequired(true);
     }
 }

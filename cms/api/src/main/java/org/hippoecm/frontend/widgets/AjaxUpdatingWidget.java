@@ -27,7 +27,7 @@ import org.apache.wicket.util.time.Duration;
 
 public abstract class AjaxUpdatingWidget<T> extends Panel {
 
-    private FormComponent<? extends T> focus;
+    private FormComponent<T> formComponent;
     private Duration throttleDelay;
 
     public AjaxUpdatingWidget(String id, IModel<T> model) {
@@ -51,8 +51,8 @@ public abstract class AjaxUpdatingWidget<T> extends Panel {
     /**
      * Adds an ajax updating form component
      */
-    protected void addFormField(final FormComponent<? extends T> component) {
-        add(focus = component);
+    protected void addFormField(final FormComponent<T> component) {
+        add(formComponent = component);
         component.setOutputMarkupId(true);
         if(throttleDelay == null) {
             component.add(new AjaxFormComponentUpdatingBehavior("onChange") {
@@ -80,8 +80,12 @@ public abstract class AjaxUpdatingWidget<T> extends Panel {
         }
     }
 
-    public FormComponent<? extends T> getFocusComponent() {
-        return focus;
+    public FormComponent<T> getFocusComponent() {
+        return getFormComponent();
+    }
+
+    public final FormComponent<T> getFormComponent() {
+        return formComponent;
     }
 
     // callback for subclasses
