@@ -67,7 +67,7 @@
     <xercesImpl.version>2.9.1</xercesImpl.version>
     <xalan.version>2.4.1</xalan.version>
 
-    <commons-lang.version>2.4</commons-lang.version>
+    <commons-lang.version>2.6</commons-lang.version>
     <commons-collections.version>3.2.1</commons-collections.version>
     <commons-codec.version>1.4</commons-codec.version>
     <commons-pool.version>1.5.4</commons-pool.version>
