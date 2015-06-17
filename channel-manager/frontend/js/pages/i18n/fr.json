@@ -3,7 +3,7 @@
   "ITEM_NOT_CORRECT_LOCATION": "Une erreur interne s'est produite: des pages du plan de site incorrect ont été demandées.",
   "LANDING_PAGES": "Pages de renvoi",
   "ADD_NEW_PAGE": "Ajouter une nouvelle page",
-  "ADD_NEW_PAGE_DISABLED_TOOLTIP": "Pour ajouter une page, cliquez tout d'abord \n sur 'Modifier le canal'",
+  "ADD_NEW_PAGE_DISABLED_TOOLTIP": "Pour ajouter une page, cliquez tout d'abord \n sur '\u00C9diter le channel'",
   "CREATE_NEW_PAGE": "Créer une nouvelle page",
   "PAGE_TITLE": "Titre de page",
   "TITLE_REQUIRED": "Le titre est un champ obligatoire",
