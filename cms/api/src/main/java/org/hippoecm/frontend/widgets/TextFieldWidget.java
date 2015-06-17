@@ -36,9 +36,7 @@ public class TextFieldWidget extends AjaxUpdatingWidget<String> {
     public TextFieldWidget(String id, IModel<String> model, IModel<String> labelModel, Duration throttleDelay) {
         super(id, model, throttleDelay);
 
-        final TextField<String> textField;
-        addFormField(textField = new TextField<String>("widget", model) {
-
+        final TextField<String> textField = new TextField<String>("widget", model) {
             {
                 setFlag(FLAG_CONVERT_EMPTY_INPUT_STRING_TO_NULL, false);
             }
@@ -53,9 +51,8 @@ public class TextFieldWidget extends AjaxUpdatingWidget<String> {
                 }
                 super.onComponentTag(tag);
             }
-        });
-        textField.setType(String.class);
-
+        };
+        addFormField(textField);
         if (labelModel != null) {
            textField.setLabel(labelModel);
         }
