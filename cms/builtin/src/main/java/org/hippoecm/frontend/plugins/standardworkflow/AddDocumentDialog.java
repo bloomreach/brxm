@@ -29,7 +29,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -41,11 +40,8 @@ import org.hippoecm.frontend.plugins.standardworkflow.validators.AddDocumentVali
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.StringCodec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AddDocumentDialog extends AbstractWorkflowDialogRestyling<AddDocumentArguments> {
-    private static Logger log = LoggerFactory.getLogger(AddDocumentDialog.class);
 
     private final NameUriField nameUriContainer;
 
@@ -56,7 +52,8 @@ public class AddDocumentDialog extends AbstractWorkflowDialogRestyling<AddDocume
     public AddDocumentDialog(AddDocumentArguments addDocumentModel, IModel<String> title, String category,
                              Set<String> prototypes, boolean translated, final IWorkflowInvoker invoker,
                              IModel<StringCodec> nodeNameCodec, ILocaleProvider localeProvider, final WorkflowDescriptorModel workflowDescriptorModel) {
-        super(Model.of(addDocumentModel), invoker);
+        super(invoker, Model.of(addDocumentModel));
+
         this.title = title;
         this.nodeNameCodecModel = nodeNameCodec;
 
@@ -119,6 +116,8 @@ public class AddDocumentDialog extends AbstractWorkflowDialogRestyling<AddDocume
         });
 
         add(CssClass.append("add-document-dialog"));
+
+        setSize(DialogConstants.MEDIUM_AUTO);
     }
 
     @Override
@@ -131,11 +130,6 @@ public class AddDocumentDialog extends AbstractWorkflowDialogRestyling<AddDocume
     @Override
     public IModel<String> getTitle() {
         return title;
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.MEDIUM_AUTO;
     }
 
     public LanguageField getLanguageField() {

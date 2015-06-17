@@ -69,7 +69,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 final IModel docName = getDocumentName();
                 IModel<String> title = new StringResourceModel("depublish-title", PublicationWorkflowPlugin.this, null, docName);
                 IModel<String> message = new StringResourceModel("depublish-message", PublicationWorkflowPlugin.this, null, docName);
-                return new DepublishDialog(title, message, getModel(), this, getEditorManager());
+                return new DepublishDialog(this, getModel(), title, message, getEditorManager());
             }
 
             @Override
@@ -98,7 +98,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 final IModel docName = getDocumentName();
                 IModel<String> title = new StringResourceModel("depublish-title", PublicationWorkflowPlugin.this, null, docName);
                 IModel<String> message = new StringResourceModel("depublish-message", PublicationWorkflowPlugin.this, null, docName);
-                return new DepublishDialog(title, message, getModel(), this, getEditorManager());
+                return new DepublishDialog(this, getModel(), title, message, getEditorManager());
             }
 
             @Override

@@ -25,8 +25,9 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 
 public class UnpublishedReferencesDialog extends AbstractWorkflowDialogRestyling<WorkflowDescriptor> {
 
-    public UnpublishedReferencesDialog(IWorkflowInvoker invoker, ISortableDataProvider<Node, String> provider, IEditorManager mgr) {
-        super(null, invoker);
+    public UnpublishedReferencesDialog(final IWorkflowInvoker invoker, final ISortableDataProvider<Node, String> provider,
+                                       final IEditorManager mgr) {
+        super(invoker);
 
         setOutputMarkupId(true);
 

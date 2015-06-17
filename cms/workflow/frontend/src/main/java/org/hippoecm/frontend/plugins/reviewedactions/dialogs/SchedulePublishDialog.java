@@ -24,7 +24,6 @@ import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.frontend.dialog.Dialog;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.reviewedactions.UnpublishedReferenceNodeProvider;
 import org.hippoecm.frontend.plugins.reviewedactions.model.ReferenceProvider;
 import org.hippoecm.frontend.plugins.reviewedactions.model.UnpublishedReferenceProvider;
@@ -32,9 +31,9 @@ import org.hippoecm.frontend.service.IEditorManager;
 
 public class SchedulePublishDialog extends AbstractWorkflowDialogRestyling<Node> {
 
-    public SchedulePublishDialog(IWorkflowInvoker action, JcrNodeModel nodeModel, IModel<Date> dateModel,
-            IEditorManager editorMgr) {
-        super(nodeModel, action);
+    public SchedulePublishDialog(final IWorkflowInvoker invoker, final IModel<Node> nodeModel,
+                                 final IModel<Date> dateModel, final IEditorManager editorMgr) {
+        super(invoker, nodeModel);
 
         setTitleKey("schedule-publish-title");
         setCssClass("hippo-workflow-dialog");

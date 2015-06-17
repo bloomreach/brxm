@@ -31,8 +31,9 @@ import org.hippoecm.frontend.service.IEditorManager;
 
 public class ScheduleDepublishDialog extends AbstractWorkflowDialogRestyling<Node> {
 
-    public ScheduleDepublishDialog(IWorkflowInvoker action, JcrNodeModel nodeModel, IModel<Date> dateModel, IEditorManager editorMgr) {
-        super(nodeModel, action);
+    public ScheduleDepublishDialog(IWorkflowInvoker invoker, JcrNodeModel nodeModel, IModel<Date> dateModel,
+                                   IEditorManager editorMgr) {
+        super(invoker, nodeModel);
 
         setTitleKey("schedule-depublish-title");
         setCssClass("hippo-workflow-dialog");

@@ -31,34 +31,21 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 
 public class DepublishDialog extends AbstractWorkflowDialogRestyling<WorkflowDescriptor> {
 
-    private IModel<String> title;
+    public DepublishDialog(final IWorkflowInvoker invoker, final WorkflowDescriptorModel workflowModel,
+                           final IModel<String> title, final IModel<String> notification,
+                           final IEditorManager editorMgr) {
+        super(invoker, workflowModel, title);
 
-    public DepublishDialog(IModel<String>title, IModel<String> message,
-            WorkflowDescriptorModel wdm, IWorkflowInvoker action, IEditorManager editorMgr) {
-        super(wdm, message, action);
-
+        setNotification(notification);
         setCssClass("hippo-workflow-dialog");
         setFocusOnOk();
 
-        this.title = title;
-
         try {
-            ReferringDocumentsProvider provider = new ReferringDocumentsProvider(new JcrNodeModel(wdm.getNode()));
+            ReferringDocumentsProvider provider = new ReferringDocumentsProvider(new JcrNodeModel(workflowModel.getNode()));
             MarkupContainer rdv = new ReferringDocumentsView("links", provider, editorMgr);
             add(rdv);
         } catch (RepositoryException e) {
             throw new WicketRuntimeException("No document node present", e);
         }
-    }
-
-    @Override
-    public IModel<String> getTitle() {
-        return title;
-    }
-
-    @Override
-    protected void onDetach() {
-        title.detach();
-        super.onDetach();
     }
 }

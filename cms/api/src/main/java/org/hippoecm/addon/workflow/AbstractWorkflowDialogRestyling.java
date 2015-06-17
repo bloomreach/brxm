@@ -32,23 +32,44 @@ public abstract class AbstractWorkflowDialogRestyling<T> extends Dialog<T> {
     private static Logger log = LoggerFactory.getLogger(AbstractWorkflowDialogRestyling.class);
 
     private final IWorkflowInvoker invoker;
+    private final IModel<String> titleModel;
+    private final Label notification;
 
-    public AbstractWorkflowDialogRestyling(IModel<T> model, IWorkflowInvoker invoker) {
-        this(model, null, invoker);
+    public AbstractWorkflowDialogRestyling(final IWorkflowInvoker invoker) {
+        this(invoker, null);
     }
 
-    public AbstractWorkflowDialogRestyling(IModel<T> model, IModel message, IWorkflowInvoker invoker) {
+    public AbstractWorkflowDialogRestyling(final IWorkflowInvoker invoker, final  IModel<T> model) {
+        this(invoker, model, null);
+    }
+
+    public AbstractWorkflowDialogRestyling(final IWorkflowInvoker invoker, final IModel<T> model,
+                                           final IModel<String> titleModel) {
         super(model);
+
+        this.titleModel = titleModel;
         this.invoker = invoker;
 
-        Label notification = new Label("notification");
-        if (message != null) {
-            notification.setDefaultModel(message);
-        } else {
-            notification.setVisible(false);
-        }
-        add(notification);
+        setCssClass("hippo-workflow-dialog");
+
+        notification = new Label("notification");
         notification.add(CssClass.append("notification"));
+        // Hide notification label by default until a model is set by calling #setNotification
+        notification.setVisible(false);
+        add(notification);
+    }
+
+    @Override
+    public IModel<String> getTitle() {
+        if (titleModel != null) {
+            return titleModel;
+        }
+        return super.getTitle();
+    }
+
+    public void setNotification(IModel<String> notificationModel) {
+        notification.setDefaultModel(notificationModel);
+        notification.setVisible(true);
     }
 
     @Override
@@ -62,5 +83,13 @@ public abstract class AbstractWorkflowDialogRestyling<T> extends Dialog<T> {
             log.error("Could not execute workflow.", e);
             error(e);
         }
+    }
+
+    @Override
+    protected void onDetach() {
+        if (titleModel != null) {
+            titleModel.detach();
+        }
+        super.onDetach();
     }
 }
