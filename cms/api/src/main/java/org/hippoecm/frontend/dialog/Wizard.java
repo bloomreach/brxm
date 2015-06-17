@@ -36,6 +36,14 @@ public class Wizard<T> extends AbstractWizard<T> {
     private String titleKey = "dialog.title";
     private IModel<?> titleModel;
 
+    public Wizard() {
+        this(null);
+    }
+
+    public Wizard(final IModel<T> model) {
+        super(model);
+    }
+
     @Override
     public IModel<String> getTitle() {
         return Model.of(getString(titleKey, titleModel, StringUtils.EMPTY));
