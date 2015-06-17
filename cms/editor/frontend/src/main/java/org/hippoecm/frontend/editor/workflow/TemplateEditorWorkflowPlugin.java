@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.editor.workflow;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeTypeManager;
@@ -100,33 +101,38 @@ public class TemplateEditorWorkflowPlugin extends RenderPlugin<WorkflowDescripto
 
             final String namespacePath = workflow.createNamespace(prefix, url);
             final String baseDocPath = namespacePath + "/basedocument";
-            final String baseDocTypeName = prefix + ":basedocument";
 
             if (!session.itemExists(baseDocPath)) {
                 throw new WorkflowException("Namespace created at " + namespacePath + " is missing a basedocument node");
             }
 
-            if (!typeManager.hasNodeType(baseDocTypeName)) {
-                final Node baseDocNode = session.getNode(baseDocPath);
-                final NodeTypeTemplate baseDocTemplate = typeManager.createNodeTypeTemplate();
-                baseDocTemplate.setName(baseDocTypeName);
+            final String baseDocTypeName = prefix + ":basedocument";
 
-                if (baseDocNode.hasNode(NODETYPE)) {
-                    Node draft = baseDocNode.getNode(NODETYPE);
-                    if (draft.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
-                        Value[] supers = draft.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
-                        String[] superStrings = new String[supers.length];
-                        for (int i = 0; i < supers.length; i++) {
-                            superStrings[i] = supers[i].getString();
-                        }
-                        baseDocTemplate.setDeclaredSuperTypeNames(superStrings);
-                    }
-                }
-                baseDocTemplate.setOrderableChildNodes(true);
-                typeManager.registerNodeType(baseDocTemplate, false);
+            if (!typeManager.hasNodeType(baseDocTypeName)) {
+                createNodeTypeTemplate(session, typeManager, baseDocPath, baseDocTypeName);
             }
 
             return null;
+        }
+
+        private void createNodeTypeTemplate(final Session session, final NodeTypeManager typeManager, final String baseDocPath, final String baseDocTypeName) throws RepositoryException {
+            final Node baseDocNode = session.getNode(baseDocPath);
+            final NodeTypeTemplate baseDocTemplate = typeManager.createNodeTypeTemplate();
+            baseDocTemplate.setName(baseDocTypeName);
+
+            if (baseDocNode.hasNode(NODETYPE)) {
+                Node draft = baseDocNode.getNode(NODETYPE);
+                if (draft.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
+                    Value[] supers = draft.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
+                    String[] superStrings = new String[supers.length];
+                    for (int i = 0; i < supers.length; i++) {
+                        superStrings[i] = supers[i].getString();
+                    }
+                    baseDocTemplate.setDeclaredSuperTypeNames(superStrings);
+                }
+            }
+            baseDocTemplate.setOrderableChildNodes(true);
+            typeManager.registerNodeType(baseDocTemplate, false);
         }
     }
 
