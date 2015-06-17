@@ -250,15 +250,27 @@
 }
 
 .channel-properties-value {
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: flex-end;
-  align-items: center;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-flex-wrap: nowrap;
+      -ms-flex-wrap: nowrap;
+          flex-wrap: nowrap;
+  -webkit-justify-content: flex-end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .channel-manager .channel-properties .channel-preview-name {
-  flex: 1 1 auto;
+  -webkit-flex: 1 1 auto;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
   display: block;
   max-width: 123px;
   overflow: hidden;
@@ -266,11 +278,15 @@
 }
 
 .channel-manager .channel-properties .channel-preview-image-wrapper {
-  flex: 1 1 auto;
+  -webkit-flex: 1 1 auto;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
 }
 
 .channel-manager .channel-properties .channel-remove-button {
-  flex: 0 0 10px;
+  -webkit-flex: 0 0 10px;
+      -ms-flex: 0 0 10px;
+          flex: 0 0 10px;
   margin: 0 4px;
   width: 10px;
   height: 10px;
@@ -581,7 +597,8 @@
   background: url(loading.gif) no-repeat center;
   -moz-opacity: 1;
   opacity: 1;
-  filter: none;
+  -webkit-filter: none;
+          filter: none;
 }
 
 #pageEditorIFrame .ext-el-mask {
