@@ -42,8 +42,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
-import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -216,19 +215,25 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                                 }
                                 StringResourceModel messageModel = new StringResourceModel(deleteAllowed ? "delete-message-extended" : "delete-message-denied",
                                         FolderWorkflowPlugin.this, null, folderName);
-                                return new DeleteDialog(messageModel, this, deleteAllowed);
+                                return new DeleteDialog(this, messageModel, deleteAllowed);
 
                             } catch (RepositoryException e) {
                                 log.error("Unable to retrieve number of child nodes from node, folder delete cancelled", e);
                             }
                         }
-                        return new DeleteDialog(new StringResourceModel("delete-message-error", FolderWorkflowPlugin.this, null), this, false);
+
+                        final StringResourceModel notificationModel = new StringResourceModel("delete-message-error",
+                                FolderWorkflowPlugin.this, null);
+                        return new DeleteDialog(this, notificationModel, false);
                     }
 
-                    class DeleteDialog extends AbstractWorkflowDialog {
+                    class DeleteDialog extends AbstractWorkflowDialogRestyling {
 
-                        public DeleteDialog(IModel messageModel, IWorkflowInvoker invoker, boolean deleteAllowed) {
-                            super(null, messageModel, invoker);
+                        public DeleteDialog(IWorkflowInvoker invoker, IModel<String> notification, boolean deleteAllowed) {
+                            super(invoker);
+
+                            setSize(DialogConstants.SMALL_AUTO);
+                            setNotification(notification);
 
                             if (deleteAllowed) {
                                 setFocusOnOk();
@@ -241,11 +246,6 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                         @Override
                         public IModel<String> getTitle() {
                             return new StringResourceModel("delete-title", FolderWorkflowPlugin.this, null);
-                        }
-
-                        @Override
-                        public IValueMap getProperties() {
-                            return DialogConstants.SMALL;
                         }
                     }
 
