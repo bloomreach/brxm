@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,9 +15,11 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <span wicket:id="message">There are 7 modified documents</span>
+    <div class="hippo-referring-documents-header">
+      <div class="hippo-referring-documents-label" wicket:id="message">There are 7 modified documents</div>
+    </div>
     <div class="hippo-referring-documents-list">
-      <table class="hippo-list-details hippo-list-documents" wicket:id="datatable">[table]</table>
+      <table class="hippo-list-documents" wicket:id="datatable">[table]</table>
     </div>
   </wicket:panel>
 </html>

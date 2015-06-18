@@ -250,6 +250,40 @@
   margin-right: 8px;
 }
 
+.hippo-dialog-center {
+  .hippo-referring-documents {
+    padding: 0;
+    background: white;
+
+    .hippo-referring-documents-header {
+      display: flex;
+      align-items: center;
+      background: @lightest-shade;
+
+      .hippo-referring-documents-label {
+        flex: 1 1 auto;
+        padding: 16px;
+        line-height: 16px;
+        height: 16px;
+      }
+    }
+
+    .hippo-referring-documents-list {
+      flex: 1 0 auto;
+
+      th,
+      td {
+        padding: 16px;
+      }
+
+      tbody > tr {
+        // use 100% width
+        display: inherit;
+      }
+    }
+  }
+}
+
 .hippo-workflow-dialog {
   .hippo-dialog-center {
     overflow: hidden;

@@ -40,9 +40,7 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.string.Strings;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
-import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -584,11 +582,14 @@ public class TabsPlugin extends RenderPlugin {
 
     }
 
-    private class CloseAllDialog extends AbstractDialog {
+    private class CloseAllDialog extends Dialog {
 
         public CloseAllDialog(final List<Tab> changedTabs, final Tab ignoredTab) {
             super();
+
             setOkVisible(false);
+            setSize(DialogConstants.LARGE_AUTO);
+            setTitleKey("title");
 
             AjaxButton button = new AjaxButton(DialogConstants.BUTTON) {
                 @Override
@@ -651,8 +652,6 @@ public class TabsPlugin extends RenderPlugin {
 
             addButton(button);
 
-
-
             ModifiedDocumentsProvider provider = new ModifiedDocumentsProvider(getTabModelList(changedTabs));
             add(new ModifiedDocumentsView("modified-docs-view", provider));
         }
@@ -674,15 +673,6 @@ public class TabsPlugin extends RenderPlugin {
                 }
             }
             return tabModels;
-        }
-
-        public IModel<String> getTitle() {
-            return new StringResourceModel("title", this, null);
-        }
-
-        @Override
-        public IValueMap getProperties() {
-            return DialogConstants.MEDIUM;
         }
     }
 
