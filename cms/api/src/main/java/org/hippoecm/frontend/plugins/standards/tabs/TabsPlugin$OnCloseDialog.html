@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,7 +15,12 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <span wicket:id="label">Document has been modified.  Save changes?</span>
-    <span wicket:id="exception">[if exception happens, here]</span>
+    <div class="hippo-dialog-body">
+      <div class="hippo-dialog-message">
+        <span wicket:id="icon"/>
+        <span wicket:id="label">Document has been modified.  Save changes?</span>
+      </div>
+      <div wicket:id="exception">[if exception happens, here]</div>
+    </div>
   </wicket:extend>
 </html>

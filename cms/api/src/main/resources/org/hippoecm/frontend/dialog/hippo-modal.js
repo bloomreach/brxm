@@ -23,7 +23,7 @@
  */
 (function () {
     "use strict";
-    var oldWindowInitialize, oldWindowBindInit, oldWindowBindClean;
+    var oldWindowInitialize, oldWindowBindInit, oldWindowBindClean, oldShow;
 
     oldWindowInitialize = Wicket.Window.prototype.initialize;
     Wicket.Window.prototype.initialize = function() {
@@ -91,6 +91,14 @@
         this.event.beforeInitScreen.unsubscribeAll();
         this.event.afterInitScreen.unsubscribeAll();
         this.event.resizeFullScreen.unsubscribeAll();
+    };
+
+    oldShow  = Wicket.Window.prototype.show;
+    Wicket.Window.prototype.show = function() {
+      oldShow.apply(this, arguments);
+      if (this.settings.title !== null) {
+        this.captionText.setAttribute('title', this.settings.title);
+      }
     };
 
     Wicket.Window.prototype.toggleFullscreen = function() {

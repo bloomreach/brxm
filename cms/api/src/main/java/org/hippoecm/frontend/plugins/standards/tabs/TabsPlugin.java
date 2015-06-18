@@ -43,6 +43,7 @@ import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -63,6 +64,7 @@ import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.skin.Icon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -684,7 +686,7 @@ public class TabsPlugin extends RenderPlugin {
         }
     }
 
-    private static class OnCloseDialog extends AbstractDialog<Node> {
+    private static class OnCloseDialog extends Dialog<Node> {
         public interface Actions extends IClusterable {
 
             void save();
@@ -698,12 +700,10 @@ public class TabsPlugin extends RenderPlugin {
             super(model);
 
             setOkVisible(false);
+            setSize(DialogConstants.SMALL_AUTO);
 
-            if (isValid) {
-                add(new Label("label", new ResourceModel("message")));
-            } else {
-                add(new Label("label", new ResourceModel("invalid")));
-            }
+            add(new Label("label", new ResourceModel(isValid ? "message" : "invalid")));
+            add(HippoIcon.fromSprite("icon", Icon.EXCLAMATION_TRIANGLE, IconSize.L));
 
             final Label exceptionLabel = new Label("exception", "");
             exceptionLabel.setOutputMarkupId(true);
@@ -753,15 +753,10 @@ public class TabsPlugin extends RenderPlugin {
             addButton(button);
         }
 
+        @Override
         public IModel<String> getTitle() {
             return new StringResourceModel("close-document", this, null, "Close {0}",
                         new PropertyModel(getModel(), "name"));
         }
-
-        @Override
-        public IValueMap getProperties() {
-            return DialogConstants.SMALL;
-        }
-
     }
 }

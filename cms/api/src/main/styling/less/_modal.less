@@ -70,7 +70,14 @@
       font-size: @modal-header-font-size;
       margin: 0;
       padding-left: @modal-header-padding;
+      padding-right: @modal-header-padding * 2;
       line-height: @modal-header-height;
+      box-sizing: border-box;
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
     }
   }
 
@@ -236,6 +243,11 @@
       }
     }
   }
+}
+
+.hippo-dialog-message svg {
+  float: left;
+  margin-right: 8px;
 }
 
 .hippo-workflow-dialog {
