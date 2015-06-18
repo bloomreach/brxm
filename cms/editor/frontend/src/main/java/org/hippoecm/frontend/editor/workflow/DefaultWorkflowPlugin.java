@@ -32,8 +32,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
-import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
 import org.hippoecm.addon.workflow.DestinationDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -529,17 +528,17 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         whereUsedAction.setVisible(!Boolean.FALSE.equals(workflowHints.get("status")));
     }
 
-    public class RenameDocumentDialog extends AbstractWorkflowDialog<WorkflowDescriptor> {
+    public class RenameDocumentDialog extends AbstractWorkflowDialogRestyling<Void> {
 
-        private final IModel<String> title;
         private final IModel<String> nameModel;
         private final IModel<String> uriModel;
         private final NameUriField nameUriContainer;
 
         public RenameDocumentDialog(StdWorkflow action, IModel<String> title) {
-            super(DefaultWorkflowPlugin.this.getModel(), action);
+            super(action, null, title);
 
-            this.title = title;
+            setSize(DialogConstants.MEDIUM_AUTO);
+
             nameModel = PropertyModel.of(action, "targetName");
             uriModel = PropertyModel.of(action, "uriName");
 
@@ -554,16 +553,6 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             final String originalTargetName = nameModel.getObject();
             final String originalUriName = uriModel.getObject();
             add(nameUriContainer = new NameUriField("name-url", codecModel, originalUriName, originalTargetName));
-        }
-
-        @Override
-        public IModel<String> getTitle() {
-            return title;
-        }
-
-        @Override
-        public IValueMap getProperties() {
-            return DialogConstants.MEDIUM;
         }
 
         @Override

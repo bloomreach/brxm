@@ -21,8 +21,7 @@ import java.util.Map;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugins.standardworkflow.RenameMessage;
@@ -31,21 +30,17 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.StringCodec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public  class RenameDocumentDialog extends AbstractWorkflowDialog<Void> {
-    private static Logger log = LoggerFactory.getLogger(RenameDocumentDialog.class);
+public  class RenameDocumentDialog extends AbstractWorkflowDialogRestyling<Void> {
 
-    private final IModel<String> title;
     private final NameUriField nameUriContainer;
     private final PropertyModel<String> nameModel;
     private final PropertyModel<String> uriModel;
 
     public RenameDocumentDialog(StdWorkflow action, IModel<String> title, IModel<StringCodec> codecModel) {
-        super(null, action);
+        super(action, null, title);
 
-        this.title = title;
+        setSize(DialogConstants.MEDIUM_AUTO);
 
         nameModel = new PropertyModel<>(action, "targetName");
         uriModel = new PropertyModel<>(action, "uriName");
@@ -67,16 +62,6 @@ public  class RenameDocumentDialog extends AbstractWorkflowDialog<Void> {
         if (message.shouldShow()) {
             warn(message.forDocument());
         }
-    }
-
-    @Override
-    public IModel<String> getTitle() {
-        return title;
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.MEDIUM;
     }
 
     @Override

@@ -20,8 +20,7 @@ import java.util.Locale;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.DialogConstants;
@@ -29,21 +28,19 @@ import org.hippoecm.frontend.plugins.standardworkflow.validators.RenameDocumentV
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.StringCodec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentArguments> {
-    private static Logger log = LoggerFactory.getLogger(RenameDocumentDialog.class);
+public class RenameDocumentDialog extends AbstractWorkflowDialogRestyling<RenameDocumentArguments> {
 
-    private final IModel<String> title;
     private final NameUriField nameUriContainer;
     private final IModel<StringCodec> nodeNameCodecModel;
 
     public RenameDocumentDialog(RenameDocumentArguments renameDocumentModel, IModel<String> title,
                                 IWorkflowInvoker invoker, IModel<StringCodec> nodeNameCodec, final WorkflowDescriptorModel workflowDescriptorModel) {
-        super(Model.of(renameDocumentModel), invoker);
-        this.title = title;
+        super(invoker, Model.of(renameDocumentModel), title);
+
         this.nodeNameCodecModel = nodeNameCodec;
+
+        setSize(DialogConstants.MEDIUM_AUTO);
 
         final String originalUriName = renameDocumentModel.getUriName();
         final String originalTargetName = renameDocumentModel.getTargetName();
@@ -62,16 +59,6 @@ public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentA
                 error(new StringResourceModel(key, RenameDocumentDialog.this, null, parameters).getObject());
             }
         });
-    }
-
-    @Override
-    public IModel<String> getTitle() {
-        return title;
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.MEDIUM;
     }
 
     @Override

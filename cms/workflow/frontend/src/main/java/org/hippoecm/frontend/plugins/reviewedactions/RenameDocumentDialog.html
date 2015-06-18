@@ -15,24 +15,24 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <table class="hippo-window-form">
-        <wicket:container wicket:id="name-url">
-            <tr>
-                <td><wicket:message key="name-label">Name</wicket:message></td>
-                <td>
-                    <input type="text" wicket:id="name" class="hippo-form-input"/>
-                </td>
-            </tr>
-            <tr>
-                <td width="75"><wicket:message key="url-label">Name</wicket:message></td>
-                <td>
-                    <input wicket:id="url" class="hippo-form-input"/>
-                    <a wicket:id="uriAction" class="action">
-                        <span wicket:id="uriActionLabel">[ UriActionLabel ]</span>
-                    </a>
-                </td>
-            </tr>
-        </wicket:container>
-    </table>
+    <div class="hippo-dialog-body">
+      <wicket:container wicket:id="name-url">
+        <div class="label">
+          <wicket:message key="name-label">Name</wicket:message>
+        </div>
+        <div class="input">
+          <input type="text" wicket:id="name" class="hippo-form-input"/>
+        </div>
+        <div class="label">
+          <wicket:message key="url-label">Name</wicket:message>
+        </div>
+        <div class="input input-action-button">
+          <input wicket:id="url"/>
+          <a wicket:id="uriAction" class="action">
+            <span wicket:id="uriActionLabel">[ UriActionLabel ]</span>
+          </a>
+        </div>
+      </wicket:container>
+    </div>
   </wicket:extend>
 </html>
