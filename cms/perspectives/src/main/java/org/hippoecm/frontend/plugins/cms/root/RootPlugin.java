@@ -76,6 +76,7 @@ public class RootPlugin extends TabsPlugin {
 
     private static final String USAGE_STATISTICS_JS = "usage-statistics.js";
     private static final String LOGIN_LOGOUT_EVENTS_JS = "login-logout-events.js";
+    private static final String REMOVE_EXT_BROWSER_CLASSES = "remove-ext-browser-classes.js";
 
     private boolean rendered = false;
     private final ExtWidgetRegistry extWidgetRegistry;
@@ -232,7 +233,14 @@ public class RootPlugin extends TabsPlugin {
         if (UsageStatisticsSettings.get().isEnabled()) {
             response.render(createUsageStatisticsReporter());
         }
+        response.render(createRemoveExtBrowserClassesScript());
         response.render(createLoginLogoutEvents());
+    }
+
+    private HeaderItem createRemoveExtBrowserClassesScript() {
+        final PackageTextTemplate removeScriptTemplate = new PackageTextTemplate(RootPlugin.class, REMOVE_EXT_BROWSER_CLASSES);
+        final String javaScript = removeScriptTemplate.asString();
+        return OnLoadHeaderItem.forScript(javaScript);
     }
 
     private HeaderItem createUsageStatisticsReporter() {

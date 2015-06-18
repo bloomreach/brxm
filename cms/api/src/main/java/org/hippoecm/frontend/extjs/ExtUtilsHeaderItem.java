@@ -25,7 +25,7 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.wicketstuff.js.ext.util.ExtResourcesHeaderItem;
 
-public class ExtUtilsHeaderItem extends HeaderItem {
+public class  ExtUtilsHeaderItem extends HeaderItem {
 
     private static final JavaScriptResourceReference EXT_IFRAME_PANEL = new JavaScriptResourceReference(ExtWidgetRegistry.class, "IFramePanel.js");
 

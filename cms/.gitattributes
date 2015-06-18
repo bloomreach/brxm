@@ -2310,6 +2310,7 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/document-
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/document-48.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/images/document-list-back.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/root/hippo-cms.ico -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/root/remove-ext-browser-classes.js -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/root/usage-statistics.js -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/TestSuite.java -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/admin/SearchableDataProviderTest.java -text
