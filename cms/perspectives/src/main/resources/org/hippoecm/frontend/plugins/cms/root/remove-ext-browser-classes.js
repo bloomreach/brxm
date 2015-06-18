@@ -17,5 +17,5 @@
 (function ($) {
   'use strict';
 
-  $('body').removeClass('ext-ie6, ext-ie7, ext-ie8, ext-ie9');
+  $('body').removeClass('ext-ie6 ext-ie7 ext-ie8 ext-ie9');
 })(jQuery);
