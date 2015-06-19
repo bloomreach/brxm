@@ -494,19 +494,25 @@
 
     _addComponent: function (xtype, record, defaultValue, initialValue, displayValue) {
 
-      function commitValueOrDefault (field) {
+      function containsInvalidEmptyDate (field) {
+        return field.isXType('datefield', true) && field.getValue() === '' && field.defaultValue !== '';
+      }
+
+      function getNewValue(field) {
         var newValue = field.getValue();
         if (!Ext.isDefined(newValue) || newValue === '') {
           newValue = field.defaultValue;
         } else if (newValue instanceof Date) {
           newValue = newValue.format(field.format);
         }
-        record.set('value', newValue);
-        record.commit();
+        return newValue;
       }
 
-      function containsInvalidEmptyDate (field) {
-        return field.isXType('datefield', true) && field.getValue() === '' && field.defaultValue !== '';
+      function commitValueOrDefault (field) {
+        if (field.isValid() && !containsInvalidEmptyDate(field)) {
+          record.set('value', getNewValue(field));
+          record.commit();
+        }
       }
 
       function updateValue (field) {
@@ -534,7 +540,7 @@
             select: commitValueOrDefault,
             valid: updateValue,
             specialkey: function (field, event) {
-              if (event.getKey() === event.ENTER && field.isValid() && !containsInvalidEmptyDate(field)) {
+              if (event.getKey() === event.ENTER) {
                 commitValueOrDefault(field);
               }
             },
