@@ -24,7 +24,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.validation.IFormValidator;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
@@ -32,6 +31,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.editor.layout.ILayoutDescriptor;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
+import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 
 public class SelectLayoutStep extends WizardStep {
@@ -75,7 +75,7 @@ public class SelectLayoutStep extends WizardStep {
                     }
                 };
                 ILayoutDescriptor descriptor = layoutProvider.getDescriptor(layout);
-                link.add(new Image("preview", descriptor.getIcon()));
+                link.add(new CachingImage("preview", descriptor.getIcon()));
                 link.add(new Label("layout", descriptor.getName()));
                 item.add(link);
 
