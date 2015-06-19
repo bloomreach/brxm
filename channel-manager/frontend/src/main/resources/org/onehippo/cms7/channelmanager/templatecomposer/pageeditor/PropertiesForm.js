@@ -494,10 +494,6 @@
 
     _addComponent: function (xtype, record, defaultValue, initialValue, displayValue) {
 
-      function containsInvalidEmptyDate (field) {
-        return field.isXType('datefield', true) && field.getValue() === '' && field.defaultValue !== '';
-      }
-
       function getNewValue(field) {
         var newValue = field.getValue();
         if (!Ext.isDefined(newValue) || newValue === '') {
@@ -509,7 +505,7 @@
       }
 
       function commitValueOrDefault (field) {
-        if (field.isValid() && !containsInvalidEmptyDate(field)) {
+        if (field.isValid()) {
           record.set('value', getNewValue(field));
           record.commit();
         }
@@ -519,9 +515,6 @@
         var newValue = field.getValue();
         if (newValue instanceof Date) {
           newValue = newValue.format(field.format);
-        } else if (containsInvalidEmptyDate(field)) {
-          newValue = field.defaultValue;
-          field.setValue(field.defaultValue);
         }
         record.set('value', newValue);
       }
@@ -559,6 +552,7 @@
             propertyFieldConfig.listeners.check = commitValueOrDefault;
             break;
           case 'datefield':
+            propertyFieldConfig.editable = false;
             propertyFieldConfig.format = 'Y-m-d';
             break;
           case 'linkpicker':
