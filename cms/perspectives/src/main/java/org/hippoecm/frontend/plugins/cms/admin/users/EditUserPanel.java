@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
@@ -31,6 +30,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
+import org.apache.wicket.extensions.validation.validator.RfcCompliantEmailAddressValidator;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -39,7 +39,6 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.util.NodeIterable;
@@ -77,14 +76,14 @@ public class EditUserPanel extends AdminBreadCrumbPanel {
         form.add(fc);
 
         fc = new TextField("email");
-        fc.add(EmailAddressValidator.getInstance());
+        fc.add(RfcCompliantEmailAddressValidator.getInstance());
         fc.setRequired(false);
         form.add(fc);
 
         fc = new CheckBox("active");
         form.add(fc);
 
-        fc = new DropDownChoice<String>("provider", getAvailableSecurityProviderNames());
+        fc = new DropDownChoice<>("provider", getAvailableSecurityProviderNames());
         form.add(fc);
 
         // add a button that can be used to submit the form via ajax
