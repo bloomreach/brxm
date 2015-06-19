@@ -25,7 +25,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
-import org.apache.wicket.extensions.validation.validator.RfcCompliantEmailAddressValidator;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
@@ -105,19 +104,19 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
         form.setOutputMarkupId(true);
         add(form);
 
-        RequiredTextField<String> usernameField = new RequiredTextField<>("username");
+        RequiredTextField<String> usernameField = new RequiredTextField<String>("username");
         usernameField.add(StringValidator.minimumLength(2));
         usernameField.add(new UsernameValidator());
         form.add(usernameField);
 
-        TextField<String> firstNameField = new TextField<>("firstName");
+        TextField<String> firstNameField = new TextField<String>("firstName");
         form.add(firstNameField);
 
-        TextField<String> lastNameField = new TextField<>("lastName");
+        TextField<String> lastNameField = new TextField<String>("lastName");
         form.add(lastNameField);
 
-        TextField<String> emailField = new TextField<>("email");
-        emailField.add(RfcCompliantEmailAddressValidator.getInstance());
+        TextField<String> emailField = new TextField<String>("email");
+        emailField.add(EmailAddressValidator.getInstance());
         emailField.setRequired(false);
         form.add(emailField);
 
