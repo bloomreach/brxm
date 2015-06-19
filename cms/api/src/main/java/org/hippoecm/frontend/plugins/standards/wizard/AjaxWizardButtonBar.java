@@ -74,7 +74,7 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
         }
 
         @Override
-        public final boolean isEnabled() {
+        public final boolean isVisible() {
             return getWizardModel().isNextAvailable();
         }
 
@@ -111,7 +111,7 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
         }
 
         @Override
-        public final boolean isEnabled() {
+        public final boolean isVisible() {
             return getWizardModel().isPreviousAvailable();
         }
 
@@ -129,9 +129,9 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
         }
 
         @Override
-        public final boolean isEnabled() {
+        public final boolean isVisible() {
             IWizardStep activeStep = getWizardModel().getActiveStep();
-            return (activeStep != null && getWizardModel().isLastStep(activeStep));
+            return activeStep != null && getWizardModel().isLastStep(activeStep);
         }
 
         @Override
