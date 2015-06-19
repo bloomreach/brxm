@@ -489,7 +489,9 @@
       function commitValueOrDefault (field) {
         var newValue = field.getValue();
         if (typeof(newValue) === 'undefined' || (typeof(newValue) === 'string' && newValue.length === 0) || newValue === field.defaultValue) {
-          field.setValue(field.defaultValue);
+          newValue = field.defaultValue;
+        } else if (newValue instanceof Date) {
+          newValue = newValue.format(field.format);
         }
         record.set('value', newValue);
         record.commit();
@@ -497,6 +499,9 @@
 
       function updateValue (field) {
         var newValue = field.getValue();
+        if (newValue instanceof Date) {
+          newValue = newValue.format(field.format);
+        }
         record.set('value', newValue);
       }
 
@@ -514,7 +519,7 @@
             select: commitValueOrDefault,
             keyup: updateValue,
             specialkey: function (field, event) {
-              if (event.getKey() === event.ENTER) {
+              if (event.getKey() === event.ENTER && field.isValid()) {
                 commitValueOrDefault(field);
               }
             },
@@ -527,23 +532,28 @@
           }
         };
 
-      if (xtype === 'checkbox') {
-        propertyFieldConfig.checked = (initialValue === true || initialValue === 'true' || initialValue === '1' || String(initialValue).toLowerCase() === 'on');
-        propertyFieldConfig.listeners.check = commitValueOrDefault;
-      } else if (xtype === 'linkpicker') {
-        propertyFieldConfig.pickerConfig = {
-          configuration: record.get('pickerConfiguration'),
-          remembersLastVisited: record.get('pickerRemembersLastVisited'),
-          initialPath: record.get('pickerInitialPath'),
-          isRelativePath: record.get('pickerPathIsRelative'),
-          rootPath: record.get('pickerRootPath'),
-          selectableNodeTypes: record.get('pickerSelectableNodeTypes')
-        };
-      } else if (xtype === 'datefield') {
-        propertyFieldConfig.format = 'Y-m-d';
-      }
+        switch (xtype) {
+          case 'checkbox':
+            propertyFieldConfig.checked = (initialValue === true || initialValue === 'true' || initialValue === '1' || String(initialValue).toLowerCase() === 'on');
+            propertyFieldConfig.listeners.check = commitValueOrDefault;
+            break;
+          case 'datefield':
+            propertyFieldConfig.editable = false;
+            propertyFieldConfig.format = 'Y-m-d';
+            break;
+          case 'linkpicker':
+            propertyFieldConfig.pickerConfig = {
+              configuration: record.get('pickerConfiguration'),
+              remembersLastVisited: record.get('pickerRemembersLastVisited'),
+              initialPath: record.get('pickerInitialPath'),
+              isRelativePath: record.get('pickerPathIsRelative'),
+              rootPath: record.get('pickerRootPath'),
+              selectableNodeTypes: record.get('pickerSelectableNodeTypes')
+            };
+            break;
+        }
 
-      return this.add(propertyFieldConfig);
+        return this.add(propertyFieldConfig);
     },
 
     _loadException: function (proxy, type, actions, options, response) {
