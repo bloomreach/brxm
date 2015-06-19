@@ -28,6 +28,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -42,9 +43,8 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
@@ -53,7 +53,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.components.LanguageField;
-import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.frontend.plugins.standardworkflow.validators.AddDocumentValidator;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
@@ -63,6 +62,7 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.util.CodecUtils;
+import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -95,8 +95,8 @@ public class FolderShortcutPlugin extends RenderPlugin {
             public void onClick(AjaxRequestTarget target) {
                 IDialogService dialogService = getDialogService();
                 JcrNodeModel model = (JcrNodeModel) FolderShortcutPlugin.this.getDefaultModel();
-                dialogService.show(new FolderShortcutPlugin.Dialog(context, config, (model != null ? model.getNode()
-                        : null), defaultDropLocation));
+                Node node = model != null ? model.getNode() : null;
+                dialogService.show(new FolderShortcutPlugin.AddRootFolderDialog(context, config, node, defaultDropLocation));
             }
         };
         add(link);
@@ -204,8 +204,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 ILocaleProvider.class);
     }
 
-    public class Dialog extends AbstractDialog<WorkflowDescriptor> {
-        private static final long serialVersionUID = 1L;
+    public class AddRootFolderDialog extends Dialog<WorkflowDescriptor> {
 
         private String templateCategory = null;
         private String prototype = null;
@@ -226,8 +225,12 @@ public class FolderShortcutPlugin extends RenderPlugin {
         private WebMarkupContainer templateContainer;
         private LanguageField languageContainer;
 
-        public Dialog(IPluginContext context, IPluginConfig config, Node folder, String defaultFolder) {
+        public AddRootFolderDialog(IPluginContext context, IPluginConfig config, Node folder, String defaultFolder) {
             super();
+
+            setSize(DialogConstants.MEDIUM_AUTO);
+            setCssClass("add-root-folder-dialog");
+
             if (config.containsKey("option.first")) {
                 optionSelectFirst = config.getBoolean("option.first");
             }
@@ -286,7 +289,12 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 folder = null;
             }
 
-            add(new Label("message", Model.of("")));
+            add(new Label("message", Model.of("")) {
+                @Override
+                public boolean isVisible() {
+                    return StringUtils.isNotBlank(this.getDefaultModelObjectAsString());
+                }
+            });
 
             final IModel<StringCodec> codecModel = new LoadableDetachableModel<StringCodec>() {
                 @Override
@@ -323,7 +331,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 private static final long serialVersionUID = 1L;
 
                 public Object getDisplayValue(String object) {
-                    return new StringResourceModel(object, Dialog.this, null).getObject();
+                    return getString(object);
                 }
 
                 public String getIdValue(String object, int index) {
@@ -372,7 +380,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             add(new AddDocumentValidator(nameUriContainer, folderWorkflowDescriptorModel) {
                 @Override
                 protected void showError(final String key, final Object... parameters) {
-                    Dialog.this.error(new StringResourceModel(key, Dialog.this, null, parameters).getObject());
+                    AddRootFolderDialog.this.error(new StringResourceModel(key, AddRootFolderDialog.this, null, parameters).getObject());
                 }
             });
         }
@@ -505,11 +513,6 @@ public class FolderShortcutPlugin extends RenderPlugin {
             } catch (Exception ex) {
                 error(ex.getMessage());
             }
-        }
-
-        @Override
-        public IValueMap getProperties() {
-            return DialogConstants.MEDIUM;
         }
     }
 }

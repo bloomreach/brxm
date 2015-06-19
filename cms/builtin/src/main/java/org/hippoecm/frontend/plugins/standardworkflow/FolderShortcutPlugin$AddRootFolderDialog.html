@@ -15,51 +15,47 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <p class="hippo-window-status" wicket:id="message"></p>
-    <table class="hippo-window-form">
+    <div class="hippo-dialog-body">
+      <div class="hippo-window-status input-row" wicket:id="message"></div>
       <wicket:container wicket:id="name-url">
-      <tr>
-        <td>
-          <label><wicket:message key="name" /></label>
-        </td>
-		    <td>
-          <input wicket:id="name" class="hippo-form-input"/>
-        </td>
-      </tr>
-      <tr>
-        <td width="75">
-          <label><wicket:message key="url" /></label>
-        </td>
-        <td>
-          <input wicket:id="url" class="hippo-form-input"/>
+        <div class="label">
+          <wicket:message key="name">Name</wicket:message>
+        </div>
+        <div class="input">
+          <input type="text" wicket:id="name" class="hippo-form-input"/>
+        </div>
+        <div class="label">
+          <wicket:message key="url">Name</wicket:message>
+        </div>
+        <div class="input input-action-button">
+          <input wicket:id="url"/>
           <a wicket:id="uriAction" class="action">
-            <span wicket:id="uriActionLabel">edit</span>
+            <span wicket:id="uriActionLabel">[ UriActionLabel ]</span>
           </a>
-        </td>
-      </tr>
+        </div>
       </wicket:container>
-      <tr wicket:id="prototype">
-        <td>&nbsp;</td>
-        <td>
+
+      <div wicket:id="prototype" class="input-row">
+        <div class="input">
           <select class="hippo-form-select" wicket:id="select"></select>
-        </td>
-      </tr>
-      <tr wicket:id="template">
-        <td>
-          <label><span wicket:id="typelabel"/></label>
-        </td>
-        <td>
+        </div>
+      </div>
+      <div wicket:id="template" class="input-row">
+        <div class="label">
+          <label wicket:id="typelabel"></label>
+        </div>
+        <div class="input">
           <select class="hippo-form-select" wicket:id="select"></select>
-        </td>
-      </tr>
-      <tr wicket:id="language">
-        <td>
+        </div>
+      </div>
+      <div wicket:id="language" class="input-row">
+        <div class="label">
           <label><wicket:message key="language" /></label>
-        </td>
-        <td>
+        </div>
+        <div class="input">
           <select class="hippo-form-select" wicket:id="select"></select>
-        </td>
-      </tr>
-    </table>
+        </div>
+      </div>
+    </div>
   </wicket:extend>
 </html>

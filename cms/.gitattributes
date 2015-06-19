@@ -1267,11 +1267,11 @@ builtin/pom.xml svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/AddDocumentDialog.html -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/AddDocumentDialog_de.properties -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/AddDocumentDialog_fr.properties -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderShortcutPlugin$Dialog.html -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderShortcutPlugin$Dialog.properties -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderShortcutPlugin$Dialog_de.properties -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderShortcutPlugin$Dialog_fr.properties -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderShortcutPlugin$Dialog_nl.properties -text
+builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderShortcutPlugin$AddRootFolderDialog.html -text
+builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderShortcutPlugin$AddRootFolderDialog.properties -text
+builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderShortcutPlugin$AddRootFolderDialog_de.properties -text
+builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderShortcutPlugin$AddRootFolderDialog_fr.properties -text
+builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderShortcutPlugin$AddRootFolderDialog_nl.properties -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderShortcutPlugin_de.properties -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderShortcutPlugin_fr.properties -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderWorkflowPlugin.html -text
