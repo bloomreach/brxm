@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.cms.admin.SearchableDataProvider;
 import org.hippoecm.repository.api.HippoNodeType;
 
-
 public class UserDataProvider extends SearchableDataProvider<User> {
 
     private static final long serialVersionUID = 1L;
@@ -48,9 +47,20 @@ public class UserDataProvider extends SearchableDataProvider<User> {
                                 " contains(hipposys:email, '{}')"+
                             ")";
 
+    private static final String HIPPO_USERS_NODE_PATH = "/hippo:configuration/hippo:users";
+
     public UserDataProvider() {
-        super(QUERY_USER_LIST, QUERY_USER_LIST_TEMPLATE, "/hippo:configuration/hippo:users", HippoNodeType.NT_USER, HippoNodeType.NT_USERFOLDER);
+        super(QUERY_USER_LIST, QUERY_USER_LIST_TEMPLATE, HIPPO_USERS_NODE_PATH, HippoNodeType.NT_USER, HippoNodeType.NT_USERFOLDER);
         setSort("username", SortOrder.ASCENDING);
+    }
+
+    /**
+     * Support overriding the query statements in instantiation by subclasses.
+     */
+    protected UserDataProvider(String searchAllSqlStatement, String searchTermSqlStatementTemplate) {
+        super(searchAllSqlStatement, searchTermSqlStatementTemplate, HIPPO_USERS_NODE_PATH, HippoNodeType.NT_USER, HippoNodeType.NT_USERFOLDER);
+        setSort("username", SortOrder.ASCENDING);
+
     }
 
     @Override
@@ -65,7 +75,7 @@ public class UserDataProvider extends SearchableDataProvider<User> {
 
     @Override
     public Iterator<User> iterator(long first, long count) {
-        List<User> userList = new ArrayList<User>(getList());
+        List<User> userList = new ArrayList<>(getList());
 
         final Comparator<String> nullSafeComparator = new NullComparator(false);
 

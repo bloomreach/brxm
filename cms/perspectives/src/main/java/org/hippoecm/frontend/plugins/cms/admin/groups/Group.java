@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,11 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -28,14 +31,17 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import org.apache.commons.collections.SetUtils;
 import org.apache.jackrabbit.util.ISO9075;
-import org.apache.wicket.util.io.IClusterable;
 import org.apache.jackrabbit.util.Text;
 import org.apache.wicket.Session;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionBean;
 import org.hippoecm.frontend.plugins.cms.admin.users.DetachableUser;
+import org.hippoecm.frontend.plugins.cms.admin.users.SystemUserDataProvider;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
+import org.hippoecm.frontend.plugins.cms.admin.users.UserDataProvider;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -48,7 +54,6 @@ import org.slf4j.LoggerFactory;
 
 public class Group implements Comparable<Group>, IClusterable {
 
-
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(Group.class);
 
@@ -57,7 +62,6 @@ public class Group implements Comparable<Group>, IClusterable {
     private final static String QUERY_ALL = "select * from hipposys:group";
     private final static String QUERY_ALL_ROLES = "select * from hipposys:role";
     private final static String QUERY_GROUP = "SELECT * FROM hipposys:group WHERE fn:name()='{}'";
-
 
     private String path;
     private String groupname;
@@ -71,16 +75,16 @@ public class Group implements Comparable<Group>, IClusterable {
         return UserSession.get().getQueryManager();
     }
 
-
     public static boolean exists(String groupname) {
         return getGroup(groupname) != null;
     }
 
     public static List<Group> getLocalGroups() {
-        List<Group> groups = new ArrayList<Group>();
+        List<Group> groups = new ArrayList<>();
         NodeIterator iter;
         try {
-            @SuppressWarnings({"deprecation"}) Query query = getQueryManager().createQuery(QUERY_ALL_LOCAL, Query.SQL);
+            @SuppressWarnings({"deprecation"})
+            final Query query = getQueryManager().createQuery(QUERY_ALL_LOCAL, Query.SQL);
             iter = query.execute().getNodes();
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
@@ -102,10 +106,11 @@ public class Group implements Comparable<Group>, IClusterable {
 
 
     public static List<Group> getAllGroups() {
-        List<Group> groups = new ArrayList<Group>();
+        List<Group> groups = new ArrayList<>();
         NodeIterator iter;
         try {
-            @SuppressWarnings({"deprecation"}) Query query = getQueryManager().createQuery(QUERY_ALL, Query.SQL);
+            @SuppressWarnings({"deprecation"})
+            final Query query = getQueryManager().createQuery(QUERY_ALL, Query.SQL);
             iter = query.execute().getNodes();
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
@@ -136,7 +141,8 @@ public class Group implements Comparable<Group>, IClusterable {
         final String escapedGroupName = Text.escapeIllegalJcr10Chars(ISO9075.encode(NodeNameCodec.encode(groupName, true)));
         final String queryString = QUERY_GROUP.replace("{}", escapedGroupName);
         try {
-            @SuppressWarnings("deprecation") final Query query = getQueryManager().createQuery(queryString, Query.SQL);
+            @SuppressWarnings("deprecation")
+            final Query query = getQueryManager().createQuery(queryString, Query.SQL);
             final QueryResult queryResult = query.execute();
             final NodeIterator iterator = queryResult.getNodes();
             if (!iterator.hasNext()) {
@@ -155,10 +161,11 @@ public class Group implements Comparable<Group>, IClusterable {
     * @return A list of all roles defined in the system
     */
     public static List<String> getAllRoles() {
-        List<String> roles = new ArrayList<String>();
+        List<String> roles = new ArrayList<>();
         NodeIterator iter;
         try {
-            @SuppressWarnings({"deprecation"}) Query query = getQueryManager().createQuery(QUERY_ALL_ROLES, Query.SQL);
+            @SuppressWarnings({"deprecation"})
+            final Query query = getQueryManager().createQuery(QUERY_ALL_ROLES, Query.SQL);
             iter = query.execute().getNodes();
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
@@ -230,31 +237,35 @@ public class Group implements Comparable<Group>, IClusterable {
      * @throws RepositoryException
      */
     public List<String> getMembers() throws RepositoryException {
-        return getMembers(false);
+        return getMembers(true/**excludeSystemUsers*/);
     }
 
-    private List<String> getMembers(boolean includeSystemUsers) throws RepositoryException {
-        final List<String> members = new ArrayList<String>();
+    private List<String> getAllMembers() throws RepositoryException {
+        return getMembers(false/**excludeSystemUsers*/);
+    }
+
+    private List<String> getMembers(boolean excludeSystemUsers) throws RepositoryException {
+        final List<String> members = new ArrayList<>();
         if (node.hasProperty(HippoNodeType.HIPPO_MEMBERS)) {
-            final Value[] vals = node.getProperty(HippoNodeType.HIPPO_MEMBERS).getValues();
-            for (Value val : vals) {
-                final String username = val.getString();
-                if (!includeSystemUsers && User.userExists(username)) {
-                    final User user = new User(username);
-                    if (user.isSystemUser()) {
-                        continue;
-                    }
+            final Value[] storedMembers = node.getProperty(HippoNodeType.HIPPO_MEMBERS).getValues();
+
+            // do query for system users only when needed
+            final Set systemUserNames = excludeSystemUsers ? getSystemUserNames() : SetUtils.EMPTY_SET;
+
+            for (Value value : storedMembers) {
+                final String userName = value.getString();
+
+                if (excludeSystemUsers && systemUserNames.contains(userName)) {
+                    continue;
                 }
-                members.add(username);
+
+                members.add(userName);
             }
+
         }
         Collections.sort(members);
         return members;
 
-    }
-
-    private List<String> getAllMembers() throws RepositoryException {
-        return getMembers(true);
     }
 
     public List<DetachableUser> getMembersAsDetachableUsers() {
@@ -265,7 +276,7 @@ public class Group implements Comparable<Group>, IClusterable {
             throw new IllegalStateException("Cannot get members for this group", e);
         }
 
-        List<DetachableUser> users = new ArrayList<DetachableUser>();
+        List<DetachableUser> users = new ArrayList<>();
         for (String username : usernames) {
             if (!User.userExists(username)) {
                 continue;
@@ -278,15 +289,21 @@ public class Group implements Comparable<Group>, IClusterable {
         return users;
     }
 
+    private Set<String> getSystemUserNames() {
+        final UserDataProvider dataProvider = new SystemUserDataProvider();
+        final Iterator<User> iterator = dataProvider.iterator(0, dataProvider.size());
+        final Set<String> names = new HashSet<>();
+        while (iterator.hasNext()) {
+            final String systemUserName = iterator.next().getUsername();
+            names.add(systemUserName);
+        }
+        return names;
+    }
+
     //-------------------- persistence helpers ----------//
 
     /**
      * Wrapper needed for spi layer which doesn't know if a property exists or not
-     *
-     * @param node
-     * @param name
-     * @param value
-     * @throws RepositoryException
      */
     private void setOrRemoveStringProperty(Node node, String name, String value) throws RepositoryException {
         if (value == null && !node.hasProperty(name)) {
@@ -392,7 +409,7 @@ public class Group implements Comparable<Group>, IClusterable {
      */
     public List<Domain.AuthRole> getLinkedAuthenticatedRoles(final Domain domain) {
         Map<String, Domain.AuthRole> authRoles = domain.getAuthRoles();
-        List<Domain.AuthRole> roles = new ArrayList<Domain.AuthRole>();
+        List<Domain.AuthRole> roles = new ArrayList<>();
         for (Map.Entry<String, Domain.AuthRole> entry : authRoles.entrySet()) {
             Domain.AuthRole authenticationRole = entry.getValue();
             final boolean groupHasRole = authenticationRole.getGroupnames().contains(getGroupname());
