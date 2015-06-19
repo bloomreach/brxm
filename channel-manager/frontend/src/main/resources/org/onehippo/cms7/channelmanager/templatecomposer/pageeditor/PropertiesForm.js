@@ -269,10 +269,18 @@
 
       if (Ext.isEmpty(initialValue)) {
         sanitizedValue = field.getValue();
+
+        // 'datefield' converts the initial string values to Date objects while we want to store strings,
+        // so convert Dates back to strings.
+        if (Ext.isDate(sanitizedValue)) {
+          sanitizedValue = sanitizedValue.format(field.format);
+        }
+
         // Store the initial value of each field without triggering 'update' events. The value is stored
         // 'again' in the record to ensure that it can be compared against the initial value to determine
         // the dirty state of the field. Especially checkboxes can accept various values ('on', 'true',
-        // etc) that will all be returned as 'true' by getValue().
+        // etc) that will all be returned as 'true' by getValue(). Also dates have to be converted back
+        // to strings again.
         record.beginEdit();
         record.set('initialValue', sanitizedValue);
         record.set('value', sanitizedValue);
@@ -488,7 +496,7 @@
 
       function commitValueOrDefault (field) {
         var newValue = field.getValue();
-        if (typeof(newValue) === 'undefined' || (typeof(newValue) === 'string' && newValue.length === 0) || newValue === field.defaultValue) {
+        if (!Ext.isDefined(newValue) || newValue === '') {
           newValue = field.defaultValue;
         } else if (newValue instanceof Date) {
           newValue = newValue.format(field.format);
@@ -497,10 +505,17 @@
         record.commit();
       }
 
+      function containsInvalidEmptyDate (field) {
+        return field.isXType('datefield', true) && field.getValue() === '' && field.defaultValue !== '';
+      }
+
       function updateValue (field) {
         var newValue = field.getValue();
         if (newValue instanceof Date) {
           newValue = newValue.format(field.format);
+        } else if (containsInvalidEmptyDate(field)) {
+          newValue = field.defaultValue;
+          field.setValue(field.defaultValue);
         }
         record.set('value', newValue);
       }
@@ -517,9 +532,9 @@
           listeners: {
             change: commitValueOrDefault,
             select: commitValueOrDefault,
-            keyup: updateValue,
+            valid: updateValue,
             specialkey: function (field, event) {
-              if (event.getKey() === event.ENTER && field.isValid()) {
+              if (event.getKey() === event.ENTER && field.isValid() && !containsInvalidEmptyDate(field)) {
                 commitValueOrDefault(field);
               }
             },
@@ -538,7 +553,6 @@
             propertyFieldConfig.listeners.check = commitValueOrDefault;
             break;
           case 'datefield':
-            propertyFieldConfig.editable = false;
             propertyFieldConfig.format = 'Y-m-d';
             break;
           case 'linkpicker':
