@@ -392,7 +392,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             protected Dialog createRequestDialog() {
                 final IModel<String> docName = getDocumentName();
                 final IModel<String> message = new StringResourceModel("delete-message", DefaultWorkflowPlugin.this, null, docName);
-                final IModel<String> title = Model.of(getString("delete-title"));
+                final IModel<String> title = new StringResourceModel("delete-title", DefaultWorkflowPlugin.this, null, docName);
                 return new DeleteDialog(title, getModel(), message, this, getEditorManager());
             }
 
