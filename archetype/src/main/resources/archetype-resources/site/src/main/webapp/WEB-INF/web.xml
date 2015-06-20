@@ -152,12 +152,14 @@
     <!--
       'template_exception_handler' determines what Freemarker does when it encounters an error:
       - "ignore" lets Freemarker log an exception and then continue rendering.
-      - "debug" lets Freemarker log a stack trace, stops rendering and and re-throws the exception.
-      - "rethrow" (the default) does not let Freemarker log a stack trace, stops rendering and re-throws the exception.
-      The Freemarker error message in re-thrown exceptions will also be logged by the HstFreemarkerServlet.
+      - "debug" lets Freemarker log a stack trace, stops rendering and re-throws the exception.
+      - "rethrow" does not let Freemarker log a stack trace, stops rendering and re-throws the exception.
+      By default, if no template_exception_handler as above is configured, an extended "ignore" type
+      template exception handler will be configured which provides additional detail logging but like the
+      "ignore" handler will continue rendering.
       <init-param>
         <param-name>template_exception_handler</param-name>
-        <param-value>rethrow</param-value>
+        <param-value>debug</param-value>
       </init-param>
     -->
     <load-on-startup>200</load-on-startup>
