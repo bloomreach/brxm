@@ -16,6 +16,7 @@
 package org.hippoecm.hst.servlet;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -42,11 +43,13 @@ import org.slf4j.LoggerFactory;
 import freemarker.cache.MultiTemplateLoader;
 import freemarker.cache.TemplateLoader;
 import freemarker.core.Configurable;
+import freemarker.core.Environment;
 import freemarker.ext.jsp.TaglibFactory;
 import freemarker.ext.servlet.AllHttpScopesHashModel;
 import freemarker.ext.servlet.FreemarkerServlet;
 import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;
+import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
@@ -68,6 +71,13 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
 
     private static final String PROJECT_BASEDIR_PROPERTY = "project.basedir";
 
+    private static final TemplateExceptionHandler LOGGING_IGNORE_HANDLER = new TemplateExceptionHandler() {
+        @Override
+        public void handleTemplateException(final TemplateException te, final Environment env, final Writer out) throws TemplateException {
+            logFreemarkerException(te);
+        }
+    };
+
     @Override
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);
@@ -77,10 +87,9 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
         Configuration conf = super.getConfiguration();
 
         if (!hasInitParameter(Configurable.TEMPLATE_EXCEPTION_HANDLER_KEY)) {
-            log.info("No '" + Configurable.TEMPLATE_EXCEPTION_HANDLER_KEY + "' init param set. HST will instruct" +
-                    " the FreeMarker servlet to rethrow exceptions (TemplateExceptionHandler.RETHROW_HANDLER)" +
-                    " in case of template exceptions.");
-            conf.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+            log.info("No '" + Configurable.TEMPLATE_EXCEPTION_HANDLER_KEY + "' init param set. HST will setup " +
+                    " a default Freemarker TemplateExceptionHandler to log and *continue* (ignore) in case of template exceptions.");
+            conf.setTemplateExceptionHandler(LOGGING_IGNORE_HANDLER);
         }
 
         ServletContext servletContext = config.getServletContext();
