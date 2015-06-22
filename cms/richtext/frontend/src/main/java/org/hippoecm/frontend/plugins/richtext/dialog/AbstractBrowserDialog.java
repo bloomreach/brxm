@@ -112,6 +112,12 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
     }
 
     @Override
+    protected void onDetach() {
+        super.onDetach();
+        controller.detach();
+    }
+
+    @Override
     public void onClose() {
         controller.onClose();
         super.onClose();
