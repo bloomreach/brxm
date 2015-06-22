@@ -307,9 +307,15 @@ public class HstLinkTag extends ParamContainerTag {
             if (paramNameAndValue.length == 0) {
                 // skip
             } else if (paramNameAndValue.length == 1) {
-                parameters.put(paramNameAndValue[0], Collections.emptyList());
+                // don't set value null or empty list as that is interpreted as removal and then a developer cannot
+                // use path=/foo/bar?1.01.01 any more.
+                parameters.put(paramNameAndValue[0],  Lists.newArrayList(""));
             } else {
                 parameters.put(paramNameAndValue[0], Lists.newArrayList(paramNameAndValue[1]));
+            }
+            int positionInRemoveList = removedParametersList.indexOf(paramNameAndValue[0]);
+            if (positionInRemoveList > -1){
+                removedParametersList.remove(positionInRemoveList);
             }
         }
     }

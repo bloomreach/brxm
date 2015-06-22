@@ -33,7 +33,6 @@ import org.hippoecm.hst.mock.core.component.MockHstRequest;
 import org.hippoecm.hst.mock.core.component.MockHstResponse;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -52,11 +51,8 @@ public class TestHstLinkTag {
     private MockPageContext pageContext;
     private HstLinkTag linkTag;
     private HstLinkCreator linkCreator;
-    private final String testPath = "/css/style.css?foo=bar&page=3";
 
-
-    @Before
-    public void before() throws Exception {
+    private void init(final String testPath) {
         MockServletContext servletContext = new MockServletContext();
         HstRequest hstRequest = new MockHstRequest();
         HstResponse hstResponse = new MockHstResponse();
@@ -64,7 +60,6 @@ public class TestHstLinkTag {
         HttpServletResponse response = new MockHttpServletResponse();
         request.setAttribute(ContainerConstants.HST_REQUEST, hstRequest);
         request.setAttribute(ContainerConstants.HST_RESPONSE, hstResponse);
-
         final MockHstRequestContext mockHstRequestContext = new MockHstRequestContext();
         final ResolvedMount resolvedMount = EasyMock.createNiceMock(ResolvedMount.class);
         final HstContainerURLImpl baseURL = new HstContainerURLImpl();
@@ -91,10 +86,14 @@ public class TestHstLinkTag {
         linkTag.setVar("result");
         linkTag.setPath(testPath);
         linkTag.setPageContext(pageContext);
+
     }
 
     @Test
     public void test_hst_link_by_path_with_queryString_but_without_params_returns_with_queryString_xml_escaped() throws Exception {
+        final String testPath = "/css/style.css?foo=bar&page=3";
+        init(testPath);
+
         linkTag.doEndTag();
         String link = (String) pageContext.getAttribute("result");
         final String escapedExpectedResult = HstRequestUtils.escapeXml(testPath);
@@ -102,8 +101,11 @@ public class TestHstLinkTag {
         verify(linkCreator);
     }
 
+
     @Test
     public void test_hst_link_by_path_with_queryString_and_with_params_returns_merged() throws Exception {
+        final String testPath = "/css/style.css?foo=bar&page=3";
+        init(testPath);
         for (int i = 0; i < 2; i++) {
             ParamTag paramTag = new ParamTag();
             paramTag.setParent(linkTag);
@@ -121,6 +123,8 @@ public class TestHstLinkTag {
 
     @Test
     public void test_hst_link_by_path_with_queryString_and_with_overlapping_params_returns_merged_and_queryString_precedence() throws Exception {
+        final String testPath = "/css/style.css?foo=bar&page=3";
+        init(testPath);
         {
             ParamTag paramTag = new ParamTag();
             paramTag.setParent(linkTag);
@@ -147,7 +151,63 @@ public class TestHstLinkTag {
     }
 
     @Test
+    public void test_hst_link_by_path_with_queryString_and_with_overlapping_param_that_has_null_value_has_queryString_precedence() throws Exception {
+        final String testPath = "/css/style.css?foo=bar&page=3";
+        init(testPath);
+        {
+            ParamTag paramTag = new ParamTag();
+            paramTag.setParent(linkTag);
+            paramTag.setName("foo");
+            paramTag.setValue(null);
+            paramTag.doStartTag();
+            paramTag.doEndTag();
+        }
+
+        linkTag.doEndTag();
+        final String escapedExpectedResult = HstRequestUtils.escapeXml("/css/style.css?foo=bar&page=3");
+        String link = (String) pageContext.getAttribute("result");
+        assertEquals("query string and params should be escaped in URL and querystring has precedence for overlapping params",
+                escapedExpectedResult, link);
+        verify(linkCreator);
+    }
+
+    @Test
+    public void test_hst_link_by_path_with_queryString_with_null_value_get_is_sign_added() throws Exception {
+        final String testPath = "/css/style.css?foo&bar";
+        init(testPath);
+        linkTag.doEndTag();
+        final String escapedExpectedResult = HstRequestUtils.escapeXml("/css/style.css?foo=&bar=");
+        String link = (String) pageContext.getAttribute("result");
+        assertEquals("query string with empty values get '=' appended",
+                escapedExpectedResult, link);
+        verify(linkCreator);
+    }
+
+    @Test
+    public void test_hst_link_by_path_with_queryString_with_null_value_and_with_overlapping_param_that_has_non_null_value_has_queryString_precedence() throws Exception {
+        final String testPath = "/css/style.css?foo&page=3";
+        init(testPath);
+        {
+            ParamTag paramTag = new ParamTag();
+            paramTag.setParent(linkTag);
+            paramTag.setName("foo");
+            paramTag.setValue("lux");
+            paramTag.doStartTag();
+            paramTag.doEndTag();
+        }
+
+        linkTag.doEndTag();
+        final String escapedExpectedResult = HstRequestUtils.escapeXml("/css/style.css?foo=&page=3");
+        String link = (String) pageContext.getAttribute("result");
+        assertEquals("query string and params should be escaped in URL and querystring has precedence for overlapping params",
+                escapedExpectedResult, link);
+        verify(linkCreator);
+    }
+
+    @Test
     public void test_hst_link_by_path_with_queryString_unescaped() throws Exception {
+        final String testPath = "/css/style.css?foo=bar&page=3";
+        init(testPath);
         linkTag.setEscapeXml(false);
         linkTag.doEndTag();
         String link = (String) pageContext.getAttribute("result");
