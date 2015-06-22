@@ -296,7 +296,11 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 resourceContainerNode = node;
             }
             if (resourceNode == null && resourceContainerNode == null) {
-                return new HstLinkImpl(nodePath, mount, true);
+                if (nodePath.startsWith("/")) {
+                    return new HstLinkImpl(BINARIES_PREFIX + nodePath, mount, true);
+                } else {
+                    return new HstLinkImpl(BINARIES_PREFIX + "/" + nodePath, mount, true);
+                }
             }
 
             if (resourceNode != null) {
@@ -327,7 +331,11 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                                 if (pathInfo != null) {
                                     log.debug("Resource Container resolved for nodetype '{}' is able to create link for node '{}'.",
                                             container.getNodeType(), nodePath);
-                                    return new HstLinkImpl(BINARIES_PREFIX + pathInfo, mount, true);
+                                    if (pathInfo.startsWith("/")) {
+                                        return new HstLinkImpl(BINARIES_PREFIX + pathInfo, mount, true);
+                                    } else {
+                                        return new HstLinkImpl(BINARIES_PREFIX + "/" + pathInfo, mount, true);
+                                    }
                                 }
                             }
                             log.debug("resourceContainer for '{}' unable to create a HstLink for path '{}'. Try next", container.getNodeType(), nodePath);
@@ -338,7 +346,11 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         } catch (RepositoryException e) {
             log.debug("Could not find '{}' node for '{}'. Return plain path link.", HippoNodeType.NT_RESOURCE, nodePath);
         }
-        return new HstLinkImpl(nodePath, mount, true);
+        if (nodePath.startsWith("/")) {
+            return new HstLinkImpl(BINARIES_PREFIX + nodePath, mount, true);
+        } else {
+            return new HstLinkImpl(BINARIES_PREFIX + "/" + nodePath, mount, true);
+        }
     }
 
     @Override

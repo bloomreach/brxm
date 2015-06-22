@@ -832,6 +832,7 @@ components/core/src/test/java/org/hippoecm/hst/core/jcr/LazySessionDelegatingRep
 components/core/src/test/java/org/hippoecm/hst/core/jcr/SessionSecurityDelegationIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/AbstractHstLinkRewritingIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/DocumentParamsScannerTest.java -text
+components/core/src/test/java/org/hippoecm/hst/core/linking/HstBinariesLinkRewritingIT.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstContainerResourceLinkRewritingIT.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkAllRewritingIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkForCmsRequestIT.java -text
