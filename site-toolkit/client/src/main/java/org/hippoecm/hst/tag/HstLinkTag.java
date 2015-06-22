@@ -18,6 +18,7 @@ package org.hippoecm.hst.tag;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,9 @@ import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import com.google.common.collect.Lists;
+
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -224,7 +228,14 @@ public class HstLinkTag extends ParamContainerTag {
             }
 
             if (link == null && path != null) {
-                link = reqContext.getHstLinkCreator().create(path, mount);
+                String pathInfo;
+                if (path.contains("?")) {
+                    mergeParameters(StringUtils.substringAfter(path, "?"), parametersMap);
+                    pathInfo  = StringUtils.substringBefore(path, "?");
+                } else {
+                    pathInfo = path;
+                }
+                link = reqContext.getHstLinkCreator().create(pathInfo, mount);
             }
 
             if(link == null && this.siteMapItemRefId != null) {
@@ -286,6 +297,20 @@ public class HstLinkTag extends ParamContainerTag {
             return EVAL_PAGE;
         } finally {
             cleanup();
+        }
+    }
+
+    private void mergeParameters(final String queryString, final Map<String, List<String>> parameters) {
+        String[] paramPairs = queryString.split("&");
+        for (String paramPair : paramPairs) {
+            String[] paramNameAndValue = paramPair.split("=");
+            if (paramNameAndValue.length == 0) {
+                // skip
+            } else if (paramNameAndValue.length == 1) {
+                parameters.put(paramNameAndValue[0], Collections.emptyList());
+            } else {
+                parameters.put(paramNameAndValue[0], Lists.newArrayList(paramNameAndValue[1]));
+            }
         }
     }
 
@@ -482,8 +507,8 @@ public class HstLinkTag extends ParamContainerTag {
        this.fallback = fallback;
     }
     
-    private Map<String, String[]> combineParametersMap(Map<String, List<String>> parametersMap,
-            Map<String, String[]> currentRequestParameterMap) {
+    private Map<String, String[]> combineParametersMap(final Map<String, List<String>> parametersMap,
+                                                       final Map<String, String[]> currentRequestParameterMap) {
         if((parametersMap == null || parametersMap.isEmpty()) && (currentRequestParameterMap == null || currentRequestParameterMap.isEmpty())) {
            // no params at all
             return null;
