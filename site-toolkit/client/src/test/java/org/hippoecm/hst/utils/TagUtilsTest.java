@@ -74,7 +74,7 @@ public class TagUtilsTest {
     public void testGetQueryString_with_null_values() throws UnsupportedEncodingException {
         final Map<String, List<String>> params = ImmutableMap.<String, List<String>>builder()
                 .put("A", asList(null, "X", null, "Y"))
-                .put("B", new ArrayList<String>())
+                .put("B", new ArrayList<>())
                 .put("C", asList("P", null, "Q", null, null))
                 .build();
         final List<String> removed = asList("D", "E");
@@ -97,7 +97,7 @@ public class TagUtilsTest {
     public void testGetQueryString_with_all_params_removed() throws UnsupportedEncodingException {
         final Map<String, List<String>> params = ImmutableMap.<String, List<String>>builder()
                 .put("A", asList("X", "Y"))
-                .put("B", new ArrayList<String>())
+                .put("B", new ArrayList<>())
                 .put("C", asList("P", null, "Q"))
                 .build();
         final List<String> removed = asList("A", "B", "C", "D", "E");
@@ -108,9 +108,9 @@ public class TagUtilsTest {
 
     @Test
     public void testGetQueryString_with_empty_param_values() throws UnsupportedEncodingException {
-        final Map<String, List<String>> params = new HashMap<String, List<String>>();
+        final Map<String, List<String>> params = new HashMap<>();
         params.put("A", null);
-        params.put("B", new ArrayList<String>());
+        params.put("B", new ArrayList<>());
         params.put("C", asList("X"));
         final List<String> removed = Collections.emptyList();
 
