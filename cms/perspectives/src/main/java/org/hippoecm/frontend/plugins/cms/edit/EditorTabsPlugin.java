@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugins.cms.edit;
 import java.util.List;
 
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AjaxEventBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -42,9 +44,24 @@ public class EditorTabsPlugin extends TabsPlugin {
 
             @Override
             protected WebMarkupContainer newPanelContainer(final String id) {
-                return new Form(id);
+                final Form form = new Form(id);
+                // prevent the form submit when hitting enter key at input fields
+                form.add(new PreventDefaultFormSubmitBehavior());
+                return form;
             }
         };
     }
 
+
+    private static class PreventDefaultFormSubmitBehavior extends AjaxEventBehavior {
+
+        public PreventDefaultFormSubmitBehavior() {
+            super("onsubmit");
+        }
+
+        @Override
+        protected void onEvent(final AjaxRequestTarget target) {
+            // do nothing
+        }
+    }
 }
