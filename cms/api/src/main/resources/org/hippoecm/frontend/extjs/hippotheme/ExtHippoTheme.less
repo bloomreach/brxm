@@ -616,9 +616,7 @@ textarea.x-form-focus,
 }
 
 .x-grid3-row-over {
-  border-color: #ddd;
-  background-color: #fff6e0;
-  /* background-image:url(images/grid/row-over.gif); */
+  cursor: pointer;
 }
 
 .x-grid3-resize-proxy {
@@ -693,9 +691,10 @@ td.grid-hd-group-cell {
 }
 
 .x-grid3-row-selected {
-  background-color: #FFE29A;
+  background-color: @primary !important;
+  color: @white;
   background-image: none;
-  border-color: #FFE29A;
+  border-color: @primary;
 }
 
 .x-grid3-cell-selected {
