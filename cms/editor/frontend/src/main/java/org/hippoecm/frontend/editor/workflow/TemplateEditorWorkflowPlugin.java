@@ -168,14 +168,14 @@ public class TemplateEditorWorkflowPlugin extends RenderPlugin<WorkflowDescripto
             final Model<String> prefixLabel = Model.of(getString("prefix"));
             final TextFieldWidget prefixField = new RequiredTextFieldWidget("prefix", prefixModel, prefixLabel);
 
-            prefixField.getFocusComponent().add(NamespaceValidator.createNameValidator());
+            prefixField.getFormComponent().add(NamespaceValidator.createNameValidator());
             add(prefixField);
 
             final PropertyModel<String> urlModel = PropertyModel.of(namespaceModel, "url");
             final Model<String> urlLabel = Model.of(getString("url"));
             final TextFieldWidget urlField = new RequiredTextFieldWidget("url", urlModel, urlLabel);
 
-            urlField.getFocusComponent().add(NamespaceValidator.createUrlValidator());
+            urlField.getFormComponent().add(NamespaceValidator.createUrlValidator());
             add(urlField);
 
             setFocus(prefixField);

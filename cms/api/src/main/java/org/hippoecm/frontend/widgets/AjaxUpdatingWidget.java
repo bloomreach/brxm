@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.widgets;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.attributes.ThrottlingSettings;
@@ -80,7 +81,7 @@ public abstract class AjaxUpdatingWidget<T> extends Panel {
         }
     }
 
-    public FormComponent<T> getFocusComponent() {
+    public Component getFocusComponent() {
         return getFormComponent();
     }
 
