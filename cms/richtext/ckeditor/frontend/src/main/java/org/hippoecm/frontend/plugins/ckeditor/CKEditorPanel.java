@@ -76,13 +76,13 @@ public class CKEditorPanel extends Panel {
         this.editorConfigJson = editorConfigJson;
         this.editorModel = editorModel;
 
-        final TextArea<String> textArea = new TextArea<String>(WICKET_ID_EDITOR, editorModel);
+        final TextArea<String> textArea = new TextArea<>(WICKET_ID_EDITOR, editorModel);
         textArea.setOutputMarkupId(true);
         add(textArea);
 
         editorId = textArea.getMarkupId();
 
-        extensions = new LinkedList<CKEditorPanelExtension>();
+        extensions = new LinkedList<>();
     }
 
     /**
