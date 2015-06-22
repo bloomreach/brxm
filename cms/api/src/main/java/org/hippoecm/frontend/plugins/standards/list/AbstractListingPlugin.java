@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,8 +24,6 @@ import javax.jcr.version.Version;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -36,7 +34,6 @@ import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.icon.BrowserStyle;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
@@ -52,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * data provider.
  */
 public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implements TableSelectionListener<Node> {
-    private static final long serialVersionUID = 1L;
+
     private static final Logger log = LoggerFactory.getLogger(AbstractListingPlugin.class);
 
     private final IModelReference<Node> documentReference;
@@ -113,9 +110,9 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
 
             }, IObserver.class.getName());
             
-            IModel<Node> documentmodel = documentReference.getModel();
-            if(documentmodel != null) {
-                updateSelection(documentmodel);
+            final IModel<Node> documentModel = documentReference.getModel();
+            if (documentModel != null) {
+                updateSelection(documentModel);
             }
         }
     }
@@ -129,7 +126,7 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
     protected ListDataTable<Node> newListDataTable(String id, TableDefinition<Node> tableDefinition,
             ISortableDataProvider<Node, String> dataProvider, TableSelectionListener<Node> selectionListener, boolean triState,
             ListPagingDefinition pagingDefinition) {
-        return new ListDataTable<Node>(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
+        return new ListDataTable<>(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
     }
 
     private ISortableDataProvider<Node, String> getDataProvider() {
@@ -178,6 +175,18 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
         }
     }
 
+    private void dumpDataTable() {
+        if (dataTable != null) {
+            dataTable.destroy();
+        }
+    }
+
+    private void clean() {
+        dumpDataTable();
+        dumpDataProvider();
+        dumpTableDefinition();
+    }
+
     protected abstract ISortableDataProvider<Node, String> newDataProvider();
 
     protected abstract TableDefinition<Node> newTableDefinition();
@@ -222,14 +231,12 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
             return;
         }
 
-        ISortState<String> sortState = provider.getSortState();
+        final ISortState<String> sortState = provider.getSortState();
 
-        dataTable.destroy();
-        dumpDataProvider();
-        dumpTableDefinition();
+        clean();
 
-        TableDefinition<Node> tableDefinition = getTableDefinition();
-        ISortableDataProvider<Node, String> dataProvider = getDataProvider();
+        final TableDefinition<Node> tableDefinition = getTableDefinition();
+        final ISortableDataProvider<Node, String> dataProvider = getDataProvider();
 
         ISortState<String> newSortState = dataProvider.getSortState();
         for (ListColumn<Node> column : tableDefinition.getColumns()) {
@@ -281,6 +288,12 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
             log.error(ex.getMessage());
         }
         return model;
+    }
+
+    @Override
+    protected void onStop() {
+        clean();
+        super.onStop();
     }
 
 }
