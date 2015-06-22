@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.ServletConfig;
@@ -31,6 +32,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.proxy.Interceptor;
 import org.apache.commons.proxy.Invocation;
+import org.hippoecm.hst.configuration.hosting.MutableVirtualHost;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.freemarker.DelegatingTemplateLoader;
 import org.hippoecm.hst.freemarker.HstClassTemplateLoader;
@@ -197,8 +201,29 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
         if (log.isDebugEnabled()) {
             log.warn("Error in Freemarker template:", t);
         } else {
+            StringBuilder loggingURLs = new StringBuilder();
+            if(RequestContextProvider.get() != null) {
+                final VirtualHost virtualHost = RequestContextProvider.get().getResolvedMount().getMount().getVirtualHost();
+                if (virtualHost instanceof MutableVirtualHost) {
+                    List<String> cmsLocation = ((MutableVirtualHost)virtualHost).getCmsLocations();
+                    for (String location : cmsLocation) {
+                       if (loggingURLs.length() > 0) {
+                           loggingURLs.append(", ");
+                       }
+                        loggingURLs.append(location + "/logging/");
+                    }
+                }
+            }
             // by default, log a clean error message without stack traces
-            log.warn(t.getMessage());
+            String msgLoggingURLs;
+            if (loggingURLs.length() > 0) {
+                msgLoggingURLs = String.format(" or if enabled via %s.", loggingURLs);
+            } else {
+                msgLoggingURLs = ".";
+            }
+            String msg = String.format("To see the stack trace, set '%s' log-level to debug in log4j configuration%s" +
+                    "", HstFreemarkerServlet.class.getName(), msgLoggingURLs);
+            log.warn(t.getMessage() + ". " + msg);
         }
     }
 
