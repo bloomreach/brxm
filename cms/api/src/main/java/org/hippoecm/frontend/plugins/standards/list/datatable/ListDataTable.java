@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -85,8 +85,6 @@ public class ListDataTable<T> extends DataTable<T, String> {
 
         if (tableDefinition.showColumnHeaders()) {
             addTopToolbar(new AjaxFallbackHeadersToolbar<String>(this, dataProvider) {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 protected WebMarkupContainer newSortableHeader(String borderId, final String property,
                                                                final ISortStateLocator<String> locator) {
@@ -162,8 +160,8 @@ public class ListDataTable<T> extends DataTable<T, String> {
 
     public void init(IPluginContext context) {
         this.context = context;
-        this.dirty = new HashSet<Item<T>>();
-        this.observers = new HashMap<Item<T>, IObserver>();
+        this.dirty = new HashSet<>();
+        this.observers = new HashMap<>();
         definition.init(context);
     }
 
@@ -187,7 +185,7 @@ public class ListDataTable<T> extends DataTable<T, String> {
                 count = provider.size() - offset;
             }
 
-            Set<IModel<T>> visibleModels = new HashSet<IModel<T>>();
+            Set<IModel<T>> visibleModels = new HashSet<>();
             Iterator<? extends T> iter = provider.iterator(offset, count);
             while (iter.hasNext()) {
                 IModel<T> model = provider.model(iter.next());
@@ -235,7 +233,7 @@ public class ListDataTable<T> extends DataTable<T, String> {
 
     @Override
     protected Item<T> newRowItem(final String id, int index, final IModel<T> model) {
-        final OddEvenItem<T> item = new OddEvenItem<T>(id, index, model);
+        final OddEvenItem<T> item = new OddEvenItem<>(id, index, model);
         item.setOutputMarkupId(true);
 
         item.add(new AttributeAppender("class", new LoadableDetachableModel<String>() {

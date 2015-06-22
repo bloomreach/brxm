@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -44,35 +44,34 @@ import org.slf4j.LoggerFactory;
 
 public class PluginContext implements IPluginContext, IDetachable {
 
-    private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(PluginContext.class);
 
-    private IPluginConfig config;
+    private final IPluginConfig config;
     private IPlugin plugin;
-    private Map<String, List<IClusterable>> services;
-    private Map<IClusterable, ServiceRegistration> registrations;
-    private List<ServiceRegistration> registrationOrder;
-    private Map<IServiceFactory<IClusterable>, IClusterable> instances;
-    private Map<String, List<IServiceTracker<? extends IClusterable>>> listeners;
-    private Map<String, ClusterControl> children;
-    private PluginManager manager;
+    private final Map<String, List<IClusterable>> services;
+    private final Map<IClusterable, ServiceRegistration> registrations;
+    private final List<ServiceRegistration> registrationOrder;
+    private final Map<IServiceFactory<IClusterable>, IClusterable> instances;
+    private final Map<String, List<IServiceTracker<? extends IClusterable>>> listeners;
+    private final Map<String, ClusterControl> children;
+    private final PluginManager manager;
     transient boolean initializing = true;
     transient boolean stopping = false;
 
     public PluginContext(PluginManager manager, IPluginConfig config) {
         this.manager = manager;
         this.config = config;
+
         if (config == null || config.getName() == null) {
             throw new RuntimeException("Config (name) is null");
         }
 
-        this.services = new LinkedHashMap<String, List<IClusterable>>();
-        this.registrations = new IdentityHashMap<IClusterable, ServiceRegistration>();
-        this.registrationOrder = new LinkedList<ServiceRegistration>();
-        this.instances = new IdentityHashMap<IServiceFactory<IClusterable>, IClusterable>();
-        this.listeners = new LinkedHashMap<String, List<IServiceTracker<? extends IClusterable>>>();
-        this.children = new TreeMap<String, ClusterControl>();
+        this.services = new LinkedHashMap<>();
+        this.registrations = new IdentityHashMap<>();
+        this.registrationOrder = new LinkedList<>();
+        this.instances = new IdentityHashMap<>();
+        this.listeners = new LinkedHashMap<>();
+        this.children = new TreeMap<>();
     }
 
     public IClusterControl newCluster(IClusterConfig template, IPluginConfig parameters) {
@@ -125,7 +124,7 @@ public class PluginContext implements IPluginContext, IDetachable {
             return service;
         }
 
-        List<IServiceFactory> list = manager.getServices(name, IServiceFactory.class);
+        final List<IServiceFactory> list = manager.getServices(name, IServiceFactory.class);
         if (list != null && list.size() > 0) {
             for (IServiceFactory factory : list) {
                 if (clazz.isAssignableFrom(factory.getServiceClass())) {
@@ -140,7 +139,7 @@ public class PluginContext implements IPluginContext, IDetachable {
             }
         }
 
-        if (initializing && service == null) {
+        if (initializing) {
             for (Map.Entry<IClusterable, ServiceRegistration> entry : registrations.entrySet()) {
                 ServiceRegistration registration = entry.getValue();
                 if (registration.names.contains(name)) {
@@ -193,7 +192,7 @@ public class PluginContext implements IPluginContext, IDetachable {
         if (!stopping) {
             List<IClusterable> list = services.get(name);
             if (list == null) {
-                list = new LinkedList<IClusterable>();
+                list = new LinkedList<>();
                 services.put(name, list);
             }
             list.add(service);
@@ -263,7 +262,7 @@ public class PluginContext implements IPluginContext, IDetachable {
         if (!stopping) {
             List<IServiceTracker<? extends IClusterable>> list = listeners.get(name);
             if (list == null) {
-                list = new LinkedList<IServiceTracker<? extends IClusterable>>();
+                list = new LinkedList<>();
                 listeners.put(name, list);
             }
             list.add(listener);
@@ -409,7 +408,7 @@ public class PluginContext implements IPluginContext, IDetachable {
             control.detach();
         }
 
-        if (config != null && config instanceof IDetachable) {
+        if (config instanceof IDetachable) {
             ((IDetachable) config).detach();
         }
     }
