@@ -128,9 +128,9 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
 
 
     protected ListDataTable<Node> newListDataTable(String id, TableDefinition<Node> tableDefinition,
-            ISortableDataProvider<Node, String> dataProvider, ListDataTable.TableSelectionListener<Node> selectionListener, boolean triState,
-            ListPagingDefinition pagingDefinition) {
-        return new Grid(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
+            ISortableDataProvider<Node, String> dataProvider, ListDataTable.TableSelectionListener<Node> selectionListener,
+            boolean triState, ListPagingDefinition pagingDefinition) {
+        return new Grid<>(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
     }
 
     protected DataTableBehavior getBehavior() {
@@ -219,9 +219,14 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
         };
     }
 
-    class Grid extends ListDataTable<Node> {
+    private static class Grid<Node> extends ListDataTable<Node> {
 
-        public Grid(String id, TableDefinition tableDefinition, ISortableDataProvider iSortableDataProvider, TableSelectionListener tableSelectionListener, final boolean triState, IPagingDefinition pagingDefinition) {
+        public Grid(final String id,
+                    final TableDefinition<Node> tableDefinition,
+                    final ISortableDataProvider<Node, String> iSortableDataProvider,
+                    final TableSelectionListener<Node> tableSelectionListener,
+                    final boolean triState,
+                    final IPagingDefinition pagingDefinition) {
             super(id, tableDefinition, iSortableDataProvider, tableSelectionListener, triState, pagingDefinition);
         }
     }
