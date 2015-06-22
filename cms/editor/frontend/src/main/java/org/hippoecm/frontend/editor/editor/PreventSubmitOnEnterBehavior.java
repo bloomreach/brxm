@@ -31,7 +31,13 @@ import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
  * {@link Component#setOutputMarkupId(boolean)} before creating this behavior.
  */
 class PreventSubmitOnEnterBehavior extends Behavior {
-    public static final String PREVENT_SUBMIT_JS_TEMPLATE = "$('${selector}').keypress(function (e) {if (e.which == 13) {e.preventDefault();}});";
+
+    private static final String PREVENT_SUBMIT_JS_TEMPLATE = "" +
+            "$('${selector}').keypress(function (e) {" +
+            "  if (e.which == 13) {" +
+            "    e.preventDefault();" +
+            "  }" +
+            "});";
 
     private String selector;
 
