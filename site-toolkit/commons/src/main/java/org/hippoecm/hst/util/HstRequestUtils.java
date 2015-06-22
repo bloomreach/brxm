@@ -443,14 +443,12 @@ public class HstRequestUtils {
             queryParamMap = new LinkedHashMap<String, String []>();
 
             String[] paramPairs = queryString.split("&");
-            String paramName;
 
             for (String paramPair : paramPairs) {
                 String[] paramNameAndValue = paramPair.split("=");
 
                 if (paramNameAndValue.length > 0) {
-                    paramName = paramNameAndValue[0];
-                    queryParamMap.put(paramName, null);
+                    queryParamMap.put(paramNameAndValue[0], null);
                 }
             }
 
