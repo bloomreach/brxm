@@ -148,7 +148,9 @@
         $scope.$on('container:close', function (event) {
           // prevent close, process all menu changes first and then trigger the close ourselves
           event.preventDefault();
-          MenuService.processAllChanges();
+          MenuService.processAllChanges().then(function () {
+            ContainerService.performClose();
+          });
         });
       }
     ]);
