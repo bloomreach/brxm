@@ -298,7 +298,7 @@
           <sv:value>link</sv:value>
         </sv:property>
         <sv:property sv:name="hint" sv:type="String">
-          <sv:value>External link to the account</sv:value>
+          <sv:value>link.hint</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
           <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>

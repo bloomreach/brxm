@@ -607,7 +607,7 @@
           <sv:value>fullname</sv:value>
         </sv:property>
         <sv:property sv:name="hint" sv:type="String">
-          <sv:value>Full name</sv:value>
+          <sv:value>fullname.hint</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
           <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
@@ -648,7 +648,7 @@
           <sv:value>content</sv:value>
         </sv:property>
         <sv:property sv:name="hint" sv:type="String">
-          <sv:value>Information about the author</sv:value>
+          <sv:value>content.hint</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
           <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
@@ -670,7 +670,7 @@
           <sv:value>photo</sv:value>
         </sv:property>
         <sv:property sv:name="hint" sv:type="String">
-          <sv:value>Photo of the author</sv:value>
+          <sv:value>photo.hint</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
           <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
@@ -692,7 +692,7 @@
           <sv:value>accounts</sv:value>
         </sv:property>
         <sv:property sv:name="hint" sv:type="String">
-          <sv:value>External accounts</sv:value>
+          <sv:value>accounts.hint</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
           <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>

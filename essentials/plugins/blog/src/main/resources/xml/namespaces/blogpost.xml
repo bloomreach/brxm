@@ -592,7 +592,7 @@
           <sv:value>authors</sv:value>
         </sv:property>
         <sv:property sv:name="hint" sv:type="String">
-          <sv:value>Link to author document(s)</sv:value>
+          <sv:value>authors.hint</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
           <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
