@@ -16,6 +16,7 @@
 package org.onehippo.cms7.channelmanager.model;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
@@ -48,11 +49,12 @@ public class UuidFromPathModel implements IModel<String> {
             try {
                 Node node = session.getNode(path);
                 return node.getIdentifier();
+            } catch (PathNotFoundException e) {
+                log.info("Missing or not allowed to read node at '{}'. Return null", path);
             } catch (RepositoryException e) {
-                log.warn("Cannot retrieve UUID from '" + path + "'", e);
+                log.warn("Exception while trying to fetch node '{}'", path, e);
             }
         }
-
         return null;
     }
 
