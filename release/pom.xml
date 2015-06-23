@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>27.1</version>
+    <version>27.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
@@ -39,7 +39,7 @@
   </scm>
 
   <properties>
-    <hippo.release.version>10.0.2-milestone-2</hippo.release.version>
+    <hippo.release.version>10.0.2-SNAPSHOT</hippo.release.version>
 
     <hippo.addon-hst-configuration-editor.version>1.15.02</hippo.addon-hst-configuration-editor.version>
     <hippo.addon-channel-manager.version>2.28.02</hippo.addon-channel-manager.version>
@@ -50,7 +50,7 @@
     <hippo.frontend.theme.version>1.02.03</hippo.frontend.theme.version>
     <hippo.hst.version>2.30.02</hippo.hst.version>
     <hippo.packages.version>2.28.00</hippo.packages.version>
-    <hippo.repository.version>2.28.01</hippo.repository.version>
+    <hippo.repository.version>2.28.02-SNAPSHOT</hippo.repository.version>
     <hippo.services.version>1.05.00</hippo.services.version>
     <hippo.services.autoreload.version>1.05.00</hippo.services.autoreload.version>
     <hippo.services.contenttype.version>1.05.00</hippo.services.contenttype.version>
@@ -70,7 +70,7 @@
     <hippo.plugin.selections.version>2.09.02</hippo.plugin.selections.version>
     <hippo.plugin.seo-support.version>1.02.00</hippo.plugin.seo-support.version>
     <hippo.plugin.sitemap.version>1.07.01</hippo.plugin.sitemap.version>
-    <hippo.plugin.taxonomy.version>1.12.01</hippo.plugin.taxonomy.version>
+    <hippo.plugin.taxonomy.version>1.12.02-SNAPSHOT</hippo.plugin.taxonomy.version>
 
   </properties>
 
