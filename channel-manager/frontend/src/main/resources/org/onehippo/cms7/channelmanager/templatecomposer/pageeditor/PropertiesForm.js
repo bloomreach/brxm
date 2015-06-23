@@ -651,6 +651,12 @@
       this._doFirePropertiesChanges('initialValue');
     },
 
+    fireReloadComponentWithoutProperties: function () {
+      // results in component-rendering call without POST-ed params and thus in
+      // default rendered component
+      this.fireEvent('propertiesChanged', {});
+    },
+
     _doFirePropertiesChanges: function (valueField) {
       if (this.store !== null) {
         var propertiesMap = {};

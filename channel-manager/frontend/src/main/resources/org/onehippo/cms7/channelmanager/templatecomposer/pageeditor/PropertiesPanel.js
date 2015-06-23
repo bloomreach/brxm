@@ -178,7 +178,7 @@
 
     onHide: function () {
       this._stopValidationMonitoring();
-      this._fireInitialPropertiesChangedIfNeeded();
+      this.getActiveTab().propertiesForm.fireReloadComponentWithoutProperties();
     },
 
     _stopValidationMonitoring: function () {
