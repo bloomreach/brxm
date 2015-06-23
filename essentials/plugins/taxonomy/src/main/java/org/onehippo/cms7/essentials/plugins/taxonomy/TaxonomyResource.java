@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,10 +60,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * @version "$Id$"
@@ -76,8 +73,6 @@ public class TaxonomyResource extends BaseResource {
     public static final String HIPPOTAXONOMY_TAXONOMY = "hippotaxonomy:taxonomy";
     public static final String HIPPOTAXONOMY_LOCALES = "hippotaxonomy:locales";
     public static final String HIPPOTAXONOMY_MIXIN = "hippotaxonomy:classifiable";
-    private static final String FIELDPATH = "fieldPath";
-    private static final String ADDITIONAL_SERVICE_PREFIX = "taxonomyclassification";
     private static final String TAXONOMY_FIELD_MARKER = "essentials-taxonomy-name";
     private static final StringCodec codec = new StringCodecFactory.NameEncoding();
     private static final Logger log = LoggerFactory.getLogger(TaxonomyResource.class);
@@ -223,15 +218,6 @@ public class TaxonomyResource extends BaseResource {
                     final Node clusterNode = fieldNode.addNode("cluster.options", "frontend:pluginconfig");
                     clusterNode.setProperty("taxonomy.name", taxonomyName);
                     markAsTaxonomyField(fieldNode, taxonomyName);
-// This functionality appears not robust enough, not allowed for now
-//                } else if (!hasSecondTaxonomyField(session, prefix, documentName)) {
-//                    // create second taxonomy field
-//                    buildServiceNode(session, prefix, documentName, taxonomyName);
-//                    buildTemplateNode(session, prefix, documentName, taxonomyName);
-//                } else {
-//                    // more than 2 taxonomy fields are currently not supported.
-//                    return createErrorMessage("Document type '" + documentName
-//                            + "' already has the maximum supported number of 2 taxonomy fields.", response);
                 } else {
                     return createErrorMessage("For now, this feature allows only 1 taxonomy max per document type.",
                             response);
@@ -267,73 +253,6 @@ public class TaxonomyResource extends BaseResource {
         }
     }
 
-    private boolean hasSecondTaxonomyField(final Session session, final String prefix, final String documentName) {
-        try {
-            final Node servicesNode = session.getNode("/hippo:configuration/hippo:frontend/cms/cms-services");
-            final NodeIterator it = servicesNode.getNodes();
-            while (it.hasNext()) {
-                final Node serviceNode = it.nextNode();
-                if (serviceNode.getName().startsWith(ADDITIONAL_SERVICE_PREFIX)
-                    && serviceNode.hasProperty(FIELDPATH)) {
-                    final String documentType = serviceNode.getProperty(FIELDPATH).getString();
-                    if (documentType.equals(makeFieldPath(prefix, documentName))) {
-                        return true;
-                    }
-                }
-            }
-
-        } catch (RepositoryException ex) {
-            log.error("Repository exception when checking the existence of a second taxonomy field", ex);
-            return true;
-        }
-        return false;
-    }
-
-    private void buildTemplateNode(final Session session, final String prefix, final String documentName, final String taxonomyName) {
-        final String templatePath = MessageFormat.format(
-                "/hippo:namespaces/{0}/{1}/editor:templates/_default_/{2}", prefix, documentName, taxonomyName);
-
-        String daoName = getDaoName(documentName, taxonomyName);
-        final Node fieldNode = new FrontendPluginBuilder(session, templatePath).setProperties(
-                ImmutableMap.<String, String>builder()
-                        .put("taxonomy.classification.dao", daoName)
-                        .put("mode", "${mode}")
-                        .put("model.compareTo", "${model.compareTo}")
-                        .put("taxonomy.id", "service.taxonomy")
-                        .put("taxonomy.name", taxonomyName)
-                        .put("wicket.id", "${cluster.id}.left.item")
-                        .put("plugin.class", "org.onehippo.taxonomy.plugin.TaxonomyPickerPlugin")
-                        .put("wicket.model", "${wicket.model}")
-                        .build()
-        ).build();
-        if (fieldNode != null) {
-            markAsTaxonomyField(fieldNode, taxonomyName);
-        }
-    }
-
-    private void buildServiceNode(final Session session, final String prefix, final String documentName, final String taxonomyName) {
-        final String serviceName = MessageFormat.format("{0}{1}", ADDITIONAL_SERVICE_PREFIX, taxonomyName);
-        final String servicePath = MessageFormat.format(
-                "/hippo:configuration/hippo:frontend/cms/cms-services/{0}", serviceName);
-        final String daoName = getDaoName(documentName, taxonomyName);
-        final String fieldPath = makeFieldPath(prefix, documentName);
-        new FrontendPluginBuilder(session,servicePath).setProperties(
-                ImmutableMap.<String, String>builder()
-                        .put(FIELDPATH, fieldPath)
-                        .put("taxonomy.classification.dao", daoName)
-                        .put("plugin.class", "org.onehippo.taxonomy.plugin.MixinClassificationDaoPlugin")
-                        .build()
-        ).build();
-    }
-
-    private String makeFieldPath(final String prefix, final String documentName) {
-        return MessageFormat.format("{0}:{1}", prefix, documentName);
-    }
-
-    public static String getDaoName(String docType, String taxonomyName){
-        return MessageFormat.format("taxonomy.classification.{0}.dao", taxonomyName);
-    }
-
     private Node createOrGetTaxonomyContainer(final Session session) {
         Node taxonomiesNode = null;
         try {
@@ -350,7 +269,8 @@ public class TaxonomyResource extends BaseResource {
         return taxonomiesNode;
     }
 
-    private boolean addTaxonomyNode(final Session session, final Node taxonomiesNode, final String taxonomyName, final String[] locales) throws RepositoryException {
+    private void addTaxonomyNode(final Session session, final Node taxonomiesNode, final String taxonomyName,
+                                 final String[] locales) throws RepositoryException {
         final Node handleNode = taxonomiesNode.addNode(codec.encode(taxonomyName), HippoNodeType.NT_HANDLE);
         final Node taxonomyNode = handleNode.addNode(codec.encode(taxonomyName), HIPPOTAXONOMY_TAXONOMY);
         taxonomyNode.addMixin(JcrConstants.MIX_VERSIONABLE);
@@ -367,8 +287,6 @@ public class TaxonomyResource extends BaseResource {
         taxonomyNode.setProperty("hippo:availability", new String[]{"live","preview"});
         taxonomyNode.setProperty(HIPPOTAXONOMY_LOCALES, locales);
         session.save();
-        return true;
-
     }
 
     private boolean hasTaxonomyContainer(final Session session) {
