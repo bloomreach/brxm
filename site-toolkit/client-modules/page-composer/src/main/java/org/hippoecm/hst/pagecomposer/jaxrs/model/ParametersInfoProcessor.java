@@ -35,6 +35,7 @@ import javax.jcr.RepositoryException;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.FieldGroup;
@@ -144,6 +145,10 @@ public class ParametersInfoProcessor {
                 final String displayName = docRepresentation.getDisplayName();
                 if(displayName != null && !displayName.isEmpty()) {
                     property.setDisplayValue(displayName);
+                } else if (docRepresentation.getPath() != null) {
+                    log.debug("Could not retrieve displayName for path '{}'. Possibly a removed node. Set the last path " +
+                            "segment as displayValue instead.", docRepresentation.getPath());
+                    property.setDisplayValue(StringUtils.substringAfterLast(docRepresentation.getPath(), "/"));
                 }
             }
         }
