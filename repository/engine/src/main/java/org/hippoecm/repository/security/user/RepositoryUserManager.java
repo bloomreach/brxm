@@ -26,6 +26,7 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.apache.jackrabbit.api.security.user.Authorizable;
 import org.apache.jackrabbit.api.security.user.AuthorizableExistsException;
+import org.apache.jackrabbit.api.security.user.AuthorizableTypeException;
 import org.apache.jackrabbit.api.security.user.User;
 import org.hippoecm.repository.PasswordHelper;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -144,6 +145,11 @@ public class RepositoryUserManager extends AbstractUserManager {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public <T extends Authorizable> T getAuthorizable(final String id, final Class<T> authorizableClass) throws AuthorizableTypeException, RepositoryException {
+        throw new UnsupportedRepositoryOperationException();
     }
 
     @Override

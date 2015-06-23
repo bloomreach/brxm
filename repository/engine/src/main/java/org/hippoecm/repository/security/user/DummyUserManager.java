@@ -21,6 +21,7 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.apache.jackrabbit.api.security.user.Authorizable;
 import org.apache.jackrabbit.api.security.user.AuthorizableExistsException;
+import org.apache.jackrabbit.api.security.user.AuthorizableTypeException;
 import org.apache.jackrabbit.api.security.user.User;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.ManagerContext;
@@ -61,6 +62,11 @@ public class DummyUserManager extends AbstractUserManager {
 
     public boolean isCaseSensitive() {
         return true;
+    }
+
+    @Override
+    public <T extends Authorizable> T getAuthorizable(final String id, final Class<T> authorizableClass) throws AuthorizableTypeException, RepositoryException {
+        throw new UnsupportedRepositoryOperationException();
     }
 
     @Override

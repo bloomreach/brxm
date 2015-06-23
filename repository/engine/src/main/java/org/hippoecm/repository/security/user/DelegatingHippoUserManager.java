@@ -20,6 +20,9 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 
+import org.apache.jackrabbit.api.security.user.Authorizable;
+import org.apache.jackrabbit.api.security.user.AuthorizableTypeException;
+
 /**
  * Delegating to the internal <code>HippoUserManager</code>.
  * <P>

@@ -23,6 +23,7 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.apache.jackrabbit.api.security.user.Authorizable;
 import org.apache.jackrabbit.api.security.user.AuthorizableExistsException;
+import org.apache.jackrabbit.api.security.user.AuthorizableTypeException;
 import org.apache.jackrabbit.api.security.user.Group;
 import org.apache.jackrabbit.api.security.user.Query;
 import org.apache.jackrabbit.api.security.user.User;
@@ -120,6 +121,11 @@ public class DelegatingUserManager implements UserManager {
     @Override
     public void autoSave(boolean enable) throws UnsupportedRepositoryOperationException, RepositoryException {
         delegatee.autoSave(enable);
+    }
+
+    @Override
+    public <T extends Authorizable> T getAuthorizable(final String id, final Class<T> authorizableClass) throws AuthorizableTypeException, RepositoryException {
+        return delegatee.getAuthorizable(id, authorizableClass);
     }
 
 }
