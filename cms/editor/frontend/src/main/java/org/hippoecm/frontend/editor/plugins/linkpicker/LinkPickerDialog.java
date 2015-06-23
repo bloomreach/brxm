@@ -137,8 +137,8 @@ public class LinkPickerDialog extends Dialog<String> {
 
     @Override
     protected void onDetach() {
-        super.onDetach();
         controller.detach();
+        super.onDetach();
     }
 
     protected void saveNode(Node node) {
