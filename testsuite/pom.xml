@@ -19,14 +19,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>10.0.2-milestone-2</version>
+    <version>10.0.2-SNAPSHOT</version>
   </parent>
 
 
   <artifactId>hippo-testsuite</artifactId>
   <name>Hippo Test Suite</name>
   <description>Hippo Test Suite</description>
-  <version>1.07.02-milestone-2</version>
+  <version>1.07.02-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -349,9 +349,9 @@
   </profiles>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/tags/hippo-testsuite-1.07.02-milestone-2</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/tags/hippo-testsuite-1.07.02-milestone-2</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/tags/hippo-testsuite-1.07.02-milestone-2</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/trunk</url>
   </scm>
 
 </project>
