@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -18,27 +18,13 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-  <bean id="componentWindowFilteringValve" class="org.hippoecm.hst.demo.container.ExampleComponentWindowFilteringValve">
-    <property name="valveName" value="componentWindowFilteringValve" />
-    <property name="afterValves" value="initializationValve"/>
-    <property name="beforeValves" value="cmsSecurityValve"/>
-  </bean>
-
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-    <property name="targetObject">
-      <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetObject" ref="org.hippoecm.hst.core.container.Pipelines" />
-        <property name="targetMethod" value="getPipeline"/>
-        <property name="arguments">
-            <value>DefaultSitePipeline</value>
-        </property>
-      </bean>
-    </property>
-    <property name="targetMethod" value="addInitializationValve"/>
+    <property name="targetObject" ref="org.hippoecm.hst.core.container.HstComponentWindowFilter.list"/>
+    <property name="targetMethod" value="add"/>
     <property name="arguments">
-        <ref bean="componentWindowFilteringValve" />
+      <bean class="org.hippoecm.hst.demo.container.ExampleComponentWindowFilter"/>
     </property>
- </bean>
+  </bean>
 
 </beans>
 

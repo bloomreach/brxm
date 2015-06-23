@@ -57,7 +57,6 @@ components/src/main/java/org/hippoecm/hst/demo/components/SolrSearch.java -text
 components/src/main/java/org/hippoecm/hst/demo/components/TodoList.java svneol=native#text/plain
 components/src/main/java/org/hippoecm/hst/demo/components/solrutil/SolrSearchParams.java -text
 components/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilter.java -text svneol=unset#text/plain
-components/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilteringValve.java -text svneol=unset#text/plain
 components/src/main/java/org/hippoecm/hst/demo/container/HttpsSchemeExampleValve.java -text
 components/src/main/java/org/hippoecm/hst/demo/events/ChannelManagerEventListener.java -text
 components/src/main/java/org/hippoecm/hst/demo/integration/spring/NewsController.java -text
@@ -97,7 +96,7 @@ components/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketContentBrows
 components/src/main/resources/META-INF/hst-assembly/overrides/base.xml svneol=native#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/channelManagerListenerExample.xml -text
 components/src/main/resources/META-INF/hst-assembly/overrides/commentsRewriteContextResolver.xml -text
-components/src/main/resources/META-INF/hst-assembly/overrides/componentWindowFiltering-valve.xml -text svneol=unset#text/plain
+components/src/main/resources/META-INF/hst-assembly/overrides/componentWindowFiltering.xml -text svneol=unset#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/custom-jaxrs-resources.xml -text
 components/src/main/resources/META-INF/hst-assembly/overrides/customExtraBasicPoolingRepository.xml -text svneol=unset#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/customLinkProcessorsExample.xml svneol=native#text/plain
