@@ -5,7 +5,7 @@
   "angular-mocks": [],
   "angular-sanitize": ["angular-sanitize.min.js"],
   "angular-ui-router": ["release/angular-ui-router.js"],
-  "angular-ui-tree": ["dist/angular-ui-tree.min.js"],
+  "angular-ui-tree": ["dist/angular-ui-tree.min.css"],
   "chosen": ["chosen.jquery.js"],
   "es5-shim": [],
   "google-code-prettify": ["src/prettify.js"],
