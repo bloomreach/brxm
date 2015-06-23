@@ -668,11 +668,18 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     @Override
     public void addComponentWindowFilter(HstComponentWindowFilter filter) {
+        log.warn("HstRequestContextImpl.addComponentWindowFilter is deprecated. Use spring bean " +
+                "'org.hippoecm.hst.core.container.HstComponentWindowFilter.list' to add HstComponentWindowFilter instances");
         checkStateValidity();
         if (filters == null) {
             filters = new ArrayList<>();
         }
         filters.add(filter);
+    }
+
+    @Override
+    public void setComponentWindowFilters(final List<HstComponentWindowFilter> filters) {
+        this. filters = filters;
     }
 
     @Override

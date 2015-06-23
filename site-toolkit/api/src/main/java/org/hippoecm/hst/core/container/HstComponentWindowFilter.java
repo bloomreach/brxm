@@ -34,13 +34,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  * implement this interface and in {@link #doFilter(HstRequestContext, HstComponentConfiguration, HstComponentWindow)}
  * return the <code>window</code> after invoking {@link HstComponentWindow#setVisible(boolean)} with argument
  * <code>true</code>, thus HstComponentWindow#setVisible(true) <p/>
- * <p> Note that a when setting this {@link
- * org.hippoecm.hst.core.container.HstComponentWindowFilter} on the {@link org.hippoecm.hst.core.request.HstRequestContext}
- * through {@link org.hippoecm.hst.core.internal.HstMutableRequestContext#addComponentWindowFilter(HstComponentWindowFilter)},
- * this only has effect if and only if the <code>addComponentWindowFilter</code> is invoked (in a {@link
- * org.hippoecm.hst.core.container.Valve}) <strong>before</strong> the <code>ContextResolvingValve</code> is executed,
- * as the <code>ContextResolvingValve</code> is in charge of creating the {@link org.hippoecm.hst.core.container.HstComponentWindow}
- * instances.</p>
  */
 public interface HstComponentWindowFilter {
 

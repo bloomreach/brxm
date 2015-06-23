@@ -42,57 +42,60 @@ import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
 
 
 /**
- * This is an INTERNAL USAGE ONLY API. Clients should not cast to these interfaces as they should never be used from client code
+ * This is an INTERNAL USAGE ONLY API. Clients should not cast to these interfaces as they should never be used from
+ * client code
  *
  * @version $Id$
- *
  */
 public interface HstMutableRequestContext extends HstRequestContext {
 
-	public void setServletContext(ServletContext servletContext);
+    public void setServletContext(ServletContext servletContext);
 
     public void setServletRequest(HttpServletRequest servletRequest);
 
     public void setServletResponse(HttpServletResponse servletResponse);
 
-	public void setSession(Session session);
+    public void setSession(Session session);
 
-	public void setResolvedMount(ResolvedMount resolvedMount);
+    public void setResolvedMount(ResolvedMount resolvedMount);
 
-	public void setResolvedSiteMapItem(ResolvedSiteMapItem resolvedSiteMapItem);
+    public void setResolvedSiteMapItem(ResolvedSiteMapItem resolvedSiteMapItem);
 
-	public void setBaseURL(HstContainerURL baseURL);
+    public void setBaseURL(HstContainerURL baseURL);
 
-	public void setURLFactory(HstURLFactory urlFactory);
+    public void setURLFactory(HstURLFactory urlFactory);
 
-	public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher);
+    public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher);
 
-	public void setLinkCreator(HstLinkCreator linkCreator);
+    public void setLinkCreator(HstLinkCreator linkCreator);
 
-	public void setParameterInfoProxyFactory(HstParameterInfoProxyFactory parameterInfoProxyFactory);
+    public void setParameterInfoProxyFactory(HstParameterInfoProxyFactory parameterInfoProxyFactory);
 
-	public void setHstSiteMenus(HstSiteMenus siteMenus);
+    public void setHstSiteMenus(HstSiteMenus siteMenus);
 
-	public void setHstQueryManagerFactory(HstQueryManagerFactory hstQueryManagerFactory);
+    public void setHstQueryManagerFactory(HstQueryManagerFactory hstQueryManagerFactory);
 
-	public void setContainerConfiguration(ContainerConfiguration containerConfiguration);
+    public void setContainerConfiguration(ContainerConfiguration containerConfiguration);
 
     public void setSubject(Subject subject);
 
     /**
      * Sets the preferred locale associated with this request.
+     *
      * @param locale The preferred locale associated with this request.
      */
     public void setPreferredLocale(Locale locale);
 
     /**
      * Sets the locales assocaited with this request.
+     *
      * @param locales
      */
     public void setLocales(List<Locale> locales);
 
     /**
      * Sets the path suffix
+     *
      * @param pathSuffix
      */
     public void setPathSuffix(String pathSuffix);
@@ -100,15 +103,27 @@ public interface HstMutableRequestContext extends HstRequestContext {
 
     /**
      * set the conditions that will trigger a component to be added to the component window hierarchy.
+     *
      * @param conditions the {@link Set} of {@link String} conditions
      */
     void setComponentFilterTags(Set<String> conditions);
 
     /**
      * Adds the {@link HstComponentWindowFilter} to the {@link HstRequestContext}
+     *
      * @param filter the {@link HstComponentWindowFilter} to be added to the {@link HstRequestContext#getComponentWindowFilters()}
+     * @deprecated since 2.30.02 (CMS 10.0.2). Instead, use spring bean 'org.hippoecm.hst.core.container.HstComponentWindowFilter.list'
+     * to add HstComponentWindowFilter items
      */
+    @Deprecated
     void addComponentWindowFilter(HstComponentWindowFilter filter);
+
+    /**
+     * Sets the {@link HstComponentWindowFilter}s on the {@link HstRequestContext}
+     *
+     * @param filters the {@link HstComponentWindowFilter}s to be set for the {@link HstRequestContext#getComponentWindowFilters()}
+     */
+    void setComponentWindowFilters(List<HstComponentWindowFilter> filters);
 
     /**
      * @param fullyQualifiedURLs sets whether created URLs will be fully qualified
@@ -116,8 +131,10 @@ public interface HstMutableRequestContext extends HstRequestContext {
     public void setFullyQualifiedURLs(boolean fullyQualifiedURLs);
 
     /**
-     * Sets a specific render host. This can be used to render the request as if host <code>renderHost</code> was the actual
+     * Sets a specific render host. This can be used to render the request as if host <code>renderHost</code> was the
+     * actual
      * used host in the request.
+     *
      * @param renderHost the host to be used for rendering
      */
     public void setRenderHost(String renderHost);
@@ -130,6 +147,7 @@ public interface HstMutableRequestContext extends HstRequestContext {
 
     /**
      * Sets ContentBeansTool instance for this request context
+     *
      * @param contentBeansTool
      */
     public void setContentBeansTool(ContentBeansTool contentBeansTool);

@@ -39,6 +39,13 @@
         class="org.hippoecm.hst.core.container.HstComponentWindowFactoryImpl">
     <property name="referenceNameSeparator" value="_" />
   </bean>
+
+  <bean id="org.hippoecm.hst.core.container.HstComponentWindowFilter.list" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+      </list>
+    </property>
+  </bean>
   
   <bean id="org.hippoecm.hst.core.container.HstNavigationalStateCodec"
         class="org.hippoecm.hst.core.container.HstNavigationalStateCodecImpl" />

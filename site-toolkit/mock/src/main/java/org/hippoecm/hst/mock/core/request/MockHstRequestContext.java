@@ -425,6 +425,11 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     }
 
     @Override
+    public void setComponentWindowFilters(final List<HstComponentWindowFilter> filters) {
+        this.filters = filters;
+    }
+
+    @Override
     public boolean isFullyQualifiedURLs() {
         checkStateValidity();
         return fullyQualifiedURLs;

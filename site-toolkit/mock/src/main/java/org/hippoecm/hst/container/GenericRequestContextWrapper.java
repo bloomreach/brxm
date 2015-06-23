@@ -160,6 +160,11 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     }
 
     @Override
+    public void setComponentWindowFilters(final List<HstComponentWindowFilter> filters) {
+        context.setComponentWindowFilters(filters);
+    }
+
+    @Override
     public void setFullyQualifiedURLs(final boolean fullyQualifiedURLs) {
         context.setFullyQualifiedURLs(fullyQualifiedURLs);
     }

@@ -15,11 +15,14 @@
  */
 package org.hippoecm.hst.site.request;
 
+import java.util.List;
+
 import javax.jcr.Repository;
 
 import org.hippoecm.hst.content.tool.ContentBeansTool;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.container.HstComponentWindowFilter;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
@@ -46,6 +49,7 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
     private HstLinkCreator linkCreator;
     private HstSiteMenusManager siteMenusManager;
     private HstQueryManagerFactory hstQueryManagerFactory;
+    private List<HstComponentWindowFilter> componentWindowFilters;
 
     public HstRequestContextComponentImpl(Repository repository, ContextCredentialsProvider contextCredentialsProvider, ContainerConfiguration config) {
         this.repository = repository;
@@ -63,7 +67,7 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
         rc.setHstQueryManagerFactory(hstQueryManagerFactory);
         rc.setContentBeansTool(contentBeansTool);
         rc.setCachingObjectConverter(cachingObjectConverter);
-
+        rc.setComponentWindowFilters(componentWindowFilters);
         return rc;
     }
 
@@ -101,4 +105,7 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
         this.cachingObjectConverter = cachingObjectConverter;
     }
 
+    public void setComponentWindowFilters(final List<HstComponentWindowFilter> componentWindowFilters) {
+        this.componentWindowFilters = componentWindowFilters;
+    }
 }
