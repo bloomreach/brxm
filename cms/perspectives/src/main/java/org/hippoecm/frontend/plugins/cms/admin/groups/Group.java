@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,6 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.apache.commons.collections.SetUtils;
 import org.apache.jackrabbit.util.ISO9075;
 import org.apache.jackrabbit.util.Text;
 import org.apache.wicket.Session;
@@ -54,7 +53,6 @@ import org.slf4j.LoggerFactory;
 
 public class Group implements Comparable<Group>, IClusterable {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(Group.class);
 
     private final static String PROP_DESCRIPTION = "hipposys:description";
@@ -250,7 +248,7 @@ public class Group implements Comparable<Group>, IClusterable {
             final Value[] storedMembers = node.getProperty(HippoNodeType.HIPPO_MEMBERS).getValues();
 
             // do query for system users only when needed
-            final Set systemUserNames = excludeSystemUsers ? getSystemUserNames() : SetUtils.EMPTY_SET;
+            final Set<String> systemUserNames = excludeSystemUsers ? getSystemUserNames() : Collections.<String>emptySet();
 
             for (Value value : storedMembers) {
                 final String userName = value.getString();
