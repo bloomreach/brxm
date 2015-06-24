@@ -167,7 +167,7 @@ public class HstSitePipeline implements Pipeline
     
     private void invokeValves(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Valve [] valves) throws ContainerException {
         if (valves != null && valves.length > 0) {
-            new Invocation(requestContainerConfig, requestContext, servletRequest, servletResponse, valves).invokeNext();
+            new Invocation(requestContainerConfig, requestContext, valves).invokeNext();
         }
     }
 
@@ -255,7 +255,7 @@ public class HstSitePipeline implements Pipeline
 
         private int at = 0;
 
-        public Invocation(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Valve[] valves) {
+        public Invocation(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, Valve[] valves) {
             this.requestContainerConfig = requestContainerConfig;
             this.requestContext = requestContext;
             this.valves = valves;
