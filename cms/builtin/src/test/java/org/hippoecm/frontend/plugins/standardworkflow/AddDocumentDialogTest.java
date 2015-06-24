@@ -182,7 +182,7 @@ public class AddDocumentDialogTest {
         formTester.setValue(NAME_INPUT, "Another News");
 
         tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
-        tester.assertErrorMessages("The URL name \"news\" is already used in this folder. Please use a different name.");
+        tester.assertErrorMessages("The URL name \'news\' is already used in this folder. Please use a different name.");
     }
 
     @Test
@@ -196,7 +196,21 @@ public class AddDocumentDialogTest {
         formTester.setValue(NAME_INPUT, "News");
 
         tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
-        tester.assertErrorMessages("The name \"News\" is already used in this folder. Please use a different name.");
+        tester.assertErrorMessages("The name \'News\' is already used in this folder. Please use a different name.");
+    }
+
+    @Test
+    public void addFolderWithExistedUriNameAndLocalizedName(){
+        final FormTester formTester = createDialog(false);
+
+        // disable the translation from Name to uriName
+        tester.clickLink(WICKET_PATH_ENABLE_URIINPUT_LINK);
+
+        formTester.setValue(URL_INPUT, "news");
+        formTester.setValue(NAME_INPUT, "News");
+
+        tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
+        tester.assertErrorMessages("The URL name \'news\' and name \'News\' are already used in this folder. Please use different names.");
     }
 
     @Test
