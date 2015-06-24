@@ -79,4 +79,15 @@
       });
     };
   }
+
+  function registerLogoutEvent () {
+    $('.hippo-logout > .btn').click(function () {
+      Hippo.Events.publish('logout');
+    });
+  }
+
+  $(document).ready(function() {
+    registerLogoutEvent();
+  });
+
 }(window, jQuery));

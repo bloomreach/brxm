@@ -18,14 +18,10 @@ package org.hippoecm.frontend.plugins.cms.root;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.repeater.Item;
@@ -35,13 +31,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
-import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
@@ -60,8 +54,7 @@ import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.ListViewService;
 import org.hippoecm.frontend.skin.Icon;
-import org.hippoecm.frontend.usagestatistics.UsageStatisticsExternalUrl;
-import org.hippoecm.frontend.usagestatistics.UsageStatisticsSettings;
+import org.hippoecm.frontend.usagestatistics.UsageStatisticsHeaderItem;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.frontend.widgets.Pinger;
 import org.slf4j.Logger;
@@ -73,10 +66,6 @@ public class RootPlugin extends TabsPlugin {
     static final Logger log = LoggerFactory.getLogger(RootPlugin.class);
 
     public static final String CONFIG_PINGER_INTERVAL = "pinger.interval";
-
-    private static final String USAGE_STATISTICS_JS = "usage-statistics.js";
-    private static final String LOGIN_LOGOUT_EVENTS_JS = "login-logout-events.js";
-    private static final String REMOVE_EXT_BROWSER_CLASSES = "remove-ext-browser-classes.js";
 
     private boolean rendered = false;
     private final ExtWidgetRegistry extWidgetRegistry;
@@ -230,37 +219,8 @@ public class RootPlugin extends TabsPlugin {
 
         response.render(CmsHeaderItem.get());
         response.render(ExtResourcesHeaderItem.get());
-        if (UsageStatisticsSettings.get().isEnabled()) {
-            response.render(createUsageStatisticsReporter());
-        }
-        response.render(createRemoveExtBrowserClassesScript());
-        response.render(createLoginLogoutEvents());
-    }
-
-    private HeaderItem createRemoveExtBrowserClassesScript() {
-        final PackageTextTemplate removeScriptTemplate = new PackageTextTemplate(RootPlugin.class, REMOVE_EXT_BROWSER_CLASSES);
-        final String javaScript = removeScriptTemplate.asString();
-        return OnLoadHeaderItem.forScript(javaScript);
-    }
-
-    private HeaderItem createUsageStatisticsReporter() {
-        final Map<String, String> scriptParams = new TreeMap<>();
-        final String url = UsageStatisticsExternalUrl.get();
-        scriptParams.put("externalScriptUrl", url);
-        log.info("Including external script for reporting usage statistics: {}", url);
-
-        final PackageTextTemplate usageStatistics = new PackageTextTemplate(RootPlugin.class, USAGE_STATISTICS_JS);
-        final String javaScript = usageStatistics.asString(scriptParams);
-        return OnLoadHeaderItem.forScript(javaScript);
-    }
-
-    private HeaderItem createLoginLogoutEvents() {
-        final Map<String, String> eventParams = new TreeMap<>();
-        eventParams.put("releaseVersion", new SystemInfoDataProvider().getReleaseVersion());
-
-        final PackageTextTemplate template = new PackageTextTemplate(RootPlugin.class, LOGIN_LOGOUT_EVENTS_JS);
-        final String javaScript = template.asString(eventParams);
-        return OnLoadHeaderItem.forScript(javaScript);
+        response.render(RootPluginHeaderItem.get());
+        response.render(UsageStatisticsHeaderItem.get());
     }
 
     protected String getItemId() {

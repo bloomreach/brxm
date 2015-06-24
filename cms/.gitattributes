@@ -774,6 +774,7 @@ api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/persp
 api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-32.png -text svneol=unset#image/png
 api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-48.png -text svneol=unset#image/png
 api/src/main/resources/org/hippoecm/frontend/plugins/standards/perspective/perspective-64.png -text svneol=unset#image/png
+api/src/main/resources/org/hippoecm/frontend/usagestatistics/usage-statistics.js -text
 api/src/main/resources/skin/images/addfolder.png -text svneol=unset#image/png
 api/src/main/resources/skin/images/ajaxback.png -text
 api/src/main/resources/skin/images/box-blue-back.png -text
@@ -2311,7 +2312,6 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/document-
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/images/document-list-back.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/root/hippo-cms.ico -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/root/remove-ext-browser-classes.js -text
-perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/root/usage-statistics.js -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/TestSuite.java -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/admin/SearchableDataProviderTest.java -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/admin/domains/DomainDataProviderTest.java -text
