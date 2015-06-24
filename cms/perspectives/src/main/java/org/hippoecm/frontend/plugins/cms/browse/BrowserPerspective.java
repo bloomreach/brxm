@@ -47,11 +47,10 @@ public class BrowserPerspective extends Perspective {
     private IModel previousSelection;
 
     private final WireframeBehavior wireframe;
-    private boolean clientOverride = false;
     private boolean drawn = false;
 
     public BrowserPerspective(final IPluginContext context, final IPluginConfig config) {
-        super(context, config);
+        super(context, config, "content");
 
         addExtensionPoint("center");
         addExtensionPoint("left");
@@ -181,11 +180,6 @@ public class BrowserPerspective extends Perspective {
                     listing.expand();
                 }
             }
-
-            @Override
-            protected void onToggleFromClient(String position, boolean expand) {
-                clientOverride = !expand;
-            }
         });
     }
 
@@ -202,7 +196,6 @@ public class BrowserPerspective extends Perspective {
         }
 
         if (!tabs.hasOpenTabs()) {
-            clientOverride = false;
             if (listing.isSupported()) {
                 wireframe.expandDefault();
             }
