@@ -68,10 +68,6 @@
             // for now, simply don't accept any moves when the form is invalid
             return FormStateService.isValid();
           },
-          dragStart: function (event) {
-            var draggedItemId = event.source.nodeScope.$modelValue.id;
-            selectItem(draggedItemId);
-          },
           dropped: function (event) {
             var source = event.source,
               sourceNodeScope = source.nodeScope,
@@ -84,7 +80,10 @@
               MenuService.moveMenuItem(sourceId, destId, dest.index);
             }
 
-            selectItem(sourceId);
+            console.log('drop compare', $scope.MenuItemCtrl.selectedMenuItem.id, sourceId);
+            if($scope.MenuItemCtrl.selectedMenuItem.id !== sourceId) {
+              selectItem(sourceId);
+            }
           }
         };
       }
