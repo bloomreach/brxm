@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin;
 
-
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.panelperspective.PanelPluginPerspective;
@@ -23,7 +22,7 @@ import org.hippoecm.frontend.plugins.standards.panelperspective.PanelPluginPersp
 public class AdminPerspective extends PanelPluginPerspective {
 
     public AdminPerspective(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+        super(context, config, "admin");
     }
 
     @Override

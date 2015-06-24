@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,10 +34,13 @@ public abstract class PanelPluginPerspective extends Perspective {
 
     private final BreadCrumbBar breadCrumbBar;
 
-    public PanelPluginPerspective(IPluginContext context, IPluginConfig config) {
-        super(context, config);
-        setOutputMarkupId(true);
+    public PanelPluginPerspective(final IPluginContext context, final IPluginConfig config) {
+        this(context, config, null);
+    }
 
+    public PanelPluginPerspective(final IPluginContext context, final IPluginConfig config, final String eventId) {
+        super(context, config, eventId);
+        setOutputMarkupId(true);
 
         breadCrumbBar = new PanelPluginBreadCrumbBar("bread-crumb-bar");
         add(breadCrumbBar);
