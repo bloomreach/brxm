@@ -139,21 +139,22 @@ public abstract class GalleryUploadPanel extends Panel {
 
         fileUploadWidget = new SingleFileUploadWidget(FILEUPLOAD_WIDGET_ID, config, validator) {
             @Override
-            protected void onFileUpload(final FileUpload fileUpload) throws FileUploadViolationException {
+            protected void onBeforeUpload(final FileUploadInfo fileUploadInfo) {
                 // because it's an ajax event, feedbacks need to be removed manually
                 clearOldFeedbackMessages();
+            }
+
+            @Override
+            protected void onFileUpload(final FileUpload fileUpload) throws FileUploadViolationException {
                 createGalleryItem(fileUpload, getGalleryType());
             }
 
             @Override
             protected void onUploadError(final FileUploadInfo fileUploadInfo) {
-                // because it's an ajax event, feedbacks need to be removed manually
-                clearOldFeedbackMessages();
-
                 final List<String> errorMessages = fileUploadInfo.getErrorMessages();
                 if (!errorMessages.isEmpty()) {
                     errorMessages.forEach(GalleryUploadPanel.this::error);
-                    log.error("file {} contains errors: {}", fileUploadInfo.getFileName(), StringUtils.join(errorMessages, ";"));
+                    log.debug("file {} contains errors: {}", fileUploadInfo.getFileName(), StringUtils.join(errorMessages, ";"));
                 }
             }
 

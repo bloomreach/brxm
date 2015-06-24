@@ -41,22 +41,21 @@ public abstract class FileUploadPanel extends Panel {
         form.add(new SingleFileUploadWidget("fileUpload", pluginConfig, validator, true) {
             @Override
             protected void onBeforeUpload(final FileUploadInfo fileUploadInfo) {
+                form.clearFeedbackMessages();
                 FileUploadPanel.this.onBeforeUpload(fileUploadInfo);
             }
 
             @Override
             protected void onFileUpload(FileUpload fileUpload) throws FileUploadViolationException {
-                form.clearFeedbackMessages();
                 FileUploadPanel.this.onFileUpload(fileUpload);
             }
 
             @Override
             protected void onUploadError(final FileUploadInfo fileUploadInfo) {
-                form.clearFeedbackMessages();
                 final List<String> errorMessages = fileUploadInfo.getErrorMessages();
                 if (!errorMessages.isEmpty()) {
                     errorMessages.forEach(form::error);
-                    log.error("file {} contains errors: {}", fileUploadInfo.getFileName(), String.join(";", errorMessages));
+                    log.debug("file {} contains errors: {}", fileUploadInfo.getFileName(), String.join(";", errorMessages));
                 }
             }
         });
