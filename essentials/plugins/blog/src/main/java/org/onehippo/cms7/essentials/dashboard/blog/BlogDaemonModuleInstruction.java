@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,9 +75,9 @@ public class BlogDaemonModuleInstruction implements Instruction {
             final Node eventBusNode = session.getNode(CONFIG_EVENT_BUS);
             eventBusNode.setProperty("projectNamespace", (String) placeholderData.get("namespace"));
             session.save();
-            final String runSetup = (String) placeholderData.get(PREFIX + "setupImport");
-            if (!Boolean.valueOf(runSetup)) {
-                log.info("setupImport was disabled: {}", runSetup);
+            final Boolean runSetup = (Boolean)placeholderData.remove(PREFIX + "setupImport");
+            if (runSetup == null || !runSetup) {
+                log.info("setupImport was disabled");
                 return InstructionStatus.SKIPPED;
             }
             final Collection<String> urls = new HashSet<>();
@@ -89,20 +89,15 @@ public class BlogDaemonModuleInstruction implements Instruction {
                     continue;
                 }
                 final String key = PREFIX_PATTERN.matcher(originalKey).replaceFirst("");
-                final String value = (String) entry.getValue();
 
-                if (key.equals("active") || key.equals("runInstantly")) {
-                    eventBusNode.setProperty(key, Boolean.valueOf(value));
-                } else if (key.equals("cronExpression") || key.equals("cronExpressionDescription") || key.equals("jobClassName")) {
-                    eventBusNode.setProperty(key, value);
-                } else if (key.startsWith("url")) {
-                    urls.add(value);
-                } else if (key.startsWith("authorsBasePath")) {
-                    eventBusNode.setProperty(key, value);
-                } else if (key.startsWith("author")) {
-                    authors.add(value);
+                if (key.startsWith("url")) {
+                    urls.add((String) entry.getValue());
+                } else if (key.startsWith("author") && !"authorsBasePath".equals(key)) {
+                    authors.add((String) entry.getValue());
+                } else if (key.equals("active") || key.equals("runInstantly")) {
+                    eventBusNode.setProperty(key, (Boolean)entry.getValue());
                 } else {
-                    eventBusNode.setProperty(key, value);
+                    eventBusNode.setProperty(key, (String)entry.getValue());
                 }
             }
             final String[] myUrls = urls.toArray(new String[urls.size()]);
