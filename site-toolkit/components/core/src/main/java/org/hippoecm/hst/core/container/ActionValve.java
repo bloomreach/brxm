@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,27 +49,12 @@ public class ActionValve extends AbstractBaseOrderableValve {
             return;
         }
 
-        HttpServletRequest servletRequest = context.getServletRequest();
-        HttpServletResponse servletResponse = context.getServletResponse();
+        final HttpServletRequest servletRequest = context.getServletRequest();
+        final HttpServletResponse servletResponse = context.getServletResponse();
 
-        HstComponentWindow window = null;
-        window = findComponentWindow(context.getRootComponentWindow(), actionWindowReferenceNamespace);
-        
-        HstResponseState responseState = null;
-        HstContainerURLProvider urlProvider = requestContext.getURLFactory().getContainerURLProvider();
-        
-        if (window == null) {
-            log.info("Illegal request for action URL found because there is no component for id '{}' for matched " +
-                    "sitemap item '{}'. Set 404 on response.", actionWindowReferenceNamespace, requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getId());
-            try {
-                servletResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
-            } catch (IOException e) {
-                throw new ContainerException("Unable to set 404 on response after invalid resource path.", e);
-            }
-            return;
-        }
-        responseState = new HstServletResponseState(servletRequest, servletResponse);
+        final HstComponentWindow window = context.getRootComponentWindow();
 
+        HstResponseState responseState = new HstServletResponseState(servletRequest, servletResponse);
         HstRequest request = new HstRequestImpl(servletRequest, requestContext, window, HstRequest.ACTION_PHASE);
         HstResponseImpl response = new HstResponseImpl(servletRequest, servletResponse, requestContext, window, responseState, null);
         ((HstComponentWindowImpl) window).setResponseState(responseState);
@@ -100,6 +85,7 @@ public class ActionValve extends AbstractBaseOrderableValve {
             referenceNamespace = "";
         }
 
+        final HstContainerURLProvider urlProvider = requestContext.getURLFactory().getContainerURLProvider();
         urlProvider.mergeParameters(baseURL, referenceNamespace, renderParameters);
 
         if (responseState.getErrorCode() > 0) {

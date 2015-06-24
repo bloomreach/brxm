@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -83,7 +83,9 @@ public interface ValveContext
     void setRootComponentWindow(HstComponentWindow rootComponentWindow);
     
     /**
-     * Returns the root {@link HstComponentWindow} instance that is used to process the current request.
+     * Returns the root {@link HstComponentWindow} instance that is used to process the current request. Note that
+     * in case of a action/resource/component-rendering request the root component is in general the
+     * targeted (for the action/resource/component-rendering) component
      *
      * @return the root {@link HstComponentWindow} instance that is used to process the current request.
      */

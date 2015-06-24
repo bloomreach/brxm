@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -28,42 +26,31 @@ public class ComponentRenderingValve extends AbstractBaseOrderableValve {
 
     @Override
     public void invoke(ValveContext context) throws ContainerException {
-        HstRequestContext requestContext = context.getRequestContext();
-        String componentRenderingWindowReferenceNamespace = requestContext.getBaseURL().getComponentRenderingWindowReferenceNamespace();
+        final HstRequestContext requestContext = context.getRequestContext();
+        final String componentRenderingWindowReferenceNamespace = requestContext.getBaseURL().getComponentRenderingWindowReferenceNamespace();
 
         if (componentRenderingWindowReferenceNamespace == null) {
             // not a compoment rendering request, so skip it..
             context.invokeNext();
             return;
         }
-
-        HstComponentWindow window = findComponentWindow(context.getRootComponentWindow(), componentRenderingWindowReferenceNamespace);
-        HttpServletResponse servletResponse = requestContext.getServletResponse();
-
-        if (window == null) {
-            log.warn("Illegal request for componen rendering URL found because there is no component for id '{}' for matched " +
-                    "sitemap item '{}'. Set 404 on response.", componentRenderingWindowReferenceNamespace, requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getId());
-            try {
-                servletResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
-            } catch (IOException e) {
-                throw new ContainerException("Unable to set 404 on response after invalid resource path.", e);
-            }
-            return;
-        }
+        final HstComponentWindow window = context.getRootComponentWindow();
+        final HttpServletResponse servletResponse = requestContext.getServletResponse();
 
         if (requestContext.isCmsRequest() || requestContext.isPreview()) {
             setNoCacheHeaders(servletResponse);
         }
 
-        if (window.getComponentInfo().isStandalone()) {
-            // set the current window as the root window because the backing componentInfo is standalone
-            context.setRootComponentWindow(window);
-        } else {
-            // the component is not standalone: All HstComponent's should have their doBeforeRender called,
-            // but only the renderer/dispatcher of the found window should be invoked
+        if (!window.getComponentInfo().isStandalone()) {
+            // set the rendering window firsst
             context.setRootComponentRenderingWindow(window);
+            // set the sitemap item root window as the root window because the backing componentInfo is standalone
+            HstComponentWindow root = window;
+            while(root.getParentWindow() != null) {
+                root = root.getParentWindow();
+            }
+            context.setRootComponentWindow(root);
         }
-
         context.invokeNext();
     }
 

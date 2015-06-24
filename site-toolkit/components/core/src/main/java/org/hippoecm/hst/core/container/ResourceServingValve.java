@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
  *  limitations under the License.
  */
 package org.hippoecm.hst.core.container;
-
-import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,19 +50,7 @@ public class ResourceServingValve extends AbstractBaseOrderableValve {
         HttpServletRequest servletRequest = context.getServletRequest();
         HttpServletResponse servletResponse = context.getServletResponse();
 
-        HstComponentWindow window = findComponentWindow(context.getRootComponentWindow(), resourceWindowRef);
-
-        if (window == null) {
-            log.warn("Illegal request for resource URL found because there is no component for id '{}' for matched " +
-                    "sitemap item '{}'. Set 404 on response.", resourceWindowRef, requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getId());
-            try {
-                servletResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
-            } catch (IOException e) {
-                throw new ContainerException("Unable to set 404 on response after invalid resource path.", e);
-            }
-
-            return;
-        }
+        final HstComponentWindow window = context.getRootComponentWindow();
 
         HstRequest request = new HstRequestImpl(servletRequest, requestContext, window, HstRequest.RESOURCE_PHASE);
         HstResponse response = new HstResourceResponseImpl(servletResponse, requestContext, window);
