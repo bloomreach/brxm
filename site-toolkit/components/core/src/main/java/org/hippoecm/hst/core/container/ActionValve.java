@@ -67,7 +67,6 @@ public class ActionValve extends AbstractBaseOrderableValve {
             PageErrorHandler.Status handled = handleComponentExceptions(pageErrors, context.getRequestContainerConfig(), window, request, response);
             String location = responseState.getRedirectLocation();
             if (handled == PageErrorHandler.Status.HANDLED_TO_STOP && location == null) {
-                context.invokeNext();
                 return;
             }
         }
