@@ -31,6 +31,17 @@ import org.hippoecm.frontend.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The abstract file upload widget.
+ *
+ * When uploading a file, the widget should provide the following events in sequence:
+ * <ul>
+ *     <li>{@link #onBeforeUpload(FileUploadInfo)}</li>
+ *     <li>{@link #onFileUpload(FileUpload fileUpload)}</li>
+ *     <li>{@link #onUploadError(FileUploadInfo)}</li>
+ *     <li>{@link #onAfterUpload(FileItem, FileUploadInfo)}</li>
+ * </ul>
+ */
 public abstract class AbstractFileUploadWidget extends Panel {
     private static final Logger log = LoggerFactory.getLogger(AbstractFileUploadWidget.class);
 
@@ -77,6 +88,12 @@ public abstract class AbstractFileUploadWidget extends Panel {
     }
 
     /**
+     * The event is fired before processing the uploaded file.
+     */
+    protected void onBeforeUpload(final FileUploadInfo fileUploadInfo) {
+    }
+
+    /**
      * Override this method to handle uploading files
      *
      * @param fileUpload
@@ -84,8 +101,15 @@ public abstract class AbstractFileUploadWidget extends Panel {
      */
     protected abstract void onFileUpload(FileUpload fileUpload) throws FileUploadViolationException;
 
+    /**
+     * The event is fired when there is an error during processing uploaded file.
+     * @param fileUploadInfo
+     */
     protected void onUploadError(final FileUploadInfo fileUploadInfo) {}
 
+    /**
+     * The event is fired after the selecting files has been processed and uploaded.
+     */
     protected void onAfterUpload(final FileItem file, final FileUploadInfo fileUploadInfo) {}
 
     protected void onFinished() {}

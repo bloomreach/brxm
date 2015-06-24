@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The single-file-upload widget using jquery-file-upload
+ * @see AbstractFileUploadWidget
  */
 public abstract class SingleFileUploadWidget extends AbstractFileUploadWidget {
     final Logger log = LoggerFactory.getLogger(SingleFileUploadWidget.class);
@@ -85,6 +86,11 @@ public abstract class SingleFileUploadWidget extends AbstractFileUploadWidget {
 
 
         add(ajaxFileUploadBehavior = new AjaxFileUploadBehavior(this) {
+            @Override
+            protected void onBeforeUpload(final FileUploadInfo fileUploadInfo) {
+                SingleFileUploadWidget.this.onBeforeUpload(fileUploadInfo);
+            }
+
             @Override
             protected void process(final FileUpload fileUpload) throws FileUploadViolationException {
                 SingleFileUploadWidget.this.process(fileUpload);

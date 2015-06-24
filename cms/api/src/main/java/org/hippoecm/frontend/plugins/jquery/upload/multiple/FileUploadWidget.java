@@ -37,7 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The multi-files upload widget
+ * The multi-files upload widget.
+ * @see AbstractFileUploadWidget
  */
 public abstract class FileUploadWidget extends AbstractFileUploadWidget {
 
@@ -71,6 +72,11 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
 
     private void createComponents() {
         add(ajaxFileUploadBehavior = new AjaxFileUploadBehavior(this) {
+            @Override
+            protected void onBeforeUpload(final FileUploadInfo fileUploadInfo) {
+                FileUploadWidget.this.onBeforeUpload(fileUploadInfo);
+            }
+
             @Override
             protected void process(final FileUpload fileUpload) throws FileUploadViolationException {
                 FileUploadWidget.this.process(fileUpload);

@@ -44,6 +44,16 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
+/**
+ * The file upload behavior to handle uploads sent by ajax requests. The component container can override the following
+ * events:
+ * <ul>
+ *     <li>{@link #onBeforeUpload(FileUploadInfo)}</li>
+ *     <li>{@link #process(FileUpload)}</li>
+ *     <li>{@link #onUploadError(FileUploadInfo)}</li>
+ *     <li>{@link #onAfterUpload(FileItem, FileUploadInfo)}</li>
+ * </ul>
+ */
 public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
     private static final Logger log = LoggerFactory.getLogger(AjaxFileUploadBehavior.class);
 
@@ -73,6 +83,7 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
                     // save file info prior uploading because temporary files may be deleted,
                     // thus their file sizes won't be correct.
                     FileUploadInfo fileUploadInfo = new FileUploadInfo(file.getName(), file.getSize());
+                    onBeforeUpload(fileUploadInfo);
                     try {
                         log.debug("Processed a file: {}", file.getName());
                         process(new FileUpload(file));
@@ -99,7 +110,14 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
         }
     }
 
-    protected void onUploadError(final FileUploadInfo fileUploadInfo) {}
+    /**
+     * Event is fired before processing the uploaded file.
+     */
+    protected void onBeforeUpload(final FileUploadInfo fileUploadInfo) {
+    }
+
+    protected void onUploadError(final FileUploadInfo fileUploadInfo) {
+    }
 
     protected abstract void process(final FileUpload fileUpload) throws FileUploadViolationException;
 

@@ -39,6 +39,10 @@ public abstract class FileUploadPanel extends Panel {
         form.setMultiPart(true);
 
         form.add(new SingleFileUploadWidget("fileUpload", pluginConfig, validator, true) {
+            @Override
+            protected void onBeforeUpload(final FileUploadInfo fileUploadInfo) {
+                FileUploadPanel.this.onBeforeUpload(fileUploadInfo);
+            }
 
             @Override
             protected void onFileUpload(FileUpload fileUpload) throws FileUploadViolationException {
@@ -57,6 +61,12 @@ public abstract class FileUploadPanel extends Panel {
             }
         });
         add(form);
+    }
+
+    /**
+     * The event is fired before processing the uploaded file.
+     */
+    protected void onBeforeUpload(final FileUploadInfo fileUploadInfo) {
     }
 
     public abstract void onFileUpload(final FileUpload fileUpload) throws FileUploadViolationException;
