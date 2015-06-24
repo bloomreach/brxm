@@ -644,25 +644,11 @@
     },
 
     firePropertiesChanged: function () {
-      this._doFirePropertiesChanges('value');
-    },
-
-    fireInitialPropertiesChanged: function () {
-      this._doFirePropertiesChanges('initialValue');
-    },
-
-    fireReloadComponentWithoutProperties: function () {
-      // results in component-rendering call without POST-ed params and thus in
-      // default rendered component
-      this.fireEvent('propertiesChanged', {});
-    },
-
-    _doFirePropertiesChanges: function (valueField) {
       if (this.store !== null) {
         var propertiesMap = {};
         this.store.each(function (record) {
           var name = record.get('name'),
-            value = record.get(valueField);
+            value = record.get('value');
           propertiesMap[name] = value;
         });
         this.fireEvent('propertiesChanged', propertiesMap);

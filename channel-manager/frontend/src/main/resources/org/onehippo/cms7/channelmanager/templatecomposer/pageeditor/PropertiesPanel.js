@@ -178,7 +178,7 @@
 
     onHide: function () {
       this._stopValidationMonitoring();
-      this.getActiveTab().propertiesForm.fireReloadComponentWithoutProperties();
+      this._renderInitialComponentState();
     },
 
     _stopValidationMonitoring: function () {
@@ -195,11 +195,11 @@
         this.componentVariants.get().when(function (variants) {
           var initialVariantId = this._getBestMatchingVariantId('', variants);
           if (isActiveTabDirty || initialVariantId !== this._getCurrentVariantId()) {
-            this._getTab(initialVariantId).propertiesForm.fireInitialPropertiesChanged();
+            this._renderInitialComponentState();
           }
         }.createDelegate(this));
       } else if (isActiveTabDirty) {
-        this.getActiveTab().propertiesForm.fireInitialPropertiesChanged();
+        this._renderInitialComponentState();
       }
     },
 
@@ -265,6 +265,10 @@
 
     _onPropertiesChanged: function (propertiesMap) {
       this.fireEvent('propertiesChanged', this.componentId, propertiesMap);
+    },
+
+    _renderInitialComponentState: function () {
+      this.fireEvent('propertiesChanged', this.componentId, {});
     },
 
     _onPropertiesSaved: function (savedVariantId) {
