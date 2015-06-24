@@ -171,6 +171,15 @@ public class JCRJobStoreTest extends RepositoryTestCase {
     }
 
     @Test
+    public void testTriggerLockKeepAliveIsCancelledWhenRefreshingLockFails() throws Exception {
+        final Node jobNode = createAndStoreJobAndSimpleTrigger(store);
+        final List<OperableTrigger> triggers = store.acquireNextTriggers(System.currentTimeMillis(), 1, -1l);
+        jobNode.getNode("hipposched:triggers/trigger").unlock();
+        Thread.sleep(1000*12); // sleep longer than twice the refresh interval
+        assertFalse(store.stopLockKeepAlive(jobNode.getNode("hipposched:triggers/trigger").getIdentifier()));
+    }
+
+    @Test
     public void testConfigureJobInRepository() throws Exception {
         final Node test = session.getNode("/test");
         final Node groupNode = test.addNode("group", HIPPOSCHED_JOBGROUP);

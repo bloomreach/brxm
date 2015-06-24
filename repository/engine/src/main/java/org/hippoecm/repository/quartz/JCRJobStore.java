@@ -608,7 +608,7 @@ public class JCRJobStore implements JobStore {
                                 unlock(session, triggerNode.getPath());
                             }
                         } catch (RepositoryException e) {
-                            log.error("Failed to recreate trigger for job " + jobNode.getPath(), e);
+                            log.error("Failed to recreate trigger for job {}", jobNode.getPath(), e);
                             stopLockKeepAlive(triggerNode.getIdentifier());
                             unlock(session, triggerNode.getPath());
                         }
@@ -638,7 +638,7 @@ public class JCRJobStore implements JobStore {
                 final Node triggerNode = session.getNodeByIdentifier(triggerIdentifier);
                 unlock(session, triggerNode.getPath());
             } catch (ItemNotFoundException e) {
-                log.info("Trigger no longer exists: " + trigger.getKey().getName());
+                log.info("Trigger no longer exists: {}", trigger.getKey().getName());
             } catch (RepositoryException e) {
                 refreshSession(session);
                 log.error("Failed to release acquired trigger", e);
@@ -810,41 +810,41 @@ public class JCRJobStore implements JobStore {
     }
 
     private boolean lock(Session session, String nodePath) throws RepositoryException {
-        log.debug("Trying to obtain lock on " + nodePath);
+        log.debug("Trying to obtain lock on {}", nodePath);
         final HippoLockManager lockManager = (HippoLockManager) session.getWorkspace().getLockManager();
         if (!lockManager.isLocked(nodePath) || lockManager.expireLock(nodePath)) {
             try {
                 ensureIsLockable(session, nodePath);
                 lockManager.lock(nodePath, false, false, lockTimeout, getClusterNodeId(session));
-                log.debug("Lock successfully obtained on " + nodePath);
+                log.debug("Lock successfully obtained on {}", nodePath);
                 return true;
             } catch (LockException e) {
                 // happens when other cluster node beat us to it
-                log.debug("Failed to set lock on "  + nodePath +  ": " + e.getMessage());
+                log.debug("Failed to set lock on {}: {}", nodePath, e.getMessage());
             }
         } else {
-            log.debug("Already locked " + nodePath);
+            log.debug("Already locked: {}", nodePath);
         }
         return false;
     }
 
     private void unlock(Session session, String nodePath) throws RepositoryException {
-        log.debug("Trying to release lock on " + nodePath);
+        log.debug("Trying to release lock on {}", nodePath);
         try {
             final LockManager lockManager = session.getWorkspace().getLockManager();
             if (lockManager.isLocked(nodePath)) {
                 final Lock lock = lockManager.getLock(nodePath);
                 if (lock.isLockOwningSession()) {
                     lockManager.unlock(nodePath);
-                    log.debug("Lock successfully released on " + nodePath);
+                    log.debug("Lock successfully released on {}", nodePath);
                 } else {
-                    log.debug("We don't own the lock on " + nodePath);
+                    log.debug("We don't own the lock on {}", nodePath);
                 }
             } else {
-                log.debug("Not locked " + nodePath);
+                log.debug("Not locked {}", nodePath);
             }
         } catch (RepositoryException e) {
-            log.error("Failed to release lock on " + nodePath, e);
+            log.error("Failed to release lock on {}", nodePath, e);
         }
     }
 
@@ -862,8 +862,12 @@ public class JCRJobStore implements JobStore {
         final long refreshInterval = lockTimeout / 2;
         final Future<?> future = executorService.scheduleAtFixedRate(new Runnable() {
             private int failedAttempts = 0;
+            private boolean cancelled = false; // REPO-1268 additional check in case cancellation of future somehow did not work
             @Override
             public void run() {
+                if (cancelled) {
+                    return;
+                }
                 try {
                     refreshLock(session, identifier);
                     failedAttempts = 0;
@@ -872,7 +876,10 @@ public class JCRJobStore implements JobStore {
                     failedAttempts++;
                     if (failedAttempts > 1) {
                         log.warn("Cancelling keep alive after {} attempts to refresh lock", failedAttempts);
-                        stopLockKeepAlive(identifier);
+                        if (!stopLockKeepAlive(identifier)) {
+                            log.warn("Cancelling keep alive job failed");
+                        }
+                        cancelled = true;
                     }
                 }
             }
@@ -880,11 +887,12 @@ public class JCRJobStore implements JobStore {
         keepAlives.put(identifier, future);
     }
 
-    private void stopLockKeepAlive(final String identifier) {
+    boolean stopLockKeepAlive(final String identifier) {
         final Future<?> future = keepAlives.remove(identifier);
         if (future != null) {
-            future.cancel(true);
+            return future.cancel(true);
         }
+        return false;
     }
 
     private static void ensureIsLockable(Session session, String nodePath) throws RepositoryException {
