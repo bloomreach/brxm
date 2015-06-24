@@ -31,6 +31,7 @@
       this.blueprintStore = config.blueprintStore;
       this.resources = config.resources;
       this.selectedChannelId = null;
+      this.perspectiveId = config.perspectiveId;
 
       this.toolbar = new Hippo.ChannelManager.BreadcrumbToolbar({
         id: 'hippo-channelmanager-breadcrumb',
@@ -76,8 +77,8 @@
         this.toolbar.render(hippoFooter, 0);
 
         // only show the channel manager breadcrumb when channel manager is active
-        Hippo.Events.subscribe('channel-manager-activated', this.showBreadcrumb, this);
-        Hippo.Events.subscribe('channel-manager-deactivated', this.hideBreadcrumb, this);
+        Hippo.Events.subscribe('perspective-activated', this._showBreadcrumbForChannels, this);
+        Hippo.Events.subscribe('perspective-deactivated', this._hideBreadcrumbForChannels, this);
       }, this, {single: true});
 
       // get all child components
@@ -177,6 +178,18 @@
       this.hideBreadcrumbTask.cancel();
       this.toolbar.getEl().addClass('hippo-breadcrumb-active');
       this.showBreadcrumbTask.delay(0);
+    },
+
+    _hideBreadcrumbForChannels: function(eventParameters) {
+      if (eventParameters && eventParameters.perspectiveId === this.perspectiveId) {
+        this.hideBreadcrumb();
+      }
+    },
+
+    _showBreadcrumbForChannels: function(eventParameters) {
+      if (eventParameters && eventParameters.perspectiveId === this.perspectiveId) {
+        this.showBreadcrumb();
+      }
     },
 
     selectCard: function (itemId) {

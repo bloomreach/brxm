@@ -19,7 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.Fragment;
@@ -27,7 +26,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.perspectives.common.ErrorMessagePanel;
@@ -43,21 +41,17 @@ import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerApiHeaderItem;
 
-@SuppressWarnings("serial")
 public class ChannelManagerPerspective extends Perspective implements IChannelManagerService {
 
     private static final CssResourceReference CHANNEL_MANAGER_PERSPECTIVE_CSS = new CssResourceReference(ChannelManagerPerspective.class, "ChannelManagerPerspective.css");
+    private static final String EVENT_ID = "channels";
 
-    private static final String EVENT_CHANNEL_MANAGER_ACTIVATED = "channel-manager-activated";
-    private static final String EVENT_CHANNEL_MANAGER_DEACTIVATED = "channel-manager-deactivated";
-
-    private RootPanel rootPanel;
-    private boolean siteIsUp;
-    private List<IRenderService> childservices = new LinkedList<IRenderService>();
-    private boolean isActivated;
+    private final RootPanel rootPanel;
+    private final boolean siteIsUp;
+    private final List<IRenderService> childServices = new LinkedList<>();
 
     public ChannelManagerPerspective(final IPluginContext context, final IPluginConfig config) {
-        super(context, config);
+        super(context, config, EVENT_ID);
 
         final Map<String, IRestProxyService> liveRestProxyServices = RestProxyServicesManager.getLiveRestProxyServices(context, config);
 
@@ -71,12 +65,13 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
                 add(new WireframeBehavior(wfSettings));
             }
 
-            rootPanel = new RootPanel(context, config, "channel-root");
+            rootPanel = new RootPanel(context, config, "channel-root", EVENT_ID);
             add(rootPanel);
 
             final String channelManagerServiceId = config.getString("channel.manager.service.id", IChannelManagerService.class.getName());
             context.registerService(this, channelManagerServiceId);
         } else {
+            rootPanel = null;
             final Fragment errorFragment= new Fragment("channel-root", "error-fragment", this);
             errorFragment.add(new ErrorMessagePanel("error-panel", new ResourceModel("site.is.down.message")));
             add(errorFragment);
@@ -85,15 +80,13 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
 
     @Override
     public IModel<String> getTitle() {
-        return new StringResourceModel("perspective-title", this, new Model<String>("Channel Manager"));
+        return new StringResourceModel("perspective-title", this, Model.of("Channel Manager"));
     }
 
     @Override
-    public void focus(final IRenderService child) {
-        super.focus(child);
-        if (isActive()) {
-            activate();
-        }
+    protected void onDeactivated() {
+        super.onDeactivated();
+        publishEvent("perspective-deactivated");
     }
 
     @Override
@@ -105,34 +98,13 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
                 rootPanel.setActiveCard(RootPanel.CardId.CHANNEL_MANAGER);
             }
             if (isActive()) {
-                rootPanel.render(target, this.isActivated);
+                rootPanel.render(target, this.isActivated());
             } else {
                 deactivate();
             }
-            for (IRenderService child : childservices) {
+            for (IRenderService child : childServices) {
                 child.render(target);
             }
-        }
-    }
-
-    private void activate() {
-        if (!this.isActivated) {
-            this.isActivated = true;
-            publishEvent(EVENT_CHANNEL_MANAGER_ACTIVATED);
-        }
-    }
-
-    private void deactivate() {
-        if (this.isActivated) {
-            this.isActivated = false;
-            publishEvent(EVENT_CHANNEL_MANAGER_DEACTIVATED);
-        }
-    }
-
-    private static void publishEvent(final String event) {
-        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
-            target.appendJavaScript("Hippo.Events.publish('" + event + "');");
         }
     }
 
@@ -145,11 +117,11 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     }
 
     public void removeRenderService(final IRenderService service) {
-        childservices.remove(service);
+        childServices.remove(service);
     }
 
     public void addRenderService(final IRenderService service) {
-        childservices.add(service);
+        childServices.add(service);
     }
 
     @Override

@@ -84,6 +84,9 @@ public class RootPanel extends ExtPanel {
     private boolean redraw = false;
 
     @ExtProperty
+    private final String perspectiveId;
+
+    @ExtProperty
     private int activeItem = 0;
 
     @ExtProperty
@@ -97,8 +100,10 @@ public class RootPanel extends ExtPanel {
         js.append("} catch(exception) { console.log('Error initializing channel manager. '+exception); } ");
     }
 
-    public RootPanel(final IPluginContext context, final IPluginConfig config, final String id) {
+    public RootPanel(final IPluginContext context, final IPluginConfig config, final String id, final String perspectiveId) {
         super(id);
+
+        this.perspectiveId = perspectiveId;
 
         final IPluginConfig channelListConfig = config.getPluginConfig(CONFIG_CHANNEL_LIST);
 
