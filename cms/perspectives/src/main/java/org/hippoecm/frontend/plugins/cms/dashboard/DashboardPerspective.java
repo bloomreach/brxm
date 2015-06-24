@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ public class DashboardPerspective extends Perspective {
     private SystemInfoDataProvider systemDataProvider = new SystemInfoDataProvider();
 
     public DashboardPerspective(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+        super(context, config, "dashboard");
         add(new Label("version-label", systemDataProvider.getReleaseVersion()));
         EditionPanel editionPanel = new EditionPanel("edition-panel", config.getString("edition", "community").toLowerCase());
         add(editionPanel);
