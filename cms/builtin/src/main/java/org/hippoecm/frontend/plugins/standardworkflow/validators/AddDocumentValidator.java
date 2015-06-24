@@ -36,6 +36,7 @@ public abstract class AddDocumentValidator extends DocumentFormValidator{
     public static final String ERROR_SNS_NODE_EXISTS = "error-sns-node-exists";
     public static final String ERROR_LOCALIZED_NAME_EXISTS = "error-localized-name-exists";
     public static final String ERROR_VALIDATION_NAMES = "error-validation-names";
+    public static final String ERROR_SNS_NAMES_EXISTS = "error-sns-names-exist";
 
     static Logger log = LoggerFactory.getLogger(AddDocumentValidator.class);
 
@@ -58,11 +59,16 @@ public abstract class AddDocumentValidator extends DocumentFormValidator{
         String newLocalizedName = nameUriContainer.getNameComponent().getValue();
         try {
             final Node parentNode = workflowDescriptorModel.getNode();
-            if (parentNode.hasNode(newNodeName)) {
-                showError(ERROR_SNS_NODE_EXISTS, newNodeName);
-                return;
-            }
-            if (existedLocalizedName(parentNode, newLocalizedName)) {
+            final boolean hasNodeWithSameName = parentNode.hasNode(newNodeName);
+            final boolean hasNodeWithSameLocalizedName = hasChildWithLocalizedName(parentNode, newLocalizedName);
+
+            if (hasNodeWithSameName) {
+                if (hasNodeWithSameLocalizedName) {
+                    showError(ERROR_SNS_NAMES_EXISTS, newNodeName, newLocalizedName);
+                } else {
+                    showError(ERROR_SNS_NODE_EXISTS, newNodeName);
+                }
+            } else if (hasNodeWithSameLocalizedName) {
                 showError(ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
             }
         } catch (RepositoryException e) {

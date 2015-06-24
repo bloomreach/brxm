@@ -27,7 +27,7 @@ abstract class DocumentFormValidator implements IFormValidator {
      * Return true if <code>parentNode</code> contains a child having the same localized name with the specified
      * <code>localizedName</code>
      */
-    protected boolean existedLocalizedName(final Node parentNode, final String localizedName) throws RepositoryException {
+    protected boolean hasChildWithLocalizedName(final Node parentNode, final String localizedName) throws RepositoryException {
         return SameNameSiblingsUtil.hasChildWithLocalizedName(parentNode, localizedName);
     }
 

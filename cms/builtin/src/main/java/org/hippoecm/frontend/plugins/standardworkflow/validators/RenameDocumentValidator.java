@@ -35,6 +35,7 @@ public abstract class RenameDocumentValidator extends DocumentFormValidator {
     public static final String ERROR_SAME_NAMES = "error-same-names";
     public static final String ERROR_SNS_NODE_EXISTS = "error-sns-node-exists";
     public static final String ERROR_LOCALIZED_NAME_EXISTS = "error-localized-name-exists";
+    public static final String ERROR_SNS_NAMES_EXISTS = "error-sns-names-exist";
     public static final String ERROR_VALIDATION_NAMES = "error-validation-names";
 
     private final WorkflowDescriptorModel workflowDescriptorModel;
@@ -64,14 +65,23 @@ public abstract class RenameDocumentValidator extends DocumentFormValidator {
             if (StringUtils.equals(newUrlName, originalUrl)) {
                 if (StringUtils.equals(newLocalizedName, originalName)) {
                     showError(ERROR_SAME_NAMES);
-                } else if (existedLocalizedName(parentNode, newLocalizedName)) {
+                } else if (hasChildWithLocalizedName(parentNode, newLocalizedName)) {
                     showError(ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
                 }
-            } else if (parentNode.hasNode(newUrlName)) {
-                showError(ERROR_SNS_NODE_EXISTS, newUrlName);
-            } else if (!StringUtils.equals(newLocalizedName, originalName) &&
-                        existedLocalizedName(parentNode, newLocalizedName)) {
-                showError(ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
+            } else {
+                final boolean hasNodeWithSameName = parentNode.hasNode(newUrlName);
+                final boolean hasOtherNodeWithSameLocalizedName = !StringUtils.equals(newLocalizedName, originalName) &&
+                        hasChildWithLocalizedName(parentNode, newLocalizedName);
+
+                if (hasNodeWithSameName) {
+                    if (hasOtherNodeWithSameLocalizedName) {
+                        showError(ERROR_SNS_NAMES_EXISTS, newUrlName, newLocalizedName);
+                    } else {
+                        showError(ERROR_SNS_NODE_EXISTS, newUrlName);
+                    }
+                } else if (hasOtherNodeWithSameLocalizedName) {
+                    showError(ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
+                }
             }
         } catch (RepositoryException e) {
             log.error("validation error", e);
