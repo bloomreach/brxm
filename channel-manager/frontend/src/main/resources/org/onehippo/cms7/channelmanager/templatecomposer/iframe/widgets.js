@@ -126,8 +126,8 @@
       }, function () {
         self.onMouseOut(this);
       });
-      overlay.click(function () {
-        self.onClick();
+      overlay.click(function (event) {
+        self.onClick(event);
       });
       this.overlay = overlay;
       this._syncOverlay();
@@ -154,7 +154,7 @@
       return this.overlay;
     },
 
-    onClick: function () {
+    onClick: function (event) {
     },
 
     onMouseOver: function (element) {
@@ -840,17 +840,47 @@
       return $(this.element);
     },
 
-    onClick: function () {
-      var id, containerDisabled;
+    getElementFromPointBehindOverlay: function(pageX, pageY) {
+      var frame, viewportX, viewportY, pageOverlay, element;
+
+      frame = $(window);
+      viewportX = pageX - frame.scrollLeft();
+      viewportY = pageY - frame.scrollTop();
+
+      pageOverlay = $('.hst-overlay-root');
+      pageOverlay.hide();
+      element = document.elementFromPoint(viewportX, viewportY);
+      pageOverlay.show();
+
+      return element;
+    },
+
+    getEditMenuButton: function(pageX, pageY) {
+      var clickedElement = this.getElementFromPointBehindOverlay(pageX, pageY),
+        editMenuButton = $(clickedElement).closest('a.hst-cmseditmenu');
+
+      if (editMenuButton.length) {
+        return editMenuButton[0];
+      }
+      return null;
+    },
+
+    onClick: function (event) {
+      var id, editMenuButton, containerDisabled;
       if (this.isTemporary) {
         iframeToHost.publish('refresh');
       } else {
         id = this.element.getAttribute('id');
-        containerDisabled = Hippo.Util.getBoolean(this.el.attr(HST.ATTR.HST_CONTAINER_DISABLED));
-        iframeToHost.publish('onclick', {
-          elementId: id,
-          containerDisabled: containerDisabled
-        });
+        editMenuButton = this.getEditMenuButton(event.pageX, event.pageY);
+        if (editMenuButton) {
+          editMenuButton.click();
+        } else {
+          containerDisabled = Hippo.Util.getBoolean(this.el.attr(HST.ATTR.HST_CONTAINER_DISABLED));
+          iframeToHost.publish('onclick', {
+            elementId: id,
+            containerDisabled: containerDisabled
+          });
+        }
       }
     },
 
