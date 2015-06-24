@@ -36,6 +36,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.editor.icon.EditorTabIconProvider;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -113,7 +114,27 @@ public class EditPerspective extends Perspective {
         // handle notified validation events from wicket fields
         if(event.getPayload() instanceof UpdateFeedbackInfo) {
             final UpdateFeedbackInfo ufi = (UpdateFeedbackInfo) event.getPayload();
-            renderFeedbackIfNeeded(ufi.getTarget(), feedback.anyMessage());
+            if (ufi.isClearAll()) {
+                clearAllFeedbacks(ufi.getTarget());
+            } else {
+                renderFeedbackIfNeeded(ufi.getTarget(), feedback.anyMessage());
+            }
+        }
+    }
+
+    private void clearAllFeedbacks(final AjaxRequestTarget target) {
+        if (this.hasFeedbackMessage()) {
+            this.getFeedbackMessages().clear();
+        }
+        this.visitChildren(HippoForm.class, (object, visit) -> {
+            if (object instanceof HippoForm) {
+                ((HippoForm)object).clearFeedbackMessages();
+            } else {
+                log.warn("Unknown component: {}", object.getClass().getName());
+            }
+        });
+        if (target != null) {
+            target.add(feedback);
         }
     }
 

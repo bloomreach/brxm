@@ -24,12 +24,25 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
  */
 public class UpdateFeedbackInfo {
     private final AjaxRequestTarget target;
+    private final boolean clearAll;
 
     public UpdateFeedbackInfo(final AjaxRequestTarget target) {
+        this(target, false);
+    }
+
+    public UpdateFeedbackInfo(final AjaxRequestTarget target, final boolean clearAllFeedbacks) {
         this.target = target;
+        this.clearAll = clearAllFeedbacks;
     }
 
     public AjaxRequestTarget getTarget(){
         return target;
+    }
+
+    /**
+     * @return the value to determine if the receiver should delete feedback messages of all children components
+     */
+    public boolean isClearAll() {
+        return clearAll;
     }
 }

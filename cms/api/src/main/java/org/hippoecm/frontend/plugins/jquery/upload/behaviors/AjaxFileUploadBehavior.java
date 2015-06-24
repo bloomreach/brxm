@@ -153,7 +153,7 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
         for (String filename : uploadedFiles.keySet()) {
             List<String> errorMessages = uploadedFiles.get(filename).getErrorMessages();
             if (!errorMessages.isEmpty()) {
-                log.error("file {} contains errors: {}", filename,
+                log.warn("file {} contains errors: {}", filename,
                         StringUtils.join(errorMessages, ";"));
             }
         }

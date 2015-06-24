@@ -21,6 +21,7 @@ import java.util.Calendar;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -31,11 +32,13 @@ import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
+import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
 import org.hippoecm.frontend.plugins.jquery.upload.single.FileUploadPanel;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.widgets.UpdateFeedbackInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +63,13 @@ public class ImageUploadPlugin extends RenderPlugin {
     private FileUploadPanel createFileUploadPanel() {
         final FileUploadValidationService validator = ImageUploadValidationService.getValidationService(getPluginContext(), getPluginConfig());
         final FileUploadPanel panel = new FileUploadPanel("fileUpload", getPluginConfig(), validator) {
+
+            @Override
+            protected void onBeforeUpload(final FileUploadInfo fileUploadInfo) {
+                // clear all old feedback messages in other plugin instances (i.e. image variants) via the EditPerspective
+                send(ImageUploadPlugin.this, Broadcast.BUBBLE, new UpdateFeedbackInfo(null, true));
+            }
+
             @Override
             public void onFileUpload(final FileUpload fileUpload) throws FileUploadViolationException {
                 handleUpload(fileUpload);
