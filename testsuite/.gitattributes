@@ -768,3 +768,4 @@ solr/src/main/webapp/tpl/replication.html -text
 solr/src/main/webapp/tpl/schema-browser.html -text
 solr/src/main/webapp/tpl/threads.html -text
 src/main/assembly/distribution.xml -text
+usage-statistics-logger/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
