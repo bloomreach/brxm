@@ -272,12 +272,12 @@ public class TestHstSitePipeline {
         MockHttpServletResponse response = new MockHttpServletResponse();
         Valve [] valves = new Valve[0];
 
-        ValveContext valveContext1 = new HstSitePipeline.Invocation(requestContainerConfig, requestContext, request, response, valves);
+        ValveContext valveContext1 = new HstSitePipeline.Invocation(requestContainerConfig, requestContext, valves);
         PageCacheContext pageCacheContext1 = valveContext1.getPageCacheContext();
         pageCacheContext1.getPageCacheKey().setAttribute("SUBKEY1", "SUBKEY1_VALUE");
         pageCacheContext1.getPageCacheKey().setAttribute("SUBKEY2", "SUBKEY2_VALUE");
 
-        ValveContext valveContext2 = new HstSitePipeline.Invocation(requestContainerConfig, requestContext, request, response, valves);
+        ValveContext valveContext2 = new HstSitePipeline.Invocation(requestContainerConfig, requestContext, valves);
         PageCacheContext pageCacheContext2 = valveContext2.getPageCacheContext();
         pageCacheContext2.getPageCacheKey().setAttribute("SUBKEY1", "SUBKEY1_VALUE");
         pageCacheContext2.getPageCacheKey().setAttribute("SUBKEY2", "SUBKEY2_VALUE");
