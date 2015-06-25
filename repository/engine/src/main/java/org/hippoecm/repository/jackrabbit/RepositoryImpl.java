@@ -27,10 +27,12 @@ import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.SearchManager;
+import org.apache.jackrabbit.core.cluster.ClusterNode;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.journal.ExternalRepositorySyncRevisionServiceImpl;
 import org.apache.jackrabbit.core.lock.LockManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.ObservationDispatcher;
@@ -46,16 +48,20 @@ import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.query.lucene.HippoQueryHandler;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
+import org.onehippo.repository.InternalHippoRepository;
+import org.onehippo.repository.journal.ExternalRepositorySyncRevisionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
+public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl implements InternalHippoRepository {
 
     private static Logger log = LoggerFactory.getLogger(RepositoryImpl.class);
     
     private FacetedNavigationEngine<FacetedNavigationEngine.Query, FacetedNavigationEngine.Context> facetedEngine;
 
     protected boolean isStarted = false;
+
+    private ExternalRepositorySyncRevisionService externalRepositorySyncRevisionService;
 
     protected RepositoryImpl(RepositoryConfig repConfig) throws RepositoryException {
         super(repConfig);
@@ -230,6 +236,15 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
             workspaceName = super.repConfig.getDefaultWorkspaceName();
         }
         return (getWorkspaceInfo(workspaceName)).getRootSession();
+    }
+
+    public synchronized ExternalRepositorySyncRevisionService getExternalRepositorySyncRevisionService() throws RepositoryException {
+        sanityCheck();
+        if (externalRepositorySyncRevisionService == null) {
+            ClusterNode clusterNode = context.getClusterNode();
+            externalRepositorySyncRevisionService = new ExternalRepositorySyncRevisionServiceImpl(clusterNode != null ? clusterNode.getJournal() : null);
+        }
+        return externalRepositorySyncRevisionService;
     }
 
     @Override

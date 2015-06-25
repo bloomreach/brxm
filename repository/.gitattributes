@@ -282,6 +282,7 @@ engine/src/test/resources/import/sanity-result.xml svneol=native#text/plain
 engine/src/test/resources/import/skip-fixture.xml svneol=native#text/plain
 engine/src/test/resources/import/skip-merge.xml svneol=native#text/plain
 engine/src/test/resources/import/skip-result.xml svneol=native#text/plain
+engine/src/test/resources/journal/repository.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/RepositoryMapTest.xml -text
 engine/src/test/resources/org/hippoecm/repository/unittest.pdf -text
 engine/src/test/resources/org/hippoecm/repository/words_on_new_line_without_spaces.pdf -text
