@@ -40,9 +40,7 @@ import org.hippoecm.frontend.plugins.standards.panelperspective.PanelPluginPersp
 import org.hippoecm.frontend.session.UserSession;
 
 public class ReportsPerspective extends PanelPluginPerspective {
-    
-    private static final long serialVersionUID = 1L;
-    
+
     public static final String REPORTING_SERVICE = "reporting.service";
 
     private static final ResourceReference REPORTING_LAYOUT_CSS = new CssResourceReference(ReportsPerspective.class, "layout/reporting.css");
@@ -51,7 +49,7 @@ public class ReportsPerspective extends PanelPluginPerspective {
     private final DateLabel lastRefreshDateLabel;
 
     public ReportsPerspective(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+        super(context, config, "reports");
         setOutputMarkupId(true);
 
         refreshGroup = new WebMarkupContainer("refresh-group");
@@ -61,8 +59,6 @@ public class ReportsPerspective extends PanelPluginPerspective {
         refreshGroup.add(lastRefreshDateLabel);
 
         AjaxLink<String> refreshLink = new AjaxLink<String>("refresh-link") {
-
-            private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(final AjaxRequestTarget target) {
