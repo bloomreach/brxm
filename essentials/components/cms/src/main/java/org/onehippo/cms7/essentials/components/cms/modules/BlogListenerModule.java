@@ -19,13 +19,18 @@ package org.onehippo.cms7.essentials.components.cms.modules;
 import javax.jcr.*;
 import javax.jcr.observation.Event;
 
+import com.google.common.base.Joiner;
 import org.apache.jackrabbit.api.observation.JackrabbitEvent;
-import org.onehippo.cms7.essentials.components.cms.blog.BlogImporterHelper;
+import org.onehippo.cms7.essentials.components.cms.blog.BlogImporterConfiguration;
+import org.onehippo.cms7.essentials.components.cms.blog.BlogImporterJob;
 import org.onehippo.cms7.essentials.components.cms.handlers.AuthorFieldHandler;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 import org.onehippo.repository.modules.RequiresService;
+import org.onehippo.repository.scheduling.RepositoryJobCronTrigger;
+import org.onehippo.repository.scheduling.RepositoryJobInfo;
+import org.onehippo.repository.scheduling.RepositoryJobTrigger;
 import org.onehippo.repository.scheduling.RepositoryScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,10 +50,11 @@ public class BlogListenerModule extends AbstractReconfigurableDaemonModule {
 
     public static final Logger log = LoggerFactory.getLogger(BlogListenerModule.class);
 
-    private static final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
-    private static final Object lock = new Object();
     private static final String CONFIG_LOCK_ISDEEP_PROPERTY = "jcr:lockIsDeep";
     private static final String CONFIG_LOCK_OWNER = "jcr:lockOwner";
+    private static final String SCHEDULER_NAME = "BlogListenerModule";
+    private static final String SCHEDULER_GROUP_NAME = "essentials";
+    private static final String JOB_NAME = SCHEDULER_NAME + "Job";
 
     private Session session;
     private AuthorFieldHandler listener;
@@ -62,18 +68,19 @@ public class BlogListenerModule extends AbstractReconfigurableDaemonModule {
     protected void doInitialize(final Session session) throws RepositoryException {
         this.session = session;
 
-        final Node moduleConfigNode = getModuleConfigNode(session);
-        // Inline the Blog importer rescheduling?
-        BlogImporterHelper.rescheduleJob(moduleConfigNode);
+        final BlogImporterConfiguration config = new BlogImporterConfiguration(session.getNode(moduleConfigPath));
 
-        // create and register listener (refactor into separate function)
-        final String projectNamespace = BlogImporterHelper.getProjectNamespace(moduleConfigNode);
-        if (!Strings.isNullOrEmpty(projectNamespace)) {
-            listener = new AuthorFieldHandler(projectNamespace, session);
-            HippoServiceRegistry.registerService(listener, HippoEventBus.class);
-        } else {
-            log.warn("No projectNamespace configured in [org.onehippo.cms7.essentials.components.cms.modules.EventBusListenerModule]");
-        }
+        rescheduleJob(config);
+        registerListener(config);
+    }
+
+    @Override
+    protected void doShutdown() {
+        unregisterListener();
+
+        // TODO: the super class also has a protected "session" field, but doesn't logout. This is fishy.
+        // Do we need to logout here? Do we need to keep track of the session in an instance variable?
+        session.logout();
     }
 
     @Override
@@ -85,39 +92,79 @@ public class BlogListenerModule extends AbstractReconfigurableDaemonModule {
     }
 
     /**
-     * The BlogImporterSchedulingHelper writes to the repository when rescheduling jobs, which triggers a warning
-     * when done from the "notification thread". To avoid this warning, we run the job rescheduling as a separate
-     * thread.
+     * Rescheduling a job writes to the repository, which triggers a warning when done from the "notification thread".
+     * To avoid this warning, we run the job rescheduling as a separate thread.
      */
     @Override
     protected void onConfigurationChange(final Node moduleConfigNode) throws RepositoryException {
-        final Session threadSession = session.impersonate(credentials);
+        // Keep the reading of the configuration outside the thread, so we don't use
+        // the JCR session (by means of the moduleConfigNode) in a different thread.
+        final BlogImporterConfiguration config = new BlogImporterConfiguration(moduleConfigNode);
 
         new Thread() {
             @Override
             public void run() {
-                try {
-                    synchronized (lock) {
-                        BlogImporterHelper.rescheduleJob(getModuleConfigNode(threadSession));
-                    }
-                } catch (RepositoryException e) {
-                    log.error("Failed to reconfigure event log cleaner", e);
-                } finally {
-                    threadSession.logout();
-                }
+                rescheduleJob(config);
             }
         }.start();
     }
 
-    @Override
-    protected void doShutdown() {
+    private static synchronized void rescheduleJob(final BlogImporterConfiguration config) {
+        final RepositoryScheduler scheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
+
+        try {
+            if (scheduler.checkExists(JOB_NAME, SCHEDULER_GROUP_NAME)) {
+                scheduler.deleteJob(JOB_NAME, SCHEDULER_GROUP_NAME);
+            }
+
+            if (!config.isActive()
+                    || Strings.isNullOrEmpty(config.getCronExpression())
+                    || Strings.isNullOrEmpty(config.getProjectNamespace())
+                    || config.getUrls().length == 0) {
+
+                return; // No need to reschedule, we're done.
+            }
+
+            final RepositoryJobTrigger trigger = new RepositoryJobCronTrigger(SCHEDULER_NAME + "Trigger", config.getCronExpression());
+            final RepositoryJobInfo jobInfo = new RepositoryJobInfo(JOB_NAME, SCHEDULER_GROUP_NAME, BlogImporterJob.class);
+            populateJobInfo(jobInfo, config);
+            scheduler.scheduleJob(jobInfo, trigger);
+
+            if (config.isRunNow()) {
+                final String name = SCHEDULER_NAME + "TriggerNow";
+                final RepositoryJobTrigger nowTrigger = new RepositoryJobCronTrigger(name, config.getCronExpression());
+                final RepositoryJobInfo nowJobInfo = new RepositoryJobInfo(name, SCHEDULER_GROUP_NAME, BlogImporterJob.class);
+                populateJobInfo(nowJobInfo, config);
+
+                scheduler.scheduleJob(nowJobInfo, nowTrigger);
+                scheduler.executeJob(name, SCHEDULER_GROUP_NAME);
+                scheduler.deleteJob(name, SCHEDULER_GROUP_NAME);
+            }
+        } catch (RepositoryException ex) {
+            log.error("Failure (re)scheduling the blog importer.", ex);
+        }
+    }
+
+    private static void populateJobInfo(final RepositoryJobInfo jobInfo, final BlogImporterConfiguration config) {
+        jobInfo.setAttribute(BlogImporterJob.PROJECT_NAMESPACE, config.getProjectNamespace());
+        jobInfo.setAttribute(BlogImporterJob.AUTHORS_BASE_PATH, config.getAuthorsBasePath());
+        jobInfo.setAttribute(BlogImporterJob.BLOGS_BASE_PATH, config.getBlogBasePath());
+        jobInfo.setAttribute(BlogImporterJob.AUTHORS, Joiner.on(BlogImporterJob.SPLITTER).join(config.getAuthors()));
+        jobInfo.setAttribute(BlogImporterJob.URLS, Joiner.on(BlogImporterJob.SPLITTER).join(config.getUrls()));
+    }
+
+    private void registerListener(final BlogImporterConfiguration config) {
+        if (!Strings.isNullOrEmpty(config.getProjectNamespace())) {
+            listener = new AuthorFieldHandler(config.getProjectNamespace(), session);
+            HippoServiceRegistry.registerService(listener, HippoEventBus.class);
+        } else {
+            log.warn("No projectNamespace configured in [org.onehippo.cms7.essentials.components.cms.modules.EventBusListenerModule]");
+        }
+    }
+
+    private void unregisterListener() {
         if (listener != null) {
             HippoServiceRegistry.unregisterService(listener, HippoEventBus.class);
         }
-        session.logout();
-    }
-
-    private Node getModuleConfigNode(final Session session) throws RepositoryException {
-        return session.getNode(moduleConfigPath);
     }
 }

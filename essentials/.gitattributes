@@ -5,7 +5,6 @@
 /VERSIONS -text
 components/cms/pom.xml -text
 components/cms/src/main/java/org/onehippo/cms7/essentials/components/cms/blog/BlogImporterConfiguration.java -text
-components/cms/src/main/java/org/onehippo/cms7/essentials/components/cms/blog/BlogImporterHelper.java -text
 components/cms/src/main/java/org/onehippo/cms7/essentials/components/cms/blog/BlogImporterJob.java -text
 components/cms/src/main/java/org/onehippo/cms7/essentials/components/cms/blog/BlogUpdater.java -text
 components/cms/src/main/java/org/onehippo/cms7/essentials/components/cms/handlers/AuthorFieldHandler.java -text
