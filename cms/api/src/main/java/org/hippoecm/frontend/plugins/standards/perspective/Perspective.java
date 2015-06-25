@@ -209,6 +209,8 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
                 isRendered = true;
                 startPluginCluster();
             }
+        } else if (isActivated()) {
+            deactivate();
         }
         super.render(target);
     }
