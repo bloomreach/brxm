@@ -45,6 +45,7 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
 
     private static final CssResourceReference CHANNEL_MANAGER_PERSPECTIVE_CSS = new CssResourceReference(ChannelManagerPerspective.class, "ChannelManagerPerspective.css");
     private static final String EVENT_ID = "channels";
+    public static final String EVENT_PERSPECTIVE_DEACTIVATED = "perspective-deactivated";
 
     private final RootPanel rootPanel;
     private final boolean siteIsUp;
@@ -86,7 +87,7 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     @Override
     protected void onDeactivated() {
         super.onDeactivated();
-        publishEvent("perspective-deactivated");
+        publishEvent(EVENT_PERSPECTIVE_DEACTIVATED);
     }
 
     @Override
@@ -97,11 +98,11 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
             if (target == null) {
                 rootPanel.setActiveCard(RootPanel.CardId.CHANNEL_MANAGER);
             }
+
             if (isActive()) {
                 rootPanel.render(target, this.isActivated());
-            } else {
-                deactivate();
             }
+
             for (IRenderService child : childServices) {
                 child.render(target);
             }
