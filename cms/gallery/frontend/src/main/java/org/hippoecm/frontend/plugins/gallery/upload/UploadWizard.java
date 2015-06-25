@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,6 +37,11 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * TODO: Remove this class from CMS 11
+ * @deprecated The class was deprecated due to no use
+ */
+@Deprecated
 public class UploadWizard extends Wizard {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(UploadWizard.class);

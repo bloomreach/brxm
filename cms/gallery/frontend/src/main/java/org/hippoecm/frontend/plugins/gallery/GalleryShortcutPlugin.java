@@ -27,6 +27,11 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.upload.UploadDialog;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
+/**
+ * TODO: Remove this plugin from CMS 11
+ * @deprecated This plugin was deprecated due to no use.
+ */
+@Deprecated
 public class GalleryShortcutPlugin extends RenderPlugin<Node> {
     private static final long serialVersionUID = 1L;
 

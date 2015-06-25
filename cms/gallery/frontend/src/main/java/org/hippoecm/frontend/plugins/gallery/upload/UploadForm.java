@@ -47,6 +47,11 @@ import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * TODO: Remove this class from CMS 11
+ * @deprecated The class was deprecated due to no use
+ */
+@Deprecated
 class UploadForm extends Form<Node> {
 
     private static final long serialVersionUID = 1L;
