@@ -67,7 +67,7 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
             documentReference = context.getService(config.getString("model.document"), IModelReference.class);
         } else {
             documentReference = null;
-            log.warn("No document model service configured (model.document)");
+            log.info("No document model service configured (model.document)");
         }
 
         add(new EmptyPanel("table"));
