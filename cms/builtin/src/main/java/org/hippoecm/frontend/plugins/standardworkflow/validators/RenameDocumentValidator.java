@@ -57,8 +57,8 @@ public abstract class RenameDocumentValidator extends DocumentFormValidator {
 
     @Override
     public void validate(final Form<?> form) {
-        String newUrlName = nameUriContainer.getUrlComponent().getValue().toLowerCase();
-        String newLocalizedName = nameUriContainer.getNameComponent().getValue();
+        final String newUrlName = nameUriContainer.getUrlComponent().getValue().toLowerCase();
+        final String newLocalizedName = nameUriContainer.getNameComponent().getValue();
         try {
             final Node parentNode = workflowDescriptorModel.getNode().getParent();
 
@@ -73,12 +73,10 @@ public abstract class RenameDocumentValidator extends DocumentFormValidator {
                 final boolean hasOtherNodeWithSameLocalizedName = !StringUtils.equals(newLocalizedName, originalName) &&
                         hasChildWithLocalizedName(parentNode, newLocalizedName);
 
-                if (hasNodeWithSameName) {
-                    if (hasOtherNodeWithSameLocalizedName) {
-                        showError(ERROR_SNS_NAMES_EXISTS, newUrlName, newLocalizedName);
-                    } else {
-                        showError(ERROR_SNS_NODE_EXISTS, newUrlName);
-                    }
+                if (hasNodeWithSameName && hasOtherNodeWithSameLocalizedName) {
+                    showError(ERROR_SNS_NAMES_EXISTS, newUrlName, newLocalizedName);
+                } else if (hasNodeWithSameName) {
+                    showError(ERROR_SNS_NODE_EXISTS, newUrlName);
                 } else if (hasOtherNodeWithSameLocalizedName) {
                     showError(ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
                 }

@@ -55,19 +55,17 @@ public abstract class AddDocumentValidator extends DocumentFormValidator{
 
     @Override
     public void validate(final Form<?> form) {
-        String newNodeName = nameUriContainer.getUrlComponent().getValue().toLowerCase();
-        String newLocalizedName = nameUriContainer.getNameComponent().getValue();
+        final String newNodeName = nameUriContainer.getUrlComponent().getValue().toLowerCase();
+        final String newLocalizedName = nameUriContainer.getNameComponent().getValue();
         try {
             final Node parentNode = workflowDescriptorModel.getNode();
             final boolean hasNodeWithSameName = parentNode.hasNode(newNodeName);
             final boolean hasNodeWithSameLocalizedName = hasChildWithLocalizedName(parentNode, newLocalizedName);
 
-            if (hasNodeWithSameName) {
-                if (hasNodeWithSameLocalizedName) {
-                    showError(ERROR_SNS_NAMES_EXISTS, newNodeName, newLocalizedName);
-                } else {
-                    showError(ERROR_SNS_NODE_EXISTS, newNodeName);
-                }
+            if (hasNodeWithSameName && hasNodeWithSameLocalizedName) {
+                showError(ERROR_SNS_NAMES_EXISTS, newNodeName, newLocalizedName);
+            } else if (hasNodeWithSameName) {
+                showError(ERROR_SNS_NODE_EXISTS, newNodeName);
             } else if (hasNodeWithSameLocalizedName) {
                 showError(ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
             }
