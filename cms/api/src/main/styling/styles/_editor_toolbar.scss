@@ -1,0 +1,250 @@
+// Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+.hippo-toolbar-menu {
+  box-sizing: border-box;
+  border-left: 8px solid $editor-toolbar-border-color;
+  background-color: $editor-toolbar-bgcolor;
+  float: left;
+  width: 100%;
+  height: $editor-toolbar-height;
+
+  .hippo-toolbar-section {
+
+    > li {
+      float: left;
+      height: $editor-toolbar-height;
+
+      &:first-child > span {
+        > a {
+          margin-left: 20px;
+          padding-left: 12px;
+        }
+        .hippo-toolbar-menu-item {
+          margin-left: 20px;
+        }
+      }
+
+      > span > a {
+        color: $editor-toolbar-color;
+        text-decoration: none;
+        padding-left: 12px;
+        padding-right: 8px;
+        font-size: $editor-toolbar-fontsize;
+      }
+
+      &.menu-item:hover {
+        a {
+          &.menu-action .menu-action-icon,
+          &.menu-action .menu-action-text,
+          &.hippo-toolbar-section-button {
+            color: $editor-toolbar-hover-color;
+            svg {
+              color: $editor-toolbar-hover-color;
+            }
+
+            &.menu-item-active {
+              color: $editor-toolbar-active-color;
+              svg {
+                color: $editor-toolbar-active-color;
+              }
+            }
+          }
+        }
+      }
+
+      .menu-item-active {
+        color: $editor-toolbar-active-color;
+      }
+
+      .menu-item-active svg {
+        color: $editor-toolbar-active-color;
+      }
+
+      .menu-item-inactive svg {
+        color: $editor-toolbar-color;
+      }
+
+      // Buttons like 'Edit' & 'Save'
+      .menu-action {
+        display: block;
+        height: $editor-toolbar-height;
+
+        > span {
+          float: left;
+          display: inline-flex;
+        }
+
+        .menu-action-icon {
+          position: relative;
+          top: 11px;
+          padding-right: 6px;
+
+          svg {
+            position: relative;
+            top: 1px;
+            color: $editor-toolbar-color;
+          }
+        }
+
+        .menu-action-text {
+          position: relative;
+          top: 11px;
+        }
+      }
+
+      // Dropdown buttons like 'Publication'
+      .hippo-toolbar-section-button {
+        display: block;
+        height: $editor-toolbar-height;
+        padding-right: 12px;
+
+        > span {
+          float: left;
+          position: relative;
+          top: 11px;
+
+          >.menu-action-text {
+            vertical-align: top;
+          }
+
+          // Language dropdown button
+          >.menu-action-icon {
+            display: inline-flex;
+            position: relative;
+            top: 2px;
+            padding-right: 4px;
+          }
+        }
+
+        > svg {
+          float: left;
+          position: relative;
+          top: 17px;
+          left: 2px;
+        }
+      }
+
+      // Dropdown is shown
+      .menu-item-active {
+        display: block; // Needed for background color to fill the complete button
+        background-color: $editor-toolbar-active-bgcolor;
+        color: $editor-toolbar-active-color;
+      }
+
+      // Dropdown wrapper element
+      .menu-item-active + div {
+        position: relative;
+
+        .hippo-toolbar-menu-item {
+          // Draw dropdown menu over border of info panel
+          z-index: 2;
+
+          position: absolute;
+
+          > li {
+            padding: 0;
+
+            &:hover a {
+              color: $hippo-menu-enabled-hover-color;
+            }
+          }
+
+          .hippo-toolbar-menu-item-button-label {
+            position: relative;
+            top: -2px;
+          }
+        }
+      }
+    }
+
+    .menu-label-item {
+      margin-left: 12px;
+      color: $editor-toolbar-color;
+      white-space: nowrap;
+      font-size: $editor-toolbar-fontsize;
+      // Firefox will render the label 1px lower than Chrome/Safari if line-height is not set to (font-size - 1)
+      line-height: $editor-toolbar-fontsize - 1;
+
+      .menu-action-text {
+        position: relative;
+        top: 13px;
+      }
+    }
+  }
+}
+
+/* Split the dropdown in columns if there are many languages */
+.hippo-editor-toolbar .hippo-toolbar-section {
+  div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item,
+  div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item {
+    overflow:hidden;
+
+    > li {
+      float:left;
+      clear: none;
+      margin-right: 0;
+    }
+  }
+
+  div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item {
+    width: 320px;
+
+    li {
+      width: 50%;
+    }
+  }
+
+  div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item {
+    width: 480px;
+
+    li {
+      width: 33.333%;
+    }
+  }
+}
+
+.hippo-editor .hippo-toolbar-status {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  border-left: 8px solid mix($warning-light, $dark-gray);
+  background-color: $warning-light;
+  float: left;
+
+  // This margin creates a pixel of space for the bottom border
+  margin-bottom: 1px;
+
+  // Draw the bottom border using :after, otherwise it will not completely cover the left border
+  &:after {
+    content: "";
+    border-bottom: 1px solid mix($warning-light, $dark-gray);
+    left: 0;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+  }
+
+  ul > li {
+    padding: 8px 8px 0 32px;
+    line-height: 14px;
+
+    &:first-child {
+      padding-top: 10px;
+    }
+    &:last-child {
+      padding-bottom: 10px;
+    }
+  }
+}

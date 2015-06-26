@@ -1,0 +1,112 @@
+// Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+.hippo-compare-plugin {
+  background: $white;
+}
+
+.hippo-preview-document-wrapper {
+  .hippo-preview-document {
+    padding: $editor-padding;
+  }
+
+  .hippo-editor-large .hippo-editor-field-title,
+  .hippo-editor-large .hippo-hint-field {
+    display: none;
+  }
+
+  .hippo-editor-field {
+    margin-bottom: 0;
+
+    .dialog-link,
+    .hippo-editor-field-textarea,
+    select,
+    .hippo-editor-field-value-container {
+      border: none;
+      padding: 0;
+      background-color: transparent;
+    }
+
+    .hippo-editor-field-textarea {
+      line-height: normal;
+    }
+  }
+
+  .hippo-editor-field-title {
+    margin-bottom: 4px;
+  }
+
+  .even,
+  .odd {
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid $light-gray;
+
+    &:last-child,
+    .even,
+    .odd {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .hippo-editor-field-subfield.even,
+    .hippo-editor-field-subfield.odd {
+      margin-bottom: 8px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .hippo-editor-compound-field {
+    .even,
+    .odd {
+      margin-bottom: 16px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    > .hippo-editor-field {
+      border: none;
+
+      > .hippo-editor-field-subfield {
+        border: none;
+        border-bottom: 1px solid $editor-subfield-border;
+        padding-bottom: 8px;
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+
+  .hippo-property-field-type-string.hippo-property-field-multiple .hippo-editor-field-value {
+    padding-left: 2px;
+
+    > .hippo-editor-field-value-container {
+      display: list-item;
+      list-style-position: inside;
+
+      &.non-breaking {
+        line-height: 16px;
+        @include truncate();
+      }
+    }
+  }
+}

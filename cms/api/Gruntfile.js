@@ -41,22 +41,22 @@ module.exports = function (grunt) {
       gruntfile: {
         files: ['Gruntfile.js']
       },
-      less: {
+      sass: {
         options: {
           livereload: false
         },
-        files: ['<%= build.src %>/**/*.less'],
-        tasks: ['less', 'autoprefixer', 'csslint', 'concat:css', 'clean:tmp']
+        files: ['<%= build.src %>/**/*.scss'],
+        tasks: ['sass', 'autoprefixer', 'csslint', 'concat:css', 'clean:tmp']
       },
       reloadCompiledCss: {
         files: ['<%= build.skin %>/**/*.css']
       },
-      extjsLess: {
+      extjsSass: {
         options: {
           livereload: false
         },
         files: ['<%= build.extjs.src %>'],
-        tasks: ['less:extjs']
+        tasks: ['sass:extjs']
       },
       reloadCompiledExtJsCss: {
         files: ['<%= build.extjs.target %>']
@@ -67,11 +67,14 @@ module.exports = function (grunt) {
       }
     },
 
-    // Compile LessCSS to CSS.
-    less: {
+    // Compile Sass to CSS.
+    sass: {
+      options: {
+        outputStyle: 'expanded'
+      },
       main: {
         files: {
-          '<%= build.tmp %>/css/<%= build.file %>.css': '<%= build.src %>/less/main.less'
+          '<%= build.tmp %>/css/<%= build.file %>.css': '<%= build.src %>/styles/main.scss'
         }
       },
       extjs: {
@@ -94,7 +97,7 @@ module.exports = function (grunt) {
 
     // Lint the css output
     csslint: {
-      lessOutput: {
+      main: {
         options: {
           csslintrc: '.csslintrc'
         },
@@ -262,7 +265,7 @@ module.exports = function (grunt) {
   // build theme
   grunt.registerTask('build', 'Build the theme', [
     'clean:copies',
-    'less',
+    'sass',
     'autoprefixer',
     'csslint',
     'concat',

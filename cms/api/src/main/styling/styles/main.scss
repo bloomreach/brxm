@@ -1,0 +1,84 @@
+/*
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Bootstrap variables and mixins
+@import "../../../../target/bower_components/bootstrap-sass/assets/stylesheets/bootstrap/_variables";
+@import "../../../../target/bower_components/bootstrap-sass/assets/stylesheets/bootstrap/_mixins";
+
+// Hippo Theme variables and mixins
+@import "../../../../target/bower_components/hippo-theme/src/styles/_variables";
+@import "../../../../target/bower_components/hippo-theme/src/styles/_mixins";
+
+// Variable overrides
+@import "_variables";
+@import "_mixins";
+
+// Vendor styling
+@import "../../../../target/bower_components/open-sans-fontface/open-sans";
+@import "../../../../target/bower_components/bootstrap-sass/assets/stylesheets/bootstrap/_buttons";
+@import "../../../../target/bower_components/bootstrap-sass/assets/stylesheets/bootstrap/_tables";
+@import "../../../../target/bower_components/bootstrap-sass/assets/stylesheets/bootstrap/_alerts";
+@import "../../../../target/bower_components/retina.js/src/_retina";
+
+// Core styling
+@import "_legacy";
+@import "_typography";
+@import "_scaffolding";
+@import "_buttons";
+@import "_icons";
+@import "_globals";
+@import "_form_elements";
+
+// Component styling
+@import "_modal";
+@import "_modal_wizard";
+@import "_ajax_loader";
+@import "_hippo_logo";
+@import "_hippo_dev_extensions";
+@import "_user_menu";
+@import "_perspectives_switcher";
+@import "_dashboard";
+@import "_doclist";
+@import "_modal_doclist";
+@import "_tabs";
+@import "_navigator";
+@import "_section_viewer";
+@import "_modal_section_viewer";
+@import "_section_search";
+@import "_selectable_documents";
+@import "_tree";
+@import "_image_gallery";
+@import "_hippo_menu";
+@import "_editor";
+@import "_editor_toolbar";
+@import "_editor_preview";
+@import "_editor_doctype";
+@import "_editor_feedback";
+@import "_editor_linkpicker";
+@import "_editor_hint_field";
+@import "_rich_text";
+@import "_ckeditor";
+@import "_revision_history";
+@import "_datepicker";
+@import "_modal_datepicker";
+@import "_footer";
+@import "_breadcrumbs";
+@import "_login";
+@import "_admin-perspective";
+@import "_panel-plugin-perspective";
+@import "_jquery-file-upload";
+@import "_gallery_upload_panel";
+@import "_debugger";

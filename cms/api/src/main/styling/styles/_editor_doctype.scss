@@ -1,0 +1,353 @@
+// Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Document type preview styling
+.hippo-preview-document-wrapper {
+
+  .template-type-right-body {
+    border-left: 0;
+  }
+
+  .template-type-wrapper {
+    margin: 0;
+  }
+
+  .hippo-editor-template-field-controls {
+    display: none;
+  }
+
+  .hippo-editor-template-editor {
+    &.active,
+    .active {
+      > .hippo-editor-template-field {
+        border-color: $light-gray;
+        > .hippo-editor-template-field-controls {
+          background-color: $dark-gray;
+        }
+      }
+    }
+  }
+}
+
+// Document type editor styling
+.template-type-wrapper {
+  margin: -$editor-padding;
+}
+
+.hippo-editor-template-editor {
+  padding: 3px;
+
+  &.active,
+  .active {
+    > .hippo-editor-template-field {
+      border-color: $primary;
+      > .hippo-editor-template-field-controls {
+        background-color: $primary;
+      }
+    }
+  }
+
+  .hippo-editor-field {
+    margin-bottom: 9px;
+    margin-top: 7px;
+    padding: 0 5px;
+  }
+
+  .hippo-editor-field-title {
+    margin-bottom: 0;
+  }
+
+  .hippo-editor-field-textarea {
+    margin: 0;
+  }
+
+  .hippo-editor-field-subfield {
+    margin-top: 6px;
+
+    .hippo-editor-field {
+      padding: 4px 8px;
+    }
+  }
+
+  .hippo-editor-compound-field {
+    margin: 0;
+
+    > .hippo-editor-field {
+      margin-top: 0;
+      margin-bottom: 0;
+      padding: 16px 8px;
+
+      > .hippo-editor-field-subfield {
+
+        .hippo-editor-field {
+          padding-left: 0;
+          padding-right: 0;
+        }
+
+        .hippo-editor-compound-field > .hippo-editor-field {
+          padding: 16px 8px;
+        }
+      }
+    }
+  }
+
+  .hippo-hint-field {
+    top: -4px;
+  }
+}
+
+.template-type-right {
+  background-color: $white;
+}
+
+.template-type-right-body {
+  border-left: 1px solid $light-gray;
+  box-sizing: border-box;
+  min-height: 100%;
+  padding-bottom: 12px;
+
+  .hippo-multiple-text-field-widget {
+    &.hippo-editor-field-subfield {
+      border: 0;
+      padding: 0;
+    }
+
+    .hippo-editor-field-subfield-with-button {
+      padding: 4px;
+      border: 1px solid $light-gray;
+      margin-bottom: 4px;
+
+      &:hover .delete-button {
+        opacity: 1;
+      }
+    }
+
+    .hippo-editor-field-subfield-input {
+      margin: 0;
+      width: calc(100% - 24px);
+    }
+  }
+
+  .delete-button {
+    opacity: 0;
+    cursor: pointer;
+    color: $danger;
+    float: right;
+  }
+}
+
+.hippo-editor-template-field-title {
+  padding-top: 6px;
+  color: $dark-shade;
+  font-size: 15px;
+  line-height: 18px;
+}
+
+.hippo-editor-template-field-edit {
+
+  > div.even,
+  > div.odd {
+    padding: 3px;
+    border-top: 1px solid $light-gray;
+
+    &:first-child {
+      border-top: 0;
+    }
+  }
+
+  .hippo-editor-template-field-edit {
+    padding: 0 9px;
+    margin-bottom: 0;
+    border-left: 0;
+  }
+
+  .hippo-editor-field-title {
+    display: block;
+    margin-right: 0;
+    margin-top: 12px;
+    margin-bottom: 4px;
+    line-height: 1;
+    font-size: 13px;
+    font-weight: bold;
+  }
+
+  table {
+    margin-top: 16px;
+    display: block;
+  }
+
+  td {
+    color: $darker-shade;
+    padding: 2px 4px 2px 2px;
+  }
+
+  .disabled {
+    color: $dark-shade;
+  }
+
+  .ordered {
+    margin-top: 0;
+  }
+
+  .hippo-editor-field-subfield {
+    background: white;
+    border: 1px solid $light-gray;
+    padding: 4px;
+  }
+
+  .section-view {
+    margin-top: 3px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    > h2 {
+      padding-left: 12px;
+      font-size: 13px;
+      box-sizing: border-box;
+      height: 32px;
+      background-color: $light-gray;
+      display: flex;
+
+      > a {
+        align-items: center;
+        display: inline-flex;
+        color: $text-color;
+
+        > span {
+          padding-left: 4px;
+        }
+      }
+    }
+  }
+}
+
+.hippo-editor-template-field {
+  background-color: transparent;
+  border: 1px solid $light-gray;
+  padding: 0;
+
+  .hippo-editor-template-field-controls + div {
+    padding: 3px;
+  }
+
+  .hippo-editor-preview {
+    > .even,
+    > .odd {
+      padding-bottom: 3px;
+      border-bottom: 0;
+      margin-bottom: 0;
+
+      &:last-child {
+        padding-bottom: 0;
+      }
+    }
+  }
+}
+
+.hippo-editor-template-field-controls {
+  background-color: $dark-gray;
+  height: 32px;
+  padding-left: 8px;
+  padding-right: 8px;
+  display: flex;
+  flex-flow: row-reverse nowrap;
+  align-items: center;
+
+  li {
+    display: inline;
+
+    a {
+      fill: $dark-shade;
+      color: $white;
+
+      &:hover {
+        fill: $primary;
+        text-decoration: none;
+      }
+    }
+
+    .remove-button .hi {
+      fill: $dark-shade;
+
+      &:hover {
+        fill: $danger;
+      }
+    }
+  }
+}
+
+.active > .hippo-editor-template-field > .hippo-editor-template-field-controls {
+
+  .hi {
+    fill: #1764c2;
+
+    &:hover {
+      fill: $info;
+    }
+  }
+
+  .remove-button .hi:hover {
+    fill: $danger;
+  }
+}
+
+.hippo-editor-template-field-new {
+  max-height: 208px;
+  overflow: auto;
+  padding-left: 10px;
+
+  li {
+    list-style-type: none;
+    margin-bottom: 4px;
+    padding-top: 2px;
+
+    &:first-child {
+      margin-top: 8px;
+    }
+
+    &:last-child {
+      margin-bottom: 5px;
+    }
+
+    span em,
+    a {
+      color: $text-color;
+      display: inline-flex;
+
+      > span {
+        padding-left: 2px;
+      }
+    }
+
+    a:hover {
+      text-decoration: underline
+    }
+  }
+}
+
+.hippo-editor-template-css li {
+  div {
+    float: left;
+    overflow: hidden;
+    width: 83%;
+  }
+
+  a {
+    float: right;
+    width: 9%;
+    margin-top: 4px;
+  }
+}
