@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@import "../../../../target/bower_components/hippo-theme/src/less/_variables.less";
+@import "../../../../target/bower_components/hippo-theme/src/styles/_variables";
 
 html, body, .l-stretch, .l-center-container {
   width: 100%;
@@ -62,12 +62,12 @@ html, body, .l-stretch, .l-center-container {
 }
 
 .tree-col {
-  height: ~"calc(100vh - 51px)";
+  height: calc(100vh - 51px);
 }
 
 .picker-container
 .tree-col {
-  height: ~"calc(100vh - 92px)";
+  height: calc(100vh - 92px);
   padding: 0;
 }
 
@@ -102,9 +102,9 @@ html, body, .l-stretch, .l-center-container {
 
 .picker-container {
   #form-panel {
-    height: ~"calc(100vh - 51px)";
+    height: calc(100vh - 51px);
     overflow-y: auto;
-    background: @white;
+    background: $white;
     padding-left: 0;
     padding-right: 0;
   }
@@ -233,7 +233,7 @@ h3.lead.item-title {
 /* --- Top bar --- */
 #top-bar {
   background-color: rgb(245, 245, 245);
-  border-bottom: 1px solid @dark-gray;
+  border-bottom: 1px solid $dark-gray;
   padding: 5px 15px;
   max-width: none;
   margin-left: 0;
@@ -274,8 +274,8 @@ h3.lead.item-title {
     border-top: 0;
   }
   .picker-item.active > td {
-    background-color: @primary;
-    color: @white;
+    background-color: $primary;
+    color: $white;
   }
   .picker-item td {
     vertical-align: middle;
@@ -285,24 +285,24 @@ h3.lead.item-title {
 .picker-item {
   cursor: pointer;
   &:hover {
-    background: @light-gray;
+    background: $light-gray;
   }
 }
 
 .file-type {
-  color: @primary;
+  color: $primary;
 }
 
 .angular-ui-tree-title-wrapper-icon {
-  color: @dark-shade;
+  color: $dark-shade;
 }
 
 .active {
   .file-type {
-    color: @white;
+    color: $white;
   }
   .state-live, .state-new, .state-changed {
-    color: @primary;
-    fill: @white;
+    color: $primary;
+    fill: $white;
   }
 }

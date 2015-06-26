@@ -36,12 +36,9 @@ var buildConfig = {
   components_dir: 'target/bower_components',
 
   /*
-   * This is a collection of file patterns that refer to our source files.
-   * These file paths are used in the configuration of
-   * build tasks. `js` is all project javascript, less tests. `tpl` contains
-   * our template HTML files, while `html` is just our main HTML file,
-   * `less` are our styles with `mainless` being the main stylesheet to compile,
-   * and `unit` contains our app's unit tests.
+   * This is a collection of patterns.
+   * These paths are used in the configuration of
+   * build tasks.
    */
   images: 'src/images/**/*.{png,jpg,gif}',
   svg: 'src/images/**/*.svg',
@@ -52,11 +49,6 @@ var buildConfig = {
   mainjs: 'src/angularjs/main.js',
   unit: 'src/angularjs/**/*.spec.js',
   tpl: 'src/angularjs/**/*.tpl.html',
-  less: [
-    'src/less/**/*.less',
-    'src/angularjs/**/*.less'
-  ],
-  mainless: 'src/less/main.less',
   jstplModule: pkg.name + '.templates',
   jstplModuleBase: 'src/angularjs/',
   jstpl: 'target/tmp/angularjs/' + pkg.name + '-templates.js'

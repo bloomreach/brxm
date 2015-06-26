@@ -62,12 +62,12 @@ module.exports = function (grunt) {
       },
 
       /*
-       * When the LESS files change, we need to compile them, prefix css rules,
+       * When the Sass files change, we need to compile them, prefix css rules,
        * lint the resulting css and provide dist files.
        */
-      less: {
-        files: ['<%= build.less %>'],
-        tasks: ['less', 'autoprefixer', 'concat:css']
+      sass: {
+        files: ['<%= build.sass %>'],
+        tasks: ['sass', 'autoprefixer', 'concat:css']
       },
 
       extjs: {
@@ -83,11 +83,11 @@ module.exports = function (grunt) {
       }
     },
 
-    // Compile LessCSS to CSS.
-    less: {
+    // Compile Sass to CSS.
+    sass: {
       menu: {
         files: {
-          '<%= build.ngtarget %>/menu/assets/css/menu.css': '<%= build.ngsource %>/menu/assets/less/menu.less'
+          '<%= build.ngtarget %>/menu/assets/css/menu.css': '<%= build.ngsource %>/menu/assets/styles/menu.scss'
         }
       }
     },
@@ -122,7 +122,7 @@ module.exports = function (grunt) {
               '**/*.js',
               '!**/*.spec.js',
               '**/assets/css/*',
-              '!**/assets/less/*',
+              '!**/assets/styles/*',
               '**/assets/images/*',
               '**/i18n/*.json'
             ]
@@ -223,7 +223,7 @@ module.exports = function (grunt) {
     'jshint:apps',
     'declutter',
     'clean',
-    'less',
+    'sass',
     'autoprefixer',
     'copy',
     'filerev',

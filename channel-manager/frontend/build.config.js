@@ -20,8 +20,8 @@ module.exports = {
   ngtarget: 'target/classes/angular',
   extjssource: 'src/main/resources/org/onehippo/cms7/channelmanager',
   extjstarget: 'target/classes/org/onehippo/cms7/channelmanager',
-  less: [
-    'src/**/*.less',
-    'js/**/*.less'
+  sass: [
+    'src/**/*.scss',
+    'js/**/*.scss'
   ]
 };
