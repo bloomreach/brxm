@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,14 +15,20 @@
  */
 package org.hippoecm.frontend.editor;
 
+import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.markup.head.HeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.Response;
 import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -39,19 +45,20 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceContext;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.usagestatistics.UsageEvent;
+import org.hippoecm.frontend.usagestatistics.UsageStatisticsHeaderItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
-    private static final long serialVersionUID = 1L;
-
-
-    private static int editorCount = 0;
 
     private static final Logger log = LoggerFactory.getLogger(AbstractCmsEditor.class);
 
+    private static final String EVENT_EDITOR_ACTIVATED = "tab-activated";
+
+    private static int editorCount = 0;
+
     private class EditorWrapper extends RenderService {
-        private static final long serialVersionUID = 1L;
 
         public EditorWrapper(IPluginContext context, IPluginConfig properties) {
             super(new ServiceContext(context), properties);
@@ -72,10 +79,31 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
             ((ServiceContext) getPluginContext()).stop();
         }
 
-        // forward 
+        @Override
+        public void renderHead(final IHeaderResponse response) {
+            super.renderHead(response);
+            if (isActive()) {
+                response.render(new EditorActivatedHeaderItem());
+            }
+        }
+
+        @Override
+        public void render(final PluginRequestTarget target) {
+            if (isActive()) {
+                if (!isActivated()) {
+                    activate();
+                }
+            } else {
+                if (isActivated()) {
+                    deactivate();
+                }
+            }
+            super.render(target);
+        }
+
+        // forward
 
         protected class Forwarder extends ServiceTracker<IClusterable> {
-            private static final long serialVersionUID = 1L;
 
             public Forwarder() {
                 super(IClusterable.class);
@@ -93,7 +121,6 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         }
 
         protected class Editor extends ExtensionPoint {
-            private static final long serialVersionUID = 1L;
 
             private int count = 0;
             private Forwarder forwarder;
@@ -123,14 +150,12 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
                 super.onRemoveService(service, name);
             }
         }
-
     }
 
     private IEditorContext editorContext;
     private IModel<T> model;
     private IPluginContext context;
     private IPluginConfig parameters;
-
     private IClusterControl cluster;
     private EditorWrapper renderer;
     private ModelReference<T> modelService;
@@ -139,9 +164,10 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
     private String editorId;
     private String wicketId;
     private Mode mode;
+    private boolean isActivated;
 
     public AbstractCmsEditor(IEditorContext editorContext, IPluginContext context, IPluginConfig parameters,
-            IModel<T> model, Mode mode) throws EditorException {
+                             IModel<T> model, Mode mode) throws EditorException {
         this.editorContext = editorContext;
         this.model = model;
         this.context = context;
@@ -231,6 +257,58 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         editorContext.onClose();
     }
 
+    protected void activate() {
+        if (!this.isActivated) {
+            this.isActivated = true;
+            publishEvent(EVENT_EDITOR_ACTIVATED);
+            onActivated();
+        }
+    }
+
+    /**
+     * Hook method for sub classes, called when an editor is activated.
+     */
+    protected void onActivated() {
+    }
+
+    protected boolean isActivated() {
+        return this.isActivated;
+    }
+
+    protected void deactivate() {
+        if (this.isActivated) {
+            this.isActivated = false;
+            this.onDeactivated();
+        }
+    }
+
+    /**
+     * Hook method for sub classes, called when a perspective is deactivated.
+     */
+    protected void onDeactivated() {
+    }
+
+    protected void publishEvent(final String name) {
+        final UsageEvent event = createUsageEvent(name);
+        if (event != null) {
+            event.publish();
+        }
+    }
+
+    protected UsageEvent createUsageEvent(final String name) {
+        IModel<T> editorModel = null;
+        try {
+            editorModel = getEditorModel();
+        } catch (EditorException e) {
+            log.warn("Error retrieving editor model", e);
+        }
+        return createUsageEvent(name, editorModel);
+    }
+
+    protected UsageEvent createUsageEvent(final String name, IModel<T> model) {
+        return new UsageEvent(name);
+    }
+
     protected Map<IEditorFilter, Object> preClose() throws EditorException {
         List<IEditorFilter> filters = context.getServices(context.getReference(this).getServiceId(),
                 IEditorFilter.class);
@@ -270,14 +348,14 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
     public void start() throws EditorException {
         String clusterName;
         switch (mode) {
-        case EDIT:
-            clusterName = "cms-editor";
-            break;
-        case COMPARE:
-        case VIEW:
-        default:
-            clusterName = "cms-preview";
-            break;
+            case EDIT:
+                clusterName = "cms-editor";
+                break;
+            case COMPARE:
+            case VIEW:
+            default:
+                clusterName = "cms-preview";
+                break;
         }
         JavaPluginConfig editorConfig = new JavaPluginConfig(parameters);
         editorConfig.put("wicket.id", editorId);
@@ -325,14 +403,7 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         context.registerService(this, renderId);
 
         // observe focus events, those need to be synchronized with the active model of the editor manager
-        focusListener = new IFocusListener() {
-            private static final long serialVersionUID = 1L;
-
-            public void onFocus(IRenderService renderService) {
-                editorContext.onFocus();
-            }
-
-        };
+        focusListener = renderService -> editorContext.onFocus();
         context.registerService(focusListener, renderId);
     }
 
@@ -399,4 +470,23 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         }
     }
 
+    private class EditorActivatedHeaderItem extends HeaderItem {
+
+        @Override
+        public Iterable<?> getRenderTokens() {
+            return Collections.singleton("editor-activated-header-item");
+        }
+
+        @Override
+        public Iterable<? extends HeaderItem> getDependencies() {
+            return Collections.singleton(UsageStatisticsHeaderItem.get());
+        }
+
+        @Override
+        public void render(final Response response) {
+            final UsageEvent editorActivated = createUsageEvent(EVENT_EDITOR_ACTIVATED);
+            final String eventJs = editorActivated.getJavaScript();
+            OnLoadHeaderItem.forScript(eventJs).render(response);
+        }
+    }
 }
