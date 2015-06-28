@@ -33,57 +33,75 @@ public class RepoPathTest {
 
     @Test
     public void testBaseRepoPath() throws Exception  {
-        final String userDir = new File(System.getProperty("user.dir")).getAbsolutePath();
-        final String homeDir = new File(System.getProperty("user.home")).getAbsolutePath();
-        final String tmpDir = new File(System.getProperty("java.io.tmpdir")).getAbsolutePath();
-        final String fileSeparator = System.getProperty("file.separator");
-        assertNotSame(tmpDir,userDir);
+        final String originalRepoBasePath = System.getProperty(LocalHippoRepository.SYSTEM_BASE_PATH_PROPERTY, null);
+        final String originalRepoPath = System.getProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, null);
+        try {
+            final String userDir = new File(System.getProperty("user.dir")).getAbsolutePath();
+            final String homeDir = new File(System.getProperty("user.home")).getAbsolutePath();
+            final String tmpDir = new File(System.getProperty("java.io.tmpdir")).getAbsolutePath();
+            final String fileSeparator = System.getProperty("file.separator");
+            assertNotSame(tmpDir,userDir);
 
-        // Default workingDirectory should == user.dir
-        assertEquals(userDir, new RepoPathTestLocalHippoRepository().getWorkingDirectory());
+            // Default workingDirectory should == user.dir
+            assertEquals(userDir, new RepoPathTestLocalHippoRepository().getWorkingDirectory());
 
-        // No system property repo.path set: repositoryPath should be == to workingDirectory
-        assertEquals(userDir, new RepoPathTestLocalHippoRepository().getRepositoryPath());
+            // No system property repo.path set: repositoryPath should be == to workingDirectory
+            assertEquals(userDir, new RepoPathTestLocalHippoRepository().getRepositoryPath());
 
-        System.setProperty(LocalHippoRepository.SYSTEM_BASE_PATH_PROPERTY, tmpDir);
-        assertEquals(tmpDir, System.getProperty(LocalHippoRepository.SYSTEM_BASE_PATH_PROPERTY));
+            System.setProperty(LocalHippoRepository.SYSTEM_BASE_PATH_PROPERTY, tmpDir);
+            assertEquals(tmpDir, System.getProperty(LocalHippoRepository.SYSTEM_BASE_PATH_PROPERTY));
 
-        // Setting repo.base.path without repo.path should have no effect
-        assertEquals(userDir, new RepoPathTestLocalHippoRepository().getRepositoryPath());
+            // Setting repo.base.path without repo.path should have no effect
+            assertEquals(userDir, new RepoPathTestLocalHippoRepository().getRepositoryPath());
 
-        // A repo.path which is absolute will be used as such
-        System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "/subPath");
-        assertEquals("/subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
+            // A repo.path which is absolute will be used as such
+            System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "/subPath");
+            assertEquals("/subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
 
-        // A repo.path which is relative will use repo.base.path as prefix if defined
-        System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "subPath");
-        assertEquals(tmpDir + fileSeparator + "subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
+            // A repo.path which is relative will use repo.base.path as prefix if defined
+            System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "subPath");
+            assertEquals(tmpDir + fileSeparator + "subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
 
-        // A repo.path starting with a '.' also is relative and also will use repo.base.path as prefix
-        System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "./subPath");
-        assertEquals(tmpDir+fileSeparator+"./subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
+            // A repo.path starting with a '.' also is relative and also will use repo.base.path as prefix
+            System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "./subPath");
+            assertEquals(tmpDir+fileSeparator+"./subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
 
-        // A repo.path starting with a '~/' is first expanded to a user.home relative path (thus becoming absolute
-        System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "~/subPath");
-        assertEquals(homeDir+"/subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
+            // A repo.path starting with a '~/' is first expanded to a user.home relative path (thus becoming absolute
+            System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "~/subPath");
+            assertEquals(homeDir+"/subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
 
-        // Tests with no repo.base.path set (or empty)
-        System.setProperty(LocalHippoRepository.SYSTEM_BASE_PATH_PROPERTY, "");
+            // Tests with no repo.base.path set (or empty)
+            System.setProperty(LocalHippoRepository.SYSTEM_BASE_PATH_PROPERTY, "");
 
-        // A repo.path which is absolute will be used as such
-        System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "/subPath");
-        assertEquals("/subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
+            // A repo.path which is absolute will be used as such
+            System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "/subPath");
+            assertEquals("/subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
 
-        // a path not starting which is relative without repo.base.path defined will be treated as if absolute
-        System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "subPath");
-        assertEquals("subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
+            // a path not starting which is relative without repo.base.path defined will be treated as if absolute
+            System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "subPath");
+            assertEquals("subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
 
-        // A repo.path starting with a '.' also is relative but without repo.base.path be treated as if absolute
-        System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "./subPath");
-        assertEquals("./subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
+            // A repo.path starting with a '.' also is relative but without repo.base.path be treated as if absolute
+            System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "./subPath");
+            assertEquals("./subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
 
-        // A repo.path starting with a '~/' is first expanded to a user.home relative path (thus becoming absolute
-        System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "~/subPath");
-        assertEquals(homeDir+"/subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
+            // A repo.path starting with a '~/' is first expanded to a user.home relative path (thus becoming absolute
+            System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "~/subPath");
+            assertEquals(homeDir+"/subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
+        }
+        finally {
+            if (originalRepoBasePath != null) {
+                System.setProperty(LocalHippoRepository.SYSTEM_BASE_PATH_PROPERTY, originalRepoBasePath);
+            }
+            else {
+                System.clearProperty(LocalHippoRepository.SYSTEM_BASE_PATH_PROPERTY);
+            }
+            if (originalRepoPath != null) {
+                System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, originalRepoPath);
+            }
+            else {
+                System.clearProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY);
+            }
+        }
     }
 }
