@@ -406,6 +406,65 @@
         <artifactId>tika-parsers</artifactId>
         <version>${tika-parsers.version}</version>
         <exclusions>
+          <!-- Exclude PKCS7 signed messages -->
+          <exclusion>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcmail-jdk15</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15</artifactId>
+          </exclusion>
+          <!-- Exclude audio and video formats -->
+          <exclusion>
+            <groupId>org.gagravarr</groupId>
+            <artifactId>vorbis-java-tika</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.gagravarr</groupId>
+            <artifactId>vorbis-java-core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.googlecode.mp4parser</groupId>
+            <artifactId>isoparser</artifactId>
+          </exclusion>
+          <!-- Exclude NetCDF and HDF formats -->
+          <exclusion>
+            <groupId>edu.ucar</groupId>
+            <artifactId>netcdf</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+          </exclusion>
+          <!-- Exclude MIME4J (raw email and mbox files) -->
+          <exclusion>
+            <groupId>org.apache.james</groupId>
+            <artifactId>apache-mime4j-core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.james</groupId>
+            <artifactId>apache-mime4j-dom</artifactId>
+          </exclusion>
+          <!-- Exclude EXIF and other image metadata as we normally don't want to parse
+               images for full text indexing -->
+          <exclusion>
+            <groupId>com.drewnoakes</groupId>
+            <artifactId>metadata-extractor</artifactId>
+          </exclusion>
+          <!-- Exclude the Rome library as we normally don't want to parse
+               RSS and Atom feeds for full text indexing. -->
+          <exclusion>
+            <groupId>rome</groupId>
+            <artifactId>rome</artifactId>
+          </exclusion>
+          <!-- Exclude Commons compress as we don't want to parse
+               compressed archives like zips by default -->
+          <exclusion>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+          </exclusion>
+          <!-- Exclude asm (Java parsing) -->
           <exclusion>
             <groupId>asm</groupId>
             <artifactId>asm</artifactId>
@@ -418,6 +477,7 @@
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm-debug-all</artifactId>
           </exclusion>
+          <!-- Exclude boilerpipe -->
           <exclusion>
             <artifactId>boilerpipe</artifactId>
             <groupId>de.l3s.boilerpipe</groupId>
