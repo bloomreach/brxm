@@ -34,7 +34,6 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
-import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -79,10 +78,6 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         fallbackImageExtension = config.getString("fallback.image.extension", FALLBACK_IMAGE_EXTENSION);
 
         add(CssClass.append("perspective"));
-    }
-
-    private boolean eventsEnabled() {
-        return this.eventId != null;
     }
 
     public String getTitleCssClass() {
@@ -148,57 +143,11 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     }
 
     @Override
-    public void focus(final IRenderService child) {
-        super.focus(child);
-        if (isActive()) {
-            activate();
-        }
-    }
-
-    protected void activate() {
-        if (!this.isActivated) {
-            this.isActivated = true;
-            this.publishEvent(EVENT_PERSPECTIVE_ACTIVATED);
-            this.onActivated();
-        }
-    }
-
-    protected void publishEvent(final String name) {
-        if (eventsEnabled()) {
-            final UsageEvent event = new UsageEvent(name);
-            event.setParameter(EVENT_PARAM_PERSPECTIVE_ID, this.eventId);
-            event.publish();
-        }
-    }
-
-    /**
-     * Hook method for sub classes, called when a perspective is activated.
-     */
-    protected void onActivated() {
-    }
-
-    protected void deactivate() {
-        if (this.isActivated) {
-            this.isActivated = false;
-            this.onDeactivated();
-        }
-    }
-
-    /**
-     * Hook method for sub classes, called when a perspective is deactivated.
-     */
-    protected void onDeactivated() {
-    }
-
-    protected boolean isActivated() {
-        return this.isActivated;
-    }
-
-    @Override
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
         if (eventsEnabled() && isActive()) {
-            response.render(new PerspectiveActivatedHeaderItem(this.eventId));
+            isActivated = true;
+            response.render(new PerspectiveActivatedHeaderItem(eventId));
         }
     }
 
@@ -209,10 +158,45 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
                 isRendered = true;
                 startPluginCluster();
             }
-        } else if (isActivated()) {
-            deactivate();
+
+            if (!isActivated) {
+                isActivated = true;
+                onActivated();
+            }
+        } else {
+            if (isActivated) {
+                isActivated = false;
+                onDeactivated();
+            }
         }
         super.render(target);
+    }
+
+    /**
+     * Hook called when the perspective is activated, i.e. transitions from inactive to active state.
+     * When overiding, make sure to call super.onActivated() in order to keep the usage statistics working.
+     */
+    protected void onActivated() {
+        publishEvent(EVENT_PERSPECTIVE_ACTIVATED);
+    }
+
+    /**
+     * Hook called when the perspective is deactivate, i.e. transitions from active to inactive state.
+     * When overriding, make sure to call super.onDectivated().
+     */
+    protected void onDeactivated() {
+    }
+
+    protected void publishEvent(final String name) {
+        if (eventsEnabled()) {
+            final UsageEvent event = new UsageEvent(name);
+            event.setParameter(EVENT_PARAM_PERSPECTIVE_ID, eventId);
+            event.publish();
+        }
+    }
+
+    private boolean eventsEnabled() {
+        return eventId != null;
     }
 
     private void startPluginCluster() {
@@ -254,7 +238,7 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         @Override
         public void render(final Response response) {
             final UsageEvent perspectiveActivated = new UsageEvent(EVENT_PERSPECTIVE_ACTIVATED);
-            perspectiveActivated.setParameter(EVENT_PARAM_PERSPECTIVE_ID, this.perspectiveId);
+            perspectiveActivated.setParameter(EVENT_PARAM_PERSPECTIVE_ID, perspectiveId);
 
             final String eventJs = perspectiveActivated.getJavaScript();
             OnLoadHeaderItem.forScript(eventJs).render(response);
