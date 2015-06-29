@@ -35,7 +35,7 @@ import org.onehippo.repository.journal.ExternalRepositorySyncRevisionService;
  */
 public class ExternalRepositorySyncRevisionServiceImpl implements ExternalRepositorySyncRevisionService {
 
-    private static class DatabaseJournalAccessor extends DatabaseJournal {
+    private static class DatabaseJournalAccessor {
         private final DatabaseJournal dj;
 
         public DatabaseJournalAccessor(final DatabaseJournal dj) {
