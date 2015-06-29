@@ -90,12 +90,14 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         @Override
         public void render(final PluginRequestTarget target) {
             if (isActive()) {
-                if (!isActivated()) {
-                    activate();
+                if (!isActivated) {
+                    isActivated = true;
+                    onActivated();
                 }
             } else {
-                if (isActivated()) {
-                    deactivate();
+                if (isActivated) {
+                    isActivated = false;
+                    onDeactivated();
                 }
             }
             super.render(target);
@@ -257,33 +259,17 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         editorContext.onClose();
     }
 
-    protected void activate() {
-        if (!this.isActivated) {
-            this.isActivated = true;
-            publishEvent(EVENT_EDITOR_ACTIVATED);
-            onActivated();
-        }
-    }
-
     /**
-     * Hook method for sub classes, called when an editor is activated.
+     * Hook called when an editor is activated, i.e. transitions from inactive to active state.
+     * When overiding, make sure to call super.onActivated() in order to keep the usage statistics working.
      */
     protected void onActivated() {
-    }
-
-    protected boolean isActivated() {
-        return this.isActivated;
-    }
-
-    protected void deactivate() {
-        if (this.isActivated) {
-            this.isActivated = false;
-            this.onDeactivated();
-        }
+        publishEvent(EVENT_EDITOR_ACTIVATED);
     }
 
     /**
-     * Hook method for sub classes, called when a perspective is deactivated.
+     * Hook called when an editor is deactivate, i.e. transitions from active to inactive state.
+     * When overriding, make sure to call super.onDeactivated().
      */
     protected void onDeactivated() {
     }

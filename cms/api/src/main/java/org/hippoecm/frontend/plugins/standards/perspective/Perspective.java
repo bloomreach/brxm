@@ -182,7 +182,7 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
     /**
      * Hook called when the perspective is deactivate, i.e. transitions from active to inactive state.
-     * When overriding, make sure to call super.onDectivated().
+     * When overriding, make sure to call super.onDeactivated().
      */
     protected void onDeactivated() {
     }
