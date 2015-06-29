@@ -113,7 +113,7 @@ public class BlogListenerModule extends AbstractReconfigurableDaemonModule {
             if (!config.isActive()
                     || Strings.isNullOrEmpty(config.getCronExpression())
                     || Strings.isNullOrEmpty(config.getProjectNamespace())
-                    || config.getUrls().length == 0) {
+                    || config.getUrls().isEmpty()) {
 
                 return; // No need to reschedule, we're done.
             }
@@ -124,14 +124,7 @@ public class BlogListenerModule extends AbstractReconfigurableDaemonModule {
             scheduler.scheduleJob(jobInfo, trigger);
 
             if (config.isRunNow()) {
-                final String name = SCHEDULER_NAME + "TriggerNow";
-                final RepositoryJobTrigger nowTrigger = new RepositoryJobCronTrigger(name, config.getCronExpression());
-                final RepositoryJobInfo nowJobInfo = new RepositoryJobInfo(name, SCHEDULER_GROUP_NAME, BlogImporterJob.class);
-                populateJobInfo(nowJobInfo, config);
-
-                scheduler.scheduleJob(nowJobInfo, nowTrigger);
-                scheduler.executeJob(name, SCHEDULER_GROUP_NAME);
-                scheduler.deleteJob(name, SCHEDULER_GROUP_NAME);
+                scheduler.executeJob(JOB_NAME, SCHEDULER_GROUP_NAME);
             }
         } catch (RepositoryException ex) {
             log.error("Failure (re)scheduling the blog importer.", ex);

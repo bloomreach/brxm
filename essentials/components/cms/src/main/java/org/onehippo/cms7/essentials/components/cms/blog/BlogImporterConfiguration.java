@@ -16,17 +16,16 @@
 
 package org.onehippo.cms7.essentials.components.cms.blog;
 
-import org.apache.commons.lang.ArrayUtils;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BlogImporterConfiguration {
     public static final Logger log = LoggerFactory.getLogger(BlogImporterConfiguration.class);
@@ -35,14 +34,14 @@ public class BlogImporterConfiguration {
     private static final String PROP_ACTIVE = "active";
     private static final String PROP_RUNNOW = "runInstantly";
 
-    private String cronExpression;
-    private Boolean active;
-    private Boolean runNow;
-    private String blogBasePath;
-    private String authorsBasePath;
-    private String projectNamespace;
-    private String[] urls;
-    private String[] authors;
+    private final String cronExpression;
+    private final Boolean active;
+    private final Boolean runNow;
+    private final String blogBasePath;
+    private final String authorsBasePath;
+    private final String projectNamespace;
+    private final List<String> urls;
+    private final List<String> authors;
 
     public BlogImporterConfiguration(Node moduleConfigNode) throws RepositoryException {
         cronExpression = JcrUtils.getStringProperty(moduleConfigNode, PROP_CRONEXPRESSION, null);
@@ -52,12 +51,12 @@ public class BlogImporterConfiguration {
         projectNamespace = JcrUtils.getStringProperty(moduleConfigNode, BlogImporterJob.PROJECT_NAMESPACE, null);
         blogBasePath = JcrUtils.getStringProperty(moduleConfigNode, BlogImporterJob.BLOGS_BASE_PATH, null);
         authorsBasePath = JcrUtils.getStringProperty(moduleConfigNode, BlogImporterJob.AUTHORS_BASE_PATH, null);
-        urls = readStrings(moduleConfigNode, BlogImporterJob.URLS);
-        authors = readStrings(moduleConfigNode, BlogImporterJob.AUTHORS);
-        if (authors.length != urls.length) {
+        urls = Arrays.asList(JcrUtils.getMultipleStringProperty(moduleConfigNode, BlogImporterJob.URLS, null));
+        authors = Arrays.asList(JcrUtils.getMultipleStringProperty(moduleConfigNode, BlogImporterJob.AUTHORS, null));
+        if (authors.size() != urls.size()) {
             log.error("Authors and URL size mismatch, no blogs will be imported.");
-            authors = ArrayUtils.EMPTY_STRING_ARRAY;
-            urls = ArrayUtils.EMPTY_STRING_ARRAY;
+            authors.clear();
+            urls.clear();
         }
     }
 
@@ -85,31 +84,11 @@ public class BlogImporterConfiguration {
         return projectNamespace;
     }
 
-    public String[] getUrls() {
-        return urls;
+    public List<String> getUrls() {
+        return Collections.unmodifiableList(urls);
     }
 
-    public String[] getAuthors() {
-        return authors;
-    }
-
-    private String[] readStrings(final Node node, final String propertyName) {
-        try {
-            if (node.hasProperty(propertyName)) {
-                final Property property = node.getProperty(propertyName);
-                final List<String> retVal = new ArrayList<>();
-                if (property.isMultiple()) {
-                    final Value[] values = property.getValues();
-                    for (Value value : values) {
-                        final String myUrl = value.getString();
-                        retVal.add(myUrl);
-                    }
-                }
-                return retVal.toArray(new String[retVal.size()]);
-            }
-        } catch (RepositoryException e) {
-            log.error("Error reading property", e);
-        }
-        return ArrayUtils.EMPTY_STRING_ARRAY;
+    public List<String> getAuthors() {
+        return Collections.unmodifiableList(authors);
     }
 }
