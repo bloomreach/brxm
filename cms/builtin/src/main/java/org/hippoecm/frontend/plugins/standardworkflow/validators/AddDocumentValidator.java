@@ -36,7 +36,7 @@ public abstract class AddDocumentValidator extends DocumentFormValidator{
     public static final String ERROR_SNS_NODE_EXISTS = "error-sns-node-exists";
     public static final String ERROR_LOCALIZED_NAME_EXISTS = "error-localized-name-exists";
     public static final String ERROR_VALIDATION_NAMES = "error-validation-names";
-    public static final String ERROR_SNS_NAMES_EXISTS = "error-sns-names-exist";
+    public static final String ERROR_SNS_NAMES_EXIST = "error-sns-names-exist";
 
     static Logger log = LoggerFactory.getLogger(AddDocumentValidator.class);
 
@@ -63,7 +63,7 @@ public abstract class AddDocumentValidator extends DocumentFormValidator{
             final boolean hasNodeWithSameLocalizedName = hasChildWithLocalizedName(parentNode, newLocalizedName);
 
             if (hasNodeWithSameName && hasNodeWithSameLocalizedName) {
-                showError(ERROR_SNS_NAMES_EXISTS, newNodeName, newLocalizedName);
+                showError(ERROR_SNS_NAMES_EXIST, newNodeName, newLocalizedName);
             } else if (hasNodeWithSameName) {
                 showError(ERROR_SNS_NODE_EXISTS, newNodeName);
             } else if (hasNodeWithSameLocalizedName) {

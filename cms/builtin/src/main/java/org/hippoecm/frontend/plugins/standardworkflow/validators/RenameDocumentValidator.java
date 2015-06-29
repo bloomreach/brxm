@@ -35,7 +35,7 @@ public abstract class RenameDocumentValidator extends DocumentFormValidator {
     public static final String ERROR_SAME_NAMES = "error-same-names";
     public static final String ERROR_SNS_NODE_EXISTS = "error-sns-node-exists";
     public static final String ERROR_LOCALIZED_NAME_EXISTS = "error-localized-name-exists";
-    public static final String ERROR_SNS_NAMES_EXISTS = "error-sns-names-exist";
+    public static final String ERROR_SNS_NAMES_EXIST = "error-sns-names-exist";
     public static final String ERROR_VALIDATION_NAMES = "error-validation-names";
 
     private final WorkflowDescriptorModel workflowDescriptorModel;
@@ -74,7 +74,7 @@ public abstract class RenameDocumentValidator extends DocumentFormValidator {
                         hasChildWithLocalizedName(parentNode, newLocalizedName);
 
                 if (hasNodeWithSameName && hasOtherNodeWithSameLocalizedName) {
-                    showError(ERROR_SNS_NAMES_EXISTS, newUrlName, newLocalizedName);
+                    showError(ERROR_SNS_NAMES_EXIST, newUrlName, newLocalizedName);
                 } else if (hasNodeWithSameName) {
                     showError(ERROR_SNS_NODE_EXISTS, newUrlName);
                 } else if (hasOtherNodeWithSameLocalizedName) {
