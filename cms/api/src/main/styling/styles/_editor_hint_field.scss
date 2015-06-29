@@ -29,7 +29,6 @@
   .info {
     display: inline-block;
     height: 16px;
-    z-index: 24;
     vertical-align: top;
     position: relative;
     text-decoration: none;
@@ -42,7 +41,6 @@
     span {
       display: none;
       position: absolute;
-      z-index: 25;
       top: -3px;
       left: 24px;
       border: 1px solid $dark-gray;
