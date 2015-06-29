@@ -35,6 +35,16 @@
       <groupId>org.apache.taglibs</groupId>
       <artifactId>taglibs-standard-impl</artifactId>
     </dependency>
+    
+    <!-- the following xalan dependencies are required by apache standard taglibs implementation -->
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>serializer</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>

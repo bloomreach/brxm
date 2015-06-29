@@ -67,6 +67,7 @@
     <essentials.version>1.03.02-SNAPSHOT</essentials.version>
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.1</taglibs.version>
+    <xalan.version>2.7.1</xalan.version>
     <commons.lang.version>2.6</commons.lang.version>
     <junit.version>4.10</junit.version>
     <easymock.version>3.1</easymock.version>
@@ -122,6 +123,19 @@
         <groupId>org.apache.taglibs</groupId>
         <artifactId>taglibs-standard-impl</artifactId>
         <version>${dollar}{taglibs.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>xalan</groupId>
+        <artifactId>xalan</artifactId>
+        <version>${dollar}{xalan.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>xalan</groupId>
+        <artifactId>serializer</artifactId>
+        <version>${dollar}{xalan.version}</version>
         <scope>runtime</scope>
       </dependency>
 
