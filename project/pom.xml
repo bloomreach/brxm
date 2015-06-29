@@ -70,6 +70,7 @@
     <jackson.version>1.9.13</jackson.version>
     <jackson2.version>2.4.5</jackson2.version>
     <spring.version>4.1.4.RELEASE</spring.version>
+    <aspectjweaver.version>1.8.4</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
     <groovy.version>2.3.0</groovy.version>
     <freemarker.version>2.3.22</freemarker.version>
     <jackrabbit.version>2.10.1</jackrabbit.version>
