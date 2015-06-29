@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* Wicket Ajaxloader */
-/* ================================================ */
 .hippo-root .wicket-ajax-indicator {
   background-color: $ajax-loader-bgcolor;
   left: 0;
@@ -30,7 +28,7 @@
     height: $ajax-loader-height;
     animation: ajaxloader 1s infinite linear;
     background-size: $ajax-loader-width $ajax-loader-height;
-    @include at2x("#{$images}/loader/ajax-loader.png", $ajax-loader-width, $ajax-loader-height);
+    @include at2x("#{$images}/loader/ajax-loader", "png", $ajax-loader-width, $ajax-loader-height);
     background-repeat: no-repeat;
   }
 }
