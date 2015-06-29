@@ -22,7 +22,6 @@ import java.util.Date;
 import javax.jcr.Node;
 
 import org.junit.Test;
-import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.GuavaHippoEventBus;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
@@ -77,7 +76,12 @@ public class DocumentWorkflowRequestTest extends AbstractDocumentWorkflowIntegra
         assertFalse("Request still on handle", handle.hasNode(HIPPO_REQUEST));
         assertTrue("Document is not live", isLive());
         assertEquals("Edit did not make it to live", "bar", getVariant(PUBLISHED).getProperty("foo").getString());
-        assertTrue(listener.actions.contains("publish"));
+        poll(new Executable() {
+            @Override
+            public void execute() throws Exception {
+                assertTrue(listener.actions.contains("publish"));
+            }
+        }, 10);
     }
 
     @Test
@@ -93,7 +97,12 @@ public class DocumentWorkflowRequestTest extends AbstractDocumentWorkflowIntegra
 
         assertFalse("Request still on handle", handle.hasNode(HIPPO_REQUEST));
         assertFalse("Document is still live", isLive());
-        assertTrue(listener.actions.contains("depublish"));
+        poll(new Executable() {
+            @Override
+            public void execute() throws Exception {
+                assertTrue(listener.actions.contains("depublish"));
+            }
+        }, 10);
     }
 
     @Test
@@ -106,7 +115,7 @@ public class DocumentWorkflowRequestTest extends AbstractDocumentWorkflowIntegra
         session.save();
         workflow.commitEditableInstance();
 
-        workflow.requestPublication(new Date(System.currentTimeMillis()+1000));
+        workflow.requestPublication(new Date(System.currentTimeMillis() + 1000));
         poll(new Executable() {
             @Override
             public void execute() throws Exception {
