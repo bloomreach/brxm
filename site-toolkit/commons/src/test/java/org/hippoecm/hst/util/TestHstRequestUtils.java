@@ -151,4 +151,13 @@ public class TestHstRequestUtils {
         assertEquals("https", HstRequestUtils.getFarthestRequestScheme(request));
     }
 
+    @Test
+    public void testXForwardedProtoInCapitals() throws Exception {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getHeader("X-Forwarded-Proto")).andReturn("HTTP").anyTimes();
+        replay(request);
+        String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(request);
+        assertEquals("http",farthestRequestScheme);
+    }
+
 }

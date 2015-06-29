@@ -301,13 +301,13 @@ public class HstRequestUtils {
         String [] schemes = getCommaSeparatedMultipleHeaderValues(request, "X-Forwarded-Proto");
 
         if (schemes != null && schemes.length != 0) {
-            return schemes[0];
+            return schemes[0].toLowerCase();
         }
 
         schemes = getCommaSeparatedMultipleHeaderValues(request, "X-Forwarded-Scheme");
 
         if (schemes != null && schemes.length != 0) {
-            return schemes[0];
+            return schemes[0].toLowerCase();
         }
 
         String [] sslEnabledArray = getCommaSeparatedMultipleHeaderValues(request, "X-SSL-Enabled");
