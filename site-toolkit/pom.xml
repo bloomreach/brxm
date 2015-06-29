@@ -80,8 +80,6 @@
     <ehcache-core.version>2.9.0</ehcache-core.version>
     <ehcache-web.version>2.0.4</ehcache-web.version>
 
-    <aspectj.version>1.6.9</aspectj.version>
-
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
     <hippo.commons.version>1.05.00</hippo.commons.version>
@@ -333,7 +331,7 @@
       <dependency>
         <groupId>org.aspectj</groupId>
         <artifactId>aspectjweaver</artifactId>
-        <version>${aspectj.version}</version>
+        <version>${aspectjweaver.version}</version>
       </dependency>
 
       <!-- Spring Framework -->
