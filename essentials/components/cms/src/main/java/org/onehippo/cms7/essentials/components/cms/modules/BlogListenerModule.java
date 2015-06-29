@@ -56,18 +56,15 @@ public class BlogListenerModule extends AbstractReconfigurableDaemonModule {
     private static final String SCHEDULER_GROUP_NAME = "essentials";
     private static final String JOB_NAME = SCHEDULER_NAME + "Job";
 
-    private Session session;
     private AuthorFieldHandler listener;
 
     @Override
     protected void doConfigure(final Node moduleConfigNode) throws RepositoryException {
-        // we read the configuration on the fly.
+        // we read the BlogImporterConfiguration on the fly.
     }
 
     @Override
     protected void doInitialize(final Session session) throws RepositoryException {
-        this.session = session;
-
         final BlogImporterConfiguration config = new BlogImporterConfiguration(session.getNode(moduleConfigPath));
 
         rescheduleJob(config);
@@ -77,10 +74,6 @@ public class BlogListenerModule extends AbstractReconfigurableDaemonModule {
     @Override
     protected void doShutdown() {
         unregisterListener();
-
-        // TODO: the super class also has a protected "session" field, but doesn't logout. This is fishy.
-        // Do we need to logout here? Do we need to keep track of the session in an instance variable?
-        session.logout();
     }
 
     @Override
