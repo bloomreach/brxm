@@ -458,12 +458,6 @@
             <groupId>rome</groupId>
             <artifactId>rome</artifactId>
           </exclusion>
-          <!-- Exclude Commons compress as we don't want to parse
-               compressed archives like zips by default -->
-          <exclusion>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-          </exclusion>
           <!-- Exclude asm (Java parsing) -->
           <exclusion>
             <groupId>asm</groupId>
