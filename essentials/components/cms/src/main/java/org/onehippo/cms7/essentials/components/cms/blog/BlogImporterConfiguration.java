@@ -23,6 +23,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,8 +52,8 @@ public class BlogImporterConfiguration {
         projectNamespace = JcrUtils.getStringProperty(moduleConfigNode, BlogImporterJob.PROJECT_NAMESPACE, null);
         blogBasePath = JcrUtils.getStringProperty(moduleConfigNode, BlogImporterJob.BLOGS_BASE_PATH, null);
         authorsBasePath = JcrUtils.getStringProperty(moduleConfigNode, BlogImporterJob.AUTHORS_BASE_PATH, null);
-        urls = Arrays.asList(JcrUtils.getMultipleStringProperty(moduleConfigNode, BlogImporterJob.URLS, null));
-        authors = Arrays.asList(JcrUtils.getMultipleStringProperty(moduleConfigNode, BlogImporterJob.AUTHORS, null));
+        urls = Arrays.asList(JcrUtils.getMultipleStringProperty(moduleConfigNode, BlogImporterJob.URLS, ArrayUtils.EMPTY_STRING_ARRAY));
+        authors = Arrays.asList(JcrUtils.getMultipleStringProperty(moduleConfigNode, BlogImporterJob.AUTHORS, ArrayUtils.EMPTY_STRING_ARRAY));
         if (authors.size() != urls.size()) {
             log.error("Authors and URL size mismatch, no blogs will be imported.");
             authors.clear();
