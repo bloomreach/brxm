@@ -17,7 +17,7 @@
 /*!
  * Ext JS Library 3.3.1
  * Copyright(c) 2006-2010 Sencha Inc.
- * licensing$sencha.com
+ * licensing@sencha.com
  * http://www.sencha.com/license
  */
 // Bootstrap variables and mixins
@@ -1521,9 +1521,9 @@ a.x-menu-item {
       width: 16px;
       height: 16px;
       margin-top: $modal-header-padding - 4;
-      background: url("#{images_extjs}/icons/delete.svg") no-repeat left;
+      background: url("#{$images_extjs}/icons/delete.svg") no-repeat left;
       &:hover {
-        background: url("#{images_extjs}/icons/delete-hover.svg") no-repeat left;
+        background: url("#{$images_extjs}/icons/delete-hover.svg") no-repeat left;
       }
     }
 
