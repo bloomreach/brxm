@@ -66,7 +66,7 @@
   <appender name="warnings" class="org.apache.log4j.ConsoleAppender">
     <param name="Target" value="System.err"/>
     <layout class="org.apache.log4j.PatternLayout">
-      <param name="ConversionPattern" value="%d{HH:mm:ss} %-5p %m%n"/>
+      <param name="ConversionPattern" value="%d{HH:mm:ss} %-5p [%C{1}] %m%n"/>
     </layout>
   </appender>
 
@@ -117,6 +117,18 @@
 
   <logger name="freemarker">
     <level value="warn"/>
+  </logger>
+
+  <!-- Freemarker errors -->
+  <logger name="org.hippoecm.hst.servlet.HstFreemarkerServlet" additivity="false">
+    <level value="warn"/>
+    <appender-ref ref="warnings"/>
+  </logger>
+
+  <logger name="freemarker.servlet" additivity="false">
+    <!-- freemarker servket errors will be logged by HstFreemarkerServlet -->
+    <level value="fatal" />
+    <appender-ref ref="warnings" />
   </logger>
 
   <logger name="org.apache.cxf">
@@ -173,12 +185,6 @@
   <logger name="org.onehippo.cms7.services.autoreload.AutoReloadServiceModule" additivity="false">
     <level value="info"/>
     <appender-ref ref="messages"/>
-  </logger>
-
-  <!-- Freemarker errors -->
-  <logger name="org.hippoecm.hst.servlet.HstFreemarkerServlet" additivity="false">
-    <level value="warn"/>
-    <appender-ref ref="warnings"/>
   </logger>
 
   <root>
