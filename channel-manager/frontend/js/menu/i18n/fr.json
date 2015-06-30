@@ -34,5 +34,7 @@
   "TOOLTIP_OPEN_LINK": "Ouvrir le lien",
   "CLOSE_PANEL_TITLE": "Souhaitez-vous vraiment fermer ce panneau?",
   "CLOSE_PANEL_CONFIRMATION": "Les dernières modifications ne seront pas enregistrées.",
-  "CLOSE": "Fermer"
+  "CLOSE": "Fermer",
+  "EMPTY_MENU": "Aucun élément dans le menu",
+  "EMPTY_DOCUMENT_PICKER": "Aucun document disponible"
 }

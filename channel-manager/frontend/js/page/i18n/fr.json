@@ -12,11 +12,17 @@
   "SAVE": "Enregistrer",
   "CANCEL": "Annuler",
   "DELETE_PAGE": "Supprimer la page",
+  "COPY_PAGE": "Copier cette page",
   "CONFIRM_DELETE_TITLE": "Confirmer la suppression",
   "CONFIRM_DELETE_MESSAGE": "Souhaitez-vous vraiment supprimer '{{ title }}'?",
   "TOOLTIP_NOT_EDITABLE": "Cette page ne peut pas être supprimée, car elle n'est actuellement pas modifiable",
   "TOOLTIP_IS_HOMEPAGE": "La page d'accueil ne peut pas être supprimée",
   "PAGE_LOCKED": "Cette page a été verrouillée par {{ owner }} à {{ timestamp | date:'M/d/yyyy h:mm a' }}",
   "TECHNICAL_ERROR": "Une erreur technique s'est produite",
-  "ITEM_ALREADY_LOCKED": "Cette page ne peut pas être modifiée, car elle est déjà en cours de modification par '{{ lockedBy }}'"
+  "ITEM_ALREADY_LOCKED": "Cette page ne peut pas être modifiée, car elle est déjà en cours de modification par '{{ lockedBy }}'",
+  "PRIMARY_DOCUMENT": "Document page primaire",
+  "REMOVE_PRIMARY_DOCUMENT": "Supprimer",
+  "CONFIRM_REMOVE_PRIMARY_DOCUMENT_TITLE": "Confirmer la suppression",
+  "CONFIRM_REMOVE_PRIMARY_DOCUMENT_MESSAGE": "Êtes-vous sûr de vouloir supprimer le document de page primaire?",
+  "NONE": "Aucun"
 }

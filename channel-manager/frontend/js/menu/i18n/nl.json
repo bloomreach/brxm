@@ -34,5 +34,7 @@
   "TOOLTIP_OPEN_LINK": "Open link",
   "CLOSE_PANEL_TITLE": "Weet u zeker dat u dit venster wil sluiten?",
   "CLOSE_PANEL_CONFIRMATION": "De laatste wijzigingen zullen niet worden opgeslaan.",
-  "CLOSE": "Sluit"
+  "CLOSE": "Sluit",
+  "EMPTY_MENU": "Geen menu items beschikbaar",
+  "EMPTY_DOCUMENT_PICKER": "Geen documenten beschikbaar"
 }
