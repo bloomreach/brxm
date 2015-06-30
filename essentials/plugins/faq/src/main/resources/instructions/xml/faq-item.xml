@@ -217,6 +217,28 @@
                 <sv:value>Vraag</sv:value>
               </sv:property>
             </sv:node>
+            <sv:node sv:name="hippo:translation">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:translation</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:language" sv:type="String">
+                <sv:value>de</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:message" sv:type="String">
+                <sv:value>Frage</sv:value>
+              </sv:property>
+            </sv:node>
+            <sv:node sv:name="hippo:translation">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:translation</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:language" sv:type="String">
+                <sv:value>fr</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:message" sv:type="String">
+                <sv:value>Question</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
           <sv:node sv:name="answer">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -245,6 +267,28 @@
               </sv:property>
               <sv:property sv:name="hippo:message" sv:type="String">
                 <sv:value>Antwoord</sv:value>
+              </sv:property>
+            </sv:node>
+            <sv:node sv:name="hippo:translation">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:translation</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:language" sv:type="String">
+                <sv:value>de</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:message" sv:type="String">
+                <sv:value>Antwort</sv:value>
+              </sv:property>
+            </sv:node>
+            <sv:node sv:name="hippo:translation">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:translation</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:language" sv:type="String">
+                <sv:value>fr</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:message" sv:type="String">
+                <sv:value>Réponse</sv:value>
               </sv:property>
             </sv:node>
           </sv:node>
@@ -321,6 +365,28 @@
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
       <sv:value>FAQ Item</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo:translation">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:translation</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:language" sv:type="String">
+      <sv:value>de</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:message" sv:type="String">
+      <sv:value>FAQ-Item</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo:translation">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:translation</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:language" sv:type="String">
+      <sv:value>fr</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:message" sv:type="String">
+      <sv:value>Élément de FAQ</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>

@@ -107,7 +107,7 @@
       <sv:value>de</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Neuen Blog Ordner</sv:value>
+      <sv:value>Neuer Blog-Ordner</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
@@ -121,7 +121,7 @@
       <sv:value>fr</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>un nouveau dossier blog post</sv:value>
+      <sv:value>nouveau dossier post blog</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>

@@ -88,7 +88,7 @@
       <sv:value>fr</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>nouveau blog post</sv:value>
+      <sv:value>nouveau post blog</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
@@ -102,7 +102,7 @@
       <sv:value>de</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Neues Blog Post</sv:value>
+      <sv:value>Neuer Blog-Post</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
