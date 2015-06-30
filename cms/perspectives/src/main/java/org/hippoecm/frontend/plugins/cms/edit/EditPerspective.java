@@ -130,7 +130,7 @@ public class EditPerspective extends Perspective {
     }
 
     private void clearFeedbackOfChildComponents() {
-        this.visitChildren(HippoForm.class, (object, visit) -> ((HippoForm)object).clearFeedbackMessages());
+        visitChildren(HippoForm.class, (object, visit) -> ((HippoForm)object).clearFeedbackMessages());
     }
 
     private void renderFeedbackIfNeeded(final AjaxRequestTarget target, final boolean hasFeedbackMessage) {
