@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,6 +17,8 @@ package org.hippoecm.frontend.plugins.standards.tabs;
 
 import java.util.Collections;
 import java.util.List;
+
+import javax.jcr.Node;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -33,7 +35,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeM
 
 class ModifiedDocumentsView extends Panel implements IPagingDefinition {
 
-    private final ListDataTable dataTable;
+    private final ListDataTable<Node> dataTable;
     private final ModifiedDocumentsProvider provider;
 
     public ModifiedDocumentsView(String id, final ModifiedDocumentsProvider provider) {
@@ -45,46 +47,37 @@ class ModifiedDocumentsView extends Panel implements IPagingDefinition {
         add(new Label("message", new LoadableDetachableModel<String>() {
             @Override
             protected String load() {
+                IModel<String> message = Model.of("");
                 if (provider.size() > 1) {
-                    return new StringResourceModel("message", ModifiedDocumentsView.this, new Model(provider))
-                            .getObject();
+                    message = new StringResourceModel("message", ModifiedDocumentsView.this, Model.of(provider));
                 } else if (provider.size() == 1) {
-                    return new StringResourceModel("message-single", ModifiedDocumentsView.this, null).getObject();
-                } else {
-                    return "";
+                    message = new StringResourceModel("message-single", ModifiedDocumentsView.this, null);
                 }
+                return message.getObject();
             }
         }));
 
-        dataTable = new ListDataTable("datatable", getTableDefinition(), this.provider, new ListDataTable.TableSelectionListener(){
-            public void selectionChanged(IModel model) {
-                //Do Nothing for now
-            }
-        }, true, this);
+        dataTable = new ListDataTable<>("datatable", getTableDefinition(), this.provider, model -> {}, true, this);
         add(dataTable);
 
         add(CssClass.append(new LoadableDetachableModel<String>() {
             @Override
             protected String load() {
-                if (ModifiedDocumentsView.this.provider.size() == 0) {
-                    return "hippo-empty";
-                }
-                return "";
+                return ModifiedDocumentsView.this.provider.size() == 0 ? "hippo-empty" : "";
             }
         }));
-
 
         add(CssClass.append("hippo-referring-documents"));
     }
 
-    protected TableDefinition getTableDefinition() {
-        final List<ListColumn> columns = Collections.singletonList(createNameColumn());
-        return new TableDefinition(columns);
+    protected TableDefinition<Node> getTableDefinition() {
+        final List<ListColumn<Node>> columns = Collections.singletonList(createNameColumn());
+        return new TableDefinition<>(columns);
     }
 
-    private ListColumn createNameColumn() {
+    private ListColumn<Node> createNameColumn() {
         final Model<String> displayModel = Model.of(getString("doclisting-name"));
-        final ListColumn column = new ListColumn(displayModel, null);
+        final ListColumn<Node> column = new ListColumn<>(displayModel, null);
         column.setAttributeModifier(DocumentAttributeModifier.getInstance());
         return column;
     }
@@ -97,4 +90,9 @@ class ModifiedDocumentsView extends Panel implements IPagingDefinition {
         return 5;
     }
 
+    @Override
+    protected void onDetach() {
+        provider.detach();
+        super.onDetach();
+    }
 }

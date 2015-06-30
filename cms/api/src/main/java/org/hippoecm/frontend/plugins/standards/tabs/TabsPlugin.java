@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 
@@ -83,7 +82,6 @@ import org.slf4j.LoggerFactory;
  * </ul>
  */
 public class TabsPlugin extends RenderPlugin {
-    private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(TabsPlugin.class);
 
@@ -134,7 +132,6 @@ public class TabsPlugin extends RenderPlugin {
 
         selectCount = 0;
         ServiceTracker<IRenderService> tabsTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
-            private static final long serialVersionUID = 1L;
 
             @Override
             public void onServiceAdded(IRenderService service, String name) {
@@ -325,8 +322,11 @@ public class TabsPlugin extends RenderPlugin {
      */
     void onClose(Tab tab, AjaxRequestTarget target) {
         final IEditor editor = tab.getEditor();
+        if (editor == null) {
+            return;
+        }
         try {
-            if (editor != null && editor.isModified() || !editor.isValid()) {
+            if (editor.isModified() || !editor.isValid()) {
 
                 OnCloseDialog onCloseDialog = new OnCloseDialog(new OnCloseDialog.Actions() {
                     public void revert() {
@@ -402,7 +402,6 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     protected class Tab implements ITab, IObserver<IObservable> {
-        private static final long serialVersionUID = 1L;
 
         ServiceTracker<ITitleDecorator> decoratorTracker;
         ITitleDecorator decorator;
@@ -416,7 +415,6 @@ public class TabsPlugin extends RenderPlugin {
             IPluginContext context = getPluginContext();
             String serviceId = context.getReference(renderer).getServiceId();
             decoratorTracker = new ServiceTracker<ITitleDecorator>(ITitleDecorator.class) {
-                private static final long serialVersionUID = 1L;
 
                 @Override
                 protected void onServiceAdded(ITitleDecorator service, String name) {
@@ -471,10 +469,10 @@ public class TabsPlugin extends RenderPlugin {
             return (IObservable) titleModel;
         }
 
-
+        @SuppressWarnings("unchecked")
         public IModel<Node> getModel() {
             final IEditor editor = getEditor();
-            return editor.getModel();
+            return editor != null ? editor.getModel() : null;
         }
 
         public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
@@ -542,20 +540,16 @@ public class TabsPlugin extends RenderPlugin {
                 return null;
             }
 
-            final IEditor editor = context.getService(reference.getServiceId(), IEditor.class);
-            if (editor == null) {
-                log.error("Could not find editor service for a tab");
-            }
-            return editor;
+            return context.getService(reference.getServiceId(), IEditor.class);
         }
 
         boolean isEditorTab() {
-            return (getEditor() != null);
+            return getEditor() != null;
         }
 
         public Form getForm() {
-            IEditor editor = getEditor();
-            return editor !=null ? editor.getForm() : null;
+            final IEditor editor = getEditor();
+            return editor != null ? editor.getForm() : null;
         }
 
         void select() {
@@ -583,12 +577,12 @@ public class TabsPlugin extends RenderPlugin {
 
         public static final String MODIFIED_DOCS_VIEW_ID = "modified-docs-view";
 
+        private final ModifiedDocumentsProvider provider;
+        private final ModifiedDocumentsView modifiedDocumentsView;
         private final Tab ignoredTab;
-        private List<Tab> changedTabs;
 
         public CloseAllDialog(final List<Tab> changedTabs, final Tab ignoredTab) {
             super();
-            this.changedTabs = changedTabs;
             this.ignoredTab = ignoredTab;
 
             setOkVisible(false);
@@ -637,18 +631,18 @@ public class TabsPlugin extends RenderPlugin {
                 }
             });
 
-            final ModifiedDocumentsProvider provider = new ModifiedDocumentsProvider(getTabModelList(this.changedTabs));
-            add(new ModifiedDocumentsView(MODIFIED_DOCS_VIEW_ID, provider));
+            provider = new ModifiedDocumentsProvider(getNodeModelList(changedTabs));
+            modifiedDocumentsView = new ModifiedDocumentsView(MODIFIED_DOCS_VIEW_ID, provider);
+            add(modifiedDocumentsView);
         }
 
-        private List<Tab> processAllTabs(final Consumer<Tab> tabAction) {
+        private void processAllTabs(final Consumer<Tab> tabAction) {
             // need to clone the list because the tabAction may close a tab, then it is removed from the tabs at
             // ServiceTracker#onRemoveService(). This may cause ConcurrentModificationException
             final List<Tab> listTabsClone = new ArrayList<>(TabsPlugin.this.tabs);
-            return listTabsClone.stream()
-                    .filter(t -> t != null && !t.equals(ignoredTab))
-                    .peek(tabAction)
-                    .collect(Collectors.toList());
+            listTabsClone.stream()
+                .filter(t -> t != null && !t.equals(ignoredTab))
+                .forEach(tabAction);
         }
 
         private void updateDialog(final AjaxRequestTarget target) {
@@ -657,15 +651,13 @@ public class TabsPlugin extends RenderPlugin {
             if (updatedChangedTabs.isEmpty()) {
                 closeDialog();
             } else {
-                this.changedTabs = updatedChangedTabs;
-                final ModifiedDocumentsProvider provider = new ModifiedDocumentsProvider(getTabModelList(this.changedTabs));
-                final ModifiedDocumentsView mdv;
-                replace(mdv = new ModifiedDocumentsView(MODIFIED_DOCS_VIEW_ID, provider));
-                target.add(mdv);
+                final List<JcrNodeModel> nodeModelList = getNodeModelList(updatedChangedTabs);
+                provider.setModifiedDocuments(nodeModelList);
+                target.add(modifiedDocumentsView);
             }
         }
 
-        private List<JcrNodeModel> getTabModelList(List<Tab> changedTabs) {
+        private List<JcrNodeModel> getNodeModelList(List<Tab> changedTabs) {
             final List<JcrNodeModel> tabModels = new ArrayList<>();
             for (Tab tab : changedTabs) {
                 final IEditor editor = tab.getEditor();
@@ -705,7 +697,7 @@ public class TabsPlugin extends RenderPlugin {
             add(exceptionLabel);
 
             ResourceModel discardButtonLabel = isValid ? new ResourceModel("discard", "Discard") : new ResourceModel("discard-invalid");
-            add(new AjaxButton(DialogConstants.BUTTON, discardButtonLabel) {
+            addButton(new AjaxButton(DialogConstants.BUTTON, discardButtonLabel) {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
                     try {
