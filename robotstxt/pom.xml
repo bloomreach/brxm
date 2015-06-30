@@ -111,7 +111,7 @@
             <configuration>
               <excludes combine.children="append">
                 <!-- repository content XML -->
-                <exclude>repository/src/main/resources/*.xml</exclude>
+                <exclude>repository/src/main/resources/**/*.xml</exclude>
               </excludes>
             </configuration>
           </plugin>

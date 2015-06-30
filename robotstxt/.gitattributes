@@ -9,3 +9,5 @@ repository/src/main/resources/hst/configurations/default/pages/robotstxt-page.xm
 repository/src/main/resources/hst/configurations/default/templates/robotstxt-template.xml svneol=native#text/plain
 repository/src/main/resources/namespace.xml svneol=native#text/plain
 repository/src/main/resources/robotstxt.cnd -text
+repository/src/main/resources/translation-deltas/namespace-1.xml -text svneol=unset#application/xml
+repository/src/main/resources/translation-deltas/namespace-2.xml -text svneol=unset#application/xml
