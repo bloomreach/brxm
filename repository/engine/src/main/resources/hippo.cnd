@@ -141,7 +141,8 @@
 - hippo:contextpaths (string) multiple
 - hippo:upstreamitems (string) multiple
 - hippo:version (string)
-- hippo:timestamp (long)
+- hippo:timestamp (long) // deprecated, replaced by hippo:lastprocessedtime
+- hippo:lastprocessedtime (date)
 - hippo:webfilebundle (string)
 - hippo:changerecord (string)
 

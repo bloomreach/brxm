@@ -407,7 +407,10 @@ public interface HippoNodeType {
 
     public static final String HIPPO_UPSTREAMITEMS = "hippo:upstreamitems";
 
+    /** @deprecated replaced by {@link #HIPPO_LASTPROCESSEDTIME} */
     public static final String HIPPO_TIMESTAMP = "hippo:timestamp";
+
+    public static final String HIPPO_LASTPROCESSEDTIME = "hippo:lastprocessedtime";
 
     /** @deprecated replaced by {@link #HIPPO_CONTEXTPATHS} */
     public static final String HIPPO_CONTEXTNODENAME = "hippo:contextnodename";

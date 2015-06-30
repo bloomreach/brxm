@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -61,6 +62,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTROOT;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTEXTPATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_ERRORMESSAGE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_EXTENSIONSOURCE;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LASTPROCESSEDTIME;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NAMESPACE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NODETYPES;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NODETYPESRESOURCE;
@@ -372,7 +374,11 @@ public class InitializeItem {
                 }
             }
             itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_DONE);
-            itemNode.setProperty(HIPPO_TIMESTAMP, System.currentTimeMillis());
+            // remove deprecated hippo:timestamp property when setting its replacement hippo:lastprocessedtime
+            if (itemNode.hasProperty(HIPPO_TIMESTAMP)) {
+                itemNode.getProperty(HIPPO_TIMESTAMP).remove();
+            }
+            itemNode.setProperty(HIPPO_LASTPROCESSEDTIME, Calendar.getInstance());
             session.save();
             return Collections.unmodifiableList(postStartupTasks);
         } catch (RepositoryException e) {
@@ -605,10 +611,6 @@ public class InitializeItem {
         }
         itemNode.setProperty(HIPPO_UPSTREAMITEMS, upstreamItemIds);
         itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_PENDING);
-    }
-
-    long getTimestamp() throws RepositoryException {
-        return JcrUtils.getLongProperty(itemNode, HIPPO_TIMESTAMP, -1l);
     }
 
     static void markMissing(final Node itemNode) throws RepositoryException {
