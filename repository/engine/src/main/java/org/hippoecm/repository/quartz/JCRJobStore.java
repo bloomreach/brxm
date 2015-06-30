@@ -887,12 +887,16 @@ public class JCRJobStore implements JobStore {
         keepAlives.put(identifier, future);
     }
 
-    boolean stopLockKeepAlive(final String identifier) {
+    private boolean stopLockKeepAlive(final String identifier) {
         final Future<?> future = keepAlives.remove(identifier);
         if (future != null) {
             return future.cancel(true);
         }
         return false;
+    }
+
+    Map<String, Future<?>> getLockKeepAlives() {
+        return keepAlives;
     }
 
     private static void ensureIsLockable(Session session, String nodePath) throws RepositoryException {
