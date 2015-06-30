@@ -114,28 +114,23 @@ public class EditPerspective extends Perspective {
         // handle notified validation events from wicket fields
         if(event.getPayload() instanceof UpdateFeedbackInfo) {
             final UpdateFeedbackInfo ufi = (UpdateFeedbackInfo) event.getPayload();
+            final AjaxRequestTarget target = ufi.getTarget();
             if (ufi.isClearAll()) {
-                clearAllFeedbacks(ufi.getTarget());
+                if (hasFeedbackMessage()) {
+                    getFeedbackMessages().clear();
+                }
+                clearFeedbackOfChildComponents();
+                if (target != null) {
+                    target.add(feedback);
+                }
             } else {
-                renderFeedbackIfNeeded(ufi.getTarget(), feedback.anyMessage());
+                renderFeedbackIfNeeded(target, feedback.anyMessage());
             }
         }
     }
 
-    private void clearAllFeedbacks(final AjaxRequestTarget target) {
-        if (this.hasFeedbackMessage()) {
-            this.getFeedbackMessages().clear();
-        }
-        this.visitChildren(HippoForm.class, (object, visit) -> {
-            if (object instanceof HippoForm) {
-                ((HippoForm)object).clearFeedbackMessages();
-            } else {
-                log.warn("Unknown component: {}", object.getClass().getName());
-            }
-        });
-        if (target != null) {
-            target.add(feedback);
-        }
+    private void clearFeedbackOfChildComponents() {
+        this.visitChildren(HippoForm.class, (object, visit) -> ((HippoForm)object).clearFeedbackMessages());
     }
 
     private void renderFeedbackIfNeeded(final AjaxRequestTarget target, final boolean hasFeedbackMessage) {
