@@ -2,6 +2,8 @@
 /LICENSE -text
 /NOTICE -text
 /pom.xml svneol=native#text/plain
+src/main/java/org/onehippo/cms7/resourcebundle/ResourceBundlePlugin_de.properties -text
+src/main/java/org/onehippo/cms7/resourcebundle/ResourceBundlePlugin_fr.properties -text
 src/main/java/org/onehippo/cms7/resourcebundle/description.png -text svneol=unset#image/png
 src/main/resources/hide-resourcebundle-namespace.xml svneol=native#text/plain
 src/main/resources/hippoecm-extension.xml svneol=native#text/plain
