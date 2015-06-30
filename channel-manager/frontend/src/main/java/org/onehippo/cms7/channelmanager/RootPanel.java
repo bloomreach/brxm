@@ -167,7 +167,7 @@ public class RootPanel extends ExtPanel {
         redraw = true;
     }
 
-    public void render(final PluginRequestTarget target, final boolean showBreadcrumb) {
+    public void render(final PluginRequestTarget target) {
         pageEditor.render(target);
         channelStore.update();
         if (target != null) {
@@ -175,21 +175,13 @@ public class RootPanel extends ExtPanel {
                 selectActiveItem(target);
                 redraw = false;
             }
-            updateBreadcrumb(showBreadcrumb, target);
+            target.appendJavaScript("Ext.getCmp('rootPanel').showBreadcrumb();");
         }
     }
 
     private void selectActiveItem(final PluginRequestTarget target) {
         final String script = String.format("Ext.getCmp('rootPanel').selectCard(%s);", activeItem);
         target.appendJavaScript(script);
-    }
-
-    private void updateBreadcrumb(final boolean showBreadcrumb, final PluginRequestTarget target) {
-        if (showBreadcrumb) {
-            target.appendJavaScript("Ext.getCmp('rootPanel').showBreadcrumb();");
-        } else {
-            target.appendJavaScript("Ext.getCmp('rootPanel').hideBreadcrumb();");
-        }
     }
 
     @Override

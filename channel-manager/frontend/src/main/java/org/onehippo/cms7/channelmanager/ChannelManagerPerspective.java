@@ -99,8 +99,9 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
                 rootPanel.setActiveCard(RootPanel.CardId.CHANNEL_MANAGER);
             }
 
-            // show/hide breadcrumbs
-            rootPanel.render(target, isActive());
+            if (isActive()) {
+                rootPanel.render(target);
+            }
 
             for (IRenderService child : childServices) {
                 child.render(target);
