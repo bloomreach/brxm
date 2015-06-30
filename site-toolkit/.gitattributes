@@ -344,6 +344,8 @@ client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/bu
 client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/builtin/components/table.ftl -text
 client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/builtin/components/ul.ftl -text
 client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/jaxrs/property/SwitchTemplatePropertyRepresentationFactory.properties -text
+client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/jaxrs/property/SwitchTemplatePropertyRepresentationFactory_de.properties -text
+client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/jaxrs/property/SwitchTemplatePropertyRepresentationFactory_fr.properties -text
 client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/jaxrs/property/SwitchTemplatePropertyRepresentationFactory_nl.properties -text
 client-modules/page-composer/src/site/site.xml -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/AbstractPageComposerTest.java -text
