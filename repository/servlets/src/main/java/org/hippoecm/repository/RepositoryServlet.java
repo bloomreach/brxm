@@ -88,7 +88,7 @@ public class RepositoryServlet extends HttpServlet {
     public static final String START_REMOTE_SERVER = "start-remote-server";
 
     /** Default repository storage directory */
-    public static final String DEFAULT_REPOSITORY_DIRECTORY = "/WEB-INF/storage";
+    public static final String DEFAULT_REPOSITORY_DIRECTORY = "WEB-INF/storage";
 
     /** Default repository storage directory under the current working directory in case war is running while not
  * unpacked. */
@@ -136,7 +136,7 @@ public class RepositoryServlet extends HttpServlet {
         // check for absolute path
         if (!storageLocation.startsWith("/") && !storageLocation.startsWith("file:")) {
             // try to parse the relative path
-            final String storagePath = config.getServletContext().getRealPath(storageLocation);
+            final String storagePath = config.getServletContext().getRealPath("/" + storageLocation);
 
             // ServletContext#getRealPath() may return null especially when unpackWARs="false".
             if (storagePath == null) {
