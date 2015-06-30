@@ -102,7 +102,7 @@
       <sv:value>de</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Neues Resource Bundle</sv:value>
+      <sv:value>Neues Resource-Bundle</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>

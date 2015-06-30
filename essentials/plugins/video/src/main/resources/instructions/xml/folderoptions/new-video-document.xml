@@ -88,7 +88,7 @@
       <sv:value>fr</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>nouveau video</sv:value>
+      <sv:value>nouvelle vidéo</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">

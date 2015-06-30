@@ -108,7 +108,7 @@
       <sv:value>fr</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>un nouveau dossier poll</sv:value>
+      <sv:value>nouveau dossier sondage</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
@@ -122,7 +122,7 @@
       <sv:value>de</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Neuen Poll Ordner</sv:value>
+      <sv:value>Neuer Poll-Ordner</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>

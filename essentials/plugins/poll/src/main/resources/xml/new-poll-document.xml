@@ -88,7 +88,7 @@
       <sv:value>fr</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>nouveau poll</sv:value>
+      <sv:value>nouveau sondage</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
@@ -102,7 +102,7 @@
       <sv:value>de</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Neues Poll</sv:value>
+      <sv:value>Neue Poll</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
