@@ -17,7 +17,7 @@
   <context-param>
     <description>The (relative) location where to store files</description>
     <param-name>repository-directory</param-name>
-    <param-value>/WEB-INF/storage</param-value>
+    <param-value>WEB-INF/storage</param-value>
   </context-param>
   <context-param>
     <description>The location of the repository configuration file. Unless the location
