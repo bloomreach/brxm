@@ -88,7 +88,7 @@ public class RepositoryServlet extends HttpServlet {
     public static final String START_REMOTE_SERVER = "start-remote-server";
 
     /** Default repository storage directory */
-    public static final String DEFAULT_REPOSITORY_DIRECTORY = "WEB-INF/storage";
+    public static final String DEFAULT_REPOSITORY_DIRECTORY = "/WEB-INF/storage";
 
     /** Default repository storage directory under the current working directory in case war is running while not
  * unpacked. */
