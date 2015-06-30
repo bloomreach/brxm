@@ -78,7 +78,6 @@
       <groupId>com.drewnoakes</groupId>
       <artifactId>metadata-extractor</artifactId>
       <version>${drewnoakes-extractor.version}</version>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
