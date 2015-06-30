@@ -61,7 +61,7 @@
     <!-- Hippo standard plugin versions -->
     <hippo.plugin.content-blocks.version>1.12.01</hippo.plugin.content-blocks.version>
     <hippo.plugin.content-tagging.version>4.09.00</hippo.plugin.content-tagging.version>
-    <hippo.plugin.dashboard-document-wizard.version>1.06.01</hippo.plugin.dashboard-document-wizard.version>
+    <hippo.plugin.dashboard-document-wizard.version>1.06.02-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
     <hippo.plugin.gallerypicker.version>1.14.02</hippo.plugin.gallerypicker.version>
     <hippo.plugin.poll.version>1.09.00</hippo.plugin.poll.version>
     <hippo.plugin.relateddocs.version>2.11.02-SNAPSHOT</hippo.plugin.relateddocs.version>
