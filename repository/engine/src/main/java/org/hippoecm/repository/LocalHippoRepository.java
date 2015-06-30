@@ -143,7 +143,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
      * path and returns as repository path.
      * </p>
      * <p>
-     * Else, when repo.path is not an abolute path and system property repo.base.path also is defined,
+     * Else, when repo.path is not an absolute path and system property repo.base.path also is defined,
      * the repo.path is taken relative to the repo.base.path.
      *
      * @return The absolute path to the file repository
