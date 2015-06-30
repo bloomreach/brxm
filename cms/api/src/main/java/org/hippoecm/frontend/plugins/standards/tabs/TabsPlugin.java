@@ -253,11 +253,7 @@ public class TabsPlugin extends RenderPlugin {
             if (ignoreTab != null && tab.equals(ignoreTab)) {
                 continue;
             }
-            IServiceReference<IRenderService> reference = getPluginContext().getReference(tab.renderer);
-            if (reference == null) {
-                continue;
-            }
-            IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
+            final IEditor editor = tab.getEditor();
             try {
                 if (editor != null && editor.isModified()) {
                     changedTabs.add(tab);
@@ -308,18 +304,11 @@ public class TabsPlugin extends RenderPlugin {
      * @param target AjaxRequestTarget
      */
     void onCloseUnmodified(Tab tab, AjaxRequestTarget target) {
-        IServiceReference<IRenderService> reference = getPluginContext().getReference(tab.renderer);
-        if (reference == null) {
-            log.error("Could not find render service for a tab");
-            return;
-        }
-        final IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
-
+        final IEditor editor = tab.getEditor();
         try {
-            if (!editor.getMode().equals(IEditor.Mode.EDIT)) {
+            if (editor != null && !editor.getMode().equals(IEditor.Mode.EDIT)) {
                 editor.close();
             }
-
         } catch (EditorException e) {
             log.warn("Unable to save the document in the editor", e);
             throw new RuntimeException("Unable to save the document in the editor", e);
@@ -335,14 +324,9 @@ public class TabsPlugin extends RenderPlugin {
      * @param target AjaxRequestTarget (unused)
      */
     void onClose(Tab tab, AjaxRequestTarget target) {
-        IServiceReference<IRenderService> reference = getPluginContext().getReference(tab.renderer);
-        if (reference == null) {
-            log.error("Could not find render service for a tab");
-            return;
-        }
-        final IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
+        final IEditor editor = tab.getEditor();
         try {
-            if (editor.isModified() || !editor.isValid()) {
+            if (editor != null && editor.isModified() || !editor.isValid()) {
 
                 OnCloseDialog onCloseDialog = new OnCloseDialog(new OnCloseDialog.Actions() {
                     public void revert() {
@@ -489,8 +473,7 @@ public class TabsPlugin extends RenderPlugin {
 
 
         public IModel<Node> getModel() {
-            IServiceReference<IRenderService> reference = getPluginContext().getReference(renderer);
-            IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
+            final IEditor editor = getEditor();
             return editor.getModel();
         }
 
@@ -550,16 +533,29 @@ public class TabsPlugin extends RenderPlugin {
 
         // package internals
 
+        IEditor getEditor() {
+            final IPluginContext context = getPluginContext();
+            final IServiceReference<IRenderService> reference = context.getReference(renderer);
+
+            if (reference == null) {
+                log.error("Could not find render service for a tab");
+                return null;
+            }
+
+            final IEditor editor = context.getService(reference.getServiceId(), IEditor.class);
+            if (editor == null) {
+                log.error("Could not find editor service for a tab");
+            }
+            return editor;
+        }
+
         boolean isEditorTab() {
-            IServiceReference<IRenderService> reference = getPluginContext().getReference(renderer);
-            IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
-            return (editor != null);
+            return (getEditor() != null);
         }
 
         public Form getForm() {
-            IServiceReference<IRenderService> reference = getPluginContext().getReference(renderer);
-            IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
-            return editor.getForm();
+            IEditor editor = getEditor();
+            return editor !=null ? editor.getForm() : null;
         }
 
         void select() {
@@ -583,20 +579,6 @@ public class TabsPlugin extends RenderPlugin {
 
     }
 
-    private IEditor getEditor(final Tab tab) {
-        final IPluginContext pluginContext = getPluginContext();
-        IServiceReference<IRenderService> reference = pluginContext.getReference(tab.renderer);
-        if (reference == null) {
-            log.error("Could not find render service for a tab");
-            return null;
-        }
-        final IEditor editor = pluginContext.getService(reference.getServiceId(), IEditor.class);
-        if (editor == null) {
-            log.error("Could not find editor service for a tab");
-        }
-        return editor;
-    }
-
     private class CloseAllDialog extends Dialog {
 
         public static final String MODIFIED_DOCS_VIEW_ID = "modified-docs-view";
@@ -617,7 +599,7 @@ public class TabsPlugin extends RenderPlugin {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
                     final Consumer<Tab> discardAndClose = currentTab -> {
-                        final IEditor editor = getEditor(currentTab);
+                        final IEditor editor = currentTab.getEditor();
                         if (editor != null) {
                             try {
                                 if (editor.isModified()) {
@@ -638,7 +620,7 @@ public class TabsPlugin extends RenderPlugin {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
                     final Consumer<Tab> saveAndClose = currentTab -> {
-                        final IEditor editor = getEditor(currentTab);
+                        final IEditor editor = currentTab.getEditor();
                         if (editor != null){
                             try {
                                 if (editor.isModified()) {
@@ -685,13 +667,8 @@ public class TabsPlugin extends RenderPlugin {
 
         private List<JcrNodeModel> getTabModelList(List<Tab> changedTabs) {
             final List<JcrNodeModel> tabModels = new ArrayList<>();
-            final IPluginContext pluginContext = getPluginContext();
             for (Tab tab : changedTabs) {
-                final IServiceReference<IRenderService> reference = pluginContext.getReference(tab.renderer);
-                if (reference == null) {
-                    continue;
-                }
-                final IEditor editor = pluginContext.getService(reference.getServiceId(), IEditor.class);
+                final IEditor editor = tab.getEditor();
                 try {
                     if (editor != null && editor.isModified()) {
                         tabModels.add(new JcrNodeModel((Node) editor.getModel().getObject()));
@@ -727,7 +704,8 @@ public class TabsPlugin extends RenderPlugin {
             exceptionLabel.setOutputMarkupId(true);
             add(exceptionLabel);
 
-            AjaxButton button = new AjaxButton(DialogConstants.BUTTON) {
+            ResourceModel discardButtonLabel = isValid ? new ResourceModel("discard", "Discard") : new ResourceModel("discard-invalid");
+            add(new AjaxButton(DialogConstants.BUTTON, discardButtonLabel) {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
                     try {
@@ -739,16 +717,10 @@ public class TabsPlugin extends RenderPlugin {
                         target.add(exceptionLabel);
                     }
                 }
-            };
+            });
 
-            if (isValid) {
-                button.setModel(new ResourceModel("discard", "Discard"));
-            } else {
-                button.setModel(new ResourceModel("discard-invalid"));
-            }
-            addButton(button);
 
-            button = new AjaxButton(DialogConstants.BUTTON) {
+            final AjaxButton saveButton = new AjaxButton(DialogConstants.BUTTON, new ResourceModel("save", "Save")) {
                 @Override
                 public boolean isVisible() {
                     return isValid;
@@ -766,9 +738,8 @@ public class TabsPlugin extends RenderPlugin {
                     }
                 }
             };
-            button.setModel(new ResourceModel("save", "Save"));
-            button.setEnabled(mode == IEditor.Mode.EDIT);
-            addButton(button);
+            saveButton.setEnabled(mode == IEditor.Mode.EDIT);
+            addButton(saveButton);
         }
 
         @Override
