@@ -49,6 +49,7 @@ components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/Essent
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsGoogleMapsComponentInfo.properties -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsGoogleMapsComponentInfo_de.properties -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsGoogleMapsComponentInfo_fr.properties -text
+components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsGoogleMapsComponentInfo_nl.properties -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsImageComponentInfo.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsListComponentInfo.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsListPickerComponentInfo.java -text
