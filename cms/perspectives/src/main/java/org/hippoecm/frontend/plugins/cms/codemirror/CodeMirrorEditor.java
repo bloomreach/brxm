@@ -185,19 +185,16 @@ public class CodeMirrorEditor extends TextArea<String> {
         if (isReadOnly()) {
             sb.append("readOnly: true, ");
         }
+        sb.append("onBlur: function(cm) { cm.save(); ");
 
         if (isChangeEventTriggeringEnabled()) {
-            sb.append("onBlur: function(cm) { " +
-                "cm.save(); " +
-                "console.log('codemirror lost focus');" +
-                "var evt = $.Event('change', {" +
+            sb.append("var evt = $.Event('change', {" +
                     "'bubbles': false," +
                     "'cancelable': true});" +
-                "$('#" + markupId + "').trigger(evt);" +
-            "},");
+                "$('#" + markupId + "').trigger(evt);");
         }
 
-        sb.append("editorName: \"" + getEditorName() + "\"});\n");
+        sb.append("}, editorName: \"" + getEditorName() + "\"});\n");
 
         return sb.toString();
     }
