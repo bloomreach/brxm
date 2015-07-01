@@ -1391,6 +1391,9 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/Pass
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/PasswordHashEditorPlugin.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/PropertiesEditor.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/PropertyValueEditor.java svneol=native#text/plain
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ReferenceEditor$ReferenceLink_de.properties -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ReferenceEditor$ReferenceLink_fr.properties -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ReferenceEditor$ReferenceLink_nl.properties -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ReferenceEditor.html -text svneol=unset#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ReferenceEditor.java -text svneol=unset#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ReferenceEditorPlugin.java -text
@@ -1469,6 +1472,8 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/permis
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/permissions/PermissionsPlugin.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/property/PropertyDialog.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/property/PropertyDialog.java svneol=native#text/plain
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/property/PropertyDialog_de.properties -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/property/PropertyDialog_fr.properties -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/recompute/RecomputeDialog.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/recompute/RecomputeDialog.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/recompute/RecomputeVisitor.java -text
@@ -1645,6 +1650,8 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPl
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditor_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginHelper.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/ITemplateFactory.java svneol=native#text/plain
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/MultipleTextFieldWidget_de.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/MultipleTextFieldWidget_fr.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/NodeFieldPlugin.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/NodeFieldPlugin.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/NodeFieldPlugin_de.properties -text
@@ -2247,6 +2254,8 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/system/s
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-24.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-32.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-48.png -text svneol=unset#image/png
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterEditor_de.properties -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterEditor_fr.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterPanel.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterPanel_de.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterPanel_nl.properties -text
@@ -2310,6 +2319,8 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/document-
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/document-32.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/document-48.png -text svneol=unset#image/png
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/edit/images/document-list-back.png -text svneol=unset#image/png
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/root/UserMenu_de.properties -text
+perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/root/UserMenu_fr.properties -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/root/hippo-cms.ico -text
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/root/remove-ext-browser-classes.js -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/TestSuite.java -text
