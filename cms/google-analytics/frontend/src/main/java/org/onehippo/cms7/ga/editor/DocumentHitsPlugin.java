@@ -15,17 +15,15 @@
  */
 package org.onehippo.cms7.ga.editor;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.SecurityUtils;
+import com.google.api.services.analytics.Analytics;
+import com.google.api.services.analytics.AnalyticsScopes;
+import com.google.api.services.analytics.model.GaData;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel;
 import org.apache.wicket.markup.html.basic.Label;
@@ -43,12 +41,17 @@ import org.onehippo.cms7.services.googleanalytics.GoogleAnalyticsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gdata.client.analytics.AnalyticsService;
-import com.google.gdata.client.analytics.DataQuery;
-import com.google.gdata.data.analytics.DataEntry;
-import com.google.gdata.data.analytics.DataFeed;
-import com.google.gdata.util.AuthenticationException;
-import com.google.gdata.util.ServiceException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.GeneralSecurityException;
+import java.security.PrivateKey;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class DocumentHitsPlugin extends RenderPlugin<Node> {
@@ -56,6 +59,8 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DocumentHitsPlugin.class);
     private static final double RANGE = 62.0;
+    private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
     private enum Period {
 
@@ -83,7 +88,7 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
             if (s.equalsIgnoreCase("months")) {
                 return MONTHS;
             }
-            log.warn("Invalid configuration value for property period: '" + s + "'. Defaulting to period 'days'.");
+            log.warn("Invalid configuration value for property period: '{}'. Defaulting to period 'days'.", s);
             return DAYS;
         }
 
@@ -155,7 +160,7 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
             return errorMessage;
         }
 
-        return getTranslation(Period.getI18CaptionKey(period), new Model<String[]>(new String[] { mostRecentPageViews.toString() }));
+        return getTranslation(Period.getI18CaptionKey(period), new Model<String[]>(new String[]{mostRecentPageViews.toString()}));
     }
 
     private String getGraphInfo() {
@@ -175,25 +180,25 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
         StringBuilder graphData = new StringBuilder();
         // the graph has a range of 62: A-Z, a-z, and 0-9 (26+26+10=62) where 'A' represents the y axis minimum
         // and '9' its maximum. We need space for the number of page views plus one to accommodate zero page views
-        double value = (RANGE / (maxPageViews+1));
+        double value = (RANGE / (maxPageViews + 1));
 
         for (Long pageViews : pageViewsList) {
             // yPos is a number between 0 and 61 that locates the number of page views
             // on the scale
-            double yPos = Math.floor(pageViews*value);
+            double yPos = Math.floor(pageViews * value);
             // now represent this number as a char
             char nextChar;
             // 0-9
             if (yPos > 51) {
-                nextChar = (char) (yPos - 52 + (int)'0');
+                nextChar = (char)(yPos - 52 + (int)'0');
             }
             // a-z
             else if (yPos > 25) {
-                nextChar = (char) (yPos - 26 + (int)'a');
+                nextChar = (char)(yPos - 26 + (int)'a');
             }
             // A-Z
             else {
-                nextChar = (char) (yPos + (int)'A');
+                nextChar = (char)(yPos + (int)'A');
             }
             graphData.append(nextChar);
         }
@@ -207,25 +212,19 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
         success = false;
         try {
             // Create Google analytics query
-            DataQuery query = new DataQuery(new URL("https://www.google.com/analytics/feeds/data"));
-            query.setIds(getTableId());
-            query.setDimensions(period.getDimension());
-            query.setMetrics("ga:pageviews");
-            query.setFilters("ga:pagePath==" + getParentNodePath());
-            query.setStartDate(getStartDate());
-            query.setEndDate(getEndDate());
-
-            if (log.isDebugEnabled()) {
-                log.debug("Querying google analytics for feed with url: " + query.getUrl());
-            }
-
-            // Execute the query
-            DataFeed dataFeed = getAnalyticsService().getFeed(query.getUrl(), DataFeed.class);
-
+            final Analytics analyticsService = getAnalyticsService();
+            final Analytics.Data.Ga.Get get = analyticsService.data().ga().get(getTableId(), getStartDate(), getEndDate(), "ga:visits");
+            get.setDimensions(period.getDimension());
+            get.setMetrics("ga:pageviews");
+            get.setFilters("ga:pagePath==" + getParentNodePath());
+            final GaData dataFeed = get.execute();
+            // Output data to the screen.
+            final List<List<String>> rows = dataFeed.getRows();
             // Gather the results
-            pageViewsList = new LinkedList<Long>();
-            for (DataEntry entry : dataFeed.getEntries()) {
-                Long pageViews = entry.longValueOf("ga:pageviews");
+            pageViewsList = new LinkedList<>();
+
+            for (List<String> entry : rows) {
+                Long pageViews = Long.valueOf(entry.get(1));
                 pageViewsList.add(pageViews);
                 // remember the maximum number of page views in the data set
                 if (maxPageViews < pageViews) {
@@ -235,40 +234,12 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
                 mostRecentPageViews = pageViews;
             }
             success = true;
-        } catch (MalformedURLException e) {
+        } catch (RepositoryException | IOException | GeneralSecurityException e) {
             errorMessage = e.getMessage();
             if (log.isDebugEnabled()) {
                 log.warn("Failed to load google analytics graph data", e);
             } else {
-                log.warn("Failed to load google analytics graph data: " + e.getClass().getName() + ": " + e.getMessage());
-            }
-        } catch (RepositoryException e) {
-            errorMessage = e.getMessage();
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to load google analytics graph data", e);
-            } else {
-                log.warn("Failed to load google analytics graph data: " + e.getClass().getName() + ": " + e.getMessage());
-            }
-        } catch (AuthenticationException e) {
-            errorMessage = e.getMessage();
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to load google analytics graph data", e);
-            } else {
-                log.warn("Failed to load google analytics graph data: " + e.getClass().getName() + ": " + e.getMessage());
-            }
-        } catch (IOException e) {
-            errorMessage = e.getMessage();
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to load google analytics graph data", e);
-            } else {
-                log.warn("Failed to load google analytics graph data: " + e.getClass().getName() + ": " + e.getMessage());
-            }
-        } catch (ServiceException e) {
-            errorMessage = e.getMessage();
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to load google analytics graph data", e);
-            } else {
-                log.warn("Failed to load google analytics graph data: " + e.getClass().getName() + ": " + e.getMessage());
+                log.warn("Failed to load google analytics graph data: {} : {}", e.getClass().getName(), e.getMessage());
             }
         }
     }
@@ -278,18 +249,16 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
         if (period == Period.DAYS) {
             // google analytics data availability has a latency of
             // 24 hours, therefore we shift the number of days
-            cal.add(Calendar.DATE, (int) -numberofintervals -1);
-        }
-        else if (period == Period.WEEKS) {
+            cal.add(Calendar.DATE, (int)-numberofintervals - 1);
+        } else if (period == Period.WEEKS) {
             // when querying for page views per week, we must make sure
             // the first week is a whole week (starting on Sunday)
-            cal.add(Calendar.DATE, (int) -(numberofintervals*7));
+            cal.add(Calendar.DATE, (int)-(numberofintervals * 7));
             cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-        }
-        else {
+        } else {
             // when querying for page views per month, we must make sure
             // the first month is a whole month (starting on the first)
-            cal.add(Calendar.MONTH, (int) -numberofintervals);
+            cal.add(Calendar.MONTH, (int)-numberofintervals);
             cal.set(Calendar.DAY_OF_MONTH, 1);
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -305,11 +274,19 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
         return dateFormat.format(cal.getTime());
     }
 
-    private AnalyticsService getAnalyticsService() throws AuthenticationException {
-        AnalyticsService analyticsService = new AnalyticsService("hippocms7_reporting_v1");
-        // Client Login Authorization.
-        analyticsService.setUserCredentials(getUserName(), getPassword());
-        return analyticsService;
+    private Analytics getAnalyticsService() throws GeneralSecurityException, IOException, RepositoryException {
+        if (getPrivateKey() == null) {
+            throw new IllegalArgumentException("Missing public/private key pair for Google Maps API");
+        }
+
+        final GoogleCredential.Builder builder = new GoogleCredential.Builder()
+                .setTransport(HTTP_TRANSPORT)
+                .setJsonFactory(JSON_FACTORY)
+                .setServiceAccountId(getUserName())
+                .setServiceAccountScopes(Collections.singletonList(AnalyticsScopes.ANALYTICS_READONLY));
+        final PrivateKey privateKey = SecurityUtils.loadPrivateKeyFromKeyStore(SecurityUtils.getPkcs12KeyStore(), getPrivateKey(), "notasecret", "privatekey", "notasecret");
+        final GoogleCredential credential = builder.setServiceAccountPrivateKey(privateKey).build();
+        return new Analytics.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName("hippocms7_reporting_v1").build();
     }
 
     private String getTableId() {
@@ -322,9 +299,11 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
         return service != null ? service.getUserName() : null;
     }
 
-    private String getPassword() {
+
+
+    private InputStream getPrivateKey() throws RepositoryException {
         final GoogleAnalyticsService service = HippoServiceRegistry.getService(GoogleAnalyticsService.class);
-        return service != null ? service.getPassword() : null;
+        return service != null ? service.getPrivateKey() : null;
     }
 
     private String getParentNodePath() throws RepositoryException {
@@ -333,7 +312,7 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
     }
 
     private String getScheme() {
-        return ((ServletWebRequest) getRequest()).getContainerRequest().getScheme();
+        return ((ServletWebRequest)getRequest()).getContainerRequest().getScheme();
     }
 
     private String getTranslation(String key, Model<String[]> model) {
