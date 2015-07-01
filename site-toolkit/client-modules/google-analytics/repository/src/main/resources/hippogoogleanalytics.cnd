@@ -21,4 +21,6 @@
 - hippogoogleanalytics:tableId (string)
 - hippogoogleanalytics:accountId (string)
 - hippogoogleanalytics:username (string)
+// deprecated
 - hippogoogleanalytics:password (string)
++ hippogoogleanalytics:privateKey (nt:file)

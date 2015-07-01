@@ -15,18 +15,20 @@
  */
 package org.onehippo.cms7.googleanalytics;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.observation.Event;
-import javax.jcr.observation.EventIterator;
-import javax.jcr.observation.EventListener;
-
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.googleanalytics.GoogleAnalyticsService;
 import org.onehippo.repository.modules.DaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Binary;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.observation.Event;
+import javax.jcr.observation.EventIterator;
+import javax.jcr.observation.EventListener;
+import java.io.InputStream;
 
 public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService, DaemonModule {
 
@@ -37,6 +39,7 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService, Daemo
     private static final String USERNAME_PROPERTY_PATH = CONFIG_NODE_PATH + "/hippogoogleanalytics:username";
     private static final String PASSWORD_PROPERTY_PATH = CONFIG_NODE_PATH + "/hippogoogleanalytics:password";
     private static final String ACCOUNT_ID_PROPERTY_PATH = CONFIG_NODE_PATH + "/hippogoogleanalytics:accountId";
+    private static final String PRIVATE_KEY_PROPERTY_PATH = CONFIG_NODE_PATH + "/hippogoogleanalytics:privateKey/jcr:content/jcr:data";
 
     private Session session;
 
@@ -44,6 +47,7 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService, Daemo
     private volatile String password;
     private volatile String accountId;
     private volatile String tableId;
+    private volatile Binary privateKey;
 
     @Override
     public void initialize(final Session session) throws RepositoryException {
@@ -56,6 +60,7 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService, Daemo
                         password = null;
                         accountId = null;
                         tableId = null;
+                        privateKey = null;
                     }
                 },
                 Event.PROPERTY_CHANGED | Event.PROPERTY_ADDED | Event.PROPERTY_REMOVED | Event.NODE_ADDED | Event.NODE_REMOVED,
@@ -94,6 +99,19 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService, Daemo
     }
 
     @Override
+    public InputStream getPrivateKey() throws RepositoryException {
+        if (privateKey == null) {
+            privateKey = session.getProperty(PRIVATE_KEY_PROPERTY_PATH).getBinary();
+            if (privateKey == null) {
+                log.warn("Property {} not defined", PRIVATE_KEY_PROPERTY_PATH);
+                return null;
+            }
+        }
+        return privateKey.getStream();
+    }
+
+    @Override
+    @Deprecated
     public String getPassword() {
         if (password == null) {
             password = getStringProperty(session, PASSWORD_PROPERTY_PATH);
@@ -106,10 +124,24 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService, Daemo
         try {
             value = JcrUtils.getStringProperty(session, propertyName, null);
             if (value == null) {
-                log.warn("Property not found: " + propertyName);
+                log.warn("Property not found: {}", propertyName);
             }
         } catch (RepositoryException e) {
-            log.error("Failed to get property " + propertyName, e);
+            log.error("Failed to get property {}", propertyName, e);
+        }
+        return value;
+
+    }
+
+    private synchronized static Binary getBinaryProperty(Session session, String propertyName) {
+        Binary value = null;
+        try {
+            value = JcrUtils.getBinaryProperty(session, propertyName, null);
+            if (value == null) {
+                log.warn("Property not found: {}", propertyName);
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to get property {}", propertyName, e);
         }
         return value;
 
