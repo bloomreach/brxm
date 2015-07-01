@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,24 +26,29 @@ import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugin.IPluginContext;
 
 public class TableDefinition<T> implements IClusterable {
-    private static final long serialVersionUID = 1L;
 
     private List<ListColumn<T>> columns;
     private Map<String, Comparator<T>> comparators;
     private boolean showColumnHeaders;
+    private boolean sortable;
 
     public TableDefinition(List<ListColumn<T>> columnList) {
         this(columnList, true);
     }
 
     public TableDefinition(List<ListColumn<T>> columnList, boolean showColumnHeaders) {
-        columns = new ArrayList<ListColumn<T>>();
-        comparators = new HashMap<String, Comparator<T>>();
+        this(columnList, showColumnHeaders, true);
+    }
+
+    public TableDefinition(List<ListColumn<T>> columnList, boolean showColumnHeaders, boolean sortable) {
+        columns = new ArrayList<>();
+        comparators = new HashMap<>();
         for (ListColumn<T> column : columnList) {
             columns.add(column);
             comparators.put(column.getSortProperty(), column.getComparator());
         }
         this.showColumnHeaders = showColumnHeaders;
+        this.sortable = sortable;
     }
 
     public void init(IPluginContext context) {
@@ -71,4 +76,7 @@ public class TableDefinition<T> implements IClusterable {
         return showColumnHeaders;
     }
 
+    public boolean isSortable() {
+        return sortable;
+    }
 }

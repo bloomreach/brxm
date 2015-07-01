@@ -88,12 +88,16 @@ public class ListDataTable<T> extends DataTable<T, String> {
                 @Override
                 protected WebMarkupContainer newSortableHeader(String borderId, final String property,
                                                                final ISortStateLocator<String> locator) {
-                    return new ListTableHeader<String>(borderId, property, locator) {
-                        @Override
-                        public void onClick(final AjaxRequestTarget target) {
-                            target.add(ListDataTable.this);
-                        }
-                    };
+                    if (tableDefinition.isSortable()) {
+                        return new ListTableHeader<String>(borderId, property, locator) {
+                            @Override
+                            public void onClick(final AjaxRequestTarget target) {
+                                target.add(ListDataTable.this);
+                            }
+                        };
+                    } else {
+                        return new TableHeader(borderId, "sort-disabled");
+                    }
                 }
             });
 
