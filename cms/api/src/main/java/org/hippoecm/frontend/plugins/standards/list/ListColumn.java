@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
 
@@ -50,7 +49,7 @@ public class ListColumn<T> extends AbstractColumn<T, String> {
 
     private Comparator<T> comparator;
     private IListCellRenderer<T> renderer;
-    private Object attributeModifier;
+    private AbstractListAttributeModifier<T> attributeModifier;
     private String cssClass;
     private boolean isLink = true;
 
@@ -86,14 +85,6 @@ public class ListColumn<T> extends AbstractColumn<T, String> {
         return renderer;
     }
 
-    /**
-     * Deprecated method to set the list attribute modifier.  Implement the AbstractListAttributeModifier instead.
-     */
-    @Deprecated
-    public void setAttributeModifier(IListAttributeModifier<T> attributeModifier) {
-        this.attributeModifier = attributeModifier;
-    }
-
     public void setAttributeModifier(AbstractListAttributeModifier<T> attributeModifier) {
         this.attributeModifier = attributeModifier;
     }
@@ -102,18 +93,9 @@ public class ListColumn<T> extends AbstractColumn<T, String> {
         this.isLink = isLink;
     }
 
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public IListAttributeModifier<T> getAttributeModifier() {
-        if (attributeModifier instanceof IListAttributeModifier) {
-            return (IListAttributeModifier<T>) attributeModifier;
-        }
-        return null;
-    }
-
     void init(IPluginContext context) {
         this.context = context;
-        this.observers = new LinkedList<IObserver<?>>();
+        this.observers = new LinkedList<>();
     }
 
     void destroy() {
@@ -155,12 +137,7 @@ public class ListColumn<T> extends AbstractColumn<T, String> {
     protected void addCell(Item<ICellPopulator<T>> item, String componentId, IModel<T> model) {
         final ListCell cell = new ListCell(componentId, model, renderer, attributeModifier, context);
         if (attributeModifier != null) {
-            AttributeModifier[] columnModifiers;
-            if (attributeModifier instanceof AbstractListAttributeModifier) {
-                columnModifiers = ((AbstractListAttributeModifier) attributeModifier).getColumnAttributeModifiers();
-            } else {
-                columnModifiers = ((IListAttributeModifier) attributeModifier).getColumnAttributeModifiers(model);
-            }
+            AttributeModifier[] columnModifiers = attributeModifier.getColumnAttributeModifiers();
             if (columnModifiers != null) {
                 for (final AttributeModifier columnModifier : columnModifiers) {
                     if (columnModifier == null) {

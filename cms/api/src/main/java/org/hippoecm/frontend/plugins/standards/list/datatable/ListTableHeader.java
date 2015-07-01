@@ -34,9 +34,9 @@ public class ListTableHeader<T> extends Border {
         this.property = property;
         this.stateLocator = stateLocator;
 
-        add(CssClass.append(new AbstractReadOnlyModel() {
+        add(CssClass.append(new AbstractReadOnlyModel<String>() {
             @Override
-            public Object getObject() {
+            public String getObject() {
                 switch (getSortOrder()) {
                     case ASCENDING:
                         return "hippo-list-order-ascending";
@@ -72,7 +72,6 @@ public class ListTableHeader<T> extends Border {
 
     private void setSortOrder(final SortOrder order) {
         stateLocator.getSortState().setPropertySortOrder(property, order);
-
     }
 
     private SortOrder getSortOrder() {
