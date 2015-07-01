@@ -40,22 +40,10 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-services</artifactId>
     </dependency>
-
     <dependency>
-      <groupId>com.google.gdata</groupId>
-      <artifactId>gdata-analytics</artifactId>
-      <version>${google.gdata.analytics.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gdata</groupId>
-      <artifactId>core</artifactId>
-      <version>${google.gdata.core.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.mortbay.jetty</groupId>
-          <artifactId>jetty</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>com.google.apis</groupId>
+      <artifactId>google-api-services-analytics</artifactId>
+      <version>${google-api-services-analytics.version}</version>
     </dependency>
 
   </dependencies>
