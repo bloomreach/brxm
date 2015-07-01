@@ -405,12 +405,12 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
 
             if (locale == Locale.FRENCH) {
                 final String[] values  = {
-                        "Missing template 'Non Existing (fr)'",
+                        "Modèle manquant 'Non Existing (fr)'",
                         "Layout (fr)"};
                 expectedSortedDisplayValues = values;
             } else if (locale == Locale.FRANCE) {
                 final String[] values  = {
-                        "Missing template 'Non Existing (fr_FR)'",
+                        "Modèle manquant 'Non Existing (fr_FR)'",
                         "Layout (fr_FR)"};
                 expectedSortedDisplayValues = values;
             } else {
