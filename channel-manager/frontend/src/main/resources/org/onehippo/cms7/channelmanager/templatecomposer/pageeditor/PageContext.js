@@ -98,7 +98,14 @@
         },
 
         renderComponent: function(id, propertiesMap) {
-            Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('renderComponent', id, propertiesMap);
+            if (this._componentExists(id)) {
+                Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('renderComponent', id, propertiesMap);
+            }
+        },
+
+        _componentExists: function(id) {
+            var componentRecordIndex = this.stores.pageModel.indexOfId(id);
+            return componentRecordIndex !== -1;
         },
 
         _initToolkitStore: function(mountId) {
