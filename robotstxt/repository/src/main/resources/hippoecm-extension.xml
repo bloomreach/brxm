@@ -88,6 +88,21 @@
       <sv:value>/hippo:namespaces/robotstxt/section/editor:templates/_default_/translator/hippostd:translations</sv:value>
     </sv:property>
   </sv:node>
+  <!--HIPPLUG-1121: add missing property to make compound layout work. TODO: integrate this change for CMS 11-->
+  <sv:node sv:name="robotstxt-namespace-patch-supertype">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20102</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String">
+      <sv:value>hippo:compound</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces/robotstxt/section/hipposysedit:nodetype/hipposysedit:nodetype/hipposysedit:supertype</sv:value>
+    </sv:property>
+  </sv:node>
 
   <sv:node sv:name="robotstxt-template">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
