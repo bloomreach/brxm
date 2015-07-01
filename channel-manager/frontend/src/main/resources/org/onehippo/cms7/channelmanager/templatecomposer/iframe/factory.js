@@ -66,7 +66,7 @@
             },
 
             _enhance : function(element) {
-                var hstContainerMetaData, id, type, base, xtype, url, refNS,
+                var hstContainerMetaData, id, type, base, xtype, url, refNS, extraIconCssClass,
                         hstContainerLockedBy, hstContainerLockedByCurrentUser, hstContainerLockedOn, hstContainerLastModified, disabled;
 
                 hstContainerMetaData = this.getContainerMetaData(element);
@@ -114,6 +114,7 @@
                         xtype = 'Hippo.ChannelManager.TemplateComposer.IFrame.UI.ContainerItem.Base';
                     }
                 }
+
                 element.setAttribute(HST.ATTR.XTYPE, xtype);
 
                 url = hstContainerMetaData[HST.ATTR.URL];
@@ -124,6 +125,11 @@
                 refNS = hstContainerMetaData[HST.ATTR.REF_NS];
                 if (refNS !== undefined) {
                     element.setAttribute(HST.ATTR.REF_NS, refNS);
+                }
+
+                extraIconCssClass = hstContainerMetaData[HST.ATTR.HST_EXTRA_ICON_CSS_CLASS];
+                if (extraIconCssClass !== undefined) {
+                  element.setAttribute(HST.ATTR.HST_EXTRA_ICON_CSS_CLASS, extraIconCssClass);
                 }
 
                 if (hstContainerMetaData[HST.ATTR.INHERITED] !== undefined) {

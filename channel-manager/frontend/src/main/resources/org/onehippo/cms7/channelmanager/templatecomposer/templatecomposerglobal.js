@@ -29,6 +29,7 @@
             XTYPE : 'xtype',
             INHERITED : 'inherited',
             HST_LOCKED_BY : 'HST-LockedBy',
+            HST_EXTRA_ICON_CSS_CLASS : 'HST-Extra-Icon-Css-Class',
             HST_LOCKED_BY_CURRENT_USER : "HST-LockedBy-Current-User",
             HST_LOCKED_ON : "HST-LockedOn",
             HST_LAST_MODIFIED : "HST-LastModified",

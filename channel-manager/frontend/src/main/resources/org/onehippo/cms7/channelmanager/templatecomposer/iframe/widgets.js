@@ -747,11 +747,17 @@
     },
 
     onRender: function () {
-      var element, deleteButton;
-      this.overlay.append($('<div/>').addClass(this.cls.overlay.inner));
+      var element, deleteButton, overlayContainer;
+
+      if (this.el.attr(HST.ATTR.HST_EXTRA_ICON_CSS_CLASS)) {
+        this.overlay.append($('<div/>').addClass(this.cls.overlay.inner + " " + this.el.attr(HST.ATTR.HST_EXTRA_ICON_CSS_CLASS)));
+        overlayContainer = this.overlay.closest('.hst-overlay-container');
+        overlayContainer.removeClass('hst-overlay-locked');
+      } else {
+        this.overlay.append($('<div/>').addClass(this.cls.overlay.inner));
+      }
 
       this.menu = $('<div/>').addClass('hst-overlay-menu');
-
       element = this.element;
       if (!this.el.attr(HST.ATTR.HST_CONTAINER_DISABLED)) {
         deleteButton = $('<div/>').addClass('hst-overlay-menu-button');
