@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService, Daemo
     private static final String USERNAME_PROPERTY_PATH = CONFIG_NODE_PATH + "/hippogoogleanalytics:username";
     private static final String PASSWORD_PROPERTY_PATH = CONFIG_NODE_PATH + "/hippogoogleanalytics:password";
     private static final String ACCOUNT_ID_PROPERTY_PATH = CONFIG_NODE_PATH + "/hippogoogleanalytics:accountId";
-    private static final String PRIVATE_KEY_PROPERTY_PATH = CONFIG_NODE_PATH + "/hippogoogleanalytics:privateKey/jcr:content/jcr:data";
+    private static final String PRIVATE_KEY_PROPERTY_PATH = CONFIG_NODE_PATH + "/hippogoogleanalytics:privateKey";
 
     private Session session;
 
@@ -101,9 +101,8 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService, Daemo
     @Override
     public InputStream getPrivateKey() throws RepositoryException {
         if (privateKey == null) {
-            privateKey = session.getProperty(PRIVATE_KEY_PROPERTY_PATH).getBinary();
+            privateKey = getBinaryProperty(session, PRIVATE_KEY_PROPERTY_PATH);
             if (privateKey == null) {
-                log.warn("Property {} not defined", PRIVATE_KEY_PROPERTY_PATH);
                 return null;
             }
         }

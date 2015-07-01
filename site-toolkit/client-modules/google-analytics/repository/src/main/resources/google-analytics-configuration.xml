@@ -34,33 +34,5 @@
     <sv:property sv:name="hippogoogleanalytics:accountId" sv:type="String">
       <sv:value>UA-XXXXX-X</sv:value>
     </sv:property>
-    <sv:node sv:name="hippogoogleanalytics:privateKey">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>nt:file</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:created" sv:type="Date">
-        <sv:value>2015-07-01T11:23:39.359+02:00</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:createdBy" sv:type="String">
-        <sv:value>admin</sv:value>
-      </sv:property>
-      <sv:node sv:name="jcr:content">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:resource</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:data" sv:type="Binary">
-          <sv:value> </sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:lastModified" sv:type="Date">
-          <sv:value>2015-07-01T11:20:42.987+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:lastModifiedBy" sv:type="String">
-          <sv:value>system</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mimeType" sv:type="String">
-          <sv:value>application/octet-stream</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
   </sv:node>
 </sv:node>
