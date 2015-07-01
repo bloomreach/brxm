@@ -17,6 +17,9 @@ package org.onehippo.cms7.services.googleanalytics;
 
 import org.onehippo.cms7.services.SingletonService;
 
+import javax.jcr.RepositoryException;
+import java.io.InputStream;
+
 @SingletonService
 public interface GoogleAnalyticsService {
 
@@ -33,11 +36,19 @@ public interface GoogleAnalyticsService {
     /**
      * @return  configured google analytics account password or {@code null} if not configured
      */
+    @Deprecated
     String getPassword();
 
     /**
      * @return  configured google analytics account user name or {@code null} if not configured
      */
     String getUserName();
+
+    /**
+     *
+     * @return  input stream to uploaded key file, {@code PKCS 12}
+     * @throws RepositoryException
+     */
+    InputStream getPrivateKey() throws RepositoryException;
 
 }
