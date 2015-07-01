@@ -27,6 +27,9 @@
     <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
       <sv:value>true</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.30.03</sv:value>
+    </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
       <sv:value>http://www.onehippo.org/jcr/hippogoogleanalytics/nt/1.0</sv:value>
     </sv:property>
