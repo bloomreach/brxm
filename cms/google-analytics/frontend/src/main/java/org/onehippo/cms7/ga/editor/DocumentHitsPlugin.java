@@ -24,11 +24,14 @@ import com.google.api.client.util.SecurityUtils;
 import com.google.api.services.analytics.Analytics;
 import com.google.api.services.analytics.AnalyticsScopes;
 import com.google.api.services.analytics.model.GaData;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
@@ -138,8 +141,18 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
             public Component getLazyLoadComponent(String markupId) {
                 Fragment fragment = new Fragment(markupId, "lazy-load-document-hits-container", DocumentHitsPlugin.this);
 
-                Image image = new Image("document-hits-image", getGraphUrl());
+                final String url = getGraphUrl();
+                ExternalImage image = new ExternalImage("document-hits-image", url);
                 image.add(TitleAttribute.set(getGraphInfo()));
+                image.add(new AttributeModifier("src", new AbstractReadOnlyModel<String>() {
+
+                    private static final long serialVersionUID = 1L;
+                    @Override
+                    public final String getObject() {
+                       return url;
+                    }
+                }));
+                image.setOutputMarkupId(true);
                 fragment.add(image);
                 Label label = new Label("document-hits-label", getGraphLabel());
                 fragment.add(label);
@@ -151,6 +164,20 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
 
     }
 
+    public  class ExternalImage extends WebComponent {
+
+        public ExternalImage(String id, String imageUrl) {
+            super(id);
+            add(new AttributeModifier("src", new Model<>(imageUrl)));
+            setVisible(!(imageUrl == null || imageUrl.isEmpty()));
+        }
+
+        protected void onComponentTag(ComponentTag tag) {
+            super.onComponentTag(tag);
+            checkComponentTag(tag, "img");
+        }
+
+    }
     private String getGraphLabel() {
         if (!loaded) {
             loadGraphData();
@@ -204,7 +231,7 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
         }
 
 
-        return getScheme() + "://chart.googleapis.com/chart?cht=ls&amp;chs=75x18&amp;chco=0077cc&amp;chm=B%2Ce6f2fa%2C0%2C0.0%2C0.0&amp;chd=s%3A" + graphData.toString();
+        return getScheme() + "://chart.googleapis.com/chart?cht=ls&chs=75x18&amp;chco=0077cc&chm=B%2Ce6f2fa%2C0%2C0.0%2C0.0&chd=s%3A" + graphData.toString();
     }
 
     private void loadGraphData() {
