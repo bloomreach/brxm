@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2009-2013 Hippo
+    Copyright 2009-2015 Hippo
 
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -111,13 +111,29 @@
         </sv:property>
     </sv:node>
 
-    <!-- using contentdelete after splitting namespace in multiple initializeitems: avoiding too many same name sibling hippo:translations on merge with existing namespace -->
     <sv:node sv:name="selection-namespace-BooleanRadioGroup">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:initializeitem</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:sequence" sv:type="Double">
             <sv:value>21101.04</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:contentroot" sv:type="String">
+            <sv:value>/hippo:namespaces/selection</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:contentresource" sv:type="String">
+            <sv:value>selection-namespace-BooleanRadioGroup.xml</sv:value>
+        </sv:property>
+    </sv:node>
+    <!-- using contentdelete after splitting namespace in multiple initializeitems:
+         avoiding too many same name sibling hippo:translations on merge with existing namespace.
+         Another reason for reloading this field type definition is the changed translations (HIPPLUG-1141). -->
+    <sv:node sv:name="selection-namespace-BooleanRadioGroup-reload">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:initializeitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:sequence" sv:type="Double">
+            <sv:value>21101.05</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentdelete" sv:type="String">
             <sv:value>/hippo:namespaces/selection/BooleanRadioGroup</sv:value>
@@ -127,12 +143,6 @@
         </sv:property>
         <sv:property sv:name="hippo:contentresource" sv:type="String">
             <sv:value>selection-namespace-BooleanRadioGroup.xml</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:version" sv:type="String">
-          <sv:value>2.09.00</sv:value>
         </sv:property>
     </sv:node>
 
