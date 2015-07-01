@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,10 @@ package org.hippoecm.frontend.plugins.console.behavior;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -26,6 +30,8 @@ import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.string.StringValue;
@@ -34,63 +40,36 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.RepositoryException;
 
 public class ParameterHistoryBehavior extends AbstractDefaultAjaxBehavior implements IObserver {
 
     private static final Logger log = LoggerFactory.getLogger(ParameterHistoryBehavior.class);
 
-    private static final String PATH_PARAMETER = "path";
-    private static final String UUID_PARAMETER = "uuid";
+    private static final JavaScriptResourceReference SCRIPT_RESOURCE_REFERENCE = new JavaScriptResourceReference(ParameterHistoryBehavior.class, "js/parameterhistory/parameterhistory.js");
 
-    private IModelReference reference;
+    private static final String PATH_PARAMETER = "_path";
+    private static final String UUID_PARAMETER = "_uuid";
+
+    private IModelReference<Node> reference;
     private transient boolean myUpdate;
 
-    public ParameterHistoryBehavior(IModelReference reference) {
+    public ParameterHistoryBehavior(IModelReference<Node> reference) {
         this.reference = reference;
-
         setReferenceModelFromRequest();
-    }
-
-    private void setReferenceModelFromRequest() {
-        final RequestCycle requestCycle = RequestCycle.get();
-        StringValue path = requestCycle.getRequest().getQueryParameters().getParameterValue(PATH_PARAMETER);
-        if (!path.isNull()) {
-            try {
-                myUpdate = true;
-                JcrNodeModel nodeModel = new JcrNodeModel(path.toString());
-                while (nodeModel.getNode() == null) {
-                    nodeModel = nodeModel.getParentModel();
-                }
-                reference.setModel(nodeModel);
-            } finally {
-                myUpdate = false;
-            }
-        } else {
-            StringValue uuid = requestCycle.getRequest().getQueryParameters().getParameterValue(UUID_PARAMETER);
-            if (!uuid.isNull()) {
-                try {
-                    reference.setModel(new JcrNodeModel(
-                            UserSession.get().getJcrSession().getNodeByIdentifier(uuid.toString())));
-                } catch (RepositoryException e) {
-                    log.info("Could not find node by uuid: {}", uuid);
-                }
-            }
-        }
     }
 
     @Override
     public void renderHead(final Component component, final IHeaderResponse response) {
         super.renderHead(component, response);
 
-        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(ParameterHistoryBehavior.class, "js/parameterhistory/parameterhistory.js")));
+        response.render(JavaScriptHeaderItem.forReference(SCRIPT_RESOURCE_REFERENCE));
 
         String attributesAsJson = renderAjaxAttributes(component).toString();
         response.render(OnLoadHeaderItem.forScript(
-                "Hippo.ParameterHistory.init(function(path) {\n"
+                "Hippo.ParameterHistory.init(function(path, uuid) {\n"
                         + "    var call = new Wicket.Ajax.Call(),"
                         + "        attributes = jQuery.extend({}, " + attributesAsJson + ");\n"
                         + "    call.ajax(attributes);\n"
@@ -102,6 +81,7 @@ public class ParameterHistoryBehavior extends AbstractDefaultAjaxBehavior implem
         super.updateAjaxAttributes(attributes);
         final List<CharSequence> dep = attributes.getDynamicExtraParameters();
         dep.add("return { " + PATH_PARAMETER + ": path };");
+        dep.add("return { " + UUID_PARAMETER + ": uuid };");
     }
 
     @Override
@@ -116,11 +96,73 @@ public class ParameterHistoryBehavior extends AbstractDefaultAjaxBehavior implem
 
     @Override
     public void onEvent(final Iterator events) {
-        if (!myUpdate) {
-            JcrNodeModel nodeModel = (JcrNodeModel) reference.getModel();
-            String path = nodeModel.getItemModel().getPath();
-            AjaxRequestTarget ajax = RequestCycle.get().find(AjaxRequestTarget.class);
-            ajax.appendJavaScript("Hippo.ParameterHistory.setPath('" + path + "')");
+        if (myUpdate) {
+            return;
+        }
+
+        final IModel<Node> model = reference.getModel();
+        final String path = JcrUtils.getNodePathQuietly(model != null ? model.getObject() : null);
+        if (path != null) {
+            setPathWithAjax(path, false);
+        }
+    }
+
+    private void setReferenceModelFromRequest() {
+        myUpdate = true;
+
+        final RequestCycle requestCycle = RequestCycle.get();
+        final IRequestParameters queryParameters = requestCycle.getRequest().getQueryParameters();
+
+        final StringValue path = queryParameters.getParameterValue(PATH_PARAMETER);
+        if (!path.isEmpty()) {
+            setReferenceFromPath(path.toString());
+        } else {
+            final StringValue uuid = queryParameters.getParameterValue(UUID_PARAMETER);
+            if (!uuid.isEmpty()) {
+                setReferenceFromUuid(uuid.toString());
+            }
+        }
+
+        myUpdate = false;
+    }
+
+    private void setReferenceFromUuid(final String uuid) {
+        final Session jcrSession = UserSession.get().getJcrSession();
+        Node node = null;
+        try {
+            node = jcrSession.getNodeByIdentifier(uuid);
+        } catch (RepositoryException e) {
+            log.info("Could not find node by uuid: {}", uuid);
+        }
+
+        if (node != null) {
+            final JcrNodeModel model = new JcrNodeModel(node);
+            reference.setModel(model);
+            setPathWithAjax(model.getItemModel().getPath(), true);
+        }
+    }
+
+    private void setReferenceFromPath(final String path) {
+        final JcrNodeModel startModel = new JcrNodeModel(path);
+        JcrNodeModel model = startModel;
+        while (model != null && model.getNode() == null) {
+            model = model.getParentModel();
+        }
+
+        if (!startModel.equals(model)) {
+            if (model == null) {
+                model = new JcrNodeModel("/");
+            }
+            setPathWithAjax(model.getItemModel().getPath(), true);
+        }
+        reference.setModel(model);
+    }
+
+    private void setPathWithAjax(final String path, final boolean replace) {
+        final AjaxRequestTarget ajax = RequestCycle.get().find(AjaxRequestTarget.class);
+        if (ajax != null) {
+            final String script = String.format("Hippo.ParameterHistory.setPath('%s', %s);", path, replace);
+            ajax.appendJavaScript(script);
         }
     }
 }
