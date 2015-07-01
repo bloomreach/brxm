@@ -164,20 +164,7 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
 
     }
 
-    public  class ExternalImage extends WebComponent {
 
-        public ExternalImage(String id, String imageUrl) {
-            super(id);
-            add(new AttributeModifier("src", new Model<>(imageUrl)));
-            setVisible(!(imageUrl == null || imageUrl.isEmpty()));
-        }
-
-        protected void onComponentTag(ComponentTag tag) {
-            super.onComponentTag(tag);
-            checkComponentTag(tag, "img");
-        }
-
-    }
     private String getGraphLabel() {
         if (!loaded) {
             loadGraphData();
@@ -344,5 +331,20 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
 
     private String getTranslation(String key, Model<String[]> model) {
         return new StringResourceModel(key, this, model, "").getObject();
+    }
+
+    private class ExternalImage extends WebComponent {
+
+        public ExternalImage(String id, String imageUrl) {
+            super(id);
+            add(new AttributeModifier("src", new Model<>(imageUrl)));
+            setVisible(!(imageUrl == null || imageUrl.isEmpty()));
+        }
+
+        protected void onComponentTag(ComponentTag tag) {
+            super.onComponentTag(tag);
+            checkComponentTag(tag, "img");
+        }
+
     }
 }
