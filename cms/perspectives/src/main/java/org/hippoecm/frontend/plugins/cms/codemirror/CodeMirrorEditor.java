@@ -178,27 +178,26 @@ public class CodeMirrorEditor extends TextArea<String> {
     protected String getJavaScriptForEditor() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("var cm = CodeMirror.fromTextArea(document.getElementById('" + getMarkupId() + "'), ");
+        final String markupId = getMarkupId();
+        sb.append("var cm = CodeMirror.fromTextArea(document.getElementById('" + markupId + "'), ");
         sb.append("{ lineNumbers: true, matchBrackets: true, mode: \"" + getEditorMode() + "\", ");
 
         if (isReadOnly()) {
             sb.append("readOnly: true, ");
         }
 
-        sb.append("onChange: function(cm) { cm.save(); ");
-
         if (isChangeEventTriggeringEnabled()) {
-            sb.append("var ta = document.getElementById('" + getMarkupId() + "'); " +
-            "if ('createEvent' in document) { " +
-            "var evt = document.createEvent('HTMLEvents'); " +
-            "evt.initEvent('change', false, true); " +
-            "ta.dispatchEvent(evt); " +
-            "} else { " +
-            "ta.fireEvent('onchange'); " +
-            "} ");
+            sb.append("onBlur: function(cm) { " +
+                "cm.save(); " +
+                "console.log('codemirror lost focus');" +
+                "var evt = $.Event('change', {" +
+                    "'bubbles': false," +
+                    "'cancelable': true});" +
+                "$('#" + markupId + "').trigger(evt);" +
+            "},");
         }
 
-        sb.append("}, editorName: \"" + getEditorName() + "\"});\n");
+        sb.append("editorName: \"" + getEditorName() + "\"});\n");
 
         return sb.toString();
     }
