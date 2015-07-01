@@ -31,7 +31,6 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
@@ -144,14 +143,6 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
                 final String url = getGraphUrl();
                 ExternalImage image = new ExternalImage("document-hits-image", url);
                 image.add(TitleAttribute.set(getGraphInfo()));
-                image.add(new AttributeModifier("src", new AbstractReadOnlyModel<String>() {
-
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public final String getObject() {
-                       return url;
-                    }
-                }));
                 image.setOutputMarkupId(true);
                 fragment.add(image);
                 Label label = new Label("document-hits-label", getGraphLabel());
