@@ -49,7 +49,7 @@
     <hippo.frontend.plugins.version>1.02.00</hippo.frontend.plugins.version>
     <hippo.frontend.theme.version>1.02.04-SNAPSHOT</hippo.frontend.theme.version>
     <hippo.hst.version>2.30.03-SNAPSHOT</hippo.hst.version>
-    <hippo.packages.version>2.28.00</hippo.packages.version>
+    <hippo.packages.version>2.28.01-SNAPSHOT</hippo.packages.version>
     <hippo.repository.version>2.28.02-SNAPSHOT</hippo.repository.version>
     <hippo.services.version>1.05.01-SNAPSHOT</hippo.services.version>
     <hippo.services.autoreload.version>1.05.00</hippo.services.autoreload.version>
@@ -59,11 +59,11 @@
     <hippo.utilities.version>1.04.00</hippo.utilities.version>
 
     <!-- Hippo standard plugin versions -->
-    <hippo.plugin.content-blocks.version>1.12.01</hippo.plugin.content-blocks.version>
-    <hippo.plugin.content-tagging.version>4.09.00</hippo.plugin.content-tagging.version>
+    <hippo.plugin.content-blocks.version>1.12.02-SNAPSHOT</hippo.plugin.content-blocks.version>
+    <hippo.plugin.content-tagging.version>4.09.01-SNAPSHOT</hippo.plugin.content-tagging.version>
     <hippo.plugin.dashboard-document-wizard.version>1.06.02-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
     <hippo.plugin.gallerypicker.version>1.14.02</hippo.plugin.gallerypicker.version>
-    <hippo.plugin.poll.version>1.09.00</hippo.plugin.poll.version>
+    <hippo.plugin.poll.version>1.09.01-SNAPSHOT</hippo.plugin.poll.version>
     <hippo.plugin.relateddocs.version>2.11.02-SNAPSHOT</hippo.plugin.relateddocs.version>
     <hippo.plugin.resourcebundle-editor.version>1.03.02-SNAPSHOT</hippo.plugin.resourcebundle-editor.version>
     <hippo.plugin.robotstxt.version>1.09.01-SNAPSHOT</hippo.plugin.robotstxt.version>
