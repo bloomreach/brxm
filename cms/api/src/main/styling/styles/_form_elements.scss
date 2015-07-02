@@ -81,8 +81,15 @@ select {
   cursor: pointer;
   &[disabled] {
     cursor: auto;
-    color: $dark-shade;
+    color: $forms-disabled-color;
+    background-color: $forms-disabled-bgcolor;
   }
+}
+
+.grayedout,
+input[type="text"][disabled] {
+  color: $forms-disabled-color;
+  background-color: $forms-disabled-bgcolor;
 }
 
 input[type="text"]::-ms-clear {
