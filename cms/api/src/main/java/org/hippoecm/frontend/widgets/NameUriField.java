@@ -28,6 +28,7 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.time.Duration;
@@ -41,42 +42,45 @@ public class NameUriField extends WebMarkupContainer {
 
     private final IModel<StringCodec> codecModel;
 
-    private final FormComponent nameComponent;
-    private final FormComponent urlComponent;
+    private final FormComponent<String> nameComponent;
+    private final FormComponent<String> urlComponent;
 
-    private boolean modifiedUrl;
-    private boolean editingUrl;
-
-    public NameUriField(String id, IModel<StringCodec> codecModel, final String url, final String name) {
-        super(id);
-        this.codecModel = codecModel;
-
-        nameModel = Model.of(name);
-        urlModel = Model.of(url);
-        if (StringUtils.isNotEmpty(url) && StringUtils.isNotEmpty(name)) {
-            modifiedUrl = !StringUtils.equals(encode(nameModel.getObject()), urlModel.getObject());
-            editingUrl = modifiedUrl;
-        }
-
-        add(nameComponent = createNameComponent(nameModel));
-        add(urlComponent = createUriComponent(urlModel));
-
-        add(createUrlAction());
-    }
+    private boolean urlIsEditable;
+    private boolean urlIsRequired;
 
     public NameUriField(final String id, final IModel<StringCodec> codecModel) {
         this(id, codecModel, null, null);
     }
 
-    private FormComponent createNameComponent(final IModel<String> nameModel) {
-        FormComponent nameComponent = new TextField<>("name", nameModel);
+    public NameUriField(String id, IModel<StringCodec> codecModel, final String url, final String name) {
+        super(id);
+        this.codecModel = codecModel;
+
+        urlIsEditable = urlIsRequired = StringUtils.isNotEmpty(name) && !StringUtils.equals(encode(name), url);
+
+        nameModel = Model.of(name);
+        add(nameComponent = createNameComponent());
+
+        urlModel = new Model<String>(url) {
+            @Override
+            public String getObject() {
+                return encode(urlIsEditable ? super.getObject() : getName());
+            }
+        };
+        add(urlComponent = createUrlComponent());
+
+        add(createUrlAction());
+    }
+
+    private FormComponent<String> createNameComponent() {
+        FormComponent<String> nameComponent = new TextField<>("name", nameModel);
         nameComponent.setRequired(true);
         nameComponent.add(new OnChangeAjaxBehavior() {
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                if (!editingUrl && !modifiedUrl) {
-                    urlModel.setObject(encode(nameModel.getObject()));
+                if (!urlIsEditable) {
+                    // the value of the url field is controlled by the name value, redraw when name changes
                     target.add(urlComponent);
                 }
             }
@@ -91,17 +95,22 @@ public class NameUriField extends WebMarkupContainer {
         return nameComponent;
     }
 
-    private FormComponent createUriComponent(final IModel<String> urlModel) {
-        FormComponent urlComponent = new TextField<String>("url", urlModel) {
+    private FormComponent<String> createUrlComponent() {
+        FormComponent<String> urlComponent = new TextField<String>("url", urlModel) {
             @Override
             public boolean isEnabled() {
-                return editingUrl;
+                return urlIsEditable;
+            }
+
+            @Override
+            public boolean isRequired() {
+                return urlIsRequired;
             }
         };
         urlComponent.add(CssClass.append(new AbstractReadOnlyModel<String>() {
             @Override
             public String getObject() {
-                return editingUrl ? "grayedin" : "grayedout";
+                return urlIsEditable ? "grayedin" : "grayedout";
             }
         }));
         urlComponent.setOutputMarkupId(true);
@@ -112,24 +121,31 @@ public class NameUriField extends WebMarkupContainer {
         AjaxLink<Boolean> uriAction = new AjaxLink<Boolean>("uriAction") {
             @Override
             public void onClick(AjaxRequestTarget target) {
-                if (editingUrl) { // resetting
-                    urlModel.setObject(encode(nameModel.getObject()));
-                    modifiedUrl = false;
-                } else { // starting edit
-                    target.focusComponent(urlComponent);
-                    modifiedUrl = true;
+                urlIsRequired = !urlIsEditable;
+
+                if (!urlComponent.isValid() || urlComponent.getForm().hasErrorMessage()) {
+                    urlComponent.getForm().getFeedbackMessages().clear();
+                    // reset the urlComponent with the value in nameModel and restart validation
+                    urlModel.setObject("");
+                    urlComponent.setConvertedInput(getName());
+                    urlComponent.updateModel();
+                    urlComponent.validate();
                 }
-                editingUrl = !editingUrl;
+                urlModel.setObject(getName());
+                urlIsEditable = !urlIsEditable;
+
                 target.add(this);
                 target.add(urlComponent);
+                target.focusComponent(urlIsEditable ? urlComponent : nameComponent);
             }
         };
-        uriAction.add(new Label("uriActionLabel", new AbstractReadOnlyModel<String>() {
+
+        uriAction.add(new Label("uriActionLabel", new LoadableDetachableModel<String>() {
             @Override
-            public String getObject() {
-                return editingUrl ? getString("url-reset") : getString("url-edit");
+            protected String load() {
+                return urlIsEditable ? getString("url-reset") : getString("url-edit");
             }
-        }));
+        } ));
         return uriAction;
     }
 
@@ -140,14 +156,6 @@ public class NameUriField extends WebMarkupContainer {
             target.focusComponent(nameComponent);
         }
         super.onBeforeRender();
-    }
-
-    public void encodeUri() {
-        urlModel.setObject(encode(nameModel.getObject()));
-        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
-            target.add(urlComponent);
-        }
     }
 
     private String encode(final String text) {
@@ -175,5 +183,15 @@ public class NameUriField extends WebMarkupContainer {
 
     public String getUrl() {
         return urlModel.getObject();
+    }
+
+    // If the codec model has been detached and the url field is not editable, we should redraw the url field to ensure
+    // the intended codec is applied (mostly the codec model is detached so that upon the next usage it will load a
+    // different StringCodec).
+    public void onCodecModelDetached() {
+        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+        if (!urlIsEditable) {
+            target.add(urlComponent);
+        }
     }
 }

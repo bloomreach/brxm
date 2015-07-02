@@ -347,8 +347,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                     evaluateChoices();
                     // Detach the codec model to load the correct codec for the selected template
                     codecModel.detach();
-                    // Re-encode the URI value
-                    nameUriContainer.encodeUri();
+                    nameUriContainer.onCodecModelDetached();
                 }
             });
             templateChoice.setNullValid(false);
@@ -362,8 +361,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 protected void onSelectionChanged() {
                     // Detach the codec model to load the correct codec for the selected language
                     codecModel.detach();
-                    // Re-encode the URI value
-                    nameUriContainer.encodeUri();
+                    nameUriContainer.onCodecModelDetached();
                 }
             };
             add(languageContainer);
