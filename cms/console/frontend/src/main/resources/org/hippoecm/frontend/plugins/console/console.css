@@ -882,11 +882,18 @@ body.hippo-root div.yui-log-container {
 }
 
 .property-dialog .property-values > div > div {
-  display: table-cell;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 
 .property-dialog li .property-value {
-  padding-bottom: 2px;
+  padding-bottom: 3px;
 }
 
 .property-dialog .property-value-add {
@@ -898,7 +905,16 @@ body.hippo-root div.yui-log-container {
   font-size: 18px;
 }
 
-.property-dialog .property-value-remove.remove-icon {
+.property-dialog .property-value-remove {
+  padding-left: 4px;
+}
+
+.property-dialog .property-value-remove .remove-icon {
   color: #f44336;
   font-size: 20px;
+}
+
+.node-dialog input[type="text"],
+.property-dialog input[type="text"] {
+  padding: 2px;
 }
