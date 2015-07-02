@@ -130,17 +130,16 @@ public class NameUriField extends WebMarkupContainer {
         AjaxLink<Boolean> uriAction = new AjaxLink<Boolean>("uriAction") {
             @Override
             public void onClick(AjaxRequestTarget target) {
+                // urlIsEditable must not be changed prior #validate() otherwise urlModel object value will also load
+                // value from getName()
                 urlIsRequired = !urlIsEditable;
 
                 if (!urlComponent.isValid() || urlComponent.getForm().hasErrorMessage()) {
                     urlComponent.getForm().getFeedbackMessages().clear();
-                    // reset the urlComponent with the value in nameModel and restart validation
-                    urlModel.setObject("");
-                    urlComponent.setConvertedInput(getName());
-                    urlComponent.updateModel();
-                    urlComponent.validate();
                 }
-                urlModel.setObject(getName());
+                urlComponent.setModelObject(getName());
+                urlComponent.validate();
+
                 urlIsEditable = !urlIsEditable;
 
                 target.add(this);
