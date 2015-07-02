@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.cms.codemirror;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -23,6 +26,7 @@ import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.util.template.PackageTextTemplate;
 
 /**
  * Component that displays a CodeMirror panel which gives a nice syntax highlighting for Groovy, etc.
@@ -72,6 +76,9 @@ public class CodeMirrorEditor extends TextArea<String> {
 
     /** Built-in Eclipse CodeMirror skin */
     private static final CssResourceReference ECLIPSE_SKIN = new CssResourceReference(CodeMirrorEditor.class, "theme/eclipse.css");
+
+    /** CodeMirror instantiation script */
+    public static final String CREATE_EDITOR_SCRIPT = "create-codemirror-editor.js";
 
     private String editorName;
     private String editorMode = MIME_TYPE_GROOVY;
@@ -176,26 +183,14 @@ public class CodeMirrorEditor extends TextArea<String> {
      * @return
      */
     protected String getJavaScriptForEditor() {
-        StringBuilder sb = new StringBuilder();
+        final Map<String, String> scriptParams = new TreeMap<>();
+        scriptParams.put("markupId", getMarkupId());
+        scriptParams.put("editorMode", getEditorMode());
+        scriptParams.put("editorName", getEditorName());
+        scriptParams.put("readOnly", Boolean.toString(isReadOnly()));
+        scriptParams.put("changeEventTriggerEnabled", Boolean.toString(isChangeEventTriggeringEnabled()));
 
-        final String markupId = getMarkupId();
-        sb.append("var cm = CodeMirror.fromTextArea(document.getElementById('" + markupId + "'), ");
-        sb.append("{ lineNumbers: true, matchBrackets: true, mode: \"" + getEditorMode() + "\", ");
-
-        if (isReadOnly()) {
-            sb.append("readOnly: true, ");
-        }
-        sb.append("onBlur: function(cm) { cm.save(); ");
-
-        if (isChangeEventTriggeringEnabled()) {
-            sb.append("var evt = $.Event('change', {" +
-                    "'bubbles': false," +
-                    "'cancelable': true});" +
-                "$('#" + markupId + "').trigger(evt);");
-        }
-
-        sb.append("}, editorName: \"" + getEditorName() + "\"});\n");
-
-        return sb.toString();
+        final PackageTextTemplate script = new PackageTextTemplate(CodeMirrorEditor.class, CREATE_EDITOR_SCRIPT);
+        return script.asString(scriptParams);
     }
 }
