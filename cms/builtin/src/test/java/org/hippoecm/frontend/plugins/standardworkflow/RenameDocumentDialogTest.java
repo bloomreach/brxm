@@ -22,6 +22,8 @@ import java.util.Locale;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -37,6 +39,7 @@ import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.StringCodec;
+import org.hippoecm.repository.api.StringCodecFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -94,7 +97,7 @@ public class RenameDocumentDialogTest {
             e.printStackTrace();
         }
 
-        final StringCodec stringCodec = Mockito.mock(StringCodec.class);
+        final StringCodec stringCodec = new StringCodecFactory.UriEncoding();
         IModel<StringCodec> stringCodecModel = new LoadableDetachableModel<StringCodec>(stringCodec) {
             @Override
             protected StringCodec load() {
@@ -142,6 +145,19 @@ public class RenameDocumentDialogTest {
         MockNodeUtil.addFolder(projectNode, "news", "News");
         MockNodeUtil.addFolder(projectNode, "common", "Common");
         return projectNode;
+    }
+
+    @Test
+    public void createDialogContainingExpectedInputValues(){
+        final FormTester formTester = createDialog(false);
+        FormComponent<String> nameComponent = (FormComponent<String>) formTester.getForm().get(NAME_INPUT);
+        assertNotNull(nameComponent);
+        assertEquals("News", nameComponent.getValue());
+
+        FormComponent<String> urlField = (FormComponent<String>) formTester.getForm().get(URL_INPUT);
+        assertNotNull(urlField);
+        assertEquals("news", urlField.getValue());
+
     }
 
     @Test
