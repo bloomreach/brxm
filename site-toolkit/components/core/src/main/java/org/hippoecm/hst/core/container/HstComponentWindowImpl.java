@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -154,22 +154,22 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     }
 
     public Map<String, HstComponentWindow> getChildWindowMap() {
-        return this.childWindowMap;
+        return childWindowMap;
     }
     
     public List<String> getChildWindowNames() {
-        if (this.childWindowMap == null) {
+        if (childWindowMap == null) {
             return Collections.emptyList();
         } else {
-           return Collections.unmodifiableList(new ArrayList<String>(childWindowMap.keySet()));
+           return Collections.unmodifiableList(new ArrayList<>(childWindowMap.keySet()));
         }
     }
     
     public HstComponentWindow getChildWindow(String name) {
         HstComponentWindow childWindow = null;
         
-        if (this.childWindowMap != null) {
-            childWindow = (HstComponentWindow) this.childWindowMap.get(name);
+        if (childWindowMap != null) {
+            childWindow = childWindowMap.get(name);
         }
         
         return childWindow;
@@ -179,7 +179,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
         HstComponentWindow childWindow = null;
         
         if (this.childWindowMapByReferenceName != null) {
-            childWindow = (HstComponentWindow) this.childWindowMapByReferenceName.get(referenceName);
+            childWindow = childWindowMapByReferenceName.get(referenceName);
         }
         
         return childWindow;
@@ -200,30 +200,30 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     
 
     public String getReferenceNamespace() {
-        return this.referenceNamespace;
+        return referenceNamespace;
     }
     
     public HstResponseState getResponseState() {
-        return this.responseState;
+        return responseState;
     }
     
     public void addChildWindow(HstComponentWindow child) {
-        if (this.childWindowMap == null) {
-            this.childWindowMap = new LinkedHashMap<String, HstComponentWindow>();
+        if (childWindowMap == null) {
+            childWindowMap = new LinkedHashMap<>();
         }
         
-        HstComponentWindow old = (HstComponentWindow) this.childWindowMap.put(child.getName(), child);
+        HstComponentWindow old = childWindowMap.put(child.getName(), child);
         
         if (old != null) {
             log.error("Ambiguous components configuration because component sibblings found with same name: '{}'. " +
             		"The first one is replaced. This should not be possible. You can report the HST2 team so they can fix this.", child.getName() );
         }
         
-        if (this.childWindowMapByReferenceName == null) {
-            this.childWindowMapByReferenceName = new LinkedHashMap<String, HstComponentWindow>();
+        if (childWindowMapByReferenceName == null) {
+            childWindowMapByReferenceName = new LinkedHashMap<>();
         }
         
-        this.childWindowMapByReferenceName.put(child.getReferenceName(), child);
+        childWindowMapByReferenceName.put(child.getReferenceName(), child);
     }
     
     public HstComponentInfo getComponentInfo() {
@@ -240,7 +240,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     
     public void setAttribute(String name, Object value) {
         if (attributes == null) {
-            attributes = new HashMap<String, Object>();
+            attributes = new HashMap<>();
         }
         
         attributes.put(name, value);
@@ -277,4 +277,21 @@ public class HstComponentWindowImpl implements HstComponentWindow {
        this.visible = visible;
     }
 
+    @Override
+    public void removeChildWindow(final HstComponentWindow window) {
+        HstComponentWindow remove = null;
+        if (childWindowMap != null) {
+            remove = childWindowMap.remove(window.getName());
+        }
+        if (childWindowMapByReferenceName != null) {
+            childWindowMapByReferenceName.remove(window.getReferenceName());
+        }
+        if (log.isDebugEnabled()) {
+            if (remove == null) {
+                log.debug("could not remove '{}' from '{}' because not a child.", window.getName(), getName());
+            } else {
+                log.debug("Removed '{}' from '{}'.", remove.getName(), getName());
+            }
+        }
+    }
 }
