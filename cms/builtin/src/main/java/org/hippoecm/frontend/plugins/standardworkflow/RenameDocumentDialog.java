@@ -45,7 +45,7 @@ public class RenameDocumentDialog extends AbstractWorkflowDialogRestyling<Rename
         final String originalUriName = renameDocumentModel.getUriName();
         final String originalTargetName = renameDocumentModel.getTargetName();
 
-        add(nameUriContainer = new NameUriField("name-url", this.nodeNameCodecModel, originalUriName, originalTargetName));
+        add(nameUriContainer = new NameUriField("name-url", nodeNameCodecModel, originalUriName, originalTargetName, true));
 
         final Locale cmsLocale = UserSession.get().getLocale();
         final RenameMessage message = new RenameMessage(cmsLocale, renameDocumentModel.getLocalizedNames());

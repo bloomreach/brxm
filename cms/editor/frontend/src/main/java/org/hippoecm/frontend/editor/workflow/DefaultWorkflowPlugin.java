@@ -532,7 +532,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
         private final IModel<String> nameModel;
         private final IModel<String> uriModel;
-        private final NameUriField nameUriContainer;
+        private final NameUriField nameUriField;
 
         public RenameDocumentDialog(StdWorkflow action, IModel<String> title) {
             super(action, null, title);
@@ -552,13 +552,13 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
             final String originalTargetName = nameModel.getObject();
             final String originalUriName = uriModel.getObject();
-            add(nameUriContainer = new NameUriField("name-url", codecModel, originalUriName, originalTargetName));
+            add(nameUriField = new NameUriField("name-url", codecModel, originalUriName, originalTargetName, true));
         }
 
         @Override
         protected void onOk() {
-            nameModel.setObject(nameUriContainer.getName());
-            uriModel.setObject(nameUriContainer.getUrl());
+            nameModel.setObject(nameUriField.getName());
+            uriModel.setObject(nameUriField.getUrl());
             super.onOk();
         }
     }

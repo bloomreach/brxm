@@ -33,7 +33,7 @@ import org.hippoecm.repository.api.StringCodec;
 
 public  class RenameDocumentDialog extends AbstractWorkflowDialogRestyling<Void> {
 
-    private final NameUriField nameUriContainer;
+    private final NameUriField nameUriField;
     private final PropertyModel<String> nameModel;
     private final PropertyModel<String> uriModel;
 
@@ -48,9 +48,9 @@ public  class RenameDocumentDialog extends AbstractWorkflowDialogRestyling<Void>
 
         String originalName = nameModel.getObject();
         String originalUriName = uriModel.getObject();
-        add(nameUriContainer = new NameUriField("name-url", codecModel, originalUriName, originalName));
+        add(nameUriField = new NameUriField("name-url", codecModel, originalUriName, originalName, true));
 
-        add(new RenameDocumentValidator(nameUriContainer, action.getModel()) {
+        add(new RenameDocumentValidator(nameUriField, action.getModel()) {
             @Override
             protected void showError(final String key, final Object... parameters) {
                 error(new StringResourceModel(key, RenameDocumentDialog.this, null, parameters).getObject());
@@ -66,8 +66,8 @@ public  class RenameDocumentDialog extends AbstractWorkflowDialogRestyling<Void>
 
     @Override
     protected void onOk() {
-        this.uriModel.setObject(nameUriContainer.getUrl());
-        this.nameModel.setObject(nameUriContainer.getName());
+        this.uriModel.setObject(nameUriField.getUrl());
+        this.nameModel.setObject(nameUriField.getName());
         super.onOk();
     }
 }

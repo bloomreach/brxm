@@ -53,10 +53,19 @@ public class NameUriField extends WebMarkupContainer {
     }
 
     public NameUriField(String id, IModel<StringCodec> codecModel, final String url, final String name) {
+        this(id, codecModel, url, name, null);
+    }
+
+    public NameUriField(final String id, final IModel<StringCodec> codecModel, final String name, final String url,
+                        final Boolean urlFieldEnabled) {
         super(id);
         this.codecModel = codecModel;
 
-        urlIsEditable = urlIsRequired = StringUtils.isNotEmpty(name) && !StringUtils.equals(encode(name), url);
+        // If urlFieldEnabled is null, we check if the encoded version of param name equals param url. If true we
+        // choose to keep the name field in control of the value of url, otherwise control over the url field is
+        // handed over to the user.
+        urlIsEditable = urlIsRequired = urlFieldEnabled != null ? urlFieldEnabled :
+                StringUtils.isNotEmpty(name) && !StringUtils.equals(encode(name), url);
 
         nameModel = Model.of(name);
         add(nameComponent = createNameComponent());
