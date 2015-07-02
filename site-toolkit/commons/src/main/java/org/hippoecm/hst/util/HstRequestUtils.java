@@ -360,7 +360,7 @@ public class HstRequestUtils {
             return request.getServerPort();
         }
 
-        int offset = requestHost.indexOf(':');
+        int offset = requestHost.lastIndexOf(':');
 
         if (offset != -1) {
             return Integer.parseInt(requestHost.substring(offset + 1));

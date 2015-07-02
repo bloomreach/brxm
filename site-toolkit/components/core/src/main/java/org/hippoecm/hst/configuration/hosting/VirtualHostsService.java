@@ -503,7 +503,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
         int portNumber = 0;
         String portStrippedHostName = hostName;
-        int offset = portStrippedHostName.indexOf(':');
+        int offset = portStrippedHostName.lastIndexOf(':');
         if (offset != -1) {
             try {
                 portNumber = Integer.parseInt(portStrippedHostName.substring(offset+1));
