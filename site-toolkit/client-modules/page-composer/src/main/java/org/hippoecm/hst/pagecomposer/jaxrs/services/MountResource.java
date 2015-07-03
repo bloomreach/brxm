@@ -52,6 +52,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtIdsRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.NewPageModelRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PageModelRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PrototypesRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.RelativeDocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.UserRepresentation;
@@ -376,7 +377,7 @@ public class MountResource extends AbstractConfigResource {
             log.warn("Could not get the editing mount to get the content path for listing documents.");
             return error("Could not get the editing mount to get the content path for listing documents.");
         }
-        List<DocumentRepresentation> documentLocations = new ArrayList<DocumentRepresentation>();
+        List<RelativeDocumentRepresentation> documentLocations = new ArrayList<>();
         String canonicalContentPath = editingMount.getContentPath();
         try {
             Session session = requestContext.getSession();
@@ -398,7 +399,7 @@ public class MountResource extends AbstractConfigResource {
                     doc = doc.getParent();
                 }
                 String docPath = doc.getPath();
-                documentLocations.add(DocumentUtils.getDocumentRepresentationHstConfigUser(docPath));
+                documentLocations.add(DocumentUtils.getRelativeDocumentRepresentationHstConfigUser(contentRoot.getPath(), docPath));
             }
         } catch (RepositoryException e) {
             log.warn("Exception happened while trying to fetch documents of type '" + docType + "'", e);

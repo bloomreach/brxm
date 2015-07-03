@@ -41,6 +41,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ParameterType;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.RelativeDocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoNode;
@@ -221,6 +222,21 @@ public class DocumentUtils {
                 session.logout();
             }
         }
+    }
+
+    /**
+     * @return a RelativeDocumentRepresentation which is the same as DocumentRepresentation only with getPath relative to <code>contentRoot</code>
+     * @throw IllegalArgumentException in case <code>absPath</code> does not start with <code>contentRoot + "/'</code>
+     */
+    public static RelativeDocumentRepresentation getRelativeDocumentRepresentationHstConfigUser(final String contentRoot, final String absPath) {
+        if (!absPath.startsWith(contentRoot + "/")) {
+            throw new IllegalArgumentException("absPath '" + absPath + "' should start with '" +contentRoot+ "/'");
+        }
+        DocumentRepresentation documentRepresentation = getDocumentRepresentationHstConfigUser(absPath);
+        return new RelativeDocumentRepresentation(documentRepresentation.getPath().substring(contentRoot.length() + 1),
+                                                  documentRepresentation.getDisplayName(),
+                                                  documentRepresentation.isDocument(),
+                                                  documentRepresentation.isExists());
     }
 
 }
