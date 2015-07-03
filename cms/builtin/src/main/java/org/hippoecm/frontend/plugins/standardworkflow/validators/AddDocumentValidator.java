@@ -70,7 +70,7 @@ public abstract class AddDocumentValidator extends DocumentFormValidator{
                 showError(ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
             }
         } catch (RepositoryException e) {
-            log.error("validation error", e);
+            log.error("validation error: {}", e.getMessage());
             showError(ERROR_VALIDATION_NAMES);
         }
     }

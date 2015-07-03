@@ -82,7 +82,7 @@ public abstract class RenameDocumentValidator extends DocumentFormValidator {
                 }
             }
         } catch (RepositoryException e) {
-            log.error("validation error", e);
+            log.error("validation error: {}", e.getMessage());
             showError(ERROR_VALIDATION_NAMES);
         }
     }
