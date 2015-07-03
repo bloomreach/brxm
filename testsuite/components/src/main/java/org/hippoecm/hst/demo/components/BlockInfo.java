@@ -32,7 +32,7 @@ public interface BlockInfo {
     String getBlockPath();
 
 
-    @Parameter(name = "blockPathOutsidChannel", displayName = "Cross channel Block Path")
-    @JcrPath(pickerInitialPath = "/content/documents")
+    @Parameter(name = "crossChannelBlockPath", displayName = "Cross channel Block Path")
+    @JcrPath(pickerInitialPath = "/content/documents", pickerRootPath = "/content/documents/demosite_fr")
     String getBlockPathOutsideChannel();
 }
