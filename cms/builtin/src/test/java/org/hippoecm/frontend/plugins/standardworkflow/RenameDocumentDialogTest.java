@@ -181,7 +181,7 @@ public class RenameDocumentDialogTest {
         formTester.setValue(NAME_INPUT, "Common");
         tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
 
-        tester.assertErrorMessages("The name \'Common\' is already used in this folder. Please use a different name.");
+        tester.assertErrorMessages("The name \"Common\" is already used in this folder. Please use a different name.");
     }
 
     @Test
@@ -200,7 +200,7 @@ public class RenameDocumentDialogTest {
         formTester.setValue(URL_INPUT, "common");
         formTester.setValue(NAME_INPUT, "News");
         tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
-        tester.assertErrorMessages("The URL name \'common\' is already used in this folder. Please use a different name.");
+        tester.assertErrorMessages("The URL name \"common\" is already used in this folder. Please use a different name.");
     }
 
     @Test
@@ -209,7 +209,7 @@ public class RenameDocumentDialogTest {
         formTester.setValue(URL_INPUT, "common");
         formTester.setValue(NAME_INPUT, "Different News");
         tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
-        tester.assertErrorMessages("The URL name \'common\' is already used in this folder. Please use a different name.");
+        tester.assertErrorMessages("The URL name \"common\" is already used in this folder. Please use a different name.");
     }
 
     @Test
@@ -248,7 +248,7 @@ public class RenameDocumentDialogTest {
         formTester.setValue(NAME_INPUT, "Common");
         tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
 
-        tester.assertErrorMessages("The name \'Common\' is already used in this folder. Please use a different name.");
+        tester.assertErrorMessages("The name \"Common\" is already used in this folder. Please use a different name.");
     }
 
     @Test

@@ -245,6 +245,6 @@ public class AddDocumentDialogTest {
         formTester.setValue(URL_INPUT, "another-news");
         formTester.setValue(NAME_INPUT, "Another News");
         tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
-        tester.assertErrorMessages("Error to validate input names");
+        tester.assertErrorMessages("Failed to validate input names");
     }
 }
