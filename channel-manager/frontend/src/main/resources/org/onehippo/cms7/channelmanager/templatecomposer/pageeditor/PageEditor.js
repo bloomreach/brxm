@@ -1001,15 +1001,12 @@
             var componentPropertiesPanel = Ext.getCmp('componentPropertiesPanel'),
                 componentId = record.get('id'),
                 pageRequestVariants = this.pageContainer.pageContext.pageRequestVariants,
-                lastModifiedTimestamp = record.get('lastModifiedTimestamp');
+                lastModifiedTimestamp = record.get('lastModifiedTimestamp'),
+                componentDisplayName = record.get('label') || record.get('name');
             componentPropertiesPanel.load(componentId, pageRequestVariants, lastModifiedTimestamp);
-            if (this.propertiesWindow) {
-                if(record.json !== undefined && record.json.label !== undefined){
-                    this.propertiesWindow.setTitle(record.json.label);
-                }else{
-                this.propertiesWindow.setTitle(record.get('name'));
-                }
 
+            if (this.propertiesWindow) {
+                this.propertiesWindow.setTitle(componentDisplayName);
                 this.propertiesWindow.show();
             }
         },

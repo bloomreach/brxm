@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -138,6 +138,7 @@
                 prototypeRecord: [
                     {name: 'id', mapping: 'id'},
                     {name: 'name', mapping: 'name'},
+                    {name: 'label', mapping: 'label'},
                     {name: 'path', mapping: 'path'},
                     {name: 'parentId', mapping: 'parentId'},
                     {name: 'componentClassName', mapping: 'componentClassName'},
