@@ -80,7 +80,6 @@
               MenuService.moveMenuItem(sourceId, destId, dest.index);
             }
 
-            console.log('drop compare', $scope.MenuItemCtrl.selectedMenuItem.id, sourceId);
             if($scope.MenuItemCtrl.selectedMenuItem.id !== sourceId) {
               selectItem(sourceId);
             }
