@@ -146,6 +146,10 @@ public class HstComponentParameters {
         return getValue(ContainerConstants.DEFAULT_PARAMETER_PREFIX, name);
     }
 
+    /**
+     * if <code>value</code> is <code>null</code> the parameter for <code>prefix</code> and <code>name</code> gets removed. The result
+     * is then the same as invoking {@link #remove}
+     */
     public void setValue(final String prefix, final String name, final String value) {
         final String prefixOrDefault = prefixOrDefault(prefix);
         Map<String, String> parameters = prefixedParameters.get(prefixOrDefault);
@@ -153,7 +157,20 @@ public class HstComponentParameters {
             parameters = new HashMap<>();
             prefixedParameters.put(prefixOrDefault, parameters);
         }
-        parameters.put(name, value);
+        if (value == null) {
+            parameters.remove(name);
+        } else {
+            parameters.put(name, value);
+        }
+    }
+
+    public void remove(final String prefix, final String name) {
+        final String prefixOrDefault = prefixOrDefault(prefix);
+        Map<String, String> parameters = prefixedParameters.get(prefixOrDefault);
+        if (parameters == null) {
+            return;
+        }
+        parameters.remove(name);
     }
 
     public void renamePrefix(String oldPrefix, String newPrefix) throws IllegalArgumentException {

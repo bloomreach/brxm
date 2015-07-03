@@ -34,6 +34,7 @@ import org.onehippo.repository.mock.MockNodeFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class HstComponentParametersTest {
@@ -149,6 +150,26 @@ public class HstComponentParametersTest {
     }
 
     @Test
+    public void nullValueResultInRemoving() throws RepositoryException, JAXBException, IOException {
+        MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-no-prefixes-one-parameter.xml");
+        HstComponentParameters parameters = new HstComponentParameters(node, helper);
+        assertEquals("valueOne", parameters.getValue("", "parameterOne"));
+        parameters.setValue("", "parameterOne", null);
+        parameters.save(0);
+        assertNull(parameters.getValue("", "parameterOne"));
+    }
+
+    @Test
+    public void testRemove() throws RepositoryException, JAXBException, IOException {
+        MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-no-prefixes-one-parameter.xml");
+        HstComponentParameters parameters = new HstComponentParameters(node, helper);
+        assertEquals("valueOne", parameters.getValue("", "parameterOne"));
+        parameters.remove("", "parameterOne");
+        parameters.save(0);
+        assertNull(parameters.getValue("", "parameterOne"));
+    }
+
+        @Test
     public void prefixesAddFirstParameter() throws RepositoryException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-empty.xml");
 
