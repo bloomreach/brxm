@@ -16,6 +16,7 @@
 package org.onehippo.cms7.channelmanager.model;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
@@ -66,25 +67,21 @@ public class DocumentLinkModel implements IModel<String> {
 
     @Override
     public void setObject(String path) {
-        String setPath = path;
-
+        String relPath = path;
         if (isRelative && path.startsWith(rootPath)) {
             // convert absolute path to relative path
-            setPath = path.substring(rootPath.length());
-            if (setPath.startsWith("/")) {
-                setPath = setPath.substring(1);
-            }
+            relPath = path.substring(rootPath.length() + 1);
         }
 
         final DocumentLinkInfo documentLinkInfo = new DocumentLinkInfo();
-        documentLinkInfo.setPath(setPath);
+        documentLinkInfo.setPath(relPath);
         documentLinkInfo.setDocumentName(getDocumentName(path));
 
         delegate.setObject(documentLinkInfo);
     }
 
     private String getDocumentName(final String path) {
-        if(path.startsWith(rootPath)) {
+        if (path.startsWith("/")) {
             final javax.jcr.Session session = ((UserSession)Session.get()).getJcrSession();
 
             try {
@@ -92,8 +89,10 @@ public class DocumentLinkModel implements IModel<String> {
                 if (node instanceof HippoNode) {
                     return ((HippoNode)node).getLocalizedName();
                 }
+            } catch (PathNotFoundException e){
+                log.info("Cannot find node for '{}'", path);
             } catch (RepositoryException e) {
-                log.warn("Cannot retrieve node with path '" + path + "'", e);
+                log.warn("Cannot retrieve node with path '{}'",path, e);
             }
         }
 
