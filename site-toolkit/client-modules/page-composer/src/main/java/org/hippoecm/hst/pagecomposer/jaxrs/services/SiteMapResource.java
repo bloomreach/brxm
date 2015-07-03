@@ -29,8 +29,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.ctc.wstx.util.StringUtil;
-
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -52,7 +50,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NotNullValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorBuilder;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
-import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,13 +116,20 @@ public class SiteMapResource extends AbstractConfigResource {
                 final HstComponentConfiguration page = componentsConfiguration.getComponentConfiguration(componentConfigurationId);
 
                 DocumentRepresentation primaryDocumentRepresentation = null;
-                if (siteMapItem.getRelativeContentPath() != null) {
-                    final String rootContentPath = getPageComposerContextService().getEditingMount().getContentPath();
-                    primaryDocumentRepresentation = getDocumentRepresentationHstConfigUser(siteMapItem.getRelativeContentPath(), rootContentPath);
+                final String relativeContentPath = siteMapItem.getRelativeContentPath();
+                final String rootContentPath = getPageComposerContextService().getEditingMount().getContentPath();
+                if (relativeContentPath != null) {
+                    final String absPath;
+                    if (relativeContentPath.startsWith("/")) {
+                        absPath = rootContentPath + relativeContentPath;
+                    } else {
+                        absPath = rootContentPath + "/" + relativeContentPath;
+                    }
+                    primaryDocumentRepresentation = getDocumentRepresentationHstConfigUser(absPath);
                     primaryDocumentRepresentation.setSelected(true);
                 }
                 Set<DocumentRepresentation> availableDocumentRepresentations = findAvailableDocumentRepresentations(
-                        getPageComposerContextService(), page, primaryDocumentRepresentation, true);
+                        getPageComposerContextService(), page, primaryDocumentRepresentation, true, rootContentPath + "/");
 
                 final SiteMapItemRepresentation siteMapItemRepresentation = new SiteMapItemRepresentation()
                         .represent(siteMapItem, getPageComposerContextService().getEditingMount(), primaryDocumentRepresentation, availableDocumentRepresentations);

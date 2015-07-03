@@ -393,20 +393,12 @@ public class MountResource extends AbstractConfigResource {
             NodeIterator documents = result.getNodes();
             while (documents.hasNext()) {
                 Node doc = documents.nextNode();
-                if (doc == null) {
-                    continue;
-                }
                 if (doc.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                     // take the handle
                     doc = doc.getParent();
                 }
                 String docPath = doc.getPath();
-                if (!docPath.startsWith(canonicalContentPath + "/")) {
-                    log.warn("Unexpected document path '{}'", docPath);
-                    continue;
-                }
-                String relPath = docPath.substring(canonicalContentPath.length() + 1);
-                documentLocations.add(DocumentUtils.getDocumentRepresentationHstConfigUser(relPath, canonicalContentPath));
+                documentLocations.add(DocumentUtils.getDocumentRepresentationHstConfigUser(docPath));
             }
         } catch (RepositoryException e) {
             log.warn("Exception happened while trying to fetch documents of type '" + docType + "'", e);

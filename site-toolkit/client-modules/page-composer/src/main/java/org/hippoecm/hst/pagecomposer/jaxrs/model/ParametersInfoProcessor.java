@@ -140,8 +140,13 @@ public class ParametersInfoProcessor {
         if (value != null && !value.isEmpty()) {
             property.setValue(value);
             if(contentPath != null && !contentPath.isEmpty() && property.getType().equals(ParameterType.JCR_PATH.xtype)) {
-                final String relPath = assertRelativePath(value, contentPath);
-                final DocumentRepresentation docRepresentation = DocumentUtils.getDocumentRepresentationHstConfigUser(relPath, contentPath);
+                final String absPath;
+                if (value.startsWith("/")) {
+                    absPath = value;
+                } else {
+                    absPath = contentPath + "/" + value;
+                }
+                final DocumentRepresentation docRepresentation = DocumentUtils.getDocumentRepresentationHstConfigUser(absPath);
                 final String displayName = docRepresentation.getDisplayName();
                 if(displayName != null && !displayName.isEmpty()) {
                     property.setDisplayValue(displayName);
@@ -152,19 +157,6 @@ public class ParametersInfoProcessor {
                 }
             }
         }
-    }
-
-    private static String assertRelativePath(final String value, final String contentPath) {
-        String relativePath;
-        if (value.startsWith(contentPath + "/")) {
-            relativePath = value.substring((contentPath + "/").length());
-        } else {
-            relativePath = value;
-        }
-        if(relativePath.startsWith("/")) {
-            relativePath = relativePath.substring(1);
-        }
-        return relativePath;
     }
 
     private static Map<String, ContainerItemComponentPropertyRepresentation> createPropertyMap(final String contentPath, final Class<?> classType, final ResourceBundle[] resourceBundles) {

@@ -19,8 +19,10 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.IllegalFormatCodePointException;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
@@ -49,6 +51,21 @@ import org.slf4j.LoggerFactory;
 public class DocumentUtils {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentUtils.class);
+
+    public static Set<DocumentRepresentation> findAvailableDocumentRepresentations(final PageComposerContextService pageComposerContextService,
+                                                                                   final HstComponentConfiguration page,
+                                                                                   final DocumentRepresentation primaryDocumentRepresentation,
+                                                                                   final boolean documentsOnly,
+                                                                                   final String filterStartPath) throws RepositoryException {
+        final Set<DocumentRepresentation> availableDocumentRepresentations = findAvailableDocumentRepresentations(pageComposerContextService, page, primaryDocumentRepresentation, documentsOnly);
+        final Set<DocumentRepresentation> filtered = new HashSet<>();
+        for (DocumentRepresentation availableDocumentRepresentation : availableDocumentRepresentations) {
+            if (availableDocumentRepresentation.getPath().startsWith(filterStartPath)) {
+                filtered.add(availableDocumentRepresentation);
+            }
+        }
+        return filtered;
+    }
 
     public static Set<DocumentRepresentation> findAvailableDocumentRepresentations(final PageComposerContextService pageComposerContextService,
                                                                                    final HstComponentConfiguration page,
@@ -107,7 +124,6 @@ public class DocumentUtils {
                         if (annotation instanceof DocumentLink) {
                             absolutePath = false;
                             // for DocumentLink we need some extra processing
-                            final DocumentLink documentLink = (DocumentLink) annotation;
                             propertyName = propAnnotation.name();
                         } else if (annotation instanceof JcrPath) {
                             // for JcrPath we need some extra processing too
@@ -132,15 +148,14 @@ public class DocumentUtils {
                                     continue;
                                 }
 
-                                if (absolutePath) {
-                                    if (!documentLocation.startsWith(contentPath + "/")) {
-                                        log.debug("Skipping absolute document path '{}' outside or equal to current root content '{}'",
-                                                documentLocation, contentPath);
-                                        continue;
+                                if (!absolutePath) {
+                                    if (documentLocation.startsWith("/")) {
+                                        documentLocation = contentPath + documentLocation;
+                                    } else {
+                                        documentLocation = contentPath + "/" + documentLocation;
                                     }
-                                    documentLocation = documentLocation.substring(contentPath.length() + 1);
                                 }
-                                final DocumentRepresentation presentation = getDocumentRepresentationHstConfigUser(documentLocation, contentPath);
+                                final DocumentRepresentation presentation = getDocumentRepresentationHstConfigUser(documentLocation);
                                 if (documentsOnly) {
                                     if (presentation.isDocument() && presentation.isExists()) {
                                         documentRepresentations.add(presentation);
@@ -165,11 +180,13 @@ public class DocumentUtils {
 
 
     /**
-     * @throws java.lang.IllegalArgumentException is <code>relPath</code> does not start with <code>mount.getContentPath()
-     *                                            + '/'</code>
+     * @throws java.lang.IllegalArgumentException if <code>absPath</code> does not start with "/"
      * @throws RuntimeRepositoryException         in case some repository exception happens
      */
-    public static DocumentRepresentation getDocumentRepresentationHstConfigUser(final String relPath, final String rootContentPath) {
+    public static DocumentRepresentation getDocumentRepresentationHstConfigUser(final String absPath) {
+        if (absPath == null || !absPath.startsWith("/")) {
+            throw new IllegalArgumentException("Invalid absolute path");
+        }
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
         Credentials configUser = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".hstconfigreader");
         Session session = null;
@@ -177,12 +194,8 @@ public class DocumentUtils {
         try {
             // pooled hst config user session which has in general read access everywhere
             session = repository.login(configUser);
-            final Node node;
-            if (StringUtils.isEmpty(relPath)) {
-               node = session.getNode(rootContentPath);
-            } else {
-                node = session.getNode(rootContentPath + "/" + relPath);
-            }
+            final Node node = session.getNode(absPath);
+
             final boolean isDocument;
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 isDocument = true;
@@ -194,9 +207,9 @@ public class DocumentUtils {
                 isDocument = false;
             }
             String displayName = ((HippoNode) node).getLocalizedName();
-            return new DocumentRepresentation(relPath, rootContentPath, displayName, isDocument, true);
+            return new DocumentRepresentation(absPath, displayName, isDocument, true);
         } catch (PathNotFoundException e) {
-            return new DocumentRepresentation(relPath, rootContentPath, null, false, false);
+            return new DocumentRepresentation(absPath, StringUtils.substringAfterLast(absPath, "/"), false, false);
         } catch (RepositoryException e) {
             throw new RuntimeRepositoryException("Could not obtain hst config user session", e);
         } finally {

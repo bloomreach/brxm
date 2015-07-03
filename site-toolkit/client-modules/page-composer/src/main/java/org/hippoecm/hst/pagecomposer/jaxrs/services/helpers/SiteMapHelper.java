@@ -315,9 +315,15 @@ public class SiteMapHelper extends AbstractHelper {
         if (siteMapItem.getScheme() != null) {
             setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME, siteMapItem.getScheme());
         }
-        
-        if (siteMapItem.getPrimaryDocumentRepresentation() != null) {
-            setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, siteMapItem.getPrimaryDocumentRepresentation().getPath());
+        if (siteMapItem.getPrimaryDocumentRepresentation() != null && siteMapItem.getPrimaryDocumentRepresentation().getPath() != null) {
+            final String absPath = siteMapItem.getPrimaryDocumentRepresentation().getPath();
+            final String rootContentPath = pageComposerContextService.getEditingMount().getContentPath();
+            if (absPath.startsWith(rootContentPath + "/")) {
+                setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, absPath.substring(rootContentPath.length() + 1));
+            } else {
+                log.info("Cannot set '{}' for relative content path because does not start with root channel content path '{}'",
+                        absPath, rootContentPath + "/");
+            }
         } else if (siteMapItem.getRelativeContentPath() != null) {
             setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, siteMapItem.getRelativeContentPath());
         }

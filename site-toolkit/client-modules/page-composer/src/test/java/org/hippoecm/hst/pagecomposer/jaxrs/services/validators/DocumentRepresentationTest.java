@@ -30,25 +30,22 @@ public class DocumentRepresentationTest {
     public void test_DocumentRepresentation_creation() {
 
         DocumentRepresentation presentation = new DocumentRepresentation(
-                "News/News1",
-                "/unittestcontent/documents/unittestproject", "News One", true, true);
+                "/unittestcontent/documents/unittestproject/News/News1", "News One", true, true);
 
-        assertEquals("News/News1", presentation.getPath());
+        assertEquals("/unittestcontent/documents/unittestproject/News/News1", presentation.getPath());
         assertEquals("News One", presentation.getDisplayName());
     }
 
     @Test
-    public void test_DocumentRepresentation_equals_and_hashCode_based_on_getPath_and_contentRoot() {
+    public void test_DocumentRepresentation_equals_and_hashCode_based_on_path() {
 
         Set<DocumentRepresentation> testSet = new HashSet<>();
         DocumentRepresentation presentation1 = new DocumentRepresentation(
-                "News/News1",
-                "/unittestcontent/documents/unittestproject", "News One", true, true);
+                "/unittestcontent/documents/unittestproject/News/News1", "News One", true, true);
 
 
         DocumentRepresentation presentation2 = new DocumentRepresentation(
-                "News/News1",
-                "/unittestcontent/documents/unittestproject", "News DIFFERENT NAME", true, true);
+                "/unittestcontent/documents/unittestproject/News/News1", "News DIFFERENT NAME", true, true);
 
         testSet.add(presentation1);
         testSet.add(presentation2);
@@ -57,8 +54,7 @@ public class DocumentRepresentationTest {
 
 
         DocumentRepresentation presentationDifferentRootContent = new DocumentRepresentation(
-                "News/News1",
-                "/unittestcontent/documents", "News One", true, true);
+                "/unittestcontent/documentsNews/News1", "News One", true, true);
 
 
         testSet.add(presentationDifferentRootContent);

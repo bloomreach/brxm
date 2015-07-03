@@ -20,7 +20,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "document")
 public class DocumentRepresentation {
     private String path;
-    private String rootMountContentPath;
     private String displayName;
     private boolean isDocument;
     private boolean exists;
@@ -30,13 +29,11 @@ public class DocumentRepresentation {
     public DocumentRepresentation(){
     }
 
-    public DocumentRepresentation(final String path,
-                                  final String rootMountContentPath,
+    public DocumentRepresentation(final String absPath,
                                   final String displayName,
                                   final boolean isDocument,
                                   final boolean exists) {
-            this.rootMountContentPath = rootMountContentPath;
-            this.path = path;
+            this.path = absPath;
             this.displayName = displayName;
             this.isDocument = isDocument;
             this.exists = exists;
@@ -100,25 +97,18 @@ public class DocumentRepresentation {
         if (!path.equals(that.path)) {
             return false;
         }
-        if (!rootMountContentPath.equals(that.rootMountContentPath)) {
-            return false;
-        }
-
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = path.hashCode();
-        result = 31 * result + rootMountContentPath.hashCode();
-        return result;
+        return path.hashCode();
     }
 
     @Override
     public String toString() {
         return "DocumentRepresentation{" +
                 "path='" + path + '\'' +
-                ", rootMountContentPath='" + rootMountContentPath + '\'' +
                 ", displayName='" + displayName + '\'' +
                 ", isDocument=" + isDocument +
                 ", exists=" + exists +

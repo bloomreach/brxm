@@ -51,7 +51,7 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
 
         final DocumentRepresentation primaryDocumentRepresentation = home.getPrimaryDocumentRepresentation();
         assertNotNull(primaryDocumentRepresentation);
-        assertEquals(relativeContentPath, primaryDocumentRepresentation.getPath());
+        assertEquals("/unittestcontent/documents/unittestproject/common/homepage", primaryDocumentRepresentation.getPath());
         assertEquals("Home Page", primaryDocumentRepresentation.getDisplayName());
         assertTrue(primaryDocumentRepresentation.isExists());
         assertTrue(primaryDocumentRepresentation.isDocument());
@@ -75,7 +75,7 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
 
         final DocumentRepresentation primaryDocumentRepresentation = homeWithNonExistingRelContentPath.getPrimaryDocumentRepresentation();
         assertNotNull(primaryDocumentRepresentation);
-        assertEquals(relativeContentPath, primaryDocumentRepresentation.getPath());
+        assertEquals("/unittestcontent/documents/unittestproject/path-to-no-node", primaryDocumentRepresentation.getPath());
         assertNull(primaryDocumentRepresentation.getDisplayName());
         assertFalse(primaryDocumentRepresentation.isExists());
         assertFalse(primaryDocumentRepresentation.isDocument());
@@ -109,7 +109,7 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
 
         final DocumentRepresentation updatedRepresentation = updated.getPrimaryDocumentRepresentation();
 
-        assertEquals(updatedRelativeContentPath, updatedRepresentation.getPath());
+        assertEquals("/unittestcontent/documents/unittestproject/updatedPath", updatedRepresentation.getPath());
         assertNull(updatedRepresentation.getDisplayName());
         assertFalse(updatedRepresentation.isExists());
         assertFalse(updatedRepresentation.isDocument());
@@ -133,7 +133,7 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
                 assertEquals("updatedPath1", updatedRelativeContentPath);
 
                 final DocumentRepresentation updatedRepresentation = updated.getPrimaryDocumentRepresentation();
-                assertEquals(updatedRelativeContentPath, updatedRepresentation.getPath());
+                assertEquals("/unittestcontent/documents/unittestproject/updatedPath1", updatedRepresentation.getPath());
             }
         }
     }
@@ -249,17 +249,13 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
         assertEquals(4, availableDocumentRepresentations.size());
 
         DocumentRepresentation representation1 = new DocumentRepresentation(
-                "News/News2",
-                "/unittestcontent/documents/unittestproject", "News2", true, true);
+                "/unittestcontent/documents/unittestproject/News/News2", "News2", true, true);
         DocumentRepresentation representation2 = new DocumentRepresentation(
-                "News/News1",
-                "/unittestcontent/documents/unittestproject", "News1", true, true);
+                "/unittestcontent/documents/unittestproject/News/News1", "News1", true, true);
         DocumentRepresentation representation3 = new DocumentRepresentation(
-                "common/aboutfolder/about-us",
-                "/unittestcontent/documents/unittestproject", "About Us", true, true);
+                "/unittestcontent/documents/unittestproject/common/aboutfolder/about-us", "About Us", true, true);
         DocumentRepresentation folderRepresentation = new DocumentRepresentation(
-                "common",
-                "/unittestcontent/documents/unittestproject", "common", false, true);
+                "/unittestcontent/documents/unittestproject/common", "common", false, true);
 
         DocumentRepresentation[] presentRepresentations = {representation1, representation2, representation3, homePage.getPrimaryDocumentRepresentation()};
         for (DocumentRepresentation representation : presentRepresentations) {
@@ -267,6 +263,32 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
         }
 
         assertFalse("Folders should not be present", availableDocumentRepresentations.contains(folderRepresentation));
+
+    }
+
+    @Test
+    public void test_availableDocumentRepresentations_does_not_return_documents_from_other_channels() throws Exception {
+        final Node leftComponent = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/leftmenu");
+        leftComponent.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, LeftMenu.class.getName());
+
+        leftComponent.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES,
+                new String[] {
+                        "absoluteJcrPath"
+                });
+
+        leftComponent.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES,
+                new String[] {
+                        "/unittestcontent/documents/unittestsubproject/common/homepage"
+                });
+
+        session.save();
+        Thread.sleep(100);
+
+        final SiteMapItemRepresentation homePage = getSiteMapItemRepresentation(session, "home");
+        final Set<DocumentRepresentation> availableDocumentRepresentations = homePage.getAvailableDocumentRepresentations();
+        assertEquals(1, availableDocumentRepresentations.size());
+
+        assertEquals(homePage.getPrimaryDocumentRepresentation(), availableDocumentRepresentations.iterator().next());
 
     }
 
@@ -319,32 +341,24 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
         assertEquals(4, availableDocumentRepresentations.size());
 
         DocumentRepresentation existing1 = new DocumentRepresentation(
-                "News/News2",
-                "/unittestcontent/documents/unittestproject", "News2", true, true);
+                "/unittestcontent/documents/unittestproject/News/News2", "News2", true, true);
         DocumentRepresentation existing2 = new DocumentRepresentation(
-                "News/News1",
-                "/unittestcontent/documents/unittestproject", "News1", true, true);
+                 "/unittestcontent/documents/unittestproject/News/News1", "News1", true, true);
 
         DocumentRepresentation existing3 = new DocumentRepresentation(
-                "common/aboutfolder/about-us",
-                "/unittestcontent/documents/unittestproject", "About Us", true, true);
+                "/unittestcontent/documents/unittestproject/common/aboutfolder/about-us", "About Us", true, true);
 
         DocumentRepresentation folderRepresentation = new DocumentRepresentation(
-                "common",
-                "/unittestcontent/documents/unittestproject", "common", false, true);
+                "/unittestcontent/documents/unittestproject/common", "common", false, true);
 
         DocumentRepresentation nonExisting1 = new DocumentRepresentation(
-                "dummy-News/News2",
-                "/unittestcontent/documents/unittestproject", null, false, false);
+                "/unittestcontent/documents/unittestproject/dummy-News/News2", null, false, false);
         DocumentRepresentation nonExisting2 = new DocumentRepresentation(
-                "dummy-News/News1",
-                "/unittestcontent/documents/unittestproject", null, false, false);
+                "/unittestcontent/documents/unittestproject/dummy-News/News1", null, false, false);
         DocumentRepresentation nonExisting3 = new DocumentRepresentation(
-                "common/aboutfolder/dummy-about-us",
-                "/unittestcontent/documents/unittestproject", null, false, false);
+                "/unittestcontent/documents/unittestproject/common/aboutfolder/dummy-about-us", null, false, false);
         DocumentRepresentation nonExisting4 = new DocumentRepresentation(
-                "dummy-common",
-                "/unittestcontent/documents/unittestproject", null, false, false);
+                "/unittestcontent/documents/unittestproject/dummy-common", null, false, false);
 
         DocumentRepresentation[] presentRepresentations = {existing1, existing2, existing3, homePage.getPrimaryDocumentRepresentation()};
 
