@@ -19,9 +19,17 @@ package org.hippoecm.frontend.plugins.standardworkflow.validators;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.validation.IFormValidator;
+import org.apache.wicket.model.StringResourceModel;
 
 abstract class DocumentFormValidator implements IFormValidator {
+
+    private final Component component;
+
+    public DocumentFormValidator(final Component component) {
+        this.component = component;
+    }
 
     /**
      * Return true if <code>parentNode</code> contains a child having the same localized name with the specified
@@ -31,5 +39,7 @@ abstract class DocumentFormValidator implements IFormValidator {
         return SameNameSiblingsUtil.hasChildWithLocalizedName(parentNode, localizedName);
     }
 
-    protected abstract void showError(final String key, Object... parameters);
+    protected void showError(final String key, Object... parameters) {
+        component.error(new StringResourceModel(key, component, null, parameters).getObject());
+    }
 }

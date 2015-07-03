@@ -27,16 +27,9 @@ import org.hippoecm.frontend.widgets.NameUriField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class RenameDocumentValidator extends DocumentFormValidator {
+public class RenameDocumentValidator extends DocumentFormValidator {
+
     static Logger log = LoggerFactory.getLogger(RenameDocumentValidator.class);
-    /**
-     * Error key messages. Component uses this validator must have these keys in its resource bundle
-     */
-    public static final String ERROR_SAME_NAMES = "error-same-names";
-    public static final String ERROR_SNS_NODE_EXISTS = "error-sns-node-exists";
-    public static final String ERROR_LOCALIZED_NAME_EXISTS = "error-localized-name-exists";
-    public static final String ERROR_SNS_NAMES_EXIST = "error-sns-names-exist";
-    public static final String ERROR_VALIDATION_NAMES = "error-validation-names";
 
     private final WorkflowDescriptorModel workflowDescriptorModel;
     private final NameUriField nameUriContainer;
@@ -44,6 +37,8 @@ public abstract class RenameDocumentValidator extends DocumentFormValidator {
     private final String originalUrl;
 
     public RenameDocumentValidator(NameUriField nameUriContainer, WorkflowDescriptorModel workflowDescriptorModel) {
+        super(nameUriContainer);
+
         this.nameUriContainer = nameUriContainer;
         this.workflowDescriptorModel = workflowDescriptorModel;
         this.originalName = nameUriContainer.getName();
@@ -64,9 +59,9 @@ public abstract class RenameDocumentValidator extends DocumentFormValidator {
 
             if (StringUtils.equals(newUrlName, originalUrl)) {
                 if (StringUtils.equals(newLocalizedName, originalName)) {
-                    showError(ERROR_SAME_NAMES);
+                    showError(NameUriField.ERROR_SAME_NAMES);
                 } else if (hasChildWithLocalizedName(parentNode, newLocalizedName)) {
-                    showError(ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
+                    showError(NameUriField.ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
                 }
             } else {
                 final boolean hasNodeWithSameName = parentNode.hasNode(newUrlName);
@@ -74,16 +69,16 @@ public abstract class RenameDocumentValidator extends DocumentFormValidator {
                         hasChildWithLocalizedName(parentNode, newLocalizedName);
 
                 if (hasNodeWithSameName && hasOtherNodeWithSameLocalizedName) {
-                    showError(ERROR_SNS_NAMES_EXIST, newUrlName, newLocalizedName);
+                    showError(NameUriField.ERROR_SNS_NAMES_EXIST, newUrlName, newLocalizedName);
                 } else if (hasNodeWithSameName) {
-                    showError(ERROR_SNS_NODE_EXISTS, newUrlName);
+                    showError(NameUriField.ERROR_SNS_NODE_EXISTS, newUrlName);
                 } else if (hasOtherNodeWithSameLocalizedName) {
-                    showError(ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
+                    showError(NameUriField.ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
                 }
             }
         } catch (RepositoryException e) {
             log.error("validation error: {}", e.getMessage());
-            showError(ERROR_VALIDATION_NAMES);
+            showError(NameUriField.ERROR_VALIDATION_NAMES);
         }
     }
 }

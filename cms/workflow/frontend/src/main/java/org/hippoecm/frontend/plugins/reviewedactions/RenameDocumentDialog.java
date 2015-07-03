@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.frontend.dialog.DialogConstants;
@@ -50,12 +49,7 @@ public  class RenameDocumentDialog extends AbstractWorkflowDialogRestyling<Void>
         String originalUriName = uriModel.getObject();
         add(nameUriField = new NameUriField("name-url", codecModel, originalUriName, originalName, true));
 
-        add(new RenameDocumentValidator(nameUriField, action.getModel()) {
-            @Override
-            protected void showError(final String key, final Object... parameters) {
-                error(new StringResourceModel(key, RenameDocumentDialog.this, null, parameters).getObject());
-            }
-        });
+        add(new RenameDocumentValidator(nameUriField, action.getModel()));
 
         final Locale cmsLocale = UserSession.get().getLocale();
         final RenameMessage message = new RenameMessage(cmsLocale, localizedNamesModel.getObject());

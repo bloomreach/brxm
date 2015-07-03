@@ -1280,8 +1280,6 @@ builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderWorkf
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderWorkflowPlugin.properties -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderWorkflowPlugin_de.properties -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderWorkflowPlugin_fr.properties -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/RenameDocumentDialog_de.properties -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/RenameDocumentDialog_fr.properties -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ReorderDialog.html svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ReorderDialog.java svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ReorderDialog.properties -text
@@ -2737,7 +2735,6 @@ workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/Ex
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/PreviewWorkflowPlugin.java svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/PublishAllShortcutPlugin$Dialog_de.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/PublishAllShortcutPlugin_de.properties -text
-workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/RenameDocumentDialog_de.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/RequestsView.html svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/RequestsView.java svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/RequestsView_de.properties -text

@@ -29,14 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Validate localized name and url name upon adding a new document/folder
  */
-public abstract class AddDocumentValidator extends DocumentFormValidator{
-    /**
-     * Error key messages. Component uses this validator must have these keys in its resource bundle
-     */
-    public static final String ERROR_SNS_NODE_EXISTS = "error-sns-node-exists";
-    public static final String ERROR_LOCALIZED_NAME_EXISTS = "error-localized-name-exists";
-    public static final String ERROR_VALIDATION_NAMES = "error-validation-names";
-    public static final String ERROR_SNS_NAMES_EXIST = "error-sns-names-exist";
+public class AddDocumentValidator extends DocumentFormValidator {
 
     static Logger log = LoggerFactory.getLogger(AddDocumentValidator.class);
 
@@ -44,6 +37,8 @@ public abstract class AddDocumentValidator extends DocumentFormValidator{
     private final WorkflowDescriptorModel workflowDescriptorModel;
 
     public AddDocumentValidator(NameUriField nameUriContainer, final WorkflowDescriptorModel workflowDescriptorModel) {
+        super(nameUriContainer);
+
         this.nameUriContainer = nameUriContainer;
         this.workflowDescriptorModel = workflowDescriptorModel;
     }
@@ -63,15 +58,15 @@ public abstract class AddDocumentValidator extends DocumentFormValidator{
             final boolean hasNodeWithSameLocalizedName = hasChildWithLocalizedName(parentNode, newLocalizedName);
 
             if (hasNodeWithSameName && hasNodeWithSameLocalizedName) {
-                showError(ERROR_SNS_NAMES_EXIST, newNodeName, newLocalizedName);
+                showError(NameUriField.ERROR_SNS_NAMES_EXIST, newNodeName, newLocalizedName);
             } else if (hasNodeWithSameName) {
-                showError(ERROR_SNS_NODE_EXISTS, newNodeName);
+                showError(NameUriField.ERROR_SNS_NODE_EXISTS, newNodeName);
             } else if (hasNodeWithSameLocalizedName) {
-                showError(ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
+                showError(NameUriField.ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
             }
         } catch (RepositoryException e) {
             log.error("validation error: {}", e.getMessage());
-            showError(ERROR_VALIDATION_NAMES);
+            showError(NameUriField.ERROR_VALIDATION_NAMES);
         }
     }
 }

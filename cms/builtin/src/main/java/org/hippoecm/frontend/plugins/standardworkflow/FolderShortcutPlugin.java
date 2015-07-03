@@ -375,12 +375,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             }
             evaluateChoices();
 
-            add(new AddDocumentValidator(nameUriContainer, folderWorkflowDescriptorModel) {
-                @Override
-                protected void showError(final String key, final Object... parameters) {
-                    AddRootFolderDialog.this.error(new StringResourceModel(key, AddRootFolderDialog.this, null, parameters).getObject());
-                }
-            });
+            add(new AddDocumentValidator(nameUriContainer, folderWorkflowDescriptorModel));
         }
 
         @Override

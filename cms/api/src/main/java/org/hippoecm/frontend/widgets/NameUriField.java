@@ -36,6 +36,14 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.repository.api.StringCodec;
 
 public class NameUriField extends Panel {
+    /**
+     * Error key messages. Component uses this validator must have these keys in its resource bundle
+     */
+    public static final String ERROR_SNS_NODE_EXISTS = "error-sns-node-exists";
+    public static final String ERROR_LOCALIZED_NAME_EXISTS = "error-localized-name-exists";
+    public static final String ERROR_VALIDATION_NAMES = "error-validation-names";
+    public static final String ERROR_SNS_NAMES_EXIST = "error-sns-names-exist";
+    public static final String ERROR_SAME_NAMES = "error-same-names";
 
     private final IModel<String> nameModel;
     private final IModel<String> urlModel;
