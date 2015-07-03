@@ -14,31 +14,18 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-    <wicket:extend>
-        <div class="hippo-dialog-body">
-            <wicket:container wicket:id="name-url">
-                <div class="label"><wicket:message key="name-label">Name</wicket:message></div>
-                <div class="input"><input type="text" wicket:id="name" class="hippo-form-input"/></div>
+  <wicket:extend>
+    <div class="hippo-dialog-body">
+      <wicket:container wicket:id="name-url">[ name-url component ]</wicket:container>
+      <div wicket:id="language">
+        <div class="label"><wicket:message key="language" /></div>
+        <div><select wicket:id="select"></select></div>
+      </div>
 
-                <div class="label"><wicket:message key="url-label">Name</wicket:message></div>
-                <div class="input input-action-button">
-                    <input wicket:id="url"/>
-                    <a wicket:id="uriAction" class="action">
-                        <span wicket:id="uriActionLabel">[ UriActionLabel ]</span>
-                    </a>
-                </div>
-            </wicket:container>
-            <div wicket:id="language">
-                <div class="label"><wicket:message key="language" /></div>
-                <div><select wicket:id="select"></select></div>
-            </div>
-
-            <div class="label"><span wicket:id="typelabel"/></div>
-            <div class="input"><select class="hippo-form-select" wicket:id="prototype"/></div>
-
-            <div wicket:id="notypes"/>
-
-            <wicket:child/>
-        </div>
-    </wicket:extend>
+      <div class="label"><span wicket:id="typelabel"/></div>
+      <div class="input"><select class="hippo-form-select" wicket:id="prototype"/></div>
+      <div wicket:id="notypes"/>
+      <wicket:child/>
+    </div>
+  </wicket:extend>
 </html>
