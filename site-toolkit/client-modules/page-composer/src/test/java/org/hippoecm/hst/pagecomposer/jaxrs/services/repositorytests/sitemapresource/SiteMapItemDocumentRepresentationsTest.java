@@ -76,7 +76,7 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
         final DocumentRepresentation primaryDocumentRepresentation = homeWithNonExistingRelContentPath.getPrimaryDocumentRepresentation();
         assertNotNull(primaryDocumentRepresentation);
         assertEquals("/unittestcontent/documents/unittestproject/path-to-no-node", primaryDocumentRepresentation.getPath());
-        assertNull(primaryDocumentRepresentation.getDisplayName());
+        assertEquals("path-to-no-node",primaryDocumentRepresentation.getDisplayName());
         assertFalse(primaryDocumentRepresentation.isExists());
         assertFalse(primaryDocumentRepresentation.isDocument());
     }
@@ -98,7 +98,7 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
         {
             final SiteMapItemRepresentation toUpdate = getSiteMapItemRepresentation(session, "home");
             final DocumentRepresentation representation = toUpdate.getPrimaryDocumentRepresentation();
-            representation.setPath("updatedPath");
+            representation.setPath("/unittestcontent/documents/unittestproject/updatedPath");
             final SiteMapResource siteMapResource = createResource();
             siteMapResource.update(toUpdate);
         }
@@ -110,7 +110,7 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
         final DocumentRepresentation updatedRepresentation = updated.getPrimaryDocumentRepresentation();
 
         assertEquals("/unittestcontent/documents/unittestproject/updatedPath", updatedRepresentation.getPath());
-        assertNull(updatedRepresentation.getDisplayName());
+        assertEquals("updatedPath", updatedRepresentation.getDisplayName());
         assertFalse(updatedRepresentation.isExists());
         assertFalse(updatedRepresentation.isDocument());
     }
@@ -118,10 +118,12 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
     @Test
     public void update_by_setting_primaryDocumentRepresentation_and_relativeContentPath_has_precedence_for_primaryDocumentRepresentation_path() throws Exception {
         {
+
             final SiteMapItemRepresentation toUpdate = getSiteMapItemRepresentation(session, "home");
             final DocumentRepresentation representation = toUpdate.getPrimaryDocumentRepresentation();
             // both update PrimaryDocumentRepresentation and relativeContentPath : first has precedence
-            representation.setPath("updatedPath1");
+
+            representation.setPath("/unittestcontent/documents/unittestproject/updatedPath1");
             toUpdate.setRelativeContentPath("updatedPath2");
 
             final SiteMapResource siteMapResource = createResource();
