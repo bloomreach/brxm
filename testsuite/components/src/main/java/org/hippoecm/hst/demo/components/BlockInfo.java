@@ -16,6 +16,7 @@
 package org.hippoecm.hst.demo.components;
 
 import org.hippoecm.hst.core.parameters.Color;
+import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
 public interface BlockInfo {
@@ -26,4 +27,12 @@ public interface BlockInfo {
     @Parameter(name = "content", defaultValue="My block", displayName = "Contents")
     String getContent();
 
+    @Parameter(name = "blockPath", displayName = "Block Path")
+    @JcrPath(pickerInitialPath = "/content/documents/demosite/news")
+    String getBlockPath();
+
+
+    @Parameter(name = "blockPathOutsidChannel", displayName = "Cross channel Block Path")
+    @JcrPath(pickerInitialPath = "/content/documents")
+    String getBlockPathOutsideChannel();
 }

@@ -17,10 +17,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst' %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 
 <div style="border: 1px solid ${borderColor};margin-top: 20px;">
   <c:choose>
+    <c:when test="${not empty bannerPath}">
+      <hst:link var="bannerSrc" path="/binaries${bannerPath}"/>
+      <img src="${bannerSrc}" alt="${fn:escapeXml(myName)}"/>
+    </c:when>
     <c:when test="${not empty content}">
       <span>Banner content: ${content}</span>
     </c:when>

@@ -45,5 +45,8 @@ public class Banner extends BaseHstComponent {
         String parentPath = path.substring(0, index);
         String parentName = parentPath.substring(parentPath.lastIndexOf('/') + 1);
         request.setAttribute("myName", parentName + ":" + path.substring(index + 1));
+
+        String bannerPath = paramsInfo.getPath();
+        request.setAttribute("bannerPath", bannerPath);
     }
 }

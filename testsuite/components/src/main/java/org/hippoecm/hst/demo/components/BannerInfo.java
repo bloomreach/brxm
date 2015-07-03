@@ -20,6 +20,7 @@ package org.hippoecm.hst.demo.components;
 import java.util.Date;
 
 import org.hippoecm.hst.core.parameters.Color;
+import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
 public interface BannerInfo {
@@ -40,4 +41,9 @@ public interface BannerInfo {
     @Parameter(name = "content", displayName = "Content")
     String getContent();
 
+    @Parameter(name = "bannerPath", displayName = "Banner Path")
+    @JcrPath(
+            pickerSelectableNodeTypes = { "demosite:qaimageset" },
+            pickerInitialPath = "/content/gallery/images")
+    String getPath();
 }
