@@ -21,8 +21,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the annotated method returns a JCR path that can be selected via a 'picker'. The path can be absolute,
- * or relative to the canonical content root of the channel in which this annotation is used (see {@link #isRelative()}).
+ * Indicates that the annotated method returns a JCR path that can be selected via a 'picker'. The path can be
+ * absolute, or relative (see {@link #isRelative()}) to the picker content root path (see {@link #pickerRootPath()}).
  *
  * This annotation should only be used on public getter methods.
  */
@@ -73,5 +73,16 @@ public @interface JcrPath {
      * is used.
      */
     boolean isRelative() default false;
+
+    /**
+     * <p>
+     * The root absolute path to use in the picker. This parameter allows the picker to select documents outside the channel
+     * content path scope. However it is still restricted by authorization rules. The default value is empty, it means that
+     * the picker will use the canonical content path of the channel as the root path.
+     * </p>
+     * @return the absolute root path to use in the picker, or an empty string if the channel content path is used. If configured
+     * it <strong>must</strong> start with a "/".
+     */
+    String pickerRootPath() default "";
 
 }
