@@ -96,7 +96,7 @@ public class DocumentLinkModel implements IModel<String> {
             }
         }
 
-        return StringUtils.EMPTY;
+        return StringUtils.substringAfterLast(path, "/");
     }
 
     @Override
