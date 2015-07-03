@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.widgets.NameUriField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +37,9 @@ public class AddDocumentValidator extends DocumentFormValidator {
     private final NameUriField nameUriContainer;
     private final WorkflowDescriptorModel workflowDescriptorModel;
 
-    public AddDocumentValidator(NameUriField nameUriContainer, final WorkflowDescriptorModel workflowDescriptorModel) {
-        super(nameUriContainer);
+    public AddDocumentValidator(final AbstractDialog dialog, final NameUriField nameUriContainer,
+                                final WorkflowDescriptorModel workflowDescriptorModel) {
+        super(dialog, nameUriContainer);
 
         this.nameUriContainer = nameUriContainer;
         this.workflowDescriptorModel = workflowDescriptorModel;

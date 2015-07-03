@@ -52,7 +52,7 @@ public class RenameDocumentDialog extends AbstractWorkflowDialogRestyling<Rename
             warn(message.forFolder());
         }
 
-        add(new RenameDocumentValidator(nameUriContainer, workflowDescriptorModel));
+        add(new RenameDocumentValidator(this, nameUriContainer, workflowDescriptorModel));
     }
 
     @Override

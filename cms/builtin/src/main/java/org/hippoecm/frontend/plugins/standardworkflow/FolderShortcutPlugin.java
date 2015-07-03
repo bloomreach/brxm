@@ -375,7 +375,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             }
             evaluateChoices();
 
-            add(new AddDocumentValidator(nameUriContainer, folderWorkflowDescriptorModel));
+            add(new AddDocumentValidator(this, nameUriContainer, folderWorkflowDescriptorModel));
         }
 
         @Override

@@ -108,7 +108,7 @@ public class AddDocumentDialog extends AbstractWorkflowDialogRestyling<AddDocume
         }
         add(languageField);
 
-        add(new AddDocumentValidator(nameUriContainer, workflowDescriptorModel));
+        add(new AddDocumentValidator(this, nameUriContainer, workflowDescriptorModel));
 
         add(CssClass.append("add-document-dialog"));
 

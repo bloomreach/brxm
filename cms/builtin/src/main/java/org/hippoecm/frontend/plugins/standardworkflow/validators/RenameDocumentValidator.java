@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.widgets.NameUriField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +37,9 @@ public class RenameDocumentValidator extends DocumentFormValidator {
     private final String originalName;
     private final String originalUrl;
 
-    public RenameDocumentValidator(NameUriField nameUriContainer, WorkflowDescriptorModel workflowDescriptorModel) {
-        super(nameUriContainer);
+    public RenameDocumentValidator(final AbstractDialog dialog, final NameUriField nameUriContainer,
+                                   WorkflowDescriptorModel workflowDescriptorModel) {
+        super(dialog, nameUriContainer);
 
         this.nameUriContainer = nameUriContainer;
         this.workflowDescriptorModel = workflowDescriptorModel;

@@ -22,12 +22,15 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.validation.IFormValidator;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.dialog.AbstractDialog;
 
 abstract class DocumentFormValidator implements IFormValidator {
 
+    private final AbstractDialog dialog;
     private final Component component;
 
-    public DocumentFormValidator(final Component component) {
+    public DocumentFormValidator(final AbstractDialog dialog, final Component component) {
+        this.dialog = dialog;
         this.component = component;
     }
 
@@ -40,6 +43,6 @@ abstract class DocumentFormValidator implements IFormValidator {
     }
 
     protected void showError(final String key, Object... parameters) {
-        component.error(new StringResourceModel(key, component, null, parameters).getObject());
+        dialog.error(new StringResourceModel(key, component, null, parameters).getObject());
     }
 }

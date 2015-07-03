@@ -49,7 +49,7 @@ public  class RenameDocumentDialog extends AbstractWorkflowDialogRestyling<Void>
         String originalUriName = uriModel.getObject();
         add(nameUriField = new NameUriField("name-url", codecModel, originalUriName, originalName, true));
 
-        add(new RenameDocumentValidator(nameUriField, action.getModel()));
+        add(new RenameDocumentValidator(this, nameUriField, action.getModel()));
 
         final Locale cmsLocale = UserSession.get().getLocale();
         final RenameMessage message = new RenameMessage(cmsLocale, localizedNamesModel.getObject());
