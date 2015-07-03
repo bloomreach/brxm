@@ -22,7 +22,7 @@ import java.util.Locale;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -148,7 +148,7 @@ public class RenameDocumentDialogTest {
     }
 
     @Test
-    public void createDialogContainingExpectedInputValues(){
+    public void dialogCreatedContainingExpectedInputValues(){
         final FormTester formTester = createDialog(false);
         FormComponent<String> nameComponent = (FormComponent<String>) formTester.getForm().get(NAME_INPUT);
         assertNotNull(nameComponent);
@@ -158,6 +158,13 @@ public class RenameDocumentDialogTest {
         assertNotNull(urlField);
         assertEquals("news", urlField.getValue());
 
+        // url field is editable in renaming dialog
+        assertTrue(urlField.isEnabled());
+
+        // the urlAction must be 'Reset'
+        Label urlActionLabel = (Label) formTester.getForm().get("name-url:uriAction:uriActionLabel");
+        assertNotNull(urlActionLabel);
+        assertEquals("Reset", urlActionLabel.getDefaultModelObject());
     }
 
     @Test

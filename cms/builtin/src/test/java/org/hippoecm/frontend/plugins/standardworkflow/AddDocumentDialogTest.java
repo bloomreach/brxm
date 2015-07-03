@@ -24,6 +24,8 @@ import java.util.Locale;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -43,7 +45,10 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.onehippo.repository.mock.MockNode;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -72,8 +77,6 @@ public class AddDocumentDialogTest {
         config.put("plugin.class", DummyPlugin.class.getName());
         context = home.getPluginManager().start(config);
     }
-
-
 
     private FormTester createDialog(boolean workflowError){
         final WorkflowDescriptorModel workflowDescriptorModel;
@@ -151,6 +154,25 @@ public class AddDocumentDialogTest {
         MockNodeUtil.addFolder(projectNode, "common", "Common");
         return projectNode;
     }
+
+    @Test
+    public void dialogCreatedWithInitialStates(){
+        final FormTester formTester = createDialog(false);
+        FormComponent<String> nameComponent = (FormComponent<String>) formTester.getForm().get(NAME_INPUT);
+        assertNotNull(nameComponent);
+
+        FormComponent<String> urlField = (FormComponent<String>) formTester.getForm().get(URL_INPUT);
+        assertNotNull(urlField);
+
+        // url field is non-editable
+        assertFalse(urlField.isEnabled());
+
+        // the urlAction must be 'Edit'
+        Label urlActionLabel = (Label) formTester.getForm().get("name-url:uriAction:uriActionLabel");
+        assertNotNull(urlActionLabel);
+        assertEquals("Edit", urlActionLabel.getDefaultModelObject());
+    }
+
 
     @Test
     public void clickOKWithEmptyInputs(){
