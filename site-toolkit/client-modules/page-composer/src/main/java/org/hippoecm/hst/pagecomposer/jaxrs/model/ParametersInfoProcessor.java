@@ -196,7 +196,11 @@ public class ParametersInfoProcessor {
                     final JcrPath jcrPath = (JcrPath) annotation;
                     prop.setPickerConfiguration(jcrPath.pickerConfiguration());
                     prop.setPickerInitialPath(jcrPath.pickerInitialPath());
-                    prop.setPickerRootPath(contentPath);
+                    String pickerRootPath = jcrPath.pickerRootPath();
+                    if (StringUtils.isEmpty(pickerRootPath)) {
+                        pickerRootPath = contentPath;
+                    }
+                    prop.setPickerRootPath(pickerRootPath);
                     prop.setPickerPathIsRelative(jcrPath.isRelative());
                     prop.setPickerRemembersLastVisited(jcrPath.pickerRemembersLastVisited());
                     prop.setPickerSelectableNodeTypes(jcrPath.pickerSelectableNodeTypes());

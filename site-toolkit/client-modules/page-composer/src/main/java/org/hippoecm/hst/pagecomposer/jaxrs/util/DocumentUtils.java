@@ -121,6 +121,7 @@ public class DocumentUtils {
                         final Annotation annotation = ParameterType.getTypeAnnotation(method);
                         final String propertyName;
                         boolean absolutePath;
+                        String rootPickerPath = contentPath;
                         if (annotation instanceof DocumentLink) {
                             absolutePath = false;
                             // for DocumentLink we need some extra processing
@@ -128,6 +129,9 @@ public class DocumentUtils {
                         } else if (annotation instanceof JcrPath) {
                             // for JcrPath we need some extra processing too
                             final JcrPath jcrPath = (JcrPath) annotation;
+                            if (StringUtils.isNotEmpty(jcrPath.pickerRootPath())) {
+                                rootPickerPath = jcrPath.pickerRootPath();
+                            }
                             propertyName = propAnnotation.name();
                             absolutePath = !jcrPath.isRelative();
                         } else {
@@ -150,9 +154,9 @@ public class DocumentUtils {
 
                                 if (!absolutePath) {
                                     if (documentLocation.startsWith("/")) {
-                                        documentLocation = contentPath + documentLocation;
+                                        documentLocation = rootPickerPath + documentLocation;
                                     } else {
-                                        documentLocation = contentPath + "/" + documentLocation;
+                                        documentLocation = rootPickerPath + "/" + documentLocation;
                                     }
                                 }
                                 final DocumentRepresentation presentation = getDocumentRepresentationHstConfigUser(documentLocation);
