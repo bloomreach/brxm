@@ -279,18 +279,21 @@ public class HstComponentWindowImpl implements HstComponentWindow {
 
     @Override
     public void removeChildWindow(final HstComponentWindow window) {
-        HstComponentWindow remove = null;
-        if (childWindowMap != null) {
-            remove = childWindowMap.remove(window.getName());
+        if (window == null) {
+            throw new IllegalArgumentException("'window' argument not allowed to be null");
         }
-        if (childWindowMapByReferenceName != null) {
-            childWindowMapByReferenceName.remove(window.getReferenceName());
+        if (childWindowMap == null) {
+            log.debug("Cannot remove '{}' since no child windows present for '{}'", window.getName(), getName());
+            return;
         }
-        if (log.isDebugEnabled()) {
-            if (remove == null) {
-                log.debug("could not remove '{}' from '{}' because not a child.", window.getName(), getName());
-            } else {
-                log.debug("Removed '{}' from '{}'.", remove.getName(), getName());
+
+        HstComponentWindow removed = childWindowMap.remove(window.getName());
+        if (removed == null) {
+            log.debug("could not remove '{}' from '{}' because not a child.", window.getName(), getName());
+        } else {
+            log.debug("Removed '{}' from '{}'.", window.getName(), getName());
+            if (childWindowMapByReferenceName != null) {
+                childWindowMapByReferenceName.remove(window.getReferenceName());
             }
         }
     }
