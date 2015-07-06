@@ -70,7 +70,10 @@ public class DocumentLinkModel implements IModel<String> {
         String relPath = path;
         if (isRelative && path.startsWith(rootPath)) {
             // convert absolute path to relative path
-            relPath = path.substring(rootPath.length() + 1);
+            relPath = path.substring(rootPath.length());
+            if (!relPath.isEmpty()) {
+                relPath = relPath.substring(1);
+            }
         }
 
         final DocumentLinkInfo documentLinkInfo = new DocumentLinkInfo();
