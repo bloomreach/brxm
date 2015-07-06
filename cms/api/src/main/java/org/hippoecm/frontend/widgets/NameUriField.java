@@ -36,14 +36,6 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.repository.api.StringCodec;
 
 public class NameUriField extends Panel {
-    /**
-     * Error key messages. Component uses this validator must have these keys in its resource bundle
-     */
-    public static final String ERROR_SNS_NODE_EXISTS = "error-sns-node-exists";
-    public static final String ERROR_LOCALIZED_NAME_EXISTS = "error-localized-name-exists";
-    public static final String ERROR_VALIDATION_NAMES = "error-validation-names";
-    public static final String ERROR_SNS_NAMES_EXIST = "error-sns-names-exist";
-    public static final String ERROR_SAME_NAMES = "error-same-names";
 
     private final IModel<String> nameModel;
     private final IModel<String> urlModel;
@@ -54,7 +46,6 @@ public class NameUriField extends Panel {
     private final FormComponent<String> urlComponent;
 
     private boolean urlIsEditable;
-    private boolean urlIsRequired;
 
     public NameUriField(final String id, final IModel<StringCodec> codecModel) {
         this(id, codecModel, null, null);
@@ -72,7 +63,7 @@ public class NameUriField extends Panel {
         // If urlFieldEnabled is null, we check if the encoded version of param name equals param url. If true we
         // choose to keep the name field in control of the value of url, otherwise control over the url field is
         // handed over to the user.
-        urlIsEditable = urlIsRequired = urlFieldEnabled != null ? urlFieldEnabled :
+        urlIsEditable = urlFieldEnabled != null ? urlFieldEnabled :
                 StringUtils.isNotEmpty(name) && !StringUtils.equals(encode(name), url);
 
         nameModel = Model.of(name);
@@ -121,7 +112,7 @@ public class NameUriField extends Panel {
 
             @Override
             public boolean isRequired() {
-                return urlIsRequired;
+                return urlIsEditable;
             }
         };
         urlComponent.add(CssClass.append(new AbstractReadOnlyModel<String>() {
@@ -138,17 +129,15 @@ public class NameUriField extends Panel {
         AjaxLink<Boolean> uriAction = new AjaxLink<Boolean>("uriAction") {
             @Override
             public void onClick(AjaxRequestTarget target) {
-                // urlIsEditable must not be changed prior #validate() otherwise urlModel object value will also load
-                // value from getName()
-                urlIsRequired = !urlIsEditable;
-
-                if (!urlComponent.isValid() || urlComponent.getForm().hasErrorMessage()) {
-                    urlComponent.getForm().getFeedbackMessages().clear();
-                }
-                urlComponent.setModelObject(getName());
-                urlComponent.validate();
-
                 urlIsEditable = !urlIsEditable;
+
+                urlComponent.modelChanging();
+                urlModel.setObject(getName());
+                urlComponent.modelChanged();
+
+                if (!urlComponent.isValid()) {
+                    urlComponent.validate();
+                }
 
                 target.add(this);
                 target.add(urlComponent);
