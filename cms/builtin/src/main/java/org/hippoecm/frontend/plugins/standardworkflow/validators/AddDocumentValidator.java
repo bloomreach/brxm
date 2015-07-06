@@ -22,7 +22,6 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.widgets.NameUriField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,14 +31,14 @@ import org.slf4j.LoggerFactory;
  */
 public class AddDocumentValidator extends DocumentFormValidator {
 
-    static Logger log = LoggerFactory.getLogger(AddDocumentValidator.class);
+    private static final Logger log = LoggerFactory.getLogger(AddDocumentValidator.class);
 
     private final NameUriField nameUriContainer;
     private final WorkflowDescriptorModel workflowDescriptorModel;
 
-    public AddDocumentValidator(final AbstractDialog dialog, final NameUriField nameUriContainer,
+    public AddDocumentValidator(final Form form, final NameUriField nameUriContainer,
                                 final WorkflowDescriptorModel workflowDescriptorModel) {
-        super(dialog, nameUriContainer);
+        super(form);
 
         this.nameUriContainer = nameUriContainer;
         this.workflowDescriptorModel = workflowDescriptorModel;
@@ -60,15 +59,15 @@ public class AddDocumentValidator extends DocumentFormValidator {
             final boolean hasNodeWithSameLocalizedName = hasChildWithLocalizedName(parentNode, newLocalizedName);
 
             if (hasNodeWithSameName && hasNodeWithSameLocalizedName) {
-                showError(NameUriField.ERROR_SNS_NAMES_EXIST, newNodeName, newLocalizedName);
+                showError(ERROR_SNS_NAMES_EXIST, newNodeName, newLocalizedName);
             } else if (hasNodeWithSameName) {
-                showError(NameUriField.ERROR_SNS_NODE_EXISTS, newNodeName);
+                showError(ERROR_SNS_NODE_EXISTS, newNodeName);
             } else if (hasNodeWithSameLocalizedName) {
-                showError(NameUriField.ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
+                showError(ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
             }
         } catch (RepositoryException e) {
             log.error("validation error: {}", e.getMessage());
-            showError(NameUriField.ERROR_VALIDATION_NAMES);
+            showError(ERROR_VALIDATION_NAMES);
         }
     }
 }

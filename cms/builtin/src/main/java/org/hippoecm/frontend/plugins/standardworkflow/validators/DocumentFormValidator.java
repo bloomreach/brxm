@@ -19,19 +19,21 @@ package org.hippoecm.frontend.plugins.standardworkflow.validators;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.validation.IFormValidator;
-import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 
-abstract class DocumentFormValidator implements IFormValidator {
+public abstract class DocumentFormValidator implements IFormValidator {
 
-    private final AbstractDialog dialog;
-    private final Component component;
+    public static final String ERROR_SNS_NODE_EXISTS = "error-sns-node-exists";
+    public static final String ERROR_LOCALIZED_NAME_EXISTS = "error-localized-name-exists";
+    public static final String ERROR_VALIDATION_NAMES = "error-validation-names";
+    public static final String ERROR_SNS_NAMES_EXIST = "error-sns-names-exist";
 
-    public DocumentFormValidator(final AbstractDialog dialog, final Component component) {
-        this.dialog = dialog;
-        this.component = component;
+    private final Form form;
+
+    public DocumentFormValidator(final Form form) {
+        this.form = form;
     }
 
     /**
@@ -43,6 +45,6 @@ abstract class DocumentFormValidator implements IFormValidator {
     }
 
     protected void showError(final String key, Object... parameters) {
-        dialog.error(new StringResourceModel(key, component, null, parameters).getObject());
+        form.error(new ClassResourceModel(key, DocumentFormValidator.class, null, parameters).getObject());
     }
 }
