@@ -26,7 +26,7 @@
   <artifactId>hippo-testsuite</artifactId>
   <name>Hippo Test Suite</name>
   <description>Hippo Test Suite</description>
-  <version>1.07.02-SNAPSHOT</version>
+  <version>1.07.02-rc-1</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -349,9 +349,9 @@
   </profiles>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/tags/hippo-testsuite-1.07.02-rc-1</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/tags/hippo-testsuite-1.07.02-rc-1</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/tags/hippo-testsuite-1.07.02-rc-1</url>
   </scm>
 
 </project>
