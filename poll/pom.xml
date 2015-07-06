@@ -28,15 +28,15 @@
   <description>Hippo Plugin Poll</description>
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-poll</artifactId>
-  <version>1.09.01</version>
+  <version>1.09.02-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/tags/hippo-plugin-poll-1.09.01</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/tags/hippo-plugin-poll-1.09.01</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/tags/hippo-plugin-poll-1.09.01</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/trunk/</url>
   </scm>
 
   <properties>
