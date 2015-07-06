@@ -29,13 +29,13 @@
   <description>Hippo Plugin Content Blocks</description>
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-content-blocks</artifactId>
-  <version>1.12.02</version>
+  <version>1.12.03-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/tags/hippo-plugin-content-blocks-1.12.02</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/tags/hippo-plugin-content-blocks-1.12.02</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/tags/hippo-plugin-content-blocks-1.12.02</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/trunk/</url>
   </scm>
 
   <properties>
