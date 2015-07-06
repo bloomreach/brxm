@@ -34,7 +34,7 @@ public class ContainerItemRepresentation extends ComponentRepresentation {
         setName(node.getName());
         setPath(node.getPath());
         setParentId(node.getParent().getIdentifier());
-        if (node.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME)) {
+        if (node.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE)) {
             setTemplate(node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE).getString());
         }
         if (node.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_LABEL)) {
