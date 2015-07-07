@@ -20,6 +20,19 @@
     </sv:property>
   </sv:node>
 
+  <!-- Remove webfiles watchedModules -->
+  <sv:node sv:name="contentblocksdemo-webfiles-module-delete-property-watchedModules">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropdelete" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:modules/webfiles/hippo:moduleconfig/watchedModules</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>30011</sv:value>
+    </sv:property>
+  </sv:node>
+
   <!-- Document types -->
   <sv:node sv:name="contentblocksdemo">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -555,37 +568,37 @@
   </sv:node>
 
   <!-- Subsite  common configuration -->
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
 
   <!-- Subsite common templates -->
-  
+
 
    <!-- Blueprints -->
-  
+
 
   <!-- Blueprints workspace configuration nodes -->
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
 
   <!-- Blueprints NON workspace configuraion nodes -->
-  
 
-  
 
-  
+
+
+
 
   <!-- Subsites bootstrap content -->
   <sv:node sv:name="contentblocksdemo-hippo-queries-new-subsite-template-contentblocksdemo-subsite">
