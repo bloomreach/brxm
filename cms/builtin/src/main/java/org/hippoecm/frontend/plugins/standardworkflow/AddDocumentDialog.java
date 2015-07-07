@@ -25,6 +25,7 @@ import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -135,5 +136,11 @@ public class AddDocumentDialog extends AbstractWorkflowDialogRestyling<AddDocume
     protected void onDetach() {
         nodeNameCodecModel.detach();
         super.onDetach();
+    }
+
+    //TODO: This override method should be moved to the ancestor class in CMS7-9429
+    @Override
+    protected FeedbackPanel newFeedbackPanel(String id) {
+        return new FeedbackPanel(id);
     }
 }
