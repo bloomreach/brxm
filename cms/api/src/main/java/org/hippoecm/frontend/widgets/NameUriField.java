@@ -23,6 +23,7 @@ import org.apache.wicket.ajax.attributes.ThrottlingSettings;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -135,7 +136,13 @@ public class NameUriField extends Panel {
                 urlModel.setObject(getName());
                 urlComponent.modelChanged();
 
+                Form<?> form = urlComponent.getForm();
+                if (form.hasFeedbackMessage()) {
+                    form.getFeedbackMessages().clear();
+                }
+
                 if (!urlComponent.isValid()) {
+
                     urlComponent.validate();
                 }
 

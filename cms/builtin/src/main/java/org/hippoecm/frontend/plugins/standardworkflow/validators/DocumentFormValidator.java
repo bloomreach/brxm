@@ -45,6 +45,6 @@ public abstract class DocumentFormValidator implements IFormValidator {
     }
 
     protected void showError(final String key, Object... parameters) {
-        form.error(new ClassResourceModel(key, DocumentFormValidator.class, null, parameters).getObject());
+        form.error(new ClassResourceModel(key, DocumentFormValidator.class, parameters).getObject());
     }
 }
