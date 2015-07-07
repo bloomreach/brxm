@@ -30,7 +30,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.DialogConstants;
@@ -42,7 +42,7 @@ import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.StringCodec;
 
-public class AddDocumentDialog extends AbstractWorkflowDialogRestyling<AddDocumentArguments> {
+public class AddDocumentDialog extends WorkflowDialog<AddDocumentArguments> {
 
     private final NameUriField nameUriContainer;
 

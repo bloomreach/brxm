@@ -20,7 +20,7 @@ import java.util.Locale;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.DialogConstants;
@@ -29,7 +29,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.StringCodec;
 
-public class RenameDocumentDialog extends AbstractWorkflowDialogRestyling<RenameDocumentArguments> {
+public class RenameDocumentDialog extends WorkflowDialog<RenameDocumentArguments> {
 
     private final NameUriField nameUriContainer;
     private final IModel<StringCodec> nodeNameCodecModel;

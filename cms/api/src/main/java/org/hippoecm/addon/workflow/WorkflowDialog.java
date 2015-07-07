@@ -23,28 +23,24 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/* Temporary copy of AbstractWorkflowDialog to extend from Dialog rather than
- * AbstractDialog. Once all subclasses of AbstractWorkflowDialog have been
- * restyled, the intent is to delete this file again.
- */
-public abstract class AbstractWorkflowDialogRestyling<T> extends Dialog<T> {
+public class WorkflowDialog<T> extends Dialog<T> {
 
-    private static Logger log = LoggerFactory.getLogger(AbstractWorkflowDialogRestyling.class);
+    private static Logger log = LoggerFactory.getLogger(WorkflowDialog.class);
 
     private final IWorkflowInvoker invoker;
     private final IModel<String> titleModel;
     private final Label notification;
 
-    public AbstractWorkflowDialogRestyling(final IWorkflowInvoker invoker) {
+    public WorkflowDialog(final IWorkflowInvoker invoker) {
         this(invoker, null);
     }
 
-    public AbstractWorkflowDialogRestyling(final IWorkflowInvoker invoker, final  IModel<T> model) {
+    public WorkflowDialog(final IWorkflowInvoker invoker, final IModel<T> model) {
         this(invoker, model, null);
     }
 
-    public AbstractWorkflowDialogRestyling(final IWorkflowInvoker invoker, final IModel<T> model,
-                                           final IModel<String> titleModel) {
+    public WorkflowDialog(final IWorkflowInvoker invoker, final IModel<T> model,
+                          final IModel<String> titleModel) {
         super(model);
 
         this.titleModel = titleModel;

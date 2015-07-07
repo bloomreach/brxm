@@ -21,7 +21,7 @@ import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.editor.workflow.dialog.ReferringDocumentsView;
@@ -29,7 +29,7 @@ import org.hippoecm.frontend.editor.workflow.model.ReferringDocumentsProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.service.IEditorManager;
 
-public class ScheduleDepublishDialog extends AbstractWorkflowDialogRestyling<Node> {
+public class ScheduleDepublishDialog extends WorkflowDialog<Node> {
 
     public ScheduleDepublishDialog(IWorkflowInvoker invoker, JcrNodeModel nodeModel, IModel<Date> dateModel,
                                    IEditorManager editorMgr) {

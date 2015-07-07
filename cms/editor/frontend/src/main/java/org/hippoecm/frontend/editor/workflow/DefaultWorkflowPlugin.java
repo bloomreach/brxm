@@ -32,7 +32,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.DestinationDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -528,7 +528,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         whereUsedAction.setVisible(!Boolean.FALSE.equals(workflowHints.get("status")));
     }
 
-    public class RenameDocumentDialog extends AbstractWorkflowDialogRestyling<Void> {
+    public class RenameDocumentDialog extends WorkflowDialog<Void> {
 
         private final IModel<String> nameModel;
         private final IModel<String> uriModel;

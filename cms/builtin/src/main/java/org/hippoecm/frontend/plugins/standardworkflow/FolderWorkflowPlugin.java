@@ -42,7 +42,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -227,7 +227,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                         return new DeleteDialog(this, notificationModel, false);
                     }
 
-                    class DeleteDialog extends AbstractWorkflowDialogRestyling {
+                    class DeleteDialog extends WorkflowDialog<Void> {
 
                         public DeleteDialog(IWorkflowInvoker invoker, IModel<String> notification, boolean deleteAllowed) {
                             super(invoker);

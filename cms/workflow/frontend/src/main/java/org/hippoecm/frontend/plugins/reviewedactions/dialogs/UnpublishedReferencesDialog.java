@@ -18,12 +18,12 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs;
 import javax.jcr.Node;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 
-public class UnpublishedReferencesDialog extends AbstractWorkflowDialogRestyling<WorkflowDescriptor> {
+public class UnpublishedReferencesDialog extends WorkflowDialog<WorkflowDescriptor> {
 
     public UnpublishedReferencesDialog(final IWorkflowInvoker invoker, final ISortableDataProvider<Node, String> provider,
                                        final IEditorManager mgr) {

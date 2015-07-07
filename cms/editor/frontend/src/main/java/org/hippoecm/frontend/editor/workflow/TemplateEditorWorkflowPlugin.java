@@ -28,7 +28,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.io.IClusterable;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -158,7 +158,7 @@ public class TemplateEditorWorkflowPlugin extends RenderPlugin<WorkflowDescripto
         }
     }
 
-    private static class NamespaceDialog extends AbstractWorkflowDialogRestyling<Namespace> {
+    private static class NamespaceDialog extends WorkflowDialog<Namespace> {
 
         public NamespaceDialog(final IWorkflowInvoker invoker, final IModel<Namespace> namespaceModel,
                                final IModel<String> titleModel) {

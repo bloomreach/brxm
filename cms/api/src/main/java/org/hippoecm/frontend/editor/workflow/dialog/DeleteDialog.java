@@ -21,7 +21,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.DialogConstants;
@@ -31,7 +31,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 
-public class DeleteDialog extends AbstractWorkflowDialogRestyling<WorkflowDescriptor> {
+public class DeleteDialog extends WorkflowDialog<WorkflowDescriptor> {
 
     public DeleteDialog(IModel<String> title, WorkflowDescriptorModel model, IModel<String> notification,
                         IWorkflowInvoker invoker, IEditorManager editorMgr) {

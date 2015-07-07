@@ -20,7 +20,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialogRestyling;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.editor.workflow.dialog.ReferringDocumentsView;
@@ -29,7 +29,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 
-public class DepublishDialog extends AbstractWorkflowDialogRestyling<WorkflowDescriptor> {
+public class DepublishDialog extends WorkflowDialog<WorkflowDescriptor> {
 
     public DepublishDialog(final IWorkflowInvoker invoker, final WorkflowDescriptorModel workflowModel,
                            final IModel<String> title, final IModel<String> notification,
