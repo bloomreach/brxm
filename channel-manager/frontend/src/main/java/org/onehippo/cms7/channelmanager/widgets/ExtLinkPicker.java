@@ -219,10 +219,13 @@ public class ExtLinkPicker extends ExtObservable {
                     log.warn("Cannot invoke callback for picked path '{}': no ajax request target available", documentLinkInfo.getPath());
                     return;
                 }
-                target.prependJavaScript("Hippo.ChannelManager.ExtLinkPickerFactory.Instance.fireEvent('picked', '"
-                        + documentLinkInfo.getPath() + "', '" + documentLinkInfo.getDocumentName() + "')");
+
+                final String script = String.format("Hippo.ChannelManager.ExtLinkPickerFactory.Instance.fireEvent('picked', '%s', '%s');",
+                        JavaScriptUtils.escape(documentLinkInfo.getPath()),
+                        JavaScriptUtils.escape(documentLinkInfo.getDocumentName()));
+
+                target.prependJavaScript(script);
             }
         }
-
     }
 }
