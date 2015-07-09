@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -221,8 +222,7 @@ public class ExtLinkPicker extends ExtObservable {
                 }
 
                 final String script = String.format("Hippo.ChannelManager.ExtLinkPickerFactory.Instance.fireEvent('picked', '%s', '%s');",
-                        JavaScriptUtils.escape(documentLinkInfo.getPath()),
-                        JavaScriptUtils.escape(documentLinkInfo.getDocumentName()));
+                        documentLinkInfo.getPath(), StringEscapeUtils.escapeJavaScript(documentLinkInfo.getDocumentName()));
 
                 target.prependJavaScript(script);
             }

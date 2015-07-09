@@ -150,7 +150,7 @@
         tag: 'input',
         type: 'text',
         readonly: 'readonly',
-        value: this.displayValue,
+        value: Ext.util.Format.htmlEncode(this.displayValue),
         width: this.el.getWidth()
       }, true);
       this.renderTextField.addClass('x-form-text');
