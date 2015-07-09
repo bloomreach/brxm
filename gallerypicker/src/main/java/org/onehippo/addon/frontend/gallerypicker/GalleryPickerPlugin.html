@@ -24,14 +24,14 @@
           <img wicket:id="previewImage"/>
         </td>
         <td class="gallerypickerbuttons">
-          <button wicket:id="select" class="btn btn-default btn-sm">[select]</button>
+          <a class="btn btn-default btn-sm" wicket:id="select">
+            <span class="button-label"><wicket:message key="picker.select">[Select]</wicket:message></span>
+          </a>
           <a class="btn btn-default btn-sm" wicket:id="open">
-            <span class="button-label">
-              <wicket:message key="picker.open">[Open]</wicket:message>
-            </span>
+            <span class="button-label"><wicket:message key="picker.open">[Open]</wicket:message></span>
           </a>
           <a class="btn btn-default btn-sm" href="#" wicket:id="remove">
-            <span class="button-label" wicket:id="remove-link-text"/>
+            <span class="button-label"><wicket:message key="picker.remove">[Clear]</wicket:message></span>
           </a>
         </td>
       </tr>

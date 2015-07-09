@@ -29,7 +29,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
@@ -40,8 +39,6 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.DialogLink;
-import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -132,9 +129,13 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
 
             case EDIT:
                 fragment = new Fragment("fragment", "edit", this);
-                DialogLink select = new DialogLink("select", new StringResourceModel("picker.select", this, null),
-                        createDialogFactory(), getDialogService());
-                fragment.add(select);
+                fragment.add(new AjaxLink<Void>("select") {
+
+                    @Override
+                    public void onClick(final AjaxRequestTarget target) {
+                        getDialogService().show(createDialog());
+                    }
+                });
                 addOpenButton(fragment);
 
                 remove = new AjaxLink<Void>("remove") {
@@ -146,7 +147,6 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
                 };
                 fragment.add(remove);
 
-                remove.add(new Label("remove-link-text", new StringResourceModel("picker.remove", this, null)));
                 remove.setVisible(false);
                 if (isValidDisplaySelection()) {
                     remove.setVisible(true);
@@ -228,46 +228,37 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
     }
 
     /**
-     * Create a dialogFactory, which is used by the plugin to render the dialog for selecting an image.
-     *
-     * @return a new DialogFactory based on the current configuration
+     * Create a gallery picker dialog to select an image.
      */
-    private IDialogFactory createDialogFactory() {
-        return new IDialogFactory() {
+    private AbstractDialog<String> createDialog() {
+        final IChainingModel<String> dialogModel = new IChainingModel<String>() {
 
-            public AbstractDialog<String> createDialog() {
-                return new GalleryPickerDialog(getPluginContext(), getPluginConfig(), new IChainingModel<String>() {
+            public String getObject() {
+                return valueModel.getObject();
+            }
 
-                    public String getObject() {
-                        return valueModel.getObject();
-                    }
+            public void setObject(String object) {
+                valueModel.setObject(object);
+                GalleryPickerPlugin.this.modelChanged();
+            }
 
-                    public void setObject(String object) {
-                        valueModel.setObject(object);
-                        GalleryPickerPlugin.this.modelChanged();
-                    }
+            public IModel<?> getChainedModel() {
+                return valueModel;
+            }
 
-                    public IModel<?> getChainedModel() {
-                        return valueModel;
-                    }
+            public void setChainedModel(IModel<?> model) {
+                throw new UnsupportedOperationException("Value model cannot be changed");
+            }
 
-                    public void setChainedModel(IModel<?> model) {
-                        throw new UnsupportedOperationException("Value model cannot be changed");
-                    }
+            public void detach() {
+                valueModel.detach();
+            }
+        };
+        return new GalleryPickerDialog(getPluginContext(), getPluginConfig(), dialogModel) {
 
-                    public void detach() {
-                        valueModel.detach();
-                    }
-
-                }) {
-
-                    @Override
-                    public IModel<String> getTitle() {
-                        return new StringResourceModel("dialog-title", GalleryPickerPlugin.this, null, "Gallery Picker");
-                    }
-
-                };
-
+            @Override
+            public IModel<String> getTitle() {
+                return new StringResourceModel("dialog-title", GalleryPickerPlugin.this, null, "Gallery Picker");
             }
         };
     }
