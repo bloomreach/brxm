@@ -32,7 +32,6 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
@@ -54,8 +53,6 @@ import org.slf4j.LoggerFactory;
 
 
 public class MirrorTemplatePlugin extends RenderPlugin<Node> {
-
-    private static final long serialVersionUID = 3291203040649222050L;
     private static final Logger log = LoggerFactory.getLogger(MirrorTemplatePlugin.class);
 
     private static final CssResourceReference MIRROR_TEMPLATE_PLUGIN =
@@ -93,8 +90,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     private void addOpenLinkPickerLink() {
         final IModel<String> displayModel = getLocalizedNameModel();
         final IPluginContext context = getPluginContext();
-        DialogLink openPickerLink = new DialogLink("openLinkPickerLink", displayModel, getiDialogFactory(context), getDialogService()) {
-            private static final long serialVersionUID = -9208836930344551499L;
+        DialogLink openPickerLink = new DialogLink("openLinkPickerLink", displayModel, getDialogFactory(context), getDialogService()) {
 
             @Override
             public boolean isVisible() {
@@ -113,8 +109,6 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
 
     private void addOpenLink() {
         AjaxLink openLink = new AjaxLink("openLink") {
-
-            private static final long serialVersionUID = 4534492390511710009L;
 
             @Override
             public boolean isVisible() {
@@ -137,10 +131,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     }
 
     private void addOpenButton() {
-        AjaxLink openButton = new AjaxLink("open") {
-
-            private static final long serialVersionUID = -7214708709986794120L;
-
+        final AjaxLink openButton = new AjaxLink("open") {
             @Override
             public boolean isVisible() {
                 return hasFilledDocbase();
@@ -157,13 +148,16 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
 
     private void addSelectButton() {
         final IPluginContext context = getPluginContext();
-        fragment.add(new DialogLink("select", new ResourceModel("select"), getiDialogFactory(context), getDialogService()));
+        fragment.add(new AjaxLink<Void>("select") {
+            @Override
+            public void onClick(final AjaxRequestTarget target) {
+                getDialogService().show(createLinkPickerDialog(context));
+            }
+        });
     }
 
     private void addClearButton() {
-        AjaxLink clearButton = new AjaxLink<Void>("clear") {
-            private static final long serialVersionUID = 6966047483487193607L;
-
+        final AjaxLink clearButton = new AjaxLink<Void>("clear") {
             @Override
             public boolean isVisible() {
                 return hasFilledDocbase();
@@ -187,39 +181,39 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
         redraw();
     }
 
-    private IDialogFactory getiDialogFactory(final IPluginContext context) {
-        return new IDialogFactory() {
-            private static final long serialVersionUID = 1L;
+    private IDialogFactory getDialogFactory(final IPluginContext context) {
+        return () -> createLinkPickerDialog(context);
+    }
 
-            public AbstractDialog<String> createDialog() {
-                final JcrPropertyValueModel<String> docbaseModel = getDocBaseModel();
-                final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(getPluginConfig(), docbaseModel);
-                return new LinkPickerDialog(context, dialogConfig, new IChainingModel<String>() {
-                    private static final long serialVersionUID = 1L;
+    /**
+     * Create a link picker dialog
+     */
+    private AbstractDialog<String> createLinkPickerDialog(final IPluginContext context) {
+        final JcrPropertyValueModel<String> docbaseModel = getDocBaseModel();
+        final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(getPluginConfig(), docbaseModel);
+        final IChainingModel<String> linkPickerModel = new IChainingModel<String>() {
+            public String getObject() {
+                return docbaseModel.getObject();
+            }
 
-                    public String getObject() {
-                        return docbaseModel.getObject();
-                    }
+            public void setObject(String uuid) {
+                getDocBaseModel().setObject(uuid);
+                redraw();
+            }
 
-                    public void setObject(String uuid) {
-                        getDocBaseModel().setObject(uuid);
-                        redraw();
-                    }
+            public IModel<String> getChainedModel() {
+                return docbaseModel;
+            }
 
-                    public IModel<String> getChainedModel() {
-                        return docbaseModel;
-                    }
+            public void setChainedModel(IModel<?> model) {
+                throw new UnsupportedOperationException("Value model cannot be changed");
+            }
 
-                    public void setChainedModel(IModel<?> model) {
-                        throw new UnsupportedOperationException("Value model cannot be changed");
-                    }
-
-                    public void detach() {
-                        docbaseModel.detach();
-                    }
-                });
+            public void detach() {
+                docbaseModel.detach();
             }
         };
+        return new LinkPickerDialog(context, dialogConfig, linkPickerModel);
     }
 
     private String getMirrorPath() {
@@ -300,8 +294,6 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     IModel<String> getPathModel() {
         return new LoadableDetachableModel<String>() {
 
-            private static final long serialVersionUID = 6356059402455045185L;
-
             @Override
             protected String load() {
                 return getMirrorPath();
@@ -311,8 +303,6 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
 
     IModel<String> getLocalizedNameModel() {
         return new LoadableDetachableModel<String>() {
-
-            private static final long serialVersionUID = -6560021518997149932L;
 
             @Override
             protected String load() {

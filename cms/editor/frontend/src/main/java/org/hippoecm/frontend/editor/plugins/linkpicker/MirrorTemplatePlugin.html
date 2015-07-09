@@ -22,7 +22,9 @@
 <wicket:fragment wicket:id="edit">
   <div class="hippo-editor-field-value">
     <div class="hippo-editor-field-value-container mirrortemplate_link" wicket:id="openLinkPickerLink"></div>
-    <button class="btn btn-default btn-sm" wicket:id="select"></button>
+    <a class="btn btn-default btn-sm" wicket:id="select">
+      <span><wicket:message key="select">[Select]</wicket:message></span>
+    </a>
     <a class="btn btn-default btn-sm" wicket:id="open" href="#">
       <span><wicket:message key="open">[Open]</wicket:message></span>
     </a>
