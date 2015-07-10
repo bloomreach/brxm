@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>10.0.2-SNAPSHOT</version> <!-- currently using snapshot as latest plugin version depends on yet unreleased CMS utilities -->
+    <version>10.0.2-SNAPSHOT</version> <!-- currently using snapshot as latest plugin version depends on yet unreleased CMS utilities. Is no longer needed when 10.0.2 has been released. -->
   </parent>
 
   <name>Hippo Plugin Taxonomy Demo</name>
