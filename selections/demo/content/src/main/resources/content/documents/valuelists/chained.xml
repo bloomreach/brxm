@@ -44,7 +44,7 @@
         <sv:value>08306f8b-48c7-4489-b62a-4b20ce6136db</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
-        <sv:value>inherited - from query</sv:value>
+        <sv:value>en</sv:value>
       </sv:property>
       <sv:node sv:name="selection:listitem">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -111,7 +111,7 @@
         <sv:value>edaf6f38-7b53-415b-807f-3e8d4260a2e1</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
-        <sv:value>inherited - from query</sv:value>
+        <sv:value>en</sv:value>
       </sv:property>
       <sv:node sv:name="selection:listitem">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -201,7 +201,7 @@
         <sv:value>fe560ef3-3fc5-40d8-b1c4-34f21d88474c</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
-        <sv:value>inherited - from query</sv:value>
+        <sv:value>en</sv:value>
       </sv:property>
       <sv:node sv:name="selection:listitem">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
