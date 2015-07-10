@@ -20,9 +20,9 @@
   "PAGE_LOCKED": "Diese Seite wurde von {{ owner }} am {{ timestamp | date:'d-M-yyyy H:mm' }} gesperrt",
   "TECHNICAL_ERROR": "Es ist ein technischer Fehler aufgetreten",
   "ITEM_ALREADY_LOCKED": "Sie können diese Seite nicht bearbeiten, weil sie bereits gesperrt ist von '{{ lockedBy }}'.",
-  "PRIMARY_DOCUMENT": "Primärseitendokument",
+  "PRIMARY_DOCUMENT": "Primäres Dokument",
   "REMOVE_PRIMARY_DOCUMENT": "Entfernen",
   "CONFIRM_REMOVE_PRIMARY_DOCUMENT_TITLE": "Entfernen bestätigen",
   "CONFIRM_REMOVE_PRIMARY_DOCUMENT_MESSAGE": "Sind Sie sicher, dass das Primärseitendokument entfernt werden soll?",
-  "NONE": "Kein(e/es/er)"
+  "NONE": "Keines"
 }

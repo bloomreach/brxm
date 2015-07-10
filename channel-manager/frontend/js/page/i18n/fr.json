@@ -20,7 +20,7 @@
   "PAGE_LOCKED": "Cette page a été verrouillée par {{ owner }} à {{ timestamp | date:'M/d/yyyy h:mm a' }}",
   "TECHNICAL_ERROR": "Une erreur technique s'est produite",
   "ITEM_ALREADY_LOCKED": "Cette page ne peut pas être modifiée, car elle est déjà en cours de modification par '{{ lockedBy }}'",
-  "PRIMARY_DOCUMENT": "Document page primaire",
+  "PRIMARY_DOCUMENT": "Document primaire",
   "REMOVE_PRIMARY_DOCUMENT": "Supprimer",
   "CONFIRM_REMOVE_PRIMARY_DOCUMENT_TITLE": "Confirmer la suppression",
   "CONFIRM_REMOVE_PRIMARY_DOCUMENT_MESSAGE": "Êtes-vous sûr de vouloir supprimer le document de page primaire?",
