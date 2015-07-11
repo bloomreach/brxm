@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms</artifactId>
-    <version>2.28.04-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <name>CMS API</name>
@@ -114,7 +114,7 @@
     <dependency>
       <groupId>org.imgscalr</groupId>
       <artifactId>imgscalr-lib</artifactId>
-      <version>4.2</version>
+      <version>${imgscalr-lib.version}</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
@@ -122,7 +122,7 @@
     <dependency>
       <groupId>net.sf.json-lib</groupId>
       <artifactId>json-lib</artifactId>
-      <version>2.2.2</version>
+      <version>${json-lib.version}</version>
       <classifier>jdk15</classifier>
       <exclusions>
         <exclusion>

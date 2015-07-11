@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-cms</artifactId>
-  <version>2.28.04-SNAPSHOT</version>
+  <version>3.0.0-SNAPSHOT</version>
 
   <inceptionYear>2007</inceptionYear>
 
@@ -86,11 +86,11 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
 
-    <hippo.commons.version>1.05.00</hippo.commons.version>
-    <hippo.frontend.theme.version>1.02.04</hippo.frontend.theme.version>
-    <hippo.utilities.version>1.04.00</hippo.utilities.version>
-    <hippo.services.version>1.05.01</hippo.services.version>
-    <hippo.repository.version>2.28.01</hippo.repository.version>
+    <hippo.commons.version>2.0.0-SNAPSHOT</hippo.commons.version>
+    <hippo.frontend.theme.version>2.0.0-SNAPSHOT</hippo.frontend.theme.version>
+    <hippo.utilities.version>2.0.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.services.version>2.0.0-SNAPSHOT</hippo.services.version>
+    <hippo.repository.version>3.0.0-SNAPSHOT</hippo.repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>2.4</easymock.version>
@@ -103,6 +103,7 @@
     <!-- Project Dependencies -->
     <commons-codec.version>1.4</commons-codec.version>
     <commons-collections.version>3.1</commons-collections.version>
+    <commons-beanutils.version>1.7.0</commons-beanutils.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-io.version>1.4</commons-io.version>
 
@@ -122,6 +123,7 @@
     <drewnoakes-extractor.version>2.6.2</drewnoakes-extractor.version>
     <sanselan.version>0.97-incubator</sanselan.version>
     <agilecoders.wicket.bootstrap.version>0.9.7</agilecoders.wicket.bootstrap.version>
+    <imgscalr-lib.version>4.2</imgscalr-lib.version>
 
     <yui.sources.version>1.01.12</yui.sources.version>
     <hippo.htmldiff.version>1.01.03</hippo.htmldiff.version>
