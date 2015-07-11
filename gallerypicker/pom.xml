@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>27.1</version>
+    <version>27.2</version>
   </parent>
 
   <name>Hippo Plugin Gallery Picker</name>
@@ -27,7 +27,7 @@
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-gallerypicker</artifactId>
   <packaging>jar</packaging>
-  <version>1.14.03-SNAPSHOT</version>
+  <version>2.0.0-SNAPSHOT</version>
 
   <inceptionYear>2008</inceptionYear>
 
@@ -38,8 +38,8 @@
   </scm>
 
   <properties>
-    <hippo.repository.version>2.28.01</hippo.repository.version>
-    <hippo.cms.version>2.28.02</hippo.cms.version>
+    <hippo.repository.version>3.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>3.0.0-SNAPSHOT</hippo.cms.version>
 
     <lib.commons-lang.version>2.6</lib.commons-lang.version>
     <lib.easymock.version>2.4</lib.easymock.version>
