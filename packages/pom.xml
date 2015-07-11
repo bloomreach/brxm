@@ -26,7 +26,7 @@
   <name>Hippo Product Packages</name>
   <description>Hippo Product Packages</description>
   <artifactId>hippo-packages</artifactId>
-  <version>2.28.02-SNAPSHOT</version>
+  <version>3.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2008</inceptionYear>
 
@@ -40,11 +40,11 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Product Packages</notice.project.name>
 
-    <hippo.utilities.version>1.04.00</hippo.utilities.version>
-    <hippo.repository.version>2.28.02</hippo.repository.version>
-    <hippo.cms.version>2.28.03</hippo.cms.version>
-    <hippo.hst.version>2.30.03</hippo.hst.version>
-    <hippo.services.webfiles.version>1.05.00</hippo.services.webfiles.version>
+    <hippo.utilities.version>2.0.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.repository.version>3.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>3.0.0-SNAPSHOT</hippo.cms.version>
+    <hippo.hst.version>3.0.0-SNAPSHOT</hippo.hst.version>
+    <hippo.services.webfiles.version>2.0.0-SNAPSHOT</hippo.services.webfiles.version>
 
   </properties>
 
