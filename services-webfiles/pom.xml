@@ -26,7 +26,7 @@
 
   <name>Hippo CMS7 Services - webfiles</name>
   <artifactId>hippo-services-webfiles</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
+  <version>2.0.0</version>
 
   <inceptionYear>2014</inceptionYear>
 
@@ -45,9 +45,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-webfiles/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-webfiles/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-webfiles/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-webfiles/tags/hippo-services-webfiles-2.0.0</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-webfiles/tags/hippo-services-webfiles-2.0.0</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-webfiles/tags/hippo-services-webfiles-2.0.0</url>
   </scm>
 
   <repositories>
