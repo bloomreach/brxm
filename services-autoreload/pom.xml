@@ -35,8 +35,8 @@
     <notice.project.name>Hippo CMS7 Services - autoreload</notice.project.name>
 
     <!-- runtime dependencies -->
-    <hippo.repository.version>3.0.0-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>2.0.0-SNAPSHOT</hippo.services.version>
+    <hippo.repository.version>3.0.0</hippo.repository.version>
+    <hippo.services.version>2.0.0</hippo.services.version>
     <javax.websocket-api.version>1.0</javax.websocket-api.version>
 
     <!-- test dependencies -->
