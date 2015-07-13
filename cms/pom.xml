@@ -86,11 +86,11 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
 
-    <hippo.commons.version>2.0.0-SNAPSHOT</hippo.commons.version>
-    <hippo.frontend.theme.version>2.0.0-SNAPSHOT</hippo.frontend.theme.version>
-    <hippo.utilities.version>2.0.0-SNAPSHOT</hippo.utilities.version>
-    <hippo.services.version>2.0.0-SNAPSHOT</hippo.services.version>
-    <hippo.repository.version>3.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.commons.version>2.0.0</hippo.commons.version>
+    <hippo.frontend.theme.version>2.0.0</hippo.frontend.theme.version>
+    <hippo.utilities.version>2.0.0</hippo.utilities.version>
+    <hippo.services.version>2.0.0</hippo.services.version>
+    <hippo.repository.version>3.0.0</hippo.repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>2.4</easymock.version>
