@@ -50,7 +50,7 @@
     <hippo.frontend.theme.version>2.0.0</hippo.frontend.theme.version>
     <hippo.hst.version>3.0.0</hippo.hst.version>
     <hippo.packages.version>3.0.0</hippo.packages.version>
-    <hippo.repository.version>3.0.0</hippo.repository.version>
+    <hippo.repository.version>3.0.1-SNAPSHOT</hippo.repository.version>
     <hippo.services.version>2.0.0</hippo.services.version>
     <hippo.services.autoreload.version>2.0.0</hippo.services.autoreload.version>
     <hippo.services.contenttype.version>2.0.0</hippo.services.contenttype.version>
