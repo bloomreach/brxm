@@ -41,7 +41,6 @@
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>2ae887e8-bbec-44da-82b4-c3b2c55a522b</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:discriminator" sv:type="String" />
       <sv:node sv:name="screenshot_cms_small.jpg">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippogallery:exampleImageSet</sv:value>
@@ -92,7 +91,6 @@
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>07464293-3c92-4ebe-8f01-89bd3e92a0bf</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:discriminator" sv:type="String" />
       <sv:node sv:name="nopic.gif">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippogallery:exampleImageSet</sv:value>
