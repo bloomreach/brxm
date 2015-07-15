@@ -15,11 +15,6 @@
  */
 package org.hippoecm.repository.api;
 
-/*
- * This file has to be kept in sync with:
- * core/src/main/resources/org/hippoecm/repository/repository.cnd
- */
-
 /**
  * This interface defines the node types and item names that are in use by
  * the Hippo repository build on top of JCR.
@@ -233,6 +228,9 @@ public interface HippoNodeType {
 
     public static final String HIPPO_DIRLEVELS = "hipposys:dirlevels";
 
+    /**
+     * @deprecated since 3.0.1 with no substitute
+     */
     public static final String HIPPO_DISCRIMINATOR = "hippo:discriminator";
 
     public static final String HIPPO_DISPLAY = "hipposys:display";

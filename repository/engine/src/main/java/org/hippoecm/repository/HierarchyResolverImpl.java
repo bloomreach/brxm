@@ -170,6 +170,7 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                         continue;
                     }
                     if (conditionElts[conditionIdx].equals("{_similar}")) {
+                        logger.warn("path selector {_similar} is deprecated without a substitute");
                         Node parent = ancestor.getParent();
                         if (parent.hasProperty(HippoNodeType.HIPPO_DISCRIMINATOR)) {
                             Value[] discriminators = parent.getProperty(HippoNodeType.HIPPO_DISCRIMINATOR).getValues();

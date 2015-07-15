@@ -14,8 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         sv:name="reviewed-action">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="reviewed-action">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:deriveddefinition</sv:value>
   </sv:property>
@@ -37,7 +36,7 @@
         <sv:value>hipposys:resolvepropertyreference</sv:value>
       </sv:property>
       <sv:property sv:name="hipposys:relPath" sv:type="String">
-        <sv:value>../{.}[{_similar},@hippostd:state='published']/hippo:availability</sv:value>
+        <sv:value>../{.}[@hippostd:state='published']/hippo:availability</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="publishedLastModified">
@@ -45,7 +44,7 @@
         <sv:value>hipposys:resolvepropertyreference</sv:value>
       </sv:property>
       <sv:property sv:name="hipposys:relPath" sv:type="String">
-        <sv:value>../{.}[{_similar},@hippostd:state='published']/hippostdpubwf:lastModificationDate</sv:value>
+        <sv:value>../{.}[@hippostd:state='published']/hippostdpubwf:lastModificationDate</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="unpublishedLastModified">
@@ -53,7 +52,7 @@
         <sv:value>hipposys:resolvepropertyreference</sv:value>
       </sv:property>
       <sv:property sv:name="hipposys:relPath" sv:type="String">
-        <sv:value>../{.}[{_similar},@hippostd:state='unpublished']/hippostdpubwf:lastModificationDate</sv:value>
+        <sv:value>../{.}[@hippostd:state='unpublished']/hippostdpubwf:lastModificationDate</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

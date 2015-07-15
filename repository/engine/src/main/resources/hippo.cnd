@@ -44,7 +44,7 @@
 - hippo:paths (string) multiple
 
 [hippo:handle] > nt:base
-- hippo:discriminator (string) multiple
+- hippo:discriminator (string) multiple // deprecated
 + * (hippo:document) = hippo:document multiple version
 + hippo:request (hippo:request) multiple ignore
 

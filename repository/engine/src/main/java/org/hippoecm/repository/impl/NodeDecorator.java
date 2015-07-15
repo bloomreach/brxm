@@ -394,51 +394,9 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
     }
 
     public Localized getLocalized(Locale locale) throws RepositoryException {
-        Localized localized = null;
-        Node handle, node;
-        if (isNodeType(HippoNodeType.NT_HANDLE)) {
-            handle = node = this;
-        } else {
-            handle = getParent();
-            if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                node = handle;
-            } else {
-                handle = null;
-                node = this;
-            }
+        if (locale != null) {
+            return Localized.getInstance(locale);
         }
-        if (handle != null && node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-            Map<String, List<String>> locales = new TreeMap<String, List<String>>();
-            if (handle.hasProperty(HippoNodeType.HIPPO_DISCRIMINATOR)) {
-                for (Value discriminatorValue : handle.getProperty(HippoNodeType.HIPPO_DISCRIMINATOR).getValues()) {
-                    String discriminator = discriminatorValue.getString();
-                    if (node.hasProperty(discriminator)) {
-                        Property discriminatorProperty = node.getProperty(discriminator);
-                        if (discriminatorProperty.getDefinition().isMultiple()) {
-                            List<String> list = new LinkedList<String>();
-                            for (Value value : discriminatorProperty.getValues()) {
-                                list.add(value.getString());
-                            }
-                            locales.put(discriminator, list);
-                        } else {
-                            locales.put(discriminator, Collections.singletonList(discriminatorProperty.getString()));
-                        }
-                    } else {
-                        locales.put(discriminator, null);
-                    }
-                }
-            }
-            if (locales.size() > 0) {
-                localized = Localized.getInstance(locales);
-            }
-        }
-        if (localized == null) {
-            if (locale != null) {
-                localized = Localized.getInstance(locale);
-            }
-        } else {
-            localized = Localized.getInstance(locale);
-        }
-        return localized;
+        return null;
     }
 }
