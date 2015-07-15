@@ -25,7 +25,6 @@
   <sv:property sv:name="jcr:uuid" sv:type="String">
     <sv:value>4709f797-61ae-4c36-93d4-63b5d50fc200</sv:value>
   </sv:property>
-  <sv:property sv:name="hippo:discriminator" sv:type="String" sv:multiple="true"/>
   <sv:node sv:name="animal-2883_640.jpg">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippogallery:imageset</sv:value>
