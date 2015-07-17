@@ -30,7 +30,7 @@ limitations under the License.  -->
 User-agent: ${section.userAgent}
 &lt;#list section.disallows as path&gt;Disallow: ${path}
 &lt;/#list&gt;
-&lt;#list disallowedFacNavLinks as facnav&gt;Disallow: &lt;@hst.link link=facnav/&gt;
+&lt;#list disallowedFacNavLinks as facnav&gt;Disallow: &lt;@hst.link link=facnav/&gt;/
 &lt;/#list&gt;
 
         &lt;/#if&gt;
