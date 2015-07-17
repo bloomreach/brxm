@@ -23,6 +23,7 @@
   "OPEN_CONFIRMATION_TITLE": "Ouvrir un lien externe",
   "OPEN_CONFIRMATION": "Souhaitez-vous vraiment ouvrir '{{ title }}' dans un nouvel onglet?",
   "OPEN_LINK": "Ouvrir un lien externe",
+  "PICK": "Sélectionner",
   "ITEM_ALREADY_LOCKED": "Vous ne pouvez pas modifier ce menu, car il est en cours de modification par '{{ lockedBy }}'",
   "ITEM_NAME_NOT_UNIQUE": "L'élément de menu '{{ item }}' existe déjà dans le sous-menu '{{ parentPath }}'",
   "ITEM_NAME_NOT_UNIQUE_IN_ROOT": "L'élément de menu '{{ item }}' existe déjà en tant qu'élément de menu supérieur",

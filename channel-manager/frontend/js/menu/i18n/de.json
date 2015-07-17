@@ -23,6 +23,7 @@
   "OPEN_CONFIRMATION_TITLE": "Externen Link öffnen",
   "OPEN_CONFIRMATION": "Sind Sie sicher, dass Sie '{{ title }}' in einer neuen Registerkarte öffnen möchten?",
   "OPEN_LINK": "Externen Link öffnen",
+  "PICK": "Wählen",
   "ITEM_ALREADY_LOCKED": "Sie können dieses Menü nicht bearbeiten, weil '{{ lockedBy }}' das Menü bereits bearbeitet",
   "ITEM_NAME_NOT_UNIQUE": "Das Menüelement '{{item}}' existiert bereits im Untermenü '{{parentPath}}'",
   "ITEM_NAME_NOT_UNIQUE_IN_ROOT": "Das Element '{{item}}' existiert bereits als Hauptmenüelement ",

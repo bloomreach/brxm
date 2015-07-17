@@ -23,6 +23,7 @@
   "OPEN_CONFIRMATION_TITLE": "Open external link",
   "OPEN_CONFIRMATION": "Are you sure you want to open '{{ title }}' in a new tab?",
   "OPEN_LINK": "Open external link",
+  "PICK": "Pick",
   "ITEM_ALREADY_LOCKED": "You cannot edit this menu because '{{ lockedBy }}' is already editing it",
   "ITEM_NAME_NOT_UNIQUE": "The menu item '{{ item }}' already exists in the sub menu '{{ parentPath }}'",
   "ITEM_NAME_NOT_UNIQUE_IN_ROOT": "The menu item '{{ item }}' already exists as a top menu item",

@@ -23,6 +23,7 @@
   "OPEN_CONFIRMATION_TITLE": "Open externe link",
   "OPEN_CONFIRMATION": "Weet u zeker dat u '{{ title }}' wilt openen in een nieuwe tab?",
   "OPEN_LINK": "Open externe link",
+  "PICK": "Selecteer",
   "ITEM_ALREADY_LOCKED": "U kunt dit menu niet bewerken omdat '{{ lockedBy }}' het menu al bewerkt",
   "ITEM_NAME_NOT_UNIQUE": "Het menu item '{{item}}' bestaat al in het sub menu '{{parentPath}}'",
   "ITEM_NAME_NOT_UNIQUE_IN_ROOT": "Het item '{{item}}' bestaat al als hoofd menu item",
