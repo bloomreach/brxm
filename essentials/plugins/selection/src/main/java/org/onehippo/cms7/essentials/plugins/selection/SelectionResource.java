@@ -296,7 +296,7 @@ public class SelectionResource extends BaseResource {
             throws RepositoryException, IOException {
         final String docTypeBase = MessageFormat.format("/hippo:namespaces/{0}/{1}/",
                 values.get("namespace"), values.get("documentType"));
-        final String documentType = values.get("namespace") + ":" + values.get("documentType");
+        final String documentType = values.get("namespace") + ':' + values.get("documentType");
 
         final Node editorTemplate = session.getNode(docTypeBase + "editor:templates/_default_");
         final Node nodeTypeHandle = session.getNode(docTypeBase + "hipposysedit:nodetype");
@@ -384,7 +384,7 @@ public class SelectionResource extends BaseResource {
     private Document readSpringConfiguration() {
         final File springFile = getSpringFile();
         InputStream is = null;
-        if (springFile.exists() && springFile.isFile()) {
+        if (springFile !=null && springFile.exists() && springFile.isFile()) {
             try {
                 is = new FileInputStream(springFile);
             } catch (FileNotFoundException ex) {

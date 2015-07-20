@@ -35,6 +35,7 @@
             $scope.initializing = true;
 
             $scope.addField = function() {
+               var maxRows = isNaN(parseInt($scope.data.maxRows)) ? 10: parseInt($scope.data.maxRows);
                 var payload = {
                     values: {
                         namespace:     $scope.data.selectedDocumentType.prefix,
@@ -44,7 +45,7 @@
                         valueList:     $scope.data.selectedValueList.value,
                         presentation:  $scope.data.presentation.id,
                         orientation:   $scope.data.orientation,
-                        maxRows:       $scope.data.maxRows,
+                        maxRows:       maxRows,
                         allowOrdering: $scope.data.allowOrdering
                     }
                 };
@@ -164,7 +165,7 @@
                 $scope.data.selectionType = 'single';
                 $scope.data.selectedValueList = undefined;
                 $scope.data.allowOrdering = false;
-                $scope.data.maxRows = undefined;
+                $scope.data.maxRows = 10;
             }
             function reloadSelectionFields(documentType) {
                 $scope.selectionFields = [];
