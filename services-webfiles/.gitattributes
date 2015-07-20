@@ -1,4 +1,6 @@
 * text=auto !eol
+/LICENSE -text
+/NOTICE -text
 /pom.xml -text
 src/main/java/org/onehippo/cms7/services/webfiles/WebFilesServiceImpl.java -text
 src/main/java/org/onehippo/cms7/services/webfiles/WebFilesServiceModule.java -text
