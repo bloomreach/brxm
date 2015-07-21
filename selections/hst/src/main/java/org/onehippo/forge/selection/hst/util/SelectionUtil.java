@@ -20,8 +20,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hippoecm.hst.core.component.HstRequest;
 import org.onehippo.forge.selection.hst.contentbean.ValueList;
 import org.onehippo.forge.selection.hst.contentbean.ValueListItem;
+import org.onehippo.forge.selection.hst.manager.ValueListManager;
+import org.hippoecm.hst.site.HstServices;
 
 public class SelectionUtil {
 
@@ -46,5 +49,12 @@ public class SelectionUtil {
         }
 
         return map;
+    }
+
+    public static ValueList getValueListByIdentifier(String identifier, HstRequest request){
+
+        ValueListManager valueListManager = HstServices.getComponentManager().getComponent(ValueListManager.class.getName());
+
+        return valueListManager.getValueList(request.getRequestContext().getSiteContentBaseBean(), identifier);
     }
 }

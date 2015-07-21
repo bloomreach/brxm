@@ -44,6 +44,11 @@
       <artifactId>hst-content-beans</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-commons</artifactId>
+    </dependency>
+
   </dependencies>
 
 </project>
