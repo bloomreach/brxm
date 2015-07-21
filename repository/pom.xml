@@ -26,7 +26,7 @@
   <name>Repository</name>
   <description>Hippo Repository</description>
   <artifactId>hippo-repository</artifactId>
-  <version>3.1.0-integration-SNAPSHOT</version>
+  <version>3.1.0-translations-1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2007</inceptionYear>
@@ -95,9 +95,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/branches/repository-3.1.0-integration</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/repository/branches/repository-3.1.0-integration</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/branches/repository-3.1.0-integration</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/branches/repository-3.1.0-translations-1</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/repository/branches/repository-3.1.0-translations-1</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/branches/repository-3.1.0-translations-1</url>
   </scm>
 
   <build>
