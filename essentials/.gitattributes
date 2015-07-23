@@ -353,7 +353,7 @@ plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/DependencyUtils.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/DocumentTemplateUtils.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/EssentialConst.java -text
-plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/FileUtils.java -text
+plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/EssentialsFileUtils.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/GalleryUtils.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/GlobalUtils.java -text
 plugin-sdk/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/HippoNodeUtils.java -text

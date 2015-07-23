@@ -39,6 +39,7 @@
   <xs:simpleType name="directoryActionType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="create"/>
+      <xs:enumeration value="copy"/>
       <xs:enumeration value="delete"/>
     </xs:restriction>
   </xs:simpleType>

@@ -28,6 +28,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.github.mustachejava.DefaultMustacheFactory;
+import com.github.mustachejava.Mustache;
+import com.github.mustachejava.MustacheFactory;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.WordUtils;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -38,12 +44,6 @@ import org.eclipse.jdt.core.dom.Type;
 import org.onehippo.cms7.essentials.dashboard.utils.code.ExistingMethodsVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.github.mustachejava.DefaultMustacheFactory;
-import com.github.mustachejava.Mustache;
-import com.github.mustachejava.MustacheFactory;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
 
 
 /**
@@ -169,6 +169,26 @@ public final class TemplateUtils {
             log.error("Error flushing template", e);
         }
         return content;
+    }
+
+    public static void replaceFileTemplateData(final Path path, final Map<String, Object> data) {
+        final String content = GlobalUtils.readTextFile(path).toString();
+        if (Strings.isNullOrEmpty(content)) {
+            return;
+        }
+
+        try {
+            final Writer writer = new StringWriter();
+            final MustacheFactory mf = new DefaultMustacheFactory();
+
+            final StringReader reader = new StringReader(content);
+            final Mustache mustache = mf.compile(reader, content);
+            mustache.execute(writer, data);
+            writer.flush();
+            GlobalUtils.writeToFile(writer.toString(), path);
+        } catch (IOException e) {
+            log.error("Error flushing template", e);
+        }
     }
 
     public static String injectTemplate(final String templateName, final Map<String, Object> data, final Class<?> clazz) {

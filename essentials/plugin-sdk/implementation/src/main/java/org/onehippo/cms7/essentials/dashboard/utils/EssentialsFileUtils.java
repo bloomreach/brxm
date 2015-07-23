@@ -24,9 +24,9 @@ import java.util.Deque;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class FileUtils {
+public final class EssentialsFileUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(EssentialsFileUtils.class);
 
     public static void createParentDirectories(final File directory) throws IOException {
         if (directory == null) {
@@ -46,7 +46,7 @@ public final class FileUtils {
      * @param directory  directory to delete
      * @return boolean on success
      */
-    public static boolean deleteDirectory(final File directory) {
+    public static boolean deleteSingleDirectory(final File directory) {
         if (directory == null) {
             throw new IllegalArgumentException("Directory was null");
         }

@@ -20,13 +20,17 @@ import java.io.File;
 
 import javax.inject.Inject;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.utils.FileUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialsFileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import static org.junit.Assert.assertTrue;
@@ -38,6 +42,7 @@ public class DirectoryInstructionTest extends BaseResourceTest {
     public static final String THIRD = "EssentialsDirectoryInstructionTest";
     public static final String DIR = File.separator + THIRD + File.separator + SECOND + File.separator + FIRST;
 
+    private static final Logger log = LoggerFactory.getLogger(DirectoryInstructionTest.class);
     @Inject
     private InstructionExecutor executor;
     @Inject
@@ -45,7 +50,9 @@ public class DirectoryInstructionTest extends BaseResourceTest {
     private DirectoryInstruction createInstruction;
     @Inject
     @Qualifier("directoryInstruction")
-    private DirectoryInstruction deleteInstruction;
+    private DirectoryInstruction copyInstruction;
+
+    private File targetDir;
 
     private static String createPlaceHolder(final String placeholderProjectRoot) {
         return "{{" + placeholderProjectRoot + "}}";
@@ -66,14 +73,32 @@ public class DirectoryInstructionTest extends BaseResourceTest {
 
     }
 
+    @Test
+    public void testCopy() throws Exception {
+
+        targetDir = new File(System.getProperty("java.io.tmpdir") + File.separatorChar + getClass().getSimpleName());
+        log.info("testing copy to: {}", targetDir);
+        final InstructionSet set = new PluginInstructionSet();
+        set.addInstruction(copyInstruction);
+        final PluginContext context = getContext();
+        InstructionStatus status = executor.execute(set, context);
+        assertTrue(status == InstructionStatus.FAILED);
+        copyInstruction.setSource("/");
+        copyInstruction.setAction("copy");
+        copyInstruction.setTarget(targetDir.getAbsolutePath());
+        status = executor.execute(set, context);
+        assertTrue("Expected to fail: " + status, status == InstructionStatus.FAILED);
+
+    }
+
     @Override
     @After
     public void tearDown() throws Exception {
-        boolean deleted = FileUtils.deleteDirectory(new File(System.getProperty("java.io.tmpdir") + DIR));
-        assertTrue(deleted);
-        deleted = FileUtils.deleteDirectory(new File(System.getProperty("java.io.tmpdir") + File.separator + THIRD + File.separator + SECOND));
-        assertTrue(deleted);
-        deleted = FileUtils.deleteDirectory(new File(System.getProperty("java.io.tmpdir") + File.separator + THIRD));
-        assertTrue(deleted);
+        EssentialsFileUtils.deleteSingleDirectory(new File(System.getProperty("java.io.tmpdir") + DIR));
+        EssentialsFileUtils.deleteSingleDirectory(new File(System.getProperty("java.io.tmpdir") + File.separator + THIRD + File.separator + SECOND));
+        EssentialsFileUtils.deleteSingleDirectory(new File(System.getProperty("java.io.tmpdir") + File.separator + THIRD));
+        if (targetDir != null) {
+            FileUtils.deleteDirectory(targetDir);
+        }
     }
 }
