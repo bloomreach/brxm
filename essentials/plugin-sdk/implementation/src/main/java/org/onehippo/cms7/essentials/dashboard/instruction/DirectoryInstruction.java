@@ -61,9 +61,17 @@ public class DirectoryInstruction extends PluginInstruction {
     private String message;
     private boolean overwrite;
 
-    private static final Set<String> SUPPORTED_EXTENSIONS = new ImmutableSet.Builder<String>()
+    /**
+     * Files with those extensions will be template-processed (replacing of template placeholders)
+     */
+    private static final Set<String> SUPPORTED_PLACEHOLDER_EXTENSIONS = new ImmutableSet.Builder<String>()
             .add("properties")
             .add("jspf")
+            .add("md")
+            .add("groovy")
+            .add("cnd")
+            .add("log")
+            .add("json")
             .add("java")
             .add("jsp")
             .add("xml")
@@ -249,7 +257,7 @@ public class DirectoryInstruction extends PluginInstruction {
                         IOUtils.closeQuietly(out);
                         log.info("Copied file {}", file);
                         final String ext = FilenameUtils.getExtension(file.getAbsolutePath());
-                        if (SUPPORTED_EXTENSIONS.contains(ext.toLowerCase())) {
+                        if (SUPPORTED_PLACEHOLDER_EXTENSIONS.contains(ext.toLowerCase())) {
                             TemplateUtils.replaceFileTemplateData(file.toPath(), placeholderData);
                         } else {
                             log.debug("Skipping processing of template placeholders: {}", ext);
