@@ -49,6 +49,9 @@ public class MessagesReplaceTag extends BodyTagSupport {
     protected String basename;
     protected Locale locale;
     protected String localeString;
+    protected String variablePrefix;
+    protected String variableSuffix;
+    protected Character escapeChar;
 
     @Override
     public int doStartTag() throws JspException{
@@ -89,7 +92,9 @@ public class MessagesReplaceTag extends BodyTagSupport {
 
                 if (textContent != null) {
                     if (bundle != null) {
-                        textContent = MessageUtils.replaceMessagesByBundle(bundle, textContent);
+                        textContent = MessageUtils.replaceMessagesByBundle(bundle, textContent,
+                                                                           variablePrefix, variableSuffix,
+                                                                           escapeChar);
                     }
 
                     if (var == null) {
@@ -165,6 +170,30 @@ public class MessagesReplaceTag extends BodyTagSupport {
         this.localeString = localeString;
     }
 
+    public String getVariablePrefix() {
+        return variablePrefix;
+    }
+
+    public void setVariablePrefix(String variablePrefix) {
+        this.variablePrefix = variablePrefix;
+    }
+
+    public String getVariableSuffix() {
+        return variableSuffix;
+    }
+
+    public void setVariableSuffix(String variableSuffix) {
+        this.variableSuffix = variableSuffix;
+    }
+
+    public Character getEscapeChar() {
+        return escapeChar;
+    }
+
+    public void setEscapeChar(Character escapeChar) {
+        this.escapeChar = escapeChar;
+    }
+
     protected LocalizationContext getLocalizationContext() {
         LocalizationContext locCtx = null;
 
@@ -213,6 +242,21 @@ public class MessagesReplaceTag extends BodyTagSupport {
             attr = tagData.getAttributeString("locale");
             if (attr != null) {
                 viList.add(new VariableInfo("locale", "java.util.Locale", true, VariableInfo.AT_BEGIN));
+            }
+
+            attr = tagData.getAttributeString("variablePrefix");
+            if (attr != null) {
+                viList.add(new VariableInfo("variablePrefix", "java.lang.String", true, VariableInfo.AT_BEGIN));
+            }
+
+            attr = tagData.getAttributeString("variableSuffix");
+            if (attr != null) {
+                viList.add(new VariableInfo("variableSuffix", "java.lang.String", true, VariableInfo.AT_BEGIN));
+            }
+
+            attr = tagData.getAttributeString("escapeChar");
+            if (attr != null) {
+                viList.add(new VariableInfo("escapeChar", "java.lang.Character", true, VariableInfo.AT_BEGIN));
             }
 
             return viList.toArray(new VariableInfo[viList.size()]);

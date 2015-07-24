@@ -18,6 +18,7 @@ package org.hippoecm.hst.utils;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.hippoecm.hst.resourcebundle.ResourceBundleUtils;
@@ -38,16 +39,49 @@ public class MessageUtils {
 
     private static Logger log = LoggerFactory.getLogger(MessageUtils.class);
 
+    /**
+     * Default escape character to override the default escape character of {@link StrSubstitutor}, '$'.
+     * '\\' is more user friendly than '$' in most use cases.
+     */
+    public static final char DEFAULT_ESCAPE = '\\';
+
     private MessageUtils() {
     }
 
     /**
      * Replaces the given text by looking up values from the resolved resource bundle by the <code>basename</code>.
-     * @param basename
-     * @param text
-     * @return
+     * @param basename resource bundle base name
+     * @param text text to replace
+     * @return replaced string by the values found in the given resource bundle
      */
     public static String replaceMessages(String basename, String text) {
+        return replaceMessages(basename, text, null, null, null);
+    }
+
+    /**
+     * Replaces the given text by looking up values from the resolved resource bundle by the <code>basename</code>.
+     * @param basename resource bundle base name
+     * @param text text to replace
+     * @param variablePrefix variable reference prefix. "${" by default.
+     * @param variableSuffix variable reference suffix. "}" by default.
+     * @return replaced string by the values found in the given resource bundle
+     */
+    public static String replaceMessages(String basename, String text, String variablePrefix,
+                                         String variableSuffix) {
+        return replaceMessages(basename, text, variablePrefix, variableSuffix, null);
+    }
+
+    /**
+     * Replaces the given text by looking up values from the resolved resource bundle by the <code>basename</code>.
+     * @param basename resource bundle base name
+     * @param text text to replace
+     * @param variablePrefix variable reference prefix. "${" by default.
+     * @param variableSuffix variable reference suffix. "}" by default.
+     * @param escapeChar escape character which can be put just before a variable reference to ignore the expression.
+     * @return replaced string by the values found in the given resource bundle
+     */
+    public static String replaceMessages(String basename, String text, String variablePrefix,
+                                         String variableSuffix, Character escapeChar) {
         ResourceBundle bundle = null;
 
         try {
@@ -60,21 +94,63 @@ public class MessageUtils {
             return text;
         }
 
-        return replaceMessagesByBundle(bundle, text);
+        return replaceMessagesByBundle(bundle, text, variablePrefix, variableSuffix, escapeChar);
     }
 
     /**
      * Replaces the given text by looking up values from the given resource bundle.
-     * @param bundle
-     * @param text
-     * @return
+     * @param bundle resource bundle
+     * @param text text to replace
+     * @return replaced string by the values found in the given resource bundle
      */
     public static String replaceMessagesByBundle(ResourceBundle bundle, String text) {
+        return replaceMessagesByBundle(bundle, text, null, null, null);
+    }
+
+    /**
+     * Replaces the given text by looking up values from the given resource bundle.
+     * @param bundle resource bundle
+     * @param text text to replace
+     * @param variablePrefix variable reference prefix. "${" by default.
+     * @param variableSuffix variable reference suffix. "}" by default.
+     * @return replaced string by the values found in the given resource bundle
+     */
+    public static String replaceMessagesByBundle(ResourceBundle bundle, String text, String variablePrefix,
+                                                 String variableSuffix) {
+        return replaceMessagesByBundle(bundle, text, variablePrefix, variableSuffix, null);
+    }
+
+    /**
+     * Replaces the given text by looking up values from the given resource bundle.
+     * @param bundle resource bundle
+     * @param text text to replace
+     * @param variablePrefix variable reference prefix. "${" by default.
+     * @param variableSuffix variable reference suffix. "}" by default.
+     * @param escapeChar escape character which can be put just before a variable reference to ignore the expression.
+     * @return replaced string by the values found in the given resource bundle
+     */
+    public static String replaceMessagesByBundle(ResourceBundle bundle, String text, String variablePrefix,
+                                                 String variableSuffix, Character escapeChar) {
         if (bundle == null) {
             throw new IllegalArgumentException("The bundle must not be null.");
         }
 
-        StrSubstitutor subst = new StrSubstitutor(new ResourceBundleVariableResolver(bundle));
+        StrSubstitutor subst = new StrSubstitutor(new ResourceBundleVariableResolver(bundle),
+                                                  StrSubstitutor.DEFAULT_PREFIX,
+                                                  StrSubstitutor.DEFAULT_SUFFIX,
+                                                  DEFAULT_ESCAPE);
+
+        if (StringUtils.isNotBlank(variablePrefix)) {
+            subst.setVariablePrefix(variablePrefix);
+        }
+
+        if (StringUtils.isNotBlank(variableSuffix)) {
+            subst.setVariableSuffix(variableSuffix);
+        }
+
+        if (escapeChar != null) {
+            subst.setEscapeChar(escapeChar);
+        }
 
         return subst.replace(text);
     }
@@ -101,3 +177,4 @@ public class MessageUtils {
         }
     }
 }
+

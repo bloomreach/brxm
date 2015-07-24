@@ -1055,6 +1055,41 @@
       <rtexprvalue>true</rtexprvalue>
       <type>java.util.Locale</type>
     </attribute>
+    <attribute>
+      <description>
+        The variable reference prefix. The default value is "${".
+        If the body content content contains variable references surrounded by variablePrefix and variableSuffix,
+        then this tag replaces each variable reference by the value found in either the current locale context
+        or the provided resource bundle.
+      </description>
+      <name>variablePrefix</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>
+        The variable reference suffix. The default value is "}".
+        If the body content content contains variable references surrounded by variablePrefix and variableSuffix,
+        then this tag replaces each variable reference by the value found in either the current locale context
+        or the provided resource bundle.
+      </description>
+      <name>variableSuffix</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>
+        The variable reference escape character. The default value is '\'.
+        If this escape character is placed before a variable reference, the variable reference is ignored
+        and won't be replaced.
+      </description>
+      <name>escapeChar</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Character</type>
+    </attribute>
     <example><![CDATA[
       <%-- Replaces all the variables (e.g, ${company.name}) in the html output --%>
       <hst:messagesReplace>

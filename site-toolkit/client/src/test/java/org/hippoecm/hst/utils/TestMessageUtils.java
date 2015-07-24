@@ -15,14 +15,22 @@
  */
 package org.hippoecm.hst.utils;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+
+import java.util.ResourceBundle;
+
+import org.hippoecm.hst.resourcebundle.ResourceBundleUtils;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * TestMessageUtils
  */
 public class TestMessageUtils {
+
+    private static final String BUNDLE_NAME = TestMessageUtils.class.getName();
+
+    private ResourceBundle bundle;
 
     private static final String BASIC_TEST_MESSAGE = 
             "The action path is '${ns1.target.environment.url}${header.search.form.action.path.en}' for English users\n"
@@ -32,12 +40,105 @@ public class TestMessageUtils {
             "The action path is 'http://web24.ns1.com:9090/PS/en/Redirect.do' for English users\n"
             + "while the action path is 'http://web24.ns1.com:9090/PS/fr/Redirect.do' for French users.";
 
+    private static final String PREFIX_SUFFIX_TEST_MESSAGE = 
+        "The action path is '@ns1.target.environment.url@@header.search.form.action.path.en@' for English users\n"
+        + "while the action path is '@ns1.target.environment.url@@header.search.form.action.path.fr@' for French users.";
+
+    private static final String PREFIX_SUFFIX_TEST_EXPECTED_MESSAGE = 
+        "The action path is 'http://web24.ns1.com:9090/PS/en/Redirect.do' for English users\n"
+        + "while the action path is 'http://web24.ns1.com:9090/PS/fr/Redirect.do' for French users.";
+
+    private static final String DOLLAR_SIGN_TEST_MESSAGE = 
+        "The annual payment is $${annual.payment}.";
+
+    private static final String DOLLAR_SIGN_TEST_EXPECTED_MESSAGE = 
+        "The annual payment is $500.";
+
+    @Before
+    public void before() throws Exception {
+        bundle = ResourceBundleUtils.getBundle(BUNDLE_NAME, null);
+    }
+
     @Test
     public void testBasic() throws Exception {
+        String replacedMessage = MessageUtils.replaceMessages(BUNDLE_NAME, BASIC_TEST_MESSAGE);
+        assertEquals(BASIC_TEST_EXPECTED_MESSAGE, replacedMessage);
 
-        final String bundleName = getClass().getName();
-        String replacedMessage = MessageUtils.replaceMessages(bundleName, BASIC_TEST_MESSAGE);
+        replacedMessage = MessageUtils.replaceMessages(BUNDLE_NAME, BASIC_TEST_MESSAGE, "${", null, null);
+        assertEquals(BASIC_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessages(BUNDLE_NAME, BASIC_TEST_MESSAGE, "${", "}", null);
+        assertEquals(BASIC_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessages(BUNDLE_NAME, BASIC_TEST_MESSAGE, "${", "}", '$');
+        assertEquals(BASIC_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessages(BUNDLE_NAME, BASIC_TEST_MESSAGE, "${", "}", '\\');
+        assertEquals(BASIC_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessagesByBundle(bundle, BASIC_TEST_MESSAGE);
+        assertEquals(BASIC_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessagesByBundle(bundle, BASIC_TEST_MESSAGE, "${", null, null);
+        assertEquals(BASIC_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessagesByBundle(bundle, BASIC_TEST_MESSAGE, "${", "}", null);
+        assertEquals(BASIC_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessagesByBundle(bundle, BASIC_TEST_MESSAGE, "${", "}", '$');
+        assertEquals(BASIC_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessagesByBundle(bundle, BASIC_TEST_MESSAGE, "${", "}", '\\');
         assertEquals(BASIC_TEST_EXPECTED_MESSAGE, replacedMessage);
     }
 
+    @Test
+    public void testCustomVariablePrefixSuffix() throws Exception {
+        String replacedMessage = MessageUtils.replaceMessages(BUNDLE_NAME, PREFIX_SUFFIX_TEST_MESSAGE, "@", "@");
+        assertEquals(PREFIX_SUFFIX_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessages(BUNDLE_NAME, PREFIX_SUFFIX_TEST_MESSAGE, "@", "@", '$');
+        assertEquals(PREFIX_SUFFIX_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessages(BUNDLE_NAME, PREFIX_SUFFIX_TEST_MESSAGE, "@", "@", '\\');
+        assertEquals(PREFIX_SUFFIX_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessagesByBundle(bundle, PREFIX_SUFFIX_TEST_MESSAGE, "@", "@");
+        assertEquals(PREFIX_SUFFIX_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessagesByBundle(bundle, PREFIX_SUFFIX_TEST_MESSAGE, "@", "@", '$');
+        assertEquals(PREFIX_SUFFIX_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessagesByBundle(bundle, PREFIX_SUFFIX_TEST_MESSAGE, "@", "@", '\\');
+        assertEquals(PREFIX_SUFFIX_TEST_EXPECTED_MESSAGE, replacedMessage);
+    }
+
+    @Test
+    public void testDollarSignPrefixedVariable() throws Exception {
+        String replacedMessage = MessageUtils.replaceMessages(BUNDLE_NAME, DOLLAR_SIGN_TEST_MESSAGE);
+        assertEquals(DOLLAR_SIGN_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessages(BUNDLE_NAME, DOLLAR_SIGN_TEST_MESSAGE, "${", null, null);
+        assertEquals(DOLLAR_SIGN_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessages(BUNDLE_NAME, DOLLAR_SIGN_TEST_MESSAGE, "${", "}", null);
+        assertEquals(DOLLAR_SIGN_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessages(BUNDLE_NAME, DOLLAR_SIGN_TEST_MESSAGE, "${", "}", '\\');
+        assertEquals(DOLLAR_SIGN_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessagesByBundle(bundle, DOLLAR_SIGN_TEST_MESSAGE);
+        assertEquals(DOLLAR_SIGN_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessagesByBundle(bundle, DOLLAR_SIGN_TEST_MESSAGE, "${", null, null);
+        assertEquals(DOLLAR_SIGN_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessagesByBundle(bundle, DOLLAR_SIGN_TEST_MESSAGE, "${", "}", null);
+        assertEquals(DOLLAR_SIGN_TEST_EXPECTED_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessagesByBundle(bundle, DOLLAR_SIGN_TEST_MESSAGE, "${", "}", '\\');
+        assertEquals(DOLLAR_SIGN_TEST_EXPECTED_MESSAGE, replacedMessage);
+    }
+
 }
+
