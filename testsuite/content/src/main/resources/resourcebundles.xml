@@ -76,6 +76,7 @@
         <sv:value>key.available.languages</sv:value>
         <sv:value>key.page.notfound</sv:value>
         <sv:value>key.page.notfound.message</sv:value>
+        <sv:value>key.download.charge</sv:value>
       </sv:property>
       <sv:property sv:name="resourcebundle:messages" sv:type="String" sv:multiple="true">
         <sv:value>Home</sv:value>
@@ -84,6 +85,7 @@
         <sv:value>Available in languages</sv:value>
         <sv:value>Page not found</sv:value>
         <sv:value>The page you were looking for cannot be found.</sv:value>
+        <sv:value>0.00</sv:value>
       </sv:property>
       <sv:property sv:name="resourcebundle:messages_en" sv:type="String" sv:multiple="true">
         <sv:value>Home</sv:value>
@@ -92,6 +94,7 @@
         <sv:value>Available in languages</sv:value>
         <sv:value>Page not found</sv:value>
         <sv:value>The page you were looking for cannot be found.</sv:value>
+        <sv:value>0.00</sv:value>
       </sv:property>
       <sv:property sv:name="resourcebundle:messages_fr" sv:type="String" sv:multiple="true">
         <sv:value>Accueil</sv:value>
@@ -100,6 +103,7 @@
         <sv:value>Disponible dans les langues</sv:value>
         <sv:value>Page introuvable</sv:value>
         <sv:value>La page que vous recherchez ne peut pas &amp;ecirc;tre trouv&amp;eacute;.</sv:value>
+        <sv:value>0,00</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="generalresources">
@@ -150,6 +154,7 @@
         <sv:value>key.available.languages</sv:value>
         <sv:value>key.page.notfound</sv:value>
         <sv:value>key.page.notfound.message</sv:value>
+        <sv:value>key.download.charge</sv:value>
       </sv:property>
       <sv:property sv:name="resourcebundle:messages" sv:type="String" sv:multiple="true">
         <sv:value>Home</sv:value>
@@ -158,6 +163,7 @@
         <sv:value>Available in languages</sv:value>
         <sv:value>Page not found</sv:value>
         <sv:value>The page you were looking for cannot be found.</sv:value>
+        <sv:value>0.00</sv:value>
       </sv:property>
       <sv:property sv:name="resourcebundle:messages_en" sv:type="String" sv:multiple="true">
         <sv:value>Home</sv:value>
@@ -166,6 +172,7 @@
         <sv:value>Available in languages</sv:value>
         <sv:value>Page not found</sv:value>
         <sv:value>The page you were looking for cannot be found.</sv:value>
+        <sv:value>0.00</sv:value>
       </sv:property>
       <sv:property sv:name="resourcebundle:messages_fr" sv:type="String" sv:multiple="true">
         <sv:value>Accueil</sv:value>
@@ -174,6 +181,7 @@
         <sv:value>Disponible dans les langues</sv:value>
         <sv:value>Page introuvable</sv:value>
         <sv:value>La page que vous recherchez ne peut pas &amp;ecirc;tre trouv&amp;eacute;.</sv:value>
+        <sv:value>0,00</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
