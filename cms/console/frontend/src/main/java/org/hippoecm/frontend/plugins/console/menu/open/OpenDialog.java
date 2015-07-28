@@ -55,7 +55,7 @@ public class OpenDialog extends AbstractDialog<Node> {
 
     public OpenDialog(final NodeModelReference modelReference) {
         this.modelReference = modelReference;
-        IModel<String> labelModel = new Model<>("Path/UUID");
+        IModel<String> labelModel = new Model<>("Path or UUID");
         add(new Label("label", labelModel));
         add(setFocus(makeValueField(getValueCurrentlySelectedJcrNode())));
     }
@@ -205,7 +205,7 @@ public class OpenDialog extends AbstractDialog<Node> {
 
     @Override
     public IModel getTitle() {
-        return new Model<String>("Open node by path or id");
+        return new Model<String>("Open node by path or UUID");
     }
 
     @Override
