@@ -145,6 +145,145 @@
         <sv:property sv:multiple="true" sv:name="frontend:services" sv:type="String">
           <sv:value>wicket.id</sv:value>
         </sv:property>
+        <sv:property sv:name="translator.id" sv:type="String">
+          <sv:value>${cluster.id}.translator</sv:value>
+        </sv:property>
+        <sv:node sv:name="translator">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippostd:translated</sv:value>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.i18n.ConfigTraversingPlugin</sv:value>
+          </sv:property>
+          <sv:node sv:name="hippostd:translations">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:translations</sv:value>
+            </sv:property>
+            <sv:node sv:name="seotitle">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>frontend:pluginconfig</sv:value>
+              </sv:property>
+              <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+                <sv:value>hippo:translated</sv:value>
+              </sv:property>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>en</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>SEO Title</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>nl</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>SEO titel</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+            <sv:node sv:name="seodescription">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>frontend:pluginconfig</sv:value>
+              </sv:property>
+              <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+                <sv:value>hippo:translated</sv:value>
+              </sv:property>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>en</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>SEO Description</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>nl</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>SEO beschrijving</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+            <sv:node sv:name="seodescription.hint">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>frontend:pluginconfig</sv:value>
+              </sv:property>
+              <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+                <sv:value>hippo:translated</sv:value>
+              </sv:property>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>en</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>Text to be used in the meta description tag</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>nl</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>Tekst die in de meta description tag gebruikt dient te worden</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+            <sv:node sv:name="seotitle.hint">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>frontend:pluginconfig</sv:value>
+              </sv:property>
+              <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+                <sv:value>hippo:translated</sv:value>
+              </sv:property>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>en</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>Text to be used in the title tag</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>nl</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>Tekst die in de title tag begruikt dient te worden</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
@@ -167,7 +306,7 @@
             <sv:value>seotitle</sv:value>
           </sv:property>
           <sv:property sv:name="hint" sv:type="String">
-            <sv:value>Text to be used in the title tag</sv:value>
+            <sv:value>seotitle.hint</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
@@ -192,7 +331,7 @@
             <sv:value>seodescription</sv:value>
           </sv:property>
           <sv:property sv:name="hint" sv:type="String">
-            <sv:value>Text to be used in the meta description tag</sv:value>
+            <sv:value>seodescription.hint</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
