@@ -67,22 +67,12 @@ public class SEOHelperComponentTest {
     public void setUp() throws Exception {
 
         publicationDate.set(2011, Calendar.JULY, 25);
-
-//        contentNode = EasyMock.createNiceMock(Node.class);
-//
-//        EasyMock.expect(contentNode.isNodeType("hippostdpubwf:document")).andReturn(true).anyTimes();
         contentNode = new MockNode("mock", "hippostdpubwf:document");
-//        final Node seo = contentNode.addNode("dummy-compound-name", SEOHelperComponent.SEO_COMPOUND_NODETYPE);
-//        seo.setProperty(SEOHelperComponent.SEO_TITLE_PROPERTY, "SEOTITLE");
-//        seo.setProperty(SEOHelperComponent.SEO_DESCRIPTION_PROPERTY, "SEODESCRIPTION");
-
         contentBean = EasyMock.createNiceMock(HippoBean.class);
         EasyMock.expect(contentBean.getName()).andReturn("CONTENTDOCUMENT").anyTimes();
         EasyMock.expect(contentBean.getNode()).andReturn(contentNode).anyTimes();
         EasyMock.expect(contentBean.getProperty("hippostdpubwf:publicationDate")).andReturn(publicationDate).anyTimes();
         EasyMock.expect(contentBean.getProperty("hippostdpubwf:lastModificationDate")).andReturn(lastModificationDate).anyTimes();
-
-//        EasyMock.replay(contentNode);
         EasyMock.replay(contentBean);
 
         paramsInfo = new MySEOHelperComponentParamsInfo();
