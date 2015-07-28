@@ -2530,6 +2530,13 @@ plugins/gallery-manager/src/main/resources/target
 plugins/gallery-manager/src/main/target
 plugins/gallery-manager/src/target
 plugins/gallery-manager/target
+plugins/google-maps/*.iml
+plugins/google-maps/.DS_Store
+plugins/google-maps/.idea
+plugins/google-maps/atlassian-ide-plugin.xml
+plugins/google-maps/classes
+plugins/google-maps/hippo-plugins.iws
+plugins/google-maps/target
 plugins/hippo-plugins.iws
 plugins/image-component/*.iml
 plugins/image-component/.DS_Store
