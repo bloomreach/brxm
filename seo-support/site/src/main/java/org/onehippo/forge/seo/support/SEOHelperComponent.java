@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,16 @@
  */
 package org.onehippo.forge.seo.support;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.text.StrSubstitutor;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
@@ -41,7 +41,10 @@ import org.slf4j.LoggerFactory;
 @ParametersInfo(type = SEOHelperComponentParamsInfo.class)
 public class SEOHelperComponent extends BaseHstComponent {
 
-    public static final String DCTERMS_SCHEME = "DCTERMS.RFC3066";
+    static final String SEO_COMPOUND_NODETYPE = "seosupport:seo";
+    static final String SEO_TITLE_PROPERTY = "seosupport:seotitle";
+    static final String SEO_DESCRIPTION_PROPERTY = "seosupport:seodescription";
+    private static final String SEPARATOR_CHARACTERS = ", \t\r\n";
     private static Logger log = LoggerFactory.getLogger(SEOHelperComponent.class);
 
     @Override
@@ -52,20 +55,15 @@ public class SEOHelperComponent extends BaseHstComponent {
 
         request.setAttribute(params.getParamsInfoAttribute(), params);
 
-        final String documentAttrName = params.getDocumentAttribute();
-        final String menuName = params.getMenuName();
-        final String menuAttrName = params.getMenuAttribute();
-
         final HippoBean document = request.getRequestContext().getContentBean();
-
         if (document != null) {
-            request.setAttribute(documentAttrName, document);
+            request.setAttribute(params.getDocumentAttribute(), document);
         }
 
+        final String menuName = params.getMenuName();
         final HstSiteMenu menu = request.getRequestContext().getHstSiteMenus().getSiteMenu(menuName);
-
         if (menu != null) {
-            request.setAttribute(menuAttrName, menu);
+            request.setAttribute(params.getMenuAttribute(), menu);
         }
 
         if (!params.isHeadersInTemplate()) {
@@ -82,7 +80,7 @@ public class SEOHelperComponent extends BaseHstComponent {
      * @param menu     {@link HstSiteMenu}
      */
     protected void setSEORequestAttributes(HstRequest request, SEOHelperComponentParamsInfo params, HippoBean document,
-            HstSiteMenu menu) {
+                                           HstSiteMenu menu) {
 
         setPageTitleRequestAttribute(request, params, document, menu);
         setDublinCoreLinksRequestAttributes(request, params);
@@ -99,17 +97,15 @@ public class SEOHelperComponent extends BaseHstComponent {
      * @param menu     {@link HstSiteMenu} to add parent items to the title (like a bread crumb)
      */
     protected void setPageTitleRequestAttribute(HstRequest request, SEOHelperComponentParamsInfo params,
-            HippoBean document, HstSiteMenu menu) {
+                                                HippoBean document, HstSiteMenu menu) {
         if (!params.isSiteTitleInTemplate()) {
             try {
                 String mergedTitle = getPageTitle(request, params, document, menu);
-
                 if (StringUtils.isBlank(mergedTitle)) {
                     return;
                 }
 
                 request.setAttribute("title", mergedTitle);
-
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
                     log.warn("Failed to add title head element", e);
@@ -129,7 +125,7 @@ public class SEOHelperComponent extends BaseHstComponent {
      * @param menu     {@link HstSiteMenu}
      */
     protected void setMetaKeywordsDescriptionRequestAttributes(HstRequest request, SEOHelperComponentParamsInfo params,
-            HippoBean document, HstSiteMenu menu) {
+                                                               HippoBean document, HstSiteMenu menu) {
         try {
             String keywords = "";
             String pageKeywords = getPageKeywords(request, params, document, menu);
@@ -154,10 +150,13 @@ public class SEOHelperComponent extends BaseHstComponent {
 
         try {
             String description = "";
+            String seoDescription = getSeoDescription(document);
             String pageDescription = getPageDescription(request, params, document, menu);
             String defaultDescription = params.getDefaultMetaDescription();
 
-            if (StringUtils.isNotBlank(pageDescription)) {
+            if (StringUtils.isNotBlank(seoDescription)) {
+                description = seoDescription;
+            } else if (StringUtils.isNotBlank(pageDescription)) {
                 description = pageDescription;
             } else if (StringUtils.isNotBlank(defaultDescription)) {
                 description = defaultDescription;
@@ -183,60 +182,24 @@ public class SEOHelperComponent extends BaseHstComponent {
      * @param params   {@link SEOHelperComponentParamsInfo}
      */
     protected void setDublinCoreLinksRequestAttributes(HstRequest request, SEOHelperComponentParamsInfo params) {
-        try {
-            String dublinCoreSchemaLink = getDublinCoreSchemaLink(request, params);
-
-            if (StringUtils.isNotBlank(dublinCoreSchemaLink)) {
-                request.setAttribute("dublinCoreSchemaLink", dublinCoreSchemaLink);
-            }
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to add schema.DC link head element", e);
-            } else {
-                log.warn("Failed to add schema.DC link head element. {}", e.toString());
-            }
+        String dublinCoreSchemaLink = getDublinCoreSchemaLink(request, params);
+        if (StringUtils.isNotBlank(dublinCoreSchemaLink)) {
+            request.setAttribute("dublinCoreSchemaLink", dublinCoreSchemaLink);
         }
 
-        try {
-            String dublinCoreTermsLink = getDublinCoreTermsLink(request, params);
-
-            if (StringUtils.isNotBlank(dublinCoreTermsLink)) {
-                request.setAttribute("dublinCoreTermsLink", dublinCoreTermsLink);
-            }
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to add schema.DCTERMS link head element", e);
-            } else {
-                log.warn("Failed to add schema.DCTERMS link head element. {}", e.toString());
-            }
+        String dublinCoreTermsLink = getDublinCoreTermsLink(request, params);
+        if (StringUtils.isNotBlank(dublinCoreTermsLink)) {
+            request.setAttribute("dublinCoreTermsLink", dublinCoreTermsLink);
         }
 
-        try {
-            String dublinCoreSiteCopyrightLink = getSiteDublinCoreCopyrightLink(request, params);
-
-            if (StringUtils.isNotBlank(dublinCoreSiteCopyrightLink)) {
-                request.setAttribute("dublinCoreCopyrightLink", dublinCoreSiteCopyrightLink);
-            }
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to add DC.rights link head element", e);
-            } else {
-                log.warn("Failed to add DC.rights link head element. {}", e.toString());
-            }
+        String dublinCoreSiteCopyrightLink = getSiteDublinCoreCopyrightLink(request, params);
+        if (StringUtils.isNotBlank(dublinCoreSiteCopyrightLink)) {
+            request.setAttribute("dublinCoreCopyrightLink", dublinCoreSiteCopyrightLink);
         }
 
-        try {
-            String dublinCoreSiteLanguage = getDublinCoreLangauge(request, params);
-
-            if (StringUtils.isNotBlank(dublinCoreSiteLanguage)) {
-                request.setAttribute("dublinCoreLanguage", dublinCoreSiteLanguage);
-            }
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to add DC.language link head element", e);
-            } else {
-                log.warn("Failed to add DC.language link head element. {}", e.toString());
-            }
+        String dublinCoreSiteLanguage = getDublinCoreLangauge(request, params);
+        if (StringUtils.isNotBlank(dublinCoreSiteLanguage)) {
+            request.setAttribute("dublinCoreLanguage", dublinCoreSiteLanguage);
         }
     }
 
@@ -250,7 +213,6 @@ public class SEOHelperComponent extends BaseHstComponent {
     protected void setDocumentDatesRequestAttributes(HstRequest request, HippoBean document) {
         try {
             Calendar documentCreated = getDocumentCreated(request, document);
-
             if (documentCreated == null) {
                 return;
             }
@@ -267,7 +229,6 @@ public class SEOHelperComponent extends BaseHstComponent {
 
         try {
             Calendar documentModified = getDocumentModified(request, document);
-
             if (documentModified != null) {
                 request.setAttribute("dublinCoreTermsModified",
                         DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(documentModified));
@@ -294,17 +255,13 @@ public class SEOHelperComponent extends BaseHstComponent {
     }
 
     protected String getDublinCoreLangauge(HstRequest request, SEOHelperComponentParamsInfo params) {
-        String enable = params.getEnableDublinCoreLanguage();
-
-        if ("true".equalsIgnoreCase(enable)) {
+        if ("true".equalsIgnoreCase(params.getEnableDublinCoreLanguage())) {
             String language = params.getDublinCoreLanguage();
-
             if (StringUtils.isNotEmpty(language)) {
                 return language;
             }
 
             Locale locale = request.getLocale();
-
             if (locale != null) {
                 if (StringUtils.isEmpty(locale.getCountry())) {
                     return locale.getLanguage();
@@ -318,7 +275,7 @@ public class SEOHelperComponent extends BaseHstComponent {
     }
 
     /**
-     * Composes the page titlebased on
+     * Composes the page title based on
      * <ul>
      * <li>{@link org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo#getSiteTitle()}</li>
      * <li>current sitemenu item</li>
@@ -333,43 +290,42 @@ public class SEOHelperComponent extends BaseHstComponent {
      * @throws Exception if properties cannot be retrieved
      */
     protected String getPageTitle(HstRequest request, SEOHelperComponentParamsInfo params, HippoBean document,
-            HstSiteMenu menu) throws Exception {
-        List<Object> titleParts = new ArrayList<Object>();
+                                  HstSiteMenu menu) throws Exception {
+        Map<String, String> values = new HashMap<>();
+        values.put("siteTitle", "");
+        values.put("menuItem", "");
+        values.put("pageTitle", "");
+        values.put("keywords", "");
 
         String siteTitle = getSiteTitle(request, params);
         if (StringUtils.isNotBlank(siteTitle)) {
-            titleParts.add(siteTitle);
+            values.put("siteTitle", siteTitle);
         }
 
         HstSiteMenuItem selectedMenuItem = findSelectedSiteMenuItem(request, params, menu);
         HstSiteMenuItem expandedMenuItem = findExpandedSiteMenuItem(request, params, menu);
 
-        String documentTitle = getDocumentTitle(document, params);
-
         if (selectedMenuItem != null && selectedMenuItem.getParentItem() != null) {
-            titleParts.add(selectedMenuItem.getParentItem().getName());
+            values.put("menuItem", selectedMenuItem.getParentItem().getName());
         } else if (selectedMenuItem == null && params.isMenuItemAllowExpanded() && expandedMenuItem != null) {
-            titleParts.add(expandedMenuItem.getName());
+            values.put("menuItem", expandedMenuItem.getName());
         }
 
+        String documentTitle = getDocumentTitle(document, params);
         if (StringUtils.isNotBlank(documentTitle)) {
-            titleParts.add(documentTitle);
+            values.put("pageTitle", documentTitle);
         } else if (selectedMenuItem != null) {
-            titleParts.add(selectedMenuItem.getName());
+            values.put("pageTitle", selectedMenuItem.getName());
         }
-
-        String keywords = null;
 
         if (params.isKeywordsInDocumentTitle()) {
-            keywords = getPageKeywords(request, params, document, menu);
+            String keywords = getPageKeywords(request, params, document, menu);
+            if (keywords != null) {
+                values.put("keywords", keywords);
+            }
         }
 
-        if (StringUtils.isBlank(keywords)) {
-            return StringUtils.join(titleParts, " - ");
-        } else {
-            return new StringBuilder(80).append(StringUtils.join(titleParts, " - ")).append(" : ").append(keywords)
-                    .toString();
-        }
+        return generatePageTitle(params.getTemplatePageTitle(), values);
     }
 
     /**
@@ -381,27 +337,30 @@ public class SEOHelperComponent extends BaseHstComponent {
      * @throws Exception if something goes wrong
      */
     protected String getDocumentTitle(HippoBean document, SEOHelperComponentParamsInfo params) throws Exception {
-        String documentTitle = null;
 
-        if (document == null) {
-            return documentTitle;
-        }
-        String[] documentTitlePropNames = StringUtils.split(params.getDocumentTitleBeanProperties(), ", \t\r\n");
+        if (document != null) {
+            // try title from SEO compound
+            final String documentTitle = getSeoTitle(document);
+            if (StringUtils.isNotBlank(documentTitle)) {
+                return documentTitle;
+            }
 
-        if (documentTitlePropNames == null || documentTitlePropNames.length <= 0) {
-            return documentTitle;
-        }
-        for (String documentTitlePropName : documentTitlePropNames) {
-            if (PropertyUtils.isReadable(document, documentTitlePropName)) {
-                String candidateTitle = getPropertyAsEscapedString(document, documentTitlePropName);
-
-                if (StringUtils.isNotBlank(candidateTitle)) {
-                    documentTitle = candidateTitle;
-                    break;
+            // fall-back to property-based title
+            final String propertiesString = params.getDocumentTitleBeanProperties();
+            if (propertiesString != null) {
+                final String[] propertyNames = StringUtils.split(propertiesString, SEPARATOR_CHARACTERS);
+                for (String propertyName : propertyNames) {
+                    if (PropertyUtils.isReadable(document, propertyName)) {
+                        final String propertyValue = getPropertyAsEscapedString(document, propertyName);
+                        if (StringUtils.isNotBlank(propertyValue)) {
+                            return propertyValue;
+                        }
+                    }
                 }
             }
         }
-        return documentTitle;
+
+        return null;
     }
 
     /**
@@ -413,11 +372,10 @@ public class SEOHelperComponent extends BaseHstComponent {
      * @return {@link HstSiteMenuItem} if it can be found, otherwise {@literal null}
      */
     protected HstSiteMenuItem findSelectedSiteMenuItem(HstRequest request, SEOHelperComponentParamsInfo params,
-            HstSiteMenu menu) {
+                                                       HstSiteMenu menu) {
         if (menu == null) {
             return null;
         }
-
         return menu.getSelectSiteMenuItem();
     }
 
@@ -430,7 +388,7 @@ public class SEOHelperComponent extends BaseHstComponent {
      * @return {@link HstSiteMenuItem} if it can be found, otherwise {@literal null}
      */
     protected HstSiteMenuItem findExpandedSiteMenuItem(HstRequest request, SEOHelperComponentParamsInfo params,
-            HstSiteMenu menu) {
+                                                       HstSiteMenu menu) {
         if (menu == null) {
             return null;
         }
@@ -438,24 +396,25 @@ public class SEOHelperComponent extends BaseHstComponent {
     }
 
     protected String getPageKeywords(HstRequest request, SEOHelperComponentParamsInfo params, HippoBean document,
-            HstSiteMenu menu) throws Exception {
-        if (document == null) {
-            return null;
+                                     HstSiteMenu menu) throws Exception {
+        if (document != null) {
+            final String propertiesString = params.getDocumentKeywordsBeanProperties();
+            if (propertiesString != null) {
+                return getPropertiesAsValue(document, StringUtils.split(propertiesString, SEPARATOR_CHARACTERS));
+            }
         }
-        String[] documentKeywordsPropNames = StringUtils.split(params.getDocumentKeywordsBeanProperties(), ", \t\r\n");
-
-        return getPropertiesAsValue(document, documentKeywordsPropNames);
+        return null;
     }
 
     protected String getPageDescription(HstRequest request, SEOHelperComponentParamsInfo params, HippoBean document,
-            HstSiteMenu menu) throws Exception {
-        if (document == null) {
-            return null;
+                                        HstSiteMenu menu) throws Exception {
+        if (document != null) {
+            final String propertiesString = params.getDocumentDescriptionBeanProperties();
+            if (propertiesString != null) {
+                return getPropertiesAsValue(document, StringUtils.split(propertiesString, SEPARATOR_CHARACTERS));
+            }
         }
-        String[] documentDescriptionPropNames = StringUtils.split(params.getDocumentDescriptionBeanProperties(),
-                ", \t\r\n");
-
-        return getPropertiesAsValue(document, documentDescriptionPropNames);
+        return null;
     }
 
     protected String getSiteTitle(HstRequest request, SEOHelperComponentParamsInfo params) {
@@ -500,15 +459,13 @@ public class SEOHelperComponent extends BaseHstComponent {
     }
 
     protected String getPropertiesAsValue(HippoBean document, String[] propertyNames) throws Exception {
-        if (propertyNames == null || propertyNames.length <= 0) {
-            return null;
-        }
-        for (String documentKeywordsPropName : propertyNames) {
-            if (PropertyUtils.isReadable(document, documentKeywordsPropName)) {
-                String keywords = getPropertyAsEscapedString(document, documentKeywordsPropName);
-
-                if (StringUtils.isNotBlank(keywords)) {
-                    return keywords;
+        if (propertyNames != null) {
+            for (String propertyName : propertyNames) {
+                if (PropertyUtils.isReadable(document, propertyName)) {
+                    String propertyValue = getPropertyAsEscapedString(document, propertyName);
+                    if (StringUtils.isNotBlank(propertyValue)) {
+                        return propertyValue;
+                    }
                 }
             }
         }
@@ -530,5 +487,94 @@ public class SEOHelperComponent extends BaseHstComponent {
         } else {
             return SimpleHtmlExtractor.getText(value.toString());
         }
+    }
+
+    /**
+     * Use the provisioned template to to generate the page title
+     *
+     * @param template  the template for generating the page title
+     * @param values    the values to substitute into the page title
+     * @return          the page title
+     */
+    private String generatePageTitle(String template, Map<String, String> values) {
+        StrSubstitutor sub = new StrSubstitutor(values, "%(", ")");
+
+        // Remove placeholders for missing values from template
+        for (String value : values.keySet()) {
+            if (StringUtils.isBlank(values.get(value))) {
+                final String placeholder = "%("+value+")";
+                int startPlaceholder = template.indexOf(placeholder);
+                int endPlaceholder = startPlaceholder + placeholder.length();
+                if (startPlaceholder >= 0) {
+                    // template requests missing value, adjust template.
+                    int endPreviousPlaceholder = template.substring(0, startPlaceholder).lastIndexOf(")");
+                    if (endPreviousPlaceholder >= 0) {
+                        // Not the first placeholder in template, remove separator before missing value, and placeholder
+                        template = template.substring(0, endPreviousPlaceholder + 1)
+                                + template.substring(endPlaceholder);
+                    } else {
+                        int startNextPlaceholder = endPlaceholder + template.substring(endPlaceholder).indexOf("%(");
+                        if (startNextPlaceholder >= 0) {
+                            // Not the last placeholder in template, remove placeholder and separator after missing value
+                            template = template.substring(0, startPlaceholder) + template.substring(startNextPlaceholder);
+                        } else {
+                            // Only placeholder in the template, remove it
+                            template = template.substring(0, startPlaceholder)
+                                    + template.substring(endPlaceholder);
+                        }
+                    }
+                }
+            }
+        }
+
+        return sub.replace(template);
+    }
+
+    /**
+     * Gets the title set in the Seo compound on the document
+     *
+     * @param document {@link HippoBean}
+     * @return {@link String} title set in the Seo compound on the document if it is set, otherwise {@literal null}
+     */
+    private String getSeoTitle(HippoBean document) {
+        if (document != null) {
+            return getPropertyFromSeoCompound(document, SEO_TITLE_PROPERTY);
+        }
+        return null;
+    }
+
+    /**
+     * Gets the description set in the Seo compound on the document
+     *
+     * @param document {@link HippoBean}
+     * @return {@link String} description set in the Seo compound on the document if it is set, otherwise {@literal null}
+     */
+    private String getSeoDescription(HippoBean document) {
+        if (document != null) {
+            return getPropertyFromSeoCompound(document, SEO_DESCRIPTION_PROPERTY);
+        }
+        return null;
+    }
+
+    /**
+     *
+     * @param document  {@link HippoBean}
+     * @param property  Name of the to-be-retrieved String property of the SEO compound
+     * @return          Value of the String property of the SEO compound
+     */
+    private String getPropertyFromSeoCompound(HippoBean document, String property) {
+        try {
+            NodeIterator nodes = document.getNode().getNodes();
+            while (nodes.hasNext()) {
+                Node node = nodes.nextNode();
+                if (node.getPrimaryNodeType().getName().equals(SEO_COMPOUND_NODETYPE)
+                        && node.hasProperty(property)) {
+                    return node.getProperty(property).getString();
+                }
+            }
+        } catch (RepositoryException e) {
+            log.warn("Failure retrieving property {} from SEO compound of document {}", property, document.getName());
+        }
+        return null;
     }
 }
