@@ -27,14 +27,14 @@
   <description>Hippo Plugin SEO Support</description>
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-seo-support</artifactId>
-  <version>2.0.1-SNAPSHOT</version>
+  <version>2.1.0-SNAPSHOT</version>
 
   <inceptionYear>2011</inceptionYear>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/seo-support/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/seo-support/trunk/</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/seo-support/trunk/</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/seo-support/branches/seo-support-2.1.0-integration</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/seo-support/branches/seo-support-2.1.0-integration</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/seo-support/branches/seo-support-2.1.0-integration</url>
   </scm>
 
   <properties>
