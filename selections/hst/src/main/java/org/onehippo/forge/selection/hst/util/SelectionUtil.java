@@ -18,9 +18,9 @@ package org.onehippo.forge.selection.hst.util;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-
-import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.forge.selection.hst.contentbean.ValueList;
 import org.onehippo.forge.selection.hst.contentbean.ValueListItem;
 import org.onehippo.forge.selection.hst.manager.ValueListManager;
@@ -51,10 +51,23 @@ public class SelectionUtil {
         return map;
     }
 
-    public static ValueList getValueListByIdentifier(String identifier, HstRequest request){
+    public static ValueList getValueListByIdentifier(String identifier, HstRequestContext requestContext){
+
+        return getValueListByIdentifier(identifier, requestContext, null);
+    }
+
+    public static ValueList getValueListByIdentifier(String identifier, HstRequestContext requestContext, Locale locale){
 
         ValueListManager valueListManager = HstServices.getComponentManager().getComponent(ValueListManager.class.getName());
 
-        return valueListManager.getValueList(request.getRequestContext().getSiteContentBaseBean(), identifier);
+        ValueList valueList;
+
+        if (locale == null) {
+            valueList = valueListManager.getValueList(requestContext.getSiteContentBaseBean(), identifier);
+        } else {
+            valueList = valueListManager.getValueList(requestContext.getSiteContentBaseBean(), identifier, locale);
+        }
+
+        return valueList;
     }
 }
