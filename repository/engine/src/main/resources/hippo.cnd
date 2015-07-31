@@ -105,6 +105,7 @@
 
 // DATA TYPES: TRANSLATION
 
+// deprecated
 [hippo:translation]
 - hippo:language (string) mandatory
 - hippo:message (string) mandatory
@@ -112,6 +113,7 @@
 - hippo:value (string)
 - hippo:class (string)
 
+// deprecated
 [hippo:translated] mixin
 + hippo:translation (hippo:translation) multiple
 

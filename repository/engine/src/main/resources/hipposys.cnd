@@ -297,6 +297,13 @@
 + hippo:queue (hipposys:updaterfolder)
 + hippo:history (hipposys:updaterfolder)
 
+[hipposys:resourcebundle] > nt:base
+- * (string)
+
+[hipposys:resourcebundles] > nt:base
++ * (hipposys:resourcebundles)
++ * (hipposys:resourcebundle)
+
 // REPOSITORY: CONFIGURATION ROOT
 
 [hipposys:configuration] > nt:base
@@ -314,3 +321,4 @@
 + hippo:security (hipposys:securityfolder) = hipposys:securityfolder
 + hippo:modules (hipposys:modulefolder) = hipposys:modulefolder
 + hippo:update (hipposys:update) = hipposys:update autocreated
++ hippo:translations (hipposys:resourcebundles) = hipposys:resourcebundles autocreated

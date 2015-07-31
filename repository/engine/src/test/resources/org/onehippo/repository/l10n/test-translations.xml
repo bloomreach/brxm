@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="foo" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hipposys:resourcebundles</sv:value>
+  </sv:property>
+  <sv:node sv:name="bar">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:resourcebundles</sv:value>
+    </sv:property>
+    <sv:node sv:name="en">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resourcebundle</sv:value>
+      </sv:property>
+      <sv:property sv:name="key" sv:type="String">
+        <sv:value>value</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="nl">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resourcebundle</sv:value>
+      </sv:property>
+      <sv:property sv:name="key" sv:type="String">
+        <sv:value>waarde</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>

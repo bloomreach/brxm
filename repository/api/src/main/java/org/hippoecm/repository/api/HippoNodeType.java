@@ -469,4 +469,6 @@ public interface HippoNodeType {
 
     public static final String HIPPO_LOCK = "hippo:lock";
 
+    public static final String NT_RESOURCEBUNDLES = "hipposys:resourcebundles";
+    public static final String NT_RESOURCEBUNDLE = "hipposys:resourcebundle";
 }
