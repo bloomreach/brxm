@@ -206,7 +206,6 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                     boolean valid = isFieldValid(validationModel.getObject());
                     if (valid != filter.isValid()) {
                         filter.setValid(valid);
-                        target.appendJavaScript("Wicket.$('" + getMarkupId() + "').setAttribute('class', '" + filter.getObject() + "');");
                     }
                 }
                 if (target != null) {
