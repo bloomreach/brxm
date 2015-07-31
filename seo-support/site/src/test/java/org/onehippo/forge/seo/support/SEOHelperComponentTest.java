@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ import org.hippoecm.hst.mock.core.sitemenu.MockHstSiteMenus;
 import org.hippoecm.hst.util.KeyValue;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.mock.MockNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -60,23 +61,18 @@ public class SEOHelperComponentTest {
     private HippoBean contentBean;
     private Calendar publicationDate = Calendar.getInstance();
     private Calendar lastModificationDate = Calendar.getInstance();
-    private List<KeyValue<String, Element>> headElements = new LinkedList<KeyValue<String, Element>>();
+    private List<KeyValue<String, Element>> headElements = new LinkedList<>();
 
     @Before
     public void setUp() throws Exception {
 
-        publicationDate.set(2011, 6, 25);
-
-        contentNode = EasyMock.createNiceMock(Node.class);
-        EasyMock.expect(contentNode.isNodeType("hippostdpubwf:document")).andReturn(true).anyTimes();
-
+        publicationDate.set(2011, Calendar.JULY, 25);
+        contentNode = new MockNode("mock", "hippostdpubwf:document");
         contentBean = EasyMock.createNiceMock(HippoBean.class);
         EasyMock.expect(contentBean.getName()).andReturn("CONTENTDOCUMENT").anyTimes();
         EasyMock.expect(contentBean.getNode()).andReturn(contentNode).anyTimes();
         EasyMock.expect(contentBean.getProperty("hippostdpubwf:publicationDate")).andReturn(publicationDate).anyTimes();
         EasyMock.expect(contentBean.getProperty("hippostdpubwf:lastModificationDate")).andReturn(lastModificationDate).anyTimes();
-
-        EasyMock.replay(contentNode);
         EasyMock.replay(contentBean);
 
         paramsInfo = new MySEOHelperComponentParamsInfo();
@@ -89,6 +85,7 @@ public class SEOHelperComponentTest {
             protected SEOHelperComponentParamsInfo getComponentParametersInfo(HstRequest request) {
                 return paramsInfo;
             }
+
         };
 
         MockHstSiteMenuItem parentSiteMenuItem = new MockHstSiteMenuItem();
@@ -148,6 +145,9 @@ public class SEOHelperComponentTest {
                         if ("getTitle".equals(method.getName())) {
                             return "CONTENTDOCUMENTTITLE";
                         }
+                        if ("getNode".equals(method.getName())) {
+                            return contentNode;
+                        }
                         return null;
                     }
                 },
@@ -160,6 +160,27 @@ public class SEOHelperComponentTest {
     }
 
     @Test
+    public void testContentBeanWithSeoTitle() throws Exception {
+        final Node seo = contentNode.addNode("dummy-compound-name", SEOHelperComponent.SEO_COMPOUND_NODETYPE);
+        seo.setProperty(SEOHelperComponent.SEO_TITLE_PROPERTY, "SEOTITLE");
+
+        helperComp = new SEOHelperComponent() {
+            @Override
+            protected SEOHelperComponentParamsInfo getComponentParametersInfo(HstRequest request) {
+                return paramsInfo;
+            }
+        };
+
+        requestContext.setContentBean(contentBean);
+
+        helperComp.doBeforeRender(request, response);
+
+        assertEquals("Example.com - PARENTSITEMENUITEM1 - SEOTITLE", request.getAttribute("title"));
+
+        seo.remove();
+    }
+
+    @Test
     public void testContentBeanWithTitleAndKeywordsProperty() throws Exception {
         ProxyFactory proxyFactory = new ProxyFactory();
         contentBean = (HippoBean) proxyFactory.createInvokerProxy(
@@ -167,8 +188,12 @@ public class SEOHelperComponentTest {
                     public Object invoke(Object obj, Method method, Object[] args) throws Throwable {
                         if ("getTitle".equals(method.getName())) {
                             return "CONTENTDOCUMENTTITLE";
-                        } else if ("getKeywords".equals(method.getName())) {
+                        }
+                        if ("getKeywords".equals(method.getName())) {
                             return "Key1,Key2,Key3";
+                        }
+                        if ("getNode".equals(method.getName())) {
+                            return contentNode;
                         }
                         return null;
                     }
@@ -189,10 +214,15 @@ public class SEOHelperComponentTest {
                     public Object invoke(Object obj, Method method, Object[] args) throws Throwable {
                         if ("getTitle".equals(method.getName())) {
                             return "CONTENTDOCUMENTTITLE";
-                        } else if ("getKeywords".equals(method.getName())) {
+                        }
+                        if ("getKeywords".equals(method.getName())) {
                             return "Key1,Key2,Key3";
-                        } else if ("getDescription".equals(method.getName())) {
+                        }
+                        if ("getDescription".equals(method.getName())) {
                             return "The description of the document";
+                        }
+                        if ("getNode".equals(method.getName())) {
+                            return contentNode;
                         }
                         return null;
                     }
@@ -205,6 +235,27 @@ public class SEOHelperComponentTest {
         assertEquals("Example.com - PARENTSITEMENUITEM1 - CONTENTDOCUMENTTITLE : Key1,Key2,Key3", request.getAttribute("title"));
         assertEquals("Key1,Key2,Key3", request.getAttribute("metaKeywords"));
         assertEquals("The description of the document", request.getAttribute("metaDescription"));
+    }
+
+    @Test
+    public void testContentBeanWithSeoDescription() throws Exception{
+        final Node seo = contentNode.addNode("dummy-compound-name", SEOHelperComponent.SEO_COMPOUND_NODETYPE);
+        seo.setProperty(SEOHelperComponent.SEO_DESCRIPTION_PROPERTY, "SEODESCRIPTION");
+
+        helperComp = new SEOHelperComponent() {
+            @Override
+            protected SEOHelperComponentParamsInfo getComponentParametersInfo(HstRequest request) {
+                return paramsInfo;
+            }
+        };
+
+        requestContext.setContentBean(contentBean);
+
+        helperComp.doBeforeRender(request, response);
+
+        assertEquals("SEODESCRIPTION", request.getAttribute("metaDescription"));
+
+        seo.remove();
     }
 
     @Test
@@ -231,15 +282,7 @@ public class SEOHelperComponentTest {
 
     @Test
     public void testWithNonPublishableContent() throws Exception {
-        contentNode = EasyMock.createNiceMock(Node.class);
-        EasyMock.expect(contentNode.isNodeType("hippostdpubwf:document")).andReturn(false).anyTimes();
-
-        contentBean = EasyMock.createNiceMock(HippoBean.class);
-        EasyMock.expect(contentBean.getName()).andReturn("CONTENTDOCUMENT").anyTimes();
-        EasyMock.expect(contentBean.getNode()).andReturn(contentNode).anyTimes();
-
-        EasyMock.replay(contentNode);
-        EasyMock.replay(contentBean);
+        contentNode.setPrimaryType("not:hippostdpubwf:document");
 
         helperComp.doBeforeRender(request, response);
 
@@ -257,6 +300,8 @@ public class SEOHelperComponentTest {
         assertNotSame(DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(publicationDate), request.getAttribute("dublinCoreTermsCreated"));
 
         assertNotSame(DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(lastModificationDate), request.getAttribute("dublinCoreTermsModified"));
+
+        contentNode.setPrimaryType("hippostdpubwf:document");
     }
 
     private class MySEOHelperComponentParamsInfo implements SEOHelperComponentParamsInfo {
@@ -280,6 +325,7 @@ public class SEOHelperComponentTest {
         private String defaultMetaKeywords = "default meta keywords";
         private String defaultMetaDescription = "default meta description";
         private boolean siteTitleInTemplate = false;
+        private String templatePageTitle = "%(siteTitle) - %(menuItem) - %(pageTitle) : %(keywords)";
 
         public String getDocumentAttribute() {
             return documentAttribute;
@@ -409,28 +455,32 @@ public class SEOHelperComponentTest {
             this.keywordsInDocumentTitle = keywordsInDocumentTitle;
         }
 
-		public String getDefaultMetaKeywords() {
+        public String getDefaultMetaKeywords() {
             return defaultMetaKeywords;
-		}
+        }
 
-		public String getDefaultMetaDescription() {
+        public String getDefaultMetaDescription() {
             return defaultMetaDescription;
         }
 
-		public boolean isSiteTitleInTemplate() {
-			return siteTitleInTemplate;
-		}
+        public boolean isSiteTitleInTemplate() {
+            return siteTitleInTemplate;
+        }
+
+        public String getTemplatePageTitle() {
+            return templatePageTitle;
+        }
     }
 
     public interface Titled {
-        public String getTitle();
+        String getTitle();
     }
 
     public interface Descripted {
-        public String getDescription();
+        String getDescription();
     }
 
     public interface Keyworded {
-        public String getKeywords();
+        String getKeywords();
     }
 }

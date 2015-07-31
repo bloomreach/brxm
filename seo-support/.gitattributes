@@ -1,5 +1,13 @@
 * text=auto !eol
 /LICENSE -text
 /NOTICE -text
-/pom.xml svneol=native#text/plain
-src/test/resources/log4j.xml svneol=native#text/plain
+/pom.xml -text
+repository/pom.xml -text svneol=unset#application/xml
+repository/src/main/resources/hide-seosupport.xml -text
+repository/src/main/resources/hippoecm-extension.xml -text svneol=unset#application/xml
+repository/src/main/resources/seosupport-namespace.xml -text svneol=unset#application/xml
+repository/src/main/resources/seosupport.cnd -text
+site/pom.xml svneol=native#text/plain
+site/src/main/resources/org/onehippo/forge/seo/support/SEOHelperComponentParamsInfo.properties -text
+site/src/main/resources/org/onehippo/forge/seo/support/SEOHelperComponentParamsInfo_nl.properties -text
+site/src/test/resources/log4j.xml svneol=native#text/plain

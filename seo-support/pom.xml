@@ -1,45 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+   http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
--->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>27.2</version>
+    <version>27</version>
   </parent>
 
   <name>Hippo Plugin SEO Support</name>
   <description>Hippo Plugin SEO Support</description>
-  <groupId>org.onehippo.cms7</groupId>
-  <artifactId>hippo-plugin-seo-support</artifactId>
-  <version>2.1.0-SNAPSHOT</version>
+  <artifactId>hippo-plugin-seo-support-root</artifactId>
+  <version>2.1.0-seo-support-improvements.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
   <inceptionYear>2011</inceptionYear>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/seo-support/branches/seo-support-2.1.0-integration</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/seo-support/branches/seo-support-2.1.0-integration</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/seo-support/branches/seo-support-2.1.0-integration</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/seo-support/branches/seo-support-2.1.0-seo-support-improvements</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/seo-support/branches/seo-support-2.1.0-seo-support-improvements</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/seo-support/branches/seo-support-2.1.0-seo-support-improvements</url>
   </scm>
 
   <properties>
     <hippo.hst.version>3.0.0</hippo.hst.version>
     <hippo.commons.version>2.0.0</hippo.commons.version>
+    <hippo.repository.version>3.0.0</hippo.repository.version>
     <lib.junit.version>4.8.2</lib.junit.version>
     <lib.easymock.version>3.0</lib.easymock.version>
   </properties>
@@ -57,85 +60,13 @@
       </releases>
     </repository>
   </repositories>
-  
+
   <issueManagement>
     <system>Jira Hippo Plugins</system>
     <url>https://issues.onehippo.com/browse/HIPPLUG/component/13047</url>
   </issueManagement>
 
-  <dependencies>
-    
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-api</artifactId>
-      <version>${hippo.hst.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-client</artifactId>
-      <version>${hippo.hst.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms7-commons</artifactId>
-      <version>${hippo.commons.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- TEST DEPENDENCIES -->
-
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${lib.junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.easymock</groupId>
-      <artifactId>easymock</artifactId>
-      <version>${lib.easymock.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-mock</artifactId>
-      <version>${hippo.hst.version}</version>
-      <scope>test</scope>
-    </dependency>
-        
-  </dependencies>
-
-  <build>
-    <defaultGoal>package</defaultGoal>
-    <resources>
-      <resource>
-        <directory>src/main/java</directory>
-        <filtering>false</filtering>
-        <includes>
-          <include>**/*.ftl</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-  </build>
-
   <profiles>
-
     <profile>
       <id>default</id>
       <activation>
@@ -156,14 +87,20 @@
             <inherited>false</inherited>
             <configuration>
               <excludes combine.children="append">
+                <!-- repository content XML -->
+                <exclude>repository/src/main/resources/**/*.xml</exclude>
               </excludes>
             </configuration>
           </plugin>
         </plugins>
       </build>
     </profile>
-
   </profiles>
+
+  <modules>
+    <module>site</module>
+    <module>repository</module>
+  </modules>
 
 </project>
 
