@@ -34,9 +34,9 @@
   <inceptionYear>2011</inceptionYear>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/seo-support/branches/seo-support-2.1.0-seo-support-improvements</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/seo-support/branches/seo-support-2.1.0-seo-support-improvements</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/seo-support/branches/seo-support-2.1.0-seo-support-improvements</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/seo-support/branches/seo-support-2.1.0-integration</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/seo-support/branches/seo-support-2.1.0-integration</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/seo-support/branches/seo-support-2.1.0-integration</url>
   </scm>
 
   <properties>
