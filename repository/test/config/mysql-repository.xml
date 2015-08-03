@@ -20,7 +20,7 @@
   <DataSources>
     <DataSource name="ds1">
       <param name="driver" value="com.mysql.jdbc.Driver"/>
-      <param name="url" value="jdbc:mysql://localhost:3307/jcr?autoReconnect=true"/>
+      <param name="url" value="jdbc:mysql://localhost:3306/jcr?autoReconnect=true"/>
       <param name="user" value="root"/>
       <param name="password" value=""/>
       <param name="databaseType" value="mysql"/>
