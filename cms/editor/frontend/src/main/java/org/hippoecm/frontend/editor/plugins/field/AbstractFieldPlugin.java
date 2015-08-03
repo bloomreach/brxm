@@ -185,8 +185,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
                 };
                 if (validationModel != null && validationModel.getObject() != null) {
-                    IValidationResult validationResult = validationModel.getObject();
-                    filter.setValid(isFieldValid(validationResult));
+                    filter.setValid(isFieldValid(validationModel.getObject()));
                 }
 
                 managedValidation = true;
@@ -203,10 +202,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             if (IEditor.Mode.EDIT == mode && filter != null) {
                 IModel<IValidationResult> validationModel = helper.getValidationModel();
                 if (validationModel != null && validationModel.getObject() != null) {
-                    boolean valid = isFieldValid(validationModel.getObject());
-                    if (valid != filter.isValid()) {
-                        filter.setValid(valid);
-                    }
+                    filter.setValid(isFieldValid(validationModel.getObject()));
                 }
                 if (target != null) {
                     target.appendJavaScript("Wicket.$('" + getMarkupId() + "').setAttribute('class', '" + filter.getObject() + "');");
