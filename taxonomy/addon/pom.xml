@@ -30,6 +30,8 @@
   <modules>
     <module>frontend</module>
     <module>repository</module>
+    <!-- todo enable when reviewed :-->
+    <!--<module>advanced-search</module>-->
   </modules>
 
 </project>
