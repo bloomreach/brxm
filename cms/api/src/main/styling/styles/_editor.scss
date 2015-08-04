@@ -306,16 +306,19 @@
   margin: 0;
 }
 
-.invalid .hippo-editor-field {
+.invalid > .hippo-editor-compound-field > .hippo-editor-field,
+.invalid > .hippo-editor-field {
+  > .hippo-editor-field-title {
+    color: $validation-title-color;
+  }
+
   .dialog-link,
   .hippo-editor-field-textarea,
   select,
-  .hippo-editor-field-value-container {
-    border-color: $validation-border;
-  }
-
-  .hippo-editor-field-title {
-    color: $validation-title-color;
+  > .hippo-editor-field-subfield {
+    .hippo-editor-field-value-container {
+      border-color: $validation-border;
+    }
   }
 }
 
