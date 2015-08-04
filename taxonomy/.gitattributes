@@ -1,7 +1,6 @@
 * text=auto !eol
 /LICENSE -text
 /NOTICE -text
-addon/advanced-search/pom.xml -text
 addon/frontend/pom.xml svneol=native#text/plain
 addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/tree/CategoryNameComparator.java -text
 addon/pom.xml svneol=native#text/plain
@@ -23,11 +22,5 @@ addon/repository/src/main/resources/taxonomy-service.xml svneol=native#text/plai
 addon/repository/src/main/resources/taxonomy-tree-view.xml svneol=native#text/plain
 api/pom.xml svneol=native#text/plain
 hst-api/pom.xml svneol=native#text/plain
-hst-api/src/main/java/org/onehippo/taxonomy/advancedsearch/plugin/TaxonomyFilterPlugin.html -text
-hst-api/src/main/java/org/onehippo/taxonomy/advancedsearch/plugin/TaxonomyFilterPlugin.java -text
-hst-api/src/main/java/org/onehippo/taxonomy/advancedsearch/plugin/TaxonomyFilterPlugin.properties -text
-hst-api/src/main/java/org/onehippo/taxonomy/advancedsearch/plugin/TaxonomyFilterPlugin_nl.properties -text
 hst/pom.xml svneol=native#text/plain
-hst/src/main/resources/configuration/frontend/advancedsearch/taxonomyFilterPlugin.xml -text
-hst/src/main/resources/hippoecm-extension.xml -text
 /pom.xml svneol=native#text/plain
