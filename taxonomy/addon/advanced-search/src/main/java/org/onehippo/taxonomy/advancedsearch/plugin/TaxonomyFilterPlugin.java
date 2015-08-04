@@ -100,6 +100,8 @@ public class TaxonomyFilterPlugin extends RenderPlugin implements IConstraintPro
         form.add(new DialogLink("edit", new ResourceModel("edit"), dialogFactory, getDialogService())).setEnabled(getTaxonomy() != null);
         add(form);
 
+        form.add(new CategoryListView("key"));
+
         setOutputMarkupId(true);
     }
 
@@ -202,5 +204,27 @@ public class TaxonomyFilterPlugin extends RenderPlugin implements IConstraintPro
      */
     protected String getPreferredLocale() {
         return getLocale().getLanguage();
+    }
+
+    private class CategoryListView extends RefreshingView<String>{
+
+        public CategoryListView(String id) {
+            super(id);
+        }
+
+        @Override
+        protected Iterator<IModel<String>> getItemModels() {
+            List<IModel<String>> items = new ArrayList<>();
+            for(String key:taxonomyKeys){
+                items.add(new Model<>(key));
+            }
+            return items.iterator();
+        }
+
+        @Override
+        protected void populateItem(Item<String> item) {
+            final String key = item.getModelObject();
+            item.add(new Label("label", key));
+        }
     }
 }
