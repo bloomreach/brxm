@@ -1,13 +1,6 @@
 * text=auto !eol
 /LICENSE -text
 /NOTICE -text
-addon/advanced-search/pom.xml -text
-addon/advanced-search/src/main/java/org/onehippo/taxonomy/advancedsearch/plugin/TaxonomyFilterPlugin.html -text
-addon/advanced-search/src/main/java/org/onehippo/taxonomy/advancedsearch/plugin/TaxonomyFilterPlugin.java -text
-addon/advanced-search/src/main/java/org/onehippo/taxonomy/advancedsearch/plugin/TaxonomyFilterPlugin.properties -text
-addon/advanced-search/src/main/java/org/onehippo/taxonomy/advancedsearch/plugin/TaxonomyFilterPlugin_nl.properties -text
-addon/advanced-search/src/main/resources/configuration/frontend/advancedsearch/taxonomyFilterPlugin.xml -text
-addon/advanced-search/src/main/resources/hippoecm-extension.xml -text
 addon/frontend/pom.xml svneol=native#text/plain
 addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/tree/CategoryNameComparator.java -text
 addon/pom.xml svneol=native#text/plain

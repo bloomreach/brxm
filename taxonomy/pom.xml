@@ -46,10 +46,6 @@
     <hippo.repository.version>3.0.0</hippo.repository.version>
     <hippo.hst.version>3.0.0</hippo.hst.version>
 
-    <!-- todo enable when reviewed :-->
-    <!--<hippo.addon-search-service.version>2.0.0</hippo.addon-search-service.version>-->
-    <!--<hippo.services.version>2.0.0</hippo.services.version>-->
-
     <commons-collections.version>3.2.1</commons-collections.version>
 
     <jsp-api.version>2.2</jsp-api.version>
@@ -188,21 +184,6 @@
         <version>${hippo.repository.version}</version>
         <scope>provided</scope>
       </dependency>
-
-      <!-- todo enable when reviewed :-->
-      <!--<dependency>-->
-        <!--<groupId>com.onehippo.cms7</groupId>-->
-        <!--<artifactId>hippo-addon-advanced-search-frontend-api</artifactId>-->
-        <!--<version>${hippo.addon-search-service.version}</version>-->
-        <!--<scope>provided</scope>-->
-      <!--</dependency>-->
-
-      <!--<dependency>-->
-        <!--<groupId>org.onehippo.cms7</groupId>-->
-        <!--<artifactId>hippo-search-service-api</artifactId>-->
-        <!--<version>${hippo.services.version}</version>-->
-        <!--<scope>provided</scope>-->
-      <!--</dependency>-->
 
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
