@@ -41,6 +41,11 @@ public class LocationMapperTest {
         assertEquals("/no.de", contextNode);
         assertEquals("no.de.xml", file);
 
+        contextNode = LocationMapper.contextNodeForPath("/no@de", true);
+        file = LocationMapper.fileForPath("/no@de", true);
+        assertEquals("/no@de", contextNode);
+        assertEquals("no@de.xml", file);
+
         // catch all: /node
         file = LocationMapper.fileForPath("/node[23]", true);
         assertEquals("node[23].xml", file);
