@@ -9,4 +9,5 @@ public interface ResourceBundle {
     String getName();
 
     String getString(String key);
+
 }

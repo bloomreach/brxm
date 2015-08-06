@@ -1,21 +1,16 @@
 package org.onehippo.repository.l10n;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Stack;
-
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-
 import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
+import java.util.*;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_RESOURCEBUNDLE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_RESOURCEBUNDLES;
@@ -61,7 +56,9 @@ class ResourceBundleLoader {
         final ResourceBundleImpl bundle = new ResourceBundleImpl(getName(), locale);
         log.debug("Loading bundle '{}' for locale '{}'", getName(), locale);
         for (Property property : new PropertyIterable(node.getProperties())) {
-            bundle.putString(property.getName(), property.getString());
+            if (isTranslation(property)) {
+                bundle.putString(property.getName(), property.getString());
+            }
         }
         return bundle;
     }
@@ -76,6 +73,10 @@ class ResourceBundleLoader {
             }
         }
         return sb.toString();
+    }
+
+    public boolean isTranslation(Property property) throws RepositoryException {
+        return property.getType() == PropertyType.STRING;
     }
 
     private class ResourceBundleImpl implements ResourceBundle {
