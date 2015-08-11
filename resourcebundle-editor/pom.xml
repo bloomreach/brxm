@@ -28,12 +28,12 @@
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-resourcebundle-editor</artifactId>
   <name>Hippo Plugin Resourcebundle Editor</name>
-  <version>2.0.1-SNAPSHOT</version>
+  <version>2.1.0-SNAPSHOT</version>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/resourcebundle-editor/branches/hippo-plugin-resourcebundle-editor-2.0.x</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/resourcebundle-editor/branches/hippo-plugin-resourcebundle-editor-2.0.x</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/resourcebundle-editor/branches/hippo-plugin-resourcebundle-editor-2.0.x</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/resourcebundle-editor/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/resourcebundle-editor/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/resourcebundle-editor/trunk/</url>
   </scm>
 
   <properties>
