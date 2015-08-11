@@ -48,9 +48,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-autoreload/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-autoreload/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-autoreload/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-autoreload/branches/hippo-services-autoreload-2.0.x</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-autoreload/branches/hippo-services-autoreload-2.0.x</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-autoreload/branches/hippo-services-autoreload-2.0.x</url>
   </scm>
 
   <repositories>
