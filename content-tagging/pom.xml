@@ -33,9 +33,9 @@
   <inceptionYear>2008</inceptionYear>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-tagging/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-tagging/trunk/</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-tagging/trunk/</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-tagging/branches/hippo-plugin-content-tagging-5.0.x</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-tagging/branches/hippo-plugin-content-tagging-5.0.x</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-tagging/branches/hippo-plugin-content-tagging-5.0.x</url>
   </scm>
 
   <properties>
