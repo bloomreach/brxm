@@ -53,9 +53,9 @@
 
   </properties>
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/branches/hippo-essentials-2.0.x</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/branches/hippo-essentials-2.0.x</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/branches/hippo-essentials-2.0.x</url>
   </scm>
 
   <modules>
