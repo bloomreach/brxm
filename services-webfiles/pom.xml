@@ -45,9 +45,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-webfiles/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-webfiles/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-webfiles/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-webfiles/branches/hippo-services-webfiles-2.0.x</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-webfiles/branches/hippo-services-webfiles-2.0.x</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-webfiles/branches/hippo-services-webfiles-2.0.x</url>
   </scm>
 
   <repositories>
