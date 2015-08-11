@@ -138,9 +138,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/branches/hippo-cms-3.0.x</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/branches/hippo-cms-3.0.x</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/branches/hippo-cms-3.0.x</url>
   </scm>
 
   <build>
