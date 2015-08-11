@@ -90,11 +90,17 @@ public final class ProjectUtils {
         return new File(absolutePath);
     }
 
-    public static File getWebfiles(final PluginContext context) {
+    public static File getWebfilesResources(final PluginContext context) {
         final File bootstrapFolder = getFolder(context.getProjectSettings().getBootstrapModule());
-        // TODO make site part configurable ??
         final String webfilesPath = bootstrapFolder.getAbsolutePath() + File.separator + "webfiles" + File.separator
-                + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "site";
+                + "src" + File.separator + "main" + File.separator + "resources";
+        return new File(webfilesPath);
+    }
+
+    public static File getWebfiles(final PluginContext context) {
+        final File webfilesResources = getWebfilesResources(context);
+        // TODO make site part configurable ??
+        final String webfilesPath = webfilesResources.getAbsolutePath() + File.separator + "site";
         return new File(webfilesPath);
     }
     /**

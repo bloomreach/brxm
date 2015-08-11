@@ -36,7 +36,7 @@
     <#else>
         <div class="alert alert-danger">The selected document should be of type FAQ list.</div>
     </#if>
-<#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
+<#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>
     <img src="<@hst.link path="/images/essentials/catalog-component-icons/faq.png" />"> Click to edit FAQ
 </#if>

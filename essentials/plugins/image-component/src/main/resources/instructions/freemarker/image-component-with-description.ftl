@@ -9,7 +9,7 @@
             <figcaption>${document.description?html}</figcaption>
         </#if>
     </figure>
-<#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
+<#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>
     <img src="<@hst.link path="/images/essentials/catalog-component-icons/image.png" />"> Click to edit Image
 </#if>

@@ -23,7 +23,7 @@
         </div>
     </#if>
 </div>
-<#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
+<#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>
     <img src="<@hst.link path='/images/essentials/catalog-component-icons/blogposts-by-author.png'/>"> Click to edit Blogposts by Author
 </#if>

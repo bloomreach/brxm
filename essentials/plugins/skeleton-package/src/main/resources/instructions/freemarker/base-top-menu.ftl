@@ -1,7 +1,7 @@
 <#include "../include/imports.ftl">
 
 <#-- @ftlvariable name="menu" type="org.hippoecm.hst.core.sitemenu.HstSiteMenu" -->
-<#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
+<#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#if menu??>
   <#if menu.siteMenuItems??>
     <ul class="nav nav-pills">

@@ -6,12 +6,6 @@
   </@hst.headContribution>
 </#if>
 
-<#if metaKeywords??>
-  <@hst.headContribution category="SEO" keyHint="hst.seo.document.keywords">
-  <meta name="keywords" content="${metaKeywords?xml}"/>
-  </@hst.headContribution>
-</#if>
-
 <#if metaDescription??>
   <@hst.headContribution category="SEO" keyHint="hst.seo.document.description">
   <meta name="description" content="${metaDescription?xml}"/>

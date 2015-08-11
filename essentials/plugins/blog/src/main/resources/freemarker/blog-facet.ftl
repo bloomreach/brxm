@@ -47,7 +47,7 @@
       </#if>
     </#list>
   </ul>
-<#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
+<#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>
 <img src="<@hst.link path='/images/essentials/catalog-component-icons/facets.png'/>"> Click to edit Facets
 </#if>

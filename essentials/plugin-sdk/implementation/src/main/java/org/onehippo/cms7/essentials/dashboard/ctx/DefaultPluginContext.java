@@ -369,6 +369,8 @@ public class DefaultPluginContext implements PluginContext {
                 + File.separator + EssentialConst.PATH_REL_WEB_INF);
         placeholderData.put(EssentialConst.PLACEHOLDER_CMS_WEB_INF_ROOT, ProjectUtils.getCms(this).getAbsolutePath()
                 + File.separator + EssentialConst.PATH_REL_WEB_INF);
+        final File webfilesResource = ProjectUtils.getWebfilesResources(this);
+        placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_RESOURCES, webfilesResource.getAbsolutePath());
         final File webfilesFolder = ProjectUtils.getWebfiles(this);
         placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_ROOT, webfilesFolder.getAbsolutePath());
         placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_FREEMARKER_ROOT, webfilesFolder.getAbsolutePath() + File.separator + "freemarker");

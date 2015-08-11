@@ -6,12 +6,6 @@
   </hst:headContribution>
 </c:if>
 
-<c:if test="${not empty requestScope.metaKeywords}">
-  <hst:headContribution category="SEO" keyHint="hst.seo.document.keywords">
-    <meta name="keywords" content="${fn:escapeXml(requestScope.metaKeywords)}"/>
-  </hst:headContribution>
-</c:if>
-
 <c:if test="${not empty requestScope.metaDescription}">
   <hst:headContribution category="SEO" keyHint="hst.seo.document.description">
     <meta name="description" content="${fn:escapeXml(requestScope.metaDescription)}"/>

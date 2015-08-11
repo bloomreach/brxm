@@ -53,6 +53,7 @@ public final class EssentialConst {
     public static final String PLACEHOLDER_SITE_WEB_INF_ROOT = "siteWebInfRoot";
     public static final String PLACEHOLDER_CMS_WEB_INF_ROOT = "cmsWebInfRoot";
     public static final String PLACEHOLDER_SITE_RESOURCES = "siteResources";
+    public static final String PLACEHOLDER_WEBFILES_RESOURCES = "webfilesResources";
     public static final String PLACEHOLDER_WEBFILES_ROOT = "webfilesRoot";
     public static final String PLACEHOLDER_WEBFILES_FREEMARKER_ROOT = "freemarkerRoot";
     public static final String PLACEHOLDER_WEBFILES_CSS_ROOT = "webfilesCssRoot";

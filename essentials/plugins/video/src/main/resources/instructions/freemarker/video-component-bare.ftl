@@ -4,7 +4,7 @@
 <#-- @ftlvariable name="cparam" type="org.onehippo.cms7.essentials.components.info.EssentialsVideoComponentInfo"--%> -->
 <#if document??>
   <iframe width="${cparam.width}" height="${cparam.height}" src="${document.link?html}" frameborder="0" allowfullscreen></iframe>
-<#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
+<#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>
 <img src="<@hst.link path="/images/essentials/catalog-component-icons/video.png" />"> Click to edit Video
 </#if>
