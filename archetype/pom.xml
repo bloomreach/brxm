@@ -29,7 +29,7 @@
   </description>
 
   <artifactId>hippo-project-archetype</artifactId>
-  <version>3.0.1-SNAPSHOT</version>
+  <version>3.1.0-SNAPSHOT</version>
   <packaging>maven-archetype</packaging>
 
   <properties>
@@ -73,9 +73,9 @@
 
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/branches/hippo-project-archetype-3.0.x</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/branches/hippo-project-archetype-3.0.x</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/branches/hippo-project-archetype-3.0.x</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk</url>
   </scm>
 
   <build>
