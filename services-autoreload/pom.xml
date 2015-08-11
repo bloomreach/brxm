@@ -26,7 +26,7 @@
 
   <name>Hippo CMS7 Services - autoreload</name>
   <artifactId>hippo-services-autoreload</artifactId>
-  <version>2.0.1-SNAPSHOT</version>
+  <version>2.1.0-SNAPSHOT</version>
 
   <inceptionYear>2014</inceptionYear>
 
@@ -48,9 +48,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-autoreload/branches/hippo-services-autoreload-2.0.x</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-autoreload/branches/hippo-services-autoreload-2.0.x</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-autoreload/branches/hippo-services-autoreload-2.0.x</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-autoreload/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-autoreload/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-autoreload/trunk</url>
   </scm>
 
   <repositories>
