@@ -14,9 +14,10 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-      <artifactId>hst-client-dependencies</artifactId>
-      <type>pom</type>
+      <groupId>${groupId}</groupId>
+      <artifactId>${rootArtifactId}-site</artifactId>
+      <version>${dollar}{project.version}</version>
+      <type>war</type>
       <scope>provided</scope>
     </dependency>
   </dependencies>
