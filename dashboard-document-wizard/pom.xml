@@ -39,9 +39,9 @@
   </description>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/trunk/</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/trunk/</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/branches/hippo-plugin-dashboard-document-wizard-2.0.x</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/branches/hippo-plugin-dashboard-document-wizard-2.0.x</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/branches/hippo-plugin-dashboard-document-wizard-2.0.x</url>
   </scm>
 
   <issueManagement>
