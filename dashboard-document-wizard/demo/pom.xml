@@ -30,9 +30,9 @@
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/demo/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/demo/trunk/</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/demo/trunk/</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/demo/branches/dashboard-document-wizard-demo-2.0.x</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/demo/branches/dashboard-document-wizard-demo-2.0.x</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/demo/branches/dashboard-document-wizard-demo-2.0.x</url>
   </scm>
 
   <properties>
