@@ -150,14 +150,17 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         final LockManager lockManager = session.getWorkspace().getLockManager();
         try {
             log.debug("Attempting to release lock");
-            session.refresh(false);
             if (lock != null) {
                 lock.stopKeepAlive();
             }
+            session.refresh(false);
             lockManager.unlock(INIT_LOCK_PATH);
             log.debug("Lock successfully released");
         } catch (LockException e) {
             log.warn("Current session no longer holds a lock");
+        } catch (RepositoryException e) {
+            log.error("Failed to unlock initialization processor: {}. " +
+                    "Lock will time out within {} seconds", e.toString(), LOCK_TIMEOUT);
         }
     }
 
