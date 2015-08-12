@@ -25,13 +25,13 @@
   <name>Hippo Plugin Poll Demo</name>
   <description>Hippo Plugin Poll Demo</description>
   <artifactId>hippo-plugin-poll-demo</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
+  <version>2.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/demo/branches/poll-demo-2.0.x</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/demo/branches/poll-demo-2.0.x</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/demo/branches/poll-demo-2.0.x</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/demo/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/demo/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/demo/trunk/</url>
   </scm>
 
   <properties>
