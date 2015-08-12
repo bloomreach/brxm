@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.junit.Test;
 
 
 public class TestSearchInputParsingUtils {
-    
+
     @Test
     public void compressWhitespace_compressesWhitespace() {
         assertEquals("tabs are replaced with single space", ". .", SearchInputParsingUtils.compressWhitespace(".\t."));
@@ -32,10 +32,10 @@ public class TestSearchInputParsingUtils {
         assertEquals("a b c d", SearchInputParsingUtils.compressWhitespace(" \t a \n b    c          d  "));
         assertEquals("is nullsafe", null, SearchInputParsingUtils.compressWhitespace(null));
     }
-    
+
     @Test
     public void testNullArgument() throws Exception {
-         assertNull(SearchInputParsingUtils.parse(null, true));
+        assertNull(SearchInputParsingUtils.parse(null, true));
     }
     @Test
     public void testSearchInputParsingUtils_parse() throws Exception {
@@ -49,30 +49,30 @@ public class TestSearchInputParsingUtils {
         assertEquals("Me the quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("Me AND the quick brown fox jumps over the lazy dog", true));
         assertEquals("Me or the quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("Me or the quick brown fox jumps over the lazy dog", true));
         assertEquals("Me OR the quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("Me OR the quick brown fox jumps over the lazy dog", true));
-        
+
         assertEquals("the quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("AND the quick brown fox jumps over the lazy dog", true));
         assertEquals("and the quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("and the quick brown fox jumps over the lazy dog", true));
         assertEquals("or the quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("or the quick brown fox jumps over the lazy dog", true));
         assertEquals("the quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("OR the quick brown fox jumps over the lazy dog", true));
-        
+
         assertEquals("AND* the quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("AND* the quick brown fox jumps over the lazy dog", true));
         assertEquals("the quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("*AND the quick brown fox jumps over the lazy dog", true));
         assertEquals("OR* the quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("OR* the quick brown fox jumps over the lazy dog", true));
         assertEquals("the quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("*OR the quick brown fox jumps over the lazy dog", true));
-        
+
         assertEquals("the quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("*OR *the *?quick *?brown fox jumps over the lazy dog", true));
         assertEquals("the qu?ick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("*OR *the *?qu?ick *?brown fox jumps over the lazy dog", true));
         // only the first wildcard within a word is allowed
         assertEquals("The qu?ick br?own fo*x jumps over the lazy dog", SearchInputParsingUtils.parse("The ?*qu??ic?k br?ow*?n fo*x jumps over the lazy dog", true));
         // allow wildcard false
         assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The ?*qu??ic?k br?ow*?n fo*x jumps over the lazy dog", false));
-        
+
         assertEquals("The quick brown fox jumps  over   the lazy dog", SearchInputParsingUtils.parse("The (quick brown) (fox jumps) &( over ] ] [the lazy dog", true));
-        
+
         assertEquals("The -quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The NOT quick brown fox jumps over the lazy dog", true));
-        
+
         assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The \t\n quick brown fox \njumps \t over the lazy dog", true));
-        
+
         // prefix ~ is allowed for synonyms Jackrabbit. In middle of word, it is not allowed
         assertEquals("The ~quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The ~quick brown fox jumps over the lazy dog", true));
         assertEquals("The ~quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The ~qui~ck~ bro~wn fox jumps over the lazy dog", true));
@@ -153,7 +153,13 @@ public class TestSearchInputParsingUtils {
         assertEquals("The qui*ck brown fox jumps over the lazy dog", SearchInputParsingUtils.removeLeadingWildCardsFromWords("The qui*ck brown fox jumps over the lazy dog"));
         assertEquals("The qui*ck brown* fox jumps* over the lazy dog", SearchInputParsingUtils.removeLeadingWildCardsFromWords("The qui*ck brown* fox jumps* over the lazy dog"));
         assertEquals("The qui*ck brown* fox jumps* over the lazy dog", SearchInputParsingUtils.removeLeadingWildCardsFromWords("The *qui*ck *brown* fox jumps* over the lazy dog"));
-        
     }
 
+    @Test
+    public void testSearchInputParsingUtils_parse_excludeAmpersand() throws Exception {
+        assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", true));
+        assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", false));
+        assertEquals("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", SearchInputParsingUtils.parse("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", true, new char[]{'&'}));
+        assertEquals("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", SearchInputParsingUtils.parse("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", false, new char[]{'&'}));
+    }
 }
