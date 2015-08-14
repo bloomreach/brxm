@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,8 +18,11 @@ package org.onehippo.repository.update;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -51,11 +54,25 @@ class UpdaterExecutionReport {
     private final PrintStream skippedStream;
     private final PrintStreamLogger logger;
 
+    private static class TimestampPrintStreamLogger extends PrintStreamLogger {
+        private static final DateFormat timestampFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        public TimestampPrintStreamLogger(final String name, final int level, final PrintStream... out) throws IllegalArgumentException {
+            super(name, level, out);
+        }
+
+        @Override
+        protected String getMessageString(final String level, final String message) {
+            final String currentTimestamp = timestampFormatter.format(new Date());
+            return level + " " + currentTimestamp + " " + message;
+        }
+    }
+
     UpdaterExecutionReport() throws IOException {
         logFile = File.createTempFile("updater-execution", ".log.tmp", null);
         logStream = new PrintStream(logFile);
         cbos = new CircularBufferOutputStream(4096);
-        logger = new PrintStreamLogger("repository", PrintStreamLogger.DEBUG_LEVEL, logStream, new PrintStream(cbos));
+        logger = new TimestampPrintStreamLogger("repository", PrintStreamLogger.DEBUG_LEVEL, logStream, new PrintStream(cbos));
         updatedFile = File.createTempFile("updater-updated", "txt.tmp", null);
         updatedStream = new PrintStream(updatedFile);
         failedFile = File.createTempFile("updater-failed", "txt.tmp", null);
