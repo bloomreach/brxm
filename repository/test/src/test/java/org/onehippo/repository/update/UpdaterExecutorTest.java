@@ -132,7 +132,6 @@ public class UpdaterExecutorTest extends RepositoryTestCase {
         }
     }
 
-    @SuppressWarnings(value = "unused")
     public static class TestUpdater extends BaseNodeUpdateVisitor {
 
         @Override
