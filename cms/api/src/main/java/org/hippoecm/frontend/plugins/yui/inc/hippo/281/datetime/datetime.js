@@ -291,14 +291,25 @@ if (!YAHOO.hippo.DateTime) {
                         cfg.setProperty("WEEKDAYS_MEDIUM",["Son", "Mon", "Die", "Mit", "Don", "Fre", "Sam"]);
                         cfg.setProperty("WEEKDAYS_SHORT", ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"]);
                         cfg.setProperty("WEEKDAYS_1CHAR", ["S", "M", "D", "M", "D", "F", "S"]);
+                        cfg.setProperty("START_WEEKDAY",  ["1"]);
                     },
                     nl: function(cfg) {
                         cfg.setProperty("MONTHS_LONG",    ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "october", "november", "december"]);
                         cfg.setProperty("MONTHS_SHORT",   ["jan", "feb", "maa", "apr", "mei", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]);
-                        cfg.setProperty("WEEKDAYS_LONG",  ["maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag", "zondag"]);
-                        cfg.setProperty("WEEKDAYS_MEDIUM",["maa", "din", "woe", "don", "vri", "zat", "zon"]);
-                        cfg.setProperty("WEEKDAYS_SHORT", ["ma", "di", "wo", "do", "vr", "za", "zo"]);
-                        cfg.setProperty("WEEKDAYS_1CHAR", ["m", "d", "w", "d", "v", "z", "z"]);
+                        cfg.setProperty("WEEKDAYS_LONG",  ["zondag", "maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag"]);
+                        cfg.setProperty("WEEKDAYS_MEDIUM",["zon", "maa", "din", "woe", "don", "vri", "zat"]);
+                        cfg.setProperty("WEEKDAYS_SHORT", ["zo", "ma", "di", "wo", "do", "vr", "za"]);
+                        cfg.setProperty("WEEKDAYS_1CHAR", ["z", "m", "d", "w", "d", "v", "z"]);
+                        cfg.setProperty("START_WEEKDAY",  ["1"]);
+                    },
+                    fr: function(cfg) {
+                        cfg.setProperty("MONTHS_LONG",    ["janvier", "f\u00E9vrier", "mars", "avril", "mai", "juin", "juillet", "ao\u00FBt", "septembre", "octobre", "novembre", "d\u00E9cembre"]);
+                        cfg.setProperty("MONTHS_SHORT",   ["jan", "f\u00E9v", "mar", "avr", "mai", "jui", "jul", "ao\u00FB", "sep", "oct", "nov", "d\u00E9c"]);
+                        cfg.setProperty("WEEKDAYS_LONG",  ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"]);
+                        cfg.setProperty("WEEKDAYS_MEDIUM",["dim", "lun", "mar", "mer", "jeu", "ven", "sam"]);
+                        cfg.setProperty("WEEKDAYS_SHORT", ["di", "lu", "ma", "me", "je", "ve", "sa"]);
+                        cfg.setProperty("WEEKDAYS_1CHAR", ["d", "l", "m", "m", "j", "v", "s"]);
+                        cfg.setProperty("START_WEEKDAY",  ["1"]);
                     }
                 }[lang];
 
