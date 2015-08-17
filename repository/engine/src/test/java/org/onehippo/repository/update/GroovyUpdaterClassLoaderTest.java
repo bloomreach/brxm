@@ -15,47 +15,68 @@
  */
 package org.onehippo.repository.update;
 
-import org.codehaus.groovy.control.MultipleCompilationErrorsException;
-import org.junit.Test;
+import javax.jcr.RepositoryException;
 
+import org.codehaus.groovy.control.MultipleCompilationErrorsException;
+import org.junit.Before;
+import org.junit.Test;
+import org.onehippo.repository.mock.MockNode;
+
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
 
 
 public class GroovyUpdaterClassLoaderTest {
 
-    @Test (expected = MultipleCompilationErrorsException.class)
-    public void testSystemExitIsUnauthorized() {
-        final String script = "class Test { void test() { System.exit(0) } }";
-        GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
-        fail("Script can call System.exit");
+    @Before
+    public void setUp() throws RepositoryException {
+        final MockNode configuration = new MockNode("config");
+        configuration.setProperty("illegalPackages", new String[]{"java.text"});
+        configuration.setProperty("illegalClasses", new String[]{"java.util.Collections"});
+        configuration.setProperty("illegalMethods", new String[]{"java.util.Arrays#asList"});
+        UpdaterExecutor.setConfiguration(new UpdaterExecutorConfiguration(configuration));
     }
 
     @Test (expected = MultipleCompilationErrorsException.class)
-    public void testClassForNameIsUnauthorized() {
-        final String script = "class Test { void test() { Class.forName('java.lang.Object') }}";
+    public void testDefaultIllegalPackageIsUnauthorized() {
+        final String script = "class Test { void test() { java.net.URL url = new java.net.URL('file://'); } }";
         GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
-        fail("Script can call Class.forName");
+        fail("Script can use class in default illegal package");
     }
 
     @Test (expected = MultipleCompilationErrorsException.class)
-    public void testImportJavaIOFileIsUnauthorized() {
-        final String script = "import java.io.File; class Test { }";
-        GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
-        fail("Script can import java.io.File");
-    }
-
-    @Test (expected = MultipleCompilationErrorsException.class)
-    public void testIndirectImportJavaIOFileIsUnauthorized() {
+    public void testDefaultIllegalClassIsUnauthorized() {
         final String script = "class Test { void test() { java.io.File file = new java.io.File('/'); } }";
         GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
-        fail("Script can use java.io.File");
+        fail("Script can use default illegal class");
     }
 
     @Test (expected = MultipleCompilationErrorsException.class)
-    public void testJavaNetImportIsUnauthorized() {
-        final String script = "import java.net.URL; class Test { }";
+    public void testDefaultIllegalMethodIsUnauthorized() {
+        final String script = "class Test { void test() { def c = System; c.exit(0) } }";
         GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
-        fail("Script can import java.net class");
+        fail("Script can use default illegal method");
+    }
+
+    @Test (expected = MultipleCompilationErrorsException.class)
+    public void testCustomIllegalPackageIsUnauthorized() throws Exception {
+        final String script = "class Test { void test() { java.text.DateFormat.getDateInstance(); } }";
+        GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
+        fail("Script can call unauthorized class");
+    }
+
+    @Test (expected = MultipleCompilationErrorsException.class)
+    public void testCustomIllegalClassIsUnauthorized() throws Exception {
+        final String script = "class Test { void test() { java.util.Collections.emptyList(); } }";
+        GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
+        fail("Script can call unauthorized class");
+    }
+
+    @Test (expected = MultipleCompilationErrorsException.class)
+    public void testCustomIllegalMethodIsUnauthorized() throws Exception {
+        final String script = "class Test { void test() { java.util.Arrays.asList(); } }";
+        GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
+        fail("Script can call unauthorized method");
     }
 
 }

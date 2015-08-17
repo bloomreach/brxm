@@ -73,6 +73,16 @@ public class UpdaterExecutor implements EventListener {
     private volatile boolean cancelled;
     private int lastUpdateCount = 0;
 
+    private static UpdaterExecutorConfiguration configuration;
+
+    static void setConfiguration(UpdaterExecutorConfiguration configuration) {
+        UpdaterExecutor.configuration = configuration;
+    }
+
+    static UpdaterExecutorConfiguration getConfiguration() {
+        return configuration;
+    }
+
     public UpdaterExecutor(Node updaterNode, final Session session) throws Exception {
         this.session = session;
         this.background = session.impersonate(new SimpleCredentials("system", new char[] {}));
