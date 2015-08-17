@@ -92,6 +92,8 @@
     <commons-scxml2.version>2.0-M1</commons-scxml2.version>
     <h2.version>1.3.175</h2.version>
     <mysql.version>5.1.34</mysql.version>
+    <groovy.version>2.4.4</groovy.version>
+
   </properties>
 
   <scm>

@@ -199,8 +199,10 @@ engine/src/main/java/org/onehippo/repository/update/GroovyUpdaterClassLoader.jav
 engine/src/main/java/org/onehippo/repository/update/UpdaterExecutionModule.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterExecutionReport.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterExecutor.java -text
+engine/src/main/java/org/onehippo/repository/update/UpdaterExecutorConfiguration.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterInfo.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterRegistry.java -text
+engine/src/main/java/org/onehippo/repository/update/UpdaterTypeCheckingExtension.java -text
 engine/src/main/java/org/onehippo/repository/util/AnnotationUtils.java -text
 engine/src/main/java/org/onehippo/repository/xml/DereferencedSysViewSAXEventGenerator.java svneol=native#text/plain
 engine/src/main/java/org/onehippo/repository/xml/EnhancedPropInfo.java svneol=native#text/plain
