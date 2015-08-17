@@ -96,7 +96,10 @@ public class UpdaterTypeCheckingExtension extends AbstractTypeCheckingExtension 
     private Collection<Package> getIllegalPackages() {
         if (illegalPackages == null) {
             illegalPackages = new HashSet<>(defaultIllegalPackages);
-            illegalPackages.addAll(UpdaterExecutor.getConfiguration().getIllegalPackages());
+            final UpdaterExecutorConfiguration configuration = UpdaterExecutor.getConfiguration();
+            if (configuration != null) {
+                illegalPackages.addAll(configuration.getIllegalPackages());
+            }
         }
         return illegalPackages;
     }
@@ -104,7 +107,10 @@ public class UpdaterTypeCheckingExtension extends AbstractTypeCheckingExtension 
     private Collection<Class> getIllegalClasses() {
         if (illegalClasses == null) {
             illegalClasses = new HashSet<>(defaultIllegalClasses);
-            illegalClasses.addAll(UpdaterExecutor.getConfiguration().getIllegalClasses());
+            final UpdaterExecutorConfiguration configuration = UpdaterExecutor.getConfiguration();
+            if (configuration != null) {
+                illegalClasses.addAll(configuration.getIllegalClasses());
+            }
         }
         return illegalClasses;
     }
@@ -112,7 +118,10 @@ public class UpdaterTypeCheckingExtension extends AbstractTypeCheckingExtension 
     private Collection<Method> getIllegalMethods() {
         if (illegalMethods == null) {
             illegalMethods = new HashSet<>(defaultIllegalMethods);
-            illegalMethods.addAll(UpdaterExecutor.getConfiguration().getIllegalMethods());
+            final UpdaterExecutorConfiguration configuration = UpdaterExecutor.getConfiguration();
+            if (configuration != null) {
+                illegalMethods.addAll(configuration.getIllegalMethods());
+            }
         }
         return illegalMethods;
     }
