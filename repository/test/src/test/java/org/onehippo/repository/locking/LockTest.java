@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.repository;
+package org.onehippo.repository.locking;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -22,8 +22,6 @@ import javax.jcr.lock.LockManager;
 
 import org.hippoecm.repository.impl.LockManagerDecorator;
 import org.junit.Test;
-import org.onehippo.repository.locking.HippoLock;
-import org.onehippo.repository.locking.HippoLockManager;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.repository.util.JcrConstants;
 

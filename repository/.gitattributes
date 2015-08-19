@@ -371,9 +371,10 @@ test/src/test/java/org/hippoecm/repository/test/TraversePerfTest.java -text
 test/src/test/java/org/hippoecm/repository/test/TraversePerfTestCase.java -text
 test/src/test/java/org/hippoecm/repository/util/JcrUtilsTest.java -text
 test/src/test/java/org/onehippo/repository/LocalRefreshTest.java -text
-test/src/test/java/org/onehippo/repository/LockTest.java -text
 test/src/test/java/org/onehippo/repository/bootstrap/InitializationProcessorTest.java -text
 test/src/test/java/org/onehippo/repository/clustering/ClusterTest.java -text
+test/src/test/java/org/onehippo/repository/locking/LockClusterTest.java -text
+test/src/test/java/org/onehippo/repository/locking/LockTest.java -text
 test/src/test/java/org/onehippo/repository/monkey/Action.java -text
 test/src/test/java/org/onehippo/repository/monkey/AddNodeAction.java -text
 test/src/test/java/org/onehippo/repository/monkey/Monkey.java -text
