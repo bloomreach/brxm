@@ -119,6 +119,34 @@
     </sv:property>
   </sv:node>
 
+  <sv:node sv:name="robotstxt-template-script-upgrader">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20101.3</sv:value>
+    </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+    <sv:value>/hst:hst/hst:configurations/hst:default/hst:templates/robotstxt.ftl/hst:script</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentpropset" sv:type="String">
+    <sv:value>&lt;#ftl encoding="UTF-8" strip_whitespace=true attributes={"content_type": "text/plain"}&gt;
+&lt;#assign hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"] &gt;
+&lt;#if document?? &amp;&amp; document.sections??&gt;
+  &lt;#list document.sections as section&gt;
+      &lt;#if section.userAgent?? &amp;&amp; (section.disallows?? || disallowedFacNavLinks??)&gt;
+User-agent: ${section.userAgent}
+&lt;#list section.disallows as path&gt;Disallow: ${path}
+&lt;/#list&gt;
+&lt;#list disallowedFacNavLinks as facnav&gt;Disallow: &lt;@hst.link link=facnav/&gt;/
+&lt;/#list&gt;
+
+      &lt;/#if&gt;
+  &lt;/#list&gt;
+&lt;/#if&gt;</sv:value>
+      </sv:property> 
+  </sv:node>
+
   <sv:node sv:name="robotstxt-page">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
