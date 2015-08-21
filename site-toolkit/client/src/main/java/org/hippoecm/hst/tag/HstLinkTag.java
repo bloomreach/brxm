@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -162,7 +162,7 @@ public class HstLinkTag extends ParamContainerTag {
                     if(dispatcher == null) {
                         log.info("Cannot get a link because no link , path, node or sitemapItemRefId is set for a hst:link");
                     } else {
-                        log.info("Cannot get a link because no link , path, node or sitemapItemRefId is set for a hst:link in template '"+dispatcher+"'");
+                        log.info("Cannot get a link because no link , path, node or sitemapItemRefId is set for a hst:link in template {}'", dispatcher);
                     }
                     return EVAL_PAGE;
                 }

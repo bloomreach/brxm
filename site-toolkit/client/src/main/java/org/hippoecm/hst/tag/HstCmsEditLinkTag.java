@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -93,8 +93,15 @@ public class HstCmsEditLinkTag extends TagSupport  {
     @Override
     public int doEndTag() throws JspException{
         try {
-            if(this.hippoBean == null || this.hippoBean.getNode() == null || !(this.hippoBean.getNode() instanceof HippoNode)) {
-                log.warn("Cannot create a cms edit url for a bean that is null or has a jcr node that is null or not an instanceof HippoNode");
+            if(hippoBean == null || hippoBean.getNode() == null || !(hippoBean.getNode() instanceof HippoNode)) {
+                HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
+                String dispatcher = (String)servletRequest.getAttribute("javax.servlet.include.servlet_path");
+                if (dispatcher == null) {
+                    log.info("Cannot create a cms edit url for a bean that is null or has a jcr node that is null or not an instanceof HippoNode");
+                } else {
+                    log.info("Cannot create a cms edit url in template '{}' for a bean that is null or has a jcr node that is null or not an instanceof HippoNode",
+                            dispatcher);
+                }
                 return EVAL_PAGE;
             }
 
@@ -103,7 +110,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
             HstRequestContext requestContext = RequestContextProvider.get();
 
             if(requestContext == null) {
-                log.warn("Cannot create a cms edit url outside the hst request processing for '{}'", this.hippoBean.getPath());
+                log.warn("Cannot create a cms edit url outside the hst request processing for '{}'", hippoBean.getPath());
                 return EVAL_PAGE;
             }
 
@@ -131,7 +138,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
                 cmsBaseUrl = cmsBaseUrl.substring(0, cmsBaseUrl.length() -1);
             }
 
-            HippoNode node = (HippoNode)this.hippoBean.getNode();
+            HippoNode node = (HippoNode)hippoBean.getNode();
             String nodeLocation;
             String nodeId;
             try {
@@ -188,12 +195,12 @@ public class HstCmsEditLinkTag extends TagSupport  {
             else {
                 int varScope = PageContext.PAGE_SCOPE;
 
-                if (this.scope != null) {
-                    if ("request".equals(this.scope)) {
+                if (scope != null) {
+                    if ("request".equals(scope)) {
                         varScope = PageContext.REQUEST_SCOPE;
-                    } else if ("session".equals(this.scope)) {
+                    } else if ("session".equals(scope)) {
                         varScope = PageContext.SESSION_SCOPE;
-                    } else if ("application".equals(this.scope)) {
+                    } else if ("application".equals(scope)) {
                         varScope = PageContext.APPLICATION_SCOPE;
                     }
                 }
@@ -283,7 +290,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
     }
     
     public HippoBean getHippobean(){
-        return this.hippoBean;
+        return hippoBean;
     }
      
     public void setHippobean(HippoBean hippoBean) {
