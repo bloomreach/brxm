@@ -236,6 +236,7 @@
             this._onPropertiesSaved(variant);
           },
           'copy': this._copyVariant,
+          'copyActive': this._copyActiveVariant,
           scope: this
         }
       });
@@ -381,10 +382,10 @@
       return result;
     },
 
-    _copyVariant: function (existingVariant, newVariant) {
+    _copyVariant: function (existingVariantId, newVariant) {
       var existingTab, newPropertiesForm, newTab, newTabIndex;
 
-      existingTab = this._getTab(existingVariant);
+      existingTab = this._getTab(existingVariantId);
       if (Ext.isDefined(existingTab) && existingTab instanceof Hippo.ChannelManager.TemplateComposer.PropertiesEditor) {
         newPropertiesForm = existingTab.propertiesForm.createCopy(newVariant);
         newTab = this._createPropertiesEditor(
@@ -398,8 +399,12 @@
         newTab.syncVisibleHeight();
         newPropertiesForm.firePropertiesChanged();
       } else {
-        console.log("Cannot find tab for variant '" + existingVariant + "', copy to '" + newVariant + "' failed");
+        console.log("Cannot find tab for variant '" + existingVariantId + "', copy to '" + newVariant + "' failed");
       }
+    },
+
+    _copyActiveVariant: function (newVariant) {
+      this._copyVariant(this._getCurrentVariantId(), newVariant);
     },
 
     _getTab: function (variantId) {
