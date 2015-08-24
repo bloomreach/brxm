@@ -19,7 +19,7 @@ package org.onehippo.cms7.essentials.components.info;
 /**
  * @deprecated
  * Due to naming inconsistencies, this interface has been deprecated in favor of the
- * EssentialsListComponentInfo interface. This interface will be deleted in CMS 11.
+ * EssentialsListComponentInfo interface. This interface will be deleted in version 3.0.0.
  */
 @Deprecated
 public interface EssentialsDocumentListComponentInfo extends EssentialsListComponentInfo {

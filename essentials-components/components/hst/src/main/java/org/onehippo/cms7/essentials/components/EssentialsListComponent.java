@@ -38,6 +38,7 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.ContentBeanUtils;
+import org.onehippo.cms7.essentials.components.info.EssentialsDocumentListComponentInfo;
 import org.onehippo.cms7.essentials.components.info.EssentialsListComponentInfo;
 import org.onehippo.cms7.essentials.components.info.EssentialsPageable;
 import org.onehippo.cms7.essentials.components.info.EssentialsSortable;
@@ -54,7 +55,8 @@ import com.google.common.base.Strings;
 /**
  * HST component used for listing of documents.
  *
- * @version "$Id$"
+ * Note: due to the deprecation of the (misnamed) EssentialsDocumentListComponentInfo interface, quite some deprecated
+ * functions exist inside this class. They will be removed in version 3.0.0, together with above ParametersInfo interface.
  */
 @ParametersInfo(type = EssentialsListComponentInfo.class)
 public class EssentialsListComponent extends CommonComponent {
@@ -147,8 +149,13 @@ public class EssentialsListComponent extends CommonComponent {
         }
     }
 
+    @Deprecated
+    protected <T extends EssentialsDocumentListComponentInfo> void applyOrdering(final HstRequest request, final HstQuery query, final T componentInfo) {
+        applyOrdering(request, query, (EssentialsListComponentInfo) componentInfo);
+    }
 
-    protected <T extends EssentialsListComponentInfo> Pageable<? extends HippoBean> doSearch(final HstRequest request, final T paramInfo, final HippoBean scope) {
+    protected <T extends EssentialsListComponentInfo>
+    Pageable<? extends HippoBean> doSearch(final HstRequest request, final T paramInfo, final HippoBean scope) {
         try {
             final HstQuery build = buildQuery(request, paramInfo, scope);
             if (build != null) {
@@ -159,6 +166,12 @@ public class EssentialsListComponent extends CommonComponent {
             log.debug("Query exception: ", e);
         }
         return null;
+    }
+
+    @Deprecated
+    protected <T extends EssentialsDocumentListComponentInfo>
+    Pageable<? extends HippoBean> doSearch(final HstRequest request, final T paramInfo, final HippoBean scope) {
+        return doSearch(request, (EssentialsListComponentInfo) paramInfo, scope);
     }
 
     /**
@@ -186,6 +199,12 @@ public class EssentialsListComponent extends CommonComponent {
         return pageable;
     }
 
+    @Deprecated
+    protected <T extends EssentialsDocumentListComponentInfo>
+    Pageable<HippoBean> doFacetedSearch(final HstRequest request, final T paramInfo, final HippoBean scope) {
+        return doFacetedSearch(request, (EssentialsListComponentInfo) paramInfo, scope);
+    }
+
     protected void handleInvalidScope(final HstRequest request, final HstResponse response) {
         // TODO determine what to do with invalid scope
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -202,7 +221,8 @@ public class EssentialsListComponent extends CommonComponent {
      * @param scope     the scope of the query
      * @return the HST query to execute
      */
-    protected <T extends EssentialsListComponentInfo> HstQuery buildQuery(final HstRequest request, final T paramInfo, final HippoBean scope) {
+    protected <T extends EssentialsListComponentInfo>
+    HstQuery buildQuery(final HstRequest request, final T paramInfo, final HippoBean scope) {
         final QueryBuilder builder = new HstQueryBuilder(this, request);
         final String documentTypes = paramInfo.getDocumentTypes();
         final String[] types = SiteUtils.parseCommaSeparatedValue(documentTypes);
@@ -210,6 +230,12 @@ public class EssentialsListComponent extends CommonComponent {
             log.debug("Searching for document types:  {}, and including subtypes: {}", documentTypes, paramInfo.getIncludeSubtypes());
         }
         return builder.scope(scope).documents(types).includeSubtypes().build();
+    }
+
+    @Deprecated
+    protected <T extends EssentialsDocumentListComponentInfo>
+    HstQuery buildQuery(final HstRequest request, final T paramInfo, final HippoBean scope) {
+        return buildQuery(request, (EssentialsListComponentInfo)paramInfo, scope);
     }
 
     /**
@@ -221,7 +247,8 @@ public class EssentialsListComponent extends CommonComponent {
      * @return the pageable result
      * @throws QueryException query exception when query fails
      */
-    protected <T extends EssentialsListComponentInfo> Pageable<HippoBean> executeQuery(final HstRequest request, final T paramInfo, final HstQuery query) throws QueryException {
+    protected <T extends EssentialsListComponentInfo>
+    Pageable<HippoBean> executeQuery(final HstRequest request, final T paramInfo, final HstQuery query) throws QueryException {
         final int pageSize = getPageSize(request, paramInfo);
         final int page = getCurrentPage(request);
         query.setLimit(pageSize);
@@ -238,8 +265,21 @@ public class EssentialsListComponent extends CommonComponent {
                 page);
     }
 
-    protected <T extends EssentialsListComponentInfo> void applyExcludeScopes(final HstRequest request, final HstQuery query, final T paramInfo) {
+    @Deprecated
+    protected <T extends EssentialsDocumentListComponentInfo>
+    Pageable<HippoBean> executeQuery(final HstRequest request, final T paramInfo, final HstQuery query) throws QueryException {
+        return executeQuery(request, (EssentialsListComponentInfo) paramInfo, query);
+    }
+
+    protected <T extends EssentialsListComponentInfo>
+    void applyExcludeScopes(final HstRequest request, final HstQuery query, final T paramInfo) {
         // just an extension point for time being
+    }
+
+    @Deprecated
+    protected <T extends EssentialsDocumentListComponentInfo>
+    void applyExcludeScopes(final HstRequest request, final HstQuery query, final T paramInfo) {
+        applyExcludeScopes(request, query, (EssentialsListComponentInfo)paramInfo);
     }
 
     /**
@@ -367,6 +407,11 @@ public class EssentialsListComponent extends CommonComponent {
             return null;
         }
         return paramInfo.getPath();
+    }
+
+    @Deprecated
+    protected String getScopePath(final EssentialsDocumentListComponentInfo paramInfo) {
+        return getScopePath((EssentialsListComponentInfo) paramInfo);
     }
 
     /**
