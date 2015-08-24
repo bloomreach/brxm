@@ -96,8 +96,10 @@
           },
           scope: this
         });
-        buttons.push(this.deleteButton);
-        buttons.push('->');
+        if (!this.isReadOnly) {
+          buttons.push(this.deleteButton);
+          buttons.push('->');
+        }
       }
 
       this.saveButton = new Ext.Button({
@@ -107,7 +109,9 @@
         scope: this,
         formBind: true
       });
-      buttons.push(this.saveButton);
+      if (!this.isReadOnly) {
+        buttons.push(this.saveButton);
+      }
       buttons.push({
         cls: 'btn btn-default',
         text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-close'],
@@ -126,7 +130,7 @@
         autoScroll: true,
         labelWidth: 120,
         labelSeparator: '',
-        monitorValid: true,
+        monitorValid: !this.isReadOnly,
         defaults: {
           anchor: '100%'
         },
@@ -246,7 +250,7 @@
           if (groupLabel !== lastGroupLabel) {
             this.add({
               cls: 'field-group-title',
-              text: Ext.util.Format.htmlEncode(groupLabel),
+              text: this._isReadOnlyTemplate(record) ? '' : Ext.util.Format.htmlEncode(groupLabel),
               xtype: 'label'
             });
             lastGroupLabel = groupLabel;
@@ -261,6 +265,10 @@
       });
 
       this.saveButton.show();
+    },
+
+    _isReadOnlyTemplate: function (record) {
+      return this.isReadOnly && record.get('name') === 'org.hippoecm.hst.core.component.template';
     },
 
     _initField: function (record) {
@@ -330,6 +338,7 @@
         name: record.get('name'),
         value: initialValue,
         defaultValue: defaultValue,
+        disabled: this.isReadOnly,
         store: comboStore,
         forceSelection: true,
         triggerAction: 'all',
@@ -483,6 +492,7 @@
         selectOnFocus: true,
         valueField: 'id',
         displayField: 'displayText',
+        disabled: this.isReadOnly,
         listeners: {
           afterrender: fixComboLeftPadding,
           select: function (combo, comboRecord) {
@@ -528,7 +538,8 @@
           displayValue: displayValue,
           allowBlank: !record.get('required'),
           name: record.get('name'),
-          enableKeyEvents: true,
+          enableKeyEvents: !this.isReadOnly,
+          disabled: this.isReadOnly,
           listeners: {
             change: commitValueOrDefault,
             select: commitValueOrDefault,
