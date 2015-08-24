@@ -102,8 +102,9 @@
      * @param componentId the UUID of the component
      * @param pageRequestVariants the possible page request variants
      * @param lastModifiedTimestamp the time this component has last been modified
+     * @param readOnly whether to show the properties read-only or not
      */
-    load: function (componentId, pageRequestVariants, lastModifiedTimestamp) {
+    load: function (componentId, pageRequestVariants, lastModifiedTimestamp, readOnly) {
       if (this.componentVariants !== null) {
         this.componentVariants.un('invalidated', this.updateUI, this);
         this._fireInitialPropertiesChangedIfNeeded();
@@ -112,6 +113,7 @@
       this.componentId = componentId;
       this.pageRequestVariants = pageRequestVariants;
       this.lastModifiedTimestamp = lastModifiedTimestamp;
+      this.isReadOnly = readOnly;
 
       this.componentVariants = new Hippo.ChannelManager.TemplateComposer.ComponentVariants({
         componentId: componentId,
@@ -214,12 +216,15 @@
         var tab, propertiesForm;
 
         if ('plus' === variant.id) {
-          tab = this._createVariantAdder(variant, Ext.pluck(variants, 'id'));
+          if (!this.isReadOnly) {
+            tab = this._createVariantAdder(variant, Ext.pluck(variants, 'id'));
+            this.add(tab);
+          }
         } else {
           propertiesForm = this._createOrReusePropertiesForm(variant, reusablePropertiesForms);
           tab = this._createPropertiesEditor(variant, variants, propertiesForm);
+          this.add(tab);
         }
-        this.add(tab);
       }, this);
     },
 
@@ -254,6 +259,7 @@
           locale: this.locale,
           componentId: this.componentId,
           lastModifiedTimestamp: this.lastModifiedTimestamp,
+          isReadOnly: this.isReadOnly,
           bubbleEvents: ['variantDirty', 'variantPristine', 'close'],
           listeners: {
             propertiesChanged: this._onPropertiesChanged,
@@ -299,7 +305,8 @@
         variant: variant,
         allVariants: variants.slice(0, variants.length - 1),
         title: getVariantName(variant),
-        propertiesForm: propertiesForm
+        propertiesForm: propertiesForm,
+        isReadOnly: this.isReadOnly
       });
 
       editor.on('visibleHeightChanged', function (editor, visibleHeight) {

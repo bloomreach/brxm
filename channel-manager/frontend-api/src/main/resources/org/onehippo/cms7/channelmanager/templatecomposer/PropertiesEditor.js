@@ -23,12 +23,14 @@
     componentId: null,
     variant: null,
     propertiesForm: null,
+    isReadOnly: false,
 
     constructor: function (config) {
       Hippo.ChannelManager.TemplateComposer.PropertiesEditor.superclass.constructor.call(this, config);
       this.componentId = config.componentId;
       this.variant = config.variant;
       this.propertiesForm = config.propertiesForm;
+      this.isReadOnly = config.isReadOnly;
 
       this.addEvents('visibleHeightChanged');
     },

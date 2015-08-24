@@ -58,6 +58,7 @@
       this.locale = config.locale;
       this.componentId = config.componentId;
       this.lastModifiedTimestamp = config.lastModifiedTimestamp;
+      this.isReadOnly = config.isReadOnly;
 
       this.saveEnabledChecks = [];
 

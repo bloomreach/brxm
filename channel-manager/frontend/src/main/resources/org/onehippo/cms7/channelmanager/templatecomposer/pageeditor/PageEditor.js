@@ -868,9 +868,7 @@
 
             this.on('selectItem', function(record, containerDisabled) {
                 if (record.get('type') === HST.CONTAINERITEM) {
-                    if (containerDisabled !== true) {
-                        this.showProperties(record);
-                    }
+                    this.showProperties(record, containerDisabled);
                     this.templateComposerApi.selectedContainerItem(record, containerDisabled);
                 }
             }, this);
@@ -997,13 +995,13 @@
             return window;
         },
 
-        showProperties: function(record) {
+        showProperties: function(record, readOnly) {
             var componentPropertiesPanel = Ext.getCmp('componentPropertiesPanel'),
                 componentId = record.get('id'),
                 pageRequestVariants = this.pageContainer.pageContext.pageRequestVariants,
                 lastModifiedTimestamp = record.get('lastModifiedTimestamp'),
                 componentDisplayName = record.get('label') || record.get('name');
-            componentPropertiesPanel.load(componentId, pageRequestVariants, lastModifiedTimestamp);
+            componentPropertiesPanel.load(componentId, pageRequestVariants, lastModifiedTimestamp, readOnly);
 
             if (this.propertiesWindow) {
                 this.propertiesWindow.setTitle(componentDisplayName);
