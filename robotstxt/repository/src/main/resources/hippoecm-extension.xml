@@ -119,6 +119,7 @@
     </sv:property>
   </sv:node>
 
+  <!--TODO: remove this initializeitem in the next major version-->
   <sv:node sv:name="robotstxt-template-script-upgrader">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -133,16 +134,16 @@
     <sv:value>&lt;#ftl encoding="UTF-8" strip_whitespace=true attributes={"content_type": "text/plain"}&gt;
 &lt;#assign hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"] &gt;
 &lt;#if document?? &amp;&amp; document.sections??&gt;
-  &lt;#list document.sections as section&gt;
-      &lt;#if section.userAgent?? &amp;&amp; (section.disallows?? || disallowedFacNavLinks??)&gt;
+    &lt;#list document.sections as section&gt;
+        &lt;#if section.userAgent?? &amp;&amp; (section.disallows?? || disallowedFacNavLinks??)&gt;
 User-agent: ${section.userAgent}
 &lt;#list section.disallows as path&gt;Disallow: ${path}
 &lt;/#list&gt;
 &lt;#list disallowedFacNavLinks as facnav&gt;Disallow: &lt;@hst.link link=facnav/&gt;/
 &lt;/#list&gt;
 
-      &lt;/#if&gt;
-  &lt;/#list&gt;
+        &lt;/#if&gt;
+    &lt;/#list&gt;
 &lt;/#if&gt;</sv:value>
       </sv:property> 
   </sv:node>
