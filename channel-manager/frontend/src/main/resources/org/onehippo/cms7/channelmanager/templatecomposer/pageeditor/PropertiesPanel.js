@@ -231,6 +231,7 @@
         skipVariantIds: skipVariantIds,
         title: getVariantName(variant),
         variantsUuid: this.variantsUuid,
+        getCurrentVariantId: this._getCurrentVariantId.bind(this),
         listeners: {
           'save': function (variant) {
             this._onPropertiesSaved(variant);
