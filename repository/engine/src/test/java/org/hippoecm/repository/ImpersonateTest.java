@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoSession;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
+import static org.hippoecm.repository.api.HippoSession.NO_SYSTEM_IMPERSONATION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
@@ -86,13 +86,13 @@ public class ImpersonateTest extends RepositoryTestCase {
     }
 
     @Test
-    public void tesSystemImpersonateWithNoSystemImpersonation() throws RepositoryException {
+    public void testSystemImpersonateWithNoSystemImpersonation() throws RepositoryException {
         // setup system session
         LocalHippoRepository localServer = (LocalHippoRepository)server;
         Session systemSession = localServer.getOrCreateReferenceWorkspace().login();
         assertEquals("system", systemSession.getUserID());
         SimpleCredentials userCredentials = new SimpleCredentials(TEST_USER_ID, TEST_USER_PASS.toCharArray());
-        userCredentials.setAttribute(HippoSession.NO_SYSTEM_IMPERSONATION, Boolean.TRUE);
+        userCredentials.setAttribute(NO_SYSTEM_IMPERSONATION, Boolean.TRUE);
         Session userSession = systemSession.impersonate(userCredentials);
         assertEquals(TEST_USER_ID, userSession.getUserID());
     }
