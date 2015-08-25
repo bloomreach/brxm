@@ -353,7 +353,7 @@
         }
       });
 
-      if (record.get('allowCreation')) {
+      if (record.get('allowCreation') && !this.isReadOnly) {
         createDocumentLinkId = Ext.id();
 
         this.add({
