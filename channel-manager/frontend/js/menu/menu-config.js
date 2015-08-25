@@ -16,6 +16,17 @@
 (function () {
   "use strict";
 
+  var translations = [
+    '$translate',
+    'hippo.channel.ConfigService',
+    function ($translate, Config) {
+      return $translate.use(Config.locale)
+        .catch(function () {
+          $translate.use($translate.fallbackLanguage());
+        });
+    }
+  ];
+
   angular.module('hippo.channel.menu')
 
     .config([
@@ -35,7 +46,10 @@
           .state('menu-item', {
             abstract: true,
             controller: 'hippo.channel.menu.MenuItemCtrl as MenuItemCtrl',
-            templateUrl: 'states/menu-item/menu-item.html'
+            templateUrl: 'states/menu-item/menu-item.html',
+            resolve: {
+              translations: translations
+            }
           })
 
           .state('menu-item.edit', {
@@ -82,6 +96,7 @@
           prefix: 'i18n/',
           suffix: '.json'
         });
+        $translateProvider.fallbackLanguage('en');
 
         // tooltips
         $tooltipProvider.options({

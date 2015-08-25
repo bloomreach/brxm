@@ -19,15 +19,11 @@
   angular.module('hippo.channel.pages')
 
     .run([
-      '$translate',
       '$state',
       'hippo.channel.ConfigService',
       'hippo.channel.Container',
       '_hippo.channel.IFrameService',
-      function ($translate, $state, Config, Container, IFrame) {
-        // set language
-        $translate.use(Config.locale);
-
+      function ($state, Config, Container, IFrame) {
         // go to default state
         $state.go('overview-pages');
 
