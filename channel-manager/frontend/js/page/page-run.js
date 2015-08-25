@@ -20,9 +20,8 @@
 
     .run([
       '$state',
-      'hippo.channel.ConfigService',
       '_hippo.channel.IFrameService',
-      function ($state, Config, IFrame) {
+      function ($state, IFrame) {
         // go to default state
         $state.go('settings');
 

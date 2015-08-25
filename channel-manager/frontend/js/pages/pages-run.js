@@ -20,10 +20,9 @@
 
     .run([
       '$state',
-      'hippo.channel.ConfigService',
       'hippo.channel.Container',
       '_hippo.channel.IFrameService',
-      function ($state, Config, Container, IFrame) {
+      function ($state, Container, IFrame) {
         // go to default state
         $state.go('overview-pages');
 
