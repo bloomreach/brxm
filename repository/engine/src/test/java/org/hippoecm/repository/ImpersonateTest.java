@@ -22,6 +22,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,12 +67,36 @@ public class ImpersonateTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testImpersonate() throws RepositoryException {
+    public void testImpersonateAnyUserFromAnyUser() throws RepositoryException {
         // setup user session
         Session userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
         Session impersonateSession = userSession.impersonate(new SimpleCredentials("admin", new char[] {}));
         assertEquals("admin", impersonateSession.getUserID());
     }
+
+    @Test
+    public void testSystemAlwaysImpersonatesSystem() throws RepositoryException {
+        // setup system session
+        LocalHippoRepository localServer = (LocalHippoRepository)server;
+        Session systemSession = localServer.getOrCreateReferenceWorkspace().login();
+        assertEquals("system", systemSession.getUserID());
+        SimpleCredentials userCredentials = new SimpleCredentials(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+        Session anotherSystemSession = systemSession.impersonate(userCredentials);
+        assertEquals("system", anotherSystemSession.getUserID());
+    }
+
+    @Test
+    public void tesSystemImpersonateWithNoSystemImpersonation() throws RepositoryException {
+        // setup system session
+        LocalHippoRepository localServer = (LocalHippoRepository)server;
+        Session systemSession = localServer.getOrCreateReferenceWorkspace().login();
+        assertEquals("system", systemSession.getUserID());
+        SimpleCredentials userCredentials = new SimpleCredentials(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+        userCredentials.setAttribute(HippoSession.NO_SYSTEM_IMPERSONATION, Boolean.TRUE);
+        Session userSession = systemSession.impersonate(userCredentials);
+        assertEquals(TEST_USER_ID, userSession.getUserID());
+    }
+
     @Test
     public void testAnonymous() throws RepositoryException {
         // setup user session

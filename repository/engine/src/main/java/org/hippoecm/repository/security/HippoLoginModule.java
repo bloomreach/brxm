@@ -35,6 +35,7 @@ import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
 import org.apache.jackrabbit.core.security.authentication.ImpersonationCallback;
 import org.apache.jackrabbit.core.security.authentication.RepositoryCallback;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,8 +101,14 @@ public class HippoLoginModule implements LoginModule {
 
                 // system session impersonate
                 if (!impersonator.getPrincipals(SystemPrincipal.class).isEmpty()) {
-                    log.debug("SystemSession impersonating to new SystemSession");
-                    principals.add(new SystemPrincipal());
+                    if (creds != null && creds.getAttribute(HippoSession.NO_SYSTEM_IMPERSONATION) != null) {
+                        log.debug("System session impersonating as {}", userId);
+                        securityManager.assignPrincipals(principals, creds);
+                    }
+                    else {
+                        log.debug("SystemSession impersonating to new SystemSession");
+                        principals.add(new SystemPrincipal());
+                    }
                     return (validLogin = true);
                 }
 
