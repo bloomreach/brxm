@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,16 +33,19 @@ public class CachingMultiReaderQueryFilter extends Filter {
 
     private static final Logger log = LoggerFactory.getLogger(CachingMultiReaderQueryFilter.class);
 
-    private final WeakIdentityMap<IndexReader, ValidityBitSet> cache = WeakIdentityMap.newConcurrentHashMap();
+    private final WeakIdentityMap<IndexReader, OpenBitSet> cache = WeakIdentityMap.newConcurrentHashMap();
 
     private final Query query;
+    // userId of the jcr session triggering this CachingMultiReaderQueryFilter : Required only for logging purposes
+    private final String userId;
 
     /**
      * @param query only plain Lucene queries are allowed here, as Jackrabbit Query implementations are very specific,
      *              keep references to index readers, need multi index readers, etc etc
      */
-    public CachingMultiReaderQueryFilter(final Query query) {
+    public CachingMultiReaderQueryFilter(final Query query, final String userId) {
         this.query = query;
+        this.userId = userId;
     }
 
     public Query getQuery() {
@@ -59,38 +62,37 @@ public class CachingMultiReaderQueryFilter extends Filter {
             int[] maxDocs = new int[indexReaders.length];
             for (int i = 0; i < indexReaders.length; i++) {
                 IndexReader subReader = indexReaders[i];
-                docIdSets[i] = getIndexReaderDocIdSet(subReader, subReader);
+                docIdSets[i] = getIndexReaderDocIdSet(subReader);
                 maxDocs[i] = subReader.maxDoc();
             }
 
             return new MultiDocIdSet(docIdSets, maxDocs);
         }
-        log.warn("MultiIndexReader was expected but not found. Do not dissect the reader but use it as one instead");
+        log.warn("IndexReader of type MultiIndexReader expected for userId '{}' but reader of type '{}' was found. " +
+                "Do not dissect the reader but use it as is.", userId, reader.getClass().getName());
 
-        return getIndexReaderDocIdSet(reader, reader);
+        return getIndexReaderDocIdSet(reader);
     }
 
-    private DocIdSet getIndexReaderDocIdSet(final IndexReader reader, IndexReader cacheKey) throws IOException {
+    private DocIdSet getIndexReaderDocIdSet(final IndexReader reader) throws IOException {
 
-        ValidityBitSet validityBitSet = cache.get(cacheKey);
-        if (validityBitSet != null) {
-            // unfortunately, Jackrabbit can return a ReadOnlyIndexReader which is the same instance as used previously,
-            // but still happened to be changed through it's ***deleted*** bitset : This is a optimisation.
-            // See AbstractIndex#getReadOnlyIndexReader. This is why even though we use an IDENTITY as cachekey, we
-            // now still need to check whether the cached bit set is really still valid. We can only do this by checking
-            // numDocs as when a doc id gets deleted in the ReadOnlyIndexReader, numDocs decreases
-            if (reader.numDocs() == validityBitSet.numDocs) {
-                log.debug("Return cached bitSet for reader '{}'", reader);
-                return validityBitSet.bitSet;
-            } else {
-                log.debug("ReadOnlyIndexReader '{}' deleted bitset got changed. Cached entry not valid any more", reader);
-                cache.remove(cacheKey);
-            }
+        OpenBitSet docIdSet = cache.get(reader);
+        if (docIdSet != null) {
+            log.debug("For userId '{}' return cached bitSet for reader '{}'", userId, reader);
+            return docIdSet;
         }
-        // no synchronization needed: worst case scenario two concurrent thread do it both
-        OpenBitSet docIdSet = createDocIdSet(reader);
-        cache.put(cacheKey, new ValidityBitSet(reader.numDocs(), docIdSet));
-        return docIdSet;
+        synchronized (this) {
+            // try again after obtaining the lock
+            docIdSet = cache.get(reader);
+            if (docIdSet != null) {
+                log.debug("For userId '{}' return cached bitSet for reader '{}'", userId, reader);
+                return docIdSet;
+            }
+            log.debug("For userId '{}' could not find a cached bitSet for reader '{}'", userId, reader);
+            docIdSet = createDocIdSet(reader);
+            cache.put(reader, docIdSet);
+            return docIdSet;
+        }
     }
 
     private OpenBitSet createDocIdSet(IndexReader reader) throws IOException {
@@ -98,13 +100,13 @@ public class CachingMultiReaderQueryFilter extends Filter {
 
         long start = System.currentTimeMillis();
         new IndexSearcher(reader).search(query, new AbstractHitCollector() {
-
             @Override
             public final void collect(int doc, float score) {
                 bits.set(doc);  // set bit for hit
             }
         });
-        log.info("Creating CachingMultiReaderQueryFilter doc id set took {} ms.", String.valueOf(System.currentTimeMillis() - start));
+        log.info("For userId '{}', creating CachingMultiReaderQueryFilter doc id set took {} ms.", userId,
+                String.valueOf(System.currentTimeMillis() - start));
         return bits;
     }
 

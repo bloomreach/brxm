@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -175,7 +175,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             // the same filter twice or more: This only happens for the first unique userID or after a change in
             // authorization. Any way, storing it needlessly twice or more only for the same userID under concurrency is
             // much preferable over introducing synchronization
-            filter = new CachingMultiReaderQueryFilter(query);
+            filter = new CachingMultiReaderQueryFilter(query, session.getUserID());
             cache.put(session.getUserID(), filter);
         }
         return filter;
