@@ -46,6 +46,7 @@ public class TemplateLoadingCache {
     private static final Logger log = LoggerFactory.getLogger(TemplateLoadingCache.class);
 
     private final static String FREEMARKER_TMPL_BINARY_MIMETYPE = "application/octet-stream";
+    private final static String HTML_TMPL_MIMETYPE = "text/html";
 
     private Map<String, Optional<RepositorySource>> cache =  new ConcurrentHashMap<>();
 
@@ -82,10 +83,6 @@ public class TemplateLoadingCache {
         }
     }
 
-    /**
-     * @return the previous <code>RepositorySource</code> associated with <code>absPath</code>, or
-     *         <code>null</code> if there was no mapping for <code>absPath</code>.
-     */
     public void remove(final String absPath) {
         cache.remove(absPath);
     }
@@ -127,16 +124,15 @@ public class TemplateLoadingCache {
     }
 
     private Session createSession() throws RepositoryException {
-        Session session = repository.login(credentials);
-        return session;
+        return repository.login(credentials);
     }
 
     private RepositorySource createRepositorySourceFromBinary(final Node templateNode, final String absPath) throws RepositoryException {
         final Node content = templateNode.getNode(JcrConstants.JCR_CONTENT);
         String mimeType = JcrUtils.getStringProperty(content, JcrConstants.JCR_MIME_TYPE, null);
-        if (!FREEMARKER_TMPL_BINARY_MIMETYPE.equals(mimeType)) {
-            log.warn("Expected freemarker binary at '{}' with mimetype '{}' but was '{}'. Cannot return " +
-                    "ftl for wrong mimetype", absPath, mimeType, FREEMARKER_TMPL_BINARY_MIMETYPE);
+        if (!FREEMARKER_TMPL_BINARY_MIMETYPE.equals(mimeType) && !HTML_TMPL_MIMETYPE.equals(mimeType)) {
+            log.warn("Expected freemarker binary or HTML at '{}' with mimetype '{}' or '{}' but was '{}'. Cannot return " +
+                    "ftl for wrong mimetype", absPath, FREEMARKER_TMPL_BINARY_MIMETYPE, HTML_TMPL_MIMETYPE, mimeType);
             return RepositorySource.notFound(absPath);
         }
         final Binary ftl = JcrUtils.getBinaryProperty(content, JcrConstants.JCR_DATA, null);
@@ -162,9 +158,7 @@ public class TemplateLoadingCache {
 
     private RepositorySource createRepositorySource(String template, String absJcrPath) {
         if (template == null) {
-            if(template == null) {
-                log.debug("Template source '{}' not found in the repository. ", absJcrPath);
-            }
+            log.debug("Template source '{}' not found in the repository. ", absJcrPath);
             return RepositorySource.notFound(absJcrPath);
         }
         return RepositorySource.found(absJcrPath, template);
