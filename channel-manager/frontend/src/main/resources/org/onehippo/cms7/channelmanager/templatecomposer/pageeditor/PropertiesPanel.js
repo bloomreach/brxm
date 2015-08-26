@@ -236,7 +236,7 @@
         skipVariantIds: skipVariantIds,
         title: getVariantName(variant),
         variantsUuid: this.variantsUuid,
-        getCurrentVariantId: this._getCurrentVariantId.bind(this),
+        getCurrentVariant: this.getCurrentVariant.bind(this),
         listeners: {
           'save': function (variant) {
             this._onPropertiesSaved(variant);
@@ -343,8 +343,13 @@
       this.tabWidth = 0;
     },
 
+    getCurrentVariant: function () {
+      return this.getActiveTab().variant;
+    },
+
     _getCurrentVariantId: function () {
-      return this.getActiveTab().variant ? this.getActiveTab().variant.id : null;
+      var currentVariant = this.getCurrentVariant();
+      return currentVariant ? currentVariant.id : null;
     },
 
     _getBestMatchingVariantId: function (variantId, variants) {
