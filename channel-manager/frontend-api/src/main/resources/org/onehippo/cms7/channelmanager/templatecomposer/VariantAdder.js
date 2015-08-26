@@ -34,7 +34,6 @@
     componentId: null,
 
     constructor: function (config) {
-      this.title = '<span style="font-size: 140%;">' + config.title + '</span>';
       this.composerRestMountUrl = config.composerRestMountUrl;
       this.componentId = config.componentId;
       this.variantsUuid = config.variantsUuid;
@@ -79,7 +78,7 @@
         this.globalVariantsStore.on('load', success, {single: true});
         this.globalVariantsStore.on('exception', fail, {single: true});
         this.globalVariantsStore.load();
-      }.createDelegate(this));
+      }.bind(this));
     }
   });
 
