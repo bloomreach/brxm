@@ -18,8 +18,10 @@ package org.hippoecm.frontend.plugins.cms.browse;
 import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -40,9 +42,11 @@ public class Navigator extends RenderPlugin {
 
     public static final String CLUSTER_NAME = "cluster.name";
     public static final String CLUSTER_PARAMETERS = "cluster.config";
+    public static final String SELECTED_SECTION_MODEL = "selected.section.model";
 
     private DocumentCollectionView docView;
     private SectionViewer sectionViewer;
+    private ModelReference<String> sectionModelReference;
 
     private boolean clusterStarted;
 
@@ -81,8 +85,16 @@ public class Navigator extends RenderPlugin {
         };
         add(docView);
 
+        sectionModelReference = new ModelReference<>(SELECTED_SECTION_MODEL, Model.of(""));
+        sectionModelReference.init(context);
+
         final BrowserSections sections = browseService.getSections();
-        sectionViewer = new SectionViewer("sections", sections, this);
+        sectionViewer = new SectionViewer("sections", sections, this) {
+            @Override
+            protected void onSectionChange(final String sectionName) {
+                sectionModelReference.setModel(Model.of(sectionName));
+            }
+        };
         add(sectionViewer);
     }
 
@@ -115,5 +127,11 @@ public class Navigator extends RenderPlugin {
                 control.start();
             }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        sectionModelReference.destroy();
+        super.onStop();
     }
 }

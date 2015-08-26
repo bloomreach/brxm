@@ -61,7 +61,6 @@ public class SectionViewer extends Panel implements ICardView {
         this.sections = sections;
 
         IDataProvider<String> sectionProvider = new IDataProvider<String>() {
-            private static final long serialVersionUID = 1L;
 
             private transient List<String> names;
 
@@ -94,7 +93,6 @@ public class SectionViewer extends Panel implements ICardView {
         };
 
         add(new AbstractView<String>("list", sectionProvider) {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected void populateItem(final Item<String> item) {
@@ -157,8 +155,6 @@ public class SectionViewer extends Panel implements ICardView {
         form.add(select);
 
         this.sections.addListener(new IChangeListener() {
-            private static final long serialVersionUID = 1L;
-
             public void onChange() {
                 select(sections.getActiveSectionName());
             }
@@ -199,11 +195,13 @@ public class SectionViewer extends Panel implements ICardView {
 
     public void onSelect(String extension) {
         sections.setActiveSectionByName(extension);
+        onSectionChange(extension);
     }
 
     public void select(String sectionName) {
         if (sectionName != null) {
             sections.setActiveSectionByName(sectionName);
+            onSectionChange(sectionName);
 
             AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
             if (target != null) {
@@ -230,6 +228,8 @@ public class SectionViewer extends Panel implements ICardView {
         }
         return false;
     }
+
+    protected void onSectionChange(final String sectionName) {}
 
     private boolean isActive() {
         ICardView cardView = findParent(ICardView.class);
