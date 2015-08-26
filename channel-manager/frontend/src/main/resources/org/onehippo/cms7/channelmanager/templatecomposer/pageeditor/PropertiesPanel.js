@@ -242,7 +242,6 @@
             this._onPropertiesSaved(variant);
           },
           'copy': this._copyVariant,
-          'copyActive': this._copyActiveVariant,
           scope: this
         }
       });
@@ -409,10 +408,6 @@
       } else {
         console.log("Cannot find tab for variant '" + existingVariantId + "', copy to '" + newVariant + "' failed");
       }
-    },
-
-    _copyActiveVariant: function (newVariant) {
-      this._copyVariant(this._getCurrentVariantId(), newVariant);
     },
 
     _getTab: function (variantId) {
