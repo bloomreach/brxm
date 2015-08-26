@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -78,7 +78,8 @@ public class AuthorizationQuery {
                               final NamespaceMappings nsMappings,
                               final ServicingIndexingConfiguration indexingConfig,
                               final NodeTypeManager ntMgr,
-                              final Session session) throws RepositoryException {
+                              final Session session,
+                              final String userId) throws RepositoryException {
         // set the max clauses for booleans higher than the default 1024.
         BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
         if (!(session instanceof InternalHippoSession)) {
@@ -106,7 +107,7 @@ public class AuthorizationQuery {
                                     indexingConfig,
                                     nsMappings,
                                     ntMgr);
-            log.info("Creating authorization query took {} ms. Query: {}", String.valueOf(System.currentTimeMillis() - start), query);
+            log.info("Creating authorization query for user '{}' took {} ms. Query: {}", userId, String.valueOf(System.currentTimeMillis() - start), query);
         }
     }
 
@@ -261,7 +262,7 @@ public class AuthorizationQuery {
                     if (facetRule.isEqual()) {
                         return new MatchAllDocsQuery();
                     } else {
-                        return QueryHelper.getNoHitsQuery();
+                        return QueryHelper.createNoHitsQuery();
                     }
                 } else if (NODETYPE.equalsIgnoreCase(nodeNameString)) {
                     return getNodeTypeDescendantQuery(facetRule, ntMgr, session, nsMappings);
@@ -286,7 +287,7 @@ public class AuthorizationQuery {
                 break;
         }
         log.error("Incorrect FacetRule: returning a match zero nodes query");
-        return QueryHelper.getNoHitsQuery();
+        return QueryHelper.createNoHitsQuery();
     }
 
     private Query getNodeTypeDescendantQuery(final QFacetRule facetRule,
@@ -317,7 +318,7 @@ public class AuthorizationQuery {
         if (terms.size() == 0) {
             // exception occured
             if (facetRule.isEqual()) {
-                return QueryHelper.getNoHitsQuery();
+                return QueryHelper.createNoHitsQuery();
             } else {
                 return new MatchAllDocsQuery();
             }
@@ -378,7 +379,7 @@ public class AuthorizationQuery {
                 if (facetRule.isEqual()) {
                     return new MatchAllDocsQuery();
                 } else {
-                    return QueryHelper.getNoHitsQuery();
+                    return QueryHelper.createNoHitsQuery();
                 }
             } else if (FacetAuthConstants.EXPANDER_USER.equals(value)) {
                 nodeNameQuery = expandUser(fieldName, userIds);
@@ -396,13 +397,13 @@ public class AuthorizationQuery {
             }
         } catch (IllegalNameException e) {
             log.error("Failed to create node name query: " + e);
-            return QueryHelper.getNoHitsQuery();
+            return QueryHelper.createNoHitsQuery();
         }
     }
 
     private Query expandUser(final String field, final Set<String> userIds) {
         if (userIds.isEmpty()) {
-            return QueryHelper.getNoHitsQuery();
+            return QueryHelper.createNoHitsQuery();
         }
         // optimize the single-user principal case
         if (userIds.size() == 1) {
@@ -421,7 +422,7 @@ public class AuthorizationQuery {
     private Query expandGroup(final String field, final Set<String> memberships) {
         // boolean OR query of groups
         if (memberships.isEmpty()) {
-            return QueryHelper.getNoHitsQuery();
+            return QueryHelper.createNoHitsQuery();
         }
         BooleanQuery b = new BooleanQuery(true);
         for (String groupName : memberships) {
@@ -434,7 +435,7 @@ public class AuthorizationQuery {
     private Query expandRole(final String field, final Set<String> roles) {
         // boolean Or query of roles
         if (roles.size() == 0) {
-            return QueryHelper.getNoHitsQuery();
+            return QueryHelper.createNoHitsQuery();
         }
         BooleanQuery b = new BooleanQuery(true);
         for (String role : roles) {

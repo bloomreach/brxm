@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.jcr.AccessDeniedException;
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
@@ -68,20 +67,18 @@ import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
-import org.apache.jackrabbit.spi.commons.conversion.NameException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.util.XMLChar;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.dataprovider.MirrorNodeId;
 import org.hippoecm.repository.decorating.NodeDecorator;
-import org.onehippo.repository.xml.EnhancedSystemViewImportHandler;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.HippoQueryHandler;
 import org.hippoecm.repository.security.domain.QFacetRule;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.security.domain.FacetRule;
+import org.onehippo.repository.xml.EnhancedSystemViewImportHandler;
 import org.onehippo.repository.xml.ImportContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -308,7 +305,8 @@ abstract class SessionImplHelper {
                                                          queryHandler.getNamespaceMappings(),
                                                          queryHandler.getIndexingConfig(),
                                                          context.getNodeTypeManager(),
-                                                         context.getSessionImpl());
+                                                         context.getSessionImpl(),
+                                                         userId);
         }
 
         HippoLocalItemStateManager localISM = (HippoLocalItemStateManager)(context.getWorkspace().getItemStateManager());
