@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,33 +15,32 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.AjaxSettings;
 import org.hippoecm.frontend.util.MappingException;
 import org.hippoecm.frontend.util.PluginConfigMapper;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Contains all settings of a wireframe and it's units.
- * <p/>
  * <ul>
  * <li>
- * ROOT_ID: a {@link YuiId} value representing the wireframe's root element.
+ * root.id: a {@link YuiId} value representing the wireframe's root element.
  * </li>
  * <li>
- * PARENT_ID: a {@link YuiId} value representing the parent wireframe (value will be auto-set by the {@link
- * WireframeBehavior} when LINKED_WITH_PARENT is true.
+ * parent.id: a {@link YuiId} value representing the parent wireframe (value will be auto-set by the {@link
+ * WireframeBehavior} when linked.with.parent is true.
  * </li>
  * <li>
- * LINKED_WITH_PARENT: when set to true, the wireframe will register itself with it's parent wireframe and sync render
+ * linked.with.parent: when set to true, the wireframe will register itself with it's parent wireframe and sync render
  * and resize events.
  * </li>
  * <li>
- * UNITS: Array of {@link UnitSettings} representing the units for this wireframe. These should be set by the same
+ * units: Array of {@link UnitSettings} representing the units for this wireframe. These should be set by the same
  * IPluginConfig object as the {@link WireframeSettings}.<br/>
  * The easiest way to configure units is storing the html and configuration all in the same place as the wireframe's
  * html and configuration. If we use an {@link IPluginConfig} for configuration, we can add a StringArray property
@@ -49,10 +48,8 @@ import java.util.List;
  * {@link WireframeSettings} to lookup two String properties on the IPluginConfig named "top" and "center" which
  * should contain a comma-separated string of UnitSettings, like "id=center,scroll=true,width=120".
  * </li>
+ * <li>default.expanded.unit: The unit that will be expanded when {@link WireframeBehavior#expandDefault} is called.</li>
  * </ul>
- * <p/>
- * Warning: this class currently extends the YuiObject which is deprecated and will soon be replaced by a POJO settings
- * file. Not sure how to handle default values and things like dont-escape-string yet.
  */
 public class WireframeSettings extends AjaxSettings {
 
@@ -68,7 +65,7 @@ public class WireframeSettings extends AjaxSettings {
     private String defaultExpandedUnit;
 
     public WireframeSettings(IPluginConfig config) {
-        units = new ArrayList<UnitSettings>(5);
+        units = new ArrayList<>(5);
         for (String position : new String[]{"top", "left", "center", "right", "bottom"}) {
             String unitConfig = config.getString(position);
             if (unitConfig != null) {
