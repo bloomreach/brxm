@@ -78,17 +78,20 @@ public class CachingMultiReaderQueryFilter extends Filter {
 
         OpenBitSet docIdSet = cache.get(reader);
         if (docIdSet != null) {
-            log.debug("For userId '{}' return cached bitSet for reader '{}'", userId, reader);
+            log.debug("For userId '{}' return cached bitSet for reader with max doc '{}' and num docs '{}'",
+                    userId, reader.maxDoc(), reader.numDocs());
             return docIdSet;
         }
         synchronized (this) {
             // try again after obtaining the lock
             docIdSet = cache.get(reader);
             if (docIdSet != null) {
-                log.debug("For userId '{}' return cached bitSet for reader '{}'", userId, reader);
+                log.debug("For userId '{}' return cached bitSet for reader with max doc '{}' and num docs '{}'",
+                        userId, reader.maxDoc(), reader.numDocs());
                 return docIdSet;
             }
-            log.debug("For userId '{}' could not find a cached bitSet for reader '{}'", userId, reader);
+            log.debug("For userId '{}' could not find a cached bitSet for reader  with max doc '{}' and num docs '{}'",
+                    userId, reader.maxDoc(), reader.numDocs());
             docIdSet = createDocIdSet(reader);
             cache.put(reader, docIdSet);
             return docIdSet;
@@ -108,16 +111,6 @@ public class CachingMultiReaderQueryFilter extends Filter {
         log.info("For userId '{}', creating CachingMultiReaderQueryFilter doc id set took {} ms.", userId,
                 String.valueOf(System.currentTimeMillis() - start));
         return bits;
-    }
-
-
-    private class ValidityBitSet {
-        private int numDocs;
-        private OpenBitSet bitSet;
-        private ValidityBitSet(int numDocs, OpenBitSet bitSet) {
-            this.numDocs = numDocs;
-            this.bitSet = bitSet;
-        }
     }
 
 }
