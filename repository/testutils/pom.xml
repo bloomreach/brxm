@@ -28,10 +28,6 @@
   <artifactId>hippo-repository-testutils</artifactId>
   <packaging>jar</packaging>
 
-  <properties>
-    <powermock.version>1.6.2</powermock.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -88,7 +84,6 @@
     <dependency>
       <groupId>javax.ws.rs</groupId>
       <artifactId>javax.ws.rs-api</artifactId>
-      <version>2.0</version>
     </dependency>
     <!-- TODO: see if there is a transport for Tomcat as well -->
     <dependency>

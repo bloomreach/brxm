@@ -20,6 +20,7 @@ import java.util.Set;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.Application;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
@@ -34,22 +35,32 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class CXFTest {
 
-    protected Class<?> defaultSerializer = JacksonJsonProvider.class;
+    private Class<?> defaultSerializer = JacksonJsonProvider.class;
 
     private String address;
     private Server server;
     private Set<Class<?>> clientClasses;
     private Set<Object> clientSingletons;
 
-    protected javax.ws.rs.client.Invocation.Builder createClient() {
+    protected Class<?> getDefaultSerializer() {
+        return defaultSerializer;
+    }
+
+    @SuppressWarnings("unused")
+    protected void setDefaultSerializer(Class<?> defaultSerializer) {
+        this.defaultSerializer = defaultSerializer;
+    }
+
+    @SuppressWarnings("unused")
+    protected Builder createClient() {
         return createClient("", APPLICATION_JSON);
     }
 
-    protected javax.ws.rs.client.Invocation.Builder createClient(final String url) {
+    protected Builder createClient(final String url) {
         return createClient(url, APPLICATION_JSON);
     }
 
-    protected javax.ws.rs.client.Invocation.Builder createClient(final String url, final String mediaType) {
+    protected Builder createClient(final String url, final String mediaType) {
         Client client = ClientBuilder.newClient();
         for (Class<?> cls: clientClasses) {
             client.register(cls);
@@ -70,6 +81,7 @@ public class CXFTest {
             clientClasses.add(clientClass);
             return this;
         }
+        @SuppressWarnings("unused")
         public Config addClientSingleton(final Object singleton) {
             clientSingletons.add(singleton);
             return this;
@@ -98,8 +110,8 @@ public class CXFTest {
 
     protected Config createDefaultConfig() {
         return new Config()
-                .addClientClass(defaultSerializer)
-                .addServerClass(defaultSerializer);
+                .addClientClass(getDefaultSerializer())
+                .addServerClass(getDefaultSerializer());
     }
     
     protected void setup(Object endpointSingleton) {
@@ -130,9 +142,20 @@ public class CXFTest {
         setup(config);
     }
 
+    protected String getServerHost() {
+        return "http://localhost";
+    }
+
+    protected String getServerPort() {
+        return TestUtil.getPortNumber(getClass());
+    }
+
+    protected String getServerAddress() {
+        return getServerHost() + ":" + getServerPort();
+    }
+
     protected void setup(Config config) {
-        address = "http://localhost:" + TestUtil.getPortNumber(this.getClass());
-        System.out.println(address);
+        address = getServerAddress();
 
         Application application = new Application() {
             public Set<Class<?>> getClasses() {
