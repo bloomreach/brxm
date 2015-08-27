@@ -20,25 +20,19 @@ import javax.ws.rs.core.Response;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.api.support.membermodification.MemberMatcher;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.junit.Assert.assertEquals;
-import static org.powermock.api.mockito.PowerMockito.doReturn;
-import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.powermock.api.easymock.PowerMock.mockStaticPartial;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(TestCompatibilityWithPowerMock.ToBeMocked.class)
+@PrepareForTest(TestClassWithStaticMembers.class)
 public class TestCompatibilityWithPowerMock extends CXFTest {
-
-    public class ToBeMocked {
-        private String privateImplementation() {
-            return "original";
-        }
-        public String func() {
-            return privateImplementation();
-        }
-    }
 
     @Before
     public void setup() {
@@ -53,10 +47,22 @@ public class TestCompatibilityWithPowerMock extends CXFTest {
     }
 
     @Test
-    public void testPowerMock() throws Exception {
-        ToBeMocked myMock = spy(new ToBeMocked());
-        assertEquals("original", myMock.func());
-        doReturn("mocked").when(myMock, "privateImplementation");
-        assertEquals("mocked", myMock.func());
+    public void test_unmocked_call_must_return_original() {
+        assertEquals("Unmocked call must return original", "original", TestClassWithStaticMembers.func());
+    }
+
+    @Test
+    public void test_mocked_call() throws Exception {
+        mockStaticPartial(TestClassWithStaticMembers.class, "privateImplementation");
+        PowerMock.expectPrivate(
+                TestClassWithStaticMembers.class,
+                MemberMatcher.method(TestClassWithStaticMembers.class, "privateImplementation")
+        ).andReturn("mocked");
+
+        replayAll();
+
+        assertEquals("Mocked should return mocked", "mocked", TestClassWithStaticMembers.func());
+
+        verifyAll();
     }
 }
