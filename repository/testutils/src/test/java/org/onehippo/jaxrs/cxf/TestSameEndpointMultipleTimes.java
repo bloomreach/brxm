@@ -17,8 +17,11 @@ package org.onehippo.jaxrs.cxf;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper;
+import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.ExecuteOnLogLevel;
 
 import static org.junit.Assert.assertEquals;
 
@@ -37,8 +40,17 @@ public class TestSameEndpointMultipleTimes extends CXFTest {
     }
 
     @Test
-    public void testHelloWorldPost() {
-        Response r = createClient("/helloworld").delete();
-        assertEquals(Response.Status.METHOD_NOT_ALLOWED.getStatusCode(), r.getStatus());
+    public void testHelloWorldDelete() {
+        // Suppress warning for calling non-existing verb
+        ExecuteOnLogLevel.error(
+                new Runnable() {
+                    public void run() {
+                        Response r = createClient("/helloworld").delete();
+                        assertEquals(Response.Status.METHOD_NOT_ALLOWED.getStatusCode(), r.getStatus());
+                    }
+                },
+                JAXRSUtils.class.getName(),
+                WebApplicationExceptionMapper.class.getName()
+        );
     }
 }
