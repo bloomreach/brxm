@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="alternate" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:mount</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:channelpath" sv:type="String">
+    <sv:value>/hst:hst/hst:channels/alternate-hap</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:locale" sv:type="String">
+    <sv:value>nl_NL</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:mountpoint" sv:type="String">
+    <sv:value>/hst:hst/hst:sites/alternate-hap</sv:value>
+  </sv:property>
+</sv:node>
