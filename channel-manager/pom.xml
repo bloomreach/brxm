@@ -137,6 +137,7 @@
     <module>repository</module>
     <module>test</module>
     <module>angularjs-api</module>
+    <module>hap</module>
   </modules>
 
   <scm>
