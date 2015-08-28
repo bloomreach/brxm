@@ -16,6 +16,17 @@
 (function () {
   "use strict";
 
+  var translations = [
+    '$translate',
+    'hippo.channel.ConfigService',
+    function ($translate, Config) {
+      return $translate.use(Config.locale)
+        .catch(function () {
+          $translate.use($translate.fallbackLanguage());
+        });
+    }
+  ];
+
   angular.module('hippo.channel.pages')
 
     .config([
@@ -29,13 +40,19 @@
           .state('overview-pages', {
             url: '/overview-pages',
             controller: 'hippo.channel.pages.OverviewPagesCtrl',
-            templateUrl: 'states/overview-pages/overview-pages.html'
+            templateUrl: 'states/overview-pages/overview-pages.html',
+            resolve: {
+              translations: translations
+            }
           })
 
           .state('add-page', {
             url: '/add-page',
             controller: 'hippo.channel.pages.AddPageCtrl',
-            templateUrl: 'states/add-page/add-page.html'
+            templateUrl: 'states/add-page/add-page.html',
+            resolve: {
+              translations: translations
+            }
           });
 
         // translations
@@ -43,6 +60,7 @@
           prefix: 'i18n/',
           suffix: '.json'
         });
+        $translateProvider.fallbackLanguage('en');
 
         // tooltips
         $tooltipProvider.options({

@@ -19,14 +19,9 @@
   angular.module('hippo.channel.page')
 
     .run([
-      '$translate',
       '$state',
-      'hippo.channel.ConfigService',
       '_hippo.channel.IFrameService',
-      function ($translate, $state, Config, IFrame) {
-        // set language
-        $translate.use(Config.locale);
-
+      function ($state, IFrame) {
         // go to default state
         $state.go('settings');
 
