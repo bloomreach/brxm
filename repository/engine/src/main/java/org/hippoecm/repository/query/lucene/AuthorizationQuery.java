@@ -54,8 +54,12 @@ import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.QFacetRule;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.principals.GroupPrincipal;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.repository.util.JcrConstants.JCR_MIXIN_TYPES;
+import static org.onehippo.repository.util.JcrConstants.JCR_PRIMARY_TYPE;
 
 public class AuthorizationQuery {
 
@@ -67,6 +71,18 @@ public class AuthorizationQuery {
     private static final String MESSAGE_ZEROMATCH_QUERY = "returning a match zero nodes query";
     public static final String NODETYPE = "nodetype";
     public static final String NODENAME = "nodename";
+
+    private static final Collection<String> SKIP_TYPE_FACETS = new HashSet<>();
+    static {
+        SKIP_TYPE_FACETS.add(JcrConstants.NT_SYSTEM);
+        SKIP_TYPE_FACETS.add(JcrConstants.NT_VERSION_STORAGE);
+        SKIP_TYPE_FACETS.add(JcrConstants.NT_VERSION_HISTORY);
+        SKIP_TYPE_FACETS.add(JcrConstants.NT_VERSION);
+        SKIP_TYPE_FACETS.add(JcrConstants.NT_FROZEN_NODE);
+        SKIP_TYPE_FACETS.add(JcrConstants.NT_VERSIONED_CHILD);
+        SKIP_TYPE_FACETS.add(JcrConstants.NT_VERSION_LABELS);
+    }
+
 
     /**
      * The lucene query
@@ -265,23 +281,31 @@ public class AuthorizationQuery {
                         return QueryHelper.createNoHitsQuery();
                     }
                 } else if (NODETYPE.equalsIgnoreCase(nodeNameString)) {
-                    return getNodeTypeDescendantQuery(facetRule, ntMgr, session, nsMappings);
+                    if (SKIP_TYPE_FACETS.contains(nodeNameString)) {
+                        return null;
+                    } else {
+                        return getNodeTypeDescendantQuery(facetRule, ntMgr, session, nsMappings);
+                    }
                 } else if (NODENAME.equalsIgnoreCase(nodeNameString)) {
                     return getNodeNameQuery(facetRule, userIds, roles, memberships, nsMappings);
                 } else {
-                    try {
-                        if ("jcr:primaryType".equals(nodeNameString)) {
-                            return getNodeTypeQuery(ServicingFieldNames.HIPPO_PRIMARYTYPE, facetRule, session, nsMappings);
-                        } else if ("jcr:mixinTypes".equals(nodeNameString)) {
-                            return getNodeTypeQuery(ServicingFieldNames.HIPPO_MIXINTYPE, facetRule, session, nsMappings);
-                        } else {
-                            log.error("Ignoring facetrule with facet '" + nodeNameString + "'. hippo:facet must be either 'nodetype', 'jcr:primaryType' " +
-                                              "or 'jcr:mixinTypes' when hipposys:type = Name.");
+                    if (SKIP_TYPE_FACETS.contains(nodeNameString)) {
+                        return null;
+                    } else {
+                        try {
+                            if (JCR_PRIMARY_TYPE.equals(nodeNameString)) {
+                                return getNodeTypeQuery(ServicingFieldNames.HIPPO_PRIMARYTYPE, facetRule, session, nsMappings);
+                            } else if (JCR_MIXIN_TYPES.equals(nodeNameString)) {
+                                return getNodeTypeQuery(ServicingFieldNames.HIPPO_MIXINTYPE, facetRule, session, nsMappings);
+                            } else {
+                                log.error("Ignoring facetrule with facet '" + nodeNameString + "'. hippo:facet must be either 'nodetype', 'jcr:primaryType' " +
+                                        "or 'jcr:mixinTypes' when hipposys:type = Name.");
+                            }
+                        } catch (IllegalNameException ine) {
+                            log.warn("Illegal name in facet rule", ine);
+                        } catch(NamespaceException ne) {
+                            log.warn("Namespace exception in facet rule", ne);
                         }
-                    } catch (IllegalNameException ine) {
-                        log.warn("Illegal name in facet rule", ine);
-                    } catch(NamespaceException ne) {
-                        log.warn("Namespace exception in facet rule", ne);
                     }
                 }
                 break;
