@@ -278,6 +278,9 @@ hap/blueprint/src/main/resources/configuration/queries/website.xml -text
 hap/blueprint/src/main/resources/hippoecm-extension.xml eol=lf
 hap/blueprint/src/main/resources/hst/website.xml -text
 hap/pom.xml -text svneol=unset#application/xml
+hap/prototype-pages/pom.xml -text svneol=unset#application/xml
+hap/prototype-pages/src/main/resources/hippoecm-extension.xml eol=lf
+hap/prototype-pages/src/main/resources/main-vbox.xml -text svneol=unset#application/xml
 /pom.xml eol=lf
 repository/pom.xml eol=lf
 repository/src/main/resources/channel-manager-cluster.xml eol=lf
