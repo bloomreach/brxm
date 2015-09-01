@@ -38,6 +38,8 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.onehippo.cms7.essentials.components.ext.DefaultPageableFactory;
+import org.onehippo.cms7.essentials.components.ext.DoBeforeExtension;
+import org.onehippo.cms7.essentials.components.ext.NoopDoBeforeExtension;
 import org.onehippo.cms7.essentials.components.ext.PageableFactory;
 import org.onehippo.cms7.essentials.components.utils.SiteUtils;
 import org.slf4j.Logger;
@@ -63,6 +65,8 @@ public abstract class CommonComponent extends BaseHstComponent {
 
     @SuppressWarnings("HippoHstThreadSafeInspection")
     private PageableFactory pageableFactory;
+    @SuppressWarnings("HippoHstThreadSafeInspection")
+    private DoBeforeExtension doBeforeExtension;
     /**
      * Attribute names used within Essentials
      */
@@ -87,6 +91,8 @@ public abstract class CommonComponent extends BaseHstComponent {
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
         setEditMode(request);
+        // execute configured DoBeforeExtension
+        doBeforeRenderExtension(request, response);
     }
 
     public <T extends HippoBean> T getHippoBeanForPath(final String documentPath, Class<T> beanMappingClass) {
@@ -285,6 +291,22 @@ public abstract class CommonComponent extends BaseHstComponent {
             }
         }
         return pageableFactory;
+    }
+
+    /**
+     * Executes configured DoBeforeExtension for each component call. Override within component if no execution is needed
+     * @param request HstRequest instance
+     * @param response HstResponse instance
+     */
+    protected void doBeforeRenderExtension(final HstRequest request, final HstResponse response) {
+        if (doBeforeExtension == null) {
+            doBeforeExtension = HstServices.getComponentManager().getComponent(DoBeforeExtension.class.getName());
+            if (doBeforeExtension == null) {
+                log.debug("CommonExtension extension: {} is *not* configured, essentials will use NoopCommonExtension", DoBeforeExtension.class.getName());
+                doBeforeExtension = new NoopDoBeforeExtension();
+            }
+        }
+        doBeforeExtension.execute(this, request, response);
     }
 
 
