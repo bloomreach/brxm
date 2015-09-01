@@ -21,13 +21,13 @@ import org.apache.wicket.util.io.IClusterable;
 
 public class BrowseState implements IClusterable {
 
-    // change state
+    // UI events
     private boolean sectionChanged;
     private boolean tabChanged;
     private boolean listingChanged;
     private boolean expandChanged;
 
-    // render state
+    // render actions
     private boolean expandDefault;
     private boolean expandListing;
     private boolean collapseAll;
@@ -37,7 +37,7 @@ public class BrowseState implements IClusterable {
     private boolean shelveSelection;
     private boolean restoreSelection;
 
-    // value state
+    // UI state
     private String tab;
     private String section;
     private boolean expanded;
@@ -92,6 +92,7 @@ public class BrowseState implements IClusterable {
             }
         } else {
             if (listingChanged || expandChanged) {
+                // Note that here, "expanded" already contains the new value, i.e. after the expansion/collapsing. See onExpand/onCollapse.
                 if (expanded) {
                     expandListing = true;
                     shelveSelection = expandChanged && hasOpenTabs;
@@ -99,7 +100,7 @@ public class BrowseState implements IClusterable {
                 } else {
                     collapseListing = true;
                     restoreSelection = expandChanged && currentSectionMatchesLastSection();
-                    focusTabs = !restoreSelection && expandChanged && hasOpenTabs;
+                    focusTabs = expandChanged && !currentSectionMatchesLastSection() && hasOpenTabs;
                 }
             }
 
