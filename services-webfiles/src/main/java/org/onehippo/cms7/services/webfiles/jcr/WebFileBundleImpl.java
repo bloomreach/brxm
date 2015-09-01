@@ -273,6 +273,7 @@ public class WebFileBundleImpl implements WebFileBundle {
     private WebFileImpl create(Node folder, String absPath, Binary content) throws RepositoryException, IOException {
         final String fileName = getFileName(absPath);
         final Node file = folder.addNode(fileName, NT_FILE);
+        //  TODO do not use tika.detect, see CMS-9511 and CMS-9478
         doCreate(file, content, tika.detect(content.getStream(), fileName));
         return new WebFileImpl(file);
     }
