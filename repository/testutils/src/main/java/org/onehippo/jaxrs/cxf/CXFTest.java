@@ -34,6 +34,32 @@ import org.junit.After;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
+/**
+ * Utility class for unit testing of JAXRS endpoints; for examples how to use this class, see the unit tests.
+ *
+ * <p>The smallest example can be found in the test class {@code org.onehippo.jaxrs.cxf.TestSingleEndpoint}. Most tests
+ * use <a href="https://github.com/jayway/rest-assured">REST-assured</a> to write the test conditions. See their
+ * <a href="https://github.com/jayway/rest-assured">GitHub page</a> or
+ * <a href="https://github.com/jayway/rest-assured/wiki/Usage">user guide</a> for more information. Be sure to check
+ * the <a href="https://github.com/jayway/rest-assured/wiki/Usage#examples">examples</a> section.</p>
+ *
+ * <p>Next to testing of the plain JSON output, it is also possible to test using a JAXRS client, see the test class
+ * {@code org.onehippo.jaxrs.cxf.TestJaxrsClient}.</p>
+ *
+ * <p>In general the CXFTest has been tested to be compatible with the following frameworks found in the Hippo stack:
+ * <ul>
+ *     <li>
+ *         Spring: see test class {@code org.onehippo.jaxrs.cxf.TestCompatibilityWithSpring}
+ *     </li>
+ *     <li>
+ *         PowerMock: see test class {@code org.onehippo.jaxrs.cxf.TestCompatibilityWithPowerMock}, do note the three
+ *         class level annotations
+ *         ({@literal@RunWith(PowerMockRunner.class) @PowerMockIgnore("javax.net.ssl.*") @PrepareForTest(Class<?>)})
+ *         that are all necessary to make the test succeed.
+ *     </li>
+ * </ul>
+ * </p>
+ */
 public class CXFTest {
 
     private Class<?> defaultSerializer = JacksonJsonProvider.class;
