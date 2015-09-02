@@ -15,33 +15,44 @@
  */
 package org.onehippo.jaxrs.cxf;
 
+import java.time.LocalDateTime;
+
+import javax.ws.rs.core.Response;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.jaxrs.cxf.HelloObjectEndpoint.StructuredMessage;
 
 import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
 
-public class TestMultipleEndpoints extends CXFTest {
+public class TestJaxrsClient extends CXFTest {
 
     @Before
     public void setup() {
-        Config config = createDefaultConfig()
-                .addServerClass(HelloWorldEndpoint.class)
-                .addServerClass(HelloObjectEndpoint.class);
-        setup(config);
+        setup(HelloObjectEndpoint.class);
     }
 
     @Test
-    public void callingTwoEndpointsInOneTestMustSucceed() {
-        when().
-                get("/helloworld").
-        then().
-                statusCode(200).
-                body(equalTo("Hello world"));
-
+    public void callingUsingRestAssuredMustSucceed() {
         when().
                 get("/helloobject").
         then().
-                statusCode(200);
+                statusCode(200).
+                body("message", equalTo("Hello object"),
+                     "timestamp.year", equalTo(LocalDateTime.now().getYear()));
+    }
+
+    @Test
+    public void callingUsingJaxrsClientMustSucceed() {
+        final Response response = createJaxrsClient("/helloobject").get();
+
+        assertEquals(200, response.getStatus());
+
+        StructuredMessage message = response.readEntity(StructuredMessage.class);
+
+        assertEquals("Hello object", message.getMessage());
+        assertEquals(LocalDateTime.now().getYear(), message.getTimestamp().getYear());
     }
 }

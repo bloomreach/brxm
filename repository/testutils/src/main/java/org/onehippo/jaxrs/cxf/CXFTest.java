@@ -53,15 +53,15 @@ public class CXFTest {
     }
 
     @SuppressWarnings("unused")
-    protected Builder createClient() {
-        return createClient("", APPLICATION_JSON);
+    protected Builder createJaxrsClient() {
+        return createJaxrsClient("", APPLICATION_JSON);
     }
 
-    protected Builder createClient(final String url) {
-        return createClient(url, APPLICATION_JSON);
+    protected Builder createJaxrsClient(final String url) {
+        return createJaxrsClient(url, APPLICATION_JSON);
     }
 
-    protected Builder createClient(final String url, final String mediaType) {
+    protected Builder createJaxrsClient(final String url, final String mediaType) {
         Client client = ClientBuilder.newClient();
         for (Class<?> cls: clientClasses) {
             client.register(cls);
