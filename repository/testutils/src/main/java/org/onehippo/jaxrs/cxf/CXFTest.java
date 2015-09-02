@@ -24,6 +24,7 @@ import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.Application;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.jayway.restassured.RestAssured;
 
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
@@ -146,8 +147,8 @@ public class CXFTest {
         return "http://localhost";
     }
 
-    protected String getServerPort() {
-        return TestUtil.getPortNumber(getClass());
+    protected int getServerPort() {
+        return Integer.parseInt(TestUtil.getPortNumber(getClass()));
     }
 
     protected String getServerAddress() {
@@ -174,6 +175,9 @@ public class CXFTest {
 
         clientClasses = config.getClientClasses();
         clientSingletons = config.getClientSingletons();
+
+        RestAssured.baseURI = getServerHost();
+        RestAssured.port = getServerPort();
     }
 
     @After

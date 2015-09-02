@@ -15,8 +15,6 @@
  */
 package org.onehippo.jaxrs.cxf;
 
-import javax.ws.rs.core.Response;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.assertEquals;
+import static com.jayway.restassured.RestAssured.when;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/org/onehippo/jaxrs/cxf/spring.xml"})
@@ -40,8 +39,10 @@ public class TestCompatibilityWithSpring extends CXFTest {
 
     @Test
     public void testHelloWorld() {
-        Response r = createClient("/helloworld").get();
-        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-        assertEquals("Hello world", r.readEntity(String.class));
+        when().
+            get("/helloworld").
+        then().
+            statusCode(200).
+            body(equalTo("Hello world"));
     }
 }

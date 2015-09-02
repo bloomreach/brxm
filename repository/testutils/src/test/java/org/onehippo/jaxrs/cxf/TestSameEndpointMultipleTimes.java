@@ -15,15 +15,14 @@
  */
 package org.onehippo.jaxrs.cxf;
 
-import javax.ws.rs.core.Response;
-
 import org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.ExecuteOnLogLevel;
 
-import static org.junit.Assert.assertEquals;
+import static com.jayway.restassured.RestAssured.when;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 public class TestSameEndpointMultipleTimes extends CXFTest {
 
@@ -34,9 +33,11 @@ public class TestSameEndpointMultipleTimes extends CXFTest {
 
     @Test
     public void testHelloWorld() {
-        Response r = createClient("/helloworld").get();
-        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-        assertEquals("Hello world", r.readEntity(String.class));
+        when().
+            get("/helloworld").
+        then().
+            statusCode(200).
+            body(equalTo("Hello world"));
     }
 
     @Test
@@ -45,8 +46,10 @@ public class TestSameEndpointMultipleTimes extends CXFTest {
         ExecuteOnLogLevel.error(
                 new Runnable() {
                     public void run() {
-                        Response r = createClient("/helloworld").delete();
-                        assertEquals(Response.Status.METHOD_NOT_ALLOWED.getStatusCode(), r.getStatus());
+                        when().
+                            delete("/helloworld").
+                        then().
+                            statusCode(405);
                     }
                 },
                 JAXRSUtils.class.getName(),

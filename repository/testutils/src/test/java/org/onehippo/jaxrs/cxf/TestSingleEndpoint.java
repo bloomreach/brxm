@@ -15,12 +15,11 @@
  */
 package org.onehippo.jaxrs.cxf;
 
-import javax.ws.rs.core.Response;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static com.jayway.restassured.RestAssured.when;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 public class TestSingleEndpoint extends CXFTest {
 
@@ -31,8 +30,10 @@ public class TestSingleEndpoint extends CXFTest {
 
     @Test
     public void testHelloWorld() {
-        Response r = createClient("/helloworld").get();
-        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-        assertEquals("Hello world", r.readEntity(String.class));
+        when().
+            get("/helloworld").
+        then().
+            statusCode(200).
+            body(equalTo("Hello world"));
     }
 }

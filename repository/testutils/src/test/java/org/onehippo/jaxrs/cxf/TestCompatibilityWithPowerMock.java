@@ -15,22 +15,24 @@
  */
 package org.onehippo.jaxrs.cxf;
 
-import javax.ws.rs.core.Response;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.api.support.membermodification.MemberMatcher;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static com.jayway.restassured.RestAssured.when;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.powermock.api.easymock.PowerMock.mockStaticPartial;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore("javax.net.ssl.*")
 @PrepareForTest(TestClassWithStaticMembers.class)
 public class TestCompatibilityWithPowerMock extends CXFTest {
 
@@ -41,9 +43,11 @@ public class TestCompatibilityWithPowerMock extends CXFTest {
 
     @Test
     public void testHelloWorld() {
-        Response r = createClient("/helloworld").get();
-        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-        assertEquals("Hello world", r.readEntity(String.class));
+        when().
+            get("/helloworld").
+        then().
+            statusCode(200).
+            body(equalTo("Hello world"));
     }
 
     @Test
