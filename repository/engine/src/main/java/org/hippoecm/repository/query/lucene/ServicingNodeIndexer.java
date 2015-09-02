@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -200,6 +200,10 @@ public class ServicingNodeIndexer extends NodeIndexer {
             if (internalValue.length() == 0) {
                 return;
             }
+
+            // implementing a limited solution for HTML character reference filtering; see also REPO-1312
+            internalValue = internalValue.replaceAll("&#?\\w*;", " ");
+
             // create fulltext index on property
             int idx = fieldName.indexOf(':');
             fieldName = fieldName.substring(0, idx + 1)
