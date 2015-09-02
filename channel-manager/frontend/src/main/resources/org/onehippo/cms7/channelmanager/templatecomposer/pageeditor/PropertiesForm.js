@@ -63,7 +63,8 @@
       this.saveEnabledChecks = [];
 
       Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.constructor.call(this, Ext.apply(config, {
-        cls: 'templateComposerPropertiesForm'
+        cls: 'templateComposerPropertiesForm',
+        maskDisabled: false
       }));
     },
 

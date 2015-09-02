@@ -38,6 +38,7 @@
       this.componentId = config.componentId;
       this.variantsUuid = config.variantsUuid;
       this.getCurrentVariant = config.getCurrentVariant;
+      this.componentMessageBus = config.componentMessageBus;
 
       this.globalVariantsStore = new Hippo.ChannelManager.TemplateComposer.GlobalVariantsStore({
         composerRestMountUrl: this.composerRestMountUrl,

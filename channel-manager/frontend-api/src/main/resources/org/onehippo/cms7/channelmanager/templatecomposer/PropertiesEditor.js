@@ -31,6 +31,7 @@
       this.variant = config.variant;
       this.propertiesForm = config.propertiesForm;
       this.isReadOnly = config.isReadOnly;
+      this.componentMessageBus = config.componentMessageBus;
 
       this.addEvents('visibleHeightChanged');
     },

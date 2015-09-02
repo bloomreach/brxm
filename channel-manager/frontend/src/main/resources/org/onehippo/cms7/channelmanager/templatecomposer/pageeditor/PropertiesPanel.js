@@ -56,6 +56,8 @@
       this.resources = config.resources;
       this.locale = config.locale;
 
+      this.componentMessageBus = Hippo.createMessageBus('properties-panel');
+
       this.variantAdderXType = config.variantAdderXType;
       this.propertiesEditorXType = config.propertiesEditorXType;
 
@@ -237,6 +239,7 @@
         title: getVariantName(variant),
         variantsUuid: this.variantsUuid,
         getCurrentVariant: this.getCurrentVariant.bind(this),
+        componentMessageBus: this.componentMessageBus,
         listeners: {
           'save': function (variant) {
             this._onPropertiesSaved(variant);
@@ -305,7 +308,8 @@
         allVariants: variants.slice(0, variants.length - 1),
         title: getVariantName(variant),
         propertiesForm: propertiesForm,
-        isReadOnly: this.isReadOnly
+        isReadOnly: this.isReadOnly,
+        componentMessageBus: this.componentMessageBus
       });
 
       editor.on('visibleHeightChanged', function (editor, visibleHeight) {
