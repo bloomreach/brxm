@@ -33,7 +33,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.net.ssl.*")
-@PrepareForTest(TestClassWithStaticMembers.class)
+@PrepareForTest(ClassWithStaticMembers.class)
 public class TestCompatibilityWithPowerMock extends CXFTest {
 
     @Before
@@ -42,30 +42,30 @@ public class TestCompatibilityWithPowerMock extends CXFTest {
     }
 
     @Test
-    public void testHelloWorld() {
+    public void callingHelloWorldInCombinationWithPowerMockMustSucceed() {
         when().
-            get("/helloworld").
+                get("/helloworld").
         then().
-            statusCode(200).
-            body(equalTo("Hello world"));
+                statusCode(200).
+                body(equalTo("Hello world"));
     }
 
     @Test
-    public void test_unmocked_call_must_return_original() {
-        assertEquals("Unmocked call must return original", "original", TestClassWithStaticMembers.func());
+    public void unmockedCallMustReturnOriginal() {
+        assertEquals("Unmocked call must return original", "original", ClassWithStaticMembers.func());
     }
 
     @Test
-    public void test_mocked_call() throws Exception {
-        mockStaticPartial(TestClassWithStaticMembers.class, "privateImplementation");
+    public void mockedCallMustReturnMockedAnswer() throws Exception {
+        mockStaticPartial(ClassWithStaticMembers.class, "privateImplementation");
         PowerMock.expectPrivate(
-                TestClassWithStaticMembers.class,
-                MemberMatcher.method(TestClassWithStaticMembers.class, "privateImplementation")
+                ClassWithStaticMembers.class,
+                MemberMatcher.method(ClassWithStaticMembers.class, "privateImplementation")
         ).andReturn("mocked");
 
         replayAll();
 
-        assertEquals("Mocked should return mocked", "mocked", TestClassWithStaticMembers.func());
+        assertEquals("Mocked should return mocked", "mocked", ClassWithStaticMembers.func());
 
         verifyAll();
     }

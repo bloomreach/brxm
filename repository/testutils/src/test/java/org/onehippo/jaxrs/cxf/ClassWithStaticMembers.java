@@ -15,7 +15,7 @@
  */
 package org.onehippo.jaxrs.cxf;
 
-public class TestClassWithStaticMembers {
+public class ClassWithStaticMembers {
     private static String privateImplementation() {
         return "original";
     }

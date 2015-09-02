@@ -32,17 +32,17 @@ public class TestMultipleEndpoints extends CXFTest {
     }
 
     @Test
-    public void testHelloWorld() {
+    public void callingTwoEndpointsInOneTestMustSucceed() {
         when().
-            get("/helloworld").
+                get("/helloworld").
         then().
-            statusCode(200).
-            body(equalTo("Hello world"));
+                statusCode(200).
+                body(equalTo("Hello world"));
 
         when().
-            get("/hellogalaxy").
+                get("/hellogalaxy").
         then().
-            statusCode(200).
-            body(equalTo("Hello galaxy"));
+                statusCode(200).
+                body(equalTo("Hello galaxy"));
     }
 }

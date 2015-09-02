@@ -32,24 +32,33 @@ public class TestSameEndpointMultipleTimes extends CXFTest {
     }
 
     @Test
-    public void testHelloWorld() {
+    public void callingHelloWorldMustSucceed() {
         when().
-            get("/helloworld").
+                get("/helloworld").
         then().
-            statusCode(200).
-            body(equalTo("Hello world"));
+                statusCode(200).
+                body(equalTo("Hello world"));
     }
 
     @Test
-    public void testHelloWorldDelete() {
+    public void callingHelloWorldAgainMustSucceed() {
+        when().
+                get("/helloworld").
+        then().
+                statusCode(200).
+                body(equalTo("Hello world"));
+    }
+
+    @Test
+    public void makingIllegalCallMustBeSuppressible() {
         // Suppress warning for calling non-existing verb
         ExecuteOnLogLevel.error(
                 new Runnable() {
                     public void run() {
                         when().
-                            delete("/helloworld").
+                                delete("/helloworld").
                         then().
-                            statusCode(405);
+                                statusCode(405);
                     }
                 },
                 JAXRSUtils.class.getName(),

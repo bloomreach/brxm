@@ -38,11 +38,11 @@ public class TestCompatibilityWithSpring extends CXFTest {
     }
 
     @Test
-    public void testHelloWorld() {
+    public void callingHelloWorldInjectedThroughSpringMustSucceed() {
         when().
-            get("/helloworld").
+                get("/helloworld").
         then().
-            statusCode(200).
-            body(equalTo("Hello world"));
+                statusCode(200).
+                body(equalTo("Hello world"));
     }
 }
