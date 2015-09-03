@@ -22,7 +22,17 @@ import org.apache.lucene.search.BooleanClause.Occur;
 
 public class QueryHelper {
 
-    private QueryHelper() {
+    private final static Query noHitsQuery = createNoHitsQuery();
+    private final static Query matchAllDocsQuery = new MatchAllDocsQuery();
+
+    private QueryHelper() {}
+
+    public static boolean isNoHitsQuery(final Query query) {
+        return noHitsQuery.equals(query);
+    }
+
+    public static boolean isMatchAllDocsQuery(final Query query) {
+        return matchAllDocsQuery.equals(query);
     }
 
     public static Query createNoHitsQuery() {
