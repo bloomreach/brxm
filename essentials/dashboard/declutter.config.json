@@ -4,6 +4,7 @@
   "angular-chosen-localytics": ["chosen.js"],
   "angular-mocks": [],
   "angular-sanitize": ["angular-sanitize.min.js"],
+  "angular-tablesort": ["src/angular-tablesort.js"],
   "angular-ui-router": ["release/angular-ui-router.js"],
   "angular-ui-tree": ["dist/angular-ui-tree.min.css"],
   "chosen": ["chosen.jquery.js"],
@@ -11,6 +12,5 @@
   "google-code-prettify": ["src/prettify.js"],
   "hippo-theme": ["dist/**"],
   "jasmine-jquery": [],
-  "jquery": ["dist/jquery.js"],
-  "angular-tablesort": ["src/angular-tablesort.js"]
+  "jquery": ["dist/jquery.js"]
 }
