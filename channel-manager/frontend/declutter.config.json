@@ -37,8 +37,5 @@
   "underscore": [
     "underscore-min.js",
     "underscore-min.map"
-  ],
-  "angular-tablesort": [
-    "src/angular-tablesort.js"
   ]
 }
