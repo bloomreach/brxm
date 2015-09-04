@@ -24,8 +24,8 @@
           class="org.onehippo.cms7.essentials.components.ext.DefaultPageableFactory"/>
 
   <!-- Default no-operation do before extension -->
-  <bean id="org.onehippo.cms7.essentials.components.ext.DoBeforeExtension"
-        class="org.onehippo.cms7.essentials.components.ext.NoopDoBeforeExtension"/>
+  <bean id="org.onehippo.cms7.essentials.components.ext.DoBeforeRenderExtension"
+        class="org.onehippo.cms7.essentials.components.ext.NoopDoBeforeRenderExtension"/>
 
 
 </beans>

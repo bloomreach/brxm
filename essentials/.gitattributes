@@ -33,8 +33,8 @@ components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsP
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsSearchComponent.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/EssentialsVideoComponent.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/ext/DefaultPageableFactory.java -text
-components/hst/src/main/java/org/onehippo/cms7/essentials/components/ext/DoBeforeExtension.java -text
-components/hst/src/main/java/org/onehippo/cms7/essentials/components/ext/NoopDoBeforeExtension.java -text
+components/hst/src/main/java/org/onehippo/cms7/essentials/components/ext/DoBeforeRenderExtension.java -text
+components/hst/src/main/java/org/onehippo/cms7/essentials/components/ext/NoopDoBeforeRenderExtension.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/ext/PageableFactory.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsBlogAuthorPostsComponentInfo.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsBlogComponentInfo.java -text
