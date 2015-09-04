@@ -178,8 +178,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
     public TaxonomyPickerPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        final String captionKey = config.getString("captionKey", "title");
-        add(new Label("title", new ResourceModel(captionKey)));
+        add(new Label("title", getCaptionModel()));
 
         final Label requiredMarker = new Label("required", "*");
         final IFieldDescriptor fieldDescriptor = getTaxonomyFieldDescriptor();
@@ -339,29 +338,41 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
     }
 
     /**
-     * Get the field descriptor object for this field
+     * Get the document type descriptor object that this field is part of
      */
-    protected IFieldDescriptor getTaxonomyFieldDescriptor() {
+    protected ITypeDescriptor getDocumentTypeDescriptor() {
 
         final ITemplateEngine templateEngine = getPluginContext().getService(getPluginConfig().getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
         if (templateEngine != null) {
             try {
-                final String fieldName = getPluginConfig().getString(AbstractFieldPlugin.FIELD, "keys");
-
-                // get field in current document type, which is either directly configured field or the hippotaxonomy:classifiable
-                final ITypeDescriptor type = templateEngine.getType(getModel());
-                final IFieldDescriptor field = type.getField(fieldName);
-                if (field != null) {
-                    return field;
-                }
-                log.warn("Cannot find taxonomy field '{}' for type {}", fieldName, type.getName());
-
+                return templateEngine.getType(getModel());
             } catch (TemplateEngineException e) {
                 log.error("Cannot determine type for taxonomy field", e);
             }
         } else {
             log.error("Cannot find template engine, plugin config is {}", getPluginConfig());
         }
+        return null;
+    }
+
+    /**
+     * Get the field descriptor object for this field
+     */
+    protected IFieldDescriptor getTaxonomyFieldDescriptor() {
+
+        // get field in current document type, which is either directly configured field or the hippotaxonomy:classifiable
+        final ITypeDescriptor docType = getDocumentTypeDescriptor();
+        if (docType != null) {
+            final String fieldName = getPluginConfig().getString(AbstractFieldPlugin.FIELD, "keys");
+
+            final IFieldDescriptor field = docType.getField(fieldName);
+            if (field != null) {
+                return field;
+            }
+
+            log.warn("Cannot find taxonomy field '{}' for type {}", fieldName, docType.getName());
+        }
+
         return null;
     }
 
@@ -410,5 +421,66 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         }
 
         return true;
+    }
+
+    /**
+     * Returns a key consisting of the super's cluster (tab) based translator id, plus the document type.
+     * The document type is added to not get translations mixed up in the Wicket cache for fields of different document
+     * types with the same name (e.g. title).
+     *
+     * Inspired on org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin#getResourceProviderKey(),
+     * unfortunately this class does not extend from AbstractFieldPlugin.
+     */
+    @Override
+    public String getResourceProviderKey() {
+        String key = super.getResourceProviderKey();
+
+        final ITypeDescriptor docType = getDocumentTypeDescriptor();
+
+        if (docType != null) {
+            key = (key == null) ? "" : (key + ".");
+            key += docType.getName();
+            if (log.isDebugEnabled()) {
+                log.debug("For field {}/{}, enriched resource provider key with doc type, resulting in {}",
+                        new String[]{docType.getName(),
+                                (getTaxonomyFieldDescriptor() != null) ? getTaxonomyFieldDescriptor().getName() : "taxonomy",
+                                key});
+            }
+        }
+        return key;
+    }
+
+    /**
+     * Get the model for the caption, a.k.a. title.
+     *
+     * Inspired on org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin#getCaptionModel(),
+     * unfortunately this class does not extend from AbstractFieldPlugin.
+     */
+    protected IModel<String> getCaptionModel() {
+
+        final IFieldDescriptor field = getTaxonomyFieldDescriptor();
+        String caption = getPluginConfig().getString("caption");
+        // captionKey config first on behalf of multiple taxonomy pickers in one document
+        String captionKey = getPluginConfig().getString("captionKey");
+        if (captionKey == null) {
+            captionKey = field != null ? field.getName() : caption;
+        }
+
+        // warn when no field, nor caption(key)
+        if (captionKey == null) {
+            log.warn("Cannot set taxonomy field caption because both field reference and property 'caption' are missing." +
+                            " Document type is '{}'",
+                    getDocumentTypeDescriptor() == null ? "unknown" : getDocumentTypeDescriptor().getName());
+            return new Model<>("undefined");
+        }
+
+        // capitalized field name as default caption (not key!)
+        if (caption == null && field != null && field.getName().length() >= 1) {
+            caption = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+        }
+
+        // implicitly from translator service (this class implements IStringResourceProvider)
+        log.debug("Getting taxonomy field caption from translator by captionKey '{}' and default caption '{}'", captionKey, caption);
+        return new StringResourceModel(captionKey, this, null, caption);
     }
 }
