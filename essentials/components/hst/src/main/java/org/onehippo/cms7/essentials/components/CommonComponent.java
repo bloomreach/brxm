@@ -92,7 +92,8 @@ public abstract class CommonComponent extends BaseHstComponent {
         if (doBeforeRenderExtension == null) {
             doBeforeRenderExtension = HstServices.getComponentManager().getComponent(DoBeforeRenderExtension.class.getName());
             if (doBeforeRenderExtension == null) {
-                log.debug("CommonExtension extension: {} is *not* configured, essentials will use NoopCommonExtension", DoBeforeRenderExtension.class.getName());
+                log.debug("DoBeforeRenderExtension: {} is *not* configured, falling back to NoopCommonExtension",
+                        DoBeforeRenderExtension.class.getName());
                 doBeforeRenderExtension = new NoopDoBeforeRenderExtension();
             }
         }
@@ -101,8 +102,7 @@ public abstract class CommonComponent extends BaseHstComponent {
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
         setEditMode(request);
-        // execute configured DoBeforeRenderExtension
-        doBeforeRenderExtension(request, response);
+        doBeforeRenderExtension.execute(this, request, response);
     }
 
     public <T extends HippoBean> T getHippoBeanForPath(final String documentPath, Class<T> beanMappingClass) {
@@ -304,15 +304,14 @@ public abstract class CommonComponent extends BaseHstComponent {
     }
 
     /**
-     * Executes configured DoBeforeRenderExtension for each component call. Override within component if no execution is needed
-     * @param request HstRequest instance
-     * @param response HstResponse instance
+     * Override the Spring-configured, project-global DoBeforeRenderExtension on a per-component basis.
+     *
+     * @param doBeforeRenderExtension the custom extension, must not be null.
      */
-    protected void doBeforeRenderExtension(final HstRequest request, final HstResponse response) {
-        doBeforeRenderExtension.execute(this, request, response);
-    }
-
     public void setDoBeforeRenderExtension(final DoBeforeRenderExtension doBeforeRenderExtension) {
+        if (doBeforeRenderExtension == null) {
+            throw new IllegalArgumentException("Extension must not be null.");
+        }
         this.doBeforeRenderExtension = doBeforeRenderExtension;
     }
 
