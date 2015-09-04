@@ -11,5 +11,6 @@
   "google-code-prettify": ["src/prettify.js"],
   "hippo-theme": ["dist/**"],
   "jasmine-jquery": [],
-  "jquery": ["dist/jquery.js"]
+  "jquery": ["dist/jquery.js"],
+  "angular-tablesort": ["src/angular-tablesort.js"]
 }
