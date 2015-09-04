@@ -38,6 +38,8 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.onehippo.cms7.essentials.components.ext.DefaultPageableFactory;
+import org.onehippo.cms7.essentials.components.ext.DoBeforeRenderExtension;
+import org.onehippo.cms7.essentials.components.ext.NoopDoBeforeRenderExtension;
 import org.onehippo.cms7.essentials.components.ext.PageableFactory;
 import org.onehippo.cms7.essentials.components.utils.SiteUtils;
 import org.slf4j.Logger;
@@ -63,6 +65,8 @@ public abstract class CommonComponent extends BaseHstComponent {
 
     @SuppressWarnings("HippoHstThreadSafeInspection")
     private PageableFactory pageableFactory;
+    @SuppressWarnings("HippoHstThreadSafeInspection")
+    private DoBeforeRenderExtension doBeforeRenderExtension;
     /**
      * Attribute names used within Essentials
      */
@@ -84,9 +88,21 @@ public abstract class CommonComponent extends BaseHstComponent {
 
     private static Logger log = LoggerFactory.getLogger(CommonComponent.class);
 
+    public CommonComponent() {
+        if (doBeforeRenderExtension == null) {
+            doBeforeRenderExtension = HstServices.getComponentManager().getComponent(DoBeforeRenderExtension.class.getName());
+            if (doBeforeRenderExtension == null) {
+                log.debug("DoBeforeRenderExtension: {} is *not* configured, falling back to NoopCommonExtension",
+                        DoBeforeRenderExtension.class.getName());
+                doBeforeRenderExtension = new NoopDoBeforeRenderExtension();
+            }
+        }
+    }
+
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
         setEditMode(request);
+        doBeforeRenderExtension.execute(this, request, response);
     }
 
     public <T extends HippoBean> T getHippoBeanForPath(final String documentPath, Class<T> beanMappingClass) {
@@ -287,5 +303,16 @@ public abstract class CommonComponent extends BaseHstComponent {
         return pageableFactory;
     }
 
+    /**
+     * Override the Spring-configured, project-global DoBeforeRenderExtension on a per-component basis.
+     *
+     * @param doBeforeRenderExtension the custom extension, must not be null.
+     */
+    public void setDoBeforeRenderExtension(final DoBeforeRenderExtension doBeforeRenderExtension) {
+        if (doBeforeRenderExtension == null) {
+            throw new IllegalArgumentException("Extension must not be null.");
+        }
+        this.doBeforeRenderExtension = doBeforeRenderExtension;
+    }
 
 }
