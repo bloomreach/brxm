@@ -708,6 +708,7 @@ components/core/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenusImpl.ja
 components/core/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenusManagerImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/util/DOMUtils.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/util/PropertyParser.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/core/webfiles/WhitelistingReader.java -text
 components/core/src/main/java/org/hippoecm/hst/proxy/DynaBeanMethodInvoker.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/proxy/DynaBeanProxyUtils.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/addon/module/model/ModuleDefinition.java -text
@@ -845,6 +846,7 @@ components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkRewritingComp
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkRewritingCrossSchemeIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkRewritingIT.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/order/TestObjectOrderer.java -text
+components/core/src/test/java/org/hippoecm/hst/core/webfiles/TestWhitelistingReader.java -text
 components/core/src/test/java/org/hippoecm/hst/proxy/IPersonInfo.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/proxy/TestDynaBeanProxyUtils.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/container/AlwaysFailingOnStartBean.java -text
@@ -911,6 +913,9 @@ components/core/src/test/resources/org/hippoecm/hst/core/container/DefaultPipeli
 components/core/src/test/resources/org/hippoecm/hst/core/container/FactoryComponentInstanceCreationIT.xml -text
 components/core/src/test/resources/org/hippoecm/hst/core/container/PageCachingValveIT.xml -text
 components/core/src/test/resources/org/hippoecm/hst/core/container/RequestContextDisposedIT.xml svneol=native#text/plain
+components/core/src/test/resources/org/hippoecm/hst/core/container/TestWebFileValveEmptyWhitelisting.txt -text
+components/core/src/test/resources/org/hippoecm/hst/core/container/TestWebFileValveWhitelisting.txt -text
+components/core/src/test/resources/org/hippoecm/hst/core/webfiles/whitelistingTest.txt -text
 components/core/src/test/resources/org/hippoecm/hst/site/container/SystemDefaultSessionPoolConfigurationsIT.xml -text
 components/core/src/test/resources/org/hippoecm/hst/test/AbstractTestConfigurations.xml -text
 components/core/src/test/resources/org/hippoecm/repository/repository.xml svneol=native#text/plain

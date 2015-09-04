@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.jcr.RepositoryException;
@@ -25,16 +26,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.cache.CacheElement;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.cache.webfiles.CacheableWebFile;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.webfiles.WhitelistingReader;
 import org.hippoecm.hst.util.WebFileUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webfiles.Binary;
 import org.onehippo.cms7.services.webfiles.WebFile;
 import org.onehippo.cms7.services.webfiles.WebFileBundle;
 import org.onehippo.cms7.services.webfiles.WebFileException;
+import org.onehippo.cms7.services.webfiles.WebFileNotFoundException;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +48,8 @@ public class WebFileValve extends AbstractBaseOrderableValve {
     private static final Logger log = LoggerFactory.getLogger(WebFileValve.class);
     private static final long ONE_YEAR_SECONDS = TimeUnit.SECONDS.convert(365L, TimeUnit.DAYS);
     private static final long ONE_YEAR_MILLISECONDS = TimeUnit.MILLISECONDS.convert(ONE_YEAR_SECONDS, TimeUnit.SECONDS);
+
+    static final String WHITE_LISTING_CONTENT_PATH = "/hst-whitelisting.txt";
 
     private HstCache webFileCache;
 
@@ -65,7 +71,7 @@ public class WebFileValve extends AbstractBaseOrderableValve {
             if (log.isDebugEnabled()) {
                 log.info("Cannot serve binary '{}'", request.getPathInfo(), e);
             } else {
-                log.info("Cannot serve binary '{}', cause: '{}'", request.getPathInfo(), e.toString());
+                log.info("Cannot serve binary '{}', cause: {}", request.getPathInfo(), e.toString());
             }
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -84,7 +90,34 @@ public class WebFileValve extends AbstractBaseOrderableValve {
         log.debug("Trying to get web file bundle '{}' with session user '{}'", bundleName, session.getUserID());
         final WebFileBundle webFileBundle = service.getJcrWebFileBundle(session, bundleName);
 
-        final String contentPath = "/" + requestContext.getResolvedSiteMapItem().getRelativeContentPath();
+        final String relativeContentPath = requestContext.getResolvedSiteMapItem().getRelativeContentPath();
+
+        if (StringUtils.isEmpty(relativeContentPath)) {
+            throw new WebFileException("Cannot serve web file for empty relative content path.");
+        }
+
+        boolean isWhitelisted = false;
+        try {
+            final Set<String> whitelist = getWhitelistingReader(requestContext).getWhitelist();
+            for (String whitelisted : whitelist) {
+                if (relativeContentPath.startsWith(whitelisted) || relativeContentPath.equals(whitelisted)) {
+                    isWhitelisted = true;
+                    break;
+                }
+            }
+        } catch (WebFileNotFoundException e) {
+            // will be changed to false for the 3.0.2
+            isWhitelisted = true;
+        }
+
+        if (!isWhitelisted) {
+            final String msg = String.format("Web file for relative content path '%s' is not white listed in '%s' for '%s' " +
+                            "hence won't be served publicly. If it is required to be served publicly, add it to the file '%s'",
+                    relativeContentPath, WHITE_LISTING_CONTENT_PATH, bundleName, WHITE_LISTING_CONTENT_PATH);
+            throw new WebFileException(msg);
+        }
+
+        final String contentPath = "/" + relativeContentPath;
         final String version = getVersion(requestContext, contentPath);
         final String cacheKey = createCacheKey(bundleName, contentPath, version);
 
@@ -93,7 +126,39 @@ public class WebFileValve extends AbstractBaseOrderableValve {
         if (cacheElement == null) {
             return cacheWebFile(webFileBundle, contentPath, version, cacheKey);
         } else {
-            return (CacheableWebFile) cacheElement.getContent();
+            return (CacheableWebFile)cacheElement.getContent();
+        }
+    }
+
+    private WhitelistingReader getWhitelistingReader(final HstRequestContext requestContext)
+            throws ContainerException, RepositoryException, WebFileException, IOException {
+        final String bundleName = WebFileUtils.getBundleName(requestContext);
+
+        final String version = getVersion(requestContext, WHITE_LISTING_CONTENT_PATH);
+        final String cacheKey = createCacheKey(bundleName, WHITE_LISTING_CONTENT_PATH, version);
+
+        try {
+            final CacheElement cacheElement = webFileCache.get(cacheKey);
+            if (cacheElement != null && cacheElement.getContent() instanceof WhitelistingReader) {
+                return (WhitelistingReader)cacheElement.getContent();
+            }
+            final WebFilesService service = getWebFilesService();
+            final Session session = requestContext.getSession();
+            final WebFileBundle webFileBundle = service.getJcrWebFileBundle(session, bundleName);
+
+            final WebFile webFile = getWebFileFromBundle(webFileBundle, WHITE_LISTING_CONTENT_PATH, version);
+            final WhitelistingReader whiteListingReader = new WhitelistingReader(webFile.getBinary().getStream());
+            final CacheElement whiteListingReaderElement = webFileCache.createElement(cacheKey, whiteListingReader);
+            webFileCache.put(whiteListingReaderElement);
+            return whiteListingReader;
+        } catch (Exception e) {
+            if (e instanceof WebFileNotFoundException) {
+                log.info("No '{}' configured in web files for '{}'. All web files will be whitelisted. In the next PATCH version " +
+                                "(HST 3.0.2) all web files will be blacklisted if there is no '{}' configured in web files.",
+                        WHITE_LISTING_CONTENT_PATH, bundleName, WHITE_LISTING_CONTENT_PATH);
+            }
+            clearBlockingLock(cacheKey);
+            throw e;
         }
     }
 
@@ -118,7 +183,7 @@ public class WebFileValve extends AbstractBaseOrderableValve {
         return version;
     }
 
-    private String createCacheKey(final String bundleName, final String contentPath, final String version) {
+    static String createCacheKey(final String bundleName, final String contentPath, final String version) {
         final StringBuilder cacheKeyBuilder = new StringBuilder(bundleName).append('\uFFFF');
         cacheKeyBuilder.append(version).append(contentPath);
         return cacheKeyBuilder.toString();

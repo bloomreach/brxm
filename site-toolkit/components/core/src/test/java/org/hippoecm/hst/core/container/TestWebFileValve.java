@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.container;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,6 +33,7 @@ import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.cache.webfiles.CacheableWebFile;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.webfiles.WhitelistingReader;
 import org.hippoecm.hst.mock.core.component.MockHstRequest;
 import org.hippoecm.hst.mock.core.component.MockHstResponse;
 import org.hippoecm.hst.mock.core.component.MockValveContext;
@@ -45,6 +47,7 @@ import org.onehippo.cms7.services.webfiles.Binary;
 import org.onehippo.cms7.services.webfiles.WebFile;
 import org.onehippo.cms7.services.webfiles.WebFileBundle;
 import org.onehippo.cms7.services.webfiles.WebFileException;
+import org.onehippo.cms7.services.webfiles.WebFileNotFoundException;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.onehippo.repository.mock.MockNode;
 
@@ -53,6 +56,8 @@ import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.hippoecm.hst.core.container.WebFileValve.WHITE_LISTING_CONTENT_PATH;
+import static org.hippoecm.hst.core.container.WebFileValve.createCacheKey;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -92,7 +97,7 @@ public class TestWebFileValve {
         webFilesService = EasyMock.createMock(WebFilesService.class);
         webFileBundle = EasyMock.createMock(WebFileBundle.class);
         webFile = EasyMock.createMock(WebFile.class);
-        expect(webFilesService.getJcrWebFileBundle(eq(session), eq("site"))).andReturn(webFileBundle);
+        expect(webFilesService.getJcrWebFileBundle(eq(session), eq("site"))).andReturn(webFileBundle).anyTimes();
         HippoServiceRegistry.registerService(webFilesService, WebFilesService.class);
     }
 
@@ -103,8 +108,8 @@ public class TestWebFileValve {
     private static void mockContextPath(final String contextPath, final MockHstRequestContext requestContext) throws RepositoryException {
         final ResolvedMount resolvedMount = EasyMock.createMock(ResolvedMount.class);
         final Mount mount = EasyMock.createMock(Mount.class);
-        expect(resolvedMount.getMount()).andReturn(mount);
-        expect(mount.getContextPath()).andReturn(contextPath);
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        expect(mount.getContextPath()).andReturn(contextPath).anyTimes();
         replay(resolvedMount, mount);
         requestContext.setResolvedMount(resolvedMount);
     }
@@ -135,6 +140,54 @@ public class TestWebFileValve {
         return styleCss;
     }
 
+    private static WebFile fooCss() {
+        final WebFile fooCss = EasyMock.createMock(WebFile.class);
+        expect(fooCss.getPath()).andReturn("/foo.css");
+        expect(fooCss.getName()).andReturn("foo.css");
+        expect(fooCss.getMimeType()).andReturn("text/css");
+        expect(fooCss.getEncoding()).andReturn("UTF-8");
+        expect(fooCss.getLastModified()).andReturn(Calendar.getInstance());
+
+        final Binary binary = EasyMock.createNiceMock(Binary.class);
+        byte[] data = STYLE_CSS_CONTENTS.getBytes();
+        expect(binary.getSize()).andReturn((long)data.length);
+        expect(binary.getStream()).andReturn(new ByteArrayInputStream(data));
+        expect(fooCss.getBinary()).andReturn(binary);
+
+        replay(fooCss, binary);
+
+        return fooCss;
+    }
+
+    private static WebFile whitelisting() {
+        final WebFile whitelisting = EasyMock.createMock(WebFile.class);
+        expect(whitelisting.getPath()).andReturn("/hst-whitelisting.txt");
+        expect(whitelisting.getName()).andReturn("hst-whitelisting.txt");
+        expect(whitelisting.getMimeType()).andReturn("text/plain");
+        expect(whitelisting.getEncoding()).andReturn("UTF-8");
+        expect(whitelisting.getLastModified()).andReturn(Calendar.getInstance());
+
+        final Binary binary = new TestBinary(TestWebFileValve.class.getResourceAsStream("TestWebFileValveWhitelisting.txt"));
+        expect(whitelisting.getBinary()).andReturn(binary);
+        replay(whitelisting);
+        return whitelisting;
+    }
+
+    private static WebFile emptyWhitelisting() {
+        final WebFile whitelisting = EasyMock.createMock(WebFile.class);
+        expect(whitelisting.getPath()).andReturn("/hst-whitelisting.txt");
+        expect(whitelisting.getName()).andReturn("hst-whitelisting.txt");
+        expect(whitelisting.getMimeType()).andReturn("text/plain");
+        expect(whitelisting.getEncoding()).andReturn("UTF-8");
+        expect(whitelisting.getLastModified()).andReturn(Calendar.getInstance());
+
+        final Binary binary = new TestBinary(TestWebFileValve.class.getResourceAsStream("TestWebFileValveEmptyWhitelisting.txt"));
+        expect(whitelisting.getBinary()).andReturn(binary);
+        replay(whitelisting);
+        return whitelisting;
+    }
+
+
     @After
     public void tearDown() throws Exception {
         HippoServiceRegistry.unregisterService(webFilesService, WebFilesService.class);
@@ -142,7 +195,8 @@ public class TestWebFileValve {
 
     @Test
     public void uncached_web_resource_from_workspace_is_cached() throws ContainerException, UnsupportedEncodingException {
-        expect(webFileBundle.getAntiCacheValue()).andReturn("bundleVersion");
+        expect(webFileBundle.getAntiCacheValue()).andReturn("bundleVersion").anyTimes();
+        expect(webFileBundle.get("/hst-whitelisting.txt")).andReturn(whitelisting());
         expect(webFileBundle.get("/css/style.css")).andReturn(styleCss());
         expect(cache.createElement(anyObject(), anyObject())).andReturn(EasyMock.createMock(CacheElement.class));
         replayMocks();
@@ -150,13 +204,14 @@ public class TestWebFileValve {
         valve.invoke(valveContext);
 
         verify(cache);
-        assertStyleCssIsWritten();
+        assertCssIsWritten(styleCss());
         assertTrue("Next valve should have been invoked", valveContext.isNextValveInvoked());
     }
 
     @Test
     public void uncached_web_resource_from_history_is_cached() throws ContainerException, UnsupportedEncodingException {
-        expect(webFileBundle.getAntiCacheValue()).andReturn("antiCacheValueThatIsNotEqualToTheBundleVersion");
+        expect(webFileBundle.getAntiCacheValue()).andReturn("antiCacheValueThatIsNotEqualToTheBundleVersion").anyTimes();
+        expect(webFileBundle.get("/hst-whitelisting.txt", "bundleVersion")).andReturn(whitelisting());
         expect(webFileBundle.get("/css/style.css", "bundleVersion")).andReturn(styleCss());
         expect(cache.createElement(anyObject(), anyObject())).andReturn(EasyMock.createMock(CacheElement.class));
         replayMocks();
@@ -164,30 +219,72 @@ public class TestWebFileValve {
         valve.invoke(valveContext);
 
         verify(cache);
-        assertStyleCssIsWritten();
+        assertCssIsWritten(styleCss());
         assertTrue("Next valve should have been invoked", valveContext.isNextValveInvoked());
     }
 
     @Test
     public void cached_web_resource_is_served_from_cache() throws ContainerException, IOException {
+
+        expect(webFileBundle.getAntiCacheValue()).andReturn("bundleVersion").anyTimes();
+        expect(webFileBundle.get("/hst-whitelisting.txt")).andReturn(whitelisting());
+
         final CacheElement cacheElement = EasyMock.createMock(CacheElement.class);
         expect(cacheElement.getContent()).andReturn(new CacheableWebFile(styleCss()));
         replay(cacheElement);
-
-        expect(cache.get(anyObject())).andReturn(cacheElement);
+        final String cssCacheKey = createCacheKey("site", "/css/style.css", "bundleVersion");
+        expect(cache.get(cssCacheKey)).andReturn(cacheElement);
         replayMocks();
 
         valve.invoke(valveContext);
 
         verify(cache);
-        assertStyleCssIsWritten();
+        assertCssIsWritten(styleCss());
         assertTrue("Next valve should have been invoked", valveContext.isNextValveInvoked());
     }
 
     @Test
     public void error_while_caching_clears_lock_and_stops_valve_invocation() throws UnsupportedEncodingException {
-        expect(webFileBundle.getAntiCacheValue()).andReturn("bundleVersion");
+        expect(webFileBundle.getAntiCacheValue()).andReturn("bundleVersion").anyTimes();
         expect(webFileBundle.get("/css/style.css")).andReturn(styleCss());
+        final String whitelistingKey = createCacheKey("site", WHITE_LISTING_CONTENT_PATH, "bundleVersion");
+        WhitelistingReader whitelistingReader = new WhitelistingReader(TestWebFileValve.class.getResourceAsStream("TestWebFileValveWhitelisting.txt"));
+        CacheElement cacheElement = new CacheElement(){
+            @Override
+            public Object getKey() {
+                return whitelistingKey;
+            }
+            @Override
+            public Object getContent() {
+                return whitelistingReader;
+            }
+            @Override
+            public int getTimeToLiveSeconds() {
+                return 0;
+            }
+            @Override
+            public void setTimeToLiveSeconds(final int timeToLive) {
+            }
+            @Override
+            public int getTimeToIdleSeconds() {
+                return 0;
+            }
+            @Override
+            public void setTimeToIdleSeconds(final int timeToIdle) {
+            }
+            @Override
+            public boolean isEternal() {
+                return false;
+            }
+            @Override
+            public void setEternal(final boolean eternal) {
+            }
+            @Override
+            public boolean isCacheable() {
+                return false;
+            }
+        };
+        expect(cache.get(eq(whitelistingKey))).andReturn(cacheElement);
         expect(cache.createElement(anyObject(), anyObject())).andThrow(new RuntimeException("simulate error while caching"));
         expect(cache.createElement(anyObject(), eq(null))).andReturn(null);
         replayMocks();
@@ -205,7 +302,8 @@ public class TestWebFileValve {
 
     @Test
     public void unknown_web_resource_clears_lock_and_sets_not_found_status() throws UnsupportedEncodingException, ContainerException {
-        expect(webFileBundle.getAntiCacheValue()).andReturn("bundleVersion");
+        expect(webFileBundle.getAntiCacheValue()).andReturn("bundleVersion").anyTimes();
+        expect(webFileBundle.get("/hst-whitelisting.txt")).andReturn(whitelisting());
         expect(webFileBundle.get("/css/style.css")).andThrow(new WebFileException("simulate unknown web file"));
         expect(cache.createElement(anyObject(), eq(null))).andReturn(null);
         replayMocks();
@@ -218,9 +316,67 @@ public class TestWebFileValve {
         assertEquals("response code", 404, response.getStatusCode());
     }
 
-    private void assertStyleCssIsWritten() throws UnsupportedEncodingException {
-        final WebFile styleCss = styleCss();
+    @Test
+    public void non_whitelisted_web_resource_does_not_get_served() throws ContainerException, UnsupportedEncodingException {
+        expect(webFileBundle.getAntiCacheValue()).andReturn("bundleVersion").anyTimes();
+        expect(webFileBundle.get("/hst-whitelisting.txt")).andReturn(emptyWhitelisting());
+        expect(webFileBundle.get("/css/style.css")).andReturn(styleCss());
+        expect(cache.createElement(anyObject(), anyObject())).andReturn(EasyMock.createMock(CacheElement.class)).times(1);
+        replayMocks();
+        valve.invoke(valveContext);
+        verify(cache);
+        assertEquals("nothing should be written to the response", "", response.getContentAsString());
+        assertFalse("Next valve should not have been invoked", valveContext.isNextValveInvoked());
+        assertEquals("response code", 404, response.getStatusCode());
+    }
 
+    @Test
+    public void whitelisting_gets_cached() throws ContainerException, UnsupportedEncodingException {
+        expect(webFileBundle.getAntiCacheValue()).andReturn("bundleVersion").anyTimes();
+        expect(webFileBundle.get("/hst-whitelisting.txt")).andReturn(whitelisting());
+        expect(webFileBundle.get("/css/style.css")).andReturn(styleCss());
+
+        final String whitelistingKey = createCacheKey("site", WHITE_LISTING_CONTENT_PATH, "bundleVersion");
+        final String cssStyleKey = createCacheKey("site", "/css/style.css", "bundleVersion");
+        expect(cache.createElement(eq(whitelistingKey), anyObject())).andReturn(EasyMock.createMock(CacheElement.class));
+        expect(cache.createElement(eq(cssStyleKey), anyObject())).andReturn(EasyMock.createMock(CacheElement.class));
+        replayMocks();
+        valve.invoke(valveContext);
+        verify(webFileBundle, cache);
+        assertCssIsWritten(styleCss());
+        assertTrue("Next valve should have been invoked", valveContext.isNextValveInvoked());
+    }
+
+    @Test
+    public void whitelisting_web_resource_file_instead_of_folder() throws ContainerException, UnsupportedEncodingException, RepositoryException {
+        mockResolvedSiteMapItem("foo.css", "bundleVersion", requestContext);
+        expect(webFileBundle.getAntiCacheValue()).andReturn("bundleVersion").anyTimes();
+        expect(webFileBundle.get("/hst-whitelisting.txt")).andReturn(whitelisting());
+        expect(webFileBundle.get("/foo.css")).andReturn(fooCss());
+        replayMocks();
+        valve.invoke(valveContext);
+        verify(webFileBundle, cache);
+        assertCssIsWritten(fooCss());
+        assertTrue("Next valve should have been invoked", valveContext.isNextValveInvoked());
+    }
+
+
+    // NOTE with HSTTWO-3388 this behavior should change: when there is no hst-whitelisting.txt file, no web file is
+    // served at all
+    @Test
+    public void whitelisting_not_present_results_in_web_resource_being_served() throws ContainerException, UnsupportedEncodingException {
+        expect(webFileBundle.getAntiCacheValue()).andReturn("bundleVersion").anyTimes();
+        expect(webFileBundle.get("/hst-whitelisting.txt")).andThrow(new WebFileNotFoundException());
+        expect(webFileBundle.get("/css/style.css")).andReturn(styleCss());
+        expect(cache.createElement(anyObject(), anyObject())).andReturn(EasyMock.createMock(CacheElement.class)).times(1);
+        replayMocks();
+        valve.invoke(valveContext);
+        verify(cache);
+        assertCssIsWritten(styleCss());
+        assertTrue("Next valve should have been invoked", valveContext.isNextValveInvoked());
+    }
+
+    private void assertCssIsWritten(final WebFile styleCss) throws UnsupportedEncodingException {
         final Map<String, List<Object>> headers = response.getHeaders();
         assertEquals("Content-Length header", String.valueOf(styleCss.getBinary().getSize()), headers.get("Content-Length").get(0));
         assertEquals("Content type", styleCss.getMimeType(), response.getContentType());
@@ -230,4 +386,27 @@ public class TestWebFileValve {
         assertEquals("written web file", STYLE_CSS_CONTENTS, response.getContentAsString());
     }
 
+    private static class TestBinary implements Binary {
+
+        final InputStream stream;
+
+        public TestBinary(final InputStream stream) {
+            this.stream = stream;
+        }
+
+        @Override
+        public InputStream getStream() {
+            return stream;
+        }
+
+        @Override
+        public long getSize() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void dispose() {
+            throw new UnsupportedOperationException();
+        }
+    }
 }
