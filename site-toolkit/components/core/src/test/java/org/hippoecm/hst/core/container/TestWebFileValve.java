@@ -361,10 +361,8 @@ public class TestWebFileValve {
     }
 
 
-    // NOTE with HSTTWO-3388 this behavior should change: when there is no hst-whitelisting.txt file, no web file is
-    // served at all
     @Test
-    public void whitelisting_not_present_results_in_web_resource_being_served() throws ContainerException, UnsupportedEncodingException {
+    public void whitelisting_not_present_results_in_web_resource_not_being_served() throws ContainerException, UnsupportedEncodingException {
         expect(webFileBundle.getAntiCacheValue()).andReturn("bundleVersion").anyTimes();
         expect(webFileBundle.get("/hst-whitelisting.txt")).andThrow(new WebFileNotFoundException());
         expect(webFileBundle.get("/css/style.css")).andReturn(styleCss());
@@ -372,8 +370,9 @@ public class TestWebFileValve {
         replayMocks();
         valve.invoke(valveContext);
         verify(cache);
-        assertCssIsWritten(styleCss());
-        assertTrue("Next valve should have been invoked", valveContext.isNextValveInvoked());
+        assertEquals("nothing should be written to the response", "", response.getContentAsString());
+        assertFalse("Next valve should not have been invoked", valveContext.isNextValveInvoked());
+        assertEquals("response code", 404, response.getStatusCode());
     }
 
     private void assertCssIsWritten(final WebFile styleCss) throws UnsupportedEncodingException {
