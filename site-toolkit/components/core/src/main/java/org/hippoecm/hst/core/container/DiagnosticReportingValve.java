@@ -18,7 +18,7 @@ package org.hippoecm.hst.core.container;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
 import org.hippoecm.hst.diagnosis.Task;
-import org.hippoecm.hst.util.TaskLogFormatter;
+import org.hippoecm.hst.diagnosis.TaskLogFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,9 +42,9 @@ public class DiagnosticReportingValve extends AbstractDiagnosticReportingValve {
                 }
 
                 final int diagnosticsDepth = virtualHostsService.getDiagnosticsDepth();
-                log.info("Diagnostic Summary:\n{}", TaskLogFormatter.getTaskLog(rootTask, diagnosticsDepth));
+                log.info("Diagnostic Summary:\n{}", TaskLogFormatUtils.getTaskLog(rootTask, diagnosticsDepth));
             } else {
-                log.info("Diagnostic Summary:\n{}", TaskLogFormatter.getTaskLog(rootTask));
+                log.info("Diagnostic Summary:\n{}", TaskLogFormatUtils.getTaskLog(rootTask));
             }
         }
     }

@@ -23,7 +23,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Utility class to get a pretty printed hierarchical task log
+ *
+ * @deprecated Use {@link org.hippoecm.hst.diagnosis.TaskLogFormatUtils} instead.
  */
+@Deprecated
 public class TaskLogFormatter {
 
     private static final Logger log = LoggerFactory.getLogger(TaskLogFormatter.class);

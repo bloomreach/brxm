@@ -229,7 +229,6 @@ api/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenuItem.java svneol=nat
 api/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenus.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenusManager.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/sitemenu/package-info.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/diagnosis/Task.java -text
 api/src/main/java/org/hippoecm/hst/jaxrs/JAXRSService.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/provider/PropertyMap.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/provider/ValueProvider.java svneol=native#text/plain
@@ -514,9 +513,6 @@ commons/src/main/java/org/hippoecm/hst/core/sitemenu/AbstractMenu.java svneol=na
 commons/src/main/java/org/hippoecm/hst/core/sitemenu/AbstractMenuItem.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/sitemenu/EditableMenuImpl.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/sitemenu/EditableMenuItemImpl.java svneol=native#text/plain
-commons/src/main/java/org/hippoecm/hst/diagnosis/DefaultTaskImpl.java -text
-commons/src/main/java/org/hippoecm/hst/diagnosis/HDC.java -text
-commons/src/main/java/org/hippoecm/hst/diagnosis/NOOPTaskImpl.java -text
 commons/src/main/java/org/hippoecm/hst/resourcebundle/CompositeResourceBundle.java -text
 commons/src/main/java/org/hippoecm/hst/resourcebundle/ResourceBundleUtils.java -text
 commons/src/main/java/org/hippoecm/hst/security/HstSubject.java -text
@@ -551,7 +547,6 @@ commons/src/test/java/org/hippoecm/hst/core/hosting/TestCustomMountAndVirtualhos
 commons/src/test/java/org/hippoecm/hst/core/internal/TestStringPool.java -text
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestEventListenerImpl.java -text svneol=unset#text/plain
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestEventListenersContainerImpl.java svneol=native#text/plain
-commons/src/test/java/org/hippoecm/hst/diagnosis/TestHDC.java -text
 commons/src/test/java/org/hippoecm/hst/resourcebundle/TestCompositeResourceBundle.java -text
 commons/src/test/java/org/hippoecm/hst/resourcebundle/TestResourceBundleUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestAnnotationsScanner.java -text
