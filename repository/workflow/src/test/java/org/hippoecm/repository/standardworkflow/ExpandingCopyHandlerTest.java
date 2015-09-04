@@ -113,7 +113,7 @@ public class ExpandingCopyHandlerTest extends RepositoryTestCase {
         }};
         ExpandingCopyHandler handler = new ExpandingCopyHandler(target, substitutes, session.getValueFactory());
         JcrUtils.copyTo(source, handler);
-        session.getNode("/test/target").isNodeType("mix:mimeType");
+        assertTrue(session.getNode("/test/target/source").isNodeType("mix:mimeType"));
     }
 
     @Test
