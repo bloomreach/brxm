@@ -20,10 +20,10 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.onehippo.cms7.essentials.components.CommonComponent;
 
 /**
- * No operation, default DoBeforeExtension implementation.
+ * No operation, default DoBeforeRenderExtension implementation.
  * Configured as spring component in <strong>/site/src/main/resources/META-INF/hst-assembly/overrides/hippo-essentials-spring.xml</strong>
  */
-public class NoopDoBeforeExtension implements DoBeforeExtension {
+public class NoopDoBeforeRenderExtension implements DoBeforeRenderExtension {
     @Override
     public void execute(final CommonComponent component, final HstRequest request, final HstResponse response) {
         // noop

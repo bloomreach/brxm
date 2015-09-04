@@ -20,14 +20,14 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.onehippo.cms7.essentials.components.CommonComponent;
 
 /**
- * Implementation of DoBeforeExtension is executed on every doBeforeRender call (for each configured  component)
+ * Implementation of DoBeforeRenderExtension is executed on every doBeforeRender call (for each configured  component)
  * NOTE: <strong>Extensions</strong> implementing this interface shouldn't contain any state (<strong>must be thread
  * threadsafe)</strong>
  * <p>
  * Extension is configured as Spring managed component in
  * <strong>/site/src/main/resources/META-INF/hst-assembly/overrides/hippo-essentials-spring.xml</strong>
  */
-public interface DoBeforeExtension {
+public interface DoBeforeRenderExtension {
     /**
      * Executed after {@code org.onehippo.cms7.essentials.components.CommonComponent#doBeforeRender(request, response)}
      *
