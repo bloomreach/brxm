@@ -186,6 +186,10 @@
     <level value="info"/>
     <appender-ref ref="messages"/>
   </logger>
+  <logger name="org.hippoecm.hst.core.container.WebFileValve" additivity="false">
+    <level value="info"/>
+    <appender-ref ref="messages"/>
+  </logger>
 
   <root>
     <level value="warn"/>
