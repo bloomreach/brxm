@@ -145,7 +145,7 @@ public class TemplateLoadingCache {
         final InputStream stream = ftl.getStream();
         try {
             try {
-                String template = IOUtils.toString(stream);
+                String template = IOUtils.toString(stream, "UTF-8");
                 return createRepositorySource(template, absPath);
             } catch (IOException e) {
                 log.warn("Exception while reading freemarker binary from '{}'", absPath, e);
