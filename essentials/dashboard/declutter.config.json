@@ -1,16 +1,41 @@
 {
-  "angular": ["angular.js"],
-  "angular-bootstrap": ["ui-bootstrap-tpls.js"],
-  "angular-chosen-localytics": ["chosen.js"],
+  "angular": [
+    "angular.js"
+  ],
+  "angular-bootstrap": [
+    "ui-bootstrap-tpls.js"
+  ],
+  "angular-chosen-localytics": [
+    "chosen.js"
+  ],
   "angular-mocks": [],
-  "angular-sanitize": ["angular-sanitize.min.js"],
-  "angular-tablesort": ["src/angular-tablesort.js"],
-  "angular-ui-router": ["release/angular-ui-router.js"],
-  "angular-ui-tree": ["dist/angular-ui-tree.min.css"],
-  "chosen": ["chosen.jquery.js"],
+  "angular-sanitize": [
+    "angular-sanitize.min.js"
+  ],
+  "angular-tablesort": [
+    "src/angular-tablesort.js"
+  ],
+  "angular-ui-router": [
+    "release/angular-ui-router.js"
+  ],
+  "angular-ui-tree": [
+    "dist/angular-ui-tree.min.css"
+  ],
+  "chosen": [
+    "chosen.jquery.js"
+  ],
   "es5-shim": [],
-  "google-code-prettify": ["src/prettify.js"],
-  "hippo-theme": ["dist/**"],
+  "google-code-prettify": [
+    "src/prettify.js"
+  ],
+  "hippo-theme": [
+    "dist/**"
+  ],
   "jasmine-jquery": [],
-  "jquery": ["dist/jquery.js"]
+  "jquery": [
+    "dist/jquery.js"
+  ],
+  "angular-animate": [
+    "angular-animate.js"
+  ]
 }
