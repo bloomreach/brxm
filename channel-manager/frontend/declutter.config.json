@@ -40,5 +40,8 @@
   ],
   "angular-tablesort": [
     "src/angular-tablesort.js"
+  ],
+  "angular-animate": [
+    "angular-animate.js"
   ]
 }
