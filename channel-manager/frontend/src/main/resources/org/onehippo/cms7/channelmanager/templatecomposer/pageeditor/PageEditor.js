@@ -909,90 +909,54 @@
         },
 
         createPropertiesWindow: function(mountId) {
-            var propertiesPanel, windowWidth, window;
-
-            propertiesPanel = new Hippo.ChannelManager.TemplateComposer.PropertiesPanel({
-                id: 'componentPropertiesPanel',
-                resources: this.resources,
-                locale: this.locale,
-                composerRestMountUrl: this.pageContainer.getComposerRestMountUrl(),
-                variantsUuid: this.variantsUuid,
-                globalVariantsStore: this.globalVariantsStore,
-                globalVariantsStoreFuture: this.globalVariantsStoreFuture,
-                mountId: mountId,
-                listeners: {
-                    'save': function() {
-                        this.fireEvent('channelChanged');
-                    },
-                    'close': function() {
-                        window.hide();
-                    },
-                    'delete': function() {
-                        this.fireEvent('channelChanged');
-                    },
-                    'propertiesChanged': function(componentId, propertiesMap) {
-                        this.renderComponent(componentId, propertiesMap);
-                    },
-                    scope: this
-                }
-            });
-
-            windowWidth = 525;
-            if (Ext.isDefined(this.variantsUuid)) {
-                windowWidth += propertiesPanel.tabWidth;
-            }
-
-            window = new Hippo.ux.window.FloatingWindow({
+            var pageEditorIFrame = Ext.getCmp('pageEditorIFrame');
+            return new Hippo.ChannelManager.TemplateComposer.PropertiesWindow({
                 id: 'componentPropertiesWindow',
                 title: this.resources['properties-window-default-title'],
                 x: 10, y: 120,
-                width: windowWidth,
+                width: 525,
                 height: 350,
-                layout: 'fit',
                 closable: true,
                 closeAction: 'hide',
                 collapsible: false,
                 constrainHeader: true,
                 bodyStyle: 'background-color: #ffffff',
                 cls: "component-properties",
-                renderTo: Ext.getCmp('pageEditorIFrame').getEl(),
+                renderTo: pageEditorIFrame.getEl(),
                 constrain: true,
                 hidden: true,
+                composerRestMountUrl: this.pageContainer.getComposerRestMountUrl(),
+                resources: this.resources,
+                locale: this.locale,
+                variantsUuid: this.variantsUuid,
+                globalVariantsStore: this.globalVariantsStore,
+                globalVariantsStoreFuture: this.globalVariantsStoreFuture,
+                mountId: mountId,
                 listeners: {
+                    save: function() {
+                        this.fireEvent('channelChanged');
+                    },
+                    'delete': function() {
+                        this.fireEvent('channelChanged');
+                    },
+                    propertiesChanged: function(componentId, propertiesMap) {
+                        this.renderComponent(componentId, propertiesMap);
+                    },
                     hide: function() {
                         this.pageContainer.deselectComponents();
-                        propertiesPanel.onHide();
+                    },
+                    // Enable mouse events in the iframe while the component properties window is dragged. When the
+                    // mouse pointer is moved quickly it can end up outside the window above the iframe. The iframe
+                    // should then send mouse events back to the host to update the position of the dragged window.
+                    startdrag: function () {
+                        pageEditorIFrame.hostToIFrame.publish('enablemouseevents');
+                    },
+                    enddrag: function () {
+                        pageEditorIFrame.hostToIFrame.publish('disablemouseevents');
                     },
                     scope: this
-                },
-                items: [ propertiesPanel ]
-            });
-
-            // Adapt the size of the window to the visible height of the properties panel.
-            propertiesPanel.on('visibleHeightChanged', function(visibleHeight) {
-                var currentWindowHeight = window.getHeight(),
-                    visibleWindowHeight = visibleHeight + window.getFrameHeight(),
-                    pageEditorHeight = Ext.getCmp('pageEditorIFrame').getHeight(),
-                    windowY = window.getPosition()[1],
-                    spaceBetweenWindowAndBottom = 4,
-                    maxWindowHeight = pageEditorHeight - windowY - spaceBetweenWindowAndBottom,
-                    newWindowHeight = Math.min(visibleWindowHeight, maxWindowHeight);
-                if (currentWindowHeight !== newWindowHeight) {
-                    window.setHeight(newWindowHeight);
                 }
             });
-
-            // Enable mouse events in the iframe while the properties window is dragged. When the mouse pointer is moved
-            // quickly it can end up outside the window above the iframe. The iframe should then send mouse events back
-            // to the host in order to update the position of the dragged window.
-            window.on('startdrag', function() {
-                Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('enablemouseevents');
-            });
-            window.on('enddrag', function() {
-                Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('disablemouseevents');
-            });
-
-            return window;
         },
 
         showProperties: function(record, readOnly) {

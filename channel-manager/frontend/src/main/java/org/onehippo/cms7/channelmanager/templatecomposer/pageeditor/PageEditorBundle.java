@@ -40,6 +40,7 @@ public final class PageEditorBundle {
             "ValidatorField.js",
             "PropertiesForm.js",
             "PropertiesPanel.js",
+            "PropertiesWindow.js",
             "DragDropOne.js",
             "Hippo.Msg.js",
             "ToolkitStore.js",
