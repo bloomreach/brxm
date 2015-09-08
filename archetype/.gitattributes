@@ -46,7 +46,7 @@ src/main/resources/archetype-resources/bootstrap/content/src/main/resources/hipp
 src/main/resources/archetype-resources/bootstrap/pom.xml -text
 src/main/resources/archetype-resources/bootstrap/webfiles/pom.xml -text
 src/main/resources/archetype-resources/bootstrap/webfiles/src/main/resources/hippoecm-extension.xml -text
-src/main/resources/archetype-resources/bootstrap/webfiles/src/main/resources/site/hst-whitelisting.txt -text
+src/main/resources/archetype-resources/bootstrap/webfiles/src/main/resources/site/hst-whitelist.txt -text
 src/main/resources/archetype-resources/cms/pom.xml -text
 src/main/resources/archetype-resources/cms/src/main/webapp/WEB-INF/error.jsp -text
 src/main/resources/archetype-resources/cms/src/main/webapp/WEB-INF/web.xml -text
