@@ -27,13 +27,13 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WhitelistingReader {
+public class WhitelistReader {
 
-    private static final Logger log = LoggerFactory.getLogger(WhitelistingReader.class);
+    private static final Logger log = LoggerFactory.getLogger(WhitelistReader.class);
 
     private final Set<String> whitelist = new HashSet<>();
 
-    public WhitelistingReader(final InputStream is) {
+    public WhitelistReader(final InputStream is) {
         try {
             final List<String> list = IOUtils.readLines(is, "UTF-8");
             for (String line : list) {

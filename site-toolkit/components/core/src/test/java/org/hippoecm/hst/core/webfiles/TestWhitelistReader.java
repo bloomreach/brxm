@@ -25,17 +25,17 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class TestWhitelistingReader {
+public class TestWhitelistReader {
 
     @Test
     public void test_reading_whitelisting_file() throws Exception {
 
         InputStream input = null;
         try {
-            input = TestWhitelistingReader.class.getResourceAsStream("whitelistingTest.txt");
-            final WhitelistingReader whiteListingReader = new WhitelistingReader(input);
+            input = TestWhitelistReader.class.getResourceAsStream("whitelistTest.txt");
+            final WhitelistReader whiteListingReader = new WhitelistReader(input);
 
-            // see "whitelistingTest.txt"
+            // see "whitelistTest.txt"
             final Set<String> expectedWhiteList = new ImmutableSet.Builder<String>().add("/css/test",
                     "foo",
                     "js/",
