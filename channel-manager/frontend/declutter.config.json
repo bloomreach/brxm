@@ -3,7 +3,6 @@
     "angular.min.js",
     "angular.min.js.map"
   ],
-  "angular-animate": [],
   "angular-bootstrap": ["ui-bootstrap-tpls.min.js"],
   "angular-chosen-localytics": ["chosen.js"],
   "angular-mocks": [],
@@ -41,5 +40,8 @@
   ],
   "angular-tablesort": [
     "src/angular-tablesort.js"
+  ],
+  "angular-animate": [
+    "angular-animate.js"
   ]
 }
