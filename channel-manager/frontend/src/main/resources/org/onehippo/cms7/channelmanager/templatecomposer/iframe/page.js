@@ -112,6 +112,11 @@
         return false;
       }, this);
 
+      hostToIFrame.subscribe('setStatusClass', function (id, status) {
+        this.setStatusClass(id, status);
+        return false;
+      }, this);
+
       hostToIFrame.subscribe('renderComponent', function (id, propertiesMap) {
         this.renderComponent(id, propertiesMap);
         return false;
@@ -312,6 +317,13 @@
 
     getOverlay: function () {
       return this.overlay;
+    },
+
+    setStatusClass: function(id, status) {
+      var item = this.retrieve(id);
+      if (item && status) {
+        item.setStatusClass(status);
+      }
     }
   };
 

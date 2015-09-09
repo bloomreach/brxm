@@ -56,7 +56,7 @@
           hover: 'hst-overlay-hover',
           disabled: 'hst-overlay-disabled',
           locked: 'hst-overlay-locked',
-          inner: 'hst-overlay-inner',
+          status: 'hst-overlay-status',
           mark: null,
           custom: null
         }
@@ -747,15 +747,7 @@
     },
 
     onRender: function () {
-      var element, deleteButton, overlayContainer;
-
-      if (this.el.attr(HST.ATTR.HST_EXTRA_ICON_CSS_CLASS)) {
-        this.overlay.append($('<div/>').addClass(this.cls.overlay.inner + " " + this.el.attr(HST.ATTR.HST_EXTRA_ICON_CSS_CLASS)));
-        overlayContainer = this.overlay.closest('.hst-overlay-container');
-        overlayContainer.removeClass('hst-overlay-locked');
-      } else {
-        this.overlay.append($('<div/>').addClass(this.cls.overlay.inner));
-      }
+      var element, deleteButton;
 
       this.menu = $('<div/>').addClass('hst-overlay-menu');
       element = this.element;
@@ -768,6 +760,20 @@
         this.menu.append(deleteButton);
       }
       this.overlay.append(this.menu);
+
+      this.status = $('<div/>').addClass(this.cls.overlay.status);
+      this.menu.append(this.status);
+
+      if (this.el.attr(HST.ATTR.HST_EXTRA_ICON_CSS_CLASS)) {
+        this.setStatusClass(this.el.attr(HST.ATTR.HST_EXTRA_ICON_CSS_CLASS));
+      }
+    },
+
+    setStatusClass: function(status) {
+      // reset before setting (new) classname
+      this.status.attr('class', this.cls.overlay.status);
+      this.status.addClass(status);
+      this.overlay.closest('.hst-overlay-container').removeClass(this.cls.overlay.locked);
     },
 
     renderComponent: function (id, propertiesMap, callback) {

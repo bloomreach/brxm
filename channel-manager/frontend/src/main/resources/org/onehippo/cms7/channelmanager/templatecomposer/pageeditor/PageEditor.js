@@ -154,6 +154,10 @@
 
         selectedContainerItem: function(record, containerDisabled) {
             this.fireEvent('containeritemselected', record.get('id'), containerDisabled);
+        },
+
+        setStatusClassOnContainerItem: function(id, status) {
+            this.pageContainer.setStatusClassOnContainerItem(id, status);
         }
     });
 

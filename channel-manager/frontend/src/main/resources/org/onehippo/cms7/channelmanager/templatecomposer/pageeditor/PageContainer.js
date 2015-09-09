@@ -393,6 +393,10 @@
             Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('deselect');
         },
 
+        setStatusClassOnContainerItem: function(id, status) {
+            Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('setStatusClass', id, status);
+        },
+
         // END PUBLIC METHODS THAT CHANGE THE iFrame
 
         _lock: function(cb) {
