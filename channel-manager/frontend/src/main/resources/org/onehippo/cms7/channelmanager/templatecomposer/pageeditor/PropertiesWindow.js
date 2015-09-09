@@ -35,6 +35,7 @@
         listeners: {
           visibleHeightChanged: this._adjustHeight,
           close: this.hide,
+          // TODO: handle 'clientvalidation' to enable/disable 'Save' button
           scope: this
         }
       });
@@ -43,10 +44,34 @@
         windowWidth += this.propertiesPanel.tabWidth;
       }
 
+      this.saveButton = new Ext.Button({
+        xtype: 'button',
+        cls: 'btn btn-default',
+        text: 'Save',
+        listeners: {
+          click: function () {
+            console.log("save clicked");
+            // TODO: loop through all dirty forms & save
+
+            // TODO: fired the event upon complete all saving such as
+            // this.propertiesPanel[dirty].editor.onAfterSavedProperties();
+          }
+        }
+      });
+
+      var buttons = [];
+      buttons.push(this.saveButton);
+      buttons.push({
+        xtype: 'button',
+        cls: 'btn btn-default',
+        text: 'Close'
+      });
+
       Hippo.ChannelManager.TemplateComposer.PropertiesWindow.superclass.constructor.call(this, Ext.apply(config, {
         layout: 'fit',
         width: windowWidth,
-        items: this.propertiesPanel
+        items: this.propertiesPanel,
+        buttons: buttons
       }));
     },
 
