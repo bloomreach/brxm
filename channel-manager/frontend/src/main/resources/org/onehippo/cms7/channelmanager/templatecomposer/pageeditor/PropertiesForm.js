@@ -181,7 +181,7 @@
       return isDirty;
     },
 
-    _submitForm: function () {
+    _submitForm: function (onSuccess, onFail) {
       var uncheckedValues = {},
         form = this.getForm();
 
@@ -204,6 +204,7 @@
         success: function () {
           this.fireEvent('propertiesSaved', this.newVariantId);
           this._fireVariantDirtyOrPristine();
+          onSuccess(this.newVariantId);
         },
         failure: function () {
           Hippo.Msg.alert(Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['toolkit-store-error-message-title'],
@@ -212,6 +213,7 @@
               // reload channel manager
               Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').pageContainer.refreshIframe();
             });
+          onFail();
         },
         scope: this
       });

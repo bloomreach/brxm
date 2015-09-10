@@ -50,13 +50,8 @@
         cls: 'btn btn-default',
         text: 'Save',
         listeners: {
-          click: function () {
-            console.log("save clicked");
-            // TODO: loop through all dirty forms & save
-
-            // TODO: fired the event upon complete all saving such as
-            // this.propertiesPanel[dirty].editor.onAfterSavedProperties();
-          }
+          click: this._saveAll,
+          scope: this
         }
       });
 
@@ -81,6 +76,43 @@
       this.addEvents('save', 'close', 'delete', 'propertiesChanged');
 
       this.on('hide', this.propertiesPanel.onHide, this.propertiesPanel);
+    },
+
+    _saveAll: function () {
+      var dirtyEditors = this.propertiesPanel.getDirtyEditors(),
+        promises = [],
+        afterSaveCallback = null;
+
+      for (var i = 0; i < dirtyEditors.length; i++) {
+        promises.push(saveFormAsync(dirtyEditors[i].propertiesForm));
+        if (afterSaveCallback === null) {
+          afterSaveCallback = dirtyEditors[i].getCallbackAfterSave();
+        }
+      }
+
+      function saveFormAsync (form) {
+        var def = $.Deferred();
+        form._submitForm(function () {
+          console.log("Save " + form.variant.id);
+          def.resolve(form);
+        }, function () {
+          console.log("Fail " + form);
+          def.reject(form);
+        });
+        return def.promise();
+      };
+
+      $.when.apply($, promises).then(function () {
+        console.log("Saved all");
+
+        if (afterSaveCallback) {
+          afterSaveCallback();
+        }
+      }.bind(this),
+        function (form) {
+        console.log("A form failed to save:" + form.variant.id);
+      });
+
     },
 
     _adjustHeight: function (propertiesPanelVisibleHeight) {

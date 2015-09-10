@@ -55,7 +55,12 @@
      */
     markDirty: function (isDirty) {
       this.propertiesForm.markDirty(isDirty === undefined ? true : isDirty);
-    }
+    },
+
+    getCallbackAfterSave: function() {
+      console.log("after saved at the editor:" + this.variant.id);
+      return null;
+    },
 
   });
 

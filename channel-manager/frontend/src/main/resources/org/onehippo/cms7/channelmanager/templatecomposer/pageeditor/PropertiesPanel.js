@@ -35,7 +35,6 @@
     composerRestMountUrl: null,
     mountId: null,
     resources: null,
-    variants: null,
     variantsUuid: null,
     locale: null,
     firePropertiesChangedEvents: false,
@@ -430,8 +429,17 @@
         }
       });
       return tab;
-    }
+    },
 
+    getDirtyEditors: function () {
+      var editors = [];
+      this.items.each(function (item) {
+        if (Ext.isDefined(item.propertiesForm) && item.propertiesForm.isDirty()) {
+          editors.push(item);
+        }
+      });
+      return editors;
+    }
   });
 
 }());
