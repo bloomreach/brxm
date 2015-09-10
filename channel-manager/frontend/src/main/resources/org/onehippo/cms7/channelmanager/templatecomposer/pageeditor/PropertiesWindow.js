@@ -83,13 +83,6 @@
         promises = [],
         afterSaveCallback = null;
 
-      for (var i = 0; i < dirtyEditors.length; i++) {
-        promises.push(saveFormAsync(dirtyEditors[i].propertiesForm));
-        if (afterSaveCallback === null) {
-          afterSaveCallback = dirtyEditors[i].getCallbackAfterSave();
-        }
-      }
-
       function saveFormAsync (form) {
         var def = $.Deferred();
         form._submitForm(function () {
@@ -100,7 +93,14 @@
           def.reject(form);
         });
         return def.promise();
-      };
+      }
+
+      for (var i = 0; i < dirtyEditors.length; i++) {
+        promises.push(saveFormAsync(dirtyEditors[i].propertiesForm));
+        if (afterSaveCallback === null) {
+          afterSaveCallback = dirtyEditors[i].getCallbackAfterSave();
+        }
+      }
 
       $.when.apply($, promises).then(function () {
         console.log("Saved all");
