@@ -19,6 +19,8 @@
 
   Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
+  var $ = jQuery;
+
   function getVariantName (variant) {
     return variant.variantName || variant.name;
   }

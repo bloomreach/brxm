@@ -18,6 +18,8 @@
 
   Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
+  var $ = jQuery;
+
   Hippo.ChannelManager.TemplateComposer.PropertiesEditor = Ext.extend(Ext.Panel, {
 
     componentId: null,
@@ -75,8 +77,7 @@
     getCallbackAfterSave: function() {
       // TODO: return a function to be invoked after save-all if needed
       return null;
-    },
-
+    }
   });
 
 }());
