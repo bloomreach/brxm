@@ -153,6 +153,19 @@ public class HstLinkImpl implements HstLink {
         return mount;
     }
 
+    @Override
+    public HstSiteMapItem getHstSiteMapItem() {
+        if (siteMapItem != null) {
+            return siteMapItem.orElse(null);
+        }
+
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        if (requestContext == null) {
+            return null;
+        }
+        return resolveSiteMapItem(requestContext);
+    }
+
     public String getPath() {
         return this.path;
     }

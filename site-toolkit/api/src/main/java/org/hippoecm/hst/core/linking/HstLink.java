@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.linking;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
@@ -111,7 +112,13 @@ public interface HstLink {
      * 
      */
     Mount getMount();
-    
+
+    /**
+     * @return the {@link HstSiteMapItem} that matches this {@link HstLink} or <code>null</code> if this {@link HstLink} cannot
+     * be matched to any {@link HstSiteMapItem}
+     */
+    HstSiteMapItem getHstSiteMapItem();
+
     /**
      * When for example for some bean the (real) link cannot be created through the HstLinkCreator, a HstLink can be returned
      * with a path that is for example from some configured property like '/pagenotfound'. If this method returns <code>true</code> 

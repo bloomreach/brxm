@@ -16,6 +16,7 @@
 package org.hippoecm.hst.mock.core.linking;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -28,6 +29,7 @@ public class MockHstLink implements HstLink {
     private boolean notFound;
     private boolean containerResource;
     private Mount mount;
+    private HstSiteMapItem hstSiteMapItem;
     private String subPath;
 
     public MockHstLink() {
@@ -78,6 +80,14 @@ public class MockHstLink implements HstLink {
     
     public void setMount(Mount mount) {
         this.mount = mount;
+    }
+
+    public HstSiteMapItem getHstSiteMapItem() {
+        return hstSiteMapItem;
+    }
+
+    public void setHstSiteMapItem(final HstSiteMapItem hstSiteMapItem) {
+        this.hstSiteMapItem = hstSiteMapItem;
     }
 
     public String getSubPath() {
