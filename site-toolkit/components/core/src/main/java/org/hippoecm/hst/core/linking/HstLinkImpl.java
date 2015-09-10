@@ -386,6 +386,9 @@ public class HstLinkImpl implements HstLink {
             if (requestContext.isFullyQualifiedURLs()) {
                 return true;
             }
+            if (mount == null) {
+                return false;
+            }
 
             final Mount requestMount = requestContext.getResolvedMount().getMount();
 
@@ -463,6 +466,10 @@ public class HstLinkImpl implements HstLink {
             if (scheme != null) {
                 return scheme;
             }
+            if (mount == null) {
+                scheme = requestContext.getResolvedMount().getMount().getScheme();
+                return scheme;
+            }
             // to avoid more expensive resolveSiteMapItem() we first check whether scheme *can* be different than the one
             // for the mount
             if (schemeCannotBeDifferent()) {
@@ -505,6 +512,9 @@ public class HstLinkImpl implements HstLink {
     private HstSiteMapItem resolveSiteMapItem(HstRequestContext requestContext) {
         if (siteMapItem != null) {
             return siteMapItem.orElse(null);
+        }
+        if (mount == null) {
+            return null;
         }
         ResolvedSiteMapItem resolved = null;
         try {
