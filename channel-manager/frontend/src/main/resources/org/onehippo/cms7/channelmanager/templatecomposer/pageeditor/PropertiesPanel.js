@@ -264,7 +264,7 @@
           componentId: this.componentId,
           lastModifiedTimestamp: this.lastModifiedTimestamp,
           isReadOnly: this.isReadOnly,
-          bubbleEvents: ['variantDirty', 'variantPristine', 'close'],
+          bubbleEvents: ['variantDirty', 'variantPristine'],
           listeners: {
             propertiesChanged: this._onPropertiesChanged,
             propertiesSaved: this._onPropertiesSaved,
@@ -334,8 +334,6 @@
       editor.on('beforedeactivate', function () {
         propertiesForm.stopMonitoring();
       });
-
-      this.relayEvents(editor, ['close']);
 
       return editor;
     },

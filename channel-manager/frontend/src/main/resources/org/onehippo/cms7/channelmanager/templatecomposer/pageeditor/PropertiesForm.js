@@ -103,24 +103,16 @@
         }
       }
 
-      this.saveButton = new Ext.Button({
-        cls: 'btn btn-default',
-        text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-save'],
-        handler: this._submitForm,
-        scope: this,
-        formBind: true
-      });
+      //this.saveButton = new Ext.Button({
+      //  cls: 'btn btn-default',
+      //  text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-save'],
+      //  handler: this._submitForm,
+      //  scope: this,
+      //  formBind: true
+      //});
       //if (!this.isReadOnly) {
       //  buttons.push(this.saveButton);
       //}
-      //buttons.push({
-      //  cls: 'btn btn-default',
-      //  text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-close'],
-      //  scope: this,
-      //  handler: function () {
-      //    this.fireEvent('close');
-      //  }
-      //});
 
       this.addSaveEnabledCheck(this.isDirty.bind(this));
 

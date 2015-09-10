@@ -48,7 +48,7 @@
       this.saveButton = new Ext.Button({
         xtype: 'button',
         cls: 'btn btn-default',
-        text: 'Save',
+        text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-save'],
         listeners: {
           click: function () {
             this.propertiesPanel.saveAll();
@@ -61,7 +61,11 @@
       buttons.push({
         xtype: 'button',
         cls: 'btn btn-default',
-        text: 'Close'
+        text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-close'],
+        scope: this,
+        handler: function () {
+          this.propertiesPanel.fireEvent('close');
+        }
       });
 
       Hippo.ChannelManager.TemplateComposer.PropertiesWindow.superclass.constructor.call(this, Ext.apply(config, {
