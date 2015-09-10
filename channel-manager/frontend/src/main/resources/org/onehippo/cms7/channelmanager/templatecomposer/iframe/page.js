@@ -321,7 +321,7 @@
 
     setStatusClass: function(id, status) {
       var item = this.retrieve(id);
-      if (item && status) {
+      if (item) {
         item.setStatusClass(status);
       }
     }
