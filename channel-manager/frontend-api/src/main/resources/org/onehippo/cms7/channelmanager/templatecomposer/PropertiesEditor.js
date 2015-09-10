@@ -57,8 +57,23 @@
       this.propertiesForm.markDirty(isDirty === undefined ? true : isDirty);
     },
 
+    /**
+     * Save the form containing in the editor
+     */
+    save: function () {
+      var def = $.Deferred(),
+        form = this.propertiesForm;
+
+      form._submitForm(function () {
+        def.resolve(form);
+      }, function () {
+        def.reject(form);
+      });
+      return def.promise();
+    },
+
     getCallbackAfterSave: function() {
-      console.log("after saved at the editor:" + this.variant.id);
+      // TODO: return a function to be invoked after save-all if needed
       return null;
     },
 

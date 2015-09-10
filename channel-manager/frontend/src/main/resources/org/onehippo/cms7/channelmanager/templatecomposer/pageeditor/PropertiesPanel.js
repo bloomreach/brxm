@@ -431,7 +431,12 @@
       return tab;
     },
 
-    getDirtyEditors: function () {
+    /**
+     * Return editors that have dirty forms
+     * @returns {Array}
+     * @private
+     */
+    _getDirtyEditors: function () {
       var editors = [];
       this.items.each(function (item) {
         if (Ext.isDefined(item.propertiesForm) && item.propertiesForm.isDirty()) {
@@ -439,6 +444,37 @@
         }
       });
       return editors;
+    },
+
+    /**
+     * Save all dirty forms in the panel
+     * @param success
+     * @param fail
+     */
+    saveAll: function () {
+      var dirtyEditors = this._getDirtyEditors(),
+        afterSaveCallback = null,
+        saveAllDefer = null,
+        promises = [];
+
+      dirtyEditors.forEach(function(editor) {
+        promises.push(editor.save());
+        if (afterSaveCallback === null) {
+          afterSaveCallback = editor.getCallbackAfterSave();
+        }
+      });
+
+      saveAllDefer = $.Deferred();
+      $.when.apply($, promises).then(function () {
+        if (afterSaveCallback) {
+          afterSaveCallback();
+        }
+        saveAllDefer.resolve();
+      }, function () {
+        saveAllDefer.reject();
+      });
+
+      return saveAllDefer.promise();
     }
   });
 
