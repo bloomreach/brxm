@@ -467,9 +467,11 @@
       saveAllDefer = $.Deferred();
       $.when.apply($, promises).then(function () {
         if (afterSaveCallback) {
-          afterSaveCallback();
+          afterSaveCallback(saveAllDefer);
+        } else {
+          saveAllDefer.resolve();
         }
-        saveAllDefer.resolve();
+
       }, function () {
         saveAllDefer.reject();
       });
