@@ -21,7 +21,8 @@
   Hippo.ChannelManager.TemplateComposer.PropertiesWindow = Ext.extend(Hippo.ux.window.FloatingWindow, {
 
     constructor: function (config) {
-      var windowWidth = config.width;
+      var buttons = [],
+        windowWidth = config.width;
 
       this.propertiesPanel = new Hippo.ChannelManager.TemplateComposer.PropertiesPanel({
         id: 'componentPropertiesPanel',
@@ -59,7 +60,6 @@
         }
       });
 
-      var buttons = [];
       buttons.push(this.saveButton);
       buttons.push({
         xtype: 'button',
