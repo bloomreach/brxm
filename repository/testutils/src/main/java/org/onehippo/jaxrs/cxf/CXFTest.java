@@ -64,7 +64,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
  *     </li>
  *     <li>
  *         PowerMock: see test class {@code org.onehippo.jaxrs.cxf.TestCompatibilityWithPowerMock}, do note the three
- *         class level annotations ({@literal@RunWith(PowerMockRunner.class) @PowerMockIgnore("javax.net.ssl.*")
+ *         class level annotations ({@literal @RunWith(PowerMockRunner.class) @PowerMockIgnore("javax.net.ssl.*")
  *         @PrepareForTest(Class<?>)}) that are all necessary to make the test run successfully.
  *     </li>
  * </ul>
