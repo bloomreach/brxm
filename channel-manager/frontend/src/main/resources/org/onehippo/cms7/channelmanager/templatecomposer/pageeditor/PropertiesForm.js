@@ -231,7 +231,7 @@
         autoWidth: true,
         layout: 'fit'
       });
-      this.saveButton.hide();
+      //this.saveButton.hide();
     },
 
     _initFields: function () {
@@ -259,7 +259,7 @@
         validator: this.isSaveEnabled.bind(this)
       });
 
-      this.saveButton.show();
+      //this.saveButton.show();
     },
 
     _isReadOnlyTemplate: function (record) {
