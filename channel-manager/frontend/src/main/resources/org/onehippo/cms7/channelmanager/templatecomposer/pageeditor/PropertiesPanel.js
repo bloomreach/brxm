@@ -73,7 +73,6 @@
     initComponent: function () {
       Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.initComponent.apply(this, arguments);
 
-      //TODO: add 'clientvalidation' event to notify parent window
       this.addEvents('visibleHeightChanged');
 
       this.on('beforetabchange', function (panel, newTab, currentTab) {
@@ -262,12 +261,11 @@
           componentId: this.componentId,
           lastModifiedTimestamp: this.lastModifiedTimestamp,
           isReadOnly: this.isReadOnly,
-          bubbleEvents: ['variantDirty', 'variantPristine'],
+          bubbleEvents: ['variantDirty', 'variantPristine', 'clientvalidation'],
           listeners: {
             propertiesChanged: this._onPropertiesChanged,
             propertiesSaved: this._onPropertiesSaved,
             propertiesDeleted: this._onPropertiesDeleted,
-            // TODO: catch and fire 'clientvalidation' event to notify parent window
             scope: this
           }
         });

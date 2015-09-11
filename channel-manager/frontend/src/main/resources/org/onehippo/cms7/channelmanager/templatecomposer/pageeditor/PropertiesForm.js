@@ -60,8 +60,6 @@
       this.lastModifiedTimestamp = config.lastModifiedTimestamp;
       this.isReadOnly = config.isReadOnly;
 
-      this.saveEnabledChecks = [];
-
       Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.constructor.call(this, Ext.apply(config, {
         cls: 'templateComposerPropertiesForm',
         maskDisabled: false
@@ -102,19 +100,6 @@
           buttons.push('->');
         }
       }
-
-      //this.saveButton = new Ext.Button({
-      //  cls: 'btn btn-default',
-      //  text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-save'],
-      //  handler: this._submitForm,
-      //  scope: this,
-      //  formBind: true
-      //});
-      //if (!this.isReadOnly) {
-      //  buttons.push(this.saveButton);
-      //}
-
-      this.addSaveEnabledCheck(this.isDirty.bind(this));
 
       Ext.apply(this, {
         autoHeight: true,
@@ -238,7 +223,6 @@
         autoWidth: true,
         layout: 'fit'
       });
-      //this.saveButton.hide();
     },
 
     _initFields: function () {
@@ -260,13 +244,6 @@
           this._initField(record);
         }
       }, this);
-
-      this.add({
-        xtype: 'Hippo.ChannelManager.TemplateComposer.ValidatorField',
-        validator: this.isSaveEnabled.bind(this)
-      });
-
-      //this.saveButton.show();
     },
 
     _isReadOnlyTemplate: function (record) {
@@ -668,25 +645,6 @@
         });
         this.fireEvent('propertiesChanged', propertiesMap);
       }
-    },
-
-    /**
-     * Add a function that returns whether the save button of this form should be enabled or not.
-     * When all check functions return true the save button is enabled. If any of the check functions
-     * returns false, the save button is disabled.
-     * @param fn the save-enabled check function to add.
-     */
-    addSaveEnabledCheck: function (fn) {
-      this.saveEnabledChecks.push(fn);
-    },
-
-    isSaveEnabled: function () {
-      var isEnabled = true;
-      this.saveEnabledChecks.some(function (checkSaveEnabled) {
-        isEnabled = checkSaveEnabled();
-        return !isEnabled;
-      });
-      return isEnabled;
     },
 
     disableDelete: function () {

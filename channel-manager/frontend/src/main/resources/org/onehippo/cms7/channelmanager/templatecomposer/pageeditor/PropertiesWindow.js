@@ -20,6 +20,8 @@
 
   Hippo.ChannelManager.TemplateComposer.PropertiesWindow = Ext.extend(Hippo.ux.window.FloatingWindow, {
 
+    formStates: {},
+
     constructor: function (config) {
       var buttons = [],
         windowWidth = config.width;
@@ -36,7 +38,7 @@
         listeners: {
           visibleHeightChanged: this._adjustHeight,
           close: this.hide,
-          // TODO: handle 'clientvalidation' to enable/disable 'Save' button
+          clientvalidation: this._onClientValidation,
           scope: this
         }
       });
@@ -94,7 +96,39 @@
       if (this.getHeight() !== newHeight) {
         this.setHeight(newHeight);
       }
+    },
+
+    _onClientValidation: function (form, valid) {
+      var disableSaveButton = true,
+        count = 0,
+        name = form.variant.variantName;
+
+      this.formStates[name] = {
+        name: name,
+        valid: valid,
+        dirty: form.isDirty()
+      };
+
+      // enable save if all forms are valid and exists a dirty one
+      for (name in this.formStates) {
+        if (!this.formStates[name].valid) {
+          break;
+        }
+        count++;
+      }
+      if (count === Object.keys(this.formStates).length) {
+        // check if a dirty form exists
+        for (name in this.formStates) {
+          if (this.formStates[name].dirty) {
+            disableSaveButton = false;
+            break;
+          }
+        }
+      }
+
+      this.saveButton.setDisabled(disableSaveButton);
     }
+
   });
 
 }());
