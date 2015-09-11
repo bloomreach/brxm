@@ -27,15 +27,15 @@
   <description>Hippo Plugin Related Documents</description>
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-relateddocs</artifactId>
-  <version>3.1.0-SNAPSHOT</version>
+  <version>3.1.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   
   <inceptionYear>2009</inceptionYear>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/branches/hippo-plugin-relateddocs-add-hst-3.1.xx</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/branches/hippo-plugin-relateddocs-add-hst-3.1.xx</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/branches/hippo-plugin-relateddocs-add-hst-3.1.xx</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/trunk/</url>
   </scm>
   
   <properties>
