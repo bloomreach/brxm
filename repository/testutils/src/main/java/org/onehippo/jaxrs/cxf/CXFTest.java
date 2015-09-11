@@ -37,25 +37,35 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 /**
  * Utility class for unit testing of JAXRS endpoints; for examples how to use this class, see the unit tests.
  *
- * <p>The smallest example can be found in the test class {@code org.onehippo.jaxrs.cxf.TestSingleEndpoint}. Most tests
- * use <a href="https://github.com/jayway/rest-assured">REST-assured</a> to write the test conditions. See their
- * <a href="https://github.com/jayway/rest-assured">GitHub page</a> or
+ * <p>The smallest example can be found in the test class {@code org.onehippo.jaxrs.cxf.TestSingleEndpoint}. This
+ * tests a single endpoint. It is possible to test more complex setups, for instance using multiple endpoints or using
+ * custom object mappers. To create such a setup, first call {@link #createDefaultConfig()} or
+ * {@link #createDefaultConfig(Class<?>)} and add additional JAXRS endpoints, filters, providers, etc. Subsequently
+ * call {@link #setup(Config)} to create your test fixture.</p>
+ *
+ * <p>Most tests use <a href="https://github.com/jayway/rest-assured">REST-assured</a> to write the test conditions.
+ * See their <a href="https://github.com/jayway/rest-assured">GitHub page</a> or
  * <a href="https://github.com/jayway/rest-assured/wiki/Usage">user guide</a> for more information. Be sure to check
  * the <a href="https://github.com/jayway/rest-assured/wiki/Usage#examples">examples</a> section.</p>
  *
  * <p>Next to testing of the plain JSON output, it is also possible to test using a JAXRS client, see the test class
  * {@code org.onehippo.jaxrs.cxf.TestJaxrsClient}.</p>
  *
- * <p>In general the CXFTest has been tested to be compatible with the following frameworks found in the Hippo stack:
+ * <p>In general the CXFTest testbed has been tested to be compatible with the following frameworks found in the Hippo
+ * stack:
  * <ul>
+ *     <li>
+ *         HST: if your code uses {@code HstRequestContext}, it is possible to set a mocked {@code HstRequestContext}
+ *         in the thread local storage using a helper class. See
+ *         {@code org.onehippo.jaxrs.cxf.hst.TestHstTestFixtureHelper} in the HST project how to do this.
+ *     </li>
  *     <li>
  *         Spring: see test class {@code org.onehippo.jaxrs.cxf.TestCompatibilityWithSpring}
  *     </li>
  *     <li>
  *         PowerMock: see test class {@code org.onehippo.jaxrs.cxf.TestCompatibilityWithPowerMock}, do note the three
- *         class level annotations
- *         ({@literal@RunWith(PowerMockRunner.class) @PowerMockIgnore("javax.net.ssl.*") @PrepareForTest(Class<?>)})
- *         that are all necessary to make the test succeed.
+ *         class level annotations ({@literal@RunWith(PowerMockRunner.class) @PowerMockIgnore("javax.net.ssl.*")
+ *         @PrepareForTest(Class<?>)}) that are all necessary to make the test run successfully.
  *     </li>
  * </ul>
  * </p>
@@ -140,32 +150,23 @@ public class CXFTest {
                 .addClientClass(getDefaultSerializer())
                 .addServerClass(getDefaultSerializer());
     }
-    
+
+    @SuppressWarnings("unused")
+    protected Config createDefaultConfig(Class<?> objectMapper) {
+        return createDefaultConfig()
+                .addClientClass(objectMapper)
+                .addServerClass(objectMapper);
+    }
+
     protected void setup(Object endpointSingleton) {
         Config config = createDefaultConfig()
                 .addServerSingleton(endpointSingleton);
         setup(config);
     }
 
-    protected void setup(Object endpointSingleton, Class<?> objectMapper) {
-        Config config = createDefaultConfig()
-                .addServerSingleton(endpointSingleton)
-                .addServerClass(objectMapper)
-                .addClientClass(objectMapper);
-        setup(config);
-    }
-
     protected void setup(Class<?> endpointClass) {
         Config config = createDefaultConfig()
                 .addServerClass(endpointClass);
-        setup(config);
-    }
-
-    protected void setup(Class<?> endpointClass, Class<?> objectMapper) {
-        Config config = createDefaultConfig()
-                .addServerClass(endpointClass)
-                .addServerClass(objectMapper)
-                .addClientClass(objectMapper);
         setup(config);
     }
 
