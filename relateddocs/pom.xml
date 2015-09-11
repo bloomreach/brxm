@@ -33,9 +33,9 @@
   <inceptionYear>2009</inceptionYear>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/trunk/</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/trunk/</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/branches/hippo-plugin-relateddocs-add-hst-3.1.xx</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/branches/hippo-plugin-relateddocs-add-hst-3.1.xx</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/branches/hippo-plugin-relateddocs-add-hst-3.1.xx</url>
   </scm>
   
   <properties>
