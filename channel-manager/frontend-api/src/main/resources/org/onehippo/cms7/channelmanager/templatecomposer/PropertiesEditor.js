@@ -13,12 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-(function () {
+(function ($) {
   "use strict";
 
   Ext.namespace('Hippo.ChannelManager.TemplateComposer');
-
-  var $ = jQuery;
 
   Hippo.ChannelManager.TemplateComposer.PropertiesEditor = Ext.extend(Ext.Panel, {
 
@@ -66,7 +64,7 @@
       var def = $.Deferred(),
         form = this.propertiesForm;
 
-      form._submitForm(function () {
+      form.submitForm(function () {
         def.resolve(form);
       }, function () {
         def.reject(form);
@@ -74,10 +72,9 @@
       return def.promise();
     },
 
-    getCallbackAfterSave: function() {
-      // TODO: return a function to be invoked after save-all if needed
-      return null;
+    onAfterSave: function() {
+      return $.Deferred().resolve().promise();
     }
   });
 
-}());
+}(jQuery));

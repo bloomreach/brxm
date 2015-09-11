@@ -13,13 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-(function () {
+(function ($) {
 
   "use strict";
 
   Ext.namespace('Hippo.ChannelManager.TemplateComposer');
-
-  var $ = jQuery;
 
   function getVariantName (variant) {
     return variant.variantName || variant.name;
@@ -453,31 +451,20 @@
      */
     saveAll: function () {
       var dirtyEditors = this._getDirtyEditors(),
-        afterSaveCallback = null,
-        saveAllDefer = null,
-        promises = [];
+        savePromises = [];
 
       dirtyEditors.forEach(function(editor) {
-        promises.push(editor.save());
-        if (afterSaveCallback === null) {
-          afterSaveCallback = editor.getCallbackAfterSave();
-        }
+        savePromises.push(editor.save());
       });
 
-      saveAllDefer = $.Deferred();
-      $.when.apply($, promises).then(function () {
-        if (afterSaveCallback) {
-          afterSaveCallback(saveAllDefer);
-        } else {
-          saveAllDefer.resolve();
-        }
-
-      }, function () {
-        saveAllDefer.reject();
+      return $.when.apply($, savePromises).then(function () {
+        var afterSavePromises = [];
+        dirtyEditors.forEach(function(editor) {
+          afterSavePromises.push(editor.onAfterSave());
+        });
+        return $.when.apply($, afterSavePromises);
       });
-
-      return saveAllDefer.promise();
     }
   });
 
-}());
+}(jQuery));
