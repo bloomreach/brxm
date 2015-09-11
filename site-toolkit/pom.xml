@@ -83,7 +83,7 @@
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
     <hippo.commons.version>2.1.0-SNAPSHOT</hippo.commons.version>
-    <hippo.repository.version>3.0.0</hippo.repository.version>
+    <hippo.repository.version>3.1.0-SNAPSHOT</hippo.repository.version>
     <hippo.utilities.version>2.0.0</hippo.utilities.version>
     <hippo.services.version>2.0.0</hippo.services.version>
     <hippo.services.eventbus.version>2.0.0</hippo.services.eventbus.version>
