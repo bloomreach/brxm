@@ -58,8 +58,6 @@
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.1</taglibs.version>
 
-    <geronimo-annotation_1.1_spec.version>1.0.1</geronimo-annotation_1.1_spec.version>
-
     <junit.version>4.5</junit.version>
     <easymock.version>3.0</easymock.version>
 
@@ -145,15 +143,6 @@
   <dependencyManagement>
 
     <dependencies>
-
-      <!-- Servlet API dependencies -->
-
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-annotation_1.1_spec</artifactId>
-        <version>${geronimo-annotation_1.1_spec.version}</version>
-        <scope>provided</scope>
-      </dependency>
 
       <!-- Hippo CMS7 API dependency -->
 

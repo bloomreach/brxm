@@ -29,13 +29,7 @@
   <packaging>jar</packaging>
   
   <dependencies>
-    
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-annotation_1.1_spec</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
