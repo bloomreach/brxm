@@ -173,9 +173,16 @@
       return isDirty;
     },
 
-    _submitForm: function (onSuccess, onFail) {
+    submitForm: function (onSuccess, onFail) {
       var uncheckedValues = {},
         form = this.getForm();
+
+      if (!this.rendered) {
+        // if the form has not been rendered the values were never changed,
+        // so no need to submit
+        onSuccess();
+        return;
+      }
 
       form.items.each(function (item) {
         if (item instanceof Ext.form.Checkbox) {
@@ -592,15 +599,16 @@
 
     load: function () {
       if (this.store) {
-        return this._loadDirtyState();
+        return this._reloadState();
       } else {
         return this._loadStore();
       }
     },
 
-    _loadDirtyState: function () {
+    _reloadState: function () {
       return new Hippo.Future(function (success) {
         this._fireVariantDirtyOrPristine();
+        this.fireEvent('propertiesLoaded', this);
         success();
       }.createDelegate(this));
     },
