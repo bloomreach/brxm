@@ -49,7 +49,7 @@
             type: 'documents'
           },
           {
-            name: 'Pages',
+            name: 'Pages (Sitemap Items)',
             type: 'pages'
           }
         ];
