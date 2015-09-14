@@ -27,7 +27,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class TestHstTestFixtureHelper extends CXFTest {
+public class TestHstCXFTestFixtureHelper extends CXFTest {
 
     @Before
     public void setup() {
@@ -35,7 +35,7 @@ public class TestHstTestFixtureHelper extends CXFTest {
         expect(context.getAttribute(anyObject())).andReturn("Hello from context").anyTimes();
         replay(context);
 
-        HstTestFixtureHelper helper = new HstTestFixtureHelper(context);
+        HstCXFTestFixtureHelper helper = new HstCXFTestFixtureHelper(context);
         Config config = createDefaultConfig()
                 .addServerClass(HelloFromContextEndpoint.class)
                 .addServerSingleton(helper);

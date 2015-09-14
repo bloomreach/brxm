@@ -24,12 +24,16 @@ import javax.ws.rs.ext.Provider;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
+/**
+ * Helper class for setting up a CXFTest that uses the HST.
+ * For example usage, see the tests in {@code org.onehippo.jaxrs.cxf.hst.TestHstCXFTestFixtureHelper}.
+ */
 @Provider
-public class HstTestFixtureHelper implements ContainerRequestFilter {
+public class HstCXFTestFixtureHelper implements ContainerRequestFilter {
 
     private HstRequestContext hstRequestContext;
 
-    public HstTestFixtureHelper(final HstRequestContext hstRequestContext) {
+    public HstCXFTestFixtureHelper(final HstRequestContext hstRequestContext) {
         this.hstRequestContext= hstRequestContext;
     }
 
