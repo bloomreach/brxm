@@ -52,14 +52,9 @@
         xtype: 'button',
         cls: 'btn btn-default',
         text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-save'],
-        listeners: {
-          click: function () {
-            var thisWindow = this;
-            thisWindow.propertiesPanel.saveAll().then(function (){
-              thisWindow._resetFormStates();
-            });
-          },
-          scope: this
+        scope: this,
+        handler: function () {
+          this.propertiesPanel.saveAll().then(this._resetFormStates.bind(this));
         }
       });
 
