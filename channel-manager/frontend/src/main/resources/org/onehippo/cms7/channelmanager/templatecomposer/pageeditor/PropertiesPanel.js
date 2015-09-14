@@ -73,7 +73,7 @@
     initComponent: function () {
       Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.initComponent.apply(this, arguments);
 
-      this.addEvents('visibleHeightChanged');
+      this.addEvents('visibleHeightChanged', 'onLoad');
 
       this.on('beforetabchange', function (panel, newTab, currentTab) {
         var proceed;
@@ -132,6 +132,7 @@
       this.componentVariants.on('invalidated', this.updateUI, this);
 
       this.updateUI();
+      this.fireEvent('onLoad');
     },
 
     updateUI: function (triggeredByVariantId) {

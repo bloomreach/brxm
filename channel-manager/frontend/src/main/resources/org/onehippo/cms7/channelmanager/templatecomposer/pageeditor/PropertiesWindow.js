@@ -20,7 +20,7 @@
 
   Hippo.ChannelManager.TemplateComposer.PropertiesWindow = Ext.extend(Hippo.ux.window.FloatingWindow, {
 
-    formStates: {},
+    _formStates: {},
 
     constructor: function (config) {
       var buttons = [],
@@ -39,6 +39,7 @@
           visibleHeightChanged: this._adjustHeight,
           close: this.hide,
           clientvalidation: this._onClientValidation,
+          onLoad: this._resetFormStates,
           scope: this
         }
       });
@@ -85,7 +86,7 @@
 
       this.on('hide', this.propertiesPanel.onHide, this.propertiesPanel);
     },
-    
+
     _adjustHeight: function (propertiesPanelVisibleHeight) {
       var newVisibleHeight = propertiesPanelVisibleHeight + this.getFrameHeight(),
         pageEditorHeight = Ext.getCmp('pageEditorIFrame').getHeight(),
@@ -98,28 +99,32 @@
       }
     },
 
+    _resetFormStates: function() {
+      this._formStates = {};
+    },
+
     _onClientValidation: function (form, valid) {
       var disableSaveButton = true,
         count = 0,
         name = form.variant.variantName;
 
-      this.formStates[name] = {
+      this._formStates[name] = {
         name: name,
         valid: valid,
         dirty: form.isDirty()
       };
 
       // enable save if all forms are valid and exists a dirty one
-      for (name in this.formStates) {
-        if (!this.formStates[name].valid) {
+      for (name in this._formStates) {
+        if (!this._formStates[name].valid) {
           break;
         }
         count++;
       }
-      if (count === Object.keys(this.formStates).length) {
+      if (count === Object.keys(this._formStates).length) {
         // check if a dirty form exists
-        for (name in this.formStates) {
-          if (this.formStates[name].dirty) {
+        for (name in this._formStates) {
+          if (this._formStates[name].dirty) {
             disableSaveButton = false;
             break;
           }
