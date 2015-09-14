@@ -56,7 +56,7 @@
           hover: 'hst-overlay-hover',
           disabled: 'hst-overlay-disabled',
           locked: 'hst-overlay-locked',
-          status: 'hst-overlay-status',
+          status: 'hst-overlay-menu-component-status',
           mark: null,
           custom: null
         }
@@ -752,7 +752,7 @@
       this.menu = $('<div/>').addClass('hst-overlay-menu');
       element = this.element;
       if (!this.el.attr(HST.ATTR.HST_CONTAINER_DISABLED)) {
-        deleteButton = $('<div/>').addClass('hst-overlay-menu-button');
+        deleteButton = $('<div/>').addClass('hst-overlay-menu-delete-button');
         deleteButton.click(function (e) {
           e.stopPropagation();
           iframeToHost.publish('remove', element);
