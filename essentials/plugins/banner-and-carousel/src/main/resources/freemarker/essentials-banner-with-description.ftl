@@ -1,6 +1,6 @@
 <#include "../../include/imports.ftl">
 
-<#-- @ftlvariable name="document" type="org.example.beans.Banner" -->
+<#-- @ftlvariable name="document" type="{{beansPackage}}.Banner" -->
 <#if document??>
     <div>
         <figure>
