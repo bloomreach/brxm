@@ -43,5 +43,8 @@
   ],
   "angular-animate": [
     "angular-animate.js"
+  ],
+  "angular-aria": [
+    "angular-aria.js"
   ]
 }
