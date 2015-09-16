@@ -40,6 +40,14 @@
           close: this.hide,
           clientvalidation: this._onClientValidation,
           onLoad: this._resetFormStates,
+          beforetabchange: function (panel, newTab, currentTab) {
+            if (newTab) {
+              newTab.addClass('qa-tab-active');
+            }
+            if (currentTab) {
+              currentTab.removeClass('qa-tab-active');
+            }
+          },
           scope: this
         }
       });
