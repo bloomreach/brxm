@@ -648,13 +648,13 @@
     },
 
     disableDelete: function () {
-      if (this.deleteButton) {
+      if (this.deleteButton && !this.deleteButton.disabled) {
         this.deleteButton.disable();
       }
     },
 
     enableDelete: function () {
-      if (this.deleteButton) {
+      if (this.deleteButton && this.deleteButton.disabled) {
         this.deleteButton.enable();
       }
     }
