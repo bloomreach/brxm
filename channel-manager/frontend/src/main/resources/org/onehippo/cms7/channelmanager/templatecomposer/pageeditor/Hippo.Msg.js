@@ -85,7 +85,7 @@ Hippo.Msg = (function () {
     buttons = dialog.fbar.items;
 
     buttons.each(function (button) {
-      button.addClass('btn').addClass('btn-default');
+      button.addClass('btn').addClass('btn-default').addClass('qa-message-button');
     });
   };
 

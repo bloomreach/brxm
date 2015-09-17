@@ -61,7 +61,7 @@
       this.isReadOnly = config.isReadOnly;
 
       Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.constructor.call(this, Ext.apply(config, {
-        cls: 'templateComposerPropertiesForm',
+        cls: 'templateComposerPropertiesForm qa-properties-form',
         maskDisabled: false
       }));
     },
@@ -81,7 +81,7 @@
       if (this.variant.id !== 'hippo-default') {
         this.deleteButton = new Ext.Button({
           text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-delete'],
-          cls: 'btn btn-default',
+          cls: 'btn btn-default qa-delete-button',
           handler: function () {
             Ext.Ajax.request({
               method: 'DELETE',

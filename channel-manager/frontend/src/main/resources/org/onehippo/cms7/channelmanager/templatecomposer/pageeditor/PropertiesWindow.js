@@ -58,7 +58,7 @@
 
       this.saveButton = new Ext.Button({
         xtype: 'button',
-        cls: 'btn btn-default',
+        cls: 'btn btn-default qa-save-button',
         text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-save'],
         scope: this,
         handler: function () {
@@ -69,7 +69,7 @@
       buttons.push(this.saveButton);
       buttons.push({
         xtype: 'button',
-        cls: 'btn btn-default',
+        cls: 'btn btn-default qa-close-button',
         text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-close'],
         scope: this,
         handler: function () {
