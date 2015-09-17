@@ -12,7 +12,9 @@
   "angular-ui-tree": ["dist/angular-ui-tree.min.js"],
   "chosen": ["chosen.jquery.min.js"],
   "es5-shim": [],
-  "google-code-prettify": [],
+  "google-code-prettify": [
+    "src/prettify.js"
+  ],
   "hippo-theme": [
     "dist/css/main.min.css",
     "dist/js/main.min.js",
