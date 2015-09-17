@@ -39,6 +39,11 @@ import groovy.lang.GroovyClassLoader;
 
 /**
  * {@link GroovyClassLoader} that is configured for updaters
+ * <p>
+ * While this custom Groovy ClassLoader protects against certain obvious and trivial mistakes and misuse of the Groovy
+ * language, but is not assumed or even intended to provide a full blown and trusted Groovy execution sandbox.
+ * See for more information: {@link #createCompilationCustomizer()}.
+ * </p>
  */
 public class GroovyUpdaterClassLoader extends GroovyClassLoader {
 
@@ -98,7 +103,7 @@ public class GroovyUpdaterClassLoader extends GroovyClassLoader {
 
     private static CompilerConfiguration createCompilerConfiguration() {
         final CompilerConfiguration compilerConfiguration = new CompilerConfiguration();
-        compilerConfiguration.addCompilationCustomizers(createImportCustomizer(), createSecurityCustomizer());
+        compilerConfiguration.addCompilationCustomizers(createImportCustomizer(), createCompilationCustomizer());
         return compilerConfiguration;
     }
 
@@ -108,13 +113,30 @@ public class GroovyUpdaterClassLoader extends GroovyClassLoader {
         return importCustomizer;
     }
 
-    private static CompilationCustomizer createSecurityCustomizer() {
-        final SecureASTCustomizer securityCustomizer = new SecureASTCustomizer();
-        securityCustomizer.setImportsBlacklist(Arrays.asList(importsBlacklist));
-        securityCustomizer.setStarImportsBlacklist(Arrays.asList(starImportsBlacklist));
-        securityCustomizer.setIndirectImportCheckEnabled(true);
-        securityCustomizer.addExpressionCheckers(new UpdaterExpressionChecker());
-        return securityCustomizer;
+    /**
+     * Creates a CompilationCustomizer which (only) checks and prevents obvious and trivial mistakes and misuse
+     * of the full power of Groovy.
+     * <p>
+     * Certain typical class and package imports like java.io and java(x).net, java.lang.reflect etc. are blacklisted,
+     * and direct usage of dangerous classes and methods like System, System.exit(), Runtime or ProcessBuilder are
+     * also prevented.
+     * <p>
+     * These checks are however only on first/surface level, <em>not</em> assumed or even intended as a full blown and
+     * trustable security sandbox.</p>
+     * <p>It must be expected and anticipated that proper securing against misuse of the capabilities of Groovy
+     * in the context of Groovy Updater scripts, relies on the usage and access to those scripts, e.g. limited to
+     * trusted developers and administrators only, not in sandboxing the capabilities of the scripts themselves.
+     * </p>
+     * @return a custom Groovy CompilationCustomizer which (only) checks and prevents obvious and trivial mistakes and
+     * misuse of the full power of Groovy.
+     */
+    private static CompilationCustomizer createCompilationCustomizer() {
+        final SecureASTCustomizer compilationCustomizer = new SecureASTCustomizer();
+        compilationCustomizer.setImportsBlacklist(Arrays.asList(importsBlacklist));
+        compilationCustomizer.setStarImportsBlacklist(Arrays.asList(starImportsBlacklist));
+        compilationCustomizer.setIndirectImportCheckEnabled(true);
+        compilationCustomizer.addExpressionCheckers(new UpdaterExpressionChecker());
+        return compilationCustomizer;
     }
 
     private static final class UpdaterExpressionChecker implements SecureASTCustomizer.ExpressionChecker {
