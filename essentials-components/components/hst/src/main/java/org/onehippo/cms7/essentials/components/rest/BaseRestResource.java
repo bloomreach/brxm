@@ -22,6 +22,8 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.ext.ContextResolver;
+import javax.xml.bind.JAXBContext;
 import javax.xml.ws.WebServiceException;
 
 import org.apache.commons.lang.StringUtils;
@@ -45,7 +47,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @version "$Id$"
  */
-public abstract class BaseRestResource extends AbstractResource {
+public abstract class BaseRestResource extends AbstractResource implements ContextResolver<JAXBContext> {
 
     public static final String INVALID_SCOPE = "Invalid scope";
     public static final String UNCHECKED = "unchecked";
