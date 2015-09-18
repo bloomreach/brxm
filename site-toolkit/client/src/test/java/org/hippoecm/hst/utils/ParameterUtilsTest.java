@@ -36,6 +36,7 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ParameterUtilsTest {
@@ -76,6 +77,23 @@ public class ParameterUtilsTest {
         Calendar since = searchInfo.getSince();
         assertEquals("2014-10-07", DateFormatUtils.format(since, ParameterUtils.ISO_DATE_FORMAT));
     }
+
+    @Ignore(value="As long as HSTTWO-3405 is not done this test will fail")
+    @Test
+    public void test_parameter_values_when_parametersInfo_on_super_class()  throws Exception {
+        final TestSubSearchComponent testSubSearchComponent = new TestSubSearchComponent();
+        EasyMock.expect(componentConfig.getParameter("queryOption", resolvedSiteMapItem)).andReturn("queryOptionValue1").anyTimes();
+        EasyMock.expect(componentConfig.getParameter("since", resolvedSiteMapItem)).andReturn("2014-10-7").anyTimes();
+        EasyMock.replay(componentConfig);
+
+        SearchInfo searchInfo = ParameterUtils.getParametersInfo(testSubSearchComponent, componentConfig, request);
+
+        assertEquals("queryOptionValue1", searchInfo.getQueryOption());
+
+        Calendar since = searchInfo.getSince();
+        assertEquals("2014-10-07", DateFormatUtils.format(since, ParameterUtils.ISO_DATE_FORMAT));
+    }
+
 
     @Test
     public void testDateParameterValues() throws Exception {
@@ -133,6 +151,10 @@ public class ParameterUtilsTest {
         public void destroy() throws HstComponentException {
         }
 
+    }
+
+    // parameters info on super class
+    public class TestSubSearchComponent extends TestSearchComponent {
     }
 
     /**
