@@ -402,6 +402,7 @@
       existingTab = this._getTab(existingVariantId);
       if (Ext.isDefined(existingTab) && existingTab instanceof Hippo.ChannelManager.TemplateComposer.PropertiesEditor) {
         newPropertiesForm = existingTab.propertiesForm.createCopy(newVariant);
+        newPropertiesForm.hideDelete();
         newTab = this._createPropertiesEditor(
           newVariant,
           Ext.pluck(this.items.getRange(), "variant"),

@@ -97,7 +97,6 @@
         });
         if (!this.isReadOnly) {
           buttons.push(this.deleteButton);
-          buttons.push('->');
         }
       }
 
@@ -656,6 +655,12 @@
     enableDelete: function () {
       if (this.deleteButton && this.deleteButton.disabled) {
         this.deleteButton.enable();
+      }
+    },
+
+    hideDelete: function () {
+      if (this.deleteButton) {
+        this.deleteButton.hide();
       }
     }
 
