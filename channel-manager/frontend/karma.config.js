@@ -36,6 +36,7 @@ module.exports = function (config) {
       build.bower + '/angular-ui-router/release/angular-ui-router.min.js',
       build.bower + '/angular-ui-tree/dist/angular-ui-tree.js',
       build.bower + '/angular-chosen-localytics/chosen.js',
+      build.bower + '/angular-aria/angular-aria.js',
       build.bower + '/hippo-addon-channel-manager-angularjs-api/dist/js/main.min.js',
 
       // testing dependencies
