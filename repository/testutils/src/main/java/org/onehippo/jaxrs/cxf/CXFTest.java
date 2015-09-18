@@ -25,6 +25,8 @@ import javax.ws.rs.core.Application;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.specification.RequestSender;
+import com.jayway.restassured.specification.RequestSpecification;
 
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
@@ -108,6 +110,14 @@ public class CXFTest {
         return client.target(address).path(url).request(mediaType);
     }
 
+    protected RequestSpecification given() {
+        return RestAssured.given().proxy(getServerHost(), getServerPort());
+    }
+
+    protected RequestSender when() {
+        return this.given().when();
+    }
+
     public class Config {
         private final Set<Class<?>> clientClasses = new HashSet<>();
         private final Set<Object>   clientSingletons = new HashSet<>();
@@ -171,7 +181,7 @@ public class CXFTest {
     }
 
     protected String getServerHost() {
-        return "http://localhost";
+        return "localhost";
     }
 
     protected int getServerPort() {
@@ -179,7 +189,7 @@ public class CXFTest {
     }
 
     protected String getServerAddress() {
-        return getServerHost() + ":" + getServerPort();
+        return "http://" + getServerHost() + ":" + getServerPort();
     }
 
     protected void setup(Config config) {
@@ -194,17 +204,14 @@ public class CXFTest {
                 return config.getServerSingletons();
             }
         };
-        JAXRSServerFactoryBean endpointFactory = ResourceUtils.createApplication(application, true);
-        endpointFactory.setAddress(address);
+        JAXRSServerFactoryBean serverFactory = ResourceUtils.createApplication(application, true);
+        serverFactory.setAddress(address);
 
-        server = endpointFactory.create();
+        server = serverFactory.create();
         server.start();
 
         clientClasses = config.getClientClasses();
         clientSingletons = config.getClientSingletons();
-
-        RestAssured.baseURI = getServerHost();
-        RestAssured.port = getServerPort();
     }
 
     @After

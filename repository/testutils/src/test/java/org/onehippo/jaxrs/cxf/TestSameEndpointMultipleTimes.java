@@ -21,7 +21,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.ExecuteOnLogLevel;
 
-import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 public class TestSameEndpointMultipleTimes extends CXFTest {
@@ -33,20 +32,20 @@ public class TestSameEndpointMultipleTimes extends CXFTest {
 
     @Test
     public void callingHelloWorldMustSucceed() {
-        when().
-                get("/helloworld").
-        then().
-                statusCode(200).
-                body(equalTo("Hello world"));
+        when()
+                .get("/helloworld")
+        .then()
+                .statusCode(200)
+                .body(equalTo("Hello world"));
     }
 
     @Test
     public void callingHelloWorldAgainMustSucceed() {
-        when().
-                get("/helloworld").
-        then().
-                statusCode(200).
-                body(equalTo("Hello world"));
+        when()
+                .get("/helloworld")
+        .then()
+                .statusCode(200)
+                .body(equalTo("Hello world"));
     }
 
     @Test
@@ -55,10 +54,10 @@ public class TestSameEndpointMultipleTimes extends CXFTest {
         ExecuteOnLogLevel.error(
                 new Runnable() {
                     public void run() {
-                        when().
-                                delete("/helloworld").
-                        then().
-                                statusCode(405);
+                        when()
+                                .delete("/helloworld")
+                        .then()
+                                .statusCode(405);
                     }
                 },
                 JAXRSUtils.class.getName(),

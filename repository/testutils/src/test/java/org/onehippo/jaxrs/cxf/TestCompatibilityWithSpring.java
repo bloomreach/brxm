@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -39,10 +38,10 @@ public class TestCompatibilityWithSpring extends CXFTest {
 
     @Test
     public void callingHelloWorldInjectedThroughSpringMustSucceed() {
-        when().
-                get("/helloworld").
-        then().
-                statusCode(200).
-                body(equalTo("Hello world"));
+        when()
+                .get("/helloworld")
+        .then()
+                .statusCode(200)
+                .body(equalTo("Hello world"));
     }
 }

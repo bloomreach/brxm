@@ -18,7 +18,6 @@ package org.onehippo.jaxrs.cxf;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 public class TestSingleEndpoint extends CXFTest {
@@ -30,10 +29,10 @@ public class TestSingleEndpoint extends CXFTest {
 
     @Test
     public void callingHelloWorldMustSucceed() {
-        when().
-                get("/helloworld").
-        then().
-                statusCode(200).
-                body(equalTo("Hello world"));
+        when()
+                .get("/helloworld")
+        .then()
+                .statusCode(200)
+                .body(equalTo("Hello world"));
     }
 }

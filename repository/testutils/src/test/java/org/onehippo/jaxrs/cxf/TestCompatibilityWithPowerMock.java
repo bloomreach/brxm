@@ -24,7 +24,6 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.powermock.api.easymock.PowerMock.mockStaticPartial;
@@ -43,11 +42,11 @@ public class TestCompatibilityWithPowerMock extends CXFTest {
 
     @Test
     public void callingHelloWorldInCombinationWithPowerMockMustSucceed() {
-        when().
-                get("/helloworld").
-        then().
-                statusCode(200).
-                body(equalTo("Hello world"));
+        when()
+                .get("/helloworld")
+        .then()
+                .statusCode(200)
+                .body(equalTo("Hello world"));
     }
 
     @Test

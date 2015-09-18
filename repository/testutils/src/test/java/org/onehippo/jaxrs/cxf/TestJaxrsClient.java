@@ -23,7 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.jaxrs.cxf.HelloObjectEndpoint.StructuredMessage;
 
-import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 
@@ -36,11 +35,11 @@ public class TestJaxrsClient extends CXFTest {
 
     @Test
     public void callingUsingRestAssuredMustSucceed() {
-        when().
-                get("/helloobject").
-        then().
-                statusCode(200).
-                body("message", equalTo("Hello object"),
+        when()
+                .get("/helloobject")
+        .then()
+                .statusCode(200)
+                .body("message", equalTo("Hello object"),
                      "timestamp.year", equalTo(LocalDateTime.now().getYear()));
     }
 
