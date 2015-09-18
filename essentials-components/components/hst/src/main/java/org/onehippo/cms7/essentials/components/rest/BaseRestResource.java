@@ -22,8 +22,6 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.ext.ContextResolver;
-import javax.xml.bind.JAXBContext;
 import javax.xml.ws.WebServiceException;
 
 import org.apache.commons.lang.StringUtils;
@@ -47,7 +45,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @version "$Id$"
  */
-public abstract class BaseRestResource extends AbstractResource implements ContextResolver<JAXBContext> {
+public abstract class BaseRestResource extends AbstractResource {
 
     public static final String INVALID_SCOPE = "Invalid scope";
     public static final String UNCHECKED = "unchecked";
@@ -159,7 +157,7 @@ public abstract class BaseRestResource extends AbstractResource implements Conte
         final HstQueryResult results = query.execute();
         final HippoBeanIterator beans = results.getHippoBeans();
         if (beans.hasNext()) {
-            return (T) beans.nextHippoBean();
+            return (T)beans.nextHippoBean();
         }
 
         return null;
@@ -171,7 +169,7 @@ public abstract class BaseRestResource extends AbstractResource implements Conte
         List<T> retval = new ArrayList<>();
         if (beans.hasNext()) {
             @SuppressWarnings({UNCHECKED})
-            final T bean = (T) beans.nextHippoBean();
+            final T bean = (T)beans.nextHippoBean();
             if (bean != null) {
                 retval.add(bean);
             }
