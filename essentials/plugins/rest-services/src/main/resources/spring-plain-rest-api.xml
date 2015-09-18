@@ -17,8 +17,8 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
 
   <import resource="classpath:/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-jackson.xml"/>
   <import resource="classpath:/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-plain-pipeline.xml"/>
@@ -37,6 +37,56 @@
       </list>
     </property>
   </bean>
+  <!--
+    JAXB CONTEXT MAPPINGS
+  -->
+  <bean id="jaxrsHippoContextProvider" class="org.onehippo.cms7.essentials.components.rest.JaxbContextProvider">
+    <property name="beansPackage" value="{{beansPackage}}"/>
+    <!--
+      you can add extra classes if needed as followed:
+    -->
+    <!--
+      <property name="classes">
+        <list>
+          <value type="java.lang.Class">org.example.beans.MyBean</value>
+        </list>
+      </property>
+    -->
+  </bean>
+
+  <bean id="essentialsRestAllEntityProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <ref bean="jaxrsRestJsonProvider"/>
+        <ref bean="jaxrsHippoContextProvider"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="jaxrsRestPlainServiceValve" class="org.hippoecm.hst.core.container.JaxrsRestServiceValve"
+        init-method="initialize" destroy-method="destroy">
+    <constructor-arg>
+      <bean class="org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService">
+        <constructor-arg value="jaxrsPlainService"/>
+        <property name="servletPath" value=""/>
+        <property name="jaxrsServerFactoryBean">
+          <bean class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
+            <property name="address" value="/"/>
+            <property name="providers" ref="essentialsRestAllEntityProviders"/>
+            <property name="resourceProviders" ref="jaxrsRestPlainResourceProviders"/>
+            <property name="invoker" ref="jaxrsRestPlainServiceInvoker"/>
+          </bean>
+        </property>
+        <property name="inInterceptors">
+          <list>
+            <ref bean="jaxrsRestPlainServiceQueryStringReplacingInterceptor"/>
+          </list>
+        </property>
+      </bean>
+    </constructor-arg>
+    <property name="valveName" value="jaxrsRestPlainServiceValve"/>
+  </bean>
+
 
 </beans>
 
