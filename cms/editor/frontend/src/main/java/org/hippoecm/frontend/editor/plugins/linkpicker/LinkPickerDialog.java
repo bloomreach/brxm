@@ -54,7 +54,6 @@ public class LinkPickerDialog extends Dialog<String> {
 
         setOutputMarkupId(true);
 
-        setTitleKey("link-picker");
         setCssClass("hippo-dialog-picker");
 
         final NodePickerControllerSettings settings = NodePickerControllerSettings.fromPluginConfig(config);
