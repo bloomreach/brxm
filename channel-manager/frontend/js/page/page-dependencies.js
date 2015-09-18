@@ -19,7 +19,6 @@
   angular.module('hippo.channel.page', [
     'hippo.channel',
     'hippo.theme',
-    'ngRoute',
     'pascalprecht.translate',
     'ui.bootstrap',
     'ui.router'

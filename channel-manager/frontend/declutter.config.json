@@ -6,17 +6,15 @@
   "angular-bootstrap": ["ui-bootstrap-tpls.min.js"],
   "angular-chosen-localytics": ["chosen.js"],
   "angular-mocks": [],
-  "angular-route": [
-    "angular-route.min.js",
-    "angular-route.min.js.map"
-  ],
   "angular-translate": ["angular-translate.min.js"],
   "angular-translate-loader-static-files": ["angular-translate-loader-static-files.min.js"],
   "angular-ui-router": ["release/angular-ui-router.min.js"],
   "angular-ui-tree": ["dist/angular-ui-tree.min.js"],
   "chosen": ["chosen.jquery.min.js"],
   "es5-shim": [],
-  "google-code-prettify": [],
+  "google-code-prettify": [
+    "src/prettify.js"
+  ],
   "hippo-theme": [
     "dist/css/main.min.css",
     "dist/js/main.min.js",
@@ -45,6 +43,6 @@
     "angular-animate.js"
   ],
   "angular-aria": [
-    "angular-aria.js"
+    "angular-aria.min.js"
   ]
 }
