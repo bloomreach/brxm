@@ -43,7 +43,6 @@ public class GalleryPickerDialog extends LinkPickerDialog {
 
     public GalleryPickerDialog(IPluginContext context, IPluginConfig config, IModel<String> model) {
         super(context, config, model);
-
         enableUpload = config.getAsBoolean("enable.upload", false);
     }
 

@@ -254,13 +254,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
                 valueModel.detach();
             }
         };
-        return new GalleryPickerDialog(getPluginContext(), getPluginConfig(), dialogModel) {
-
-            @Override
-            public IModel<String> getTitle() {
-                return new StringResourceModel("dialog-title", GalleryPickerPlugin.this, null, "Gallery Picker");
-            }
-        };
+        return new GalleryPickerDialog(getPluginContext(), getPluginConfig(), dialogModel);
     }
 
     @Override
