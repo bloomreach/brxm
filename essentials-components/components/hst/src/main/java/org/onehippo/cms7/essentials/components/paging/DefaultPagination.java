@@ -22,7 +22,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 
@@ -32,6 +33,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
  * @version $Id$
  */
 @XmlAccessorType(XmlAccessType.NONE)
+@XmlRootElement
 public class DefaultPagination<T extends HippoBean> extends Pageable<T> {
 
 
@@ -39,6 +41,10 @@ public class DefaultPagination<T extends HippoBean> extends Pageable<T> {
 
     @SuppressWarnings({"RawUseOfParameterizedType", "rawtypes", "StaticVariableOfConcreteClass"})
     private static final Pageable EMPTY_IMMUTABLE = new DefaultPagination(0, true);
+
+    public DefaultPagination() {
+        items = new ArrayList<>();
+    }
 
     /**
      * Returns empty immutable collection
@@ -48,7 +54,7 @@ public class DefaultPagination<T extends HippoBean> extends Pageable<T> {
      */
     @SuppressWarnings({"unchecked"})
     public static <T extends HippoBean> DefaultPagination<T> emptyCollection() {
-        return (DefaultPagination<T>) EMPTY_IMMUTABLE;
+        return (DefaultPagination<T>)EMPTY_IMMUTABLE;
     }
 
     private DefaultPagination(final int total, final boolean empty) {
@@ -77,7 +83,7 @@ public class DefaultPagination<T extends HippoBean> extends Pageable<T> {
         items.add(item);
     }
 
-    @XmlElement
+    @XmlAnyElement(lax = true)
     @Override
     public List<T> getItems() {
         return items;

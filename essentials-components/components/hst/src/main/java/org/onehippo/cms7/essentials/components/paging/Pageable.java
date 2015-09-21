@@ -24,15 +24,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
-import org.hippoecm.hst.content.beans.standard.HippoBean;
-
 /**
  * Pageable
  *
  * @version $Id$
  */
 @XmlAccessorType(XmlAccessType.NONE)
-public abstract class Pageable<T extends HippoBean> {
+public abstract class Pageable<T> {
 
     private static final int DEFAULT_PAGE_RANGE = 10;
 
@@ -53,6 +51,9 @@ public abstract class Pageable<T extends HippoBean> {
     private long total;
 
     private boolean showPagination = true;
+
+    public Pageable() {
+    }
 
     /**
      * Constructor. NOTE: you can always override <code><strong>setTotal()</strong></code> method in your own class if
@@ -182,7 +183,7 @@ public abstract class Pageable<T extends HippoBean> {
     public List<Long> getPageNumbersArray() {
         long startPage = getStartPage();
         long endPage = getEndPage();
-        List<Long> pages = new ArrayList<Long>();
+        List<Long> pages = new ArrayList<>();
         for (long i = startPage; i <= endPage; i++) {
             pages.add(i);
         }
@@ -394,5 +395,5 @@ public abstract class Pageable<T extends HippoBean> {
 
 
     @XmlElement
-    public abstract List<? extends HippoBean> getItems();
+    public abstract List<T> getItems();
 }
