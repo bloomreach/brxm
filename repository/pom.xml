@@ -97,9 +97,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/branches/repository-3.1.0.menueditor-improvements</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/repository/branches/repository-3.1.0.menueditor-improvements</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/branches/repository-3.1.0.menueditor-improvements</url>
   </scm>
 
   <build>
