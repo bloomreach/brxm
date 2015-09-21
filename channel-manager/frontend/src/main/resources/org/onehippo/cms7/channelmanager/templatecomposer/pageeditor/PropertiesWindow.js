@@ -48,6 +48,9 @@
               currentTab.removeClass('qa-tab-active');
             }
           },
+          propertiesChanged: function(componentId, propertiesMap) {
+            this.fireEvent('propertiesChanged', componentId, propertiesMap);
+          },
           scope: this
         }
       });
