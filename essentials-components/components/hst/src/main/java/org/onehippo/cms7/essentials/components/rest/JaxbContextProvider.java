@@ -52,42 +52,41 @@ public class JaxbContextProvider implements ContextResolver<JAXBContext> {
         log.debug("Creating custom JAXB ContextResolver");
     }
 
+    @Override
     public JAXBContext getContext(Class<?> objectType) {
         if (context == null) {
             try {
-                if (Strings.isNullOrEmpty(beansPackage)) {
-                    final List<Class<?>> allClasses = new ArrayList<>();
-                    allClasses.add(IterablePagination.class);
-                    allClasses.add(DefaultPagination.class);
-                    if (classes != null) {
-                        allClasses.addAll(classes);
-                    }
-                    final Class[] jaxbClasses = allClasses.toArray(new Class[allClasses.size()]);
-                    context = JAXBContext.newInstance(jaxbClasses);
-                    return context;
-                }
                 final List<Class<?>> allClasses = new ArrayList<>();
-                allClasses.add(IterablePagination.class);
-                allClasses.add(DefaultPagination.class);
-                final ClassPath classPath = ClassPath.from(getClass().getClassLoader());
-                final ImmutableSet<ClassPath.ClassInfo> topLevelClasses = classPath.getTopLevelClassesRecursive(beansPackage);
-                for (ClassPath.ClassInfo topLevelClass : topLevelClasses) {
-                    final String name = topLevelClass.getName();
-                    final Class<?> clazz = Class.forName(name);
-                    if (clazz.isAnnotationPresent(XmlRootElement.class)) {
-                        allClasses.add(clazz);
-                    }
-                }
+
+                includeAnnotatedTopLevelClassesFromBeansPackage(allClasses);
                 if (classes != null) {
                     allClasses.addAll(classes);
                 }
-                final Class[] jaxbClasses = allClasses.toArray(new Class[allClasses.size()]);
-                context = JAXBContext.newInstance(jaxbClasses);
+                // Hard-coded classes to include
+                allClasses.add(IterablePagination.class);
+                allClasses.add(DefaultPagination.class);
+
+                context = JAXBContext.newInstance(allClasses.toArray(new Class[allClasses.size()]));
             } catch (JAXBException | IOException | ClassNotFoundException e) {
                 log.error("Error creating JAXB context:", e);
             }
         }
         return context;
+    }
+
+    private void includeAnnotatedTopLevelClassesFromBeansPackage(final List<Class<?>> allClasses)
+            throws IOException, ClassNotFoundException {
+        if (!Strings.isNullOrEmpty(beansPackage)) {
+            final ClassPath classPath = ClassPath.from(getClass().getClassLoader());
+            final ImmutableSet<ClassPath.ClassInfo> topLevelClasses = classPath.getTopLevelClassesRecursive(beansPackage);
+            for (ClassPath.ClassInfo topLevelClass : topLevelClasses) {
+                final String name = topLevelClass.getName();
+                final Class<?> clazz = Class.forName(name);
+                if (clazz.isAnnotationPresent(XmlRootElement.class)) {
+                    allClasses.add(clazz);
+                }
+            }
+        }
     }
 
     public List<Class<?>> getClasses() {
