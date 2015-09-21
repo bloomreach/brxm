@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,6 +38,8 @@ import org.apache.jackrabbit.core.security.authentication.RepositoryCallback;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.HippoSession.NO_SYSTEM_IMPERSONATION;
 
 public class HippoLoginModule implements LoginModule {
 
@@ -94,14 +96,20 @@ public class HippoLoginModule implements LoginModule {
             if (impersonator != null) {
                 // anonymous cannot impersonate
                 if (!impersonator.getPrincipals(AnonymousPrincipal.class).isEmpty()) {
-                    log.info("Denied Anymous impersonating as {}", userId);
+                    log.info("Denied Anonymous impersonating as {}", userId);
                     return false;
                 }
 
                 // system session impersonate
                 if (!impersonator.getPrincipals(SystemPrincipal.class).isEmpty()) {
-                    log.debug("SystemSession impersonating to new SystemSession");
-                    principals.add(new SystemPrincipal());
+                    if (creds != null && creds.getAttribute(NO_SYSTEM_IMPERSONATION) != null) {
+                        log.debug("System session impersonating as {}", userId);
+                        securityManager.assignPrincipals(principals, creds);
+                    }
+                    else {
+                        log.debug("SystemSession impersonating to new SystemSession");
+                        principals.add(new SystemPrincipal());
+                    }
                     return (validLogin = true);
                 }
 

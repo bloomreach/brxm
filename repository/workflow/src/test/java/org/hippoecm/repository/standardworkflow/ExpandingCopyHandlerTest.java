@@ -105,6 +105,17 @@ public class ExpandingCopyHandlerTest extends RepositoryTestCase {
         assertEquals("substitute", values[1].getString());
     }
 
+
+    @Test
+    public void testCopyWithMixinSubstitution() throws Exception {
+        final Map<String, String[]> substitutes = new HashMap<String, String[]>() {{
+            put("./jcr:mixinTypes", new String[] { "mix:mimeType" });
+        }};
+        ExpandingCopyHandler handler = new ExpandingCopyHandler(target, substitutes, session.getValueFactory());
+        JcrUtils.copyTo(source, handler);
+        assertTrue(session.getNode("/test/target/source").isNodeType("mix:mimeType"));
+    }
+
     @Test
     public void testNodeIsNotRenamedIfDefinitionDisallowsIt() throws Exception {
         Node handle = session.getNode("/test").addNode("handle", "hippo:handle");

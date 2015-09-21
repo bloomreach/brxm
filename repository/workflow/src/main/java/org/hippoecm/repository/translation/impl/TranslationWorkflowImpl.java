@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import javax.jcr.Session;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
@@ -65,11 +64,11 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         }
     }
 
-    public Document addTranslation(String language, String name) throws WorkflowException, MappingException,
+    public Document addTranslation(String language, String name) throws WorkflowException,
             RepositoryException, RemoteException {
         HippoTranslatedNode translatedNode = new HippoTranslatedNode(rootSubject);
         Node lclContainingFolder = translatedNode.getContainingFolder();
-        if (!lclContainingFolder.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
+        if (lclContainingFolder == null || !lclContainingFolder.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
             throw new WorkflowException("No translated ancestor found");
         }
 
@@ -162,7 +161,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         return new Document(copiedDoc);
     }
 
-    public void addTranslation(String language, Document document) throws WorkflowException, MappingException,
+    public void addTranslation(String language, Document document) throws WorkflowException,
             RepositoryException, RemoteException {
         HippoTranslatedNode translatedNode = new HippoTranslatedNode(rootSubject);
         if (translatedNode.hasTranslation(language)) {
@@ -183,14 +182,14 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
     }
 
     public Map<String, Serializable> hints() throws WorkflowException, RemoteException, RepositoryException {
-        Map<String, Serializable> hints = new TreeMap<String, Serializable>();
+        Map<String, Serializable> hints = new TreeMap<>();
 
-        if (rootSubject.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
-            String state = rootSubject.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
+        if (userSubject.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
+            String state = userSubject.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
             if ("draft".equals(state)) {
                 hints.put("addTranslation", Boolean.FALSE);
             } else {
-                NodeIterator siblings = rootSubject.getParent().getNodes(rootSubject.getName());
+                NodeIterator siblings = userSubject.getParent().getNodes(userSubject.getName());
                 Node unpublished = null;
                 Node published = null;
                 while (siblings.hasNext()) {
@@ -212,7 +211,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
             }
         }
 
-        HippoTranslatedNode translatedNode = new HippoTranslatedNode(rootSubject);
+        HippoTranslatedNode translatedNode = new HippoTranslatedNode(userSubject);
         Set<String> translations;
         try {
             translations = translatedNode.getTranslations();
@@ -222,8 +221,8 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
 
         hints.put("locales", (Serializable) translations);
 
-        Set<String> available = new TreeSet<String>();
-        // for all the available translations we pick the highest ancestor of rootSubject of type HippoTranslationNodeType.NT_TRANSLATED,
+        Set<String> available = new TreeSet<>();
+        // for all the available translations we pick the highest ancestor of userSubject of type HippoTranslationNodeType.NT_TRANSLATED,
         // and take all the translations for that node
         Node highestTranslatedNode = translatedNode.getFarthestTranslatedAncestor();
         if (highestTranslatedNode != null) {

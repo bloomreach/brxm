@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -79,7 +80,7 @@ class ExpandingCopyHandler extends DefaultCopyHandler {
                 }
             }
 
-            List<NodeType> mixins = Arrays.asList(nodeInfo.getMixinTypes());
+            List<NodeType> mixins = new ArrayList<>(Arrays.asList(nodeInfo.getMixinTypes()));
             for (Map.Entry<String, String[]> entry : renames.entrySet()) {
                 final String key = entry.getKey();
                 final String[] substitutes = entry.getValue();

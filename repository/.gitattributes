@@ -237,6 +237,7 @@ engine/src/test/java/org/hippoecm/repository/SearchOnNodeNameTest.java svneol=na
 engine/src/test/java/org/hippoecm/repository/SecurityServiceTest.java -text
 engine/src/test/java/org/hippoecm/repository/StandardHippoAnalyzerTest.java svneol=native#text/plain
 engine/src/test/java/org/hippoecm/repository/quartz/JCRJobStoreTest.java -text
+engine/src/test/java/org/hippoecm/repository/query/lucene/util/QueryHelperTest.java -text
 engine/src/test/java/org/hippoecm/repository/query/lucene/util/SetDocIdSetBuilderTest.java -text
 engine/src/test/java/org/onehippo/repository/bootstrap/instructions/ContentDeleteInstructionTest.java -text
 engine/src/test/java/org/onehippo/repository/bootstrap/instructions/ContentPropAddInstructionTest.java -text
@@ -375,9 +376,10 @@ test/src/test/java/org/hippoecm/repository/test/TraversePerfTest.java -text
 test/src/test/java/org/hippoecm/repository/test/TraversePerfTestCase.java -text
 test/src/test/java/org/hippoecm/repository/util/JcrUtilsTest.java -text
 test/src/test/java/org/onehippo/repository/LocalRefreshTest.java -text
-test/src/test/java/org/onehippo/repository/LockTest.java -text
 test/src/test/java/org/onehippo/repository/bootstrap/InitializationProcessorTest.java -text
 test/src/test/java/org/onehippo/repository/clustering/ClusterTest.java -text
+test/src/test/java/org/onehippo/repository/locking/LockClusterTest.java -text
+test/src/test/java/org/onehippo/repository/locking/LockTest.java -text
 test/src/test/java/org/onehippo/repository/monkey/Action.java -text
 test/src/test/java/org/onehippo/repository/monkey/AddNodeAction.java -text
 test/src/test/java/org/onehippo/repository/monkey/Monkey.java -text

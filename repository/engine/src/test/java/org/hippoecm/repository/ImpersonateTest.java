@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
+import static org.hippoecm.repository.api.HippoSession.NO_SYSTEM_IMPERSONATION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
@@ -66,12 +67,36 @@ public class ImpersonateTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testImpersonate() throws RepositoryException {
+    public void testImpersonateAnyUserFromAnyUser() throws RepositoryException {
         // setup user session
         Session userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
         Session impersonateSession = userSession.impersonate(new SimpleCredentials("admin", new char[] {}));
         assertEquals("admin", impersonateSession.getUserID());
     }
+
+    @Test
+    public void testSystemAlwaysImpersonatesSystem() throws RepositoryException {
+        // setup system session
+        LocalHippoRepository localServer = (LocalHippoRepository)server;
+        Session systemSession = localServer.getOrCreateReferenceWorkspace().login();
+        assertEquals("system", systemSession.getUserID());
+        SimpleCredentials userCredentials = new SimpleCredentials(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+        Session anotherSystemSession = systemSession.impersonate(userCredentials);
+        assertEquals("system", anotherSystemSession.getUserID());
+    }
+
+    @Test
+    public void testSystemImpersonateWithNoSystemImpersonation() throws RepositoryException {
+        // setup system session
+        LocalHippoRepository localServer = (LocalHippoRepository)server;
+        Session systemSession = localServer.getOrCreateReferenceWorkspace().login();
+        assertEquals("system", systemSession.getUserID());
+        SimpleCredentials userCredentials = new SimpleCredentials(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+        userCredentials.setAttribute(NO_SYSTEM_IMPERSONATION, Boolean.TRUE);
+        Session userSession = systemSession.impersonate(userCredentials);
+        assertEquals(TEST_USER_ID, userSession.getUserID());
+    }
+
     @Test
     public void testAnonymous() throws RepositoryException {
         // setup user session

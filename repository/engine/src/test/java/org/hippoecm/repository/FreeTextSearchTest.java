@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,8 +30,6 @@ import javax.jcr.query.QueryResult;
 import org.apache.jackrabbit.core.query.QueryHandler;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -423,6 +421,26 @@ public class FreeTextSearchTest extends RepositoryTestCase {
 
     }
 
+    @Test
+    public void testCharacterReferenceRemoval() throws Exception {
+        String word = "abc&nbsp;xyz&#x32;AT&T&gt;klm&agrave;";
+
+        String[] extraSecondLevelChildNodeContent = new String[] {
+                "/test/Document1/Document1/compoundchild/hippo:html2",  "hippo:testhtml",
+                "hippo:testcontent", word
+        };
+
+        createContent(defaultContent, extraSecondLevelChildNodeContent);
+
+        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'abc AND xyz AND AT&T AND klm')]";
+        QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
+        NodeIterator nodes = queryResult.getNodes();
+        assertEquals(1L, nodes.getSize());
+        while(nodes.hasNext()) {
+            Node doc = nodes.nextNode();
+            assertTrue(doc.getName().equals("Document1"));
+        }
+    }
 
     public static void flushIndex(Repository repository) {
         try {

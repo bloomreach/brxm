@@ -32,11 +32,11 @@ import org.slf4j.LoggerFactory;
  * This class contains a set of static utilities to temporarily (for example one method invocation) change the log level
  * for some logger. This is very useful in case of unit testing some behaviour with expected exceptions, for example
  * when unit testing wrongly configured bootstrap configuration. To avoid these expected exceptions being logged
- * and fill up the unit test output, you can use this utility to temporarily change the log-level
+ * and fill up the unit test output, you can use this utility to temporarily change the log-level.
  * </p>
  *
  * <p>
- *     For example, assume that we unit test a wrong Spring bean and expect a warning to be logger
+ *     For example, assume that we unit test a wrong Spring bean and expect a warning to be logged
  *     when starting the component manager. Assume you know the warning is logged by componentManager.start();
  *     You can suppress this warning during that call as follows:
  * </p>
@@ -50,12 +50,11 @@ import org.slf4j.LoggerFactory;
  *         }
  *         // the SpringComponentManager.class.getName() is the logger name
  *       }, SpringComponentManager.class.getName());
- *
- *       </code>
+ *     </code>
  * </pre>
  *
  * Note that all the public utility methods on purpose take a second and third argument for <code>name</code>
- * and <code>names</code>. For example
+ * and <code>names</code>. For example:
  *  <pre>
  *     <code>
  *     debug(Runnable callback, String name, String ... names)
@@ -64,7 +63,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * If you we would use <code> debug(Runnable callback, String ... names)</code> it would be less clear when using the
  * utility method that you should include at least one logger. With only <code>String ... names</code> this would be
- * much less clear as then you could invoke debug with only a Runnable object and no other argument
+ * much less clear as then you could invoke debug with only a Runnable object and no other argument.
  * </p>
  * <p>
  *  If the action to be invoked by the {@link Runnable} callback itself might throw (also) an exception, using

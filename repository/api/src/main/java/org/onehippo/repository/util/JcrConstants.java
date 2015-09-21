@@ -38,6 +38,10 @@ public final class JcrConstants {
     public static final String NT_VERSION = "nt:version";
     public static final String NT_VERSION_HISTORY = "nt:versionHistory";
     public static final String NT_FROZEN_NODE = "nt:frozenNode";
+    public static final String NT_VERSIONED_CHILD = "nt:versionedChild";
+    public static final String NT_VERSION_STORAGE = "rep:versionStorage";
+    public static final String NT_VERSION_LABELS = "nt:versionLabels";
+    public static final String NT_SYSTEM = "rep:system";
 
 
     // ------------------------------------------ properties

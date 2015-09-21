@@ -158,6 +158,29 @@ public class LoggingServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+
+        String [] logLevelParams = req.getParameterValues(LOG_LEVEL_PARAM_NAME);
+
+        if (logLevelParams != null) {
+            Map<String, LoggerLevelInfo> loggerLevelInfosMap = getLoggerLevelInfosMap();
+
+            String loggerName = null;
+            String loggerLevel = null;
+
+            for (String logLevelParam : logLevelParams) {
+                loggerName = StringUtils.substringBefore(logLevelParam, ":");
+                loggerLevel = StringUtils.substringAfter(logLevelParam, ":");
+
+                if (StringUtils.isNotEmpty(loggerName) && StringUtils.isNotEmpty(loggerLevel)) {
+                    LoggerLevelInfo loggerLevelInfo = loggerLevelInfosMap.get(loggerName);
+
+                    if (loggerLevelInfo != null && !StringUtils.equals(loggerLevel, loggerLevelInfo.getEffectiveLogLevel())) {
+                        setLoggerLevel(loggerName, loggerLevel);
+                    }
+                }
+            }
+        }
+
         // explicitly set character encoding
         req.setCharacterEncoding("UTF-8");
         res.setCharacterEncoding("UTF-8");
@@ -201,28 +224,6 @@ public class LoggingServlet extends HttpServlet {
         if (!isAuthorized(req)) {
             BasicAuth.setRequestAuthorizationHeaders(res, "LoggingServlet");
             return;
-        }
-
-        String [] logLevelParams = req.getParameterValues(LOG_LEVEL_PARAM_NAME);
-
-        if (logLevelParams != null) {
-            Map<String, LoggerLevelInfo> loggerLevelInfosMap = getLoggerLevelInfosMap();
-
-            String loggerName = null;
-            String loggerLevel = null;
-
-            for (String logLevelParam : logLevelParams) {
-                loggerName = StringUtils.substringBefore(logLevelParam, ":");
-                loggerLevel = StringUtils.substringAfter(logLevelParam, ":");
-
-                if (StringUtils.isNotEmpty(loggerName) && StringUtils.isNotEmpty(loggerLevel)) {
-                    LoggerLevelInfo loggerLevelInfo = loggerLevelInfosMap.get(loggerName);
-
-                    if (loggerLevelInfo != null && !StringUtils.equals(loggerLevel, loggerLevelInfo.getEffectiveLogLevel())) {
-                        setLoggerLevel(loggerName, loggerLevel);
-                    }
-                }
-            }
         }
 
         doGet(req, res);

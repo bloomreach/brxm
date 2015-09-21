@@ -186,6 +186,7 @@ public abstract class ClusterTest {
     @After
     public void tearDown() throws Exception {
         if (session1 != null && session1.isLive()) {
+            session1.refresh(false);
             removeNodes("/test");
             session1.logout();
         }

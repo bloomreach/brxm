@@ -31,6 +31,7 @@ import org.onehippo.repository.bootstrap.InitializeInstruction;
 import org.onehippo.repository.bootstrap.InitializeItem;
 import org.onehippo.repository.bootstrap.PostStartupTask;
 
+import static javax.jcr.PropertyType.STRING;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPSET;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.log;
 
@@ -90,7 +91,14 @@ public class ContentPropSetInstruction extends InitializeInstruction {
         nodeTypes.add(target.getPrimaryNodeType());
         for (NodeType nodeType : nodeTypes) {
             for (PropertyDefinition propertyDefinition : nodeType.getPropertyDefinitions()) {
-                if (propertyDefinition.getName().equals("*") || propertyDefinition.getName().equals(propertyName)) {
+                if (propertyDefinition.getRequiredType() == STRING && propertyDefinition.getName().equals(propertyName)) {
+                    return propertyDefinition.isMultiple();
+                }
+            }
+        }
+        for (NodeType nodeType : nodeTypes) {
+            for (PropertyDefinition propertyDefinition : nodeType.getPropertyDefinitions()) {
+                if (propertyDefinition.getRequiredType() == STRING && propertyDefinition.getName().equals("*")) {
                     return propertyDefinition.isMultiple();
                 }
             }
