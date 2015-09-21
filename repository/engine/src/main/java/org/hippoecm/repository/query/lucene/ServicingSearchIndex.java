@@ -556,7 +556,8 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                                  final Set<NodeId> includedIdsCache,
                                  final List<NodeId> nodeIdHierarchy) throws RepositoryException {
 
-        if (node.getParentId() == null) {
+        final NodeId parentId = node.getParentId();
+        if (parentId == null) {
             // no 'skip index' node was found, add this nodeIdHierarchy list to the include set
             includedIdsCache.addAll(nodeIdHierarchy);
             return false;
@@ -581,8 +582,11 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         }
 
         try {
-            final NodeState parent = getNodeState(node.getParentId());
+            final NodeState parent = getNodeState(parentId);
             return skipIndexing(parent, excludedIdsCache, includedIdsCache, nodeIdHierarchy);
+        } catch (ItemNotFoundException e) {
+            log.debug("Node with id '{}' not found, not skipping indexing", parentId);
+            return true;
         } catch (ItemStateException e) {
             String msg = "Error while indexing node: " + nodeId + " of "
                     + "type: " + node.getNodeTypeName();
@@ -782,7 +786,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         return (PropertyState) getItemStateManager().getItemState(propertyId);
     }
 
-    private NodeState getNodeState(ItemId nodeId) throws ItemStateException {
+    private NodeState getNodeState(ItemId nodeId) throws ItemNotFoundException, ItemStateException {
         return (NodeState) getItemStateManager().getItemState(nodeId);
     }
 
