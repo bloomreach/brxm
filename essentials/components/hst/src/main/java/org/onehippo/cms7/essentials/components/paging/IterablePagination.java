@@ -19,7 +19,8 @@ package org.onehippo.cms7.essentials.components.paging;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
@@ -32,13 +33,17 @@ import org.slf4j.LoggerFactory;
  *
  * @version $Id$
  */
+@XmlRootElement
 public class IterablePagination<T extends HippoBean> extends Pageable<T> {
 
     public static final String UNCHECKED = "unchecked";
     private static Logger log = LoggerFactory.getLogger(IterablePagination.class);
 
-
     private List<T> items;
+
+    public IterablePagination() {
+        items = new ArrayList<>();
+    }
 
     /**
      * Constructor to be used when the paging has been done beforehand (for example in HST query).
@@ -127,15 +132,15 @@ public class IterablePagination<T extends HippoBean> extends Pageable<T> {
      *
      * @return all paged items
      */
-    @XmlElement
+    @XmlAnyElement(lax = true)
     @Override
-    public List<? extends HippoBean> getItems() {
+    public List<T> getItems() {
         return items;
     }
 
     @SuppressWarnings({UNCHECKED})
-    public void setItems(List<? extends HippoBean> items) {
-        this.items = (List<T>) items;
+    public void setItems(List<T> items) {
+        this.items = items;
     }
 
 

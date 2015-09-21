@@ -71,6 +71,7 @@ components/hst/src/main/java/org/onehippo/cms7/essentials/components/paging/Defa
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/paging/IterablePagination.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/paging/Pageable.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/rest/BaseRestResource.java -text
+components/hst/src/main/java/org/onehippo/cms7/essentials/components/rest/JaxbContextProvider.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/rest/adapters/HippoGalleryImageAdapter.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/rest/adapters/HippoHtmlAdapter.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/rest/adapters/RestLink.java -text
@@ -81,6 +82,11 @@ components/hst/src/main/java/org/onehippo/cms7/essentials/components/utils/Compo
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/utils/SiteUtils.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/utils/query/HstQueryBuilder.java -text
 components/hst/src/main/java/org/onehippo/cms7/essentials/components/utils/query/QueryBuilder.java -text
+components/hst/src/test/java/org/onehippo/cms7/essentials/components/paging/DefaultPaginationTest.java -text
+components/hst/src/test/java/org/onehippo/cms7/essentials/components/paging/IterablePaginationTest.java -text
+components/hst/src/test/java/org/onehippo/cms7/essentials/components/paging/TestBean.java -text
+components/hst/src/test/java/org/onehippo/cms7/essentials/components/rest/JaxbContextProviderTest.java -text
+components/hst/src/test/resources/log4j.xml -text
 components/pom.xml -text
 dashboard-dependencies/pom.xml -text
 dashboard/.bowerrc -text
