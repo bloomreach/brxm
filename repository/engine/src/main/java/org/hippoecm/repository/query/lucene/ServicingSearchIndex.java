@@ -586,7 +586,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             return skipIndexing(parent, excludedIdsCache, includedIdsCache, nodeIdHierarchy);
         } catch (ItemNotFoundException e) {
             log.debug("Node with id '{}' not found, not skipping indexing", parentId);
-            return true;
+            return false;
         } catch (ItemStateException e) {
             String msg = "Error while indexing node: " + nodeId + " of "
                     + "type: " + node.getNodeTypeName();
