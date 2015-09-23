@@ -716,13 +716,18 @@ public class HstServletResponseState implements HstResponseState {
     }
 
     public void flush() throws IOException {
-        doFlush(getParentWriter());
+        doFlush(null);
     }
 
     public void flush(Writer writer) throws IOException {
         doFlush(writer);
     }
 
+    /**
+     * @param writer The writer to write to or {@code null}. The writer MUST be {@code null} when invoked from {@link #flush()}
+     *               because if {@code getParentWriter()} gets invoked in {@link #flush()}, the backing http servlet response already
+     *               gets committed and a redirect is not possible any more.
+     */
     private void doFlush(Writer writer) throws IOException {
         if (flushed) {
             //throw new IllegalStateException("Already flushed");
@@ -807,7 +812,9 @@ public class HstServletResponseState implements HstResponseState {
                     if (!closed) {
                         outputStream.flush();
                     }
-
+                    if (writer == null) {
+                        writer = getParentWriter();
+                    }
                     int len = byteOutputBuffer.size();
                     if (contentLength > -1 && contentLength < len) {
                         len = contentLength;
@@ -832,6 +839,9 @@ public class HstServletResponseState implements HstResponseState {
                     if (!closed) {
                         printWriter.flush();
 
+                        if (writer == null) {
+                            writer = getParentWriter();
+                        }
                         printPreambleComments(preambleComments);
                         printPreambleElements(preambleElements);
                         if (wrapperElement == null) {
@@ -922,6 +932,10 @@ public class HstServletResponseState implements HstResponseState {
         this.parentResponse.setLocale(locale);
     }
 
+    /**
+     * After invoking this method, the backing http servlet response becomes committed. After this method gets
+     * invoked, not more response headers can be set and no redirect can be done any more
+     */
     protected Writer getParentWriter() throws IOException {
         try {
             return getResponseWriter();
