@@ -11,16 +11,19 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposys:resourcebundle</sv:value>
       </sv:property>
-      <sv:property sv:name="key" sv:type="String">
-        <sv:value>value</sv:value>
+      <sv:property sv:name="key1" sv:type="String">
+        <sv:value>value1</sv:value>
+      </sv:property>
+      <sv:property sv:name="key2" sv:type="String">
+        <sv:value>value2</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="nl">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposys:resourcebundle</sv:value>
       </sv:property>
-      <sv:property sv:name="key" sv:type="String">
-        <sv:value>waarde</sv:value>
+      <sv:property sv:name="key1" sv:type="String">
+        <sv:value>waarde1</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
