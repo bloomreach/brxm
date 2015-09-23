@@ -160,3 +160,6 @@
 
 // marker mixin to exclude the node from being indexed
 [hippo:skipindex] mixin
+
+[hippo:named] mixin
+- hippo:name (string) mandatory

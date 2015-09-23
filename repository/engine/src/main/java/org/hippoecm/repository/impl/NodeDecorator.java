@@ -292,6 +292,14 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
         }
     }
 
+    @Override
+    public String getHippoName() throws RepositoryException {
+        if (isNodeType(HippoNodeType.NT_NAMED)) {
+            return getProperty(HippoNodeType.HIPPO_NAME).getString();
+        }
+        return getName();
+    }
+
     /**
      * @inheritDoc
      */
@@ -309,10 +317,10 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
                 if (handle.isNodeType(HippoNodeType.NT_HANDLE) && handle.isNodeType(HippoNodeType.NT_TRANSLATED)) {
                     node = handle;
                 } else {
-                    return getName();
+                    return getHippoName();
                 }
             } else {
-                return getName();
+                return getHippoName();
             }
         }
         if(localized == null) {
@@ -343,7 +351,7 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
                 return localizedName;
             }
         }
-        return getName();
+        return getHippoName();
     }
 
     @Override

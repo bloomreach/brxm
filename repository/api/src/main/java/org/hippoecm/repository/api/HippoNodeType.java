@@ -188,6 +188,8 @@ public interface HippoNodeType {
 
     public static final String NT_LOCKABLE = "hippo:lockable";
 
+    public static final String NT_NAMED = "hippo:named";
+
     public static final String HIPPO_ACTIVE = "hipposys:active";
 
     public static final String HIPPO_SYSTEM = "hipposys:system";
@@ -471,4 +473,6 @@ public interface HippoNodeType {
 
     public static final String NT_RESOURCEBUNDLES = "hipposys:resourcebundles";
     public static final String NT_RESOURCEBUNDLE = "hipposys:resourcebundle";
+
+    public static final String HIPPO_NAME = "hippo:name";
 }

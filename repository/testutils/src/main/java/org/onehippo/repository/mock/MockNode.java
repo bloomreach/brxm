@@ -681,6 +681,11 @@ public class MockNode extends MockItem implements HippoNode {
     }
 
     @Override
+    public String getHippoName() throws RepositoryException {
+        return getName();
+    }
+
+    @Override
     public String getLocalizedName() throws RepositoryException {
         return getName();
     }

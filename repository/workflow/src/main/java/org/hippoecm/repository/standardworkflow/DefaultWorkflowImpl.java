@@ -129,6 +129,16 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
         }
     }
 
+    @Override
+    public void setHippoName(final String hippoName) throws WorkflowException, RepositoryException, RemoteException {
+        JcrUtils.ensureIsCheckedOut(subject);
+        if (!subject.isNodeType(HippoNodeType.NT_NAMED)) {
+            subject.addMixin(HippoNodeType.NT_NAMED);
+        }
+        subject.setProperty(HippoNodeType.HIPPO_NAME, hippoName);
+        subject.getSession().save();
+    }
+
     public void localizeName(Localized localized, String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Node node;
         if (subject.isNodeType(HippoNodeType.NT_HANDLE)) {

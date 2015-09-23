@@ -46,6 +46,11 @@ public class ServerServicingNode extends ServerNode implements RemoteServicingNo
         }
     }
 
+    @Override
+    public String getHippoName() throws RepositoryException, RemoteException {
+        return node.getHippoName();
+    }
+
     public String getLocalizedName(Localized localized) throws RepositoryException, RemoteException {
         try {
             return node.getLocalizedName(localized);

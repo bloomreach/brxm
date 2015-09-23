@@ -30,6 +30,8 @@ public interface RemoteServicingNode extends RemoteNode, Remote, Serializable {
 
     RemoteNode getCanonicalNode() throws RepositoryException, RemoteException;
 
+    String getHippoName() throws RepositoryException, RemoteException;
+
     String getLocalizedName(Localized localized) throws RepositoryException, RemoteException;
 
     Map<Localized, String> getLocalizedNames() throws RepositoryException, RemoteException;
