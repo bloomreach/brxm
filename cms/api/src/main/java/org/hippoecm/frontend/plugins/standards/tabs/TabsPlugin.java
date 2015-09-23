@@ -384,9 +384,11 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     public void hide() {
-        previousSelectedTabIndex = tabbedPanel.getSelectedTab();
-        tabbedPanel.setSelectedTab(-1);
-        tabbedPanel.redraw();
+        if (tabbedPanel.getSelectedTab() > -1) {
+            previousSelectedTabIndex = tabbedPanel.getSelectedTab();
+            tabbedPanel.setSelectedTab(-1);
+            tabbedPanel.redraw();
+        }
     }
 
     public void show() {

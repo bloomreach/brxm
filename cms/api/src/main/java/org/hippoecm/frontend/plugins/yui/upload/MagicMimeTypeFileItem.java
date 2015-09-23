@@ -22,6 +22,8 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.tika.Tika;
+import org.apache.tika.mime.MediaType;
+import org.apache.tika.mime.MediaTypeRegistry;
 import org.apache.wicket.util.upload.FileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +45,12 @@ public class MagicMimeTypeFileItem implements FileItem {
      */
     private String resolveMimeType(FileItem fileItem) {
         try (InputStream in = fileItem.getInputStream()) {
-            return tika.detect(in, fileItem.getName());
+            final String fileName = fileItem.getName();
+            final String extensionBasedMediaType = tika.detect(fileName);
+            if (MediaTypeRegistry.getDefaultRegistry().isInstanceOf(extensionBasedMediaType, MediaType.TEXT_PLAIN)) {
+                return extensionBasedMediaType;
+            }
+            return tika.detect(in, fileName);
         } catch (IOException e) {
             log.warn("Tika failed to detect mime-type, falling back on browser provided mime-type", e);
         }
