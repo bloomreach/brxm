@@ -65,7 +65,10 @@
         text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-save'],
         scope: this,
         handler: function () {
-          this.propertiesPanel.saveAll().then(this._resetFormStates.bind(this));
+          this.propertiesPanel.saveAll().then(function () {
+            this._resetFormStates();
+            Hippo.ChannelManager.TemplateComposer.Instance.templateComposerApi.channelChanged();
+          }.bind(this));
         }
       });
 

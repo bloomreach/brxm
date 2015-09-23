@@ -286,6 +286,7 @@
     },
 
     _onPropertiesDeleted: function (deletedVariantId) {
+      Hippo.ChannelManager.TemplateComposer.Instance.templateComposerApi.channelChanged();
       this._reloadCleanupAndFireEvent(deletedVariantId, 'delete');
     },
 
