@@ -27,6 +27,7 @@
     width: 100%;
     height: $ajax-loader-height;
     animation: ajaxloader 1s infinite linear;
+    animation-play-state: paused;
     background-size: $ajax-loader-width $ajax-loader-height;
     @include at2x("#{$images}/loader/ajax-loader", "png", $ajax-loader-width, $ajax-loader-height);
     background-repeat: no-repeat;
@@ -35,6 +36,9 @@
 
 .hippo-ajax-show-load .wicket-ajax-indicator {
   visibility: visible;
+  .ajax-loader {
+    animation-play-state: running;
+  }
 }
 
 .hippo-ajax-show-busy {
