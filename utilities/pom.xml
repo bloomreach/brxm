@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>27.2</version>
+    <version>27.3-SNAPSHOT</version>
   </parent>
 
   <name>Hippo CMS7 Utilities</name>
@@ -33,7 +33,7 @@
   <inceptionYear>2012</inceptionYear>
 
   <properties>
-    <commons-lang.version>2.4</commons-lang.version>
+    <commons-lang.version>2.6</commons-lang.version>
     <junit.version>4.10</junit.version>
   </properties>
 
