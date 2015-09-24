@@ -95,12 +95,13 @@ public class RepositoryUserManager extends AbstractUserManager {
             String passkey = JcrUtils.getStringProperty(userinfo, HippoNodeType.HIPPO_PASSKEY, null);
             if (passkey != null && password != null && password.length > 0) {
                 if (JvmCredentials.PASSKEY.equals(passkey)) {
+                    log.info("User '{}' has {} passkey: attempting to log in with Jvm credentials", creds.getUserID(), JvmCredentials.PASSKEY);
                     final JvmCredentials jvmCreds = JvmCredentials.getCredentials(creds.getUserID());
                     if (Arrays.equals(jvmCreds.getPassword(), password)) {
                         log.info("User '{}' authenticated via jvm credentials", creds.getUserID());
                         return true;
                     }
-                    log.info("Jvm credentials did not match for user '{}'", creds.getUserID());
+                    log.info("Jvm credentials did not match for user '{}'. Continuing with regular authentication", creds.getUserID());
                 }
                 else if (Arrays.equals(password, passkey.toCharArray())) {
                     return true;
