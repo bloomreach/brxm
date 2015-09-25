@@ -217,16 +217,8 @@ public class ContentBeansService {
         if (!hasRelatedDocs) {
             return;
         }
-        // check related docs existence:
-        Map<String, Path> existing = findExitingBeans();
-        ensureRelatedDocsBean(existing);
-        existing = findExitingBeans();
-        final Path relatedPath = existing.get(EssentialConst.RELATEDDOCS_DOCS);
-        if (relatedPath == null) {
-            log.warn("Missing related documents bean, unable to generate bean methods");
-            return;
-        }
 
+        Map<String, Path> existing = findExitingBeans();
         for (HippoContentBean contentBean : contentBeans) {
             final Path path = existing.get(contentBean.getName());
             if (path != null && contentBean.getContentType().getAggregatedTypes().contains(RELATED_MIXIN)) {
@@ -234,31 +226,14 @@ public class ContentBeansService {
                 final Set<String> methodInternalNames = methodCollection.getMethodInternalNames();
                 if (!methodInternalNames.contains(EssentialConst.RELATEDDOCS_DOCS)) {
                     log.debug("Adding related docs method to: ", path);
-                    JavaSourceUtils.addRelatedDocsMethod(EssentialConst.METHOD_RELATED_DOCUMENTS, path, relatedPath);
+                    JavaSourceUtils.addRelatedDocsMethod(EssentialConst.METHOD_RELATED_DOCUMENTS, path);
                     log.debug(MSG_ADDED_METHOD, EssentialConst.METHOD_RELATED_DOCUMENTS);
+                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(path.toString(), EssentialConst.METHOD_RELATED_DOCUMENTS, ActionType.CREATED_METHOD));
                     eventBus.post(new MessageEvent(String.format("Successfully created method: %s", EssentialConst.METHOD_RELATED_DOCUMENTS)));
-
                 }
             }
         }
     }
-
-    private Path ensureRelatedDocsBean(final Map<String, Path> existing) {
-        if (existing.containsKey(EssentialConst.RELATEDDOCS_DOCS)) {
-            return existing.get(EssentialConst.RELATEDDOCS_DOCS);
-        }
-        //final String relatedDocumentsBean = EssentialConst.RELATED_DOCUMENTS_BEAN;
-        final String className = GlobalUtils.createClassName(EssentialConst.RELATED_DOCUMENTS_BEAN);
-        final Path path = JavaSourceUtils.createJavaClass(context.getBeansRootPath().toString(), className, context.beansPackageName(), null);
-        context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(ActionType.CREATED_CLASS, path.toString(), className));
-        JavaSourceUtils.createHippoBean(path, context.beansPackageName(), EssentialConst.RELATEDDOCS_DOCS, EssentialConst.RELATEDDOCS_DOCS);
-        JavaSourceUtils.addExtendsClass(path, "HippoItem");
-        JavaSourceUtils.addImport(path, EssentialConst.HIPPO_ITEM_IMPORT);
-        JavaSourceUtils.populateRelatedDocsBean(EssentialConst.METHOD_RELATED_DOCUMENTS, path);
-        return path;
-
-    }
-
 
     /*
       public List<HippoBean> getRelatedDocs() {

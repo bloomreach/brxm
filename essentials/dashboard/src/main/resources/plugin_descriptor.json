@@ -306,6 +306,13 @@
                 "artifactId": "hippo-plugin-relateddocs",
                 "scope": "compile",
                 "targetPom": "cms"
+            },
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo.cms7",
+                "artifactId": "hippo-plugin-relateddocs-hst-client",
+                "scope": "compile",
+                "targetPom": "site"
             }
         ]
     },
