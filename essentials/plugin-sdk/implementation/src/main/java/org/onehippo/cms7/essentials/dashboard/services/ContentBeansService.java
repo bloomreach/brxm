@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.stream.Collectors;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -193,15 +194,11 @@ public class ContentBeansService {
         final Set<String> set = new HashSet<>();
         final List<HippoContentProperty> properties = bean.getProperties();
         if (properties != null) {
-            for (HippoContentProperty property : properties) {
-                set.add(property.getName());
-            }
+            set.addAll(properties.stream().map(HippoContentProperty::getName).collect(Collectors.toList()));
         }
         final List<HippoContentChildNode> children = bean.getChildren();
         if (children != null) {
-            for (HippoContentChildNode child : children) {
-                set.add(child.getName());
-            }
+            set.addAll(children.stream().map(HippoContentChildNode::getName).collect(Collectors.toList()));
         }
 
         return set;
