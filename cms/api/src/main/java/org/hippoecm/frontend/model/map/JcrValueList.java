@@ -26,8 +26,10 @@ import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 
 import org.apache.wicket.model.IDetachable;
+import org.hippoecm.frontend.RepositoryRuntimeException;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
+import org.hippoecm.frontend.session.InvalidSessionException;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,10 +158,9 @@ public class JcrValueList<T> extends AbstractList<T> implements IDetachable {
         }
         try {
             return property.getProperty().getValues().length;
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+        } catch (RepositoryException e) {
+            throw new RepositoryRuntimeException("Failed to determine property value list size: " + e.toString(), e);
         }
-        return 0;
     }
 
     public void detach() {
