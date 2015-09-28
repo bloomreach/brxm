@@ -135,11 +135,11 @@
       this.fireEvent('onLoad');
     },
 
-    updateUI: function (changedVariantIds, activeVariantId) {
-      var existingTabs = changedVariantIds ? this._getTabs() : [],
+    updateUI: function (triggeredByVariantId) {
+      var existingTabs = triggeredByVariantId ? this._getTabs() : [],
         reusableTabs = existingTabs.filter(function (tab) {
-          // reuse all variant tabs except the changed ones that have been saved
-          return tab.variant && changedVariantIds.indexOf(tab.variant.id) === -1;
+          // reuse all variant tabs except the changed one that triggerd the UI update
+          return tab.variant && tab.variant.id !== triggeredByVariantId;
         });
 
       this.firePropertiesChangedEvents = false;
@@ -152,7 +152,7 @@
         this.adjustBodyWidth(this.tabWidth);
 
         this.firePropertiesChangedEvents = true;
-        this._selectBestMatchingTab(activeVariantId, variants);
+        this._selectBestMatchingTab(triggeredByVariantId, variants);
 
         endUpdate = this.endUpdate.createDelegate(this);
         this._loadTabs().when(endUpdate).otherwise(endUpdate);
@@ -241,6 +241,9 @@
         getCurrentVariant: this.getCurrentVariant.bind(this),
         componentMessageBus: this.componentMessageBus,
         listeners: {
+          'save': function (variant) {
+            this._onPropertiesSaved(variant);
+          },
           'copy': this._copyVariant,
           scope: this
         }
@@ -262,6 +265,7 @@
           bubbleEvents: ['variantDirty', 'variantPristine', 'clientvalidation'],
           listeners: {
             propertiesChanged: this._onPropertiesChanged,
+            propertiesSaved: this._onPropertiesSaved,
             propertiesDeleted: this._onPropertiesDeleted,
             scope: this
           }
@@ -277,24 +281,17 @@
       this.fireEvent('propertiesChanged', this.componentId, {});
     },
 
-    /**
-     * Event called after all dirty forms are saved
-     * @param savedVariantIds  list of dirty variants that have been saved
-     * @param activeVariantId  the active variant in the panel
-     * @private
-     */
-    _onSaved: function (savedVariantIds, activeVariantId) {
-      this._reloadCleanupAndFireEvent(savedVariantIds, activeVariantId, 'save');
+    _onPropertiesSaved: function (savedVariantId) {
+      this._reloadCleanupAndFireEvent(savedVariantId, 'save');
     },
 
     _onPropertiesDeleted: function (deletedVariantId) {
       Hippo.ChannelManager.TemplateComposer.Instance.templateComposerApi.channelChanged();
-      // set the active tab be the first one (i.e. default variant)
-      this._reloadCleanupAndFireEvent([deletedVariantId], 'hippo-default', 'delete');
+      this._reloadCleanupAndFireEvent(deletedVariantId, 'delete');
     },
 
-    _reloadCleanupAndFireEvent: function (changedVariantIds, activeVariantId, event) {
-      this.componentVariants.invalidate(changedVariantIds, activeVariantId);
+    _reloadCleanupAndFireEvent: function (changedVariantId, event) {
+      this.componentVariants.invalidate(changedVariantId);
       this.componentVariants.cleanup().when(function () {
         this.fireEvent(event);
       }.createDelegate(this)).otherwise(function (response) {
@@ -455,13 +452,7 @@
      */
     saveAll: function () {
       var dirtyEditors = this._getDirtyEditors(),
-        savePromises = [],
-        dirtyVariantIds = [],
-        activeVariantId = this.getActiveTab().variant.id;
-
-      dirtyEditors.forEach(function (editor) {
-        dirtyVariantIds.push(editor.variant.id);
-      });
+        savePromises = [];
 
       dirtyEditors.forEach(function(editor) {
         savePromises.push(editor.save());
@@ -469,12 +460,11 @@
 
       return $.when.apply($, savePromises).then(function () {
         var afterSavePromises = [];
-        this._onSaved(dirtyVariantIds, activeVariantId);
         dirtyEditors.forEach(function(editor) {
           afterSavePromises.push(editor.onAfterSave());
         });
         return $.when.apply($, afterSavePromises);
-      }.bind(this));
+      });
     }
   });
 
