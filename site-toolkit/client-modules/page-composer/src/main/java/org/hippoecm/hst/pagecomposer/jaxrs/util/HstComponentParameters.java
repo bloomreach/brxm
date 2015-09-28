@@ -119,15 +119,12 @@ public class HstComponentParameters {
     }
 
     public Set<String> getPrefixes() {
-        return new HashSet<String>(prefixedParameters.keySet());
+        return new HashSet<>(prefixedParameters.keySet());
     }
 
     public boolean hasParameter(final String prefix, final String name) {
         final Map<String, String> parameters = prefixedParameters.get(prefixOrDefault(prefix));
-        if (parameters == null) {
-            return false;
-        }
-        return parameters.containsKey(name);
+        return parameters != null && parameters.containsKey(name);
     }
 
     public boolean hasDefaultParameter(final String name) {
@@ -177,11 +174,8 @@ public class HstComponentParameters {
         if (isDefaultPrefix(oldPrefix)) {
             throw new IllegalArgumentException("Cannot rename default prefix '" + oldPrefix + "'");
         }
-        if (isDefaultPrefix(newPrefix)) {
-            throw new IllegalArgumentException("Cannot rename prefix '" + oldPrefix + "' to default prefix '" + newPrefix + "'");
-        }
         Map<String, String> parameters = prefixedParameters.remove(oldPrefix);
-        prefixedParameters.put(newPrefix, parameters);
+        prefixedParameters.put(prefixOrDefault(newPrefix), parameters);
     }
 
     public boolean removePrefix(final String prefix) {
@@ -223,9 +217,9 @@ public class HstComponentParameters {
     }
 
     public void setNodeChanges() throws RepositoryException {
-        List<String> prefixes = new ArrayList<String>();
-        List<String> names = new ArrayList<String>();
-        List<String> values = new ArrayList<String>();
+        List<String> prefixes = new ArrayList<>();
+        List<String> names = new ArrayList<>();
+        List<String> values = new ArrayList<>();
 
         boolean addPrefixes = false;
 

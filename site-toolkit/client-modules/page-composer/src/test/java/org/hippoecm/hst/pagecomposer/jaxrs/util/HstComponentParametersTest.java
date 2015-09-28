@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -268,12 +268,20 @@ public class HstComponentParametersTest {
         parameters.renamePrefix("", "foo");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void cannotRenamePrefixToDefault() throws RepositoryException, JAXBException, IOException {
-        MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-one-prefix-one-parameter.xml");
-
+    @Test
+    public void canRenamePrefixToDefault() throws RepositoryException, JAXBException, IOException {
+        MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-default-and-prefix-one-parameter.xml");
         HstComponentParameters parameters = new HstComponentParameters(node, helper);
         parameters.renamePrefix("prefix", "");
+        parameters.save(0);
+
+        assertHasPrefixesNamesValues(node, false, true, true);
+
+        String[] expectedNames = {"parameterOne"};
+        assertValues(expectedNames, node.getProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES).getValues());
+
+        String[] expectedValues = {"prefixValue"};
+        assertValues(expectedValues, node.getProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES).getValues());
     }
 
     @Test
@@ -334,8 +342,8 @@ public class HstComponentParametersTest {
     private void assertValues(String[] expected, final Value[] actual) throws RepositoryException {
         assertEquals("Wrong number of values", expected.length, actual.length);
 
-        List<String> toExpect = new ArrayList<String>(Arrays.asList(expected));
-        List<Value> toCheck = new ArrayList<Value>(Arrays.asList(actual));
+        List<String> toExpect = new ArrayList<>(Arrays.asList(expected));
+        List<Value> toCheck = new ArrayList<>(Arrays.asList(actual));
 
         for (Value value : toCheck) {
             assertTrue("Expected values " + Arrays.toString(expected) + " but got " + valuesToString(actual),
