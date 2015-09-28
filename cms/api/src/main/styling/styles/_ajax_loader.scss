@@ -31,12 +31,14 @@
     background-size: $ajax-loader-width $ajax-loader-height;
     @include at2x("#{$images}/loader/ajax-loader", "png", $ajax-loader-width, $ajax-loader-height);
     background-repeat: no-repeat;
+    will-change: auto;
   }
 }
 
 .hippo-ajax-show-load .wicket-ajax-indicator {
   visibility: visible;
   .ajax-loader {
+    will-change: transform;
     animation-play-state: running;
   }
 }
@@ -56,22 +58,18 @@
 
 @keyframes ajaxloader {
   0% {
-    transform: rotateY(0deg);
-    margin-left: -50%;
+    transform: translate(-50%, 0) rotateY(0deg);
   }
 
   50% {
-    transform: rotateY(0deg);
-    margin-left: 50%;
+    transform: translate(50%, 0) rotateY(0deg);
   }
 
-  51% {
-    transform: rotateY(180deg);
-    margin-left: 50%;
+  50.001% {
+    transform: translate(50%, 0) rotateY(180deg);
   }
 
   100% {
-    transform: rotateY(180deg);
-    margin-left: -50%;
+    transform: translate(-50%, 0) rotateY(180deg);
   }
 }
