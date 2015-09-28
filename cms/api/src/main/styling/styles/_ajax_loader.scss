@@ -58,18 +58,18 @@
 
 @keyframes ajaxloader {
   0% {
-    transform: translate(-50%, 0) rotateY(0deg);
+    transform: translate(-75%, 0) rotateY(0deg);
   }
 
   50% {
-    transform: translate(50%, 0) rotateY(0deg);
+    transform: translate(25%, 0) rotateY(0deg);
   }
 
   50.001% {
-    transform: translate(50%, 0) rotateY(180deg);
+    transform: translate(75%, 0) rotateY(180deg);
   }
 
   100% {
-    transform: translate(-50%, 0) rotateY(180deg);
+    transform: translate(-25%, 0) rotateY(180deg);
   }
 }
