@@ -64,8 +64,11 @@
       var def = $.Deferred(),
         form = this.propertiesForm;
 
-      form.submitForm(function () {
-        def.resolve(form);
+      form.submitForm(function (savedVariantId) {
+        def.resolve({
+          oldId: form.variant.id,
+          newId: savedVariantId
+        });
       }, function () {
         def.reject(form);
       });

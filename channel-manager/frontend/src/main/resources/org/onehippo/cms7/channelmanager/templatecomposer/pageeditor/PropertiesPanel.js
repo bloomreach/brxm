@@ -448,6 +448,18 @@
       return editors;
     },
 
+    // Update the activeVariantId based on the mapping between old and new variant id after save.
+    // @see PropertiesEditor#save for more detail
+    _findActiveVariantId: function(mapVariantIds, activeVariantId) {
+      mapVariantIds.some(function (entry) {
+        if (entry.oldId === activeVariantId) {
+          activeVariantId = entry.newId;
+          return true;
+        }
+      });
+      return activeVariantId;
+    },
+
     /**
      * Save all dirty forms in the panel
      * @param success
@@ -465,8 +477,13 @@
       });
 
       return $.when.apply($, savePromises).then(function () {
-        var afterSavePromises = [];
-        this._onSaved(dirtyVariantIds, activeVariantId);
+        var afterSavePromises = [],
+          mapVariantIds = [].slice.call(arguments),
+          savedVariantIds = Ext.pluck(mapVariantIds, "newId");
+
+        activeVariantId = this._findActiveVariantId(mapVariantIds, activeVariantId);
+        this._onSaved(savedVariantIds, activeVariantId);
+
         dirtyEditors.forEach(function(editor) {
           afterSavePromises.push(editor.onAfterSave());
         });
