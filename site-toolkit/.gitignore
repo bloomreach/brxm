@@ -216,6 +216,8 @@ toolkit-resources/addon/unittestcontents/.settings
 toolkit-resources/addon/unittestcontents/bin
 toolkit-resources/addon/unittestcontents/hst-addon-unittestcontents.iml
 toolkit-resources/addon/unittestcontents/target
+toolkit-resources/addon/unittestspringconfig/*.iml
+toolkit-resources/addon/unittestspringconfig/target
 toolkit-resources/target
 toolkit-resources/toolkit-resources.iml
 /version
