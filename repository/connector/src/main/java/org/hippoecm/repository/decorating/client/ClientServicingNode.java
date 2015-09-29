@@ -67,7 +67,7 @@ public class ClientServicingNode extends ClientNode implements HippoNode {
     }
 
     @Override
-    public String getHippoName() throws RepositoryException {
+    public String getDisplayName() throws RepositoryException {
         try {
             return remote.getHippoName();
         } catch (RemoteException e) {

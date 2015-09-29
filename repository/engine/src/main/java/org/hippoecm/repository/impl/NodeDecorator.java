@@ -17,11 +17,8 @@ package org.hippoecm.repository.impl;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
@@ -32,7 +29,6 @@ import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -293,7 +289,7 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
     }
 
     @Override
-    public String getHippoName() throws RepositoryException {
+    public String getDisplayName() throws RepositoryException {
         if (isNodeType(HippoNodeType.NT_NAMED)) {
             return getProperty(HippoNodeType.HIPPO_NAME).getString();
         }
@@ -317,10 +313,10 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
                 if (handle.isNodeType(HippoNodeType.NT_HANDLE) && handle.isNodeType(HippoNodeType.NT_TRANSLATED)) {
                     node = handle;
                 } else {
-                    return getHippoName();
+                    return getDisplayName();
                 }
             } else {
-                return getHippoName();
+                return getDisplayName();
             }
         }
         if(localized == null) {
@@ -351,7 +347,7 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
                 return localizedName;
             }
         }
-        return getHippoName();
+        return getDisplayName();
     }
 
     @Override

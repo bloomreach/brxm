@@ -70,14 +70,14 @@ public interface DefaultWorkflow extends CopyWorkflow {
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
-     * Set the pretty name of this node.
+     * Set the display name of this node.
      *
-     * @param hippoName the pretty name of this node.
+     * @param displayName the display name of this node.
      * @throws WorkflowException
      * @throws RepositoryException
      * @throws RemoteException
      */
-    public void setHippoName(String hippoName) throws WorkflowException, RepositoryException, RemoteException;
+    public void setDisplayName(String displayName) throws WorkflowException, RepositoryException, RemoteException;
 
     /**
      * Gives the document a specific new name for the specific location.  A location may be a language, region or other
@@ -89,8 +89,9 @@ public interface DefaultWorkflow extends CopyWorkflow {
      * @throws MappingException indicates that the work-flow call failed because of configuration problems
      * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
-     * @deprecated use {@link #setHippoName} instead
+     * @deprecated no alternative, localizing the name of a document does not make sense
      */
+    @Deprecated
     public void localizeName(Localized locale, String newName)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
     
@@ -103,8 +104,9 @@ public interface DefaultWorkflow extends CopyWorkflow {
      * @throws MappingException indicates that the work-flow call failed because of configuration problems
      * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
-     * @deprecated use {@link #setHippoName(String)} instead
+     * @deprecated no alternative, localizing the name of a document does not make sense
      */
+    @Deprecated
     public void localizeName(Locale locale, String newName)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
@@ -119,8 +121,9 @@ public interface DefaultWorkflow extends CopyWorkflow {
      * @throws MappingException indicates that the work-flow call failed because of configuration problems
      * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
-     * @deprecated use {@link #setHippoName} instead
+     * @deprecated no alternative, localizing the name of document does not make sense
      */
+    @Deprecated
     public void localizeName(String newName)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
@@ -131,8 +134,9 @@ public interface DefaultWorkflow extends CopyWorkflow {
      * @throws MappingException indicates that the work-flow call failed because of configuration problems
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
-     * @deprecated use {@link #setHippoName(String)} instead.
+     * @deprecated no alternative, localizing the name of a document does not make sense
      */
+    @Deprecated
     public void replaceAllLocalizedNames(String newName)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
 

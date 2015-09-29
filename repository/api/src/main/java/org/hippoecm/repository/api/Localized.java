@@ -28,8 +28,9 @@ import javax.jcr.RepositoryException;
  * that exact order, the Localized object can also indicate a locale on other factors.
  * Such as on live or preview site, or when a translation is based only upon country regardless
  * of language.
- * @deprecated use {@link org.onehippo.repository.l10n.LocalizationService} and {@link HippoNode#getHippoName()} instead
+ * @deprecated use {@link org.onehippo.repository.l10n.LocalizationService} and {@link HippoNode#getDisplayName()} instead
  */
+@Deprecated
 public final class Localized implements Serializable {
 
     private Locale locale;

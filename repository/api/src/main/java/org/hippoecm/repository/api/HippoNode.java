@@ -30,13 +30,13 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 public interface HippoNode extends Node {
 
     /**
-     * Obtain a pretty name for this node. If not available falls back on the {@link #getName()}.
-     * If pretty name is available the result is the same as calling {@code getProperty("hippo:name").getString()}.
+     * Obtain a display name for this node. If not available falls back on {@link #getName()}.
+     * If display name is available the result is the same as calling {@code getProperty("hippo:name").getString()}.
      *
-     * @return the pretty name of this node if available, otherwise the JCR name of this node.
+     * @return the display name of this node if available, otherwise the JCR name of this node.
      * @throws RepositoryException
      */
-    String getHippoName() throws RepositoryException;
+    String getDisplayName() throws RepositoryException;
 
     /**
      * Get a localized name of this node if available.  If this name is not
@@ -49,8 +49,9 @@ public interface HippoNode extends Node {
      *
      * @return the localized node name
      * @throws RepositoryException
-     * @deprecated use {@link #getHippoName()} instead
+     * @deprecated use {@link #getDisplayName()} instead
      */
+    @Deprecated
     public String getLocalizedName() throws RepositoryException;
 
     /**
@@ -65,8 +66,9 @@ public interface HippoNode extends Node {
      * country without a language specification or live/preview site).
      * @return the localized node name
      * @throws RepositoryException
-     * @deprecated use {@link #getHippoName()} instead
+     * @deprecated use {@link #getDisplayName()} instead
      */
+    @Deprecated
     public String getLocalizedName(Localized localized) throws RepositoryException;
 
     /**
@@ -77,6 +79,7 @@ public interface HippoNode extends Node {
      * @throws RepositoryException
      * @deprecated no replacement, localization is now done using the {@link org.onehippo.repository.l10n.LocalizationService}
      */
+    @Deprecated
     public Map<Localized, String> getLocalizedNames() throws RepositoryException;
 
     /**

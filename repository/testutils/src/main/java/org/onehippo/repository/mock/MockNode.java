@@ -681,7 +681,7 @@ public class MockNode extends MockItem implements HippoNode {
     }
 
     @Override
-    public String getHippoName() throws RepositoryException {
+    public String getDisplayName() throws RepositoryException {
         return getName();
     }
 

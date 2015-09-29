@@ -130,7 +130,7 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
     }
 
     @Override
-    public void setHippoName(final String hippoName) throws WorkflowException, RepositoryException, RemoteException {
+    public void setDisplayName(final String hippoName) throws WorkflowException, RepositoryException, RemoteException {
         JcrUtils.ensureIsCheckedOut(subject);
         if (!subject.isNodeType(HippoNodeType.NT_NAMED)) {
             subject.addMixin(HippoNodeType.NT_NAMED);
