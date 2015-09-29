@@ -50,7 +50,6 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
@@ -59,6 +58,10 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.HippoStdNodeType.NT_DIRECTORY;
+import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 /**
  * Workflow plugin which adds non-application programmer accessible
@@ -79,10 +82,6 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
 
     private static Logger log = LoggerFactory.getLogger(ExtendedFolderWorkflowPlugin.class);
 
-    private static final String QUERY_LANGUAGE_PUBLISH = Query.SQL;
-    private static final String QUERY_STATEMENT_PUBLISH = "SELECT * FROM hippostd:publishable WHERE jcr:path LIKE '$basefolder/%' AND (hippostd:state='unpublished' AND (hippostd:stateSummary='changed' OR hippostd:stateSummary='new')) OR (hippostd:state='published' and NOT(hippo:availability='live'))";
-    private static final String QUERY_LANGUAGE_DEPUBLISH = Query.SQL;
-    private static final String QUERY_STATEMENT_DEPUBLISH = "SELECT * FROM hippostd:publishable WHERE jcr:path LIKE '$basefolder/%' AND hippostd:state='published' AND hippo:availability = 'live'";
     private static final String WORKFLOW_CATEGORY = "default";
 
     private String name;
@@ -107,20 +106,12 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                     name = "";
                 }
                 documents = new HashSet<>();
-                Session session = UserSession.get().getJcrSession();
-                Query query = null;
-                try {
-                    QueryManager qMgr = session.getWorkspace().getQueryManager();
-                    query = qMgr.createQuery(QUERY_STATEMENT_PUBLISH, QUERY_LANGUAGE_PUBLISH);
-                } catch (RepositoryException ex) {
-                    log.error("Error preparing to publish all documents: {}", ex);
-                }
                 return new ConfirmBulkWorkflowDialog(this,
                         new StringResourceModel("publish-all-title", ExtendedFolderWorkflowPlugin.this, null),
                         new StringResourceModel("publish-all-text", ExtendedFolderWorkflowPlugin.this, null),
                         new StringResourceModel("publish-all-subtext", ExtendedFolderWorkflowPlugin.this, null),
                         new PropertyModel(ExtendedFolderWorkflowPlugin.this, "name"),
-                        documents, query);
+                        documents, "publish");
             }
 
             @Override
@@ -130,7 +121,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                 for (String uuid : documents) {
                     try {
                         Node handle = session.getNodeByIdentifier(uuid);
-                        if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        if (handle.isNodeType(NT_HANDLE)) {
                             Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
                             if (workflow instanceof DocumentWorkflow) {
                                 DocumentWorkflow docWorkflow = (DocumentWorkflow) workflow;
@@ -164,20 +155,12 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                     name = "";
                 }
                 documents = new HashSet<>();
-                Session session = UserSession.get().getJcrSession();
-                Query query = null;
-                try {
-                    QueryManager qMgr = session.getWorkspace().getQueryManager();
-                    query = qMgr.createQuery(QUERY_STATEMENT_DEPUBLISH, QUERY_LANGUAGE_DEPUBLISH);
-                } catch (RepositoryException ex) {
-                    log.error("Error preparing to publish all documents: {}", ex);
-                }
                 return new ConfirmBulkWorkflowDialog(this,
                         new StringResourceModel("depublish-all-title", ExtendedFolderWorkflowPlugin.this, null),
                         new StringResourceModel("depublish-all-text", ExtendedFolderWorkflowPlugin.this, null),
                         new StringResourceModel("depublish-all-subtext", ExtendedFolderWorkflowPlugin.this, null),
                         new PropertyModel(ExtendedFolderWorkflowPlugin.this, "name"),
-                        documents, query);
+                        documents, "depublish");
             }
 
             @Override
@@ -187,7 +170,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                 for (String uuid : documents) {
                     try {
                         Node handle = session.getNodeByIdentifier(uuid);
-                        if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        if (handle.isNodeType(NT_HANDLE)) {
                             Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
                             if (workflow instanceof DocumentWorkflow) {
                                 DocumentWorkflow docWorkflow = (DocumentWorkflow) workflow;
@@ -228,29 +211,24 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
     }
 
     public class ConfirmBulkWorkflowDialog extends AbstractWorkflowDialog {
-        private IModel<String> title;
 
+        private IModel<String> title;
         private Label affectedComponent;
+        private final String workflowAction;
 
         public ConfirmBulkWorkflowDialog(IWorkflowInvoker action, IModel<String> dialogTitle, IModel dialogText,
-                                         IModel dialogSubText, IModel folderName, Set<String> documents, Query query) {
+                                         IModel dialogSubText, IModel folderName, Set<String> documents, String workflowAction) {
             super(ExtendedFolderWorkflowPlugin.this.getModel(), action);
             this.title = dialogTitle;
-
+            this.workflowAction = workflowAction;
             try {
                 Node folder = getWorkflowDescriptorModel().getNode();
-                if (query != null && folder != null) {
-                    query.bindValue("basefolder", folder.getSession().getValueFactory().createValue(folder.getPath()));
-                    QueryResult result = query.execute();
-                    for (Node document : new NodeIterable(result.getNodes())) {
-                        if (document.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                            documents.add(document.getParent().getIdentifier());
-                        }
-                    }
+                if (folder != null) {
+                    loadPublishableDocuments(folder, documents);
                 } else {
                     error("Error preparing to (de)publish all documents");
                 }
-            } catch(RepositoryException ex) {
+            } catch(RepositoryException | RemoteException | WorkflowException ex) {
                 log.error("Error preparing to (de)publish all documents", ex);
                 error("Error preparing to (de)publish all documents");
             }
@@ -274,6 +252,21 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
             add(affectedComponent);
 
             setOkEnabled(!documents.isEmpty());
+        }
+
+        private void loadPublishableDocuments(final Node folder, final Set<String> documents) throws RepositoryException, WorkflowException, RemoteException {
+            for (Node child : new NodeIterable(folder.getNodes())) {
+                if (child.isNodeType(NT_FOLDER) || child.isNodeType(NT_DIRECTORY)) {
+                    loadPublishableDocuments(child, documents);
+                } else if (child.isNodeType(NT_HANDLE)) {
+                    WorkflowManager workflowManager = ((HippoWorkspace) folder.getSession().getWorkspace()).getWorkflowManager();
+                    Workflow workflow = workflowManager.getWorkflow(WORKFLOW_CATEGORY, child);
+                    Serializable hint = workflow.hints().get(workflowAction);
+                    if (hint instanceof Boolean && (Boolean) hint) {
+                        documents.add(child.getIdentifier());
+                    }
+                }
+            }
         }
 
         public WorkflowDescriptorModel getWorkflowDescriptorModel() {
