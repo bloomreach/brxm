@@ -467,6 +467,7 @@ testutils/src/test/java/org/onehippo/repository/testutils/log4j/StringMatchFilte
 testutils/src/test/java/org/onehippo/repository/testutils/slf4j/LoggerRecordingWrapperTest.java -text
 testutils/src/test/resources/log4j-filters.txt -text
 upgrade/pom.xml svneol=native#text/plain
+upgrade/src/main/resources/hippo-translation-to-display-name-updater.xml -text
 utilities/pom.xml svneol=native#text/plain
 utilities/src/main/java/org/hippoecm/repository/util/MavenComparableVersion.java -text
 utilities/src/main/java/org/hippoecm/repository/util/RepoUtils.java -text
