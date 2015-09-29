@@ -288,9 +288,12 @@
     },
 
     _onPropertiesDeleted: function (deletedVariantId) {
-      Hippo.ChannelManager.TemplateComposer.Instance.templateComposerApi.channelChanged();
-      // set the active tab be the first one (i.e. default variant)
+      // set the active tab be the first one (i.e. the hippo-default variant)
       this._reloadCleanupAndFireEvent([deletedVariantId], 'hippo-default', 'delete');
+    },
+
+    _onVariantsDeleted: function (newActiveVariantId) {
+      this._reloadCleanupAndFireEvent([], newActiveVariantId, 'delete');
     },
 
     _reloadCleanupAndFireEvent: function (changedVariantIds, activeVariantId, event) {
@@ -335,6 +338,8 @@
       editor.on('beforedeactivate', function () {
         propertiesForm.stopMonitoring();
       });
+
+      editor.on('variantsDeleted', this._onVariantsDeleted, this);
 
       return editor;
     },
