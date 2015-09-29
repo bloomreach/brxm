@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>27.2</version>
+    <version>27.3-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-cms</artifactId>
@@ -90,7 +90,7 @@
     <hippo.frontend.theme.version>2.1.0-SNAPSHOT</hippo.frontend.theme.version>
     <hippo.utilities.version>2.1.0-SNAPSHOT</hippo.utilities.version>
     <hippo.services.version>2.1.0-SNAPSHOT</hippo.services.version>
-    <hippo.repository.version>3.1.0-SNAPSHOT</hippo.repository.version>
+    <hippo.repository.version>3.1.0-translations-1.0-SNAPSHOT</hippo.repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>2.4</easymock.version>

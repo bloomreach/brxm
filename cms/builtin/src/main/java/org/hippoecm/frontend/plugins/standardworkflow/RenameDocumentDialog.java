@@ -15,17 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
-import java.util.Locale;
-
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugins.standardworkflow.validators.RenameDocumentValidator;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.StringCodec;
 
@@ -46,12 +43,6 @@ public class RenameDocumentDialog extends WorkflowDialog<RenameDocumentArguments
         final String originalTargetName = renameDocumentModel.getTargetName();
 
         add(nameUriContainer = new NameUriField("name-url", nodeNameCodecModel, originalUriName, originalTargetName, true));
-
-        final Locale cmsLocale = UserSession.get().getLocale();
-        final RenameMessage message = new RenameMessage(cmsLocale, renameDocumentModel.getLocalizedNames());
-        if (message.shouldShow()) {
-            warn(message.forFolder());
-        }
 
         add(new RenameDocumentValidator(this, nameUriContainer, workflowDescriptorModel));
     }

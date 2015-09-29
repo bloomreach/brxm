@@ -360,8 +360,8 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 }
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", translatedDocument);
                 if (name != null && !url.equals(name)) {
-                    String localized = getLocalizeCodec().encode(name);
-                    defaultWorkflow.localizeName(localized);
+                    String displayName = getLocalizeCodec().encode(name);
+                    defaultWorkflow.setDisplayName(displayName);
                 }
             } finally {
                 IBrowseService<JcrNodeModel> browser = getBrowserService();
@@ -441,7 +441,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 url = docNode.getName();
                 name = url;
                 if (docNode instanceof HippoNode) {
-                    name = ((HippoNode) docNode).getLocalizedName();
+                    name = ((HippoNode) docNode).getDisplayName();
                 }
                 folders = new LinkedList<>();
                 Node handle = docNode.getParent();
@@ -581,7 +581,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 Document translationDoc = tw.addTranslation(language, urlfr);
                 if (namefr != null && !urlfr.equals(namefr)) {
                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", translationDoc);
-                    defaultWorkflow.localizeName(namefr);
+                    defaultWorkflow.setDisplayName(namefr);
                 }
                 return true;
             } catch (RepositoryException e) {

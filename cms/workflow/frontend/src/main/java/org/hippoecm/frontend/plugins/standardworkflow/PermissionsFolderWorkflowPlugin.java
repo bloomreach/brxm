@@ -101,7 +101,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
             protected IDialogService.Dialog createRequestDialog() {
                 try {
                     Node folder = getModel().getNode();
-                    PermissionsFolderWorkflowPlugin.this.name = ((HippoNode) folder).getLocalizedName();
+                    PermissionsFolderWorkflowPlugin.this.name = ((HippoNode) folder).getDisplayName();
                     try {
                         Value[] values = folder.getProperty("hippostd:foldertype").getValues();
                         for (Value value : values) {
@@ -111,7 +111,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                         log.error("Couldn't get foldertypes from folder", e);
                     }
                 } catch (RepositoryException ex) {
-                    log.error("Couldn't get localized name for folder", ex);
+                    log.error("Couldn't get display name for folder", ex);
                     PermissionsFolderWorkflowPlugin.this.name = "";
                 }
                 Session session = UserSession.get().getJcrSession();

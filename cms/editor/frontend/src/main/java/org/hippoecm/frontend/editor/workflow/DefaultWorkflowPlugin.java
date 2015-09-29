@@ -146,7 +146,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 try {
                     final HippoNode node = (HippoNode) getModel().getNode();
                     uriName = node.getName();
-                    targetName = getLocalizedNameForSession(node);
+                    targetName = node.getName();
                 } catch (RepositoryException ex) {
                     uriName = targetName = "";
                 }
@@ -169,8 +169,8 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 if (!node.getName().equals(nodeName)) {
                     ((DefaultWorkflow) wf).rename(nodeName);
                 }
-                if (!getLocalizedNameForSession(node).equals(localName)) {
-                    defaultWorkflow.replaceAllLocalizedNames(localName);
+                if (!node.getDisplayName().equals(localName)) {
+                    defaultWorkflow.setDisplayName(localName);
                 }
                 return null;
             }
@@ -196,7 +196,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 };
                 try {
                     HippoNode node = (HippoNode) getModel().getNode();
-                    String nodeName = node.getLocalizedName().toLowerCase();
+                    String nodeName = node.getDisplayName().toLowerCase();
 
                     if (isExtension(nodeName, KNOWN_IMAGE_EXTENSIONS)) {
                         createNewNodeNameForImage(nodeName);
@@ -289,10 +289,10 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 HippoNode node = (HippoNode) copyModel.getNode().getNode(nodeName);
 
                 String localName = getLocalizeCodec().encode(name);
-                if (!node.getLocalizedName().equals(localName)) {
+                if (!node.getDisplayName().equals(localName)) {
                     WorkflowManager manager = UserSession.get().getWorkflowManager();
                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                    defaultWorkflow.localizeName(localName);
+                    defaultWorkflow.setDisplayName(localName);
                 }
                 browseTo(copyModel);
                 return null;
@@ -438,12 +438,6 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
     public WorkflowDescriptorModel getModel() {
         return (WorkflowDescriptorModel) getDefaultModel();
-    }
-
-    private static String getLocalizedNameForSession(final HippoNode node) throws RepositoryException {
-        final Locale cmsLocale = UserSession.get().getLocale();
-        final Localized cmsLocalized = Localized.getInstance(cmsLocale);
-        return node.getLocalizedName(cmsLocalized);
     }
 
     private JcrNodeModel getFolder() {

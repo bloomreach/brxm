@@ -15,19 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.frontend.dialog.DialogConstants;
-import org.hippoecm.frontend.plugins.standardworkflow.RenameMessage;
 import org.hippoecm.frontend.plugins.standardworkflow.validators.RenameDocumentValidator;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.NameUriField;
-import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.StringCodec;
 
 public  class RenameDocumentDialog extends WorkflowDialog<Void> {
@@ -43,19 +37,12 @@ public  class RenameDocumentDialog extends WorkflowDialog<Void> {
 
         nameModel = new PropertyModel<>(action, "targetName");
         uriModel = new PropertyModel<>(action, "uriName");
-        final PropertyModel<Map<Localized, String>> localizedNamesModel = new PropertyModel<>(action, "localizedNames");
 
         String originalName = nameModel.getObject();
         String originalUriName = uriModel.getObject();
         add(nameUriField = new NameUriField("name-url", codecModel, originalUriName, originalName, true));
 
         add(new RenameDocumentValidator(this, nameUriField, action.getModel()));
-
-        final Locale cmsLocale = UserSession.get().getLocale();
-        final RenameMessage message = new RenameMessage(cmsLocale, localizedNamesModel.getObject());
-        if (message.shouldShow()) {
-            warn(message.forDocument());
-        }
     }
 
     @Override

@@ -119,24 +119,16 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                         try {
                             HippoNode node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
                             renameDocumentModel.setUriName(node.getName());
-                            renameDocumentModel.setTargetName(getLocalizedNameForSession(node));
+                            renameDocumentModel.setTargetName(node.getDisplayName());
                             renameDocumentModel.setNodeType(node.getPrimaryNodeType().getName());
-                            renameDocumentModel.setLocalizedNames(node.getLocalizedNames());
                         } catch (RepositoryException ex) {
                             log.error("Could not retrieve workflow document", ex);
                             renameDocumentModel.setUriName("");
                             renameDocumentModel.setTargetName("");
                             renameDocumentModel.setNodeType(null);
-                            renameDocumentModel.setLocalizedNames(null);
                         }
 
                         return newRenameDocumentDialog(renameDocumentModel, this);
-                    }
-
-                    private String getLocalizedNameForSession(final HippoNode node) throws RepositoryException {
-                        final Locale cmsLocale = UserSession.get().getLocale();
-                        final Localized cmsLocalized = Localized.getInstance(cmsLocale);
-                        return node.getLocalizedName(cmsLocalized);
                     }
 
                     @Override
@@ -153,8 +145,8 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                         if (!((WorkflowDescriptorModel) getDefaultModel()).getNode().getName().equals(nodeName)) {
                             folderWorkflow.rename(node.getName() + (node.getIndex() > 1 ? "[" + node.getIndex() + "]" : ""), nodeName);
                         }
-                        if (!getLocalizedNameForSession(node).equals(localName)) {
-                            defaultWorkflow.replaceAllLocalizedNames(localName);
+                        if (!node.getDisplayName().equals(localName)) {
+                            defaultWorkflow.setDisplayName(localName);
                         }
                     }
                 });
@@ -357,7 +349,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                                 if (!nodeName.equals(localName)) {
                                     WorkflowManager workflowMgr = UserSession.get().getWorkflowManager();
                                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) workflowMgr.getWorkflow("core", nodeModel.getNode());
-                                    defaultWorkflow.localizeName(localName);
+                                    defaultWorkflow.setDisplayName(localName);
                                 }
                                 select(nodeModel);
                             } else {

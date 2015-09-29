@@ -259,13 +259,13 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
         return session;
     }
 
-    private String getLocalizedName(final String identifier) {
+    private String getDisplaydName(final String identifier) {
         try {
             Node nodeByIdentifier = getJCRSession().getNodeByIdentifier(identifier);
             HippoNode nodeByIdentifier1 = (HippoNode) nodeByIdentifier;
-            return nodeByIdentifier1.getLocalizedName();
+            return nodeByIdentifier1.getDisplayName();
         } catch (RepositoryException e) {
-            log.error("Cannot get localized name " + e.getMessage(), e);
+            log.error("Cannot get display name " + e.getMessage(), e);
         }
         return StringUtils.EMPTY;
     }
@@ -306,7 +306,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
 
             @Override
             protected String load() {
-                return getLocalizedName(getDocBaseModel().getObject());
+                return getDisplaydName(getDocBaseModel().getObject());
             }
 
         };

@@ -73,7 +73,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         add(renameAction = new StdWorkflow("rename", new StringResourceModel("rename-label", this, null), context, getModel()) {
             public String targetName;
             public String uriName;
-            public Map<Localized, String> localizedNames;
 
             @Override
             public String getSubMenu() {
@@ -101,11 +100,9 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     final HippoNode node = getModelNode();
                     locale = CodecUtils.getLocaleFromNodeAndAncestors(node);
                     uriName = node.getName();
-                    targetName = getLocalizedNameForSession(node);
-                    localizedNames = node.getLocalizedNames();
+                    targetName = node.getDisplayName();
                 } catch (RepositoryException ex) {
                     uriName = targetName = "";
-                    localizedNames = Collections.emptyMap();
                 }
 
                 IModel<StringCodec> codecModel = CodecUtils.getNodeNameCodecModel(context, locale);
@@ -116,12 +113,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             private HippoNode getModelNode() throws RepositoryException {
                 return (HippoNode) getModel().getNode();
-            }
-
-            private String getLocalizedNameForSession(final HippoNode node) throws RepositoryException {
-                final Locale cmsLocale = UserSession.get().getLocale();
-                final Localized cmsLocalized = Localized.getInstance(cmsLocale);
-                return node.getLocalizedName(cmsLocalized);
             }
 
             @Override
@@ -146,8 +137,8 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 if (!((WorkflowDescriptorModel) getDefaultModel()).getNode().getName().equals(nodeName)) {
                     ((DocumentWorkflow) wf).rename(nodeName);
                 }
-                if (!getLocalizedNameForSession(node).equals(localName)) {
-                    defaultWorkflow.replaceAllLocalizedNames(localName);
+                if (!node.getDisplayName().equals(localName)) {
+                    defaultWorkflow.setDisplayName(localName);
                 }
                 return null;
             }
@@ -185,7 +176,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
                     final CopyNameHelper copyNameHelper = new CopyNameHelper(codec,
                             new StringResourceModel("copyof", DocumentWorkflowPlugin.this, null).getString());
-                    name = copyNameHelper.getCopyName(getModelNode().getLocalizedName(),
+                    name = copyNameHelper.getCopyName(getModelNode().getDisplayName(),
                             destination.getNodeModel().getNode());
                 } catch (RepositoryException ex) {
                     return new ExceptionDialog(ex);
@@ -226,7 +217,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
                 WorkflowManager manager = UserSession.get().getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", result.getNode(nodeName));
-                defaultWorkflow.localizeName(getLocalizeCodec().encode(name));
+                defaultWorkflow.setDisplayName(getLocalizeCodec().encode(name));
 
                 browseTo(resultModel);
                 return null;

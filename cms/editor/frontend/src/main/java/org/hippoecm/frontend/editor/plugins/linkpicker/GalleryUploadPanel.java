@@ -203,8 +203,8 @@ public abstract class GalleryUploadPanel extends Panel {
                 Document document = workflow.createGalleryItem(nodeName, galleryType);
                 node = (HippoNode) UserSession.get().getJcrSession().getNodeByIdentifier(document.getIdentity());
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                if (!node.getLocalizedName().equals(localName)) {
-                    defaultWorkflow.localizeName(localName);
+                if (!node.getDisplayName().equals(localName)) {
+                    defaultWorkflow.setDisplayName(localName);
                 }
             } catch (WorkflowException | RepositoryException ex) {
                 log.error(ex.getMessage());
