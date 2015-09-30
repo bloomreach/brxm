@@ -338,8 +338,8 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
             newFolder = (HippoFolderBean) wpm.getObject(absoluteDocumentHandlePath);
 
             // test localized name
-            assert !newFolder.getLocalizedName().equals(newFolder.getName());
-            assert newFolder.getLocalizedName().equals(folderName);
+            assert !newFolder.getDisplayName().equals(newFolder.getName());
+            assert newFolder.getDisplayName().equals(folderName);
             assert expectedNodeName.equals(newFolder.getName());
 
             // test jcr low level
@@ -406,16 +406,16 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
             HippoFolderBean newTmpFolder = newFolder;
             // check the created folder names
             assert "new-folder4".equals(newTmpFolder.getName());
-            assert "new folder4".equals(newTmpFolder.getLocalizedName());
+            assert "new folder4".equals(newTmpFolder.getDisplayName());
             newTmpFolder = (HippoFolderBean) newTmpFolder.getParentBean();
             assert "new-folder3".equals(newTmpFolder.getName());
-            assert "new FOLDER3".equals(newTmpFolder.getLocalizedName());
+            assert "new FOLDER3".equals(newTmpFolder.getDisplayName());
             newTmpFolder = (HippoFolderBean) newTmpFolder.getParentBean();
             assert "new-folder2".equals(newTmpFolder.getName());
-            assert "NEW Folder2".equals(newTmpFolder.getLocalizedName());
+            assert "NEW Folder2".equals(newTmpFolder.getDisplayName());
             newTmpFolder = (HippoFolderBean) newTmpFolder.getParentBean();
             assert "new-folder1".equals(newTmpFolder.getName());
-            assert "new Folder1".equals(newTmpFolder.getLocalizedName());
+            assert "new Folder1".equals(newTmpFolder.getDisplayName());
         } finally {
             if (newFolder != null) {
                 wpm.remove(newFolder);

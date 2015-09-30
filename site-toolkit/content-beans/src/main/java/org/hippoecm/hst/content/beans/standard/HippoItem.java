@@ -47,6 +47,7 @@ public class HippoItem implements HippoBean {
     protected String path;
     protected String name;
     protected String localizedName;
+    protected String displayName;
     protected JCRValueProvider valueProvider;
     protected transient ObjectConverter objectConverter;
     protected boolean detached = false;
@@ -100,6 +101,14 @@ public class HippoItem implements HippoBean {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String getDisplayName() {
+        if (displayName == null && valueProvider != null) {
+            displayName = valueProvider.getDisplayName();
+        }
+        return displayName;
     }
 
     @IndexField(ignoreInCompound = true)

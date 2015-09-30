@@ -54,6 +54,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     private String identifier;
     private String nodeName;
     private String localizedName;
+    private String displayName;
     private Map<String, Object> allProperties;
     
     private boolean detached = false;
@@ -119,7 +120,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         }
         return this.jcrNode;
     }
-    
+
     public Node getParentJcrNode(){
         if(this.jcrNode == null) {
             log.info("Cannot get parent node when node is detached");
@@ -154,7 +155,23 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     public String getName() {
        return this.nodeName;
     }
-    
+
+    @Override
+    public String getDisplayName() {
+        if (displayName != null) {
+            return displayName;
+        }
+        final Node node = getJcrNode();
+        if (node instanceof HippoNode) {
+            try {
+                return displayName = ((HippoNode) node).getDisplayName();
+            } catch (RepositoryException e) {
+                throw new RuntimeRepositoryException(e);
+            }
+        }
+        return displayName = getName();
+    }
+
     public String getLocalizedName(){
         if(localizedName != null) {
             return localizedName;

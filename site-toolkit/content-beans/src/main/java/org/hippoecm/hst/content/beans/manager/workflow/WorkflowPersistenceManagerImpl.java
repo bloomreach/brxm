@@ -260,7 +260,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                 Node addedNode = folderNode.getSession().getNode(added);
                 if (!nodeName.equals(name)) {
                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflow(defaultWorkflowCategory, addedNode);
-                    defaultWorkflow.localizeName(name);
+                    defaultWorkflow.setDisplayName(name);
                 }
 
                 if (documentAdditionWorkflowCategory.equals(category)) {
