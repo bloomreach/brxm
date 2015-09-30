@@ -36,6 +36,7 @@ import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.wicket.model.IDetachable;
+import org.hippoecm.frontend.RepositoryRuntimeException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.InvalidSessionException;
 import org.slf4j.Logger;
@@ -348,12 +349,13 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
                     Node child = nodes.nextNode();
                     names.add(child.getName());
                 }
-                return names.size() + (int) node.getProperties().getSize() - 1;
+                int items = names.size() + (int) node.getProperties().getSize();
+                return items - 1; // - 1 because we filter the jcr:primaryType property
             }
-        } catch (RepositoryException ex) {
-            handleRepositoryException(ex);
+            return 0;
+        } catch (RepositoryException e) {
+            throw new RepositoryRuntimeException("Failed to determine node map size: " + e.toString(), e);
         }
-        return 0;
     }
 
     @Override
