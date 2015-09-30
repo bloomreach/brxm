@@ -292,8 +292,8 @@
       this._reloadCleanupAndFireEvent([deletedVariantId], 'hippo-default', 'delete');
     },
 
-    _onVariantsDeleted: function (newActiveVariantId) {
-      this._reloadCleanupAndFireEvent([], newActiveVariantId, 'delete');
+    _onVariantsDeleted: function (deletedVariantIds, newActiveVariantId) {
+      this._reloadCleanupAndFireEvent(deletedVariantIds, newActiveVariantId, 'delete');
     },
 
     _reloadCleanupAndFireEvent: function (changedVariantIds, activeVariantId, event) {
