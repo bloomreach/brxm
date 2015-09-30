@@ -18,15 +18,11 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -115,28 +111,8 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
             }
 
             @Override
-            protected void execute(WorkflowDescriptorModel model) throws Exception {
-                Session session = UserSession.get().getJcrSession();
-                WorkflowManager wfMgr = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-                for (String uuid : documents) {
-                    try {
-                        Node handle = session.getNodeByIdentifier(uuid);
-                        if (handle.isNodeType(NT_HANDLE)) {
-                            Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
-                            if (workflow instanceof DocumentWorkflow) {
-                                DocumentWorkflow docWorkflow = (DocumentWorkflow) workflow;
-                                cancelRequests(docWorkflow);
-
-                                ((DocumentWorkflow) workflow).publish();
-                                ++processed;
-                                log.info("published document "+handle.getPath()+" ("+uuid+")");
-                            }
-                        }
-                    } catch (RepositoryException ex) {
-                        log.warn("Publication of {} failed: {}", uuid, ex);
-                    }
-                    session.refresh(true);
-                }
+            protected void execute(WorkflowDescriptorModel model) throws RepositoryException {
+                bulkExecuteDocumentWorkflow("publish");
             }
         });
 
@@ -165,43 +141,33 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected void execute(WorkflowDescriptorModel model) throws Exception {
-                Session session = UserSession.get().getJcrSession();
-                WorkflowManager wfMgr = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-                for (String uuid : documents) {
-                    try {
-                        Node handle = session.getNodeByIdentifier(uuid);
-                        if (handle.isNodeType(NT_HANDLE)) {
-                            Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
-                            if (workflow instanceof DocumentWorkflow) {
-                                DocumentWorkflow docWorkflow = (DocumentWorkflow) workflow;
-                                cancelRequests(docWorkflow);
-
-                                ((DocumentWorkflow) workflow).depublish();
-                                ++processed;
-                                log.info("depublished document "+handle.getPath()+" ("+uuid+")");
-                            }
-                        }
-                    } catch (RepositoryException ex) {
-                        log.warn("Depublication of {} failed: {}", uuid, ex);
-                    }
-                    session.refresh(true);
-                }
+                bulkExecuteDocumentWorkflow("depublish");
             }
         });
     }
 
-    private void cancelRequests(final DocumentWorkflow docWorkflow) throws RepositoryException, WorkflowException, RemoteException {
-        Map<String, Map<String, Serializable>> requests = (Map<String, Map<String, Serializable>>) docWorkflow.hints().get("requests");
-        if (requests != null) {
-            for (Map.Entry<String, Map<String, Serializable>> entry : requests.entrySet()) {
-                String id = entry.getKey();
-                final Map<String, Serializable> actions = entry.getValue();
-                if (Boolean.TRUE.equals(actions.get("cancelRequest"))) {
-                    docWorkflow.cancelRequest(id);
-                } else if (Boolean.TRUE.equals(actions.get("rejectRequest"))) {
-                    docWorkflow.rejectRequest(id, "bulk workflow");
+    private void bulkExecuteDocumentWorkflow(final String action) throws RepositoryException {
+        Session session = UserSession.get().getJcrSession();
+        WorkflowManager wfMgr = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        for (String uuid : documents) {
+            try {
+                Node handle = session.getNodeByIdentifier(uuid);
+                if (handle.isNodeType(NT_HANDLE)) {
+                    Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
+                    if (workflow instanceof DocumentWorkflow) {
+                        DocumentWorkflow docWorkflow = (DocumentWorkflow) workflow;
+                        switch (action) {
+                            case "publish": docWorkflow.publish(); break;
+                            case "depublish" : docWorkflow.depublish(); break;
+                        }
+                        ++processed;
+                        log.info("executed action {} on document {} ({})", action, handle.getPath(), uuid);
+                    }
                 }
+            } catch (RepositoryException | RemoteException | WorkflowException e) {
+                log.warn("Publication of {} failed: {}", uuid, e);
             }
+            session.refresh(true);
         }
     }
 
