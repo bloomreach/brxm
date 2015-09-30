@@ -28,6 +28,7 @@
 
       this.propertiesPanel = new Hippo.ChannelManager.TemplateComposer.PropertiesPanel({
         id: 'componentPropertiesPanel',
+        bubbleEvents: ['save', 'delete', 'propertiesChanged'],
         resources: config.resources,
         locale: config.locale,
         composerRestMountUrl: config.composerRestMountUrl,
@@ -47,9 +48,6 @@
             if (currentTab) {
               currentTab.removeClass('qa-tab-active');
             }
-          },
-          propertiesChanged: function(componentId, propertiesMap) {
-            this.fireEvent('propertiesChanged', componentId, propertiesMap);
           },
           scope: this
         }
