@@ -93,6 +93,11 @@ public class MockHippoBean implements HippoBean {
         throw new UnsupportedOperationException("Not supported yet");
     }
 
+    @Override
+    public String getDisplayName() {
+        throw new UnsupportedOperationException("Not supported yet");
+    }
+
     public Node getNode() {
         throw new UnsupportedOperationException("Not supported yet");
     }
