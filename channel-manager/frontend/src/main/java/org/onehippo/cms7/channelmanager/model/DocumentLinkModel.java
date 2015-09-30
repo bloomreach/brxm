@@ -90,7 +90,7 @@ public class DocumentLinkModel implements IModel<String> {
             try {
                 final Node node = session.getNode(path);
                 if (node instanceof HippoNode) {
-                    return ((HippoNode)node).getLocalizedName();
+                    return ((HippoNode)node).getDisplayName();
                 }
             } catch (PathNotFoundException e){
                 log.info("Cannot find node for '{}'", path);
