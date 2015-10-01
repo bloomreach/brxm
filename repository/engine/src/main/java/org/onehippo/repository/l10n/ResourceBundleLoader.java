@@ -65,6 +65,9 @@ class ResourceBundleLoader {
     private ResourceBundle resolveParent(ResourceBundleImpl bundle) {
         ResourceBundle result = null;
         for (ResourceBundleImpl parent : bundles.values()) {
+            if (parent == bundle) {
+                continue;
+            }
             if (parent.getName().equals(bundle.getName())) {
                 if (isParent(parent.getLocale(), bundle.getLocale())) {
                     if (result == null || isParent(result.getLocale(), parent.getLocale())) {
