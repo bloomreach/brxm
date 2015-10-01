@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2015-2015 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hippo:types"
+         xmlns:esv="http://www.onehippo.org/jcr/xmlimport" esv:merge="combine">
+  <sv:node sv:name="hippostdpubwf:document">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:resourcebundles</sv:value>
+    </sv:property>
+    <sv:node sv:name="en">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resourcebundle</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:name" sv:type="String">
+        <sv:value>Publishable</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state=published" sv:type="String">
+        <sv:value>Live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state=unpublished" sv:type="String">
+        <sv:value>Offline</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state=draft" sv:type="String">
+        <sv:value>Draft</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="nl">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resourcebundle</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:name" sv:type="String">
+        <sv:value>Publiceerbaar</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state=published" sv:type="String">
+        <sv:value>Gepubliceerd</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state=unpublished" sv:type="String">
+        <sv:value>Niet gepubliceerd</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state=draft" sv:type="String">
+        <sv:value>Klad</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="fr">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resourcebundle</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:name" sv:type="String">
+        <sv:value>Publiable</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state=published" sv:type="String">
+        <sv:value>Publié</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state=unpublished" sv:type="String">
+        <sv:value>Non publié</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state=draft" sv:type="String">
+        <sv:value>Brouillon</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="de">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resourcebundle</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:name" sv:type="String">
+        <sv:value>Veröffentlichbar</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state=published" sv:type="String">
+        <sv:value>Veröffentlicht</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state=unpublished" sv:type="String">
+        <sv:value>Nicht veröffentlicht</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state=draft" sv:type="String">
+        <sv:value>Entwurf</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>

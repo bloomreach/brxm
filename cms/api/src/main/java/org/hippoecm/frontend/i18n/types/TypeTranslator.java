@@ -32,6 +32,10 @@ import org.hippoecm.frontend.model.nodetypes.NodeTypeModelWrapper;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.l10n.LocalizationService;
+import org.onehippo.repository.l10n.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +44,9 @@ public class TypeTranslator extends NodeTypeModelWrapper {
     final static Logger log = LoggerFactory.getLogger(TypeTranslator.class);
 
     private static final long serialVersionUID = 1L;
+    private static final String JCR_NAME = "jcr:name";
+    private static final String HIPPO_TYPES = "hippo:types";
+    private static final String TRANSLATIONS_PATH = "/hippo:configuration/hippo:translations";
 
     private IPluginConfig translations = null;
     private TypeNameModel name;
@@ -99,6 +106,10 @@ public class TypeTranslator extends NodeTypeModelWrapper {
 
         @Override
         protected String load() {
+
+            final String translation = getStringFromBundle(JCR_NAME);
+            if (translation != null) return translation;
+
             String name = getNodeTypeModel().getType();
 
             JcrNodeModel nodeModel = getNodeModel();
@@ -118,6 +129,7 @@ public class TypeTranslator extends NodeTypeModelWrapper {
                     while (nodes.hasNext()) {
                         Node child = nodes.nextNode();
                         if (findTranslationNode(child, language)) {
+                            hippoTranslatedDeprecationWarning(node.getPath());
                             return child.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
                         }
                     }
@@ -147,6 +159,27 @@ public class TypeTranslator extends NodeTypeModelWrapper {
         }
     }
 
+
+
+    private String getBundleName() {
+        String type = getNodeTypeModel().getType();
+        if (!type.contains(":")) {
+            type = "hipposys:" + type;
+        }
+        return HIPPO_TYPES + "." + type;
+    }
+
+    private String getStringFromBundle(final String key) {
+        final LocalizationService service = HippoServiceRegistry.getService(LocalizationService.class);
+        if (service != null) {
+            final ResourceBundle bundle = service.getResourceBundle(getBundleName(), Session.get().getLocale());
+            if (bundle != null) {
+                return bundle.getString(key);
+            }
+        }
+        return null;
+    }
+
     class PropertyValueModel extends LoadableDetachableModel<String> {
         private static final long serialVersionUID = 1L;
 
@@ -160,7 +193,15 @@ public class TypeTranslator extends NodeTypeModelWrapper {
 
         @Override
         protected String load() {
+
+            final String key = property + "=" + value.getObject();
+            final String translation = getStringFromBundle(key);
+            if (translation != null) {
+                return translation;
+            }
+
             String name = value.getObject();
+
             JcrNodeModel nodeModel = getNodeModel();
             if (nodeModel == null) {
                 return name;
@@ -179,6 +220,7 @@ public class TypeTranslator extends NodeTypeModelWrapper {
                 while (nodes.hasNext()) {
                     Node child = nodes.nextNode();
                     if (findTranslationNode(child, name, language, property)) {
+                        hippoTranslatedDeprecationWarning(node.getPath());
                         return child.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
                     }
                 }
@@ -225,6 +267,12 @@ public class TypeTranslator extends NodeTypeModelWrapper {
         }
     }
 
+    private static void hippoTranslatedDeprecationWarning(String nodePath) {
+        log.warn("Usage of deprecated hippo:translated model at {}, " +
+                        "store translations of document types at {} instead",
+                nodePath, TRANSLATIONS_PATH);
+    }
+
     class PropertyModel extends LoadableDetachableModel<String> {
         private static final long serialVersionUID = 1L;
 
@@ -236,6 +284,12 @@ public class TypeTranslator extends NodeTypeModelWrapper {
 
         @Override
         protected String load() {
+
+            final String translation = getStringFromBundle(propertyName);
+            if (translation != null) {
+                return translation;
+            }
+
             String translatedName = translate(propertyName);
             if (StringUtils.isNotEmpty(translatedName)) {
                 return translatedName;
@@ -267,9 +321,6 @@ public class TypeTranslator extends NodeTypeModelWrapper {
     /**
      * Translate field name using old i18n mechanism with 'hippo:translation' nodes directly under the doc-type node, i.e.
      * <code>/hippo:namespaces/${projectName}/${docType}/hippo:translation[X]</code>
-     *
-     * @deprecated It's recommended to use the new i18n translation mechanism for field name in {@link #translate(String)}
-     * @return
      */
     @Deprecated
     private String translateProperty(final String propertyName) {
@@ -288,6 +339,7 @@ public class TypeTranslator extends NodeTypeModelWrapper {
                 while (nodes.hasNext()) {
                     Node child = nodes.nextNode();
                     if (findTranslationNode(child, propertyName, matchingLanguage)) {
+                        hippoTranslatedDeprecationWarning(node.getPath());
                         return child.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
                     }
                 }
@@ -301,16 +353,17 @@ public class TypeTranslator extends NodeTypeModelWrapper {
     /**
      * Translate field name using the new i18n field name translation mechanism, i.e. the translator node of type
      * 'frontend:plugin' at <code>/hippo:namespaces/${projectName}/${docType}/editor:templates/_default_/translator</code>
-     *
-     * @param propertyName
      */
-    protected String translate(final String propertyName){
+    @Deprecated
+    protected String translate(final String propertyName) {
+        String docTypePath = null;
         if (translations == null){
             attach();
             try {
                 Node docTypeNode = nodeModel.getNode();
                 if (docTypeNode != null) {
                     translations = TranslatorUtils.getTranslationsConfig(docTypeNode);
+                    docTypePath = JcrUtils.getNodePathQuietly(docTypeNode);
                 }
             } catch (TranslatorException e) {
                 log.debug("Cannot retrieve i18n translation configuration", e);
@@ -319,7 +372,11 @@ public class TypeTranslator extends NodeTypeModelWrapper {
 
         final String shortName = getShortName(propertyName);
         IModel model = TranslatorUtils.getTranslatedModel(translations, TranslatorUtils.getCriteria(shortName));
-        return (model != null) ? (String) model.getObject() : null;
+        String translation = (model != null) ? (String) model.getObject() : null;
+        if (translation != null) {
+            hippoTranslatedDeprecationWarning(docTypePath);
+        }
+        return translation;
     }
 
     private String getCaptionProperty(final String propertyName) {

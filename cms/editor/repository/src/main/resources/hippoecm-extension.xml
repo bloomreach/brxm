@@ -84,51 +84,7 @@
       <sv:value>2.28.00</sv:value>
     </sv:property>
   </sv:node>
-  <!-- System Namespace french translations -->
-  <sv:node sv:name="templateeditor-system-fr">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>namespace-system_fr.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>21.01</sv:value>
-    </sv:property>
-  </sv:node>
-  <!-- System Namespace italian translations -->
-  <sv:node sv:name="templateeditor-system-it">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>namespace-system_it.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>21.02</sv:value>
-    </sv:property>
-  </sv:node>
-  <!-- System Namespace german translations -->
-  <sv:node sv:name="templateeditor-system-de">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>namespace-system_de.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>21.03</sv:value>
-    </sv:property>
-  </sv:node>
+
   <!-- Hippo Namespace -->
   <sv:node sv:name="templateeditor-hippo">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -150,49 +106,6 @@
       <sv:value>2.28.00</sv:value>
     </sv:property>
   </sv:node>
-  <!-- Hippo Namespace french translations -->
-  <sv:node sv:name="templateeditor-hippo-fr">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>namespace-hippo_fr.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>22.01</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="templateeditor-hippo-it">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>namespace-hippo_it.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>22.01</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="templateeditor-hippo-de">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>namespace-hippo_de.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>22.03</sv:value>
-    </sv:property>
-  </sv:node>
   <!-- Hippo sysedit Namespace -->
   <sv:node sv:name="templateeditor-hipposysedit">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -206,51 +119,6 @@
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>22.5</sv:value>
-    </sv:property>
-  </sv:node>
-  <!-- Hippo sysedit Namespace french translations -->
-  <sv:node sv:name="templateeditor-hipposysedit-fr">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>namespace-hipposysedit_fr.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>22.51</sv:value>
-    </sv:property>
-  </sv:node>
-  <!-- Hippo sysedit Namespace italian translations -->
-  <sv:node sv:name="templateeditor-hipposysedit-it">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>namespace-hipposysedit_it.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>22.52</sv:value>
-    </sv:property>
-  </sv:node>
-  <!-- Hippo sysedit Namespace german translations -->
-  <sv:node sv:name="templateeditor-hipposysedit-de">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>namespace-hipposysedit_de.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>22.53</sv:value>
     </sv:property>
   </sv:node>
   <!-- Hippo standard namespace -->
@@ -272,51 +140,6 @@
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>22.6</sv:value>
-    </sv:property>
-  </sv:node>
-  <!-- Hippo standard namespace french translations -->
-  <sv:node sv:name="hippostd-types-fr">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>namespace-hippostd_fr.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>22.61</sv:value>
-    </sv:property>
-  </sv:node>
-  <!-- Hippo standard namespace italian translations -->
-  <sv:node sv:name="hippostd-types-it">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>namespace-hippostd_it.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>22.62</sv:value>
-    </sv:property>
-  </sv:node>
-  <!-- Hippo standard namespace german translations -->
-  <sv:node sv:name="hippostd-types-de">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>namespace-hippostd_de.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>22.63</sv:value>
     </sv:property>
   </sv:node>
   <!-- Frontend Namespace -->
@@ -717,6 +540,66 @@
     </sv:property>
     <sv:property sv:name="hippo:contentpropadd" sv:type="String">
       <sv:value>base.path</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="hippo-cms-hippo-type-translations">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>13.0</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:translations</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hippo-type-translations.xml</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="hippo-cms-hippostd-type-translations">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>13.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:translations</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hippostd-type-translations.xml</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="hippo-cms-system-type-translations">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>13.2</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:translations</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>system-type-translations.xml</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="hippo-cms-hipposysedit-type-translations">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>13.3</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:translations</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hipposysedit-type-translations.xml</sv:value>
     </sv:property>
   </sv:node>
 

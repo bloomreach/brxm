@@ -73,6 +73,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     private static final String MAX_ITEMS = "maxitems";
 
     private static final int DEFAULT_MAX_ITEMS = 0;
+    private static final String HIPPO_TYPES = "hippo:types";
 
     private final int maxItems;
     private IPluginConfig parameters;
@@ -502,8 +503,19 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         return helper;
     }
 
+    @Override
+    public String getString(final Map<String, String> criteria) {
+        return super.getString(criteria);
+    }
+
     protected IModel<String> getCaptionModel() {
         IFieldDescriptor field = getFieldHelper().getField();
+        if (field != null) {
+            final String translation = getStringFromBundle(field.getPath());
+            if (translation != null) {
+                return Model.of(translation);
+            }
+        }
         String caption = getPluginConfig().getString("caption");
         String captionKey = field != null ? field.getName() : caption;
         if (captionKey == null) {
@@ -513,6 +525,11 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             caption = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
         }
         return new StringResourceModel(captionKey, this, null, caption);
+    }
+
+    protected String getBundleName() {
+        final String docType = getFieldHelper().getDocumentType().getName();
+        return HIPPO_TYPES + "." + docType;
     }
 
     protected ITemplateEngine getTemplateEngine() {
