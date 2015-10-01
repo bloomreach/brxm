@@ -31,8 +31,8 @@ import com.jayway.restassured.specification.RequestSpecification;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.utils.ResourceUtils;
-import org.apache.cxf.testutil.common.TestUtil;
 import org.junit.After;
+import org.onehippo.repository.testutils.PortUtil;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -197,7 +197,7 @@ public class CXFTest {
     }
 
     protected int getServerPort() {
-        return Integer.parseInt(TestUtil.getPortNumber(getClass()));
+        return PortUtil.getPortNumber(getClass());
     }
 
     protected String getServerAddress() {
