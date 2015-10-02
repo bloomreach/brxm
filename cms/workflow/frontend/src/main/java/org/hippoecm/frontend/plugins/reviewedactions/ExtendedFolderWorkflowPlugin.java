@@ -165,7 +165,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                     }
                 }
             } catch (RepositoryException | RemoteException | WorkflowException e) {
-                log.warn("Publication of {} failed: {}", uuid, e);
+                log.warn("Execution of action {} on {} failed: {}", action, uuid, e);
             }
             session.refresh(true);
         }
