@@ -53,6 +53,8 @@ import org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_TEXT;
+
 /**
  * Gallery processor that puts a resized version of the image in the primary item and populates
  * other resource child nodes with the original.
@@ -298,6 +300,8 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
                 if (MimeTypeHelper.isPdfMimeType(mimeType)) {
                     InputStream dataInputStream = primaryChild.getProperty(JcrConstants.JCR_DATA).getBinary().getStream();
                     ResourceHelper.handlePdfAndSetHippoTextProperty(primaryChild,dataInputStream);
+                } else if (node.hasProperty(HIPPO_TEXT)) {
+                    node.getProperty(HIPPO_TEXT).remove();
                 }
             }
             for (NodeDefinition childDef : node.getPrimaryNodeType().getChildNodeDefinitions()) {
