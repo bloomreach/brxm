@@ -27,8 +27,8 @@ import org.onehippo.cms7.services.SingletonService;
  * </p>
  * <p>
  * {@link ResourceBundle} resolution is implemented as follows. A Locale is interpreted to have
- * three levels of identity, which from least to most specific are: language, country, and variant,
- * which may not all be specified, only the least specific locale identifier, language is mandatory.
+ * three levels of identity, which from least to most specific are: language, country, and variant.
+ * These may not all be specified, only the least specific locale identifier, the language is mandatory.
  * When a {@link ResourceBundle} is requested from the service, first an exact match is attempted, i.e.
  * a {@link ResourceBundle} is searched that matches the full identity of the given {@link Locale}.
  * If an exact match is not found a less exact match is attempted.
