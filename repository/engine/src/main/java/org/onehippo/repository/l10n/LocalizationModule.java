@@ -29,12 +29,12 @@ import org.onehippo.repository.modules.DaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.repository.l10n.LocalizationService.TRANSLATIONS_PATH;
+
 public class LocalizationModule implements DaemonModule {
 
     private static final Logger log = LoggerFactory.getLogger(LocalizationModule.class);
 
-    private static final String HIPPO_TRANSLATIONS_PATH = "/hippo:configuration/hippo:translations";
-    private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 
     private Session session;
     private ModuleConfigurationListener listener;
@@ -70,7 +70,7 @@ public class LocalizationModule implements DaemonModule {
     }
 
     private void loadBundles(final Session session) throws RepositoryException {
-        bundles = ResourceBundleLoader.load(session.getNode(HIPPO_TRANSLATIONS_PATH));
+        bundles = ResourceBundleLoader.load(session.getNode(TRANSLATIONS_PATH));
     }
 
     @Override
@@ -95,7 +95,7 @@ public class LocalizationModule implements DaemonModule {
 
         private void start() throws RepositoryException {
             session.getWorkspace().getObservationManager().
-                    addEventListener(this, EVENT_TYPES, HIPPO_TRANSLATIONS_PATH, true, null, null, false);
+                    addEventListener(this, EVENT_TYPES, TRANSLATIONS_PATH, true, null, null, false);
         }
 
         private void stop() throws RepositoryException {

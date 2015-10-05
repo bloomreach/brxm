@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_RESOURCEBUNDLE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_RESOURCEBUNDLES;
+import static org.onehippo.repository.l10n.LocalizationService.DEFAULT_LOCALE;
 
 class ResourceBundleLoader {
 
@@ -42,7 +43,6 @@ class ResourceBundleLoader {
 
     private final Map<ResourceBundleKey, ResourceBundleImpl> bundles = new HashMap<>();
     private final Stack<String> path = new Stack<>();
-    private final Locale defaultLocale = Locale.ENGLISH;
 
     private ResourceBundleLoader() {
     }
@@ -83,7 +83,7 @@ class ResourceBundleLoader {
     }
 
     private boolean isDefaultLocale(Locale locale) {
-        return locale.equals(defaultLocale);
+        return locale.equals(DEFAULT_LOCALE);
     }
 
     private boolean isParent(Locale locale1, Locale locale2) {
