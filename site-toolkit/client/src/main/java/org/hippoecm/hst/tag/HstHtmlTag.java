@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import org.hippoecm.hst.content.rewriter.ContentRewriter;
 import org.hippoecm.hst.content.rewriter.ImageVariant;
 import org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -241,11 +242,15 @@ public class HstHtmlTag extends TagSupport {
 
     public ContentRewriter<String> getOrCreateContentRewriter() {
         if (contentRewriter == null) {
-            contentRewriter = new SimpleContentRewriter();
+            contentRewriter = HstServices.getComponentManager().getComponent(ContentRewriter.class.getName());
+
+            // fall back to old behavior in case of missing global Spring configuration
+            if (contentRewriter == null) {
+                contentRewriter = new SimpleContentRewriter();
+            }
         }
         return contentRewriter;
     }
-
 
     /**
      * @param fullyQualifiedLinks flag to define whether internal links are rewritten into fully qualified links (URLs)

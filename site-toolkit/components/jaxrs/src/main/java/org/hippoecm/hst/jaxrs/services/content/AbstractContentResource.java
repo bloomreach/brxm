@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.ContentNodeBindingException;
-import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -37,6 +36,7 @@ import org.hippoecm.hst.jaxrs.JAXRSService;
 import org.hippoecm.hst.jaxrs.model.content.HippoHtmlRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.Link;
 import org.hippoecm.hst.jaxrs.services.AbstractResource;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +51,21 @@ public abstract class AbstractContentResource extends AbstractResource {
     
     protected String getRequestContentPath(HstRequestContext requestContext) {
     	return (String) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY);
+    }
+
+    protected ContentRewriter<String> getResolvedContentRewriter() {
+        ContentRewriter<String> result = getContentRewriter();
+
+        if (result == null) {
+            result = HstServices.getComponentManager().getComponent(ContentRewriter.class.getName());
+
+            // fall back to old behavior in case of missing global Spring configuration
+            if (result == null) {
+                result = new SimpleContentRewriter();
+            }
+        }
+
+        return result;
     }
 
     protected String deleteContentResource(HttpServletRequest servletRequest, HippoBean baseBean, String relPath) throws RepositoryException, ObjectBeanPersistenceException {
@@ -92,11 +107,8 @@ public abstract class AbstractContentResource extends AbstractResource {
             parentLink.setRel(getHstQualifiedLinkRel("parent"));
             htmlRep.addLink(parentLink);
             
-            ContentRewriter<String> rewriter = getContentRewriter();
-            if (rewriter == null) {
-                rewriter = new SimpleContentRewriter();
-            }
-            
+            ContentRewriter<String> rewriter = getResolvedContentRewriter();
+
             if (StringUtils.isEmpty(targetMountAlias)) {
                 targetMountAlias = MOUNT_ALIAS_SITE;
             }
@@ -198,11 +210,8 @@ public abstract class AbstractContentResource extends AbstractResource {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         
-        ContentRewriter<String> rewriter = getContentRewriter();
-        if (rewriter == null) {
-            rewriter = new SimpleContentRewriter();
-        }
-        
+        ContentRewriter<String> rewriter = getResolvedContentRewriter();
+
         if (StringUtils.isEmpty(targetMountAlias)) {
             targetMountAlias = MOUNT_ALIAS_SITE;
         }
@@ -212,7 +221,7 @@ public abstract class AbstractContentResource extends AbstractResource {
         String rewrittenHtml = rewriter.rewrite(htmlBean.getContent(), htmlBean.getNode(), requestContext, targetMount);
         return StringUtils.defaultString(rewrittenHtml);
     }
-    
+
     protected String updateHippoHtmlContent(HttpServletRequest servletRequest, String relPath, String htmlContent) {
         HippoBean hippoBean = null;
         HippoHtml htmlBean = null;
