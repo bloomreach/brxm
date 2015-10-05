@@ -77,7 +77,12 @@
 
     onAfterSave: function() {
       return $.Deferred().resolve().promise();
+    },
+
+    getInitialActiveVariantId: function () {
+      return $.Deferred().resolve().promise();
     }
+
   });
 
 }(jQuery));

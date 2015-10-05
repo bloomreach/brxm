@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-(function () {
+(function ($) {
 
   "use strict";
 
@@ -582,37 +582,40 @@
     },
 
     _reloadState: function () {
-      return new Hippo.Future(function (success) {
-        this._fireVariantDirtyOrPristine();
-        this.fireEvent('propertiesLoaded', this);
-        success();
-      }.createDelegate(this));
+      this._fireVariantDirtyOrPristine();
+      this.fireEvent('propertiesLoaded', this);
+      return $.Deferred().resolve().promise();
     },
 
     _loadStore: function () {
-      return new Hippo.Future(function (success, fail) {
-        this.store = new Ext.data.JsonStore({
-          autoLoad: false,
-          method: 'GET',
-          root: 'properties',
-          fields: [
-            'name', 'value', 'initialValue', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation', 'defaultValue',
-            'pickerConfiguration', 'pickerInitialPath', 'pickerRemembersLastVisited', 'pickerPathIsRelative', 'pickerRootPath', 'pickerSelectableNodeTypes',
-            'dropDownListValues', 'dropDownListDisplayValues', 'hiddenInChannelManager', 'groupLabel', 'displayValue'
-          ],
-          url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/' + this.locale + '?FORCE_CLIENT_HOST=true'
-        });
-        this.store.on('load', function () {
-          this._loadProperties();
-          success();
-        }, this);
-        this.store.on('exception', function () {
-          this._loadException.apply(this, arguments);
-          fail();
-        }, this);
-        this._initStoreListeners();
-        this.store.load();
-      }.createDelegate(this));
+      var result = $.Deferred();
+
+      this.store = new Ext.data.JsonStore({
+        autoLoad: false,
+        method: 'GET',
+        root: 'properties',
+        fields: [
+          'name', 'value', 'initialValue', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation', 'defaultValue',
+          'pickerConfiguration', 'pickerInitialPath', 'pickerRemembersLastVisited', 'pickerPathIsRelative', 'pickerRootPath', 'pickerSelectableNodeTypes',
+          'dropDownListValues', 'dropDownListDisplayValues', 'hiddenInChannelManager', 'groupLabel', 'displayValue'
+        ],
+        url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/' + this.locale + '?FORCE_CLIENT_HOST=true'
+      });
+
+      this.store.on('load', function () {
+        this._loadProperties();
+        result.resolve();
+      }, this);
+
+      this.store.on('exception', function () {
+        this._loadException.apply(this, arguments);
+        result.reject();
+      }, this);
+
+      this._initStoreListeners();
+      this.store.load();
+
+      return result.promise();
     },
 
     _initStoreListeners: function () {
@@ -668,4 +671,4 @@
 
   Ext.reg('Hippo.ChannelManager.TemplateComposer.PropertiesForm', Hippo.ChannelManager.TemplateComposer.PropertiesForm);
 
-}());
+}(jQuery));

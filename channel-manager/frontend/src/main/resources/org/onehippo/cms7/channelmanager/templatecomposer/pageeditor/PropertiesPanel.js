@@ -146,20 +146,18 @@
       this.beginUpdate();
       this.removeAll();
       this.componentVariants.get().when(function (variants) {
-        var endUpdate;
-
         this._initTabs(variants, reusableTabs);
         this.adjustBodyWidth(this.tabWidth);
 
         this.firePropertiesChangedEvents = true;
-        this._selectBestMatchingTab(activeVariantId, variants);
 
-        endUpdate = this.endUpdate.createDelegate(this);
-        this._loadTabs().when(endUpdate).otherwise(endUpdate);
-      }.createDelegate(this)).otherwise(function (response) {
+        this._selectBestMatchingTab(activeVariantId, variants).then(function () {
+          this._loadTabs().always(this.endUpdate.bind(this));
+        }.bind(this));
+      }.bind(this)).otherwise(function (response) {
         Hippo.Msg.alert('Failed to get variants.', 'Only the default variant will be available: ' + response.status + ':' + response.statusText);
         this.endUpdate();
-      }.createDelegate(this));
+      }.bind(this));
     },
 
     _getTabs: function () {
@@ -171,13 +169,13 @@
     },
 
     _loadTabs: function () {
-      var futures = [];
+      var loadAllTabs = [];
 
       this.items.each(function (tab) {
-        futures.push(tab.load());
+        loadAllTabs.push(tab.load());
       }, this);
 
-      return Hippo.Future.join(futures);
+      return $.when.apply($, loadAllTabs);
     },
 
     onHide: function () {
@@ -186,9 +184,10 @@
     },
 
     _stopValidationMonitoring: function () {
-      var activeForm = this.getActiveTab().propertiesForm;
-      if (activeForm) {
-        activeForm.stopMonitoring();
+      var activeTab = this.getActiveTab();
+
+      if (activeTab && activeTab.propertiesForm) {
+        activeTab.propertiesForm.stopMonitoring();
       }
     },
 
@@ -370,8 +369,29 @@
     },
 
     _selectBestMatchingTab: function (variantId, variants) {
-      var tabIndex = this._getBestMatchingTabIndex(variantId, variants);
-      this.setActiveTab(tabIndex);
+      var fetchInitialActiveVariantId;
+
+      if (variantId) {
+        fetchInitialActiveVariantId = $.Deferred().resolve(variantId).promise();
+      } else {
+        fetchInitialActiveVariantId = this._getFirstPropertiesEditor().getInitialActiveVariantId();
+      }
+
+      return fetchInitialActiveVariantId.then(function (activeVariantId) {
+        var tabIndex = this._getBestMatchingTabIndex(activeVariantId, variants);
+        this.setActiveTab(tabIndex);
+      }.bind(this));
+    },
+
+    _getFirstPropertiesEditor: function () {
+      var result = this.items[0];
+      this.items.find(function (item) {
+        if (item.variant.id !== 'plus') {
+          result = item;
+          return true;
+        }
+      });
+      return result;
     },
 
     _getBestMatchingTabIndex: function (variantId, variants) {
