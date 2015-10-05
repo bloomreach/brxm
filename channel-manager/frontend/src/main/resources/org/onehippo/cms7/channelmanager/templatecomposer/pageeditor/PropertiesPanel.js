@@ -296,12 +296,6 @@
       this._reloadCleanupAndFireEvent(deletedVariantIds, newActiveVariantId, 'delete');
     },
 
-    _onActivateTab: function (activeVariantId) {
-      this.componentVariants.get().when(function (variants) {
-        this._selectBestMatchingTab(activeVariantId, variants);
-      }.createDelegate(this));
-    },
-
     _reloadCleanupAndFireEvent: function (changedVariantIds, activeVariantId, event) {
       this.componentVariants.invalidate(changedVariantIds, activeVariantId);
       this.componentVariants.cleanup().when(function () {
@@ -346,8 +340,6 @@
       });
 
       editor.on('variantsDeleted', this._onVariantsDeleted, this);
-
-      editor.on('activateTab', this._onActivateTab, this);
 
       return editor;
     },

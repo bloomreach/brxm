@@ -33,7 +33,7 @@
       this.isReadOnly = config.isReadOnly;
       this.componentMessageBus = config.componentMessageBus;
 
-      this.addEvents('visibleHeightChanged', 'variantsDeleted', 'activateTab');
+      this.addEvents('visibleHeightChanged', 'variantsDeleted');
     },
 
     load: function () {
