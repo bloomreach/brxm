@@ -136,10 +136,10 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         showCompoundNames = parameters.getAsBoolean(SHOW_COMPOUND_NAMES, false);
 
         // use caption for backwards compatibility; i18n should use field name
-        IFieldDescriptor field = getFieldHelper().getField();
-        String captionKey = field != null ? field.getName() : config.getString("caption");
-        add(new Label("name", new StringResourceModel(captionKey, this, null, config.getString("caption"))));
 
+        add(new Label("name", getCaptionModel()));
+
+        IFieldDescriptor field = getFieldHelper().getField();
         Label required = new Label("required", "*");
         required.setVisible(field != null && (field.getValidators().contains("required")|| field.isMandatory()));
         add(required);
