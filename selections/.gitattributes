@@ -14,5 +14,11 @@ addon-repository/src/main/resources/selection-namespace.xml svneol=native#text/p
 addon-repository/src/main/resources/selection-types.cnd -text
 addon-repository/src/main/resources/system-DynamicDropdown.xml svneol=native#text/plain
 addon-repository/src/main/resources/system-StaticDropdown.xml svneol=native#text/plain
+addon-repository/src/main/resources/translations/BooleanRadioGroup-type-translations.xml -text
+addon-repository/src/main/resources/translations/DynamicDropdown-type-translations.xml -text
+addon-repository/src/main/resources/translations/RadioGroup-type-translations.xml -text
+addon-repository/src/main/resources/translations/StaticDropdown-type-translations.xml -text
+addon-repository/src/main/resources/translations/listitem-type-translations.xml -text
+addon-repository/src/main/resources/translations/valuelist-type-translations.xml -text
 hst/pom.xml svneol=native#text/plain
 /pom.xml svneol=native#text/plain
