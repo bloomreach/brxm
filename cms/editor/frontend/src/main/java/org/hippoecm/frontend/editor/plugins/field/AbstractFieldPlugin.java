@@ -509,19 +509,17 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     }
 
     protected IModel<String> getCaptionModel() {
-        IFieldDescriptor field = getFieldHelper().getField();
-        if (field != null) {
-            final String translation = getStringFromBundle(field.getPath());
-            if (translation != null) {
-                return Model.of(translation);
-            }
-        }
-        String caption = getPluginConfig().getString("caption");
-        String captionKey = field != null ? field.getName() : caption;
-        if (captionKey == null) {
+        final IFieldDescriptor field = getFieldHelper().getField();
+        if (field == null) {
             return new Model<>("undefined");
         }
-        if (caption == null && field != null && field.getName().length() >= 1) {
+        final String translation = getStringFromBundle(field.getPath());
+        if (translation != null) {
+            return Model.of(translation);
+        }
+        String caption = getPluginConfig().getString("caption");
+        final String captionKey = field.getName();
+        if (caption == null && !field.getName().isEmpty()) {
             caption = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
         }
         return new StringResourceModel(captionKey, this, null, caption);
