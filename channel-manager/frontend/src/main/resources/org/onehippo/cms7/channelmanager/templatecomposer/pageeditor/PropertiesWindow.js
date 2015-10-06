@@ -53,7 +53,7 @@
         }
       });
 
-      if (Ext.isDefined(this.variantsUuid)) {
+      if (Ext.isDefined(config.variantsUuid)) {
         windowWidth += this.propertiesPanel.tabWidth;
       }
 
