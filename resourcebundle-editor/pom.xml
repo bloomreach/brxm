@@ -23,12 +23,10 @@
     <version>27.2</version>
   </parent>
 
-  <inceptionYear>2013</inceptionYear>
-
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-resourcebundle-editor</artifactId>
   <name>Hippo Plugin Resourcebundle Editor</name>
   <version>2.1.0-translations-1.0-SNAPSHOT</version>
+  <inceptionYear>2013</inceptionYear>
 
   <scm>
     <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/resourcebundle-editor/branches/resourcebundle-editor-2.1.0-translations-1</connection>
