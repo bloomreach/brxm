@@ -26,7 +26,6 @@
 
   <name>Hippo Plugin Poll</name>
   <description>Hippo Plugin Poll</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-poll</artifactId>
   <version>2.1.0-translations-1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
