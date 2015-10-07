@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.linking;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
@@ -25,6 +26,7 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstContainerURL;
@@ -32,6 +34,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
+import org.hippoecm.hst.core.util.PathEncoder;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.request.ResolvedMountImpl;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -49,7 +52,7 @@ public class HstLinkImpl implements HstLink {
     private Mount mount;
     private Optional<HstSiteMapItem> siteMapItem;
     private boolean notFound = false;
-    private final static String[] FULLY_QUALIFIED_URL_PREFIXES = {"//", "http:", "https:"};
+    final static String[] FULLY_QUALIFIED_URL_PREFIXES = {"//", "http:", "https:"};
 
     /**
      * <p>
@@ -233,7 +236,16 @@ public class HstLinkImpl implements HstLink {
 
         for (String s : FULLY_QUALIFIED_URL_PREFIXES) {
             if (path.startsWith(s)) {
-                return path;
+                try {
+                    final String encoded = PathEncoder.encode(path,
+                            requestContext.getBaseURL().getCharacterEncoding(),
+                            FULLY_QUALIFIED_URL_PREFIXES);
+                    return encoded;
+                } catch (UnsupportedEncodingException e) {
+                    // same exception as used by org.hippoecm.hst.core.component.HstURLImpl.toString() although
+                    // not perse from a HstComponent invocation, but this is not the case for HstURLImpl either.
+                    throw new HstComponentException(e);
+                }
             }
         }
 
