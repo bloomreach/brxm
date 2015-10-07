@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,84 +15,86 @@
  */
 
 (function () {
-    "use strict";
+  "use strict";
 
-    var LIVE_RELOAD_URL = '//localhost:35729/livereload.js';
+  var LIVE_RELOAD_URL = '//localhost:35729/livereload.js';
 
-    angular.module('hippo.channel')
+  angular.module('hippo.channel')
 
-        .service('_hippo.channel.IFrameService', ['$window', '$log', function ($window, $log) {
+    .service('_hippo.channel.IFrameService', [
+      '$window', '$log', function ($window, $log) {
 
-            function getParentIFramePanelId() {
-                var idParam = 'parentExtIFramePanelId',
-                    search = $window.location.search,
-                    parameters, i, length, keyValue;
+        function getParentIFramePanelId () {
+          var idParam = 'parentExtIFramePanelId',
+            search = $window.location.search,
+            parameters, i, length, keyValue;
 
-                if (search.length > 0) {
-                    parameters = search.substring(1).split('&');
+          if (search.length > 0) {
+            parameters = search.substring(1).split('&');
 
-                    for (i = 0, length = parameters.length; i < length; i++) {
-                        keyValue = parameters[i].split('=');
-                        if (keyValue[0] === idParam) {
-                            return keyValue[1];
-                        }
-                    }
-                }
-
-                throw new Error("Expected query parameter '" + idParam + "'");
+            for (i = 0, length = parameters.length; i < length; i++) {
+              keyValue = parameters[i].split('=');
+              if (keyValue[0] === idParam) {
+                return keyValue[1];
+              }
             }
+          }
 
-            function getParentIFramePanel() {
-                var iframePanelId = getParentIFramePanelId(),
-                    iframePanel = $window.parent.Ext.getCmp(iframePanelId);
+          throw new Error("Expected query parameter '" + idParam + "'");
+        }
 
-                if (!angular.isObject(iframePanel)) {
-                    throw new Error("Unknown iframe panel id: '" + iframePanelId + "'");
-                }
+        function getParentIFramePanel () {
+          var iframePanelId = getParentIFramePanelId(),
+            iframePanel = $window.parent.Ext.getCmp(iframePanelId);
 
-                return iframePanel;
-            }
+          if (!angular.isObject(iframePanel)) {
+            throw new Error("Unknown iframe panel id: '" + iframePanelId + "'");
+          }
 
-            function publish(event, value) {
-                return getParentIFramePanel().iframeToHost.publish(event, value);
-            }
+          return iframePanel;
+        }
 
-            function subscribe(event, callback, scope) {
-                return getParentIFramePanel().hostToIFrame.subscribe(event, callback, scope);
-            }
+        function publish (event, value) {
+          return getParentIFramePanel().iframeToHost.publish(event, value);
+        }
 
-            function getConfig() {
-                var iframePanel = getParentIFramePanel(),
-                    config = iframePanel.initialConfig.iframeConfig;
+        function subscribe (event, callback, scope) {
+          return getParentIFramePanel().hostToIFrame.subscribe(event, callback, scope);
+        }
 
-                if (config === undefined) {
-                    throw new Error("Parent iframe panel does not contain iframe configuration");
-                }
+        function getConfig () {
+          var iframePanel = getParentIFramePanel(),
+            config = iframePanel.initialConfig.iframeConfig;
 
-                return config;
-            }
+          if (config === undefined) {
+            throw new Error("Parent iframe panel does not contain iframe configuration");
+          }
 
-            function addScriptToHead(scriptUrl) {
-                var head = $window.document.getElementsByTagName("head")[0],
-                    script = document.createElement('script');
-                script.type = 'text/javascript';
-                script.src = scriptUrl;
-                head.appendChild(script);
-            }
+          return config;
+        }
 
-            function enableLiveReload() {
-                if (getConfig().debug) {
-                    addScriptToHead(LIVE_RELOAD_URL);
-                    $log.info("iframe #" + getParentIFramePanelId() + " has live reload enabled via " + LIVE_RELOAD_URL);
-                }
-            }
+        function addScriptToHead (scriptUrl) {
+          var head = $window.document.getElementsByTagName("head")[0],
+            script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.src = scriptUrl;
+          head.appendChild(script);
+        }
 
-            return {
-                isActive: ($window.self !== $window.top),
-                getConfig: getConfig,
-                enableLiveReload: enableLiveReload,
-                publish: publish,
-                subscribe: subscribe
-            };
-        }]);
+        function enableLiveReload () {
+          if (getConfig().debug) {
+            addScriptToHead(LIVE_RELOAD_URL);
+            $log.info("iframe #" + getParentIFramePanelId() + " has live reload enabled via " + LIVE_RELOAD_URL);
+          }
+        }
+
+        return {
+          isActive: ($window.self !== $window.top),
+          getConfig: getConfig,
+          enableLiveReload: enableLiveReload,
+          publish: publish,
+          subscribe: subscribe
+        };
+      }
+    ]);
 }());

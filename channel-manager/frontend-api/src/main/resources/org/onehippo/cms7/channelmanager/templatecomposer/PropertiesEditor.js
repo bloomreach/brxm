@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-(function () {
+(function ($) {
   "use strict";
 
   Ext.namespace('Hippo.ChannelManager.TemplateComposer');
@@ -23,14 +23,17 @@
     componentId: null,
     variant: null,
     propertiesForm: null,
+    isReadOnly: false,
 
     constructor: function (config) {
       Hippo.ChannelManager.TemplateComposer.PropertiesEditor.superclass.constructor.call(this, config);
       this.componentId = config.componentId;
       this.variant = config.variant;
       this.propertiesForm = config.propertiesForm;
+      this.isReadOnly = config.isReadOnly;
+      this.componentMessageBus = config.componentMessageBus;
 
-      this.addEvents('visibleHeightChanged');
+      this.addEvents('visibleHeightChanged', 'variantsDeleted');
     },
 
     load: function () {
@@ -52,8 +55,34 @@
      */
     markDirty: function (isDirty) {
       this.propertiesForm.markDirty(isDirty === undefined ? true : isDirty);
+    },
+
+    /**
+     * Save the form containing in the editor
+     */
+    save: function () {
+      var def = $.Deferred(),
+        form = this.propertiesForm;
+
+      form.submitForm(function (savedVariantId) {
+        def.resolve({
+          oldId: form.variant.id,
+          newId: savedVariantId
+        });
+      }, function () {
+        def.reject(form);
+      });
+      return def.promise();
+    },
+
+    onAfterSave: function() {
+      return $.Deferred().resolve().promise();
+    },
+
+    getInitialActiveVariantId: function () {
+      return $.Deferred().resolve().promise();
     }
 
   });
 
-}());
+}(jQuery));

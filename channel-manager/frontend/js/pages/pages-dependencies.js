@@ -20,9 +20,7 @@
     'hippo.channel',
     'hippo.theme',
     'pascalprecht.translate',
-    'ui.bootstrap',
-    'ui.router',
-    'ui.tree'
+    'ui.router'
   ]);
 
 }());
