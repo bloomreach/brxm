@@ -5,6 +5,7 @@
 repository/pom.xml -text svneol=unset#application/xml
 repository/src/main/resources/hide-seosupport.xml -text
 repository/src/main/resources/hippoecm-extension.xml -text svneol=unset#application/xml
+repository/src/main/resources/seo-type-translations.xml -text
 repository/src/main/resources/seosupport-namespace.xml -text svneol=unset#application/xml
 repository/src/main/resources/seosupport.cnd -text
 site/pom.xml svneol=native#text/plain
