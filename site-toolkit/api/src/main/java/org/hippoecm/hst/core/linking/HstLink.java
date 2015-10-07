@@ -39,7 +39,9 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  * </p>
  */
 public interface HstLink {
-    
+
+    final static String[] FULLY_QUALIFIED_URL_PREFIXES = {"//", "http:", "https:"};
+
     /**
      * Note: This is *not* a url!
      * @return the path of this HstLink. Note: This is *not* a url! The value never starts or ends with a slash /

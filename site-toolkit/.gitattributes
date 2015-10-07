@@ -702,6 +702,7 @@ components/core/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenuUtils.ja
 components/core/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenusImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenusManagerImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/util/DOMUtils.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/core/util/PathEncoder.java -text
 components/core/src/main/java/org/hippoecm/hst/core/util/PropertyParser.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/webfiles/WhitelistReader.java -text
 components/core/src/main/java/org/hippoecm/hst/proxy/DynaBeanMethodInvoker.java svneol=native#text/plain
@@ -836,11 +837,13 @@ components/core/src/test/java/org/hippoecm/hst/core/linking/HstBinariesLinkRewri
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstContainerResourceLinkRewritingIT.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkAllRewritingIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkForCmsRequestIT.java -text
+components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkImplTest.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkLowestDepthFirstAndTheLexicalComparatorTest.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkRewritingComponentPickedIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkRewritingCrossSchemeIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkRewritingIT.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/order/TestObjectOrderer.java -text
+components/core/src/test/java/org/hippoecm/hst/core/util/PathEncoderTest.java -text
 components/core/src/test/java/org/hippoecm/hst/core/webfiles/TestWhitelistReader.java -text
 components/core/src/test/java/org/hippoecm/hst/proxy/IPersonInfo.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/proxy/TestDynaBeanProxyUtils.java svneol=native#text/plain
