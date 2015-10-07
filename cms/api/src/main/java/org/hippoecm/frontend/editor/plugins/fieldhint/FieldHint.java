@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.hippoecm.frontend.editor.plugins.fieldhint;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,15 +26,32 @@ import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.skin.Icon;
 
 public class FieldHint extends Panel {
+
+    public FieldHint(String id, final IModel<String> hintModel) {
+        super(id);
+        add(createHint(hintModel));
+    }
+
+    @Deprecated
     public FieldHint(String id, final String hint) {
         super(id);
-
         add(createHint(hint));
     }
 
+    protected Component createHint(final IModel<String> hintModel) {
+        final WebMarkupContainer hintContainer = new WebMarkupContainer("hint-visual");
+        if (hintModel == null) {
+            hintContainer.setVisible(false);
+        } else {
+            hintContainer.add(new Label("hint-text", hintModel));
+            hintContainer.add(HippoIcon.fromSprite("hint-image", Icon.INFO_CIRCLE));
+        }
+        return hintContainer;
+    }
+
+    @Deprecated
     protected Component createHint(final String hint) {
         WebMarkupContainer hintContainer = new WebMarkupContainer("hint-visual");
-
         if (StringUtils.isBlank(hint)) {
             // no hint available, display nothing
             hintContainer.setVisible(false);
@@ -47,4 +63,5 @@ public class FieldHint extends Panel {
         }
         return hintContainer;
     }
+
 }

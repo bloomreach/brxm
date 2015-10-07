@@ -109,7 +109,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     // view and edit modes
     protected AbstractProvider<P, C> provider;
-    private FieldPluginHelper helper;
+    protected FieldPluginHelper helper;
     private TemplateController<P, C> templateController;
     private boolean managedValidation = false;
     private Map<Object, ValidationFilter> listeners = new HashMap<>();
@@ -501,33 +501,6 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     protected FieldPluginHelper getFieldHelper() {
         return helper;
-    }
-
-    @Override
-    public String getString(final Map<String, String> criteria) {
-        return super.getString(criteria);
-    }
-
-    protected IModel<String> getCaptionModel() {
-        final IFieldDescriptor field = getFieldHelper().getField();
-        if (field == null) {
-            return new Model<>("undefined");
-        }
-        final String translation = getStringFromBundle(field.getPath());
-        if (translation != null) {
-            return Model.of(translation);
-        }
-        String caption = getPluginConfig().getString("caption");
-        final String captionKey = field.getName();
-        if (caption == null && !field.getName().isEmpty()) {
-            caption = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
-        }
-        return new StringResourceModel(captionKey, this, null, caption);
-    }
-
-    protected String getBundleName() {
-        final String docType = getFieldHelper().getDocumentType().getName();
-        return HIPPO_TYPES + "." + docType;
     }
 
     protected ITemplateEngine getTemplateEngine() {

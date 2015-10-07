@@ -46,12 +46,8 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrPropertyValueModel> {
-
-    static final Logger log = LoggerFactory.getLogger(PropertyFieldPlugin.class);
 
     private JcrNodeModel nodeModel;
     private JcrPropertyModel propertyModel;
@@ -64,14 +60,14 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         nodeModel = (JcrNodeModel) getDefaultModel();
 
         // use caption for backwards compatibility; i18n should use field name
-        add(new Label("name", getCaptionModel()));
+        add(new Label("name", helper.getCaptionModel(this)));
 
         add(createNrItemsLabel());
 
         final Label required = new Label("required", "*");
         add(required);
 
-        add(new FieldHint("hint-panel", config.getString("hint")));
+        add(new FieldHint("hint-panel", helper.getHintModel(this)));
         add(createAddLink());
 
         final IFieldDescriptor field = getFieldHelper().getField();
