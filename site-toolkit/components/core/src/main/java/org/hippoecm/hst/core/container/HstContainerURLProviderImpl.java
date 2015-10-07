@@ -325,7 +325,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                 url.append('/');
             }
         } else {
-            final String encoded = PathEncoder.encode(containerUrlPathInfo, characterEncoding, null);
+            final String encoded = PathEncoder.encode(containerUrlPathInfo, characterEncoding);
             if (!encoded.startsWith("/")) {
                 url.append("/");
             }
