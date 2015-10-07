@@ -30,7 +30,7 @@ import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManage
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.rewriter.ContentRewriter;
-import org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter;
+import org.hippoecm.hst.content.rewriter.ContentRewriterFactory;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.JAXRSService;
 import org.hippoecm.hst.jaxrs.model.content.HippoHtmlRepresentation;
@@ -54,18 +54,14 @@ public abstract class AbstractContentResource extends AbstractResource {
     }
 
     protected ContentRewriter<String> getResolvedContentRewriter() {
-        ContentRewriter<String> result = getContentRewriter();
+        ContentRewriter<String> contentRewriter = getContentRewriter();
 
-        if (result == null) {
-            result = HstServices.getComponentManager().getComponent(ContentRewriter.class.getName());
-
-            // fall back to old behavior in case of missing global Spring configuration
-            if (result == null) {
-                result = new SimpleContentRewriter();
-            }
+        if (contentRewriter == null) {
+            ContentRewriterFactory factory = HstServices.getComponentManager().getComponent(ContentRewriterFactory.class.getName());
+            contentRewriter = factory.createContentRewriter();
         }
 
-        return result;
+        return contentRewriter;
     }
 
     protected String deleteContentResource(HttpServletRequest servletRequest, HippoBean baseBean, String relPath) throws RepositoryException, ObjectBeanPersistenceException {

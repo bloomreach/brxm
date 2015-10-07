@@ -30,8 +30,8 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.rewriter.ContentRewriter;
+import org.hippoecm.hst.content.rewriter.ContentRewriterFactory;
 import org.hippoecm.hst.content.rewriter.ImageVariant;
-import org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
@@ -240,14 +240,11 @@ public class HstHtmlTag extends TagSupport {
         return contentRewriter;
     }
 
+    @SuppressWarnings("unchecked")
     public ContentRewriter<String> getOrCreateContentRewriter() {
         if (contentRewriter == null) {
-            contentRewriter = HstServices.getComponentManager().getComponent(ContentRewriter.class.getName());
-
-            // fall back to old behavior in case of missing global Spring configuration
-            if (contentRewriter == null) {
-                contentRewriter = new SimpleContentRewriter();
-            }
+            ContentRewriterFactory factory = HstServices.getComponentManager().getComponent(ContentRewriterFactory.class.getName());
+            contentRewriter = factory.createContentRewriter();
         }
         return contentRewriter;
     }

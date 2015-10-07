@@ -27,9 +27,9 @@
     <property name="objectConverter" ref="org.hippoecm.hst.content.beans.manager.ObjectConverter" />
   </bean>
 
-  <bean id="org.hippoecm.hst.content.rewriter.ContentRewriter"
-        class="org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter"
-        scope="prototype"
-  />
+  <bean id="org.hippoecm.hst.content.rewriter.ContentRewriterFactory"
+        class="org.hippoecm.hst.content.rewriter.impl.ContentRewriterFactoryImpl">
+    <property name="defaultContentRewriterClassName" value="${default.hst.contentrewriter.class}" />
+  </bean>
 
 </beans>
