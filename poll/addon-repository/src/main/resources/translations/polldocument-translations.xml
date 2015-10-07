@@ -25,12 +25,18 @@
     <sv:property sv:name="jcr:name" sv:type="String">
       <sv:value>Poll</sv:value>
     </sv:property>
+    <sv:property sv:name="poll:poll" sv:type="String">
+      <sv:value>Poll</sv:value>
+    </sv:property>
   </sv:node>
   <sv:node sv:name="nl">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:resourcebundle</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:name" sv:type="String">
+      <sv:value>Stelling</sv:value>
+    </sv:property>
+    <sv:property sv:name="poll:poll" sv:type="String">
       <sv:value>Stelling</sv:value>
     </sv:property>
   </sv:node>
@@ -41,12 +47,18 @@
     <sv:property sv:name="jcr:name" sv:type="String">
       <sv:value>Sondage</sv:value>
     </sv:property>
+    <sv:property sv:name="poll:poll" sv:type="String">
+      <sv:value>Sondage</sv:value>
+    </sv:property>
   </sv:node>
   <sv:node sv:name="de">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:resourcebundle</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:name" sv:type="String">
+      <sv:value>Umfrage</sv:value>
+    </sv:property>
+    <sv:property sv:name="poll:poll" sv:type="String">
       <sv:value>Umfrage</sv:value>
     </sv:property>
   </sv:node>

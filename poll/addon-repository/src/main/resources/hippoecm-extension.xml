@@ -91,28 +91,6 @@
     </sv:property>
   </sv:node>
 
-  <!-- poll translator service -->
-  <sv:node sv:name="poll-translator">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>20430</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>poll-translator.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-services</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>1.05.07</sv:value>
-    </sv:property>
-  </sv:node>
-
   <sv:node sv:name="hide-poll-namespace-from-tree-view">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>

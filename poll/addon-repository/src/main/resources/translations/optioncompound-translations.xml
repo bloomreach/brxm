@@ -25,6 +25,12 @@
     <sv:property sv:name="jcr:name" sv:type="String">
       <sv:value>Option</sv:value>
     </sv:property>
+    <sv:property sv:name="poll:value" sv:type="String">
+      <sv:value>Value</sv:value>
+    </sv:property>
+    <sv:property sv:name="poll:label" sv:type="String">
+      <sv:value>Label</sv:value>
+    </sv:property>
   </sv:node>
   <sv:node sv:name="nl">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -32,6 +38,12 @@
     </sv:property>
     <sv:property sv:name="jcr:name" sv:type="String">
       <sv:value>Optie</sv:value>
+    </sv:property>
+    <sv:property sv:name="poll:value" sv:type="String">
+      <sv:value>Waarde</sv:value>
+    </sv:property>
+    <sv:property sv:name="poll:label" sv:type="String">
+      <sv:value>Label</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="fr">
@@ -41,6 +53,12 @@
     <sv:property sv:name="jcr:name" sv:type="String">
       <sv:value>Option</sv:value>
     </sv:property>
+    <sv:property sv:name="poll:value" sv:type="String">
+      <sv:value>Valeur</sv:value>
+    </sv:property>
+    <sv:property sv:name="poll:label" sv:type="String">
+      <sv:value>Étiquette</sv:value>
+    </sv:property>
   </sv:node>
   <sv:node sv:name="de">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -48,6 +66,12 @@
     </sv:property>
     <sv:property sv:name="jcr:name" sv:type="String">
       <sv:value>Option</sv:value>
+    </sv:property>
+    <sv:property sv:name="poll:value" sv:type="String">
+      <sv:value>Wert</sv:value>
+    </sv:property>
+    <sv:property sv:name="option:label" sv:type="String">
+      <sv:value>Label</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
