@@ -453,37 +453,4 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         return key;
     }
 
-    /**
-     * Get the model for the caption, a.k.a. title.
-     *
-     * Inspired on org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin#getCaptionModel(),
-     * unfortunately this class does not extend from AbstractFieldPlugin.
-     */
-    protected IModel<String> getCaptionModel() {
-
-        final IFieldDescriptor field = getTaxonomyFieldDescriptor();
-        String caption = getPluginConfig().getString("caption");
-        // captionKey config first on behalf of multiple taxonomy pickers in one document
-        String captionKey = getPluginConfig().getString("captionKey");
-        if (captionKey == null) {
-            captionKey = field != null ? field.getName() : caption;
-        }
-
-        // warn when no field, nor caption(key)
-        if (captionKey == null) {
-            log.warn("Cannot set taxonomy field caption because both field reference and property 'caption' are missing." +
-                            " Document type is '{}'",
-                    getDocumentTypeDescriptor() == null ? "unknown" : getDocumentTypeDescriptor().getName());
-            return new Model<>("undefined");
-        }
-
-        // capitalized field name as default caption (not key!)
-        if (caption == null && field != null && field.getName().length() >= 1) {
-            caption = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
-        }
-
-        // implicitly from translator service (this class implements IStringResourceProvider)
-        log.debug("Getting taxonomy field caption from translator by captionKey '{}' and default caption '{}'", captionKey, caption);
-        return new StringResourceModel(captionKey, this, null, caption);
-    }
 }
