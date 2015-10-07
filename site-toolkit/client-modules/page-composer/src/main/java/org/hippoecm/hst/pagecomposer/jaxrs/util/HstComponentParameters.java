@@ -177,11 +177,8 @@ public class HstComponentParameters {
         if (isDefaultPrefix(oldPrefix)) {
             throw new IllegalArgumentException("Cannot rename default prefix '" + oldPrefix + "'");
         }
-        if (isDefaultPrefix(newPrefix)) {
-            throw new IllegalArgumentException("Cannot rename prefix '" + oldPrefix + "' to default prefix '" + newPrefix + "'");
-        }
         Map<String, String> parameters = prefixedParameters.remove(oldPrefix);
-        prefixedParameters.put(newPrefix, parameters);
+        prefixedParameters.put(prefixOrDefault(newPrefix), parameters);
     }
 
     public boolean removePrefix(final String prefix) {
