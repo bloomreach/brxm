@@ -43,6 +43,8 @@ import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.util.PathUtils.FULLY_QUALIFIED_URL_PREFIXES;
+
 public class HstLinkImpl implements HstLink {
 
     private final static Logger log = LoggerFactory.getLogger(HstLinkImpl.class);

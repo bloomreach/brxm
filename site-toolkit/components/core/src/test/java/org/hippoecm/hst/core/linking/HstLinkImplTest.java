@@ -28,7 +28,7 @@ import org.junit.Test;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.hippoecm.hst.core.linking.HstLink.FULLY_QUALIFIED_URL_PREFIXES;
+import static org.hippoecm.hst.util.PathUtils.FULLY_QUALIFIED_URL_PREFIXES;
 import static org.junit.Assert.assertEquals;
 
 

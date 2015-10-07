@@ -46,7 +46,7 @@ import org.hippoecm.hst.utils.TagUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.core.linking.HstLink.FULLY_QUALIFIED_URL_PREFIXES;
+import static org.hippoecm.hst.util.PathUtils.FULLY_QUALIFIED_URL_PREFIXES;
 import static org.hippoecm.hst.utils.TagUtils.getQueryString;
 import static org.hippoecm.hst.utils.TagUtils.writeOrSetVar;
 
