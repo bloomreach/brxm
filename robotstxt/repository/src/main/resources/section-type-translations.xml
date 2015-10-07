@@ -25,6 +25,12 @@
     <sv:property sv:name="jcr:name" sv:type="String">
       <sv:value>Section</sv:value>
     </sv:property>
+    <sv:property sv:name="robotstxt:useragent" sv:type="String">
+      <sv:value>User-agent</sv:value>
+    </sv:property>
+    <sv:property sv:name="robotstxt:disallow" sv:type="String">
+      <sv:value>Disallow</sv:value>
+    </sv:property>
   </sv:node>
   <sv:node sv:name="nl">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -32,6 +38,12 @@
     </sv:property>
     <sv:property sv:name="jcr:name" sv:type="String">
       <sv:value>Sectie</sv:value>
+    </sv:property>
+    <sv:property sv:name="robotstxt:useragent" sv:type="String">
+      <sv:value>User-agent</sv:value>
+    </sv:property>
+    <sv:property sv:name="robotstxt:disallow" sv:type="String">
+      <sv:value>Niet toestaan</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="de">
@@ -41,6 +53,12 @@
     <sv:property sv:name="jcr:name" sv:type="String">
       <sv:value>Sektion</sv:value>
     </sv:property>
+    <sv:property sv:name="robotstxt:useragent" sv:type="String">
+      <sv:value>User-agent</sv:value>
+    </sv:property>
+    <sv:property sv:name="robotstxt:disallow" sv:type="String">
+      <sv:value>Nicht zulassen</sv:value>
+    </sv:property>
   </sv:node>
   <sv:node sv:name="fr">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -48,6 +66,12 @@
     </sv:property>
     <sv:property sv:name="jcr:name" sv:type="String">
       <sv:value>Section</sv:value>
+    </sv:property>
+    <sv:property sv:name="robotstxt:useragent" sv:type="String">
+      <sv:value>User-agent</sv:value>
+    </sv:property>
+    <sv:property sv:name="robotstxt:disallow" sv:type="String">
+      <sv:value>Interdire</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
