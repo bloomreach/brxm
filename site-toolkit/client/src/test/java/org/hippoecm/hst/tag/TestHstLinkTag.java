@@ -52,6 +52,9 @@ public class TestHstLinkTag {
     private HstLinkTag linkTag;
     private HstLinkCreator linkCreator;
 
+    private HstLink hstLink;
+    private ResolvedMount resolvedMount;
+
     private void init(final String testPath) {
         MockServletContext servletContext = new MockServletContext();
         HstRequest hstRequest = new MockHstRequest();
@@ -61,7 +64,7 @@ public class TestHstLinkTag {
         request.setAttribute(ContainerConstants.HST_REQUEST, hstRequest);
         request.setAttribute(ContainerConstants.HST_RESPONSE, hstResponse);
         final MockHstRequestContext mockHstRequestContext = new MockHstRequestContext();
-        final ResolvedMount resolvedMount = EasyMock.createNiceMock(ResolvedMount.class);
+        resolvedMount = EasyMock.createNiceMock(ResolvedMount.class);
         final HstContainerURLImpl baseURL = new HstContainerURLImpl();
         baseURL.setCharacterEncoding("utf-8");
         mockHstRequestContext.setBaseURL(baseURL);
@@ -71,15 +74,14 @@ public class TestHstLinkTag {
         linkCreator = EasyMock.createNiceMock(HstLinkCreator.class);
         mockHstRequestContext.setLinkCreator(linkCreator);
 
-        HstLink hstLink = new HstLinkImpl(testPath, null) {
+        hstLink = new HstLinkImpl(testPath, null) {
             @Override
             public String toUrlForm(final HstRequestContext requestContext, final boolean fullyQualified) {
                 return StringUtils.substringBefore(testPath, "?");
             }
         };
         // expect call for /css/style.css with the query string!
-        expect(linkCreator.create(eq("/css/style.css"), isNull())).andReturn(hstLink).once();
-        replay(resolvedMount, linkCreator);
+
 
         pageContext = new MockPageContext(servletContext, request, response);
         linkTag = new HstLinkTag();
@@ -94,6 +96,9 @@ public class TestHstLinkTag {
         final String testPath = "/css/style.css?foo=bar&page=3";
         init(testPath);
 
+        expect(linkCreator.create(eq("/css/style.css"), isNull())).andReturn(hstLink).once();
+        replay(resolvedMount, linkCreator);
+
         linkTag.doEndTag();
         String link = (String) pageContext.getAttribute("result");
         final String escapedExpectedResult = HstRequestUtils.escapeXml(testPath);
@@ -106,6 +111,10 @@ public class TestHstLinkTag {
     public void test_hst_link_by_path_with_queryString_and_with_params_returns_merged() throws Exception {
         final String testPath = "/css/style.css?foo=bar&page=3";
         init(testPath);
+
+        expect(linkCreator.create(eq("/css/style.css"), isNull())).andReturn(hstLink).once();
+        replay(resolvedMount, linkCreator);
+
         for (int i = 0; i < 2; i++) {
             ParamTag paramTag = new ParamTag();
             paramTag.setParent(linkTag);
@@ -125,6 +134,10 @@ public class TestHstLinkTag {
     public void test_hst_link_by_path_with_queryString_and_with_overlapping_params_returns_merged_and_queryString_precedence() throws Exception {
         final String testPath = "/css/style.css?foo=bar&page=3";
         init(testPath);
+
+        expect(linkCreator.create(eq("/css/style.css"), isNull())).andReturn(hstLink).once();
+        replay(resolvedMount, linkCreator);
+
         {
             ParamTag paramTag = new ParamTag();
             paramTag.setParent(linkTag);
@@ -154,6 +167,10 @@ public class TestHstLinkTag {
     public void test_hst_link_by_path_with_queryString_and_with_overlapping_param_that_has_null_value_has_queryString_precedence() throws Exception {
         final String testPath = "/css/style.css?foo=bar&page=3";
         init(testPath);
+
+        expect(linkCreator.create(eq("/css/style.css"), isNull())).andReturn(hstLink).once();
+        replay(resolvedMount, linkCreator);
+
         {
             ParamTag paramTag = new ParamTag();
             paramTag.setParent(linkTag);
@@ -175,6 +192,10 @@ public class TestHstLinkTag {
     public void test_hst_link_by_path_with_queryString_with_null_value_get_is_sign_added() throws Exception {
         final String testPath = "/css/style.css?foo&bar";
         init(testPath);
+
+        expect(linkCreator.create(eq("/css/style.css"), isNull())).andReturn(hstLink).once();
+        replay(resolvedMount, linkCreator);
+
         linkTag.doEndTag();
         final String escapedExpectedResult = HstRequestUtils.escapeXml("/css/style.css?foo=&bar=");
         String link = (String) pageContext.getAttribute("result");
@@ -187,6 +208,10 @@ public class TestHstLinkTag {
     public void test_hst_link_by_path_with_queryString_with_null_value_and_with_overlapping_param_that_has_non_null_value_has_queryString_precedence() throws Exception {
         final String testPath = "/css/style.css?foo&page=3";
         init(testPath);
+
+        expect(linkCreator.create(eq("/css/style.css"), isNull())).andReturn(hstLink).once();
+        replay(resolvedMount, linkCreator);
+
         {
             ParamTag paramTag = new ParamTag();
             paramTag.setParent(linkTag);
@@ -208,10 +233,56 @@ public class TestHstLinkTag {
     public void test_hst_link_by_path_with_queryString_unescaped() throws Exception {
         final String testPath = "/css/style.css?foo=bar&page=3";
         init(testPath);
+
+        expect(linkCreator.create(eq("/css/style.css"), isNull())).andReturn(hstLink).once();
+        replay(resolvedMount, linkCreator);
+
         linkTag.setEscapeXml(false);
         linkTag.doEndTag();
         String link = (String) pageContext.getAttribute("result");
         assertEquals("query string should be unescaped in the result", testPath, link);
+        verify(linkCreator);
+    }
+
+    @Test
+    public void hst_link_by_path_with_illegal_prefix_gets_prefix_stripped() throws Exception {
+        final String testPath = "http://www.onehippo.org/css/style.css?foo=bar&page=3";
+        init(testPath);
+
+        hstLink = new HstLinkImpl(testPath, null) {
+            @Override
+            public String toUrlForm(final HstRequestContext requestContext, final boolean fullyQualified) {
+                return "www.onehippo.org/css/style.css";
+            }
+        };
+        expect(linkCreator.create(eq("www.onehippo.org/css/style.css"), isNull())).andReturn(hstLink).once();
+        replay(resolvedMount, linkCreator);
+
+        linkTag.setEscapeXml(false);
+        linkTag.doEndTag();
+        String link = (String) pageContext.getAttribute("result");
+        assertEquals("Illegal prefix should be removed", "www.onehippo.org/css/style.css?foo=bar&page=3", link);
+        verify(linkCreator);
+    }
+
+    @Test
+    public void hst_link_by_path_with_illegal_prefixes_gets_prefixes_stripped() throws Exception {
+        final String testPath = "http:http://https://www.onehippo.org/css/style.css?foo=bar&page=3";
+        init(testPath);
+
+        hstLink = new HstLinkImpl(testPath, null) {
+            @Override
+            public String toUrlForm(final HstRequestContext requestContext, final boolean fullyQualified) {
+                return "www.onehippo.org/css/style.css";
+            }
+        };
+        expect(linkCreator.create(eq("www.onehippo.org/css/style.css"), isNull())).andReturn(hstLink).once();
+        replay(resolvedMount, linkCreator);
+
+        linkTag.setEscapeXml(false);
+        linkTag.doEndTag();
+        String link = (String) pageContext.getAttribute("result");
+        assertEquals("Illegal prefix should be removed", "www.onehippo.org/css/style.css?foo=bar&page=3", link);
         verify(linkCreator);
     }
 

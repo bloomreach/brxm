@@ -52,7 +52,6 @@ public class HstLinkImpl implements HstLink {
     private Mount mount;
     private Optional<HstSiteMapItem> siteMapItem;
     private boolean notFound = false;
-    final static String[] FULLY_QUALIFIED_URL_PREFIXES = {"//", "http:", "https:"};
 
     /**
      * <p>
