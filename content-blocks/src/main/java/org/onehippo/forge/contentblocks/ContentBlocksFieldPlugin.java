@@ -55,6 +55,7 @@ import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.compare.IComparer;
 import org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin;
+import org.hippoecm.frontend.editor.plugins.field.FieldPluginHelper;
 import org.hippoecm.frontend.editor.plugins.field.TransparentFragment;
 import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
@@ -123,6 +124,8 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     public ContentBlocksFieldPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
+        FieldPluginHelper helper = new FieldPluginHelper(context, config);
+
         final String configuredCompoundList = config.getString(COMPOUND_LIST);
         compoundList = compoundListFromConfiguration(configuredCompoundList);
         providerCompoundType = config.getString(PROVIDER_COMPOUND);
@@ -137,14 +140,14 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
         // use caption for backwards compatibility; i18n should use field name
 
-        add(new Label("name", getCaptionModel()));
+        add(new Label("name", helper.getCaptionModel(this)));
 
         IFieldDescriptor field = getFieldHelper().getField();
         Label required = new Label("required", "*");
         required.setVisible(field != null && (field.getValidators().contains("required")|| field.isMandatory()));
         add(required);
 
-        add(new FieldHint("hint-panel", config.getString("hint")));
+        add(new FieldHint("hint-panel", helper.getHintModel(this)));
 
         add(createAddLinkLabel());
 
