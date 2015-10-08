@@ -143,7 +143,7 @@ class ResourceBundleLoader {
         return property.getType() == PropertyType.STRING;
     }
 
-    private class ResourceBundleImpl implements ResourceBundle {
+    private static class ResourceBundleImpl implements ResourceBundle {
         private final String name;
         private final Locale locale;
         private final Map<String, String> strings = new HashMap<>();
