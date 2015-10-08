@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,6 +75,14 @@ public class RichTextDiffWithLinksAndImagesPanelTest {
         Node current = addHtmlNode(root, "current", "Some text");
         String diff = createDiff(base, current);
         assertEquals(htmlEncode("<html>Some text</html>\n"), diff);
+    }
+
+    @Test
+    public void sameCharacterDifferentEncodingShowsNoChanges() throws RepositoryException {
+        Node base = addHtmlNode(root, "base", "e &#101; ' ' &apos; &apos; &#39; &#39;");
+        Node current = addHtmlNode(root, "current", "&#101; e &apos; &#39; ' &#39; ' &apos;");
+        String diff = createDiff(base, current);
+        assertEquals(htmlEncode("<html>e e &#039; &#039; &#039; &#039; &#039; &#039;</html>\n"), diff);
     }
 
     @Test
