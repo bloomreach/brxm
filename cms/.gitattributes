@@ -2437,6 +2437,7 @@ richtext/repository/src/main/resources/hippohtmlcleaner.cnd -text
 richtext/repository/src/main/resources/hippostd-html-type-translations.xml -text
 richtext/repository/src/main/resources/system-html-type-translations.xml -text
 scripts/src/main/resources/hippoecm-extension.xml -text
+scripts/src/main/resources/move-doctype-translations.xml -text
 scripts/src/main/resources/update-plugin-config.xml -text
 test/src/main/java/org/hippoecm/frontend/PluginSuite.java -text
 test/src/main/java/org/hippoecm/frontend/session/AccessiblePluginUserSession.java -text
