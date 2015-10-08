@@ -97,15 +97,6 @@
   padding-bottom: 2px;
 }
 
-.hippo-editor-field-subfield-controls a:active,
-.hippo-editor-field-subfield-controls a:hover {
-  text-decoration: none;
-}
-
-.hippo-editor-field-subfield-controls .remove-link .hi {
-  color: red;
-}
-
 /* Dialog style */
 .notification {
   margin: 11px;

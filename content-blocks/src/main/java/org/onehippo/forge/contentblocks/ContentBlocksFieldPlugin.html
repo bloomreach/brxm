@@ -22,14 +22,9 @@
           <span wicket:id="name">[ field name ]</span><span class="required" wicket:id="required">*</span>
         </h3>
         <wicket:container wicket:id="hint-panel"/>
-        <div wicket:id="view">
+        <div wicket:id="view" class="hippo-editor-field-subfield">
           <wicket:container wicket:id="fragment"/>
         </div>
-        <div class="hippo-content-block-controls">
-          <div class="contentpicker-label" wicket:id="addLabel">[Add label]</div>
-          <wicket:container wicket:id="contentpicker-add"/>
-        </div>
-        <div class="focus-marker"><a wicket:id="focusMarker" name="focusMarker" onfocus="this.blur();">&#160;</a></div>
       </div>
     </div>
   </wicket:panel>
@@ -57,7 +52,7 @@
     <div class="content-block-title">
       <span wicket:id="itemTitle">[ item title ]</span>
     </div>
-    <div class="contentpicker-blocks hippo-editor-field-subfield">
+    <div class="contentpicker-blocks">
       <div class="hippo-editor-field-subfield-controls" wicket:id="controls">
         <a class="up-link" wicket:id="up"><span wicket:id="up-icon"></span></a>
         <a class="down-link" wicket:id="down"><span wicket:id="down-icon"></span></a>
@@ -65,13 +60,18 @@
       </div>
       <div wicket:id="item"></div>
     </div>
+    <div class="hippo-content-block-controls">
+      <div class="contentpicker-label" wicket:id="addLabel">[Add label]</div>
+      <wicket:container wicket:id="contentpicker-add"/>
+    </div>
+    <div class="focus-marker"><a wicket:id="focusMarker" name="focusMarker" onfocus="this.blur();">&#160;</a></div>
   </wicket:fragment>
 
   <wicket:fragment wicket:id="view-fragment">
     <div class="content-block-title">
       <span wicket:id="itemTitle">[ item title ]</span>
     </div>
-    <div class="contentpicker-blocks hippo-editor-field-subfield">
+    <div class="contentpicker-blocks">
       <div wicket:id="item"></div>
     </div>
   </wicket:fragment>
