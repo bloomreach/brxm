@@ -27,16 +27,14 @@ import org.hippoecm.hst.content.beans.standard.HippoItem;
 public class RelatedDocsBean extends HippoItem {
 
     public List<HippoBean> getDocs() {
+        List<HippoFacetSelect> relatedDocumentLinks = getChildBeans("hippo:facetselect");
+        List<HippoBean> docs = new ArrayList<>();
 
-        List<HippoFacetSelect> reldocsfs = this.getChildBeans("hippo:facetselect");
+        for (HippoFacetSelect link : relatedDocumentLinks) {
+            HippoBean relatedDocument = link.getReferencedBean();
 
-        List<HippoBean> docs = new ArrayList<HippoBean>();
-
-        for (HippoFacetSelect fs : reldocsfs) {
-            HippoBean b = fs.getReferencedBean();
-
-            if (b != null) {
-                docs.add(b);
+            if (relatedDocument != null) {
+                docs.add(relatedDocument);
             }
         }
 
