@@ -29,17 +29,6 @@
   <sv:property sv:name="hippo:name" sv:type="String">
     <sv:value>Introduction speech</sv:value>
   </sv:property>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value/>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Introduction speech</sv:value>
-    </sv:property>
-  </sv:node>
   <sv:node sv:name="introduction-speech">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>{{namespace}}:eventsdocument</sv:value>

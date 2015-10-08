@@ -24,6 +24,8 @@
     <!-- folder doc queries-->
     <xml action="copy" source="config/new-content-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="config/new-content-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <!-- type translations -->
+    <xml action="copy" source="translations/contentdocument-translations.xml" target="/hippo:configuration/hippo:translations/hippo:types"/>
   </instructionSet>
 
   <instructionSet group="sampleData">

@@ -543,6 +543,7 @@ plugins/banner-and-carousel/src/main/resources/xml/data/banner_entry_1.xml -text
 plugins/banner-and-carousel/src/main/resources/xml/data/banner_entry_2.xml -text
 plugins/banner-and-carousel/src/main/resources/xml/data/banner_images.xml -text
 plugins/banner-and-carousel/src/main/resources/xml/namespaces/bannerdocument.xml -text
+plugins/banner-and-carousel/src/main/resources/xml/translations/bannerdocument-translations.xml -text
 plugins/bean-writer/pom.xml -text
 plugins/bean-writer/src/main/java/org/onehippo/cms7/essentials/beanwriter/rest/BeanWriterResource.java -text
 plugins/bean-writer/src/main/java/org/onehippo/cms7/essentials/beanwriter/rest/MyRestList.java -text
@@ -623,6 +624,9 @@ plugins/blog/src/main/resources/xml/samples/author_1.xml -text
 plugins/blog/src/main/resources/xml/samples/author_2.xml -text
 plugins/blog/src/main/resources/xml/samples/blog_entry_1.xml -text
 plugins/blog/src/main/resources/xml/samples/blog_entry_2.xml -text
+plugins/blog/src/main/resources/xml/translations/account-translations.xml -text
+plugins/blog/src/main/resources/xml/translations/author-translations.xml -text
+plugins/blog/src/main/resources/xml/translations/blogpost-translations.xml -text
 plugins/blog/src/test/java/org/onehippo/cms7/essentials/dashboard/blog/BlogInstructionPackageTest.java -text
 plugins/blog/src/test/resources/log4j.xml -text
 plugins/blog/src/test/resources/test-hippofacnav.cnd -text
@@ -702,6 +706,7 @@ plugins/events/src/main/resources/xml/samples/content/gallery/samples.xml -text
 plugins/events/src/main/resources/xml/samples/content/gallery/samples/blue.xml -text
 plugins/events/src/main/resources/xml/samples/content/gallery/samples/coffee.xml -text
 plugins/events/src/main/resources/xml/samples/content/gallery/samples/pencils.xml -text
+plugins/events/src/main/resources/xml/translations/eventsdocument-translations.xml -text
 plugins/faq/pom.xml -text
 plugins/faq/src/main/resources/META-INF/faqComponentPlugin_instructions.xml -text
 plugins/faq/src/main/resources/META-INF/resources/feature/faqPlugin/faqPlugin.html -text
@@ -846,6 +851,7 @@ plugins/news/src/main/resources/xml/samples/content/gallery/samples.xml -text
 plugins/news/src/main/resources/xml/samples/content/gallery/samples/grapes.xml -text
 plugins/news/src/main/resources/xml/samples/content/gallery/samples/medusa.xml -text
 plugins/news/src/main/resources/xml/samples/content/gallery/samples/snail.xml -text
+plugins/news/src/main/resources/xml/translations/newsdocument-translations.xml -text
 plugins/poll/pom.xml -text
 plugins/poll/src/main/java/org/onehippo/cms7/essentials/plugins/poll/PollInstruction.java -text
 plugins/poll/src/main/resources/META-INF/poll_plugin_instructions.xml -text
@@ -963,6 +969,7 @@ plugins/simple-content/src/main/resources/java/ContentDocument.txt -text
 plugins/simple-content/src/main/resources/jsp/contentlist-main-contentlist.jsp -text
 plugins/simple-content/src/main/resources/jsp/contentpage-main.jsp -text
 plugins/simple-content/src/main/resources/namespaces/contentdocument.xml -text
+plugins/simple-content/src/main/resources/translations/contentdocument-translations.xml -text
 plugins/sitemap/pom.xml -text
 plugins/sitemap/src/main/java/org/onehippo/cms7/essentials/plugins/sitemap/SitemapParameterService.java -text
 plugins/sitemap/src/main/resources/META-INF/resources/feature/sitemapPlugin/sitemapPlugin.html -text

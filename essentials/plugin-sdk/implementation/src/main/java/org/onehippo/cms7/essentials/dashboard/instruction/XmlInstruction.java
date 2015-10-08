@@ -147,7 +147,7 @@ public class XmlInstruction extends PluginInstruction {
         final InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
         try {
             final XmlNode xmlNode = XmlUtils.parseXml(stream);
-            final String name = xmlNode.getName();
+            final String name = TemplateUtils.replaceTemplateData(xmlNode.getName(), context.getPlaceholderData());
             if (!Strings.isNullOrEmpty(name) && session.itemExists(parentPath)) {
 
                 final String absPath = parentPath.endsWith("/") ? parentPath + name : parentPath + '/' + name;

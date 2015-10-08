@@ -21,6 +21,7 @@
   <instructionSet>
     <cnd documentType="newsdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <xml action="copy" source="xml/namespaces/newsdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
+    <xml action="copy" source="xml/translations/newsdocument-translations.xml" target="/hippo:configuration/hippo:translations/hippo:types"/>
   </instructionSet>
 
   <instructionSet group="jsp">
