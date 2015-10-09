@@ -1322,107 +1322,8 @@ public final class JavaSourceUtils {
 
 
     @SuppressWarnings(UNCHECKED)
-    public static void populateRelatedDocsBean(final String methodName, final Path path) {
-        final CompilationUnit unit = getCompilationUnit(path);
-        unit.recordModifications();
-        final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
-        final AST ast = unit.getAST();
-        final MethodDeclaration methodDeclaration = ast.newMethodDeclaration();
-        methodDeclaration.setName(ast.newSimpleName(methodName));
-        final ParameterizedType type = ast.newParameterizedType(ast.newSimpleType(ast.newName("List")));
-        type.typeArguments().add(ast.newSimpleType(ast.newSimpleName("HippoBean")));
-        methodDeclaration.setReturnType2(type);
-        methodDeclaration.modifiers().add(ast.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD));
-        methodDeclaration.setConstructor(false);
-        // start method body
-        final Block body = ast.newBlock();
-        methodDeclaration.setBody(body);
-        // add facet field declaration:
+    public static void addRelatedDocsMethod(final String methodName, final Path path) {
 
-        final VariableDeclarationFragment relatedFragment = ast.newVariableDeclarationFragment();
-        relatedFragment.setName(ast.newSimpleName("facets"));
-        final MethodInvocation relatedInvocation = ast.newMethodInvocation();
-        relatedInvocation.setName(ast.newSimpleName("getChildBeans"));
-        final StringLiteral stringArg = ast.newStringLiteral();
-        stringArg.setLiteralValue("hippo:facetselect");
-        relatedInvocation.arguments().add(stringArg);
-        final VariableDeclarationStatement relatedStatement = ast.newVariableDeclarationStatement(relatedFragment);
-        final ParameterizedType listBeanType = ast.newParameterizedType(ast.newSimpleType(ast.newName("List")));
-        listBeanType.typeArguments().add(ast.newSimpleType(ast.newSimpleName("HippoFacetSelect")));
-        relatedStatement.setType(listBeanType);
-        relatedStatement.modifiers().add(ast.newModifier(Modifier.ModifierKeyword.FINAL_KEYWORD));
-        relatedFragment.setInitializer(relatedInvocation);
-        body.statements().add(relatedStatement);
-        // document list declaration:
-        final VariableDeclarationFragment beanFragment = ast.newVariableDeclarationFragment();
-        beanFragment.setName(ast.newSimpleName("beans"));
-        final ClassInstanceCreation initializer = ast.newClassInstanceCreation();
-        final ParameterizedType fieldListType = ast.newParameterizedType(ast.newSimpleType(ast.newName("ArrayList")));
-        fieldListType.typeArguments().add(ast.newSimpleType(ast.newSimpleName("HippoBean")));
-        initializer.setType(fieldListType);
-        beanFragment.setInitializer(initializer);
-        final VariableDeclarationStatement beanStatement = createListType(ast, beanFragment, "HippoBean");
-        body.statements().add(beanStatement);
-        // for loop
-        final EnhancedForStatement forLoopStatement = ast.newEnhancedForStatement();
-        forLoopStatement.setExpression(ast.newSimpleName("facets"));
-        final SingleVariableDeclaration facetVar = ast.newSingleVariableDeclaration();
-        facetVar.setType(ast.newSimpleType(ast.newName("HippoFacetSelect")));
-        facetVar.setName(ast.newSimpleName("facet"));
-        forLoopStatement.setParameter(facetVar);
-        final IfStatement ifStatement = ast.newIfStatement();
-        // facet reference
-        final VariableDeclarationFragment facetFragment = ast.newVariableDeclarationFragment();
-        facetFragment.setName(ast.newSimpleName("bean"));
-        final MethodInvocation facetInvocation = ast.newMethodInvocation();
-        final SimpleName myName = ast.newSimpleName("facet");
-        facetInvocation.setExpression(myName);
-        facetInvocation.setName(ast.newSimpleName("getReferencedBean"));
-        final VariableDeclarationStatement facetStatement = ast.newVariableDeclarationStatement(facetFragment);
-        facetStatement.setType(ast.newSimpleType(ast.newSimpleName("HippoBean")));
-        facetStatement.modifiers().add(ast.newModifier(Modifier.ModifierKeyword.FINAL_KEYWORD));
-        facetFragment.setInitializer(facetInvocation);
-        // add bean to list
-        final MethodInvocation beanAddInvocation = ast.newMethodInvocation();
-        final SimpleName name = ast.newSimpleName("beans");
-        beanAddInvocation.setExpression(name);
-        beanAddInvocation.setName(ast.newSimpleName("add"));
-        beanAddInvocation.arguments().add(ast.newSimpleName("bean"));
-        final ExpressionStatement beanAddStatement = ast.newExpressionStatement(beanAddInvocation);
-        // if null check..
-        final InfixExpression infix = ast.newInfixExpression();
-        infix.setLeftOperand(ast.newSimpleName("bean"));
-        infix.setRightOperand(ast.newNullLiteral());
-        infix.setOperator(InfixExpression.Operator.NOT_EQUALS);
-        ifStatement.setExpression(infix);
-        final Block bracketsBlock = ast.newBlock();
-        bracketsBlock.statements().add(beanAddStatement);
-        ifStatement.setThenStatement(bracketsBlock);
-        final Block blockIfStatement = ast.newBlock();
-        blockIfStatement.statements().add(facetStatement);
-        blockIfStatement.statements().add(ifStatement);
-        body.statements().add(forLoopStatement);
-        forLoopStatement.setBody(blockIfStatement);
-        final ReturnStatement statement = ast.newReturnStatement();
-        statement.setExpression(ast.newSimpleName("beans"));
-        body.statements().add(statement);
-        classType.bodyDeclarations().add(methodDeclaration);
-        // add annotation
-        final MarkerAnnotation generatedAnnotation = ast.newMarkerAnnotation();
-        generatedAnnotation.setTypeName(ast.newName(HippoEssentialsGenerated.class.getSimpleName()));
-        addHippoGeneratedAnnotation(EssentialConst.RELATEDDOCS_DOCS, unit, methodDeclaration, ast);
-        replaceFile(path, unit, ast);
-        // add imports
-        addImport(path, EssentialConst.HIPPO_BEAN_IMPORT);
-        addImport(path, EssentialConst.HIPPO_FACET_SELECT_IMPORT);
-        addImport(path, ArrayList.class.getName());
-        addImport(path, List.class.getName());
-    }
-
-    @SuppressWarnings(UNCHECKED)
-    public static void addRelatedDocsMethod(final String methodName, final Path path, final Path relatedDocumentsPath) {
-        final String beanName = JavaSourceUtils.getClassName(relatedDocumentsPath);
-        final String importName = JavaSourceUtils.getImportName(relatedDocumentsPath);
         final CompilationUnit unit = getCompilationUnit(path);
         unit.recordModifications();
         final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
@@ -1442,11 +1343,11 @@ public final class JavaSourceUtils {
         final MethodInvocation relatedInvocation = ast.newMethodInvocation();
         relatedInvocation.setName(ast.newSimpleName("getBean"));
         final StringLiteral stringArg = ast.newStringLiteral();
-        stringArg.setLiteralValue("relateddocs:docs");
+        stringArg.setLiteralValue(EssentialConst.RELATEDDOCS_DOCS);
         relatedInvocation.arguments().add(stringArg);
         final VariableDeclarationStatement relatedStatement = ast.newVariableDeclarationStatement(relatedFragment);
 
-        relatedStatement.setType(ast.newSimpleType(ast.newSimpleName(beanName)));
+        relatedStatement.setType(ast.newSimpleType(ast.newSimpleName(EssentialConst.RELATED_DOCS_BEAN)));
         relatedStatement.modifiers().add(ast.newModifier(Modifier.ModifierKeyword.FINAL_KEYWORD));
         relatedFragment.setInitializer(relatedInvocation);
         body.statements().add(relatedStatement);
@@ -1456,7 +1357,7 @@ public final class JavaSourceUtils {
         final MethodInvocation facetInvocation = ast.newMethodInvocation();
         final SimpleName myName = ast.newSimpleName("documents");
         facetInvocation.setExpression(myName);
-        facetInvocation.setName(ast.newSimpleName("getRelatedDocuments"));
+        facetInvocation.setName(ast.newSimpleName("getDocs"));
         final ReturnStatement statement = ast.newReturnStatement();
         statement.setExpression(facetInvocation);
         body.statements().add(statement);
@@ -1464,13 +1365,11 @@ public final class JavaSourceUtils {
         // add annotation
         final MarkerAnnotation generatedAnnotation = ast.newMarkerAnnotation();
         generatedAnnotation.setTypeName(ast.newName(HippoEssentialsGenerated.class.getSimpleName()));
-        addHippoGeneratedAnnotation("relateddocs:docs", unit, methodDeclaration, ast);
+        addHippoGeneratedAnnotation(EssentialConst.RELATEDDOCS_DOCS, unit, methodDeclaration, ast);
         replaceFile(path, unit, ast);
         // add imports
         addImport(path, EssentialConst.HIPPO_BEAN_IMPORT);
-        addImport(path, EssentialConst.HIPPO_FACET_SELECT_IMPORT);
-        addImport(path, ArrayList.class.getName());
-        addImport(path, importName);
+        addImport(path, EssentialConst.HIPPO_RELATED_DOCS_IMPORT);
         addImport(path, List.class.getName());
 
     }
