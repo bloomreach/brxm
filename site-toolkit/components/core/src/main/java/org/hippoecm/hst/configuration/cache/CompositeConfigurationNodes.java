@@ -260,7 +260,7 @@ public class CompositeConfigurationNodes {
         return paths;
     }
 
-    public List<String> getCompositeConfigurationDependenyPaths() {
+    public List<String> getCompositeConfigurationDependencyPaths() {
         return compositeConfigurationDependenyPaths;
     }
 
