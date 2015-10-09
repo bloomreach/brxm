@@ -207,7 +207,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
     }
 
     @Test
-    public void test_inherited_configuration_workspace_menu_is_only_included_when_no_own_sitemenus() throws Exception {
+    public void test_inherited_configuration_workspace_menu_is_not_included() throws Exception {
         String commonConfigPath = "/hst:hst/hst:configurations/unittestcommon";
         session.getNode(commonConfigPath).addNode("hst:workspace").addNode("hst:sitemenus");
         // start with moving shared menu from 'unittestcommon' to hst:workspace of 'unittestcommon'
@@ -235,24 +235,13 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
 
         }
 
-        // subproject should have the menu from inherited hst:workspace SINCE it has NO own hst:sitemenu
+        // subproject should NOT have the menu from inherited hst:workspace even though it has NO own hst:sitemenu : by default,
+        // hst:workspace is not inherited
         {
             ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/subsite");
             final HstSite hstSite = mount.getMount().getHstSite();
             final Map<String,HstSiteMenuConfiguration> unitTestSubProjectMenus = hstSite.getSiteMenusConfiguration().getSiteMenuConfigurations();
-            final HstSiteMenuConfiguration mainUnitTestSubProjectMenu = unitTestSubProjectMenus.values().iterator().next();
-            final Node unitTestSubProjectJcrNode = session.getNodeByIdentifier(((CanonicalInfo)mainUnitTestSubProjectMenu).getCanonicalIdentifier());
-            // inherited node is not part of sub project configuration path
-            assertFalse(unitTestSubProjectJcrNode.getPath().startsWith(hstSite.getConfigurationPath()));
-            assertTrue(unitTestSubProjectJcrNode.getPath().startsWith("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus"));
-
-            assertEquals(1, mainUnitTestSubProjectMenu.getSiteMenuConfigurationItems().size());
-            final HstSiteMenuItemConfiguration newsMenuItem = mainUnitTestSubProjectMenu.getSiteMenuConfigurationItems().get(0);
-
-            assertEquals(newsMenuItem.getName(), "News");
-            String mainMenuNodeIdentifier = ((CanonicalInfo)newsMenuItem).getCanonicalIdentifier();
-            final Node mainMenuNode = session.getNodeByIdentifier(mainMenuNodeIdentifier);
-            assertTrue(mainMenuNode.getPath().equals("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus/footer/News"));
+            assertTrue(unitTestSubProjectMenus.values().isEmpty());
         }
 
         // now move /hst:hst/hst:configurations/unittestproject/hst:sitemenus
@@ -310,9 +299,8 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         }
 
         // now delete /hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemenus
-        // unittestproject should now use the hst:workspace menu from
-        // /hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus
-        // and thus only have the 'footer' menu
+        // unittestproject should still not use the hst:workspace menu from
+        // /hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus and thus have no menu items
 
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemenus").remove();
         pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
@@ -323,17 +311,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
             ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
             final HstSite hstSite = mount.getMount().getHstSite();
             final Map<String,HstSiteMenuConfiguration> unitTestProjectMenus = hstSite.getSiteMenusConfiguration().getSiteMenuConfigurations();
-            final HstSiteMenuConfiguration mainUnitTestProjectMenu = unitTestProjectMenus.values().iterator().next();
-            assertTrue(((CanonicalInfo)mainUnitTestProjectMenu).isWorkspaceConfiguration());
-            final Node unitTestMenuJcrNode = session.getNodeByIdentifier(((CanonicalInfo)mainUnitTestProjectMenu).getCanonicalIdentifier());
-            assertTrue(unitTestMenuJcrNode.getPath().startsWith("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus"));
-
-            assertEquals(1, mainUnitTestProjectMenu.getSiteMenuConfigurationItems().size());
-            for (HstSiteMenuItemConfiguration menuItem : mainUnitTestProjectMenu.getSiteMenuConfigurationItems()) {
-                String mainMenuNodeIdentifier = ((CanonicalInfo)menuItem).getCanonicalIdentifier();
-                final Node mainMenuNode = session.getNodeByIdentifier(mainMenuNodeIdentifier);
-                assertTrue(mainMenuNode.getPath().startsWith("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus/footer"));
-            }
+            assertTrue(unitTestProjectMenus.values().isEmpty());
         }
     }
 
