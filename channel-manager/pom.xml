@@ -25,7 +25,7 @@
 
 
   <artifactId>hippo-addon-channel-manager</artifactId>
-  <version>3.1.0-SNAPSHOT</version>
+  <version>3.1.0-inheritance-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2011</inceptionYear>
 
@@ -37,7 +37,7 @@
 
     <hippo.repository.version>3.0.0</hippo.repository.version>
     <hippo.cms.version>3.0.0</hippo.cms.version>
-    <hippo.hst.version>3.1.0-SNAPSHOT</hippo.hst.version>
+    <hippo.hst.version>3.1.0-inheritance-SNAPSHOT</hippo.hst.version>
     <hippo.commons.version>2.0.0</hippo.commons.version>
     <hippo.addon-hst-configuration-editor.version>2.0.0</hippo.addon-hst-configuration-editor.version>
     <hippo.frontend.plugins.version>2.0.0</hippo.frontend.plugins.version>
