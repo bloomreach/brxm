@@ -72,6 +72,7 @@ public final class JavaSourceUtils {
     private static final Pattern ARRAY_PATTERN = Pattern.compile("\\[\\s*\\]");
     public static final String UNCHECKED = "unchecked";
     public static final String RAWTYPES = "rawtypes";
+    public static final String TAB_SIZE = "4";
     private static Logger log = LoggerFactory.getLogger(JavaSourceUtils.class);
 
     private JavaSourceUtils() {
@@ -869,6 +870,8 @@ public final class JavaSourceUtils {
         options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_7);
         options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_7);
         options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_7);
+        options.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, JavaCore.SPACE);
+        options.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, TAB_SIZE);
         final String alignmentValue = DefaultCodeFormatterConstants.createAlignmentValue(true, DefaultCodeFormatterConstants.WRAP_ONE_PER_LINE, DefaultCodeFormatterConstants.INDENT_ON_COLUMN);
         options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ENUM_CONSTANTS, alignmentValue);
         final CodeFormatter codeFormatter = ToolFactory.createCodeFormatter(options);

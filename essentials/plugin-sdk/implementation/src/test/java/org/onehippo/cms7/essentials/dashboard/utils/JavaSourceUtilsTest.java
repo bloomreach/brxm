@@ -48,6 +48,7 @@ public class JavaSourceUtilsTest extends BaseResourceTest {
     public static final String CLASS_NAME = "TestExampleClass";
     public static final String CLASS_DOC_NAME = "TestDocClass";
     public static final String PACKAGE_NAME = "com.foo.bar";
+    public static final String SPACE_FORMATTING = "    ";
     private static Logger log = LoggerFactory.getLogger(JavaSourceUtilsTest.class);
     private String absolutePath = "";
     private Path path;
@@ -162,7 +163,9 @@ public class JavaSourceUtilsTest extends BaseResourceTest {
         // check imports
         final List<String> statements = JavaSourceUtils.getImportStatements(path);
         assertTrue(statements.contains(HippoEssentialsGenerated.class.getCanonicalName()));
-
+        // check spaces formatting:
+        final String source = GlobalUtils.readTextFile(path).toString();
+        assertTrue(source.contains(SPACE_FORMATTING));
     }
 
     @Test
