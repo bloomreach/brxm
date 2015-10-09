@@ -1366,8 +1366,6 @@ public final class JavaSourceUtils {
         replaceFile(path, unit, ast);
         // add imports
         addImport(path, EssentialConst.HIPPO_BEAN_IMPORT);
-        addImport(path, EssentialConst.HIPPO_FACET_SELECT_IMPORT);
-        addImport(path, ArrayList.class.getName());
         addImport(path, EssentialConst.HIPPO_RELATED_DOCS_IMPORT);
         addImport(path, List.class.getName());
 
