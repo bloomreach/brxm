@@ -41,6 +41,13 @@
         hidden: true
       });
 
+      // ping all site webapps to keep the SSO session alive
+      this.pinger = new Hippo.ChannelManager.Pinger({
+        cmsUser: config.cmsUser,
+        composerRestMountPath: config.composerRestMountPath,
+        contextPaths: config.contextPaths
+      });
+
       Ext.apply(config, {
         id: 'rootPanel',
         layout: 'card',
@@ -55,6 +62,7 @@
       Hippo.ChannelManager.RootPanel.superclass.constructor.call(this, config);
 
       this.selectCard(config.activeItem);
+      this.pinger.run();
     },
 
     initComponent: function () {
