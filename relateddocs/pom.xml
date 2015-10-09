@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <modules>
+    <module>addon-cms</module>
+    <module>hst</module>
+  </modules>
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
@@ -25,11 +29,10 @@
 
   <name>Hippo Plugin Related Documents</name>
   <description>Hippo Plugin Related Documents</description>
-  <groupId>org.onehippo.cms7</groupId>
-  <artifactId>hippo-plugin-relateddocs</artifactId>
+  <artifactId>hippo-plugin-relateddocs-parent</artifactId>
   <version>3.1.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
-  
+  <packaging>pom</packaging>
+
   <inceptionYear>2009</inceptionYear>
 
   <scm>
@@ -37,11 +40,11 @@
     <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/trunk/</developerConnection>
     <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/relateddocs/trunk/</url>
   </scm>
-  
+
   <properties>
     <hippo.cms.version>3.0.0</hippo.cms.version>
     <hippo.repository.version>3.0.0</hippo.repository.version>
-
+    <hippo.hst.version>3.0.0</hippo.hst.version>
     <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
   </properties>
 
@@ -58,42 +61,50 @@
       </releases>
     </repository>
   </repositories>
-  
+
   <issueManagement>
     <url>https://issues.onehippo.com/browse/HIPPLUG/component/10871</url>
   </issueManagement>
 
-  <dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.onehippo.cms7.hst</groupId>
+        <artifactId>hst-api</artifactId>
+        <version>${hippo.hst.version}</version>
+        <scope>provided</scope>
+      </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-api</artifactId>
-      <version>${hippo.cms.version}</version>
-      <scope>provided</scope>
-    </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7.hst</groupId>
+        <artifactId>hst-content-beans</artifactId>
+        <version>${hippo.hst.version}</version>
+        <scope>provided</scope>
+      </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-editor-frontend</artifactId>
-      <version>${hippo.cms.version}</version>
-      <scope>provided</scope>
-    </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-api</artifactId>
+        <version>${hippo.cms.version}</version>
+        <scope>provided</scope>
+      </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-api</artifactId>
-      <version>${hippo.repository.version}</version>
-      <scope>provided</scope>
-    </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-editor-frontend</artifactId>
+        <version>${hippo.cms.version}</version>
+        <scope>provided</scope>
+      </dependency>
 
-    <!-- Dependencies to make tests work -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.8</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-api</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
 
   <build>
     <defaultGoal>package</defaultGoal>
@@ -133,7 +144,7 @@
             <configuration>
               <excludes combine.children="append">
                 <!-- repository content XML -->
-                <exclude>src/main/resources/*.xml</exclude>
+                <exclude>addon-cms/src/main/resources/*.xml</exclude>
               </excludes>
             </configuration>
           </plugin>
