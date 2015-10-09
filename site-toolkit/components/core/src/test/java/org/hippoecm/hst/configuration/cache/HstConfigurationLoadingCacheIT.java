@@ -62,4 +62,25 @@ public class HstConfigurationLoadingCacheIT extends AbstractHstLoadingCacheTestC
         rootConfigEventPath = hstConfigurationLoadingCache.getMainConfigOrRootConfigNodePath(new HstEvent("/hst:hst/hst:configurations/foo[1]/bar/lux/", false));
         assertEquals("/hst:hst/hst:configurations/foo[1]/bar", rootConfigEventPath);
     }
+
+
+    @Test
+    public void testGetRootConfigPathFromWorkspaceEvents() {
+        String rootConfigEventPath = hstConfigurationLoadingCache.getMainConfigOrRootConfigNodePath(new HstEvent("/hst:hst/hst:configurations/foo/hst:workspace", false));
+        assertEquals("/hst:hst/hst:configurations/foo/hst:workspace", rootConfigEventPath);
+
+        rootConfigEventPath = hstConfigurationLoadingCache.getMainConfigOrRootConfigNodePath(
+                new HstEvent("/hst:hst/hst:configurations/foo/hst:workspace/hst:sitemap", false));
+        assertEquals("/hst:hst/hst:configurations/foo/hst:workspace/hst:sitemap", rootConfigEventPath);
+
+
+        rootConfigEventPath = hstConfigurationLoadingCache.getMainConfigOrRootConfigNodePath(
+                new HstEvent("/hst:hst/hst:configurations/foo/hst:workspace/hst:sitemap/test", false));
+        assertEquals("/hst:hst/hst:configurations/foo/hst:workspace/hst:sitemap", rootConfigEventPath);
+        rootConfigEventPath = hstConfigurationLoadingCache.getMainConfigOrRootConfigNodePath(
+
+                new HstEvent("/hst:hst/hst:configurations/foo/hst:workspace/hst:sitemap/test/", false));
+        assertEquals("/hst:hst/hst:configurations/foo/hst:workspace/hst:sitemap", rootConfigEventPath);
+
+    }
 }

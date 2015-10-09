@@ -15,12 +15,18 @@
  */
 package org.hippoecm.hst.configuration.sitemap;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
@@ -36,11 +42,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import junit.framework.Assert;
-import static junit.framework.Assert.assertNull;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class SiteMapModelsIT extends AbstractTestConfigurations {
@@ -81,7 +89,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         CanonicalInfo siteMapCanonicalInfo = (CanonicalInfo)siteMap;
         assertFalse(siteMapCanonicalInfo.isWorkspaceConfiguration());
         final Node siteMapNode = session.getNodeByIdentifier(siteMapCanonicalInfo.getCanonicalIdentifier());
-        assertTrue(siteMapNode.getPath().equals(hstSite.getConfigurationPath()+"/hst:sitemap"));
+        assertTrue(siteMapNode.getPath().equals(hstSite.getConfigurationPath() + "/hst:sitemap"));
 
         for (HstSiteMapItem hstSiteMapItem : siteMap.getSiteMapItems()) {
             if (hstSiteMapItem.getQualifiedId().contains("hst:default")) {
@@ -109,7 +117,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         CanonicalInfo siteMapCanonicalInfo = (CanonicalInfo)siteMap;
         assertTrue(siteMapCanonicalInfo.isWorkspaceConfiguration());
         final Node siteMapNode = session.getNodeByIdentifier(siteMapCanonicalInfo.getCanonicalIdentifier());
-        assertTrue(siteMapNode.getPath().equals(hstSite.getConfigurationPath()+"/hst:workspace/hst:sitemap"));
+        assertTrue(siteMapNode.getPath().equals(hstSite.getConfigurationPath() + "/hst:workspace/hst:sitemap"));
 
         for (HstSiteMapItem hstSiteMapItem : siteMap.getSiteMapItems()) {
             if (hstSiteMapItem.getQualifiedId().contains("hst:default")) {
@@ -119,7 +127,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
             CanonicalInfo siteMapItemCanonicalInfo = (CanonicalInfo)hstSiteMapItem;
             assertTrue(siteMapItemCanonicalInfo.isWorkspaceConfiguration());
             final Node siteMapItemNode = session.getNodeByIdentifier(siteMapItemCanonicalInfo.getCanonicalIdentifier());
-            assertTrue(siteMapItemNode.getPath().startsWith(hstSite.getConfigurationPath()+"/hst:workspace/hst:sitemap"));
+            assertTrue(siteMapItemNode.getPath().startsWith(hstSite.getConfigurationPath() + "/hst:workspace/hst:sitemap"));
         }
     }
 
@@ -139,20 +147,20 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         assertFalse(siteMapCanonicalInfo.isWorkspaceConfiguration());
 
         final Node siteMapNode = session.getNodeByIdentifier(siteMapCanonicalInfo.getCanonicalIdentifier());
-        assertTrue(siteMapNode.getPath().equals(hstSite.getConfigurationPath()+"/hst:sitemap"));
+        assertTrue(siteMapNode.getPath().equals(hstSite.getConfigurationPath() + "/hst:sitemap"));
 
         HstSiteMapItem home = siteMap.getSiteMapItem("home");
         CanonicalInfo homeCanonicalInfo = (CanonicalInfo)home;
         assertTrue(homeCanonicalInfo.isWorkspaceConfiguration());
         final Node homeNode = session.getNodeByIdentifier(homeCanonicalInfo.getCanonicalIdentifier());
-        assertTrue(homeNode.getPath().startsWith(hstSite.getConfigurationPath()+"/hst:workspace/hst:sitemap"));
+        assertTrue(homeNode.getPath().startsWith(hstSite.getConfigurationPath() + "/hst:workspace/hst:sitemap"));
 
         for (HstSiteMapItem hstSiteMapItem : siteMap.getSiteMapItems()) {
             CanonicalInfo siteMapItemCanonicalInfo = (CanonicalInfo)hstSiteMapItem;
             if (hstSiteMapItem.getValue().equals("home")) {
                 assertTrue(siteMapItemCanonicalInfo.isWorkspaceConfiguration());
                 final Node siteMapItemNode = session.getNodeByIdentifier(siteMapItemCanonicalInfo.getCanonicalIdentifier());
-                assertTrue(siteMapItemNode.getPath().startsWith(hstSite.getConfigurationPath()+"/hst:workspace/hst:sitemap"));
+                assertTrue(siteMapItemNode.getPath().startsWith(hstSite.getConfigurationPath() + "/hst:workspace/hst:sitemap"));
             } else {
                 assertFalse(siteMapItemCanonicalInfo.isWorkspaceConfiguration());
                 final Node siteMapItemNode = session.getNodeByIdentifier(siteMapItemCanonicalInfo.getCanonicalIdentifier());
@@ -177,7 +185,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         assertFalse(siteMapCanonicalInfo.isWorkspaceConfiguration());
 
         final Node siteMapNode = session.getNodeByIdentifier(siteMapCanonicalInfo.getCanonicalIdentifier());
-        assertTrue(siteMapNode.getPath().equals(hstSite.getConfigurationPath()+"/hst:sitemap"));
+        assertTrue(siteMapNode.getPath().equals(hstSite.getConfigurationPath() + "/hst:sitemap"));
 
         HstSiteMapItem home = siteMap.getSiteMapItem("home");
         CanonicalInfo homeCanonicalInfo = (CanonicalInfo)home;
@@ -208,7 +216,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
             CanonicalInfo homeCanonicalInfo = (CanonicalInfo)home;
             assertTrue(homeCanonicalInfo.isWorkspaceConfiguration());
             final Node homeNode = session.getNodeByIdentifier(homeCanonicalInfo.getCanonicalIdentifier());
-            assertTrue(homeNode.getPath().startsWith(hstSite.getConfigurationPath()+"/hst:workspace/hst:sitemap"));
+            assertTrue(homeNode.getPath().startsWith(hstSite.getConfigurationPath() + "/hst:workspace/hst:sitemap"));
         }
 
         {
@@ -240,11 +248,11 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         CanonicalInfo homeCanonicalInfo = (CanonicalInfo)home;
         assertTrue(homeCanonicalInfo.isWorkspaceConfiguration());
         final Node homeNode = session.getNodeByIdentifier(homeCanonicalInfo.getCanonicalIdentifier());
-        assertTrue(homeNode.getPath().startsWith(hstSite.getConfigurationPath()+"/hst:workspace/hst:sitemap"));
+        assertTrue(homeNode.getPath().startsWith(hstSite.getConfigurationPath() + "/hst:workspace/hst:sitemap"));
     }
 
     @Test
-    public void test_workspace_in_inherited_sitemap_is_ignored() throws Exception {
+    public void workspace_sitemap_from_inherited_configuration_is_by_default_ignored() throws Exception {
         session.getNode("/hst:hst/hst:configurations/unittestcommon").addNode("hst:workspace").addNode("hst:sitemap");
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home",
                 "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap/home");
@@ -255,14 +263,168 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         assertNull(siteMap.getSiteMapItem("home"));
     }
 
+    // test inheritance from hst:workspace via inheritsfrom = ../xyz/hst:workspace
     @Test
-    public void marked_deleted_nodes_are_part_of_hst_model_but_ignored_while_matching()  throws Exception {
+    public void hst_sitemap_from_workspace_by_default_not_inherited_unless_explicitly_inherited() throws Exception {
+        {
+            VirtualHosts vhosts = hstManager.getVirtualHosts();
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+            final HstSiteMapItem item = mount.getHstSite().getSiteMap().getSiteMapItem("home");
+            assertNotNull(item);
+            assertFalse(((CanonicalInfo)item).isWorkspaceConfiguration());
+        }
+        // now move the [/hst:hst/hst:configurations/unittestcommon/hst:pages] to
+        // [/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages] and show the 'homepage' is not there
+        // any more in the model
+
+        if (!session.nodeExists("/hst:hst/hst:configurations/unittestcommon/hst:workspace")) {
+            session.getNode("/hst:hst/hst:configurations/unittestcommon").addNode(HstNodeTypes.NODENAME_HST_WORKSPACE);
+        }
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap",
+                "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap");
+
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+        session.save();
+        invalidator.eventPaths(pathsToBeChanged);
+        {
+            VirtualHosts vhosts = hstManager.getVirtualHosts();
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+            final HstSiteMapItem item = mount.getHstSite().getSiteMap().getSiteMapItem("home");
+            assertNull(item);
+        }
+
+        // for all kind of inheritance variants below, the 'home' sitemap item should be inherited
+        List<String[]> inheritanceVariants = new ArrayList<>();
+        inheritanceVariants.add(new String[]{"../unittestcommon", "../unittestcommon/hst:workspace"});
+        inheritanceVariants.add(new String[]{"../unittestcommon", "../unittestcommon/hst:workspace/hst:sitemap"});
+        inheritanceVariants.add(new String[]{"../unittestcommon/hst:workspace", "../unittestcommon"});
+        inheritanceVariants.add(new String[]{"../unittestcommon/hst:workspace/hst:sitemap", "../unittestcommon"});
+        inheritanceVariants.add(new String[]{"../unittestcommon/hst:workspace"});
+        inheritanceVariants.add(new String[]{"../unittestcommon/hst:workspace/hst:sitemap"});
+        inheritanceVariants.add(new String[]{"../unittestcommon/hst:workspace/hst:sitemap", "../unittestcommon/hst:workspace"});
+        inheritanceVariants.add(new String[]{"../unittestcommon/hst:workspace", "../unittestcommon/hst:workspace/hst:sitemap"});
+
+        for (String[] inheritanceVariant : inheritanceVariants) {
+
+            setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                    inheritanceVariant);
+
+            pathsToBeChanged = new String[]{"/hst:hst/hst:configurations/unittestproject"};
+            invalidator.eventPaths(pathsToBeChanged);
+            {
+                VirtualHosts vhosts = hstManager.getVirtualHosts();
+                final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+                final HstSiteMapItem item = mount.getHstSite().getSiteMap().getSiteMapItem("home");
+                assertNotNull(item);
+                assertTrue(((CanonicalInfo)item).isWorkspaceConfiguration());
+                assertNull(item.getParameter("foo"));
+            }
+            // make sure a change triggers a reload!
+            final Node homePageNode = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap/home");
+            homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"foo"});
+            homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"bar"});
+            pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+            session.save();
+            invalidator.eventPaths(pathsToBeChanged);
+            {
+                VirtualHosts vhosts = hstManager.getVirtualHosts();
+                final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+                final HstSiteMapItem item = mount.getHstSite().getSiteMap().getSiteMapItem("home");
+                // assert that the change is reloaded
+                assertEquals("bar", item.getParameter("foo"));
+            }
+
+            homePageNode.getProperty(GENERAL_PROPERTY_PARAMETER_NAMES).remove();
+            homePageNode.getProperty(GENERAL_PROPERTY_PARAMETER_VALUES).remove();
+            pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+            session.save();
+            invalidator.eventPaths(pathsToBeChanged);
+        }
+    }
+
+
+    @Test
+    public void test_inheritance_precedence() throws Exception {
+        if (!session.nodeExists("/hst:hst/hst:configurations/unittestcommon/hst:workspace")) {
+            session.getNode("/hst:hst/hst:configurations/unittestcommon").addNode(HstNodeTypes.NODENAME_HST_WORKSPACE);
+        }
+
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap",
+                "/hst:hst/hst:configurations/unittestcommon/hst:sitemap");
+        // hst:pages both below unittestcommon AND below unittestcommon/hst:workspace
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:sitemap",
+                "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap");
+
+        // both have hst:sitemap/home : Depending on precedence of the hst:inheritsfrom, one of them is merged into the 'unittestproject' model
+        final Node homePageNode = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:sitemap/home");
+        homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"location"});
+        homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"non-workspace"});
+        final Node workspaceHomePageNode = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap/home");
+        workspaceHomePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"location"});
+        workspaceHomePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"workspace"});
+
+        // add an extra sitemap to workspace
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap/home",
+                "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap/homeAgain");
+
+
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                new String[]{"../unittestcommon", "../unittestcommon/hst:workspace"});
+        session.save();
+
+        {
+            VirtualHosts vhosts = hstManager.getVirtualHosts();
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+            final HstSiteMapItem item = mount.getHstSite().getSiteMap().getSiteMapItem("home");
+            assertNotNull(item);
+            // since we first inherit ../unittestcommon and *then* ../unittestcommon/hst:workspace, we expect the 'home' from
+            // unittestcommon/hst:sitemap and not from unittestcommon/hst:workspace/hst:sitemap
+            assertEquals("non-workspace", item.getParameter("location"));
+
+            // assert that 'homeAgain' which is only present below 'unittestcommon/hst:workspace/hst:sitemap' is inherited still
+            final HstSiteMapItem itemAgain = mount.getHstSite().getSiteMap().getSiteMapItem("homeAgain");
+            assertNotNull(itemAgain);
+        }
+
+        // switch the inheritance
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                new String[]{"../unittestcommon/hst:workspace", "../unittestcommon"});
+
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        session.save();
+        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestproject"});
+
+        {
+            VirtualHosts vhosts = hstManager.getVirtualHosts();
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+            final HstSiteMapItem item = mount.getHstSite().getSiteMap().getSiteMapItem("home");
+            assertNotNull(item);
+            // since we first inherit ../unittestcommon and *then* ../unittestcommon/hst:workspace, we expect the homepage from
+            // unittestcommon/hst:pages and not from unittestcommon/hst:workspace/hst:pages
+            assertEquals("workspace", item.getParameter("location"));
+        }
+    }
+
+    private void setWorkspaceInheritance(final String hstConfigurationPath, final String[] inheritsFrom) throws RepositoryException {
+        final Node hstConfigNode = session.getNode(hstConfigurationPath);
+        hstConfigNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, inheritsFrom);
+        session.save();
+    }
+
+    private String getLocalhostRootMountId() throws RepositoryException {
+        return session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root").getIdentifier();
+    }
+
+
+    @Test
+    public void marked_deleted_nodes_are_part_of_hst_model_but_ignored_while_matching() throws Exception {
 
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
         ResolvedSiteMapItem matchedItemForHomePage = mount.matchSiteMapItem("/");
         ResolvedSiteMapItem matchedItemForNewsFoo = mount.matchSiteMapItem("/news/foo");
-        assertEquals("home",matchedItemForHomePage.getHstSiteMapItem().getId());
-        assertEquals("news/_default_",matchedItemForNewsFoo.getHstSiteMapItem().getId());
+        assertEquals("home", matchedItemForHomePage.getHstSiteMapItem().getId());
+        assertEquals("news/_default_", matchedItemForNewsFoo.getHstSiteMapItem().getId());
 
         final Node home = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home");
         home.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
@@ -292,7 +454,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
     }
 
     @Test
-    public void marked_deleted_nodes_their_children_are_marked_deleted_as_well()  throws Exception {
+    public void marked_deleted_nodes_their_children_are_marked_deleted_as_well() throws Exception {
         final Node news = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news");
         news.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
         news.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
