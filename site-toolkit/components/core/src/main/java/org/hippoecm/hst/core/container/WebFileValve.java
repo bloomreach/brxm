@@ -106,7 +106,8 @@ public class WebFileValve extends AbstractBaseOrderableValve {
                 }
             }
         } catch (WebFileNotFoundException e) {
-            isWhitelisted = false;
+            // will be changed to false for the 3.1.1
+            isWhitelisted = true;
         }
 
         if (!isWhitelisted) {
@@ -152,8 +153,8 @@ public class WebFileValve extends AbstractBaseOrderableValve {
             return whiteListReader;
         } catch (Exception e) {
             if (e instanceof WebFileNotFoundException) {
-                log.info("No '{}' configured in web files for '{}'. All web files will be blacklisted. Add '{}' and " +
-                                "configure which folders are publicly accessible.",
+                log.info("No '{}' configured in web files for '{}'. All web files will be whitelisted. In the next PATCH version " +
+                                "(HST 3.1.1) all web files will be blacklisted if there is no '{}' configured in web files.",
                         WHITE_LIST_CONTENT_PATH, bundleName, WHITE_LIST_CONTENT_PATH);
             }
             clearBlockingLock(cacheKey);
