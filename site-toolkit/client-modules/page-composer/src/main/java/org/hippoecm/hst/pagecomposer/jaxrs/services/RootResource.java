@@ -1,5 +1,5 @@
 /*
-*  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+*  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ public class RootResource extends AbstractConfigResource {
     public Response keepalive(@Context HttpServletRequest servletRequest) {
         HttpSession session = servletRequest.getSession(false);
         if (session != null) {
-            return ok("OK");
+            return ok("OK", session.getMaxInactiveInterval());
         } else {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity("Error: No http session on the request found.").build();
