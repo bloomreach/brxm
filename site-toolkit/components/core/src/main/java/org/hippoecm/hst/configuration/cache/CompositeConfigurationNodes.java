@@ -264,7 +264,7 @@ public class CompositeConfigurationNodes {
         return compositeConfigurationDependenyPaths;
     }
 
-    public class CompositeConfigurationNode {
+    public static class CompositeConfigurationNode {
 
         private HstNode mainConfigNode;
         private Map<String, HstNode> compositeChildren = new HashMap<>();
