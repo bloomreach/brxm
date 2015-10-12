@@ -94,7 +94,18 @@ public class BrowserPerspective extends Perspective {
             }
         }, SERVICE_TABS);
 
-        monitorSectionChange(context);
+        sectionModel = ObservableModel.from(context, Navigator.SELECTED_SECTION_MODEL);
+        context.registerService(new IObserver<ObservableModel<String>>() {
+            @Override
+            public ObservableModel<String> getObservable() {
+                return sectionModel;
+            }
+
+            @Override
+            public void onEvent(final Iterator<? extends IEvent<ObservableModel<String>>> events) {
+                state.onSectionChanged(sectionModel.getObject());
+            }
+        }, IObserver.class.getName());
 
         nodeService = new ModelService<Node>(config.getString(MODEL_DOCUMENT)) {
             @Override
@@ -123,21 +134,6 @@ public class BrowserPerspective extends Perspective {
 
         // Explicitly start with the expanded view
         wireframe.expandDefault();
-    }
-
-    private void monitorSectionChange(final IPluginContext context) {
-        sectionModel = ObservableModel.from(context, Navigator.SELECTED_SECTION_MODEL);
-        context.registerService(new IObserver<ObservableModel<String>>() {
-            @Override
-            public ObservableModel<String> getObservable() {
-                return sectionModel;
-            }
-
-            @Override
-            public void onEvent(final Iterator<? extends IEvent<ObservableModel<String>>> events) {
-                state.onSectionChanged(sectionModel.getObject());
-            }
-        }, IObserver.class.getName());
     }
 
     @Override
