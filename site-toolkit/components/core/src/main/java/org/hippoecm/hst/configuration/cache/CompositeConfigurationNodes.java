@@ -82,8 +82,10 @@ public class CompositeConfigurationNodes {
                         log.warn("Skipping inheritfrom property for configuration node '{}' because this node is already inherit. Not allowed to inherit again", inheritConfig.getValueProvider().getPath());
                     }
                 } else {
-                    log.error("Relative inherit path '{}' for node '{}' does not point to a node of type '{}' or does not exist. Fix this path.",
-                            new String[]{inheritPath, configurationRootNode.getValueProvider().getPath(), NODETYPE_HST_CONFIGURATION});
+                    log.error("Relative inherit path '{}' for node '{}' does not point to a node of type " +
+                                    "'{}' or '{}', or it does not point to a child node of '{}', or it does not exist. Fix this path.",
+                            new String[]{inheritPath, configurationRootNode.getValueProvider().getPath(),
+                                    NODETYPE_HST_CONFIGURATION, NODETYPE_HST_WORKSPACE, NODENAME_HST_WORKSPACE});
                 }
             }
         }
