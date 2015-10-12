@@ -61,7 +61,7 @@ public class RootPanel extends ExtPanel {
 
         private final int tabIndex;
 
-        private CardId(int tabIndex) {
+        CardId(int tabIndex) {
             this.tabIndex = tabIndex;
         }
 
@@ -93,6 +93,9 @@ public class RootPanel extends ExtPanel {
     @SuppressWarnings("unused")
     private String composerRestMountPath;
 
+    @ExtProperty
+    private final String[] contextPaths;
+
     @Override
     public void buildInstantiationJs(final StringBuilder js, final String extClass, final JSONObject properties) {
         js.append("try { ");
@@ -115,8 +118,8 @@ public class RootPanel extends ExtPanel {
             composerRestMountPath = pageEditorConfig.getString(COMPOSER_REST_MOUNT_PATH_PROPERTY, DEFAULT_COMPOSER_REST_MOUNT_PATH);
         }
 
-
         final Map<String, IRestProxyService> liveRestProxyServices = RestProxyServicesManager.getLiveRestProxyServices(context, config);
+        contextPaths = liveRestProxyServices.keySet().toArray(new String[liveRestProxyServices.size()]);
 
         this.blueprintStore = new BlueprintStore(liveRestProxyServices);
         this.channelStore = ChannelStoreFactory.createStore(context, channelListConfig, liveRestProxyServices, blueprintStore);

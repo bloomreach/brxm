@@ -18,22 +18,6 @@
 
     Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
-    function synchronizeSiteUser(composerRestMountUrl, cmsUser) {
-        var url = composerRestMountUrl + '/cafebabe-cafe-babe-cafe-babecafebabe./keepalive/?FORCE_CLIENT_HOST=true';
-        Ext.Ajax.request({
-            url: url,
-            headers: {
-                'CMS-User': cmsUser,
-                'FORCE_CLIENT_HOST': 'true'
-            },
-            failure: function(response) {
-                console.warn("The SSO handshake with '" + url + "' failed. " +
-                        "The channel manager cannot be used. Please make sure the site is up and the channel manager is configured correctly. " +
-                        "The server responded: " + response.responseText);
-            }
-        });
-    }
-
     function swapElements(array, firstIndex, secondIndex) {
         var tmp = array[firstIndex];
         array[firstIndex] = array[secondIndex];
@@ -225,8 +209,6 @@
                     ]);
                 }.createDelegate(this));
             }
-
-            synchronizeSiteUser(this.pageContainer.getComposerRestMountUrl(), config.cmsUser);
 
             this.initUI(config);
 
