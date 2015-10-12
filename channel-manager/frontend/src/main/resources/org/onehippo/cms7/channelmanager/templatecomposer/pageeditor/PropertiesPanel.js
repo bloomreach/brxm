@@ -103,9 +103,10 @@
      * @param componentId the UUID of the component
      * @param pageRequestVariants the possible page request variants
      * @param lastModifiedTimestamp the time this component has last been modified
-     * @param readOnly whether to show the properties read-only or not
+     * @param container object with information about the container of this component.
+     * Available properties are 'isDisabled' and 'isInherited'.
      */
-    load: function (componentId, pageRequestVariants, lastModifiedTimestamp, readOnly) {
+    load: function (componentId, pageRequestVariants, lastModifiedTimestamp, container) {
       if (this.componentVariants !== null) {
         this.componentVariants.un('invalidated', this.updateUI, this);
         this._fireInitialPropertiesChangedIfNeeded();
@@ -114,7 +115,7 @@
       this.componentId = componentId;
       this.pageRequestVariants = pageRequestVariants;
       this.lastModifiedTimestamp = lastModifiedTimestamp;
-      this.isReadOnly = readOnly;
+      this.container = container;
 
       this.componentVariants = new Hippo.ChannelManager.TemplateComposer.ComponentVariants({
         componentId: componentId,
@@ -217,7 +218,7 @@
         var tab, propertiesForm;
 
         if ('plus' === variant.id) {
-          if (!this.isReadOnly) {
+          if (!this.container.isDisabled) {
             tab = this._createVariantAdder(variant, Ext.pluck(variants, 'id'));
             this.add(tab);
           }
@@ -257,7 +258,7 @@
           locale: this.locale,
           componentId: this.componentId,
           lastModifiedTimestamp: this.lastModifiedTimestamp,
-          isReadOnly: this.isReadOnly,
+          isReadOnly: this.container.isDisabled,
           bubbleEvents: ['variantDirty', 'variantPristine', 'clientvalidation'],
           listeners: {
             propertiesChanged: this._onPropertiesChanged,
@@ -314,7 +315,8 @@
         allVariants: variants.slice(0, variants.length - 1),
         title: getVariantName(variant),
         propertiesForm: propertiesForm,
-        isReadOnly: this.isReadOnly,
+        isReadOnly: this.container.isDisabled,
+        isInherited: this.container.isInherited,
         componentMessageBus: this.componentMessageBus
       });
 
