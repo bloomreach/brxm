@@ -250,7 +250,6 @@
     text-decoration: none;
   }
 
-
   .remove-link .hi {
     color: $danger;
   }
@@ -417,13 +416,4 @@
   line-height: normal;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.hippo-editor-field-subfield-controls a:active,
-.hippo-editor-field-subfield-controls a:hover {
-  text-decoration: none;
-}
-
-.hippo-editor-field-subfield-controls .remove-link .hi {
-  color: red;
 }
