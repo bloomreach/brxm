@@ -34,6 +34,7 @@
             HST_LOCKED_ON : "HST-LockedOn",
             HST_LAST_MODIFIED : "HST-LastModified",
             HST_CONTAINER_DISABLED : "HST-Container-disabled",
+            HST_CONTAINER_INHERITED : "HST-Container-inherited",
             URL : 'url',
             REF_NS : 'refNS'
         },

@@ -133,6 +133,7 @@
                 }
 
                 if (hstContainerMetaData[HST.ATTR.INHERITED] !== undefined) {
+                    element.setAttribute(HST.ATTR.HST_CONTAINER_INHERITED, "true");
                     element.setAttribute(HST.ATTR.HST_CONTAINER_DISABLED, "true");
                 }
 

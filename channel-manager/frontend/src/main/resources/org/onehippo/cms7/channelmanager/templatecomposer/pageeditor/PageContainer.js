@@ -518,9 +518,10 @@
         },
 
         _onClick: function(data) {
-            var id, containerDisabled, record;
+            var id, container, record;
+
             id = data.elementId;
-            containerDisabled = data.containerDisabled;
+            container = data.container;
             record = this.pageContext.stores.pageModel.getById(id);
 
             if (!record) {
@@ -531,7 +532,7 @@
             if (this.selectedRecord !== record) {
                 Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('select', record.data.id);
                 this.selectedRecord = record;
-                this.fireEvent('selectItem', record, containerDisabled);
+                this.fireEvent('selectItem', record, container);
             }
         },
 
