@@ -750,6 +750,11 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-seo-support-repository</artifactId>
+        <version>${hippo.plugin.seo-support.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-plugin-sitemap-component</artifactId>
         <version>${hippo.plugin.sitemap.version}</version>
       </dependency>
