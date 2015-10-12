@@ -116,7 +116,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     private final boolean showCompoundNames;
 
     private final int maxItems;
-    private final Link<CharSequence> focusMarker;
+    private Link<CharSequence> focusMarker;
 
     // each validator service id for a started clusters must be unique
     int validatorCount = 0;
@@ -148,21 +148,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         add(required);
 
         add(new FieldHint("hint-panel", helper.getHintModel(this)));
-
-        add(createAddLinkLabel());
-
-        String type = config.getString("contentPickerType", LINKS);
-        if (LINKS.equals(type)) {
-            add(new AddBlockWithLinks("contentpicker-add", this));
-        } else if (DROPDOWN.equals(type)) {
-            add(new AddBlockWithDropDown("contentpicker-add", this));
-        } else {
-            log.error("Invalid content picker type '{}'. Please make sure that property 'contentPickerType' in plugin " +
-                    "config is either '{}' or '{}'. Falling back to '{}' type.", new String[]{type, LINKS, DROPDOWN, LINKS});
-            add(new AddBlockWithLinks("contentpicker-add", this));
-        }
-
-        add(focusMarker = new FocusLink("focusMarker"));
     }
 
     @Override
@@ -369,6 +354,21 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         item.add(fragment);
 
         addCompoundNameAsTitle(item, model, null/*oldModel*/);
+
+        fragment.add(createAddLinkLabel());
+
+        String type = getPluginConfig().getString("contentPickerType", LINKS);
+        if (LINKS.equals(type)) {
+            fragment.add(new AddBlockWithLinks("contentpicker-add", this));
+        } else if (DROPDOWN.equals(type)) {
+            fragment.add(new AddBlockWithDropDown("contentpicker-add", this));
+        } else {
+            log.error("Invalid content picker type '{}'. Please make sure that property 'contentPickerType' in plugin " +
+                    "config is either '{}' or '{}'. Falling back to '{}' type.", new String[]{type, LINKS, DROPDOWN, LINKS});
+            fragment.add(new AddBlockWithLinks("contentpicker-add", this));
+        }
+
+        fragment.add(focusMarker = new FocusLink("focusMarker"));
     }
     /**
     * @deprecated Deprecated in favor of {@link #populateViewItem(Item, JcrNodeModel)}
@@ -380,7 +380,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         item.add(fragment);
     }
 
-        @Override
+    @Override
     protected void populateViewItem(Item<IRenderService> item, final JcrNodeModel model) {
         Fragment fragment = new TransparentFragment(FRAGMENT_ID, VIEW_FRAGMENT_ID, this);
         item.add(fragment);
