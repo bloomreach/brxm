@@ -1,5 +1,5 @@
 #
-#  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+#  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
 #
 #  Licensed under the Apache License, Version 2.0 (the  "License");
 #  you may not use this file except in compliance with the License.
@@ -21,3 +21,6 @@ Cannot load channels because node '/hst:hst/hst:channels' does not exist
 Unknown channel /hst:hst/hst:channels/testchannel, ignoring mount hst:root
 Please correct the configuration because duplicate configuration nodes found
 Cannot add cms location
+Cannot lookup referenced component
+Cannot find hst:template
+Relative inherit path '../unittestcommon/hst:workspace/hst:containers/myReferenceableContainer'

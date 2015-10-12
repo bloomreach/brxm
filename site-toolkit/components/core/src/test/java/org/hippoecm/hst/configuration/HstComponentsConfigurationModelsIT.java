@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -47,44 +48,59 @@ import static org.junit.Assert.assertTrue;
 public class HstComponentsConfigurationModelsIT extends AbstractTestConfigurations {
 
     private HstManager hstManager;
+    private Session session;
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
         hstManager = getComponent(HstManager.class.getName());
+        this.session = createSession();
+        createHstConfigBackup(session);
     }
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        restoreHstConfigBackup(session);
+        session.logout();
+        super.tearDown();
+    }
+
 
     /**
      * All the mounts that share the same items for:
      * <ol>
-     *  <li>hst:pages</li>
-     *  <li>hst:components</li>
-     *  <li>hst:templates</li>
-     *  <li>hst:catalog</li>
-     *  <li>hst:workspace</li>
+     * <li>hst:pages</li>
+     * <li>hst:components</li>
+     * <li>hst:templates</li>
+     * <li>hst:catalog</li>
+     * <li>hst:workspace</li>
      * </ol>
-     * 
-     * MUST also share the same {@link HstComponentsConfigurationService}. This also 
-     * holds of course of the items above are coming from inherited configuration. If the {@link HstComponentConfigurationService}
-     * is not shared, memory footprint of the HST model will become very large and loading of the model 
+     * <p/>
+     * MUST also share the same {@link HstComponentsConfigurationService}. This also
+     * holds of course of the items above are coming from inherited configuration. If the {@link
+     * HstComponentConfigurationService}
+     * is not shared, memory footprint of the HST model will become very large and loading of the model
      * becomes slow. The model MUST always be shared. This unit test verifies that
-     * 
-     * For the unittest content we have all the available hst:configuration inherit from the hst:configuration 'unittestcommon' :
-     * This is the configuration that contains the pages, components and templates for all the {@link Mount}s. Thus, all 
-     * {@link HstComponentsConfigurationService}s for the unittest model should be the same, EXCEPT for 
-     * the Mounts that point to '/hst:hst/hst:sites/unittestsubproject' which in turn refers to   
-     * '/hst:hst/hst:configurations/unittestsubproject' : This unittestsubproject has its own hst:pages/homepage (which is only meant for this unit test to validate the 
+     * <p/>
+     * For the unittest content we have all the available hst:configuration inherit from the hst:configuration
+     * 'unittestcommon' :
+     * This is the configuration that contains the pages, components and templates for all the {@link Mount}s. Thus,
+     * all
+     * {@link HstComponentsConfigurationService}s for the unittest model should be the same, EXCEPT for
+     * the Mounts that point to '/hst:hst/hst:sites/unittestsubproject' which in turn refers to
+     * '/hst:hst/hst:configurations/unittestsubproject' : This unittestsubproject has its own hst:pages/homepage (which
+     * is only meant for this unit test to validate the
      * correct working of inheriting {@link HstComponentsConfigurationService}s only
      * when all pages, components, templates and catalogs are the same)
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testSharedHstComponentsConfigurations() throws Exception {
         // since unittestproject contains its own 'hst:prototypepages' node, we first move this node away (otherwise
         // instance won't be shared)
-        Session session = createSession();
         removePagePrototypeFromConfig(session);
 
         ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
@@ -128,35 +144,33 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         HstComponentsConfiguration service9 = mount9.getMount().getHstSite().getComponentsConfiguration();
         HstComponentsConfiguration service10 = mount10.getMount().getHstSite().getComponentsConfiguration();
         HstComponentsConfiguration service11 = mount11.getMount().getHstSite().getComponentsConfiguration();
-        
+
         HstComponentsConfiguration WithDiffHstCompServ1 = mountWithDiffHstCompServ1.getMount().getHstSite().getComponentsConfiguration();
         HstComponentsConfiguration WithDiffHstCompServ2 = mountWithDiffHstCompServ2.getMount().getHstSite().getComponentsConfiguration();
 
-        assertSame("Expected shared HstComponentsConfiguration objects failed", service1 , service2);
-        assertSame("Expected shared HstComponentsConfiguration objects failed", service1 , service4);
-        assertSame("Expected shared HstComponentsConfiguration objects failed", service1 , service5);
-        assertSame("Expected shared HstComponentsConfiguration objects failed", service1 , service6);
-        assertSame("Expected shared HstComponentsConfiguration objects failed", service1 , service7);
-        assertSame("Expected shared HstComponentsConfiguration objects failed", service1 , service8);
-        assertSame("Expected shared HstComponentsConfiguration objects failed", service1 , service9);
-        assertSame("Expected shared HstComponentsConfiguration objects failed", service1 , service10);
-        assertSame("Expected shared HstComponentsConfiguration objects failed", service1 , service11);
+        assertSame("Expected shared HstComponentsConfiguration objects failed", service1, service2);
+        assertSame("Expected shared HstComponentsConfiguration objects failed", service1, service4);
+        assertSame("Expected shared HstComponentsConfiguration objects failed", service1, service5);
+        assertSame("Expected shared HstComponentsConfiguration objects failed", service1, service6);
+        assertSame("Expected shared HstComponentsConfiguration objects failed", service1, service7);
+        assertSame("Expected shared HstComponentsConfiguration objects failed", service1, service8);
+        assertSame("Expected shared HstComponentsConfiguration objects failed", service1, service9);
+        assertSame("Expected shared HstComponentsConfiguration objects failed", service1, service10);
+        assertSame("Expected shared HstComponentsConfiguration objects failed", service1, service11);
 
-        assertNotSame("Expected non shared HstComponentsConfiguration objects failed", service1 , WithDiffHstCompServ1);
-        assertNotSame("Expected non shared HstComponentsConfiguration objects failed", service1 , WithDiffHstCompServ2);
+        assertNotSame("Expected non shared HstComponentsConfiguration objects failed", service1, WithDiffHstCompServ1);
+        assertNotSame("Expected non shared HstComponentsConfiguration objects failed", service1, WithDiffHstCompServ2);
 
-        restorePagePrototypesFromConfig(session);
-        session.logout();
     }
 
     /**
      * HstComponentsConfigurationService instance are reused between models after changes if the changes
      * could never have effect on them.
+     *
      * @throws Exception
      */
     @Test
     public void testReloadOnlyChangedHstComponentsConfigurations() throws Exception {
-        final Session session = createSession();
         removePagePrototypeFromConfig(session);
 
         final ResolvedMount mountBefore1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
@@ -254,10 +268,6 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         assertSame(componenentConfigsThirdAfter1, componenentConfigsThirdAfter2);
         assertSame(componenentConfigsThirdAfter1, componenentConfigsBefore1);
 
-        session.getNode("/hst:hst/hst:configurations/global").getNode("hst:sitemenus").remove();
-        session.save();
-        restorePagePrototypesFromConfig(session);
-        session.logout();
     }
 
 
@@ -277,7 +287,6 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         HstComponentsConfiguration service6 = mount6.getMount().getHstSite().getComponentsConfiguration();
         HstComponentsConfiguration service7 = mount7.getMount().getHstSite().getComponentsConfiguration();
 
-        final Session session = createSession();
         Node defaultComponents = session.getNode("/hst:hst/hst:configurations/hst:default/hst:components");
         defaultComponents.addNode("testNewUniqueNamedNodeInHstDefaultConfigurationTriggersReloadAll", "hst:component");
 
@@ -337,10 +346,6 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         assertSame(serviceAgain6, serviceAfter6);
         assertSame(serviceAgain7, serviceAfter7);
 
-        session.getNode("/hst:hst/hst:configurations/hst:default/hst:sitemap").getNode("testNewUniqueNamedNodeInHstDefaultConfigurationTriggersReloadAll").remove();
-        session.getNode("/hst:hst/hst:configurations/hst:default/hst:components").getNode("testNewUniqueNamedNodeInHstDefaultConfigurationTriggersReloadAll").remove();
-        session.save();
-        session.logout();
     }
 
     @Test
@@ -359,9 +364,8 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         HstComponentsConfiguration service6 = mount6.getMount().getHstSite().getComponentsConfiguration();
         HstComponentsConfiguration service7 = mount7.getMount().getHstSite().getComponentsConfiguration();
 
-        final Session session = createSession();
         Node configurationsNode = session.getNode("/hst:hst/hst:configurations");
-        Node commonCatalog = configurationsNode.addNode("hst:catalog","hst:catalog");
+        Node commonCatalog = configurationsNode.addNode("hst:catalog", "hst:catalog");
         commonCatalog.addNode("testNewUniqueNamedNodeInCommonCatalogTriggersReloadAll", "hst:containeritempackage");
 
         EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
@@ -389,9 +393,7 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         assertNotSame(service5, serviceAfter5);
         assertNotSame(service6, serviceAfter6);
         assertNotSame(service7, serviceAfter7);
-        session.getNode("/hst:hst/hst:configurations/hst:catalog").remove();
-        session.save();
-        session.logout();
+
     }
 
     @Test
@@ -400,7 +402,6 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         // all HstComponentConfiguration instances to be marked as 'inherited'
         // there is one explicit non inherited component, and that is
         // hst:hst/hst:configurations/unittestsubproject/hst:pages/homepage
-
 
         final String explicitNonInheritedComponent = "/hst:hst/hst:configurations/unittestsubproject/hst:pages/homepage";
         final VirtualHosts virtualHosts = hstManager.getVirtualHosts();
@@ -437,17 +438,10 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         }
     }
 
-
-    private void restorePagePrototypesFromConfig(final Session session) throws RepositoryException {
-        session.move("/hst:prototypepages", "/hst:hst/hst:configurations/unittestproject/hst:prototypepages");
-        session.save();
-    }
-
     private void removePagePrototypeFromConfig(final Session session) throws RepositoryException {
         session.move("/hst:hst/hst:configurations/unittestproject/hst:prototypepages", "/hst:prototypepages");
         session.save();
     }
-
 
     protected Session createSession() throws RepositoryException {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");

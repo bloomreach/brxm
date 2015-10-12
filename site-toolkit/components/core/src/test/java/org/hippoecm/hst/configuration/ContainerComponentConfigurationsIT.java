@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,17 +23,21 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.nodetype.ConstraintViolationException;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
+import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -119,7 +123,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
     }
 
 
-    private void addIllegalHomePageContainer(final Node parent,final String containerName) throws Exception {
+    private void addIllegalHomePageContainer(final Node parent, final String containerName) throws Exception {
         /*
            try to add to test component a not allowed container:
              + containerName [hst:containercomponent]
@@ -155,7 +159,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
 
     private void addComponentReference(final Node parent, final String containerReferenceNodeName, String reference) throws RepositoryException {
         /*
-         try to add to test component a non existing cnntainerComponentReference:
+         try to add to test component a non existing containerComponentReference:
            + containerName [hst:containercomponent]
                - hst:xtype =  HST.vBox
                - hst:referencecomponent = reference
@@ -315,18 +319,20 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
     @Test
     public void referenceable_containers_from_inherited_configuration_not_included() throws Exception {
         // below add a container to hst:workspace in 'unittestcommon' : this workspace is invisible for
-        // 'unittestproject' as workspace nodes are not inherited
+        // 'unittestproject' as workspace nodes are not IMPLICITLY inherited UNLESS hst:inheritsfrom EXPLICITLY
+        // includes ../xyz/hst:workspace
         createHstWorkspaceAndReferenceableContainer("myReferenceableContainer",
                 "/hst:hst/hst:configurations/unittestcommon");
-        addComponentReference(testComponent, "inheritedcontainer", "myReferenceableContainer");
+        final String inheritedContainerName = "inheritedcontainer";
+        addComponentReference(testComponent, inheritedContainerName, "myReferenceableContainer");
         {
             final VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
             final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
             final HstComponentConfiguration pageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
             final HstComponentConfiguration testComponent = pageComponent.getChildByName(TEST_COMPONENT_NODE_NAME);
             assertNotNull(testComponent);
-            // container available since part of inherited
-            final HstComponentConfiguration component = testComponent.getChildByName("container");
+            // container NOT available since part of inherited
+            final HstComponentConfiguration component = testComponent.getChildByName(inheritedContainerName);
             assertNull(component);
         }
 
@@ -344,15 +350,118 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
             final HstComponentConfiguration pageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
             final HstComponentConfiguration testComponent = pageComponent.getChildByName(TEST_COMPONENT_NODE_NAME);
             assertNotNull(testComponent);
-            // container available since part of inherited
+            // container available since part of inherited workspace (which by default is not inherited)
             final HstComponentConfiguration component = testComponent.getChildByName("localcontainer");
             assertNotNull(component);
         }
 
     }
 
+
+    private void setWorkspaceInheritance(final String hstConfigurationPath, final String[] inheritsFrom) throws RepositoryException {
+        final Node hstConfigNode = session.getNode(hstConfigurationPath);
+        hstConfigNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, inheritsFrom);
+        session.save();
+    }
+
+    @Test
+    public void referenceable_containers_from_inherited_configuration_included_when_workspace_explicitly_inherited_and_invalidation_works() throws Exception {
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                new String[]{"../unittestcommon", "../unittestcommon/hst:workspace"});
+        assertInheritanceAndModelReloadWorks();
+    }
+
+    @Test
+    public void referenceable_containers_from_inherited_configuration_included_when_only_workspace_inherited_and_invalidation_works() throws Exception {
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                new String[]{"../unittestcommon/hst:workspace"});
+        assertInheritanceAndModelReloadWorks();
+    }
+
+    @Test
+    public void referenceable_containers_from_containers_inherited_configuration_included_when_workspace_explicitly_inherited_and_invalidation_works() throws Exception {
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                new String[]{"../unittestcommon", "../unittestcommon/hst:workspace/hst:containers"});
+        assertInheritanceAndModelReloadWorks();
+    }
+
+    @Test
+    public void referenceable_containers_from_containers_inherited_configuration_included_when_only_workspace_inherited_and_invalidation_works() throws Exception {
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                new String[]{"../unittestcommon/hst:workspace/hst:containers"});
+        assertInheritanceAndModelReloadWorks();
+    }
+
+    @Test
+    public void test_illegal_reference_of_to_deeply_nested_container() throws Exception {
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                new String[]{"../unittestcommon/hst:workspace/hst:containers/myReferenceableContainer"});
+        createHstWorkspaceAndReferenceableContainer("myReferenceableContainer",
+                "/hst:hst/hst:configurations/unittestcommon");
+
+        final String inheritedContainerName = "inheritedcontainer";
+        addComponentReference(testComponent, inheritedContainerName, "myReferenceableContainer");
+        {
+            final VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+            final HstComponentConfiguration pageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
+            final HstComponentConfiguration testComponent = pageComponent.getChildByName(TEST_COMPONENT_NODE_NAME);
+            assertNotNull(testComponent);
+            // container available since part of inherited BUT inherited workspace IS now inherited because explicitly inherited
+            final HstComponentConfiguration component = testComponent.getChildByName(inheritedContainerName);
+            assertNull(component);
+        }
+    }
+
+    private void assertInheritanceAndModelReloadWorks() throws Exception {
+
+        createHstWorkspaceAndReferenceableContainer("myReferenceableContainer",
+                "/hst:hst/hst:configurations/unittestcommon");
+
+        final String inheritedContainerName = "inheritedcontainer";
+        addComponentReference(testComponent, inheritedContainerName, "myReferenceableContainer");
+        {
+            final VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+            final HstComponentConfiguration pageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
+            final HstComponentConfiguration testComponent = pageComponent.getChildByName(TEST_COMPONENT_NODE_NAME);
+            assertNotNull(testComponent);
+            // container available since part of inherited BUT inherited workspace IS now inherited because explicitly inherited
+            final HstComponentConfiguration component = testComponent.getChildByName(inheritedContainerName);
+            assertNotNull(component);
+            final HstComponentConfiguration item = component.getChildByName("item");
+            assertNotNull(item);
+            assertEquals("value1", item.getParameter("name1"));
+            assertTrue(item.isInherited());
+        }
+
+        // now trigger a change in the inherited component from workspace. This should trigger a reload
+        final Node componentItem = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:containers/myReferenceableContainer/item");
+        componentItem.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"valueNew"});
+        session.save();
+        // trigger events as during tests the jcr event listeners are not enabled
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        invalidator.eventPaths(componentItem.getPath());
+        {
+            final VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+            final HstComponentConfiguration pageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
+            final HstComponentConfiguration testComponent = pageComponent.getChildByName(TEST_COMPONENT_NODE_NAME);
+            assertNotNull(testComponent);
+            final HstComponentConfiguration component = testComponent.getChildByName(inheritedContainerName);
+            assertNotNull(component);
+            final HstComponentConfiguration item = component.getChildByName("item");
+            assertNotNull(item);
+            // a change in inherited workspace node should trigger a reload of the model
+            assertEquals("valueNew", item.getParameter("name1"));
+            assertTrue(item.isInherited());
+        }
+
+    }
+
     /**
-     * @return the highest ancestor path of newly created nodes: This is the node that needs to be cleanup at the end again
+     * @return the highest ancestor path of newly created nodes: This is the node that needs to be cleanup at the end
+     * again
      */
     private String createHstWorkspaceAndReferenceableContainer(final String containerRelPath,
                                                                final String projectPath) throws RepositoryException {
@@ -378,7 +487,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         final String[] elems = containerRelPath.split("/");
         if (elems.length > 1) {
             // first create folders
-            for (int i = 0; i < (elems.length -1); i++) {
+            for (int i = 0; i < (elems.length - 1); i++) {
                 if (folder.hasNode(elems[i])) {
                     folder = folder.getNode(elems[i]);
                 } else {
@@ -389,8 +498,8 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
                 }
             }
         }
-        final Node container = folder.addNode(elems[elems.length -1], HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
-        if (highestAncestorPath  == null) {
+        final Node container = folder.addNode(elems[elems.length - 1], HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
+        if (highestAncestorPath == null) {
             highestAncestorPath = container.getPath();
         }
         container.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.vBox");
