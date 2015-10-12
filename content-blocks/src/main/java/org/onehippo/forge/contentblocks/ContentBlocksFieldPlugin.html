@@ -25,16 +25,22 @@
         <div wicket:id="view" class="hippo-editor-field-subfield">
           <wicket:container wicket:id="fragment"/>
         </div>
+        <div class="hippo-content-block-controls" wicket:id="blockControls">
+          <wicket:container wicket:id="contentpicker-add"/>
+          <div class="focus-marker"><a wicket:id="focusMarker" name="focusMarker" onfocus="this.blur();">&#160;</a></div>
+          <div class="contentpicker-label" wicket:id="addLabel">[Add label]</div>
+        </div>
       </div>
     </div>
   </wicket:panel>
 
   <wicket:fragment wicket:id="addItemsLinks">
-    <div class="contentpicker-link-list">
-      <div class="contentpicker-links" wicket:id="repeater">
-        <div class="contentpicker-link">
-          <a href="#" wicket:id="addItem"><span wicket:id="linkText"></span></a>
-        </div>
+    <div class="contentpicker-links">
+      <div class="contentpicker-link" wicket:id="repeater">
+        <a href="#" wicket:id="addItem" class="btn btn-default btn-sm">
+          <span wicket:id="icon"></span>
+          <span wicket:id="linkText"></span>
+        </a>
       </div>
     </div>
   </wicket:fragment>
@@ -44,7 +50,10 @@
       <form wicket:id="cpform">
         <select class="hippo-editor-field-select" wicket:id="itemsDropDown"></select>
       </form>
-      <input type="submit" wicket:message="value:addInputValue" wicket:id="addItem" class="hippo-button"/>
+      <a wicket:id="addItem" class="btn btn-default btn-sm">
+        <span wicket:id="icon"></span>
+        <span wicket:id="linkText"></span>
+      </a>
     </div>
   </wicket:fragment>
 
@@ -60,11 +69,6 @@
       </div>
       <div wicket:id="item"></div>
     </div>
-    <div class="hippo-content-block-controls">
-      <div class="contentpicker-label" wicket:id="addLabel">[Add label]</div>
-      <wicket:container wicket:id="contentpicker-add"/>
-    </div>
-    <div class="focus-marker"><a wicket:id="focusMarker" name="focusMarker" onfocus="this.blur();">&#160;</a></div>
   </wicket:fragment>
 
   <wicket:fragment wicket:id="view-fragment">

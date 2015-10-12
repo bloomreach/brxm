@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+.hippo-editor-field-subfield:hover > .contentpicker-blocks .hippo-editor-field-subfield-controls {
+  opacity: 1;
+}
+
 .contentpicker-blocks div.hippo-diff-added {
   float: none;
 }
@@ -39,10 +43,8 @@
   align-items: center;
 }
 
-.contentpicker-link-list,
+.contentpicker-links,
 .contentpicker-dropdown {
-  margin-left: auto; /* align right */
-
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -53,25 +55,20 @@
   align-items: center;
 }
 
-.contentpicker-links {
-  margin-left: 16px;
-  font-weight: bold;
-  font-style: italic;
-}
-
-.contentpicker-links:first-child {
-  margin-left: 0;
+.contentpicker-link:not(:first-child) {
+  margin-left: 4px;
 }
 
 .contentpicker-dropdown select {
   padding: 1px 4px;
-  margin-right: 8px;
+  margin-right: 4px;
+  height: 28px;
 }
 
 .contentpicker-label {
   text-align: left;
   font-weight: bold;
-  margin-left: 4px;
+  margin-left: auto;
 }
 
 .focus-marker {
