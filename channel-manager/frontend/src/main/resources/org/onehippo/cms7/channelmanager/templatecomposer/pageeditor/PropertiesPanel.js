@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-(function () {
+(function ($) {
 
   "use strict";
 
@@ -35,7 +35,6 @@
     composerRestMountUrl: null,
     mountId: null,
     resources: null,
-    variants: null,
     variantsUuid: null,
     locale: null,
     firePropertiesChangedEvents: false,
@@ -56,6 +55,8 @@
       this.resources = config.resources;
       this.locale = config.locale;
 
+      this.componentMessageBus = Hippo.createMessageBus('properties-panel');
+
       this.variantAdderXType = config.variantAdderXType;
       this.propertiesEditorXType = config.propertiesEditorXType;
 
@@ -72,7 +73,7 @@
     initComponent: function () {
       Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.initComponent.apply(this, arguments);
 
-      this.addEvents('visibleHeightChanged');
+      this.addEvents('visibleHeightChanged', 'onLoad');
 
       this.on('beforetabchange', function (panel, newTab, currentTab) {
         var proceed;
@@ -102,8 +103,9 @@
      * @param componentId the UUID of the component
      * @param pageRequestVariants the possible page request variants
      * @param lastModifiedTimestamp the time this component has last been modified
+     * @param readOnly whether to show the properties read-only or not
      */
-    load: function (componentId, pageRequestVariants, lastModifiedTimestamp) {
+    load: function (componentId, pageRequestVariants, lastModifiedTimestamp, readOnly) {
       if (this.componentVariants !== null) {
         this.componentVariants.un('invalidated', this.updateUI, this);
         this._fireInitialPropertiesChangedIfNeeded();
@@ -112,6 +114,7 @@
       this.componentId = componentId;
       this.pageRequestVariants = pageRequestVariants;
       this.lastModifiedTimestamp = lastModifiedTimestamp;
+      this.isReadOnly = readOnly;
 
       this.componentVariants = new Hippo.ChannelManager.TemplateComposer.ComponentVariants({
         componentId: componentId,
@@ -129,33 +132,32 @@
       this.componentVariants.on('invalidated', this.updateUI, this);
 
       this.updateUI();
+      this.fireEvent('onLoad');
     },
 
-    updateUI: function (triggeredByVariantId) {
-      var existingTabs = triggeredByVariantId ? this._getTabs() : [],
+    updateUI: function (changedVariantIds, activeVariantId) {
+      var existingTabs = changedVariantIds ? this._getTabs() : [],
         reusableTabs = existingTabs.filter(function (tab) {
-          // reuse all variant tabs except the changed one that triggerd the UI update
-          return tab.variant && tab.variant.id !== triggeredByVariantId;
+          // reuse all variant tabs except the changed ones that have been saved
+          return tab.variant && changedVariantIds.indexOf(tab.variant.id) === -1;
         });
 
       this.firePropertiesChangedEvents = false;
       this.beginUpdate();
       this.removeAll();
       this.componentVariants.get().when(function (variants) {
-        var endUpdate;
-
         this._initTabs(variants, reusableTabs);
         this.adjustBodyWidth(this.tabWidth);
 
         this.firePropertiesChangedEvents = true;
-        this._selectBestMatchingTab(triggeredByVariantId, variants);
 
-        endUpdate = this.endUpdate.createDelegate(this);
-        this._loadTabs().when(endUpdate).otherwise(endUpdate);
-      }.createDelegate(this)).otherwise(function (response) {
+        this._selectBestMatchingTab(activeVariantId, variants).then(function () {
+          this._loadTabs().always(this.endUpdate.bind(this));
+        }.bind(this));
+      }.bind(this)).otherwise(function (response) {
         Hippo.Msg.alert('Failed to get variants.', 'Only the default variant will be available: ' + response.status + ':' + response.statusText);
         this.endUpdate();
-      }.createDelegate(this));
+      }.bind(this));
     },
 
     _getTabs: function () {
@@ -167,13 +169,13 @@
     },
 
     _loadTabs: function () {
-      var futures = [];
+      var loadAllTabs = [];
 
       this.items.each(function (tab) {
-        futures.push(tab.load());
+        loadAllTabs.push(tab.load());
       }, this);
 
-      return Hippo.Future.join(futures);
+      return $.when.apply($, loadAllTabs);
     },
 
     onHide: function () {
@@ -182,9 +184,10 @@
     },
 
     _stopValidationMonitoring: function () {
-      var activeForm = this.getActiveTab().propertiesForm;
-      if (activeForm) {
-        activeForm.stopMonitoring();
+      var activeTab = this.getActiveTab();
+
+      if (activeTab && activeTab.propertiesForm) {
+        activeTab.propertiesForm.stopMonitoring();
       }
     },
 
@@ -214,12 +217,15 @@
         var tab, propertiesForm;
 
         if ('plus' === variant.id) {
-          tab = this._createVariantAdder(variant, Ext.pluck(variants, 'id'));
+          if (!this.isReadOnly) {
+            tab = this._createVariantAdder(variant, Ext.pluck(variants, 'id'));
+            this.add(tab);
+          }
         } else {
           propertiesForm = this._createOrReusePropertiesForm(variant, reusablePropertiesForms);
           tab = this._createPropertiesEditor(variant, variants, propertiesForm);
+          this.add(tab);
         }
-        this.add(tab);
       }, this);
     },
 
@@ -231,10 +237,9 @@
         skipVariantIds: skipVariantIds,
         title: getVariantName(variant),
         variantsUuid: this.variantsUuid,
+        getCurrentVariant: this.getCurrentVariant.bind(this),
+        componentMessageBus: this.componentMessageBus,
         listeners: {
-          'save': function (variant) {
-            this._onPropertiesSaved(variant);
-          },
           'copy': this._copyVariant,
           scope: this
         }
@@ -252,10 +257,10 @@
           locale: this.locale,
           componentId: this.componentId,
           lastModifiedTimestamp: this.lastModifiedTimestamp,
-          bubbleEvents: ['variantDirty', 'variantPristine', 'close'],
+          isReadOnly: this.isReadOnly,
+          bubbleEvents: ['variantDirty', 'variantPristine', 'clientvalidation'],
           listeners: {
             propertiesChanged: this._onPropertiesChanged,
-            propertiesSaved: this._onPropertiesSaved,
             propertiesDeleted: this._onPropertiesDeleted,
             scope: this
           }
@@ -271,16 +276,27 @@
       this.fireEvent('propertiesChanged', this.componentId, {});
     },
 
-    _onPropertiesSaved: function (savedVariantId) {
-      this._reloadCleanupAndFireEvent(savedVariantId, 'save');
+    /**
+     * Event called after all dirty forms are saved
+     * @param savedVariantIds  list of dirty variants that have been saved
+     * @param activeVariantId  the active variant in the panel
+     * @private
+     */
+    _onSaved: function (savedVariantIds, activeVariantId) {
+      this._reloadCleanupAndFireEvent(savedVariantIds, activeVariantId, 'save');
     },
 
     _onPropertiesDeleted: function (deletedVariantId) {
-      this._reloadCleanupAndFireEvent(deletedVariantId, 'delete');
+      // set the active tab be the first one (i.e. the hippo-default variant)
+      this._reloadCleanupAndFireEvent([deletedVariantId], 'hippo-default', 'delete');
     },
 
-    _reloadCleanupAndFireEvent: function (changedVariantId, event) {
-      this.componentVariants.invalidate(changedVariantId);
+    _onVariantsDeleted: function (deletedVariantIds, newActiveVariantId) {
+      this._reloadCleanupAndFireEvent(deletedVariantIds, newActiveVariantId, 'delete');
+    },
+
+    _reloadCleanupAndFireEvent: function (changedVariantIds, activeVariantId, event) {
+      this.componentVariants.invalidate(changedVariantIds, activeVariantId);
       this.componentVariants.cleanup().when(function () {
         this.fireEvent(event);
       }.createDelegate(this)).otherwise(function (response) {
@@ -297,7 +313,9 @@
         variant: variant,
         allVariants: variants.slice(0, variants.length - 1),
         title: getVariantName(variant),
-        propertiesForm: propertiesForm
+        propertiesForm: propertiesForm,
+        isReadOnly: this.isReadOnly,
+        componentMessageBus: this.componentMessageBus
       });
 
       editor.on('visibleHeightChanged', function (editor, visibleHeight) {
@@ -320,7 +338,7 @@
         propertiesForm.stopMonitoring();
       });
 
-      this.relayEvents(editor, ['close']);
+      editor.on('variantsDeleted', this._onVariantsDeleted, this);
 
       return editor;
     },
@@ -335,8 +353,13 @@
       this.tabWidth = 0;
     },
 
+    getCurrentVariant: function () {
+      return this.getActiveTab().variant;
+    },
+
     _getCurrentVariantId: function () {
-      return this.getActiveTab().variant ? this.getActiveTab().variant.id : null;
+      var currentVariant = this.getCurrentVariant();
+      return currentVariant ? currentVariant.id : null;
     },
 
     _getBestMatchingVariantId: function (variantId, variants) {
@@ -346,8 +369,29 @@
     },
 
     _selectBestMatchingTab: function (variantId, variants) {
-      var tabIndex = this._getBestMatchingTabIndex(variantId, variants);
-      this.setActiveTab(tabIndex);
+      var fetchInitialActiveVariantId;
+
+      if (variantId) {
+        fetchInitialActiveVariantId = $.Deferred().resolve(variantId).promise();
+      } else {
+        fetchInitialActiveVariantId = this._getFirstPropertiesEditor().getInitialActiveVariantId();
+      }
+
+      return fetchInitialActiveVariantId.then(function (activeVariantId) {
+        var tabIndex = this._getBestMatchingTabIndex(activeVariantId, variants);
+        this.setActiveTab(tabIndex);
+      }.bind(this));
+    },
+
+    _getFirstPropertiesEditor: function () {
+      var result = this.items[0];
+      this.items.find(function (item) {
+        if (item.variant.id !== 'plus') {
+          result = item;
+          return true;
+        }
+      });
+      return result;
     },
 
     _getBestMatchingTabIndex: function (variantId, variants) {
@@ -381,12 +425,13 @@
       return result;
     },
 
-    _copyVariant: function (existingVariant, newVariant) {
+    _copyVariant: function (existingVariantId, newVariant) {
       var existingTab, newPropertiesForm, newTab, newTabIndex;
 
-      existingTab = this._getTab(existingVariant);
+      existingTab = this._getTab(existingVariantId);
       if (Ext.isDefined(existingTab) && existingTab instanceof Hippo.ChannelManager.TemplateComposer.PropertiesEditor) {
         newPropertiesForm = existingTab.propertiesForm.createCopy(newVariant);
+        newPropertiesForm.hideDelete();
         newTab = this._createPropertiesEditor(
           newVariant,
           Ext.pluck(this.items.getRange(), "variant"),
@@ -398,7 +443,7 @@
         newTab.syncVisibleHeight();
         newPropertiesForm.firePropertiesChanged();
       } else {
-        console.log("Cannot find tab for variant '" + existingVariant + "', copy to '" + newVariant + "' failed");
+        console.log("Cannot find tab for variant '" + existingVariantId + "', copy to '" + newVariant + "' failed");
       }
     },
 
@@ -411,8 +456,65 @@
         }
       });
       return tab;
-    }
+    },
 
+    /**
+     * Return editors that have dirty forms
+     * @returns {Array}
+     * @private
+     */
+    _getDirtyEditors: function () {
+      var editors = [];
+      this.items.each(function (item) {
+        if (Ext.isDefined(item.propertiesForm) && item.propertiesForm.isDirty()) {
+          editors.push(item);
+        }
+      });
+      return editors;
+    },
+
+    // Update the activeVariantId based on the mapping between old and new variant id after save.
+    // @see PropertiesEditor#save for more detail
+    _findActiveVariantId: function(mapVariantIds, activeVariantId) {
+      mapVariantIds.some(function (entry) {
+        if (entry.oldId === activeVariantId) {
+          activeVariantId = entry.newId;
+          return true;
+        }
+      });
+      return activeVariantId;
+    },
+
+    /**
+     * Save all dirty forms in the panel
+     * @param success
+     * @param fail
+     */
+    saveAll: function () {
+      var dirtyEditors = this._getDirtyEditors(),
+        savePromises = [],
+        dirtyVariantIds = [],
+        activeVariantId = this.getActiveTab().variant.id;
+
+      dirtyEditors.forEach(function(editor) {
+        savePromises.push(editor.save());
+        dirtyVariantIds.push(editor.variant.id);
+      });
+
+      return $.when.apply($, savePromises).then(function () {
+        var afterSavePromises = [],
+          mapVariantIds = [].slice.call(arguments),
+          savedVariantIds = Ext.pluck(mapVariantIds, "newId");
+
+        activeVariantId = this._findActiveVariantId(mapVariantIds, activeVariantId);
+        this._onSaved(savedVariantIds, activeVariantId);
+
+        dirtyEditors.forEach(function(editor) {
+          afterSavePromises.push(editor.onAfterSave());
+        });
+        return $.when.apply($, afterSavePromises);
+      }.bind(this));
+    }
   });
 
-}());
+}(jQuery));

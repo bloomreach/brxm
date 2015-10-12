@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-(function () {
+(function ($) {
 
   "use strict";
 
@@ -58,11 +58,11 @@
       this.locale = config.locale;
       this.componentId = config.componentId;
       this.lastModifiedTimestamp = config.lastModifiedTimestamp;
-
-      this.saveEnabledChecks = [];
+      this.isReadOnly = config.isReadOnly;
 
       Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.constructor.call(this, Ext.apply(config, {
-        cls: 'templateComposerPropertiesForm'
+        cls: 'templateComposerPropertiesForm qa-properties-form',
+        maskDisabled: false
       }));
     },
 
@@ -81,7 +81,7 @@
       if (this.variant.id !== 'hippo-default') {
         this.deleteButton = new Ext.Button({
           text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-delete'],
-          cls: 'btn btn-default',
+          cls: 'btn btn-default qa-delete-button',
           handler: function () {
             Ext.Ajax.request({
               method: 'DELETE',
@@ -95,28 +95,10 @@
           },
           scope: this
         });
-        buttons.push(this.deleteButton);
-        buttons.push('->');
-      }
-
-      this.saveButton = new Ext.Button({
-        cls: 'btn btn-default',
-        text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-save'],
-        handler: this._submitForm,
-        scope: this,
-        formBind: true
-      });
-      buttons.push(this.saveButton);
-      buttons.push({
-        cls: 'btn btn-default',
-        text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-close'],
-        scope: this,
-        handler: function () {
-          this.fireEvent('close');
+        if (!this.isReadOnly) {
+          buttons.push(this.deleteButton);
         }
-      });
-
-      this.addSaveEnabledCheck(this.isDirty.bind(this));
+      }
 
       Ext.apply(this, {
         autoHeight: true,
@@ -125,7 +107,7 @@
         autoScroll: true,
         labelWidth: 120,
         labelSeparator: '',
-        monitorValid: true,
+        monitorValid: !this.isReadOnly,
         defaults: {
           anchor: '100%'
         },
@@ -175,9 +157,16 @@
       return isDirty;
     },
 
-    _submitForm: function () {
+    submitForm: function (onSuccess, onFail) {
       var uncheckedValues = {},
         form = this.getForm();
+
+      if (!this.rendered) {
+        // if the form has not been rendered the values were never changed,
+        // so no need to submit
+        onSuccess();
+        return;
+      }
 
       form.items.each(function (item) {
         if (item instanceof Ext.form.Checkbox) {
@@ -198,6 +187,7 @@
         success: function () {
           this.fireEvent('propertiesSaved', this.newVariantId);
           this._fireVariantDirtyOrPristine();
+          onSuccess(this.newVariantId);
         },
         failure: function () {
           Hippo.Msg.alert(Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['toolkit-store-error-message-title'],
@@ -206,6 +196,7 @@
               // reload channel manager
               Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').pageContainer.refreshIframe();
             });
+          onFail();
         },
         scope: this
       });
@@ -231,7 +222,6 @@
         autoWidth: true,
         layout: 'fit'
       });
-      this.saveButton.hide();
     },
 
     _initFields: function () {
@@ -245,7 +235,7 @@
           if (groupLabel !== lastGroupLabel) {
             this.add({
               cls: 'field-group-title',
-              text: Ext.util.Format.htmlEncode(groupLabel),
+              text: this._isReadOnlyTemplate(record) ? '' : Ext.util.Format.htmlEncode(groupLabel),
               xtype: 'label'
             });
             lastGroupLabel = groupLabel;
@@ -253,13 +243,10 @@
           this._initField(record);
         }
       }, this);
+    },
 
-      this.add({
-        xtype: 'Hippo.ChannelManager.TemplateComposer.ValidatorField',
-        validator: this.isSaveEnabled.bind(this)
-      });
-
-      this.saveButton.show();
+    _isReadOnlyTemplate: function (record) {
+      return this.isReadOnly && record.get('name') === 'org.hippoecm.hst.core.component.template';
     },
 
     _initField: function (record) {
@@ -329,6 +316,7 @@
         name: record.get('name'),
         value: initialValue,
         defaultValue: defaultValue,
+        disabled: this.isReadOnly,
         store: comboStore,
         forceSelection: true,
         triggerAction: 'all',
@@ -343,7 +331,7 @@
         }
       });
 
-      if (record.get('allowCreation')) {
+      if (record.get('allowCreation') && !this.isReadOnly) {
         createDocumentLinkId = Ext.id();
 
         this.add({
@@ -482,6 +470,7 @@
         selectOnFocus: true,
         valueField: 'id',
         displayField: 'displayText',
+        disabled: this.isReadOnly,
         listeners: {
           afterrender: fixComboLeftPadding,
           select: function (combo, comboRecord) {
@@ -527,7 +516,8 @@
           displayValue: displayValue,
           allowBlank: !record.get('required'),
           name: record.get('name'),
-          enableKeyEvents: true,
+          enableKeyEvents: !this.isReadOnly,
+          disabled: this.isReadOnly,
           listeners: {
             change: commitValueOrDefault,
             select: commitValueOrDefault,
@@ -585,43 +575,47 @@
 
     load: function () {
       if (this.store) {
-        return this._loadDirtyState();
+        return this._reloadState();
       } else {
         return this._loadStore();
       }
     },
 
-    _loadDirtyState: function () {
-      return new Hippo.Future(function (success) {
-        this._fireVariantDirtyOrPristine();
-        success();
-      }.createDelegate(this));
+    _reloadState: function () {
+      this._fireVariantDirtyOrPristine();
+      this.fireEvent('propertiesLoaded', this);
+      return $.Deferred().resolve().promise();
     },
 
     _loadStore: function () {
-      return new Hippo.Future(function (success, fail) {
-        this.store = new Ext.data.JsonStore({
-          autoLoad: false,
-          method: 'GET',
-          root: 'properties',
-          fields: [
-            'name', 'value', 'initialValue', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation', 'defaultValue',
-            'pickerConfiguration', 'pickerInitialPath', 'pickerRemembersLastVisited', 'pickerPathIsRelative', 'pickerRootPath', 'pickerSelectableNodeTypes',
-            'dropDownListValues', 'dropDownListDisplayValues', 'hiddenInChannelManager', 'groupLabel', 'displayValue'
-          ],
-          url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/' + this.locale + '?FORCE_CLIENT_HOST=true'
-        });
-        this.store.on('load', function () {
-          this._loadProperties();
-          success();
-        }, this);
-        this.store.on('exception', function () {
-          this._loadException.apply(this, arguments);
-          fail();
-        }, this);
-        this._initStoreListeners();
-        this.store.load();
-      }.createDelegate(this));
+      var result = $.Deferred();
+
+      this.store = new Ext.data.JsonStore({
+        autoLoad: false,
+        method: 'GET',
+        root: 'properties',
+        fields: [
+          'name', 'value', 'initialValue', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation', 'defaultValue',
+          'pickerConfiguration', 'pickerInitialPath', 'pickerRemembersLastVisited', 'pickerPathIsRelative', 'pickerRootPath', 'pickerSelectableNodeTypes',
+          'dropDownListValues', 'dropDownListDisplayValues', 'hiddenInChannelManager', 'groupLabel', 'displayValue'
+        ],
+        url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/' + this.locale + '?FORCE_CLIENT_HOST=true'
+      });
+
+      this.store.on('load', function () {
+        this._loadProperties();
+        result.resolve();
+      }, this);
+
+      this.store.on('exception', function () {
+        this._loadException.apply(this, arguments);
+        result.reject();
+      }, this);
+
+      this._initStoreListeners();
+      this.store.load();
+
+      return result.promise();
     },
 
     _initStoreListeners: function () {
@@ -655,34 +649,21 @@
       }
     },
 
-    /**
-     * Add a function that returns whether the save button of this form should be enabled or not.
-     * When all check functions return true the save button is enabled. If any of the check functions
-     * returns false, the save button is disabled.
-     * @param fn the save-enabled check function to add.
-     */
-    addSaveEnabledCheck: function (fn) {
-      this.saveEnabledChecks.push(fn);
-    },
-
-    isSaveEnabled: function () {
-      var isEnabled = true;
-      this.saveEnabledChecks.some(function (checkSaveEnabled) {
-        isEnabled = checkSaveEnabled();
-        return !isEnabled;
-      });
-      return isEnabled;
-    },
-
     disableDelete: function () {
-      if (this.deleteButton) {
+      if (this.deleteButton && !this.deleteButton.disabled) {
         this.deleteButton.disable();
       }
     },
 
     enableDelete: function () {
-      if (this.deleteButton) {
+      if (this.deleteButton && this.deleteButton.disabled) {
         this.deleteButton.enable();
+      }
+    },
+
+    hideDelete: function () {
+      if (this.deleteButton) {
+        this.deleteButton.hide();
       }
     }
 
@@ -690,4 +671,4 @@
 
   Ext.reg('Hippo.ChannelManager.TemplateComposer.PropertiesForm', Hippo.ChannelManager.TemplateComposer.PropertiesForm);
 
-}());
+}(jQuery));

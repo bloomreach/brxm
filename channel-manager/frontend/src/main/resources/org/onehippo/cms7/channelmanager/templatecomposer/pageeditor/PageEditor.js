@@ -18,22 +18,6 @@
 
     Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
-    function synchronizeSiteUser(composerRestMountUrl, cmsUser) {
-        var url = composerRestMountUrl + '/cafebabe-cafe-babe-cafe-babecafebabe./keepalive/?FORCE_CLIENT_HOST=true';
-        Ext.Ajax.request({
-            url: url,
-            headers: {
-                'CMS-User': cmsUser,
-                'FORCE_CLIENT_HOST': 'true'
-            },
-            failure: function(response) {
-                console.warn("The SSO handshake with '" + url + "' failed. " +
-                        "The channel manager cannot be used. Please make sure the site is up and the channel manager is configured correctly. " +
-                        "The server responded: " + response.responseText);
-            }
-        });
-    }
-
     function swapElements(array, firstIndex, secondIndex) {
         var tmp = array[firstIndex];
         array[firstIndex] = array[secondIndex];
@@ -154,6 +138,10 @@
 
         selectedContainerItem: function(record, containerDisabled) {
             this.fireEvent('containeritemselected', record.get('id'), containerDisabled);
+        },
+
+        setStatusClassOnContainerItem: function(id, status) {
+            this.pageContainer.setStatusClassOnContainerItem(id, status);
         }
     });
 
@@ -221,8 +209,6 @@
                     ]);
                 }.createDelegate(this));
             }
-
-            synchronizeSiteUser(this.pageContainer.getComposerRestMountUrl(), config.cmsUser);
 
             this.initUI(config);
 
@@ -868,9 +854,7 @@
 
             this.on('selectItem', function(record, containerDisabled) {
                 if (record.get('type') === HST.CONTAINERITEM) {
-                    if (containerDisabled !== true) {
-                        this.showProperties(record);
-                    }
+                    this.showProperties(record, containerDisabled);
                     this.templateComposerApi.selectedContainerItem(record, containerDisabled);
                 }
             }, this);
@@ -911,99 +895,63 @@
         },
 
         createPropertiesWindow: function(mountId) {
-            var propertiesPanel, windowWidth, window;
-
-            propertiesPanel = new Hippo.ChannelManager.TemplateComposer.PropertiesPanel({
-                id: 'componentPropertiesPanel',
-                resources: this.resources,
-                locale: this.locale,
-                composerRestMountUrl: this.pageContainer.getComposerRestMountUrl(),
-                variantsUuid: this.variantsUuid,
-                globalVariantsStore: this.globalVariantsStore,
-                globalVariantsStoreFuture: this.globalVariantsStoreFuture,
-                mountId: mountId,
-                listeners: {
-                    'save': function() {
-                        this.fireEvent('channelChanged');
-                    },
-                    'close': function() {
-                        window.hide();
-                    },
-                    'delete': function() {
-                        this.fireEvent('channelChanged');
-                    },
-                    'propertiesChanged': function(componentId, propertiesMap) {
-                        this.renderComponent(componentId, propertiesMap);
-                    },
-                    scope: this
-                }
-            });
-
-            windowWidth = 525;
-            if (Ext.isDefined(this.variantsUuid)) {
-                windowWidth += propertiesPanel.tabWidth;
-            }
-
-            window = new Hippo.ux.window.FloatingWindow({
+            var pageEditorIFrame = Ext.getCmp('pageEditorIFrame');
+            return new Hippo.ChannelManager.TemplateComposer.PropertiesWindow({
                 id: 'componentPropertiesWindow',
                 title: this.resources['properties-window-default-title'],
                 x: 10, y: 120,
-                width: windowWidth,
+                width: 525,
                 height: 350,
-                layout: 'fit',
                 closable: true,
                 closeAction: 'hide',
                 collapsible: false,
                 constrainHeader: true,
                 bodyStyle: 'background-color: #ffffff',
                 cls: "component-properties",
-                renderTo: Ext.getCmp('pageEditorIFrame').getEl(),
+                renderTo: pageEditorIFrame.getEl(),
                 constrain: true,
                 hidden: true,
+                composerRestMountUrl: this.pageContainer.getComposerRestMountUrl(),
+                resources: this.resources,
+                locale: this.locale,
+                variantsUuid: this.variantsUuid,
+                globalVariantsStore: this.globalVariantsStore,
+                globalVariantsStoreFuture: this.globalVariantsStoreFuture,
+                mountId: mountId,
                 listeners: {
+                    save: function() {
+                        this.fireEvent('channelChanged');
+                    },
+                    'delete': function() {
+                        this.fireEvent('channelChanged');
+                    },
+                    propertiesChanged: function(componentId, propertiesMap) {
+                        this.renderComponent(componentId, propertiesMap);
+                    },
                     hide: function() {
                         this.pageContainer.deselectComponents();
-                        propertiesPanel.onHide();
+                    },
+                    // Enable mouse events in the iframe while the component properties window is dragged. When the
+                    // mouse pointer is moved quickly it can end up outside the window above the iframe. The iframe
+                    // should then send mouse events back to the host to update the position of the dragged window.
+                    startdrag: function () {
+                        pageEditorIFrame.hostToIFrame.publish('enablemouseevents');
+                    },
+                    enddrag: function () {
+                        pageEditorIFrame.hostToIFrame.publish('disablemouseevents');
                     },
                     scope: this
-                },
-                items: [ propertiesPanel ]
-            });
-
-            // Adapt the size of the window to the visible height of the properties panel.
-            propertiesPanel.on('visibleHeightChanged', function(visibleHeight) {
-                var currentWindowHeight = window.getHeight(),
-                    visibleWindowHeight = visibleHeight + window.getFrameHeight(),
-                    pageEditorHeight = Ext.getCmp('pageEditorIFrame').getHeight(),
-                    windowY = window.getPosition()[1],
-                    spaceBetweenWindowAndBottom = 4,
-                    maxWindowHeight = pageEditorHeight - windowY - spaceBetweenWindowAndBottom,
-                    newWindowHeight = Math.min(visibleWindowHeight, maxWindowHeight);
-                if (currentWindowHeight !== newWindowHeight) {
-                    window.setHeight(newWindowHeight);
                 }
             });
-
-            // Enable mouse events in the iframe while the properties window is dragged. When the mouse pointer is moved
-            // quickly it can end up outside the window above the iframe. The iframe should then send mouse events back
-            // to the host in order to update the position of the dragged window.
-            window.on('startdrag', function() {
-                Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('enablemouseevents');
-            });
-            window.on('enddrag', function() {
-                Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('disablemouseevents');
-            });
-
-            return window;
         },
 
-        showProperties: function(record) {
+        showProperties: function(record, readOnly) {
             var componentPropertiesPanel = Ext.getCmp('componentPropertiesPanel'),
                 componentId = record.get('id'),
                 pageRequestVariants = this.pageContainer.pageContext.pageRequestVariants,
                 lastModifiedTimestamp = record.get('lastModifiedTimestamp'),
                 componentDisplayName = record.get('label') || record.get('name');
-            componentPropertiesPanel.load(componentId, pageRequestVariants, lastModifiedTimestamp);
+            componentPropertiesPanel.load(componentId, pageRequestVariants, lastModifiedTimestamp, readOnly);
 
             if (this.propertiesWindow) {
                 this.propertiesWindow.setTitle(componentDisplayName);

@@ -64,15 +64,21 @@
     trigger2Class: 'x-form-search-trigger',
 
     onTriggerClick: function () {
-      this.openPicker();
+      if (!this.disabled) {
+        this.openPicker();
+      }
     },
 
     onTrigger1Click: function () {
-      this.picked(this.defaultValue);
+      if (!this.disabled) {
+        this.picked(this.defaultValue);
+      }
     },
 
     onTrigger2Click: function () {
-      this.openPicker();
+      if (!this.disabled) {
+        this.openPicker();
+      }
     },
 
     setDefaultValue: function (value) {

@@ -44,6 +44,7 @@
           <predefinedVars>
             Ext,
             Hippo,
+            jQuery,
             window
           </predefinedVars>
           <sourceJsFolder>${basedir}/src/main/resources</sourceJsFolder>

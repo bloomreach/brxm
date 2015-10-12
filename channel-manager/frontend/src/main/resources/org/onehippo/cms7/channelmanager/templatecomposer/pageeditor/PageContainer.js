@@ -63,37 +63,10 @@
                 }
                 Hippo.Msg.hide();
             }, this);
-
-            this.ping = window.setInterval(function() {
-                if (this.sessionId && this._hasFocus() && Ext.getCmp('pageEditorIFrame').isValidSession(this.sessionId)) {
-                    Ext.Ajax.request({
-                        url: this.getComposerRestMountUrl() + '/cafebabe-cafe-babe-cafe-babecafebabe./keepalive/?FORCE_CLIENT_HOST=true',
-                        failure: function() {
-                            delete this.sessionId;
-
-                            Hippo.Msg.hide();
-                            Hippo.Msg.confirm(this.resources['hst-exception-title'], this.resources['hst-timeout-message'].format(this.contextPath), function(id) {
-                                if (id === 'yes') {
-                                    this._initializeHstSession();
-                                } else {
-                                    this.fireEvent.apply(this, ['fatalIFrameException', {msg: this.resources['hst-exception']}]);
-                                }
-                            }.createDelegate(this));
-                        }.createDelegate(this)
-                    });
-                }
-            }.createDelegate(this), 20000);
         },
 
         getComposerRestMountUrl: function() {
             return this.contextPath + this.composerRestMountPath;
-        },
-
-        destroy: function() {
-            window.clearInterval(this.ping);
-            delete this.ping;
-
-            Hippo.ChannelManager.TemplateComposer.PageContainer.superclass.destroy.call(this);
         },
 
         _populateIFrameResourceCache: function() {
@@ -391,6 +364,10 @@
 
         deselectComponents: function() {
             Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('deselect');
+        },
+
+        setStatusClassOnContainerItem: function(id, status) {
+            Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('setStatusClass', id, status);
         },
 
         // END PUBLIC METHODS THAT CHANGE THE iFrame

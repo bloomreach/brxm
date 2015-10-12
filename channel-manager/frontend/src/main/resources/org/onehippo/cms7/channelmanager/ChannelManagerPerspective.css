@@ -817,6 +817,10 @@
   overflow-x: hidden !important;
 }
 
+.templateComposerPropertiesForm .x-item-disabled .x-form-trigger-over {
+  background-position: 50% 50% !important;
+}
+
 .ext-gecko .x-window-body .templateComposerPropertiesForm .x-form-item {
   overflow: hidden;
 }
