@@ -89,6 +89,7 @@ engine/wdbp-error-log.txt
 engine/workspaces
 /hippo-repository.iml
 jaxrs/*.iml
+jaxrs/log4j.log
 jaxrs/target
 /jpox.log
 /log4j.log

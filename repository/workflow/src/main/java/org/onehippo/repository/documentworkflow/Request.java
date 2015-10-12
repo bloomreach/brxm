@@ -70,6 +70,10 @@ public abstract class Request extends Document {
         return null;
     }
 
+    public String getRequestType() throws RepositoryException {
+        return hasNode() ? getNode().getPrimaryNodeType().getName() : null;
+    }
+
     public final boolean isScheduledRequest() {
         return this instanceof ScheduledRequest;
     }

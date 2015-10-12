@@ -469,6 +469,10 @@ public class InitializeItem {
                     getName(), moduleVersion, existingModuleVersion, isNewer);
             if (!isNewer) {
                 return false;
+            } else {
+                log.warn("You are using a deprecated method to specify initialize item version " +
+                        "(Implementation-Build manifest entry). " +
+                        "Please use the hippo:version property instead.");
             }
         }
         return true;

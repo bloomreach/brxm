@@ -29,13 +29,19 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.transaction.NotSupportedException;
 
+import org.apache.jackrabbit.commons.iterator.NodeIteratorAdapter;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.security.ManagerContext;
+import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SECURITYPROVIDER;
+import static org.hippoecm.repository.api.HippoNodeType.NT_GROUP;
+import static org.hippoecm.repository.api.HippoNodeType.NT_GROUPFOLDER;
 import static org.hippoecm.repository.security.SecurityManager.INTERNAL_PROVIDER;
+import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 
 /**
  * Abstract group manager for managing groups. 
@@ -101,7 +107,7 @@ public abstract class AbstractGroupManager implements GroupManager {
         String path = buildGroupPath(rawGroupId);
         if (session.getRootNode().hasNode(path)) {
             Node group = session.getRootNode().getNode(path);
-            if (group.getPrimaryNodeType().isNodeType(HippoNodeType.NT_GROUP)) {
+            if (group.getPrimaryNodeType().isNodeType(NT_GROUP)) {
                 return true;
             }
         }
@@ -115,7 +121,7 @@ public abstract class AbstractGroupManager implements GroupManager {
         String path = buildGroupPath(rawGroupId);
         if (session.getRootNode().hasNode(path)) {
             Node group = session.getRootNode().getNode(path);
-            if (group.getPrimaryNodeType().isNodeType(HippoNodeType.NT_GROUP)) {
+            if (group.getPrimaryNodeType().isNodeType(NT_GROUP)) {
                 return group;
             } else {
                 return null;
@@ -143,7 +149,7 @@ public abstract class AbstractGroupManager implements GroupManager {
             }
             String c = NodeNameCodec.encode(Character.toLowerCase(groupId.charAt(pos)));
             if (!groupsNode.hasNode(c)) {
-                groupsNode = groupsNode.addNode(c, HippoNodeType.NT_GROUPFOLDER);
+                groupsNode = groupsNode.addNode(c, NT_GROUPFOLDER);
             } else {
                 groupsNode = groupsNode.getNode(c);
             }
@@ -151,7 +157,7 @@ public abstract class AbstractGroupManager implements GroupManager {
         Node group = groupsNode.addNode(NodeNameCodec.encode(groupId, true), getNodeType());
         group.setProperty(HippoNodeType.HIPPO_MEMBERS, new Value[] {});
         if (!INTERNAL_PROVIDER.equals(providerId)) {
-            group.setProperty(HippoNodeType.HIPPO_SECURITYPROVIDER, providerId);
+            group.setProperty(HIPPO_SECURITYPROVIDER, providerId);
             log.debug("Group: {} created by {} ", groupId, providerId);
         }
         return group;
@@ -169,11 +175,11 @@ public abstract class AbstractGroupManager implements GroupManager {
         }
         final StringBuilder statement = new StringBuilder();
         statement.append("//element");
-        statement.append("(*, ").append(HippoNodeType.NT_GROUP).append(")");
+        statement.append("(*, ").append(NT_GROUP).append(")");
         if (providerId != null) {
             statement.append('[');
             statement.append("@");
-            statement.append(HippoNodeType.HIPPO_SECURITYPROVIDER).append("= '").append(providerId).append("'");
+            statement.append(HIPPO_SECURITYPROVIDER).append("= '").append(providerId).append("'");
             statement.append(']');
         }
         statement.append(" order by @jcr:name");
@@ -231,7 +237,7 @@ public abstract class AbstractGroupManager implements GroupManager {
         }
     }
 
-    private final void setDirLevels() {
+    private void setDirLevels() {
         dirLevels = 0;
         String relPath = providerPath + "/" + HippoNodeType.NT_GROUPPROVIDER;
         try {
@@ -267,8 +273,8 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     public final boolean isManagerForGroup(Node group) throws RepositoryException {
-        if (group.hasProperty(HippoNodeType.HIPPO_SECURITYPROVIDER)) {
-            return providerId.equals(group.getProperty(HippoNodeType.HIPPO_SECURITYPROVIDER).getString());
+        if (group.hasProperty(HIPPO_SECURITYPROVIDER)) {
+            return providerId.equals(group.getProperty(HIPPO_SECURITYPROVIDER).getString());
         } else {
             return INTERNAL_PROVIDER.equals(providerId);
         }
@@ -280,29 +286,8 @@ public abstract class AbstractGroupManager implements GroupManager {
 
     public final NodeIterator getMemberships(String rawUserId, String providerId) throws RepositoryException {
         final String userId = rawUserId != null ? NodeNameCodec.decode(sanitizeId(rawUserId)) : null;
-
-        StringBuilder statement = new StringBuilder();
-        // Triggers: https://issues.apache.org/jira/browse/JCR-1573 don't use path in query for now
-        //statement.append("//").append(groupsPath).append("//element");
-        statement.append("//element");
-        statement.append("(*, ").append(HippoNodeType.NT_GROUP).append(")");
-        statement.append("[(");
-        statement.append("@").append(HippoNodeType.HIPPO_MEMBERS).append(" = '*'");
-        if (userId != null) {
-            statement.append(" or @");
-            statement.append(HippoNodeType.HIPPO_MEMBERS).append(" = '").append(userId.replace("'", "''")).append("'");
-        }
-        statement.append(')');
-        if (providerId != null) {
-            statement.append(" and @");
-            statement.append(HippoNodeType.HIPPO_SECURITYPROVIDER).append("= '").append(providerId).append("'");
-        }
-        statement.append(']');
-        //log.info("Searching for memberships for user '{}' with query '{}'", userId, statement);
-
-        Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
-        QueryResult result = q.execute();
-        return result.getNodes();
+        final Node groupsFolder = session.getRootNode().getNode(groupsPath);
+        return new NodeIteratorAdapter(getMembershipsByPath(userId, providerId, groupsFolder, 0));
     }
 
     public final Set<String> getMembershipIds(String userId) {
@@ -310,20 +295,40 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     public final Set<String> getMembershipIds(String userId, String providerId) {
-        final Set<String> groupIds = new HashSet<String>();
+        final Set<String> groupIds = new HashSet<>();
         try {
-            final NodeIterator nodes = getMemberships(userId, providerId);
-            while (nodes.hasNext()) {
-                try {
-                    groupIds.add(NodeNameCodec.decode(nodes.nextNode().getName()));
-                } catch (RepositoryException e) {
-                    log.warn("Failed to add group id to set of memberships of user {}: " + e, userId);
-                }
+            Node groupsFolder = session.getRootNode().getNode(groupsPath);
+            for (Node groupNode : getMembershipsByPath(userId, providerId, groupsFolder, 0)) {
+                groupIds.add(NodeNameCodec.decode(groupNode.getName()));
             }
         } catch (RepositoryException e) {
             log.error("Error while getting membership ids", e);
         }
         return groupIds;
+    }
+
+    private Set<Node> getMembershipsByPath(String userId, String providerId, Node groupFolder, int level) {
+        final Set<Node> groups = new HashSet<>();
+        try {
+            for (Node groupNode : new NodeIterable(groupFolder.getNodes())) {
+                if (groupNode.isNodeType(NT_GROUP)) {
+                    for (String memberId : getMembers(groupNode)) {
+                        if ("*".equals(memberId) || memberId.equals(userId)) {
+                            if (providerId == null ||
+                                    providerId.equals(getStringProperty(groupNode, HIPPO_SECURITYPROVIDER, null))) {
+                                groups.add(groupNode);
+                            }
+                        }
+                    }
+                } else if (groupNode.isNodeType(NT_GROUPFOLDER) && level <= dirLevels) {
+                    level++;
+                    groups.addAll(getMembershipsByPath(userId, providerId, groupNode, level));
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("Error while getting membership ids", e);
+        }
+        return groups;
     }
 
     public final void syncMemberships(Node user) throws RepositoryException {

@@ -31,8 +31,8 @@ import com.jayway.restassured.specification.RequestSpecification;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.utils.ResourceUtils;
-import org.apache.cxf.testutil.common.TestUtil;
 import org.junit.After;
+import org.onehippo.repository.testutils.PortUtil;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -45,13 +45,19 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
  * {@link #createDefaultConfig(Class<?>)} and add additional JAXRS endpoints, filters, providers, etc. Subsequently
  * call {@link #setup(Config)} to create your test fixture.</p>
  *
- * <p>Most tests use <a href="https://github.com/jayway/rest-assured">REST-assured</a> to write the test conditions.
+ * <p>Most examples use <a href="https://github.com/jayway/rest-assured">REST-assured</a> to write the test conditions.
+ * Note that this class provides {@link #given()} and {@link #when()} methods that return an initialized REST-assured
+ * "client", connected to the test fixture.
  * See their <a href="https://github.com/jayway/rest-assured">GitHub page</a> or
  * <a href="https://github.com/jayway/rest-assured/wiki/Usage">user guide</a> for more information. Be sure to check
  * the <a href="https://github.com/jayway/rest-assured/wiki/Usage#examples">examples</a> section.</p>
  *
  * <p>Next to testing of the plain JSON output, it is also possible to test using a JAXRS client, see the test class
  * {@code org.onehippo.jaxrs.cxf.TestJaxrsClient}.</p>
+ *
+ * <p>A note on thread-safety: it is possible to run tests that extend from CXFTest multi-threaded. Be sure to use
+ * {@link #given()} or {@link #when()} to create a REST-assured client, other mechanisms of initializing
+ * REST-assured may not be thread-safe.</p>
  *
  * <p>In general the CXFTest testbed has been tested to be compatible with the following frameworks found in the Hippo
  * stack:
@@ -110,10 +116,16 @@ public class CXFTest {
         return client.target(address).path(url).request(mediaType);
     }
 
+    /** Utility method to create a REST-assured "client" in a thread-safe manner.
+     * @return An initialized {@link RequestSpecification} connected to this test fixture.
+     */
     protected RequestSpecification given() {
         return RestAssured.given().proxy(getServerHost(), getServerPort());
     }
 
+    /** Utility method to create a REST-assured "client" in a thread-safe manner.
+     * @return An initialized {@link RequestSender} connected to this test fixture.
+     */
     protected RequestSender when() {
         return this.given().when();
     }
@@ -185,7 +197,7 @@ public class CXFTest {
     }
 
     protected int getServerPort() {
-        return Integer.parseInt(TestUtil.getPortNumber(getClass()));
+        return PortUtil.getPortNumber(getClass());
     }
 
     protected String getServerAddress() {
