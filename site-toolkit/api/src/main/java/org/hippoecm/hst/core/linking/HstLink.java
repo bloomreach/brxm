@@ -16,7 +16,6 @@
 package org.hippoecm.hst.core.linking;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -39,7 +38,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  * </p>
  */
 public interface HstLink {
-    
+
     /**
      * Note: This is *not* a url!
      * @return the path of this HstLink. Note: This is *not* a url! The value never starts or ends with a slash /

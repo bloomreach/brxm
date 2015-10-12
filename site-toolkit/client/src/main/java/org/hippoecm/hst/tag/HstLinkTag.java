@@ -46,6 +46,7 @@ import org.hippoecm.hst.utils.TagUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.util.PathUtils.FULLY_QUALIFIED_URL_PREFIXES;
 import static org.hippoecm.hst.utils.TagUtils.getQueryString;
 import static org.hippoecm.hst.utils.TagUtils.writeOrSetVar;
 
@@ -235,7 +236,17 @@ public class HstLinkTag extends ParamContainerTag {
                 } else {
                     pathInfo = path;
                 }
-                link = reqContext.getHstLinkCreator().create(pathInfo, mount);
+
+                String before = pathInfo;
+                String result = stripForbiddenPrefixes(pathInfo);
+                while (!result.equals(before)) {
+                    // keep stripping
+                    log.debug("Stripping illegal prefixes from '{}'", pathInfo);
+                    before = result;
+                    result = stripForbiddenPrefixes(result);
+                }
+
+                link = reqContext.getHstLinkCreator().create(result, mount);
             }
 
             if(link == null && this.siteMapItemRefId != null) {
@@ -298,6 +309,15 @@ public class HstLinkTag extends ParamContainerTag {
         } finally {
             cleanup();
         }
+    }
+
+    private String stripForbiddenPrefixes(String pathInfo) {
+        for (String fullyQualifiedUrlPrefix : FULLY_QUALIFIED_URL_PREFIXES) {
+            if (pathInfo.startsWith(fullyQualifiedUrlPrefix)) {
+                return pathInfo.substring(fullyQualifiedUrlPrefix.length());
+            }
+        }
+        return pathInfo;
     }
 
     private void mergeParameters(final String queryString, final Map<String, List<String>> parameters) {

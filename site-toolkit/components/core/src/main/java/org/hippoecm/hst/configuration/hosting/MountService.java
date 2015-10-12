@@ -252,7 +252,7 @@ public class MountService implements ContextualizableMount, MutableMount {
 
         this.allProperties = mount.getValueProvider().getProperties();
 
-        this.parameters = new HashMap<String, String>();
+        parameters = new HashMap<String, String>();
         String[] parameterNames = mount.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
         String[] parameterValues = mount.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
         if(parameterNames != null && parameterValues != null){
@@ -265,15 +265,15 @@ public class MountService implements ContextualizableMount, MutableMount {
                 }
             }
         }
-        if(this.parent != null){
+        if(parent != null){
             // add the parent parameters that are not already present
-            for(Entry<String, String> parentParam : ((MountService)this.parent).getParameters().entrySet()) {
-                if(!this.parameters.containsKey(parentParam.getKey())) {
-                    this.parameters.put(StringPool.get(parentParam.getKey()), StringPool.get(parentParam.getValue()));
+            for(Entry<String, String> parentParam : parent.getParameters().entrySet()) {
+                if(!parameters.containsKey(parentParam.getKey())) {
+                    parameters.put(StringPool.get(parentParam.getKey()), StringPool.get(parentParam.getValue()));
                 }
             }
         }
-        this.parameters = CollectionOptimizer.optimizeHashMap(this.parameters);
+        parameters = CollectionOptimizer.optimizeHashMap(this.parameters);
 
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ALIAS)) {
             this.alias = StringPool.get(mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_ALIAS).toLowerCase());

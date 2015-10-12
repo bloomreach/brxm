@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PathUtils {
 
+    public static String[] FULLY_QUALIFIED_URL_PREFIXES = {"//", "http:", "https:"};
     private static final Logger log = LoggerFactory.getLogger(PathUtils.class);
 
     private static final String HTML_SUFFIX = ".html";

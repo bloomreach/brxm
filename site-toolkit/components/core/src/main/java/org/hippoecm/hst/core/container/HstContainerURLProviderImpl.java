@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.util.PathEncoder;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
@@ -315,13 +316,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         StringBuilder url = new StringBuilder(100);
         String pathSuffixDelimiter = requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter();
 
-        boolean includeSlash = true;
-
         String containerUrlPathInfo = containerURL.getPathInfo();
-
-        if (containerUrlPathInfo.startsWith(pathSuffixDelimiter)) {
-            includeSlash = false;
-        }
 
         if ("/".equals(containerUrlPathInfo) || StringUtils.isEmpty(containerUrlPathInfo)) {
             if (StringUtils.isEmpty(containerURL.getResolvedMountPath())) {
@@ -330,46 +325,11 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                 url.append('/');
             }
         } else {
-            String[] unencodedPaths = StringUtils.splitPreserveAllTokens(containerUrlPathInfo, '/');
-
-            for (String path : unencodedPaths) {
-                if (StringUtils.isNotEmpty(path)) {
-                    if (includeSlash) {
-                        url.append('/');
-                    } else {
-                        // apparently due to pathSuffixDelimiter the first / was skipped. From now include it
-                        includeSlash = true;
-                    }
-
-                    // check if we have an anchor link and encode everything behind it, but leave first part as it is:
-                    if (path.indexOf('#') != -1) {
-                        String[] hashParts = StringUtils.splitPreserveAllTokens(path, '#');
-
-                        // check if preceded with query
-                        if (hashParts[0].indexOf('?') != -1) {
-                            String[] parameterParts = StringUtils.splitPreserveAllTokens(hashParts[0], '?');
-                            url.append(URLEncoder.encode(parameterParts[0], characterEncoding))
-                                    .append('?').append(parameterParts[1])
-                                    .append('#').append(URLEncoder.encode(hashParts[1], characterEncoding));
-                        }
-                        else{
-                            url.append(URLEncoder.encode(hashParts[0], characterEncoding)).append('#').append(URLEncoder.encode(hashParts[1], characterEncoding));
-                        }
-                    }
-                    // check query parameters:
-                    else if (path.indexOf('?') != -1) {
-                        String[] parameterParts = StringUtils.splitPreserveAllTokens(path, '?');
-                        url.append(URLEncoder.encode(parameterParts[0], characterEncoding)).append('?').append(parameterParts[1]);
-                    } else {
-                        url.append(URLEncoder.encode(path, characterEncoding));
-                    }
-                }
+            final String encoded = PathEncoder.encode(containerUrlPathInfo, characterEncoding);
+            if (!encoded.startsWith("/")) {
+                url.append("/");
             }
-        }
-
-        if (pathSuffixDelimiter != null && containerUrlPathInfo.endsWith(pathSuffixDelimiter) && pathSuffixDelimiter.endsWith("/")) {
-            // the trailing slash is removed above, but for ./ we need to append the slash again
-            url.append('/');
+            url.append(encoded);
         }
 
         boolean firstParamDone = (url.indexOf("?") >= 0);

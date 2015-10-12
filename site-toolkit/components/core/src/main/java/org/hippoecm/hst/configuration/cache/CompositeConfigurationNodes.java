@@ -113,6 +113,7 @@ public class CompositeConfigurationNodes {
             List<HstNode> fallbackMainConfigNodes = new ArrayList<>();
             // see if there is an inherited main config node that is *not* below workspace since workspace nodes are NOT
             // inherited
+            final boolean isMainConfigNodeInherited = (mainConfigNode == null);
             if (!compositeConfigurationNodeRelPath.startsWith(HstNodeTypes.NODENAME_HST_WORKSPACE)) {
                 for (HstNode inherited : orderedRootConfigurationNodeInheritanceList) {
                     if (mainConfigNode == null) {
@@ -129,7 +130,7 @@ public class CompositeConfigurationNodes {
                 continue;
             }
             // do the actual composite: start with 'mainConfigNode' and then merge in the nodes from inheritanceListForMainConfigNode
-            CompositeConfigurationNode compositeConfigurationNode = new CompositeConfigurationNode(mainConfigNode, fallbackMainConfigNodes);
+            CompositeConfigurationNode compositeConfigurationNode = new CompositeConfigurationNode(mainConfigNode, fallbackMainConfigNodes, isMainConfigNodeInherited);
             compositeConfigurationNodes.put(compositeConfigurationNodeRelPath, compositeConfigurationNode);
 
         }
@@ -177,18 +178,20 @@ public class CompositeConfigurationNodes {
         return compositeConfigurationDependenyPaths;
     }
 
-    public class CompositeConfigurationNode {
+    public static class CompositeConfigurationNode {
 
         private HstNode mainConfigNode;
         private Map<String, HstNode> compositeChildren = new HashMap<>();
 
-        public CompositeConfigurationNode(final HstNode mainConfigNode, final List<HstNode> fallbackMainConfigNodes) {
+        public CompositeConfigurationNode(final HstNode mainConfigNode,
+                                          final List<HstNode> fallbackMainConfigNodes,
+                                          final boolean isMainConfigNodeInherited) {
             this.mainConfigNode = mainConfigNode;
 
             HstNode mainConfigNodeInWorkspace = null;
             final HstNode parent = mainConfigNode.getParent();
-            if (!parent.getName().equals(HstNodeTypes.NODENAME_HST_WORKSPACE)) {
-                 // mainConfigNode is not already a node in workspace
+            if (!parent.getName().equals(HstNodeTypes.NODENAME_HST_WORKSPACE) && !isMainConfigNodeInherited) {
+                 // mainConfigNode is not already a node in workspace and the mainConfigNode is not already inherited
                 mainConfigNodeInWorkspace = parent.getNode(HstNodeTypes.NODENAME_HST_WORKSPACE + "/" + mainConfigNode.getName());
             }
 
