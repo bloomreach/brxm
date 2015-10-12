@@ -201,7 +201,6 @@ public class SectionViewer extends Panel implements ICardView {
     public void select(String sectionName) {
         if (sectionName != null) {
             sections.setActiveSectionByName(sectionName);
-            onSectionChange(sectionName);
 
             AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
             if (target != null) {

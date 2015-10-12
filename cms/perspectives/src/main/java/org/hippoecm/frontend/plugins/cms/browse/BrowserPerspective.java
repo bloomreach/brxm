@@ -24,6 +24,8 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.ObservableModel;
+import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -47,7 +49,7 @@ public class BrowserPerspective extends Perspective {
     private final WireframeBehavior wireframe;
     private IExpandableCollapsable listing;
     private TabsPlugin tabs;
-    private ModelService<String> sectionService;
+    private ObservableModel<String> sectionModel;
     private ModelService<Node> nodeService;
     private BrowseState state;
 
@@ -88,12 +90,7 @@ public class BrowserPerspective extends Perspective {
             }
         }, SERVICE_TABS);
 
-        sectionService = new ModelService<String>(Navigator.SELECTED_SECTION_MODEL) {
-            @Override
-            void onUpdateModel(final IModel<String> oldSection, final IModel<String> newSection) {
-                state.onSectionChanged(newSection.getObject());
-            }
-        };
+        monitorSectionChange(context);
 
         nodeService = new ModelService<Node>(config.getString(MODEL_DOCUMENT)) {
             @Override
@@ -119,6 +116,21 @@ public class BrowserPerspective extends Perspective {
                 state.onExpand();
             }
         });
+    }
+
+    private void monitorSectionChange(final IPluginContext context) {
+        sectionModel = ObservableModel.from(context, Navigator.SELECTED_SECTION_MODEL);
+        context.registerService(new IObserver<ObservableModel<String>>() {
+            @Override
+            public ObservableModel<String> getObservable() {
+                return sectionModel;
+            }
+
+            @Override
+            public void onEvent(final Iterator<? extends IEvent<ObservableModel<String>>> events) {
+                state.onSectionChanged(sectionModel.getObject());
+            }
+        }, IObserver.class.getName());
     }
 
     @Override
@@ -156,7 +168,7 @@ public class BrowserPerspective extends Perspective {
 
     @Override
     protected void onDetach() {
-        sectionService.detach();
+        sectionModel.detach();
         nodeService.detach();
 
         super.onDetach();

@@ -21,8 +21,8 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
+import org.hippoecm.frontend.RepositoryRuntimeException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -72,10 +72,9 @@ public class JcrList extends AbstractList<IHippoMap> implements IDetachable {
     public int size() {
         try {
             return (int) getNode().getNodes(name).getSize();
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+        } catch (RepositoryException e) {
+            throw new RepositoryRuntimeException("Failed to determine node list size: " + e.toString(), e);
         }
-        return 0;
     }
 
     @Override

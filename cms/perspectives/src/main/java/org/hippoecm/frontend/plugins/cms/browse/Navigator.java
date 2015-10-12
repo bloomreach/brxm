@@ -18,10 +18,9 @@ package org.hippoecm.frontend.plugins.cms.browse;
 import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelReference;
+import org.hippoecm.frontend.model.ObservableModel;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -35,9 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Navigator extends RenderPlugin {
-
-    private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(Navigator.class);
 
     public static final String CLUSTER_NAME = "cluster.name";
@@ -46,7 +42,7 @@ public class Navigator extends RenderPlugin {
 
     private DocumentCollectionView docView;
     private SectionViewer sectionViewer;
-    private ModelReference<String> sectionModelReference;
+    private ObservableModel<String> sectionModel;
 
     private boolean clusterStarted;
 
@@ -85,14 +81,13 @@ public class Navigator extends RenderPlugin {
         };
         add(docView);
 
-        sectionModelReference = new ModelReference<>(SELECTED_SECTION_MODEL, Model.of(""));
-        sectionModelReference.init(context);
+        sectionModel = ObservableModel.from(context, Navigator.SELECTED_SECTION_MODEL);
 
         final BrowserSections sections = browseService.getSections();
         sectionViewer = new SectionViewer("sections", sections, this) {
             @Override
             protected void onSectionChange(final String sectionName) {
-                sectionModelReference.setModel(Model.of(sectionName));
+                sectionModel.setObject(sectionName);
             }
         };
         add(sectionViewer);
@@ -130,8 +125,8 @@ public class Navigator extends RenderPlugin {
     }
 
     @Override
-    protected void onStop() {
-        sectionModelReference.destroy();
-        super.onStop();
+    protected void onDetach() {
+        sectionModel.detach();
+        super.onDetach();
     }
 }

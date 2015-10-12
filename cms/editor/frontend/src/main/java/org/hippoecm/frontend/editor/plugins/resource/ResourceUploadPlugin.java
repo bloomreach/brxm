@@ -36,6 +36,8 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_TEXT;
+
 /**
  * Plugin for uploading resources into the JCR repository.
  * This plugin can be configured with specific types, so not all file types are allowed to be uploaded.
@@ -83,10 +85,11 @@ public class ResourceUploadPlugin extends RenderPlugin {
         Node node = nodeModel.getNode();
         try {
             ResourceHelper.setDefaultResourceProperties(node, mimeType, upload.getInputStream(), fileName);
-
             if (MimeTypeHelper.isPdfMimeType(mimeType)) {
                 InputStream inputStream = node.getProperty(JcrConstants.JCR_DATA).getBinary().getStream();
                 ResourceHelper.handlePdfAndSetHippoTextProperty(node, inputStream);
+            } else if (node.hasProperty(HIPPO_TEXT)) {
+                node.getProperty(HIPPO_TEXT).remove();
             }
         } catch (RepositoryException | IOException ex) {
             if (log.isDebugEnabled()) {
