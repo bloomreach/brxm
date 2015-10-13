@@ -349,9 +349,9 @@
   </profiles>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/branches/hippo-testsuite-2.1.x</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/branches/hippo-testsuite-2.1.x</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/branches/hippo-testsuite-2.1.x</url>
   </scm>
 
 </project>
