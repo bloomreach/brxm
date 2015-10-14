@@ -51,9 +51,10 @@ public class CXFRepositoryJaxrsEndpoint extends RepositoryJaxrsEndpoint {
     private List<Interceptor<? extends Message>> outFaultInterceptors;
 
     /**
-     * Sets a custom invoker. If a non-null invoker is passed, the authorization settings set through
-     * {@link RepositoryJaxrsEndpoint#authorized(String, String)} will be ignored. If null is passed, an new instance
-     * of {@link AuthorizingRepositoryJaxrsInvoker} will be used as invoker.
+     * Sets a custom invoker. Note that setting a custom invoker, handling authentication and authorization also
+     * becomes the responsibility of this custom invoker.If a non-null invoker is passed, the authorization settings
+     * set through {@link RepositoryJaxrsEndpoint#authorized(String, String)} will be ignored. If null is passed, an
+     * new instance of {@link AuthorizingRepositoryJaxrsInvoker} will be used as invoker.
      */
     public CXFRepositoryJaxrsEndpoint invoker(JAXRSInvoker invoker) {
         this.invoker = invoker;
