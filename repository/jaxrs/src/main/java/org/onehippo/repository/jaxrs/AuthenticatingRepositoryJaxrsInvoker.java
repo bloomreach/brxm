@@ -33,6 +33,21 @@ import org.onehippo.repository.RepositoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Invoker that uses repository authentication to validate the caller's credentials.
+ *
+ * <p>It is possible to create application endpoints that do not use authentication using code such as:</p>
+ *
+ * <pre>
+ * CXFRepositoryJaxrsEndpoint endpoint = new CXFRepositoryJaxrsEndpoint("/")
+ *         .singleton(mySingletonResource)
+ *         .invoker(new org.apache.cxf.jaxrs.JAXRSInvoker());
+ * </pre>
+ *
+ * <p>For more detailed documentation and example usage, see the
+ * <a href="http://www.onehippo.org/library/concepts/hippo-services/repository-jaxrs-service.html">online
+ * documentation</a>.<p>
+ */
 public class AuthenticatingRepositoryJaxrsInvoker extends JAXRSInvoker {
 
     private static final Logger log = LoggerFactory.getLogger(AuthenticatingRepositoryJaxrsInvoker.class);

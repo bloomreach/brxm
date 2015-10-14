@@ -22,6 +22,15 @@ import java.util.Set;
 
 import javax.ws.rs.core.Application;
 
+/**
+ * Class to construct a JAX-RS application endpoint using a fluent API.
+ *
+ * <p>A JAX-RS application endpoint should contain either a singleton or a root class.</p>
+ *
+ * <p>For more detailed documentation and example usage, see the
+ * <a href="http://www.onehippo.org/library/concepts/hippo-services/repository-jaxrs-service.html">online
+ * documentation</a>.</p>
+ */
 public class RepositoryJaxrsEndpoint {
 
     private String address;
@@ -54,6 +63,15 @@ public class RepositoryJaxrsEndpoint {
         return address;
     }
 
+    /**
+     * Configures the application endpoint to use repository authorization to check whether the authenticated user
+     * has sufficient permissions to call this application endpoint.
+     *
+     * @param authorizationNodePath the node path on which the permission is checked
+     * @param authorizationPermission the permission that is checked
+     * @return
+     * @see RepositoryJaxrsService#HIPPO_REST_PERMISSION
+     */
     public RepositoryJaxrsEndpoint authorized(String authorizationNodePath, String authorizationPermission) {
         this.authorizationNodePath = authorizationNodePath;
         this.authorizationPermission = authorizationPermission;

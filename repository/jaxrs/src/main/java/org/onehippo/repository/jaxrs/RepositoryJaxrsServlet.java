@@ -26,7 +26,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
+/**
+ * Servlet used to load and initialize the {@link RepositoryJaxrsService}. This servlet is configured in the Hippo
+ * CMS application's web.xml under <code>/ws/</code>.
+ */
 public class RepositoryJaxrsServlet extends HttpServlet {
 
     private static final String SHOW_SERVICE_LIST_PAGE_PARAM = "show-service-list-page";
