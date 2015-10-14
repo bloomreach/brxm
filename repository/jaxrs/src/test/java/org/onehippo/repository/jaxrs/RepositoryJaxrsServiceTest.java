@@ -38,7 +38,6 @@ import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -393,7 +392,6 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
         expectOK(null, null, "open", "open");
     }
 
-    @Ignore
     @Test
     public void test_authorized_endpoint() throws RepositoryException {
         initializeRepoJaxrsService();

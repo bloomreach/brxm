@@ -67,8 +67,11 @@ public class AuthenticatingRepositoryJaxrsInvoker extends JAXRSInvoker {
                 checkAuthorized(exchange, requestParams, resourceObject, session);
                 result = super.invoke(exchange, requestParams, resourceObject);
             }
-            catch (AccessControlException | LoginException e) {
+            catch (LoginException e) {
                 result = new MessageContentsList(Response.status(Response.Status.UNAUTHORIZED).header("WWW-Authenticate", "Basic").build());
+            }
+            catch (AccessControlException e) {
+                result = new MessageContentsList(Response.status(Response.Status.FORBIDDEN).build());
             }
             catch (RepositoryException e) {
                 log.error("Error during login", e);
