@@ -165,11 +165,15 @@ public final class RepositoryJaxrsService {
         String address = endpoint.getAddress();
         if (bus == null) {
             if (pendingEndpoints.containsKey(address)) {
-                throw new IllegalStateException("Endpoint address "+address+" already registered.");
+                throw new IllegalStateException("Endpoint address " + address + " already registered.");
             }
             pendingEndpoints.put(address, endpoint);
         }
         else {
+            if (servers.containsKey(address)) {
+                throw new IllegalStateException("Endpoint address " + address + " already registered.");
+            }
+
             Application app = endpoint.getApplication();
             if (app == null) {
                 app = new Application() {

@@ -312,7 +312,6 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
         expectOK("one", "message");
     }
 
-    @Ignore
     @Test
     public void expect_exception_when_registering_multiple_endpoints_on_same_path_after_initialization() {
         initializeRepoJaxrsService();
