@@ -38,6 +38,8 @@
     <xml action="copy" source="instructions/hst/faq-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <!-- workspace-->
     <xml action="copy" source="instructions/hst/faqlist-workspace.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <!-- translations -->
+    <xml action="copy" source="xml/translations/template-translations.xml" target="/hippo:configuration/hippo:translations"/>
   </instructionSet>
 
   <instructionSet group="freemarker">

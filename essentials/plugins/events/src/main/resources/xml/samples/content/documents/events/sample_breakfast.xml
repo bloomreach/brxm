@@ -116,15 +116,4 @@
       <sv:property sv:name="hippo:values" sv:type="String" sv:multiple="true"/>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value/>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Breakfast</sv:value>
-    </sv:property>
-  </sv:node>
 </sv:node>

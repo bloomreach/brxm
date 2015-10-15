@@ -544,6 +544,7 @@ plugins/banner-and-carousel/src/main/resources/xml/data/banner_entry_2.xml -text
 plugins/banner-and-carousel/src/main/resources/xml/data/banner_images.xml -text
 plugins/banner-and-carousel/src/main/resources/xml/namespaces/bannerdocument.xml -text
 plugins/banner-and-carousel/src/main/resources/xml/translations/bannerdocument-translations.xml -text
+plugins/banner-and-carousel/src/main/resources/xml/translations/template-translations.xml -text
 plugins/bean-writer/pom.xml -text
 plugins/bean-writer/src/main/java/org/onehippo/cms7/essentials/beanwriter/rest/BeanWriterResource.java -text
 plugins/bean-writer/src/main/java/org/onehippo/cms7/essentials/beanwriter/rest/MyRestList.java -text
@@ -627,6 +628,7 @@ plugins/blog/src/main/resources/xml/samples/blog_entry_2.xml -text
 plugins/blog/src/main/resources/xml/translations/account-translations.xml -text
 plugins/blog/src/main/resources/xml/translations/author-translations.xml -text
 plugins/blog/src/main/resources/xml/translations/blogpost-translations.xml -text
+plugins/blog/src/main/resources/xml/translations/template-translations.xml -text
 plugins/blog/src/test/java/org/onehippo/cms7/essentials/dashboard/blog/BlogInstructionPackageTest.java -text
 plugins/blog/src/test/resources/log4j.xml -text
 plugins/blog/src/test/resources/test-hippofacnav.cnd -text
@@ -707,6 +709,7 @@ plugins/events/src/main/resources/xml/samples/content/gallery/samples/blue.xml -
 plugins/events/src/main/resources/xml/samples/content/gallery/samples/coffee.xml -text
 plugins/events/src/main/resources/xml/samples/content/gallery/samples/pencils.xml -text
 plugins/events/src/main/resources/xml/translations/eventsdocument-translations.xml -text
+plugins/events/src/main/resources/xml/translations/template-translations.xml -text
 plugins/faq/pom.xml -text
 plugins/faq/src/main/resources/META-INF/faqComponentPlugin_instructions.xml -text
 plugins/faq/src/main/resources/META-INF/resources/feature/faqPlugin/faqPlugin.html -text
@@ -741,6 +744,7 @@ plugins/faq/src/main/resources/instructions/jsp/faqlist-main.jsp -text
 plugins/faq/src/main/resources/instructions/xml/faq-item.xml -text
 plugins/faq/src/main/resources/instructions/xml/faq-list.xml -text
 plugins/faq/src/main/resources/instructions/xml/faq-sample.xml -text
+plugins/faq/src/main/resources/instructions/xml/translations/template-translations.xml -text
 plugins/gallery-manager/pom.xml -text
 plugins/gallery-manager/src/main/java/org/onehippo/cms7/essentials/plugins/gallery/GalleryModel.java -text
 plugins/gallery-manager/src/main/java/org/onehippo/cms7/essentials/plugins/gallery/GalleryPluginResource.java -text
@@ -852,6 +856,7 @@ plugins/news/src/main/resources/xml/samples/content/gallery/samples/grapes.xml -
 plugins/news/src/main/resources/xml/samples/content/gallery/samples/medusa.xml -text
 plugins/news/src/main/resources/xml/samples/content/gallery/samples/snail.xml -text
 plugins/news/src/main/resources/xml/translations/newsdocument-translations.xml -text
+plugins/news/src/main/resources/xml/translations/template-translations.xml -text
 plugins/poll/pom.xml -text
 plugins/poll/src/main/java/org/onehippo/cms7/essentials/plugins/poll/PollInstruction.java -text
 plugins/poll/src/main/resources/META-INF/poll_plugin_instructions.xml -text
@@ -861,6 +866,7 @@ plugins/poll/src/main/resources/xml/new-poll-document.xml -text
 plugins/poll/src/main/resources/xml/new-poll-folder.xml -text
 plugins/poll/src/main/resources/xml/poll-example.xml -text
 plugins/poll/src/main/resources/xml/poll-folder.xml -text
+plugins/poll/src/main/resources/xml/template-translations.xml -text
 plugins/pom.xml -text
 plugins/related-documents/pom.xml -text
 plugins/related-documents/src/main/java/org/onehippo/cms7/essentials/plugins/relateddocuments/RelatedDocumentsParameterService.java -text
@@ -970,6 +976,7 @@ plugins/simple-content/src/main/resources/jsp/contentlist-main-contentlist.jsp -
 plugins/simple-content/src/main/resources/jsp/contentpage-main.jsp -text
 plugins/simple-content/src/main/resources/namespaces/contentdocument.xml -text
 plugins/simple-content/src/main/resources/translations/contentdocument-translations.xml -text
+plugins/simple-content/src/main/resources/translations/template-translations.xml -text
 plugins/sitemap/pom.xml -text
 plugins/sitemap/src/main/java/org/onehippo/cms7/essentials/plugins/sitemap/SitemapParameterService.java -text
 plugins/sitemap/src/main/resources/META-INF/resources/feature/sitemapPlugin/sitemapPlugin.html -text
@@ -1031,6 +1038,7 @@ plugins/skeleton-package/src/main/resources/instructions/xml/hst/workspace/base.
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/workspace/homepage.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/hst/workspace/pagenotfound.xml -text
 plugins/skeleton-package/src/main/resources/instructions/xml/spring/hippo-essentials-spring.xml -text
+plugins/skeleton-package/src/main/resources/instructions/xml/translations/template-translations.xml -text
 plugins/skeleton-package/src/test/resources/log4j.xml -text
 plugins/tagging/pom.xml -text
 plugins/tagging/src/main/java/org/onehippo/cms7/essentials/plugins/tagging/TaggingInstructionPackage.java -text
@@ -1070,4 +1078,5 @@ plugins/video/src/main/resources/instructions/xml/hst/video-component-catalog.xm
 plugins/video/src/main/resources/instructions/xml/hst/video-component-freemarker.xml -text
 plugins/video/src/main/resources/instructions/xml/hst/video-component-jsp.xml -text
 plugins/video/src/main/resources/instructions/xml/namespace/video-namespace.xml -text
+plugins/video/src/main/resources/instructions/xml/translations/template-translations.xml -text
 /pom.xml -text

@@ -30,6 +30,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.io.IOUtils;
+import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
 import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
@@ -101,7 +103,7 @@ public class XmlInstruction extends PluginInstruction {
     }
 
     private InstructionStatus copy() {
-        final Session session = context.createSession();
+        final HippoSession session = (HippoSession) context.createSession();
         InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
         try {
             if (!session.itemExists(target)) {
@@ -127,7 +129,8 @@ public class XmlInstruction extends PluginInstruction {
 
             // Import XML with replaced NAMESPACE placeholder
             final String myData = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(stream), context.getPlaceholderData());
-            session.importXML(destination.getPath(), IOUtils.toInputStream(myData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+            session.importEnhancedSystemViewXML(destination.getPath(), IOUtils.toInputStream(myData),
+                    ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING, ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW, null);
             session.save();
             log.info("Added node to: {}", destination.getPath());
             sendEvents();
