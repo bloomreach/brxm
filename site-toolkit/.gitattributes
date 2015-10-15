@@ -1300,6 +1300,7 @@ toolkit-resources/addon/repository/src/main/resources/hippo-configuration/group-
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/hstconfig-domain.xml -text svneol=unset#text/plain
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/move-containers-to-workspace-script.xml -text
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/readonly-folders.xml -text
+toolkit-resources/addon/repository/src/main/resources/hippo-configuration/site-templates-translations.xml -text
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/state-not-draft.xml svneol=native#text/plain
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/subsite-template.xml -text
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/subsite-workflows.xml -text
