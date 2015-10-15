@@ -51,7 +51,7 @@ public class TemplateEditorWorkflowImpl extends WorkflowImpl implements Template
         Map<String, String> replacements = new TreeMap<>();
         replacements.put("name", prefix);
         replacements.put("uri", uri);
-        final String namespacePath = folderWorkflow.add("Template Editor Namespace", "namespace", replacements);
+        final String namespacePath = folderWorkflow.add("new-namespace", "namespace", replacements);
         final Node namespace = getWorkflowContext().getUserSession().getNode(namespacePath);
         for (Node node : new NodeIterable(namespace.getNodes())) {
             if (node.isNodeType("hipposysedit:templatetype")) {

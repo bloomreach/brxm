@@ -62,6 +62,7 @@ import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
@@ -80,6 +81,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
     private static final ResourceReference CSS = new CssResourceReference(PermissionsFolderWorkflowPlugin.class, "PermissionsFolderWorkflowPlugin.css");
     private static final String QUERY_LANGUAGE_QUERIES = Query.XPATH;
     private static final String QUERY_STATEMENT_QUERIES = "hippo:configuration/hippo:queries/hippo:templates//element(*, hippostd:templatequery)";
+    private static final String HIPPO_TEMPLATES_BUNDLE_NAME = "hippo:templates";
 
     private static final List<String> EMPTY = new ArrayList<>();
 
@@ -296,7 +298,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
 
                 public String getDisplayValue(final String object) {
                     String categoryLabel = new StringResourceModel("add-category", PermissionsFolderWorkflowPlugin.this, null,
-                            new StringResourceModel(object, PermissionsFolderWorkflowPlugin.this, null)).getString();
+                            new ResourceBundleModel(HIPPO_TEMPLATES_BUNDLE_NAME, object)).getString();
                     return String.format("%s (%s)", categoryLabel, object);//categoryLabel;
                 }
 
@@ -348,7 +350,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
 
         public String getDisplayObject() {
             String categoryLabel = new StringResourceModel("add-category", PermissionsFolderWorkflowPlugin.this, null,
-                    new StringResourceModel(this.getObject(), PermissionsFolderWorkflowPlugin.this, null)).getString();
+                    new ResourceBundleModel(HIPPO_TEMPLATES_BUNDLE_NAME, this.getObject())).getString();
             return String.format("%s (%s)", categoryLabel, this.getObject()); //categoryLabel;//
         }
 

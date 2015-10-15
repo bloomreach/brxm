@@ -20,7 +20,6 @@ import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -42,13 +41,14 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
-import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -72,7 +72,6 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -87,6 +86,8 @@ import org.slf4j.LoggerFactory;
 
 public class FolderWorkflowPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
+
+    private static final String HIPPO_TEMPLATES_BUNDLE_NAME = "hippo:templates";
 
     private static Logger log = LoggerFactory.getLogger(FolderWorkflowPlugin.class);
 
@@ -263,7 +264,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
                 for (final String category : prototypes.keySet()) {
                     IModel<String> categoryLabel = new StringResourceModel("add-category", this, null,
-                            new StringResourceModel(category, this, null));
+                            new ResourceBundleModel(HIPPO_TEMPLATES_BUNDLE_NAME, category));
 
                     final StdWorkflow<FolderWorkflow> stdWorkflow = new StdWorkflow<FolderWorkflow>("id", categoryLabel, getPluginContext(), model) {
 
@@ -424,7 +425,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
         AddDocumentDialog dialog = new AddDocumentDialog(
                 addDocumentModel,
-                new StringResourceModel(category, this, null),
+                new ResourceBundleModel(HIPPO_TEMPLATES_BUNDLE_NAME, category),
                 category,
                 prototypes,
                 translated && !isLanguageKnown(),

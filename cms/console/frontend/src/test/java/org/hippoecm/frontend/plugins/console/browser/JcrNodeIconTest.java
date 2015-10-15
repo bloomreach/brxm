@@ -42,7 +42,7 @@ public class JcrNodeIconTest extends RepositoryTestCase {
         assertEquals(getCssClass("/hippo:configuration/hippo:queries/hippo:templates/simple/hippostd:templates/new-document/new-document"), "fa fa-file-text jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:queries/hippo:templates/new-folder/hippostd:templates/hippostd:folder"), "fa fa-folder-o jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:queries/hippo:templates/new-collection/hippostd:templates/hippostd:directory"), "fa fa-folder jcrnode-conf");
-        assertEquals(getCssClass("/hippo:configuration/hippo:queries/hippo:templates/Template Editor Namespace/hippostd:templates/namespace"), "fa fa-bullseye jcrnode-conf");
+        assertEquals(getCssClass("/hippo:configuration/hippo:queries/hippo:templates/new-namespace/hippostd:templates/namespace"), "fa fa-bullseye jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:queries/hippo:templates/new-type/hippostd:templates/document/hipposysedit:prototypes"), "fa fa-star-o jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:queries/hippo:templates/new-file-folder/hippostd:templates/asset gallery"), "fa fa-paperclip jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:queries/hippo:templates/new-image-folder/hippostd:templates/image gallery"), "fa fa-picture-o jcrnode-conf");

@@ -21,4 +21,29 @@
       <sv:value>hipposys:resourcebundles</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="hippo:templates">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:resourcebundles</sv:value>
+    </sv:property>
+    <sv:node sv:name="en">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resourcebundle</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="nl">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resourcebundle</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="de">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resourcebundle</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="fr">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resourcebundle</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
 </sv:node>

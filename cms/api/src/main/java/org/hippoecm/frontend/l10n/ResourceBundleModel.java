@@ -21,7 +21,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.l10n.LocalizationService;
 import org.onehippo.repository.l10n.ResourceBundle;
 
-public class ResourceBundleModel extends LoadableDetachableModel {
+public class ResourceBundleModel extends LoadableDetachableModel<String> {
 
     private final String bundleName;
     private final String key;
@@ -32,7 +32,7 @@ public class ResourceBundleModel extends LoadableDetachableModel {
     }
 
     @Override
-    protected Object load() {
+    protected String load() {
         final LocalizationService localizationService = HippoServiceRegistry.getService(LocalizationService.class);
         if (localizationService != null) {
             final ResourceBundle bundle = localizationService.getResourceBundle(bundleName, Session.get().getLocale());
@@ -44,7 +44,6 @@ public class ResourceBundleModel extends LoadableDetachableModel {
     }
 
     @Override
-    public void setObject(final Object object) {
-
+    public void setObject(final String object) {
     }
 }
