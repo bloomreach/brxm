@@ -145,7 +145,7 @@ public class XmlInstruction extends PluginInstruction {
     }
 
     private boolean isMerge(final XmlNode rootXmlNode) {
-        return "combine".equals(rootXmlNode.getMerge()) || "override".equals(rootXmlNode.getMerge());
+        return "combine".equals(rootXmlNode.getMerge()) || "overlay".equals(rootXmlNode.getMerge());
     }
 
     private boolean nodeExists(final Session session, final XmlNode xmlNode, final String parentPath) throws RepositoryException {
