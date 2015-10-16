@@ -26,7 +26,7 @@
     <file action="copy" source="instructions/java/Video.txt" target="{{beansFolder}}/Video.java"/>
     <xml action="copy" source="instructions/xml/folderoptions/new-video-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="instructions/xml/folderoptions/new-video-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
-    <xml action="copy" source="translations/template-translations.xml" target="/hippo:configuration/hippo:translations"/>
+    <xml action="copy" source="instructions/xml/translations/videotemplates-translations.xml" target="/hippo:configuration/hippo:translations"/>
   </instructionSet>
 
   <instructionSet group="jsp">

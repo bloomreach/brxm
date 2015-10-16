@@ -33,7 +33,7 @@
     <xml action="copy" source="xml/configuration/new-banner-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <!-- type translations -->
     <xml action="copy" source="xml/translations/bannerdocument-translations.xml" target="/hippo:configuration/hippo:translations/hippo:types"/>
-    <xml action="copy" source="xml/translations/template-translations.xml" target="/hippo:configuration/hippo:translations"/>
+    <xml action="copy" source="xml/translations/bannertemplates-translations.xml" target="/hippo:configuration/hippo:translations"/>
   </instructionSet>
 
   <!--

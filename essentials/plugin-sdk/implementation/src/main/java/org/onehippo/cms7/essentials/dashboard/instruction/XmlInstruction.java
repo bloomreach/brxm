@@ -120,12 +120,11 @@ public class XmlInstruction extends PluginInstruction {
                 return InstructionStatus.FAILED;
             }
 
-            // first check if node exists:
-            if (!isOverwrite() && nodeExists(session, source, destination.getPath())) {
+            final XmlNode rootXmlNode = getRootXmlNode();
+            if (!isOverwrite() && !isMerge(rootXmlNode) && nodeExists(session, rootXmlNode, destination.getPath())) {
                 eventBus.post(new InstructionEvent(this));
                 return InstructionStatus.SKIPPED;
             }
-
 
             // Import XML with replaced NAMESPACE placeholder
             final String myData = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(stream), context.getPlaceholderData());
@@ -145,26 +144,30 @@ public class XmlInstruction extends PluginInstruction {
 
     }
 
-    private boolean nodeExists(final Session session, final String source, final String parentPath) throws RepositoryException {
+    private boolean isMerge(final XmlNode rootXmlNode) {
+        return "combine".equals(rootXmlNode.getMerge()) || "override".equals(rootXmlNode.getMerge());
+    }
 
+    private boolean nodeExists(final Session session, final XmlNode xmlNode, final String parentPath) throws RepositoryException {
+        final String name = TemplateUtils.replaceTemplateData(xmlNode.getName(), context.getPlaceholderData());
+        if (!Strings.isNullOrEmpty(name) && session.itemExists(parentPath)) {
+
+            final String absPath = parentPath.endsWith("/") ? parentPath + name : parentPath + '/' + name;
+            if (session.itemExists(absPath)) {
+                log.debug("Node already exists: {}", absPath);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private XmlNode getRootXmlNode() {
         final InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
         try {
-            final XmlNode xmlNode = XmlUtils.parseXml(stream);
-            final String name = TemplateUtils.replaceTemplateData(xmlNode.getName(), context.getPlaceholderData());
-            if (!Strings.isNullOrEmpty(name) && session.itemExists(parentPath)) {
-
-                final String absPath = parentPath.endsWith("/") ? parentPath + name : parentPath + '/' + name;
-                if (session.itemExists(absPath)) {
-                    log.debug("Node already exists: {}", absPath);
-                    return true;
-                }
-            }
+            return XmlUtils.parseXml(stream);
         } finally {
             IOUtils.closeQuietly(stream);
         }
-
-
-        return false;
     }
 
 

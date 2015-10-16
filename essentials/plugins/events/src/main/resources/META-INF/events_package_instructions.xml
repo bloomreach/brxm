@@ -23,7 +23,7 @@
     <cnd documentType="eventsdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <xml action="copy" source="xml/namespaces/eventsdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
     <xml action="copy" source="xml/translations/eventsdocument-translations.xml" target="/hippo:configuration/hippo:translations/hippo:types"/>
-    <xml action="copy" source="xml/translations/template-translations.xml" target="/hippo:configuration/hippo:translations"/>
+    <xml action="copy" source="xml/translations/eventstemplates-translations.xml" target="/hippo:configuration/hippo:translations"/>
   </instructionSet>
 
   <instructionSet group="jsp">
