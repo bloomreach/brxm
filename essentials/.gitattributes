@@ -744,6 +744,8 @@ plugins/faq/src/main/resources/instructions/jsp/faqlist-main.jsp -text
 plugins/faq/src/main/resources/instructions/xml/faq-item.xml -text
 plugins/faq/src/main/resources/instructions/xml/faq-list.xml -text
 plugins/faq/src/main/resources/instructions/xml/faq-sample.xml -text
+plugins/faq/src/main/resources/instructions/xml/translations/faqitem-translations.xml -text
+plugins/faq/src/main/resources/instructions/xml/translations/faqlist-translations.xml -text
 plugins/faq/src/main/resources/instructions/xml/translations/faqtemplates-translations.xml -text
 plugins/gallery-manager/pom.xml -text
 plugins/gallery-manager/src/main/java/org/onehippo/cms7/essentials/plugins/gallery/GalleryModel.java -text
@@ -1078,5 +1080,6 @@ plugins/video/src/main/resources/instructions/xml/hst/video-component-catalog.xm
 plugins/video/src/main/resources/instructions/xml/hst/video-component-freemarker.xml -text
 plugins/video/src/main/resources/instructions/xml/hst/video-component-jsp.xml -text
 plugins/video/src/main/resources/instructions/xml/namespace/video-namespace.xml -text
+plugins/video/src/main/resources/instructions/xml/translations/videodocument-translations.xml -text
 plugins/video/src/main/resources/instructions/xml/translations/videotemplates-translations.xml -text
 /pom.xml -text
