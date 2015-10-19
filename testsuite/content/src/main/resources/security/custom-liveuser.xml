@@ -21,8 +21,8 @@ limitations under the License. -->
   <sv:property sv:name="hipposys:active" sv:type="Boolean">
     <sv:value>true</sv:value>
   </sv:property>
-  <sv:property sv:name="hipposys:password" sv:type="String">
-    <sv:value>customliveuserpass</sv:value>
+  <sv:property sv:name="hipposys:passkey" sv:type="String">
+    <sv:value>jvm://</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:securityprovider" sv:type="String">
     <sv:value>internal</sv:value>
