@@ -836,17 +836,20 @@
             }, this);
 
             this.on('previewCreated', function() {
-                var self = this,
-                    previewChannelId;
+                var previewChannelId;
                 if (!stringEndsWith(this.channelId, "-preview")) {
                     previewChannelId = this.channelId + "-preview";
                     this.channelId = null;
                     this.channelStoreFuture.when(function(config) {
                         config.store.on('load', function() {
-                            self.browseTo({ channelId: previewChannelId, isEditMode: true });
+                            this.browseTo({
+                                channelId: previewChannelId,
+                                isEditMode: true,
+                                renderPathInfo: this.pageContainer.renderPathInfo
+                            });
                         }, this, { single: true });
                         config.store.reload();
-                    });
+                    }.bind(this));
                 } else {
                     this.pageContainer.refreshIframe.call(this.pageContainer);
                 }
