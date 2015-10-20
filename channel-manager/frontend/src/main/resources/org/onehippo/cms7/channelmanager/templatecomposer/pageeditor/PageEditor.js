@@ -852,10 +852,10 @@
                 }
             }, this);
 
-            this.on('selectItem', function(record, containerDisabled) {
+            this.on('selectItem', function(record, container) {
                 if (record.get('type') === HST.CONTAINERITEM) {
-                    this.showProperties(record, containerDisabled);
-                    this.templateComposerApi.selectedContainerItem(record, containerDisabled);
+                    this.showProperties(record, container);
+                    this.templateComposerApi.selectedContainerItem(record, container.isDisabled);
                 }
             }, this);
 
@@ -945,13 +945,14 @@
             });
         },
 
-        showProperties: function(record, readOnly) {
+        showProperties: function(record, container) {
             var componentPropertiesPanel = Ext.getCmp('componentPropertiesPanel'),
                 componentId = record.get('id'),
                 pageRequestVariants = this.pageContainer.pageContext.pageRequestVariants,
                 lastModifiedTimestamp = record.get('lastModifiedTimestamp'),
                 componentDisplayName = record.get('label') || record.get('name');
-            componentPropertiesPanel.load(componentId, pageRequestVariants, lastModifiedTimestamp, readOnly);
+
+            componentPropertiesPanel.load(componentId, pageRequestVariants, lastModifiedTimestamp, container);
 
             if (this.propertiesWindow) {
                 this.propertiesWindow.setTitle(componentDisplayName);

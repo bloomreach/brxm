@@ -853,15 +853,19 @@
     },
 
     onClick: function () {
-      var id, containerDisabled;
+      var id, containerDisabled, containerInherited;
       if (this.isTemporary) {
         iframeToHost.publish('refresh');
       } else {
         id = this.element.getAttribute('id');
         containerDisabled = Hippo.Util.getBoolean(this.el.attr(HST.ATTR.HST_CONTAINER_DISABLED));
+        containerInherited = Hippo.Util.getBoolean(this.el.attr(HST.ATTR.HST_CONTAINER_INHERITED));
         iframeToHost.publish('onclick', {
           elementId: id,
-          containerDisabled: containerDisabled
+          container: {
+            isDisabled: containerDisabled,
+            isInherited: containerInherited
+          }
         });
       }
     },
