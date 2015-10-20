@@ -9,5 +9,7 @@ repository/src/main/resources/seosupport-namespace.xml -text svneol=unset#applic
 repository/src/main/resources/seosupport.cnd -text
 site/pom.xml svneol=native#text/plain
 site/src/main/resources/org/onehippo/forge/seo/support/SEOHelperComponentParamsInfo.properties -text
+site/src/main/resources/org/onehippo/forge/seo/support/SEOHelperComponentParamsInfo_de.properties -text
+site/src/main/resources/org/onehippo/forge/seo/support/SEOHelperComponentParamsInfo_fr.properties -text
 site/src/main/resources/org/onehippo/forge/seo/support/SEOHelperComponentParamsInfo_nl.properties -text
 site/src/test/resources/log4j.xml svneol=native#text/plain

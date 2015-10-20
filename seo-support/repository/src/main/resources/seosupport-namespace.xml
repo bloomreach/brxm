@@ -37,6 +37,28 @@
         <sv:value>SEO</sv:value>
       </sv:property>
     </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>de</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>SEO</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>fr</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>SEO</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="hipposysedit:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -191,6 +213,28 @@
                   <sv:value>SEO titel</sv:value>
                 </sv:property>
               </sv:node>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>de</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>SEO-Titel</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>fr</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>Titre SEO</sv:value>
+                </sv:property>
+              </sv:node>
             </sv:node>
             <sv:node sv:name="seodescription">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -221,6 +265,28 @@
                   <sv:value>SEO beschrijving</sv:value>
                 </sv:property>
               </sv:node>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>de</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>SEO-Beschreibung</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>fr</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>Description SEO</sv:value>
+                </sv:property>
+              </sv:node>
             </sv:node>
             <sv:node sv:name="seodescription.hint">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -248,7 +314,29 @@
                   <sv:value>nl</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:message" sv:type="String">
-                  <sv:value>Tekst die in de meta description tag gebruikt dient te worden</sv:value>
+                  <sv:value>Tekst die in de meta-description tag gebruikt dient te worden</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>de</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>Text für Tag 'meta-description'</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>fr</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>Texte à utiliser dans la balise "meta-description"</sv:value>
                 </sv:property>
               </sv:node>
             </sv:node>
@@ -278,7 +366,29 @@
                   <sv:value>nl</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:message" sv:type="String">
-                  <sv:value>Tekst die in de title tag begruikt dient te worden</sv:value>
+                  <sv:value>Tekst die in de title tag gebruikt dient te worden</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>de</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>Text für Tag 'title'</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>fr</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>Texte à utiliser dans la balise "title"</sv:value>
                 </sv:property>
               </sv:node>
             </sv:node>
