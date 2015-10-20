@@ -95,6 +95,7 @@
       <sv:value>miscellaneous</sv:value>
     </sv:property>
   </sv:node>
+  <!-- deprecated, remove in future version -->
   <sv:node sv:name="workflowMenuTranslator">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>

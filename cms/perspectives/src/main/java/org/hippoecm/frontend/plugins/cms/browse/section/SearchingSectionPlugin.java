@@ -328,6 +328,11 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     }
 
     @Override
+    protected String getBundleName() {
+        return "hippo:cms.sections";
+    }
+
+    @Override
     public ResourceReference getIcon(IconSize type) {
         return null;
     }

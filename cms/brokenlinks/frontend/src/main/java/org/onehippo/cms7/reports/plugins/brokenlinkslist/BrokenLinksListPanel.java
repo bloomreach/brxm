@@ -200,7 +200,7 @@ public class BrokenLinksListPanel extends ReportPanel {
         properties.put("store", new JSONIdentifier(store.getJsObjectId()));
         properties.put("pageSize", this.pageSize);
         properties.put("paging", config.getAsBoolean("paging", true));
-        properties.put("noDataText", ReportUtil.getTranslation(this, NO_DATA_TRANSLATOR_KEY, StringUtils.EMPTY));
+        properties.put("noDataText", getString(NO_DATA_TRANSLATOR_KEY));
         properties.put("updateText", this.updateText);
 
         if (config.containsKey(CONFIG_AUTO_EXPAND_COLUMN)) {
@@ -214,10 +214,7 @@ public class BrokenLinksListPanel extends ReportPanel {
             }
         }
 
-        final String title = ReportUtil.getTranslation(this, TITLE_TRANSLATOR_KEY, StringUtils.EMPTY);
-        if (StringUtils.isNotEmpty(title)) {
-            properties.put("title", title);
-        }
+        properties.put("title", getString(TITLE_TRANSLATOR_KEY));
     }
 
     private JSONArray getColumnsConfig() throws JSONException {

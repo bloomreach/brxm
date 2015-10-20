@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.l10n;
 
+import java.util.Locale;
+
 import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -25,17 +27,26 @@ public class ResourceBundleModel extends LoadableDetachableModel<String> {
 
     private final String bundleName;
     private final String key;
+    private final Locale locale;
 
     public ResourceBundleModel(final String bundleName, final String key) {
         this.bundleName = bundleName;
         this.key = key;
+        this.locale = null;
+    }
+
+    public ResourceBundleModel(final String bundleName, final String key, final Locale locale) {
+        this.bundleName = bundleName;
+        this.key = key;
+        this.locale = locale;
     }
 
     @Override
     protected String load() {
         final LocalizationService localizationService = HippoServiceRegistry.getService(LocalizationService.class);
         if (localizationService != null) {
-            final ResourceBundle bundle = localizationService.getResourceBundle(bundleName, Session.get().getLocale());
+            Locale locale = this.locale != null ? this.locale : Session.get().getLocale();
+            final ResourceBundle bundle = localizationService.getResourceBundle(bundleName, locale);
             if (bundle != null) {
                 return bundle.getString(key);
             }

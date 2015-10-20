@@ -25,6 +25,7 @@ import org.apache.wicket.Localizer;
  * importance.  Different criteria are separated by a "," (comma).  Criteria
  * are dropped until a match is found.
  */
+@Deprecated
 public class StagedLocalizer extends Localizer {
 
     public StagedLocalizer() {

@@ -31,6 +31,9 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.l10n.LocalizationService;
+import org.onehippo.repository.l10n.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +51,7 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
     public static final String CONFIG_VARIANT = "variant";
     public static final String DEFAULT_COUNTRY = "us";
     public static final String UNKNOWN_COUNTRY = "error";
+    private static final String LOCALES_BUNDLE_NAME = "hippo:cms.locales";
 
     static final Logger log = LoggerFactory.getLogger(LocaleProviderPlugin.class);
 
@@ -145,6 +149,7 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
         return name.substring(name.lastIndexOf('.') + 1);
     }
 
+    @Deprecated
     private static Map<String, String> getTranslations(final IPluginConfig config) {
         final Set<IPluginConfig> translationConfigs = config.getPluginConfigSet();
         final Map<String, String> translations = new HashMap<String, String>();
@@ -159,6 +164,7 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
     private static class TranslationLocale extends HippoLocale {
 
         private static final long serialVersionUID = 1L;
+        @Deprecated
         private final Map<String, String> translations;
 
         public TranslationLocale(final Locale locale, final String name, final Map<String, String> translations) {
@@ -168,11 +174,25 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
 
         @Override
         public String getDisplayName(Locale locale) {
-            String name = translations.get(locale.getLanguage());
-            if (name == null) {
-                return getLocale().getDisplayLanguage(locale);
+            String displayName = null;
+            final LocalizationService localizationService = HippoServiceRegistry.getService(LocalizationService.class);
+            if (localizationService != null) {
+                final ResourceBundle resourceBundle = localizationService.getResourceBundle(LOCALES_BUNDLE_NAME, locale);
+                if (resourceBundle != null) {
+                    displayName = resourceBundle.getString(locale.getLanguage());
+                }
             }
-            return name;
+            if (displayName == null) {
+                displayName = translations.get(locale.getLanguage());
+                if (displayName != null) {
+                    log.warn("Using deprecated locale translation. Move your locale translations to " +
+                            "resource bundle at /hippo:configuration/hippo:translations/hippo:cms/locales");
+                }
+            }
+            if (displayName == null) {
+                displayName = getLocale().getDisplayLanguage(locale);
+            }
+            return displayName;
         }
 
         @Override

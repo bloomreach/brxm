@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2015-2015 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="locales">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hipposys:resourcebundles</sv:value>
+  </sv:property>
+  <sv:node sv:name="en">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:resourcebundle</sv:value>
+    </sv:property>
+    <sv:property sv:name="en" sv:type="String">
+      <sv:value>English</sv:value>
+    </sv:property>
+    <sv:property sv:name="nl" sv:type="String">
+      <sv:value>Dutch</sv:value>
+    </sv:property>
+    <sv:property sv:name="de" sv:type="String">
+      <sv:value>German</sv:value>
+    </sv:property>
+    <sv:property sv:name="fr" sv:type="String">
+      <sv:value>French</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="nl">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:resourcebundle</sv:value>
+    </sv:property>
+    <sv:property sv:name="en" sv:type="String">
+      <sv:value>Engels</sv:value>
+    </sv:property>
+    <sv:property sv:name="nl" sv:type="String">
+      <sv:value>Nederlands</sv:value>
+    </sv:property>
+    <sv:property sv:name="de" sv:type="String">
+      <sv:value>Duits</sv:value>
+    </sv:property>
+    <sv:property sv:name="fr" sv:type="String">
+      <sv:value>Frans</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="de">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:resourcebundle</sv:value>
+    </sv:property>
+    <sv:property sv:name="en" sv:type="String">
+      <sv:value>Englisch</sv:value>
+    </sv:property>
+    <sv:property sv:name="nl" sv:type="String">
+      <sv:value>Niederländisch</sv:value>
+    </sv:property>
+    <sv:property sv:name="de" sv:type="String">
+      <sv:value>Deutsch</sv:value>
+    </sv:property>
+    <sv:property sv:name="fr" sv:type="String">
+      <sv:value>Französisch</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="fr">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:resourcebundle</sv:value>
+    </sv:property>
+    <sv:property sv:name="en" sv:type="String">
+      <sv:value>Anglais</sv:value>
+    </sv:property>
+    <sv:property sv:name="nl" sv:type="String">
+      <sv:value>Néerlandais</sv:value>
+    </sv:property>
+    <sv:property sv:name="de" sv:type="String">
+      <sv:value>Allemand</sv:value>
+    </sv:property>
+    <sv:property sv:name="fr" sv:type="String">
+      <sv:value>Français</sv:value>
+    </sv:property>
+  </sv:node>
+</sv:node>

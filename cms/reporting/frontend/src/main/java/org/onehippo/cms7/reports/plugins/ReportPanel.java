@@ -16,9 +16,11 @@
 package org.onehippo.cms7.reports.plugins;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -30,6 +32,9 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ITranslateService;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.l10n.LocalizationService;
+import org.onehippo.repository.l10n.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtPanel;
@@ -137,6 +142,22 @@ public class ReportPanel extends ExtPanel implements IStringResourceProvider {
 
     public String getResourceProviderKey() {
         return config.getString(ITranslateService.TRANSLATOR_ID);
+    }
+
+    @Override
+    public String getString(final String key, Locale locale) {
+        final LocalizationService service = HippoServiceRegistry.getService(LocalizationService.class);
+        if (service != null) {
+            if (locale == null) {
+                locale = Session.get().getLocale();
+            }
+            final ResourceBundle bundle = service.getResourceBundle("hippo:reports", locale);
+            final String s;
+            if (bundle != null && (s = bundle.getString(key)) != null) {
+                return s;
+            }
+        }
+        return null;
     }
 
     @Override

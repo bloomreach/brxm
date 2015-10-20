@@ -138,7 +138,12 @@ public class BrowsingSectionPlugin extends RenderPlugin<DocumentCollection> impl
     public IModel<String> getTitle() {
         return new StringResourceModel(getPluginConfig().getString("title", getPluginConfig().getName()), this, null);
     }
-    
+
+    @Override
+    protected String getBundleName() {
+        return "hippo:cms.sections";
+    }
+
     @Override
     public ResourceReference getIcon(IconSize type) {
         return null;

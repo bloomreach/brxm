@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -492,6 +493,24 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         return null;
     }
 
+    public String getString(final String key, Locale locale) {
+        final String bundleName = getBundleName();
+        if (bundleName != null) {
+            final LocalizationService service = HippoServiceRegistry.getService(LocalizationService.class);
+            if (service != null) {
+                if (locale == null) {
+                    locale = Session.get().getLocale();
+                }
+                final ResourceBundle bundle = service.getResourceBundle(bundleName, locale);
+                final String s;
+                if (bundle != null && (s = bundle.getString(key)) != null) {
+                    return s;
+                }
+            }
+        }
+        return null;
+    }
+
     // implement IStringResourceProvider
     public String getString(Map<String, String> criteria) {
         String[] translators = config.getStringArray(ITranslateService.TRANSLATOR_ID);
@@ -523,20 +542,6 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
                             return translation;
                         }
                     }
-                }
-            }
-        }
-        return null;
-    }
-
-    protected final String getStringFromBundle(final String key) {
-        final String bundleName = getBundleName();
-        if (bundleName != null) {
-            final LocalizationService service = HippoServiceRegistry.getService(LocalizationService.class);
-            if (service != null) {
-                final ResourceBundle bundle = service.getResourceBundle(bundleName, Session.get().getLocale());
-                if (bundle != null && bundle.getString(key) != null) {
-                    return bundle.getString(key);
                 }
             }
         }

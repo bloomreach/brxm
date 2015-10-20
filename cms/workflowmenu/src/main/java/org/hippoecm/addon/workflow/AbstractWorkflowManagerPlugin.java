@@ -126,6 +126,11 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
     }
 
     @Override
+    protected String getBundleName() {
+        return "hippo:workflows";
+    }
+
+    @Override
     public String getString(Map<String, String> criteria) {
         String key = criteria.get(HippoNodeType.HIPPO_KEY);
         if (key != null) {

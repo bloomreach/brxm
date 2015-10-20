@@ -15,17 +15,26 @@
  */
 package org.hippoecm.frontend;
 
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.wicket.util.io.IClusterable;
 
 public interface IStringResourceProvider extends IClusterable {
 
+    String getString(String key, Locale locale);
+
+    /**
+     * @deprecated  use {@link #getString(String, Locale)} instead
+     */
+    @Deprecated
     String getString(Map<String, String> keys);
 
     /**
      * @return a key that uniquely identifies the resource provider, or null if no such key is available.
+     * @deprecated  no replacement
      */
+    @Deprecated
     String getResourceProviderKey();
 
 }

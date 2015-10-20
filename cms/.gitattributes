@@ -1251,7 +1251,6 @@ brokenlinks/repository/src/main/java/org/onehippo/cms7/brokenlinks/LinkURIUtils.
 brokenlinks/repository/src/main/resources/brokenlinks-authorization.xml -text
 brokenlinks/repository/src/main/resources/brokenlinks-job.xml -text
 brokenlinks/repository/src/main/resources/brokenlinks-reports-plugin.xml svneol=native#text/plain
-brokenlinks/repository/src/main/resources/brokenlinks-reports-translators.xml svneol=native#text/plain
 brokenlinks/repository/src/main/resources/brokenlinks-reports.xml svneol=native#text/plain
 brokenlinks/repository/src/main/resources/brokenlinks-workflows.xml svneol=native#text/plain
 brokenlinks/repository/src/main/resources/brokenlinks.cnd -text
@@ -1334,8 +1333,10 @@ config/src/main/resources/domain-workflow-frontend.xml svneol=native#text/plain
 config/src/main/resources/folder-frontend-workflows-filters.xml svneol=native#text/plain
 config/src/main/resources/hippoecm-extension.xml -text svneol=unset#text/plain
 config/src/main/resources/hippostd-workflows-frontend.xml svneol=native#text/plain
+config/src/main/resources/section-translations.xml -text
 config/src/main/resources/shortcuts-workflows-frontend.xml svneol=native#text/plain
 config/src/main/resources/threepane-workflows-frontend.xml svneol=native#text/plain
+config/src/main/resources/workflow-translations.xml -text
 console/frontend/.bowerrc -text
 console/frontend/README.md -text
 console/frontend/bower.json -text
@@ -1785,7 +1786,6 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/rename-16.pn
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/where-used-16.png -text svneol=unset#unset
 editor/pom.xml -text
 editor/repository/pom.xml -text
-editor/repository/src/main/resources/cms-validators_de.xml -text
 editor/repository/src/main/resources/committype-workflows.xml -text
 editor/repository/src/main/resources/default-editor-factory.xml svneol=native#text/plain
 editor/repository/src/main/resources/default-workflows.xml svneol=native#text/plain
@@ -1804,12 +1804,11 @@ editor/repository/src/main/resources/internal-workflows.xml svneol=native#text/p
 editor/repository/src/main/resources/namespace-frontend.xml svneol=native#text/plain
 editor/repository/src/main/resources/namespace-hippo.xml svneol=native#text/plain
 editor/repository/src/main/resources/namespace-system.xml svneol=native#text/plain
-editor/repository/src/main/resources/namespace-system_it.xml -text
 editor/repository/src/main/resources/new-namespace.xml -text
 editor/repository/src/main/resources/new-type.xml -text
-editor/repository/src/main/resources/resource-required-translations.xml -text
 editor/repository/src/main/resources/resource-required.xml -text
 editor/repository/src/main/resources/system-type-translations.xml -text
+editor/repository/src/main/resources/validators-translations.xml -text
 editor/repository/src/test/java/org/hippoecm/repository/EditmodelWorkflowTest.java svneol=native#text/plain
 editor/repository/src/test/resources/RedefineNodetypeTest-1.cnd -text
 editor/repository/src/test/resources/RedefineNodetypeTest-2.cnd -text
@@ -2146,6 +2145,10 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/Defau
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/UserGroupListPanel.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/UserGroupListPanel.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective_de.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective_fr.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective_nl.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/DocumentCollectionView.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/Navigator.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/SectionViewer.html svneol=native#text/plain
@@ -2702,10 +2705,9 @@ translation/frontend/src/main/java/org/hippoecm/frontend/translation/workflow/tr
 translation/frontend/src/main/java/org/hippoecm/repository/translation/impl/TranslationWorkflowImpl_de.properties -text
 translation/frontend/src/main/java/org/onehippo/translate/TranslateWorkflowImpl_de.properties -text
 translation/repository/src/main/resources/cms.xml svneol=native#text/plain
+translation/repository/src/main/resources/locale-translations.xml -text
 translation/repository/src/main/resources/translate-workflows.xml svneol=native#text/plain
 translation/repository/src/main/resources/translation-hide-translations-folder.xml svneol=native#text/plain
-translation/repository/src/main/resources/translation-locale-provider_de.xml -text
-translation/repository/src/main/resources/translation-locale-provider_it.xml -text
 translation/repository/src/main/resources/translation-treenode-icon-service.xml svneol=native#text/plain
 translation/test/src/main/java/org/hippoecm/frontend/translation/components/document/DocumentMismatchingPage.java svneol=native#text/plain
 translation/test/src/main/java/org/hippoecm/frontend/translation/components/document/DocumentRegularPage.java svneol=native#text/plain
@@ -2842,7 +2844,6 @@ workflow/frontend/src/test/resources/cmstest.cnd -text
 workflow/frontend/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
 workflow/frontend/src/test/resources/log4j-filters.txt -text
 workflow/frontend/src/test/resources/log4j.xml svneol=native#text/plain
-workflow/repository/src/main/resources/admin-workflowmenu.xml -text
 workflow/repository/src/main/resources/editing-reviewedactions-workflows.xml svneol=native#text/plain
 workflow/repository/src/main/resources/hippoecm-extension.xml -text
 workflow/repository/src/main/resources/hippostd-publishablesummary-type-translations.xml -text

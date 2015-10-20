@@ -16,13 +16,16 @@
 package org.hippoecm.frontend.editor.validator.plugins;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.IStringResourceProvider;
 import org.hippoecm.frontend.editor.validator.ValidatorService;
 import org.hippoecm.frontend.i18n.TranslatorUtils;
+import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -34,11 +37,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract public class AbstractCmsValidator extends Plugin implements ICmsValidator, IStringResourceProvider {
-    @SuppressWarnings({"UnusedDeclaration"})
-    private static Logger log = LoggerFactory.getLogger(AbstractCmsValidator.class);
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractCmsValidator.class);
 
     private final String name;
-    private final static String EMPTY = "";
 
     public AbstractCmsValidator(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -70,13 +72,23 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
     }
 
     protected String translateKey(String key) {
-        String translated = getString(TranslatorUtils.getCriteria(key));
-        if(translated==null){
-          return EMPTY;
+        String translated = getString(key, Session.get().getLocale());
+        if (translated == null) {
+            translated = getString(TranslatorUtils.getCriteria(key));
+            if (translated == null) {
+                translated = "";
+            } else {
+                log.warn("Using a deprecated way of translating validator {} (key = {}). " +
+                        "Move validator translations to /hippo:configuration/hippo:translations/hippo:cms/validators",
+                        getName(), key);
+            }
         }
         return translated;
     }
 
+    public String getString(String key, Locale locale) {
+        return new ResourceBundleModel("hippo:cms.validators", key, locale).getObject();
+    }
 
     public String getString(Map<String, String> criteria) {
         String[] translators = getPluginConfig().getStringArray(ITranslateService.TRANSLATOR_ID);
