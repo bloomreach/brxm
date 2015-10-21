@@ -21,7 +21,6 @@ import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.PackageResource;
@@ -42,7 +41,9 @@ import org.hippoecm.frontend.usagestatistics.UsageStatisticsHeaderItem;
 
 public abstract class Perspective extends RenderPlugin<Void> implements ITitleDecorator {
 
-    public static final String TITLE = "perspective.title";
+    // deprecated
+    private static final String TITLE_KEY_PROPERTY = "perspective.title";
+    private static final String TITLE_KEY = "perspective-title";
 
     public static final String CLUSTER_NAME = "cluster.name";
     public static final String CLUSTER_PARAMETERS = "cluster.config";
@@ -71,8 +72,14 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
         this.eventId = eventId;
 
-        final String configuredTitle = config.getString(TITLE);
-        this.title = configuredTitle != null ? new StringResourceModel(configuredTitle, this, null) : Model.of("title");
+        String titleKey = config.getString(TITLE_KEY_PROPERTY);
+        if (titleKey != null) {
+            log.warn("Property {} on perspective configuration of perspective {} is deprecated, just use key 'perspective-title' " +
+                    "in the perspective's java resource bundle", TITLE_KEY_PROPERTY, getClass());
+        } else {
+            titleKey = TITLE_KEY;
+        }
+        this.title = new StringResourceModel(titleKey, this, null);
 
         imageExtension = config.getString("image.extension", IMAGE_EXTENSION);
         fallbackImageExtension = config.getString("fallback.image.extension", FALLBACK_IMAGE_EXTENSION);
