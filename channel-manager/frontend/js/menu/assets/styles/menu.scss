@@ -175,6 +175,8 @@ h3.lead.item-title {
 /* --- Confirmation message --- */
 .edit-menu-item-container {
   position: relative;
+  display:flex;
+  height: 100%;
 }
 
 .overlay {

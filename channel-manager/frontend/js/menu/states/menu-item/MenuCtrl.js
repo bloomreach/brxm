@@ -48,12 +48,21 @@
           function addItemAfterCheckingValidity () {
             MenuCtrl.isSaving.newItem = true;
             MenuService.getMenu().then(function (menuData) {
-              var blankMenuItem = {
-                linkType: 'SITEMAPITEM',
-                title: $filter('incrementProperty')(menuData.items, 'title', $filter('translate')('UNTITLED'), 'items'),
-                link: ''
-              };
 
+              var blankMenuItem;
+              var prototypeItem = menuData.prototypeItem;
+              if (prototypeItem !== undefined) {
+                var prototypeItemCopy = angular.copy(prototypeItem);
+                blankMenuItem = prototypeItemCopy;
+              }
+              else {
+                blankMenuItem = {
+                  linkType: 'SITEMAPITEM',
+                  link: '',
+                  title:''
+                };
+              }
+              blankMenuItem.title = $filter('incrementProperty')(menuData.items, 'title', $filter('translate')('UNTITLED'), 'items');
               if ($stateParams.menuItemId) {
                 MenuService.getPathToMenuItem($stateParams.menuItemId).then(addMenuItemToPath);
               } else {
