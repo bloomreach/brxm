@@ -26,6 +26,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
+import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfigurationService;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 
 public class SiteMenuRepresentation {
@@ -38,6 +39,7 @@ public class SiteMenuRepresentation {
     private String siteMapIdentifier;
 
     private List<SiteMenuItemRepresentation> children = new ArrayList<>();
+    private SiteMenuItemRepresentation prototypeItem;
 
     public SiteMenuRepresentation() {
         super();
@@ -67,6 +69,9 @@ public class SiteMenuRepresentation {
         for (HstSiteMenuItemConfiguration item : siteMenuConfiguration.getSiteMenuConfigurationItems()) {
             children.add(new SiteMenuItemRepresentation(item, mount));
         }
+
+        HstSiteMenuItemConfiguration prototypeConfiguration = ((HstSiteMenuConfigurationService) siteMenuConfiguration).getPrototypeItem();
+        prototypeItem = prototypeConfiguration != null ? new SiteMenuItemRepresentation(prototypeConfiguration, mount) : null;
     }
 
     public String getId() {
@@ -113,6 +118,13 @@ public class SiteMenuRepresentation {
     @XmlElement(name = "items")
     public List<SiteMenuItemRepresentation> getChildren() {
         return children;
+    }
+
+    /**
+     * @return The hst:sitemenuitem with name {@link HstSiteMenuConfigurationService#HST_PROTOTYPEITEM} or null if it does not exist
+     */
+    public SiteMenuItemRepresentation getPrototypeItem(){
+        return prototypeItem;
     }
 
     public void setChildren(final List<SiteMenuItemRepresentation> children) {

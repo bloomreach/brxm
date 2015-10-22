@@ -29,12 +29,14 @@ import org.hippoecm.hst.core.internal.StringPool;
 
 public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration, CanonicalInfo, ConfigurationLockInfo {
 
+    public static final String HST_PROTOTYPEITEM = "hst:prototypeitem";
     private String name;
     private final String canonicalIdentifier;
     private final String canonicalPath;
     private final boolean workspaceConfiguration;
     private HstSiteMenusConfiguration hstSiteMenusConfiguration;
     private List<HstSiteMenuItemConfiguration> siteMenuItems = new ArrayList<HstSiteMenuItemConfiguration>();
+    private HstSiteMenuItemConfiguration prototypeItem;
 
     private String lockedBy;
     private Calendar lockedOn;
@@ -47,7 +49,11 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
         this.workspaceConfiguration = ConfigurationUtils.isWorkspaceConfig(siteMenu);
         for (HstNode siteMenuItem : siteMenu.getNodes()) {
             HstSiteMenuItemConfiguration siteMenuItemConfiguration = new HstSiteMenuItemConfigurationService(siteMenuItem, null, this);
-            siteMenuItems.add(siteMenuItemConfiguration);
+            if (HST_PROTOTYPEITEM.equals(siteMenuItem.getName())) {
+                prototypeItem = siteMenuItemConfiguration;
+            } else {
+                siteMenuItems.add(siteMenuItemConfiguration);
+            }
         }
         this.lockedBy = siteMenu.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
         this.lockedOn = siteMenu.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON);
@@ -89,5 +95,12 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
     @Override
     public Calendar getLockedOn() {
         return lockedOn;
+    }
+
+    /**
+     * @return The hst:sitemenuitem with name {@link #HST_PROTOTYPEITEM} or null if it does not exist
+     */
+    public HstSiteMenuItemConfiguration getPrototypeItem() {
+        return prototypeItem;
     }
 }
