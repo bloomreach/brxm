@@ -17,12 +17,11 @@ package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.util.Locale;
 
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugins.standardworkflow.validators.RenameDocumentValidator;
 import org.hippoecm.frontend.session.UserSession;
@@ -34,21 +33,24 @@ public class RenameDocumentDialog extends WorkflowDialog<RenameDocumentArguments
     private final NameUriField nameUriContainer;
     private final IModel<StringCodec> nodeNameCodecModel;
 
-    public RenameDocumentDialog(RenameDocumentArguments renameDocumentModel, IModel<String> title,
-                                IWorkflowInvoker invoker, IModel<StringCodec> nodeNameCodec, final WorkflowDescriptorModel workflowDescriptorModel) {
-        super(invoker, Model.of(renameDocumentModel), title);
+    public RenameDocumentDialog(final RenameDocumentArguments renameDocumentArguments,
+                                final IModel<String> title,
+                                final IWorkflowInvoker invoker,
+                                final IModel<StringCodec> nodeNameCodec,
+                                final WorkflowDescriptorModel workflowDescriptorModel) {
+        super(invoker, Model.of(renameDocumentArguments), title);
 
         this.nodeNameCodecModel = nodeNameCodec;
 
         setSize(DialogConstants.MEDIUM_AUTO);
 
-        final String originalUriName = renameDocumentModel.getUriName();
-        final String originalTargetName = renameDocumentModel.getTargetName();
+        final String originalUriName = renameDocumentArguments.getUriName();
+        final String originalTargetName = renameDocumentArguments.getTargetName();
 
         add(nameUriContainer = new NameUriField("name-url", nodeNameCodecModel, originalUriName, originalTargetName, true));
 
         final Locale cmsLocale = UserSession.get().getLocale();
-        final RenameMessage message = new RenameMessage(cmsLocale, renameDocumentModel.getLocalizedNames());
+        final RenameMessage message = new RenameMessage(cmsLocale, renameDocumentArguments.getLocalizedNames());
         if (message.shouldShow()) {
             warn(message.forFolder());
         }
@@ -68,11 +70,5 @@ public class RenameDocumentDialog extends WorkflowDialog<RenameDocumentArguments
     protected void onDetach() {
         nodeNameCodecModel.detach();
         super.onDetach();
-    }
-
-    //TODO: This override method should be moved to the ancestor class in CMS7-9429
-    @Override
-    protected FeedbackPanel newFeedbackPanel(String id) {
-        return new FeedbackPanel(id);
     }
 }

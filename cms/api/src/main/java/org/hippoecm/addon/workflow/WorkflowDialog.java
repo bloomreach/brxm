@@ -16,6 +16,7 @@
 package org.hippoecm.addon.workflow;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
@@ -87,5 +88,10 @@ public class WorkflowDialog<T> extends Dialog<T> {
             titleModel.detach();
         }
         super.onDetach();
+    }
+
+    @Override
+    protected FeedbackPanel newFeedbackPanel(String id) {
+        return new FeedbackPanel(id);
     }
 }

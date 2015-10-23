@@ -47,6 +47,7 @@ import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standardworkflow.RenameDocumentArguments;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditor.Mode;
@@ -128,8 +129,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         });
 
         add(renameAction = new StdWorkflow("rename", Model.of(getString("rename-label")), context, getModel()) {
-            public String targetName;
-            public String uriName;
+            private RenameDocumentArguments renameDocumentArguments;
 
             @Override
             public String getSubMenu() {
@@ -145,16 +145,27 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             protected Dialog createRequestDialog() {
                 try {
                     final HippoNode node = (HippoNode) getModel().getNode();
-                    uriName = node.getName();
-                    targetName = getLocalizedNameForSession(node);
+                    renameDocumentArguments = new RenameDocumentArguments(
+                            getLocalizedNameForSession(node),
+                            node.getName(),
+                            node.getLocalizedNames());
                 } catch (RepositoryException ex) {
-                    uriName = targetName = "";
+                    renameDocumentArguments = new RenameDocumentArguments();
                 }
-                return new RenameDocumentDialog(this, Model.of(getString("rename-title")));
+
+                return new org.hippoecm.frontend.plugins.standardworkflow.RenameDocumentDialog(renameDocumentArguments,
+                        new StringResourceModel("rename-title", DefaultWorkflowPlugin.this, null),
+                        this,
+                        getStringCodecModel(),
+                        this.getModel()
+                );
             }
 
             @Override
             protected String execute(Workflow wf) throws Exception {
+                final String targetName = renameDocumentArguments.getTargetName();
+                final String uriName = renameDocumentArguments.getUriName();
+
                 if (Strings.isEmpty(targetName)) {
                     throw new WorkflowException("No name for destination given");
                 }
@@ -436,6 +447,16 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         }
     }
 
+    private IModel<StringCodec> getStringCodecModel() {
+        String locale = null;
+        try {
+            locale = CodecUtils.getLocaleFromNodeAndAncestors(DefaultWorkflowPlugin.this.getModel().getNode());
+        } catch (RepositoryException e) {
+            //ignore
+        }
+        return CodecUtils.getNodeNameCodecModel(getPluginContext(), locale);
+    }
+
     public WorkflowDescriptorModel getModel() {
         return (WorkflowDescriptorModel) getDefaultModel();
     }
@@ -528,6 +549,11 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         whereUsedAction.setVisible(!Boolean.FALSE.equals(workflowHints.get("status")));
     }
 
+
+    /**
+     * @deprecated was replaced by {@link org.hippoecm.frontend.plugins.standardworkflow.RenameDocumentDialog} since version 3.2.0.
+     * This class will be removed in version 4.0.
+     */
     public class RenameDocumentDialog extends WorkflowDialog<Void> {
 
         private final IModel<String> nameModel;
@@ -542,13 +568,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             nameModel = PropertyModel.of(action, "targetName");
             uriModel = PropertyModel.of(action, "uriName");
 
-            String locale = null;
-            try {
-                locale = CodecUtils.getLocaleFromNodeAndAncestors(DefaultWorkflowPlugin.this.getModel().getNode());
-            } catch (RepositoryException e) {
-                //ignore
-            }
-            final IModel<StringCodec> codecModel = CodecUtils.getNodeNameCodecModel(getPluginContext(), locale);
+            final IModel<StringCodec> codecModel = getStringCodecModel();
 
             final String originalTargetName = nameModel.getObject();
             final String originalUriName = uriModel.getObject();

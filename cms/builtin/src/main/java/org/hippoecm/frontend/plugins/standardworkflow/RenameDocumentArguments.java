@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.standardworkflow;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.repository.api.Localized;
 
@@ -28,6 +29,18 @@ public class RenameDocumentArguments implements IClusterable {
     private Map<Localized, String> localizedNames;
 
     public RenameDocumentArguments() {
+        localizedNames = Collections.EMPTY_MAP;
+    }
+
+    public RenameDocumentArguments(final String targetName, final String uriName, final Map<Localized, String> localizedNames) {
+        this(targetName, uriName, StringUtils.EMPTY, localizedNames);
+    }
+
+    public RenameDocumentArguments(final String targetName, final String uriName, final String nodeType, final Map<Localized, String> localizedNames) {
+        this.targetName = targetName;
+        this.uriName = uriName;
+        this.nodeType = nodeType;
+        this.localizedNames = localizedNames;
     }
 
     public String getTargetName() {
