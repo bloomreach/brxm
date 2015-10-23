@@ -170,9 +170,8 @@ span.hst-container-item {
 }
 
 .empty-container-placeholder {
-  height: 20px;
   font-size: 15px;
-  padding: 6px 0 6px 0;
+  padding: 6px 0;
   text-align: center;
   font-style: italic;
 }
