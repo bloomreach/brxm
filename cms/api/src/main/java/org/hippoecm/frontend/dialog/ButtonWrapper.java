@@ -98,12 +98,12 @@ public class ButtonWrapper implements IClusterable {
                     attributes.getAjaxCallListeners().add(new AjaxCallListener(){
                         @Override
                         public CharSequence getBeforeHandler(final Component component) {
-                            return "document.getElementById('" + getMarkupId() + "').disabled = true;";
+                            return "$('#" + getMarkupId() + "').prop('disabled', true);";
                         }
 
                         @Override
-                        public CharSequence getSuccessHandler(final Component component) {
-                            return "document.getElementById('" + getMarkupId() + "').disabled = false;";
+                        public CharSequence getCompleteHandler(final Component component) {
+                            return "$('#" + getMarkupId() + "').prop('disabled', false);";
                         }
                     });
                     ButtonWrapper.this.onUpdateAjaxAttributes(attributes);
