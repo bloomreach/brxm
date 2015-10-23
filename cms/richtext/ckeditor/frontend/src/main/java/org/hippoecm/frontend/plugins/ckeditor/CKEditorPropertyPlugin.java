@@ -39,7 +39,7 @@ public class CKEditorPropertyPlugin extends AbstractCKEditorPlugin<String> {
             // &gt; must not be replaced with > hence basicEntities = true
             + "  basicEntities: true,"
             + "  autoUpdateElement: false,"
-            + "  contentsCss: 'ckeditor/hippocontents.css',"
+            + "  contentsCss: ['ckeditor/hippocontents.css'],"
             + "  plugins: 'basicstyles,button,clipboard,contextmenu,divarea,enterkey,entities,floatingspace,floatpanel,htmlwriter,listblock,magicline,menu,menubutton,panel,panelbutton,removeformat,richcombo,stylescombo,tab,toolbar,undo',"
             + "  title: false,"
             + "  toolbar: ["
