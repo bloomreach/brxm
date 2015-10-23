@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.util.Locale;
 
+import org.apache.wicket.ajax.AjaxChannel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
@@ -48,6 +49,11 @@ public class RenameDocumentDialog extends WorkflowDialog<RenameDocumentArguments
         final String originalTargetName = renameDocumentArguments.getTargetName();
 
         add(nameUriContainer = new NameUriField("name-url", nodeNameCodecModel, originalUriName, originalTargetName, true));
+
+        // use a dedicated channel for ajax calls in this dialog
+        final AjaxChannel ajaxChannel = new AjaxChannel(getMarkupId(), AjaxChannel.Type.ACTIVE);
+        setAjaxChannel(ajaxChannel);
+        nameUriContainer.setAjaxChannel(ajaxChannel);
 
         final Locale cmsLocale = UserSession.get().getLocale();
         final RenameMessage message = new RenameMessage(cmsLocale, renameDocumentArguments.getLocalizedNames());

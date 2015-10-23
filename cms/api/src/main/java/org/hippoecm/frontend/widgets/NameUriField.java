@@ -17,6 +17,7 @@ package org.hippoecm.frontend.widgets;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxChannel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.attributes.ThrottlingSettings;
@@ -40,6 +41,8 @@ public class NameUriField extends Panel {
 
     private final IModel<String> nameModel;
     private final IModel<String> urlModel;
+
+    private AjaxChannel ajaxChannel;
 
     private final IModel<StringCodec> codecModel;
 
@@ -97,6 +100,7 @@ public class NameUriField extends Panel {
             @Override
             protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
                 super.updateAjaxAttributes(attributes);
+                attributes.setChannel(ajaxChannel);
                 attributes.setThrottlingSettings(new ThrottlingSettings(NameUriField.this.getPath(), Duration.milliseconds(500)));
             }
         });
@@ -205,5 +209,9 @@ public class NameUriField extends Panel {
         if (!urlIsEditable) {
             target.add(urlComponent);
         }
+    }
+
+    public void setAjaxChannel(AjaxChannel ajaxChannel) {
+        this.ajaxChannel = ajaxChannel;
     }
 }
