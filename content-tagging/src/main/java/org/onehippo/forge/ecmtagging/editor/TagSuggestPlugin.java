@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -37,11 +36,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.onehippo.forge.ecmtagging.Tag;
 import org.onehippo.forge.ecmtagging.TagCollection;
 import org.onehippo.forge.ecmtagging.TagSuggestor;
@@ -52,11 +50,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Frontend Plugin that displays the tag suggestions to the user.
- *
- * @author Jeroen Tietema
- *
  */
-public class TagSuggestPlugin extends RenderPlugin<Node> {
+public class TagSuggestPlugin extends AbstractTagsPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -80,6 +75,10 @@ public class TagSuggestPlugin extends RenderPlugin<Node> {
         }
         if ("edit".equals(mode)) {
             fragment = new Fragment("tag-view", "suggestions", this);
+
+            final String defaultCaption = new ClassResourceModel("keyword_suggestions", TagSuggestPlugin.class).getObject();
+            fragment.add(new Label("title", getCaptionModel("tagsuggest", defaultCaption)));
+
             try {
                 fragment.add(new TagSuggestView("view", ((JcrNodeModel) getModel()).getNode().getSession(), tagIndexLocation));
             } catch (RepositoryException e) {
@@ -208,6 +207,4 @@ public class TagSuggestPlugin extends RenderPlugin<Node> {
     public void onEvent(final Iterator event) {
         redraw();
     }
-
-
 }

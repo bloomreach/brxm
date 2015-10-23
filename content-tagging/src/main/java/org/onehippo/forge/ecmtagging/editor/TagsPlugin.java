@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,12 +15,6 @@
  */
 package org.onehippo.forge.ecmtagging.editor;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.jcr.Node;
-
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
@@ -30,21 +24,22 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.standards.diff.LCS;
 import org.hippoecm.frontend.plugins.standards.diff.LCS.Change;
-import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.onehippo.forge.ecmtagging.TaggingNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
 /**
  * Frontend Plugin that displays the current assigned tags of the document.
- *
- * @author Jeroen Tietema
- *
  */
-public class TagsPlugin extends RenderPlugin<Node> {
+public class TagsPlugin extends AbstractTagsPlugin {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
@@ -64,6 +59,9 @@ public class TagsPlugin extends RenderPlugin<Node> {
 
     public TagsPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        final String defaultCaption = new ClassResourceModel("keywords", TagsPlugin.class).getObject();
+        add(new Label("title", getCaptionModel("tags", defaultCaption)));
 
         nodeModel = (JcrNodeModel) getModel();
         toLowerCase = config.getAsBoolean(LOWERCASE, false);
@@ -153,5 +151,4 @@ public class TagsPlugin extends RenderPlugin<Node> {
         log.debug("New tag model object: {}", tagModel.getObject());
         return tagModel;
     }
-
 }
