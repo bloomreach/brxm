@@ -1295,6 +1295,7 @@ toolkit-resources/addon/pom.xml svneol=native#text/plain
 toolkit-resources/addon/repository/pom.xml svneol=native#text/plain
 toolkit-resources/addon/repository/src/main/java/org/onehippo/cms7/hst/toolkit/addon/formdata/FormDataCleanupJob.java -text
 toolkit-resources/addon/repository/src/main/resources/formdata.xml -text
+toolkit-resources/addon/repository/src/main/resources/hippo-configuration/exclude-attic.xml -text
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/formdata-domain.xml -text
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/group-webmaster.xml -text
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/hstconfig-domain.xml -text svneol=unset#text/plain

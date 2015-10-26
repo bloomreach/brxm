@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.configuration.menu;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -22,10 +24,14 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.core.request.ResolvedMount;
@@ -38,8 +44,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMENUITEM;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class HstMenuModelsIT extends AbstractTestConfigurations {
@@ -346,4 +359,170 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
 
     }
 
+    // test inheritance from hst:workspace via inheritsfrom = ../xyz/hst:workspace
+    @Test
+    public void menu_from_workspace_by_default_not_inherited_unless_explicitly_inherited() throws Exception {
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:sitemenus/main",
+                "/hst:hst/hst:configurations/unittestcommon/hst:sitemenus/footer");
+        session.save();
+
+        {
+            VirtualHosts vhosts = hstManager.getVirtualHosts();
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+            final Map<String, HstSiteMenuConfiguration> siteMenuConfigurations = mount.getHstSite().getSiteMenusConfiguration().getSiteMenuConfigurations();
+            assertNotNull(siteMenuConfigurations.get("main"));
+            assertNotNull(siteMenuConfigurations.get("footer"));
+            assertFalse(((CanonicalInfo)siteMenuConfigurations.get("main")).isWorkspaceConfiguration());
+        }
+
+        // now move the [/hst:hst/hst:configurations/unittestcommon/hst:sitemenus/footer] to
+        // [/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus/footer] and show the 'footer' is not
+        // there any more in the model
+
+        if (!session.nodeExists("/hst:hst/hst:configurations/unittestcommon/hst:workspace")) {
+            session.getNode("/hst:hst/hst:configurations/unittestcommon").addNode(NODENAME_HST_WORKSPACE);
+        }
+        if (!session.nodeExists("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus")) {
+            session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:workspace").addNode(HstNodeTypes.NODENAME_HST_SITEMENUS);
+        }
+
+        session.move("/hst:hst/hst:configurations/unittestcommon/hst:sitemenus/footer",
+                "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus/footer");
+
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+        session.save();
+        invalidator.eventPaths(pathsToBeChanged);
+        {
+            VirtualHosts vhosts = hstManager.getVirtualHosts();
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+            final Map<String, HstSiteMenuConfiguration> siteMenuConfigurations = mount.getHstSite().getSiteMenusConfiguration().getSiteMenuConfigurations();
+            assertNotNull(siteMenuConfigurations.get("main"));
+            assertNull(siteMenuConfigurations.get("footer"));
+        }
+
+        // for all kind of inheritance variants below, the 'footer' menu should be inherited now
+        List<String[]> inheritanceVariants = new ArrayList<>();
+        inheritanceVariants.add(new String[]{"../unittestcommon", "../unittestcommon/hst:workspace"});
+        inheritanceVariants.add(new String[]{"../unittestcommon", "../unittestcommon/hst:workspace/hst:sitemenus"});
+        inheritanceVariants.add(new String[]{"../unittestcommon/hst:workspace", "../unittestcommon"});
+        inheritanceVariants.add(new String[]{"../unittestcommon/hst:workspace/hst:sitemenus", "../unittestcommon"});
+        inheritanceVariants.add(new String[]{"../unittestcommon/hst:workspace"});
+        inheritanceVariants.add(new String[]{"../unittestcommon/hst:workspace/hst:sitemenus"});
+        inheritanceVariants.add(new String[]{"../unittestcommon/hst:workspace/hst:sitemenus", "../unittestcommon/hst:workspace"});
+        inheritanceVariants.add(new String[]{"../unittestcommon/hst:workspace", "../unittestcommon/hst:workspace/hst:sitemenus"});
+
+        for (String[] inheritanceVariant : inheritanceVariants) {
+
+            setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                    inheritanceVariant);
+
+            pathsToBeChanged = new String[]{"/hst:hst/hst:configurations/unittestproject"};
+            invalidator.eventPaths(pathsToBeChanged);
+            {
+                VirtualHosts vhosts = hstManager.getVirtualHosts();
+                final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+                final Map<String, HstSiteMenuConfiguration> siteMenuConfigurations = mount.getHstSite().getSiteMenusConfiguration().getSiteMenuConfigurations();
+                assertNotNull(siteMenuConfigurations.get("main"));
+                assertNotNull(siteMenuConfigurations.get("footer"));
+                assertFalse(((CanonicalInfo)siteMenuConfigurations.get("main")).isWorkspaceConfiguration());
+                assertTrue(((CanonicalInfo)siteMenuConfigurations.get("footer")).isWorkspaceConfiguration());
+            }
+            // make sure a change triggers a reload!
+            session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus/footer").addNode("newItem", NODETYPE_HST_SITEMENUITEM);
+            pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+            session.save();
+            invalidator.eventPaths(pathsToBeChanged);
+            {
+                VirtualHosts vhosts = hstManager.getVirtualHosts();
+                final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+                final Map<String, HstSiteMenuConfiguration> siteMenuConfigurations = mount.getHstSite().getSiteMenusConfiguration().getSiteMenuConfigurations();
+                boolean expectedItemFound = false;
+                for (HstSiteMenuItemConfiguration itemConfiguration : siteMenuConfigurations.get("footer").getSiteMenuConfigurationItems()) {
+                    if ("newItem".equals(itemConfiguration.getName())) {
+                        expectedItemFound = true;
+                    }
+                }
+                assertTrue(expectedItemFound);
+            }
+
+            session.removeItem("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus/footer/newItem");
+            pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+            session.save();
+            invalidator.eventPaths(pathsToBeChanged);
+        }
+    }
+
+
+    @Test
+    public void test_inheritance_precedence() throws Exception {
+        if (!session.nodeExists("/hst:hst/hst:configurations/unittestcommon/hst:workspace")) {
+            session.getNode("/hst:hst/hst:configurations/unittestcommon").addNode(NODENAME_HST_WORKSPACE);
+        }
+
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap",
+                "/hst:hst/hst:configurations/unittestcommon/hst:sitemap");
+        // hst:pages both below unittestcommon AND below unittestcommon/hst:workspace
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:sitemap",
+                "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap");
+
+        // both have hst:sitemap/home : Depending on precedence of the hst:inheritsfrom, one of them is merged into the 'unittestproject' model
+        final Node homePageNode = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:sitemap/home");
+        homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"location"});
+        homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"non-workspace"});
+        final Node workspaceHomePageNode = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap/home");
+        workspaceHomePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"location"});
+        workspaceHomePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"workspace"});
+
+        // add an extra sitemap to workspace
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap/home",
+                "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap/homeAgain");
+
+
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                new String[]{"../unittestcommon", "../unittestcommon/hst:workspace"});
+        session.save();
+
+        {
+            VirtualHosts vhosts = hstManager.getVirtualHosts();
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+            final HstSiteMapItem item = mount.getHstSite().getSiteMap().getSiteMapItem("home");
+            assertNotNull(item);
+            // since we first inherit ../unittestcommon and *then* ../unittestcommon/hst:workspace, we expect the 'home' from
+            // unittestcommon/hst:sitemap and not from unittestcommon/hst:workspace/hst:sitemap
+            assertEquals("non-workspace", item.getParameter("location"));
+
+            // assert that 'homeAgain' which is only present below 'unittestcommon/hst:workspace/hst:sitemap' is inherited still
+            final HstSiteMapItem itemAgain = mount.getHstSite().getSiteMap().getSiteMapItem("homeAgain");
+            assertNotNull(itemAgain);
+        }
+
+        // switch the inheritance
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                new String[]{"../unittestcommon/hst:workspace", "../unittestcommon"});
+
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        session.save();
+        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestproject"});
+
+        {
+            VirtualHosts vhosts = hstManager.getVirtualHosts();
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+            final HstSiteMapItem item = mount.getHstSite().getSiteMap().getSiteMapItem("home");
+            assertNotNull(item);
+            // since we first inherit ../unittestcommon and *then* ../unittestcommon/hst:workspace, we expect the homepage from
+            // unittestcommon/hst:pages and not from unittestcommon/hst:workspace/hst:pages
+            assertEquals("workspace", item.getParameter("location"));
+        }
+    }
+
+    private void setWorkspaceInheritance(final String hstConfigurationPath, final String[] inheritsFrom) throws RepositoryException {
+        final Node hstConfigNode = session.getNode(hstConfigurationPath);
+        hstConfigNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, inheritsFrom);
+        session.save();
+    }
+
+    private String getLocalhostRootMountId() throws RepositoryException {
+        return session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root").getIdentifier();
+    }
 }
