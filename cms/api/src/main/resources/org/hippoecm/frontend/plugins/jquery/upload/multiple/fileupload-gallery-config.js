@@ -19,10 +19,21 @@
 (function () {
   'use strict';
 
+  /**
+   * Notify the selection changed event to the wicket back-end
+   */
+  function notifySelectionChange() {
+    var url = '${selectionChangeUrl}';
+    Wicket.Ajax.get( {
+      u: url + "&numberOfFiles=" + this.getNumberOfFiles()
+    });
+  }
+
   $('#${componentMarkupId}').fileupload({
     autoUpload: false,
     url: '${url}',
     uploadDoneUrl: '${fileUploadDoneUrl}',
+    onSelectionChange: notifySelectionChange,
     maxNumberOfFiles: ${maxNumberOfFiles},
     maxFileSize: ${max.file.size},
     acceptFileTypes: /(\.)(${acceptFileTypes})$/i,

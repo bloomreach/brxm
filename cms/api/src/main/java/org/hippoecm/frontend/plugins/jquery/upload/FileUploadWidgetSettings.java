@@ -38,6 +38,7 @@ public class FileUploadWidgetSettings implements IClusterable {
     private long maxNumberOfFiles;
     private String[] allowedExtensions;
     private boolean autoUpload;
+    private String selectionChangeNotificationUrl;
 
     public FileUploadWidgetSettings(final IPluginConfig pluginConfig, final FileUploadValidationService validator) {
         loadConfig(pluginConfig, validator);
@@ -132,5 +133,23 @@ public class FileUploadWidgetSettings implements IClusterable {
      */
     public final void setAutoUpload(final boolean autoUpload) {
         this.autoUpload = autoUpload;
+    }
+
+    /**
+     * The url to notify on the event a file is added or removed from the list of uploading. This setting is used for
+     * multi-files uploads only.
+     * @param selectionChangeNotificationUrl
+     */
+    public void setSelectionChangeNotificationUrl(final String selectionChangeNotificationUrl) {
+        this.selectionChangeNotificationUrl = selectionChangeNotificationUrl;
+    }
+
+    /**
+     * The url to notify on the event the file selection list was changed. This setting is used for multi-files
+     * uploads only.
+     * @return
+     */
+    public String getSelectionChangeNotificationUrl() {
+        return selectionChangeNotificationUrl;
     }
 }

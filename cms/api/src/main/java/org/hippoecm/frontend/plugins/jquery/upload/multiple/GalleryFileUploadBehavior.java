@@ -55,6 +55,7 @@ public class GalleryFileUploadBehavior extends FileUploadBehavior {
         final Map<String, Object> variables = super.configureParameters(component);
         //the url to be notified when uploading has done
         variables.put("fileUploadDoneUrl", settings.getUploadDoneNotificationUrl());
+        variables.put("selectionChangeUrl", settings.getSelectionChangeNotificationUrl());
         return variables;
     }
 

@@ -44,6 +44,17 @@
     numberOfCompletedFiles: 0,
     hasError: false,
     options: {
+
+      added: function () {
+        var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload');
+        that.options.onSelectionChange();
+      },
+
+      failed: function () {
+        var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload');
+        that.options.onSelectionChange();
+      },
+
       start: function (e) {
         var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload');
         that.disable();

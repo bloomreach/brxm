@@ -19,10 +19,13 @@ package org.hippoecm.frontend.plugins.jquery.upload.multiple;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.IBehaviorListener;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
 import org.apache.wicket.util.upload.FileItem;
@@ -53,6 +56,7 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
 
     private AbstractAjaxBehavior ajaxCallbackUploadDoneBehavior;
     private AjaxFileUploadBehavior ajaxFileUploadBehavior;
+    private AbstractDefaultAjaxBehavior ajaxCallbackSelectionChangeBehavior;
 
     protected void onFileUploadResponse(final ServletWebRequest request, final Map<String, FileUploadInfo> uploadedFiles) {
     }
@@ -111,6 +115,14 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
             }
         });
 
+        add(ajaxCallbackSelectionChangeBehavior = new AbstractDefaultAjaxBehavior() {
+            @Override
+            protected void respond(final AjaxRequestTarget target) {
+                final int numberOfFiles = RequestCycle.get().getRequest().getRequestParameters().getParameterValue("numberOfFiles").toInt();
+                FileUploadWidget.this.onSelectionChange(target, numberOfFiles);
+            }
+        });
+
         // The buttons toolbar. Mandatory
         fileUploadBar = new FileUploadBar("fileUploadBar", settings);
         add(fileUploadBar);
@@ -141,11 +153,14 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
     @Override
     protected void onBeforeRender() {
         // Obtain callback urls used for uploading files & notification
-        String uploadUrl = urlFor(ajaxFileUploadBehavior, IBehaviorListener.INTERFACE, new PageParameters()).toString();
+        final String uploadUrl = urlFor(ajaxFileUploadBehavior, IBehaviorListener.INTERFACE, new PageParameters()).toString();
         settings.setUploadUrl(uploadUrl);
 
-        String uploadDoneNotificationUrl = ajaxCallbackUploadDoneBehavior.getCallbackUrl().toString();
+        final String uploadDoneNotificationUrl = ajaxCallbackUploadDoneBehavior.getCallbackUrl().toString();
         settings.setUploadDoneNotificationUrl(uploadDoneNotificationUrl);
+
+        final String selectionChangeNotificationUrl = ajaxCallbackSelectionChangeBehavior.getCallbackUrl().toString();
+        settings.setSelectionChangeNotificationUrl(selectionChangeNotificationUrl);
         super.onBeforeRender();
     }
 
@@ -155,5 +170,9 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
             log.debug("Uploaded file: #{} {}", fileUploadCounter, fileUploadInfo.getFileName());
         }
         increaseFileUploadingCounter();
+    }
+
+    @Override
+    protected void onSelectionChange(final AjaxRequestTarget target, final int numberOfFiles) {
     }
 }

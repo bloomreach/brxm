@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.util.upload.FileItem;
@@ -113,4 +114,11 @@ public abstract class AbstractFileUploadWidget extends Panel {
     protected void onAfterUpload(final FileItem file, final FileUploadInfo fileUploadInfo) {}
 
     protected void onFinished() {}
+
+    /**
+     * The event is fired when the file selection list was changed
+     * @param target
+     * @param numberOfFiles the number of files in the selection list
+     */
+    protected void onSelectionChange(final AjaxRequestTarget target, final int numberOfFiles) {}
 }
