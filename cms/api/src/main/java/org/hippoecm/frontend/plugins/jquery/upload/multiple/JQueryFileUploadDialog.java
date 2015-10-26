@@ -27,7 +27,7 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.upload.FileUploadException;
 import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -44,7 +44,7 @@ import wicket.contrib.input.events.key.KeyType;
 /**
  * The multi-files upload dialog using jQuery File Upload plugin
  */
-public abstract class JQueryFileUploadDialog extends AbstractDialog {
+public abstract class JQueryFileUploadDialog extends Dialog {
     private static final Logger log = LoggerFactory.getLogger(JQueryFileUploadDialog.class);
 
     public static final String FILEUPLOAD_WIDGET_ID = "uploadPanel";
