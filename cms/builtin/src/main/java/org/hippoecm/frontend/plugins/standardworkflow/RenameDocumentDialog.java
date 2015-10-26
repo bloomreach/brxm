@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
-import org.apache.wicket.ajax.AjaxChannel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;

@@ -100,8 +100,9 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     final HippoNode node = getModelNode();
                     locale = CodecUtils.getLocaleFromNodeAndAncestors(node);
                     renameDocumentArguments = new RenameDocumentArguments(
-                            node.getName(),
-                            node.getDisplayName()
+                            node.getDisplayName(),
+                            node.getName()
+
                     );
                 } catch (RepositoryException ex) {
                     renameDocumentArguments = new RenameDocumentArguments();

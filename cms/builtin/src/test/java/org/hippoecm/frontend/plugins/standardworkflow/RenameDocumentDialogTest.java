@@ -85,7 +85,7 @@ public class RenameDocumentDialogTest {
         }
 
         // rename the 'news' folder
-        RenameDocumentArguments renameDocumentArguments = new RenameDocumentArguments("News", "news", HippoStdNodeType.NT_FOLDER, Collections.EMPTY_MAP);
+        RenameDocumentArguments renameDocumentArguments = new RenameDocumentArguments("News", "news", HippoStdNodeType.NT_FOLDER);
 
         final IWorkflowInvoker invoker = Mockito.mock(IWorkflowInvoker.class);
 

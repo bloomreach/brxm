@@ -146,7 +146,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 try {
                     final HippoNode node = (HippoNode) getModel().getNode();
                     renameDocumentArguments = new RenameDocumentArguments(
-                            getLocalizedNameForSession(node),
+                            node.getDisplayName(),
                             node.getName());
                 } catch (RepositoryException ex) {
                     renameDocumentArguments = new RenameDocumentArguments();

@@ -24,18 +24,16 @@ public class RenameDocumentArguments implements IClusterable {
     private String nodeType;
 
     public RenameDocumentArguments() {
-        localizedNames = Collections.EMPTY_MAP;
     }
 
-    public RenameDocumentArguments(final String targetName, final String uriName, final Map<Localized, String> localizedNames) {
-        this(targetName, uriName, StringUtils.EMPTY, localizedNames);
+    public RenameDocumentArguments(final String targetName, final String uriName) {
+        this(targetName, uriName, StringUtils.EMPTY);
     }
 
-    public RenameDocumentArguments(final String targetName, final String uriName, final String nodeType, final Map<Localized, String> localizedNames) {
+    public RenameDocumentArguments(final String targetName, final String uriName, final String nodeType) {
         this.targetName = targetName;
         this.uriName = uriName;
         this.nodeType = nodeType;
-        this.localizedNames = localizedNames;
     }
 
     public String getTargetName() {
