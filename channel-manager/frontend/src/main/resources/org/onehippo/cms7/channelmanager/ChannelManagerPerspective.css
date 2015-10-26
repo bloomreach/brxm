@@ -695,7 +695,6 @@
 }
 
 .channel-manager .channel .lockedBy {
-  display: inline-block;
   font-size: 10px;
   color: #9ba0a5;
 }
