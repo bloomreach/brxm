@@ -26,6 +26,22 @@ import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.message.Message;
 
+/**
+ * Class to construct a CXF application endpoint using a fluent API.
+ *
+ * <p>Compared to a {@link RepositoryJaxrsEndpoint}, a CXFRepositoryJaxrsEndpoint can make use of additional CXF specific
+ * functionality:
+ * <ul>
+ *     <li>Set a custom invoker,</li>
+ *     <li>Register <a href="http://cxf.apache.org/docs/interceptors.html">CXF interceptors</a>,</li>
+ *     <li>Hook into the application endpoint creation by overriding the
+ *     {@link CXFRepositoryJaxrsEndpoint#preCreate(JAXRSServerFactoryBean)} and/or
+ *     {@link CXFRepositoryJaxrsEndpoint#postCreate(Server)} methods</li>
+ * </ul></p>
+ *
+ * <p>For more detailed documentation and example usage, see the
+ * <a href="http://www.onehippo.org/library/concepts/hippo-services/repository-jaxrs-service.html">online documentation</a>.</p>
+ */
 public class CXFRepositoryJaxrsEndpoint extends RepositoryJaxrsEndpoint {
 
     private JAXRSInvoker invoker;
@@ -34,6 +50,12 @@ public class CXFRepositoryJaxrsEndpoint extends RepositoryJaxrsEndpoint {
     private List<Interceptor<? extends Message>> outInterceptors;
     private List<Interceptor<? extends Message>> outFaultInterceptors;
 
+    /**
+     * Sets a custom invoker. Note that setting a custom invoker, handling authentication and authorization also
+     * becomes the responsibility of this custom invoker.If a non-null invoker is passed, the authorization settings
+     * set through {@link RepositoryJaxrsEndpoint#authorized(String, String)} will be ignored. If null is passed, an
+     * new instance of {@link AuthorizingRepositoryJaxrsInvoker} will be used as invoker.
+     */
     public CXFRepositoryJaxrsEndpoint invoker(JAXRSInvoker invoker) {
         this.invoker = invoker;
         return this;

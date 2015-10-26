@@ -45,10 +45,14 @@
     </dependency>
 
     <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-core</artifactId>
+      <version>${hamcrest-core.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <!-- TODO: temporary override, figure out why other repo tests do not work with 4.12 -->
-      <version>4.12</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -82,5 +86,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
 </project>

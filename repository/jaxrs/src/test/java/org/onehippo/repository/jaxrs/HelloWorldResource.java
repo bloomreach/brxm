@@ -20,9 +20,19 @@ import javax.ws.rs.Path;
 
 public class HelloWorldResource {
 
+    private String message;
+
+    public HelloWorldResource() {
+        this.message = "Hello world from CXF";
+    }
+
+    public HelloWorldResource(String message) {
+        this.message = message;
+    }
+
     @Path("/")
     @GET
     public String getHelloWorld() {
-        return "Hello world from CXF";
+        return message;
     }
 }

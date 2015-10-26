@@ -40,7 +40,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
  * either a servlet embedded in Tomcat, a JAXRS resource served by CXF embedded in Tomcat, or the
  * RepositoryJaxrsServlet embedded in Tomcat.
  */
-public class EmbeddingTests {
+public class EmbeddingTest {
 
     @Rule
     public TemporaryFolder tmpTomcatFolder = new TemporaryFolder();
@@ -136,4 +136,5 @@ public class EmbeddingTests {
         tomcat.stop();
         tomcat.destroy();
     }
+
 }

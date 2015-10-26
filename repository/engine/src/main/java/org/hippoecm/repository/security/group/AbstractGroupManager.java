@@ -16,12 +16,14 @@
 package org.hippoecm.repository.security.group;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -33,6 +35,7 @@ import org.apache.jackrabbit.commons.iterator.NodeIteratorAdapter;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.security.ManagerContext;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -368,12 +371,16 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     public final Set<String> getMembers(Node group) throws RepositoryException {
-        Value[] vals = group.getProperty(HippoNodeType.HIPPO_MEMBERS).getValues();
-        Set<String> members = new HashSet<String>(vals.length);
-        for (Value val : vals) {
-            members.add(val.getString());
+        final Property membersProperty = JcrUtils.getPropertyIfExists(group, HippoNodeType.HIPPO_MEMBERS);
+        if (membersProperty != null) {
+            Value[] values = membersProperty.getValues();
+            final Set<String> members = new HashSet<>(values.length);
+            for (final Value value : values) {
+                members.add(value.getString());
+            }
+            return members;
         }
-        return members;
+        return Collections.emptySet();
     }
 
     public final void setMembers(Node group, Set<String> members) throws RepositoryException {

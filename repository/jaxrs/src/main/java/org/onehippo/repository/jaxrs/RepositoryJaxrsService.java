@@ -45,10 +45,39 @@ import org.apache.cxf.transport.servlet.servicelist.ServiceListGeneratorServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The RepositoryJaxrsService provides functionality to dynamic add and remove JAX-RS REST application endpoints from
+ * the CMS webapp.
+ *
+ * <p>These application endpoints can be accessed through a corresponding {@link RepositoryJaxrsServlet} which by
+ * default is configured in the Hippo CMS application's web.xml making the application endpoints available under
+ * <code>"/ws/&lt;address&gt;"</code>. This servlet
+ * loads and initializes the service.</p>
+ *
+ * <p>To create application endpoints, use the fluent APIs of either {@link RepositoryJaxrsEndpoint} or
+ * {@link CXFRepositoryJaxrsEndpoint} to create an application endpoint and then call
+ * {@link RepositoryJaxrsService#addEndpoint(RepositoryJaxrsEndpoint)} to add them to the service. By default
+ * application endpoints are secured with basic authentication via the Hippo Repository, i.e. require a valid
+ * Repository (CMS) username and password. In addition authorization restrictions can be configured for an application
+ * endpoint.</p>
+ *
+ * <p>For more detailed documentation and example usage, see the
+ * <a href="http://www.onehippo.org/library/concepts/hippo-services/repository-jaxrs-service.html">online
+ * documentation</a>.</p>
+ *
+ * <p>To avoid startup race conditions, it is possible to add/remove application endpoints both before and after
+ * {@link RepositoryJaxrsService#init(ServletConfig, Map)} is called by {@link RepositoryJaxrsServlet} to initialize
+ * the service. Application endpoints added before {@link RepositoryJaxrsService#init(ServletConfig, Map)} are
+ * collected and initialized as part of {@link RepositoryJaxrsService#init(ServletConfig, Map)}.</p>
+ */
 public final class RepositoryJaxrsService {
 
     private static final Logger log = LoggerFactory.getLogger(RepositoryJaxrsService.class);
 
+    /**
+     * Hippo permission that can be used in combination with {@link AuthorizingRepositoryJaxrsInvoker} to enforce
+     * additional authorization restrictions.
+     */
     public static final String HIPPO_REST_PERMISSION = "hippo:rest";
 
     private static RepositoryJaxrsService INSTANCE = new RepositoryJaxrsService();
@@ -94,6 +123,10 @@ public final class RepositoryJaxrsService {
 
     private RepositoryJaxrsService() {}
 
+    /**
+     * Called by the {@link RepositoryJaxrsServlet} to initialize the service and any endpoints that were added to
+     * the service prior to the {@link RepositoryJaxrsService#init(ServletConfig, Map)} call.
+     */
     public synchronized static RepositoryJaxrsService init(ServletConfig config, Map<String, String> properties) {
         if (bus != null) {
             throw new IllegalStateException("RepositoryJaxrsService already started");
@@ -121,15 +154,26 @@ public final class RepositoryJaxrsService {
         }
     }
 
+    /**
+     * Adds a new application endpoint. In case the service is not initialized yet, the application endpoints are
+     * collected and initialized as part of {@link RepositoryJaxrsService#init(ServletConfig, Map)}.
+     *
+     * @param endpoint application endpoint that must be added
+     * @throws IllegalStateException in case an endpoint with the same address was added in a previous call
+     */
     public synchronized static void addEndpoint(final RepositoryJaxrsEndpoint endpoint) {
         String address = endpoint.getAddress();
         if (bus == null) {
             if (pendingEndpoints.containsKey(address)) {
-                throw new IllegalStateException("Endpoint address "+address+" already registered.");
+                throw new IllegalStateException("Endpoint address " + address + " already registered.");
             }
             pendingEndpoints.put(address, endpoint);
         }
         else {
+            if (servers.containsKey(address)) {
+                throw new IllegalStateException("Endpoint address " + address + " already registered.");
+            }
+
             Application app = endpoint.getApplication();
             if (app == null) {
                 app = new Application() {
@@ -176,6 +220,11 @@ public final class RepositoryJaxrsService {
         }
     }
 
+    /**
+     * Removes the application endpoint at the given address.
+     *
+     * @param address address of the application endpoint that must be removed
+     */
     public synchronized static void removeEndpoint(String address) {
         Server server = servers.remove(address);
         if (server != null) {

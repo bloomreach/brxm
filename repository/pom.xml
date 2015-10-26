@@ -71,14 +71,15 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Repository</notice.project.name>
 
-    <hippo.commons.version>2.1.0-SNAPSHOT</hippo.commons.version>
-    <hippo.services.version>2.1.0-SNAPSHOT</hippo.services.version>
-    <hippo.services.eventbus.version>2.1.0-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.utilities.version>2.1.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.commons.version>2.2.0-SNAPSHOT</hippo.commons.version>
+    <hippo.services.version>2.2.0-SNAPSHOT</hippo.services.version>
+    <hippo.services.eventbus.version>2.2.0-SNAPSHOT</hippo.services.eventbus.version>
+    <hippo.utilities.version>2.2.0-SNAPSHOT</hippo.utilities.version>
     <hippo.jcrdiff.version>1.01.05</hippo.jcrdiff.version>
 
     <!-- Test dependencies  -->
     <junit.version>4.10</junit.version>
+    <hamcrest-core.version>1.3</hamcrest-core.version>
 
     <!-- Project Dependencies -->
     <commons-io.version>2.4</commons-io.version>

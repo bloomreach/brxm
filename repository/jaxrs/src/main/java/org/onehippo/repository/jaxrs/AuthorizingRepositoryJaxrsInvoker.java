@@ -19,8 +19,19 @@ package org.onehippo.repository.jaxrs;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.apache.cxf.message.Exchange;
 
+/**
+ * Invoker that uses repository authorization to validate the authenticated user has sufficient permissions to call the
+ * application endpoint. To use this invoker, call {@link RepositoryJaxrsEndpoint#authorized(String, String)} when
+ * creating the application endpoint or manually create and set this invoker using
+ * {@link CXFRepositoryJaxrsEndpoint#invoker(JAXRSInvoker)}.
+ *
+ * <p>For more detailed documentation and example usage, see the
+ * <a href="http://www.onehippo.org/library/concepts/hippo-services/repository-jaxrs-service.html">online
+ * documentation</a>.</p>
+ */
 public class AuthorizingRepositoryJaxrsInvoker extends AuthenticatingRepositoryJaxrsInvoker {
 
     private String securedNodePath;
