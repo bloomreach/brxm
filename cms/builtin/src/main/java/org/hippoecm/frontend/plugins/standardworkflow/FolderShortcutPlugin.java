@@ -29,6 +29,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.ajax.AjaxChannel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -305,6 +306,11 @@ public class FolderShortcutPlugin extends RenderPlugin {
             };
 
             add(nameUriContainer = new NameUriField("name-url", codecModel));
+
+            // use a dedicated channel for ajax calls in this dialog
+            final AjaxChannel ajaxChannel = new AjaxChannel(getMarkupId(), AjaxChannel.Type.ACTIVE);
+            setAjaxChannel(ajaxChannel);
+            nameUriContainer.setAjaxChannel(ajaxChannel);
 
             List<String> emptyList = new LinkedList<>();
             emptyList.add("");

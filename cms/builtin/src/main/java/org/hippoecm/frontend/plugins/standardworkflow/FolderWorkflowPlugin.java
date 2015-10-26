@@ -106,8 +106,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
             if (isActionAvailable("rename", hints)) {
                 add(new StdWorkflow("rename", new StringResourceModel("rename-title", this, null), context, getModel()) {
-
-                    RenameDocumentArguments renameDocumentModel = new RenameDocumentArguments();
+                    private RenameDocumentArguments renameDocumentArguments = new RenameDocumentArguments();
 
                     @Override
                     protected Component getIcon(final String id) {
@@ -119,17 +118,17 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
                         try {
                             HippoNode node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
-                            renameDocumentModel.setUriName(node.getName());
-                            renameDocumentModel.setTargetName(node.getDisplayName());
-                            renameDocumentModel.setNodeType(node.getPrimaryNodeType().getName());
-                        } catch (RepositoryException ex) {
+                            renameDocumentArguments.setUriName(node.getName());
+                            renameDocumentArguments.setTargetName(node.getDisplayName());
+                            renameDocumentArguments.setNodeType(node.getPrimaryNodeType().getName());
+                       } catch (RepositoryException ex) {
                             log.error("Could not retrieve workflow document", ex);
-                            renameDocumentModel.setUriName("");
-                            renameDocumentModel.setTargetName("");
-                            renameDocumentModel.setNodeType(null);
-                        }
+                            renameDocumentArguments.setUriName("");
+                            renameDocumentArguments.setTargetName("");
+                            renameDocumentArguments.setNodeType(null);
+                       }
 
-                        return newRenameDocumentDialog(renameDocumentModel, this);
+                        return newRenameDocumentDialog(renameDocumentArguments, this);
                     }
 
                     @Override
@@ -138,8 +137,8 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                         // and there is some logic here to look up the parent.  The real solution is
                         // in the visual component to merge two workflows.
                         HippoNode node = (HippoNode) model.getNode();
-                        String nodeName = getNodeNameCodec(node).encode(renameDocumentModel.getUriName());
-                        String localName = getLocalizeCodec().encode(renameDocumentModel.getTargetName());
+                        String nodeName = getNodeNameCodec(node).encode(renameDocumentArguments.getUriName());
+                        String localName = getLocalizeCodec().encode(renameDocumentArguments.getTargetName());
                         WorkflowManager manager = UserSession.get().getWorkflowManager();
                         DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                         FolderWorkflow folderWorkflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
@@ -387,13 +386,13 @@ public class FolderWorkflowPlugin extends RenderPlugin {
         return (WorkflowDescriptorModel) super.getModel();
     }
 
-    protected Dialog newRenameDocumentDialog(RenameDocumentArguments renameDocumentModel, IWorkflowInvoker invoker) {
+    protected Dialog newRenameDocumentDialog(RenameDocumentArguments renameDocumentArguments, IWorkflowInvoker invoker) {
 
         String locale = getCodecLocale();
         IModel<StringCodec> codecModel = CodecUtils.getNodeNameCodecModel(getPluginContext(), locale);
 
         return new RenameDocumentDialog(
-                renameDocumentModel,
+                renameDocumentArguments,
                 new StringResourceModel("rename-title", this, null),
                 invoker,
                 codecModel,

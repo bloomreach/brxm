@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 
@@ -43,6 +42,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.HistoryDialog;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standardworkflow.RenameDocumentArguments;
+import org.hippoecm.frontend.plugins.standardworkflow.RenameDocumentDialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.util.CodecUtils;
@@ -71,8 +72,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         super(context, config);
 
         add(renameAction = new StdWorkflow("rename", new StringResourceModel("rename-label", this, null), context, getModel()) {
-            public String targetName;
-            public String uriName;
+           private RenameDocumentArguments renameDocumentArguments;
 
             @Override
             public String getSubMenu() {
@@ -99,16 +99,19 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 try {
                     final HippoNode node = getModelNode();
                     locale = CodecUtils.getLocaleFromNodeAndAncestors(node);
-                    uriName = node.getName();
-                    targetName = node.getDisplayName();
+                    renameDocumentArguments = new RenameDocumentArguments(
+                            node.getName(),
+                            node.getDisplayName()
+                    );
                 } catch (RepositoryException ex) {
-                    uriName = targetName = "";
+                    renameDocumentArguments = new RenameDocumentArguments();
                 }
 
-                IModel<StringCodec> codecModel = CodecUtils.getNodeNameCodecModel(context, locale);
-                return new RenameDocumentDialog(this,
+                return new RenameDocumentDialog(renameDocumentArguments,
                         new StringResourceModel("rename-title", DocumentWorkflowPlugin.this, null),
-                        codecModel);
+                        this,
+                        CodecUtils.getNodeNameCodecModel(context, locale),
+                        this.getModel());
             }
 
             private HippoNode getModelNode() throws RepositoryException {
@@ -117,6 +120,9 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
+                final String targetName = renameDocumentArguments.getTargetName();
+                final String uriName = renameDocumentArguments.getUriName();
+
                 if (Strings.isEmpty(targetName)) {
                     throw new WorkflowException("No name given for document node");
                 }

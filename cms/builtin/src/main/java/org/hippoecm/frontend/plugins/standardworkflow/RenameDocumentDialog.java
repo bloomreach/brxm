@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.ajax.AjaxChannel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
@@ -31,16 +31,19 @@ public class RenameDocumentDialog extends WorkflowDialog<RenameDocumentArguments
     private final NameUriField nameUriContainer;
     private final IModel<StringCodec> nodeNameCodecModel;
 
-    public RenameDocumentDialog(RenameDocumentArguments renameDocumentModel, IModel<String> title,
-                                IWorkflowInvoker invoker, IModel<StringCodec> nodeNameCodec, final WorkflowDescriptorModel workflowDescriptorModel) {
-        super(invoker, Model.of(renameDocumentModel), title);
+    public RenameDocumentDialog(final RenameDocumentArguments renameDocumentArguments,
+                                final IModel<String> title,
+                                final IWorkflowInvoker invoker,
+                                final IModel<StringCodec> nodeNameCodec,
+                                final WorkflowDescriptorModel workflowDescriptorModel) {
+        super(invoker, Model.of(renameDocumentArguments), title);
 
         this.nodeNameCodecModel = nodeNameCodec;
 
         setSize(DialogConstants.MEDIUM_AUTO);
 
-        final String originalUriName = renameDocumentModel.getUriName();
-        final String originalTargetName = renameDocumentModel.getTargetName();
+        final String originalUriName = renameDocumentArguments.getUriName();
+        final String originalTargetName = renameDocumentArguments.getTargetName();
 
         add(nameUriContainer = new NameUriField("name-url", nodeNameCodecModel, originalUriName, originalTargetName, true));
 
@@ -59,11 +62,5 @@ public class RenameDocumentDialog extends WorkflowDialog<RenameDocumentArguments
     protected void onDetach() {
         nodeNameCodecModel.detach();
         super.onDetach();
-    }
-
-    //TODO: This override method should be moved to the ancestor class in CMS7-9429
-    @Override
-    protected FeedbackPanel newFeedbackPanel(String id) {
-        return new FeedbackPanel(id);
     }
 }

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxChannel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
@@ -61,6 +62,11 @@ public class AddDocumentDialog extends WorkflowDialog<AddDocumentArguments> {
         final PropertyModel<String> prototypeModel = new PropertyModel<>(addDocumentModel, "prototype");
 
         add(nameUriContainer = new NameUriField("name-url", this.nodeNameCodecModel));
+
+        // use a dedicated channel for ajax calls in this dialog
+        final AjaxChannel ajaxChannel = new AjaxChannel(getMarkupId(), AjaxChannel.Type.ACTIVE);
+        setAjaxChannel(ajaxChannel);
+        nameUriContainer.setAjaxChannel(ajaxChannel);
 
         final IModel<String> documentType = new StringResourceModel("document-type", this, null);
         final Label typeLabel = new Label("typelabel", documentType);

@@ -250,7 +250,6 @@
     text-decoration: none;
   }
 
-
   .remove-link .hi {
     color: $danger;
   }
@@ -404,26 +403,18 @@
 }
 
 // Without setting height explicitly to 100% for all nested divs, no scrollbars will be rendered
+// N.B. do NOT set max-height here because it will kill the rendering performance in Chrome
 .browse-perspective-center-body,
 .browse-perspective-center-body .document,
 .browse-perspective-center-body .tabpanel,
 .browse-perspective-center-body .tabpanel form,
 .browse-perspective-center-body .tabpanel form > div,
 .browse-perspective-center-body .tabpanel form > div > div {
-  @include fixed-height(100%);
+  height: 100%;
 }
 
 .hippo-editor-field-value-container {
   line-height: normal;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.hippo-editor-field-subfield-controls a:active,
-.hippo-editor-field-subfield-controls a:hover {
-  text-decoration: none;
-}
-
-.hippo-editor-field-subfield-controls .remove-link .hi {
-  color: red;
 }
