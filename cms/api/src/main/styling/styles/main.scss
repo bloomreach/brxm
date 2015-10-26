@@ -27,11 +27,11 @@
 @import "_mixins";
 
 // Vendor styling
-@import "../../../../target/bower_components/open-sans-fontface/open-sans";
+@import "../../../../target/bower_components/open-sans-fontface/open-sans.scss";
 @import "../../../../target/bower_components/bootstrap-sass/assets/stylesheets/bootstrap/_buttons";
 @import "../../../../target/bower_components/bootstrap-sass/assets/stylesheets/bootstrap/_tables";
 @import "../../../../target/bower_components/bootstrap-sass/assets/stylesheets/bootstrap/_alerts";
-@import "../../../../target/bower_components/retina.js/src/_retina";
+@import "../../../../target/bower_components/retina.js/src/_retina.scss";
 
 // Core styling
 @import "_legacy";
