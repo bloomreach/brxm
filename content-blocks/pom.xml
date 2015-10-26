@@ -39,7 +39,7 @@
 
   <properties>
     <hippo.repository.version>3.0.0</hippo.repository.version>
-    <hippo.cms.version>3.1.0-translations-1.0-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>3.x-translations-1.0-SNAPSHOT</hippo.cms.version>
   </properties>
 
   <repositories>
