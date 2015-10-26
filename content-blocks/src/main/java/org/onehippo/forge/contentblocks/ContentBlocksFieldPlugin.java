@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.forge.contentblocks;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +30,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -80,7 +80,6 @@ import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.forge.contentblocks.model.ContentBlockComparer;
 import org.onehippo.forge.contentblocks.model.DropDownOption;
-import org.onehippo.forge.contentblocks.model.DropDownOptionModel;
 import org.onehippo.forge.contentblocks.sort.SortHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,26 +95,28 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     public static final String LINKS = "links";
     public static final String DROPDOWN = "dropdown";
 
-    private static final String CLUSTER_OPTIONS = "cluster.options";
-    private static final String MAX_ITEMS = "maxitems";
-    private static final int MAX_ITEMS_UNLIMITED = Integer.MAX_VALUE;
     private static final CssResourceReference CSS = new CssResourceReference(ContentBlocksFieldPlugin.class, "style.css");
+
+    private static final int MAX_ITEMS_UNLIMITED = Integer.MAX_VALUE;
+
+    private static final String MAX_ITEMS = "maxitems";
+    private static final String CLUSTER_OPTIONS = "cluster.options";
+    private static final String PROVIDER_COMPOUND = "cpItemsPath";
+    private static final String COMPOUND_LIST = "compoundList";
+    private static final String SHOW_COMPOUND_NAMES = "showCompoundNames";
 
     private static final String FRAGMENT_ID = "fragment";
     private static final String EDIT_FRAGMENT_ID = "edit-fragment";
     private static final String VIEW_FRAGMENT_ID = "view-fragment";
 
-    private static final String PROVIDER_COMPOUND = "cpItemsPath";
-    private final String providerCompoundType;
-
-    private static final String COMPOUND_LIST = "compoundList";
-    private List<String> compoundList = new ArrayList<>();
-
+    private static final String CONTENTPICKER_ADD = "contentpicker-add";
     private static final String ITEM_TITLE = "itemTitle";
-    private static final String SHOW_COMPOUND_NAMES = "showCompoundNames";
-    private final boolean showCompoundNames;
 
+    private final List<String> compoundList;
+    private final String providerCompoundType;
+    private final boolean showCompoundNames;
     private final int maxItems;
+
     private Link<CharSequence> focusMarker;
 
     // each validator service id for a started clusters must be unique
@@ -148,6 +149,34 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         add(required);
 
         add(new FieldHint("hint-panel", helper.getHintModel(this)));
+
+        final Component controls = createControls();
+        controls.setVisible(isEditMode());
+        add(controls);
+    }
+
+    private Component createControls() {
+        final WebMarkupContainer controls = new WebMarkupContainer("blockControls");
+        controls.add(createAddLinkLabel());
+
+        final String type = getPluginConfig().getString("contentPickerType", LINKS);
+        switch (type) {
+            case LINKS:
+                controls.add(new AddBlockWithLinks(CONTENTPICKER_ADD, this));
+                break;
+            case DROPDOWN:
+                controls.add(new AddBlockWithDropDown(CONTENTPICKER_ADD, this));
+                break;
+            default:
+                log.error("Invalid content picker type '{}'. Please make sure that property 'contentPickerType' in " +
+                        "plugin config is either '{}' or '{}'. Falling back to '{}' type.",
+                        type, LINKS, DROPDOWN, LINKS);
+                controls.add(new AddBlockWithLinks(CONTENTPICKER_ADD, this));
+                break;
+        }
+
+        controls.add(focusMarker = new FocusLink("focusMarker"));
+        return controls;
     }
 
     @Override
@@ -354,21 +383,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         item.add(fragment);
 
         addCompoundNameAsTitle(item, model, null/*oldModel*/);
-
-        fragment.add(createAddLinkLabel());
-
-        String type = getPluginConfig().getString("contentPickerType", LINKS);
-        if (LINKS.equals(type)) {
-            fragment.add(new AddBlockWithLinks("contentpicker-add", this));
-        } else if (DROPDOWN.equals(type)) {
-            fragment.add(new AddBlockWithDropDown("contentpicker-add", this));
-        } else {
-            log.error("Invalid content picker type '{}'. Please make sure that property 'contentPickerType' in plugin " +
-                    "config is either '{}' or '{}'. Falling back to '{}' type.", new String[]{type, LINKS, DROPDOWN, LINKS});
-            fragment.add(new AddBlockWithLinks("contentpicker-add", this));
-        }
-
-        fragment.add(focusMarker = new FocusLink("focusMarker"));
     }
     /**
     * @deprecated Deprecated in favor of {@link #populateViewItem(Item, JcrNodeModel)}
@@ -551,6 +565,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
                         // add (translated) name of compound as link label
                         final IModel<String> compoundName = new TypeTranslator(new JcrNodeTypeModel(compound)).getTypeName();
                         link.add(new Label("linkText", compoundName));
+                        link.add(HippoIcon.fromSprite("icon", Icon.PLUS));
                         item.add(link);
 
                         repeatingView.add(item);
@@ -585,6 +600,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
                         // add (translated) name of compound as link label
                         final IModel<String> cpItemFieldName = new TypeTranslator(new JcrNodeTypeModel(fieldDesc.getTypeDescriptor().getType())).getTypeName();
                         link.add(new Label("linkText", cpItemFieldName));
+                        link.add(HippoIcon.fromSprite("icon", Icon.PLUS));
                         item.add(link);
 
                         repeatingView.add(item);
@@ -609,77 +625,41 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
      */
     private class AddBlockWithDropDown extends Fragment {
 
+        private DropDownOption selectedOption = null;
+
         public AddBlockWithDropDown(final String id, MarkupContainer container) {
             super(id, "addItemsDropDown", container);
             setVisibilityAllowed(true);
 
-
             final Form<?> form = new Form("cpform");
             add(form);
 
-            final DropDownOptionModel dropDownOptionModel = new DropDownOptionModel();
-            final DropDownChoice dropDown;
-
-            // check if the compounds are configured as list
-            if (!compoundList.isEmpty()) {
-
-                final List<DropDownOption> options = getOptionsFromList();
-
-                // avoid first "Choose item" entry
-                if (options.size() > 0) {
-                    dropDownOptionModel.setItem(options.get(0));
-                }
-
-                dropDown = new DropDownChoice<>("itemsDropDown",
-                        new PropertyModel<>(dropDownOptionModel, "item"),
-                        options,
-                        new ChoiceRenderer<>("label", "value"));
-                form.add(dropDown);
-
-                add(new AjaxButton("addItem", form) {
-                    @Override
-                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                        if (dropDownOptionModel.getItem() != null && dropDownOptionModel.getItem().getValue() != null) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("Selecting value '{}' from dropdown, compoundList={}",
-                                    dropDownOptionModel.getItem().getValue(), compoundList);
-                            }
-                            addItem(dropDownOptionModel.getItem().getValue(), target);
-                        } else {
-                            log.debug("No value selected from dropdown, compoundList={}", compoundList);
-                        }
-                    }
-                });
+            final List<DropDownOption> options = getOptions();
+            // avoid first "Choose item" entry
+            if (options.size() > 0) {
+                selectedOption = options.get(0);
             }
-            else if (providerCompoundType != null ) {
-                final List<DropDownOption> options = getOptionsFromProvider();
 
-                // avoid first "Choose item" entry
-                if (options.size() > 0) {
-                    dropDownOptionModel.setItem(options.get(0));
-                }
+            final DropDownChoice dropDown = new DropDownChoice<>("itemsDropDown",
+                    new PropertyModel<>(this, "selectedOption"),
+                    options,
+                    new ChoiceRenderer<>("label", "value"));
+            form.add(dropDown);
 
-                dropDown = new DropDownChoice<>("itemsDropDown",
-                        new PropertyModel<>(dropDownOptionModel, "item"),
-                        options,
-                        new ChoiceRenderer<>("label", "value"));
-                form.add(dropDown);
+            final AjaxSubmitLink link = new AjaxSubmitLink("addItem", form) {
+                @Override
+                protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+                    final String selectedValue =  selectedOption != null ? selectedOption.getValue() : null;
 
-                add(new AjaxButton("addItem", form) {
-                    @Override
-                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                        if (dropDownOptionModel.getItem() != null && dropDownOptionModel.getItem().getValue() != null) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("Selecting value '{}' from dropdown, providerCompoundType={}",
-                                        dropDownOptionModel.getItem().getValue(), providerCompoundType);
-                            }
-                            addItem(dropDownOptionModel.getItem().getValue(), target);
-                        } else {
-                            log.debug("No value selected from dropdown, providerCompoundType={}", providerCompoundType);
-                        }
+                    log.debug("Selected value '{}' from dropdown", selectedValue);
+                    if (StringUtils.isNotEmpty(selectedValue)) {
+                        addItem(selectedValue, target);
                     }
-                });
-            }
+                }
+            };
+            link.add(HippoIcon.fromSprite("icon", Icon.PLUS));
+            link.add(new Label("linkText", ContentBlocksFieldPlugin.this.getString("addInputValue")));
+            add(link);
         }
 
         @Override
@@ -687,11 +667,15 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
             return isEditMode() && canAddItem();
         }
 
+        private List<DropDownOption> getOptions() {
+            return !compoundList.isEmpty() ? getOptionsFromList() :
+                    providerCompoundType != null ? getOptionsFromProvider() : Collections.emptyList();
+        }
+
         private List<DropDownOption> getOptionsFromProvider(){
+            log.debug("Getting content picker items from compoundType {}", providerCompoundType);
 
             final List<DropDownOption> options = new ArrayList<>();
-
-            log.debug("Getting content picker items from {}", providerCompoundType);
 
             try {
                 ITypeDescriptor cpItemTypeDescriptor = getTemplateEngine().getType(providerCompoundType);
@@ -699,13 +683,12 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
                 log.debug("The Content Blocks items are configured in {}", cpItemTypeDescriptor.getName());
 
                 Map<String, IFieldDescriptor> fields = cpItemTypeDescriptor.getFields();
-                for (final Map.Entry<String, IFieldDescriptor> entry : fields.entrySet()) {
-
-                    final IFieldDescriptor cpItemField = entry.getValue();
+                for (final IFieldDescriptor cpItemField: fields.values()) {
 
                     // value is actual JCR type, label is (translated) name of compound
-                    final String value = cpItemField.getTypeDescriptor().getName();
-                    final String label = new TypeTranslator(new JcrNodeTypeModel(cpItemField.getTypeDescriptor().getType())).getTypeName().getObject();
+                    final ITypeDescriptor typeDescriptor = cpItemField.getTypeDescriptor();
+                    final String value = typeDescriptor.getName();
+                    final String label = new TypeTranslator(new JcrNodeTypeModel(typeDescriptor.getType())).getTypeName().getObject();
 
                     options.add(new DropDownOption(value, label));
                 }
@@ -717,9 +700,9 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         }
 
         private List<DropDownOption> getOptionsFromList() {
+            log.debug("Getting content picker items from compoundList {}", compoundList);
 
             List<DropDownOption> options = new ArrayList<>();
-
             try {
                 for (final String compound : compoundList) {
                     final String typeName = getTemplateEngine().getType(compound).getName();
