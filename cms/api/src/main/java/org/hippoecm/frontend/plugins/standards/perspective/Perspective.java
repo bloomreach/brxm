@@ -42,8 +42,9 @@ import org.hippoecm.frontend.usagestatistics.UsageStatisticsHeaderItem;
 public abstract class Perspective extends RenderPlugin<Void> implements ITitleDecorator {
 
     // deprecated
-    private static final String TITLE_KEY_PROPERTY = "perspective.title";
-    private static final String TITLE_KEY = "perspective-title";
+    @Deprecated
+    public static final String TITLE = "perspective.title";
+    public static final String TITLE_KEY = "perspective-title";
 
     public static final String CLUSTER_NAME = "cluster.name";
     public static final String CLUSTER_PARAMETERS = "cluster.config";
@@ -72,10 +73,10 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
         this.eventId = eventId;
 
-        String titleKey = config.getString(TITLE_KEY_PROPERTY);
+        String titleKey = config.getString(TITLE);
         if (titleKey != null) {
             log.warn("Property {} on perspective configuration of perspective {} is deprecated, just use key 'perspective-title' " +
-                    "in the perspective's java resource bundle", TITLE_KEY_PROPERTY, getClass());
+                    "in the perspective's java resource bundle", TITLE, getClass());
         } else {
             titleKey = TITLE_KEY;
         }
