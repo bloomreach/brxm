@@ -32,7 +32,7 @@
 }
 
 .hippo-content-block-controls {
-  padding-top: 8px;
+  padding-top: 4px;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -53,10 +53,16 @@
   -webkit-align-items: center;
   -ms-flex-align: center;
   align-items: center;
+  flex-wrap: wrap;
 }
 
-.contentpicker-link:not(:first-child) {
-  margin-left: 4px;
+.contentpicker-dropdown,
+.contentpicker-link {
+  margin-top: 4px;
+}
+
+.contentpicker-link {
+  margin-right: 4px;
 }
 
 .contentpicker-dropdown select {
