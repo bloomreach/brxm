@@ -123,6 +123,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                             renameDocumentArguments.setLocalizedNames(node.getLocalizedNames());
                         } catch (RepositoryException ex) {
                             log.error("Could not retrieve workflow document", ex);
+                            renameDocumentArguments = new RenameDocumentArguments(StringUtils.EMPTY, StringUtils.EMPTY, null, null);
                         }
 
                         return newRenameDocumentDialog(renameDocumentArguments, this);
