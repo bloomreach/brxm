@@ -81,7 +81,7 @@
         originalDone.call(this, e, data);
         // this event is fired after each file uploading is sent
         var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload'),
-          numberOfFiles = that.options.getNumberOfFiles();
+          numberOfValidFiles = that.options.getNumberOfValidFiles();
 
         if (data.result.files && data.result.files.length) {
           that.numberOfCompletedFiles += data.result.files.length;
@@ -93,7 +93,7 @@
           }
         }
 
-        if (that.numberOfCompletedFiles >= numberOfFiles) {
+        if (that.numberOfCompletedFiles >= numberOfValidFiles) {
           that.options.onUploadDone(that.numberOfCompletedFiles, that.hasError);
         }
       },
@@ -120,8 +120,7 @@
      * Invoke this method to upload all selected files
      */
     uploadFiles: function () {
-      var filesList = this.options.filesContainer,
-        numberOfSentFiles = 0;
+      var filesList = this.options.filesContainer;
 
       if (filesList.children().length > this.options.maxNumberOfFiles) {
         this.element.find('.fileupload-process').text(this.options.i18n('maxNumberOfFiles')).show();
@@ -132,7 +131,8 @@
 
       $.each(filesList.children(), function (idx, template) {
         var data = $.data(template, 'data');
-        if (data && data.submit) {
+        // not submit invalid files
+        if (data && data.files && !data.files.error && data.submit) {
           data.submit();
         }
       });
