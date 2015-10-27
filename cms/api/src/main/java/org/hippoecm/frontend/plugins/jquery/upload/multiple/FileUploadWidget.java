@@ -147,9 +147,7 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
 
     @Override
     protected void onAfterUpload(final FileItem file, final FileUploadInfo fileUploadInfo) {
-        if (log.isDebugEnabled()) {
-            log.debug("Uploaded file: #{} {}", fileUploadInfo.getFileName());
-        }
+        log.debug("Uploaded file: {}", fileUploadInfo.getFileName());
     }
 
     @Override

@@ -33,17 +33,15 @@ public class AjaxCallbackUploadDoneBehavior extends AbstractDefaultAjaxBehavior 
     }
 
     /**
-     * Override this method to receive notification when uploading has done.
-     *  @param target
+     * Override this method to receive notification when uploading has been done.
+     * @param target
      * @param numberOfFiles
      * @param error
      */
     protected void onNotify(final AjaxRequestTarget target, final int numberOfFiles, final boolean error) {}
 
     /**
-     * @deprecated Deprecated by {@link #onNotify(AjaxRequestTarget, int, boolean)} since version 3.2.0 and will be
-     * removed from version 4.0.0.
-     *
+     * @deprecated Deprecated by {@link #onNotify(AjaxRequestTarget, int, boolean)} since version 3.2.0
      * @param numberOfFiles number of uploaded files
      */
     @Deprecated

@@ -136,8 +136,8 @@ public class FileUploadWidgetSettings implements IClusterable {
     }
 
     /**
-     * The url to notify on the event a file is added or removed from the list of uploading. This setting is used for
-     * multi-files uploads only.
+     * Sets the url to notify when the file selection list has been changed. This setting is used for
+     * multi-file uploads only.
      * @param selectionChangeNotificationUrl
      */
     public void setSelectionChangeNotificationUrl(final String selectionChangeNotificationUrl) {
@@ -145,9 +145,8 @@ public class FileUploadWidgetSettings implements IClusterable {
     }
 
     /**
-     * The url to notify on the event the file selection list was changed. This setting is used for multi-files
+     * @return the url to notify when the file selection list has been changed. This setting is used for multi-file
      * uploads only.
-     * @return
      */
     public String getSelectionChangeNotificationUrl() {
         return selectionChangeNotificationUrl;

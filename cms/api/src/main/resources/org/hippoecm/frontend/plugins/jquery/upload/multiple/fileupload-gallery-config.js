@@ -20,7 +20,7 @@
   'use strict';
 
   /**
-   * Notify the selection changed event to wicket back-end
+   * Notifies Wicket that the selection changed
    */
   function notifySelectionChange() {
     var url = '${selectionChangeUrl}';
@@ -30,9 +30,7 @@
   }
 
   /**
-   * Notify the 'uploadDone' event to wicket back-end after all files are uploaded
-   * @param numberOfFiles
-   * @param error
+   * Notifies Wicket that all files have been uploaded
    */
   function notifyUploadDone(numberOfFiles, error) {
     var url = '${fileUploadDoneUrl}';

@@ -114,8 +114,7 @@ public abstract class AbstractFileUploadWidget extends Panel {
     protected void onAfterUpload(final FileItem file, final FileUploadInfo fileUploadInfo) {}
 
     /**
-     * @deprecated This method was replaced by {@link #onFinished(AjaxRequestTarget, int, boolean)} since version 3.2.0
-     * and will be removed from version 4.0.0.
+     * @deprecated This method has been replaced by {@link #onFinished(AjaxRequestTarget, int, boolean)} since version 3.2.0
      */
     @Deprecated
     protected void onFinished() {}
