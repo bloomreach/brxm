@@ -20,7 +20,7 @@
   'use strict';
 
   /**
-   * Notify the selection changed event to the wicket back-end
+   * Notify the selection changed event to wicket back-end
    */
   function notifySelectionChange() {
     var url = '${selectionChangeUrl}';
@@ -29,10 +29,22 @@
     });
   }
 
+  /**
+   * Notify the 'uploadDone' event to wicket back-end after all files are uploaded
+   * @param numberOfFiles
+   * @param error
+   */
+  function notifyUploadDone(numberOfFiles, error) {
+    var url = '${fileUploadDoneUrl}';
+    Wicket.Ajax.get( {
+      u: url + "&numberOfFiles=" + numberOfFiles + "&error=" + error
+    });
+  }
+
   $('#${componentMarkupId}').fileupload({
     autoUpload: false,
     url: '${url}',
-    uploadDoneUrl: '${fileUploadDoneUrl}',
+    onUploadDone: notifyUploadDone,
     onSelectionChange: notifySelectionChange,
     maxNumberOfFiles: ${maxNumberOfFiles},
     maxFileSize: ${max.file.size},

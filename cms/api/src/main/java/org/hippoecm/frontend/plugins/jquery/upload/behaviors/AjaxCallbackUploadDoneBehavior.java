@@ -16,79 +16,36 @@
 
 package org.hippoecm.frontend.plugins.jquery.upload.behaviors;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.wicket.ajax.json.JSONException;
-import org.apache.wicket.ajax.json.JSONObject;
-import org.apache.wicket.behavior.AbstractAjaxBehavior;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.handler.TextRequestHandler;
-import org.hippoecm.frontend.plugins.jquery.upload.FileUploadWidgetSettings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public abstract class AjaxCallbackUploadDoneBehavior extends AbstractAjaxBehavior {
-    private static final Logger log = LoggerFactory.getLogger(AjaxCallbackUploadDoneBehavior.class);
-
-    public static final String APPLICATION_JSON = "application/json";
-
-    private enum ResponseType {
-        OK,
-        FAILED
-    }
-
-    private final FileUploadWidgetSettings settings;
-
-    public AjaxCallbackUploadDoneBehavior(final FileUploadWidgetSettings settings) {
-        this.settings = settings;
-    }
-
-    /**
-     * Handle notification from the file upload dialog. The notification contains number of files to be uploaded
-     * in the following JSON format:
-     * {
-     *     total: #numberOfFiles
-     * }
-     *
-     * The response is either of following:
-     * {
-     *     status: 'OK'|'FAILED'
-     * }
-     */
+public class AjaxCallbackUploadDoneBehavior extends AbstractDefaultAjaxBehavior {
     @Override
-    public void onRequest() {
-        HttpServletRequest request = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
-        try {
-            // The 'total' key contains expected #files uploaded.
-            JSONObject json = new JSONObject(IOUtils.toString(request.getReader()));
-            int numberOfFiles = json.getInt("total");
-            if (numberOfFiles < 0 || numberOfFiles > settings.getMaxNumberOfFiles()) {
-                log.error("Invalid notification parameter from jquery file upload dialog: numberOfFiles={}", numberOfFiles);
-                response(ResponseType.FAILED);
-                return;
-            }
-            log.debug("Number of files to be uploaded:{}", numberOfFiles);
-            response(ResponseType.OK);
-            onNotify(numberOfFiles);
-        } catch (IOException | JSONException e) {
-            log.error("Failed to process the close notification from jquery file upload dialog", e);
-            response(ResponseType.FAILED);
-        }
+    protected void respond(final AjaxRequestTarget target) {
+        final IRequestParameters requestParameters = RequestCycle.get().getRequest().getRequestParameters();
+        final int numberOfUploadedFiles = requestParameters.getParameterValue("numberOfFiles").toInt(0);
+        final boolean error = requestParameters.getParameterValue("error").toBoolean(false);
+
+        onNotify(target, numberOfUploadedFiles, error);
+        onNotify(numberOfUploadedFiles);
     }
 
     /**
-     * Override this method to receive notification when uploading has done
+     * Override this method to receive notification when uploading has done.
+     *  @param target
+     * @param numberOfFiles
+     * @param error
+     */
+    protected void onNotify(final AjaxRequestTarget target, final int numberOfFiles, final boolean error) {}
+
+    /**
+     * @deprecated Deprecated by {@link #onNotify(AjaxRequestTarget, int, boolean)} since version 3.2.0 and will be
+     * removed from version 4.0.0.
+     *
      * @param numberOfFiles number of uploaded files
      */
-    protected abstract void onNotify(final int numberOfFiles);
-
-    private void response(final ResponseType responseType) {
-        String content = String.format("{\"status\":\"%s\"}", responseType.name());
-        TextRequestHandler textRequestHandler = new
-                TextRequestHandler(APPLICATION_JSON, "UTF-8", content);
-        RequestCycle.get().scheduleRequestHandlerAfterCurrent(textRequestHandler);
-    }
+    @Deprecated
+    protected void onNotify(final int numberOfFiles) {}
 }

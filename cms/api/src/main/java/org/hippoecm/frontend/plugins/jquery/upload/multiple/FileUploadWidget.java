@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.IBehaviorListener;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
@@ -49,12 +48,9 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
 
     private static final String UPLOADING_SCRIPT_TEMPLATE = "$('#${componentMarkupId}').data('blueimp-fileupload').uploadFiles()";
 
-    private long fileUploadCounter = 0;
-    private int nNumberOfFiles = 0;
-
     private FileUploadBar fileUploadBar;
 
-    private AbstractAjaxBehavior ajaxCallbackUploadDoneBehavior;
+    private AbstractDefaultAjaxBehavior ajaxCallbackUploadDoneBehavior;
     private AjaxFileUploadBehavior ajaxFileUploadBehavior;
     private AbstractDefaultAjaxBehavior ajaxCallbackSelectionChangeBehavior;
 
@@ -102,16 +98,12 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
 
         });
 
-        add(ajaxCallbackUploadDoneBehavior = new AjaxCallbackUploadDoneBehavior(settings) {
+        add(ajaxCallbackUploadDoneBehavior = new AjaxCallbackUploadDoneBehavior() {
             @Override
-            protected void onNotify(final int numberOfUploadedFiles) {
-                FileUploadWidget.this.nNumberOfFiles = numberOfUploadedFiles;
-                if (fileUploadCounter >= nNumberOfFiles) {
-                    // Received all files
-                    FileUploadWidget.this.onFinished();
-                } else {
-                    log.debug("Haven't received all files yet: {}/{}", fileUploadCounter, numberOfUploadedFiles);
-                }
+            protected void onNotify(final AjaxRequestTarget target, final int numberOfFiles, final boolean error) {
+                FileUploadWidget.this.onFinished(target, numberOfFiles, error);
+                // backward compatible call
+                FileUploadWidget.this.onFinished();
             }
         });
 
@@ -139,17 +131,6 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
         add(downloadTemplate);
     }
 
-    /**
-     * Call this method every time an uploading file has been processed
-     */
-    private void increaseFileUploadingCounter() {
-        this.fileUploadCounter++;
-        // if nNumberOfFiles <= 0 means that the notification message from client has not been sent yet
-        if (nNumberOfFiles > 0 && fileUploadCounter >= nNumberOfFiles) {
-            log.debug("Received all files");
-            onFinished();
-        }
-    }
     @Override
     protected void onBeforeRender() {
         // Obtain callback urls used for uploading files & notification
@@ -167,9 +148,8 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
     @Override
     protected void onAfterUpload(final FileItem file, final FileUploadInfo fileUploadInfo) {
         if (log.isDebugEnabled()) {
-            log.debug("Uploaded file: #{} {}", fileUploadCounter, fileUploadInfo.getFileName());
+            log.debug("Uploaded file: #{} {}", fileUploadInfo.getFileName());
         }
-        increaseFileUploadingCounter();
     }
 
     @Override

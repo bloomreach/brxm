@@ -81,21 +81,20 @@
         originalDone.call(this, e, data);
         // this event is fired after each file uploading is sent
         var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload'),
-          filesList = that.options.filesContainer,
-          numberOfFiles = filesList.children().length;
+          numberOfFiles = that.options.getNumberOfFiles();
 
         if (data.result.files && data.result.files.length) {
           that.numberOfCompletedFiles += data.result.files.length;
-        }
-        for (var index = 0; index < data.result.files.length && !that.hasError; index++) {
-          if (data.result.files[index] && data.result.files[index].error) {
-            that.hasError = true;
+
+          if (!that.hasError) {
+            that.hasError = data.result.files.some(function (file) {
+              return !!file.error;
+            });
           }
         }
 
-        // close active window if uploaded all files and no error
-        if (that.numberOfCompletedFiles === numberOfFiles && !that.hasError) {
-          Wicket.Window.get().close();
+        if (that.numberOfCompletedFiles >= numberOfFiles) {
+          that.options.onUploadDone(that.numberOfCompletedFiles, that.hasError);
         }
       }
     },
@@ -126,36 +125,8 @@
         var data = $.data(template, 'data');
         if (data && data.submit) {
           data.submit();
-          numberOfSentFiles++;
         }
       });
-
-      this.notifyUpload(numberOfSentFiles);
-    },
-
-    /**
-     * Notify server on number of uploading files. The message format:
-     * { 'total' : numberOfFiles }
-     *
-     * Expected to receive:
-     * { 'status' : "OK" | "FAILED" }
-     *
-     * @param numberOfFiles
-     */
-    notifyUpload: function (numberOfFiles) {
-      var notificationData = {};
-      notificationData.total = numberOfFiles;
-
-      if (this.options.uploadDoneUrl) {
-        $.ajax({
-          url: this.options.uploadDoneUrl,
-          type: 'POST',
-          contentType: 'application/json; charset=utf-8',
-          cache: false,
-          dataType: 'json',
-          data: JSON.stringify(notificationData)
-        });
-      }
     }
   });
 }));

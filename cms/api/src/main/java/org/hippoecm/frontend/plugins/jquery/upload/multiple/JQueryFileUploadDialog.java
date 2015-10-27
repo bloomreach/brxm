@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.upload.FileUploadException;
@@ -69,6 +70,12 @@ public abstract class JQueryFileUploadDialog extends Dialog {
             protected String getOnClickScript(){
                 return fileUploadWidget.getUploadScript();
             }
+
+            @Override
+            protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+                setEnabled(false);
+                target.add(this);
+            }
         };
         uploadButton.setEnabled(false);
         uploadButton.add(new InputBehavior(new KeyType[]{KeyType.Enter}, EventType.click));
@@ -91,8 +98,12 @@ public abstract class JQueryFileUploadDialog extends Dialog {
             }
 
             @Override
-            protected void onFinished() {
+            protected void onFinished(final AjaxRequestTarget target, final int numberOfFiles, final boolean error) {
                 JQueryFileUploadDialog.this.onFinished();
+
+                if (!error) {
+                    JQueryFileUploadDialog.this.closeDialog();
+                }
             }
 
             @Override
