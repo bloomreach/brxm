@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,29 +24,37 @@ public class QueryImpl implements Query, QueryNode {
 
     private final QueryImpl parent;
 
+    private final boolean returnParentNode;
     private final int offset;
     private final int limit;
 
     QueryImpl(QueryImpl parent) {
         this.parent = parent;
+        this.returnParentNode = false;
         this.offset = -1;
         this.limit = -1;
     }
 
-    QueryImpl(QueryImpl parent, int offset, int limit) {
+    QueryImpl(QueryImpl parent, boolean returnParentNode, int offset, int limit) {
         this.parent = parent;
+        this.returnParentNode = returnParentNode;
         this.offset = offset;
         this.limit = limit;
     }
 
     @Override
+    public QueryImpl returnParentNode() {
+        return new QueryImpl(this, true, this.offset, this.limit);
+    }
+
+    @Override
     public QueryImpl offsetBy(final int offset) {
-        return new QueryImpl(this, offset, this.limit);
+        return new QueryImpl(this, this.returnParentNode, offset, this.limit);
     }
 
     @Override
     public QueryImpl limitTo(final int limit) {
-        return new QueryImpl(this, this.offset, limit);
+        return new QueryImpl(this, this.returnParentNode, this.offset, limit);
     }
 
     @Override
@@ -68,6 +76,11 @@ public class QueryImpl implements Query, QueryNode {
 
     protected final QueryImpl getParent() {
         return parent;
+    }
+
+    @Override
+    public final boolean getReturnParentNode() {
+        return returnParentNode;
     }
 
     @Override

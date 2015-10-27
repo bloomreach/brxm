@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ public class JcrQueryBuilder {
 
     static final int DEFAULT_LIMIT = 1000;
 
+    private boolean returnParentNode = false;
     private int limit = DEFAULT_LIMIT;
     private int offset = 0;
 
@@ -152,6 +153,10 @@ public class JcrQueryBuilder {
             }
         }
 
+        if (this.returnParentNode) {
+            query.append("/..");
+        }
+
         if (orderByList.size() > 0) {
             query.append(" order by ");
             boolean first = true;
@@ -195,6 +200,14 @@ public class JcrQueryBuilder {
 
     public void addSelect(final String property) {
         this.selected.add(property);
+    }
+
+    public boolean getReturnParentNode() {
+        return returnParentNode;
+    }
+
+    public void setReturnParentNode() {
+        this.returnParentNode = true;
     }
 
     public int getOffset() {

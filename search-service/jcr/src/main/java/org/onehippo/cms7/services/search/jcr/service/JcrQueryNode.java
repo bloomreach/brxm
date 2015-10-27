@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,6 +71,25 @@ public class JcrQueryNode extends JcrConstraintNode {
             }
         } catch (RepositoryException re) {
             log.warn("Unable to clean up query node");
+        }
+    }
+
+    public boolean getReturnParentNode() {
+        try {
+            if (node.hasProperty(HippoSearchNodeType.RETURNPARENTNODE)) {
+                return node.getProperty(HippoSearchNodeType.RETURNPARENTNODE).getBoolean();
+            }
+        } catch (RepositoryException re) {
+            log.warn("Unable to read returnparentnode", re);
+        }
+        return false;
+    }
+
+    public void setReturnParentNode(boolean value) {
+        try {
+            node.setProperty(HippoSearchNodeType.RETURNPARENTNODE, value);
+        } catch (RepositoryException re) {
+            log.warn("Unable to store returnparentnode", re);
         }
     }
 

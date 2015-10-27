@@ -15,10 +15,10 @@
  */
 package org.onehippo.cms7.services.search.jcr.query;
 
-
 import org.junit.Test;
 import org.onehippo.cms7.services.search.commons.query.InitialQueryImpl;
 import org.onehippo.cms7.services.search.commons.query.QueryImpl;
+import org.onehippo.cms7.services.search.jcr.TestUtils;
 import org.onehippo.cms7.services.search.query.QueryBuilder;
 import org.onehippo.cms7.services.search.query.QueryUtils;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -30,22 +30,22 @@ public class TestJcrQueryBuilder extends RepositoryTestCase {
     public final static String COMMON_SCOPE = "(@hippo:paths='cafebabe-cafe-babe-cafe-babecafebabe')";
     public final static String COMMON_ORDERBY = " order by @jcr:score descending";
 
+    public void testEmptyQuery() throws Exception {
+        InitialQueryImpl query = new InitialQueryImpl();
+
+        String queryAsString = TestUtils.getQueryAsString(query, session);
+
+        assertEquals("//*" + COMMON_ORDERBY, queryAsString);
+    }
 
     @Test
     public void testNoFilter() throws Exception {
         InitialQueryImpl initialQuery = new InitialQueryImpl();
         QueryImpl query = initialQuery.from("/");
 
-        String queryAsString = getQueryAsString(query);
+        String queryAsString = TestUtils.getQueryAsString(query, session);
 
         assertEquals("//*[" + COMMON_SCOPE + "]" + COMMON_ORDERBY, queryAsString);
-    }
-
-    private String getQueryAsString(final QueryImpl query) {
-        final JcrQueryBuilder builder = new JcrQueryBuilder(session);
-        JcrQueryVisitor visitor = new JcrQueryVisitor(builder, session);
-        query.accept(visitor);
-        return builder.getQueryString();
     }
 
     @Test
@@ -57,7 +57,7 @@ public class TestJcrQueryBuilder extends RepositoryTestCase {
             }
         }.build();
 
-        String queryAsString = getQueryAsString(query);
+        String queryAsString = TestUtils.getQueryAsString(query, session);
         assertEquals("//*[" + COMMON_SCOPE + " and (@a = 'a' and (@b = 'b'))]" + COMMON_ORDERBY, queryAsString);
     }
 
@@ -78,7 +78,7 @@ public class TestJcrQueryBuilder extends RepositoryTestCase {
             }
         }.build();
 
-        String queryAsString = getQueryAsString(query);
+        String queryAsString = TestUtils.getQueryAsString(query, session);
         //*[(@hippo:paths='cafebabe-cafe-babe-cafe-babecafebabe') and ((jcr:contains(.,'contains') or jcr:contains(.,'contains*')) and (@a = 'a') and (@b = 'b') and (@c = 'c'))] order by @jcr:score descending
         assertEquals("//*[" + COMMON_SCOPE + " and ((jcr:contains(.,'contains') or jcr:contains(.,'contains*')) and (@a = 'a') and (@b = 'b') and (@c = 'c'))]" + COMMON_ORDERBY, queryAsString);
     }
@@ -100,7 +100,7 @@ public class TestJcrQueryBuilder extends RepositoryTestCase {
             }
         }.build();
 
-        String queryAsString = getQueryAsString(query);
+        String queryAsString = TestUtils.getQueryAsString(query, session);
         assertEquals("//*[" + COMMON_SCOPE + " and ((jcr:contains(.,'contains') or jcr:contains(.,'contains*')) or (@a = 'a') or (@b = 'b') or (@c = 'c'))]" + COMMON_ORDERBY, queryAsString);
     }
 
@@ -113,7 +113,7 @@ public class TestJcrQueryBuilder extends RepositoryTestCase {
             }
         }.build();
 
-        String queryAsString = getQueryAsString(query);
+        String queryAsString = TestUtils.getQueryAsString(query, session);
         assertEquals("//*[" + COMMON_SCOPE + "] order by @a ascending", queryAsString);
     }
 
@@ -126,7 +126,7 @@ public class TestJcrQueryBuilder extends RepositoryTestCase {
             }
         }.build();
 
-        String queryAsString = getQueryAsString(query);
+        String queryAsString = TestUtils.getQueryAsString(query, session);
         assertEquals("//*[" + COMMON_SCOPE + "] order by @a descending", queryAsString);
     }
 
@@ -139,9 +139,10 @@ public class TestJcrQueryBuilder extends RepositoryTestCase {
             }
         }.build();
 
-        String queryAsString = getQueryAsString(query);
+        String queryAsString = TestUtils.getQueryAsString(query, session);
         assertEquals("//*[" + COMMON_SCOPE + " and (@a = '')]" + COMMON_ORDERBY, queryAsString);
     }
+
     @Test
      public void test_empty_value_for_TextContraint_via_QueryUtils() throws Exception {
         QueryImpl query = new QueryBuilder() {
@@ -151,7 +152,7 @@ public class TestJcrQueryBuilder extends RepositoryTestCase {
             }
         }.build();
 
-        String queryAsString = getQueryAsString(query);
+        String queryAsString = TestUtils.getQueryAsString(query, session);
         assertEquals("//*[" + COMMON_SCOPE + " and (@a = '')]" + COMMON_ORDERBY, queryAsString);
     }
 
@@ -164,8 +165,26 @@ public class TestJcrQueryBuilder extends RepositoryTestCase {
             }
         }.build();
 
-        String queryAsString = getQueryAsString(query);
+        String queryAsString = TestUtils.getQueryAsString(query, session);
         assertEquals("//*[" + COMMON_SCOPE + " and (@a = '''' and (@b = ''''))]" + COMMON_ORDERBY, queryAsString);
-
     }
+
+    @Test
+    public void test_adding_return_parent_node_to_empty_query() {
+        InitialQueryImpl initialQuery = new InitialQueryImpl();
+        QueryImpl query = initialQuery.returnParentNode();
+
+        String queryAsString = TestUtils.getQueryAsString(query, session);
+        assertEquals("//*/.." + COMMON_ORDERBY, queryAsString);
+    }
+
+    @Test
+    public void test_adding_subnode_to_query_with_constrains() {
+        InitialQueryImpl initialQuery = new InitialQueryImpl();
+        QueryImpl query = initialQuery.from("/").returnParentNode();
+
+        String queryAsString = TestUtils.getQueryAsString(query, session);
+        assertEquals("//*[" + COMMON_SCOPE + "]/.." + COMMON_ORDERBY, queryAsString);
+    }
+
 }

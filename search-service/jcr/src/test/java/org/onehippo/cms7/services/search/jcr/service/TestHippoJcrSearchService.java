@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,10 @@ import javax.jcr.RepositoryException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.search.commons.query.QueryImpl;
 import org.onehippo.cms7.services.search.document.SearchDocument;
 import org.onehippo.cms7.services.search.jcr.HippoSearchNodeType;
+import org.onehippo.cms7.services.search.jcr.TestUtils;
 import org.onehippo.cms7.services.search.query.InitialQuery;
 import org.onehippo.cms7.services.search.query.Query;
 import org.onehippo.cms7.services.search.query.constraint.DateConstraint;
@@ -112,16 +114,23 @@ public class TestHippoJcrSearchService extends RepositoryTestCase {
         testPersistRetrieveQuery(initialQuery.where(integer("count").from(5).andTo(10)));
         testPersistRetrieveQuery(initialQuery.where(date("publication").from(new Date(), DateConstraint.Resolution.HOUR)));
         testPersistRetrieveQuery(initialQuery.where(date("publication").from(new Date(), DateConstraint.Resolution.EXACT)));
+        testPersistRetrieveQuery(initialQuery.returnParentNode());
     }
 
     private void testPersistRetrieveQuery(Query searchQuery) throws Exception {
         Node node = createQueryNode();
         try {
+            QueryImpl searchQueryImpl = (QueryImpl) searchQuery;
             QueryNode queryNode = searchService.asQueryNode(searchQuery);
             searchService.persist(node.getIdentifier(), queryNode);
 
             QueryNode retrieved = searchService.retrieve(node.getIdentifier());
+            QueryImpl retrievedImpl = (QueryImpl) retrieved;
+
             assertEquals(queryNode.toString(), retrieved.toString());
+            assertEquals(
+                    TestUtils.getQueryAsString(searchQueryImpl, session),
+                    TestUtils.getQueryAsString(retrievedImpl, session));
         } finally {
             node.remove();
         }
