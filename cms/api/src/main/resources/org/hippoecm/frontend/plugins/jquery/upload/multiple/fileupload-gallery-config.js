@@ -25,7 +25,7 @@
   function notifySelectionChange() {
     var url = '${selectionChangeUrl}';
     Wicket.Ajax.get( {
-      u: url + "&numberOfFiles=" + this.getNumberOfFiles()
+      u: url + "&numberOfValidFiles=" + this.getNumberOfValidFiles()
     });
   }
 

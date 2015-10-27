@@ -107,8 +107,8 @@ public abstract class JQueryFileUploadDialog extends Dialog {
             }
 
             @Override
-            protected void onSelectionChange(final AjaxRequestTarget target, final int numberOfFiles) {
-                uploadButton.setEnabled(numberOfFiles > 0);
+            protected void onSelectionChange(final AjaxRequestTarget target, final int numberOfValidFiles) {
+                uploadButton.setEnabled(numberOfValidFiles > 0);
                 target.add(uploadButton);
             }
         };

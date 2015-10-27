@@ -96,6 +96,15 @@
         if (that.numberOfCompletedFiles >= numberOfFiles) {
           that.options.onUploadDone(that.numberOfCompletedFiles, that.hasError);
         }
+      },
+
+      /**
+       * Return number of valid files to upload
+       * @returns {number}
+       */
+      getNumberOfValidFiles: function () {
+        var selectedFiles = this.filesContainer.children();
+        return selectedFiles.length - selectedFiles.find('.error').not(':empty').length;
       }
     },
 

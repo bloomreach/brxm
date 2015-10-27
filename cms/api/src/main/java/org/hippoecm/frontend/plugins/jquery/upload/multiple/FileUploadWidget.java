@@ -110,8 +110,8 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
         add(ajaxCallbackSelectionChangeBehavior = new AbstractDefaultAjaxBehavior() {
             @Override
             protected void respond(final AjaxRequestTarget target) {
-                final int numberOfFiles = RequestCycle.get().getRequest().getRequestParameters().getParameterValue("numberOfFiles").toInt();
-                FileUploadWidget.this.onSelectionChange(target, numberOfFiles);
+                final int numberOfValidFiles = RequestCycle.get().getRequest().getRequestParameters().getParameterValue("numberOfValidFiles").toInt();
+                FileUploadWidget.this.onSelectionChange(target, numberOfValidFiles);
             }
         });
 
