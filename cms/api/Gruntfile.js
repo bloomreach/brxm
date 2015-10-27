@@ -220,9 +220,9 @@ module.exports = function (grunt) {
           {
             expand: true,
             nonull: true,
-            cwd: '<%= build.bower %>/jquery-file-upload/img/',
-            src: ['*.gif'],
-            dest: '<%= build.images %>'
+            cwd: '<%= build.bower %>/jquery-file-upload/',
+            src: ['img/*'],
+            dest: '<%= build.skin %>'
           }
         ]
       }
