@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-cms</artifactId>
-  <version>3.0.0-restyling-psp1-SNAPSHOT</version>
+  <version>3.2.0-restyling-psp1-SNAPSHOT</version>
 
   <inceptionYear>2007</inceptionYear>
 
