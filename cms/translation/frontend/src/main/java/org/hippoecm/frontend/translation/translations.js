@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 if (Hippo === undefined) {
-    Hippo = {};
+  Hippo = {};
 }
 
 Hippo.Translation = {};
@@ -25,79 +25,79 @@ Hippo.Translation = {};
  */
 Hippo.Translation.PathRenderer = Ext.extend(Ext.util.Observable, {
 
-    constructor: function(config) {
-        this.locales = config.locales;
-        this.resources = config.resources;
-        Hippo.Translation.PathRenderer.superclass.constructor.call(config);
-    },
+  constructor: function (config) {
+    this.locales = config.locales;
+    this.resources = config.resources;
+    Hippo.Translation.PathRenderer.superclass.constructor.call(config);
+  },
 
-    renderPath: function(path) {
-        var text, locale, i, len, iconClass, countryClass, candidate;
+  renderPath: function (path) {
+    var text, locale, i, len, iconClass, countryClass, candidate;
 
-        text = '<div style="float: left;">';
-        locale = null;
+    text = '<div style="float: left;">';
+    locale = null;
 
-        for (i = 1, len = path.length; i < len; i++) {
-            if (i !== 1) {
-                text += ' / ';
-            }
+    for (i = 1, len = path.length; i < len; i++) {
+      if (i !== 1) {
+        text += ' / ';
+      }
 
-            iconClass = 'hippo-translated-folder-without-flag';
-            countryClass = '';
-            if ((locale === null || locale === undefined) && path[i].lang !== undefined) {
-                candidate = this.locales[path[i].lang];
-                if (candidate !== null && candidate !== undefined) {
-                    locale = candidate;
-                    iconClass = 'hippo-translated-folder-with-flag';
-                    countryClass = 'hippo-translation-country-' + locale.country;
-                }
-            }
-
-            text += '<span class="hi-stack hi-tiny ' + iconClass + '">'
-                    + '<svg class="hi hi-tiny hi-folder"><use xlink:href="#hi-folder"></use></svg>'
-                    + '<span class="hi hi-tiny hippo-translation-country ' + countryClass + '"></span>'
-                    + '</span> ';
-            text += path[i].name;
+      iconClass = 'hippo-translated-folder-without-flag';
+      countryClass = '';
+      if ((locale === null || locale === undefined) && path[i].lang !== undefined) {
+        candidate = this.locales[path[i].lang];
+        if (candidate !== null && candidate !== undefined) {
+          locale = candidate;
+          iconClass = 'hippo-translated-folder-with-flag';
+          countryClass = 'hippo-translation-country-' + locale.country;
         }
-        text += '</div>';
-        if (locale !== null && locale !== undefined) {
-            text += '<div style="float: left;" class="hippo-translation-language">'
-                    + this.resources.language + ': ' + locale.name
-                    + '</div>';
-        }
-        return text;
+      }
+
+      text += '<span class="hi-stack hi-tiny ' + iconClass + '">'
+        + '<svg class="hi hi-tiny hi-folder"><use xlink:href="#hi-folder"></use></svg>'
+        + '<span class="hi hi-tiny hippo-translation-country ' + countryClass + '"></span>'
+        + '</span> ';
+      text += path[i].name;
     }
+    text += '</div>';
+    if (locale !== null && locale !== undefined) {
+      text += '<div style="float: left;" class="hippo-translation-language">'
+        + this.resources.language + ': ' + locale.name
+        + '</div>';
+    }
+    return text;
+  }
 });
 
-Hippo.Translation.ImageService = function(imageServiceUrl) {
-    this.service = imageServiceUrl;
+Hippo.Translation.ImageService = function (imageServiceUrl) {
+  this.service = imageServiceUrl;
 };
 
 Hippo.Translation.ImageService.prototype = {
-    getImage: function(lang) {
-        return this.service + "&lang=" + lang;
-    }
+  getImage: function (lang) {
+    return this.service + "&lang=" + lang;
+  }
 };
 
 Hippo.Translation.SiblingLocator = Ext.extend(Ext.util.Observable, {
 
-    constructor: function(config) {
-        this.dataUrl = config.dataUrl;
-        Hippo.Translation.SiblingLocator.superclass.constructor.call(this, config);
-    },
+  constructor: function (config) {
+    this.dataUrl = config.dataUrl;
+    Hippo.Translation.SiblingLocator.superclass.constructor.call(this, config);
+  },
 
-    getSiblings: function(t9Id, callback) {
-        Ext.Ajax.request({
-            url: this.dataUrl,
-            params: {
-                t9id: t9Id
-            },
-            success: function(response) {
-                var children = Ext.util.JSON.decode(response.responseText);
-                callback.call(this, children);
-            }
-        });
-    }
+  getSiblings: function (t9Id, callback) {
+    Ext.Ajax.request({
+      url: this.dataUrl,
+      params: {
+        t9id: t9Id
+      },
+      success: function (response) {
+        var children = Ext.util.JSON.decode(response.responseText);
+        callback.call(this, children);
+      }
+    });
+  }
 
 });
 
