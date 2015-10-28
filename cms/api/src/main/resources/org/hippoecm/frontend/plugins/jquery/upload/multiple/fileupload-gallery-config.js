@@ -40,6 +40,11 @@
   }
 
   $('#${componentMarkupId}').fileupload({
+    messages: {
+      maxNumberOfFiles: '${max.number.of.files.exceeded}',
+      maxFileSize: "${max.filesize.message}",
+      acceptFileTypes: "${invalid.extension.message}"
+    },
     autoUpload: false,
     url: '${url}',
     onUploadDone: notifyUploadDone,
