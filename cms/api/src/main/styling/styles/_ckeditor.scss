@@ -16,9 +16,9 @@
 
   background: url("#{$images}/loading.gif") no-repeat center;
 
-  // hide text in the textarea
+  // hide the textarea
   .hippo-ckeditor-textarea {
-    opacity: 0;
+    display: none;
   }
 }
 
