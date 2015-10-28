@@ -54,27 +54,20 @@
     padding: 16px;
 
     .goto-block {
-      text-decoration: none;
-      padding: 10px 16px 10px 16px;
-      width: 66%;
-      background-color: $light-shade;
+      color: $brand-primary;
+      padding-bottom: 8px;
+      border-bottom: 1px solid $light-shade;
       margin-bottom: 8px;
       display: flex;
       align-items: center;
 
-      &:hover {
-        background-color: $lighter-shade;
-      }
-
       svg {
-        color: $text-color;
         flex-shrink: 0;
       }
 
       span {
         padding-left: 8px;
         font-size: 14px;
-        color: $text-color;
       }
     }
 
