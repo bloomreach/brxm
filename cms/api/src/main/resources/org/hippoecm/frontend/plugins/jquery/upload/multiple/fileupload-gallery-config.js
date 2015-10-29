@@ -41,6 +41,7 @@
 
   $('#${componentMarkupId}').fileupload({
     messages: {
+      maxNumberOfFilesWidget: '${max.number.of.files.exceeded.widget}',
       maxNumberOfFiles: '${max.number.of.files.exceeded}',
       maxFileSize: "${max.filesize.message}",
       acceptFileTypes: "${invalid.extension.message}"
@@ -51,7 +52,7 @@
     onSelectionChange: notifySelectionChange,
     maxNumberOfFiles: ${maxNumberOfFiles},
     maxFileSize: ${max.file.size},
-    acceptFileTypes: /(\.)(${acceptFileTypes})$/i,
+    acceptFileTypes: /(\.)${acceptFileTypes}$/i,
     dataType: 'json',
     previewMaxWidth: 32,
     previewMaxHeight: 32

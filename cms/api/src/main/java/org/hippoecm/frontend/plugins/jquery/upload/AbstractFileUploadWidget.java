@@ -129,10 +129,4 @@ public abstract class AbstractFileUploadWidget extends Panel {
     protected void onFinished(final AjaxRequestTarget target, final int numberOfFiles, final boolean error) {
     }
 
-    /**
-     * The event is fired when the file selection list was changed
-     * @param target
-     * @param numberOfValidFiles the number of valid files in the selection list
-     */
-    protected void onSelectionChange(final AjaxRequestTarget target, final int numberOfValidFiles) {}
 }

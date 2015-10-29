@@ -52,6 +52,7 @@
 
       failed: function () {
         var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload');
+        that._clearErrorMessage();
         that.options.onSelectionChange();
       },
 
@@ -116,6 +117,14 @@
       this.element.find('.progress').removeClass('visible');
     },
 
+    _showErrorMessage: function (error) {
+      this.element.find('.fileupload-error').text(error).show();
+    },
+
+    _clearErrorMessage: function () {
+      this.element.find('.fileupload-error').text('').hide();
+    },
+
     /**
      * Invoke this method to upload all selected files
      */
@@ -123,10 +132,9 @@
       var filesList = this.options.filesContainer;
 
       if (filesList.children().length > this.options.maxNumberOfFiles) {
-        this.element.find('.fileupload-process').text(this.options.i18n('maxNumberOfFiles')).show();
+        this._showErrorMessage(this.options.i18n('maxNumberOfFilesWidget'));
         return;
       }
-      this.element.find('.fileupload-process').hide();
       this.element.closest('form').find('input[type=submit]').prop('disabled', true);
 
       $.each(filesList.children(), function (idx, template) {

@@ -149,8 +149,11 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
     protected void onAfterUpload(final FileItem file, final FileUploadInfo fileUploadInfo) {
         log.debug("Uploaded file: {}", fileUploadInfo.getFileName());
     }
-
-    @Override
-    protected void onSelectionChange(final AjaxRequestTarget target, final int numberOfFiles) {
+    /**
+     * The event is fired when the file selection list was changed
+     * @param target
+     * @param numberOfValidFiles the number of valid files in the selection list
+     */
+    protected void onSelectionChange(final AjaxRequestTarget target, final int numberOfValidFiles) {
     }
 }
