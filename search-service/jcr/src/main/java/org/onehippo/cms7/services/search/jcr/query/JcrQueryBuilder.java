@@ -132,6 +132,10 @@ public class JcrQueryBuilder {
             query.insert(0, "//*");
         }
 
+        if (this.returnParentNode) {
+            query.append("/..");
+        }
+
         if (!this.selected.isEmpty()) {
             boolean first = true;
             for (String property : selected) {
@@ -151,10 +155,6 @@ public class JcrQueryBuilder {
             if (!first) {
                 query.append(')');
             }
-        }
-
-        if (this.returnParentNode) {
-            query.append("/..");
         }
 
         if (orderByList.size() > 0) {
@@ -202,7 +202,7 @@ public class JcrQueryBuilder {
         this.selected.add(property);
     }
 
-    public boolean getReturnParentNode() {
+    public boolean isReturnParentNode() {
         return returnParentNode;
     }
 

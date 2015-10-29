@@ -22,9 +22,18 @@ import javax.jcr.Value;
 
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
-import org.onehippo.cms7.services.search.jcr.HippoSearchNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.cms7.services.search.jcr.HippoSearchNodeType.ASC_DESC;
+import static org.onehippo.cms7.services.search.jcr.HippoSearchNodeType.CONSTRAINT;
+import static org.onehippo.cms7.services.search.jcr.HippoSearchNodeType.EXCLUDES;
+import static org.onehippo.cms7.services.search.jcr.HippoSearchNodeType.INCLUDES;
+import static org.onehippo.cms7.services.search.jcr.HippoSearchNodeType.LIMIT;
+import static org.onehippo.cms7.services.search.jcr.HippoSearchNodeType.NODETYPE;
+import static org.onehippo.cms7.services.search.jcr.HippoSearchNodeType.OFFSET;
+import static org.onehippo.cms7.services.search.jcr.HippoSearchNodeType.ORDER_BY;
+import static org.onehippo.cms7.services.search.jcr.HippoSearchNodeType.RETURNPARENTNODE;
 
 public class JcrQueryNode extends JcrConstraintNode {
 
@@ -66,7 +75,7 @@ public class JcrQueryNode extends JcrConstraintNode {
                     property.remove();
                 }
             }
-            for (Node child : new NodeIterable(node.getNodes(HippoSearchNodeType.CONSTRAINT))) {
+            for (Node child : new NodeIterable(node.getNodes(CONSTRAINT))) {
                 child.remove();
             }
         } catch (RepositoryException re) {
@@ -74,10 +83,10 @@ public class JcrQueryNode extends JcrConstraintNode {
         }
     }
 
-    public boolean getReturnParentNode() {
+    public boolean isReturnParentNode() {
         try {
-            if (node.hasProperty(HippoSearchNodeType.RETURNPARENTNODE)) {
-                return node.getProperty(HippoSearchNodeType.RETURNPARENTNODE).getBoolean();
+            if (node.hasProperty(RETURNPARENTNODE)) {
+                return node.getProperty(RETURNPARENTNODE).getBoolean();
             }
         } catch (RepositoryException re) {
             log.warn("Unable to read returnparentnode", re);
@@ -87,7 +96,7 @@ public class JcrQueryNode extends JcrConstraintNode {
 
     public void setReturnParentNode(boolean value) {
         try {
-            node.setProperty(HippoSearchNodeType.RETURNPARENTNODE, value);
+            node.setProperty(RETURNPARENTNODE, value);
         } catch (RepositoryException re) {
             log.warn("Unable to store returnparentnode", re);
         }
@@ -95,8 +104,8 @@ public class JcrQueryNode extends JcrConstraintNode {
 
     public int getLimit() {
         try {
-            if (node.hasProperty(HippoSearchNodeType.LIMIT)) {
-                return (int) node.getProperty(HippoSearchNodeType.LIMIT).getLong();
+            if (node.hasProperty(LIMIT)) {
+                return (int) node.getProperty(LIMIT).getLong();
             }
         } catch (RepositoryException re) {
             log.warn("Unable to read limit", re);
@@ -106,7 +115,7 @@ public class JcrQueryNode extends JcrConstraintNode {
 
     public void setLimit(final int limit) {
         try {
-            node.setProperty(HippoSearchNodeType.LIMIT, limit);
+            node.setProperty(LIMIT, limit);
         } catch (RepositoryException re) {
             log.warn("Unable to store limit", re);
         }
@@ -114,8 +123,8 @@ public class JcrQueryNode extends JcrConstraintNode {
 
     public int getOffset() {
         try {
-            if (node.hasProperty(HippoSearchNodeType.OFFSET)) {
-                return (int) node.getProperty(HippoSearchNodeType.OFFSET).getLong();
+            if (node.hasProperty(OFFSET)) {
+                return (int) node.getProperty(OFFSET).getLong();
             }
         } catch (RepositoryException re) {
             log.warn("Unable to read limit", re);
@@ -125,7 +134,7 @@ public class JcrQueryNode extends JcrConstraintNode {
 
     public void setOffset(final int offset) {
         try {
-            node.setProperty(HippoSearchNodeType.OFFSET, offset);
+            node.setProperty(OFFSET, offset);
         } catch (RepositoryException re) {
             log.warn("Unable to store limit", re);
         }
@@ -133,8 +142,8 @@ public class JcrQueryNode extends JcrConstraintNode {
 
     public String getNodeType() {
         try {
-            if (node.hasProperty(HippoSearchNodeType.NODETYPE)) {
-                return node.getProperty(HippoSearchNodeType.NODETYPE).getString();
+            if (node.hasProperty(NODETYPE)) {
+                return node.getProperty(NODETYPE).getString();
             }
         } catch (RepositoryException re) {
             log.warn("Unable to retrieve node type", re);
@@ -144,7 +153,7 @@ public class JcrQueryNode extends JcrConstraintNode {
 
     public void setNodeType(final String nodeType) {
         try {
-            node.setProperty(HippoSearchNodeType.NODETYPE, nodeType);
+            node.setProperty(NODETYPE, nodeType);
         } catch (RepositoryException re) {
             log.warn("Unable to store node type", re);
         }
@@ -154,8 +163,8 @@ public class JcrQueryNode extends JcrConstraintNode {
         try {
             {
                 Value[] properties;
-                if (node.hasProperty(HippoSearchNodeType.ORDER_BY)) {
-                    properties =  node.getProperty(HippoSearchNodeType.ORDER_BY).getValues();
+                if (node.hasProperty(ORDER_BY)) {
+                    properties =  node.getProperty(ORDER_BY).getValues();
                 } else {
                     properties = new Value[0];
                 }
@@ -163,12 +172,12 @@ public class JcrQueryNode extends JcrConstraintNode {
                 Value[] newProps = new Value[properties.length + 1];
                 System.arraycopy(properties, 0, newProps, 0, properties.length);
                 newProps[properties.length] = node.getSession().getValueFactory().createValue(ordering.getProperty());
-                node.setProperty(HippoSearchNodeType.ORDER_BY, newProps);
+                node.setProperty(ORDER_BY, newProps);
             }
             {
                 Value[] orders;
-                if (node.hasProperty(HippoSearchNodeType.ASC_DESC)) {
-                    orders = node.getProperty(HippoSearchNodeType.ASC_DESC).getValues();
+                if (node.hasProperty(ASC_DESC)) {
+                    orders = node.getProperty(ASC_DESC).getValues();
                 } else {
                     orders = new Value[0];
                 }
@@ -176,7 +185,7 @@ public class JcrQueryNode extends JcrConstraintNode {
                 Value[] newOrders = new Value[orders.length + 1];
                 System.arraycopy(orders, 0, newOrders, 0, orders.length);
                 newOrders[orders.length] = node.getSession().getValueFactory().createValue(ordering.getOrdering());
-                node.setProperty(HippoSearchNodeType.ASC_DESC, newOrders);
+                node.setProperty(ASC_DESC, newOrders);
             }
         } catch (RepositoryException re) {
             log.error("Unable to store order by clause for " + ordering.getProperty());
@@ -185,10 +194,10 @@ public class JcrQueryNode extends JcrConstraintNode {
 
     public Ordering[] getOrderings() {
         try {
-            if (node.hasProperty(HippoSearchNodeType.ORDER_BY) && node.hasProperty(
-                    HippoSearchNodeType.ASC_DESC)) {
-                Value[] properties =  node.getProperty(HippoSearchNodeType.ORDER_BY).getValues();
-                Value[] orders = node.getProperty(HippoSearchNodeType.ASC_DESC).getValues();
+            if (node.hasProperty(ORDER_BY) && node.hasProperty(
+                    ASC_DESC)) {
+                Value[] properties =  node.getProperty(ORDER_BY).getValues();
+                Value[] orders = node.getProperty(ASC_DESC).getValues();
                 if (properties.length == orders.length) {
                     Ordering[] orderings = new Ordering[properties.length];
                     for (int i = 0; i < properties.length; i++) {
@@ -208,8 +217,8 @@ public class JcrQueryNode extends JcrConstraintNode {
     public void addInclude(final String path) {
         try {
             Value[] includes;
-            if (node.hasProperty(HippoSearchNodeType.INCLUDES)) {
-                includes = node.getProperty(HippoSearchNodeType.INCLUDES).getValues();
+            if (node.hasProperty(INCLUDES)) {
+                includes = node.getProperty(INCLUDES).getValues();
             } else {
                 includes = new Value[0];
             }
@@ -217,7 +226,7 @@ public class JcrQueryNode extends JcrConstraintNode {
             Value[] newIncludes = new Value[includes.length + 1];
             System.arraycopy(includes, 0, newIncludes, 0, includes.length);
             newIncludes[includes.length] = node.getSession().getValueFactory().createValue(path);
-            node.setProperty(HippoSearchNodeType.INCLUDES, newIncludes);
+            node.setProperty(INCLUDES, newIncludes);
         } catch (RepositoryException re) {
             log.warn("Unable to add included path", re);
         }
@@ -226,8 +235,8 @@ public class JcrQueryNode extends JcrConstraintNode {
     public String[] getIncludes() {
         try {
             Value[] includes;
-            if (node.hasProperty(HippoSearchNodeType.INCLUDES)) {
-                includes = node.getProperty(HippoSearchNodeType.INCLUDES).getValues();
+            if (node.hasProperty(INCLUDES)) {
+                includes = node.getProperty(INCLUDES).getValues();
             } else {
                 includes = new Value[0];
             }
@@ -247,8 +256,8 @@ public class JcrQueryNode extends JcrConstraintNode {
     public void addExclude(final String path) {
         try {
             Value[] excludes;
-            if (node.hasProperty(HippoSearchNodeType.EXCLUDES)) {
-                excludes = node.getProperty(HippoSearchNodeType.EXCLUDES).getValues();
+            if (node.hasProperty(EXCLUDES)) {
+                excludes = node.getProperty(EXCLUDES).getValues();
             } else {
                 excludes = new Value[0];
             }
@@ -256,7 +265,7 @@ public class JcrQueryNode extends JcrConstraintNode {
             Value[] newExcludes = new Value[excludes.length + 1];
             System.arraycopy(excludes, 0, newExcludes, 0, excludes.length);
             newExcludes[excludes.length] = node.getSession().getValueFactory().createValue(path);
-            node.setProperty(HippoSearchNodeType.EXCLUDES, newExcludes);
+            node.setProperty(EXCLUDES, newExcludes);
         } catch (RepositoryException re) {
             log.warn("Unable to add included path", re);
         }
@@ -265,8 +274,8 @@ public class JcrQueryNode extends JcrConstraintNode {
     public String[] getExcludes() {
         try {
             Value[] excludes;
-            if (node.hasProperty(HippoSearchNodeType.EXCLUDES)) {
-                excludes = node.getProperty(HippoSearchNodeType.EXCLUDES).getValues();
+            if (node.hasProperty(EXCLUDES)) {
+                excludes = node.getProperty(EXCLUDES).getValues();
             } else {
                 excludes = new Value[0];
             }

@@ -20,7 +20,7 @@ package org.onehippo.cms7.services.search.query.reflect;
  */
 public interface QueryNode {
 
-    boolean getReturnParentNode();
+    boolean isReturnParentNode();
 
     int getLimit();
 

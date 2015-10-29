@@ -79,7 +79,7 @@ public class QueryImpl implements Query, QueryNode {
     }
 
     @Override
-    public final boolean getReturnParentNode() {
+    public final boolean isReturnParentNode() {
         return returnParentNode;
     }
 

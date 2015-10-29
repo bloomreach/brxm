@@ -56,7 +56,7 @@ class JcrPersistingQueryVisitor implements QueryVisitor {
 
     @Override
     public void visit(final QueryNode query) {
-        node.setReturnParentNode(query.getReturnParentNode());
+        node.setReturnParentNode(query.isReturnParentNode());
         node.setLimit(query.getLimit());
         node.setOffset(query.getOffset());
     }

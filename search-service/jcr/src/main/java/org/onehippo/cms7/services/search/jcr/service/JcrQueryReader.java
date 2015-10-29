@@ -111,7 +111,7 @@ public class JcrQueryReader {
             }
         }
 
-        if (node.getReturnParentNode()) {
+        if (node.isReturnParentNode()) {
             query = query.returnParentNode();
         }
 

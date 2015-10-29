@@ -50,7 +50,7 @@ public class JcrQueryVisitor implements QueryVisitor {
 
     @Override
     public void visit(final QueryNode query) {
-        if (query.getReturnParentNode()) {
+        if (query.isReturnParentNode()) {
             builder.setReturnParentNode();
         }
         if (query.getLimit() != -1) {
