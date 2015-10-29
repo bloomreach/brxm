@@ -21,21 +21,26 @@ import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.editor.workflow.dialog.ReferringDocumentsView;
 import org.hippoecm.frontend.editor.workflow.model.ReferringDocumentsProvider;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.service.IEditorManager;
 
 public class ScheduleDepublishDialog extends WorkflowDialog<Node> {
 
+    private final IModel<String> titleModel;
+
     public ScheduleDepublishDialog(IWorkflowInvoker invoker, JcrNodeModel nodeModel, IModel<Date> dateModel,
                                    IEditorManager editorMgr) {
         super(invoker, nodeModel);
 
-        setTitleKey("schedule-depublish-title");
+        final IModel<String> displayDocumentName = new NodeTranslator(nodeModel).getNodeName();
+        titleModel = new StringResourceModel("schedule-depublish-title", this, null, displayDocumentName);
         setCssClass("hippo-workflow-dialog");
         setFocusOnCancel();
 
@@ -43,5 +48,18 @@ public class ScheduleDepublishDialog extends WorkflowDialog<Node> {
         add(new ReferringDocumentsView("refs", provider, editorMgr));
 
         addOrReplace(new DatePickerComponent(Dialog.BOTTOM_LEFT_ID, dateModel, new ResourceModel("schedule-depublish-text")));
+    }
+
+    @Override
+    public IModel<String> getTitle() {
+        return titleModel;
+    }
+
+    @Override
+    protected void onDetach() {
+        if (titleModel != null) {
+            titleModel.detach();
+        }
+        super.onDetach();
     }
 }
