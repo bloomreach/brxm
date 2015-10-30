@@ -116,4 +116,7 @@
 .fileupload-listing-files .controls {
   width: 35px;
   text-align: center;
+  .remove {
+    cursor: pointer;
+  }
 }
