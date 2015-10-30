@@ -18,7 +18,7 @@ package org.onehippo.forge.poll.component;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
-public interface PollDocumentComponentInfo extends PollComponentInfo {
+interface PollDocumentComponentInfo extends PollComponentInfo {
 
     @Override
     @Parameter(name = "poll-dataPath", displayName = "Path to store poll data", hideInChannelManager = true)
