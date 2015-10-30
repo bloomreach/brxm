@@ -72,7 +72,6 @@ public class GalleryFileUploadBehavior extends FileUploadBehavior {
         variables.put("acceptFileTypes", getAcceptFileTypesPattern("|"));
 
         // Localized error messages
-        variables.put(MAX_NUMBER_OF_FILES_EXCEEDED, getMessage(MAX_NUMBER_OF_FILES_EXCEEDED));
         variables.put(MAX_NUMBER_OF_FILES_EXCEEDED_WIDGET, getMessage(MAX_NUMBER_OF_FILES_EXCEEDED_WIDGET));
 
         final String maxFileSizeMB = String.format("%2.1fMB", Bytes.bytes(settings.getMaxFileSize()).megabytes());

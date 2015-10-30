@@ -56,6 +56,7 @@ public abstract class JQueryFileUploadDialog extends Dialog {
 
     private final FileUploadValidationService validator;
     private final Button uploadButton;
+    private boolean isUploadButtonEnabled;
 
     protected JQueryFileUploadDialog(final IPluginContext pluginContext, final IPluginConfig pluginConfig){
         setOutputMarkupId(true);
@@ -73,11 +74,15 @@ public abstract class JQueryFileUploadDialog extends Dialog {
 
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
-                setEnabled(false);
+                isUploadButtonEnabled = false;
                 target.add(this);
             }
+
+            @Override
+            public boolean isEnabled() {
+                return isUploadButtonEnabled;
+            }
         };
-        uploadButton.setEnabled(false);
         uploadButton.add(new InputBehavior(new KeyType[]{KeyType.Enter}, EventType.click));
         uploadButton.setOutputMarkupId(true);
         this.addButton(uploadButton);
@@ -107,8 +112,11 @@ public abstract class JQueryFileUploadDialog extends Dialog {
             }
 
             @Override
-            protected void onSelectionChange(final AjaxRequestTarget target, final int numberOfValidFiles) {
-                uploadButton.setEnabled(numberOfValidFiles > 0);
+            protected void onSelectionChange(final AjaxRequestTarget target) {
+                final int numberOfValidFiles = this.getNumberOfValidFiles();
+                final int numberOfSelectedFiles = this.getNumberOFSelectedFiles();
+
+                isUploadButtonEnabled = (numberOfValidFiles > 0) && (numberOfSelectedFiles <= settings.getMaxNumberOfFiles());
                 target.add(uploadButton);
             }
         };

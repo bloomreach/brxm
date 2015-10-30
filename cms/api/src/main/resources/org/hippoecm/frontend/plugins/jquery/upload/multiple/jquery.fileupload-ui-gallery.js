@@ -39,21 +39,40 @@
   var originalStart = $.blueimp.fileupload.prototype.options.start;
   var originalStop = $.blueimp.fileupload.prototype.options.stop;
   var originalDone = $.blueimp.fileupload.prototype.options.done;
+  var originalAdd = $.blueimp.fileupload.prototype.options.add;
 
   $.widget('blueimp.fileupload', $.blueimp.fileupload, {
     numberOfCompletedFiles: 0,
     hasError: false,
     options: {
-
-      added: function () {
-        var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload');
-        that.options.onSelectionChange();
-      },
+      // disable default max-number-of-files validation in jquery.fileupload-validation
+      maxNumberOfFiles: null,
 
       failed: function () {
-        var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload');
-        that._clearErrorMessage();
-        that.options.onSelectionChange();
+        // event called when removing a file to the selection list
+        var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload'),
+          numberOfValidFiles = that.options.getNumberOfValidFiles(),
+          numberOfSelectedFiles = that.options.getNumberOfSelectedFiles();
+
+        if (numberOfSelectedFiles <= that.options.maxTotalFiles) {
+          that._clearErrorMessage();
+        }
+        that.options.onSelectionChange(numberOfValidFiles, numberOfSelectedFiles);
+      },
+
+      add: function (e, data) {
+        // event called when adding a file to the selection list
+        originalAdd.call(this, e, data);
+
+        var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload'),
+          numberOfValidFiles = that.options.getNumberOfValidFiles(),
+          numberOfSelectedFiles = that.options.getNumberOfSelectedFiles();
+
+        if (numberOfSelectedFiles > that.options.maxTotalFiles) {
+          that._showErrorMessage(that.options.i18n('maxNumberOfFilesWidget'));
+        }
+
+        that.options.onSelectionChange(numberOfValidFiles, numberOfSelectedFiles);
       },
 
       start: function (e) {
@@ -106,6 +125,13 @@
       getNumberOfValidFiles: function () {
         var selectedFiles = this.filesContainer.children();
         return selectedFiles.length - selectedFiles.find('.error').not(':empty').length;
+      },
+
+      /**
+       * Return all selected files, including processing ones
+       */
+      getNumberOfSelectedFiles: function () {
+        return this.filesContainer.children().length;
       }
     },
 
@@ -131,8 +157,8 @@
     uploadFiles: function () {
       var filesList = this.options.filesContainer;
 
-      if (filesList.children().length > this.options.maxNumberOfFiles) {
-        this._showErrorMessage(this.options.i18n('maxNumberOfFilesWidget'));
+      if (filesList.children().length > this.options.maxTotalFiles) {
+        // not upload too many files
         return;
       }
       this.element.closest('form').find('input[type=submit]').prop('disabled', true);

@@ -54,6 +54,9 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
     private AjaxFileUploadBehavior ajaxFileUploadBehavior;
     private AbstractDefaultAjaxBehavior ajaxCallbackSelectionChangeBehavior;
 
+    private int numberOfValidFiles;
+    private int numberOFSelectedFiles;
+
     protected void onFileUploadResponse(final ServletWebRequest request, final Map<String, FileUploadInfo> uploadedFiles) {
     }
 
@@ -110,8 +113,9 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
         add(ajaxCallbackSelectionChangeBehavior = new AbstractDefaultAjaxBehavior() {
             @Override
             protected void respond(final AjaxRequestTarget target) {
-                final int numberOfValidFiles = RequestCycle.get().getRequest().getRequestParameters().getParameterValue("numberOfValidFiles").toInt();
-                FileUploadWidget.this.onSelectionChange(target, numberOfValidFiles);
+                numberOfValidFiles = RequestCycle.get().getRequest().getRequestParameters().getParameterValue("numberOfValidFiles").toInt(0);
+                numberOFSelectedFiles = RequestCycle.get().getRequest().getRequestParameters().getParameterValue("numberOfSelectedFiles").toInt(0);
+                FileUploadWidget.this.onSelectionChange(target);
             }
         });
 
@@ -152,8 +156,15 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
     /**
      * The event is fired when the file selection list was changed
      * @param target
-     * @param numberOfValidFiles the number of valid files in the selection list
      */
-    protected void onSelectionChange(final AjaxRequestTarget target, final int numberOfValidFiles) {
+    protected void onSelectionChange(final AjaxRequestTarget target) {
+    }
+
+    public int getNumberOfValidFiles() {
+        return numberOfValidFiles;
+    }
+
+    public int getNumberOFSelectedFiles() {
+        return numberOFSelectedFiles;
     }
 }

@@ -22,10 +22,10 @@
   /**
    * Notifies Wicket that the selection changed
    */
-  function notifySelectionChange() {
+  function notifySelectionChange(numberOfValidFiles, numberOfSelectedFiles) {
     var url = '${selectionChangeUrl}';
     Wicket.Ajax.get( {
-      u: url + "&numberOfValidFiles=" + this.getNumberOfValidFiles()
+      u: url + "&numberOfValidFiles=" + numberOfValidFiles + "&numberOfSelectedFiles=" + numberOfSelectedFiles
     });
   }
 
@@ -42,7 +42,6 @@
   $('#${componentMarkupId}').fileupload({
     messages: {
       maxNumberOfFilesWidget: '${max.number.of.files.exceeded.widget}',
-      maxNumberOfFiles: '${max.number.of.files.exceeded}',
       maxFileSize: "${max.filesize.message}",
       acceptFileTypes: "${invalid.extension.message}"
     },
@@ -50,7 +49,7 @@
     url: '${url}',
     onUploadDone: notifyUploadDone,
     onSelectionChange: notifySelectionChange,
-    maxNumberOfFiles: ${maxNumberOfFiles},
+    maxTotalFiles: ${maxTotalFiles},
     maxFileSize: ${max.file.size},
     acceptFileTypes: /(\.)${acceptFileTypes}$/i,
     dataType: 'json',
