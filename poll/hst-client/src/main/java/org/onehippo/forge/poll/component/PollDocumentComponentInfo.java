@@ -21,7 +21,19 @@ import org.hippoecm.hst.core.parameters.Parameter;
 public interface PollDocumentComponentInfo extends PollComponentInfo {
 
     @Override
-    @Parameter(name = "poll-docsPath", required = true, displayName = "Path to the poll document")
+    @Parameter(name = "poll-dataPath", displayName = "Path to store poll data", hideInChannelManager = true)
+    String getPollDataPath();
+
+    @Override
+    @Parameter(name = "poll-docsClass", displayName = "Poll documents class", hideInChannelManager = true)
+    String getPollDocsClass();
+
+    @Override
+    @Parameter(name = "poll-pollCompoundName", displayName = "Name of poll compound", hideInChannelManager = true)
+    String getPollCompoundName();
+
+    @Override
+    @Parameter(name = "poll-docsPath", required = true, displayName = "Poll document")
     @JcrPath(pickerSelectableNodeTypes = "poll:polldocument")
     String getPollDocsPath();
 }
