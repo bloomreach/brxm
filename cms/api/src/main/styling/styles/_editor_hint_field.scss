@@ -50,6 +50,7 @@
       overflow: hidden;
       width: auto;
       white-space: nowrap;
+      z-index: 1;
 
       .col30 & {
         right: 24px;
