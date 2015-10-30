@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,12 @@ import org.hippoecm.hst.content.beans.standard.HippoItem;
 
 @Node(jcrType = "poll:poll")
 public class Poll extends HippoItem {
-    
+
+    /**
+     * Deprecated 'active' flag because document (de)publication leads to same functionality
+     *
+     * @deprecated no longer in use
+     */
     public Boolean getActive() {
         return this.getProperty("poll:active");
     }

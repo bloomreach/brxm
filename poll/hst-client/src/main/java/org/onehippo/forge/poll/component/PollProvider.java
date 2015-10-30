@@ -27,7 +27,6 @@ import javax.servlet.http.Cookie;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
-import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
@@ -41,17 +40,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provider that can be instantiated within a component to add poll
- * functionality by composition.
+ * Provider that can be instantiated within a component to add poll functionality by composition.
  *
- * To get a poll document, the provider searches for documents in a certain
- * location as configured by component parameter 'poll-docsPath'.
- * The type of document beans searched for is determined by the parameter
- * 'poll-docClass' and defaults to "org.onehippo.forge.poll.contentbean.PollDocument".
+ * The provider retrieves a poll document as configured by component parameter 'poll-docsPath'.
+ * The type of document bean that is retrieved is determined by the parameter 'poll-docClass' and defaults to
+ * "org.onehippo.forge.poll.contentbean.PollDocument".
  *
- * It searches for documents that have a compound type poll:poll with its
- * property poll:active set to true. It then takes the first of these documents
- * and returns it.
+ * If the 'poll-docsPath' points to a poll document of the correct class, it returns that document directly.
+ *
+ * If the 'poll-docsPath' points to a folder, it uses that folder as scope to search for documents that are of the
+ * correct class. It then takes the first of these documents and returns it.
  */
 public class PollProvider {
 
@@ -126,12 +124,12 @@ public class PollProvider {
      */
     public void doBeforeRender(final HstRequest request, final HstResponse response, final PollComponentInfo pollComponentInfo) {
 
-        // prevent backbutton from showing form again
+        // prevent back button from showing form again
         response.setHeader("Cache-Control","no-cache,no-store,max-age=0");
         response.setHeader("Pragma","no-cache");
         response.setDateHeader("Expires", 0);
 
-        final HippoDocumentBean pollDocument = getActivePollDocument(request, pollComponentInfo);
+        final HippoDocumentBean pollDocument = getPollDocument(request, pollComponentInfo);
         if (pollDocument != null) {
 
             request.setAttribute(POLL_DOCUMENT, pollDocument);
@@ -177,12 +175,11 @@ public class PollProvider {
     }
 
     /**
-     * Get the first document of a searched list of documents containing active
-     * poll compounds.
+     * Get the first document of a searched list of documents containing poll compounds.
      */
-    public HippoDocumentBean getActivePollDocument(final HstRequest request, final PollComponentInfo pollComponentInfo) {
+    public HippoDocumentBean getPollDocument(final HstRequest request, final PollComponentInfo pollComponentInfo) {
 
-        final List<HippoDocumentBean> pollDocuments = searchActivePollDocuments(request, pollComponentInfo);
+        final List<HippoDocumentBean> pollDocuments = searchPollDocuments(request, pollComponentInfo);
 
         if ((pollDocuments != null) && (pollDocuments.size() > 0)) {
             return pollDocuments.get(0);
@@ -193,11 +190,12 @@ public class PollProvider {
 
     /**
      * Cast a vote to an option of a poll compound in a poll document, and persist it.
-     *  @param request the HST request
+     *
+     * @param request the HST request
      * @param persistableSession JCR session with write rights
      * @param pollDocumentPath the poll document's path, relative from content root
      * @param optionId the id of the option to vote
-     * @param pollComponentInfo
+     * @param pollComponentInfo poll component parameter interface
      */
     public boolean castVote(final HstRequest request, final Session persistableSession,
                             final String pollDocumentPath, final String optionId,
@@ -491,12 +489,11 @@ public class PollProvider {
                 ? PARAM_DOC_POLL_COMPOUND_NAME_DEFAULT : pollCompoundName;
     }
 
-    /***
-     * Search poll documents that have the property 'poll:active' of the poll
-     * compound node of a document set to 'true'.
+    /**
+     * Search poll documents based on the given poll document class.
      */
-    protected List<HippoDocumentBean> searchActivePollDocuments(final HstRequest request,
-                                                                final PollComponentInfo pollComponentInfo) {
+    protected List<HippoDocumentBean> searchPollDocuments(final HstRequest request,
+                                                          final PollComponentInfo pollComponentInfo) {
 
         String docsPath = pollComponentInfo.getPollDocsPath();
         if (docsPath == null || docsPath.equals("")) {
@@ -504,32 +501,27 @@ public class PollProvider {
             return null;
         }
 
-        final HippoBean scope = getBean(docsPath, request);
+        final HippoBean documentOrScope = getBean(docsPath, request);
 
-        if (scope == null) {
+        if (documentOrScope == null) {
             return null;
         }
 
         final Class<? extends HippoDocumentBean> beanClass = getPollDocumentClass(request, pollComponentInfo);
 
-        if (beanClass.isAssignableFrom(scope.getClass())) {
-            return Arrays.asList((HippoDocumentBean) scope);
+        // 'poll-docsPath' points to poll document directly
+        if (beanClass.isAssignableFrom(documentOrScope.getClass())) {
+            return Arrays.asList((HippoDocumentBean) documentOrScope);
         }
 
-        final String pollCompoundName = getPollCompoundName(request, pollComponentInfo);
-
+        // 'poll-docsPath' points to a folder that is the scope to search for poll documents
         try {
-            final HstQuery query = request.getRequestContext().getQueryManager().createQuery(scope, beanClass);
-
-            final Filter activePollFilter = query.createFilter();
-            activePollFilter.addEqualTo(pollCompoundName + "/@poll:active", Boolean.TRUE);
-            query.setFilter(activePollFilter);
-
+            final HstQuery query = request.getRequestContext().getQueryManager().createQuery(documentOrScope, beanClass);
             query.setLimit(queryLimit);
 
             final HstQueryResult result = query.execute();
             final HippoBeanIterator iterator = result.getHippoBeans();
-            final List<HippoDocumentBean> beans = new ArrayList<HippoDocumentBean>(result.getSize());
+            final List<HippoDocumentBean> beans = new ArrayList<>(result.getSize());
             while (iterator.hasNext()) {
                 final Object bean = iterator.next();
                 if (bean != null) {
@@ -540,7 +532,7 @@ public class PollProvider {
             return beans;
         }
         catch (QueryException qe) {
-            logger.error("Querying for scope " + scope.getPath() + " and " + beanClass + " failed", qe);
+            logger.error("Querying for scope " + documentOrScope.getPath() + " and " + beanClass + " failed", qe);
             return null;
         }
     }
