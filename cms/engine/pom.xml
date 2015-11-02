@@ -73,6 +73,10 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-proxy</artifactId>
+    </dependency>
 
     <!-- Dependencies for the CMS-HST REST API -->
     <dependency>

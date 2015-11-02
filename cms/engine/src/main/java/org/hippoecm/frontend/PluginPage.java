@@ -47,6 +47,8 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.WebApplicationHelper;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
 
 public class PluginPage extends Home implements IServiceTracker<IRenderService> {
 
@@ -67,39 +69,52 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
     }
 
     public PluginPage(IApplicationFactory appFactory) {
-        pageId = ((PluginUserSession) UserSession.get()).getPageId();
+        Task pageInitTask = null;
 
-        add(new EmptyPanel("root"));
+        try {
+            if (HDC.isStarted()) {
+                pageInitTask = HDC.getCurrentTask().startSubtask("PluginPage.init");
+            }
 
-        mgr = new PluginManager(this);
-        context = new PluginContext(mgr, new JavaPluginConfig("home"));
-        context.connect(null);
+            pageId = ((PluginUserSession) UserSession.get()).getPageId();
 
-        context.registerTracker(this, "service.root");
+            add(new EmptyPanel("root"));
 
-        pluginConfigService = new PluginConfigFactory(UserSession.get(), appFactory);
-        context.registerService(pluginConfigService, IPluginConfigService.class.getName());
+            mgr = new PluginManager(this);
+            context = new PluginContext(mgr, new JavaPluginConfig("home"));
+            context.connect(null);
 
-        obRegistry = new ObservableRegistry(context, null);
-        obRegistry.startObservation();
+            context.registerTracker(this, "service.root");
 
-        dialogService = new DialogServiceFactory("dialog");
-        dialogService.init(context, IDialogService.class.getName());
-        add(dialogService.getComponent());
+            pluginConfigService = new PluginConfigFactory(UserSession.get(), appFactory);
+            context.registerService(pluginConfigService, IPluginConfigService.class.getName());
 
-        context.registerService(this, Home.class.getName());
-        registerGlobalBehaviorTracker();
+            obRegistry = new ObservableRegistry(context, null);
+            obRegistry.startObservation();
 
-        add(menuBehavior = new ContextMenuBehavior());
+            dialogService = new DialogServiceFactory("dialog");
+            dialogService.init(context, IDialogService.class.getName());
+            add(dialogService.getComponent());
 
-        IClusterConfig pluginCluster = pluginConfigService.getDefaultCluster();
-        IClusterControl clusterControl = context.newCluster(pluginCluster, null);
-        clusterControl.start();
+            context.registerService(this, Home.class.getName());
+            registerGlobalBehaviorTracker();
 
-        IController controller = context.getService(IController.class.getName(), IController.class);
-        if (controller != null) {
-            WebRequest request = (WebRequest) RequestCycle.get().getRequest();
-            controller.process(request.getRequestParameters());
+            add(menuBehavior = new ContextMenuBehavior());
+
+            IClusterConfig pluginCluster = pluginConfigService.getDefaultCluster();
+            IClusterControl clusterControl = context.newCluster(pluginCluster, null);
+            clusterControl.start();
+
+            IController controller = context.getService(IController.class.getName(), IController.class);
+
+            if (controller != null) {
+                WebRequest request = (WebRequest) RequestCycle.get().getRequest();
+                controller.process(request.getRequestParameters());
+            }
+        } finally {
+            if (pageInitTask != null) {
+                pageInitTask.stop();
+            }
         }
     }
 
@@ -128,10 +143,23 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
     @Override
     public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-        CoreLibrariesContributor.contribute(Application.get(), response);
-        if (WebApplicationHelper.isDevelopmentMode()) {
-            addDevelopmentModeCssClassToHtml(response);
+        Task pageRenderHeadTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                pageRenderHeadTask = HDC.getCurrentTask().startSubtask("PluginPage.renderHead");
+            }
+
+            super.renderHead(response);
+            CoreLibrariesContributor.contribute(Application.get(), response);
+
+            if (WebApplicationHelper.isDevelopmentMode()) {
+                addDevelopmentModeCssClassToHtml(response);
+            }
+        } finally {
+            if (pageRenderHeadTask != null) {
+                pageRenderHeadTask.stop();
+            }
         }
     }
 
@@ -159,24 +187,99 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
      * Notify refreshables and listeners in the page for which events have been received.
      */
     public void processEvents() {
-        refresh();
+        Task pageProcessEventsTask = null;
+
         try {
+            if (HDC.isStarted()) {
+                pageProcessEventsTask = HDC.getCurrentTask().startSubtask("PluginPage.processEvents");
+            }
+
+            refresh();
+
             // re-evaluate models
             context.getServices(IRefreshable.class.getName(), IRefreshable.class).forEach(org.hippoecm.frontend.model.event.IRefreshable::refresh);
 
             // process JCR events
             JcrObservationManager.getInstance().processEvents();
         } finally {
+            if (pageProcessEventsTask != null) {
+                pageProcessEventsTask.stop();
+            }
+
             setFlag(FLAG_RESERVED1, false);
         }
     }
 
-    public void render(PluginRequestTarget target) {
-        if (root != null) {
-            root.render(target);
+    @Override
+    protected void onInitialize() {
+        Task initTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                initTask = HDC.getCurrentTask().startSubtask("PluginPage.onInitialize");
+            }
+
+            super.onInitialize();
+        } finally {
+            if (initTask != null) {
+                initTask.stop();
+            }
         }
-        dialogService.render(target);
-        menuBehavior.checkMenus(target);
+    }
+
+    @Override
+    protected void onBeforeRender() {
+        Task beforeRenderTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                beforeRenderTask = HDC.getCurrentTask().startSubtask("PluginPage.onBeforeRender");
+            }
+
+            super.onBeforeRender();
+        } finally {
+            if (beforeRenderTask != null) {
+                beforeRenderTask.stop();
+            }
+        }
+    }
+
+    @Override
+    protected void onAfterRender() {
+        Task afterRenderTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                afterRenderTask = HDC.getCurrentTask().startSubtask("PluginPage.onAfterRender");
+            }
+
+            super.onAfterRender();
+        } finally {
+            if (afterRenderTask != null) {
+                afterRenderTask.stop();
+            }
+        }
+    }
+
+    public void render(PluginRequestTarget target) {
+        Task pageRenderTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                pageRenderTask = HDC.getCurrentTask().startSubtask("PluginPage.render");
+            }
+
+            if (root != null) {
+                root.render(target);
+            }
+
+            dialogService.render(target);
+            menuBehavior.checkMenus(target);
+        } finally {
+            if (pageRenderTask != null) {
+                pageRenderTask.stop();
+            }
+        }
     }
 
     public void focus(IRenderService child) {
@@ -232,8 +335,20 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
     @Override
     public void onDetach() {
-        context.detach();
-        super.onDetach();
+        Task detachTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                detachTask = HDC.getCurrentTask().startSubtask("PluginPage.onDetach");
+            }
+
+            context.detach();
+            super.onDetach();
+        } finally {
+            if (detachTask != null) {
+                detachTask.stop();
+            }
+        }
     }
 
     public void showContextMenu(IContextMenu active) {

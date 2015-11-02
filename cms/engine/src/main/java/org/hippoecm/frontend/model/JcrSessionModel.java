@@ -28,6 +28,8 @@ import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.hippoecm.frontend.Main;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -69,21 +71,33 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
     }
 
     protected void flush() {
-        Session session = getObject();
-        if (session != null) {
-            if (session.isLive()) {
-                if (saveOnExit) {
-                    try {
-                        session.save();
-                    } catch (RepositoryException e) {
-                        log.error("Failed to save session before logging out", e);
-                    }
-                }
-                session.logout();
-                logHippoEvent(false, session.getUserID(), "logout", true);
+        Task flushTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                flushTask = HDC.getCurrentTask().startSubtask("JcrSessionModel.flush");
             }
-            transientJcrSessionWrapper = null;
-            super.detach();
+
+            Session session = getObject();
+            if (session != null) {
+                if (session.isLive()) {
+                    if (saveOnExit) {
+                        try {
+                            session.save();
+                        } catch (RepositoryException e) {
+                            log.error("Failed to save session before logging out", e);
+                        }
+                    }
+                    session.logout();
+                    logHippoEvent(false, session.getUserID(), "logout", true);
+                }
+                transientJcrSessionWrapper = null;
+                super.detach();
+            }
+        } finally {
+            if (flushTask != null) {
+                flushTask.stop();
+            }
         }
     }
 
@@ -157,20 +171,45 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
     }
 
     public static Session login(UserCredentials credentials) throws LoginException, RepositoryException {
-        Main main = (Main) Application.get();
-        HippoRepository repository = main.getRepository();
-        return repository.getRepository().login(credentials.getJcrCredentials());
+        Task loginTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                loginTask = HDC.getCurrentTask().startSubtask("JcrSessionModel.login");
+            }
+
+            Main main = (Main) Application.get();
+            HippoRepository repository = main.getRepository();
+            return repository.getRepository().login(credentials.getJcrCredentials());
+        } finally {
+            if (loginTask != null) {
+                loginTask.stop();
+            }
+        }
     }
 
     private void logHippoEvent(final boolean login, final String user, final String message, boolean success) {
         final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+
         if (eventBus != null) {
-            final String action = login ? "login" : "logout";
-            final HippoEvent event = new HippoSecurityEvent("cms").success(success).action(action)
-                    .category(HippoEventConstants.CATEGORY_SECURITY).user(user).set("remoteAddress", getRemoteAddr())
-                    .message(message);
-            event.sealEvent();
-            eventBus.post(event);
+            Task logEventTask = null;
+
+            try {
+                if (HDC.isStarted()) {
+                    logEventTask = HDC.getCurrentTask().startSubtask("JcrSessionModel.logHippoEvent");
+                }
+
+                final String action = login ? "login" : "logout";
+                final HippoEvent event = new HippoSecurityEvent("cms").success(success).action(action)
+                        .category(HippoEventConstants.CATEGORY_SECURITY).user(user).set("remoteAddress", getRemoteAddr())
+                        .message(message);
+                event.sealEvent();
+                eventBus.post(event);
+            } finally {
+                if (logEventTask != null) {
+                    logEventTask.stop();
+                }
+            }
         }
     }
 
@@ -200,6 +239,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
         if (result.getNodes().hasNext()) {
             return result.getNodes().nextNode();
         }
+
         return null;
     }
 

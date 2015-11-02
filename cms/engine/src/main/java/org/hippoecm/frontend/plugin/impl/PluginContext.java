@@ -39,6 +39,8 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.ClusterConfigDecorator;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,45 +77,59 @@ public class PluginContext implements IPluginContext, IDetachable {
     }
 
     public IClusterControl newCluster(IClusterConfig template, IPluginConfig parameters) {
-        String name = template.getName();
-        if (name != null) {
-            name = name.replace(':', '_');
-        } else {
-            name = "";
-        }
-        String clusterIdBase = config.getName() + ".cluster." + name;
-        String clusterId = clusterIdBase;
-        int counter = 0;
-        while (children.containsKey(clusterId)) {
-            clusterId = clusterIdBase + counter++;
-        }
-        IClusterConfig decorator = new ClusterConfigDecorator(template, clusterId);
-        ClusterControl cluster = new ClusterControl(manager, this, decorator, clusterId);
+        Task newClusterTask = null;
+        ClusterControl cluster = null;
 
-        for (String service : template.getServices()) {
-            String serviceId = clusterId + ".service." + service.replace(':', '_');
-            decorator.put(service, serviceId);
-            if (parameters != null && parameters.getString(service) != null) {
-                cluster.forward(serviceId, parameters.getString(service));
+        try {
+            if (HDC.isStarted()) {
+                newClusterTask = HDC.getCurrentTask().startSubtask("PluginContext.newCluster");
             }
-        }
-        for (String reference : template.getReferences()) {
-            String serviceId;
-            if (!template.getServices().contains(reference)) {
-                serviceId = clusterId + ".reference." + reference.replace(':', '_');
-                decorator.put(reference, serviceId);
+
+            String name = template.getName();
+            if (name != null) {
+                name = name.replace(':', '_');
             } else {
-                serviceId = decorator.getString(reference);
+                name = "";
             }
-            if (parameters != null && parameters.getString(reference) != null) {
-                cluster.forward(parameters.getString(reference), serviceId);
+            String clusterIdBase = config.getName() + ".cluster." + name;
+            String clusterId = clusterIdBase;
+            int counter = 0;
+            while (children.containsKey(clusterId)) {
+                clusterId = clusterIdBase + counter++;
+            }
+            IClusterConfig decorator = new ClusterConfigDecorator(template, clusterId);
+            cluster = new ClusterControl(manager, this, decorator, clusterId);
+
+            for (String service : template.getServices()) {
+                String serviceId = clusterId + ".service." + service.replace(':', '_');
+                decorator.put(service, serviceId);
+                if (parameters != null && parameters.getString(service) != null) {
+                    cluster.forward(serviceId, parameters.getString(service));
+                }
+            }
+            for (String reference : template.getReferences()) {
+                String serviceId;
+                if (!template.getServices().contains(reference)) {
+                    serviceId = clusterId + ".reference." + reference.replace(':', '_');
+                    decorator.put(reference, serviceId);
+                } else {
+                    serviceId = decorator.getString(reference);
+                }
+                if (parameters != null && parameters.getString(reference) != null) {
+                    cluster.forward(parameters.getString(reference), serviceId);
+                }
+            }
+            for (String property : template.getProperties()) {
+                if (parameters != null && parameters.get(property) != null) {
+                    decorator.put(property, parameters.get(property));
+                }
+            }
+        } finally {
+            if (newClusterTask != null) {
+                newClusterTask.stop();
             }
         }
-        for (String property : template.getProperties()) {
-            if (parameters != null && parameters.get(property) != null) {
-                decorator.put(property, parameters.get(property));
-            }
-        }
+
         return cluster;
     }
 
@@ -287,32 +303,48 @@ public class PluginContext implements IPluginContext, IDetachable {
     // DO NOT CALL THIS API
     @SuppressWarnings("unchecked")
     public void connect(IPlugin plugin) {
-        if (initializing) {
-            this.plugin = plugin;
-            Map<String, List> listeners = new LinkedHashMap(this.listeners);
-            initializing = false;
+        Task connectTask = null;
 
-            log.debug("registering trackers for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
-            for (Map.Entry<String, List> entry : listeners.entrySet()) {
-                List<IServiceTracker<? extends IClusterable>> list = entry.getValue();
-                for (IServiceTracker<? extends IClusterable> listener : list) {
-                    manager.registerTracker(listener, entry.getKey());
+        try {
+            if (HDC.isStarted()) {
+                connectTask = HDC.getCurrentTask().startSubtask("PluginContext.connect");
+
+                if (plugin != null) {
+                    connectTask.setAttribute("pluginClass", plugin.getClass().getName());
                 }
             }
 
-            log.debug("registering services for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
-            for (ServiceRegistration registration : registrationOrder) {
-                registration.notifyTrackers();
-            }
-            registrationOrder.clear();
-            registrations.clear();
+            if (initializing) {
+                this.plugin = plugin;
+                Map<String, List> listeners = new LinkedHashMap(this.listeners);
+                initializing = false;
 
-            if (plugin != null) {
-                log.debug("starting plugin {}", plugin.getClass().getName());
-                plugin.start();
+                log.debug("registering trackers for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
+                for (Map.Entry<String, List> entry : listeners.entrySet()) {
+                    List<IServiceTracker<? extends IClusterable>> list = entry.getValue();
+                    for (IServiceTracker<? extends IClusterable> listener : list) {
+                        manager.registerTracker(listener, entry.getKey());
+                    }
+                }
+
+                log.debug("registering services for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
+                for (ServiceRegistration registration : registrationOrder) {
+                    registration.notifyTrackers();
+                }
+                registrationOrder.clear();
+                registrations.clear();
+
+                if (plugin != null) {
+                    log.debug("starting plugin {}", plugin.getClass().getName());
+                    plugin.start();
+                }
+            } else {
+                log.warn("context was already initialized");
             }
-        } else {
-            log.warn("context was already initialized");
+        } finally {
+            if (connectTask != null) {
+                connectTask.stop();
+            }
         }
     }
 
@@ -325,55 +357,84 @@ public class PluginContext implements IPluginContext, IDetachable {
     }
 
     PluginContext start(IPluginConfig plugin) {
-        return manager.start(plugin);
+        Task startTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                startTask = HDC.getCurrentTask().startSubtask("PluginContext.start");
+                if (plugin != null) {
+                    startTask.setAttribute("pluginConfig", plugin.getName());
+                    String pluginClassName = plugin.getString(IPlugin.CLASSNAME);
+                    startTask.setAttribute("pluginClass", pluginClassName != null ? pluginClassName : "unknown");
+                }
+            }
+
+            return manager.start(plugin);
+        } finally {
+            if (startTask != null) {
+                startTask.stop();
+            }
+        }
     }
 
     void stop() {
-        if (!stopping) {
-            stopping = true;
+        Task stopTask = null;
 
-            if (plugin != null) {
-                plugin.stop();
+        try {
+            if (HDC.isStarted()) {
+                stopTask = HDC.getCurrentTask().startSubtask("PluginContext.stop");
             }
 
-            log.debug("stopping clusters for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
-            ClusterControl[] controls = children.values().toArray(new ClusterControl[children.size()]);
-            for (ClusterControl control : controls) {
-                control.stop();
-            }
+            if (!stopping) {
+                stopping = true;
 
-            if (!initializing) {
-                log.debug("unregistering trackers for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
-                for (Map.Entry<String, List<IServiceTracker<? extends IClusterable>>> entry : listeners.entrySet()) {
-                    for (IServiceTracker<? extends IClusterable> service : entry.getValue()) {
-                        manager.unregisterTracker(service, entry.getKey());
+                if (plugin != null) {
+                    plugin.stop();
+                }
+
+                log.debug("stopping clusters for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
+                ClusterControl[] controls = children.values().toArray(new ClusterControl[children.size()]);
+                for (ClusterControl control : controls) {
+                    control.stop();
+                }
+
+                if (!initializing) {
+                    log.debug("unregistering trackers for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
+                    for (Map.Entry<String, List<IServiceTracker<? extends IClusterable>>> entry : listeners.entrySet()) {
+                        for (IServiceTracker<? extends IClusterable> service : entry.getValue()) {
+                            manager.unregisterTracker(service, entry.getKey());
+                        }
                     }
                 }
-            }
-            listeners.clear();
+                listeners.clear();
 
-            log.debug("releasing service factory instances for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
-            for (Map.Entry<IServiceFactory<IClusterable>, IClusterable> entry : instances.entrySet()) {
-                entry.getKey().releaseService(this, entry.getValue());
-            }
-            instances.clear();
+                log.debug("releasing service factory instances for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
+                for (Map.Entry<IServiceFactory<IClusterable>, IClusterable> entry : instances.entrySet()) {
+                    entry.getKey().releaseService(this, entry.getValue());
+                }
+                instances.clear();
 
-            if (!initializing) {
-                log.debug("unregistering services for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
-                for (Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
-                    final String key = entry.getKey();
-                    for (IClusterable service : entry.getValue()) {
-                        manager.unregisterService(service, key);
+                if (!initializing) {
+                    log.debug("unregistering services for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
+                    for (Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
+                        final String key = entry.getKey();
+                        for (IClusterable service : entry.getValue()) {
+                            manager.unregisterService(service, key);
+                        }
                     }
+                } else {
+                    for (ServiceRegistration registration : registrationOrder) {
+                        registration.cleanup();
+                    }
+                    registrationOrder.clear();
+                    registrations.clear();
                 }
-            } else {
-                for (ServiceRegistration registration : registrationOrder) {
-                    registration.cleanup();
-                }
-                registrationOrder.clear();
-                registrations.clear();
+                services.clear();
             }
-            services.clear();
+        } finally {
+            if (stopTask != null) {
+                stopTask.stop();
+            }
         }
     }
 
@@ -383,7 +444,7 @@ public class PluginContext implements IPluginContext, IDetachable {
         initializing = true;
         stopping = false;
     }
-    
+
     public void detach() {
         for (Map.Entry<IServiceFactory<IClusterable>, IClusterable> entry : instances.entrySet()) {
             IClusterable service = entry.getValue();
@@ -416,7 +477,7 @@ public class PluginContext implements IPluginContext, IDetachable {
     private void writeObject(ObjectOutputStream output) throws IOException {
         if (stopping && Application.exists()) {
             if (Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT)) {
-                throw new WicketRuntimeException("Stopped plugin is still being referenced: " + plugin.getClass().getName());
+                throw new WicketRuntimeException("Stopped plugin is still being referenced: " + (plugin != null ? plugin.getClass().getName() : "unknown"));
             }
         }
         output.defaultWriteObject();

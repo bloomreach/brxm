@@ -59,6 +59,8 @@ import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.WebApplicationHelper;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -404,14 +406,28 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
      * {@inheritDoc}
      */
     public void render(PluginRequestTarget target) {
-        if (redraw) {
-            if (target != null && isActive()) {
-                target.add(this);
+        Task renderTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                renderTask = HDC.getCurrentTask().startSubtask("AbstractRenderService.render");
+                renderTask.setAttribute("pluginConfig", getPluginConfig().getName());
+                renderTask.setAttribute("pluginClass", getClass().getName());
             }
-        }
-        for (Map.Entry<String, ExtensionPoint> entry : children.entrySet()) {
-            for (IRenderService service : entry.getValue().getChildren()) {
-                service.render(target);
+
+            if (redraw) {
+                if (target != null && isActive()) {
+                    target.add(this);
+                }
+            }
+            for (Map.Entry<String, ExtensionPoint> entry : children.entrySet()) {
+                for (IRenderService service : entry.getValue().getChildren()) {
+                    service.render(target);
+                }
+            }
+        } finally {
+            if (renderTask != null) {
+                renderTask.stop();
             }
         }
     }
@@ -534,13 +550,47 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
                 return service.getModel();
             }
         }
+
         return null;
     }
 
     @Override
     protected void onBeforeRender() {
-        redraw = false;
-        super.onBeforeRender();
+        Task beforeRenderTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                beforeRenderTask = HDC.getCurrentTask().startSubtask("AbstractRenderService.onBeforeRender");
+                beforeRenderTask.setAttribute("pluginConfig", getPluginConfig().getName());
+                beforeRenderTask.setAttribute("pluginClass", getClass().getName());
+            }
+
+            redraw = false;
+            super.onBeforeRender();
+        } finally {
+            if (beforeRenderTask != null) {
+                beforeRenderTask.stop();
+            }
+        }
+    }
+
+    @Override
+    protected void onAfterRender() {
+        Task afterRenderTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                afterRenderTask = HDC.getCurrentTask().startSubtask("AbstractRenderService.onAfterRender");
+                afterRenderTask.setAttribute("pluginConfig", getPluginConfig().getName());
+                afterRenderTask.setAttribute("pluginClass", getClass().getName());
+            }
+
+            super.onAfterRender();
+        } finally {
+            if (afterRenderTask != null) {
+                afterRenderTask.stop();
+            }
+        }
     }
 
     @Override

@@ -1874,6 +1874,9 @@ engine/src/main/java/org/hippoecm/frontend/StagedLocalizer.java -text
 engine/src/main/java/org/hippoecm/frontend/StringResourceProviderConsumer.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/behaviors/ContextMenuBehavior.java -text
 engine/src/main/java/org/hippoecm/frontend/behaviors/contextmenu.js -text
+engine/src/main/java/org/hippoecm/frontend/diagnosis/DiagnosisDaemonModule.java -text
+engine/src/main/java/org/hippoecm/frontend/diagnosis/DiagnosisRequestCycleListener.java -text
+engine/src/main/java/org/hippoecm/frontend/diagnosis/DiagnosisService.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/AbstractTranslateService.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/ConfigTraversingPlugin.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/NodeWrapper.java -text
@@ -1922,6 +1925,8 @@ engine/src/main/java/org/hippoecm/frontend/service/preferences/PreferencesStore.
 engine/src/main/java/org/hippoecm/frontend/service/preferences/PreferencesStorePlugin.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/service/restproxy/RestProxyServicePlugin.java -text
 engine/src/main/java/org/hippoecm/frontend/util/NodeStateUtil.java -text
+engine/src/main/resources/hippo-configuration/hippo-modules/diagnosis-module.xml -text
+engine/src/main/resources/hippoecm-extension.xml -text
 engine/src/main/resources/hippoecm-layouts.xml svneol=native#text/plain
 engine/src/main/resources/org/hippoecm/frontend/hippo-cms.ico -text
 engine/src/main/resources/org/hippoecm/frontend/hippo-console.ico -text

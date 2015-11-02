@@ -48,6 +48,9 @@ import org.hippoecm.frontend.observation.JcrObservationManager;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
+import org.hippoecm.frontend.session.LoginException.Cause;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
@@ -55,8 +58,6 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.frontend.session.LoginException.Cause;
 
 /**
  * A Wicket {@link org.apache.wicket.Session} that maintains a reference to a JCR {@link javax.jcr.Session}.  It is
@@ -340,16 +341,28 @@ public class PluginUserSession extends UserSession {
     }
 
     public void logout() {
-        releaseJcrSession();
-        jcrSessionModel = null;
+        Task logoutTask = null;
 
-        JcrObservationManager.getInstance().cleanupListeners(this);
-        pageId = 0;
+        try {
+            if (HDC.isStarted()) {
+                logoutTask = HDC.getCurrentTask().startSubtask("PluginUserSession.logout");
+            }
 
-        getHttpSession().removeAttribute("hippo:username");
+            releaseJcrSession();
+            jcrSessionModel = null;
 
-        invalidate();
-        dirty();
+            JcrObservationManager.getInstance().cleanupListeners(this);
+            pageId = 0;
+
+            getHttpSession().removeAttribute("hippo:username");
+
+            invalidate();
+            dirty();
+        } finally {
+            if (logoutTask != null) {
+                logoutTask.stop();
+            }
+        }
     }
 
     public Credentials getCredentials() {
@@ -429,11 +442,23 @@ public class PluginUserSession extends UserSession {
     }
 
     public void flush() {
-        JcrObservationManager.getInstance().cleanupListeners(this);
-        if (Application.exists()) {
-            clear();
-        } else {
-            log.info("There is no wicket application attached to the current thread.");
+        Task flushTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                flushTask = HDC.getCurrentTask().startSubtask("PluginUserSession.flush");
+            }
+
+            JcrObservationManager.getInstance().cleanupListeners(this);
+            if (Application.exists()) {
+                clear();
+            } else {
+                log.info("There is no wicket application attached to the current thread.");
+            }
+        } finally {
+            if (flushTask != null) {
+                flushTask.stop();
+            }
         }
     }
 
