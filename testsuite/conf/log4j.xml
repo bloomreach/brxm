@@ -36,6 +36,21 @@
     </filter>
   </appender>
 
+  <!-- hippo-cms-diagnostic.log -->
+  <appender name="cms-diagnostic" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="${catalina.base}/logs/hippo-cms-diagnostic.log"/>
+    <param name="Append" value="true"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%t] %m%n"/>
+    </layout>
+    <filter class="org.onehippo.cms7.logging.log4j.MdcOrJndiPropertyFilter">
+      <param name="name" value="logging/contextName" />
+      <param name="resourceRef" value="true" />
+      <param name="value" value="cms" />
+      <param name="onMatchOption" value="ACCEPT" />
+    </filter>
+  </appender>
+
   <!-- hippo-site.log -->
   <appender name="site" class="org.apache.log4j.DailyRollingFileAppender">
     <param name="File" value="${catalina.base}/logs/hippo-site.log"/>
@@ -154,6 +169,12 @@
   </logger>
   <logger name="org.apache.wicket">
     <level value="warn"/>
+  </logger>
+
+  <logger additivity="false" name="org.hippoecm.frontend.diagnosis">
+    <level value="info"/>
+    <appender-ref ref="cms-diagnostic"/>
+    <appender-ref ref="console"/>
   </logger>
 
   <!-- audit logging -->
