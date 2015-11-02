@@ -23,11 +23,8 @@
 .hippo-panel-plugin-body h3 {
   font-size: 12px;
   font-weight: bold;
-  color: #0d496f;
+  color: $primary;
   margin-bottom: 5px;
-}
-
-.hippo-controlpanel-form {
 }
 
 .hippo-controlpanel-form textarea {
@@ -37,7 +34,7 @@
 
 .hippo-controlpanel-form input[type="password"],
 .hippo-controlpanel-form input[type="text"] {
-  border: 1px solid #afafaf;
+  border: 1px solid $dark-shade;
   padding: 3px;
   line-height: 16px;
 }
@@ -45,8 +42,8 @@
 .hippo-panel-plugin .icons-128 {
   background-position: left center;
   background-repeat: no-repeat;
-  border-bottom: 1px solid #afafaf;
-  border-top: 1px solid #afafaf;
+  border-bottom: 1px solid $dark-shade;
+  border-top: 1px solid $dark-shade;
   min-height: 128px;
   padding-bottom: 10px;
   padding-left: 150px;
@@ -62,7 +59,7 @@
 }
 
 .hippo-controlpanel-table-default {
-  border: 1px solid #afafaf;
+  border: 1px solid $dark-shade;
   border-collapse: separate
 }
 
@@ -73,12 +70,12 @@
 .hippo-controlpanel-table-default tr th {
   background-color: $light-shade;
 
-  border-bottom: 1px solid #afafaf;
+  border-bottom: 1px solid $dark-shade;
   border-left: none;
-  border-right: 1px solid #afafaf;
+  border-right: 1px solid $dark-shade;
   font-size: 12px;
   font-weight: bold;
-  color: black;
+  color: $black;
   padding: 4px;
 
   &:last-child {
@@ -98,7 +95,7 @@
 .hippo-controlpanel-table-default tr.navigation .navigatorLabel {
   font-size: 11px;
   font-weight: bold;
-  color: #666666;
+
 }
 
 .hippo-controlpanel-table-default tr.navigation td em,
@@ -106,24 +103,24 @@
   padding: 8px;
   padding-left: 10px;
   padding-right: 10px;
-  background: #f2f2f2;
-  color: #666666;
+  background: $lightest-shade;
+  color: $darkest-shade;
   line-height: 13px;
   font-weight: bold
 }
 
 .hippo-controlpanel-table-default tr.navigation td a:hover {
-  background: #afafaf;
-  color: white
+  background: $dark-shade;
+  color: $white
 }
 
 .hippo-controlpanel-table-default tr.navigation td em {
-  color: #cccccc;
+  color: $light-gray;
   display: inline-block;
 }
 
 .hippo-controlpanel-table-default tr td a {
-  color: #0467b4
+  color: $primary
 }
 
 .hippo-controlpanel-table-default tr td:hover {
@@ -131,8 +128,8 @@
 }
 
 .hippo-controlpanel-table-default tr.odd td {
-  background: #f4f4f4;
-  border-right: 1px solid #afafaf;
+  background: $lightest-shade;
+  border-right: 1px solid $dark-shade;
 
   &:last-child {
     border-right: 0;
@@ -140,8 +137,8 @@
 }
 
 .hippo-controlpanel-table-default tr.even td {
-  background: white;
-  border-right: 1px solid #afafaf;
+  background: $white;
+  border-right: 1px solid $dark-shade;
 
   &:last-child {
     border-right: 0;
@@ -153,8 +150,8 @@
 }
 
 .hippo-controlpanel-table-nested tr td {
-  background: #f2f2f2;
-  border: 1px solid white;
+  background: $lightest-shade;
+  border: 1px solid $white;
   border-bottom: none;
   border-top: none;
   padding: 4px;
@@ -168,7 +165,7 @@
 }
 
 .hippo-controlpanel-table-nested span.icon-16 a {
-  color: #cf2d27
+  color: $danger
 }
 
 .hippo-controlpanel-table-nested span.icon-16 a:hover {
@@ -181,7 +178,7 @@
 }
 
 .hippo-controlpanel-actions-top {
-  border-bottom: 1px solid #afafaf;
+  border-bottom: 1px solid $dark-shade;
   border-top: none;
   text-align: left;
   padding-top: 2px;
@@ -190,7 +187,7 @@
 
 .hippo-controlpanel-actions {
   padding: 10px;
-  border-top: 1px solid #afafaf;
+  border-top: 1px solid $dark-shade;
   text-align: right;
   padding-right: 25px;
   margin-top: 15px;
@@ -209,7 +206,7 @@
 .hippo-controlpanel-options li {
   list-style-type: disc;
   margin: 5px;
-  color: #afafaf;
+  color: $dark-shade;
   list-style-position: inside;
   font-size: 12px;
 }
@@ -220,13 +217,13 @@
 
 .hippo-controlpanel-options li a {
   font-size: 12px;
-  color: #0467b4
+  color: $primary
 }
 
 .hippo-controlpanel-options li a:hover {
   text-decoration: underline;
   font-size: 12px;
-  color: #0467b4
+  color: $primary
 }
 
 .hippo-root .hippo-controlpanel-actions a {
@@ -234,27 +231,25 @@
   padding-left: 22px;
   display: block;
   float: left;
-  border: 1px solid #afafaf;
-  background-color: #f4f4f4;
+  border: 1px solid $dark-shade;
+  background-color: $lightest-shade;
   font-weight: bold;
 }
 
 .hippo-root .hippo-controlpanel-actions a:hover {
-  background-color: #fff6e0;
   text-decoration: underline;
   cursor: pointer
 }
 
 .hippo-controlpanel-section-title {
   font-size: 14px;
-  color: #69889c
 }
 
 .hippo-controlpanel-table-default {
 }
 
 .groovy-basic-shell {
-  background-color: white;
+  background-color: $white;
   height: 320px;
   width: 720px;
   position: relative !important;
