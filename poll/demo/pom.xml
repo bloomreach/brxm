@@ -35,8 +35,6 @@
   </scm>
 
   <properties>
-    <hippo.plugin.poll.version>2.2.0-SNAPSHOT-cleanup</hippo.plugin.poll.version>
-
     <taglibs.version>1.2.1</taglibs.version>
     <commons.lang.version>2.6</commons.lang.version>
   </properties>
