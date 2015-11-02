@@ -35,6 +35,10 @@
     height: auto;
 }
 
+.taxonomy-tree-picker {
+    display: flex;
+}
+
 .taxonomy-tree-popup {
     height: 385px;
     width: 340px;
@@ -42,6 +46,11 @@
     float: left;
     border-bottom: 1px solid #e3e3e3;
     border-right: 1px solid #e3e3e3;
+
+    /* copied from hippo theme's .solid-child */
+    -webkit-flex: 0 0 auto;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
 }
 
 .taxonomy-tree-popup .wicket-tree {
@@ -63,11 +72,16 @@
 }
 
 .taxonomy-container {
-    width: 500px;
     height: 385px;
     float: left;
+    overflow: scroll;
     border-bottom: 1px solid #e3e3e3;
     background-color: #E3E3E3;
+
+    /* copie from hippo theme's .flex-child */
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
 }
 
 .taxonomy-container h3 {

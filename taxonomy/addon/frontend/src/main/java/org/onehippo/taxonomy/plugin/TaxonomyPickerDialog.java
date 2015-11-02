@@ -18,9 +18,7 @@ package org.onehippo.taxonomy.plugin;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.util.value.IValueMap;
-import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -35,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * TaxonomyPickerDialog used by {@link TaxonomyPickerPlugin} to show picker dialog to users.
  * @version $Id$
  */
-public class TaxonomyPickerDialog extends AbstractDialog<Classification> {
+public class TaxonomyPickerDialog extends Dialog<Classification> {
 
     static final Logger log = LoggerFactory.getLogger(TaxonomyPickerDialog.class);
 
@@ -58,22 +56,22 @@ public class TaxonomyPickerDialog extends AbstractDialog<Classification> {
      * @param model
      * @param preferredLocale
      */
-     public TaxonomyPickerDialog(final IPluginContext context, final IPluginConfig config, IModel<Classification> model,
-             String preferredLocale) {
-         this(context, config, model, preferredLocale, new TaxonomyModel(context, config), false);
-     }
+    public TaxonomyPickerDialog(final IPluginContext context, final IPluginConfig config, IModel<Classification> model,
+            String preferredLocale) {
+        this(context, config, model, preferredLocale, new TaxonomyModel(context, config), false);
+    }
 
-     /**
-      * Constructor which adds UI components in the dialog.
-      * The main UI component in this dialog is the taxonomy browser.
-      * @param context
-      * @param config
-      * @param model
-      * @param preferredLocale
-      * @param taxonomyModel
-      */
-     public TaxonomyPickerDialog(final IPluginContext context, final IPluginConfig config, IModel<Classification> model,
-             String preferredLocale, final TaxonomyModel taxonomyModel, final boolean detailsReadOnly) {
+    /**
+     * Constructor which adds UI components in the dialog.
+     * The main UI component in this dialog is the taxonomy browser.
+     * @param context
+     * @param config
+     * @param model
+     * @param preferredLocale
+     * @param taxonomyModel
+     */
+    public TaxonomyPickerDialog(final IPluginContext context, final IPluginConfig config, IModel<Classification> model,
+            String preferredLocale, final TaxonomyModel taxonomyModel, final boolean detailsReadOnly) {
         super(model);
 
         setOkEnabled(true);
@@ -93,15 +91,8 @@ public class TaxonomyPickerDialog extends AbstractDialog<Classification> {
             add(browser = new TaxonomyBrowser("content", new Model<>(model.getObject()),
                      taxonomyModel, preferredLocale, detailsReadOnly, iconProvider));
         }
-    }
 
-    @Override
-    public IValueMap getProperties() {
-        if (TREE.equals(viewType)) {
-            return DialogConstants.LARGE;
-        } else {
-            return new ValueMap("width=500,height=368");
-        }
+        setSize(DialogConstants.LARGE_AUTO);
     }
 
     public IModel<String> getTitle() {
