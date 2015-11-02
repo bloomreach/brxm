@@ -2,7 +2,7 @@
 
 /* Remove background sprite for tabs */
 .x-tot2ivn-vr-tab-strip-top.x-tab-strip-top {
-    background: #fff none;
+    background: #ffffff none;
 }
 
 .x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tab-right,
@@ -39,7 +39,7 @@
 /* Left Panel background */
 .x-tot2ivn-vr-tab-panel {
     background: #ffffff;
-    border-color: #99bbe8 !important;
+    border-color: #40a6ff !important;
 }
 
 /* Left Panel */
@@ -58,7 +58,7 @@
 
 /* Right Body Panel */
 .x-tot2ivn-vr-tab-panel-bwrap {
-    background: #fff;
+    background: #ffffff;
     overflow: visible;
     overflow-x: hidden;
     overflow-y: auto;
@@ -80,7 +80,7 @@
     text-overflow: ellipsis;
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
     font-size: 12px;
-    color: #3f3f3f;
+    color: #22272f;
 }
 
 /* Hovered menu item */
