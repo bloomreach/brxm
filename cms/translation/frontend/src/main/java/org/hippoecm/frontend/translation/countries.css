@@ -39,13 +39,14 @@
   color: black;
 }
 
-table#translations-break-link {
-  margin-bottom: 12px;
-  margin-left: 20px;
+#translations-break-link {
+  margin-bottom: 8px;
+  margin-left: 14px;
 }
 
 #translations-break-link .x-btn-text {
   padding-bottom: 17px;
+  padding-top: 6px;
 }
 
 .hippo-root .x-panel-body {
