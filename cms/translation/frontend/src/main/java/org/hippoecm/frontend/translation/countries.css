@@ -19,6 +19,14 @@
   color: #666666;
 }
 
+#folder-path .hippo-translation-language {
+  line-height: 16px;
+}
+
+.ext-ie #folder-path .hippo-translation-language {
+  padding-top: 0;
+}
+
 .hippo-root .x-tree-node .x-tree-node-disabled .x-tree-node-icon {
   opacity: 0.7;
 }
@@ -59,7 +67,17 @@
 }
 
 .hippo-folder-translations .hi-folder {
-  fill: #858585;
+  color: #9ba0a5;
+}
+
+.hippo-translated-folder-with-flag,
+.hippo-translated-folder-without-flag {
+  margin-right: 4px;
+}
+
+.hippo-translated-folder-with-flag svg + span {
+  width: 11px;
+  height: 9px;
 }
 
 .hippo-folder-translations .hippo-translated-folder-without-flag > .hi-folder {
