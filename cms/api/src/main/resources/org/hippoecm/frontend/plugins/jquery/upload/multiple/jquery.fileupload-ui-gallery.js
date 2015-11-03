@@ -158,14 +158,14 @@
       var filesList = this.options.filesContainer;
 
       if (filesList.children().length > this.options.maxTotalFiles) {
-        // not upload too many files
+        // prevent user from uploading too many files
         return;
       }
       this.element.closest('form').find('input[type=submit]').prop('disabled', true);
 
       $.each(filesList.children(), function (idx, template) {
         var data = $.data(template, 'data');
-        // not submit invalid files
+        // don't submit invalid files
         if (data && data.files && !data.files.error && data.submit) {
           data.submit();
         }
