@@ -30,6 +30,7 @@ public class TestJcrQueryBuilder extends RepositoryTestCase {
     public final static String COMMON_SCOPE = "(@hippo:paths='cafebabe-cafe-babe-cafe-babecafebabe')";
     public final static String COMMON_ORDERBY = " order by @jcr:score descending";
 
+    @Test
     public void testEmptyQuery() throws Exception {
         InitialQueryImpl query = new InitialQueryImpl();
 
@@ -185,6 +186,17 @@ public class TestJcrQueryBuilder extends RepositoryTestCase {
 
         String queryAsString = TestUtils.getQueryAsString(query, session);
         assertEquals("//*[" + COMMON_SCOPE + "]/.." + COMMON_ORDERBY, queryAsString);
+    }
+
+    @Test
+    public void test_contains_empty_string_is_optimized_away() {
+        InitialQueryImpl initialQuery = new InitialQueryImpl();
+        QueryImpl query = initialQuery.from("/").where(QueryUtils.text().contains(""))
+                .and(QueryUtils.text().contains("this"))
+                .and(QueryUtils.text().contains(""));
+
+        String queryAsString = TestUtils.getQueryAsString(query, session);
+        assertEquals("//*[" + COMMON_SCOPE + " and (((jcr:contains(.,'this') or jcr:contains(.,'this*'))))]" + COMMON_ORDERBY, queryAsString);
     }
 
 }
