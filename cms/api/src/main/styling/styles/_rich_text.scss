@@ -25,7 +25,7 @@
   }
 
   blockquote {
-    border-left: 5px solid #ccc;
+    border-left: 5px solid $light-gray;
     font-family: Georgia, Times, "Times New Roman", serif;
     font-style: italic;
     padding: 2px 8px 2px 20px;
@@ -107,18 +107,18 @@
 
   hr {
     border: 0;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid $light-gray;
   }
 
   .right {
-    border: 1px solid #ccc;
+    border: 1px solid $light-gray;
     float: right;
     margin-left: 15px;
     padding: 5px;
   }
 
   .left {
-    border: 1px solid #ccc;
+    border: 1px solid $light-gray;
     float: left;
     margin-right: 15px;
     padding: 5px;

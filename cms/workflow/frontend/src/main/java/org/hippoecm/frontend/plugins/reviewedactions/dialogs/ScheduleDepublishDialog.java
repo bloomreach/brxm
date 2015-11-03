@@ -21,8 +21,8 @@ import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.editor.workflow.dialog.ReferringDocumentsView;
 import org.hippoecm.frontend.editor.workflow.model.ReferringDocumentsProvider;
@@ -31,11 +31,11 @@ import org.hippoecm.frontend.service.IEditorManager;
 
 public class ScheduleDepublishDialog extends WorkflowDialog<Node> {
 
-    public ScheduleDepublishDialog(IWorkflowInvoker invoker, JcrNodeModel nodeModel, IModel<Date> dateModel,
-                                   IEditorManager editorMgr) {
-        super(invoker, nodeModel);
+    public ScheduleDepublishDialog(final IWorkflowInvoker invoker, final JcrNodeModel nodeModel,
+                                   final IModel<Date> dateModel, final IModel<String> titleModel,
+                                   final IEditorManager editorMgr) {
+        super(invoker, nodeModel, titleModel);
 
-        setTitleKey("schedule-depublish-title");
         setCssClass("hippo-workflow-dialog");
         setFocusOnCancel();
 

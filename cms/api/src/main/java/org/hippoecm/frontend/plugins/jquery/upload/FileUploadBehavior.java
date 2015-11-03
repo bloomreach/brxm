@@ -57,7 +57,7 @@ public abstract class FileUploadBehavior extends AbstractAjaxBehavior {
         // the url to receive file upload
         variables.put("url", settings.getUploadUrl());
 
-        variables.put("maxNumberOfFiles", settings.getMaxNumberOfFiles());
+        variables.put("maxTotalFiles", settings.getMaxNumberOfFiles());
 
         // disable client-side file extension validation, accepted any files
         String acceptFileTypes = REGEX_ANYFILE;

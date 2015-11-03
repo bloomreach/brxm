@@ -288,7 +288,7 @@
 
     .hippo-selectable-documents {
       padding: 0;
-      background: white;
+      background: $white;
 
       .hippo-selectable-documents-header {
         display: flex;
@@ -408,7 +408,7 @@
 .hippo-picker-list-details {
   height: 356px;
   margin-left: 0;
-  background: #ffffff;
+  background: $white;
   width: auto;
   position: relative;
   overflow: hidden;
@@ -520,8 +520,8 @@ table.hippo-window-form {
 }
 
 .hippo-window-form td:not(.hippo-window-navigator) input {
-  background: white;
-  border: 1px solid #afafaf;
+  background: $white;
+  border: 1px solid $dark-shade;
   padding: 3px;
   line-height: 18px;
 }
@@ -547,8 +547,8 @@ table.hippo-window-form {
   margin: 11px;
   padding: 12px;
   text-align: center;
-  background: #ffccaa;
-  border: 1px solid #ff9900;
+  background:  $warning-light;
+  border: 1px solid $warning;
 }
 
 .hippo-window .hippo-dialog-container {
@@ -629,7 +629,7 @@ table.hippo-window-form {
   }
 
   tbody tr {
-    background-color: white;
+    background-color: $white;
     border-bottom: 1px solid $light-shade;
 
     td:first-child {
@@ -645,7 +645,7 @@ table.hippo-window-form {
 .hippo-revision-history-dialog .hippo-list-paging > td {
   position: relative;
   padding: 0;
-  background-color: white;
+  background-color: $white;
 
   .paging-container {
     border-top: 1px solid $doclist-row-separator-color;

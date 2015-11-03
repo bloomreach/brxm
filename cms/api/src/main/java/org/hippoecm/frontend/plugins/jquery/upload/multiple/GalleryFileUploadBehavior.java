@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -43,6 +44,7 @@ public class GalleryFileUploadBehavior extends FileUploadBehavior {
     private static final String MAX_FILESIZE_MESSAGE = "max.filesize.message";
     private static final String INVALID_EXTENSION_MESSAGE = "invalid.extension.message";
     private static final String MAX_NUMBER_OF_FILES_EXCEEDED = "max.number.of.files.exceeded";
+    private static final String MAX_NUMBER_OF_FILES_EXCEEDED_WIDGET = "max.number.of.files.exceeded.widget";
 
     public GalleryFileUploadBehavior(final FileUploadWidgetSettings settings) {
         super(settings);
@@ -65,17 +67,27 @@ public class GalleryFileUploadBehavior extends FileUploadBehavior {
         variables.put("fileUploadDoneUrl", settings.getUploadDoneNotificationUrl());
         variables.put("selectionChangeUrl", settings.getSelectionChangeNotificationUrl());
 
-        final List<String> allowedExtensions = Arrays.asList(settings.getAllowedExtensions());
-        variables.put("acceptFileTypes", String.join("|", allowedExtensions));
+        final List<String> allowedExtensions = Arrays.asList(ArrayUtils.nullToEmpty(settings.getAllowedExtensions()));
+
+        variables.put("acceptFileTypes", getAcceptFileTypesPattern("|"));
 
         // Localized error messages
-        variables.put(MAX_NUMBER_OF_FILES_EXCEEDED, getMessage(MAX_NUMBER_OF_FILES_EXCEEDED));
+        variables.put(MAX_NUMBER_OF_FILES_EXCEEDED_WIDGET, getMessage(MAX_NUMBER_OF_FILES_EXCEEDED_WIDGET));
 
         final String maxFileSizeMB = String.format("%2.1fMB", Bytes.bytes(settings.getMaxFileSize()).megabytes());
         variables.put(MAX_FILESIZE_MESSAGE, getMessage(MAX_FILESIZE_MESSAGE, maxFileSizeMB));
 
-        variables.put(INVALID_EXTENSION_MESSAGE, getMessage(INVALID_EXTENSION_MESSAGE, String.join(", ", allowedExtensions)));
+        variables.put(INVALID_EXTENSION_MESSAGE, getMessage(INVALID_EXTENSION_MESSAGE, getAcceptFileTypesPattern(", ")));
         return variables;
+    }
+
+    private String getAcceptFileTypesPattern(String delimiter) {
+        final String[] allowedExtensions = settings.getAllowedExtensions();
+        if (allowedExtensions == null || allowedExtensions.length == 0) {
+            return "*";
+        }
+
+        return "(" + String.join(delimiter, allowedExtensions) + ")";
     }
 
     private String getMessage(final String key, Object... parameters) {
