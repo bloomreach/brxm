@@ -37,6 +37,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.model.IChangeListener;
 import org.hippoecm.frontend.plugins.cms.browse.model.BrowserSections;
 import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection;
@@ -229,7 +230,12 @@ public class SectionViewer extends Panel implements ICardView {
         return false;
     }
 
-    protected void onSectionChange(final String sectionName) {}
+    protected void onSectionChange(final String sectionName) {
+        IContextMenuManager menuManager = findParent(IContextMenuManager.class);
+        if (menuManager != null) {
+            menuManager.collapseAllContextMenus();
+        }
+    }
 
     private boolean isActive() {
         ICardView cardView = findParent(ICardView.class);
