@@ -40,6 +40,9 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated The class was deprecated since version 2.19.00.
+ */
 @Deprecated
 public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
     private static final long serialVersionUID = 1L;
