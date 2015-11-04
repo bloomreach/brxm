@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,11 +24,11 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.Session;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconRenderer;
+import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,93 +37,93 @@ public class MimeTypeIconRenderer extends IconRenderer {
 
     static final Logger log = LoggerFactory.getLogger(MimeTypeIconRenderer.class);
 
-    private static final Map<String, String> MIMETYPE_TO_ICON = new HashMap<String, String>();
+    private static final Map<String, Icon> MIMETYPE_TO_ICON = new HashMap<>();
 
     static {
         //Microsoft Office
         //.doc
-        MIMETYPE_TO_ICON.put("application/msword", "res/mimetype-doc-16.png");
+        MIMETYPE_TO_ICON.put("application/msword", Icon.MIMETYPE_DOC);
 
         //.xls
-        MIMETYPE_TO_ICON.put("application/vnd.ms-excel", "res/mimetype-xls-16.png");
-        MIMETYPE_TO_ICON.put("application/excel", "res/mimetype-xls-16.png");
-        MIMETYPE_TO_ICON.put("application/x-excel", "res/mimetype-xls-16.png");
-        MIMETYPE_TO_ICON.put("application/x-msexcel", "res/mimetype-xls-16.png");
+        MIMETYPE_TO_ICON.put("application/vnd.ms-excel", Icon.MIMETYPE_XLS);
+        MIMETYPE_TO_ICON.put("application/excel", Icon.MIMETYPE_XLS);
+        MIMETYPE_TO_ICON.put("application/x-excel", Icon.MIMETYPE_XLS);
+        MIMETYPE_TO_ICON.put("application/x-msexcel", Icon.MIMETYPE_XLS);
 
         //.ppt
-        MIMETYPE_TO_ICON.put("application/mspowerpoint", "res/mimetype-ppt-16.png");
-        MIMETYPE_TO_ICON.put("application/powerpoint", "res/mimetype-ppt-16.png");
-        MIMETYPE_TO_ICON.put("application/vnd.ms-powerpoint", "res/mimetype-ppt-16.png");
-        MIMETYPE_TO_ICON.put("application/x-mspowerpoint", "res/mimetype-ppt-16.png");
+        MIMETYPE_TO_ICON.put("application/mspowerpoint", Icon.MIMETYPE_PPT);
+        MIMETYPE_TO_ICON.put("application/powerpoint", Icon.MIMETYPE_PPT);
+        MIMETYPE_TO_ICON.put("application/vnd.ms-powerpoint", Icon.MIMETYPE_PPT);
+        MIMETYPE_TO_ICON.put("application/x-mspowerpoint", Icon.MIMETYPE_PPT);
 
         ///Microsoft Open XML
         //.docx
         MIMETYPE_TO_ICON.put("application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                "res/mimetype-docx-16.png");
+                Icon.MIMETYPE_DOCX);
 
         //.xlsx
         MIMETYPE_TO_ICON.put("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                "res/mimetype-xlsx-16.png");
+                Icon.MIMETYPE_XLSX);
 
         //.pptx
         MIMETYPE_TO_ICON.put("application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                "res/mimetype-pptx-16.png");
+                Icon.MIMETYPE_PPTX);
 
         //OpenOffice 1
         //.sxw
-        MIMETYPE_TO_ICON.put("application/vnd.sun.xml.writer", "res/mimetype-sxw-16.png");
+        MIMETYPE_TO_ICON.put("application/vnd.sun.xml.writer", Icon.MIMETYPE_SXW);
 
         //.sxc
-        MIMETYPE_TO_ICON.put("application/vnd.sun.xml.calc", "res/mimetype-sxc-16.png");
+        MIMETYPE_TO_ICON.put("application/vnd.sun.xml.calc", Icon.MIMETYPE_SXC);
 
         //.sxi
-        MIMETYPE_TO_ICON.put("application/vnd.sun.xml.impress", "res/mimetype-sxi-16.png");
+        MIMETYPE_TO_ICON.put("application/vnd.sun.xml.impress", Icon.MIMETYPE_SXI);
 
         //OpenOffice 2
         //*.odt
-        MIMETYPE_TO_ICON.put("application/opendocument", "res/mimetype-odt-16.png");
-        MIMETYPE_TO_ICON.put("application/vnd.oasis.opendocument.text", "res/mimetype-odt-16.png");
+        MIMETYPE_TO_ICON.put("application/opendocument", Icon.MIMETYPE_ODT);
+        MIMETYPE_TO_ICON.put("application/vnd.oasis.opendocument.text", Icon.MIMETYPE_ODT);
 
         //*.ods
-        MIMETYPE_TO_ICON.put("application/vnd.oasis.opendocument.spreadsheet", "res/mimetype-ods-16.png");
+        MIMETYPE_TO_ICON.put("application/vnd.oasis.opendocument.spreadsheet", Icon.MIMETYPE_ODS);
 
         //*.odp
-        MIMETYPE_TO_ICON.put("application/vnd.oasis.opendocument.presentation", "res/mimetype-odp-16.png");
+        MIMETYPE_TO_ICON.put("application/vnd.oasis.opendocument.presentation", Icon.MIMETYPE_ODP);
 
         //General
         //image
-        MIMETYPE_TO_ICON.put("image", "res/mimetype-image-16.png");
+        MIMETYPE_TO_ICON.put("image", Icon.MIMETYPE_IMAGE);
 
         //video
-        MIMETYPE_TO_ICON.put("video", "res/mimetype-video-16.png");
+        MIMETYPE_TO_ICON.put("video", Icon.MIMETYPE_VIDEO);
 
         //audio
-        MIMETYPE_TO_ICON.put("audio", "res/mimetype-audio-16.png");
+        MIMETYPE_TO_ICON.put("audio", Icon.MIMETYPE_AUDIO);
 
         //text
-        MIMETYPE_TO_ICON.put("text", "res/mimetype-text-16.png");
+        MIMETYPE_TO_ICON.put("text", Icon.MIMETYPE_TEXT);
 
         //.pdf
-        MIMETYPE_TO_ICON.put("application/pdf", "res/mimetype-pdf-16.png");
+        MIMETYPE_TO_ICON.put("application/pdf", Icon.MIMETYPE_PDF);
 
         //.swf
-        MIMETYPE_TO_ICON.put("application/x-shockwave-flash", "res/mimetype-swf-16.png");
+        MIMETYPE_TO_ICON.put("application/x-shockwave-flash", Icon.MIMETYPE_FLASH);
 
         //zips
-        MIMETYPE_TO_ICON.put("application/zip", "res/mimetype-zip-16.png");
-        MIMETYPE_TO_ICON.put("application/x-zip-compressed", "res/mimetype-zip-16.png");
-        MIMETYPE_TO_ICON.put("application/x-compress", "res/mimetype-zip-16.png");
-        MIMETYPE_TO_ICON.put("application/x-compressed", "res/mimetype-zip-16.png");
-        MIMETYPE_TO_ICON.put("application/x-bzip", "res/mimetype-zip-16.png");
-        MIMETYPE_TO_ICON.put("application/x-bzip2", "res/mimetype-zip-16.png");
-        MIMETYPE_TO_ICON.put("application/x-gzip", "res/mimetype-zip-16.png");
-        MIMETYPE_TO_ICON.put("multipart/x-zip", "res/mimetype-zip-16.png");
+        MIMETYPE_TO_ICON.put("application/zip", Icon.MIMETYPE_ZIP);
+        MIMETYPE_TO_ICON.put("application/x-zip-compressed", Icon.MIMETYPE_ZIP);
+        MIMETYPE_TO_ICON.put("application/x-compress", Icon.MIMETYPE_ZIP);
+        MIMETYPE_TO_ICON.put("application/x-compressed", Icon.MIMETYPE_ZIP);
+        MIMETYPE_TO_ICON.put("application/x-bzip", Icon.MIMETYPE_ZIP);
+        MIMETYPE_TO_ICON.put("application/x-bzip2", Icon.MIMETYPE_ZIP);
+        MIMETYPE_TO_ICON.put("application/x-gzip", Icon.MIMETYPE_ZIP);
+        MIMETYPE_TO_ICON.put("multipart/x-zip", Icon.MIMETYPE_ZIP);
 
         //.rtf
-        MIMETYPE_TO_ICON.put("application/rtf", "res/mimetype-rtf-16.png");
+        MIMETYPE_TO_ICON.put("application/rtf", Icon.MIMETYPE_RTF);
 
         //Octet stream
-        MIMETYPE_TO_ICON.put("application/octet-stream", "res/mimetype-binary-16.png");
+        MIMETYPE_TO_ICON.put("application/octet-stream", Icon.MIMETYPE_BINARY);
     }
 
     @Override
@@ -139,15 +139,9 @@ public class MimeTypeIconRenderer extends IconRenderer {
                             return null;
                         }
                         String mimeType = ((Node) primItem).getProperty("jcr:mimeType").getString();
-                        String iconPath = mimetypeToPath(mimeType);
-                        if (iconPath != null) {
-                            final Session session = Session.get();
-                            final PackageResourceReference reference = new PackageResourceReference(MimeTypeIconRenderer.class,
-                                    iconPath,
-                                    session.getLocale(),
-                                    session.getStyle(),
-                                    null);
-                            return HippoIcon.fromResource(id, reference);
+                        final Icon iconType = mimetypeToIcon(mimeType);
+                        if (iconType != null) {
+                            return HippoIcon.fromSprite(id, iconType, IconSize.L);
                         }
                     } else {
                         log.warn("primary item of image set must be of type "
@@ -165,7 +159,7 @@ public class MimeTypeIconRenderer extends IconRenderer {
     }
 
     //Mimetypes other than application/* are matched by category only (the part before the slash)
-    private String mimetypeToPath(String mimeType) {
+    private Icon mimetypeToIcon(String mimeType) {
         if (!mimeType.startsWith("application")) {
             mimeType = StringUtils.substringBefore(mimeType, "/");
         }
