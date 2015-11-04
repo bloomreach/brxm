@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,8 +30,6 @@ import org.hippoecm.frontend.behaviors.IContextMenu;
  * This behavior adds a right-click event-handler to the component.
  */
 public abstract class RightClickBehavior extends AbstractDefaultAjaxBehavior implements IContextMenu {
-
-    private static final long serialVersionUID = 1L;
 
     public static final String MOUSE_X_PARAM = "x";
     public static final String MOUSE_Y_PARAM = "y";
@@ -78,7 +76,9 @@ public abstract class RightClickBehavior extends AbstractDefaultAjaxBehavior imp
         final MarkupContainer menu = getContextmenu();
         if (menu.isVisible() && getComponentToUpdate().isVisible()) {
             menu.setVisible(false);
-            target.add(getComponentToUpdate());
+            if (target != null) {
+                target.add(getComponentToUpdate());
+            }
         }
     }
 
