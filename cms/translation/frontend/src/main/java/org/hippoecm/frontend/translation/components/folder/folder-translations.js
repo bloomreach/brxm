@@ -213,7 +213,7 @@ Hippo.Translation.Folder.SelectTree = Ext.extend(Ext.ux.tree.TreeGrid, {
                                 return values.t9ns !== undefined;
                             },
                             format: function(v) {
-                                return '<img src="' + self.images.getImage(v) + '" />';
+                                return '<img class="flag-md" src="' + self.images.getImage(v) + '" />';
                             }
                         }
                 )
