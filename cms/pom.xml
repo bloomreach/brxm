@@ -86,8 +86,9 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
 
+    <hippo.frontend.theme.version>2.2.0-restyling-psp1-SNAPSHOT</hippo.frontend.theme.version>
+
     <hippo.commons.version>2.2.0-SNAPSHOT</hippo.commons.version>
-    <hippo.frontend.theme.version>2.2.0-SNAPSHOT</hippo.frontend.theme.version>
     <hippo.utilities.version>2.2.0-SNAPSHOT</hippo.utilities.version>
     <hippo.services.version>2.2.0-SNAPSHOT</hippo.services.version>
     <hippo.repository.version>3.2.0-SNAPSHOT</hippo.repository.version>
