@@ -19,6 +19,17 @@
   color: #666666;
 }
 
+.hippo-folder-translations,
+.hippo-folder-translations .x-list-body dt em,
+.hippo-folder-translations .x-fieldset legend,
+.hippo-folder-translations .x-btn button {
+  font: 12px "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.hippo-folder-translations .x-fieldset legend {
+  font-weight: bold;
+}
+
 #folder-path .hippo-translation-language {
   line-height: 16px;
 }
