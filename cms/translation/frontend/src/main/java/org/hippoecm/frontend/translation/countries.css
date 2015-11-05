@@ -76,12 +76,16 @@
 }
 
 #translations-break-link {
-  margin-bottom: 8px;
-  margin-left: 14px;
+  margin-bottom: 6px;
+  margin-left: 0;
 }
 
 .ext-ie .x-btn .hippo-t9n-breaklink {
   padding-top: 0
+}
+
+.x-btn-text-icon.x-btn-text-icon-not-found .x-btn-icon-small-left .x-btn-text {
+  padding-left: 0;
 }
 
 .hippo-root .x-panel-body {
