@@ -20,14 +20,13 @@
 }
 
 .hippo-folder-translations,
+.hippo-folder-translations .x-grid3-hd-row td,
+.hippo-folder-translations .x-tree-node,
 .hippo-folder-translations .x-list-body dt em,
 .hippo-folder-translations .x-fieldset legend,
 .hippo-folder-translations .x-btn button {
-  font: 12px "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-
-.hippo-folder-translations .x-fieldset legend {
-  font-weight: bold;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 12px;
 }
 
 #folder-path .hippo-translation-language {
@@ -42,23 +41,22 @@
   opacity: 0.7;
 }
 
-.hippo-folder-translations .hippo-translated-folder-without-flag {
-  position: relative;
-  top: 1px;
-}
-
 .hippo-folder-translations .flag-md {
   position: relative;
   top: 2px;
 }
 
-.ext-ie .hippo-folder-translations .hippo-translated-folder-without-flag {
+.hippo-folder-translations .hippo-translated-folder-without-flag {
   position: relative;
-  top: 3px;
+  top: -1px;
 }
 
-.ext-ie .hippo-folder-translations .hippo-translated-folder-with-flag {
-  top: 2px;
+.ext-ie .translation-field-set .hippo-translated-folder-without-flag {
+  top: 0;
+}
+
+.ext-ie .translation-field-set .hippo-translated-folder-with-flag {
+  top: 1px;
 }
 
 .hippo-root .x-tree-node .x-tree-node-disabled a span {
@@ -82,9 +80,8 @@
   margin-left: 14px;
 }
 
-#translations-break-link .x-btn-text {
-  padding-bottom: 17px;
-  padding-top: 6px;
+.ext-ie .x-btn .hippo-t9n-breaklink {
+  padding-top: 0
 }
 
 .hippo-root .x-panel-body {
