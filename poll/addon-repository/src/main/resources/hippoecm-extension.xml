@@ -66,7 +66,43 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.2.0</sv:value>
+      <sv:value>1.09.00</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="types-compound-poll-delete-field-active">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20412.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentdelete" sv:type="String">
+      <sv:value>/hippo:namespaces/poll/poll/hipposysedit:nodetype/hipposysedit:nodetype/active</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="types-compound-poll-delete-prototype-property-active">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20412.2</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentdelete" sv:type="String">
+      <sv:value>/hippo:namespaces/poll/poll/hipposysedit:prototypes/hipposysedit:prototype/active</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="types-compound-poll-delete-templateplugin-active">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20412.3 </sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentdelete" sv:type="String">
+      <sv:value>/hippo:namespaces/poll/poll/editor:templates/_default_/active</sv:value>
     </sv:property>
   </sv:node>
 
@@ -87,7 +123,19 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.2.0</sv:value>
+      <sv:value>1.09.00</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="types-polldocument-delete-prototype-property-active">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20420.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentdelete" sv:type="String">
+      <sv:value>/hippo:namespaces/poll/polldocument/hipposysedit:prototypes/hipposysedit:prototype/poll:poll/poll:active</sv:value>
     </sv:property>
   </sv:node>
 
@@ -109,7 +157,19 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.2.0</sv:value>
+      <sv:value>1.05.07</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="poll-translator-delete-translation-active">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20430.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentdelete" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-services/pollTranslator/hippostd:translations/active</sv:value>
     </sv:property>
   </sv:node>
 
