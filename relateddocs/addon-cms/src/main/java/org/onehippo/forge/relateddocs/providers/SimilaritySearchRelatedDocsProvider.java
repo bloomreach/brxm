@@ -28,8 +28,6 @@ import javax.jcr.query.RowIterator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
 import org.onehippo.forge.relateddocs.RelatedDoc;
 import org.onehippo.forge.relateddocs.RelatedDocCollection;
@@ -80,7 +78,6 @@ public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProv
         }
 
         Node docNode = documentModel.getNode();
-        Node parentNode = docNode.getParent();
         String xpathQuery = createXPathQuery(docNode);
 
         if (log.isDebugEnabled()) {
@@ -92,48 +89,22 @@ public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProv
 
         query.setLimit(MAX_RESULTS);
         RowIterator r = query.execute().getRows();
-        int i = 0;
-        while (r.hasNext() && i < MAX_RESULTS) {
+
+        /*
+        Cleaned up iteration over result set since xPathQuery is changed to hold handles.
+        Original code also filtered out prototype, but I think we can safely assume prototypes
+        are not located in content directory
+         */
+        while (r.hasNext()) {
             // retrieve the query results from the row
             Row row = r.nextRow();
             String path = row.getValue("jcr:path").getString();
             long myScore = row.getValue("jcr:score").getLong();
+
             // retrieve the found document from the repository
             try {
                 Node document = (Node) nodeModel.getNode().getSession().getItem(path);
-                Node itsParent = ((HippoNode) document).getCanonicalNode().getParent();
-
-
-                // same parent? skip
-                // only interested in handles, not in the documents themselves
-                // if it's already chosen, then skip the document
-                if (parentNode.isSame(itsParent)) {
-                    continue;
-                } else if (document.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    if (uuidSet.contains(document.getIdentifier())) {
-                        continue;
-                    }
-                    if (log.isDebugEnabled()) {
-                        log.debug("Found related document {}", document.getPath());
-                    }
-                    collection.add(new RelatedDoc(new JcrNodeModel(document), this.score * myScore));
-                } else if (itsParent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    if (uuidSet.contains(itsParent.getIdentifier())) {
-                        continue;
-                    }
-                    if (log.isDebugEnabled()) {
-                        log.debug("Found parent {}", itsParent.getPath());
-                    }
-                    // exclude prototype stuff: note need to check this
-                    final JcrNodeModel jcrNodeModel = new JcrNodeModel(itsParent);
-                    if (jcrNodeModel.getNode().getPath().endsWith("hippo:prototype")) {
-                        continue;
-                    }
-                    collection.add(new RelatedDoc(jcrNodeModel, this.score * myScore));
-                } else {
-                    continue;
-                }
-                i++;
+                collection.add(new RelatedDoc(new JcrNodeModel(document), this.score * myScore));
             } catch (RepositoryException e) {
                 log.error("Error handling SimilaritySearch results", e.getMessage());
             }
@@ -167,9 +138,9 @@ public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProv
 
         StringBuilder statement = new StringBuilder("//element(*, ").append(RelatedDocsNodeType.NT_RELATABLEDOCS).append(")[rep:similar(., '");
         statement.append(docNode.getPath()).append("')");
-        statement.append(" and hippo:availability='preview'");
+        statement.append(" and (@hippo:availability='preview' or (@hippo:availability = 'live'))");
         statement.append(" and @hippo:paths='").append(siteContentNode.getIdentifier()).append('\'');
-        statement.append("] order by @jcr:score descending");
+        statement.append("]/.. order by @jcr:score descending");
 
         return statement.toString();
     }
