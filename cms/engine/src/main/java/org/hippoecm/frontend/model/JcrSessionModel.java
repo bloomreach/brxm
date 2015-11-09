@@ -171,21 +171,9 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
     }
 
     public static Session login(UserCredentials credentials) throws LoginException, RepositoryException {
-        Task loginTask = null;
-
-        try {
-            if (HDC.isStarted()) {
-                loginTask = HDC.getCurrentTask().startSubtask("JcrSessionModel.login");
-            }
-
-            Main main = (Main) Application.get();
-            HippoRepository repository = main.getRepository();
-            return repository.getRepository().login(credentials.getJcrCredentials());
-        } finally {
-            if (loginTask != null) {
-                loginTask.stop();
-            }
-        }
+        Main main = (Main) Application.get();
+        HippoRepository repository = main.getRepository();
+        return repository.getRepository().login(credentials.getJcrCredentials());
     }
 
     private void logHippoEvent(final boolean login, final String user, final String message, boolean success) {
