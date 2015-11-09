@@ -76,6 +76,8 @@ public class TaxonomyPickerDialog extends Dialog<Classification> {
 
         setOkEnabled(true);
         setOutputMarkupId(true);
+        setTitleKey("taxonomy-picker");
+        setSize(DialogConstants.LARGE_AUTO);
 
         viewType = config.getString(CONFIG_TYPE, TREE);
         if (PALETTE.equals(viewType)) {
@@ -91,12 +93,6 @@ public class TaxonomyPickerDialog extends Dialog<Classification> {
             add(browser = new TaxonomyBrowser("content", new Model<>(model.getObject()),
                      taxonomyModel, preferredLocale, detailsReadOnly, iconProvider));
         }
-
-        setSize(DialogConstants.LARGE_AUTO);
-    }
-
-    public IModel<String> getTitle() {
-        return Model.of(getString("taxonomy-picker"));
     }
 
     @Override
