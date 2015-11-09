@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 .taxonomy-tree {
-    height: auto;
-    overflow: auto;
-    clear: both;
+  height: auto;
+  overflow: auto;
+  clear: both;
 }
 
 .taxonomy-tree .hippo-tree {
@@ -27,97 +27,97 @@
 }
 
 .taxonomy-tree .hippo-tree .wicket-tree {
-    border: 0;
-    line-height: 1.5em;
-    overflow: visible;
-    white-space: nowrap;
-    width: 100%;
-    height: auto;
+  border: 0;
+  line-height: 1.5em;
+  overflow: visible;
+  white-space: nowrap;
+  width: 100%;
+  height: auto;
 }
 
 .taxonomy-tree-picker {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
 }
 
 .taxonomy-tree-popup {
-    height: 385px;
-    width: 340px;
-    overflow: auto;
-    border-bottom: 1px solid #e3e3e3;
-    border-right: 1px solid #e3e3e3;
+  height: 385px;
+  width: 340px;
+  overflow: auto;
+  border-bottom: 1px solid #e3e3e3;
+  border-right: 1px solid #e3e3e3;
 
-    /* copied from hippo theme's .solid-child */
-    -webkit-flex: 0 0 auto;
-    -ms-flex: 0 0 auto;
-    flex: 0 0 auto;
+  /* copied from hippo theme's .solid-child */
+  -webkit-flex: 0 0 auto;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
 }
 
 .taxonomy-tree-popup .wicket-tree {
-    border: 1px solid #CCCCCC;
-    white-space: nowrap;
-    width: 100%;
-    height: auto;
-    margin: 10px 0;
+  border: 1px solid #cccccc;
+  white-space: nowrap;
+  width: 100%;
+  height: auto;
+  margin: 10px 0;
 }
 
 .taxonomy-tree-popup .wicket-tree .row {
-    overflow: visible;
+  overflow: visible;
 }
 
 .taxonomy-tree-popup .wicket-tree .row-selected {
-    overflow: visible;
+  overflow: visible;
 }
 
 .taxonomy-container {
-    height: 385px;
-    overflow: auto;
-    border-bottom: 1px solid #e3e3e3;
-    background-color: #E3E3E3;
+  height: 385px;
+  overflow: auto;
+  border-bottom: 1px solid #e3e3e3;
+  background-color: #e3e3e3;
 
-    /* copied from hippo theme's .flex-child */
-    -webkit-flex: 1 1 auto;
-    -ms-flex: 1 1 auto;
-    flex: 1 1 auto;
+  /* copied from hippo theme's .flex-child */
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
 }
 
 .taxonomy-container h3 {
-    font-size: 16px;
-    margin-bottom: 10px;
+  font-size: 16px;
+  margin-bottom: 10px;
 }
 
 .taxonomy-details {
-    margin-left: 10px;
-    margin-top: 10px;
-    background-color: #e3e3e3;
-    padding: 5px;
+  margin-left: 10px;
+  margin-top: 10px;
+  background-color: #e3e3e3;
+  padding: 5px;
 }
 
 div.taxonomy-details a, div.taxonomy-details a:visited {
-    color: #0467B4;
+  color: #0467b4;
 }
 
 div.taxonomy-details a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .taxonomy-selected {
-    margin-left: 10px;
-    margin-top: 15px;
-    background-color: #e3e3e3;
-    padding: 5px;
+  margin-left: 10px;
+  margin-top: 15px;
+  background-color: #e3e3e3;
+  padding: 5px;
 }
 
 .taxonomy-selected .remove {
-    font-size: 12px;
-    font-weight: bold;
-    color: red;
+  font-size: 12px;
+  font-weight: bold;
+  color: red;
 }
 
 .taxonomy-container table {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .taxonomy-editor .hippo-toolbar {
@@ -128,77 +128,78 @@ div.taxonomy-details a:hover {
 }
 
 .taxonomy-editor table {
-    border: 1px solid #e3e3e3;
-    width: 100%;
+  border: 1px solid #e3e3e3;
+  width: 100%;
 }
 
-.taxonomy-editor  td,
+.taxonomy-editor td,
 .taxonomy-details td {
-    text-align: left;
-    vertical-align: top;
-    margin: 5px;
-    padding: 10px;
+  text-align: left;
+  vertical-align: top;
+  margin: 5px;
+  padding: 10px;
 }
 
-.taxonomy-editor  tr td:first-child,
+.taxonomy-editor tr td:first-child,
 .taxonomy-details tr td:first-child {
-    text-align: right;
-    width: 100px;
+  text-align: right;
+  width: 100px;
 }
 
 .taxonomy-palette-picker table.palette {
-    margin-left: 11px;
-    margin-right: 11px;
+  margin-left: 11px;
+  margin-right: 11px;
 }
 
 .taxonomy-palette-picker table.palette td.header {
-    background-color: white;
-    border-top: 1px solid white;
+  background-color: white;
+  border-top: 1px solid white;
 }
 
 .taxonomy-palette-picker td.buttons button {
-    padding: 10px;
+  padding: 10px;
 }
 
 .taxonomy-palette-picker .palette .choicesSelect,
 .taxonomy-palette-picker .palette .selectionSelect {
-    height: 260px;
+  height: 260px;
 }
 
 .taxonomy-canon {
-    display: block;
-    vertical-align: middle;
-    padding-left: 20px;
-    height: 25px;
-    font-weight: bold;
+  display: block;
+  vertical-align: middle;
+  padding-left: 20px;
+  height: 25px;
+  font-weight: bold;
 }
 
 .taxonomy-current-canon {
-    padding-bottom: 8px;
-    display: block;
+  padding-bottom: 8px;
+  display: block;
 }
 
 .taxonomy-picker-form .hippo-dialog-feedback ul.feedbackPanel {
-    background-color: #fff8d5;
-    border: 1px solid #69849f;
-    color: #69849f;
-    font-size: 12px;
-    font-weight: bold;
-    padding: 10px;
-    text-align: center;
+  background-color: #fff8d5;
+  border: 1px solid #69849f;
+  color: #69849f;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 10px;
+  text-align: center;
 }
 
 /* Adjustments to the reused toolbar */
 .taxonomy-editor .hippo-toolbar-menu {
-    border-left: 0;
+  border-left: 0;
 }
+
 .taxonomy-editor .hippo-toolbar-menu .hippo-toolbar-section > li:first-child > span > a {
-    margin-left: 0;
+  margin-left: 0;
 }
 
 .hippo-toolbar-menu .hippo-toolbar-section > li .menu-action .menu-action-icon .hi-times-circle,
 .hippo-toolbar-menu .hippo-toolbar-section > li.menu-item:hover a.menu-action .menu-action-icon .hi-times-circle {
-    color: #ffffff;
+  color: #ffffff;
 }
 
 /* enforce disabled styling of buttons (.taxonomy-disabled-action) */
@@ -206,10 +207,10 @@ div.taxonomy-details a:hover {
 .taxonomy-editor .hippo-toolbar-menu .hippo-toolbar-section > li > span > a.taxonomy-disabled-action .menu-action-icon svg,
 .taxonomy-editor .hippo-toolbar-menu .hippo-toolbar-section > li.menu-item:hover a.menu-action.taxonomy-disabled-action .menu-action-icon svg,
 .taxonomy-editor .hippo-toolbar-menu .hippo-toolbar-section > li.menu-item:hover a.menu-action.taxonomy-disabled-action .menu-action-text {
-    color: #bdbdbd;
+  color: #bdbdbd;
 }
 
 .hippo-preview-document .taxonomy-editor .hippo-editor-field select {
-    border: 1px solid #d4d6d8;
-    padding: 8px;
+  border: 1px solid #d4d6d8;
+  padding: 8px;
 }
