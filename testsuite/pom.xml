@@ -37,7 +37,6 @@
     <hippo.repository.version>3.2.x-hdcinall-1.0-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>3.2.x-hdcinall-1.0-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>3.2.x-hdcinall-1.0-SNAPSHOT</hippo.hst.version>
-    <hippo.addon-channel-manager.version>3.2.x-hdcinall-1.0-SNAPSHOT</hippo.addon-channel-manager.version>
     <!-- ***END temporary override of versions*** -->
 
     <jsp-api.version>2.2</jsp-api.version>
