@@ -260,16 +260,11 @@ $doclist-icon-shift-right: 2px;
       }
 
       .doclisting-icon {
-        .hi-minus-circle {
-          color: $primary;
-          fill: $doclist-row-selected-color;
-        }
-        .hi-check-circle {
-          color: $primary;
-          fill: $doclist-row-selected-color;
-        }
+        .hi-minus-circle,
+        .hi-check-circle,
         .hi-exclamation-triangle {
-          fill: $white;
+          color: $primary;
+          fill: $doclist-row-selected-color;
         }
       }
 
