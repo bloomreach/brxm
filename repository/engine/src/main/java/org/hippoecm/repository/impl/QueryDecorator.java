@@ -89,7 +89,7 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
 
         try {
             if (HDC.isStarted()) {
-                queryTask = HDC.getCurrentTask().startSubtask("QueryDecorator.execute");
+                queryTask = HDC.getCurrentTask().startSubtask("query");
                 queryTask.setAttribute("statement", getStatement());
             }
 

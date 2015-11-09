@@ -23,6 +23,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
 import org.onehippo.repository.RepositoryService;
 
 /**
@@ -71,8 +73,20 @@ public class RepositoryDecorator implements RepositoryService {
      */
     public Session login(Credentials credentials, String workspaceName) throws LoginException,
             NoSuchWorkspaceException, RepositoryException {
-        Session session = repository.login(credentials, workspaceName);
-        return factory.getSessionDecorator(this, session);
+        Task loginTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                loginTask = HDC.getCurrentTask().startSubtask("login");
+            }
+
+            Session session = repository.login(credentials, workspaceName);
+            return factory.getSessionDecorator(this, session);
+        } finally {
+            if (loginTask != null) {
+                loginTask.stop();
+            }
+        }
     }
 
     /**
