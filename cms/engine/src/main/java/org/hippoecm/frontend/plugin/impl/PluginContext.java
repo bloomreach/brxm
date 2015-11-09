@@ -363,9 +363,9 @@ public class PluginContext implements IPluginContext, IDetachable {
             if (HDC.isStarted()) {
                 startTask = HDC.getCurrentTask().startSubtask("PluginContext.start");
                 if (plugin != null) {
-                    startTask.setAttribute("pluginConfig", plugin.getName());
                     String pluginClassName = plugin.getString(IPlugin.CLASSNAME);
                     startTask.setAttribute("pluginClass", pluginClassName != null ? pluginClassName : "unknown");
+                    startTask.setAttribute("pluginConfig", plugin.getName());
                 }
             }
 
