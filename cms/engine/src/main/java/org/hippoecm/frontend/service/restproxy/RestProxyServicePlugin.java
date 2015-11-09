@@ -265,7 +265,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
 
                 try {
                     if (HDC.isStarted()) {
-                        jaxrsClientTask = HDC.getCurrentTask().startSubtask("JAXRSClient");
+                        jaxrsClientTask = HDC.getCurrentTask().startSubtask("RestProxyServicePlugin");
                         jaxrsClientTask.setAttribute("class", restServiceApiClass.getName());
                         jaxrsClientTask.setAttribute("method", invocation.getMethod().getName());
                     }

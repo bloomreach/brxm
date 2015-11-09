@@ -411,8 +411,8 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         try {
             if (HDC.isStarted()) {
                 renderTask = HDC.getCurrentTask().startSubtask("AbstractRenderService.render");
-                renderTask.setAttribute("pluginConfig", getPluginConfig().getName());
                 renderTask.setAttribute("pluginClass", getClass().getName());
+                renderTask.setAttribute("pluginConfig", getPluginConfig().getName());
             }
 
             if (redraw) {
@@ -561,8 +561,8 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         try {
             if (HDC.isStarted()) {
                 beforeRenderTask = HDC.getCurrentTask().startSubtask("AbstractRenderService.onBeforeRender");
-                beforeRenderTask.setAttribute("pluginConfig", getPluginConfig().getName());
                 beforeRenderTask.setAttribute("pluginClass", getClass().getName());
+                beforeRenderTask.setAttribute("pluginConfig", getPluginConfig().getName());
             }
 
             redraw = false;
@@ -581,8 +581,8 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         try {
             if (HDC.isStarted()) {
                 afterRenderTask = HDC.getCurrentTask().startSubtask("AbstractRenderService.onAfterRender");
-                afterRenderTask.setAttribute("pluginConfig", getPluginConfig().getName());
                 afterRenderTask.setAttribute("pluginClass", getClass().getName());
+                afterRenderTask.setAttribute("pluginConfig", getPluginConfig().getName());
             }
 
             super.onAfterRender();
