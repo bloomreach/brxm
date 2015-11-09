@@ -201,7 +201,7 @@
   }
 
   .hippo-editor-field-subfield {
-    background: white;
+    background: $white;
     border: 1px solid $light-gray;
     padding: 4px;
   }
@@ -292,7 +292,7 @@
 .active > .hippo-editor-template-field > .hippo-editor-template-field-controls {
 
   .hi {
-    fill: #1764c2;
+    fill: $primary;
 
     &:hover {
       fill: $info;

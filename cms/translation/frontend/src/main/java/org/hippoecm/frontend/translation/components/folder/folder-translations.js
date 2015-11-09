@@ -77,15 +77,17 @@ Hippo.Translation.Folder.Panel = Ext.extend(Ext.form.FormPanel, {
             disabled: !hasSiblings,
             icon: (hasSiblings ? self.breakLink : self.breakLinkDisabled),
             iconCls: 'hippo-t9n-breaklink',
-            cls: 'x-btn-text-icon',
+            cls: 'x-btn-text-icon btn btn-default btn-sm' + (!hasSiblings ? ' x-btn-text-icon-not-found' : ''),
             text: (hasSiblings ? self.resources['unlink-translations'] : self.resources['link-translations']),
             listeners: {
                 disable: function(button) {
                     this.setIcon(self.breakLinkDisabled);
+                    this.addClass('x-btn-text-icon-not-found');
                     this.setText(self.resources['link-translations']);
                 },
                 enable: function(button) {
                     this.setIcon(self.breakLink);
+                    this.removeClass('x-btn-text-icon-not-found');
                     this.setText(self.resources['unlink-translations']);
                 },
                 click: function() {
@@ -213,7 +215,7 @@ Hippo.Translation.Folder.SelectTree = Ext.extend(Ext.ux.tree.TreeGrid, {
                                 return values.t9ns !== undefined;
                             },
                             format: function(v) {
-                                return '<img src="' + self.images.getImage(v) + '" />';
+                                return '<img class="flag-md" src="' + self.images.getImage(v) + '" />';
                             }
                         }
                 )

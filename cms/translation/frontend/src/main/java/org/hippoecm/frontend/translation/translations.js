@@ -34,7 +34,7 @@ Hippo.Translation.PathRenderer = Ext.extend(Ext.util.Observable, {
   renderPath: function (path) {
     var text, locale, i, len, iconClass, countryClass, candidate;
 
-    text = '<div style="float: left;">';
+    text = '<div>';
     locale = null;
 
     for (i = 1, len = path.length; i < len; i++) {
@@ -53,15 +53,16 @@ Hippo.Translation.PathRenderer = Ext.extend(Ext.util.Observable, {
         }
       }
 
-      text += '<span class="hi-stack hi-tiny ' + iconClass + '">'
-        + '<svg class="hi hi-tiny hi-folder"><use xlink:href="#hi-folder"></use></svg>'
-        + '<span class="hi hi-tiny hippo-translation-country ' + countryClass + '"></span>'
-        + '</span> ';
+      text += '<span class="hi hi-stack hi-m ' + iconClass + '">'
+        + '<svg class="hi hi-folder hi-m"><use xlink:href="#hi-folder-m"></use></svg>'
+        + '<span class="hi hi-bottom hi-right ' + countryClass + '">&nbsp;</span>'
+        + '</span>';
+
       text += path[i].name;
     }
     text += '</div>';
     if (locale !== null && locale !== undefined) {
-      text += '<div style="float: left;" class="hippo-translation-language">'
+      text += '<div class="hippo-translation-language">'
         + this.resources.language + ': ' + locale.name
         + '</div>';
     }

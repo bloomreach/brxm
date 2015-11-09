@@ -1,12 +1,12 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,8 +23,8 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.translation.components.folder.FolderTranslationView;
@@ -35,24 +35,21 @@ import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FolderTranslationsDialog extends AbstractWorkflowDialog<Node> {
+public class FolderTranslationsDialog extends WorkflowDialog<Node> {
 
-    private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(FolderTranslationsDialog.class);
 
-    static final Logger log = LoggerFactory.getLogger(FolderTranslationsDialog.class);
-
-    private IModel<String> title;
+    private static final IValueMap SIZE = new ValueMap("width=680,height=388").makeImmutable();
 
     private IModel<T9Node> t9NodeModel;
 
     public FolderTranslationsDialog(IWorkflowInvoker action, IModel<String> title, IModel<Node> folderModel,
             ILocaleProvider provider) {
-        super(folderModel, action);
+        super(action, folderModel, title);
 
-        this.title = title;
+        setSize(SIZE);
 
         IModel<T9Tree> treeModel = new LoadableDetachableModel<T9Tree>() {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected T9Tree load() {
@@ -64,7 +61,9 @@ public class FolderTranslationsDialog extends AbstractWorkflowDialog<Node> {
             if (!node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
                 throw new RuntimeException("invalid folder model");
             }
-            t9NodeModel = new Model<T9Node>(treeModel.getObject().getNode(node.getIdentifier()));
+            final String folderId = node.getIdentifier();
+            final T9Node folderNode = treeModel.getObject().getNode(folderId);
+            t9NodeModel = Model.of(folderNode);
         } catch (RepositoryException ex) {
             throw new RuntimeException("error determining node type of folder node", ex);
         }
@@ -86,21 +85,5 @@ public class FolderTranslationsDialog extends AbstractWorkflowDialog<Node> {
         } else {
             log.warn("Could not store folder links");
         }
-//        super.onOk();
-    }
-
-    public IModel getTitle() {
-        return title;
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return new ValueMap("width=680,height=388").makeImmutable();
-    }
-
-    @Override
-    protected void onDetach() {
-        title.detach();
-        super.onDetach();
     }
 }

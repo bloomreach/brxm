@@ -450,7 +450,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
     private IModel<StringCodec> getStringCodecModel() {
         String locale = null;
         try {
-            locale = CodecUtils.getLocaleFromNodeAndAncestors(DefaultWorkflowPlugin.this.getModel().getNode());
+            locale = CodecUtils.getLocaleFromNodeAndAncestors(getModel().getNode());
         } catch (RepositoryException e) {
             //ignore
         }

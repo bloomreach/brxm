@@ -24,6 +24,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.IBehaviorListener;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
@@ -55,7 +56,7 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
     private AbstractDefaultAjaxBehavior ajaxCallbackSelectionChangeBehavior;
 
     private int numberOfValidFiles;
-    private int numberOFSelectedFiles;
+    private int numberOfSelectedFiles;
 
     protected void onFileUploadResponse(final ServletWebRequest request, final Map<String, FileUploadInfo> uploadedFiles) {
     }
@@ -113,8 +114,9 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
         add(ajaxCallbackSelectionChangeBehavior = new AbstractDefaultAjaxBehavior() {
             @Override
             protected void respond(final AjaxRequestTarget target) {
-                numberOfValidFiles = RequestCycle.get().getRequest().getRequestParameters().getParameterValue("numberOfValidFiles").toInt(0);
-                numberOFSelectedFiles = RequestCycle.get().getRequest().getRequestParameters().getParameterValue("numberOfSelectedFiles").toInt(0);
+                final IRequestParameters parameters = RequestCycle.get().getRequest().getRequestParameters();
+                numberOfValidFiles = parameters.getParameterValue("numberOfValidFiles").toInt(0);
+                numberOfSelectedFiles = parameters.getParameterValue("numberOfSelectedFiles").toInt(0);
                 FileUploadWidget.this.onSelectionChange(target);
             }
         });
@@ -164,7 +166,7 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
         return numberOfValidFiles;
     }
 
-    public int getNumberOFSelectedFiles() {
-        return numberOFSelectedFiles;
+    public int getNumberOfSelectedFiles() {
+        return numberOfSelectedFiles;
     }
 }
