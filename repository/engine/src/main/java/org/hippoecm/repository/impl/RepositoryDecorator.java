@@ -24,6 +24,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.hippoecm.repository.util.RepoUtils;
 import org.onehippo.repository.RepositoryService;
@@ -58,12 +60,25 @@ public class RepositoryDecorator extends org.hippoecm.repository.decorating.Repo
 
     @Override
     public Session login(Credentials credentials, String workspaceName) throws RepositoryException {
-        if (credentials instanceof JvmCredentials) {
-            JvmCredentials jvmCredentials = (JvmCredentials)credentials;
-            credentials = new SimpleCredentials(jvmCredentials.getUserID(), jvmCredentials.getPassword());
+        Task loginTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                loginTask = HDC.getCurrentTask().startSubtask("login");
+            }
+
+
+            if (credentials instanceof JvmCredentials) {
+                JvmCredentials jvmCredentials = (JvmCredentials)credentials;
+                credentials = new SimpleCredentials(jvmCredentials.getUserID(), jvmCredentials.getPassword());
+            }
+            Session session = repository.login(credentials, workspaceName);
+            return DecoratorFactoryImpl.getSessionDecorator(session, credentials);
+        } finally {
+            if (loginTask != null) {
+                loginTask.stop();
+            }
         }
-        Session session = repository.login(credentials, workspaceName);
-        return DecoratorFactoryImpl.getSessionDecorator(session, credentials);
     }
 
     @Override
