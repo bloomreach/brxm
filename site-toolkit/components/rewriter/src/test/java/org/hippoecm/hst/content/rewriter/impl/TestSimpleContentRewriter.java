@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -123,7 +123,7 @@ public class TestSimpleContentRewriter {
         ContentRewriter<String> rewriter = new SimpleContentRewriter() {
             // overriding to mimic the hst link creator's behavior here.
             @Override
-            protected HstLink getDocumentLink(String path, Node node, HstRequestContext requestContext, Mount mount) {
+            protected HstLink getDocumentLink(String path, Node hippoHtmlNode, HstRequestContext requestContext, Mount mount) {
                 String docPath = StringUtils.substringBefore(path, "?");
                 String queryString = StringUtils.substringAfter(path, "?");
                 HstLink link = EasyMock.createNiceMock(HstLink.class);
@@ -159,18 +159,18 @@ public class TestSimpleContentRewriter {
     public void testSimpleLinkRewriting() throws Exception {
         ContentRewriter<String> rewriter = new SimpleContentRewriter() {
             @Override
-            protected String rewriteDocumentLink(String path, Node node, HstRequestContext requestContext, Mount mount) {
-                if (isExternal(path)) {
-                    return "javascript:openPopup('" + path + "');";
+            protected String rewriteDocumentLink(String documentLinkReference, Node hippoHtmlNode, HstRequestContext requestContext, Mount mount) {
+                if (isExternal(documentLinkReference)) {
+                    return "javascript:openPopup('" + documentLinkReference + "');";
                 }
-                return super.rewriteDocumentLink(path, node, requestContext, mount);
+                return super.rewriteDocumentLink(documentLinkReference, hippoHtmlNode, requestContext, mount);
             }
             @Override
-            protected String rewriteBinaryLink(String path, Node node, HstRequestContext requestContext, Mount mount) {
-                if (isExternal(path)) {
-                    return "javascript:openPopup('" + path + "');";
+            protected String rewriteBinaryLink(String binaryLinkReference, Node hippoHtmlNode, HstRequestContext requestContext, Mount mount) {
+                if (isExternal(binaryLinkReference)) {
+                    return "javascript:openPopup('" + binaryLinkReference + "');";
                 }
-                return super.rewriteBinaryLink(path, node, requestContext, mount);
+                return super.rewriteBinaryLink(binaryLinkReference, hippoHtmlNode, requestContext, mount);
             }
         };
 
