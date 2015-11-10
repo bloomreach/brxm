@@ -387,10 +387,10 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                             log.info("Unable to rewrite path '{}' for node '{}' to proper binary url for imageVariant '{}'.", new String[]{linkPath, nodePath, imageVariant.getName()});
                             return null;
                         }
-                        return createLink(binary, requestContext, targetMount);
+                        return createInternalLink(binary, requestContext, targetMount);
                     } else {
                         final Node binary = binaryDocument.getNode(binaryPathSegments[2]);
-                        return createLink(binary, requestContext, targetMount);
+                        return createInternalLink(binary, requestContext, targetMount);
                     }
 
                 } else {
@@ -406,7 +406,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                             }
                             referencedNode = referencedNode.getNode(referencedNode.getName());
                         }
-                        return createLink(referencedNode, requestContext, targetMount);
+                        return createInternalLink(referencedNode, requestContext, targetMount);
                     } else {
                         log.info("For '{}' a node of type hippo:mirror of hippo:facetselect is expected but was of type '{}'. Cannot " +
                                 "create a link for that node type.", mirrorNode.getPath(), mirrorNode.getPrimaryNodeType().getName());
@@ -429,7 +429,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
      * @return link to the referenced node and optional target mount. target mount is ignored in case links must be canonical.
      * @throws RepositoryException if no path can be retrieved from the referencedNode
      */
-    private HstLink createLink(final Node referencedNode, final HstRequestContext requestContext, final Mount targetMount)
+    protected HstLink createInternalLink(final Node referencedNode, final HstRequestContext requestContext, final Mount targetMount)
             throws RepositoryException {
         if (isCanonicalLinks()) {
             if (targetMount != null) {
