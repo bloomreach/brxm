@@ -44,6 +44,7 @@
     <hippo.repository.version>3.2.0-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>3.2.0-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>3.2.0-SNAPSHOT</hippo.hst.version>
+    <hippo.services.webfiles.version>2.2.0-SNAPSHOT</hippo.services.webfiles.version>
 
   </properties>
 
@@ -62,6 +63,7 @@
   </repositories>
   
   <modules>
+    <module>package-shared-dependencies</module>
     <module>package-app-dependencies</module>
     <module>package-cms-dependencies</module>
   </modules>
