@@ -74,7 +74,6 @@
     <hippo.commons.version>2.2.0-SNAPSHOT</hippo.commons.version>
     <hippo.services.version>2.2.0-SNAPSHOT</hippo.services.version>
     <hippo.services.eventbus.version>2.2.0-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.services.webfiles.version>2.2.0-SNAPSHOT</hippo.services.webfiles.version>
     <hippo.utilities.version>2.2.0-SNAPSHOT</hippo.utilities.version>
     <hippo.jcrdiff.version>1.01.05</hippo.jcrdiff.version>
 
@@ -156,15 +155,9 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-services-webfiles</artifactId>
-        <version>${hippo.services.webfiles.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms7-utilities</artifactId>
         <version>${hippo.utilities.version}</version>
       </dependency>
-
       <dependency>
         <groupId>javax.jcr</groupId>
         <artifactId>jcr</artifactId>

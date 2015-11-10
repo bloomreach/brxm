@@ -57,13 +57,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-modules</artifactId>
       <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <!-- since unit tests mock the webFilesService we must exclude it here -->
-          <groupId>org.onehippo.cms7</groupId>
-          <artifactId>hippo-services-webfiles</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
