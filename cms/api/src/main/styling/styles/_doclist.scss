@@ -255,7 +255,7 @@ $doclist-icon-shift-right: 2px;
       background-color: $doclist-row-selected-bgcolor;
       color: $doclist-row-selected-color;
 
-      svg.hi, .hi-stack > svg:first-child {
+      .hi-stack > svg:first-child {
         color: $doclist-row-selected-color;
       }
 
