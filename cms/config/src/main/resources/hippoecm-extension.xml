@@ -623,12 +623,12 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="diagnosis-module">
+  <sv:node sv:name="diagnostics-module">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>diagnosis-module.xml</sv:value>
+      <sv:value>diagnostics-module.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:modules</sv:value>

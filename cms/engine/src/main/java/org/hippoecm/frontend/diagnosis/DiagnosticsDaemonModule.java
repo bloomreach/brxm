@@ -30,10 +30,10 @@ import org.onehippo.repository.modules.ProvidesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@ProvidesService(types = DiagnosisService.class)
-public class DiagnosisDaemonModule extends AbstractReconfigurableDaemonModule {
+@ProvidesService(types = DiagnosticsService.class)
+public class DiagnosticsDaemonModule extends AbstractReconfigurableDaemonModule {
 
-    private static Logger log = LoggerFactory.getLogger(DiagnosisDaemonModule.class);
+    private static Logger log = LoggerFactory.getLogger(DiagnosticsDaemonModule.class);
 
     private static final String ENABLED = "enabled";
 
@@ -53,7 +53,7 @@ public class DiagnosisDaemonModule extends AbstractReconfigurableDaemonModule {
 
     private final Object configurationLock = new Object();
 
-    private DiagnosisService service;
+    private DiagnosticsService service;
 
     @Override
     protected void doConfigure(final Node moduleConfig) throws RepositoryException {
@@ -80,7 +80,7 @@ public class DiagnosisDaemonModule extends AbstractReconfigurableDaemonModule {
 
     @Override
     protected void doInitialize(final Session session) throws RepositoryException {
-        HippoServiceRegistry.registerService(service = new DiagnosisService() {
+        HippoServiceRegistry.registerService(service = new DiagnosticsService() {
             @Override
             public boolean isEnabledFor(String clientAddress) {
                 if (!enabled) {
@@ -103,12 +103,12 @@ public class DiagnosisDaemonModule extends AbstractReconfigurableDaemonModule {
             public int getDepth() {
                 return (int) depth;
             }
-        }, DiagnosisService.class);
+        }, DiagnosticsService.class);
     }
 
     @Override
     protected void doShutdown() {
-        HippoServiceRegistry.unregisterService(service, DiagnosisService.class);
+        HippoServiceRegistry.unregisterService(service, DiagnosticsService.class);
     }
 
 }

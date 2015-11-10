@@ -34,19 +34,19 @@ import org.slf4j.LoggerFactory;
 /**
  * The default {@link IRequestCycleListener} implementation to set diagnosis context and report monitoring logs.
  */
-public class DiagnosisRequestCycleListener extends AbstractRequestCycleListener {
+public class DiagnosticsRequestCycleListener extends AbstractRequestCycleListener {
 
-    private static Logger log = LoggerFactory.getLogger(DiagnosisRequestCycleListener.class);
+    private static Logger log = LoggerFactory.getLogger(DiagnosticsRequestCycleListener.class);
 
     @Override
     public void onBeginRequest(RequestCycle cycle) {
-        final DiagnosisService diagnosisService = HippoServiceRegistry.getService(DiagnosisService.class);
+        final DiagnosticsService diagnosticsService = HippoServiceRegistry.getService(DiagnosticsService.class);
 
-        if (diagnosisService != null) {
+        if (diagnosticsService != null) {
             final Main application = (Main) Application.get();
             final String remoteAddr = getFarthestRemoteAddr(cycle);
 
-            if (diagnosisService.isEnabledFor(remoteAddr)) {
+            if (diagnosticsService.isEnabledFor(remoteAddr)) {
                 if (HDC.isStarted()) {
                     log.error("HDC was not cleaned up properly in previous request cycle for some reason. So clean up HDC to start new one.");
                     HDC.cleanUp();
@@ -65,9 +65,9 @@ public class DiagnosisRequestCycleListener extends AbstractRequestCycleListener 
                 final Task rootTask = HDC.getRootTask();
                 rootTask.stop();
 
-                final DiagnosisService diagnosisService = HippoServiceRegistry.getService(DiagnosisService.class);
-                final long threshold = diagnosisService != null ? diagnosisService.getThresholdMillisec() : -1;
-                final int depth = diagnosisService != null ? diagnosisService.getDepth() : -1;
+                final DiagnosticsService diagnosticsService = HippoServiceRegistry.getService(DiagnosticsService.class);
+                final long threshold = diagnosticsService != null ? diagnosticsService.getThresholdMillisec() : -1;
+                final int depth = diagnosticsService != null ? diagnosticsService.getDepth() : -1;
 
                 if (threshold > -1L && rootTask.getDurationTimeMillis() < threshold) {
                     log.debug("Skipping task '{}' because took only '{}' ms.",
