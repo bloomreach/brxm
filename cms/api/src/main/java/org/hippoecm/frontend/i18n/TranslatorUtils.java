@@ -31,6 +31,7 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
+import org.apache.wicket.core.util.string.interpolator.PropertyVariableInterpolator;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -40,6 +41,7 @@ import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -196,12 +198,65 @@ public class TranslatorUtils {
      * @param component  the component having translated resource files
      * @param t  the throwable exception
      * @param parameters parameters used in the message template storing in resource files
-     * @return
+     * @return  A model for the translated exception message.
      */
     public static IModel<String> getExceptionTranslation(final Component component,
                                                          final Throwable t, final Object... parameters) {
-        String key = "exception,type=${type},message=${message}";
         HashMap<String, String> details = new HashMap<>();
+
+        return new StringResourceModel(createKey(t, details), component, new Model<>(details), t.getLocalizedMessage(), parameters);
+    }
+
+    /**
+     * Create a model containing the translated message for the given exception and its parameters. The message will be
+     * loaded from a class's resource properties files with following syntax:
+     * <pre>
+     * {@code
+     *  exception,type\=${exception-class-path},message\=${exception-message}=<your-localized-message>
+     * }
+     * </pre>
+     *
+     * This method was created due to CMS-9656, where the GalleryUploadPanel failed to retrieve messages from its
+     * own resource bundle due to an intricate inheritance structure. Using the clazz instead of a component
+     * circumvents the inheritance structure as far as necessary.
+     *
+     * @param clazz  the class having translated resource files
+     * @param t  the throwable exception
+     * @param locale  locale to be used
+     * @param parameters parameters used in the message template storing in resource files
+     * @return  A model for the translated exception message.
+     */
+    public static IModel<String> getExceptionTranslation(final Class clazz, final Throwable t, Locale locale,
+                                                         final Object... parameters) {
+        HashMap<String, String> details = new HashMap<>();
+        String key = new PropertyVariableInterpolator(createKey(t, details), details).toString();
+        final IModel<String> initialModel = new ClassResourceModel(key, clazz, locale, null, parameters);
+
+        // Below logic is inspirend on the recursion implemented by the IStringResourceLoader implementation
+        // in org.hippoecm.frontend.Main.
+        IModel<String> model = initialModel;
+        while (model.getObject().equals(key)) { // meaning: while matching key-value pair not found
+            if (key.contains(",")) {
+                key = key.substring(0, key.lastIndexOf(','));
+                model = new ClassResourceModel(key, clazz, locale, null, parameters);
+            } else {
+                model = initialModel; // out of options, fall back to initial Model
+                break;
+            }
+        }
+
+        return model;
+    }
+
+    /**
+     * Create the resource key and assemble the details.
+     *
+     * @param t        exception for which to create the key
+     * @param details  map to hold the to-be-interpolated details
+     * @return         resource key
+     */
+    private static String createKey(final Throwable t, final Map<String, String> details) {
+        String key = "exception,type=${type},message=${message}";
         details.put("type", t.getClass().getName());
         details.put("message", t.getMessage());
         StackTraceElement[] elements = t.getStackTrace();
@@ -210,6 +265,6 @@ public class TranslatorUtils {
             details.put("clazz", top.getClassName());
             key += ",class=${clazz}";
         }
-        return new StringResourceModel(key, component, new Model<>(details), t.getLocalizedMessage(), parameters);
+        return key;
     }
 }
