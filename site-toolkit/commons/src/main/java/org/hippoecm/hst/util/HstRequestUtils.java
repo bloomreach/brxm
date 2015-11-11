@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
@@ -602,6 +603,42 @@ public class HstRequestUtils {
         return requestContext.isCmsRequest()
                 && HTTP_METHOD_POST.equals(requestContext.getServletRequest().getMethod())
                 && requestContext.getBaseURL().getComponentRenderingWindowReferenceNamespace() != null;
+    }
+
+    /**
+     * Returns the request URL as seen by, for example, a browser. The returned URL consists of:
+     * <ol>
+     *     <li>the base URL
+     * as returned by {@link org.hippoecm.hst.configuration.hosting.VirtualHost#getBaseURL(javax.servlet.http.HttpServletRequest)}</li>
+     *    <li>the context path,
+     * if that is configured in the HST to be visible (as determined by {@link org.hippoecm.hst.configuration.hosting.VirtualHost#isContextPathInUrl()})</li>
+     * <li>the path of the URL</li>
+     * <li>optionally based on flag {@code includeQueryString}, the queryString is added</li>
+     * </ol>
+     *
+     * @param request            the HTTP servlet request
+     * @param includeQueryString whether to include the queryString as seen by the browser
+     * @return the external request URL as seen by the browser (without encoding)
+     */
+    public static String getExternalRequestUrl(final HttpServletRequest request, final boolean includeQueryString) {
+        final HstRequestContext context = getHstRequestContext(request);
+        if (context == null) {
+            // no context (e.g. in unit tests), simply return the request URL
+            return request.getRequestURL().toString();
+        }
+
+        final VirtualHost virtualHost = context.getVirtualHost();
+        final StringBuilder url = new StringBuilder();
+
+        url.append(virtualHost.getBaseURL(request));
+        if (virtualHost.isContextPathInUrl()) {
+            url.append(request.getContextPath());
+        }
+        url.append(context.getBaseURL().getRequestPath());
+        if (includeQueryString && request.getQueryString() != null) {
+            url.append("?").append(request.getQueryString());
+        }
+        return url.toString();
     }
 
 }
