@@ -1031,6 +1031,7 @@ plugins/tagging/src/main/java/org/onehippo/cms7/essentials/plugins/tagging/Taggi
 plugins/tagging/src/main/resources/META-INF/resources/feature/taggingPlugin/taggingPlugin.html -text
 plugins/tagging/src/main/resources/META-INF/resources/feature/taggingPlugin/taggingPlugin.js -text
 plugins/tagging/src/main/resources/META-INF/web-fragment.xml -text
+plugins/tagging/src/main/resources/tagging-template-field_tag_suggest-translations.xml -text
 plugins/tagging/src/main/resources/tagging-template-field_tag_suggest.xml -text
 plugins/tagging/src/main/resources/tagging-template-field_tags.xml -text
 plugins/taxonomy/pom.xml -text
