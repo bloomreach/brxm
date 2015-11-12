@@ -45,10 +45,12 @@
         PickerCtrl.treeItems = PickerService.getTree();
         PickerCtrl.pickerTypes = [
           {
+            id : 'documents',
             name: 'Documents',
             type: 'documents'
           },
           {
+            id : 'pages',
             name: 'Pages (Sitemap Items)',
             type: 'pages'
           }
@@ -72,7 +74,7 @@
             siteMapIdentifier: $stateParams.siteMapIdentifier,
             link: $stateParams.link
           });
-          if (PickerCtrl.pickerType.name == 'Pages') {
+          if (PickerCtrl.pickerType.id == 'pages') {
             PickerService.getInitialData($stateParams.siteMapIdentifier).then(function () {
               navigateToSelected(PickerCtrl.treeItems);
             });
