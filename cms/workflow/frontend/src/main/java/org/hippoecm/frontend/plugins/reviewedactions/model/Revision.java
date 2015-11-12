@@ -127,7 +127,9 @@ public class Revision implements IDetachable {
 
     @Override
     public void detach() {
-        history.detach();
+        if (handleModel != null) {
+            handleModel.detach();
+        }
         if (versionModel != null) {
             versionModel.detach();
         }
