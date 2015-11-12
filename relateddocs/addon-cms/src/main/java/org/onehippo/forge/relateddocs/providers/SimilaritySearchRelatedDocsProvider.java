@@ -84,17 +84,12 @@ public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProv
             log.debug("Executing query{}: ", xpathQuery);
         }
         @SuppressWarnings(value = "deprecation")
-        HippoQuery query = (HippoQuery) nodeModel.getNode().getSession().getWorkspace().getQueryManager().createQuery(
+        Query query = nodeModel.getNode().getSession().getWorkspace().getQueryManager().createQuery(
                 xpathQuery, Query.XPATH);
 
         query.setLimit(MAX_RESULTS);
         RowIterator r = query.execute().getRows();
 
-        /*
-        Cleaned up iteration over result set since xPathQuery is changed to hold handles.
-        Original code also filtered out prototype, but I think we can safely assume prototypes
-        are not located in content directory
-         */
         while (r.hasNext()) {
             // retrieve the query results from the row
             Row row = r.nextRow();
@@ -103,7 +98,7 @@ public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProv
 
             // retrieve the found document from the repository
             try {
-                Node document = (Node) nodeModel.getNode().getSession().getItem(path);
+                Node document = nodeModel.getNode().getSession().getNode(path);
                 collection.add(new RelatedDoc(new JcrNodeModel(document), this.score * myScore));
             } catch (RepositoryException e) {
                 log.error("Error handling SimilaritySearch results", e.getMessage());
