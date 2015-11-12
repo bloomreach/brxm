@@ -88,7 +88,7 @@
     &lt;/script&gt;
 
   &lt;#else&gt;
-    No active poll available
+    No poll available
   &lt;/#if&gt;
 &lt;/div&gt;</sv:value>
   </sv:property>
