@@ -15,6 +15,9 @@
  */
 package org.hippoecm.repository.logging;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -32,11 +35,13 @@ public class EventLogCleanupJob implements RepositoryJob {
 
     private static final Logger log = LoggerFactory.getLogger(EventLogCleanupJob.class);
 
-    private static final String ITEMS_QUERY_MAX_ITEMS = "SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC";
-    private static final String ITEMS_QUERY_ITEM_TIMEOUT = "SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC";
+    private static final String ITEMS_QUERY = "SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC";
 
     private static final String CONFIG_MINUTESTOLIVE = "minutestolive";
     private static final String CONFIG_MAXITEMS = "maxitems";
+
+    private static final long DEFAULT_MAXITEMS = -1;
+    private static final long DEFAULT_MINUTESTOLIVE = -1;
 
     @Override
     public void execute(final RepositoryJobExecutionContext context) throws RepositoryException {
@@ -44,20 +49,25 @@ public class EventLogCleanupJob implements RepositoryJob {
         try {
             log.info("Running event log cleanup job");
 
-            long maxitems = Long.valueOf(context.getAttribute(CONFIG_MAXITEMS));
-            long minutestolive = Long.valueOf(context.getAttribute(CONFIG_MINUTESTOLIVE));
+            final String maxItemsAttr = context.getAttribute(CONFIG_MAXITEMS);
+            final long maxItems = maxItemsAttr != null ? Long.valueOf(maxItemsAttr) : DEFAULT_MAXITEMS;
+            final String minutesToLiveAttr = context.getAttribute(CONFIG_MINUTESTOLIVE);
+            final long minutesToLive = minutesToLiveAttr != null ? Long.valueOf(minutesToLiveAttr) : DEFAULT_MINUTESTOLIVE;
 
-            removeTooManyItems(maxitems, session);
-            removeTimedOutItems(minutestolive, session);
+            removeTooManyItems(maxItems, session);
+            removeTimedOutItems(minutesToLive, session);
         } finally {
             session.logout();
         }
     }
 
     private void removeTooManyItems(long maxitems, Session session) throws RepositoryException {
-        if (maxitems != -1) {
+        if (maxitems == -1) {
+            log.debug("No maxitems configured");
+        } else {
+            log.info("Truncating event log to {} most recent items", maxitems);
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
-            final Query query = queryManager.createQuery(ITEMS_QUERY_MAX_ITEMS, Query.SQL);
+            final Query query = queryManager.createQuery(ITEMS_QUERY, Query.SQL);
             final NodeIterator nodes = query.execute().getNodes();
             final long totalSize = ((HippoNodeIterator) nodes).getTotalSize();
             final long cleanupSize = totalSize - maxitems;
@@ -86,11 +96,14 @@ public class EventLogCleanupJob implements RepositoryJob {
     }
 
     private void removeTimedOutItems(long minutestolive, Session session) throws RepositoryException {
-        if (minutestolive != -1) {
-            final QueryManager queryManager = session.getWorkspace().getQueryManager();
-            final Query query = queryManager.createQuery(ITEMS_QUERY_ITEM_TIMEOUT, Query.SQL);
-            final NodeIterator nodes = query.execute().getNodes();
+        if (minutestolive == -1) {
+            log.debug("No minutestolive configured");
+        } else {
             final long timeoutTimestamp = System.currentTimeMillis() - minutestolive*1000*60;
+            log.info("Removing items from event log from before {}", SimpleDateFormat.getDateTimeInstance().format(new Date(timeoutTimestamp)));
+            final QueryManager queryManager = session.getWorkspace().getQueryManager();
+            final Query query = queryManager.createQuery(ITEMS_QUERY, Query.SQL);
+            final NodeIterator nodes = query.execute().getNodes();
             int count = 0;
             while (nodes.hasNext()) {
                 try {
