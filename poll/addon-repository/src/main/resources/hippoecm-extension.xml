@@ -70,6 +70,8 @@
     </sv:property>
   </sv:node>
 
+  <!-- This contentdelete instruction is already integrated in the poll compound namespace XML
+       and can be deleted in next major version -->
   <sv:node sv:name="types-compound-poll-delete-field-active">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -82,6 +84,8 @@
     </sv:property>
   </sv:node>
 
+  <!-- This contentpropdelete instruction is already integrated in the poll compound namespace XML
+       and can be deleted in next major version -->
   <sv:node sv:name="types-compound-poll-delete-prototype-property-active">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -94,12 +98,14 @@
     </sv:property>
   </sv:node>
 
+  <!-- This contentdelete instruction is already integrated in the poll compound namespace XML
+       and can be deleted in next major version -->
   <sv:node sv:name="types-compound-poll-delete-templateplugin-active">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>20412.3 </sv:value>
+      <sv:value>20412.3</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentdelete" sv:type="String">
       <sv:value>/hippo:namespaces/poll/poll/editor:templates/_default_/active</sv:value>
@@ -127,6 +133,8 @@
     </sv:property>
   </sv:node>
 
+  <!-- This contentpropdelete instruction is already integrated in the poll document namespace XML
+       and can be deleted in next major version -->
   <sv:node sv:name="types-polldocument-delete-prototype-property-active">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -161,6 +169,8 @@
     </sv:property>
   </sv:node>
 
+  <!-- This contentdelete instruction is already integrated in the poll translator service XML
+       and can be deleted in next major version -->
   <sv:node sv:name="poll-translator-delete-translation-active">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
