@@ -1,5 +1,5 @@
 /**
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,10 @@ package org.onehippo.forge.robotstxt.components;
 
 import java.util.List;
 import java.util.ArrayList;
-
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryManager;
-
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -33,6 +31,8 @@ import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.onehippo.forge.robotstxt.annotated.Robotstxt;
+
+import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
 
 public class RobotstxtComponent extends BaseHstComponent {
 
@@ -91,34 +91,44 @@ public class RobotstxtComponent extends BaseHstComponent {
              */
 
             final String siteContentBase = mount.getContentPath();
-            final String xpath = "/jcr:root"
-                    + ISO9075.encodePath(siteContentBase)
-                    + "//element(*,hippofacnav:facetnavigation)";
+            final String xpath = "/jcr:root" + ISO9075.encodePath(siteContentBase)
+                    + "//element(*," + FacNavNodeType.NT_FACETNAVIGATION + ")";
 
             final QueryManager queryManager = request.getRequestContext().getSession().getWorkspace().getQueryManager();
             final NodeIterator nodeIterator = queryManager.createQuery(xpath, "xpath").execute().getNodes();
             final HstLinkCreator linkCreator = request.getRequestContext().getHstLinkCreator();
 
             while (nodeIterator.hasNext()) {
-                Node node = nodeIterator.nextNode();
-                HstLink link = linkCreator.create(node, request.getRequestContext());
+                final Node node = nodeIterator.nextNode();
 
-                if (link.isNotFound()) {
-                    continue;
+                // disallow all first level links below facet navigation
+                final NodeIterator facetChildNodesIterator = node.getNodes();
+                while (facetChildNodesIterator.hasNext()){
+                    final Node facetChildNode = facetChildNodesIterator.nextNode();
+
+                    if (!facetChildNode.isNodeType(FacNavNodeType.NT_FACETSAVAILABLENAVIGATION)){
+                        continue;
+                    }
+
+                    final HstLink link = linkCreator.create(facetChildNode, request.getRequestContext());
+
+                    if (link.isNotFound()) {
+                        continue;
+                    }
+
+                    if (link.getMount() != mount) {
+                        /**
+                         * Some projects combine the content of multiple sites into the same content tree.
+                         * It may then happen that certain (faceted) content is only available on another
+                         * site than the one for which robots.txt has been requested. In order to avoid that
+                         * robots.txt ends up with links to different sites, we exclude such content here.
+                         */
+                        continue;
+                    }
+
+                    // Link is suitable for rendering.
+                    disallowedLinks.add(link);
                 }
-
-                if (link.getMount() != mount) {
-                    /**
-                     * Some projects combine the content of multiple sites into the same content tree.
-                     * It may then happen that certain (faceted) content is only available on another
-                     * site than the one for which robots.txt has been requested. In order to avoid that
-                     * robots.txt ends up with links to different sites, we exclude such content here.
-                     */
-                    continue;
-                }
-
-                // Link is suitable for rendering.
-                disallowedLinks.add(link);
             }
         } catch (RepositoryException e) {
             throw new HstComponentException(e);
