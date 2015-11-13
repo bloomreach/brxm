@@ -28,12 +28,12 @@
       'lowercaseFilter',
       'hippoChannelAlphanumericFilter',
       function ($scope, $filter, FeedbackService, PrototypeService, PageService, ContainerService, lowercaseFilter, alphanumericFilter) {
-        var updateURLAutomatically = true,
+        var updateLastPathInfoElementAutomatically = true,
           translate = $filter('translate');
 
         $scope.page = {
           title: '',
-          url: '',
+          lastPathInfoElement: '',
           prototype: {}
         };
 
@@ -44,11 +44,11 @@
         $scope.prototypes = [];
 
         $scope.tooltips = {
-          url: function () {
+          lastPathInfoElement: function () {
             if ($scope.form.$dirty) {
-              if ($scope.form.url.$error.required) {
+              if ($scope.form.lastPathInfoElement.$error.required) {
                 return translate('URL_REQUIRED');
-              } else if ($scope.form.url.$error.illegalCharacters) {
+              } else if ($scope.form.lastPathInfoElement.$error.illegalCharacters) {
                 return translate('ILLEGAL_CHARACTERS', $scope.validation);
               }
             }
@@ -59,7 +59,7 @@
         $scope.submit = function () {
           var pageModel = {
             pageTitle: $scope.page.title,
-            name: $scope.page.url,
+            name: $scope.page.lastPathInfoElement,
             componentConfigurationId: $scope.page.prototype.id
           };
 
@@ -80,15 +80,15 @@
           $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
         });
 
-        // update url according to page title
+        // update lastPathInfoElement according to page title
         $scope.$watch('page.title', function (value) {
-          if (updateURLAutomatically) {
-            $scope.page.url = alphanumericFilter(lowercaseFilter(value));
+          if (updateLastPathInfoElementAutomatically) {
+            $scope.page.lastPathInfoElement = alphanumericFilter(lowercaseFilter(value));
           }
         });
 
-        $scope.disableAutomaticUrlUpdate = function () {
-          updateURLAutomatically = false;
+        $scope.disableAutomaticLastPathInfoElementUpdate = function () {
+          updateLastPathInfoElementAutomatically = false;
         };
       }
     ]);
