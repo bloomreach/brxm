@@ -89,7 +89,7 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>20412.2</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:contentdelete" sv:type="String">
+    <sv:property sv:name="hippo:contentpropdelete" sv:type="String">
       <sv:value>/hippo:namespaces/poll/poll/hipposysedit:prototypes/hipposysedit:prototype/poll:active</sv:value>
     </sv:property>
   </sv:node>
@@ -134,7 +134,7 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>20420.1</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:contentdelete" sv:type="String">
+    <sv:property sv:name="hippo:contentpropdelete" sv:type="String">
       <sv:value>/hippo:namespaces/poll/polldocument/hipposysedit:prototypes/hipposysedit:prototype/poll:poll/poll:active</sv:value>
     </sv:property>
   </sv:node>
