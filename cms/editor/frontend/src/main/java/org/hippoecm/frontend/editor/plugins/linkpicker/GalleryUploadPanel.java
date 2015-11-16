@@ -208,7 +208,7 @@ public abstract class GalleryUploadPanel extends Panel {
                 }
             } catch (WorkflowException | RepositoryException ex) {
                 log.error(ex.getMessage());
-                error(TranslatorUtils.getExceptionTranslation(GalleryUploadPanel.class, ex, this.getLocale(), localName).getObject());
+                error(TranslatorUtils.getExceptionTranslation(GalleryUploadPanel.class, ex, localName).getObject());
             }
             if (node != null) {
                 try {
@@ -216,7 +216,7 @@ public abstract class GalleryUploadPanel extends Panel {
                     node.getSession().save();
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage());
-                    error(TranslatorUtils.getExceptionTranslation(GalleryUploadPanel.class, ex, this.getLocale()));
+                    error(TranslatorUtils.getExceptionTranslation(GalleryUploadPanel.class, ex));
                     try {
                         DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                         defaultWorkflow.delete();
@@ -230,7 +230,7 @@ public abstract class GalleryUploadPanel extends Panel {
                     }
                 } catch (GalleryException ex) {
                     log.error(ex.getMessage());
-                    error(TranslatorUtils.getExceptionTranslation(GalleryUploadPanel.class, ex, this.getLocale()));
+                    error(TranslatorUtils.getExceptionTranslation(GalleryUploadPanel.class, ex));
                 }
             }
         } catch (IOException ex) {

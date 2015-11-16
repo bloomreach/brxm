@@ -188,7 +188,7 @@ public class TranslatorUtils {
 
     /**
      * Create a model containing the translated message for the given exception and its parameters. The message will be
-     * loaded from the component's resource properties files with following syntax:
+     * loaded from the resource properties files of either component or exception class with following syntax:
      * <pre>
      * {@code
      *  exception,type\=${exception-class-path},message\=${exception-message}=<your-localized-message>
@@ -204,7 +204,7 @@ public class TranslatorUtils {
                                                          final Throwable t, final Object... parameters) {
         HashMap<String, String> details = new HashMap<>();
 
-        return new StringResourceModel(createKey(t, details), component, new Model<>(details), t.getLocalizedMessage(), parameters);
+        return new StringResourceModel(createKey(t, details), component, Model.of(details), t.getLocalizedMessage(), parameters);
     }
 
     /**
@@ -212,7 +212,7 @@ public class TranslatorUtils {
      * loaded from a class's resource properties files with following syntax:
      * <pre>
      * {@code
-     *  exception,type\=${exception-class-path},message\=${exception-message}=<your-localized-message>
+     *  exception,type\=${exception-class-path}
      * }
      * </pre>
      *
@@ -222,30 +222,17 @@ public class TranslatorUtils {
      *
      * @param clazz  the class having translated resource files
      * @param t  the throwable exception
-     * @param locale  locale to be used
      * @param parameters parameters used in the message template storing in resource files
      * @return  A model for the translated exception message.
      */
-    public static IModel<String> getExceptionTranslation(final Class clazz, final Throwable t, Locale locale,
+    public static IModel<String> getExceptionTranslation(final Class clazz, final Throwable t,
                                                          final Object... parameters) {
+        final String key = "exception,type=${type},class=${clazz}";
         HashMap<String, String> details = new HashMap<>();
-        String key = new PropertyVariableInterpolator(createKey(t, details), details).toString();
-        final IModel<String> initialModel = new ClassResourceModel(key, clazz, locale, null, parameters);
+        details.put("type", t.getClass().getName());
+        details.put("clazz", clazz.getName());
 
-        // Below logic is inspirend on the recursion implemented by the IStringResourceLoader implementation
-        // in org.hippoecm.frontend.Main.
-        IModel<String> model = initialModel;
-        while (model.getObject().equals(key)) { // meaning: while matching key-value pair not found
-            if (key.contains(",")) {
-                key = key.substring(0, key.lastIndexOf(','));
-                model = new ClassResourceModel(key, clazz, locale, null, parameters);
-            } else {
-                model = initialModel; // out of options, fall back to initial Model
-                break;
-            }
-        }
-
-        return model;
+        return new StringResourceModel(key, Model.of(details), t.getLocalizedMessage(), parameters);
     }
 
     /**
