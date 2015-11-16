@@ -36,8 +36,6 @@ import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 import org.hippoecm.hst.content.beans.query.filter.IsNodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.NodeTypeFilter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.diagnosis.HDC;
-import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.DateTools;
 import org.slf4j.LoggerFactory;
@@ -285,23 +283,18 @@ public class HstQueryImpl implements HstQuery {
 
     @Override
     public HstQueryResult execute() throws QueryException {
-        Task queryTask = null;
-
         try {
             String query = getQuery();
-
-            if (HDC.isStarted()) {
-                queryTask = HDC.getCurrentTask().startSubtask("HstQuery");
-                queryTask.setAttribute("query", query);
-            }
 
             QueryManager jcrQueryManager = getQueryManager();
 
             Query jcrQuery = jcrQueryManager.createQuery(query, "xpath");
-            if(offset > -1){
+
+            if (offset > -1){
                 jcrQuery.setOffset(offset);
             }
-            if(limit > -1){
+
+            if (limit > -1){
                 jcrQuery.setLimit(limit);
             }
 
@@ -313,10 +306,6 @@ public class HstQueryImpl implements HstQuery {
             log.warn("LoginException. Return null : {}", e);
         } catch (RepositoryException e) {
             throw new QueryException(e.getMessage(), e);
-        } finally {
-            if (queryTask != null) {
-                queryTask.stop();
-            }
         }
 
         return null;

@@ -65,7 +65,10 @@
       <null/>
     </property>
     <property name="nodeTypeNames">
-      <value>nt:file</value>
+      <list>
+        <value>nt:file</value>
+        <value>nt:resource</value>
+      </list>
     </property>
     <property name="noLocal" value="false"/>
     <property name="eventListener">

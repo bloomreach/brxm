@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
     <artifactId>toolkit-cnd</artifactId>
-    <version>3.1.0-menueditor-improvements-SNAPSHOT</version>
+    <version>3.2.0-menu-editor-improvements-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit CND Addon Resources</name>

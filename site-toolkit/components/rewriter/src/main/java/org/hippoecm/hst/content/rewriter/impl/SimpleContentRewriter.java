@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,15 +15,6 @@
  */
 package org.hippoecm.hst.content.rewriter.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.regex.Pattern;
-
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
-
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.content.rewriter.ImageVariant;
@@ -34,14 +25,27 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.regex.Pattern;
+
 /**
  * SimpleContentRewriter
+ *
+ * Rewrites rich text stored in HippoHtml nodes. Links to repository content are rewritten to URLs.
+ *
+ * The href attributes of anchor tags can contain a reference to a child node of the HippoHtml node. This child node
+ * will contain a link to a repository resource. The same applies to the src attributes of image tags.
  * 
  * @version $Id: SimpleContentRewriter.java 24267 2010-10-11 09:09:56Z aschrijvers $
  */
 public class SimpleContentRewriter extends AbstractContentRewriter<String> {
     
-    private final static Logger log = LoggerFactory.getLogger(SimpleContentRewriter.class);
+    private static final Logger log = LoggerFactory.getLogger(SimpleContentRewriter.class);
 
     /**
      * External URL resources which are not generated from the repository resources.
@@ -71,27 +75,38 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
     private boolean rewritingBinaryLink = false;
     
     public SimpleContentRewriter() {
-        
+
     }
 
     @Override
-    public String rewrite(String html, HstRequestContext requestContext) {
+    public String rewrite(final String html, final HstRequestContext requestContext) {
         return getInnerHtml(html);
     }
 
     @Override
-    public String rewrite(String html, Node node, HstRequestContext requestContext) {
-        return rewrite(html, node, requestContext, (Mount)null);
+    public String rewrite(final String html, final Node hippoHtmlNode, final HstRequestContext requestContext) {
+        return rewrite(html, hippoHtmlNode, requestContext, (Mount)null);
     }
     
     @Override
-    public String rewrite(String html, Node node, HstRequestContext requestContext, String targetSiteAlias) {
-        Mount targetMount = requestContext.getMount(targetSiteAlias);
-        return rewrite(html, node, requestContext, targetMount);
+    public String rewrite(final String html, final Node hippoHtmlNode, final HstRequestContext requestContext,
+                          final String targetSiteAlias) {
+        final Mount targetMount = requestContext.getMount(targetSiteAlias);
+        return rewrite(html, hippoHtmlNode, requestContext, targetMount);
     }
-    
+
+    /**
+     * Rewrite link references in rich text to valid URLs. A link reference must match the name of a child node of the
+     * HippoHtml node that contains a link to a JCR node.
+     * @param html rich text with possible link references
+     * @param hippoHtmlNode the node that has child nodes that contain references to JCR nodes
+     * @param requestContext the context for the current request
+     * @param targetMount mount that the links must point to
+     * @return rewritten html with URLs
+     */
     @Override
-    public String rewrite(final String html, Node node, HstRequestContext requestContext, Mount targetMount) {
+    public String rewrite(final String html, final Node hippoHtmlNode, final HstRequestContext requestContext,
+                          final Mount targetMount) {
 
         // strip off html & body tag
         String rewrittenHtml = getInnerHtml(html);
@@ -102,7 +117,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         // only create if really needed
         StringBuilder sb = null;
         int globalOffset = 0;
-        String documentLinkHref = null;
+        String documentLinkHref;
 
         while (rewrittenHtml.indexOf(LINK_TAG, globalOffset) > -1) {
             int offset = rewrittenHtml.indexOf(LINK_TAG, globalOffset);
@@ -123,12 +138,12 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
             if (hrefIndexStart < endTag) {
                 int hrefIndexEnd = rewrittenHtml.indexOf(ATTR_END, hrefIndexStart);
                 if (hrefIndexEnd > hrefIndexStart) {
-                    String documentPath = rewrittenHtml.substring(hrefIndexStart, hrefIndexEnd);
+                    final String documentPath = rewrittenHtml.substring(hrefIndexStart, hrefIndexEnd);
 
                     offset = endTag;
                     sb.append(rewrittenHtml.substring(globalOffset, hrefIndexStart));
 
-                    documentLinkHref = rewriteDocumentLink(documentPath, node, requestContext, targetMount);
+                    documentLinkHref = rewriteDocumentLink(documentPath, hippoHtmlNode, requestContext, targetMount);
                     if (documentLinkHref != null) {
                         sb.append(documentLinkHref);
                     }
@@ -150,7 +165,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         }
 
         globalOffset = 0;
-        String binaryLinkSrc = null;
+        String binaryLinkSrc;
 
         while (rewrittenHtml.indexOf(IMG_TAG, globalOffset) > -1) {
             int offset = rewrittenHtml.indexOf(IMG_TAG, globalOffset);
@@ -176,7 +191,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                     offset = endTag;
                     sb.append(rewrittenHtml.substring(globalOffset, srcIndexStart));
 
-                    binaryLinkSrc = rewriteBinaryLink(srcPath, node, requestContext, targetMount);
+                    binaryLinkSrc = rewriteBinaryLink(srcPath, hippoHtmlNode, requestContext, targetMount);
                     if (binaryLinkSrc != null) {
                         sb.append(binaryLinkSrc);
                     }
@@ -199,11 +214,11 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         }
     }
 
-    private String getInnerHtml(final String html) {
+    private static String getInnerHtml(final String html) {
         if (html == null) {
             return null;
         }
-        String innerHTML = SimpleHtmlExtractor.getInnerHtml(html, "body", false);
+        final String innerHTML = SimpleHtmlExtractor.getInnerHtml(html, "body", false);
         if (innerHTML == null) {
             if (HTML_TAG_PATTERN.matcher(html).find() || BODY_TAG_PATTERN.matcher(html).find()) {
                 return null;
@@ -216,78 +231,79 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
 
     /**
      * Rewrites document link in <code>href</code> attribute of anchor tag.
-     * @param documentLinkHref
-     * @param node
-     * @param requestContext
-     * @param targetMount
-     * @return
+     * @param documentLinkReference reference to a document link child node of the hippoHtmlNode
+     * @param hippoHtmlNode the node that contains rich text and child nodes with jcr links
+     * @param requestContext the context for the current request
+     * @param targetMount mount that the link must point to
+     * @return document link reference rewritten to a URL or page not found link
      */
-    protected String rewriteDocumentLink(String documentLinkHref, Node node, HstRequestContext requestContext, Mount targetMount) {
-        if (StringUtils.isEmpty(documentLinkHref)) {
-            return documentLinkHref;
+    protected String rewriteDocumentLink(final String documentLinkReference, final Node hippoHtmlNode,
+                                         final HstRequestContext requestContext, final Mount targetMount) {
+        if (StringUtils.isEmpty(documentLinkReference)) {
+            return documentLinkReference;
         }
 
-        if (isExternal(documentLinkHref)) {
-            return documentLinkHref;
+        if (isExternal(documentLinkReference)) {
+            return documentLinkReference;
+        }
+
+        final String[] hrefParts = StringUtils.split(documentLinkReference, '?');
+
+        final HstLink documentLink = getDocumentLink(hrefParts[0], hippoHtmlNode, requestContext, targetMount);
+        String rewrittenLinkHref;
+
+        if (documentLink != null && documentLink.getPath() != null) {
+            rewrittenLinkHref = documentLink.toUrlForm(requestContext, isFullyQualifiedLinks());
         } else {
-            String queryString = StringUtils.substringAfter(documentLinkHref, "?");
-            boolean hasQueryString = !StringUtils.isEmpty(queryString);
-
-            if (hasQueryString) {
-                documentLinkHref = StringUtils.substringBefore(documentLinkHref, "?");
-            }
-
-            HstLink href = getDocumentLink(documentLinkHref, node, requestContext, targetMount);
-
-            if (href != null && href.getPath() != null) {
-                documentLinkHref = href.toUrlForm(requestContext, isFullyQualifiedLinks());
-            } else {
-                log.debug("could not resolve internal document link for '{}'. Return page not found link", documentLinkHref);
-                HstLink notFoundLink = requestContext.getHstLinkCreator().createPageNotFoundLink(requestContext.getResolvedMount().getMount());
-                documentLinkHref = notFoundLink.toUrlForm(requestContext, isFullyQualifiedLinks());
-            }
-
-            if (hasQueryString) {
-                return new StringBuilder(documentLinkHref).append('?').append(queryString).toString();
-            } else {
-                return documentLinkHref;
-            }
+            log.debug("could not resolve internal document link for '{}'. Return page not found link", documentLinkReference);
+            HstLink notFoundLink = requestContext.getHstLinkCreator().createPageNotFoundLink(requestContext.getResolvedMount().getMount());
+            rewrittenLinkHref = notFoundLink.toUrlForm(requestContext, isFullyQualifiedLinks());
         }
+
+        if (hrefParts.length > 1) {
+            return rewrittenLinkHref + '?' + hrefParts[1];
+        } else {
+            return rewrittenLinkHref;
+        }
+
     }
 
     /**
      * Rewrites binary link in <code>src</code> attribute of <code>img</code> tag.
-     * @param binaryLinkSrc
-     * @param node
-     * @param requestContext
-     * @param targetMount
-     * @return
+     * @param binaryLinkReference reference to a document link child node of the hippoHtmlNode
+     * @param hippoHtmlNode the node that contains rich text and child nodes with jcr links
+     * @param requestContext the context for the current request
+     * @param targetMount mount that the link must point to
+     * @return binary link reference rewritten to a URL or page not found link
      */
-    protected String rewriteBinaryLink(String binaryLinkSrc, Node node, HstRequestContext requestContext, Mount targetMount) {
-        if (StringUtils.isEmpty(binaryLinkSrc)) {
-            return binaryLinkSrc;
+    protected String rewriteBinaryLink(final String binaryLinkReference, final Node hippoHtmlNode,
+                                       final HstRequestContext requestContext, final Mount targetMount) {
+        if (StringUtils.isEmpty(binaryLinkReference)) {
+            return binaryLinkReference;
         }
 
-        if (isExternal(binaryLinkSrc)) {
-            return binaryLinkSrc;
+        if (isExternal(binaryLinkReference)) {
+            return binaryLinkReference;
+        }
+
+        final HstLink binaryLink = getBinaryLink(binaryLinkReference, hippoHtmlNode, requestContext, targetMount);
+
+        if (binaryLink != null && binaryLink.getPath() != null) {
+            return binaryLink.toUrlForm(requestContext, isFullyQualifiedLinks());
         } else {
-            HstLink binaryLink = getBinaryLink(binaryLinkSrc, node, requestContext, targetMount);
-
-            if (binaryLink != null && binaryLink.getPath() != null) {
-                return binaryLink.toUrlForm(requestContext, isFullyQualifiedLinks());
-            } else {
-                log.debug("could not resolve internal binary link for '{}'. Return page not found link", binaryLinkSrc);
-                HstLink notFoundLink = requestContext.getHstLinkCreator().createPageNotFoundLink(requestContext.getResolvedMount().getMount());
-                return notFoundLink.toUrlForm(requestContext, isFullyQualifiedLinks());
-            }
+            log.debug("could not resolve internal binary link for '{}'. Return page not found link", binaryLinkReference);
+            HstLink notFoundLink = requestContext.getHstLinkCreator().createPageNotFoundLink(requestContext.getResolvedMount().getMount());
+            return notFoundLink.toUrlForm(requestContext, isFullyQualifiedLinks());
         }
     }
 
-    protected HstLink getDocumentLink(String path, Node node, HstRequestContext requestContext, Mount targetMount) {
-        return getLink(path, node, requestContext, targetMount);
+    protected HstLink getDocumentLink(final String path, final Node hippoHtmlNode, final HstRequestContext requestContext,
+                                      final Mount targetMount) {
+        return getLink(path, hippoHtmlNode, requestContext, targetMount);
     }
 
-    protected HstLink getBinaryLink(String path, Node node, HstRequestContext requestContext, Mount targetMount) {
+    protected HstLink getBinaryLink(final String path, final Node node, final HstRequestContext requestContext,
+                                    final  Mount targetMount) {
         // Instead of adding an extr boolean argument to the getLink(...) method to indicate whether a binaryLink
         // is rewritten or not, we use a 'rewritingBinaryLink' flag to indicate this. This is for historical 
         // backwards compatible reasons, as developers might have overridden 
@@ -300,47 +316,50 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         return link;
     }
     
-    protected HstLink getLink(String path, Node node, HstRequestContext reqContext, Mount targetMount) {
+    protected HstLink getLink(final String path, final Node hippoHtmlNode, final HstRequestContext requestContext,
+                              final Mount targetMount) {
+        String linkPath;
         try {
-            path = URLDecoder.decode(path, "UTF-8");
-        } catch (UnsupportedEncodingException e1) {
+            linkPath = URLDecoder.decode(path, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
             log.warn("UnsupportedEncodingException for documentPath");
+            linkPath = path;
         }
 
         // translate the documentPath to a URL in combination with the Node and the mapping object
-        if (path.startsWith("/")) {
+        if (linkPath.startsWith("/")) {
             // this is an absolute path, which is not an internal content link. We just try to create a link for it directly
             if (targetMount == null) {
-                return reqContext.getHstLinkCreator().create(path, reqContext.getResolvedMount().getMount());
+                return requestContext.getHstLinkCreator().create(linkPath, requestContext.getResolvedMount().getMount());
             } else {
-                return reqContext.getHstLinkCreator().create(path, targetMount);
+                return requestContext.getHstLinkCreator().create(linkPath, targetMount);
             }
         } else {
             // relative node, most likely a mirror node:
             String nodePath = null;
-            final String relPath = path;
             try {
-                nodePath = node.getPath();
+                nodePath = hippoHtmlNode.getPath();
                 if (rewritingBinaryLink) {
 
-                    if (!isValidBinariesPath(nodePath, relPath)) {
+                    if (!isValidBinariesPath(nodePath, linkPath)) {
                         return null;
                     }
-                    String[] binaryPathSegments = relPath.split("/");
-                    Node mirrorNode = node.getNode(binaryPathSegments[0]);
+                    final String[] binaryPathSegments = linkPath.split("/");
+                    final Node mirrorNode = hippoHtmlNode.getNode(binaryPathSegments[0]);
                     if (!mirrorNode.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
                         log.info("For '{}' a node of type hippo:mirror of hippo:facetselect is expected but was of type '{}'. Cannot " +
                                 "create a link for that node type.", mirrorNode.getPath(), mirrorNode.getPrimaryNodeType().getName());
                         return null;
                     }
-                    String uuid = mirrorNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                    final String uuid = mirrorNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                     Node referencedNode = mirrorNode.getSession().getNodeByIdentifier(uuid);
                     if (!referencedNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                         log.info("Unable to rewrite path '{}' for node '{}' to proper binary url : Expected link to a " +
-                                "node of type hippo:handle but was of type '{}'.", new String[]{relPath, nodePath, referencedNode.getPrimaryNodeType().getName()});
+                                "node of type hippo:handle but was of type '{}'.",
+                                new String[]{linkPath, nodePath, referencedNode.getPrimaryNodeType().getName()});
                         return null;
                     }
-                    Node binaryDocument = referencedNode.getNode(referencedNode.getName());
+                    final Node binaryDocument = referencedNode.getNode(referencedNode.getName());
                     if (getImageVariant() != null) {
                         ImageVariant imageVariant = getImageVariant();
 
@@ -365,64 +384,71 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                             }
                         }
                         if (binary == null) {
-                            log.info("Unable to rewrite path '{}' for node '{}' to proper binary url for imageVariant '{}'.", new String[]{relPath, nodePath, imageVariant.getName()});
+                            log.info("Unable to rewrite path '{}' for node '{}' to proper binary url for imageVariant '{}'.", new String[]{linkPath, nodePath, imageVariant.getName()});
                             return null;
                         }
-                        return createLink(binary, reqContext, targetMount);
+                        return createInternalLink(binary, requestContext, targetMount);
                     } else {
-                        Node binary = binaryDocument.getNode(binaryPathSegments[2]);
-                        return createLink(binary, reqContext, targetMount);
+                        final Node binary = binaryDocument.getNode(binaryPathSegments[2]);
+                        return createInternalLink(binary, requestContext, targetMount);
                     }
 
                 } else {
-                    Node mirrorNode = node.getNode(relPath);
+                    final Node mirrorNode = hippoHtmlNode.getNode(linkPath);
                     if (mirrorNode.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
                         String uuid = mirrorNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                         Node referencedNode = mirrorNode.getSession().getNodeByIdentifier(uuid);
                         if (referencedNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                             if (!referencedNode.hasNode(referencedNode.getName())) {
                                 log.info("Unable to rewrite path '{}' for node '{}' to proper url because no (readable) document" +
-                                        " node below linked handle node: '{}'.", new String[]{relPath, nodePath});
+                                        " node below linked handle node: '{}'.", new String[]{linkPath, nodePath});
                                 return null;
                             }
                             referencedNode = referencedNode.getNode(referencedNode.getName());
                         }
-                        return createLink(referencedNode, reqContext, targetMount);
+                        return createInternalLink(referencedNode, requestContext, targetMount);
                     } else {
                         log.info("For '{}' a node of type hippo:mirror of hippo:facetselect is expected but was of type '{}'. Cannot " +
                                 "create a link for that node type.", mirrorNode.getPath(), mirrorNode.getPrimaryNodeType().getName());
                     }
                 }
-            } catch (ItemNotFoundException e) {
-                log.info("Unable to rewrite path '{}' for node '{}' to proper url : '{}'.", new String[]{relPath, nodePath, e.getMessage()});
-            } catch (PathNotFoundException e) {
-                log.info("Unable to rewrite path '{}' for node '{}' to proper url : '{}'.", new String[]{relPath, nodePath, e.getMessage()});
+            } catch (ItemNotFoundException | PathNotFoundException e) {
+                log.info("Unable to rewrite path '{}' for node '{}' to proper url : '{}'.", new String[]{linkPath, nodePath, e.getMessage()});
             } catch (RepositoryException e) {
-                log.warn("Unable to rewrite path '{}' for node '{}' to proper url : '{}'.", new String[]{relPath, nodePath, e.getMessage()});
+                log.warn("Unable to rewrite path '{}' for node '{}' to proper url : '{}'.", new String[]{linkPath, nodePath, e.getMessage()});
             }
         }
         return null;
     }
 
-    private HstLink createLink(final Node node, final HstRequestContext reqContext, final Mount targetMount) throws RepositoryException {
+    /**
+     * Create an HstLink to a referenced node in rich text.
+     * @param referencedNode the node to create a link to
+     * @param requestContext the context for the current request
+     * @param targetMount mount that the link must point to. may be null
+     * @return link to the referenced node and optional target mount. target mount is ignored in case links must be canonical.
+     * @throws RepositoryException if no path can be retrieved from the referencedNode
+     */
+    protected HstLink createInternalLink(final Node referencedNode, final HstRequestContext requestContext, final Mount targetMount)
+            throws RepositoryException {
         if (isCanonicalLinks()) {
             if (targetMount != null) {
                 log.info("TargetMount is defined to create a link for, but target mount is ignored in case a canonical link is " +
-                        "requested. Ignoring target mount '{}' but instead return canonical link for nodepath '{}'.",
-                        targetMount, node.getPath());
+                                "requested. Ignoring target mount '{}' but instead return canonical link for nodepath '{}'.",
+                        targetMount, referencedNode.getPath());
             }
-            return reqContext.getHstLinkCreator().createCanonical(node, reqContext);
+            return requestContext.getHstLinkCreator().createCanonical(referencedNode, requestContext);
         }
         if (targetMount == null) {
-            return reqContext.getHstLinkCreator().create(node, reqContext);
+            return requestContext.getHstLinkCreator().create(referencedNode, requestContext);
         } else {
-            return reqContext.getHstLinkCreator().create(node, targetMount);
+            return requestContext.getHstLinkCreator().create(referencedNode, targetMount);
         }
     }
 
-    private boolean isValidBinariesPath(final String nodePath, final String relPath) {
+    private static boolean isValidBinariesPath(final String nodePath, final String relPath) {
         final String[] binaryPathSegments = relPath.split("/");
-        if (binaryPathSegments.length == 3 && binaryPathSegments[1].equals("{_document}")) {
+        if (binaryPathSegments.length == 3 && "{_document}".equals(binaryPathSegments[1])) {
           return true;
         }
         log.info("Unable to rewrite relPath '{}' for node '{}' to proper url : '{}'. For binary links we expect" +
@@ -430,9 +456,14 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         return false;
     }
 
-    protected boolean isExternal(String path) {
-        for (String prefix : EXTERNALS) {
-            if (path.startsWith(prefix)) {
+    /**
+     * Check to see if a tag does not reference a dynamic resource
+     * @param tagReference the tag reference
+     * @return true if the tag does not reference a dynamic resource
+     */
+    protected boolean isExternal(final String tagReference) {
+        for (final String prefix : EXTERNALS) {
+            if (tagReference.startsWith(prefix)) {
                 return true;
             }
         }

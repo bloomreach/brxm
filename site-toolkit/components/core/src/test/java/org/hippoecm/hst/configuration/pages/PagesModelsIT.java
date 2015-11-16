@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.configuration.pages;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -22,18 +25,27 @@ import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
+import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertNull;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -181,7 +193,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
     }
 
     @Test
-    public void test_workspace_in_inherited_pages_is_ignored() throws Exception {
+    public void workspace_pages_from_inherited_configuration_are_by_default_ignored() throws Exception {
         session.getNode("/hst:hst/hst:configurations/unittestcommon").addNode("hst:workspace");
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:pages",
                 "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages");
@@ -194,6 +206,156 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         }
         assertNull(hstSite.getComponentsConfiguration().getComponentConfigurations().get("standarddetail"));
     }
+
+    // test inheritance from hst:workspace via inheritsfrom = ../xyz/hst:workspace
+    @Test
+    public void hst_components_from_workspace_by_default_not_inherited_unless_explicitly_inherited() throws Exception {
+        {
+            VirtualHosts vhosts = hstManager.getVirtualHosts();
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+            final HstComponentConfiguration pageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
+            assertNotNull(pageComponent);
+            assertTrue(pageComponent.isInherited());
+        }
+        // now move the [/hst:hst/hst:configurations/unittestcommon/hst:pages] to
+        // [/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages] and show the 'homepage' is not there any more
+
+        if (!session.nodeExists("/hst:hst/hst:configurations/unittestcommon/hst:workspace")) {
+            session.getNode("/hst:hst/hst:configurations/unittestcommon").addNode(HstNodeTypes.NODENAME_HST_WORKSPACE);
+        }
+        session.move("/hst:hst/hst:configurations/unittestcommon/hst:pages",
+                "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages");
+
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+        session.save();
+
+        invalidator.eventPaths(pathsToBeChanged);
+        {
+            VirtualHosts vhosts = hstManager.getVirtualHosts();
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+            final HstComponentConfiguration pageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
+            Assert.assertNull(pageComponent);
+        }
+
+        // for all kind of inheritance variants below, the 'homepage' should be inherited
+        List<String[]> inheritanceVariants = new ArrayList<>();
+        inheritanceVariants.add(new String[]{"../unittestcommon", "../unittestcommon/hst:workspace"});
+        inheritanceVariants.add(new String[]{"../unittestcommon", "../unittestcommon/hst:workspace/hst:pages"});
+        inheritanceVariants.add(new String[]{"../unittestcommon/hst:workspace", "../unittestcommon"});
+        inheritanceVariants.add(new String[]{"../unittestcommon/hst:workspace/hst:pages", "../unittestcommon"});
+        inheritanceVariants.add(new String[]{"../unittestcommon/hst:workspace"});
+        inheritanceVariants.add(new String[]{"../unittestcommon/hst:workspace/hst:pages"});
+        inheritanceVariants.add(new String[]{"../unittestcommon/hst:workspace/hst:pages", "../unittestcommon/hst:workspace"});
+        inheritanceVariants.add(new String[]{"../unittestcommon/hst:workspace", "../unittestcommon/hst:workspace/hst:pages"});
+
+        for (String[] inheritanceVariant : inheritanceVariants) {
+
+            setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                    inheritanceVariant);
+
+            pathsToBeChanged = new String[]{"/hst:hst/hst:configurations/unittestproject"};
+            invalidator.eventPaths(pathsToBeChanged);
+            {
+                VirtualHosts vhosts = hstManager.getVirtualHosts();
+                final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+                final HstComponentConfiguration pageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
+                assertNotNull(pageComponent);
+                assertTrue(pageComponent.isInherited());
+                Assert.assertNull(pageComponent.getParameter("foo"));
+            }
+            // make sure a change triggers a reload!
+            final Node homePageNode = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages/homepage");
+            homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"foo"});
+            homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"bar"});
+            pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+            session.save();
+            invalidator.eventPaths(pathsToBeChanged);
+            {
+                VirtualHosts vhosts = hstManager.getVirtualHosts();
+                final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+                final HstComponentConfiguration pageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
+                // assert that the change is reloaded
+                assertEquals("bar", pageComponent.getParameter("foo"));
+            }
+
+            homePageNode.getProperty(GENERAL_PROPERTY_PARAMETER_NAMES).remove();
+            homePageNode.getProperty(GENERAL_PROPERTY_PARAMETER_VALUES).remove();
+            pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+            session.save();
+            invalidator.eventPaths(pathsToBeChanged);
+        }
+    }
+
+    @Test
+    public void test_inheritance_precedence() throws Exception {
+        if (!session.nodeExists("/hst:hst/hst:configurations/unittestcommon/hst:workspace")) {
+            session.getNode("/hst:hst/hst:configurations/unittestcommon").addNode(HstNodeTypes.NODENAME_HST_WORKSPACE);
+        }
+
+        // hst:pages both below unittestcommon AND below unittestcommon/hst:workspace
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:pages", "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages");
+
+        // both have hst:pages/homepage : Depending on precedence of the hst:inheritsfrom, one of them is merged into the 'unittestproject' model
+        final Node homePageNode = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/homepage");
+        homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"location"});
+        homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"non-workspace"});
+        final Node workspaceHomePageNode = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages/homepage");
+        workspaceHomePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"location"});
+        workspaceHomePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"workspace"});
+
+        // add an extra component to workspace
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages/homepage",
+                "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages/homepageAgain");
+
+
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                new String[]{"../unittestcommon", "../unittestcommon/hst:workspace"});
+        session.save();
+
+        {
+            VirtualHosts vhosts = hstManager.getVirtualHosts();
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+            final HstComponentConfiguration pageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
+            assertNotNull(pageComponent);
+            // since we first inherit ../unittestcommon and *then* ../unittestcommon/hst:workspace, we expect the homepage from
+            // unittestcommon/hst:pages and not from unittestcommon/hst:workspace/hst:pages
+            assertEquals("non-workspace", pageComponent.getParameter("location"));
+
+            // assert that 'homepageAgain' which is only present below 'unittestcommon/hst:workspace/hst:pages' is inherited still
+            final HstComponentConfiguration pageAgainComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepageAgain");
+            assertNotNull(pageAgainComponent);
+        }
+
+        // switch the inheritance
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                new String[]{"../unittestcommon/hst:workspace", "../unittestcommon"});
+
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        session.save();
+        invalidator.eventPaths(new String[] {"/hst:hst/hst:configurations/unittestproject"});
+
+        {
+            VirtualHosts vhosts = hstManager.getVirtualHosts();
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+            final HstComponentConfiguration pageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
+            assertNotNull(pageComponent);
+            // since we first inherit ../unittestcommon and *then* ../unittestcommon/hst:workspace, we expect the homepage from
+            // unittestcommon/hst:pages and not from unittestcommon/hst:workspace/hst:pages
+            assertEquals("workspace", pageComponent.getParameter("location"));
+        }
+    }
+
+    private void setWorkspaceInheritance(final String hstConfigurationPath, final String[] inheritsFrom) throws RepositoryException {
+        final Node hstConfigNode = session.getNode(hstConfigurationPath);
+        hstConfigNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, inheritsFrom);
+        session.save();
+    }
+
+    private String getLocalhostRootMountId() throws RepositoryException {
+        return session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root").getIdentifier();
+    }
+
 
     @Test
     public void test_marked_deleted_hstconfiguration_nodes_are_present_in_model()  throws Exception {

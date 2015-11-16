@@ -34,7 +34,7 @@
 
   <groupId>org.onehippo.cms7.hst</groupId>
   <artifactId>hst</artifactId>
-  <version>3.1.0-menueditor-improvements-SNAPSHOT</version>
+  <version>3.2.0-menu-editor-improvements-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2008</inceptionYear>
   <issueManagement>
@@ -80,11 +80,11 @@
 
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
-    <hippo.commons.version>2.1.0-SNAPSHOT</hippo.commons.version>
-    <hippo.repository.version>3.1.0-SNAPSHOT</hippo.repository.version>
-    <hippo.utilities.version>2.0.0</hippo.utilities.version>
-    <hippo.services.version>2.0.0</hippo.services.version>
-    <hippo.services.eventbus.version>2.0.0</hippo.services.eventbus.version>
+    <hippo.commons.version>2.2.0-SNAPSHOT</hippo.commons.version>
+    <hippo.repository.version>3.2.0-SNAPSHOT</hippo.repository.version>
+    <hippo.utilities.version>2.2.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.services.version>2.2.0-SNAPSHOT</hippo.services.version>
+    <hippo.services.eventbus.version>2.2.0-SNAPSHOT</hippo.services.eventbus.version>
 
     <htmlcleaner.version>2.12</htmlcleaner.version>
 

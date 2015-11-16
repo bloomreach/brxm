@@ -36,7 +36,7 @@ public class FormDataCleanupJob implements RepositoryJob {
     private static final String CONFIG_BATCH_SIZE = "batchsize";
     private static final String CONFIG_EXCLUDE_PATHS = "excludepaths";
 
-    private static String FORMDATA_QUERY = "SELECT * FROM hst:formdata ORDER BY hst:creationtime ASC";
+    private static final String FORMDATA_QUERY = "SELECT * FROM hst:formdata ORDER BY hst:creationtime ASC";
 
     @Override
     public void execute(final RepositoryJobExecutionContext context) throws RepositoryException {

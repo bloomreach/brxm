@@ -23,8 +23,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isEmpty;
 
 public class WebFilesTemplateEventListener extends RepositoryTemplateEventListener {
 
@@ -56,9 +60,14 @@ public class WebFilesTemplateEventListener extends RepositoryTemplateEventListen
                 }
                 String freeMarkerFilePath = nodePath;
                 while (!freeMarkerFilePath.endsWith(".ftl")) {
+                    if (isEmpty(freeMarkerFilePath)) {
+                        break;
+                    }
                     freeMarkerFilePath = getParentPath(freeMarkerFilePath);
                 }
-                pathsToRemoveFromCache.add(freeMarkerFilePath);
+                if (!isEmpty(freeMarkerFilePath)) {
+                    pathsToRemoveFromCache.add(freeMarkerFilePath);
+                }
             } catch (RepositoryException e) {
                 log.error("RepositoryException during template change listener ", e);
             }
@@ -67,6 +76,10 @@ public class WebFilesTemplateEventListener extends RepositoryTemplateEventListen
     }
 
     private String getParentPath(final String propertyPath) {
-        return propertyPath.substring(0, propertyPath.lastIndexOf("/"));
+        final int slashIndex = propertyPath.lastIndexOf("/");
+        if (slashIndex == -1) {
+            return EMPTY;
+        }
+        return propertyPath.substring(0, slashIndex);
     }
 }

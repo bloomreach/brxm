@@ -170,7 +170,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
 
 
         hstComponentsConfiguration = new HstComponentsConfigurationService(ccn, commonCatalogItems.orNull());
-        final List<String> events = ccn.getCompositeConfigurationDependenyPaths();
+        final List<String> events = ccn.getCompositeConfigurationDependencyPaths();
 
         // the commmon catalog, default at /hst:hst/hst:configurations/hst:catalog is a special node that is always included
         // as all the hstComponentsConfiguration need a reload after a change in there
@@ -205,7 +205,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
             return null;
         }
         siteMapItemHandlerConfiguration = new HstSiteMapItemHandlersConfigurationService(compositeSiteMapItemHandlersNode);
-        final List<String> events = ccn.getCompositeConfigurationDependenyPaths();
+        final List<String> events = ccn.getCompositeConfigurationDependencyPaths();
         siteMapItemHandlerConfigurationCache.put(cachekey, siteMapItemHandlerConfiguration, events.toArray(new String[events.size()]));
 
         return siteMapItemHandlerConfiguration;
