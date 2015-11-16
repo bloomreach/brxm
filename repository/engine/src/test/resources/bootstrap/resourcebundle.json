@@ -1,0 +1,12 @@
+{
+  "foo" : {
+    "bar" : {
+      "en" : {
+        "key" : "value"
+      },
+      "nl" : {
+        "key" : "waarde"
+      }
+    }
+  }
+}

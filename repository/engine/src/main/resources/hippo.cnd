@@ -146,6 +146,7 @@
 - hippo:timestamp (long) // deprecated, replaced by hippo:lastprocessedtime
 - hippo:lastprocessedtime (date)
 - hippo:webfilebundle (string)
+- hippo:resourcebundles (string)
 - hippo:changerecord (string)
 
 [hippo:initializefolder] > nt:base orderable

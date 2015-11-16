@@ -397,6 +397,8 @@ public interface HippoNodeType {
 
     public static final String HIPPO_WEB_FILE_BUNDLE = "hippo:webfilebundle";
 
+    public static final String HIPPO_RESOURCEBUNDLES = "hippo:resourcebundles";
+
     public static final String HIPPO_CONTENTPROPSET = "hippo:contentpropset";
 
     public static final String HIPPO_CONTENTPROPADD = "hippo:contentpropadd";

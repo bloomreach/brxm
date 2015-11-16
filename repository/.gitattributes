@@ -189,9 +189,12 @@ engine/src/main/java/org/onehippo/repository/bootstrap/instructions/ContentResou
 engine/src/main/java/org/onehippo/repository/bootstrap/instructions/NamespaceInstruction.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/instructions/NodeTypesInstruction.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/instructions/NodeTypesResourceInstruction.java -text
+engine/src/main/java/org/onehippo/repository/bootstrap/instructions/ResourceBundlesInstruction.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/instructions/WebFileBundleInstruction.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/util/BootstrapConstants.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/util/BootstrapUtils.java -text
+engine/src/main/java/org/onehippo/repository/bootstrap/util/BundleFileInfo.java -text
+engine/src/main/java/org/onehippo/repository/bootstrap/util/BundleInfo.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/util/PartialSystemViewFilter.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/util/PartialZipFile.java -text
 engine/src/main/java/org/onehippo/repository/modules/ModuleManager.java -text
@@ -243,6 +246,8 @@ engine/src/test/java/org/onehippo/repository/bootstrap/instructions/ContentDelet
 engine/src/test/java/org/onehippo/repository/bootstrap/instructions/ContentPropAddInstructionTest.java -text
 engine/src/test/java/org/onehippo/repository/bootstrap/instructions/ContentPropDeleteInstructionTest.java -text
 engine/src/test/java/org/onehippo/repository/bootstrap/instructions/ContentPropSetInstructionTest.java -text
+engine/src/test/java/org/onehippo/repository/bootstrap/instructions/ResourceBundlesInstructionTest.java -text
+engine/src/test/java/org/onehippo/repository/bootstrap/util/BundleFileInfoTest.java -text
 engine/src/test/java/org/onehippo/repository/bootstrap/util/PartialSystemViewFilterTest.java -text
 engine/src/test/java/org/onehippo/repository/modules/ModuleManagerTest.java -text
 engine/src/test/java/org/onehippo/repository/modules/ModuleRegistryTest.java -text
@@ -251,6 +256,7 @@ engine/src/test/java/org/onehippo/repository/util/AnnotationUtilsTest.java -text
 engine/src/test/java/org/onehippo/repository/xml/ExportImportPackageTest.java -text
 engine/src/test/java/org/onehippo/repository/xml/ExportImportTest.java -text
 engine/src/test/resources/bootstrap/path[!!-~]with[!!-~]spaces/SubZipFileTest.zip -text
+engine/src/test/resources/bootstrap/resourcebundle.json -text
 engine/src/test/resources/domain-defaultread.xml svneol=native#text/plain
 engine/src/test/resources/domain-defaultwrite.xml svneol=native#text/plain
 engine/src/test/resources/export/expected.xml -text

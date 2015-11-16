@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.jcr.InvalidSerializedDataException;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.xml.parsers.FactoryConfigurationError;
@@ -47,12 +48,15 @@ import org.apache.commons.lang.StringUtils;
 import org.onehippo.repository.bootstrap.InitializeInstruction;
 import org.onehippo.repository.bootstrap.InitializeItem;
 import org.onehippo.repository.bootstrap.PostStartupTask;
+import org.onehippo.repository.bootstrap.util.ContentFileInfo;
 import org.onehippo.repository.bootstrap.util.PartialSystemViewFilter;
 import org.onehippo.repository.xml.DefaultContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_DELTADIRECTIVE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTRESOURCE;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTEXTPATHS;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.INIT_FOLDER_PATH;
 import static org.onehippo.repository.bootstrap.util.BootstrapUtils.getNodeIndex;
 import static org.onehippo.repository.bootstrap.util.BootstrapUtils.initializeNodecontent;
@@ -63,6 +67,29 @@ public class ContentResourceInstruction extends InitializeInstruction {
 
     public ContentResourceInstruction(final InitializeItem item, final Session session) {
         super(item, session);
+    }
+
+    @Override
+    protected void initializeItem() throws RepositoryException {
+        final Node itemNode = this.item.getItemNode();
+        final ContentFileInfo info = ContentFileInfo.readInfo(itemNode);
+        if (info != null) {
+            itemNode.setProperty(HIPPO_CONTEXTPATHS, info.contextPaths.toArray(new String[info.contextPaths.size()]));
+            itemNode.setProperty(HIPPOSYS_DELTADIRECTIVE, info.deltaDirective);
+        }
+    }
+
+    @Override
+    protected boolean isDownstream(final String[] reloadPaths) throws RepositoryException {
+        final String[] contextPaths = item.getContextPaths();
+        if (contextPaths != null) {
+            for (String contextPath : contextPaths) {
+                if (contextPath.equals(reloadPaths[0]) || contextPath.startsWith(reloadPaths[0] + "/")) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
