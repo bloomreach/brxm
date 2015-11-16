@@ -368,46 +368,52 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
     public void referenceable_containers_from_inherited_configuration_included_when_workspace_explicitly_inherited_and_invalidation_works() throws Exception {
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                 new String[]{"../unittestcommon", "../unittestcommon/hst:workspace"});
-        assertInheritanceAndModelReloadWorks(getLocalhostRootMountId());
+        assertInheritanceAndModelReloadWorks();
     }
 
     @Test
     public void referenceable_containers_from_inherited_configuration_included_when_only_workspace_inherited_and_invalidation_works() throws Exception {
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                 new String[]{"../unittestcommon/hst:workspace"});
-        assertInheritanceAndModelReloadWorks(getLocalhostRootMountId());
+        assertInheritanceAndModelReloadWorks();
     }
 
     @Test
     public void referenceable_containers_from_containers_inherited_configuration_included_when_workspace_explicitly_inherited_and_invalidation_works() throws Exception {
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                 new String[]{"../unittestcommon", "../unittestcommon/hst:workspace/hst:containers"});
-        assertInheritanceAndModelReloadWorks(getLocalhostRootMountId());
+        assertInheritanceAndModelReloadWorks();
     }
 
     @Test
     public void referenceable_containers_from_containers_inherited_configuration_included_when_only_workspace_inherited_and_invalidation_works() throws Exception {
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                 new String[]{"../unittestcommon/hst:workspace/hst:containers"});
-        assertInheritanceAndModelReloadWorks(getLocalhostRootMountId());
+        assertInheritanceAndModelReloadWorks();
     }
 
     @Test
-    public void cascading_non_workspace_inheritance() throws Exception {
+    public void test_illegal_reference_of_to_deeply_nested_container() throws Exception {
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                new String[]{"../unittestcommon/hst:workspace/hst:containers/myReferenceableContainer"});
+        createHstWorkspaceAndReferenceableContainer("myReferenceableContainer",
+                "/hst:hst/hst:configurations/unittestcommon");
 
+        final String inheritedContainerName = "inheritedcontainer";
+        addComponentReference(testComponent, inheritedContainerName, "myReferenceableContainer");
+        {
+            final VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+            final HstComponentConfiguration pageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
+            final HstComponentConfiguration testComponent = pageComponent.getChildByName(TEST_COMPONENT_NODE_NAME);
+            assertNotNull(testComponent);
+            // container available since part of inherited BUT inherited workspace IS now inherited because explicitly inherited
+            final HstComponentConfiguration component = testComponent.getChildByName(inheritedContainerName);
+            assertNull(component);
+        }
     }
 
-    @Test
-    public void cascading_workspace_inheritance() throws Exception {
-
-    }
-
-    @Test
-    public void cascading_workspace_children_inheritance() throws Exception {
-
-    }
-
-    private void assertInheritanceAndModelReloadWorks(final String mountId) throws Exception {
+    private void assertInheritanceAndModelReloadWorks() throws Exception {
 
         createHstWorkspaceAndReferenceableContainer("myReferenceableContainer",
                 "/hst:hst/hst:configurations/unittestcommon");
@@ -416,7 +422,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         addComponentReference(testComponent, inheritedContainerName, "myReferenceableContainer");
         {
             final VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-            final Mount mount = vhosts.getMountByIdentifier(mountId);
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
             final HstComponentConfiguration pageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
             final HstComponentConfiguration testComponent = pageComponent.getChildByName(TEST_COMPONENT_NODE_NAME);
             assertNotNull(testComponent);
@@ -451,27 +457,6 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
             assertTrue(item.isInherited());
         }
 
-    }
-
-    @Test
-    public void test_illegal_reference_of_to_deeply_nested_container() throws Exception {
-        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
-                new String[]{"../unittestcommon/hst:workspace/hst:containers/myReferenceableContainer"});
-        createHstWorkspaceAndReferenceableContainer("myReferenceableContainer",
-                "/hst:hst/hst:configurations/unittestcommon");
-
-        final String inheritedContainerName = "inheritedcontainer";
-        addComponentReference(testComponent, inheritedContainerName, "myReferenceableContainer");
-        {
-            final VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
-            final HstComponentConfiguration pageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
-            final HstComponentConfiguration testComponent = pageComponent.getChildByName(TEST_COMPONENT_NODE_NAME);
-            assertNotNull(testComponent);
-            // container available since part of inherited BUT inherited workspace IS now inherited because explicitly inherited
-            final HstComponentConfiguration component = testComponent.getChildByName(inheritedContainerName);
-            assertNull(component);
-        }
     }
 
     /**

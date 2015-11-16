@@ -106,7 +106,8 @@ public class WebFileValve extends AbstractBaseOrderableValve {
                 }
             }
         } catch (WebFileNotFoundException e) {
-            isWhitelisted = false;
+            // will be changed to false for the 3.1.1
+            isWhitelisted = true;
         }
 
         if (!isWhitelisted) {
