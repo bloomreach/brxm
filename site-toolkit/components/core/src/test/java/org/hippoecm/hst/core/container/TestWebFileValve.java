@@ -361,10 +361,8 @@ public class TestWebFileValve {
         assertTrue("Next valve should have been invoked", valveContext.isNextValveInvoked());
     }
 
-
     @Test
-    @Ignore("to be enabled with 3.1.1")
-    public void whitelisting_not_present_results_in_web_resource_not_being_served() throws ContainerException, UnsupportedEncodingException {
+    public void whitelist_not_present_results_in_web_resource_not_being_served() throws ContainerException, UnsupportedEncodingException {
         expect(webFileBundle.getAntiCacheValue()).andReturn("bundleVersion").anyTimes();
         expect(webFileBundle.get("/hst-whitelist.txt")).andThrow(new WebFileNotFoundException());
         expect(webFileBundle.get("/css/style.css")).andReturn(styleCss());
