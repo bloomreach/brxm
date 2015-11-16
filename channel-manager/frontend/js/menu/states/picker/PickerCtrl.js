@@ -72,7 +72,7 @@
             siteMapIdentifier: $stateParams.siteMapIdentifier,
             link: $stateParams.link
           });
-          if (PickerCtrl.pickerType.name == 'Pages') {
+          if (PickerCtrl.pickerType.type == 'pages') {
             PickerService.getInitialData($stateParams.siteMapIdentifier).then(function () {
               navigateToSelected(PickerCtrl.treeItems);
             });

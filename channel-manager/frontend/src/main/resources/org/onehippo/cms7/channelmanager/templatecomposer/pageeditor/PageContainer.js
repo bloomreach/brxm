@@ -65,11 +65,11 @@
             }, this);
         },
 
-        getComposerRestMountUrl: function() {
+        getComposerRestMountUrl: function () {
             return this.contextPath + this.composerRestMountPath;
         },
 
-        _populateIFrameResourceCache: function() {
+        _populateIFrameResourceCache: function () {
             var iframeResources, self, resourceUrls, futures, join, i;
             iframeResources = {
                 cache: {},
@@ -81,16 +81,16 @@
             resourceUrls = this.iFrameCssHeadContributions.concat().concat(this.iFrameJsHeadContributions);
             futures = [];
 
-            Ext.each(resourceUrls, function(src) {
-                futures.push(new Hippo.Future(function(success, failure) {
+            Ext.each(resourceUrls, function (src) {
+                futures.push(new Hippo.Future(function (success, failure) {
                     Ext.Ajax.request({
                         url: src,
                         method: 'GET',
-                        success: function(result, request) {
+                        success: function (result, request) {
                             iframeResources.cache[src] = result.responseText;
                             success();
                         },
-                        failure: function(result, request) {
+                        failure: function (result, request) {
                             self.fireEvent.apply(self, ['fatalIFrameException', {msg: self.resources['pre-cache-iframe-resources-exception'].format(src)}]);
                             failure();
                         }
@@ -104,7 +104,7 @@
 
         // PUBLIC METHODS THAT CHANGE OR RELOAD THE iFrame
 
-        initComposer: function(isEditMode) {
+        initComposer: function (isEditMode) {
             return new Hippo.Future(function(success, failure) {
                 if (typeof this.contextPath === 'undefined'
                         || typeof this.renderHost === 'undefined'
@@ -122,30 +122,35 @@
                 // do initial handshake with CmsSecurityValve of the composer mount and
                 // go ahead with the actual host which we want to edit (for which we need to be authenticated)
                 this._initializeHstSession(function() {
-                    var iFrameUrl;
-
                     this._initIFrameListeners();
-
-                    iFrameUrl = this.contextPath;
-                    if (iFrameUrl === '/') {
-                        iFrameUrl = '';
-                    }
-                    if (this.cmsPreviewPrefix) {
-                        iFrameUrl += '/' + this.cmsPreviewPrefix;
-                    }
-                    if (this.renderPathInfo) {
-                        iFrameUrl += this.renderPathInfo;
-                    }
-                    if (iFrameUrl === this.contextPath) {
-                        // The best practice for proxy pass rules is to match on <context path>/ to delegate to the site webapp.
-                        // The iframe url should therefore end with '/'.
-                        iFrameUrl += '/';
-                    }
-                    Ext.getCmp('pageEditorIFrame').setLocation(iFrameUrl);
-
+                    Ext.getCmp('pageEditorIFrame').setLocation(this._getIFrameUrl());
                     success();
                 }.createDelegate(this));
             }.createDelegate(this));
+        },
+
+        _getIFrameUrl: function () {
+            var result = this._getIFrameUrlPrefix();
+            if (this.renderPathInfo) {
+                result += this.renderPathInfo;
+            }
+            if (result === this.contextPath) {
+                // The best practice for proxy pass rules is to match on <context path>/ to delegate to the site webapp.
+                // The iframe url should therefore end with '/'.
+                result += '/';
+            }
+            return result;
+        },
+
+        _getIFrameUrlPrefix: function () {
+            var result = this.contextPath;
+            if (result === '/') {
+                result = '';
+            }
+            if (this.cmsPreviewPrefix) {
+                result += '/' + this.cmsPreviewPrefix;
+            }
+            return result;
         },
 
         _initializeHstSession: function(callback) {
@@ -423,9 +428,12 @@
         },
 
         _onIframeDOMReady: function() {
+            var iframe = Ext.getCmp('pageEditorIFrame');
+
             this._lock();
 
             this.selectedRecord = null;
+            this._updateRenderPathInfo(iframe.getLocation());
 
             // disable old page context
             if (this.pageContext !== null) {
@@ -443,8 +451,6 @@
                 this._complete();
             }, this);
             this.pageContext.on('pageContextInitializationFailed', function(error) {
-                var iframe = Ext.getCmp('pageEditorIFrame');
-
                 this.previewMode = this.pageContext.previewMode;
 
                 if (!iframe.isValidSession(this.sessionId)) {
@@ -467,6 +473,20 @@
                 }
             }, this);
             this.pageContext.initialize(this.canEdit);
+        },
+
+        _updateRenderPathInfo: function (iframeUrl) {
+            var urlParser, urlPath, urlPathPrefix;
+
+            urlParser = document.createElement('a');
+            urlParser.href = iframeUrl;
+
+            urlPath = urlParser.pathname;
+            urlPathPrefix = this._getIFrameUrlPrefix();
+
+            if (urlPath.indexOf(urlPathPrefix) === 0) {
+                this.renderPathInfo = urlPath.substring(urlPathPrefix.length);
+            }
         },
 
         _onRearrangeContainer: function(rearranges) {
@@ -518,9 +538,10 @@
         },
 
         _onClick: function(data) {
-            var id, containerDisabled, record;
+            var id, container, record;
+
             id = data.elementId;
-            containerDisabled = data.containerDisabled;
+            container = data.container;
             record = this.pageContext.stores.pageModel.getById(id);
 
             if (!record) {
@@ -531,7 +552,7 @@
             if (this.selectedRecord !== record) {
                 Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('select', record.data.id);
                 this.selectedRecord = record;
-                this.fireEvent('selectItem', record, containerDisabled);
+                this.fireEvent('selectItem', record, container);
             }
         },
 

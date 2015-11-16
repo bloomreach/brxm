@@ -74,8 +74,8 @@ html, body, .l-stretch, .l-center-container {
 .panel-footer {
   height: 51px;
   padding: 8px;
-  background-color: #F3F3F3;
-  border-top: 1px solid #E3E3E3;
+  background-color: $lightest-shade;
+  border-top: 1px solid $light-shade;
   display: flex;
   align-items: center;
 }
@@ -90,14 +90,14 @@ html, body, .l-stretch, .l-center-container {
 
 #menu-panel {
   height: 100vh;
-  border-right: 1px solid #E3E3E3;
+  border-right: 1px solid $light-shade;
   padding-left: 0;
   padding-right: 0;
 }
 
 #form-panel {
   height: 100vh;
-  background-color: #f4f4f4;
+  background-color: $lightest-shade;
 }
 
 .picker-container {
@@ -124,11 +124,11 @@ html, body, .l-stretch, .l-center-container {
   display: table-cell;
   float: none;
   vertical-align: top;
-  border-top: 1px solid #dddddd;
+  border-top: 1px solid $light-gray;
 }
 
 #add {
-  border-right: 1px solid #dddddd;
+  border-right: 1px solid $light-gray;
 }
 
 #add button,
@@ -160,7 +160,7 @@ form h4.page-header {
 }
 
 hr {
-  border-top-color: #dddddd;
+  border-top-color: $light-gray;
 }
 
 h3.lead.item-title {
@@ -182,7 +182,7 @@ h3.lead.item-title {
 .overlay {
   margin-left: -292px;
   top: 0;
-  background: white;
+  background: $white;
   position: absolute;
   z-index: 999999;
   width: 840px;
@@ -234,7 +234,7 @@ h3.lead.item-title {
 
 /* --- Top bar --- */
 #top-bar {
-  background-color: rgb(245, 245, 245);
+  background-color: $lightest-shade;
   border-bottom: 1px solid $dark-gray;
   padding: 5px 15px;
   max-width: none;
@@ -247,7 +247,7 @@ h3.lead.item-title {
   display: flex;
   align-items: center;
   height: 41px;
-  background: #f4f4f4;
+  background: $lightest-shade;
   padding: 3px;
   select {
     width: 100%;
@@ -262,7 +262,7 @@ h3.lead.item-title {
 .document-picker {
   margin-bottom: 0;
   thead {
-    background: #f4f4f4;
+    background: $lightest-shade;
     tr {
       height: 41px;
       th {
