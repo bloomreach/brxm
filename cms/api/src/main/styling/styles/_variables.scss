@@ -279,3 +279,21 @@ $ajax-loader-bgcolor:               $darkest-shade;
 $file-upload-progress:              $success;
 $file-upload-error:                 $danger;
 $file-upload-stripe-bg:             $lighter-shade;
+
+// supported mimetypes that have a specific icon
+$mimetypes: (
+  audio
+  binary
+  doc docx
+  flash
+  image
+  odp ods odt
+  pdf
+  ppt pptx
+  rtf
+  sxc sxi sxw
+  text
+  video
+  xls xlsx
+  zip
+);
