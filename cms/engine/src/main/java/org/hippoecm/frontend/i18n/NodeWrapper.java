@@ -27,10 +27,16 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated  since 3.2.0. Use {@link org.onehippo.repository.l10n.LocalizationService},
+ * {@link org.hippoecm.frontend.l10n.ResourceBundleModel}, {@link HippoNode#getDisplayName()}
+ */
+@Deprecated
 public class NodeWrapper implements ITranslation<IModel> {
 
     private static final long serialVersionUID = 1L;

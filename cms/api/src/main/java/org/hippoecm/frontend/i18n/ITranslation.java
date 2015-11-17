@@ -19,7 +19,13 @@ import java.util.Set;
 
 import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.repository.api.HippoNode;
 
+/**
+ * @deprecated since 3.2.0. Use {@link org.onehippo.repository.l10n.LocalizationService},
+ * {@link org.hippoecm.frontend.l10n.ResourceBundleModel}, {@link HippoNode#getDisplayName()}
+ */
+@Deprecated
 public interface ITranslation<T extends IModel> extends IClusterable {
 
     Set<String> getMatchingCriteria();

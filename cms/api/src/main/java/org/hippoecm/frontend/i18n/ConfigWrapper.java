@@ -21,15 +21,17 @@ import java.util.Set;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.value.IValueMap;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated since 3.2.0. Use {@link org.onehippo.repository.l10n.LocalizationService},
+ * {@link org.hippoecm.frontend.l10n.ResourceBundleModel}, {@link HippoNode#getDisplayName()}
+ */
+@Deprecated
 public class ConfigWrapper implements ITranslation<IModel> {
 
     private static final long serialVersionUID = 1L;
-
-    final static Logger log = LoggerFactory.getLogger(ConfigWrapper.class);
 
     private IValueMap config;
     private Set<String> matches;

@@ -23,9 +23,15 @@ import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated since 3.2.0. Use {@link org.onehippo.repository.l10n.LocalizationService},
+ * {@link org.hippoecm.frontend.l10n.ResourceBundleModel}, {@link HippoNode#getDisplayName()}
+ */
+@Deprecated
 public class ConfigTraversingPlugin extends AbstractTranslateService implements IPlugin {
 
     private static final long serialVersionUID = 1L;

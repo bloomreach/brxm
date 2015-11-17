@@ -36,6 +36,11 @@ import org.hippoecm.repository.api.StringCodecFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated since 3.2.0. Use {@link org.onehippo.repository.l10n.LocalizationService},
+ * {@link org.hippoecm.frontend.l10n.ResourceBundleModel}
+ */
+@Deprecated
 public class SearchingTranslatorPlugin extends AbstractTranslateService implements IPlugin {
 
     private static final long serialVersionUID = 1L;

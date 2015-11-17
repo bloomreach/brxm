@@ -20,14 +20,16 @@ import java.util.Comparator;
 import java.util.Set;
 
 import org.apache.wicket.model.IModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.repository.api.HippoNode;
 
+/**
+ * @deprecated  since 3.2.0. Use {@link org.onehippo.repository.l10n.LocalizationService},
+ * {@link org.hippoecm.frontend.l10n.ResourceBundleModel}, {@link HippoNode#getDisplayName()}
+ */
+@Deprecated
 public class TranslationSelectionStrategy<T extends IModel> implements Comparator<ITranslation<T>> {
 
     private static final long serialVersionUID = 1L;
-
-    final static Logger log = LoggerFactory.getLogger(TranslationSelectionStrategy.class);
 
     private Set<String> keys;
 

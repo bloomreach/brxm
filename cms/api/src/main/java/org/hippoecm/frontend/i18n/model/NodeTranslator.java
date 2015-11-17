@@ -40,6 +40,7 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
@@ -49,7 +50,10 @@ import org.slf4j.LoggerFactory;
  * Translator of node names, property names and values.  When a node has the mixin
  * hippo:translated set, it is used to lookup the translated strings.  When no such mixin
  * is present or the node doesn't exist, the last element of the node path is returned.
+ * @deprecated since 3.2.0. Use {@link org.onehippo.repository.l10n.LocalizationService},
+ * {@link org.hippoecm.frontend.l10n.ResourceBundleModel}, {@link HippoNode#getDisplayName()}
  */
+@Deprecated
 public class NodeTranslator extends NodeModelWrapper<NodeTranslator> {
 
     final static Logger log = LoggerFactory.getLogger(NodeTranslator.class);

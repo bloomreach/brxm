@@ -42,6 +42,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class TranslatorUtils {
@@ -50,8 +51,12 @@ public class TranslatorUtils {
     public static final String EDITOR_TEMPLATESET_NODETYPE = "editor:templateset";
     public static final String CAPTION_PROPERTY = "caption";
 
-    private TranslatorUtils(){}
+    private TranslatorUtils() {}
 
+    /**
+     * @deprecated  since 3.2.0. Use {@link org.onehippo.repository.l10n.LocalizationService},
+     * {@link org.hippoecm.frontend.l10n.ResourceBundleModel}, {@link HippoNode#getDisplayName()}
+     */
     public static Map<String, String> getCriteria(String key) {
         Map<String, String> keys = new TreeMap<>();
         String realKey;
@@ -89,7 +94,10 @@ public class TranslatorUtils {
      *
      * @param typeNode the node referring to a document type at /hippo:namespaces/${projectName}/${docType}
      * @throws TranslatorException
+     * @deprecated  since 3.2.0. Use {@link org.onehippo.repository.l10n.LocalizationService},
+     * {@link org.hippoecm.frontend.l10n.ResourceBundleModel}, {@link HippoNode#getDisplayName()}
      */
+    @Deprecated
     public static IPluginConfig getTranslationsConfig(final Node typeNode) throws TranslatorException {
         Node templateNode = getTemplateNode(typeNode);
 
@@ -163,6 +171,11 @@ public class TranslatorUtils {
         }
     }
 
+    /**
+     * @deprecated  since 3.2.0. Use {@link org.onehippo.repository.l10n.LocalizationService},
+     * {@link org.hippoecm.frontend.l10n.ResourceBundleModel}, {@link HippoNode#getDisplayName()}
+     */
+    @Deprecated
     public static IModel getTranslatedModel(final IPluginConfig translations, final Map<String, String> criteria) {
         if (translations == null || criteria == null){
             return null;

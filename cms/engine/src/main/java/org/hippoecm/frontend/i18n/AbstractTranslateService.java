@@ -22,9 +22,15 @@ import org.hippoecm.frontend.model.IModelProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ITranslateService;
+import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated  since 3.2.0. Use {@link org.onehippo.repository.l10n.LocalizationService},
+ * {@link org.hippoecm.frontend.l10n.ResourceBundleModel}, {@link HippoNode#getDisplayName()}
+ */
+@Deprecated
 public abstract class AbstractTranslateService implements IModelProvider<IModel>, ITranslateService {
 
     private static final long serialVersionUID = 1L;

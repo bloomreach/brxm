@@ -18,7 +18,13 @@ package org.hippoecm.frontend.service;
 import java.util.Map;
 
 import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.repository.api.HippoNode;
 
+/**
+ * @deprecated  since 3.2.0. Use {@link org.onehippo.repository.l10n.LocalizationService},
+ * {@link org.hippoecm.frontend.l10n.ResourceBundleModel}, {@link HippoNode#getDisplayName()}
+ */
+@Deprecated
 public interface ITranslateService extends IClusterable {
 
     String TRANSLATOR_ID = "translator.id";
