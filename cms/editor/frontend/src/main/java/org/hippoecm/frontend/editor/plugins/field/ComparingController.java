@@ -267,8 +267,8 @@ public class ComparingController<P extends Item, C extends IModel> implements ID
     }
 
     public void start(AbstractProvider<P,C> oldProvider, AbstractProvider<P,C> newProvider) {
-        int oldSize = oldProvider.size();
-        int newSize = newProvider.size();
+        final int oldSize = oldProvider.size();
+        final int newSize = newProvider.size();
 
         // fast path
         if (oldSize == 0 && newSize == 0) {
