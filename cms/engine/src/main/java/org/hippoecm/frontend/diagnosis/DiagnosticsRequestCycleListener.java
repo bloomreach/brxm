@@ -15,14 +15,10 @@
  */
 package org.hippoecm.frontend.diagnosis;
 
-import javax.servlet.ServletRequest;
-
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.IRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.http.WebRequest;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
@@ -44,9 +40,8 @@ public class DiagnosticsRequestCycleListener extends AbstractRequestCycleListene
 
         if (diagnosticsService != null) {
             final Main application = (Main) Application.get();
-            final String remoteAddr = getFarthestRemoteAddr(cycle);
 
-            if (diagnosticsService.isEnabledFor(remoteAddr)) {
+            if (diagnosticsService.isEnabledFor(cycle.getRequest())) {
                 if (HDC.isStarted()) {
                     log.error("HDC was not cleaned up properly in previous request cycle for some reason. So clean up HDC to start new one.");
                     HDC.cleanUp();
@@ -80,36 +75,4 @@ public class DiagnosticsRequestCycleListener extends AbstractRequestCycleListene
             }
         }
     }
-
-    protected String getFarthestRemoteAddr(final RequestCycle requestCycle) {
-        String [] remoteAddrs = getRemoteAddrs(requestCycle);
-
-        if (ArrayUtils.isNotEmpty(remoteAddrs)) {
-            return remoteAddrs[0];
-        }
-
-        return null;
-    }
-
-    private String [] getRemoteAddrs(final RequestCycle requestCycle) {
-        WebRequest request = (WebRequest) requestCycle.getRequest();
-
-        String xff = request.getHeader("X-Forwarded-For");
-
-        if (xff != null) {
-            String [] addrs = xff.split(",");
-
-            for (int i = 0; i < addrs.length; i++) {
-                addrs[i] = addrs[i].trim();
-            }
-
-            return addrs;
-        } else if (request.getContainerRequest() instanceof ServletRequest) {
-            ServletRequest servletRequest = (ServletRequest) request.getContainerRequest();
-            return new String [] { servletRequest.getRemoteAddr() };
-        }
-
-        return ArrayUtils.EMPTY_STRING_ARRAY;
-    }
-
 }

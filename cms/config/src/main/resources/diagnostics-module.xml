@@ -37,5 +37,8 @@
     <sv:property sv:name="allowedAddresses" sv:type="String" sv:multiple="true">
       <sv:value></sv:value>
     </sv:property>
+    <sv:property sv:name="allowedUsers" sv:type="String" sv:multiple="true">
+      <sv:value></sv:value>
+    </sv:property>
   </sv:node>
 </sv:node>
