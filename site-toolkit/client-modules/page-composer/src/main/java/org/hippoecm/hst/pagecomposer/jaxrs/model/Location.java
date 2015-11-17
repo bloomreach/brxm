@@ -21,7 +21,7 @@ public class Location {
     private String id;
 
     /**
-     * @param location String representation of the location
+     * @param location String representation of the location. It must end with a '/' (due to frontend reasons)
      * @param id sitemap item UUID
      */
     public Location(final String location, final String id) {
@@ -29,6 +29,9 @@ public class Location {
         this.id = id;
     }
 
+    /**
+     * @return the location, including a '/' at the end because needed in the frontend channel mngr
+     */
     public String getLocation() {
         return location;
     }

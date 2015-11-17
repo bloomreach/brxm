@@ -142,7 +142,7 @@ public class SiteMapItemRepresentation {
             } else if (!pathInfo.startsWith("/")) {
                 pathInfo = "/" + pathInfo;
             }
-            return  new Location(prefix + pathInfo, ((CanonicalInfo)item.getParentItem()).getCanonicalIdentifier());
+            return  new Location(prefix + pathInfo + "/", ((CanonicalInfo)item.getParentItem()).getCanonicalIdentifier());
         }
     }
 

@@ -50,6 +50,9 @@ public class NewPageModelRepresentation {
         this.prototypes = prototypes;
     }
 
+    /**
+     * @return the possible locations to add a new page to. The location
+     */
     public List<Location> getLocations() {
         return locations;
     }
