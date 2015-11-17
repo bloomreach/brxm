@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.jcr.Item;
 import javax.jcr.Node;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
@@ -368,7 +369,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             if (field.isMultiple()) {
                 if (getMaxItems() > 0) {
                     return getNumberOfItems() < getMaxItems();
-            }
+                }
                 return true;
             }
 
@@ -500,16 +501,19 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     }
 
     protected IModel<String> getCaptionModel() {
-        IFieldDescriptor field = getFieldHelper().getField();
+        final IFieldDescriptor field = getFieldHelper().getField();
         String caption = getPluginConfig().getString("caption");
-        String captionKey = field != null ? field.getName() : caption;
-        if (captionKey == null) {
-            return new Model<>("undefined");
+
+        if (field != null) {
+            final String captionKey = field.getName();
+            if (StringUtils.isNotBlank(captionKey)) {
+                caption = StringUtils.defaultIfBlank(caption, StringUtils.capitalize(captionKey));
+                return new StringResourceModel(captionKey, this, null, caption);
+            }
+        } else if (StringUtils.isNotBlank(caption)) {
+            return new StringResourceModel(caption, this, null, caption);
         }
-        if (caption == null && field.getName().length() >= 1) {
-            caption = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
-        }
-        return new StringResourceModel(captionKey, this, null, caption);
+        return Model.of("undefined");
     }
 
     protected ITemplateEngine getTemplateEngine() {
