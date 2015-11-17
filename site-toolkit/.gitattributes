@@ -361,6 +361,7 @@ client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/m
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ParametersInfoProcessorPopulatedPropertiesTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ParametersInfoProcessorSwitchTemplateTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ParametersInfoProcessorTest.java -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/SiteMapItemRepresentationTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/SwitchTemplatePropertyRepresentationFactoryBundleTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/property/SwitchTemplatePropertyRepresentationFactoryTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerItemComponentResourceTest.java -text

@@ -128,7 +128,7 @@ public class SiteMapItemRepresentation {
 
     }
 
-    private Location findParentLocation(final Mount mount, final HstSiteMapItem item) {
+    Location findParentLocation(final Mount mount, final HstSiteMapItem item) {
         String prefix = mount.getVirtualHost().getHostName();
         if (StringUtils.isNotEmpty(mount.getMountPath())) {
             prefix += mount.getMountPath();
