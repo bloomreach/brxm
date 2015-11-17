@@ -76,6 +76,8 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     private IPluginConfig parameters;
 
     abstract static class ValidationFilter extends Model<String> {
+        private static final String INVALID = "invalid";
+
         private boolean valid = true;
 
         public boolean isValid() {
@@ -90,7 +92,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
         @Override
         public String getObject() {
-            return valid ? "" : "invalid";
+            return valid ? "" : INVALID;
         }
     }
 
@@ -205,7 +207,12 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                     filter.setValid(isFieldValid(validationModel.getObject()));
                 }
                 if (target != null) {
-                    target.appendJavaScript("$('#" + getMarkupId() + "').attr('class', '" + filter.getObject() + "');");
+                    final String element = "$('#" + getMarkupId() + "')";
+                    if (filter.isValid()) {
+                        target.appendJavaScript(element + ".removeClass('" + ValidationFilter.INVALID + "');");
+                    } else {
+                        target.appendJavaScript(element + ".addClass('" + ValidationFilter.INVALID + "');");
+                    }
                 }
             }
         }
@@ -361,7 +368,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             if (field.isMultiple()) {
                 if (getMaxItems() > 0) {
                     return getNumberOfItems() < getMaxItems();
-                }
+            }
                 return true;
             }
 
@@ -499,7 +506,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         if (captionKey == null) {
             return new Model<>("undefined");
         }
-        if (caption == null && field != null && field.getName().length() >= 1) {
+        if (caption == null && field.getName().length() >= 1) {
             caption = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
         }
         return new StringResourceModel(captionKey, this, null, caption);
