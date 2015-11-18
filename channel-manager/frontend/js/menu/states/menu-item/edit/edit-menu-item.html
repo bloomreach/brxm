@@ -62,7 +62,7 @@
             'has-error': (form.title.$dirty || form.title.$touched) && !EditMenuItemCtrl.isSaving.title && (form.title.$invalid || !EditMenuItemCtrl.isSaved.title)
         }">
         <label for="hippo.channel.menu.menuItem.edit.title">{{ 'LABEL' | translate }}</label>
-        <input type="text" name="title" class="form-control" id="hippo.channel.menu.menuItem.edit.title"
+        <input type="text" name="title" class="form-control qa-cm-tc-menu-item-label" id="hippo.channel.menu.menuItem.edit.title"
                data-ng-attr-placeholder="{{ 'LABEL' | translate }}"
                data-hippo-channel-auto-focus
                data-ng-model="MenuItemCtrl.selectedMenuItem.title"

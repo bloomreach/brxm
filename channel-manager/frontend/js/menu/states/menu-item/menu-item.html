@@ -25,14 +25,14 @@
             </a>
             <span class="spacer" data-ng-show="childNodes().length === 0">&#9679;</span>
             <span class="angular-ui-tree-title-wrapper">
-              <span class="angular-ui-tree-title">{{ item.title }}</span>
+              <span class="angular-ui-tree-title qa-cm-tc-menu-tree-item">{{ item.title }}</span>
             </span>
           </div>
           <div class="empty-tree" data-ng-if="list.length == 0">{{ 'EMPTY_MENU' | translate }}</div>
         </div>
       </div>
       <div class="panel-footer" data-ng-controller="hippo.channel.menu.MenuCtrl as MenuCtrl">
-        <button type="button" class="btn btn-default btn-block" data-ng-click="MenuCtrl.addItem()" data-ng-disabled="MenuCtrl.isSaving.newItem">
+        <button type="button" class="btn btn-default btn-block qa-cm-tc-menu-item-add" data-ng-click="MenuCtrl.addItem()" data-ng-disabled="MenuCtrl.isSaving.newItem">
           <hippo-icon name="{{isSaving.newItem ? 'spinner' : 'plus'}}" size="m"></hippo-icon>
           {{ 'ADD_MENU_ITEM' | translate }}
         </button>
