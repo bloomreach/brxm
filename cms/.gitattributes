@@ -2705,7 +2705,6 @@ translation/frontend/src/main/java/org/hippoecm/frontend/translation/workflow/tr
 translation/frontend/src/main/java/org/hippoecm/repository/translation/impl/TranslationWorkflowImpl_de.properties -text
 translation/frontend/src/main/java/org/onehippo/translate/TranslateWorkflowImpl_de.properties -text
 translation/repository/src/main/resources/cms.xml svneol=native#text/plain
-translation/repository/src/main/resources/locale-translations.xml -text
 translation/repository/src/main/resources/translate-workflows.xml svneol=native#text/plain
 translation/repository/src/main/resources/translation-hide-translations-folder.xml svneol=native#text/plain
 translation/repository/src/main/resources/translation-treenode-icon-service.xml svneol=native#text/plain
