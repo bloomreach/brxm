@@ -45,7 +45,11 @@ public class ValidatorFactory {
     }
 
     public Validator getNotNullValidator(final Object notNull, final ClientError clientError) {
-        return new NotNullValidator(notNull, clientError);
+        return getNotNullValidator(notNull, clientError, null);
+    }
+
+    public Validator getNotNullValidator(final Object notNull, final ClientError clientError, final String errorMessage) {
+        return new NotNullValidator(notNull, clientError, errorMessage);
     }
 
     public Validator getNodePathPrefixValidator(final String nodePathPrefix, final String id, final String requiredNodeType) {

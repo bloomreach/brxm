@@ -250,6 +250,8 @@ public class SiteMapResource extends AbstractConfigResource {
     @Path("/copy")
     public Response copy(final CopyPageRepresentation copyPageRepresentation) {
         final ValidatorBuilder preValidators = ValidatorBuilder.builder()
+                .add(validatorFactory.getNotNullValidator(copyPageRepresentation.getTargetName(),
+                        ClientError.INVALID_NAME, "Name of the copied page is not allowed to be null"))
                 .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
                         HstNodeTypes.NODETYPE_HST_SITEMAP));
