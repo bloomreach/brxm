@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import org.hippoecm.hst.core.internal.StringPool;
 
 public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration, CanonicalInfo, ConfigurationLockInfo {
 
-    public static final String HST_PROTOTYPEITEM = "hst:prototypeitem";
     private String name;
     private final String canonicalIdentifier;
     private final String canonicalPath;
@@ -49,7 +48,7 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
         this.workspaceConfiguration = ConfigurationUtils.isWorkspaceConfig(siteMenu);
         for (HstNode siteMenuItem : siteMenu.getNodes()) {
             HstSiteMenuItemConfiguration siteMenuItemConfiguration = new HstSiteMenuItemConfigurationService(siteMenuItem, null, this);
-            if (HST_PROTOTYPEITEM.equals(siteMenuItem.getName())) {
+            if (HstNodeTypes.SITEMENUITEM_HST_PROTOTYPEITEM.equals(siteMenuItem.getName())) {
                 prototypeItem = siteMenuItemConfiguration;
             } else {
                 siteMenuItems.add(siteMenuItemConfiguration);
@@ -98,7 +97,8 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
     }
 
     /**
-     * @return The hst:sitemenuitem with name {@link #HST_PROTOTYPEITEM} or null if it does not exist
+     * @return The site menu item with name {@link HstNodeTypes#SITEMENUITEM_HST_PROTOTYPEITEM}
+     * or null if it does not exist
      */
     public HstSiteMenuItemConfiguration getPrototypeItem() {
         return prototypeItem;
