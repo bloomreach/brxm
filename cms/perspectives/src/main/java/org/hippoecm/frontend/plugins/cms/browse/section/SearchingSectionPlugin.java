@@ -40,6 +40,7 @@ import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.OnEnterAjaxBehavior;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -324,7 +325,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
     public IModel<String> getTitle() {
         final String titleKey = getPluginConfig().getString("title", getPluginConfig().getName());
-        return Model.of(getString(titleKey));
+        return new ResourceBundleModel(getBundleName(), titleKey);
     }
 
     @Override

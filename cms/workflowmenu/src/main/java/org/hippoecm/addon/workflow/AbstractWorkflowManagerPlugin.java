@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,6 +38,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.editor.IFormService;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -132,9 +134,15 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
 
     @Override
     public String getString(Map<String, String> criteria) {
-        String key = criteria.get(HippoNodeType.HIPPO_KEY);
+        final String key = criteria.get(HippoNodeType.HIPPO_KEY);
         if (key != null) {
-            String language = getLocale().getLanguage();
+            final Locale locale = getLocale();
+            final String language = locale.getLanguage();
+            final IModel<String> bundleModel = getResourceBundleModel(key, locale);
+            String translation;
+            if (bundleModel != null && (translation = bundleModel.getObject()) != null) {
+                return translation;
+            }
             for (String category : categories) {
                 if (key.equals(category)) {
                     String path = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.WORKFLOWS_PATH + "/" + category;
@@ -145,9 +153,11 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
                             if (node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
                                 NodeIterator translations = node.getNodes(HippoNodeType.HIPPO_TRANSLATION);
                                 while (translations.hasNext()) {
-                                    Node translation = translations.nextNode();
-                                    if (translation.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString().equals(language)) {
-                                        return translation.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
+                                    Node translationNode = translations.nextNode();
+                                    if (translationNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString().equals(language)) {
+                                        log.warn("Using deprecated way to translate workflow category {}. " +
+                                                "Move workflow translations to /hippo:configuration/hippo:translations/hippo:workflows");
+                                        return translationNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
                                     }
                                 }
                             }

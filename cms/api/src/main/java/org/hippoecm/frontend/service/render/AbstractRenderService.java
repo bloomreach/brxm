@@ -27,6 +27,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.LocaleUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Session;
@@ -39,6 +41,7 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -47,6 +50,7 @@ import org.apache.wicket.response.StringResponse;
 import org.hippoecm.frontend.IStringResourceProvider;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -61,9 +65,6 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.repository.l10n.LocalizationService;
-import org.onehippo.repository.l10n.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -493,54 +494,47 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         return null;
     }
 
-    public String getString(final String key, Locale locale) {
+    protected final ResourceBundleModel getResourceBundleModel(final String key, Locale locale) {
         final String bundleName = getBundleName();
-        if (bundleName != null) {
-            final LocalizationService service = HippoServiceRegistry.getService(LocalizationService.class);
-            if (service != null) {
-                if (locale == null) {
-                    locale = Session.get().getLocale();
-                }
-                final ResourceBundle bundle = service.getResourceBundle(bundleName, locale);
-                final String s;
-                if (bundle != null && (s = bundle.getString(key)) != null) {
-                    return s;
-                }
-            }
+        if (!StringUtils.isBlank(bundleName)) {
+            return new ResourceBundleModel(bundleName, key, locale);
         }
         return null;
     }
 
     // implement IStringResourceProvider
     public String getString(Map<String, String> criteria) {
+        final String key = criteria.get(HippoNodeType.HIPPO_KEY);
+        String language = criteria.get(HippoNodeType.HIPPO_LANGUAGE);
+        if (language == null) {
+            language = DEFAULT_LOCALE;
+        }
+        final Locale locale = LocaleUtils.toLocale(language);
+        final IModel<String> bundleModel = getResourceBundleModel(key, locale);
+        String translation;
+        if (bundleModel != null && (translation = bundleModel.getObject()) != null) {
+            return translation;
+        }
+        translation = getTranslationFromTranslator(criteria);
+        if (translation == null && !DEFAULT_LOCALE.equals(criteria.get(HippoNodeType.HIPPO_LANGUAGE))) {
+            Map<String, String> defaultLocaleCriteria = new TreeMap<>();
+            defaultLocaleCriteria.put(HippoNodeType.HIPPO_LANGUAGE, DEFAULT_LOCALE);
+            defaultLocaleCriteria.put(HippoNodeType.HIPPO_KEY, criteria.get(HippoNodeType.HIPPO_KEY));
+            translation = getTranslationFromTranslator(defaultLocaleCriteria);
+        }
+        return translation;
+    }
+
+    private String getTranslationFromTranslator(final Map<String, String> criteria) {
         String[] translators = config.getStringArray(ITranslateService.TRANSLATOR_ID);
         if (translators != null) {
-            String translation = null;
             for (String translatorId : translators) {
-                ITranslateService translator = (ITranslateService) context.getService(translatorId,
-                        ITranslateService.class);
+                ITranslateService translator = context.getService(translatorId, ITranslateService.class);
                 if (translator != null) {
-                    translation = translator.translate(criteria);
+                    final String translation = translator.translate(criteria);
                     if (translation != null) {
+                        log.warn("Using deprecated translator for criteria {} in {}", criteria, this);
                         return translation;
-                    }
-                }
-            }
-
-            // if translation is not found by the criteria, then let's try to find the default locale translation instead.
-            if (translation == null && !DEFAULT_LOCALE.equals(criteria.get(HippoNodeType.HIPPO_LANGUAGE))) {
-                Map<String, String> defaultLocaleCriteria = new TreeMap<String, String>();
-                defaultLocaleCriteria.put(HippoNodeType.HIPPO_LANGUAGE, DEFAULT_LOCALE);
-                defaultLocaleCriteria.put(HippoNodeType.HIPPO_KEY, criteria.get(HippoNodeType.HIPPO_KEY));
-
-                for (String translatorId : translators) {
-                    ITranslateService translator = (ITranslateService) context.getService(translatorId,
-                            ITranslateService.class);
-                    if (translator != null) {
-                        translation = translator.translate(defaultLocaleCriteria);
-                        if (translation != null) {
-                            return translation;
-                        }
                     }
                 }
             }

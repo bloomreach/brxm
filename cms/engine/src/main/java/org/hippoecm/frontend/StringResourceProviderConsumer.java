@@ -33,28 +33,26 @@ import org.slf4j.LoggerFactory;
  * The keys can be in the format "realKey[,prop1=value1[,prop2=value2[...]]]".
  * In this case, the prop-value pairs are used as additional criteria in the
  * search for a translation.
+ * @deprecated since 3.2.0. Use repository-based resource bundle service.
+ * See {@link org.hippoecm.frontend.l10n.ResourceBundleModel}
  */
+@Deprecated
 public class StringResourceProviderConsumer implements IStringResourceLoader {
 
     private static final Logger log = LoggerFactory.getLogger(StringResourceProviderConsumer.class);
 
     @Override
     public String loadStringResource(final Component component, final String key, final Locale locale, final String style, final String variation) {
-        final IStringResourceProvider provider;
+        IStringResourceProvider provider = null;
         if (component instanceof IStringResourceProvider) {
             provider = (IStringResourceProvider) component;
         } else if (component != null) {
             provider = component.findParent(IStringResourceProvider.class);
-        } else {
-            return null;
         }
         if (provider != null) {
-            String result = provider.getString(key, locale);
-            if (result == null) {
-                result = provider.getString(getKeysMap(component, key, locale));
-                if (result != null) {
-                    log.warn("Found deprecated translation: key = {}, component = {}. Use repository-based resource bundles.", key, component);
-                }
+            String result = provider.getString(getKeysMap(component, key, locale));
+            if (result != null) {
+                log.warn("Deprecated translation resolution: key = {}, component = {}. Use ResourceBundleModel instead.", key, component);
             }
             return result;
         }
