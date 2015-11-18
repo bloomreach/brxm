@@ -106,7 +106,7 @@ describe('Settings Controller', function () {
     expect(PageService.getCurrentPage).toHaveBeenCalled();
     expect(scope.page.id).toEqual('pageId');
     expect(scope.page.title).toEqual('Page Title');
-    expect(scope.page.url).toEqual('pageName');
+    expect(scope.page.lastPathInfoElement).toEqual('pageName');
   }));
 
   it('should get the lock information', function () {

@@ -94,6 +94,20 @@
           return deferred.promise;
         };
 
+        pageService.copyPage = function (copyModel) {
+          var deferred = $q.defer(),
+              url = '/' + ConfigService.sitemapId + './copy';
+
+          $http.post(pageServiceUrl(url), copyModel)
+            .success(function (response) {
+              deferred.resolve(response.data);
+            })
+            .error(function (error) {
+              deferred.reject(error);
+            });
+          return deferred.promise;
+        };
+
         pageService.updatePage = function (page) {
           var deferred = $q.defer();
 

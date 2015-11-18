@@ -34,10 +34,15 @@
           title: '',
           primaryDocument: '',
           availableDocumentRepresentations: [],
-          url: '',
+          lastPathInfoElement: '',
           prototype: {
             id: null
           }
+        };
+
+        $scope.copy = {
+          target: '',
+          lastPathInfoElement: ''
         };
 
         $scope.state = {
@@ -58,12 +63,24 @@
           illegalCharacters: '/ :'
         };
 
+        $scope.locations = [];
+
         $scope.tooltips = {
-          url: function () {
+          lastPathInfoElement: function () {
             if ($scope.form.$dirty) {
-              if ($scope.form.url.$error.required) {
+              if ($scope.form.lastPathInfoElement.$error.required) {
                 return translate('URL_REQUIRED');
-              } else if ($scope.form.url.$error.illegalCharacters) {
+              } else if ($scope.form.lastPathInfoElement.$error.illegalCharacters) {
+                return translate('URL_ILLEGAL_CHARACTERS', $scope.validation);
+              }
+            }
+            return '';
+          },
+          copyLastPathInfoElement: function () {
+            if ($scope.copyForm.$dirty) {
+              if ($scope.copyForm.lastPathInfoElement.$error.required) {
+                return translate('URL_REQUIRED');
+              } else if ($scope.copyForm.lastPathInfoElement.$error.illegalCharacters) {
                 return translate('URL_ILLEGAL_CHARACTERS', $scope.validation);
               }
             }
@@ -74,6 +91,12 @@
               return translate('TOOLTIP_IS_HOMEPAGE');
             } else if (!$scope.state.isEditable) {
               return translate('TOOLTIP_NOT_EDITABLE');
+            }
+            return '';
+          },
+          copyButton: function () {
+            if (!$scope.state.isEditable) {
+              return translate('TOOLTIP_NOT_COPYABLE');
             }
             return '';
           }
@@ -91,8 +114,10 @@
 
         // fetch data
         loadHost()
-          .then(loadPage)
-          .then(loadPrototypes);
+          .then(loadPrototypes)
+          .then(loadPage);
+          // TODO .then(loadLocations) and do not load the locations in loadPrototypes as it now done.
+          // TODO namely, we need to be able to load locations from a different channel than the current one as well
 
         $scope.showAssignNewTemplate = function () {
           $scope.template.isVisible = true;
@@ -102,7 +127,7 @@
           var pageModel = {
             id: $scope.page.id,
             pageTitle: $scope.page.title,
-            name: $scope.page.url,
+            name: $scope.page.lastPathInfoElement,
             componentConfigurationId: $scope.page.prototype.id,
             primaryDocumentRepresentation: $scope.page.primaryDocumentRepresentation
           };
@@ -110,6 +135,21 @@
           PageService.updatePage(pageModel).then(function (data) {
             ContainerService.showPage(data.renderPathInfo);
           }, setErrorFeedback);
+        };
+
+        $scope.submitCopyPage = function () {
+          console.log('$scope.copy', $scope.copy);
+          var copyModel = {
+            siteMapItemUUId: $scope.page.id,
+            targetName: $scope.copy.lastPathInfoElement,
+            targetSiteMapItemUUID: $scope.copy.target.id
+          };
+
+          PageService.copyPage(copyModel).then(function (data) {
+            ContainerService.showPage(data.renderPathInfo);
+          }, function (errorResponse) {
+            $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
+          });
         };
 
         $scope.closeContainer = function () {
@@ -141,7 +181,7 @@
           var pageModel = {
             id: $scope.page.id,
             pageTitle: $scope.page.title,
-            name: $scope.page.url,
+            name: $scope.page.lastPathInfoElement,
             componentConfigurationId: $scope.page.prototype.id,
             primaryDocumentRepresentation: {
               path: '',
@@ -172,6 +212,7 @@
           return PrototypeService.getPrototypes()
             .then(function (data) {
               $scope.prototypes = data.prototypes;
+              $scope.locations = data.locations || [];
               return data.prototypes;
             }, setErrorFeedback);
         }
@@ -207,7 +248,15 @@
                 $scope.page.primaryDocumentRepresentation = $scope.page.availableDocumentRepresentations[0];
               }
 
-              $scope.page.url = currentPage.name;
+              $scope.page.lastPathInfoElement = currentPage.name;
+              $scope.copy.lastPathInfoElement = currentPage.name;
+
+              for(var i = 0; i < $scope.locations.length; i++) {
+                if ($scope.locations && currentPage.parentLocation && $scope.locations[i].id === currentPage.parentLocation.id) {
+                  $scope.copy.target = $scope.locations[i];
+                }
+              }
+
               $scope.page.hasContainerItem = currentPage.hasContainerItemInPageDefinition;
               $scope.page.isHomePage = currentPage.isHomePage;
 
