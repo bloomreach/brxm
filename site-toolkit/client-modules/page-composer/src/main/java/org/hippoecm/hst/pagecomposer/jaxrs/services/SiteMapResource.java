@@ -37,6 +37,8 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.CopyPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
@@ -239,6 +241,34 @@ public class SiteMapResource extends AbstractConfigResource {
             public Response call() throws Exception {
                 Node copy = siteMapHelper.duplicate(siteMapItemId);
                 final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(copy.getIdentifier(), null);
+                return ok("Item created successfully", siteMapPageRepresentation);
+            }
+        }, preValidators.build());
+    }
+
+    @POST
+    @Path("/copy")
+    public Response copy(final CopyPageRepresentation copyPageRepresentation) {
+        final ValidatorBuilder preValidators = ValidatorBuilder.builder()
+                .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))
+                .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
+                        HstNodeTypes.NODETYPE_HST_SITEMAP));
+        preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(copyPageRepresentation.getSiteMapItemUUId(), siteMapHelper));
+        if (copyPageRepresentation.getTargetSiteMapItemUUID() != null) {
+            // TODO cross channel copy does need a different validator than 'getCurrentPreviewConfigurationValidator'
+            preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(copyPageRepresentation.getTargetSiteMapItemUUID(), siteMapHelper));
+            preValidators.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
+                    copyPageRepresentation.getTargetSiteMapItemUUID(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
+            preValidators.add(validatorFactory.getCanCopyFromSourceToTargetValidator(copyPageRepresentation.getSiteMapItemUUId(),
+                    copyPageRepresentation.getTargetSiteMapItemUUID()));
+        }
+
+        return tryExecute(new Callable<Response>() {
+            @Override
+            public Response call() throws Exception {
+                PageCopyContext pcc = siteMapHelper.copy(copyPageRepresentation.getSiteMapItemUUId(),
+                        copyPageRepresentation.getTargetSiteMapItemUUID(), copyPageRepresentation.getTargetName());
+                final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(pcc.getNewSiteMapNode().getIdentifier(), null);
                 return ok("Item created successfully", siteMapPageRepresentation);
             }
         }, preValidators.build());

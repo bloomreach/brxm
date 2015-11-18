@@ -31,6 +31,7 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -40,6 +41,8 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
 
 public class SiteMapHelper extends AbstractHelper {
 
@@ -110,7 +113,7 @@ public class SiteMapHelper extends AbstractHelper {
                 throw new ClientException("Failed to re-apply prototype", ClientError.UNKNOWN);
             }
             siteMapItemNode.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
-                    HstNodeTypes.NODENAME_HST_PAGES + "/" + updatedPage.getName());
+                    NODENAME_HST_PAGES + "/" + updatedPage.getName());
 
         }
 
@@ -162,7 +165,7 @@ public class SiteMapHelper extends AbstractHelper {
         Node newPage = pagesHelper.create(prototypePage, targetPageNodeName);
 
         newSitemapNode.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
-                HstNodeTypes.NODENAME_HST_PAGES + "/" + newPage.getName());
+                NODENAME_HST_PAGES + "/" + newPage.getName());
 
         final Map<String, String> modifiedLocalParameters = siteMapItem.getLocalParameters();
         setLocalParameters(newSitemapNode, modifiedLocalParameters);
@@ -172,65 +175,141 @@ public class SiteMapHelper extends AbstractHelper {
         return newSitemapNode;
     }
 
-    public Node duplicate(final String siteMapItemId) throws RepositoryException {
+    /**
+     * utility method to create a <strong>shallow copy</strong> of {@code siteMapItemUUId} : Shallow copy means that
+     * child pages of {@code siteMapItemUUId} are not copied. The copy will be a sibbling of <code>siteMapItemUUId</code>
+     */
+    public Node duplicate(final String siteMapItemUUId) throws RepositoryException {
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
-        final Session session = requestContext.getSession();
-        Node toShallowCopy = session.getNodeByIdentifier(siteMapItemId);
-        HstSiteMapItem hstSiteMapItem = getConfigObject(siteMapItemId);
+        HstSiteMapItem hstSiteMapItem = getConfigObject(siteMapItemUUId);
         if (hstSiteMapItem == null) {
-            String message = String.format("Cannot duplicate because there is no siteMapItem for id '%s'.", siteMapItemId);
+            String message = String.format("Cannot duplicate because there is no siteMapItem for id '%s'.", siteMapItemUUId);
             throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED);
         }
-        String pathInfo = HstSiteMapUtils.getPath(hstSiteMapItem);
-        if (pathInfo.contains(HstNodeTypes.WILDCARD) || pathInfo.contains(HstNodeTypes.ANY)) {
-            String message = String.format("Cannot duplicate a page from siteMapItem '%s' because it contains " +
-                    "wildcards and this is not supported.", ((CanonicalInfo) hstSiteMapItem).getCanonicalPath());
-            throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED);
-        }
-        String newSiteMapItemName = pathInfo.replace("/", "-");
-        Node workspaceSiteMapNode = session.getNodeByIdentifier(getWorkspaceSiteMapId());
 
-        String target = workspaceSiteMapNode.getPath() + "/" + newSiteMapItemName;
+        final Session session = requestContext.getSession();
         final String postfix = "-duplicate";
-        String finalTarget = target + postfix;
-        String nonWorkspaceLocation = finalTarget.replace("/" + HstNodeTypes.NODENAME_HST_WORKSPACE + "/", "/");
+        String targetName = hstSiteMapItem.getValue() + postfix;
+
+        final String parentPath;
+
+        final String targetSiteMapItemUUID;
+        final CanonicalInfo parentItem = (CanonicalInfo)hstSiteMapItem.getParentItem();
+        if (parentItem == null) {
+            parentPath = getPreviewWorkspacePath() + "/" + HstNodeTypes.NODENAME_HST_SITEMAP;
+            targetSiteMapItemUUID = null;
+        } else {
+            parentPath = parentItem.getCanonicalPath();
+            targetSiteMapItemUUID = parentItem.getCanonicalIdentifier();
+        }
+        String nonWorkspaceParentPath = parentPath.replace("/" + HstNodeTypes.NODENAME_HST_WORKSPACE + "/", "/");
         int counter = 0;
-        while (session.nodeExists(finalTarget) || session.nodeExists(nonWorkspaceLocation)) {
+        while (session.nodeExists(parentPath + "/" + targetName) || session.nodeExists(nonWorkspaceParentPath + "/" + targetName)) {
             counter++;
-            finalTarget = target + "-" + counter + postfix;
-            nonWorkspaceLocation = finalTarget.replace("/" + HstNodeTypes.NODENAME_HST_WORKSPACE + "/", "/");
+            targetName = hstSiteMapItem.getValue() + "-" + counter + postfix;
         }
 
-        validateTarget(session, finalTarget);
-        final Node newSitemapNode = JcrUtils.copy(session, toShallowCopy.getPath(), finalTarget);
-        for (Node child : new NodeIterable(newSitemapNode.getNodes())) {
+        PageCopyContext pcc = copy(siteMapItemUUId, targetSiteMapItemUUID, targetName);
+        return pcc.getNewSiteMapNode();
+    }
+
+    /**
+     * utility method to create a <strong>shallow copy</strong> of {@code siteMapItemId} : Shallow copy means that
+     * child pages of {@code siteMapItemId} are not copied
+     *
+     * @param copyFromSiteMapItemUUId       the uuid of the {@code siteMapItem} to copy, not
+     * @param targetSiteMapItemUUID the uuid of the target siteMapItem, can be {@code null} in which case the same
+     *                              location as {@code siteMapItem} will be used, only with name {@code targetName}
+     * @param targetName            the name of the copy, not allowed to be {@code null}
+     * @return the {@link javax.jcr.Node} of the created new siteMapItem
+     * @throws RepositoryException
+     */
+    public PageCopyContext copy(final String copyFromSiteMapItemUUId, final String targetSiteMapItemUUID, final String targetName)
+            throws RepositoryException {
+        HstRequestContext requestContext = pageComposerContextService.getRequestContext();
+
+        PageCopyContext pcc = new PageCopyContext(requestContext);
+
+        validateSiteMapItem(copyFromSiteMapItemUUId);
+
+        if (targetSiteMapItemUUID != null) {
+            validateSiteMapItem(targetSiteMapItemUUID);
+        }
+
+        final Session session = requestContext.getSession();
+        final Node workspaceSiteMapNode = session.getNodeByIdentifier(getWorkspaceSiteMapId());
+
+        final String target;
+        if (targetSiteMapItemUUID != null) {
+            target = session.getNodeByIdentifier(targetSiteMapItemUUID).getPath() + "/" + targetName;
+        } else {
+            target = workspaceSiteMapNode.getPath() + "/" + targetName;
+        }
+        String nonWorkspaceLocation = target.replace("/" + HstNodeTypes.NODENAME_HST_WORKSPACE + "/", "/");
+
+        if (session.nodeExists(target) || session.nodeExists(nonWorkspaceLocation)) {
+            String message = String.format("Cannot copy because there is no siteMapItem with same name and " +
+                    "location already located at '%s' or '%s'.", target, nonWorkspaceLocation);
+            throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED);
+        }
+
+        validateTarget(session, target);
+        Node toShallowCopy = session.getNodeByIdentifier(copyFromSiteMapItemUUId);
+        final Node newSiteMapNode = JcrUtils.copy(session, toShallowCopy.getPath(), target);
+        for (Node child : new NodeIterable(newSiteMapNode.getNodes())) {
             // we need shallow copy so remove children again
             child.remove();
         }
-        lockHelper.acquireLock(newSitemapNode, 0);
-
+        lockHelper.acquireLock(newSiteMapNode, 0);
 
         // copy the page definition
         // we need to find the page node uuid to copy through hstSiteMapItem.getComponentConfigurationId() which is NOT
         // the page UUID
+        final HstSiteMapItem copyFromSiteMapItem = getConfigObject(copyFromSiteMapItemUUId);
         final HstComponentConfiguration pageToCopy = pageComposerContextService.getEditingPreviewSite().getComponentsConfiguration()
-                .getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId());
+                .getComponentConfiguration(copyFromSiteMapItem.getComponentConfigurationId());
 
         if (pageToCopy == null) {
             throw new ClientException("Cannot duplicate page since backing hst component configuration object not found",
                     ClientError.UNKNOWN);
         }
-        final String targetPageNodeName;
-        if (counter > 0) {
-            targetPageNodeName = pageToCopy.getName() + "-" + counter + postfix;
+
+        String fromPathInfo = HstSiteMapUtils.getPath(copyFromSiteMapItem);
+        String fromPageNodeNamePrefix = fromPathInfo.replace("/", "-");
+
+        final String prefix = getPreviewConfigurationWorkspacePath() + "/" + NODENAME_HST_PAGES + "/" + fromPageNodeNamePrefix + "-";
+        String targetPageName;
+        if (pageToCopy.getCanonicalStoredLocation().startsWith(prefix)){
+            targetPageName = targetName + "-" + pageToCopy.getCanonicalStoredLocation().substring(prefix.length());
         } else {
-            targetPageNodeName = pageToCopy.getName() + postfix;
+            targetPageName = targetName;
         }
+        if (targetSiteMapItemUUID != null) {
+            final HstSiteMapItem targetItem = getConfigObject(targetSiteMapItemUUID);
+            String targetPathInfo = HstSiteMapUtils.getPath(targetItem);
+            targetPageName = targetPathInfo.replace("/", "-") + "-" + targetPageName;
+        }
+
         Node clonedPage = pagesHelper.create(session.getNodeByIdentifier(pageToCopy.getCanonicalIdentifier()),
-                targetPageNodeName, pageToCopy, false);
-        newSitemapNode.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
-                HstNodeTypes.NODENAME_HST_PAGES + "/" + clonedPage.getName());
-        return newSitemapNode;
+                targetPageName, pageToCopy, false);
+        newSiteMapNode.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
+                NODENAME_HST_PAGES + "/" + clonedPage.getName());
+        pcc.setNewSiteMapNode(newSiteMapNode);
+        return pcc;
+    }
+
+    private void validateSiteMapItem(final String siteMapItemUUId) {
+        HstSiteMapItem hstSiteMapItem = getConfigObject(siteMapItemUUId);
+        if (hstSiteMapItem == null) {
+            String message = String.format("Cannot copy because there is no siteMapItem for id '%s'.", siteMapItemUUId);
+            throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED);
+        }
+        String pathInfo = HstSiteMapUtils.getPath(hstSiteMapItem);
+        if (pathInfo.contains(HstNodeTypes.WILDCARD) || pathInfo.contains(HstNodeTypes.ANY)) {
+            String message = String.format("Cannot copy a page for siteMapItem '%s' because it contains " +
+                    "wildcards and this is not supported.", ((CanonicalInfo) hstSiteMapItem).getCanonicalPath());
+            throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED);
+        }
     }
 
     public void move(final String id, final String parentId) throws RepositoryException {

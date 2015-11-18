@@ -48,25 +48,30 @@ public class ValidatorFactory {
         return new NotNullValidator(notNull, clientError);
     }
 
-    public Validator getNodePathPrefixValidator(String nodePathPrefix, String id, String requiredNodeType) {
+    public Validator getNodePathPrefixValidator(final String nodePathPrefix, final String id, final String requiredNodeType) {
         return new NodePathPrefixValidator(nodePathPrefix, id, requiredNodeType);
     }
 
-    public Validator getSiteMenuItemRepresentationValidator(Predicate<String> uriValidator, SiteMenuItemRepresentation representation) {
+    public Validator getSiteMenuItemRepresentationValidator(final Predicate<String> uriValidator, final SiteMenuItemRepresentation representation) {
         return new SiteMenuItemRepresentationValidator(uriValidator, representation);
     }
 
-    public Validator getCurrentPreviewConfigurationValidator(String id, SiteMapHelper siteMapHelper) {
+    public Validator getCurrentPreviewConfigurationValidator(final String id, final SiteMapHelper siteMapHelper) {
         return new CurrentPreviewConfigurationValidator(id, siteMapHelper);
     }
 
-    public Validator getPrototypePageValidator(String prototypeUuid) {
+    public Validator getPrototypePageValidator(final String prototypeUuid) {
         return new PrototypePageValidator(prototypeUuid);
     }
 
-    public Validator getHasPreviewConfigurationValidator(PageComposerContextService pageComposerContextService) {
+    public Validator getHasPreviewConfigurationValidator(final PageComposerContextService pageComposerContextService) {
         return new HasPreviewConfigurationValidator(pageComposerContextService);
     }
+
+    public Validator getCanCopyFromSourceToTargetValidator(final String uuidSource, final String uuidTarget) {
+        return new CanCopyFromSourceToTargetValidator(uuidSource, uuidTarget);
+    }
+
 
     public Validator getNameValidator(String name) {
         return new NameValidator(name);

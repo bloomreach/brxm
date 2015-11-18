@@ -286,4 +286,12 @@ public abstract class AbstractHelper {
         return "deleted".equals(JcrUtils.getStringProperty(node, HstNodeTypes.EDITABLE_PROPERTY_STATE, null));
     }
 
+    protected String getPreviewConfigurationPath() {
+        return pageComposerContextService.getEditingPreviewConfigurationPath();
+    }
+
+    protected String getPreviewConfigurationWorkspacePath() {
+        return getPreviewConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
+    }
+
 }
