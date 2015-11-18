@@ -50,46 +50,29 @@
             $scope.MenuItemCtrl.selectedMenuItem = item;
             $scope.MenuItemCtrl.showParameters = Object.keys(item.localParameters).length > 0;
 
-            EditMenuItemCtrl.isSaving = (function(){
-              var result = {
-                title: false,
-                linkType: false,
-                link: false
-              };
-
-              result.localParameters= (function() {
-                var parameters={};
-                var localParameters = item.localParameters;
-                if (localParameters!==undefined){
-                  for (var key in localParameters ){
-                    parameters[key]=false;
-                  }
+            function copyKeys(src, dst, value) {
+              if (angular.isDefined(src)) {
+                for (var key in src){
+                  dst[key] = value;
                 }
+              }
+            }
 
-                return parameters;
-              })();
-              return result;
-            }());
+            EditMenuItemCtrl.isSaving = {
+              title: false,
+              linkType: false,
+              link: false,
+              localParameters: {}
+            };
+            copyKeys(item.localParameters, EditMenuItemCtrl.isSaving.localParameters, false);
 
-            EditMenuItemCtrl.isSaved = (function(){
-              var result = {
-                title: true,
-                linkType: true,
-                link: true
-              };
-              result.localParameters= (function() {
-                var parameters={};
-                var localParameters = item.localParameters;
-                if (localParameters!==undefined){
-                  for (var key in localParameters ){
-                    parameters[key]=true;
-                  }
-                }
-                return parameters;
-              })();
-              return result;
-            }());
-
+            EditMenuItemCtrl.isSaved = {
+              title: true,
+              linkType: true,
+              link: true,
+              localParameters: {}
+            };
+            copyKeys(item.localParameters, EditMenuItemCtrl.isSaved.localParameters, true);
           });
         }
 
