@@ -51,10 +51,8 @@
             $scope.MenuItemCtrl.showParameters = Object.keys(item.localParameters).length > 0;
 
             function copyKeys(src, dst, value) {
-              if (angular.isDefined(src)) {
-                for (var key in src){
-                  dst[key] = value;
-                }
+              for (var key in src){
+                dst[key] = value;
               }
             }
 
