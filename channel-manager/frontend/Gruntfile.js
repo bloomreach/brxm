@@ -67,7 +67,7 @@ module.exports = function (grunt) {
        */
       sass: {
         files: ['<%= build.sass %>'],
-        tasks: ['sass', 'autoprefixer', 'concat:css']
+        tasks: ['sass', 'autoprefixer']
       },
 
       extjs: {
