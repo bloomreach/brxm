@@ -46,15 +46,15 @@
           }
 
           function createBlankMenuItem (menuData) {
+            var result = {
+              linkType: 'SITEMAPITEM',
+              title: $filter('incrementProperty')(menuData.items, 'title', $filter('translate')('UNTITLED'), 'items'),
+              link: ''
+            };
             if (angular.isDefined(menuData.prototypeItem)) {
-              return angular.copy(menuData.prototypeItem);
-            } else {
-              return {
-                linkType: 'SITEMAPITEM',
-                title: $filter('incrementProperty')(menuData.items, 'title', $filter('translate')('UNTITLED'), 'items'),
-                link: ''
-              };
+              result.localParameters = angular.copy(menuData.prototypeItem.localParameters);
             }
+            return result;
           }
 
           function addItemAfterCheckingValidity () {
