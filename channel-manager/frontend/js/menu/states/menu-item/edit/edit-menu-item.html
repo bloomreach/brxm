@@ -191,7 +191,7 @@
       <hr/>
 
       <div data-ng-show="MenuItemCtrl.showParameters">
-        <p><label>Advanced Settings</label></p>
+        <p><label>{{ 'ADVANCED_SETTINGS' | translate }}</label></p>
         <div data-ng-repeat="(key,value) in MenuItemCtrl.selectedMenuItem.localParameters">
           <div class="formgroup has-feedback"
                data-ng-class="{
@@ -199,11 +199,10 @@
             'has-error': (parameterForm.value.$dirty || parameterForm.value.$touched) && !EditMenuItemCtrl.isSaving.localParameters[key] && (parameterForm.value.$invalid || !EditMenuItemCtrl.isSaved.localParameters[key])
         }">
             <ng-form name="parameterForm">
-              <label for="hippo.channel.menu.menuItem.edit.localPameters.value">{{key}}</label>
-              <input type="text" name="value" value="{{value}}" class="form-control"
+              <label for="hippo.channel.menu.menuItem.edit.localPameters.value">{{ key }}</label>
+              <input type="text" name="value" value="{{ value }}" class="form-control"
                      id="hippo.channel.menu.menuItem.edit.localPameters.value"
                      data-ng-attr-placeholder="{{ key }}"
-                     data-hippo-channel-auto-focus
                      data-ng-model="MenuItemCtrl.selectedMenuItem.localParameters[key]"
                      data-ng-change="EditMenuItemCtrl.saveLocalParameters(parameterForm,key)"
                      data-tooltip="{{ EditMenuItemCtrl.fieldFeedbackMessage.localParameter[key] }}"
@@ -211,9 +210,6 @@
                      data-hippo-channel-tooltip-show="parameterForm.value.$invalid"
                      data-tooltip-placement="top">
               <span class="form-control-feedback" data-ng-show="parameterForm.value.$dirty">
-
-
-
                 <hippo-icon ng-if="EditMenuItemCtrl.isSaving.localParameters[key]"
                             name="spinner"
                             size="m">
@@ -227,7 +223,6 @@
                             size="m">
                 </hippo-icon>
               </span>
-
             </ng-form>
           </div>
         </div>
