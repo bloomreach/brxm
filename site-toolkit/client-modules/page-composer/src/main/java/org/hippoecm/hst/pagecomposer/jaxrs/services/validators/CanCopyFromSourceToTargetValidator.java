@@ -16,6 +16,8 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 
+import java.util.Collections;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -40,14 +42,16 @@ public class CanCopyFromSourceToTargetValidator extends AbstractValidator {
 
     @Override
     public void validate(HstRequestContext requestContext) throws RuntimeException {
+        final String message = "Cannot copy a page below itself";
         if (uuidSource.equals(uuidTarget)) {
-            throw new ClientException("Cannot copy a page below itself", ClientError.ITEM_CANNOT_BE_CLONED);
+            throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED, Collections.singletonMap("errorReason", message));
         }
         try {
             final Node sourceNode = getNodeByIdentifier(uuidSource, requestContext.getSession());
             final Node targetNode = getNodeByIdentifier(uuidTarget, requestContext.getSession());
             if (targetNode.getPath().startsWith(sourceNode.getPath() + "/")) {
-                throw new ClientException("Cannot copy a page below itself", ClientError.ITEM_CANNOT_BE_CLONED);
+                throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED,
+                        Collections.singletonMap("errorReason", message));
             }
         } catch (RepositoryException e) {
             throw new RuntimeRepositoryException(e);

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -248,9 +249,9 @@ public class SiteMapHelper extends AbstractHelper {
         String nonWorkspaceLocation = target.replace("/" + HstNodeTypes.NODENAME_HST_WORKSPACE + "/", "/");
 
         if (session.nodeExists(target) || session.nodeExists(nonWorkspaceLocation)) {
-            String message = String.format("Cannot copy because there is no siteMapItem with same name and " +
+            String message = String.format("Cannot copy because there is a siteMapItem with same name and " +
                     "location already located at '%s' or '%s'.", target, nonWorkspaceLocation);
-            throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED);
+            throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED, Collections.singletonMap("errorReason", message));
         }
 
         validateTarget(session, target);
@@ -270,8 +271,9 @@ public class SiteMapHelper extends AbstractHelper {
                 .getComponentConfiguration(copyFromSiteMapItem.getComponentConfigurationId());
 
         if (pageToCopy == null) {
-            throw new ClientException("Cannot duplicate page since backing hst component configuration object not found",
-                    ClientError.UNKNOWN);
+            final String message = "Cannot duplicate page since backing hst component configuration object not found";
+            throw new ClientException(message,
+                    ClientError.ITEM_CANNOT_BE_CLONED, Collections.singletonMap("errorReason", message));
         }
 
         String fromPathInfo = HstSiteMapUtils.getPath(copyFromSiteMapItem);
@@ -302,13 +304,13 @@ public class SiteMapHelper extends AbstractHelper {
         HstSiteMapItem hstSiteMapItem = getConfigObject(siteMapItemUUId);
         if (hstSiteMapItem == null) {
             String message = String.format("Cannot copy because there is no siteMapItem for id '%s'.", siteMapItemUUId);
-            throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED);
+            throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED, Collections.singletonMap("errorReason", message));
         }
         String pathInfo = HstSiteMapUtils.getPath(hstSiteMapItem);
         if (pathInfo.contains(HstNodeTypes.WILDCARD) || pathInfo.contains(HstNodeTypes.ANY)) {
             String message = String.format("Cannot copy a page for siteMapItem '%s' because it contains " +
                     "wildcards and this is not supported.", ((CanonicalInfo) hstSiteMapItem).getCanonicalPath());
-            throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED);
+            throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED, Collections.singletonMap("errorReason", message));
         }
     }
 

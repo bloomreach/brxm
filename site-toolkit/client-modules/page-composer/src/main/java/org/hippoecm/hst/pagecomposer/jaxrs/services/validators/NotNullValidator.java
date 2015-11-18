@@ -16,6 +16,8 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 
+import java.util.Collections;
+
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -47,7 +49,7 @@ public class NotNullValidator extends AbstractValidator {
             } else {
                 message = errorMessage;
             }
-            throw new ClientException(message, clientError);
+            throw new ClientException(message, clientError, Collections.singletonMap("errorReason", errorMessage));
         }
     }
 
