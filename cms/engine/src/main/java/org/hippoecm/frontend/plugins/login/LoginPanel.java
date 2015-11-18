@@ -183,8 +183,7 @@ public class LoginPanel extends Panel {
                     new IChoiceRenderer<String>() {
                         public String getDisplayValue(String key) {
                             final Locale locale = new Locale(key);
-                            final String displayLanguage = locale.getDisplayLanguage();
-                            return getString(key, Model.of(displayLanguage), displayLanguage);
+                            return locale.getDisplayLanguage(locale);
                         }
 
                         public String getIdValue(String object, int index) {
