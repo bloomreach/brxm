@@ -121,17 +121,13 @@
           }
         };
 
-        EditMenuItemCtrl.fieldFeedbackMessage = {};
+        EditMenuItemCtrl.fieldFeedbackMessage = {
+          localParameters: {}
+        };
 
         EditMenuItemCtrl.saveTitle = function (form) {
           if (form.title.$dirty && form.title.$valid) {
             EditMenuItemCtrl.saveSelectedMenuItem('title');
-          }
-        };
-
-        EditMenuItemCtrl.saveLocalParameters = function(form, key){
-          if (form.value.$dirty && form.value.$valid){
-            EditMenuItemCtrl.saveSelectedMenuItem(key, true);
           }
         };
 
@@ -163,7 +159,9 @@
           if ($scope.MenuItemCtrl.feedback.message) {
             $scope.MenuItemCtrl.feedback.message = '';
           }
-          EditMenuItemCtrl.fieldFeedbackMessage = {};
+          EditMenuItemCtrl.fieldFeedbackMessage = {
+            localParameters: {}
+          };
         };
 
         if ($scope.MenuItemCtrl) {
