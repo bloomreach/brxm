@@ -44,8 +44,8 @@
 
   <!-- I18N  -->
   <context-param>
-      <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
-      <param-value>messages</param-value>
+    <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
+    <param-value>messages</param-value>
   </context-param>
 
   <!--
@@ -68,6 +68,17 @@
   <context-param>
     <param-name>hst-beans-annotated-classes</param-name>
     <param-value>classpath*:org/hippoecm/hst/demo/beans/**/*.class</param-value>
+  </context-param>
+
+  <!--
+    If 'hst-config-refresh-delay' parameter is greater than 0,
+    then the HST configuration file changes will be monitored to re-initialize the HST Container.
+    The value is in ms. If set to 0 or missing, the re-initialization option on configuration file changes is not turned on.
+    Default below is set to 3 sec
+  -->
+  <context-param>
+    <param-name>hst-config-refresh-delay</param-name>
+    <param-value>3000</param-value>
   </context-param>
 
   <filter>
@@ -143,6 +154,11 @@
     <dispatcher>INCLUDE</dispatcher>
   </filter-mapping>
 
+  <!-- HST Container Config/Init/Destroy Listener -->
+  <listener>
+    <listener-class>org.hippoecm.hst.site.container.HstSiteConfigListener</listener-class>
+  </listener>
+
   <!-- Bootstrap listener to start up root web application context. -->
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -153,21 +169,13 @@
     <listener-class>org.hippoecm.hst.site.container.session.HttpSessionEventPublisher</listener-class>
   </listener>
 
+  <!-- NOTE: HstSiteConfigListener is prefered to HstSiteConfigServlet.
   <servlet>
     <servlet-name>HstSiteConfigServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
-    <!--
-      If 'hst-config-refresh-delay' parameter is greater than 0,
-      then the HST configuration file changes will be monitored to re-initialize the HST Container.
-      The value is in ms. If set to 0 or missing, the re-initialization option on configuration file changes is not turned on.
-      Default below is set to 3 sec
-    -->
-    <init-param>
-      <param-name>hst-config-refresh-delay</param-name>
-      <param-value>3000</param-value>
-    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
+  -->
 
   <servlet>
     <servlet-name>BinariesServlet</servlet-name>
