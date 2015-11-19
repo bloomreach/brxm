@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,10 +100,16 @@ public class CopyVariantTask extends AbstractDocumentTask {
 
         if (saveNeeded) {
             workflowSession.save();
+            if (dm.hasMultipleDocumentVariants(getTargetState())) {
+                targetDoc.getNode(workflowSession).remove();
+                workflowSession.save();
+                throw new WorkflowException("Concurrent workflow action detected");
+            }
         }
 
         dm.getDocuments().put(targetDoc.getState(), targetDoc);
 
         return null;
     }
+
 }

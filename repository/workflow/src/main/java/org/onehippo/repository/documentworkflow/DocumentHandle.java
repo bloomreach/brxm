@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,13 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.scxml.SCXMLWorkflowData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 
 /**
  * DocumentHandle provides the {@link SCXMLWorkflowData} backing model object for the DocumentWorkflow SCXML state machine.
@@ -120,5 +123,15 @@ public class DocumentHandle implements SCXMLWorkflowData {
 
     public Map<String, DocumentVariant> getDocuments() {
         return documents;
+    }
+
+    public boolean hasMultipleDocumentVariants(final String state) throws RepositoryException {
+        int count = 0;
+        for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
+            if (state.equals(JcrUtils.getStringProperty(variant, HIPPOSTD_STATE, null))) {
+                count++;
+            }
+        }
+        return count > 1;
     }
 }
