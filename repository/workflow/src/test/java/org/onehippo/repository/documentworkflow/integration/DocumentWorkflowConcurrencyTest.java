@@ -22,12 +22,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
@@ -35,16 +36,18 @@ import static org.junit.Assert.assertFalse;
 
 public class DocumentWorkflowConcurrencyTest extends AbstractDocumentWorkflowIntegrationTest {
 
+    private static final Logger log = LoggerFactory.getLogger(DocumentWorkflowConcurrencyTest.class);
+
     @Test
-    public void concurrentPublishFailsOnDuplicatePublishedVariants() throws Exception {
+    public void concurrentPublishFailsOnMultiplePublishedVariants() throws Exception {
         for (int i = 0; i < 5; i++) {
-            doConcurrentPublishFailsOnDuplicatePublishedVariants();
+            doConcurrentPublishFailsOnMultiplePublishedVariants();
             tearDown();
             setUp();
         }
     }
 
-    private void doConcurrentPublishFailsOnDuplicatePublishedVariants() throws Exception {
+    private void doConcurrentPublishFailsOnMultiplePublishedVariants() throws Exception {
         final Session session1 = session.impersonate(new SimpleCredentials("admin", new char[] {}));
         final Session session2 = session.impersonate(new SimpleCredentials("admin", new char[]{}));
         try {
@@ -56,14 +59,14 @@ public class DocumentWorkflowConcurrencyTest extends AbstractDocumentWorkflowInt
             thread1.start();
             thread2.start();
             latch.await();
-            assertFalse(hasMulipleVariants(PUBLISHED));
+            assertFalse(hasMultipleVariants(PUBLISHED));
         } finally {
             session1.logout();
             session2.logout();
         }
     }
 
-    private boolean hasMulipleVariants(String state) throws RepositoryException {
+    private boolean hasMultipleVariants(String state) throws RepositoryException {
         int count = 0;
         for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
             if (variant.getProperty(HIPPOSTD_STATE).getString().equals(state)) {
@@ -95,7 +98,8 @@ public class DocumentWorkflowConcurrencyTest extends AbstractDocumentWorkflowInt
                 final WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 final DocumentWorkflow workflow = (DocumentWorkflow) workflowManager.getWorkflow("default", handle);
                 workflow.publish();
-            } catch (Exception ignore) {
+            } catch (Exception e) {
+                log.debug("Publication failed", e);
             }
             latch.countDown();
         }
