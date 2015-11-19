@@ -24,9 +24,10 @@
       'hippo.channel.FeedbackService',
       'hippo.channel.PageService',
       'hippo.channel.PrototypeService',
+      'hippo.channel.ChannelService',
       'hippo.channel.ConfigService',
       'hippo.channel.Container',
-      function ($scope, $filter, FeedbackService, PageService, PrototypeService, ConfigService, ContainerService) {
+      function ($scope, $filter, FeedbackService, PageService, PrototypeService, ChannelService, ConfigService, ContainerService) {
         var translate = $filter('translate');
 
         $scope.page = {
@@ -41,6 +42,7 @@
         };
 
         $scope.copy = {
+          mountId : ConfigService.mountId,
           target: '',
           lastPathInfoElement: ''
         };
@@ -64,6 +66,8 @@
         };
 
         $scope.locations = [];
+
+        $scope.channels = [];
 
         $scope.tooltips = {
           lastPathInfoElement: function () {
@@ -114,6 +118,7 @@
 
         // fetch data
         loadHost()
+          .then(loadChannels)
           .then(loadPrototypes)
           .then(loadPage);
           // TODO .then(loadLocations) and do not load the locations in loadPrototypes as it now done.
@@ -138,8 +143,9 @@
         };
 
         $scope.submitCopyPage = function () {
-          console.log('$scope.copy', $scope.copy);
+
           var copyModel = {
+            mountId: $scope.copy.mountId,
             siteMapItemUUId: $scope.page.id,
             targetName: $scope.copy.lastPathInfoElement,
             targetSiteMapItemUUID: $scope.copy.target.id
@@ -150,6 +156,10 @@
           }, function (errorResponse) {
             $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
           });
+        };
+
+        $scope.copy.reloadTargets = function () {
+          loadPageLocations($scope.copy.mountId);
         };
 
         $scope.closeContainer = function () {
@@ -208,6 +218,22 @@
             }, setErrorFeedback);
         }
 
+        function loadChannels () {
+          return ChannelService.getChannels()
+            .then(function (data) {
+              $scope.channels = data;
+            }, setErrorFeedback);
+        }
+
+        function loadPageLocations (mountId) {
+          console.log("mountId" , mountId);
+          return ChannelService.getPageLocations(mountId)
+            .then(function (data) {
+              console.log("YIIIII");
+              $scope.locations = data || [];
+            }, setErrorFeedback);
+        }
+
         function loadPrototypes () {
           return PrototypeService.getPrototypes()
             .then(function (data) {
@@ -252,7 +278,7 @@
               $scope.copy.lastPathInfoElement = currentPage.name;
 
               for(var i = 0; i < $scope.locations.length; i++) {
-                if ($scope.locations && currentPage.parentLocation && $scope.locations[i].id === currentPage.parentLocation.id) {
+                if (currentPage.parentLocation && $scope.locations[i].id === currentPage.parentLocation.id) {
                   $scope.copy.target = $scope.locations[i];
                 }
               }

@@ -45,7 +45,6 @@
     {{ 'CONFIRM_REMOVE_PRIMARY_DOCUMENT_MESSAGE' | translate:page }}
   </p>
 </div>
-
 <div class="panel panel-default flex-full flex-column">
   <div class="panel-body flex-child">
     <form name="form" role="form" novalidate>
@@ -57,7 +56,6 @@
         <hippo-icon name="locked" size="m"></hippo-icon>
         {{ 'PAGE_LOCKED' | translate:lock }}
       </div>
-
       <div class="form-group has-feedback"
            data-ng-class="{
                 'has-success': form.title.$dirty && form.title.$valid,
@@ -179,6 +177,16 @@
         <div>
           <div class="input-group">
             <span class="input-group-btn">
+              {{ copy.channel }}
+              <select id="channel" name="channel" class="form-control" disabled
+                      data-chosen
+                      data-ng-model="copy.mountId"
+                      data-ng-options="channel.mountId as channel.name for channel in channels"
+                      data-width="'auto'"
+                      data-ng-change="copy.reloadTargets()"
+                      data-ng-required="true">
+              </select>
+
               <select data-chosen
                       data-ng-model="copy.target"
                       data-ng-options="item as item.location for item in locations"
