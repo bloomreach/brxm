@@ -190,17 +190,17 @@
 
       <hr/>
 
-      <div data-ng-show="MenuItemCtrl.showParameters">
+      <div class="qa-cm-tc-menu-item-advanced-settings" data-ng-show="MenuItemCtrl.showParameters">
         <p><label>{{ 'ADVANCED_SETTINGS' | translate }}</label></p>
         <div data-ng-repeat="(key,value) in MenuItemCtrl.selectedMenuItem.localParameters">
-          <div class="form-group has-feedback"
+          <div class="form-group has-feedback qa-property"
                data-ng-class="{
             'has-success': parameterForm.value.$dirty && !EditMenuItemCtrl.isSaving.localParameters[key] && EditMenuItemCtrl.isSaved.localParameters[key],
             'has-error': parameterForm.value.$dirty && !EditMenuItemCtrl.isSaving.localParameters[key] && !EditMenuItemCtrl.isSaved.localParameters[key]
         }">
             <ng-form name="parameterForm">
-              <label for="hippo.channel.menu.menuItem.edit.localPameters.value">{{ key }}</label>
-              <input type="text" name="value" value="{{ value }}" class="form-control"
+              <label for="hippo.channel.menu.menuItem.edit.localPameters.value" class="qa-name">{{ key }}</label>
+              <input type="text" name="value" value="{{ value }}" class="form-control qa-value"
                      id="hippo.channel.menu.menuItem.edit.localPameters.value"
                      data-ng-attr-placeholder="{{ key }}"
                      data-ng-model="MenuItemCtrl.selectedMenuItem.localParameters[key]"
