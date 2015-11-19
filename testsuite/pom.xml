@@ -34,6 +34,8 @@
   <properties>
 
     <!-- ***START temporary override of versions*** -->
+    <!-- TODO: remove when merging to trunk!!! -->
+    <hippo.hst.version>3.2.0-site-config-listener-SNAPSHOT</hippo.hst.version>
     <!-- ***END temporary override of versions*** -->
 
     <jsp-api.version>2.2</jsp-api.version>
