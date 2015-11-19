@@ -15,6 +15,8 @@
 */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.List;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -29,10 +31,15 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.stream.Collectors.toList;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource {
@@ -55,6 +62,19 @@ public class RootResource extends AbstractConfigResource {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity("Error: No http session on the request found.").build();
         }
+    }
+
+    @GET
+    @Path("/channels")
+    public Response getChannels() {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        final VirtualHost virtualHost = requestContext.getResolvedMount().getMount().getVirtualHost();
+        final List<Channel> channels = virtualHost.getVirtualHosts().getChannels(virtualHost.getHostGroupName())
+                .values()
+                .stream()
+                .filter(channel -> channel.isPreview())
+                .collect(toList());
+        return ok("Fetched channels successful", channels);
     }
 
     @GET

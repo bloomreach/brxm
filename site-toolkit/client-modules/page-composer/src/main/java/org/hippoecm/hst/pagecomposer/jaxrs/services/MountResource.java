@@ -43,11 +43,11 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtIdsRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.NewPageModelRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PageModelRepresentation;
@@ -56,6 +56,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.RelativeDocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.UserRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
@@ -146,6 +147,31 @@ public class MountResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getNewPageModel() {
         final Mount mount = getPageComposerContextService().getEditingMount();
+        NewPageModelRepresentation newPageModelRepresentation = getNewPageModelRepresentation(mount);
+        log.info("Prototype pages loaded successfully");
+        return ok("Prototype pages loaded successfully", newPageModelRepresentation);
+    }
+
+    @GET
+    @Path("/pagelocations/{mountId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPageLocations(@PathParam("mountId") final String mountId) {
+        Mount mount = RequestContextProvider.get().getVirtualHost().getVirtualHosts().getMountByIdentifier(mountId);
+        if (mount == null) {
+            String msg = String.format("Could not find a Mount for identifier + '%s'", mountId);
+            return logAndReturnClientError(new ClientException(msg, ClientError.ITEM_NOT_FOUND));
+        }
+        if (!Mount.PREVIEW_NAME.equals(mount.getType())) {
+            String msg = String.format("Expected a preview (decorated) mount but '%s' is not of " +
+                    "type preview.", mount.toString());
+            return logAndReturnClientError(new ClientException(msg, ClientError.UNKNOWN));
+        }
+        NewPageModelRepresentation newPageModelRepresentation = getNewPageModelRepresentation(mount);
+        log.info("Page locations loaded successfully");
+        return ok("Page locations loaded successfully", newPageModelRepresentation.getLocations());
+    }
+
+    private NewPageModelRepresentation getNewPageModelRepresentation(final Mount mount) {
         PrototypesRepresentation prototypePagesRepresentation = new PrototypesRepresentation().represent(mount.getHstSite(),
                 true, getPageComposerContextService());
 
@@ -156,12 +182,9 @@ public class MountResource extends AbstractConfigResource {
         if (StringUtils.isNotEmpty(mount.getMountPath())) {
             prefix += mount.getMountPath();
         }
-        NewPageModelRepresentation newPageModelRepresentation = new NewPageModelRepresentation(prototypePagesRepresentation.getPrototypes(),
+        return new NewPageModelRepresentation(prototypePagesRepresentation.getPrototypes(),
                 pages.getPages(), prefix);
-        log.info("Prototype pages loaded successfully");
-        return ok("Prototype pages loaded successfully", newPageModelRepresentation);
     }
-
 
     @GET
     @Path("/userswithchanges/")

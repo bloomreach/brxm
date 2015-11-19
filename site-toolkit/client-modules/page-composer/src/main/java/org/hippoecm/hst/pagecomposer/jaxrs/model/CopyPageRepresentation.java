@@ -17,6 +17,10 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 public class CopyPageRepresentation {
     /**
+     * target mount for the new page
+     */
+    private String mountId;
+    /**
      * targetName of the target to be created copy
      */
     private String targetName;
@@ -31,6 +35,15 @@ public class CopyPageRepresentation {
     private String siteMapItemUUId;
 
     public CopyPageRepresentation() {
+    }
+
+    public String getMountId() {
+        return mountId;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public void setMountId(final String mountId) {
+        this.mountId = mountId;
     }
 
     public String getTargetName() {
