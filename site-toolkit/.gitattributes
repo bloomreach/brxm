@@ -718,6 +718,7 @@ components/core/src/main/java/org/hippoecm/hst/site/container/ComponentManagerFa
 components/core/src/main/java/org/hippoecm/hst/site/container/DefaultComponentManagerApplicationContext.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/DefaultHstSiteConfigurer.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/container/FilteringByExpressionListableBeanFactory.java -text
+components/core/src/main/java/org/hippoecm/hst/site/container/HstSiteConfigListener.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/container/HstSiteConfigServlet.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/container/HstSiteConfigurer.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/container/ModuleDescriptorUtils.java -text
