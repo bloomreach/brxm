@@ -35,7 +35,7 @@
                 var interpolateParams = errorResponse.data;
                 if (translationId && translationId.match(translationIdRegex)) {
                     var clientErrorMessage = translate(translationId, interpolateParams);
-                    if (clientErrorMessage.match(translationIdRegex)) {
+                    if (clientErrorMessage === translationId) {
                         // Apparently there is no translation
                         return {message: translate(technicalErrorTranslationId)};
                     } else {
