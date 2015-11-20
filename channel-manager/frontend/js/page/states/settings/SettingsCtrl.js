@@ -144,18 +144,16 @@
 
         $scope.submitCopyPage = function () {
 
-          var copyModel = {
-            mountId: $scope.copy.mountId,
-            siteMapItemUUId: $scope.page.id,
-            targetName: $scope.copy.lastPathInfoElement,
-            targetSiteMapItemUUID: $scope.copy.target.id
-          };
-
-          PageService.copyPage(copyModel).then(function (data) {
-            ContainerService.showPage(data.renderPathInfo);
-          }, function (errorResponse) {
-            $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
-          });
+          PageService.copyPage(
+            $scope.copy.mountId,
+            $scope.page.id,
+            $scope.copy.lastPathInfoElement,
+            $scope.copy.target.id)
+            .then(function (data) {
+              ContainerService.showPage(data.renderPathInfo);
+            }, function (errorResponse) {
+              $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
+            });
         };
 
         $scope.copy.reloadTargets = function () {

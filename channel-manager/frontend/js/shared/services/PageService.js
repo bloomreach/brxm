@@ -94,11 +94,27 @@
           return deferred.promise;
         };
 
-        pageService.copyPage = function (copyModel) {
+        pageService.copyPage = function (mountId, siteMapItemUUId, targetName, targetSiteMapItemUUID) {
+
           var deferred = $q.defer(),
               url = '/' + ConfigService.sitemapId + './copy';
 
-          $http.post(pageServiceUrl(url), copyModel)
+          console.log("targetSiteMapItemUUID", targetSiteMapItemUUID);
+          var req = {
+            method :  'POST',
+            url : pageServiceUrl(url),
+            headers: {
+              'siteMapItemUUId': siteMapItemUUId,
+              'targetName': targetName
+            }
+          };
+          if(mountId) {
+            req.headers.mountId = mountId;
+          }
+          if(targetSiteMapItemUUID) {
+            req.headers.targetSiteMapItemUUID = targetSiteMapItemUUID;
+          }
+          $http(req)
             .success(function (response) {
               deferred.resolve(response.data);
             })
