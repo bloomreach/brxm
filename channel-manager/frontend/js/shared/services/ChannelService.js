@@ -27,10 +27,11 @@
 
         var channelService = {};
 
-        channelService.getChannels = function () {
+        channelService.getPreviewChannels = function () {
           var deferred = $q.defer();
 
-          $http.get(ConfigService.apiUrlPrefix + '/cafebabe-cafe-babe-cafe-babecafebabe./channels')
+          $http.get(ConfigService.apiUrlPrefix +
+            '/cafebabe-cafe-babe-cafe-babecafebabe./channels?preview=true&workspaceRequired=true')
             .success(function (response) {
               deferred.resolve(response.data);
             })
