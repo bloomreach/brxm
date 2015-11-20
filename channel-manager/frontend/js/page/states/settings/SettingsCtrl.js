@@ -217,7 +217,7 @@
         }
 
         function loadChannels () {
-          return ChannelService.getPreviewChannels()
+          return ChannelService.getLiveChannels()
             .then(function (data) {
               $scope.channels = data;
             }, setErrorFeedback);
