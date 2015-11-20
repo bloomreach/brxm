@@ -517,6 +517,7 @@ api/src/main/java/org/hippoecm/frontend/util/MappingException.java svneol=native
 api/src/main/java/org/hippoecm/frontend/util/MaxLengthNodeNameFormatter.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/util/MaxLengthStringFormatter.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/util/PluginConfigMapper.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/util/RequestUtils.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/validation/IFieldValidator.java -text
 api/src/main/java/org/hippoecm/frontend/validation/IValidationListener.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/validation/IValidationService.java -text svneol=unset#text/plain
@@ -1327,6 +1328,7 @@ config/src/main/resources/cms-services.xml svneol=native#text/plain
 config/src/main/resources/cms-settings.xml svneol=native#text/plain
 config/src/main/resources/cms-static.xml -text svneol=unset#text/plain
 config/src/main/resources/cms.xml -text svneol=unset#text/plain
+config/src/main/resources/diagnostics-module.xml -text
 config/src/main/resources/domain-defaultread-reporting.xml svneol=native#text/plain
 config/src/main/resources/domain-workflow-frontend.xml svneol=native#text/plain
 config/src/main/resources/folder-frontend-workflows-filters.xml svneol=native#text/plain
@@ -1874,9 +1876,9 @@ engine/src/main/java/org/hippoecm/frontend/StagedLocalizer.java -text
 engine/src/main/java/org/hippoecm/frontend/StringResourceProviderConsumer.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/behaviors/ContextMenuBehavior.java -text
 engine/src/main/java/org/hippoecm/frontend/behaviors/contextmenu.js -text
-engine/src/main/java/org/hippoecm/frontend/diagnosis/DiagnosisDaemonModule.java -text
-engine/src/main/java/org/hippoecm/frontend/diagnosis/DiagnosisRequestCycleListener.java -text
-engine/src/main/java/org/hippoecm/frontend/diagnosis/DiagnosisService.java -text
+engine/src/main/java/org/hippoecm/frontend/diagnosis/DiagnosticsDaemonModule.java -text
+engine/src/main/java/org/hippoecm/frontend/diagnosis/DiagnosticsRequestCycleListener.java -text
+engine/src/main/java/org/hippoecm/frontend/diagnosis/DiagnosticsService.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/AbstractTranslateService.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/ConfigTraversingPlugin.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/NodeWrapper.java -text
@@ -1925,8 +1927,6 @@ engine/src/main/java/org/hippoecm/frontend/service/preferences/PreferencesStore.
 engine/src/main/java/org/hippoecm/frontend/service/preferences/PreferencesStorePlugin.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/service/restproxy/RestProxyServicePlugin.java -text
 engine/src/main/java/org/hippoecm/frontend/util/NodeStateUtil.java -text
-engine/src/main/resources/hippo-configuration/hippo-modules/diagnosis-module.xml -text
-engine/src/main/resources/hippoecm-extension.xml -text
 engine/src/main/resources/hippoecm-layouts.xml svneol=native#text/plain
 engine/src/main/resources/org/hippoecm/frontend/hippo-cms.ico -text
 engine/src/main/resources/org/hippoecm/frontend/hippo-console.ico -text

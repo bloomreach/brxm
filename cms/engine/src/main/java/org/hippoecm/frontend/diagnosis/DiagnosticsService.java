@@ -15,20 +15,21 @@
  */
 package org.hippoecm.frontend.diagnosis;
 
+import org.apache.wicket.request.Request;
 import org.onehippo.cms7.services.SingletonService;
 
 /**
  * Diagnostics Service.
  */
 @SingletonService
-public interface DiagnosisService {
+public interface DiagnosticsService {
 
     /**
-     * Return true if diagnostics is enabled for the client at the address.
-     * @param clientAddress client remote address
+     * Return true if diagnostics is enabled for the client with the {@code request}.
+     * @param request request for the client at remote address
      * @return true if diagnostics is enabled
      */
-    public boolean isEnabledFor(String clientAddress);
+    public boolean isEnabledFor(Request request);
 
     /**
      * Return threshold time to report diagnostics in milliseconds.

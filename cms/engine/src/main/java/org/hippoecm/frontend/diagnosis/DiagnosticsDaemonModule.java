@@ -23,6 +23,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.request.Request;
+import org.hippoecm.frontend.session.PluginUserSession;
+import org.hippoecm.frontend.util.RequestUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
@@ -30,10 +33,10 @@ import org.onehippo.repository.modules.ProvidesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@ProvidesService(types = DiagnosisService.class)
-public class DiagnosisDaemonModule extends AbstractReconfigurableDaemonModule {
+@ProvidesService(types = DiagnosticsService.class)
+public class DiagnosticsDaemonModule extends AbstractReconfigurableDaemonModule {
 
-    private static Logger log = LoggerFactory.getLogger(DiagnosisDaemonModule.class);
+    private static Logger log = LoggerFactory.getLogger(DiagnosticsDaemonModule.class);
 
     private static final String ENABLED = "enabled";
 
@@ -43,6 +46,8 @@ public class DiagnosisDaemonModule extends AbstractReconfigurableDaemonModule {
 
     private static final String ALLOWED_ADDRESSES = "allowedAddresses";
 
+    private static final String ALLOWED_USERS = "allowedUsers";
+
     private boolean enabled;
 
     private long thresholdMillisec = -1L;
@@ -51,9 +56,11 @@ public class DiagnosisDaemonModule extends AbstractReconfigurableDaemonModule {
 
     private Set<String> allowedAddresses;
 
+    private Set<String> allowedUsers;
+
     private final Object configurationLock = new Object();
 
-    private DiagnosisService service;
+    private DiagnosticsService service;
 
     @Override
     protected void doConfigure(final Node moduleConfig) throws RepositoryException {
@@ -73,22 +80,47 @@ public class DiagnosisDaemonModule extends AbstractReconfigurableDaemonModule {
                 }
             }
 
-            log.info("Reconfiguring diagnostic daemon module. enabled: {}, thresholdMillisec: {}, depth: {}, allowedAddresses: {}",
-                     enabled, thresholdMillisec, depth, allowedAddresses);
+            allowedUsers = new HashSet<>();
+
+            String [] userValues = JcrUtils.getMultipleStringProperty(moduleConfig, ALLOWED_USERS, null);
+
+            if (userValues != null) {
+                for (String userValue : userValues) {
+                    if (StringUtils.isNotBlank(userValue)) {
+                        allowedUsers.add(StringUtils.trim(userValue));
+                    }
+                }
+            }
+
+            log.info("Reconfiguring diagnostic daemon module. enabled: {}, thresholdMillisec: {}, depth: {}, allowedAddresses: {}, allowedUsers: {}",
+                     enabled, thresholdMillisec, depth, allowedAddresses, allowedUsers);
         }
     }
 
     @Override
     protected void doInitialize(final Session session) throws RepositoryException {
-        HippoServiceRegistry.registerService(service = new DiagnosisService() {
+        HippoServiceRegistry.registerService(service = new DiagnosticsService() {
             @Override
-            public boolean isEnabledFor(String clientAddress) {
+            public boolean isEnabledFor(Request request) {
                 if (!enabled) {
                     return false;
                 }
 
-                if (!allowedAddresses.isEmpty() && !allowedAddresses.contains(clientAddress)) {
-                    return false;
+                if (!allowedAddresses.isEmpty()) {
+                    final String remoteAddr = RequestUtils.getFarthestRemoteAddr(request); 
+
+                    if (remoteAddr == null || !allowedAddresses.contains(remoteAddr)) {
+                        return false;
+                    }
+                }
+
+                if (!allowedUsers.isEmpty()) {
+                    final PluginUserSession userSession = PluginUserSession.get();
+
+                    if (userSession == null || userSession.getUserCredentials() == null
+                            || !allowedUsers.contains(userSession.getUserCredentials().getUsername())) {
+                        return false;
+                    }
                 }
 
                 return true;
@@ -103,12 +135,12 @@ public class DiagnosisDaemonModule extends AbstractReconfigurableDaemonModule {
             public int getDepth() {
                 return (int) depth;
             }
-        }, DiagnosisService.class);
+        }, DiagnosticsService.class);
     }
 
     @Override
     protected void doShutdown() {
-        HippoServiceRegistry.unregisterService(service, DiagnosisService.class);
+        HippoServiceRegistry.unregisterService(service, DiagnosticsService.class);
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugin.config.impl;
 
 import java.util.AbstractSet;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -33,20 +34,21 @@ import org.hippoecm.frontend.plugin.config.PluginConfigEvent;
 
 public class JavaPluginConfig extends ValueMap implements IPluginConfig {
 
-    private static final long serialVersionUID = 1L;
-
-    private Set<IPluginConfig> configSet = new LinkedHashSet<IPluginConfig>();
+    private final Set<IPluginConfig> configSet;
 
     private final int hashCode = new Object().hashCode();
-    private String pluginInstanceName = null;
+    private final String pluginInstanceName;
     private IObservationContext<IPluginConfig> obContext;
 
     public JavaPluginConfig() {
         super();
+        configSet = Collections.emptySet();
+        pluginInstanceName = null;
     }
 
     public JavaPluginConfig(String name) {
         super();
+        configSet = Collections.emptySet();
         pluginInstanceName = name;
     }
 
@@ -54,10 +56,14 @@ public class JavaPluginConfig extends ValueMap implements IPluginConfig {
         super();
         if (parentConfig != null) {
             putAll(parentConfig);
+            configSet = new LinkedHashSet<>();
             for (IPluginConfig config : parentConfig.getPluginConfigSet()) {
                 configSet.add(newPluginConfig(config));
             }
             pluginInstanceName = parentConfig.getName();
+        } else {
+            configSet = Collections.emptySet();
+            pluginInstanceName = null;
         }
     }
 
@@ -76,8 +82,11 @@ public class JavaPluginConfig extends ValueMap implements IPluginConfig {
     @SuppressWarnings("unchecked")
     public IPluginConfig getPluginConfig(Object key) {
         Object value = get(key);
-        if (value instanceof List && ((List) value).size() > 0) {
-            return (IPluginConfig) ((List) value).get(0);
+        if (value instanceof List) {
+            List list = (List)value;
+            if (!list.isEmpty()) {
+                return (IPluginConfig) list.get(0);
+            }
         }
         return (IPluginConfig) value;
     }
@@ -103,7 +112,7 @@ public class JavaPluginConfig extends ValueMap implements IPluginConfig {
         }
         Object oldValue = super.put((String) key, value);
         if (obContext != null) {
-            EventCollection<IEvent<IPluginConfig>> collection = new EventCollection<IEvent<IPluginConfig>>();
+            EventCollection<IEvent<IPluginConfig>> collection = new EventCollection<>();
             collection.add(new PluginConfigEvent(this, PluginConfigEvent.EventType.CONFIG_CHANGED));
             obContext.notifyObservers(collection);
         }

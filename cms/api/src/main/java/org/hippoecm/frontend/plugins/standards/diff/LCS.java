@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,9 +34,9 @@ public class LCS {
 
         static Sequence NULL = new Sequence(-1, null);
 
-        Sequence predecessor;
-        int position;
-        int length;
+        final Sequence predecessor;
+        final int position;
+        final int length;
 
         Sequence(int position, Sequence predecessor) {
             this.predecessor = predecessor;
@@ -73,8 +73,8 @@ public class LCS {
      */
     static public class Change<T> implements Serializable {
 
-        private ChangeType type;
-        private T value;
+        private final ChangeType type;
+        private final T value;
 
         public Change(T value, ChangeType type) {
             this.value = value;

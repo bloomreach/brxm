@@ -15,14 +15,10 @@
  */
 package org.hippoecm.frontend.diagnosis;
 
-import javax.servlet.ServletRequest;
-
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.IRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.http.WebRequest;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
@@ -34,19 +30,18 @@ import org.slf4j.LoggerFactory;
 /**
  * The default {@link IRequestCycleListener} implementation to set diagnosis context and report monitoring logs.
  */
-public class DiagnosisRequestCycleListener extends AbstractRequestCycleListener {
+public class DiagnosticsRequestCycleListener extends AbstractRequestCycleListener {
 
-    private static Logger log = LoggerFactory.getLogger(DiagnosisRequestCycleListener.class);
+    private static Logger log = LoggerFactory.getLogger(DiagnosticsRequestCycleListener.class);
 
     @Override
     public void onBeginRequest(RequestCycle cycle) {
-        final DiagnosisService diagnosisService = HippoServiceRegistry.getService(DiagnosisService.class);
+        final DiagnosticsService diagnosticsService = HippoServiceRegistry.getService(DiagnosticsService.class);
 
-        if (diagnosisService != null) {
+        if (diagnosticsService != null) {
             final Main application = (Main) Application.get();
-            final String remoteAddr = getFarthestRemoteAddr(cycle);
 
-            if (diagnosisService.isEnabledFor(remoteAddr)) {
+            if (diagnosticsService.isEnabledFor(cycle.getRequest())) {
                 if (HDC.isStarted()) {
                     log.error("HDC was not cleaned up properly in previous request cycle for some reason. So clean up HDC to start new one.");
                     HDC.cleanUp();
@@ -65,9 +60,9 @@ public class DiagnosisRequestCycleListener extends AbstractRequestCycleListener 
                 final Task rootTask = HDC.getRootTask();
                 rootTask.stop();
 
-                final DiagnosisService diagnosisService = HippoServiceRegistry.getService(DiagnosisService.class);
-                final long threshold = diagnosisService != null ? diagnosisService.getThresholdMillisec() : -1;
-                final int depth = diagnosisService != null ? diagnosisService.getDepth() : -1;
+                final DiagnosticsService diagnosticsService = HippoServiceRegistry.getService(DiagnosticsService.class);
+                final long threshold = diagnosticsService != null ? diagnosticsService.getThresholdMillisec() : -1;
+                final int depth = diagnosticsService != null ? diagnosticsService.getDepth() : -1;
 
                 if (threshold > -1L && rootTask.getDurationTimeMillis() < threshold) {
                     log.debug("Skipping task '{}' because took only '{}' ms.",
@@ -80,36 +75,4 @@ public class DiagnosisRequestCycleListener extends AbstractRequestCycleListener 
             }
         }
     }
-
-    protected String getFarthestRemoteAddr(final RequestCycle requestCycle) {
-        String [] remoteAddrs = getRemoteAddrs(requestCycle);
-
-        if (ArrayUtils.isNotEmpty(remoteAddrs)) {
-            return remoteAddrs[0];
-        }
-
-        return null;
-    }
-
-    private String [] getRemoteAddrs(final RequestCycle requestCycle) {
-        WebRequest request = (WebRequest) requestCycle.getRequest();
-
-        String xff = request.getHeader("X-Forwarded-For");
-
-        if (xff != null) {
-            String [] addrs = xff.split(",");
-
-            for (int i = 0; i < addrs.length; i++) {
-                addrs[i] = addrs[i].trim();
-            }
-
-            return addrs;
-        } else if (request.getContainerRequest() instanceof ServletRequest) {
-            ServletRequest servletRequest = (ServletRequest) request.getContainerRequest();
-            return new String [] { servletRequest.getRemoteAddr() };
-        }
-
-        return ArrayUtils.EMPTY_STRING_ARRAY;
-    }
-
 }
