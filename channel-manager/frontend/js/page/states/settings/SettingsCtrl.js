@@ -226,10 +226,8 @@
         }
 
         function loadPageLocations (mountId) {
-          console.log("mountId" , mountId);
           return ChannelService.getPageLocations(mountId)
             .then(function (data) {
-              console.log("YIIIII");
               $scope.locations = data || [];
             }, setErrorFeedback);
         }
