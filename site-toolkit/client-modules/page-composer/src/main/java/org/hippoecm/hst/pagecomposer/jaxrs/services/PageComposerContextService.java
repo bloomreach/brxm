@@ -94,7 +94,7 @@ public class PageComposerContextService {
     public String getEditingLiveChannelPath() {
         final String channelPath = getEditingPreviewChannelPath();
         if (channelPath.endsWith("-preview")) {
-            return StringUtils.substringAfterLast(channelPath, "-preview");
+            return StringUtils.substringBeforeLast(channelPath, "-preview");
         }
         // there is no preview yet: Live and preview are same paths
         return channelPath;
