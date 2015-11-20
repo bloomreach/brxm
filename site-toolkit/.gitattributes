@@ -293,7 +293,6 @@ client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/m
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ContainerItemComponentRepresentation.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ContainerItemRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ContainerRepresentation.java -text
-client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/CopyPageRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/DocumentRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ExtResponseRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/Location.java -text

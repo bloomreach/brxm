@@ -22,6 +22,7 @@ import java.util.concurrent.Callable;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -38,7 +39,6 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.CopyPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
@@ -248,28 +248,33 @@ public class SiteMapResource extends AbstractConfigResource {
 
     @POST
     @Path("/copy")
-    public Response copy(final CopyPageRepresentation copyPageRepresentation) {
+    public Response copy(
+            @HeaderParam("targetName")final String targetName,
+            @HeaderParam("siteMapItemUUId") final String siteMapItemUUId,
+            @HeaderParam("targetSiteMapItemUUID")final String targetSiteMapItemUUID,
+            @HeaderParam("mountId")final String mountId) {
+
         final ValidatorBuilder preValidators = ValidatorBuilder.builder()
-                .add(validatorFactory.getNotNullValidator(copyPageRepresentation.getTargetName(),
+                .add(validatorFactory.getNotNullValidator(targetName,
                         ClientError.INVALID_NAME, "Name of the copied page is not allowed to be null"))
                 .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
                         HstNodeTypes.NODETYPE_HST_SITEMAP));
-        preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(copyPageRepresentation.getSiteMapItemUUId(), siteMapHelper));
-        if (copyPageRepresentation.getTargetSiteMapItemUUID() != null) {
+        preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(siteMapItemUUId, siteMapHelper));
+        if (StringUtils.isNotBlank(targetSiteMapItemUUID)) {
             // TODO cross channel copy does need a different validator than 'getCurrentPreviewConfigurationValidator'
-            preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(copyPageRepresentation.getTargetSiteMapItemUUID(), siteMapHelper));
+            preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(targetSiteMapItemUUID, siteMapHelper));
             preValidators.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
-                    copyPageRepresentation.getTargetSiteMapItemUUID(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
-            preValidators.add(validatorFactory.getCanCopyFromSourceToTargetValidator(copyPageRepresentation.getSiteMapItemUUId(),
-                    copyPageRepresentation.getTargetSiteMapItemUUID()));
+                    targetSiteMapItemUUID, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
+            preValidators.add(validatorFactory.getCanCopyFromSourceToTargetValidator(siteMapItemUUId,
+                    targetSiteMapItemUUID));
         }
 
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                PageCopyContext pcc = siteMapHelper.copy(copyPageRepresentation.getSiteMapItemUUId(),
-                        copyPageRepresentation.getTargetSiteMapItemUUID(), copyPageRepresentation.getTargetName());
+                PageCopyContext pcc = siteMapHelper.copy(siteMapItemUUId,
+                        targetSiteMapItemUUID, targetName);
                 final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(pcc.getNewSiteMapNode().getIdentifier(), null);
                 return ok("Item created successfully", siteMapPageRepresentation);
             }
