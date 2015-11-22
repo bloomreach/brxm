@@ -16,9 +16,8 @@
 package org.onehippo.cms7.services.webfiles.watch;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-import org.onehippo.cms7.services.webfiles.watch.WebFilesWatcherConfig;
 
 public class WebFilesWatcherJavaConfig implements WebFilesWatcherConfig {
 
@@ -43,21 +42,15 @@ public class WebFilesWatcherJavaConfig implements WebFilesWatcherConfig {
     }
 
     public void includeFiles(final String... globPatterns) {
-        for (String pattern : globPatterns) {
-            includedFiles.add(pattern);
-        }
+        Collections.addAll(includedFiles, globPatterns);
     }
 
     public void excludeDirs(final String... globPatterns) {
-        for (String pattern : globPatterns) {
-            excludedDirs.add(pattern);
-        }
+        Collections.addAll(excludedDirs, globPatterns);
     }
 
     void useWatchServiceOnOsNames(final String... osNames) {
-        for (String osName : osNames) {
-            useWatchServiceOnOsNames.add(osName);
-        }
+        Collections.addAll(useWatchServiceOnOsNames, osNames);
     }
 
     void setWatchDelayMillis(final long delayMillis) {

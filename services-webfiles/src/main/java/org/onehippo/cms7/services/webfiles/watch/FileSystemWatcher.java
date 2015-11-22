@@ -45,7 +45,7 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 /**
  * File system observer that uses a {@link java.nio.file.WatchService} to get notified about changes.
  */
-class FileSystemWatcher implements FileSystemObserver, Runnable {
+public class FileSystemWatcher implements FileSystemObserver, Runnable {
 
     private static final Logger log = LoggerFactory.getLogger(SubDirectoriesWatcher.class);
 
@@ -68,7 +68,7 @@ class FileSystemWatcher implements FileSystemObserver, Runnable {
      */
     final Map<WatchKey, Path> watchedPaths;
 
-    FileSystemWatcher(final GlobFileNameMatcher watchedFiles) throws IOException {
+    public FileSystemWatcher(final GlobFileNameMatcher watchedFiles) throws IOException {
         this.watchedFiles = watchedFiles;
         this.changesProcessors = new HashMap<>();
 

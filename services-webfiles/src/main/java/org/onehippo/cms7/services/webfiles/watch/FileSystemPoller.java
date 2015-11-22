@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * File system observer that polls for changes. After a set of observed changes has been reported, the polling
  * thread sleeps a fixed amount of time.
  */
-class FileSystemPoller implements FileSystemObserver, FileAlterationListener {
+public class FileSystemPoller implements FileSystemObserver, FileAlterationListener {
 
     private static final Logger log = LoggerFactory.getLogger(FileSystemPoller.class);
 
@@ -43,7 +43,7 @@ class FileSystemPoller implements FileSystemObserver, FileAlterationListener {
     private final FileAlterationMonitor monitor;
     private FileSystemListener listenerForCurrentChange;
 
-    FileSystemPoller(final FileFilter fileNameFilter, final long pollingDelayMillis) throws Exception {
+    public FileSystemPoller(final FileFilter fileNameFilter, final long pollingDelayMillis) throws Exception {
         this.fileNameFilter = fileNameFilter;
         listeners = new HashMap<>();
         monitor = new FileAlterationMonitor(pollingDelayMillis);
