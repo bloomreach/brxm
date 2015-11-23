@@ -31,8 +31,8 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.LazyMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.taxonomy.api.Category;
@@ -106,7 +106,7 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
 
     @Override
     public String getName() {
-        return new NodeTranslator(getNodeModel()).getNodeName().getObject();
+        return new NodeNameModel(getNodeModel()).getObject();
     }
 
     @Override
