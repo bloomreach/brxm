@@ -22,8 +22,8 @@ import javax.jcr.nodetype.NodeType;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -64,8 +64,7 @@ public class DocumentAttributeModifier extends AbstractNodeAttributeModifier {
     }
 
     private AttributeModifier createTitleModifierOrNull(final Node node) {
-        final NodeTranslator nodeTranslator = new NodeTranslator(new JcrNodeModel(node));
-        return TitleAttribute.append(nodeTranslator.getNodeName());
+        return TitleAttribute.append(new NodeNameModel(new JcrNodeModel(node)));
     }
 
     private AttributeModifier createClassModifierOrNull(final Node node) {

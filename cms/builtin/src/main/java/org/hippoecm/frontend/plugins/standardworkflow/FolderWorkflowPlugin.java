@@ -185,16 +185,16 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
                     @Override
                     protected Dialog createRequestDialog() {
-                        Node folderNode = null;
+                        HippoNode folderNode = null;
                         try {
-                            folderNode = getModel().getNode();
+                            folderNode = (HippoNode) getModel().getNode();
                         } catch (RepositoryException e) {
                             log.error("Unable to retrieve node from WorkflowDescriptorModel, folder delete cancelled", e);
                         }
 
                         if (folderNode != null) {
-                            final IModel folderName = new NodeTranslator(new JcrNodeModel(folderNode)).getNodeName();
                             try {
+                                final String folderName = folderNode.getDisplayName();
                                 boolean deleteAllowed = true;
                                 for (NodeIterator iter = folderNode.getNodes(); iter.hasNext(); ) {
                                     Node child = iter.nextNode();

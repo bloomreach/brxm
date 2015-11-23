@@ -38,8 +38,8 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.editor.icon.EditorTabIconProvider;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
@@ -149,7 +149,7 @@ public class EditPerspective extends Perspective {
             @Override
             protected String load() {
                 JcrNodeModel nodeModel = (JcrNodeModel) EditPerspective.this.getDefaultModel();
-                IModel<String> nodeName = new NodeTranslator(nodeModel).getNodeName();
+                IModel<String> nodeName = new NodeNameModel(nodeModel);
                 if (nodeModel != null) {
                     Node node = nodeModel.getNode();
                     if (node != null) {

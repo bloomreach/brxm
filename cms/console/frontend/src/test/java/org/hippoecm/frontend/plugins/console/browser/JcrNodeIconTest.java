@@ -37,7 +37,6 @@ public class JcrNodeIconTest extends RepositoryTestCase {
         assertEquals(getCssClass("/hippo:configuration/hippo:derivatives"), "fa fa-circle jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:queries"), "fa fa-question-circle jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:queries/hippo:templates/new-document"), "fa fa-question jcrnode-conf");
-        assertEquals(getCssClass("/hippo:configuration/hippo:queries/hippo:templates/new-document/hippo:translation"), "fa fa-flag-o jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:queries/hippo:templates/simple/hippostd:templates/new-document"), "fa fa-umbrella jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:queries/hippo:templates/simple/hippostd:templates/new-document/new-document"), "fa fa-file-text jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:queries/hippo:templates/new-folder/hippostd:templates/hippostd:folder"), "fa fa-folder-o jcrnode-conf");
@@ -57,7 +56,6 @@ public class JcrNodeIconTest extends RepositoryTestCase {
         assertEquals(getCssClass("/hippo:log"), "fa fa-circle jcrnode-log");
         assertEquals(getCssClass("/hippo:namespaces"), "fa fa-bullseye jcrnode-namespaces");
         assertEquals(getCssClass("/hippo:namespaces/system/String"), "fa fa-file-text jcrnode-namespaces");
-        assertEquals(getCssClass("/hippo:namespaces/system/String/hippo:translation"), "fa fa-flag-o jcrnode-namespaces");
         assertEquals(getCssClass("/hippo:namespaces/system/String/hipposysedit:nodetype"), "fa fa-umbrella jcrnode-namespaces");
         assertEquals(getCssClass("/hippo:namespaces/system/String/hipposysedit:nodetype/hipposysedit:nodetype"), "fa fa-circle jcrnode-namespaces");
         assertEquals(getCssClass("/hippo:namespaces/system/String/editor:templates"), "fa fa-file-text-o jcrnode-namespaces");

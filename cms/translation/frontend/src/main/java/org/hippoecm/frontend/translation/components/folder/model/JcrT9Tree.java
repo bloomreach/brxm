@@ -32,8 +32,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.slf4j.Logger;
@@ -126,7 +125,7 @@ public class JcrT9Tree extends T9Tree {
         Node parent = node.getParent();
         if (parent.getPath().startsWith(ROOT_PATH)) {
             T9Node t9Node = new T9Node(getT9Node(parent), node.getIdentifier());
-            String name = new NodeTranslator(new JcrNodeModel(node)).getNodeName().getObject();
+            String name = ((HippoNode) node).getDisplayName();
             t9Node.setName(name);
             if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
                 t9Node.setT9id(node.getProperty(HippoTranslationNodeType.ID).getString());

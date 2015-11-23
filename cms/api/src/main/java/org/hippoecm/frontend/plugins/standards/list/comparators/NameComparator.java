@@ -20,8 +20,13 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.repository.api.HippoNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NameComparator extends NodeComparator {
+
+    private static final Logger log = LoggerFactory.getLogger(NameComparator.class);
 
     private static final NameComparator INSTANCE = new NameComparator();
 
@@ -34,27 +39,31 @@ public class NameComparator extends NodeComparator {
 
     @Override
     public int compare(JcrNodeModel o1, JcrNodeModel o2) {
-        String name1 = new NodeTranslator(o1).getNodeName().getObject();
-        String name2 = new NodeTranslator(o2).getNodeName().getObject();
+        try {
+            String name1 = ((HippoNode) o1).getDisplayName();
+            String name2 = ((HippoNode) o2).getDisplayName();
 
-        int nameCompare = String.CASE_INSENSITIVE_ORDER.compare(name1, name2);
-        if (nameCompare == 0) {
-            try {
-                Node n1 = o1.getNode();
-                Node n2 = o2.getNode();
-                if (n1 == null) {
-                    if (n2 == null) {
-                        return 0;
+            int nameCompare = String.CASE_INSENSITIVE_ORDER.compare(name1, name2);
+            if (nameCompare == 0) {
+                try {
+                    Node n1 = o1.getNode();
+                    Node n2 = o2.getNode();
+                    if (n1 == null) {
+                        if (n2 == null) {
+                            return 0;
+                        }
+                        return 1;
+                    } else if (n2 == null) {
+                        return -1;
                     }
-                    return 1;
-                } else if (n2 == null) {
-                    return -1;
+                    return n1.getIndex() - n2.getIndex();
+                } catch (RepositoryException ignored) {
                 }
-                return n1.getIndex() - n2.getIndex();
-            } catch (RepositoryException ignored) {
+            } else {
+                return nameCompare;
             }
-        } else {
-            return nameCompare;
+        } catch (RepositoryException e) {
+            log.error("Failed to get display name", e);
         }
         return 0;
     }

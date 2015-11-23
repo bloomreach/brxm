@@ -50,7 +50,8 @@ import org.slf4j.LoggerFactory;
  * Translator of node names, property names and values.  When a node has the mixin
  * hippo:translated set, it is used to lookup the translated strings.  When no such mixin
  * is present or the node doesn't exist, the last element of the node path is returned.
- * @deprecated since 3.2.0. Use {@link org.onehippo.repository.l10n.LocalizationService},
+ * @deprecated since 3.2.0. Use {@link org.hippoecm.frontend.model.NodeNameModel}
+ * {@link org.onehippo.repository.l10n.LocalizationService},
  * {@link org.hippoecm.frontend.l10n.ResourceBundleModel}, {@link HippoNode#getDisplayName()}
  */
 @Deprecated

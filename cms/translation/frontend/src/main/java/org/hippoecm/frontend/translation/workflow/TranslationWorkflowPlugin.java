@@ -409,7 +409,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 throw new WorkflowSNSException("A folder or document with name '" + targetUrlName + "' already exists", targetUrlName);
             }
             // check for duplicated localized name
-            if (SameNameSiblingsUtil.hasChildWithLocalizedName(deepestTranslatedTargetNode, targetLocalizedName)) {
+            if (SameNameSiblingsUtil.hasChildWithDisplayName(deepestTranslatedTargetNode, targetLocalizedName)) {
                 throw new WorkflowSNSException("A folder or document with localized name '" + targetLocalizedName + "' already exists", targetLocalizedName);
             }
             // No SNS issue!
