@@ -29,7 +29,7 @@
       <div class="empty-tree" data-ng-if="list.length == 0">{{ 'EMPTY_MENU' | translate }}</div>
     </div>
   </div>
-  <div class="panel-footer flex-center" data-ng-controller="hippo.channel.menu.MenuCtrl as MenuCtrl">
+  <div class="panel-footer solid-child flex-center" data-ng-controller="hippo.channel.menu.MenuCtrl as MenuCtrl">
     <button type="button" class="btn btn-default btn-block qa-cm-tc-menu-item-add" data-ng-click="MenuCtrl.addItem()" data-ng-disabled="MenuCtrl.isSaving.newItem">
       <hippo-icon name="{{isSaving.newItem ? 'spinner' : 'plus'}}" size="m"></hippo-icon>
       {{ 'ADD_MENU_ITEM' | translate }}
