@@ -94,6 +94,13 @@
     <level value="warn"/>
   </logger>
 
+  <!-- org.hippoecm.frontend.diagnosis package leaves logs only when configuration at
+       /hippo:configuration/hippo:modules/diagnosis is updated in repo or HDC logging is enabled there
+       hence can be here on level 'info' -->
+  <logger additivity="false" name="org.hippoecm.frontend.diagnosis">
+    <level value="info"/>
+  </logger>
+
   <!-- audit logging -->
   <logger additivity="false" name="org.hippoecm.repository.api.Workflow">
     <level value="info"/>
