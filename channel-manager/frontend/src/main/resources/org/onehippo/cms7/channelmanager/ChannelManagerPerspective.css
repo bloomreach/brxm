@@ -29,12 +29,12 @@
 }
 
 .page-editor-panel > .x-panel-bwrap > .x-panel-body {
-  border-bottom: 2px solid #565b65;
+  border-bottom: 2px solid #39434c;
 }
 
 /* toolbar */
 .x-panel .x-panel-tbar .channel-manager-toolbar.x-toolbar {
-  background: #e0e0e0 none;
+  background: #e1e3e5 none;
   padding: 0 8px;
   border-bottom: none;
 }
@@ -55,11 +55,11 @@
 
 /* highlight the breadcrumb when it becomes active */
 #hippo-channelmanager-breadcrumb.x-toolbar.hippo-breadcrumb-active {
-  background: #f3f3f3;
+  background: #f7f7f7;
 }
 
 #pageEditorIFrame .x-panel-tbar .channel-manager-toolbar.x-toolbar {
-  border-bottom: 2px solid #565b65;
+  border-bottom: 2px solid #39434c;
 }
 
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-text {
@@ -146,7 +146,7 @@
 .channel-manager .x-toolbar .breadcrumb-item .x-btn-text {
   font-weight: bold;
   padding-left: 8px;
-  color: #666666;
+  color: #39434c;
 }
 
 .channel-manager .x-toolbar .breadcrumb-item.x-btn-over td {
@@ -154,7 +154,7 @@
 }
 
 .channel-manager .x-toolbar .breadcrumb-item.x-btn-over button {
-  color: #666666;
+  color: #39434c;
   text-decoration: underline;
 }
 
@@ -457,7 +457,7 @@
 }
 
 .channel-manager .icon-toolbar-window .x-panel {
-  background: #f6f6f6;
+  background: #f7f7f7;
 }
 
 .channel-manager .x-window .x-window-ml,
@@ -466,7 +466,7 @@
 }
 
 .channel-manager .icon-toolbar-window .x-window-body {
-  border-bottom: 1px solid #565b65;
+  border-bottom: 1px solid #39434c;
 }
 
 /* template composer icon toolbar-grid */
@@ -476,7 +476,7 @@
   padding: 0;
   margin: 0;
   position: relative;
-  background: #f6f6f6;
+  background: #f7f7f7;
 }
 
 .channel-manager .toolbar-window li {
@@ -488,7 +488,7 @@
   padding: 0;
   margin: 0;
   white-space: nowrap;
-  background: #f6f6f6;
+  background: #f7f7f7;
 }
 
 .channel-manager .toolbar .toolbar-item {
@@ -545,7 +545,7 @@
 }
 
 .channel-manager .x-grid3-cell-inner a {
-  color: #3764a0;
+  color: #0086f8;
 }
 
 .channel-manager .x-grid3-cell-inner a:hover {
@@ -588,7 +588,7 @@
 
 #componentPropertiesWindow .x-panel-body,
 #componentPropertiesWindow .x-panel-footer {
-  background-color: #f2f2f2;
+  background-color: #f7f7f7;
 }
 
 #componentPropertiesWindow .x-panel-footer {
@@ -695,7 +695,6 @@
 }
 
 .channel-manager .channel .lockedBy {
-  display: inline-block;
   font-size: 10px;
   color: #9ba0a5;
 }
@@ -885,7 +884,7 @@
   width: 23px;
   border: none;
   border-radius: 0 3px 3px 0;
-  background: url('templatecomposer/trigger.svg') no-repeat center center #bbbec0;
+  background: url('templatecomposer/trigger.svg') no-repeat center center #b8bcbf;
 }
 
 .x-combo-list {
@@ -906,7 +905,7 @@
 .x-combo-list .x-combo-list-item.x-combo-selected {
   color: #ffffff;
   border: none !important;
-  background-color: #444954;
+  background-color: #39434c;
 }
 
 .x-shadow,
