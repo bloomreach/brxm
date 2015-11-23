@@ -37,7 +37,8 @@ public class JcrUtilsTest extends RepositoryTestCase {
         super.setUp();
         final String[] content = new String[]{
                 "/test", "nt:unstructured",
-                "/test/node", "nt:unstructured"
+                "/test/node", "nt:unstructured",
+                "/test/doc", "hippo:document"
         };
         build(content, session);
         node = session.getNode("/test/node");
@@ -142,6 +143,30 @@ public class JcrUtilsTest extends RepositoryTestCase {
             fail("Should not be able to copy node when destinationName is a path");
         } catch (IllegalArgumentException expected) {
             assertTrue(expected.getMessage().contains("path"));
+        }
+    }
+
+    @Test
+    public void testCopyNodeWithNoMatchingChildNodeDef() throws Exception {
+        try {
+            JcrUtils.copy(session, "/test/node", "/test/doc/node");
+            fail("Should not be able to copy node to node with no-matching child node definition");
+        } catch (IllegalArgumentException expected) {
+            assertTrue(expected.getMessage().equals("No applicable child node definition"));
+        }
+    }
+
+    @Test
+    public void testCopyNodeToProtectedDestination() throws Exception {
+        try {
+            Node doc = session.getNode("/test/doc");
+            node.addMixin("mix:versionable");
+            doc.addMixin("mix:versionable");
+            session.save();
+            JcrUtils.copy(doc.getBaseVersion(), "foo", node.getVersionHistory());
+            fail("Should not be able to copy node to node with no-matching child node definition");
+        } catch (IllegalArgumentException expected) {
+            assertTrue(expected.getMessage().equals("No applicable child node definition"));
         }
     }
 }
