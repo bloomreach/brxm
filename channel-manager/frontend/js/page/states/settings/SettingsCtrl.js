@@ -38,7 +38,8 @@
           lastPathInfoElement: '',
           prototype: {
             id: null
-          }
+          },
+          parentLocationId: ''
         };
 
         $scope.copy = {
@@ -227,6 +228,12 @@
           return ChannelService.getPageLocations(mountId)
             .then(function (data) {
               $scope.locations = data || [];
+              $scope.copy.target = '';
+              for(var i = 0; i < $scope.locations.length; i++) {
+                if ($scope.locations[i].id === $scope.page.parentLocationId) {
+                  $scope.copy.target = $scope.locations[i];
+                }
+              }
             }, setErrorFeedback);
         }
 
@@ -271,10 +278,12 @@
               }
 
               $scope.page.lastPathInfoElement = currentPage.name;
-              $scope.copy.lastPathInfoElement = currentPage.name;
+              $scope.page.parentLocationId = currentPage.parentLocation.id;
 
+              console.log("$scope.page.parentLocationId", $scope.page.parentLocationId);
+              $scope.copy.lastPathInfoElement = currentPage.name;
               for(var i = 0; i < $scope.locations.length; i++) {
-                if (currentPage.parentLocation && $scope.locations[i].id === currentPage.parentLocation.id) {
+                if (currentPage.parentLocation && $scope.locations[i].id === $scope.page.parentLocationId) {
                   $scope.copy.target = $scope.locations[i];
                 }
               }
