@@ -293,7 +293,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
             if (baseNodeModel != null && baseNodeModel.getNode() != null) {
                 IFieldDescriptor field = helper.getField();
                 JcrMultiPropertyValueModel<String> baseModel = new JcrMultiPropertyValueModel<>(new JcrItemModel(
-                        baseNodeModel.getItemModel().getPath() + "/" + field.getPath()));
+                        baseNodeModel.getItemModel().getPath() + "/" + field.getPath(), true));
 
                 List<String> baseOptions = baseModel.getObject();
                 List<String> currentOptions = model.getObject();
