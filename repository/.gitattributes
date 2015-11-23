@@ -539,6 +539,7 @@ workflow/src/main/resources/versioning-workflows.xml -text
 workflow/src/test/java/org/hippoecm/faceteddate/DerivedDateTest.java -text
 workflow/src/test/java/org/hippoecm/repository/gallery/GalleryWorkflowTest.java -text
 workflow/src/test/java/org/onehippo/repository/documentworkflow/integration/AbstractDocumentWorkflowIntegrationTest.java -text
+workflow/src/test/java/org/onehippo/repository/documentworkflow/integration/DocumentWorkflowConcurrencyTest.java -text
 workflow/src/test/java/org/onehippo/repository/documentworkflow/integration/DocumentWorkflowEditTest.java -text
 workflow/src/test/java/org/onehippo/repository/documentworkflow/integration/DocumentWorkflowPublicationTest.java -text
 workflow/src/test/java/org/onehippo/repository/documentworkflow/integration/DocumentWorkflowRenameTest.java -text

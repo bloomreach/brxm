@@ -34,11 +34,12 @@ import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
-
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
-import org.apache.jackrabbit.core.query.QueryImpl;
 
+import org.apache.jackrabbit.core.query.QueryImpl;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.decorating.DecoratorFactory;
@@ -84,10 +85,23 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
      * @inheritDoc
      */
     public QueryResult execute() throws RepositoryException {
-        if (arguments != null) {
-            return execute((Map<String, String>)null);
-        } else {
-            return factory.getQueryResultDecorator(session, execute(query));
+        Task queryTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                queryTask = HDC.getCurrentTask().startSubtask("query");
+                queryTask.setAttribute("statement", getStatement());
+            }
+
+            if (arguments != null) {
+                return execute((Map<String, String>)null);
+            } else {
+                return factory.getQueryResultDecorator(session, execute(query));
+            }
+        } finally {
+            if (queryTask != null) {
+                queryTask.stop();
+            }
         }
     }
 

@@ -206,6 +206,7 @@ public class LockManagerDecorator extends org.hippoecm.repository.decorating.Loc
                         boolean success = false;
                         try {
                             refresh();
+                            log.debug("Refreshed lock {}", lock.getNode().getPath());
                             success = true;
                         } catch(LockException e) {
                             if (log.isDebugEnabled()) {

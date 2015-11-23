@@ -121,7 +121,7 @@ public class AbstractDocumentWorkflowIntegrationTest extends RepositoryTestCase 
         }
     }
 
-    protected static interface Executable {
+    protected interface Executable {
         void execute() throws Exception;
     }
 

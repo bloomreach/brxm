@@ -20,7 +20,6 @@ import java.util.Stack;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
@@ -84,9 +83,7 @@ public class DefaultCopyHandler implements CopyHandler {
     public void startNode(final NodeInfo nodeInfo) throws RepositoryException {
         if (getCurrent() != null) {
             final NodeDefinition definition = nodeInfo.getApplicableChildNodeDef(getCurrentNodeTypes());
-            if (definition == null) {
-                log.error("Unable to create node from NodeInfo " + nodeInfo + ": No applicable child node definition");
-            } else if (!definition.isProtected()) {
+            if (definition != null && !definition.isProtected()) {
                 final Node childDest;
                 if (definition.isAutoCreated() && nodeInfo.getIndex() == 1 && getCurrent().hasNode(nodeInfo.getName())) {
                     childDest = getCurrent().getNode(nodeInfo.getName());
@@ -99,8 +96,9 @@ public class DefaultCopyHandler implements CopyHandler {
                 setCurrent(childDest);
                 return;
             }
+            throw new IllegalArgumentException("No applicable child node definition");
         }
-        setCurrent(null);
+        throw new IllegalStateException("No current copy target node");
     }
 
     @Override

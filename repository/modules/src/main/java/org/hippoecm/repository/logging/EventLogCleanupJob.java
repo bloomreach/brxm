@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
  */
 package org.hippoecm.repository.logging;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -22,6 +25,7 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.onehippo.repository.scheduling.RepositoryJob;
 import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
@@ -32,32 +36,48 @@ public class EventLogCleanupJob implements RepositoryJob {
 
     private static final Logger log = LoggerFactory.getLogger(EventLogCleanupJob.class);
 
-    private static final String ITEMS_QUERY_MAX_ITEMS = "SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC";
-    private static final String ITEMS_QUERY_ITEM_TIMEOUT = "SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC";
+    private static final String ITEMS_QUERY = "SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC";
 
     private static final String CONFIG_MINUTESTOLIVE = "minutestolive";
     private static final String CONFIG_MAXITEMS = "maxitems";
+
+    private static final long DEFAULT_MAXITEMS = -1;
+    private static final long DEFAULT_MINUTESTOLIVE = -1;
 
     @Override
     public void execute(final RepositoryJobExecutionContext context) throws RepositoryException {
         final Session session = context.createSystemSession();
         try {
             log.info("Running event log cleanup job");
-
-            long maxitems = Long.valueOf(context.getAttribute(CONFIG_MAXITEMS));
-            long minutestolive = Long.valueOf(context.getAttribute(CONFIG_MINUTESTOLIVE));
-
-            removeTooManyItems(maxitems, session);
-            removeTimedOutItems(minutestolive, session);
+            final long maxItems = parseLongAttribute(CONFIG_MAXITEMS, DEFAULT_MAXITEMS, context);
+            removeTooManyItems(maxItems, session);
+            final long minutesToLive = parseLongAttribute(CONFIG_MINUTESTOLIVE, DEFAULT_MINUTESTOLIVE, context);
+            removeTimedOutItems(minutesToLive, session);
         } finally {
             session.logout();
         }
     }
 
+    private long parseLongAttribute(final String attrName, final long defaultValue, final RepositoryJobExecutionContext context) {
+        final String attrValue = context.getAttribute(attrName);
+        long value = defaultValue;
+        if (!StringUtils.isBlank(attrValue)) {
+            try {
+                value = Long.valueOf(attrValue);
+            } catch (NumberFormatException e) {
+                log.warn("'{}' configuration attribute cannot be parsed. Expected a long but was '{}'", attrName, attrValue);
+            }
+        }
+        return value;
+    }
+
     private void removeTooManyItems(long maxitems, Session session) throws RepositoryException {
-        if (maxitems != -1) {
+        if (maxitems == -1) {
+            log.info("No maxitems configured");
+        } else {
+            log.info("Truncating event log to {} most recent items", maxitems);
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
-            final Query query = queryManager.createQuery(ITEMS_QUERY_MAX_ITEMS, Query.SQL);
+            final Query query = queryManager.createQuery(ITEMS_QUERY, Query.SQL);
             final NodeIterator nodes = query.execute().getNodes();
             final long totalSize = ((HippoNodeIterator) nodes).getTotalSize();
             final long cleanupSize = totalSize - maxitems;
@@ -86,11 +106,14 @@ public class EventLogCleanupJob implements RepositoryJob {
     }
 
     private void removeTimedOutItems(long minutestolive, Session session) throws RepositoryException {
-        if (minutestolive != -1) {
-            final QueryManager queryManager = session.getWorkspace().getQueryManager();
-            final Query query = queryManager.createQuery(ITEMS_QUERY_ITEM_TIMEOUT, Query.SQL);
-            final NodeIterator nodes = query.execute().getNodes();
+        if (minutestolive == -1) {
+            log.info("No minutestolive configured");
+        } else {
             final long timeoutTimestamp = System.currentTimeMillis() - minutestolive*1000*60;
+            log.info("Removing items from event log from before {}", SimpleDateFormat.getDateTimeInstance().format(new Date(timeoutTimestamp)));
+            final QueryManager queryManager = session.getWorkspace().getQueryManager();
+            final Query query = queryManager.createQuery(ITEMS_QUERY, Query.SQL);
+            final NodeIterator nodes = query.execute().getNodes();
             int count = 0;
             while (nodes.hasNext()) {
                 try {
