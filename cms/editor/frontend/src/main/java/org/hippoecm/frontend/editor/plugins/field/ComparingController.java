@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -46,8 +46,6 @@ import org.slf4j.LoggerFactory;
 
 public class ComparingController<P extends Item, C extends IModel> implements IDetachable {
 
-    private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(TemplateController.class);
 
     public enum Orientation {
@@ -63,9 +61,8 @@ public class ComparingController<P extends Item, C extends IModel> implements ID
     }
 
     class ItemEntry extends RenderService {
-        private static final long serialVersionUID = 1L;
 
-        C oldModel;
+        final C oldModel;
         FieldItem<C> oldFir;
 
         C newModel;
@@ -205,9 +202,9 @@ public class ComparingController<P extends Item, C extends IModel> implements ID
 
     static class ItemValue<T extends IModel> {
 
-        private IComparer comparer;
-        private T value;
-        private int hash;
+        private final IComparer comparer;
+        private final T value;
+        private final int hash;
 
         ItemValue(IComparer comparer, T value) {
             this.value = value;
@@ -236,13 +233,13 @@ public class ComparingController<P extends Item, C extends IModel> implements ID
 
     }
 
-    private IPluginContext context;
+    private final IPluginContext context;
     @SuppressWarnings("unused")
-    private IPluginConfig config;
-    private ITemplateFactory<C> factory;
-    private Set<ItemEntry> childTemplates;
-    private JavaPluginConfig itemConfig;
-    private IComparer comparer;
+    private final IPluginConfig config;
+    private final ITemplateFactory<C> factory;
+    private final Set<ItemEntry> childTemplates;
+    private final JavaPluginConfig itemConfig;
+    private final IComparer comparer;
     private Orientation orientation = Orientation.VERTICAL;
 
     public ComparingController(IPluginContext context, IPluginConfig config, ITemplateFactory<C> factory,
@@ -270,37 +267,45 @@ public class ComparingController<P extends Item, C extends IModel> implements ID
     }
 
     public void start(AbstractProvider<P,C> oldProvider, AbstractProvider<P,C> newProvider) {
-        List<ItemValue<C>> oldItems = new LinkedList<ItemValue<C>>();
+        final int oldSize = oldProvider.size();
+        final int newSize = newProvider.size();
+
+        // fast path
+        if (oldSize == 0 && newSize == 0) {
+            return;
+        }
+
+        final List<ItemValue<C>> oldItems = new ArrayList<ItemValue<C>>(oldSize);
         if (oldProvider != null) {
-            Iterator<C> oldIter = oldProvider.iterator(0, oldProvider.size());
+            Iterator<C> oldIter = oldProvider.iterator(0, oldSize);
             while (oldIter.hasNext()) {
                 oldItems.add(new ItemValue<C>(comparer, oldIter.next()));
             }
         }
 
-        List<ItemValue<C>> newItems = new LinkedList<ItemValue<C>>();
+        final List<ItemValue<C>> newItems = new ArrayList<ItemValue<C>>(newSize);
         if (newProvider != null) {
-            Iterator<C> newIter = newProvider.iterator(0, newProvider.size());
+            Iterator<C> newIter = newProvider.iterator(0, newSize);
             while (newIter.hasNext()) {
                 newItems.add(new ItemValue<C>(comparer, newIter.next()));
             }
         }
 
-        List<ItemValue> common = LCS.getLongestCommonSubsequence(oldItems.toArray(new ItemValue[oldItems.size()]),
+        final List<ItemValue> common = LCS.getLongestCommonSubsequence(oldItems.toArray(new ItemValue[oldItems.size()]),
                 newItems.toArray(new ItemValue[newItems.size()]));
 
-        Iterator<ItemValue> commonIter = common.iterator();
-        Iterator<ItemValue<C>> oldValueIter = oldItems.iterator();
-        Iterator<ItemValue<C>> newValueIter = newItems.iterator();
+        final Iterator<ItemValue> commonIter = common.iterator();
+        final Iterator<ItemValue<C>> oldValueIter = oldItems.iterator();
+        final Iterator<ItemValue<C>> newValueIter = newItems.iterator();
         ItemValue<C> nextNewValue = null;
         if (newValueIter.hasNext()) {
             nextNewValue = newValueIter.next();
         }
         int cnt = 0;
         while (commonIter.hasNext()) {
-            ItemValue nextValue = commonIter.next();
+            final ItemValue nextValue = commonIter.next();
             while (oldValueIter.hasNext()) {
-                ItemValue<C> oldValue = oldValueIter.next();
+                final ItemValue<C> oldValue = oldValueIter.next();
                 if (oldValue.equals(nextValue)) {
                     break;
                 } else {
@@ -331,7 +336,7 @@ public class ComparingController<P extends Item, C extends IModel> implements ID
             }
         }
         while (oldValueIter.hasNext()) {
-            ItemValue<C> oldValue = oldValueIter.next();
+            final ItemValue<C> oldValue = oldValueIter.next();
             if (nextNewValue != null) {
                 addModelComparison(oldValue.value, nextNewValue.value, cnt++);
                 if (newValueIter.hasNext()) {

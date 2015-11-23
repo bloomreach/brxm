@@ -81,6 +81,8 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     abstract static class ValidationFilter extends Model<String> {
         private static final long serialVersionUID = 1L;
 
+        private static final String INVALID = "invalid";
+
         private boolean valid = true;
 
         public boolean isValid() {
@@ -95,7 +97,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
         @Override
         public String getObject() {
-            return valid ? "" : "invalid";
+            return valid ? "" : INVALID;
         }
     }
 
@@ -212,10 +214,14 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             if (IEditor.Mode.EDIT == mode && filter != null) {
                 IModel<IValidationResult> validationModel = helper.getValidationModel();
                 if (validationModel != null && validationModel.getObject() != null) {
-                    boolean valid = isFieldValid(validationModel.getObject());
-                    if (valid != filter.isValid()) {
-                        filter.setValid(valid);
-                        target.appendJavaScript("Wicket.$('" + getMarkupId() + "').setAttribute('class', '" + filter.getObject() + "');");
+                    filter.setValid(isFieldValid(validationModel.getObject()));
+                }
+                if (target != null) {
+                    final String element = "$('#" + getMarkupId() + "')";
+                    if (filter.isValid()) {
+                        target.appendJavaScript(element + ".removeClass('" + ValidationFilter.INVALID + "');");
+                    } else {
+                        target.appendJavaScript(element + ".addClass('" + ValidationFilter.INVALID + "');");
                     }
                 }
             }
@@ -372,7 +378,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             if (field.isMultiple()) {
                 if (getMaxItems() > 0) {
                     return getNumberOfItems() < getMaxItems();
-                }
+            }
                 return true;
             }
 

@@ -106,6 +106,7 @@
     <commons-beanutils.version>1.7.0</commons-beanutils.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-io.version>1.4</commons-io.version>
+    <commons-proxy.version>1.0</commons-proxy.version>
 
     <org.apache.geronimo.specs.j2ee-connector.version>1.1.1</org.apache.geronimo.specs.j2ee-connector.version>
 
@@ -128,7 +129,7 @@
     <yui.sources.version>1.01.12</yui.sources.version>
     <hippo.htmldiff.version>1.01.03</hippo.htmldiff.version>
     <hippo.jcrdiff.version>1.01.05</hippo.jcrdiff.version>
-    <hippo.ckeditor.version>4.4.6-h2</hippo.ckeditor.version>
+    <hippo.ckeditor.version>4.5.4-h1-SNAPSHOT</hippo.ckeditor.version>
 
     <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
 
@@ -331,6 +332,11 @@
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-core</artifactId>
         <version>${jackson2.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-proxy</artifactId>
+        <version>${commons-proxy.version}</version>
       </dependency>
 
       <dependency>

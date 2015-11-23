@@ -123,10 +123,10 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                             renameDocumentArguments.setNodeType(node.getPrimaryNodeType().getName());
                        } catch (RepositoryException ex) {
                             log.error("Could not retrieve workflow document", ex);
-                            renameDocumentArguments.setUriName("");
-                            renameDocumentArguments.setTargetName("");
+                            renameDocumentArguments.setUriName(StringUtils.EMPTY);
+                            renameDocumentArguments.setTargetName(StringUtils.EMPTY);
                             renameDocumentArguments.setNodeType(null);
-                       }
+                        }
 
                         return newRenameDocumentDialog(renameDocumentArguments, this);
                     }

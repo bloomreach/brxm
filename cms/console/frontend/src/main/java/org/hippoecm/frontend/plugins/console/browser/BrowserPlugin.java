@@ -195,7 +195,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
         }
     }
 
-    private class BrowserTree extends JcrTree {
+    private class BrowserTree extends JcrConsoleTree {
         private static final long serialVersionUID = 1L;
 
         public BrowserTree(final JcrTreeModel treeModel) {
@@ -268,39 +268,6 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 IJcrTreeNode treeNodeModel = (IJcrTreeNode) clickedNode;
                 BrowserPlugin.this.onSelect(treeNodeModel, target);
             }
-        }
-
-        @Override
-        protected Component newNodeIcon(final MarkupContainer parent, final String id, final TreeNode node) {
-            final IModel<Node> nodeModel = ((IJcrTreeNode) node).getNodeModel();
-            if (nodeModel ==  null || nodeModel.getObject() == null) {
-                return getDefaultIcon(id);
-            }
-
-            Node jcrNode = nodeModel.getObject();
-            Label icon = new Label(id, StringUtils.EMPTY);
-            icon.add(CssClass.append(JcrNodeIcon.getIconCssClass(jcrNode)));
-
-            final String tooltip = getTooltip(jcrNode);
-            if (StringUtils.isNotBlank(tooltip)) {
-                icon.add(TitleAttribute.append(tooltip));
-            }
-            return icon;
-        }
-
-        private Component getDefaultIcon(final String id) {
-            return new IconLabel(id, JcrNodeIcon.FA_DEFAULT_NODE_CSS_CLASS);
-        }
-
-        private String getTooltip(final Node jcrNode) {
-            try {
-                if (jcrNode.hasProperty("hippostd:state")) {
-                    return jcrNode.getProperty("hippostd:state").getString();
-                }
-            } catch (RepositoryException e) {
-                // ignore
-            }
-            return null;
         }
 
         private WebMarkupContainer createContextMenu(String contextMenu, final JcrNodeModel model) {

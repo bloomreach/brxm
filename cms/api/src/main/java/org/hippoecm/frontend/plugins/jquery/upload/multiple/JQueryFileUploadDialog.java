@@ -20,13 +20,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.upload.FileUploadException;
 import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -43,9 +45,7 @@ import wicket.contrib.input.events.key.KeyType;
 /**
  * The multi-files upload dialog using jQuery File Upload plugin
  */
-public abstract class JQueryFileUploadDialog extends AbstractDialog {
-    private static final long serialVersionUID = 1L;
-
+public abstract class JQueryFileUploadDialog extends Dialog {
     private static final Logger log = LoggerFactory.getLogger(JQueryFileUploadDialog.class);
 
     public static final String FILEUPLOAD_WIDGET_ID = "uploadPanel";
@@ -56,6 +56,7 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
 
     private final FileUploadValidationService validator;
     private final Button uploadButton;
+    private boolean isUploadButtonEnabled;
 
     protected JQueryFileUploadDialog(final IPluginContext pluginContext, final IPluginConfig pluginConfig){
         setOutputMarkupId(true);
@@ -63,12 +64,23 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
 
         setOkVisible(false);
         setOkEnabled(false);
-        setCancelLabel(new StringResourceModel("button-close-label", this, null));
+        setCancelLabel(new ResourceModel("button-close-label"));
 
-        uploadButton = new AjaxButton(DialogConstants.BUTTON, new StringResourceModel("button-upload-label", this, null)){
+        uploadButton = new AjaxButton(DialogConstants.BUTTON, new ResourceModel("button-upload-label")){
             @Override
             protected String getOnClickScript(){
                 return fileUploadWidget.getUploadScript();
+            }
+
+            @Override
+            protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+                isUploadButtonEnabled = false;
+                target.add(this);
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return isUploadButtonEnabled;
             }
         };
         uploadButton.add(new InputBehavior(new KeyType[]{KeyType.Enter}, EventType.click));
@@ -91,8 +103,21 @@ public abstract class JQueryFileUploadDialog extends AbstractDialog {
             }
 
             @Override
-            protected void onFinished() {
+            protected void onFinished(final AjaxRequestTarget target, final int numberOfFiles, final boolean error) {
                 JQueryFileUploadDialog.this.onFinished();
+
+                if (!error) {
+                    JQueryFileUploadDialog.this.closeDialog();
+                }
+            }
+
+            @Override
+            protected void onSelectionChange(final AjaxRequestTarget target) {
+                final int numberOfValidFiles = this.getNumberOfValidFiles();
+                final int numberOfSelectedFiles = this.getNumberOfSelectedFiles();
+
+                isUploadButtonEnabled = (numberOfValidFiles > 0) && (numberOfSelectedFiles <= settings.getMaxNumberOfFiles());
+                target.add(uploadButton);
             }
         };
         add(fileUploadWidget);

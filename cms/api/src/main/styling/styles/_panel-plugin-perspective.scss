@@ -36,8 +36,8 @@ table.hippo-panel-plugin-body {
   padding-left: 150px;
   padding-top: 10px;
   padding-bottom: 10px;
-  border-top: 1px solid #afafaf;
-  border-bottom: 1px solid #afafaf;
+  border-top: 1px solid $dark-shade;
+  border-bottom: 1px solid $dark-shade;
   min-height: 128px;
 }
 
@@ -60,7 +60,7 @@ table.hippo-panel-plugin-body {
 
 .hippo-panel-plugin-breadcrumbs .wicketExtensionsBreadCrumbBarCrumb a,
 .hippo-panel-plugin-breadcrumbs .wicketExtensionsBreadCrumbBarCrumb em {
-  color: #666666;
+  color: $darkest-shade;
   padding: 0;
 }
 
@@ -77,19 +77,18 @@ table.hippo-panel-plugin-body {
   display: block;
   float: left;
   font-weight: normal;
-  color: #afafaf;
+  color: $dark-shade;
   font-size: 11px
 }
 
 .hippo-panel-plugin-navigation li a {
-  color: #666666;
+  color: $darkest-shade;
   width: 230px;
-  border: 1px solid #f2f2f2;
+  border: 1px solid $lightest-shade;
   height: 47px;
   padding: 10px;
   float: left;
   margin: 10px;
-  padding-left: 10px;
   font-size: 12px;
   font-weight: bold
 }
@@ -104,7 +103,7 @@ table.hippo-panel-plugin-body {
 }
 
 .hippo-panel-plugin-navigation li a:hover {
-  border: 1px solid #afafaf
+  border: 1px solid $dark-shade
 }
 
 .hippo-panel-plugin-breadcrumbs-backbutton .breadcrumbs-separator {

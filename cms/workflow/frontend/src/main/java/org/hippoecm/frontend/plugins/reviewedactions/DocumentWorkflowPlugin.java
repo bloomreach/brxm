@@ -102,7 +102,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     renameDocumentArguments = new RenameDocumentArguments(
                             node.getDisplayName(),
                             node.getName()
-
                     );
                 } catch (RepositoryException ex) {
                     renameDocumentArguments = new RenameDocumentArguments();

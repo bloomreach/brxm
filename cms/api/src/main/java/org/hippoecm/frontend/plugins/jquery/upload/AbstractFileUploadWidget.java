@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.util.upload.FileItem;
@@ -112,5 +113,20 @@ public abstract class AbstractFileUploadWidget extends Panel {
      */
     protected void onAfterUpload(final FileItem file, final FileUploadInfo fileUploadInfo) {}
 
+    /**
+     * @deprecated This method has been replaced by {@link #onFinished(AjaxRequestTarget, int, boolean)} since version 3.2.0
+     */
+    @Deprecated
     protected void onFinished() {}
+
+    /**
+     * The event is fired after all files has been uploaded.
+     *
+     * @param target
+     * @param numberOfFiles number of uploaded files
+     * @param error <code>true</code> if there is any error in uploading files
+     */
+    protected void onFinished(final AjaxRequestTarget target, final int numberOfFiles, final boolean error) {
+    }
+
 }

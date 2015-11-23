@@ -16,16 +16,21 @@
 
 package org.hippoecm.frontend.plugins.jquery.upload.multiple;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadBehavior;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadWidgetSettings;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 
 public class GalleryFileUploadBehavior extends FileUploadBehavior {
     public static final String CONFIG_JS = "fileupload-gallery-config.js";
@@ -35,6 +40,11 @@ public class GalleryFileUploadBehavior extends FileUploadBehavior {
             "multiple/jquery.fileupload-ui.js",
             "multiple/jquery.fileupload-ui-gallery.js"
     };
+
+    private static final String MAX_FILESIZE_MESSAGE = "max.filesize.message";
+    private static final String INVALID_EXTENSION_MESSAGE = "invalid.extension.message";
+    private static final String MAX_NUMBER_OF_FILES_EXCEEDED = "max.number.of.files.exceeded";
+    private static final String MAX_NUMBER_OF_FILES_EXCEEDED_WIDGET = "max.number.of.files.exceeded.widget";
 
     public GalleryFileUploadBehavior(final FileUploadWidgetSettings settings) {
         super(settings);
@@ -55,7 +65,33 @@ public class GalleryFileUploadBehavior extends FileUploadBehavior {
         final Map<String, Object> variables = super.configureParameters(component);
         //the url to be notified when uploading has done
         variables.put("fileUploadDoneUrl", settings.getUploadDoneNotificationUrl());
+        variables.put("selectionChangeUrl", settings.getSelectionChangeNotificationUrl());
+
+        final List<String> allowedExtensions = Arrays.asList(ArrayUtils.nullToEmpty(settings.getAllowedExtensions()));
+
+        variables.put("acceptFileTypes", getAcceptFileTypesPattern("|"));
+
+        // Localized error messages
+        variables.put(MAX_NUMBER_OF_FILES_EXCEEDED_WIDGET, getMessage(MAX_NUMBER_OF_FILES_EXCEEDED_WIDGET));
+
+        final String maxFileSizeMB = String.format("%2.1fMB", Bytes.bytes(settings.getMaxFileSize()).megabytes());
+        variables.put(MAX_FILESIZE_MESSAGE, getMessage(MAX_FILESIZE_MESSAGE, maxFileSizeMB));
+
+        variables.put(INVALID_EXTENSION_MESSAGE, getMessage(INVALID_EXTENSION_MESSAGE, getAcceptFileTypesPattern(", ")));
         return variables;
+    }
+
+    private String getAcceptFileTypesPattern(String delimiter) {
+        final String[] allowedExtensions = settings.getAllowedExtensions();
+        if (allowedExtensions == null || allowedExtensions.length == 0) {
+            return "*";
+        }
+
+        return "(" + String.join(delimiter, allowedExtensions) + ")";
+    }
+
+    private String getMessage(final String key, Object... parameters) {
+        return new ClassResourceModel(key, GalleryFileUploadBehavior.class, parameters).getObject();
     }
 
     @Override

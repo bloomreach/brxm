@@ -447,7 +447,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
     private IModel<StringCodec> getStringCodecModel() {
         String locale = null;
         try {
-            locale = CodecUtils.getLocaleFromNodeAndAncestors(DefaultWorkflowPlugin.this.getModel().getNode());
+            locale = CodecUtils.getLocaleFromNodeAndAncestors(getModel().getNode());
         } catch (RepositoryException e) {
             //ignore
         }
@@ -542,8 +542,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
 
     /**
-     * @deprecated was replaced by {@link org.hippoecm.frontend.plugins.standardworkflow.RenameDocumentDialog} since version 3.2.0.
-     * This class will be removed in version 4.0.
+     * @deprecated replaced by {@link org.hippoecm.frontend.plugins.standardworkflow.RenameDocumentDialog} since version 3.2.0.
      */
     public class RenameDocumentDialog extends WorkflowDialog<Void> {
 

@@ -307,10 +307,12 @@ public class FolderShortcutPlugin extends RenderPlugin {
 
             add(nameUriContainer = new NameUriField("name-url", codecModel));
 
-            // use a dedicated channel for ajax calls in this dialog
-            final AjaxChannel ajaxChannel = new AjaxChannel(getMarkupId(), AjaxChannel.Type.ACTIVE);
-            setAjaxChannel(ajaxChannel);
-            nameUriContainer.setAjaxChannel(ajaxChannel);
+            // The dialog produces ajax requests in NameUriField and OK/Cancel dialog buttons, which may cause Wicket
+            // exceptions when typing very fast. Thus it needs to use a dedicated ajax channel with ACTIVE behavior when
+            // some AJAX requests may be sent after dialog is closed.
+            final AjaxChannel activeAjaxChannel = new AjaxChannel(getMarkupId(), AjaxChannel.Type.ACTIVE);
+            setAjaxChannel(activeAjaxChannel);
+            nameUriContainer.setAjaxChannel(activeAjaxChannel);
 
             List<String> emptyList = new LinkedList<>();
             emptyList.add("");

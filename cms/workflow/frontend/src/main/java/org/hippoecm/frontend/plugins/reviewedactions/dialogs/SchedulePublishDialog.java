@@ -21,8 +21,8 @@ import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.plugins.reviewedactions.UnpublishedReferenceNodeProvider;
 import org.hippoecm.frontend.plugins.reviewedactions.model.ReferenceProvider;
@@ -32,10 +32,10 @@ import org.hippoecm.frontend.service.IEditorManager;
 public class SchedulePublishDialog extends WorkflowDialog<Node> {
 
     public SchedulePublishDialog(final IWorkflowInvoker invoker, final IModel<Node> nodeModel,
-                                 final IModel<Date> dateModel, final IEditorManager editorMgr) {
-        super(invoker, nodeModel);
+                                 final IModel<Date> dateModel, final IModel<String> titleModel,
+                                 final IEditorManager editorMgr) {
+        super(invoker, nodeModel, titleModel);
 
-        setTitleKey("schedule-publish-title");
         setCssClass("hippo-workflow-dialog");
         setFocusOnCancel();
 

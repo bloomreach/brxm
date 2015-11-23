@@ -87,6 +87,7 @@ import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.StringValueConversionException;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
+import org.hippoecm.frontend.diagnosis.DiagnosticsRequestCycleListener;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.UserCredentials;
@@ -605,7 +606,7 @@ public class Main extends PluginApplication {
      * Adds the default built-in {@link IRequestCycleListener} or configured custom {@link IRequestCycleListener}s.
      * <P>
      * If no custom {@link IRequestCycleListener}s are configured, then this simply registers the default built-in
-     * {@link RepositoryRuntimeExceptionHandlingRequestCycleListener}.
+     * listeners such as {@link org.hippoecm.frontend.diagnosis.DiagnosticsRequestCycleListener} and {@link RepositoryRuntimeExceptionHandlingRequestCycleListener}.
      * Otherwise, this registers only the custom configured {@link IRequestCycleListener}s.
      * </P>
      */
@@ -614,6 +615,7 @@ public class Main extends PluginApplication {
         RequestCycleListenerCollection requestCycleListenerCollection = getRequestCycleListeners();
 
         if (listenerClassNames == null || listenerClassNames.length == 0) {
+            requestCycleListenerCollection.add(new DiagnosticsRequestCycleListener());
             requestCycleListenerCollection.add(new RepositoryRuntimeExceptionHandlingRequestCycleListener());
         } else {
             for (String listenerClassName : listenerClassNames) {

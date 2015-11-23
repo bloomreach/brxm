@@ -19,13 +19,39 @@
 (function () {
   'use strict';
 
+  /**
+   * Notifies Wicket that the selection changed
+   */
+  function notifySelectionChange(numberOfValidFiles, numberOfSelectedFiles) {
+    var url = '${selectionChangeUrl}';
+    Wicket.Ajax.get( {
+      u: url + "&numberOfValidFiles=" + numberOfValidFiles + "&numberOfSelectedFiles=" + numberOfSelectedFiles
+    });
+  }
+
+  /**
+   * Notifies Wicket that all files have been uploaded
+   */
+  function notifyUploadDone(numberOfFiles, error) {
+    var url = '${fileUploadDoneUrl}';
+    Wicket.Ajax.get( {
+      u: url + "&numberOfFiles=" + numberOfFiles + "&error=" + error
+    });
+  }
+
   $('#${componentMarkupId}').fileupload({
+    messages: {
+      maxNumberOfFilesWidget: '${max.number.of.files.exceeded.widget}',
+      maxFileSize: "${max.filesize.message}",
+      acceptFileTypes: "${invalid.extension.message}"
+    },
     autoUpload: false,
     url: '${url}',
-    uploadDoneUrl: '${fileUploadDoneUrl}',
-    maxNumberOfFiles: ${maxNumberOfFiles},
+    onUploadDone: notifyUploadDone,
+    onSelectionChange: notifySelectionChange,
+    maxTotalFiles: ${maxTotalFiles},
     maxFileSize: ${max.file.size},
-    acceptFileTypes: /(\.)(${acceptFileTypes})$/i,
+    acceptFileTypes: /(\.)${acceptFileTypes}$/i,
     dataType: 'json',
     previewMaxWidth: 32,
     previewMaxHeight: 32

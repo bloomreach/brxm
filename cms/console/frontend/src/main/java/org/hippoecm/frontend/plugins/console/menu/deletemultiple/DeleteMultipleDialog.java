@@ -37,6 +37,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNodeComparator;
 import org.hippoecm.frontend.plugins.console.NodeModelReference;
+import org.hippoecm.frontend.plugins.console.browser.ConsoleTreeTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +70,7 @@ public class DeleteMultipleDialog extends AbstractDialog<Node> {
                 Unit.PROPORTIONAL), "Name", "nodeModel.node.name")
 
         };
-        tree = new TreeTable("multitree", model, columns);
+        tree = new ConsoleTreeTable("multitree", model, columns);
         tree.getTreeState().setAllowSelectMultiple(true);
         add(tree);
         if (model != null) {

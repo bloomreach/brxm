@@ -1,0 +1,68 @@
+{
+  "hippo:types" : {
+    "hippogallery:exampleAssetSet" : {
+      "en" : {
+        "jcr:name" : "File"
+      },
+      "nl" : {
+        "jcr:name" : "Bestand"
+      },
+      "de" : {
+        "jcr:name" : "Datei"
+      },
+      "fr" : {
+        "jcr:name" : "Fichier"
+      }
+    },
+    "hippogallery:exampleImageSet" : {
+      "en" : {
+        "jcr:name" : "Image"
+      },
+      "nl" : {
+        "jcr:name" : "Afbeelding"
+      },
+      "de" : {
+        "jcr:name" : "Bild"
+      },
+      "fr" : {
+        "jcr:name" : "Image"
+      }
+    },
+    "hippogallery:image" : {
+      "en" : {
+        "jcr:name" : "Image"
+      },
+      "nl" : {
+        "jcr:name" : "Afbeelding"
+      },
+      "de" : {
+        "jcr:name" : "Bild"
+      },
+      "fr" : {
+        "jcr:name" : "Image"
+      }
+    },
+    "hippogallery:imageSet" : {
+      "en" : {
+        "jcr:name" : "Image",
+        "hippogallery:thumbnail" : "Thumbnail",
+        "hippogallery:original" : "Original"
+      },
+      "nl" : {
+        "jcr:name" : "Afbeelding",
+        "hippogallery:thumbnail" : "Thumbnail",
+        "hippogallery:original" : "Originele"
+      },
+      "de" : {
+        "jcr:name" : "Bild",
+        "hippogallery:thumbnail" : "Thumbnail",
+        "hippogallery:original" : "Original"
+      },
+      "fr" : {
+        "jcr:name" : "Image",
+        "hippogallery:thumbnail" : "Miniature",
+        "hippogallery:original" : "Originale"
+      }
+    }
+  }
+}

@@ -16,8 +16,6 @@
 package org.hippoecm.frontend.editor;
 
 import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.markup.head.HeaderItem;
@@ -296,17 +294,7 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
     }
 
     protected Map<IEditorFilter, Object> preClose() throws EditorException {
-        List<IEditorFilter> filters = context.getServices(context.getReference(this).getServiceId(),
-                IEditorFilter.class);
-        IdentityHashMap<IEditorFilter, Object> filterContexts = new IdentityHashMap<>();
-        //        for (IEditorFilter filter : filters) {
-        //            Object filterContext = filter.preClose();
-        //            if (filterContext == null) {
-        //                throw new EditorException("Close operation cancelled by filter");
-        //            }
-        //            filterContexts.put(filter, filterContext);
-        //        }
-        return filterContexts;
+        return Collections.emptyMap();
     }
 
     protected void postClose(Map<IEditorFilter, Object> contexts) {

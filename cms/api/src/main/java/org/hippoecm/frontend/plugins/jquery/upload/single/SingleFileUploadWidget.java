@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.IBehaviorListener;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -29,10 +28,8 @@ import org.apache.wicket.util.upload.FileItem;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.jquery.upload.AbstractFileUploadWidget;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
-import org.hippoecm.frontend.plugins.jquery.upload.behaviors.AjaxCallbackUploadDoneBehavior;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.AjaxFileUploadBehavior;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
-import org.hippoecm.frontend.plugins.jquery.upload.multiple.FileUploadWidget;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +44,6 @@ public abstract class SingleFileUploadWidget extends AbstractFileUploadWidget {
     private final String UPLOADING_SCRIPT_TEMPLATE = "$('#${componentMarkupId}').data('blueimp-fileupload').uploadFile();";
 
     private SingleFileUploadBar fileUploadBar;
-    private AbstractAjaxBehavior ajaxCallbackDoneBehavior;
     private AjaxFileUploadBehavior ajaxFileUploadBehavior;
 
     public SingleFileUploadWidget(final String uploadPanel, final IPluginConfig pluginConfig, final FileUploadValidationService validator,
@@ -77,8 +73,6 @@ public abstract class SingleFileUploadWidget extends AbstractFileUploadWidget {
         String uploadUrl = urlFor(ajaxFileUploadBehavior, IBehaviorListener.INTERFACE, new PageParameters()).toString();
         settings.setUploadUrl(uploadUrl);
 
-        String uploadDoneNotificationUrl = ajaxCallbackDoneBehavior.getCallbackUrl().toString();
-        settings.setUploadDoneNotificationUrl(uploadDoneNotificationUrl);
         super.onBeforeRender();
     }
 
@@ -103,16 +97,6 @@ public abstract class SingleFileUploadWidget extends AbstractFileUploadWidget {
 
             protected void onUploadError(final FileUploadInfo fileUploadInfo) {
                 SingleFileUploadWidget.this.onUploadError(fileUploadInfo);
-            }
-        });
-
-        add(ajaxCallbackDoneBehavior = new AjaxCallbackUploadDoneBehavior(settings) {
-            @Override
-            protected void onNotify(final int numberOfUploadedFiles) {
-                if (numberOfUploadedFiles != 1) {
-                    log.error("The widget '{}' should be used for uploading only a single file. Please use {} for multiple file uploads",
-                            SingleFileUploadWidget.class.getName(), FileUploadWidget.class.getName());
-                }
             }
         });
 

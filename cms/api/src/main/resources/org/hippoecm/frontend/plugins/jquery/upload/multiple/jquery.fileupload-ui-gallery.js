@@ -39,11 +39,42 @@
   var originalStart = $.blueimp.fileupload.prototype.options.start;
   var originalStop = $.blueimp.fileupload.prototype.options.stop;
   var originalDone = $.blueimp.fileupload.prototype.options.done;
+  var originalAdd = $.blueimp.fileupload.prototype.options.add;
 
   $.widget('blueimp.fileupload', $.blueimp.fileupload, {
     numberOfCompletedFiles: 0,
     hasError: false,
     options: {
+      // disable default max-number-of-files validation in jquery.fileupload-validation
+      maxNumberOfFiles: null,
+
+      failed: function () {
+        // event called when removing a file to the selection list
+        var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload'),
+          numberOfValidFiles = that.options.getNumberOfValidFiles(),
+          numberOfSelectedFiles = that.options.getNumberOfSelectedFiles();
+
+        if (numberOfSelectedFiles <= that.options.maxTotalFiles) {
+          that._clearErrorMessage();
+        }
+        that.options.onSelectionChange(numberOfValidFiles, numberOfSelectedFiles);
+      },
+
+      add: function (e, data) {
+        // event called when adding a file to the selection list
+        originalAdd.call(this, e, data);
+
+        var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload'),
+          numberOfValidFiles = that.options.getNumberOfValidFiles(),
+          numberOfSelectedFiles = that.options.getNumberOfSelectedFiles();
+
+        if (numberOfSelectedFiles > that.options.maxTotalFiles) {
+          that._showErrorMessage(that.options.i18n('maxNumberOfFilesWidget'));
+        }
+
+        that.options.onSelectionChange(numberOfValidFiles, numberOfSelectedFiles);
+      },
+
       start: function (e) {
         var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload');
         that.disable();
@@ -70,22 +101,37 @@
         originalDone.call(this, e, data);
         // this event is fired after each file uploading is sent
         var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload'),
-          filesList = that.options.filesContainer,
-          numberOfFiles = filesList.children().length;
+          numberOfValidFiles = that.options.getNumberOfValidFiles();
 
         if (data.result.files && data.result.files.length) {
           that.numberOfCompletedFiles += data.result.files.length;
-        }
-        for (var index = 0; index < data.result.files.length && !that.hasError; index++) {
-          if (data.result.files[index] && data.result.files[index].error) {
-            that.hasError = true;
+
+          if (!that.hasError) {
+            that.hasError = data.result.files.some(function (file) {
+              return !!file.error;
+            });
           }
         }
 
-        // close active window if uploaded all files and no error
-        if (that.numberOfCompletedFiles === numberOfFiles && !that.hasError) {
-          Wicket.Window.get().close();
+        if (that.numberOfCompletedFiles >= numberOfValidFiles) {
+          that.options.onUploadDone(that.numberOfCompletedFiles, that.hasError);
         }
+      },
+
+      /**
+       * Return number of valid files to upload
+       * @returns {number}
+       */
+      getNumberOfValidFiles: function () {
+        var selectedFiles = this.filesContainer.children();
+        return selectedFiles.length - selectedFiles.find('.error').not(':empty').length;
+      },
+
+      /**
+       * Return all selected files, including processing ones
+       */
+      getNumberOfSelectedFiles: function () {
+        return this.filesContainer.children().length;
       }
     },
 
@@ -97,54 +143,33 @@
       this.element.find('.progress').removeClass('visible');
     },
 
+    _showErrorMessage: function (error) {
+      this.element.find('.fileupload-error').text(error).show();
+    },
+
+    _clearErrorMessage: function () {
+      this.element.find('.fileupload-error').text('').hide();
+    },
+
     /**
      * Invoke this method to upload all selected files
      */
     uploadFiles: function () {
-      var filesList = this.options.filesContainer,
-        numberOfSentFiles = 0;
+      var filesList = this.options.filesContainer;
 
-      if (filesList.children().length > this.options.maxNumberOfFiles) {
-        this.element.find('.fileupload-process').text(this.options.i18n('maxNumberOfFiles')).show();
+      if (filesList.children().length > this.options.maxTotalFiles) {
+        // prevent user from uploading too many files
         return;
       }
-      this.element.find('.fileupload-process').hide();
       this.element.closest('form').find('input[type=submit]').prop('disabled', true);
 
       $.each(filesList.children(), function (idx, template) {
         var data = $.data(template, 'data');
-        if (data && data.submit) {
+        // don't submit invalid files
+        if (data && data.files && !data.files.error && data.submit) {
           data.submit();
-          numberOfSentFiles++;
         }
       });
-
-      this.notifyUpload(numberOfSentFiles);
-    },
-
-    /**
-     * Notify server on number of uploading files. The message format:
-     * { 'total' : numberOfFiles }
-     *
-     * Expected to receive:
-     * { 'status' : "OK" | "FAILED" }
-     *
-     * @param numberOfFiles
-     */
-    notifyUpload: function (numberOfFiles) {
-      var notificationData = {};
-      notificationData.total = numberOfFiles;
-
-      if (this.options.uploadDoneUrl) {
-        $.ajax({
-          url: this.options.uploadDoneUrl,
-          type: 'POST',
-          contentType: 'application/json; charset=utf-8',
-          cache: false,
-          dataType: 'json',
-          data: JSON.stringify(notificationData)
-        });
-      }
     }
   });
 }));

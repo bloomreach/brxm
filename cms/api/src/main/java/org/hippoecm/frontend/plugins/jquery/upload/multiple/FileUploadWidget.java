@@ -19,10 +19,13 @@ package org.hippoecm.frontend.plugins.jquery.upload.multiple;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.wicket.behavior.AbstractAjaxBehavior;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.IBehaviorListener;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
 import org.apache.wicket.util.upload.FileItem;
@@ -46,13 +49,14 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
 
     private static final String UPLOADING_SCRIPT_TEMPLATE = "$('#${componentMarkupId}').data('blueimp-fileupload').uploadFiles()";
 
-    private long fileUploadCounter = 0;
-    private int nNumberOfFiles = 0;
-
     private FileUploadBar fileUploadBar;
 
-    private AbstractAjaxBehavior ajaxCallbackUploadDoneBehavior;
+    private AbstractDefaultAjaxBehavior ajaxCallbackUploadDoneBehavior;
     private AjaxFileUploadBehavior ajaxFileUploadBehavior;
+    private AbstractDefaultAjaxBehavior ajaxCallbackSelectionChangeBehavior;
+
+    private int numberOfValidFiles;
+    private int numberOfSelectedFiles;
 
     protected void onFileUploadResponse(final ServletWebRequest request, final Map<String, FileUploadInfo> uploadedFiles) {
     }
@@ -98,16 +102,22 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
 
         });
 
-        add(ajaxCallbackUploadDoneBehavior = new AjaxCallbackUploadDoneBehavior(settings) {
+        add(ajaxCallbackUploadDoneBehavior = new AjaxCallbackUploadDoneBehavior() {
             @Override
-            protected void onNotify(final int numberOfUploadedFiles) {
-                FileUploadWidget.this.nNumberOfFiles = numberOfUploadedFiles;
-                if (fileUploadCounter >= nNumberOfFiles) {
-                    // Received all files
-                    FileUploadWidget.this.onFinished();
-                } else {
-                    log.debug("Haven't received all files yet: {}/{}", fileUploadCounter, numberOfUploadedFiles);
-                }
+            protected void onNotify(final AjaxRequestTarget target, final int numberOfFiles, final boolean error) {
+                FileUploadWidget.this.onFinished(target, numberOfFiles, error);
+                // backward compatible call
+                FileUploadWidget.this.onFinished();
+            }
+        });
+
+        add(ajaxCallbackSelectionChangeBehavior = new AbstractDefaultAjaxBehavior() {
+            @Override
+            protected void respond(final AjaxRequestTarget target) {
+                final IRequestParameters parameters = RequestCycle.get().getRequest().getRequestParameters();
+                numberOfValidFiles = parameters.getParameterValue("numberOfValidFiles").toInt(0);
+                numberOfSelectedFiles = parameters.getParameterValue("numberOfSelectedFiles").toInt(0);
+                FileUploadWidget.this.onSelectionChange(target);
             }
         });
 
@@ -127,33 +137,36 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
         add(downloadTemplate);
     }
 
-    /**
-     * Call this method every time an uploading file has been processed
-     */
-    private void increaseFileUploadingCounter() {
-        this.fileUploadCounter++;
-        // if nNumberOfFiles <= 0 means that the notification message from client has not been sent yet
-        if (nNumberOfFiles > 0 && fileUploadCounter >= nNumberOfFiles) {
-            log.debug("Received all files");
-            onFinished();
-        }
-    }
     @Override
     protected void onBeforeRender() {
         // Obtain callback urls used for uploading files & notification
-        String uploadUrl = urlFor(ajaxFileUploadBehavior, IBehaviorListener.INTERFACE, new PageParameters()).toString();
+        final String uploadUrl = urlFor(ajaxFileUploadBehavior, IBehaviorListener.INTERFACE, new PageParameters()).toString();
         settings.setUploadUrl(uploadUrl);
 
-        String uploadDoneNotificationUrl = ajaxCallbackUploadDoneBehavior.getCallbackUrl().toString();
+        final String uploadDoneNotificationUrl = ajaxCallbackUploadDoneBehavior.getCallbackUrl().toString();
         settings.setUploadDoneNotificationUrl(uploadDoneNotificationUrl);
+
+        final String selectionChangeNotificationUrl = ajaxCallbackSelectionChangeBehavior.getCallbackUrl().toString();
+        settings.setSelectionChangeNotificationUrl(selectionChangeNotificationUrl);
         super.onBeforeRender();
     }
 
     @Override
     protected void onAfterUpload(final FileItem file, final FileUploadInfo fileUploadInfo) {
-        if (log.isDebugEnabled()) {
-            log.debug("Uploaded file: #{} {}", fileUploadCounter, fileUploadInfo.getFileName());
-        }
-        increaseFileUploadingCounter();
+        log.debug("Uploaded file: {}", fileUploadInfo.getFileName());
+    }
+    /**
+     * The event is fired when the file selection list was changed
+     * @param target
+     */
+    protected void onSelectionChange(final AjaxRequestTarget target) {
+    }
+
+    public int getNumberOfValidFiles() {
+        return numberOfValidFiles;
+    }
+
+    public int getNumberOfSelectedFiles() {
+        return numberOfSelectedFiles;
     }
 }

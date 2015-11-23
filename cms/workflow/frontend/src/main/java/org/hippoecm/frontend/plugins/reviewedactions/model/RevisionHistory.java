@@ -70,7 +70,12 @@ public class RevisionHistory implements IDetachable {
 
     @Override
     public void detach() {
-        list = null;
+        if (list != null) {
+            for (Revision revision : list) {
+                revision.detach();
+            }
+            list = null;
+        }
         wdm.detach();
     }
 

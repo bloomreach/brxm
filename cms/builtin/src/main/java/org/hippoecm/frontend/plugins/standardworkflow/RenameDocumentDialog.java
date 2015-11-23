@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
+import java.util.Locale;
+
+import org.apache.wicket.ajax.AjaxChannel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
@@ -22,6 +25,7 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugins.standardworkflow.validators.RenameDocumentValidator;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.StringCodec;
 
@@ -45,6 +49,13 @@ public class RenameDocumentDialog extends WorkflowDialog<RenameDocumentArguments
         final String originalTargetName = renameDocumentArguments.getTargetName();
 
         add(nameUriContainer = new NameUriField("name-url", nodeNameCodecModel, originalUriName, originalTargetName, true));
+
+        // The dialog produces ajax requests in NameUriField and OK/Cancel dialog buttons, which may cause Wicket
+        // exceptions when typing very fast. Thus it needs to use a dedicated ajax channel with ACTIVE behavior when
+        // some AJAX requests may be sent after dialog is closed.
+        final AjaxChannel activeAjaxChannel = new AjaxChannel(getMarkupId(), AjaxChannel.Type.ACTIVE);
+        setAjaxChannel(activeAjaxChannel);
+        nameUriContainer.setAjaxChannel(activeAjaxChannel);
 
         add(new RenameDocumentValidator(this, nameUriContainer, workflowDescriptorModel));
     }

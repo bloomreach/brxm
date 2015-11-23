@@ -1,0 +1,24 @@
+{
+  "hippo:templates" : {
+    "en" : {
+      "new-file-folder" : "new file folder changed",
+      "new-image" : "New Image",
+      "new-image-folder" : "new folder"
+    },
+    "nl" : {
+      "new-file-folder" : "nieuwe bestands map",
+      "new-image" : "Nieuwe Afbeelding",
+      "new-image-folder" : "nieuwe map"
+    },
+    "fr" : {
+      "new-file-folder" : "un nouveau dossier",
+      "new-image" : "Nouvelle image",
+      "new-image-folder" : "un nouveau dossier"
+    },
+    "de" : {
+      "new-file-folder" : "Neuer Dateiordner",
+      "new-image" : "Neues Bild",
+      "new-image-folder" : "Neuer Ordner"
+    }
+  }
+}
