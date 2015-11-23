@@ -27,14 +27,18 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,15 +70,41 @@ public class RootResource extends AbstractConfigResource {
 
     @GET
     @Path("/channels")
-    public Response getChannels() {
+    public Response getChannels(@QueryParam("preview") final boolean preview, @QueryParam("workspaceRequired") final boolean workspaceRequired) {
         final HstRequestContext requestContext = RequestContextProvider.get();
         final VirtualHost virtualHost = requestContext.getResolvedMount().getMount().getVirtualHost();
-        final List<Channel> channels = virtualHost.getVirtualHosts().getChannels(virtualHost.getHostGroupName())
-                .values()
-                .stream()
-                .filter(channel -> channel.isPreview())
-                .collect(toList());
-        return ok("Fetched channels successful", channels);
+        try {
+            final List<Channel> channels = virtualHost.getVirtualHosts().getChannels(virtualHost.getHostGroupName())
+                    .values()
+                    .stream()
+                    .filter(channel -> channel.isPreview() == preview)
+                    .filter(channel -> workspaceFiltered(channel, workspaceRequired))
+                    .collect(toList());
+            return ok("Fetched channels successful", channels);
+        } catch (RuntimeRepositoryException e) {
+            log.warn("Could not determine authorization", e);
+            return error("Could not determine authorization", e);
+        }
+    }
+
+    private boolean workspaceFiltered(final Channel channel, final boolean workspaceRequired) throws RuntimeRepositoryException {
+        if (!workspaceRequired) {
+            return true;
+        }
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        final Mount mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(channel.getMountId());
+        final String workspacePath = mount.getHstSite().getConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
+        try {
+            final boolean workspaceExists = requestContext.getSession().nodeExists(workspacePath);
+            if (workspaceExists) {
+                log.info("Including channel {} because it has a workspace node at '{}'", workspacePath);
+            } else {
+                log.info("Skipping channel {} because it does not have a workspace node at '{}'", workspacePath);
+            }
+            return workspaceExists;
+        } catch (RepositoryException e) {
+            throw new RuntimeRepositoryException(e);
+        }
     }
 
     @GET
