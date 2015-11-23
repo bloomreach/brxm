@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.jcr.Credentials;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -181,8 +182,11 @@ public abstract class RepositoryTestCase {
 
     protected void removeNode(final String path) throws RepositoryException {
         while (session != null && session.nodeExists(path)) {
-            session.getNode(path).remove();
-            session.save();
+            try {
+                session.getNode(path).remove();
+                session.save();
+            } catch (ItemNotFoundException ignore) {
+            }
         }
     }
 
