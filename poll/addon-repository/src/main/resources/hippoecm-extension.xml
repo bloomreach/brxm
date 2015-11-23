@@ -70,6 +70,48 @@
     </sv:property>
   </sv:node>
 
+  <!-- This contentdelete instruction is already integrated in the poll compound namespace XML
+       and can be deleted in next major version -->
+  <sv:node sv:name="types-compound-poll-delete-field-active">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20412.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentdelete" sv:type="String">
+      <sv:value>/hippo:namespaces/poll/poll/hipposysedit:nodetype/hipposysedit:nodetype/active</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <!-- This contentpropdelete instruction is already integrated in the poll compound namespace XML
+       and can be deleted in next major version -->
+  <sv:node sv:name="types-compound-poll-delete-prototype-property-active">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20412.2</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropdelete" sv:type="String">
+      <sv:value>/hippo:namespaces/poll/poll/hipposysedit:prototypes/hipposysedit:prototype/poll:active</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <!-- This contentdelete instruction is already integrated in the poll compound namespace XML
+       and can be deleted in next major version -->
+  <sv:node sv:name="types-compound-poll-delete-templateplugin-active">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20412.3</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentdelete" sv:type="String">
+      <sv:value>/hippo:namespaces/poll/poll/editor:templates/_default_/active</sv:value>
+    </sv:property>
+  </sv:node>
+
   <sv:node sv:name="types-polldocument">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -88,6 +130,34 @@
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
       <sv:value>1.09.00</sv:value>
+    </sv:property>
+  </sv:node>
+
+ <!-- This contentpropdelete instruction is already integrated in the poll document namespace XML
+       and can be deleted in next major version -->
+  <sv:node sv:name="types-polldocument-delete-prototype-property-active">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20420.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropdelete" sv:type="String">
+      <sv:value>/hippo:namespaces/poll/polldocument/hipposysedit:prototypes/hipposysedit:prototype/poll:poll/poll:active</sv:value>
+    </sv:property>
+  </sv:node>
+
+ <!-- This contentdelete instruction is already integrated in the poll translator service XML
+       and can be deleted in next major version -->
+  <sv:node sv:name="poll-translator-delete-translation-active">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20430.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentdelete" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-services/pollTranslator/hippostd:translations/active</sv:value>
     </sv:property>
   </sv:node>
 
@@ -135,12 +205,6 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>20432</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>1.07.01</sv:value>
-    </sv:property>
   </sv:node>
 
   <!--  Root nodes for the poll data -->
@@ -186,12 +250,6 @@
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>20435</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>1.09.00</sv:value>
     </sv:property>
   </sv:node>
 

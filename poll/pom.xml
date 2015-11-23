@@ -33,19 +33,19 @@
   <inceptionYear>2009</inceptionYear>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/branches/poll-2.1.0-translations-1</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/branches/poll-2.1.0-translations-1</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/branches/poll-2.1.0-translations-1</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/poll/trunk/</url>
   </scm>
 
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugin Poll</notice.project.name>
 
-    <hippo.cms.version>3.0.0</hippo.cms.version>
-    <hippo.repository.version>3.0.0</hippo.repository.version>
-    <hippo.hst.version>3.0.0</hippo.hst.version>
-    <hippo.commons.version>2.0.0</hippo.commons.version>
+    <hippo.cms.version>3.2.0-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>3.2.0-SNAPSHOT</hippo.repository.version>
+    <hippo.hst.version>3.2.0-SNAPSHOT</hippo.hst.version>
+    <hippo.commons.version>2.2.0-SNAPSHOT</hippo.commons.version>
   </properties>
 
   <repositories>

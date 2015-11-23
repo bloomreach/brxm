@@ -91,9 +91,6 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>poll:poll</sv:value>
         </sv:property>
-        <sv:property sv:name="poll:active" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
         <sv:property sv:name="poll:introduction" sv:type="String">
           <sv:value/>
         </sv:property>

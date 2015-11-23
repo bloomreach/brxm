@@ -25,9 +25,6 @@
     <sv:property sv:name="jcr:name" sv:type="String">
       <sv:value>Poll Compound</sv:value>
     </sv:property>
-    <sv:property sv:name="poll:active" sv:type="String">
-      <sv:value>Active</sv:value>
-    </sv:property>
     <sv:property sv:name="poll:text" sv:type="String">
       <sv:value>Text</sv:value>
     </sv:property>
@@ -44,9 +41,6 @@
     </sv:property>
     <sv:property sv:name="jcr:name" sv:type="String">
       <sv:value>Stelling samengesteld veld</sv:value>
-    </sv:property>
-    <sv:property sv:name="poll:active" sv:type="String">
-      <sv:value>Aktief</sv:value>
     </sv:property>
     <sv:property sv:name="poll:text" sv:type="String">
       <sv:value>Tekst</sv:value>
@@ -65,9 +59,6 @@
     <sv:property sv:name="jcr:name" sv:type="String">
       <sv:value>Composé de sondage</sv:value>
     </sv:property>
-    <sv:property sv:name="poll:active" sv:type="String">
-      <sv:value>Activé</sv:value>
-    </sv:property>
     <sv:property sv:name="poll:text" sv:type="String">
       <sv:value>Texte</sv:value>
     </sv:property>
@@ -84,9 +75,6 @@
     </sv:property>
     <sv:property sv:name="jcr:name" sv:type="String">
       <sv:value>Umfrage-Kompositum</sv:value>
-    </sv:property>
-    <sv:property sv:name="poll:active" sv:type="String">
-      <sv:value>Aktiv</sv:value>
     </sv:property>
     <sv:property sv:name="poll:text" sv:type="String">
       <sv:value>Text</sv:value>
