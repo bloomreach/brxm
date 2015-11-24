@@ -130,10 +130,6 @@ public class NodeTranslator extends NodeModelWrapper<NodeTranslator> {
                 String name = "node name";
                 if (node != null) {
                     try {
-                        name = JcrUtils.getStringProperty(node, HIPPO_NAME, null);
-                        if (name != null) {
-                            return name;
-                        }
                         // return the name specified by the hippo:translated mixin,
                         // falling back to the decoded node name itself.
                         name = NodeNameCodec.decode(node.getName());
@@ -161,7 +157,7 @@ public class NodeTranslator extends NodeModelWrapper<NodeTranslator> {
                                 }
                             }
                         }
-
+                        name = JcrUtils.getStringProperty(node, HIPPO_NAME, name);
                         // when the node is not translated, return the decoded name at
                         // the time of version creation.  Fall back to handle name if necessary.
                         if (node.isNodeType("nt:frozenNode") && (node.getParent() instanceof Version)) {
