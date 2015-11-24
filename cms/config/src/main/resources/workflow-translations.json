@@ -1,0 +1,20 @@
+{
+  "hippo:workflows" : {
+    "en" : {
+      "committype" : "Type actions",
+      "admin" : "Administration"
+    },
+    "nl" : {
+      "committype" : "Type acties",
+      "admin" : "Beheer"
+    },
+    "de" : {
+      "committype" : "Typ Aktionen",
+      "admin" : "Administration"
+    },
+    "fr" : {
+      "committype" : "Type d'actions",
+      "admin" : "Administration"
+    }
+  }
+}

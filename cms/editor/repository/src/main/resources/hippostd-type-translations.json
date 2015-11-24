@@ -1,0 +1,114 @@
+{
+  "hippo:types" : {
+    "hippostd:folder" : {
+      "en" : {
+        "jcr:name" : "folder"
+      },
+      "nl" : {
+        "jcr:name" : "map"
+      },
+      "de" : {
+        "jcr:name" : "Ordner"
+      },
+      "fr" : {
+        "jcr:name":  "dossier"
+      }
+    },
+    "hippostd:directory" : {
+      "en" : {
+        "jcr:name" : "unordered folder"
+      },
+      "nl" : {
+        "jcr:name" : "ongeordende map"
+      },
+      "de" : {
+        "jcr:name" : "ungeordneter Ordner"
+      },
+      "fr" : {
+        "jcr:name":  "dossier non ordonné"
+      }
+    },
+    "hippostd:publishable" : {
+      "en" : {
+        "jcr:name" : "Publishable",
+        "hippostd:state=published" : "Live",
+        "hippostd:state=unpublished" : "Offline",
+        "hippostd:state=draft" : "Draft"
+      },
+      "nl" : {
+        "jcr:name" : "Publiceerbaar",
+        "hippostd:state=published" : "Gepubliceerd",
+        "hippostd:state=unpublished" : "Niet gepubliceerd",
+        "hippostd:state=draft" : "Klad"
+      },
+      "de" : {
+        "jcr:name" : "Veröffentlichbar",
+        "hippostd:state=published" : "Veröffentlicht",
+        "hippostd:state=unpublished" : "Nicht veröffentlicht",
+        "hippostd:state=draft" : "Entwurf"
+      },
+      "fr" : {
+        "jcr:name":  "Publiable",
+        "hippostd:state=published" : "Publié",
+        "hippostd:state=unpublished" : "Non publié",
+        "hippostd:state=draft" : "Brouillon"
+      }
+    },
+    "hippostd:taggable" : {
+      "en" : {
+        "jcr:name" : "Taggable"
+      },
+      "nl" : {
+        "jcr:name" : "Tags toestaan"
+      },
+      "de" : {
+        "jcr:name" : "Tags erlaubt"
+      },
+      "fr" : {
+        "jcr:name":  "Tags autorisés"
+      }
+    },
+    "hippostd:date" : {
+      "en" : {
+        "jcr:name" : "Faceted Date",
+        "hippostd:dayofweek=1" : "monday",
+        "hippostd:dayofweek=2" : "tuesday",
+        "hippostd:dayofweek=3" : "wednesday",
+        "hippostd:dayofweek=4" : "thursday",
+        "hippostd:dayofweek=5" : "friday",
+        "hippostd:dayofweek=6" : "saturday",
+        "hippostd:dayofweek=7" : "sunday"
+      },
+      "nl" : {
+        "jcr:name" : "Samengestelde Datum",
+        "hippostd:dayofweek=1" : "maandag",
+        "hippostd:dayofweek=2" : "dinsdag",
+        "hippostd:dayofweek=3" : "woensdag",
+        "hippostd:dayofweek=4" : "donderdag",
+        "hippostd:dayofweek=5" : "vrijdag",
+        "hippostd:dayofweek=6" : "zaterdag",
+        "hippostd:dayofweek=7" : "zondag"
+      },
+      "de" : {
+        "jcr:name" : "Zusammengesetzte Datum",
+        "hippostd:dayofweek=1" : "Montag",
+        "hippostd:dayofweek=2" : "Dienstag",
+        "hippostd:dayofweek=3" : "Mittwoch",
+        "hippostd:dayofweek=4" : "Donnerstag",
+        "hippostd:dayofweek=5" : "Freitag",
+        "hippostd:dayofweek=6" : "Samstag",
+        "hippostd:dayofweek=7" : "Sonntag"
+      },
+      "fr" : {
+        "jcr:name": "Date composée",
+        "hippostd:dayofweek=1" : "lundi",
+        "hippostd:dayofweek=2" : "mardi",
+        "hippostd:dayofweek=3" : "mercredi",
+        "hippostd:dayofweek=4" : "jeudi",
+        "hippostd:dayofweek=5" : "vendredi",
+        "hippostd:dayofweek=6" : "samedi",
+        "hippostd:dayofweek=7" : "dimanche"
+      }
+    }
+  }
+}

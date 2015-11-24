@@ -1,0 +1,20 @@
+{
+  "hippo:templates" : {
+    "en" : {
+      "new-namespace" : "New namespace",
+      "new-type" : "New Type"
+    },
+    "nl" : {
+      "new-namespace" : "Nieuw namespace",
+      "new-type" : "Nieuw Type"
+    },
+    "de" : {
+      "new-namespace" : "Neuer Namensraum",
+      "new-type" : "Neuer Typ"
+    },
+    "fr" : {
+      "new-namespace" : "Espace de noms de l'éditeur de modèle",
+      "new-type" : "Nouveau type"
+    }
+  }
+}

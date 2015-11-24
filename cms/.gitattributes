@@ -1323,7 +1323,6 @@ config/src/main/resources/cms-folder-views.xml -text svneol=unset#text/plain
 config/src/main/resources/cms-login.xml svneol=native#text/plain
 config/src/main/resources/cms-preview.xml -text svneol=unset#text/plain
 config/src/main/resources/cms-reports.xml -text svneol=unset#text/plain
-config/src/main/resources/cms-resource-bundles.xml -text
 config/src/main/resources/cms-search-views.xml svneol=native#text/plain
 config/src/main/resources/cms-services-passwordvalidation.xml -text
 config/src/main/resources/cms-services.xml svneol=native#text/plain
@@ -1336,10 +1335,10 @@ config/src/main/resources/domain-workflow-frontend.xml svneol=native#text/plain
 config/src/main/resources/folder-frontend-workflows-filters.xml svneol=native#text/plain
 config/src/main/resources/hippoecm-extension.xml -text svneol=unset#text/plain
 config/src/main/resources/hippostd-workflows-frontend.xml svneol=native#text/plain
-config/src/main/resources/section-translations.xml -text
+config/src/main/resources/section-translations.json -text
 config/src/main/resources/shortcuts-workflows-frontend.xml svneol=native#text/plain
 config/src/main/resources/threepane-workflows-frontend.xml svneol=native#text/plain
-config/src/main/resources/workflow-translations.xml -text
+config/src/main/resources/workflow-translations.json -text
 console/frontend/.bowerrc -text
 console/frontend/README.md -text
 console/frontend/bower.json -text
@@ -1797,15 +1796,15 @@ editor/repository/src/main/resources/default-editor-factory.xml svneol=native#te
 editor/repository/src/main/resources/default-workflows.xml svneol=native#text/plain
 editor/repository/src/main/resources/domain-templates-templateset.xml svneol=native#text/plain
 editor/repository/src/main/resources/editing-workflows.xml svneol=native#text/plain
-editor/repository/src/main/resources/editor-templates-translations.xml -text
+editor/repository/src/main/resources/editor-templates-translations.json -text
 editor/repository/src/main/resources/editor-workflows.xml -text
 editor/repository/src/main/resources/editor.cnd -text
 editor/repository/src/main/resources/embedded-workflows.xml -text
-editor/repository/src/main/resources/hippo-type-translations.xml -text
+editor/repository/src/main/resources/hippo-type-translations.json -text
 editor/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 editor/repository/src/main/resources/hippostd-editor-factory.xml svneol=native#text/plain
-editor/repository/src/main/resources/hippostd-type-translations.xml -text
-editor/repository/src/main/resources/hipposysedit-type-translations.xml -text
+editor/repository/src/main/resources/hippostd-type-translations.json -text
+editor/repository/src/main/resources/hipposysedit-type-translations.json -text
 editor/repository/src/main/resources/internal-workflows.xml svneol=native#text/plain
 editor/repository/src/main/resources/namespace-frontend.xml svneol=native#text/plain
 editor/repository/src/main/resources/namespace-hippo.xml svneol=native#text/plain
@@ -1813,8 +1812,8 @@ editor/repository/src/main/resources/namespace-system.xml svneol=native#text/pla
 editor/repository/src/main/resources/new-namespace.xml -text
 editor/repository/src/main/resources/new-type.xml -text
 editor/repository/src/main/resources/resource-required.xml -text
-editor/repository/src/main/resources/system-type-translations.xml -text
-editor/repository/src/main/resources/validators-translations.xml -text
+editor/repository/src/main/resources/system-type-translations.json -text
+editor/repository/src/main/resources/validator-translations.json -text
 editor/repository/src/test/java/org/hippoecm/repository/EditmodelWorkflowTest.java svneol=native#text/plain
 editor/repository/src/test/resources/RedefineNodetypeTest-1.cnd -text
 editor/repository/src/test/resources/RedefineNodetypeTest-2.cnd -text
@@ -2078,12 +2077,10 @@ gallery/repository/pom.xml svneol=native#text/plain
 gallery/repository/src/main/resources/asset-processor.xml svneol=native#text/plain
 gallery/repository/src/main/resources/asset-validator.xml -text
 gallery/repository/src/main/resources/gallery-processor.xml svneol=native#text/plain
-gallery/repository/src/main/resources/gallery-templates-translations.xml -text
 gallery/repository/src/main/resources/gallery-workflows-frontend.xml svneol=native#text/plain
 gallery/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 gallery/repository/src/main/resources/hippogallery-template-translations.json -text
 gallery/repository/src/main/resources/hippogallery-type-translations.json -text
-gallery/repository/src/main/resources/hippogallery-type-translations.xml -text
 gallery/repository/src/main/resources/image-validator.xml -text
 google-analytics/frontend/pom.xml -text
 google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/editor/DocumentHitsPlugin.html -text
@@ -2442,8 +2439,8 @@ richtext/frontend/src/test/resources/richtexttest.cnd -text
 richtext/repository/src/main/resources/default-html-cleaner-service.xml -text
 richtext/repository/src/main/resources/filtering-html-cleaner-service.xml -text
 richtext/repository/src/main/resources/hippohtmlcleaner.cnd -text
-richtext/repository/src/main/resources/hippostd-html-type-translations.xml -text
-richtext/repository/src/main/resources/system-html-type-translations.xml -text
+richtext/repository/src/main/resources/hippostd-html-type-translations.json -text
+richtext/repository/src/main/resources/system-html-type-translations.json -text
 scripts/src/main/resources/hippoecm-extension.xml -text
 scripts/src/main/resources/move-doctype-translations.xml -text
 scripts/src/main/resources/move-template-translations.xml -text
@@ -2856,9 +2853,9 @@ workflow/frontend/src/test/resources/log4j-filters.txt -text
 workflow/frontend/src/test/resources/log4j.xml svneol=native#text/plain
 workflow/repository/src/main/resources/editing-reviewedactions-workflows.xml svneol=native#text/plain
 workflow/repository/src/main/resources/hippoecm-extension.xml -text
-workflow/repository/src/main/resources/hippostd-publishablesummary-type-translations.xml -text
-workflow/repository/src/main/resources/hippostd-templates-translations.xml -text
-workflow/repository/src/main/resources/hippostdpubwf-type-translations.xml -text
+workflow/repository/src/main/resources/hippostd-publishablesummary-type-translations.json -text
+workflow/repository/src/main/resources/hippostd-templates-translations.json -text
+workflow/repository/src/main/resources/hippostdpubwf-type-translations.json -text
 workflow/repository/src/main/resources/reviewedactions-workflows.xml svneol=native#text/plain
 workflow/repository/src/main/resources/versioning-workflows.xml svneol=native#text/plain
 workflowmenu/pom.xml svneol=native#text/plain

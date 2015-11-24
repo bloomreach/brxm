@@ -1,0 +1,60 @@
+{
+  "hippo:types" : {
+    "hippo:query" : {
+      "en" : {
+        "jcr:name" : "Query"
+      },
+      "nl" : {
+        "jcr:name" : "Zoekopdracht"
+      },
+      "de" : {
+        "jcr:name" : "Suche"
+      },
+      "fr" : {
+        "jcr:name" : "Recherche"
+      }
+    },
+    "hippo:resource" : {
+      "en" : {
+        "jcr:name" : "Resource"
+      },
+      "nl" : {
+        "jcr:name" : "Bestand"
+      },
+      "de" : {
+        "jcr:name" : "Datei"
+      },
+      "fr" : {
+        "jcr:name" : "Fichier"
+      }
+    },
+    "hippo:facetselect" : {
+      "en" : {
+        "jcr:name" : "Faceted Link"
+      },
+      "nl" : {
+        "jcr:name" : "Facet verwijzing"
+      },
+      "de" : {
+        "jcr:name" : "Faceted Link"
+      },
+      "fr" : {
+        "jcr:name" : "Lien composé"
+      }
+    },
+    "hippo:mirror" : {
+      "en" : {
+        "jcr:name" : "Link"
+      },
+      "nl" : {
+        "jcr:name" : "Verwijzing"
+      },
+      "de" : {
+        "jcr:name" : "Referenz"
+      },
+      "fr" : {
+        "jcr:name" : "Lien"
+      }
+    }
+  }
+}
