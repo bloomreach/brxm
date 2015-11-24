@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -32,9 +32,6 @@
   </sv:property>
   <sv:property sv:name="engine" sv:type="String">
     <sv:value>${engine}</sv:value>
-  </sv:property>
-  <sv:property sv:name="caption" sv:type="String">
-    <sv:value>Tags</sv:value>
   </sv:property>
   <sv:property sv:name="widget.cols" sv:type="String">
     <sv:value>{{widgetCols}}</sv:value>

@@ -80,7 +80,9 @@ public class TaggingResource extends BaseResource {
             final String prefix = context.getProjectNamespacePrefix();
 
             final String templateTags = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/tagging-template-field_tags.xml"));
+            final String templateTagsTranslations = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/tagging-template-field_tags-translations.xml"));
             final String templateSuggest = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/tagging-template-field_tag_suggest.xml"));
+            final String templateSuggestTranslations = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/tagging-template-field_tag_suggest-translations.xml"));
 
             if (!Strings.isNullOrEmpty(documents)) {
 
@@ -89,11 +91,13 @@ public class TaggingResource extends BaseResource {
                 final Collection<String> addedDocuments = new HashSet<>();
                 for (final String document : docs) {
                     final String fieldImportPath = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, document);
+                    final String fieldTranslationsImportPath = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_/translator/hippostd:translations", prefix, document);
                     final String suggestFieldPath = MessageFormat.format("{0}/relateddocs", fieldImportPath);
                     if (session.nodeExists(suggestFieldPath)) {
                         log.info("Suggest field path: [{}] already exists.", fieldImportPath);
                         continue;
                     }
+
                     DocumentTemplateUtils.addMixinToTemplate(context, document, MIXIN_NAME, true);
                     // add place holders:
                     final Map<String, String> templateData = new HashMap<>(values);
@@ -106,12 +110,29 @@ public class TaggingResource extends BaseResource {
                         session.importXML(fieldImportPath, IOUtils.toInputStream(fieldData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
                     }
 
+                    // import translations for field (if translator exists):
+                    if (session.nodeExists(fieldTranslationsImportPath)) {
+                        final String tagsTranslationsPath = fieldTranslationsImportPath + '/' + "tags";
+                        if (!session.nodeExists(tagsTranslationsPath)) {
+                            session.importXML(fieldTranslationsImportPath, IOUtils.toInputStream(templateTagsTranslations), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+                        }
+                    }
+
                     // import suggest field:
                     final String suggestPath = fieldImportPath + '/' + "tagsuggest";
                     if (!session.nodeExists(suggestPath)) {
                         final String suggestData = TemplateUtils.replaceStringPlaceholders(templateSuggest, templateData);
                         session.importXML(fieldImportPath, IOUtils.toInputStream(suggestData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
                     }
+
+                    // import translations for suggest field (if translator exists):
+                    if (session.nodeExists(fieldTranslationsImportPath)) {
+                        final String suggestTranslationsPath = fieldTranslationsImportPath + '/' + "tagsuggest";
+                        if (!session.nodeExists(suggestTranslationsPath)) {
+                            session.importXML(fieldTranslationsImportPath, IOUtils.toInputStream(templateSuggestTranslations), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+                        }
+                    }
+
                     addedDocuments.add(document);
                     session.save();
                 }
