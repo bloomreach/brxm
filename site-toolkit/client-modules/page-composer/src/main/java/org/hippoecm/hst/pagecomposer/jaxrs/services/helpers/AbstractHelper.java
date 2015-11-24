@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import com.google.common.collect.Iterables;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -262,10 +263,6 @@ public abstract class AbstractHelper {
         return lockedNodesForUsers;
     }
 
-    protected String getPreviewWorkspacePath() {
-        return pageComposerContextService.getEditingPreviewSite().getConfigurationPath() + "/" + NODENAME_HST_WORKSPACE;
-    }
-
     // to override for helpers that need to be able to publish/discard
     protected String buildXPathQueryLockedNodesForUsers(final String previewConfigurationPath,
                                                         final List<String> userIds) {
@@ -290,8 +287,12 @@ public abstract class AbstractHelper {
         return pageComposerContextService.getEditingPreviewConfigurationPath();
     }
 
-    protected String getPreviewConfigurationWorkspacePath() {
-        return getPreviewConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
+    protected String getPreviewWorkspacePath() {
+        return getPreviewConfigurationPath() + "/" + NODENAME_HST_WORKSPACE;
+    }
+
+    protected String getWorkspacePath(final Mount mount) {
+        return mount.getHstSite().getConfigurationPath() + "/" + NODENAME_HST_WORKSPACE;
     }
 
 }

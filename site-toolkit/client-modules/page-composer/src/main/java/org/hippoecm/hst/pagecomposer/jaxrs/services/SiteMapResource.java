@@ -261,19 +261,23 @@ public class SiteMapResource extends AbstractConfigResource {
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
                         HstNodeTypes.NODETYPE_HST_SITEMAP));
         preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(siteMapItemUUId, siteMapHelper));
+
         if (StringUtils.isNotBlank(targetSiteMapItemUUID)) {
-            // TODO cross channel copy does need a different validator than 'getCurrentPreviewConfigurationValidator'
-            preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(targetSiteMapItemUUID, siteMapHelper));
-            preValidators.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
-                    targetSiteMapItemUUID, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
-            preValidators.add(validatorFactory.getCanCopyFromSourceToTargetValidator(siteMapItemUUId,
-                    targetSiteMapItemUUID));
+            if (mountId == null || getPageComposerContextService().getEditingMount().getIdentifier().equals(mountId)) {
+                preValidators.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
+                        targetSiteMapItemUUID, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
+                preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(targetSiteMapItemUUID, siteMapHelper));
+                preValidators.add(validatorFactory.getCanCopyFromSourceToTargetValidator(siteMapItemUUId,
+                        targetSiteMapItemUUID));
+            } else {
+                // TODO add validator for target mount that it has a preview configuration & workspace
+            }
         }
 
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                PageCopyContext pcc = siteMapHelper.copy(siteMapItemUUId,
+                PageCopyContext pcc = siteMapHelper.copy(mountId, siteMapItemUUId,
                         targetSiteMapItemUUID, targetName);
                 final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(pcc.getNewSiteMapNode().getIdentifier(), null);
                 return ok("Item created successfully", siteMapPageRepresentation);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,14 @@ public class PagesHelper extends AbstractHelper {
                        final HstComponentConfiguration pageInstance,
                        final boolean skipContainerItems) throws RepositoryException {
         final String previewWorkspacePagesPath = getPreviewWorkspacePagesPath();
+        return create(pageOrPrototype, targetPageNodeName, pageInstance, skipContainerItems, previewWorkspacePagesPath);
+    }
 
+    public Node create(final Node pageOrPrototype,
+                       final String targetPageNodeName,
+                       final HstComponentConfiguration pageInstance,
+                       final boolean skipContainerItems,
+                       final String previewWorkspacePagesPath) throws RepositoryException {
         final Session session = pageComposerContextService.getRequestContext().getSession();
         final String validTargetPageNodeName = getValidTargetPageNodeName(previewWorkspacePagesPath, targetPageNodeName, session);
         final Node newPage = JcrUtils.copy(session, pageOrPrototype.getPath(), previewWorkspacePagesPath + "/" + validTargetPageNodeName);
