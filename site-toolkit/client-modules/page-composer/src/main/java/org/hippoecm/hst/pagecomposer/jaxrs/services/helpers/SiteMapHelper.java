@@ -193,14 +193,14 @@ public class SiteMapHelper extends AbstractHelper {
     }
 
     /**
-     * utility method to create a <strong>shallow copy</strong> of {@code siteMapItemUUId} : Shallow copy means that
-     * child pages of {@code siteMapItemUUId} are not copied. The copy will be a sibbling of <code>siteMapItemUUId</code>
+     * utility method to create a <strong>shallow copy</strong> of {@code siteMapItemUUID} : Shallow copy means that
+     * child pages of {@code siteMapItemUUID} are not copied. The copy will be a sibling of <code>siteMapItemUUID</code>
      */
-    public Node duplicate(final String siteMapItemUUId) throws RepositoryException {
+    public Node duplicate(final String siteMapItemUUID) throws RepositoryException {
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
-        HstSiteMapItem hstSiteMapItem = getConfigObject(siteMapItemUUId);
+        HstSiteMapItem hstSiteMapItem = getConfigObject(siteMapItemUUID);
         if (hstSiteMapItem == null) {
-            String message = String.format("Cannot duplicate because there is no siteMapItem for id '%s'.", siteMapItemUUId);
+            String message = String.format("Cannot duplicate because there is no siteMapItem for id '%s'.", siteMapItemUUID);
             throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED);
         }
 
@@ -227,7 +227,7 @@ public class SiteMapHelper extends AbstractHelper {
         }
 
         PageCopyContext pcc = copy(pageComposerContextService.getEditingMount().getIdentifier(),
-                siteMapItemUUId, targetSiteMapItemUUID, targetName);
+                siteMapItemUUID, targetSiteMapItemUUID, targetName);
         return pcc.getNewSiteMapNode();
     }
 
@@ -237,20 +237,20 @@ public class SiteMapHelper extends AbstractHelper {
      *
      *
      * @param mountId the target mount for the copy. If <code>null</code>, the current edited mount is used
-     * @param copyFromSiteMapItemUUId       the uuid of the {@code siteMapItem} to copy, not
+     * @param sourceSiteMapItemUUID  the uuid of the {@code siteMapItem} to copy, not allowed to be <code>null</code>
      * @param targetSiteMapItemUUID the uuid of the target siteMapItem, can be {@code null} in which case the same
      *                              location as {@code siteMapItem} will be used, only with name {@code targetName}
      * @param targetName            the name of the copy, not allowed to be {@code null}
      * @return the {@link javax.jcr.Node} of the created new siteMapItem
      * @throws RepositoryException
      */
-    public PageCopyContext copy(final String mountId, final String copyFromSiteMapItemUUId, final String targetSiteMapItemUUID, final String targetName)
+    public PageCopyContext copy(final String mountId, final String sourceSiteMapItemUUID, final String targetSiteMapItemUUID, final String targetName)
             throws RepositoryException {
 
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
 
         final Mount editingMount = pageComposerContextService.getEditingMount();
-        validateSiteMapItem(copyFromSiteMapItemUUId, editingMount);
+        validateSiteMapItem(sourceSiteMapItemUUID, editingMount);
         final Mount targetMount;
         if (mountId == null) {
             targetMount = editingMount;
@@ -287,7 +287,7 @@ public class SiteMapHelper extends AbstractHelper {
         }
 
         validateTarget(session, target, targetMount.getHstSite().getSiteMap());
-        Node toShallowCopy = session.getNodeByIdentifier(copyFromSiteMapItemUUId);
+        Node toShallowCopy = session.getNodeByIdentifier(sourceSiteMapItemUUID);
         final Node newSiteMapNode = JcrUtils.copy(session, toShallowCopy.getPath(), target);
         for (Node child : new NodeIterable(newSiteMapNode.getNodes())) {
             // we need shallow copy so remove children again
@@ -298,7 +298,7 @@ public class SiteMapHelper extends AbstractHelper {
         // copy the page definition
         // we need to find the page node uuid to copy through hstSiteMapItem.getComponentConfigurationId() which is NOT
         // the page UUID
-        final HstSiteMapItem copyFromSiteMapItem = getConfigObject(copyFromSiteMapItemUUId);
+        final HstSiteMapItem copyFromSiteMapItem = getConfigObject(sourceSiteMapItemUUID);
         final HstComponentConfiguration pageToCopy = pageComposerContextService.getEditingPreviewSite().getComponentsConfiguration()
                 .getComponentConfiguration(copyFromSiteMapItem.getComponentConfigurationId());
 

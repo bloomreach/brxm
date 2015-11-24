@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,30 +25,26 @@ import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class CanCopyFromSourceToTargetValidator extends AbstractValidator {
+public class CopyNodeValidator extends AbstractValidator {
 
-    private static final Logger log = LoggerFactory.getLogger(CanCopyFromSourceToTargetValidator.class);
+    private final String sourceUUID;
+    private final String targetUUID;
 
-    private final String uuidSource;
-    private final String uuidTarget;
-
-    public CanCopyFromSourceToTargetValidator(final String uuidSource, final String uuidTarget) {
-        this.uuidSource = uuidSource;
-        this.uuidTarget = uuidTarget;
+    public CopyNodeValidator(final String sourceUUID, final String targetUUID) {
+        this.sourceUUID = sourceUUID;
+        this.targetUUID = targetUUID;
     }
 
     @Override
     public void validate(HstRequestContext requestContext) throws RuntimeException {
-        final String message = "Cannot copy a page below itself";
-        if (uuidSource.equals(uuidTarget)) {
+        final String message = "Cannot copy a node below itself";
+        if (sourceUUID.equals(targetUUID)) {
             throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED, Collections.singletonMap("errorReason", message));
         }
         try {
-            final Node sourceNode = getNodeByIdentifier(uuidSource, requestContext.getSession());
-            final Node targetNode = getNodeByIdentifier(uuidTarget, requestContext.getSession());
+            final Node sourceNode = getNodeByIdentifier(sourceUUID, requestContext.getSession());
+            final Node targetNode = getNodeByIdentifier(targetUUID, requestContext.getSession());
             if (targetNode.getPath().startsWith(sourceNode.getPath() + "/")) {
                 throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED,
                         Collections.singletonMap("errorReason", message));

@@ -249,10 +249,11 @@ public class SiteMapResource extends AbstractConfigResource {
     @POST
     @Path("/copy")
     public Response copy(
-            @HeaderParam("targetName")final String targetName,
-            @HeaderParam("siteMapItemUUId") final String siteMapItemUUId,
+            @HeaderParam("mountId")final String mountId,
+            @HeaderParam("siteMapItemUUID") final String siteMapItemUUID,
             @HeaderParam("targetSiteMapItemUUID")final String targetSiteMapItemUUID,
-            @HeaderParam("mountId")final String mountId) {
+            @HeaderParam("targetName")final String targetName
+            ) {
 
         final ValidatorBuilder preValidators = ValidatorBuilder.builder()
                 .add(validatorFactory.getNotNullValidator(targetName,
@@ -260,14 +261,14 @@ public class SiteMapResource extends AbstractConfigResource {
                 .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
                         HstNodeTypes.NODETYPE_HST_SITEMAP));
-        preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(siteMapItemUUId, siteMapHelper));
+        preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(siteMapItemUUID, siteMapHelper));
 
         if (StringUtils.isNotBlank(targetSiteMapItemUUID)) {
-            if (mountId == null || getPageComposerContextService().getEditingMount().getIdentifier().equals(mountId)) {
+            if (StringUtils.isBlank(mountId) || getPageComposerContextService().getEditingMount().getIdentifier().equals(mountId)) {
                 preValidators.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
                         targetSiteMapItemUUID, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
                 preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(targetSiteMapItemUUID, siteMapHelper));
-                preValidators.add(validatorFactory.getCanCopyFromSourceToTargetValidator(siteMapItemUUId,
+                preValidators.add(validatorFactory.getCanCopyFromSourceToTargetValidator(siteMapItemUUID,
                         targetSiteMapItemUUID));
             } else {
                 // TODO add validator for target mount that it has a preview configuration & workspace
@@ -277,7 +278,7 @@ public class SiteMapResource extends AbstractConfigResource {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                PageCopyContext pcc = siteMapHelper.copy(mountId, siteMapItemUUId,
+                PageCopyContext pcc = siteMapHelper.copy(mountId, siteMapItemUUID,
                         targetSiteMapItemUUID, targetName);
                 final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(pcc.getNewSiteMapNode().getIdentifier(), null);
                 return ok("Item created successfully", siteMapPageRepresentation);
