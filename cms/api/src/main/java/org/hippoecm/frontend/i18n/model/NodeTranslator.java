@@ -43,8 +43,11 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NAME;
 
 /**
  * Translator of node names, property names and values.  When a node has the mixin
@@ -127,6 +130,10 @@ public class NodeTranslator extends NodeModelWrapper<NodeTranslator> {
                 String name = "node name";
                 if (node != null) {
                     try {
+                        name = JcrUtils.getStringProperty(node, HIPPO_NAME, null);
+                        if (name != null) {
+                            return name;
+                        }
                         // return the name specified by the hippo:translated mixin,
                         // falling back to the decoded node name itself.
                         name = NodeNameCodec.decode(node.getName());
