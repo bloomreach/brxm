@@ -22,8 +22,8 @@ import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.apache.wicket.model.IDetachable;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -42,7 +42,6 @@ public class RelatedDoc implements Comparable<RelatedDoc>, IDetachable {
     private double score = 1.0;
 
     public RelatedDoc() {
-
     }
 
     /**
@@ -135,7 +134,7 @@ public class RelatedDoc implements Comparable<RelatedDoc>, IDetachable {
      * @throws RepositoryException
      */
     public String getName() {
-        return new NodeTranslator(nodeModel).getNodeName().getObject();
+        return new NodeNameModel(nodeModel).getObject();
     }
 
     public String getPath() {
