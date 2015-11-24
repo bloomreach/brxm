@@ -101,6 +101,8 @@ public class JcrNodeIcon {
         primaryTypeNameIcons.put("hippofacnav:facetnavigation", FontAwesomeIcon.DRIBBBLE);
         primaryTypeNameIcons.put("hst:formdatacontainer", FontAwesomeIcon.SEND);
         primaryTypeNameIcons.put("hst:formdata", FontAwesomeIcon.SEND_O);
+        primaryTypeNameIcons.put("hippotaxonomy:container", FontAwesomeIcon.BOOK);
+        primaryTypeNameIcons.put("urlrewriter:ruleset", FontAwesomeIcon.CROSSHAIRS);
 
         // config
         primaryTypeNameIcons.put("webfiles:webfiles", FontAwesomeIcon.SUITCASE);
@@ -130,6 +132,38 @@ public class JcrNodeIcon {
         primaryTypeNameIcons.put("hipposys:queryfolder", FontAwesomeIcon.QUESTION_CIRCLE);
         primaryTypeNameIcons.put("hippostd:templatequery", FontAwesomeIcon.QUESTION);
 
+        // targeting
+        primaryTypeNameIcons.put("targeting:experiments", FontAwesomeIcon.FLASK);
+        primaryTypeNameIcons.put("targeting:experiment", FontAwesomeIcon.FLASK);
+        primaryTypeNameIcons.put("targeting:experimentsfolder", FontAwesomeIcon.FOLDER_O);
+        primaryTypeNameIcons.put("targeting:configuration", FontAwesomeIcon.DASHBOARD);
+        primaryTypeNameIcons.put("targeting:collectors", FontAwesomeIcon.STEAM);
+        primaryTypeNameIcons.put("targeting:collector", FontAwesomeIcon.STEAM);
+        primaryTypeNameIcons.put("targeting:personas", FontAwesomeIcon.STREETVIEW);
+        primaryTypeNameIcons.put("targeting:persona", FontAwesomeIcon.STREETVIEW);
+        primaryTypeNameIcons.put("targeting:goals", FontAwesomeIcon.ASTERISK);
+        primaryTypeNameIcons.put("targeting:goal", FontAwesomeIcon.ASTERISK);
+        primaryTypeNameIcons.put("targeting:characteristics", FontAwesomeIcon.SLACK);
+        primaryTypeNameIcons.put("targeting:characteristic", FontAwesomeIcon.SLACK);
+        primaryTypeNameIcons.put("targeting:datastores", FontAwesomeIcon.DATABASE);
+        primaryTypeNameIcons.put("targeting:datastore", FontAwesomeIcon.DATABASE);
+        primaryTypeNameIcons.put("targeting:alteregos", FontAwesomeIcon.USER_SECRET);
+        primaryTypeNameIcons.put("targeting:alterego", FontAwesomeIcon.USER_SECRET);
+        primaryTypeNameIcons.put("targeting:dataflow", FontAwesomeIcon.LOCK);
+        primaryTypeNameIcons.put("targeting:lock", FontAwesomeIcon.LOCK);
+        primaryTypeNameIcons.put("targeting:statistics", FontAwesomeIcon.BAR_CHART);
+        primaryTypeNameIcons.put("targeting:statistic", FontAwesomeIcon.BAR_CHART);
+        primaryTypeNameIcons.put("targeting:trends", FontAwesomeIcon.LINE_CHART);
+        primaryTypeNameIcons.put("targeting:facets", FontAwesomeIcon.LINE_CHART);
+        primaryTypeNameIcons.put("targeting:conversions", FontAwesomeIcon.SMILE_O);
+        primaryTypeNameIcons.put("targeting:events", FontAwesomeIcon.CLOCK_O);
+        primaryTypeNameIcons.put("targeting:event", FontAwesomeIcon.CLOCK_O);
+        primaryTypeNameIcons.put("targeting:andexpression", FontAwesomeIcon.ANGLE_DOUBLE_RIGHT);
+        primaryTypeNameIcons.put("targeting:orexpression", FontAwesomeIcon.ANGLE_DOUBLE_RIGHT);
+        primaryTypeNameIcons.put("targeting:expression", FontAwesomeIcon.ANGLE_DOUBLE_RIGHT);
+        primaryTypeNameIcons.put("targeting:negate", FontAwesomeIcon.ANGLE_DOUBLE_RIGHT);
+        primaryTypeNameIcons.put("targeting:abstractandexpression", FontAwesomeIcon.ANGLE_DOUBLE_RIGHT);
+
         pathCssClass.put("/hst:hst", "hst");
         pathCssClass.put("/" + CONFIGURATION_PATH, "conf");
         pathCssClass.put("/content", "content");
@@ -138,6 +172,7 @@ public class JcrNodeIcon {
         pathCssClass.put("/webfiles", "webfiles");
         pathCssClass.put("/hippo:reports", "reports");
         pathCssClass.put("/hippo:log", "log");
+        pathCssClass.put("/targeting:targeting", "targeting");
     }
 
     /**
