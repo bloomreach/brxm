@@ -9,4 +9,4 @@ src/main/resources/hide-resourcebundle-namespace.xml svneol=native#text/plain
 src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 src/main/resources/namespace-fix-mandatory-id-patch.xml svneol=native#text/plain
 src/main/resources/namespace.xml svneol=native#text/plain
-src/main/resources/resourcebundle-type-translations.xml -text
+src/main/resources/type-translations.json -text

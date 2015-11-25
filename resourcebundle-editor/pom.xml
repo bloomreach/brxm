@@ -85,6 +85,7 @@
         <directory>${basedir}/src/main/resources</directory>
         <includes>
           <include>**/*.xml</include>
+          <include>**/*.json</include>
         </includes>
       </resource>
     </resources>
