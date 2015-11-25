@@ -23,6 +23,7 @@
         constructor: function(config) {
             Ext.apply(config, {
                 title: config.resources['edit-menu'],
+                cls: "qa-cm-tc-menu-editor",
                 width: 860,
                 height: 533,
                 modal: true,

@@ -40,6 +40,7 @@ describe('Menu Service', function () {
             id: '1',
             link: 'http://onehippo.org',
             linkType: 'EXTERNAL',
+            localParameters: { 'cssclass':'bike','call-to-action':'use it'},
             title: 'One'
           },
           {
@@ -106,6 +107,14 @@ describe('Menu Service', function () {
 
   it('should return a child menu item by id', function () {
     testGetMenuItem('child1');
+  });
+
+  it('should return a child menu item by id with parameters',function(){
+    menuService.getMenuItem('1').then(function (menuItem) {
+      expect(menuItem.localParameters.cssclass).toEqual('bike');
+    });
+    $httpBackend.expectGET('api/menuId');
+    $httpBackend.flush();
   });
 
   it('should return undefined when getting an unknown menu item', function () {

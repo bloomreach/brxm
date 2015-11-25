@@ -48,20 +48,34 @@
         if ($scope.MenuItemCtrl && (!$scope.MenuItemCtrl.selectedMenuItem || $stateParams.menuItemId !== $scope.MenuItemCtrl.selectedMenuItem.id)) {
           MenuService.getMenuItem($stateParams.menuItemId).then(function (item) {
             $scope.MenuItemCtrl.selectedMenuItem = item;
+            $scope.MenuItemCtrl.showParameters = Object.keys(item.localParameters).length > 0;
+
+            function copyKeys(src, dst, value) {
+              for (var key in src) {
+                if (src.hasOwnProperty(key)) {
+                  dst[key] = value;
+                }
+              }
+            }
+
+            EditMenuItemCtrl.isSaving = {
+              title: false,
+              linkType: false,
+              link: false,
+              localParameters: {}
+            };
+            copyKeys(item.localParameters, EditMenuItemCtrl.isSaving.localParameters, false);
+
+            EditMenuItemCtrl.isSaved = {
+              title: true,
+              linkType: true,
+              link: true,
+              localParameters: {}
+            };
+            copyKeys(item.localParameters, EditMenuItemCtrl.isSaved.localParameters, true);
           });
         }
 
-        EditMenuItemCtrl.isSaving = {
-          title: false,
-          linkType: false,
-          link: false
-        };
-
-        EditMenuItemCtrl.isSaved = {
-          title: true,
-          linkType: true,
-          link: true
-        };
 
         EditMenuItemCtrl.remove = {
           isVisible: false,
@@ -107,7 +121,9 @@
           }
         };
 
-        EditMenuItemCtrl.fieldFeedbackMessage = {};
+        EditMenuItemCtrl.fieldFeedbackMessage = {
+          localParameters: {}
+        };
 
         EditMenuItemCtrl.saveTitle = function (form) {
           if (form.title.$dirty && form.title.$valid) {
@@ -133,9 +149,9 @@
           }
         };
 
-        EditMenuItemCtrl.saveSelectedMenuItem = function (propertyName) {
-          if (shouldSaveSelectedMenuItemProperty(propertyName)) {
-            saveSelectedMenuItemProperty(propertyName);
+        EditMenuItemCtrl.saveSelectedMenuItem = function (propertyName, isLocalParameter) {
+          if (shouldSaveSelectedMenuItemProperty()) {
+            saveSelectedMenuItemProperty(propertyName, isLocalParameter);
           }
         };
 
@@ -143,7 +159,9 @@
           if ($scope.MenuItemCtrl.feedback.message) {
             $scope.MenuItemCtrl.feedback.message = '';
           }
-          EditMenuItemCtrl.fieldFeedbackMessage = {};
+          EditMenuItemCtrl.fieldFeedbackMessage = {
+            localParameters: {}
+          };
         };
 
         if ($scope.MenuItemCtrl) {
@@ -155,24 +173,35 @@
           return angular.isDefined($scope.MenuItemCtrl.selectedMenuItem);
         }
 
-        function saveSelectedMenuItemProperty (propertyName) {
+        function saveSelectedMenuItemProperty (propertyName, isLocalParameter) {
+          var isSaving = EditMenuItemCtrl.isSaving;
+          var isSaved = EditMenuItemCtrl.isSaved;
+          var fieldFeedbackMessage = EditMenuItemCtrl.fieldFeedbackMessage;
+
+          if (isLocalParameter) {
+            isSaving = isSaving.localParameters;
+            isSaved = isSaved.localParameters;
+            fieldFeedbackMessage = fieldFeedbackMessage.localParameters;
+          }
+
           savedMenuItem = angular.copy($scope.MenuItemCtrl.selectedMenuItem);
 
           // child properties haven't changed, so don't send them
           delete savedMenuItem.items;
 
-          EditMenuItemCtrl.isSaving[propertyName] = true;
+          isSaving[propertyName] = true;
 
           MenuService.saveMenuItem(savedMenuItem)
             .then(function () {
-              EditMenuItemCtrl.isSaving[propertyName] = false;
-              EditMenuItemCtrl.isSaved[propertyName] = true;
+              isSaving[propertyName] = false;
+              isSaved[propertyName] = true;
               FormStateService.setValid(true);
             },
             function (errorResponse) {
-              EditMenuItemCtrl.fieldFeedbackMessage[propertyName] = FeedbackService.getFeedback(errorResponse).message;
-              EditMenuItemCtrl.isSaving[propertyName] = false;
-              EditMenuItemCtrl.isSaved[propertyName] = false;
+              fieldFeedbackMessage[propertyName] = FeedbackService.getFeedback(errorResponse).message;
+              isSaving[propertyName] = false;
+              isSaved[propertyName] = false;
+
               FormStateService.setValid(false);
               $scope.MenuItemCtrl.feedback = FeedbackService.getFeedback(errorResponse);
             });

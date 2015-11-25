@@ -24,12 +24,9 @@
     <link rel="stylesheet" href="assets/css/menu.css">
   </head>
 
-  <body>
-    <div data-ng-app="hippo.channel.menu" id="application" class="full-height l-stretch">
-
-      <div class="hidden" ng-include="'../components/hippo-theme/dist/images/hippo-icon-sprite.svg'"></div>
-      <div data-ui-view id="ui-view"></div>
-    </div>
+  <body data-ng-app="hippo.channel.menu">
+    <div class="hidden" ng-include="'../components/hippo-theme/dist/images/hippo-icon-sprite.svg'"></div>
+    <div ui-view class="flex-child flex-row"></div>
 
     <script src="../components/jquery/dist/jquery.min.js"></script>
     <script src="../components/angular/angular.min.js"></script>
