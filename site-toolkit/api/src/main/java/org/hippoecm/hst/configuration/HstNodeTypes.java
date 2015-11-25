@@ -128,6 +128,8 @@ public interface HstNodeTypes {
     String SITEMENUITEM_PROPERTY_MOUNTALIAS = "hst:mountalias";
     String SITEMENUITEM_PROPERTY_ROLES = "hst:roles";
 
+    String SITEMENUITEM_HST_PROTOTYPEITEM = "hst:prototypeitem";
+
     /**
      * @deprecated Not used since CMS 10.0 (HST 2.30.00). Use a (hst:default) sitemap item to account
      * for prefixes/suffixes that need special handling.
