@@ -202,7 +202,6 @@
               <label for="hippo.channel.menu.menuItem.edit.localPameters.value" class="qa-name">{{ key }}</label>
               <input type="text" name="value" value="{{ value }}" class="form-control qa-value"
                      id="hippo.channel.menu.menuItem.edit.localPameters.value"
-                     data-ng-attr-placeholder="{{ key }}"
                      data-ng-model="MenuItemCtrl.selectedMenuItem.localParameters[key]"
                      data-ng-blur="EditMenuItemCtrl.saveSelectedMenuItem(key, true)">
               <span class="form-control-feedback" data-ng-show="parameterForm.value.$dirty && parameterForm.value.$touched">
