@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.onehippo.taxonomy.plugin.api;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 
 import java.text.Normalizer;
@@ -23,7 +24,10 @@ import java.util.regex.Pattern;
 public class KeyCodec {
 
     public static String encode(String input) {
-        String cleaned = input.replaceAll(" ","-");
+        String cleaned = "";
+        if(StringUtils.isNotBlank(input)) {
+            cleaned = input.replaceAll(" ", "-");
+        }
         cleaned = cleaned.replaceAll("&","-");
         cleaned = cleaned.replaceAll("=","-");
         cleaned = deAccent(cleaned);

@@ -28,6 +28,7 @@ import javax.jcr.Value;
 
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.LazyMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
@@ -59,7 +60,10 @@ public class JcrCategoryInfo extends TaxonomyObject implements EditableCategoryI
 
         this.name = name;
         setString(HippoNodeType.HIPPO_MESSAGE, name);
-        String encoded = KeyCodec.encode(name);
+        String encoded = "";
+        if(StringUtils.isNotBlank(name)) {
+            encoded = KeyCodec.encode(name);
+        }
         try {
             Node categoryNode = getNode().getParent();
             if (categoryNode.isNew()) {
@@ -146,7 +150,7 @@ public class JcrCategoryInfo extends TaxonomyObject implements EditableCategoryI
         try {
             return getNode().getProperty(property).getString();
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.warn("Failed to retrieve property '" + property + "' from node associated with this category");
         }
         return null;
     }
