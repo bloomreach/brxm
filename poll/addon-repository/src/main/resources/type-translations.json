@@ -1,0 +1,70 @@
+{
+  "hippo:types" : {
+    "poll:option" : {
+      "en" : {
+        "jcr:name" : "Option",
+        "poll:value" : "Value",
+        "poll:label" : "Label"
+      },
+      "nl" : {
+        "jcr:name" : "Optie",
+        "poll:value" : "Waarde",
+        "poll:label" : "Label"
+      },
+      "de" : {
+        "jcr:name" : "Option",
+        "poll:value" : "Wert",
+        "poll:label" : "Label"
+      },
+      "fr" : {
+        "jcr:name" : "Option",
+        "poll:value" : "Valeur",
+        "poll:label" : "Étiquette"
+      }
+    },
+    "poll:poll" : {
+      "en" : {
+        "jcr:name" : "Poll Compound",
+        "poll:text" : "Text",
+        "poll:introduction" : "Introduction (optional)",
+        "poll:options" : "Options"
+      },
+      "nl" : {
+        "jcr:name" : "Stelling samengesteld veld",
+        "poll:text" : "Tekst",
+        "poll:introduction" : "Introductie (optioneel)",
+        "poll:options" : "Opties"
+      },
+      "de" : {
+        "jcr:name" : "Umfrage-Kompositum",
+        "poll:text" : "Text",
+        "poll:introduction" : "Einleitung (optional)",
+        "poll:options" : "Optionen"
+      },
+      "fr" : {
+        "jcr:name" : "Composé de sondage",
+        "poll:text" : "Texte",
+        "poll:introduction" : "Introduction (facultatif)",
+        "poll:options" : "Options"
+      }
+    },
+    "poll:polldocument" : {
+      "en" : {
+        "jcr:name" : "Poll",
+        "poll:poll" : "Poll"
+      },
+      "nl" : {
+        "jcr:name" : "Stelling",
+        "poll:poll" : "Stelling"
+      },
+      "de" : {
+        "jcr:name" : "Umfrage",
+        "poll:poll" : "Umfrage"
+      },
+      "fr" : {
+        "jcr:name" : "Sondage",
+        "poll:poll" : "Sondage"
+      }
+    }
+  }
+}

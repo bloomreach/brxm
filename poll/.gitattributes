@@ -10,9 +10,7 @@ addon-repository/src/main/resources/poll-namespace.xml svneol=native#text/plain
 addon-repository/src/main/resources/poll-root-node.xml svneol=native#text/plain
 addon-repository/src/main/resources/poll-templates.xml svneol=native#text/plain
 addon-repository/src/main/resources/poll.cnd -text
-addon-repository/src/main/resources/translations/optioncompound-translations.xml -text
-addon-repository/src/main/resources/translations/pollcompound-translations.xml -text
-addon-repository/src/main/resources/translations/polldocument-translations.xml -text
+addon-repository/src/main/resources/type-translations.json -text
 addon-repository/src/main/resources/types/compound/option.xml svneol=native#text/plain
 addon-repository/src/main/resources/types/compound/poll.xml svneol=native#text/plain
 addon-repository/src/main/resources/types/polldocument.xml svneol=native#text/plain
