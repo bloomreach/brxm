@@ -1,0 +1,16 @@
+{
+  "hippo:workflows" : {
+    "en" : {
+      "socialsharing" : "Share"
+    },
+    "nl" : {
+      "socialsharing" : "Deel"
+    },
+    "de" : {
+      "socialsharing" : "Social Media"
+    },
+    "fr" : {
+      "socialsharing" : "Partager"
+    }
+  }
+}
