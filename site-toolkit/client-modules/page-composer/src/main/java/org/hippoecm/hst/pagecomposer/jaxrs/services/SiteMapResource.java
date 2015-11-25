@@ -38,6 +38,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
@@ -260,15 +261,15 @@ public class SiteMapResource extends AbstractConfigResource {
                         ClientError.INVALID_NAME, "Name of the copied page is not allowed to be null"))
                 .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
-                        HstNodeTypes.NODETYPE_HST_SITEMAP));
-        preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(siteMapItemUUID, siteMapHelper));
+                        HstNodeTypes.NODETYPE_HST_SITEMAP))
+                .add(validatorFactory.getCurrentPreviewConfigurationValidator(siteMapItemUUID, siteMapHelper));
 
         if (StringUtils.isNotBlank(targetSiteMapItemUUID)) {
             if (StringUtils.isBlank(mountId) || getPageComposerContextService().getEditingMount().getIdentifier().equals(mountId)) {
                 preValidators.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
                         targetSiteMapItemUUID, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
                 preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(targetSiteMapItemUUID, siteMapHelper));
-                preValidators.add(validatorFactory.getCanCopyFromSourceToTargetValidator(siteMapItemUUID,
+                preValidators.add(validatorFactory.getCopyNodeValidator(siteMapItemUUID,
                         targetSiteMapItemUUID));
             } else {
                 // TODO add validator for target mount that it has a preview configuration & workspace
@@ -280,7 +281,12 @@ public class SiteMapResource extends AbstractConfigResource {
             public Response call() throws Exception {
                 PageCopyContext pcc = siteMapHelper.copy(mountId, siteMapItemUUID,
                         targetSiteMapItemUUID, targetName);
-                final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(pcc.getNewSiteMapNode().getIdentifier(), null);
+
+                publishSynchronousEvent(new PageCopyEvent(pcc));
+
+                // TODO createSiteMapPageRepresentation does not take the target  mount into account. Hence, we should instead
+                // TODO use something like createSiteMapPageRepresentation(pcc)
+                final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(pcc.getNewSiteMapItemNode().getIdentifier(), null);
                 return ok("Item created successfully", siteMapPageRepresentation);
             }
         }, preValidators.build());

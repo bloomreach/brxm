@@ -228,7 +228,7 @@ public class SiteMapHelper extends AbstractHelper {
 
         PageCopyContext pcc = copy(pageComposerContextService.getEditingMount().getIdentifier(),
                 siteMapItemUUID, targetSiteMapItemUUID, targetName);
-        return pcc.getNewSiteMapNode();
+        return pcc.getNewSiteMapItemNode();
     }
 
     /**
@@ -250,7 +250,7 @@ public class SiteMapHelper extends AbstractHelper {
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
 
         final Mount editingMount = pageComposerContextService.getEditingMount();
-        validateSiteMapItem(sourceSiteMapItemUUID, editingMount);
+        final HstSiteMapItem sourceSiteMapItem = validateAndReturnSiteMapItem(sourceSiteMapItemUUID, editingMount);
         final Mount targetMount;
         if (mountId == null) {
             targetMount = editingMount;
@@ -266,8 +266,11 @@ public class SiteMapHelper extends AbstractHelper {
             throw new ClientException(message, ClientError.ITEM_NOT_FOUND, Collections.singletonMap("errorReason", message));
         }
 
+        final HstSiteMapItem targetSiteMapItem;
         if (targetSiteMapItemUUID != null) {
-            validateSiteMapItem(targetSiteMapItemUUID, targetMount);
+            targetSiteMapItem = validateAndReturnSiteMapItem(targetSiteMapItemUUID, targetMount);
+        } else {
+            targetSiteMapItem = null;
         }
 
         final Node workspaceSiteMapNode = session.getNode(workspaceSiteMapPath);
@@ -298,43 +301,41 @@ public class SiteMapHelper extends AbstractHelper {
         // copy the page definition
         // we need to find the page node uuid to copy through hstSiteMapItem.getComponentConfigurationId() which is NOT
         // the page UUID
-        final HstSiteMapItem copyFromSiteMapItem = getConfigObject(sourceSiteMapItemUUID);
-        final HstComponentConfiguration pageToCopy = pageComposerContextService.getEditingPreviewSite().getComponentsConfiguration()
-                .getComponentConfiguration(copyFromSiteMapItem.getComponentConfigurationId());
+        final HstComponentConfiguration sourcePage = pageComposerContextService.getEditingPreviewSite().getComponentsConfiguration()
+                .getComponentConfiguration(sourceSiteMapItem.getComponentConfigurationId());
 
-        if (pageToCopy == null) {
+        if (sourcePage == null) {
             final String message = "Cannot duplicate page since backing hst component configuration object not found";
             throw new ClientException(message,
                     ClientError.ITEM_CANNOT_BE_CLONED, Collections.singletonMap("errorReason", message));
         }
 
-        String fromPathInfo = HstSiteMapUtils.getPath(copyFromSiteMapItem);
+        String fromPathInfo = HstSiteMapUtils.getPath(sourceSiteMapItem);
         String fromPageNodeNamePrefix = fromPathInfo.replace("/", "-");
 
         final String prefix = getPreviewConfigurationPath() + "/" + NODENAME_HST_PAGES + "/" + fromPageNodeNamePrefix + "-";
         String targetPageName;
-        if (pageToCopy.getCanonicalStoredLocation().startsWith(prefix)){
-            targetPageName = targetName + "-" + pageToCopy.getCanonicalStoredLocation().substring(prefix.length());
+        if (sourcePage.getCanonicalStoredLocation().startsWith(prefix)){
+            targetPageName = targetName + "-" + sourcePage.getCanonicalStoredLocation().substring(prefix.length());
         } else {
             targetPageName = targetName;
         }
-        if (targetSiteMapItemUUID != null) {
-            HstSiteMapItem targetItem = getConfigObject(targetSiteMapItemUUID, targetMount);
-            String targetPathInfo = HstSiteMapUtils.getPath(targetItem);
+        if (targetSiteMapItem != null) {
+            String targetPathInfo = HstSiteMapUtils.getPath(targetSiteMapItem);
             targetPageName = targetPathInfo.replace("/", "-") + "-" + targetPageName;
         }
 
-        Node clonedPage = pagesHelper.create(session.getNodeByIdentifier(pageToCopy.getCanonicalIdentifier()),
-                targetPageName, pageToCopy, false, getWorkspacePath(targetMount) + "/" + NODENAME_HST_PAGES);
+        Node clonedPage = pagesHelper.create(session.getNodeByIdentifier(sourcePage.getCanonicalIdentifier()),
+                targetPageName, sourcePage, false, getWorkspacePath(targetMount) + "/" + NODENAME_HST_PAGES);
         newSiteMapNode.setProperty(SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
                 NODENAME_HST_PAGES + "/" + clonedPage.getName());
 
-        PageCopyContext pcc = new PageCopyContext(requestContext);
-        pcc.setNewSiteMapNode(newSiteMapNode);
+        PageCopyContext pcc = new PageCopyContext(requestContext, editingMount, sourceSiteMapItem, toShallowCopy, sourcePage,
+                session.getNodeByIdentifier(sourcePage.getCanonicalIdentifier()), targetMount, targetSiteMapItem, newSiteMapNode, clonedPage);
         return pcc;
     }
 
-    private void validateSiteMapItem(final String siteMapItemUUId, final Mount targetMount) {
+    private HstSiteMapItem validateAndReturnSiteMapItem(final String siteMapItemUUId, final Mount targetMount) {
         HstSiteMapItem hstSiteMapItem = getConfigObject(siteMapItemUUId, targetMount);
         if (hstSiteMapItem == null) {
             String message = String.format("Cannot copy because there is no siteMapItem for id '%s'.", siteMapItemUUId);
@@ -346,6 +347,7 @@ public class SiteMapHelper extends AbstractHelper {
                     "wildcards and this is not supported.", ((CanonicalInfo) hstSiteMapItem).getCanonicalPath());
             throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED, Collections.singletonMap("errorReason", message));
         }
+        return hstSiteMapItem;
     }
 
     public void move(final String id, final String parentId) throws RepositoryException {

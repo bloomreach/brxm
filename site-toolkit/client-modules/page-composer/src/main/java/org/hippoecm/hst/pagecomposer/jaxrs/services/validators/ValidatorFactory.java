@@ -72,7 +72,7 @@ public class ValidatorFactory {
         return new HasPreviewConfigurationValidator(pageComposerContextService);
     }
 
-    public Validator getCanCopyFromSourceToTargetValidator(final String uuidSource, final String uuidTarget) {
+    public Validator getCopyNodeValidator(final String uuidSource, final String uuidTarget) {
         return new CopyNodeValidator(uuidSource, uuidTarget);
     }
 

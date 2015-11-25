@@ -283,8 +283,10 @@ client-modules/google-analytics/repository/src/main/resources/hippogoogleanalyti
 client-modules/google-analytics/repository/src/site/site.xml -text
 client-modules/page-composer/pom.xml -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/builtin/components/StandardContainerComponent.java -text svneol=unset#text/plain
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/api/AbstractExceptionSupportEventObject.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/api/ChannelEvent.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/api/PageCopyContext.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/api/PageCopyEvent.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/api/PropertyRepresentationFactory.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/api/VariantRepresentation.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/cxf/CXFJaxrsHstConfigService.java -text svneol=unset#text/plain
