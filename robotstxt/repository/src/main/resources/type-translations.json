@@ -1,0 +1,44 @@
+{
+  "hippo:types" : {
+    "robotstxt:robotstxt" : {
+      "en" : {
+        "jcr:name" : "Robots.txt configuration",
+        "robotstxt:section" : "Section"
+      },
+      "nl" : {
+        "jcr:name" : "Robots.txt configuratie",
+        "robotstxt:section" : "Sectie"
+      },
+      "de" : {
+        "jcr:name" : "Robots.txt Konfiguration",
+        "robotstxt:section" : "Sektion"
+      },
+      "fr" : {
+        "jcr:name" : "Configuration robots.txt",
+        "robotstxt:section" : "Section"
+      }
+    },
+    "robotstxt:section" : {
+      "en" : {
+        "jcr:name" : "Section",
+        "robotstxt:useragent" : "User-agent",
+        "robotstxt:disallow" : "Disallow"
+      },
+      "nl" : {
+        "jcr:name" : "Sectie",
+        "robotstxt:useragent" : "User-agent",
+        "robotstxt:disallow" : "Niet toestaan"
+      },
+      "de" : {
+        "jcr:name" : "Sektion",
+        "robotstxt:useragent" : "User-agent",
+        "robotstxt:disallow" : "Nicht zulassen"
+      },
+      "fr" : {
+        "jcr:name" : "Section",
+        "robotstxt:useragent" : "User-agent",
+        "robotstxt:disallow" : "Interdire"
+      }
+    }
+  }
+}
