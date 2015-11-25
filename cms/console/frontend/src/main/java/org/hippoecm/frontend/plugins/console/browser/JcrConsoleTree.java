@@ -30,7 +30,6 @@ public abstract class JcrConsoleTree extends JcrTree {
 
     @Override
     protected Component newNodeIcon(final MarkupContainer parent, final String id, final TreeNode node) {
-        return NodeIconUtils.getJcrNodeIcon(id, node);
+        return NodeIconUtils.createJcrNodeIcon(id, node);
     }
-
 }

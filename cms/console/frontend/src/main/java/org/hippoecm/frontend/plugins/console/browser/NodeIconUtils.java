@@ -31,29 +31,36 @@ import javax.swing.tree.TreeNode;
 
 public final class NodeIconUtils {
 
-    public static Component getJcrNodeIcon(final String id, final TreeNode node) {
+    /**
+     * Create a component representing the icon for a node tree. What icon to show and
+     * whether or not it has a tooltip depends on the underlying JCR node.
+     *
+     * @param id   wicket ID of the component
+     * @param node of the tree for which to create the icon
+     * @return     a node-specific icon, or a default icon
+     */
+    public static Component createJcrNodeIcon(final String id, final TreeNode node) {
         final IModel<Node> nodeModel = ((IJcrTreeNode) node).getNodeModel();
         if (nodeModel ==  null || nodeModel.getObject() == null) {
-            return NodeIconUtils.getDefaultNodeIcon(id);
+            return createDefaultNodeIcon(id);
         }
 
         final Node jcrNode = nodeModel.getObject();
         final Label icon = new Label(id, StringUtils.EMPTY);
         icon.add(CssClass.append(JcrNodeIcon.getIconCssClass(jcrNode)));
 
-        final String tooltip = NodeIconUtils.getNodeTooltip(jcrNode);
+        final String tooltip = determineNodeTooltip(jcrNode);
         if (StringUtils.isNotBlank(tooltip)) {
             icon.add(TitleAttribute.append(tooltip));
         }
         return icon;
-
     }
 
-    public static Component getDefaultNodeIcon(final String id) {
+    private static Component createDefaultNodeIcon(final String id) {
         return new IconLabel(id, JcrNodeIcon.FA_DEFAULT_NODE_CSS_CLASS);
     }
 
-    public static String getNodeTooltip(final Node jcrNode) {
+    private static String determineNodeTooltip(final Node jcrNode) {
         try {
             if (jcrNode.hasProperty("hippostd:state")) {
                 return jcrNode.getProperty("hippostd:state").getString();
@@ -63,5 +70,4 @@ public final class NodeIconUtils {
         }
         return null;
     }
-
 }
