@@ -1,0 +1,20 @@
+{
+  "hippo:types" : {
+    "seosupport:seo" : {
+      "en" : {
+        "jcr:name" : "SEO",
+        "seosupport:seotitle" : "SEO Title",
+        "seosupport:seodescription" : "SEO Description",
+        "seosupport:seotitle#hint" : "Text to be used in the title tag",
+        "seosupport:seodescription#hint" : "Text to be used in the meta description tag"
+      },
+      "nl" : {
+        "jcr:name" : "SEO",
+        "seosupport:seotitle" : "SEO Titel",
+        "seosupport:seodescription" : "SEO beschrijving",
+        "seosupport:seotitle#hint" : "Tekst die in de title tag gebruikt dient te worden",
+        "seosupport:seodescription#hint" : "Tekst die in de meta description tag gebruikt dient te worden"
+      }
+    }
+  }
+}
