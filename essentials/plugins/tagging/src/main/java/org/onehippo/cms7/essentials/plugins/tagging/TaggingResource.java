@@ -61,7 +61,11 @@ import org.slf4j.LoggerFactory;
 public class TaggingResource extends BaseResource {
 
     private static final Logger log = LoggerFactory.getLogger(TaggingResource.class);
+
     public static final String MIXIN_NAME = "hippostd:taggable";
+
+    private static final String TAGS_FIELD = "tags";
+    private static final String TAGSUGGEST_FIELD = "tagsuggest";
 
     @POST
     @Path("/")
@@ -92,9 +96,9 @@ public class TaggingResource extends BaseResource {
                 for (final String document : docs) {
                     final String fieldImportPath = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, document);
                     final String fieldTranslationsImportPath = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_/translator/hippostd:translations", prefix, document);
-                    final String suggestFieldPath = MessageFormat.format("{0}/relateddocs", fieldImportPath);
+                    final String suggestFieldPath = MessageFormat.format("{0}/" + TAGSUGGEST_FIELD, fieldImportPath);
                     if (session.nodeExists(suggestFieldPath)) {
-                        log.info("Suggest field path: [{}] already exists.", fieldImportPath);
+                        log.info("Suggest field path: [{}] already exists.", suggestFieldPath);
                         continue;
                     }
 
@@ -104,7 +108,7 @@ public class TaggingResource extends BaseResource {
                     final Node editorTemplate = session.getNode(fieldImportPath);
                     templateData.put("fieldLocation", DocumentTemplateUtils.getDefaultPosition(editorTemplate));
                     // import field:
-                    final String tagsPath = fieldImportPath + '/' + "tags";
+                    final String tagsPath = fieldImportPath + '/' + TAGS_FIELD;
                     if (!session.nodeExists(tagsPath)) {
                         final String fieldData = TemplateUtils.replaceStringPlaceholders(templateTags, templateData);
                         session.importXML(fieldImportPath, IOUtils.toInputStream(fieldData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
@@ -112,14 +116,14 @@ public class TaggingResource extends BaseResource {
 
                     // import translations for field (if translator exists):
                     if (session.nodeExists(fieldTranslationsImportPath)) {
-                        final String tagsTranslationsPath = fieldTranslationsImportPath + '/' + "tags";
+                        final String tagsTranslationsPath = fieldTranslationsImportPath + '/' + TAGS_FIELD;
                         if (!session.nodeExists(tagsTranslationsPath)) {
                             session.importXML(fieldTranslationsImportPath, IOUtils.toInputStream(templateTagsTranslations), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
                         }
                     }
 
                     // import suggest field:
-                    final String suggestPath = fieldImportPath + '/' + "tagsuggest";
+                    final String suggestPath = fieldImportPath + '/' + TAGSUGGEST_FIELD;
                     if (!session.nodeExists(suggestPath)) {
                         final String suggestData = TemplateUtils.replaceStringPlaceholders(templateSuggest, templateData);
                         session.importXML(fieldImportPath, IOUtils.toInputStream(suggestData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
@@ -127,7 +131,7 @@ public class TaggingResource extends BaseResource {
 
                     // import translations for suggest field (if translator exists):
                     if (session.nodeExists(fieldTranslationsImportPath)) {
-                        final String suggestTranslationsPath = fieldTranslationsImportPath + '/' + "tagsuggest";
+                        final String suggestTranslationsPath = fieldTranslationsImportPath + '/' + TAGSUGGEST_FIELD;
                         if (!session.nodeExists(suggestTranslationsPath)) {
                             session.importXML(fieldTranslationsImportPath, IOUtils.toInputStream(templateSuggestTranslations), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
                         }
