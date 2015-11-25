@@ -5,9 +5,7 @@ addon/frontend/pom.xml svneol=native#text/plain
 addon/frontend/src/main/java/org/onehippo/taxonomy/plugin/tree/CategoryNameComparator.java -text
 addon/pom.xml svneol=native#text/plain
 addon/repository/pom.xml svneol=native#text/plain
-addon/repository/src/main/resources/canonised-type-translations.xml -text
 addon/repository/src/main/resources/classifiable-dao-service.xml svneol=native#text/plain
-addon/repository/src/main/resources/classifiable-type-translations.xml -text
 addon/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 addon/repository/src/main/resources/hippotaxonomy.cnd -text
 addon/repository/src/main/resources/namespace-hippotaxonomy.xml svneol=native#text/plain
@@ -22,7 +20,7 @@ addon/repository/src/main/resources/taxonomy-section-loader.xml svneol=native#te
 addon/repository/src/main/resources/taxonomy-section-translation.xml svneol=native#text/plain
 addon/repository/src/main/resources/taxonomy-service.xml svneol=native#text/plain
 addon/repository/src/main/resources/taxonomy-tree-view.xml svneol=native#text/plain
-addon/repository/src/main/resources/taxonomy-type-translations.xml -text
+addon/repository/src/main/resources/type-translations.json -text
 api/pom.xml svneol=native#text/plain
 hst-api/pom.xml svneol=native#text/plain
 hst/pom.xml svneol=native#text/plain
