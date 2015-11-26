@@ -119,17 +119,14 @@ public class HstConfigEditor extends ExtPanel {
         config.put("cluster.name", "hst-editor-navigator");
         config.put(EXTENSION_EDITOR, channelId + ".editor");
         config.put(EXTENSION_NAVIGATOR, navigator);
-        config.put(Perspective.TITLE, channelId);
         config.put("lockInheritedConfig", lockInheritedConfig);
         config.put("plugin.class", HstEditorPerspective.class.getName());
-        config.put(ITranslateService.TRANSLATOR_ID, TRANSLATOR_SERVICE_ID);
         config.put(AbstractRenderService.EXTENSIONS_ID, new String[]{EXTENSION_NAVIGATOR, EXTENSION_EDITOR});
         config.put(AbstractRenderService.WICKET_ID, HstConfigEditor.class.getName() + ".hst-editor");
 
         IPluginConfig clusterOptions = new JavaPluginConfig();
         clusterOptions.put(AbstractRenderService.MODEL_ID, model);
         clusterOptions.put(AbstractRenderService.WICKET_ID, navigator);
-        clusterOptions.put(ITranslateService.TRANSLATOR_ID, TRANSLATOR_SERVICE_ID);
         config.put("cluster.options", clusterOptions);
 
         IPluginConfig yuiConfig = new JavaPluginConfig();
