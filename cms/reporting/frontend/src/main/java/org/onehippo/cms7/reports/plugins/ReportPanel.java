@@ -75,11 +75,13 @@ public class ReportPanel extends ExtPanel implements IStringResourceProvider {
 
     protected final IPluginContext context;
     protected final IPluginConfig config;
+    protected final String reportName;
 
     public ReportPanel(final IPluginContext context, final IPluginConfig config) {
         super();
         this.context = context;
         this.config = config;
+        this.reportName = StringUtils.substringAfterLast(config.getName(), ".");
     }
 
     @Override
@@ -143,8 +145,19 @@ public class ReportPanel extends ExtPanel implements IStringResourceProvider {
         return config.getString(ITranslateService.TRANSLATOR_ID);
     }
 
-    private ResourceBundleModel getResourceBundleModel(final String key, Locale locale) {
-        return new ResourceBundleModel("hippo:reports", key, locale);
+    protected final ResourceBundleModel getResourceBundleModel(final String key, Locale locale) {
+        return new ResourceBundleModel("hippo:reports." + reportName, key, locale);
+    }
+
+    protected final String getTranslation(String key, String defaultValue) {
+        String translation = null;
+        if (StringUtils.isNotEmpty(reportName)) {
+            translation = ReportUtil.getTranslation(reportName, key);
+        }
+        if (StringUtils.isEmpty(translation)) {
+            ReportUtil.getTranslation(this, key, defaultValue);
+        }
+        return translation;
     }
 
     @Override
