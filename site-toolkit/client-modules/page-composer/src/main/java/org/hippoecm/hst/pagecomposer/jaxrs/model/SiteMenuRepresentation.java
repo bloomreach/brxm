@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,10 +22,12 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
+import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfigurationService;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 
 public class SiteMenuRepresentation {
@@ -38,6 +40,7 @@ public class SiteMenuRepresentation {
     private String siteMapIdentifier;
 
     private List<SiteMenuItemRepresentation> children = new ArrayList<>();
+    private SiteMenuItemRepresentation prototypeItem;
 
     public SiteMenuRepresentation() {
         super();
@@ -67,6 +70,9 @@ public class SiteMenuRepresentation {
         for (HstSiteMenuItemConfiguration item : siteMenuConfiguration.getSiteMenuConfigurationItems()) {
             children.add(new SiteMenuItemRepresentation(item, mount));
         }
+
+        HstSiteMenuItemConfiguration prototypeConfiguration = ((HstSiteMenuConfigurationService) siteMenuConfiguration).getPrototypeItem();
+        prototypeItem = prototypeConfiguration != null ? new SiteMenuItemRepresentation(prototypeConfiguration, mount) : null;
     }
 
     public String getId() {
@@ -113,6 +119,13 @@ public class SiteMenuRepresentation {
     @XmlElement(name = "items")
     public List<SiteMenuItemRepresentation> getChildren() {
         return children;
+    }
+
+    /**
+     * @return The hst:sitemenuitem with name {@link HstNodeTypes#SITEMENUITEM_HST_PROTOTYPEITEM} or null if it does not exist
+     */
+    public SiteMenuItemRepresentation getPrototypeItem() {
+        return prototypeItem;
     }
 
     public void setChildren(final List<SiteMenuItemRepresentation> children) {
