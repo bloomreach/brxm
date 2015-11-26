@@ -38,6 +38,7 @@ import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPlugin;
@@ -156,7 +157,11 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                 new IChoiceRenderer<Section>() {
                     @Override
                     public Object getDisplayValue(final Section section) {
-                        return new StringResourceModel(section.header, SectionTreePlugin.this, null).getObject();
+                        String displayValue = new ResourceBundleModel("hippo:cms.sections", section.header).getObject();
+                        if (displayValue == null) {
+                            displayValue = new StringResourceModel(section.header, SectionTreePlugin.this, null).getObject();
+                        }
+                        return displayValue;
                     }
 
                     @Override
