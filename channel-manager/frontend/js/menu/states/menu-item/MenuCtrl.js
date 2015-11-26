@@ -45,15 +45,22 @@
             addItemAfterCheckingValidity();
           }
 
+          function createBlankMenuItem (menuData) {
+            var result = {
+              linkType: 'SITEMAPITEM',
+              title: $filter('incrementProperty')(menuData.items, 'title', $filter('translate')('UNTITLED'), 'items'),
+              link: ''
+            };
+            if (angular.isDefined(menuData.prototypeItem)) {
+              result.localParameters = angular.copy(menuData.prototypeItem.localParameters);
+            }
+            return result;
+          }
+
           function addItemAfterCheckingValidity () {
             MenuCtrl.isSaving.newItem = true;
             MenuService.getMenu().then(function (menuData) {
-              var blankMenuItem = {
-                linkType: 'SITEMAPITEM',
-                title: $filter('incrementProperty')(menuData.items, 'title', $filter('translate')('UNTITLED'), 'items'),
-                link: ''
-              };
-
+              var blankMenuItem = createBlankMenuItem(menuData);
               if ($stateParams.menuItemId) {
                 MenuService.getPathToMenuItem($stateParams.menuItemId).then(addMenuItemToPath);
               } else {
