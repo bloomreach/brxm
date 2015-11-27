@@ -33,6 +33,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -145,18 +146,13 @@ public class MountResource extends AbstractConfigResource {
     @GET
     @Path("/newpagemodel")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNewPageModel() {
-        final Mount mount = getPageComposerContextService().getEditingMount();
-        NewPageModelRepresentation newPageModelRepresentation = getNewPageModelRepresentation(mount);
-        log.info("Prototype pages loaded successfully");
-        return ok("Prototype pages loaded successfully", newPageModelRepresentation);
-    }
-
-    @GET
-    @Path("/pagelocations/{mountId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getPageLocations(@PathParam("mountId") final String mountId) {
-        Mount mount = RequestContextProvider.get().getVirtualHost().getVirtualHosts().getMountByIdentifier(mountId);
+    public Response getNewPageModel(@QueryParam("mountId") final String mountId) {
+        final Mount mount;
+        if (mountId == null) {
+            mount = getPageComposerContextService().getEditingMount();
+        } else {
+            mount = RequestContextProvider.get().getVirtualHost().getVirtualHosts().getMountByIdentifier(mountId);
+        }
         if (mount == null) {
             String msg = String.format("Could not find a Mount for identifier + '%s'", mountId);
             return logAndReturnClientError(new ClientException(msg, ClientError.ITEM_NOT_FOUND));
@@ -167,8 +163,8 @@ public class MountResource extends AbstractConfigResource {
             return logAndReturnClientError(new ClientException(msg, ClientError.UNKNOWN));
         }
         NewPageModelRepresentation newPageModelRepresentation = getNewPageModelRepresentation(mount);
-        log.info("Page locations loaded successfully");
-        return ok("Page locations loaded successfully", newPageModelRepresentation.getLocations());
+        log.info("New Page model loaded successfully");
+        return ok("New Page model loaded successfully", newPageModelRepresentation);
     }
 
     private NewPageModelRepresentation getNewPageModelRepresentation(final Mount mount) {
