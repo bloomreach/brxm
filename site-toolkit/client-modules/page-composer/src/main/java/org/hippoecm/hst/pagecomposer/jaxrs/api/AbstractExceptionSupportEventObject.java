@@ -20,6 +20,26 @@ import java.util.EventObject;
 
 import org.slf4j.Logger;
 
+/**
+ * <p>
+ *     Abstract {@link EventObject} class that can be used to set exceptions on, that later on can be by the event originating
+ *     code to short-circuit processing.
+ * </p>
+ * <p>
+ *     Listeners to these events in general can best first check whether the event already has an exception, and if so,
+ *     return directly. For example
+ *     <pre>
+ *         {@literal @}Subscribe
+ *         {@literal @}AllowConcurrentEvents
+ *         <code>public void onPageCopyEvent(PageCopyEvent event) {
+ *           if (event.getException() != null) {
+ *           return;
+ *         }
+ *         </code>
+ *     </pre>
+ * </p>
+ *
+ */
 public abstract class AbstractExceptionSupportEventObject extends EventObject {
 
     private transient RuntimeException exception;
@@ -29,6 +49,19 @@ public abstract class AbstractExceptionSupportEventObject extends EventObject {
     }
 
     /**
+     * <p>
+     *     Listeners to events in general can best first check whether the event already has an exception, and if so,
+     *     return directly. For example
+     *     <pre>
+     *         {@literal @}Subscribe
+     *         {@literal @}AllowConcurrentEvents
+     *         <code>public void onPageCopyEvent(PageCopyEvent event) {
+     *           if (event.getException() != null) {
+     *           return;
+     *         }
+     *         </code>
+     *     </pre>
+     * </p>
      * @return the {@link RuntimeException} if it was set via {@link AbstractExceptionSupportEventObject#setException(RuntimeException)}
      * and <code>null</code> when no exception was set
      */
@@ -37,16 +70,15 @@ public abstract class AbstractExceptionSupportEventObject extends EventObject {
     }
 
     /**
-     * @param exception set the {@link java.lang.RuntimeException} for this {@link PageCopyEvent} unless there was already a
-     *                  a {@link java.lang.RuntimeException} set. In that case, the invocation of this method does not change
+     * @param exception sets the {@link java.lang.RuntimeException} for this {@link AbstractExceptionSupportEventObject}.
+     *                  If there is already an exception set, the exception is reset
      */
     public void setException(final RuntimeException exception) {
         if (this.exception != null) {
             if (getLogger() != null) {
-                getLogger().debug("Skipping exception '{}' for EventObject {} because already exception {} set.", exception.toString(),
+                getLogger().debug("Resetting exception '{}' for EventObject {} because already exception {} set.", exception.toString(),
                         this, this.exception.toString());
             }
-            return;
         }
         this.exception = exception;
     }
