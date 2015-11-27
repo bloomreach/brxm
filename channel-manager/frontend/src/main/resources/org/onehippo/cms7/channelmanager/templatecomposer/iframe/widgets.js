@@ -328,7 +328,7 @@
           this.overlay.addClass(this.cls.emptyContainer);
           tmpCls = this.cls.item;
           this.cls.item = this.cls.emptyItem;
-          item = this.createItemElement($('<div class="empty-container-placeholder">Drop Component Here</div>').hide()[0]);
+          item = this.createItemElement($('<div class="empty-container-placeholder">' + this.resources['container-empty-text'] + '</div>').hide()[0]);
           this.appendItem(item);
           this.cls.item = tmpCls;
         }
