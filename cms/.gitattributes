@@ -1354,7 +1354,6 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/Bro
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin.properties -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin_nl.properties -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/ConsoleTreeTable.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/JcrConsoleTree.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/NodeIconUtils.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/add-node.png -text svneol=unset#image/png
