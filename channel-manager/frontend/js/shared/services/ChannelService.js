@@ -45,9 +45,9 @@
         channelService.getPageLocations = function (mountId) {
           var deferred = $q.defer();
 
-          $http.get(ConfigService.apiUrlPrefix + '/' + mountId + './pagelocations/' + mountId)
+          $http.get(ConfigService.apiUrlPrefix + '/' + mountId + './newpagemodel?mountId=' + mountId)
             .success(function (response) {
-              deferred.resolve(response.data);
+              deferred.resolve(response.data.locations);
             })
             .error(function (error) {
               deferred.reject(error);
