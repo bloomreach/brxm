@@ -21,6 +21,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -103,6 +104,9 @@ public class TaxonomyObject extends JcrObject {
     }
 
     protected JcrCategory createCategory(Node parent, String key, String name, String locale) throws RepositoryException, TaxonomyException {
+        if (StringUtils.isBlank(name)) {
+            throw new TaxonomyException("Cannot create a new taxonomy with an empty name");
+        }
         String encoded = KeyCodec.encode(name);
 
         String categoryName = encoded;
