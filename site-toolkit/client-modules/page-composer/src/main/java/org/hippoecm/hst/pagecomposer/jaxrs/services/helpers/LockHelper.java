@@ -33,12 +33,21 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LAST_
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_EDITABLE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CATALOG;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CHANNEL;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_PAGES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAP;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMENUS;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_TEMPLATES;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError.ITEM_ALREADY_LOCKED;
 
 public class LockHelper {
 
     private static final Logger log = LoggerFactory.getLogger(LockHelper.class);
+
+    private static final String[] LOCKABLE_NODE_TYPES = {NODETYPE_HST_TEMPLATES, NODETYPE_HST_CONTAINERCOMPONENT,
+            NODETYPE_HST_CATALOG, NODETYPE_HST_PAGES, NODETYPE_HST_SITEMAP, NODETYPE_HST_SITEMENUS, NODETYPE_HST_CHANNEL};
 
     /**
      * recursively unlocks <code>configNode</code> and/or any descendant
@@ -47,9 +56,9 @@ public class LockHelper {
         if (configNode.isNodeType(MIXINTYPE_HST_EDITABLE)) {
             log.info("Removing lock for '{}' since node or ancestor gets published", configNode.getPath());
             configNode.removeMixin(MIXINTYPE_HST_EDITABLE);
-        } else if(configNode.hasProperty(GENERAL_PROPERTY_LOCKED_BY)){
+        } else if (configNode.hasProperty(GENERAL_PROPERTY_LOCKED_BY)) {
             configNode.getProperty(GENERAL_PROPERTY_LOCKED_BY).remove();
-            if(configNode.hasProperty(GENERAL_PROPERTY_LOCKED_ON)){
+            if (configNode.hasProperty(GENERAL_PROPERTY_LOCKED_ON)) {
                 configNode.getProperty(GENERAL_PROPERTY_LOCKED_ON).remove();
             }
         }
@@ -63,7 +72,7 @@ public class LockHelper {
      * anything. If there is no lock yet, a lock for the current session userID gets set on the node. If there is
      * already a lock by another user a ClientException is thrown,
      *
-     * @param node the node to lock
+     * @param node         the node to lock
      * @param versionStamp if > 0, it will be used as a requirement that the <code>node</code> has the same stamp
      */
     public void acquireLock(final Node node, final long versionStamp) throws RepositoryException {
@@ -75,8 +84,8 @@ public class LockHelper {
      * anything. If there is no lock yet, a lock for the user gets set on the node. If there is
      * already a lock by another user a ClientException is thrown,
      *
-     * @param node the node to lock
-     * @param lockFor the user to lock the node for
+     * @param node         the node to lock
+     * @param lockFor      the user to lock the node for
      * @param versionStamp if > 0, it will be used as a requirement that the <code>node</code> has the same stamp
      */
     public void acquireLock(final Node node, final String lockFor, final long versionStamp) throws RepositoryException {
@@ -89,11 +98,12 @@ public class LockHelper {
     }
 
     /**
-     * @see {@link #acquireLock(javax.jcr.Node, String, long)} only for the acquireSimpleLock there is no need to check descendant or
+     * @param node         the node to lock
+     * @param versionStamp if > 0, it will be used as a requirement that the <code>node</code> has the same stamp
+     * @see {@link #acquireLock(javax.jcr.Node, String, long)} only for the acquireSimpleLock there is no need to check
+     * descendant or
      * ancestors. It is only the node itself that needs to be checked. This is for example the case for sitemenu nodes
      * where there is no fine-grained locking for the items below it
-     * @param node the node to lock
-     * @param versionStamp if > 0, it will be used as a requirement that the <code>node</code> has the same stamp
      */
     void acquireSimpleLock(final Node node, final long versionStamp) throws RepositoryException {
         final Node unLockableNode = getUnLockableNode(node, false, false);
@@ -105,15 +115,15 @@ public class LockHelper {
     }
 
     private void doLock(final Node node, final String lockFor, final long versionStamp) throws RepositoryException {
-        if (node.isNodeType(NODETYPE_HST_CONTAINERCOMPONENT)) {
+        if (isLockableNodeType(node)) {
             // due historical reasons, the HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT does not need
             // editable mixin
             log.debug("node '{}' is of type '{}' so not editable mixin needed.",
-                    node.getPath(), NODETYPE_HST_CONTAINERCOMPONENT);
-        } else if(!node.isNodeType(MIXINTYPE_HST_EDITABLE)) {
+                    node.getPath(), node.getPrimaryNodeType().getName());
+        } else if (!node.isNodeType(MIXINTYPE_HST_EDITABLE)) {
             log.debug("Adding mixin '{}' to '{}'.",
                     MIXINTYPE_HST_EDITABLE, node.getPath());
-             node.addMixin(MIXINTYPE_HST_EDITABLE);
+            node.addMixin(MIXINTYPE_HST_EDITABLE);
         }
         if (node.hasProperty(GENERAL_PROPERTY_LOCKED_BY)) {
             // user already has the lock
@@ -126,7 +136,7 @@ public class LockHelper {
                 Calendar existing = Calendar.getInstance();
                 existing.setTimeInMillis(existingStamp);
                 String msg = String.format("Node '%s' has been modified wrt versionStamp. Cannot acquire lock now for user '%s'.",
-                        node.getPath() , lockFor);
+                        node.getPath(), lockFor);
                 log.info(msg);
                 throw new ClientException(msg, ClientError.ITEM_CHANGED);
             }
@@ -136,6 +146,15 @@ public class LockHelper {
         if (!node.hasProperty(GENERAL_PROPERTY_LOCKED_ON)) {
             node.setProperty(GENERAL_PROPERTY_LOCKED_ON, Calendar.getInstance());
         }
+    }
+
+    private boolean isLockableNodeType(final Node node) throws RepositoryException {
+        for (String lockableNodeType : LOCKABLE_NODE_TYPES) {
+            if (node.isNodeType(lockableNodeType)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Map<?, ?> getLockParameterMap(final Node node) throws RepositoryException {

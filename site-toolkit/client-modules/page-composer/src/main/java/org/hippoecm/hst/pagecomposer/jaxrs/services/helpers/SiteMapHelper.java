@@ -58,9 +58,14 @@ public class SiteMapHelper extends AbstractHelper {
     private static final String WORKSPACE_PATH_ELEMENT = "/" + NODENAME_HST_WORKSPACE + "/";
 
     private PagesHelper pagesHelper;
+    private TemplateHelper templateHelper;
 
     public void setPagesHelper(final PagesHelper pagesHelper) {
         this.pagesHelper = pagesHelper;
+    }
+
+    public void setTemplateHelper(final TemplateHelper templateHelper) {
+        this.templateHelper = templateHelper;
     }
 
     /**
@@ -332,6 +337,8 @@ public class SiteMapHelper extends AbstractHelper {
 
         PageCopyContext pcc = new PageCopyContext(requestContext, editingMount, sourceSiteMapItem, toShallowCopy, sourcePage,
                 session.getNodeByIdentifier(sourcePage.getCanonicalIdentifier()), targetMount, targetSiteMapItem, newSiteMapNode, clonedPage);
+
+        templateHelper.copyTemplates(pcc);
         return pcc;
     }
 
