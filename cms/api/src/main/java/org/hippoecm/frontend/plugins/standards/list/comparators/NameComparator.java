@@ -27,8 +27,6 @@ import org.slf4j.LoggerFactory;
 
 public class NameComparator extends NodeComparator {
 
-    private static final Logger log = LoggerFactory.getLogger(NameComparator.class);
-
     private static final NameComparator INSTANCE = new NameComparator();
 
     private NameComparator() {
