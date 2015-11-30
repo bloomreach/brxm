@@ -56,66 +56,96 @@ describe('IFrame Service', function () {
         });
     });
 
-    beforeEach(inject(['$log', '_hippo.channel.IFrameService', function (log, IFrameService) {
-        $log = log;
-        iframeService = IFrameService;
-    }]));
+    describe("runs in an iframe and", function () {
 
-    it('should exist', function() {
-        expect(iframeService).toBeDefined();
+        beforeEach(inject([
+            '$log', '_hippo.channel.IFrameService', function (log, IFrameService) {
+                $log = log;
+                iframeService = IFrameService;
+            }
+        ]));
+
+        it('should be active', function () {
+            expect(iframeService.isActive).toEqual(true);
+        });
+
+        it('should call the parent IFramePanel.iFrameToHost.publish', function () {
+            iframeService.publish('browseTo', '/about');
+            expect(publishMock).toHaveBeenCalledWith('browseTo', '/about');
+        });
+
+        it('should call the parent IFramePanel.hostToIFrame.subscribe', function () {
+            iframeService.subscribe('test', 'callback', 'scope');
+            expect(subscribeMock).toHaveBeenCalledWith('test', 'callback', 'scope');
+        });
+
+        it('should return the iframe config from the parent', function () {
+            expect(iframeService.getConfig()).toEqual(iframeConfig);
+        });
+
+        it('should enable live reload in debug mode', function () {
+            iframeConfig.debug = true;
+
+            var head = jasmine.createSpyObj('head', ['appendChild']);
+            $window.document.getElementsByTagName.and.returnValue([head]);
+
+            spyOn($log, 'info');
+
+            iframeService.enableLiveReload();
+
+            expect(head.appendChild).toHaveBeenCalled();
+            expect($log.info).toHaveBeenCalledWith('iframe #ext-42 has live reload enabled via //localhost:35729/livereload.js');
+        });
+
+        it('should not enable live reload in non-debug mode', function () {
+            iframeConfig.debug = false;
+            iframeService.enableLiveReload();
+            expect($window.document.getElementsByTagName).not.toHaveBeenCalled();
+        });
+
+        it("should throw an error when the parent does not contain an IFramePanel with the given ID", function () {
+            spyOn($window.parent.Ext, 'getCmp').and.returnValue(undefined);
+            expect(iframeService.getConfig).toThrow(new Error("Unknown iframe panel id: 'ext-42'"));
+        });
+
+        it("should throw an error when the parent's IFramePanel does not contain any configuration for the iframe", function () {
+            parentIFramePanel.initialConfig.iframeConfig = undefined;
+            expect(iframeService.getConfig).toThrow(new Error("Parent iframe panel does not contain iframe configuration"));
+        });
     });
 
-    it('should be active', function() {
-        expect(iframeService.isActive).toEqual(true);
-    });
+    describe("does not run in an iframe and", function () {
 
-    it('should call the parent IFramePanel.iFrameToHost.publish', function() {
-        iframeService.publish('browseTo', '/about');
-        expect(publishMock).toHaveBeenCalledWith('browseTo', '/about');
-    });
+        beforeEach(function () {
+            $window.location.search = '';
+            delete $window.parent;
+        });
 
-    it('should call the parent IFramePanel.hostToIFrame.subscribe', function() {
-        iframeService.subscribe('test', 'callback', 'scope');
-        expect(subscribeMock).toHaveBeenCalledWith('test', 'callback', 'scope');
-    });
+        beforeEach(inject([
+            '$log', '_hippo.channel.IFrameService', function (log, IFrameService) {
+                $log = log;
+                iframeService = IFrameService;
+            }
+        ]));
 
-    it('should return the iframe config from the parent', function() {
-        expect(iframeService.getConfig()).toEqual(iframeConfig);
-    });
+        it('should not be active', function () {
+            expect(iframeService.isActive).toEqual(false);
+        });
 
-    it('should enable live reload in debug mode', function() {
-        iframeConfig.debug = true;
+        it("should return an empty configuration object when no parent IFramePanel ID is set", function () {
+            expect(iframeService.getConfig()).toEqual({});
+        });
 
-        var head = jasmine.createSpyObj('head', ['appendChild']);
-        $window.document.getElementsByTagName.and.returnValue([head]);
+        it("should ignore publish calls", function () {
+            iframeService.publish('event', 'value');
+            expect(publishMock.calls.count()).toEqual(0);
+        });
 
-        spyOn($log, 'info');
+        it("should ignore subscribe calls", function () {
+            iframeService.subscribe('test', 'callback', 'scope');
+            expect(subscribeMock.calls.count()).toEqual(0);
+        });
 
-        iframeService.enableLiveReload();
-
-        expect(head.appendChild).toHaveBeenCalled();
-        expect($log.info).toHaveBeenCalledWith('iframe #ext-42 has live reload enabled via //localhost:35729/livereload.js');
-    });
-
-    it('should not enable live reload in non-debug mode', function() {
-        iframeConfig.debug = false;
-        iframeService.enableLiveReload();
-        expect($window.document.getElementsByTagName).not.toHaveBeenCalled();
-    });
-
-    it("should throw an error when the ID of the parent's IFramePanel is not known", function() {
-        $window.location.search = '';
-        expect(iframeService.getConfig).toThrow(new Error("Expected query parameter 'parentExtIFramePanelId'"));
-    });
-
-    it("should throw an error when the parent does not contain an IFramePanel with the given ID", function() {
-        spyOn($window.parent.Ext, 'getCmp').and.returnValue(undefined);
-        expect(iframeService.getConfig).toThrow(new Error("Unknown iframe panel id: 'ext-42'"));
-    });
-
-    it("should throw an error when the parent's IFramePanel does not contain any configuratin for the iframe", function() {
-        parentIFramePanel.initialConfig.iframeConfig = undefined;
-        expect(iframeService.getConfig).toThrow(new Error("Parent iframe panel does not contain iframe configuration"));
     });
 
 });
