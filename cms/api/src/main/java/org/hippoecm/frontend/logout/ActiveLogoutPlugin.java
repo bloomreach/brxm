@@ -25,6 +25,7 @@ import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.service.ILogoutService;
 import org.hippoecm.frontend.useractivity.UserActivityHeaderItem;
+import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +64,7 @@ public class ActiveLogoutPlugin extends Component {
     }
 
     private boolean isActive() {
-        return maxInactiveIntervalMinutes > 0;
+        return maxInactiveIntervalMinutes > 0 && !WebApplicationHelper.isDevelopmentMode();
     }
 
     @Override
