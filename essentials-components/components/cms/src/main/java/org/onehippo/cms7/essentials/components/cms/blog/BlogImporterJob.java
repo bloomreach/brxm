@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.nodetype.NodeType;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -154,6 +155,8 @@ public class BlogImporterJob implements RepositoryJob {
 
             final String prefixedNamespace = projectNamespace + ':';
             final String fullNameProperty = prefixedNamespace + "fullname";
+            final List<String> documentMixins = getDocumenttypeMixins(session, projectNamespace, "author");
+
             for (int i = 0; i < blogUrls.length; i++) {
                 Node authorNode = null;
                 if (myAuthorsBasePath != null && authors != null) {
@@ -173,8 +176,8 @@ public class BlogImporterJob implements RepositoryJob {
                             } else {
                                 // create author node;
                                 log.info("Creating new Author document for name: {}", author);
-                                final Node documentNode = createDocument(prefixedNamespace, "author", authorsNode, author);
-                                setDefaultDocumentPorperties(prefixedNamespace, documentNode, Calendar.getInstance());
+                                final Node documentNode = createDocument(prefixedNamespace, "author", authorsNode, author, documentMixins);
+                                setDefaultDocumentProperties(prefixedNamespace, documentNode, Calendar.getInstance());
                                 documentNode.setProperty(fullNameProperty, author);
                                 authorNode = authorsNode.getNode(author);
                                 session.save();
@@ -230,12 +233,13 @@ public class BlogImporterJob implements RepositoryJob {
 
     private void processFeed(final Session session, final String projectNamespace, final int maxDescriptionLength, final Node blogNode, final Node authorNode, final SyndFeed feed) {
         if (feed != null) {
+            final List<String> documentMixins = getDocumenttypeMixins(session, projectNamespace, "blogpost");
             for (Object entry : feed.getEntries()) {
                 if (entry instanceof SyndEntry) {
                     SyndEntry syndEntry = (SyndEntry) entry;
                     try {
                         if (!blogExists(blogNode, syndEntry)) {
-                            createBlogDocument(projectNamespace, blogNode, authorNode, syndEntry, maxDescriptionLength);
+                            createBlogDocument(projectNamespace, blogNode, authorNode, syndEntry, maxDescriptionLength, documentMixins);
                             BlogUpdater.handleSaved(blogNode, projectNamespace);
                             session.save();
                         } else {
@@ -252,6 +256,23 @@ public class BlogImporterJob implements RepositoryJob {
         }
     }
 
+    private List<String> getDocumenttypeMixins(final Session session, final String projectNamespace, final String documentTypeName) {
+        final List<String> mixins = new ArrayList<>();
+        final String docNamespacePrototype = "hippo:namespaces/" + projectNamespace + "/" + documentTypeName + "/hipposysedit:prototypes/hipposysedit:prototype";
+        try {
+            final Node docNamespacePrototypeNode = session.getRootNode().getNode(docNamespacePrototype);
+            final NodeType[] mixinNodeTypes = docNamespacePrototypeNode.getMixinNodeTypes();
+            for(NodeType nt : mixinNodeTypes) {
+                mixins.add(nt.getName());
+            }
+        } catch (RepositoryException rExp) {
+            log.error("Error in retrieving document namespace prototype", rExp);
+            cleanupSession(session);
+        }
+
+        return mixins;
+    }
+
     private boolean blogExists(Node baseNode, SyndEntry syndEntry) throws RepositoryException {
         Node blogFolder = getBlogFolder(baseNode, syndEntry);
         String documentName = NodeNameCodec.encode(syndEntry.getTitle().replace("?", ""), true);
@@ -262,11 +283,13 @@ public class BlogImporterJob implements RepositoryJob {
         return exist;
     }
 
-    private boolean createBlogDocument(final String namespace, Node baseNode, Node authorHandleNode, SyndEntry syndEntry, int maxDescriptionLength) throws RepositoryException {
+    private boolean createBlogDocument(final String namespace, final Node baseNode, final Node authorHandleNode,
+                                       final SyndEntry syndEntry, final int maxDescriptionLength,
+                                       final List<String> mixins) throws RepositoryException {
         final String prefixedNamespace = namespace + ':';
         Node blogFolder = getBlogFolder(baseNode, syndEntry);
         String documentName = NodeNameCodec.encode(syndEntry.getTitle(), true).replace("?", "");
-        Node documentNode = createDocument(prefixedNamespace, "blogpost", blogFolder, documentName);
+        Node documentNode = createDocument(prefixedNamespace, "blogpost", blogFolder, documentName, mixins);
         documentNode.setProperty(prefixedNamespace + "title", syndEntry.getTitle());
         documentNode.setProperty(prefixedNamespace + "introduction", processDescription(syndEntry, maxDescriptionLength));
         if (authorHandleNode != null) {
@@ -284,7 +307,7 @@ public class BlogImporterJob implements RepositoryJob {
         documentNode.setProperty(prefixedNamespace + "link", syndEntry.getLink());
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(syndEntry.getPublishedDate());
-        setDefaultDocumentPorperties(prefixedNamespace, documentNode, calendar);
+        setDefaultDocumentProperties(prefixedNamespace, documentNode, calendar);
         documentNode.addNode(prefixedNamespace + "content", "hippostd:html");
         documentNode.getNode(prefixedNamespace + "content").setProperty("hippostd:content", processContent(syndEntry));
         documentNode.addNode(prefixedNamespace + "image", "hippostd:html");
@@ -299,7 +322,7 @@ public class BlogImporterJob implements RepositoryJob {
         return true;
     }
 
-    private void setDefaultDocumentPorperties(final String prefixedNamespace, final Node documentNode, final Calendar calendar) throws RepositoryException {
+    private void setDefaultDocumentProperties(final String prefixedNamespace, final Node documentNode, final Calendar calendar) throws RepositoryException {
         documentNode.setProperty(prefixedNamespace + "publicationdate", calendar);
         documentNode.setProperty("hippostdpubwf:lastModifiedBy", "admin");
         documentNode.setProperty("hippostdpubwf:createdBy", "admin");
@@ -314,11 +337,14 @@ public class BlogImporterJob implements RepositoryJob {
         documentNode.setProperty("hippotranslation:id", UUID.randomUUID().toString());
     }
 
-    private Node createDocument(final String prefixedNamespace, final String docType, final Node rootNode, final String documentName) throws RepositoryException {
+    private Node createDocument(final String prefixedNamespace, final String docType, final Node rootNode,
+                                final String documentName, final List<String> mixins) throws RepositoryException {
         Node handleNode = rootNode.addNode(documentName, "hippo:handle");
         handleNode.addMixin("mix:referenceable");
         Node documentNode = handleNode.addNode(documentName, prefixedNamespace + docType);
-        documentNode.addMixin("mix:referenceable");
+        for(String mixin : mixins) {
+            documentNode.addMixin(mixin);
+        }
         documentNode.setProperty("hippo:availability", new String[]{"live", "preview"});
         return documentNode;
     }
