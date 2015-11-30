@@ -18,12 +18,8 @@ package org.hippoecm.frontend.plugins.standards.list.comparators;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeNameModel;
-import org.hippoecm.repository.api.HippoNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class NameComparator extends NodeComparator {
 
