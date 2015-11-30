@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -29,13 +31,16 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
+import org.hippoecm.frontend.logout.ActiveLogoutPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
@@ -49,12 +54,14 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
+import org.hippoecm.frontend.service.ILogoutService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.ListViewService;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.usagestatistics.UsageStatisticsHeaderItem;
+import org.hippoecm.frontend.useractivity.UserActivityHeaderItem;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.frontend.widgets.Pinger;
 import org.slf4j.Logger;
@@ -66,6 +73,7 @@ public class RootPlugin extends TabsPlugin {
     static final Logger log = LoggerFactory.getLogger(RootPlugin.class);
 
     public static final String CONFIG_PINGER_INTERVAL = "pinger.interval";
+    public static final String CONFIG_SESSION_TIMEOUT_MINUTES = "session.timeout.minutes";
 
     private boolean rendered = false;
     private final ExtWidgetRegistry extWidgetRegistry;
@@ -97,15 +105,12 @@ public class RootPlugin extends TabsPlugin {
         // keep all feedback messages after each request cycle
         getApplication().getApplicationSettings().setFeedbackMessageCleanupFilter(IFeedbackMessageFilter.NONE);
 
-        if (config.containsKey(CONFIG_PINGER_INTERVAL)) {
-            add(new Pinger("pinger", config.getAsDuration(CONFIG_PINGER_INTERVAL)));
-        } else {
-            add(new Pinger("pinger"));
-        }
+        addPinger(config);
 
         add(new Label("pageTitle", getString("page.title", null, "Hippo CMS 10")));
 
-        add(new UserMenu("userMenu", getCurrentUser()));
+        final ILogoutService logoutService = addUserMenu(context);
+        addActiveLogout(config, logoutService);
 
         services = new LinkedList<>();
 
@@ -188,6 +193,30 @@ public class RootPlugin extends TabsPlugin {
         final PageLayoutSettings pageLayoutSettings = getPageLayoutSettings(config);
         add(new PageLayoutBehavior(pageLayoutSettings));
         add(new ResourceLink("faviconLink", ((PluginApplication)getApplication()).getPluginApplicationFavIconReference()));
+    }
+
+    private void addPinger(final IPluginConfig config) {
+        final Duration pingerInterval = config.getAsDuration(CONFIG_PINGER_INTERVAL);
+        log.info("Pinger interval: {}", pingerInterval);
+        add(new Pinger("pinger", pingerInterval));
+    }
+
+    private ILogoutService addUserMenu(final IPluginContext context) {
+        final ILogoutService logoutService = context.getService(ILogoutService.SERVICE_ID, ILogoutService.class);
+        add(new UserMenu("userMenu", getCurrentUser(), logoutService));
+        return logoutService;
+    }
+
+    private void addActiveLogout(final IPluginConfig config, final ILogoutService logoutService) {
+        final Integer maxInactiveIntervalMinutes = config.getAsInteger(CONFIG_SESSION_TIMEOUT_MINUTES, getDefaultMaxInactiveIntervalMinutes());
+        add(new ActiveLogoutPlugin("activeLogout", maxInactiveIntervalMinutes, logoutService));
+    }
+
+    private static int getDefaultMaxInactiveIntervalMinutes() {
+        final ServletWebRequest servletRequest = (ServletWebRequest) RequestCycle.get().getRequest();
+        final HttpSession httpSession = servletRequest.getContainerRequest().getSession();
+        // round seconds down to minutes
+        return httpSession.getMaxInactiveInterval() / 60;
     }
 
     @Override
