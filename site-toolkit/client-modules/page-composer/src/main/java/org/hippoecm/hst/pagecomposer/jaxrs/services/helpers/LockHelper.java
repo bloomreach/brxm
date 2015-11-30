@@ -92,7 +92,7 @@ public class LockHelper {
         final Node unLockableNode = getUnLockableNode(node, lockFor, true, true);
         if (unLockableNode != null) {
             final String message = String.format("Node '%s' cannot be locked due to someone else who has the lock (possibly a descendant or ancestor that is locked).", node.getPath());
-            throw new ClientException(message, ITEM_ALREADY_LOCKED, getLockParameterMap(unLockableNode));
+            throw new ClientException(message, ITEM_ALREADY_LOCKED, getErrorParameterMap(unLockableNode, message));
         }
         doLock(node, lockFor, versionStamp);
     }
@@ -109,7 +109,7 @@ public class LockHelper {
         final Node unLockableNode = getUnLockableNode(node, false, false);
         if (unLockableNode != null) {
             final String message = String.format("Node '%s' cannot be locked due to someone else who has the lock.", node.getPath());
-            throw new ClientException(message, ITEM_ALREADY_LOCKED, getLockParameterMap(node));
+            throw new ClientException(message, ITEM_ALREADY_LOCKED, getErrorParameterMap(node, message));
         }
         doLock(node, node.getSession().getUserID(), versionStamp);
     }
@@ -157,7 +157,7 @@ public class LockHelper {
         return false;
     }
 
-    private Map<?, ?> getLockParameterMap(final Node node) throws RepositoryException {
+    private Map<?, ?> getErrorParameterMap(final Node node, final String message) throws RepositoryException {
         final Map<String, Object> parameterMap = new HashMap<>();
         if (node.hasProperty(GENERAL_PROPERTY_LOCKED_BY)) {
             parameterMap.put("lockedBy", node.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
@@ -165,6 +165,7 @@ public class LockHelper {
         if (node.hasProperty(GENERAL_PROPERTY_LOCKED_ON)) {
             parameterMap.put("lockedOn", node.getProperty(GENERAL_PROPERTY_LOCKED_ON).getDate().getTimeInMillis());
         }
+        parameterMap.put("errorReason", message);
         return parameterMap;
     }
 
