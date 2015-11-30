@@ -315,10 +315,10 @@ public class SiteMapHelper extends AbstractHelper {
                     ClientError.ITEM_CANNOT_BE_CLONED, Collections.singletonMap("errorReason", message));
         }
 
-        String fromPathInfo = HstSiteMapUtils.getPath(sourceSiteMapItem);
-        String fromPageNodeNamePrefix = fromPathInfo.replace("/", "-");
+        String sourcePathInfo = HstSiteMapUtils.getPath(sourceSiteMapItem);
+        String sourcePageNodeNamePrefix = sourcePathInfo.replace("/", "-");
 
-        final String prefix = getPreviewConfigurationPath() + "/" + NODENAME_HST_PAGES + "/" + fromPageNodeNamePrefix + "-";
+        final String prefix = getPreviewConfigurationPath() + "/" + NODENAME_HST_PAGES + "/" + sourcePageNodeNamePrefix + "-";
         String targetPageName;
         if (sourcePage.getCanonicalStoredLocation().startsWith(prefix)){
             targetPageName = targetName + "-" + sourcePage.getCanonicalStoredLocation().substring(prefix.length());

@@ -40,11 +40,11 @@ import org.slf4j.Logger;
  * </p>
  *
  */
-public abstract class AbstractExceptionSupportEventObject extends EventObject {
+public abstract class RuntimeExceptionEvent extends EventObject {
 
     private transient RuntimeException exception;
 
-    public AbstractExceptionSupportEventObject(final Object source) {
+    public RuntimeExceptionEvent(final Object source) {
         super(source);
     }
 
@@ -62,7 +62,7 @@ public abstract class AbstractExceptionSupportEventObject extends EventObject {
      *         </code>
      *     </pre>
      * </p>
-     * @return the {@link RuntimeException} if it was set via {@link AbstractExceptionSupportEventObject#setException(RuntimeException)}
+     * @return the {@link RuntimeException} if it was set via {@link RuntimeExceptionEvent#setException(RuntimeException)}
      * and <code>null</code> when no exception was set
      */
     public RuntimeException getException() {
@@ -70,7 +70,7 @@ public abstract class AbstractExceptionSupportEventObject extends EventObject {
     }
 
     /**
-     * @param exception sets the {@link java.lang.RuntimeException} for this {@link AbstractExceptionSupportEventObject}.
+     * @param exception sets the {@link java.lang.RuntimeException} for this {@link RuntimeExceptionEvent}.
      *                  If there is already an exception set, the exception is reset
      */
     public void setException(final RuntimeException exception) {

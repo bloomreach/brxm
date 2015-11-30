@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  *     will always be persisted by the code that posted the {@link PageCopyEvent} to the guava event bus
  * </p>
  */
-public class PageCopyEvent extends AbstractExceptionSupportEventObject {
+public class PageCopyEvent extends RuntimeExceptionEvent {
 
     private static final Logger log = LoggerFactory.getLogger(PageCopyEvent.class);
 

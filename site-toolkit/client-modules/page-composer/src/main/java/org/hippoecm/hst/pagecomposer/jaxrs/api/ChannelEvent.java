@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  *     will always be persisted by the code that posted the {@link ChannelEvent} to the guava event bus
  * </p>
  */
-public class ChannelEvent extends AbstractExceptionSupportEventObject {
+public class ChannelEvent extends RuntimeExceptionEvent {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelEvent.class);
 

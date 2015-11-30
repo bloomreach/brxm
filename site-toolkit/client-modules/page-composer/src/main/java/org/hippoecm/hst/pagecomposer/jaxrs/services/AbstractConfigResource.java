@@ -29,8 +29,7 @@ import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.AbstractExceptionSupportEventObject;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.RuntimeExceptionEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -138,7 +137,7 @@ public class AbstractConfigResource implements ComponentManagerAware {
         }
     }
 
-    protected void publishSynchronousEvent(final AbstractExceptionSupportEventObject event) throws ClientException {
+    protected void publishSynchronousEvent(final RuntimeExceptionEvent event) throws ClientException {
         componentManager.publishEvent(event);
         if (event.getException() != null) {
             throw event.getException();
