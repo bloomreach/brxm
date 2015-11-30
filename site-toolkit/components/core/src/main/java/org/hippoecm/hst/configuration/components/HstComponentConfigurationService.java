@@ -34,7 +34,6 @@ import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.internal.StringPool;
-import org.hippoecm.hst.provider.ValueProvider;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL;
@@ -1002,21 +1001,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     }
 
-    protected void setRenderPath(Map<String, HstNode> templateResourceMap) {
+    protected void setRenderPath(Map<String, HstComponentsConfigurationService.Template> templateResourceMap) {
         if (StringUtils.isNotEmpty(hstTemplate)) {
             String templateRenderPath = null;
-            HstNode template = templateResourceMap.get(hstTemplate);
+            HstComponentsConfigurationService.Template template = templateResourceMap.get(hstTemplate);
             if (template != null) {
-                ValueProvider valueProvider = template.getValueProvider();
+                templateRenderPath = template.getRenderPath();
 
-                if (valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH)) {
-                    templateRenderPath = valueProvider.getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
+                if (StringUtils.isBlank(templateRenderPath) && template.getScript() != null) {
+                    templateRenderPath = FREEMARKER_JCR_TEMPLATE_PROTOCOL + template.getPath();
                 }
-
-                if (StringUtils.isBlank(templateRenderPath) && valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT)) {
-                    templateRenderPath = FREEMARKER_JCR_TEMPLATE_PROTOCOL + valueProvider.getPath();
-                }
-                this.isNamedRenderer = valueProvider.getBoolean(HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED);
+                isNamedRenderer = template.isNamed();
             } else {
                 log.warn("Cannot find hst:template '{}' for hst component '{}'.", hstTemplate, this.toString());
             }
@@ -1031,22 +1026,18 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
     }
 
-    protected void setServeResourcePath(Map<String, HstNode> templateResourceMap) {
+    protected void setServeResourcePath(Map<String, HstComponentsConfigurationService.Template> templateResourceMap) {
         String templateServeResourcePath = null;
-        HstNode template = templateResourceMap.get(getHstResourceTemplate());
+        HstComponentsConfigurationService.Template template = templateResourceMap.get(getHstResourceTemplate());
 
         if (template != null) {
-            ValueProvider valueProvider = template.getValueProvider();
 
-            if (valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH)) {
-                templateServeResourcePath = valueProvider.getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
+            templateServeResourcePath = template.getRenderPath();
+
+            if (StringUtils.isBlank(templateServeResourcePath) && template.getScript() != null) {
+                templateServeResourcePath = FREEMARKER_JCR_TEMPLATE_PROTOCOL + template.getPath();
             }
-
-            if (StringUtils.isBlank(templateServeResourcePath) && valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT)) {
-                templateServeResourcePath = FREEMARKER_JCR_TEMPLATE_PROTOCOL + valueProvider.getPath();
-            }
-
-            this.isNamedResourceServer = template.getValueProvider().getBoolean(HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED);
+            isNamedRenderer = template.isNamed();
         }
 
         this.serveResourcePath = StringPool.get(templateServeResourcePath);
