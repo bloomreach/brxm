@@ -20,6 +20,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,31 +40,27 @@ public class NameComparator extends NodeComparator {
 
     @Override
     public int compare(JcrNodeModel o1, JcrNodeModel o2) {
-        try {
-            String name1 = ((HippoNode) o1).getDisplayName();
-            String name2 = ((HippoNode) o2).getDisplayName();
+        String name1 = new NodeNameModel(o1).getObject();
+        String name2 = new NodeNameModel(o2).getObject();
 
-            int nameCompare = String.CASE_INSENSITIVE_ORDER.compare(name1, name2);
-            if (nameCompare == 0) {
-                try {
-                    Node n1 = o1.getNode();
-                    Node n2 = o2.getNode();
-                    if (n1 == null) {
-                        if (n2 == null) {
-                            return 0;
-                        }
-                        return 1;
-                    } else if (n2 == null) {
-                        return -1;
+        int nameCompare = String.CASE_INSENSITIVE_ORDER.compare(name1, name2);
+        if (nameCompare == 0) {
+            try {
+                Node n1 = o1.getNode();
+                Node n2 = o2.getNode();
+                if (n1 == null) {
+                    if (n2 == null) {
+                        return 0;
                     }
-                    return n1.getIndex() - n2.getIndex();
-                } catch (RepositoryException ignored) {
+                    return 1;
+                } else if (n2 == null) {
+                    return -1;
                 }
-            } else {
-                return nameCompare;
+                return n1.getIndex() - n2.getIndex();
+            } catch (RepositoryException ignored) {
             }
-        } catch (RepositoryException e) {
-            log.error("Failed to get display name", e);
+        } else {
+            return nameCompare;
         }
         return 0;
     }
