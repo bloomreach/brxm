@@ -33,6 +33,7 @@ import com.google.common.collect.Iterables;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -63,6 +64,8 @@ public abstract class AbstractHelper {
      * @return the configuration object for <code>id</code> and <code>null</code> if not existing
      */
     public abstract <T> T getConfigObject(String id);
+
+    public abstract <T> T getConfigObject(final String itemId, final Mount mount);
 
     protected void removeProperty(Node node, String name) throws RepositoryException {
         if (node.hasProperty(name)) {

@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -229,6 +230,16 @@ public class AbstractConfigResource implements ComponentManagerAware {
 
     protected String getPreviewConfigurationWorkspacePath() {
         return getPreviewConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
+    }
+
+    protected String getPreviewConfigurationWorkspacePath(final String mountId) {
+        final Mount mount = pageComposerContextService.getRequestContext().getVirtualHost().getVirtualHosts().getMountByIdentifier(mountId);
+        if (mount == null || !mount.getHstSite().hasPreviewConfiguration()) {
+            final String msg = String.format("Cannot find for id '%s' or the mount exists but does not have a preview configuration.", mountId);
+            throw new IllegalArgumentException(msg);
+        }
+        final String configurationPath = mount.getHstSite().getConfigurationPath();
+        return configurationPath + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
     }
 
 }

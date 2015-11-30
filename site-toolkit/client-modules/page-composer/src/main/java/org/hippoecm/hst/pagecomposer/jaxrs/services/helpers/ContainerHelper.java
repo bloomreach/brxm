@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 
@@ -29,6 +30,12 @@ public class ContainerHelper extends AbstractHelper {
     @SuppressWarnings("unchecked")
     @Override
     public HstComponentConfiguration getConfigObject(final String itemId) {
+        throw new UnsupportedOperationException("not supported");
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public HstComponentConfiguration getConfigObject(final String itemId, final Mount mount) {
         throw new UnsupportedOperationException("not supported");
     }
 

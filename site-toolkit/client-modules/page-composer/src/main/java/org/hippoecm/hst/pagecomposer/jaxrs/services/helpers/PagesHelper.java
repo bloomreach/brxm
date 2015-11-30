@@ -25,6 +25,7 @@ import javax.jcr.Session;
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -45,6 +46,12 @@ public class PagesHelper extends AbstractHelper {
     @SuppressWarnings("unchecked")
     @Override
     public Object getConfigObject(final String itemId) {
+        throw new UnsupportedOperationException("not supported");
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Object getConfigObject(final String itemId, final Mount mount) {
         throw new UnsupportedOperationException("not supported");
     }
 

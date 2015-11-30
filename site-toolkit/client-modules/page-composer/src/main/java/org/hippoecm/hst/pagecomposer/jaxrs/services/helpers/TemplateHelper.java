@@ -40,6 +40,12 @@ public class TemplateHelper extends AbstractHelper {
         throw new UnsupportedOperationException("not supported");
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getConfigObject(final String itemId, final Mount mount) {
+        throw new UnsupportedOperationException("not supported");
+    }
+
     /**
      * @param pageCopyContext in case the {@code pageCopyContext} is a cross-channel copy paste event, possible missing
      *                        templates in the target channel need to be added

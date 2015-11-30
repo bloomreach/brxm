@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,17 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.AbstractHelper;
 
-public class CurrentPreviewConfigurationValidator implements Validator {
-
-    private final String id;
-    private final AbstractHelper helper;
+/**
+ * @deprecated since HST 3.2.0 : Use {@link ConfigurationExistsValidator} instead
+ */
+@Deprecated
+public class CurrentPreviewConfigurationValidator extends ConfigurationExistsValidator {
 
     public CurrentPreviewConfigurationValidator(final String id, final AbstractHelper helper){
-        this.id = id;
-        this.helper = helper;
+        super(id, helper);
 
-    }
-
-    @Override
-    public void validate(HstRequestContext requestContext) throws RuntimeException {
-        helper.getConfigObject(id);
     }
 
 }

@@ -82,9 +82,10 @@ public class SiteMapHelper extends AbstractHelper {
      * @throws ClientException if not found
      */
     @SuppressWarnings("unchecked")
+    @Override
     public HstSiteMapItem getConfigObject(final String itemId, final Mount mount) {
-        final HstSite editingPreviewSite = mount.getHstSite();
-        return getSiteMapItem(editingPreviewSite.getSiteMap(), itemId);
+        final HstSite site = mount.getHstSite();
+        return getSiteMapItem(site.getSiteMap(), itemId);
     }
 
     public void update(final SiteMapItemRepresentation siteMapItem, final boolean reApplyPrototype) throws RepositoryException {
