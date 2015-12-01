@@ -58,7 +58,6 @@ public class Pinger extends Label {
         } else {
             add(new PingBehavior(Duration.seconds(DEFAULT_INTERVAL_SECONDS)));
         }
-        this.setRenderBodyOnly(true);
     }
 
     private static class PingBehavior extends AbstractAjaxTimerBehavior {
