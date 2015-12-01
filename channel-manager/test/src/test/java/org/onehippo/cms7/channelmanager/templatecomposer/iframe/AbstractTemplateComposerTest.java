@@ -31,6 +31,7 @@ import com.google.gson.Gson;
 import org.hippoecm.frontend.HippoHeaderItem;
 import org.hippoecm.frontend.extjs.ExtUtilsHeaderItem;
 import org.onehippo.cms7.channelmanager.AbstractJavascriptTest;
+import org.onehippo.cms7.channelmanager.ResourceServlet;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerApiHeaderItem;
 import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerGlobalBundle;
@@ -84,6 +85,7 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
         injectJavascript(ExtBundle.class, ExtBundle.EXT_BASE_DEBUG);
         injectJavascript(ExtBundle.class, ExtBundle.EXT_ALL_DEBUG);
         injectJavascript(HippoHeaderItem.class, "js/message-bus.js");
+        injectJavascript(ResourceServlet.class, "mockHippoUserActivity.js");
         injectJavascript(ExtUtilsHeaderItem.class, "IFramePanel.js");
         injectJavascript(TemplateComposerApiHeaderItem.class, "IFramePanel.js");
         injectJavascript(InitializationTest.class, "mockIFramePanel.js");
