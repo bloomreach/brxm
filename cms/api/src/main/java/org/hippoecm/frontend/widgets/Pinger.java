@@ -25,6 +25,8 @@ import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.useractivity.UserActivityHeaderItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Component that pings the server regularly preventing unwanted session-timeouts.
@@ -32,6 +34,8 @@ import org.hippoecm.frontend.useractivity.UserActivityHeaderItem;
 public class Pinger extends Label {
 
     private static final int DEFAULT_INTERVAL_SECONDS = 20;
+
+    private static final Logger log = LoggerFactory.getLogger(Pinger.class);
 
     /**
      * Starts a default ping wicket components which uses a default frequency between ping intervals.
@@ -64,6 +68,7 @@ public class Pinger extends Label {
 
         public PingBehavior(Duration duration) {
             super(duration);
+            log.info("Pinger interval: {}", duration.toString());
         }
 
         @Override
