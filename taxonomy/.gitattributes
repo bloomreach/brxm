@@ -17,7 +17,7 @@ addon/repository/src/main/resources/taxonomy-domain.xml svneol=native#text/plain
 addon/repository/src/main/resources/taxonomy-folder-view.xml svneol=native#text/plain
 addon/repository/src/main/resources/taxonomy-hide-namespace.xml svneol=native#text/plain
 addon/repository/src/main/resources/taxonomy-section-loader.xml svneol=native#text/plain
-addon/repository/src/main/resources/taxonomy-section-translation.xml svneol=native#text/plain
+addon/repository/src/main/resources/taxonomy-section-translation.json -text
 addon/repository/src/main/resources/taxonomy-service.xml svneol=native#text/plain
 addon/repository/src/main/resources/taxonomy-tree-view.xml svneol=native#text/plain
 addon/repository/src/main/resources/type-translations.json -text
