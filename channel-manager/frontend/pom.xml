@@ -259,6 +259,15 @@
               <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/page-editor-all.js</output>
             </aggregation>
 
+            <!-- channel editor bundle -->
+            <aggregation>
+              <insertNewLine>true</insertNewLine>
+              <includes>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/channeleditor/ChannelEditor.js</include>
+              </includes>
+              <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/channeleditor/channel-editor-all.js</output>
+            </aggregation>
+
             <!-- plugins bundle -->
             <aggregation>
               <insertNewLine>true</insertNewLine>

@@ -38,8 +38,8 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
 import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
-import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerApiHeaderItem;
+import org.onehippo.cms7.channelmanager.templatecomposer.channeleditor.ChannelEditor;
 
 public class ChannelManagerPerspective extends Perspective implements IChannelManagerService {
 
@@ -129,12 +129,12 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     public void viewChannel(final String channelId, final String pathInfo,
                             final String contextPath, final String cmsPreviewPrefix) {
         if (siteIsUp) {
-            PageEditor pageEditor = rootPanel.getPageEditor();
-            pageEditor.setChannel(channelId);
-            pageEditor.setRenderPathInfo(pathInfo);
-            pageEditor.setRenderContextPath(contextPath);
-            pageEditor.setCmsPreviewPrefix(cmsPreviewPrefix);
-            pageEditor.setPreviewMode(true);
+            ChannelEditor channelEditor = rootPanel.getChannelEditor();
+            channelEditor.setChannel(channelId);
+            channelEditor.setRenderPathInfo(pathInfo);
+            channelEditor.setRenderContextPath(contextPath);
+            channelEditor.setCmsPreviewPrefix(cmsPreviewPrefix);
+            channelEditor.setPreviewMode(true);
             rootPanel.setActiveCard(RootPanel.CardId.TEMPLATE_COMPOSER);
             focus(null);
         }

@@ -36,7 +36,7 @@ import org.onehippo.cms7.channelmanager.channels.ChannelStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelStoreFactory;
 import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
 import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
-import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
+import org.onehippo.cms7.channelmanager.templatecomposer.channeleditor.ChannelEditor;
 import org.onehippo.cms7.channelmanager.widgets.ExtLinkPicker;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.layout.BorderLayout;
@@ -78,7 +78,7 @@ public class RootPanel extends ExtPanel {
 
     private BlueprintStore blueprintStore;
     private ChannelStore channelStore;
-    private PageEditor pageEditor;
+    private ChannelEditor channelEditor;
     private ExtStoreFuture<Object> channelStoreFuture;
 
     private boolean redraw = false;
@@ -111,11 +111,11 @@ public class RootPanel extends ExtPanel {
         final IPluginConfig channelListConfig = config.getPluginConfig(CONFIG_CHANNEL_LIST);
 
         // card 1: template composer
-        final IPluginConfig pageEditorConfig = config.getPluginConfig(CONFIG_TEMPLATE_COMPOSER);
-        if (pageEditorConfig == null) {
+        final IPluginConfig editorConfig = config.getPluginConfig(CONFIG_TEMPLATE_COMPOSER);
+        if (editorConfig == null) {
             composerRestMountPath = DEFAULT_COMPOSER_REST_MOUNT_PATH;
         } else {
-            composerRestMountPath = pageEditorConfig.getString(COMPOSER_REST_MOUNT_PATH_PROPERTY, DEFAULT_COMPOSER_REST_MOUNT_PATH);
+            composerRestMountPath = editorConfig.getString(COMPOSER_REST_MOUNT_PATH_PROPERTY, DEFAULT_COMPOSER_REST_MOUNT_PATH);
         }
 
         final Map<String, IRestProxyService> liveRestProxyServices = RestProxyServicesManager.getLiveRestProxyServices(context, config);
@@ -153,9 +153,8 @@ public class RootPanel extends ExtPanel {
 
         // default contextpath just needs to be one of the available contextpaths for which a hst site webapp is available
         final String defaultContextPath = liveRestProxyServices.isEmpty() ? "" : liveRestProxyServices.keySet().iterator().next();
-        pageEditor = new PageEditor(context, pageEditorConfig,
-                defaultContextPath, composerRestMountPath, hstConfigEditor, this.channelStoreFuture);
-        add(pageEditor);
+        channelEditor = new ChannelEditor(context, editorConfig, defaultContextPath, composerRestMountPath, channelStoreFuture);
+        add(channelEditor);
 
         // card 2: HST config editor
         if (hstConfigEditor != null) {
@@ -171,7 +170,7 @@ public class RootPanel extends ExtPanel {
     }
 
     public void render(final PluginRequestTarget target) {
-        pageEditor.render(target);
+        channelEditor.render(target);
         channelStore.update();
         if (target != null) {
             if (redraw) {
@@ -219,8 +218,8 @@ public class RootPanel extends ExtPanel {
                 BREADCRUMB_ARROW)));
     }
 
-    public PageEditor getPageEditor() {
-        return this.pageEditor;
+    public ChannelEditor getChannelEditor() {
+        return this.channelEditor;
     }
 
     public void setActiveCard(CardId rootPanelCard) {
