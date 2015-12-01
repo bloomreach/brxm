@@ -67,19 +67,17 @@ public class BlogImporterJob implements RepositoryJob {
 
     @Override
     public void execute(final RepositoryJobExecutionContext context) throws RepositoryException {
-
-
-        log.info("+---------------------------------------------------+");
-        log.info("|          Start importing blogs                    |");
-        log.info("+---------------------------------------------------+");
-
         final Session jcrSession = context.createSystemSession();
-
         if (jcrSession == null) {
             log.error("Error in getting session");
             return;
         }
+
         try {
+            log.info("+---------------------------------------------------+");
+            log.info("|          Start importing blogs                    |");
+            log.info("+---------------------------------------------------+");
+
             final String blogBasePath = context.getAttribute(BLOGS_BASE_PATH);
             final String urlsAttribute = context.getAttribute(URLS);
             final String authorsAttribute = context.getAttribute(AUTHORS);
@@ -109,10 +107,8 @@ public class BlogImporterJob implements RepositoryJob {
             log.info("+----------------------------------------------------+");
             log.info("|           Finished importing blogs                 |");
             log.info("+----------------------------------------------------+");
-        }finally {
-            if (jcrSession != null) {
-                jcrSession.logout();
-            }
+        } finally {
+            jcrSession.logout();
         }
     }
 
@@ -265,7 +261,6 @@ public class BlogImporterJob implements RepositoryJob {
             }
         } catch (RepositoryException rExp) {
             log.error("Error in retrieving document namespace prototype", rExp);
-            cleanupSession(session);
         }
 
         return mixins;
@@ -340,7 +335,7 @@ public class BlogImporterJob implements RepositoryJob {
         Node handleNode = rootNode.addNode(documentName, "hippo:handle");
         handleNode.addMixin("mix:referenceable");
         Node documentNode = handleNode.addNode(documentName, prefixedNamespace + docType);
-        for(String mixin : mixins) {
+        for (String mixin : mixins) {
             documentNode.addMixin(mixin);
         }
         documentNode.setProperty("hippo:availability", new String[]{"live", "preview"});
