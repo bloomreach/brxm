@@ -330,24 +330,9 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
         for (HstNode templateNode : templateNodes.getCompositeChildren().values()) {
             Template template = new Template(templateNode);
-            boolean renderPathExists = template.getRenderPath() != null;
-            boolean scriptExists = template.getScript() != null;
-
-            if (!renderPathExists && !scriptExists) {
-                log.warn("Skipping template '{}' because missing property hst:renderpath and hst:script.", template.getPath());
-                continue;
+            if (template.isValid()) {
+                templateResourceMap.put(template.getName(), template);
             }
-
-            if (renderPathExists && !scriptExists) {
-                String resourcePath = template.getRenderPath();
-
-                if (StringUtils.isBlank(resourcePath)) {
-                    log.warn("Skipping template '{}' because of invalid hst:renderpath value.", template.getPath());
-                    continue;
-                }
-            }
-
-            templateResourceMap.put(template.getName(), template);
         }
         return templateResourceMap;
     }
@@ -398,6 +383,25 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
         public boolean isNamed() {
             return named;
+        }
+
+        public boolean isValid() {
+            boolean renderPathExists = getRenderPath() != null;
+            boolean scriptExists = getScript() != null;
+
+            if (!renderPathExists && !scriptExists) {
+                log.warn("Template '{}' is invalid because missing property hst:renderpath and hst:script.", getPath());
+                return false;
+            }
+
+            if (renderPathExists && !scriptExists) {
+                String resourcePath = getRenderPath();
+                if (StringUtils.isBlank(resourcePath)) {
+                    log.warn("Template '{}' is invalid because of empty hst:renderpath value.", getPath());
+                    return false;
+                }
+            }
+            return true;
         }
     }
 
