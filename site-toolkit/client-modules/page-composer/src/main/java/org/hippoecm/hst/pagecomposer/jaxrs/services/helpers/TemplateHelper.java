@@ -93,7 +93,7 @@ public class TemplateHelper extends AbstractHelper {
         if (!session.nodeExists(templatesPath)) {
             session.getNode(targetMount.getHstSite().getConfigurationPath()).addNode(NODENAME_HST_TEMPLATES, NODETYPE_HST_TEMPLATES);
         }
-        JcrUtils.copy(session, template.getPath(), templatesPath + "/" + template.getName());
         lockHelper.acquireSimpleLock(session.getNode(templatesPath), 0L);
+        JcrUtils.copy(session, template.getPath(), templatesPath + "/" + template.getName());
     }
 }

@@ -330,15 +330,15 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
         for (HstNode templateNode : templateNodes.getCompositeChildren().values()) {
             Template template = new Template(templateNode);
-            boolean renderPathExisting = template.getRenderPath() != null;
-            boolean scriptExisting = template.getScript() != null;
+            boolean renderPathExists = template.getRenderPath() != null;
+            boolean scriptExists = template.getScript() != null;
 
-            if (!renderPathExisting && !scriptExisting) {
-                log.warn("Skipping template '{}' because missing property, either hst:renderpath or hst:script.", template.getPath());
+            if (!renderPathExists && !scriptExists) {
+                log.warn("Skipping template '{}' because missing property hst:renderpath and hst:script.", template.getPath());
                 continue;
             }
 
-            if (renderPathExisting && !scriptExisting) {
+            if (renderPathExists && !scriptExists) {
                 String resourcePath = template.getRenderPath();
 
                 if (StringUtils.isBlank(resourcePath)) {
