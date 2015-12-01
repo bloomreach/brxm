@@ -16,7 +16,7 @@
 (function () {
   "use strict";
 
-  var MAX_INACTIVE_INTERVAL_MS = parseInt("${maxInactiveIntervalMinutes}", 10) * 60 * 1000,
+  var MAX_INACTIVE_INTERVAL_MS = parseInt("${maxInactiveIntervalSeconds}", 10) * 1000,
     AJAX_ATTR_SYSTEM_ACTIVITY = "${ajaxAttrSystemActivity}",
     lastActive = Date.now(),
     callbacks = [];
@@ -45,7 +45,7 @@
   }
 
   function monitorWicketAjaxUserCalls () {
-    Wicket.Event.subscribe(Wicket.Event.Topic.AJAX_CALL_BEFORE_SEND, function (attrs, jqXHR, settings) {
+    Wicket.Event.subscribe(Wicket.Event.Topic.AJAX_CALL_BEFORE_SEND, function (attrs, jqXHR) {
       if (isUserActivity(jqXHR)) {
         Hippo.UserActivity.report();
       }

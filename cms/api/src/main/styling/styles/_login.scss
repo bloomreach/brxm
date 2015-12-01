@@ -71,6 +71,7 @@
     label {
       margin-bottom: 4px;
       display: inline-block;
+      vertical-align: top;
     }
   }
 
@@ -85,12 +86,16 @@
       border: 1px solid $login-panel-center-input-border;
     }
 
+    input[type=checkbox] {
+      margin-bottom: 11px;
+    }
+
     select {
       padding: 0;
       width: 100%;
-      margin-bottom: 11px;
       border: 1px solid $login-panel-center-input-border;
       height: 32px;
+      margin-bottom: 11px;
     }
   }
 }

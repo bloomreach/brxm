@@ -20,18 +20,12 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.servlet.http.HttpSession;
-
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.Response;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.HippoHeaderItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.util.ExtResourcesHeaderItem;
 
 public class UserActivityHeaderItem extends HippoHeaderItem {
@@ -39,12 +33,11 @@ public class UserActivityHeaderItem extends HippoHeaderItem {
     public static final String AJAX_ATTR_SYSTEM_ACTIVITY = "isSystemActivity";
 
     private static final String USER_ACTIVITY_JS = "user-activity.js";
-    private static final Logger log = LoggerFactory.getLogger(UserActivityHeaderItem.class);
 
-    private final int maxInactiveIntervalMinutes;
+    private final int maxInactiveIntervalSeconds;
 
-    public UserActivityHeaderItem(final int maxInactiveIntervalMinutes) {
-        this.maxInactiveIntervalMinutes = maxInactiveIntervalMinutes;
+    public UserActivityHeaderItem(final int maxInactiveIntervalSeconds) {
+        this.maxInactiveIntervalSeconds = maxInactiveIntervalSeconds;
     }
 
     @Override
@@ -65,7 +58,7 @@ public class UserActivityHeaderItem extends HippoHeaderItem {
     private String createUserActivityScript() {
         final Map<String, String> scriptParams = new TreeMap<>();
 
-        scriptParams.put("maxInactiveIntervalMinutes", Integer.toString(maxInactiveIntervalMinutes));
+        scriptParams.put("maxInactiveIntervalSeconds", Integer.toString(maxInactiveIntervalSeconds));
         scriptParams.put("ajaxAttrSystemActivity", AJAX_ATTR_SYSTEM_ACTIVITY);
 
         final PackageTextTemplate userActivityJs = new PackageTextTemplate(UserActivityHeaderItem.class, USER_ACTIVITY_JS);
