@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.hst.configuration.HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT;
+import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL;
 
 public class HstComponentsConfigurationService implements HstComponentsConfiguration {
 
@@ -347,7 +348,8 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         private final String name;
         private final String uuid;
         private final String path;
-        private final String renderPath;
+        private final String configuredRenderPath;
+        private final String effectiveRenderPath;
         private final String script;
         private final boolean named;
 
@@ -356,9 +358,15 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             name = valueProvider.getName();
             path = valueProvider.getPath();
             uuid = valueProvider.getIdentifier();
-            renderPath = valueProvider.getString(TEMPLATE_PROPERTY_RENDERPATH);
+            configuredRenderPath = valueProvider.getString(TEMPLATE_PROPERTY_RENDERPATH);
             script = valueProvider.getString(TEMPLATE_PROPERTY_SCRIPT);
             named = valueProvider.getBoolean(TEMPLATE_PROPERTY_IS_NAMED);
+
+            if (StringUtils.isBlank(configuredRenderPath) && script != null) {
+                effectiveRenderPath = FREEMARKER_JCR_TEMPLATE_PROTOCOL + path;
+            } else {
+                effectiveRenderPath = valueProvider.getString(TEMPLATE_PROPERTY_RENDERPATH);
+            }
         }
 
         public String getPath() {
@@ -373,12 +381,8 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             return uuid;
         }
 
-        public String getRenderPath() {
-            return renderPath;
-        }
-
-        public String getScript() {
-            return script;
+        public String getEffectiveRenderPath() {
+            return effectiveRenderPath;
         }
 
         public boolean isNamed() {
@@ -386,16 +390,14 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         }
 
         public boolean isValid() {
-            boolean renderPathExists = getRenderPath() != null;
-            boolean scriptExists = getScript() != null;
 
-            if (!renderPathExists && !scriptExists) {
+            if (configuredRenderPath == null && script == null) {
                 log.warn("Template '{}' is invalid because missing property hst:renderpath and hst:script.", getPath());
                 return false;
             }
 
-            if (renderPathExists && !scriptExists) {
-                String resourcePath = getRenderPath();
+            if (configuredRenderPath != null && script == null) {
+                String resourcePath = configuredRenderPath;
                 if (StringUtils.isBlank(resourcePath)) {
                     log.warn("Template '{}' is invalid because of empty hst:renderpath value.", getPath());
                     return false;

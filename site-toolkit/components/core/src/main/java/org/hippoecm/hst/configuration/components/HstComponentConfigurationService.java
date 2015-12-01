@@ -1003,19 +1003,13 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     protected void setRenderPath(Map<String, HstComponentsConfigurationService.Template> templateResourceMap) {
         if (StringUtils.isNotEmpty(hstTemplate)) {
-            String templateRenderPath = null;
             HstComponentsConfigurationService.Template template = templateResourceMap.get(hstTemplate);
             if (template != null) {
-                templateRenderPath = template.getRenderPath();
-
-                if (StringUtils.isBlank(templateRenderPath) && template.getScript() != null) {
-                    templateRenderPath = FREEMARKER_JCR_TEMPLATE_PROTOCOL + template.getPath();
-                }
+                renderPath = StringPool.get(template.getEffectiveRenderPath());
                 isNamedRenderer = template.isNamed();
             } else {
                 log.warn("Cannot find hst:template '{}' for hst component '{}'.", hstTemplate, this.toString());
             }
-            renderPath = StringPool.get(templateRenderPath);
             if (renderPath == null) {
                 log.info("renderer '{}' for component '{}' can not be found. This component will not have a renderer " +
                         "by default. It can be set runtime or this component is used without renderer.", getHstTemplate(), id);
@@ -1027,21 +1021,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     protected void setServeResourcePath(Map<String, HstComponentsConfigurationService.Template> templateResourceMap) {
-        String templateServeResourcePath = null;
         HstComponentsConfigurationService.Template template = templateResourceMap.get(getHstResourceTemplate());
 
         if (template != null) {
-
-            templateServeResourcePath = template.getRenderPath();
-
-            if (StringUtils.isBlank(templateServeResourcePath) && template.getScript() != null) {
-                templateServeResourcePath = FREEMARKER_JCR_TEMPLATE_PROTOCOL + template.getPath();
-            }
+            this.serveResourcePath = StringPool.get(template.getEffectiveRenderPath());
             isNamedRenderer = template.isNamed();
         }
-
-        this.serveResourcePath = StringPool.get(templateServeResourcePath);
-
         for (HstComponentConfigurationService child : orderedListConfigs) {
             child.setServeResourcePath(templateResourceMap);
         }
