@@ -26,6 +26,10 @@
       this.resources = config.resources;
       this.locale = config.locale;
 
+      Ext.apply(config, {
+        cls: 'qa-channel-editor'
+      });
+
       Hippo.ChannelManager.TemplateComposer.ChannelEditor.superclass.constructor.call(this, config);
     },
 
