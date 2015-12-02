@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -70,6 +71,7 @@ public class TemplateHelper extends AbstractHelper {
                                       final HstComponentsConfigurationService target) throws RepositoryException {
         final String templateName = ((HstComponentConfigurationService)sourceComponent).getHstTemplate();
 
+        final Session session = pageCopyContext.getRequestContext().getSession();
         if (templateName != null && !target.getTemplates().containsKey(templateName)) {
             // missing template in target. Fetch it from the source
             final HstComponentsConfigurationService.Template template = source.getTemplates().get(templateName);
@@ -77,7 +79,31 @@ public class TemplateHelper extends AbstractHelper {
                 log.warn("Cannot copy template since the source channel also misses the template. Ignore template '{}' copy for " +
                         "'{}'", templateName, pageCopyContext);
             } else {
-                copyTemplate(template, pageCopyContext.getTargetMount(), pageCopyContext.getRequestContext().getSession());
+                copyTemplate(template, pageCopyContext.getTargetMount(), session);
+            }
+        } else {
+            // if 'hst:templates' section turns out to be locked by *another* user, then the template might be
+            // present in preview but not yet in live. If the current user then publishes his changes, the template won't
+            // get published because he does not own the lock. We need to thus that if 'hst:templates' section is locked by
+            // someone else, that the template we need is already live.
+            final String templatesPath = getTemplatesPath(pageCopyContext.getTargetMount());
+            if (session.nodeExists(templatesPath)) {
+                // check whether locked by someone else
+                final boolean locked  = lockHelper.getUnLockableNode(session.getNode(templatesPath), false, false) != null;
+                if (locked) {
+                    // hst:templates is locked. Now, if the 'templateName' is not available in live configuration, we have
+                    // to throw an exception because the cross channel page copy cannot be successfully completed
+                    final String liveTemplatesPath = templatesPath.replace("-preview/","/");
+                    if (session.nodeExists(liveTemplatesPath + "/" + templateName)) {
+                        log.debug("Template '{}' is already available in live config so no problem.", liveTemplatesPath);
+                    } else {
+                        log.info("Template '{}' does not exist and '{}' is locked by someone else. Cannot copy template",
+                                liveTemplatesPath, templatesPath);
+                        // force an exception by trying to acquire the lock
+                        lockHelper.acquireSimpleLock(session.getNode(templatesPath), 0L);
+                    }
+                     
+                }
             }
         }
 
@@ -89,11 +115,15 @@ public class TemplateHelper extends AbstractHelper {
     private void copyTemplate(final HstComponentsConfigurationService.Template template,
                               final Mount targetMount,
                               final Session session) throws RepositoryException {
-        final String templatesPath = targetMount.getHstSite().getConfigurationPath() + "/" + NODENAME_HST_TEMPLATES;
+        final String templatesPath = getTemplatesPath(targetMount);
         if (!session.nodeExists(templatesPath)) {
             session.getNode(targetMount.getHstSite().getConfigurationPath()).addNode(NODENAME_HST_TEMPLATES, NODETYPE_HST_TEMPLATES);
         }
         lockHelper.acquireSimpleLock(session.getNode(templatesPath), 0L);
         JcrUtils.copy(session, template.getPath(), templatesPath + "/" + template.getName());
+    }
+
+    private String getTemplatesPath(final Mount targetMount) {
+        return targetMount.getHstSite().getConfigurationPath() + "/" + NODENAME_HST_TEMPLATES;
     }
 }
