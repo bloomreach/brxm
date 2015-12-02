@@ -69,10 +69,10 @@ import org.wicketstuff.js.ext.util.ExtResourcesHeaderItem;
 
 public class RootPlugin extends TabsPlugin {
 
-    static final Logger log = LoggerFactory.getLogger(RootPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(RootPlugin.class);
 
     public static final String CONFIG_PINGER_INTERVAL = "pinger.interval";
-    public static final String CONFIG_SESSION_TIMEOUT_MINUTES = "session.timeout.minutes";
+    public static final String CONFIG_MAX_INACTIVE_INTERVAL_MINUTES = "max.inactive.interval.minutes";
 
     private boolean rendered = false;
     private final ExtWidgetRegistry extWidgetRegistry;
@@ -206,7 +206,7 @@ public class RootPlugin extends TabsPlugin {
     }
 
     private void addActiveLogout(final IPluginConfig config, final ILogoutService logoutService) {
-        final Integer maxInactiveIntervalMinutes = config.getAsInteger(CONFIG_SESSION_TIMEOUT_MINUTES, getDefaultMaxInactiveIntervalMinutes());
+        final Integer maxInactiveIntervalMinutes = config.getAsInteger(CONFIG_MAX_INACTIVE_INTERVAL_MINUTES, getDefaultMaxInactiveIntervalMinutes());
         add(new ActiveLogoutPlugin("activeLogout", maxInactiveIntervalMinutes, logoutService));
     }
 
