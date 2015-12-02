@@ -39,11 +39,12 @@ public class LocalizationModule implements DaemonModule {
     private Session session;
     private ModuleConfigurationListener listener;
     private Map<ResourceBundleKey, ResourceBundle> bundles;
+    private LocalizationService service;
 
     @Override
     public void initialize(final Session session) throws RepositoryException {
         this.session = session;
-        HippoServiceRegistry.registerService(new LocalizationService() {
+        HippoServiceRegistry.registerService(service = new LocalizationService() {
             @Override
             public ResourceBundle getResourceBundle(final String name, final Locale locale) {
                 ResourceBundle bundle = null;
@@ -75,6 +76,9 @@ public class LocalizationModule implements DaemonModule {
 
     @Override
     public void shutdown() {
+        if (service != null) {
+            HippoServiceRegistry.unregisterService(service, LocalizationService.class);
+        }
         try {
             if (listener != null) {
                 listener.stop();
