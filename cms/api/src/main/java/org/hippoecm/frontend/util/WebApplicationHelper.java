@@ -24,7 +24,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -145,12 +144,7 @@ public class WebApplicationHelper {
                 }
             }
         }
-        Collections.sort(jarFiles, new Comparator<File>() {
-            @Override
-            public int compare(final File o1, final File o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
+        Collections.sort(jarFiles, (o1, o2) -> o1.getName().compareTo(o2.getName()));
         return jarFiles;
     }
 
