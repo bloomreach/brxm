@@ -36,6 +36,7 @@ class ResourceBundlesJSONSerializer implements ItemVisitor {
     private final JSONObject root = new JSONObject();
     private final Stack<JSONObject> current = new Stack<>();
     private final Stack<DeltaInstruction> currentInstruction = new Stack<>();
+    private boolean fullExport = false;
 
     private ResourceBundlesJSONSerializer(final DeltaInstruction rootInstruction) {
         current.push(root);
@@ -55,12 +56,25 @@ class ResourceBundlesJSONSerializer implements ItemVisitor {
                 current.peek().put(nodeName, new JSONObject());
                 JSONObject bundles = (JSONObject) current.peek().get(nodeName);
                 current.push(bundles);
-                currentInstruction.push(instruction);
-                for (Node child : new NodeIterable(node.getNodes())) {
-                    visit(child);
+                if (instruction.isNoneDirective()) {
+                    // serialize everything below
+                    fullExport = true;
+                    visitChildren(node);
+                    fullExport = false;
+                } else {
+                    // only serialize what has a corresponding instruction
+                    currentInstruction.push(instruction);
+                    visitChildren(node);
+                    currentInstruction.pop();
                 }
                 current.pop();
-                currentInstruction.pop();
+            }
+            else if (fullExport) {
+                current.peek().put(nodeName, new JSONObject());
+                JSONObject bundles = (JSONObject) current.peek().get(nodeName);
+                current.push(bundles);
+                visitChildren(node);
+                current.pop();
             }
         } else if (node.isNodeType(HippoNodeType.NT_RESOURCEBUNDLE)) {
             final JSONObject bundle = new JSONObject();
@@ -68,9 +82,16 @@ class ResourceBundlesJSONSerializer implements ItemVisitor {
             if (instruction != null) {
                 for (Property property : new PropertyIterable(node.getProperties())) {
                     if (!property.getName().equals(JCR_PRIMARY_TYPE) && !property.getName().equals(JCR_MIXIN_TYPES)) {
-                        if (instruction.getInstruction(property.getName(), false) != null) {
+                        if (instruction.isNoneDirective() || instruction.getInstruction(property.getName(), false) != null) {
                             bundle.put(property.getName(), property.getString());
                         }
+                    }
+                }
+                current.peek().put(nodeName, bundle);
+            } else if (fullExport) {
+                for (Property property : new PropertyIterable(node.getProperties())) {
+                    if (!property.getName().equals(JCR_PRIMARY_TYPE) && !property.getName().equals(JCR_MIXIN_TYPES)) {
+                        bundle.put(property.getName(), property.getString());
                     }
                 }
                 current.peek().put(nodeName, bundle);
@@ -78,11 +99,17 @@ class ResourceBundlesJSONSerializer implements ItemVisitor {
         }
     }
 
+    private void visitChildren(final Node node) throws RepositoryException {
+        for (Node child : new NodeIterable(node.getNodes())) {
+            visit(child);
+        }
+    }
+
     static JSONObject resourceBundlesToJSON(Session session, final DeltaInstruction rootInstruction) throws RepositoryException {
         final Node translations = session.getNode("/hippo:configuration/hippo:translations");
         final ResourceBundlesJSONSerializer visitor = new ResourceBundlesJSONSerializer(rootInstruction);
         for (Node node : new NodeIterable(translations.getNodes())) {
-            node.accept(visitor);
+            visitor.visit(node);
         }
         return visitor.root;
     }

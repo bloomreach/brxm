@@ -1204,6 +1204,7 @@ automatic-export/repository/src/test/java/org/onehippo/cms7/autoexport/Initializ
 automatic-export/repository/src/test/java/org/onehippo/cms7/autoexport/InitializeItemTest.java -text
 automatic-export/repository/src/test/java/org/onehippo/cms7/autoexport/LocationMapperTest.java -text
 automatic-export/repository/src/test/java/org/onehippo/cms7/autoexport/ModuleTest.java -text
+automatic-export/repository/src/test/java/org/onehippo/cms7/autoexport/ResourceBundleJSONSerializerTest.java -text
 automatic-export/repository/src/test/resources/META-INF/MANIFEST.MF -text
 automatic-export/repository/src/test/resources/autoexporttest/basicdelta/foo.xml -text
 automatic-export/repository/src/test/resources/autoexporttest/basicdelta/hippoecm-extension.xml -text

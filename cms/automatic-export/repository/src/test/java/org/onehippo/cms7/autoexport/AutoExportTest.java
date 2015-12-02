@@ -69,7 +69,7 @@ import static org.onehippo.cms7.autoexport.Constants.CONFIG_NODE_PATH;
 public class AutoExportTest extends RepositoryTestCase {
 
     private static final Logger log = LoggerFactory.getLogger("org.onehippo.cms7.autoexport.test");
-    private static final long TEN_SECONDS = 10*1000;
+    private static final long TEN_SECONDS = 15*1000;
     
     private String testHome;
     private String projectBase;
@@ -315,6 +315,7 @@ public class AutoExportTest extends RepositoryTestCase {
         final Node nl = foo.addNode("nl", NT_RESOURCEBUNDLE);
         nl.setProperty("bar", "test");
         session.save();
+        Thread.sleep(1000);
         enableExport();
         // change the configuration
         en.setProperty("bar", "baz");
@@ -376,7 +377,11 @@ public class AutoExportTest extends RepositoryTestCase {
                 d.overrideElementQualifier(new MyElementQualifier());
                 assertTrue("File " + file + " has unexpected contents, diff:\n" + d.toString(), d.similar());
             } else {
-                assertTrue(IOUtils.contentEquals(expected.get(file), changes.get(file)));
+                String exported = IOUtils.toString(changes.get(file));
+                String expectation = IOUtils.toString(expected.get(file));
+//                System.out.println("exported = " + exported);
+//                System.out.println("expected = " + expectation);
+                Assert.assertEquals(expectation, exported);
             }
         }
     }
