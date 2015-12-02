@@ -23,6 +23,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.util.template.PackageTextTemplate;
+import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.service.ILogoutService;
 import org.hippoecm.frontend.useractivity.UserActivityHeaderItem;
 import org.hippoecm.frontend.util.WebApplicationHelper;
@@ -54,7 +55,7 @@ public class ActiveLogoutPlugin extends Component {
         logoutBehavior = new LogoutBehavior(logoutService);
 
         if (isActive()) {
-            log.info("Inactive user sessions will be logged out automatically after {} minutes", maxInactiveIntervalMinutes);
+            log.info("Inactive user sessions will be logged out automatically after {}", Duration.minutes(maxInactiveIntervalMinutes));
             add(logoutBehavior);
         } else {
             log.info("Inactive user sessions will not be logged out automatically");
