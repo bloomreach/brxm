@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,25 +25,25 @@ import static javax.jcr.observation.Event.PROPERTY_CHANGED;
 import static javax.jcr.observation.Event.PROPERTY_REMOVED;
 import static org.onehippo.cms7.autoexport.AutoExportModule.log;
 
-class DeltaXML {
+class Delta {
     
     private final String contextPath;
-    private final DeltaXMLInstruction instruction;
+    private final DeltaInstruction instruction;
     private final Collection<ExportEvent> events = new ArrayList<ExportEvent>();
     private Boolean isEnabled;
     
-    DeltaXML(String contextPath) {
+    Delta(String contextPath) {
         this.contextPath = contextPath;
         String name = contextPath.substring(contextPath.lastIndexOf('/')+1);
-        instruction = new DeltaXMLInstruction(true, name, "combine", contextPath);
+        instruction = new DeltaInstruction(true, name, "combine", contextPath);
     }
     
-    DeltaXML(String contextPath, DeltaXMLInstruction instruction) {
+    Delta(String contextPath, DeltaInstruction instruction) {
         this.contextPath = contextPath;
         this.instruction = instruction;
     }
     
-    DeltaXMLInstruction getRootInstruction() {
+    DeltaInstruction getRootInstruction() {
         return instruction;
     }
     
@@ -103,7 +103,7 @@ class DeltaXML {
         String name = offset == -1 ? relPath : relPath.substring(offset+1);
         String parentPath = offset == -1 ? null : relPath.substring(0, offset);
         
-        DeltaXMLInstruction parentInstruction = getParentInstruction(instruction, relPath);
+        DeltaInstruction parentInstruction = getParentInstruction(instruction, relPath);
         
         if (event.getType() == NODE_ADDED) {
             boolean isReorder = hasEvent(path, NODE_REMOVED);
@@ -117,9 +117,9 @@ class DeltaXML {
                 parentInstruction = createCombineInstruction(instruction, parentPath);
             }
             if (parentInstruction.isCombineDirective()) {
-                DeltaXMLInstruction instruction = parentInstruction.getInstruction(name, true);
+                DeltaInstruction instruction = parentInstruction.getInstruction(name, true);
                 if (instruction == null) {
-                    parentInstruction.addInstruction(new DeltaXMLInstruction(true, name, null, parentInstruction));
+                    parentInstruction.addInstruction(new DeltaInstruction(true, name, null, parentInstruction));
                 } else {
                     // this could only happen if automatic export was not turned on 
                     // the entire time when changes were being made and we missed a
@@ -143,7 +143,7 @@ class DeltaXML {
                 return false;
             }
             if (parentInstruction.isCombineDirective()) {
-                DeltaXMLInstruction instruction = parentInstruction.getInstruction(name, true);
+                DeltaInstruction instruction = parentInstruction.getInstruction(name, true);
                 if (instruction == null) {
                     // node was not defined by our project
                     // parent node needs to be overlayed, we don't handle that
@@ -168,9 +168,9 @@ class DeltaXML {
                 parentInstruction = createCombineInstruction(instruction, parentPath);
             }
             if (parentInstruction.isCombineDirective()) {
-                DeltaXMLInstruction instruction = parentInstruction.getInstruction(name, false);
+                DeltaInstruction instruction = parentInstruction.getInstruction(name, false);
                 if (instruction == null) {
-                    parentInstruction.addInstruction(new DeltaXMLInstruction(false, name, null, parentInstruction));
+                    parentInstruction.addInstruction(new DeltaInstruction(false, name, null, parentInstruction));
                 } else {
                     // this could only happen if automatic export was not turned on 
                     // the entire time when changes were being made
@@ -188,7 +188,7 @@ class DeltaXML {
                 return false;
             }
             if (parentInstruction.isCombineDirective()) {
-                DeltaXMLInstruction instruction = parentInstruction.getInstruction(name, false);
+                DeltaInstruction instruction = parentInstruction.getInstruction(name, false);
                 if (instruction == null) {
                     log.warn("Change not handled by export: " 
                             + ExportEvent.valueOf(event.getType()) + " on " + path
@@ -211,13 +211,13 @@ class DeltaXML {
                 parentInstruction = createCombineInstruction(instruction, parentPath);
             }
             if (parentInstruction.isCombineDirective()) {
-                DeltaXMLInstruction instruction = parentInstruction.getInstruction(name, false);
+                DeltaInstruction instruction = parentInstruction.getInstruction(name, false);
                 if (instruction == null) {
                     // the best we can do is override properties when they change
                     // we don't have the information needed to do appends
                     // on multi-valued properties nor to remove the property override again
                     // when they become redundant because the net change is zero
-                    parentInstruction.addInstruction(new DeltaXMLInstruction(false, name, "override", parentInstruction));
+                    parentInstruction.addInstruction(new DeltaInstruction(false, name, "override", parentInstruction));
                 }
             }
         }
@@ -225,7 +225,7 @@ class DeltaXML {
         return true;        
     }
     
-    DeltaXMLInstruction getParentInstruction(DeltaXMLInstruction context, String relPath) {
+    DeltaInstruction getParentInstruction(DeltaInstruction context, String relPath) {
         if (context.isNoneDirective()) {
             return context;
         }
@@ -236,7 +236,7 @@ class DeltaXML {
             }
             String childName = relPath.substring(0, offset);
             String subPath = relPath.substring(offset+1);
-            DeltaXMLInstruction subContext = context.getInstruction(childName, true);
+            DeltaInstruction subContext = context.getInstruction(childName, true);
             if (subContext == null) {
                 return null;
             }
@@ -245,21 +245,21 @@ class DeltaXML {
         return null;
     }
     
-    DeltaXMLInstruction createCombineInstruction(DeltaXMLInstruction context, String relPath) {
+    DeltaInstruction createCombineInstruction(DeltaInstruction context, String relPath) {
         assert context.isCombineDirective();
         int offset = relPath.indexOf('/');
-        DeltaXMLInstruction result = null;
+        DeltaInstruction result = null;
         if (offset != -1) {
             String name = relPath.substring(0, offset);
-            DeltaXMLInstruction child = context.getInstruction(name, true);
+            DeltaInstruction child = context.getInstruction(name, true);
             if (child == null) {
-                child = new DeltaXMLInstruction(true, name, "combine", context);
+                child = new DeltaInstruction(true, name, "combine", context);
                 context.addInstruction(child);
             }
             result = createCombineInstruction(child, relPath.substring(offset+1));
         } else {
             String name = relPath;
-            result = new DeltaXMLInstruction(true, name, "combine", context);
+            result = new DeltaInstruction(true, name, "combine", context);
             context.addInstruction(result);
         }
         return result;
@@ -276,21 +276,21 @@ class DeltaXML {
         return isEnabled;
     }
     
-    private boolean isEnabled(DeltaXMLInstruction instruction) {
+    private boolean isEnabled(DeltaInstruction instruction) {
         if (instruction.isUnsupportedDirective()) {
             return false;
         }
-        Collection<DeltaXMLInstruction> nodeInstructions = instruction.getNodeInstructions();
+        Collection<DeltaInstruction> nodeInstructions = instruction.getNodeInstructions();
         if (nodeInstructions != null) {
-            for (DeltaXMLInstruction child : nodeInstructions) {
+            for (DeltaInstruction child : nodeInstructions) {
                 if (!isEnabled(child)) {
                     return false;
                 }
             }
         }
-        Collection<DeltaXMLInstruction> propertyInstructions = instruction.getNodeInstructions();
+        Collection<DeltaInstruction> propertyInstructions = instruction.getNodeInstructions();
         if (propertyInstructions != null) {
-            for (DeltaXMLInstruction child : propertyInstructions) {
+            for (DeltaInstruction child : propertyInstructions) {
                 if (!isEnabled(child)) {
                     return false;
                 }
@@ -299,10 +299,10 @@ class DeltaXML {
         return true;
     }
     
-    private void purge(DeltaXMLInstruction instruction) {
+    private void purge(DeltaInstruction instruction) {
         assert instruction.isCombineDirective();
         if (instruction.isEmpty()) {
-            DeltaXMLInstruction parentInstruction = instruction.getParentInstruction();
+            DeltaInstruction parentInstruction = instruction.getParentInstruction();
             if (parentInstruction != null) {
                 parentInstruction.removeInstruction(instruction);
                 purge(parentInstruction);

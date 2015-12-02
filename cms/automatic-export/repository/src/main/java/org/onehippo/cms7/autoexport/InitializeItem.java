@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,22 +23,19 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import net.sf.json.JSONObject;
 import static org.onehippo.cms7.autoexport.AutoExportModule.log;
-import static org.onehippo.cms7.autoexport.Constants.DELTA_URI;
-import static org.onehippo.cms7.autoexport.Constants.FILE;
-import static org.onehippo.cms7.autoexport.Constants.MERGE;
-import static org.onehippo.cms7.autoexport.Constants.NAME;
 import static org.onehippo.cms7.autoexport.Constants.QFILE;
 import static org.onehippo.cms7.autoexport.Constants.QMERGE;
 import static org.onehippo.cms7.autoexport.Constants.QNAME;
 import static org.onehippo.cms7.autoexport.Constants.QNODE;
-import static org.onehippo.cms7.autoexport.Constants.SV_URI;
 
 final class InitializeItem {
     
@@ -48,13 +45,14 @@ final class InitializeItem {
     private final String contentRoot;
     private final String nodeTypesResource;
     private final String namespace;
+    private String resourceBundles;
     private final File exportDir;
     private final Module module;
     
     private String contextPath;
-    private Boolean isDeltaXML;
+    private Boolean isDelta;
     private Boolean enabled;
-    private DeltaXML deltaXML;
+    private Delta delta;
     
     private boolean contextNodeRemoved = false;
     
@@ -72,6 +70,26 @@ final class InitializeItem {
         this.contextPath = contextPath;
         this.nodeTypesResource = nodeTypesResource;
         this.namespace = namespace;
+        this.exportDir = exportDir;
+        this.module = module;
+        if (contentResource != null && contentResource.endsWith(".zip")) {
+            enabled = false;
+        }
+    }
+
+    InitializeItem(String name, Double sequence,
+            String contentResource, String contentRoot,
+            String contextPath, String nodeTypesResource,
+            String namespace, String resourceBundles,
+            File exportDir, Module module) {
+        this.name = name;
+        this.sequence = sequence;
+        this.contentResource = contentResource;
+        this.contentRoot = contentRoot;
+        this.contextPath = contextPath;
+        this.nodeTypesResource = nodeTypesResource;
+        this.namespace = namespace;
+        this.resourceBundles = resourceBundles;
         this.exportDir = exportDir;
         this.module = module;
         if (contentResource != null && contentResource.endsWith(".zip")) {
@@ -108,6 +126,10 @@ final class InitializeItem {
     String getNamespace() {
         return namespace;
     }
+
+    String getResourceBundles() {
+        return resourceBundles;
+    }
     
     String getContextPath() {
         if (contextPath == null && contentResource != null) {
@@ -133,16 +155,20 @@ final class InitializeItem {
         this.contextPath = contextPath;
     }
     
-    boolean isDeltaXML() {
-        if (isDeltaXML == null && contentResource != null) {
+    boolean isDelta() {
+        if (isDelta == null && contentResource != null) {
             initContentResourceValues();
+        } else if (isDelta == null && resourceBundles != null) {
+            initResourceBundlesValues();
         }
-        return isDeltaXML == null ? false : isDeltaXML;
+        return isDelta == null ? false : isDelta;
     }
     
     boolean isEnabled() {
         if (enabled == null && contentResource != null) {
             initContentResourceValues();
+        } else if (enabled == null && resourceBundles != null) {
+            initResourceBundlesValues();
         }
         if (enabled == null) {
             enabled = true;
@@ -150,25 +176,26 @@ final class InitializeItem {
         return enabled;
     }
     
-    DeltaXML getDeltaXML() {
-        return deltaXML;
+    Delta getDelta() {
+        return delta;
     }
     
     void handleEvent(ExportEvent event) {
-        if (getContentResource() == null) {
+        if (getContentResource() == null && getResourceBundles() == null) {
             return;
         }
         if (!isEnabled()) {
             return;
         }
-        if (isDeltaXML == null) {
-            isDeltaXML = !event.getPath().equals(contextPath);
+        if (isDelta == null) {
+            isDelta = !event.getPath().equals(contextPath) || resourceBundles != null;
         }
-        if (isDeltaXML) {
-            if (deltaXML == null) {
-                deltaXML = new DeltaXML(contextPath);
+        if (isDelta) {
+            if (delta == null) {
+                String contextPath = this.contextPath != null ? this.contextPath : "/hippo:configuration/hippo:translations";
+                delta = new Delta(contextPath);
             }
-            deltaXML.handleEvent(event);
+            delta.handleEvent(event);
         }
         if (event.getType() == Event.NODE_REMOVED && contextPath.startsWith(event.getPath())) {
             contextNodeRemoved = true;
@@ -182,20 +209,56 @@ final class InitializeItem {
         if (!isEnabled()) {
             return false;
         }
-        if (isDeltaXML()) {
-            return deltaXML.processEvents();
+        if (isDelta()) {
+            return delta.processEvents();
         }
         return true;
     }
     
     
     boolean isEmpty() {
-        if (isDeltaXML()) {
-            return deltaXML == null || deltaXML.isEmpty();
+        if (isDelta()) {
+            return delta == null || delta.isEmpty();
         }
         return contextNodeRemoved;
     }
-    
+
+    private void initResourceBundlesValues() {
+        File file = new File(exportDir, resourceBundles);
+        if (!file.exists()) {
+            return;
+        }
+        try {
+            final JSONObject o = JSONObject.fromObject(FileUtils.readFileToString(file));
+            delta = parseDelta(o);
+            isDelta = true;
+            enabled = true;
+        } catch (IOException e) {
+            log.error("Failed to parse resource bundles file", e);
+        }
+    }
+
+    private Delta parseDelta(final JSONObject o) {
+        final DeltaInstruction rootInstruction = new DeltaInstruction(true, "hippo:translations", "combine", "/hippo:configuration/hippo:translations");
+        parseInstruction(o, rootInstruction);
+        return new Delta("/hippo:configuration/hippo:translations", rootInstruction);
+    }
+
+    private void parseInstruction(final JSONObject o, final DeltaInstruction parentInstruction) {
+        for (Object key : o.keySet()) {
+            final Object value = o.get(key);
+            if (value instanceof JSONObject) {
+                DeltaInstruction instruction = new DeltaInstruction(true, key.toString(), "combine", parentInstruction);
+                parseInstruction((JSONObject) value, instruction);
+                parentInstruction.addInstruction(instruction);
+            }
+            if (value instanceof String) {
+                DeltaInstruction instruction = new DeltaInstruction(false, key.toString(), "override", parentInstruction);
+                parentInstruction.addInstruction(instruction);
+            }
+        }
+    }
+
     private void initContentResourceValues() {
         if (contentResource.endsWith(".zip")) {
             return;
@@ -216,11 +279,11 @@ final class InitializeItem {
             contextPath = contentRoot.equals("/") ? "/" + contextNodeName : contentRoot + "/" + contextNodeName;
             
             String directive = document.getDocumentElement().getAttribute(QMERGE);
-            isDeltaXML = directive != null && !directive.equals("");
+            isDelta = directive != null && !directive.equals("");
             
-            if (isDeltaXML) {
-                deltaXML = parseDeltaXML(document);
-                if (deltaXML == null) {
+            if (isDelta) {
+                delta = parseDelta(document);
+                if (delta == null) {
                     log.info("Content resource " + contentResource + " uses delta xml semantics that are not supported " +
                             "by automatic export. Changes to the context " + contextPath + " must be exported manually.");
                     enabled = false;
@@ -232,42 +295,38 @@ final class InitializeItem {
                         + " must be exported manually.");
                 enabled = false;
             }
-        } catch (ParserConfigurationException e) {
-            log.error("Failed to read content resource " + contentResource + " as xml.", e);
-        } catch (SAXException e) {
-            log.error("Failed to read content resource " + contentResource + " as xml.", e);
-        } catch (IOException e) {
+        } catch (ParserConfigurationException | IOException | SAXException e) {
             log.error("Failed to read content resource " + contentResource + " as xml.", e);
         }
     }
     
-    private DeltaXML parseDeltaXML(Document document) {
-        DeltaXMLInstruction instruction = parseInstructionElement(document.getDocumentElement(), null);
+    private Delta parseDelta(Document document) {
+        DeltaInstruction instruction = parseInstructionElement(document.getDocumentElement(), null);
         if (instruction == null) {
             return null;
         }
-        return new DeltaXML(contextPath, instruction);
+        return new Delta(contextPath, instruction);
         
     }
     
-    private DeltaXMLInstruction parseInstructionElement(Element element, DeltaXMLInstruction parent) {
+    private DeltaInstruction parseInstructionElement(Element element, DeltaInstruction parent) {
         
         boolean isNode = element.getTagName().equals(QNODE);
         String name = element.getAttribute(QNAME);
         String directive = element.getAttribute(QMERGE);
 
-        DeltaXMLInstruction instruction;
+        DeltaInstruction instruction;
         if (parent == null) {
-            instruction = new DeltaXMLInstruction(isNode, name, directive, contextPath);
+            instruction = new DeltaInstruction(isNode, name, directive, contextPath);
         } else {
-            instruction = new DeltaXMLInstruction(isNode, name, directive, parent);
+            instruction = new DeltaInstruction(isNode, name, directive, parent);
         }
         if (instruction.isCombineDirective()) {
             final NodeList childNodes = element.getChildNodes();
             for (int i = 0; i < childNodes.getLength(); i++) {
                 final Node item = childNodes.item(i);
                 if (item instanceof Element) {
-                    DeltaXMLInstruction child = parseInstructionElement((Element) item, instruction);
+                    DeltaInstruction child = parseInstructionElement((Element) item, instruction);
                     if (child == null) {
                         return null;
                     }
@@ -319,8 +378,8 @@ final class InitializeItem {
             sb.append(contextPath);
             sb.append(", namespace = ");
             sb.append(namespace);
-            sb.append(", isDeltaXML = ");
-            sb.append(isDeltaXML);
+            sb.append(", isDelta = ");
+            sb.append(isDelta);
             sb.append("]");
             stringValue = sb.toString();
         }

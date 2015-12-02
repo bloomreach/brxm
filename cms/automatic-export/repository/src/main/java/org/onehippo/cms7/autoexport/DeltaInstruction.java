@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,18 +19,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-class DeltaXMLInstruction {
+class DeltaInstruction {
 
     private final boolean isNode;
     private final String name;
     private String parentPath;
     private final String contextPath;
     private final String directive;
-    private DeltaXMLInstruction parent;
-    private Map<String, DeltaXMLInstruction> nodeInstructions;
-    private Map<String, DeltaXMLInstruction> propertyInstructions;
+    private DeltaInstruction parent;
+    private Map<String, DeltaInstruction> nodeInstructions;
+    private Map<String, DeltaInstruction> propertyInstructions;
     
-    DeltaXMLInstruction(boolean isNode, String name, String directive, String contextPath) {
+    DeltaInstruction(boolean isNode, String name, String directive, String contextPath) {
         this.isNode = isNode;
         this.name = name;
         this.directive = directive;
@@ -41,7 +41,7 @@ class DeltaXMLInstruction {
         }
     }
     
-    DeltaXMLInstruction(boolean isNode, String name, String directive, DeltaXMLInstruction parent) {
+    DeltaInstruction(boolean isNode, String name, String directive, DeltaInstruction parent) {
         this.isNode = isNode;
         this.name = name;
         this.parentPath = parent.getContextPath();
@@ -86,25 +86,25 @@ class DeltaXMLInstruction {
         return directive;
     }
     
-    DeltaXMLInstruction getParentInstruction() {
+    DeltaInstruction getParentInstruction() {
         return parent;
     }
     
-    void addInstruction(DeltaXMLInstruction instruction) {
+    void addInstruction(DeltaInstruction instruction) {
         if (instruction.isNodeInstruction()) {
             if (nodeInstructions == null) {
-                nodeInstructions = new HashMap<String, DeltaXMLInstruction>();
+                nodeInstructions = new HashMap<String, DeltaInstruction>();
             }
             nodeInstructions.put(instruction.getName(), instruction);
         } else {
             if (propertyInstructions == null) {
-                propertyInstructions = new HashMap<String, DeltaXMLInstruction>();
+                propertyInstructions = new HashMap<String, DeltaInstruction>();
             }
             propertyInstructions.put(instruction.getName(), instruction);
         }
     }
     
-    void removeInstruction(DeltaXMLInstruction instruction) {
+    void removeInstruction(DeltaInstruction instruction) {
         if (instruction.isNodeInstruction()) {
             if (nodeInstructions != null) {
                 nodeInstructions.remove(instruction.getName());
@@ -129,7 +129,7 @@ class DeltaXMLInstruction {
         }
     }
         
-    DeltaXMLInstruction getInstruction(String name, boolean isNode) {
+    DeltaInstruction getInstruction(String name, boolean isNode) {
         if (isNode) {
             return nodeInstructions != null ? nodeInstructions.get(name) : null;
         } else {
@@ -137,14 +137,14 @@ class DeltaXMLInstruction {
         }
     }
     
-    Collection<DeltaXMLInstruction> getPropertyInstructions() {
+    Collection<DeltaInstruction> getPropertyInstructions() {
         if (propertyInstructions != null) {
             return propertyInstructions.values();
         }
         return null;
     }
     
-    Collection<DeltaXMLInstruction> getNodeInstructions() {
+    Collection<DeltaInstruction> getNodeInstructions() {
         if (nodeInstructions != null) {
             return nodeInstructions.values();
         }

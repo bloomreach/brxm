@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -137,13 +137,17 @@ class InitializeItemRegistry {
             initializeItemsByPrefix.put(ExportUtils.prefixFromName(item.getName()), item);
             added = true;
         }
+        if (item.getResourceBundles() != null) {
+            initializeItemsByContextPath.put("/hippo:configuration/hippo:translations", Arrays.asList(item));
+            added = true;
+        }
         return added;
     }
     
     boolean removeInitializeItem(InitializeItem item) {
         boolean removed = false;
         if (item.getContextPath() != null) {
-            Collection<InitializeItem> items = initializeItemsByContextPath.remove(item.getContextPath());
+            Collection<InitializeItem> items = initializeItemsByContextPath.get(item.getContextPath());
             if (items != null) {
                 removed = items.remove(item);
                 if (items.isEmpty()) {
@@ -156,6 +160,9 @@ class InitializeItemRegistry {
         }
         if (item.getNodeTypesResource() != null) {
             removed = initializeItemsByPrefix.remove(ExportUtils.prefixFromName(item.getName())) != null;
+        }
+        if (item.getResourceBundles() != null) {
+            removed = initializeItemsByContextPath.remove("/hippo:configuration/hippo:translations") != null;
         }
         return removed;
     }

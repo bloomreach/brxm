@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -92,11 +91,7 @@ class Extension {
                 Result output = new StreamResult(file);
                 Source input = new DOMSource(domDocument);
                 transformer.transform(input, output);
-            } catch (IOException e) {
-                log.error("Exporting " + file.getName() + " failed.", e);
-            } catch (TransformerConfigurationException e) {
-                log.error("Exporting " + file.getName() + " failed.", e);
-            } catch (TransformerException e) {
+            } catch (IOException | TransformerException e) {
                 log.error("Exporting " + file.getName() + " failed.", e);
             }
             changed = false;
@@ -120,7 +115,7 @@ class Extension {
 
     private InitializeItem parseInitializeItemFromDomElement(final Element node) {
         Double sequence = null;
-        String contentResource = null, contentRoot = null, nodeTypesResource = null, namespace = null;
+        String contentResource = null, contentRoot = null, nodeTypesResource = null, namespace = null, resourceBundles = null;
         final String nodeName = node.getAttribute(QNAME);
         final NodeList properties = node.getElementsByTagName(QPROPERTY);
         for (int i = 0; i < properties.getLength(); i++) {
@@ -142,8 +137,11 @@ class Extension {
             else if (propertyName.equals("hippo:nodetypesresource")) {
                 nodeTypesResource = value.getTextContent();
             }
+            else if (propertyName.equals("hippo:resourcebundles")) {
+                resourceBundles = value.getTextContent();
+            }
         }
-        return new InitializeItem(nodeName, sequence, contentResource, contentRoot, null, nodeTypesResource, namespace, module.getExportDir(), module);
+        return new InitializeItem(nodeName, sequence, contentResource, contentRoot, null, nodeTypesResource, namespace, resourceBundles, module.getExportDir(), module);
     }
 
     void initializeItemAdded(InitializeItem item) {
@@ -197,6 +195,11 @@ class Extension {
         }
         if (item.getNodeTypesResource() != null) {
             property = createPropertyElement("hippo:nodetypesresource", "String", item.getNodeTypesResource());
+            node.appendChild(property);
+        }
+
+        if (item.getResourceBundles() != null) {
+            property = createPropertyElement("hippo:resourcebundles", "String", item.getResourceBundles());
             node.appendChild(property);
         }
 

@@ -1168,8 +1168,8 @@ automatic-export/repository/pom.xml -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/AutoExportModule.java -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/Configuration.java -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/Constants.java -text
-automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/DeltaXML.java -text
-automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/DeltaXMLInstruction.java -text
+automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/Delta.java -text
+automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/DeltaInstruction.java -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/EventComparator.java -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/EventPreProcessor.java -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/EventProcessor.java -text
@@ -1184,6 +1184,7 @@ automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/Initializ
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/InitializeItemRegistry.java -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/LocationMapper.java -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/Module.java -text
+automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/ResourceBundlesJSONSerializer.java -text
 automatic-export/repository/src/main/resources/autoexport-domain.xml -text
 automatic-export/repository/src/main/resources/automatic-export-plugin.xml -text
 automatic-export/repository/src/main/resources/hippo-configuration/hippo-modules/autoexport-module.xml -text
@@ -1222,6 +1223,8 @@ automatic-export/repository/src/test/resources/autoexporttest/nodetypes/hippoecm
 automatic-export/repository/src/test/resources/autoexporttest/nodetypes/namespaces/et.cnd -text
 automatic-export/repository/src/test/resources/autoexporttest/simple/hippoecm-extension.xml -text
 automatic-export/repository/src/test/resources/autoexporttest/simple/simple.xml -text
+automatic-export/repository/src/test/resources/autoexporttest/translations/hippoecm-extension.xml -text
+automatic-export/repository/src/test/resources/autoexporttest/translations/translations.json -text
 automatic-export/repository/src/test/resources/et.cnd -text
 automatic-export/repository/src/test/resources/exclude-uuid-paths.xml -text
 automatic-export/repository/src/test/resources/filter/expected1.xml -text
@@ -1235,6 +1238,7 @@ automatic-export/repository/src/test/resources/filter/expected8.xml -text
 automatic-export/repository/src/test/resources/filter/input.xml -text
 automatic-export/repository/src/test/resources/hippoecm-extension.xml -text
 automatic-export/repository/src/test/resources/initializeitemtest/delta.xml -text
+automatic-export/repository/src/test/resources/initializeitemtest/translations.json -text
 automatic-export/repository/src/test/resources/log4j-filters.txt -text
 automatic-export/repository/src/test/resources/log4j.dtd -text
 automatic-export/repository/src/test/resources/log4j.xml -text

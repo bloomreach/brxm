@@ -15,13 +15,12 @@
  */
 package org.onehippo.cms7.autoexport;
 
-import java.io.File;
-
 import javax.jcr.observation.Event;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class InitializeItemFactoryTest {
 
@@ -56,6 +55,11 @@ public class InitializeItemFactoryTest {
         assertEquals("foo/bar/baz.xml", item.getContentResource());
         assertEquals("/foo/bar", item.getContentRoot());
         assertEquals(new Double(30001.3), item.getSequence());
+
+        item = factory.createInitializeItem("/hippo:configuration/hippo:translations/foo", Event.NODE_ADDED);
+        assertNotNull(item);
+        assertEquals("translations", item.getName());
+        assertEquals("translations.json", item.getResourceBundles());
     }
     
     @Test

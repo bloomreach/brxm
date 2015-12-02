@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
@@ -48,6 +49,7 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import net.sf.json.JSONObject;
 import static org.onehippo.cms7.autoexport.AutoExportModule.log;
 import static org.onehippo.cms7.autoexport.Constants.CDATA;
 import static org.onehippo.cms7.autoexport.Constants.DELTA_PREFIX;
@@ -112,6 +114,24 @@ final class Exporter {
         if (item.getNodeTypesResource() != null) {
             exportNodeTypesResource(item);
         }
+        if (item.getResourceBundles() != null) {
+            exportResourceBundles(item);
+        }
+    }
+
+    private void exportResourceBundles(InitializeItem item) {
+        try {
+            final File file = new File(module.getExportDir(), item.getResourceBundles());
+            if (!file.exists()) {
+                ExportUtils.createFile(file);
+            }
+            final JSONObject jsonObject = ResourceBundlesJSONSerializer.resourceBundlesToJSON(session, item.getDelta().getRootInstruction());
+            final String json = jsonObject.toString(2);
+            FileUtils.writeStringToFile(file, json);
+        } catch (IOException | RepositoryException e) {
+            log.error("Exporting {} failed", item.getResourceBundles(), e);
+        }
+
     }
     
     private void exportContentResource(InitializeItem item) {
@@ -151,16 +171,12 @@ final class Exporter {
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", Integer.toString(2));
             handler.setResult(new StreamResult(out));
 
-            if (item.isDeltaXML()) {
+            if (item.isDelta()) {
                 exportDeltaXML(item, handler);
             } else {
                 exportDereferencedView(item, handler);
             }
-        } catch (IOException e) {
-            log.error("Exporting " + item.getContentResource() + " failed.", e);
-        } catch (TransformerConfigurationException e) {
-            log.error("Exporting " + item.getContentResource() + " failed.", e);
-        } catch (SAXException e) {
+        } catch (IOException | TransformerConfigurationException | SAXException e) {
             log.error("Exporting " + item.getContentResource() + " failed.", e);
         } finally {
             IOUtils.closeQuietly(out);
@@ -178,7 +194,7 @@ final class Exporter {
     }
     
     private void exportDeltaXML(InitializeItem item, ContentHandler handler) throws SAXException, RepositoryException {
-        DeltaXMLInstruction rootInstruction = item.getDeltaXML().getRootInstruction();
+        DeltaInstruction rootInstruction = item.getDelta().getRootInstruction();
         handler.startDocument();
         handler.startPrefixMapping(SV_PREFIX, SV_URI);
         handler.startPrefixMapping(DELTA_PREFIX, DELTA_URI);
@@ -186,7 +202,7 @@ final class Exporter {
         handler.endDocument();
     }
     
-    private void exportInstruction(DeltaXMLInstruction instruction, ContentHandler handler) throws SAXException, RepositoryException {
+    private void exportInstruction(DeltaInstruction instruction, ContentHandler handler) throws SAXException, RepositoryException {
         if (instruction.isNoneDirective()) {
             if (instruction.isNodeInstruction()) {
                 List<String> subContextPaths = new ArrayList<String>();
@@ -205,12 +221,12 @@ final class Exporter {
             attr.addAttribute(DELTA_URI, MERGE, QMERGE, CDATA, instruction.getDirective());
             handler.startElement(SV_URI, NODE, QNODE, attr);
             if (instruction.getPropertyInstructions() != null) {
-                for (DeltaXMLInstruction child : instruction.getPropertyInstructions()) {
+                for (DeltaInstruction child : instruction.getPropertyInstructions()) {
                     exportInstruction(child, handler);
                 }
             }
             if (instruction.getNodeInstructions() != null) {
-                for (DeltaXMLInstruction child : instruction.getNodeInstructions()) {
+                for (DeltaInstruction child : instruction.getNodeInstructions()) {
                     exportInstruction(child, handler);
                 }
             }
@@ -220,7 +236,7 @@ final class Exporter {
         }
     }
 
-    private void exportPropertyInstruction(DeltaXMLInstruction instruction, ContentHandler handler, boolean override) throws SAXException, RepositoryException {
+    private void exportPropertyInstruction(DeltaInstruction instruction, ContentHandler handler, boolean override) throws SAXException, RepositoryException {
         Property property = session.getProperty(instruction.getContextPath());
         AttributesImpl attr = new AttributesImpl();
         attr.addAttribute(SV_URI, NAME, QNAME, CDATA, instruction.getName());
@@ -269,9 +285,7 @@ final class Exporter {
                 } catch (IOException e) {
                 }
             }
-        } catch (IOException e) {
-            log.error("Exporting " + item.getNodeTypesResource() + " failed.", e);
-        } catch (RepositoryException e) {
+        } catch (IOException | RepositoryException e) {
             log.error("Exporting " + item.getNodeTypesResource() + " failed.", e);
         }
     }
