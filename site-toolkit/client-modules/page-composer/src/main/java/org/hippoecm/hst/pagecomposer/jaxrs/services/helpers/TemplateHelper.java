@@ -72,37 +72,39 @@ public class TemplateHelper extends AbstractHelper {
         final String templateName = ((HstComponentConfigurationService)sourceComponent).getHstTemplate();
 
         final Session session = pageCopyContext.getRequestContext().getSession();
-        if (templateName != null && !target.getTemplates().containsKey(templateName)) {
-            // missing template in target. Fetch it from the source
-            final HstComponentsConfigurationService.Template template = source.getTemplates().get(templateName);
-            if (template == null) {
-                log.warn("Cannot copy template since the source channel also misses the template. Ignore template '{}' copy for " +
-                        "'{}'", templateName, pageCopyContext);
-            } else {
-                copyTemplate(template, pageCopyContext.getTargetMount(), session);
-            }
-        } else {
-            // if 'hst:templates' section turns out to be locked by *another* user, then the template might be
-            // present in preview but not yet in live. If the current user then publishes his changes, the template won't
-            // get published because he does not own the lock. We need to thus that if 'hst:templates' section is locked by
-            // someone else, that the template we need is already live.
-            final String templatesPath = getTemplatesPath(pageCopyContext.getTargetMount());
-            if (session.nodeExists(templatesPath)) {
-                // check whether locked by someone else
-                final boolean locked  = lockHelper.getUnLockableNode(session.getNode(templatesPath), false, false) != null;
-                if (locked) {
-                    // hst:templates is locked. Now, if the 'templateName' is not available in live configuration, we have
-                    // to throw an exception because the cross channel page copy cannot be successfully completed
-                    final String liveTemplatesPath = templatesPath.replace("-preview/","/");
-                    if (session.nodeExists(liveTemplatesPath + "/" + templateName)) {
-                        log.debug("Template '{}' is already available in live config so no problem.", liveTemplatesPath);
-                    } else {
-                        log.info("Template '{}' does not exist and '{}' is locked by someone else. Cannot copy template",
-                                liveTemplatesPath, templatesPath);
-                        // force an exception by trying to acquire the lock
-                        lockHelper.acquireSimpleLock(session.getNode(templatesPath), 0L);
+        if (templateName != null) {
+            if (target.getTemplates().containsKey(templateName)) {
+                // if 'hst:templates' section turns out to be locked by *another* user, then the template might be
+                // present in preview but not yet in live. If the current user then publishes his changes, the template won't
+                // get published because he does not own the lock. We need to thus that if 'hst:templates' section is locked by
+                // someone else, that the template we need is already live.
+                final String templatesPath = getTemplatesPath(pageCopyContext.getTargetMount());
+                if (session.nodeExists(templatesPath)) {
+                    // check whether locked by someone else
+                    final boolean locked = lockHelper.getUnLockableNode(session.getNode(templatesPath), false, false) != null;
+                    if (locked) {
+                        // hst:templates is locked. Now, if the 'templateName' is not available in live configuration, we have
+                        // to throw an exception because the cross channel page copy cannot be successfully completed
+                        final String liveTemplatesPath = templatesPath.replace("-preview/", "/");
+                        if (session.nodeExists(liveTemplatesPath + "/" + templateName)) {
+                            log.debug("Template '{}' is already available in live config so no problem.", liveTemplatesPath);
+                        } else {
+                            log.info("Template '{}' does not exist and '{}' is locked by someone else. Cannot copy template",
+                                    liveTemplatesPath, templatesPath);
+                            // force an exception by trying to acquire the lock
+                            lockHelper.acquireSimpleLock(session.getNode(templatesPath), 0L);
+                        }
+
                     }
-                     
+                }
+            } else {
+                // missing template in target. Fetch it from the source
+                final HstComponentsConfigurationService.Template template = source.getTemplates().get(templateName);
+                if (template == null) {
+                    log.warn("Cannot copy template since the source channel also misses the template. Ignore template '{}' copy for " +
+                            "'{}'", templateName, pageCopyContext);
+                } else {
+                    copyTemplate(template, pageCopyContext.getTargetMount(), session);
                 }
             }
         }
