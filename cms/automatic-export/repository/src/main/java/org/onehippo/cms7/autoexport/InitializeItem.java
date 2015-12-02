@@ -190,9 +190,9 @@ final class InitializeItem {
         if (isDelta == null) {
             isDelta = !event.getPath().equals(contextPath) || resourceBundles != null;
         }
+        String contextPath = this.contextPath != null ? this.contextPath : "/hippo:configuration/hippo:translations";
         if (isDelta) {
             if (delta == null) {
-                String contextPath = this.contextPath != null ? this.contextPath : "/hippo:configuration/hippo:translations";
                 delta = new Delta(contextPath);
             }
             delta.handleEvent(event);

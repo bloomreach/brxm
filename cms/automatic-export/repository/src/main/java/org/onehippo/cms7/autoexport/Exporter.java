@@ -120,6 +120,7 @@ final class Exporter {
     }
 
     private void exportResourceBundles(InitializeItem item) {
+        log.info("Exporting " + item.getResourceBundles() + " to module " + module.getModulePath());
         try {
             final File file = new File(module.getExportDir(), item.getResourceBundles());
             if (!file.exists()) {
