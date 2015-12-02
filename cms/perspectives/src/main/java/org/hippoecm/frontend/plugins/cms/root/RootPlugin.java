@@ -19,8 +19,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -31,7 +29,6 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.time.Duration;
@@ -40,10 +37,10 @@ import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
-import org.hippoecm.frontend.plugins.cms.logout.ActiveLogoutPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
+import org.hippoecm.frontend.plugins.cms.logout.ActiveLogoutPlugin;
 import org.hippoecm.frontend.plugins.standards.tabs.TabbedPanel;
 import org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin;
 import org.hippoecm.frontend.plugins.yui.ajax.AjaxIndicatorBehavior;
@@ -61,6 +58,9 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.ListViewService;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.usagestatistics.UsageStatisticsHeaderItem;
+import org.hippoecm.frontend.useractivity.MonitorExtUserActivityHeaderItem;
+import org.hippoecm.frontend.useractivity.UserActivityHeaderItem;
+import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.frontend.widgets.Pinger;
 import org.slf4j.Logger;
@@ -104,12 +104,11 @@ public class RootPlugin extends TabsPlugin {
         // keep all feedback messages after each request cycle
         getApplication().getApplicationSettings().setFeedbackMessageCleanupFilter(IFeedbackMessageFilter.NONE);
 
-        addPinger(config);
+        addPinger();
 
         add(new Label("pageTitle", getString("page.title", null, "Hippo CMS 10")));
 
-        final ILogoutService logoutService = addUserMenu(context);
-        addActiveLogout(config, logoutService);
+        addUserMenu();
 
         services = new LinkedList<>();
 
@@ -194,27 +193,19 @@ public class RootPlugin extends TabsPlugin {
         add(new ResourceLink("faviconLink", ((PluginApplication)getApplication()).getPluginApplicationFavIconReference()));
     }
 
-    private void addPinger(final IPluginConfig config) {
-        final Duration pingerInterval = config.getAsDuration(CONFIG_PINGER_INTERVAL);
+    private void addPinger() {
+        final Duration pingerInterval = getPluginConfig().getAsDuration(CONFIG_PINGER_INTERVAL);
         add(new Pinger("pinger", pingerInterval));
     }
 
-    private ILogoutService addUserMenu(final IPluginContext context) {
-        final ILogoutService logoutService = context.getService(ILogoutService.SERVICE_ID, ILogoutService.class);
+    private void addUserMenu() {
+        final ILogoutService logoutService = getPluginContext().getService(ILogoutService.SERVICE_ID, ILogoutService.class);
         add(new UserMenu("userMenu", getCurrentUser(), logoutService));
-        return logoutService;
+        add(new ActiveLogoutPlugin("activeLogout", getMaxInactiveIntervalMinutes(), logoutService));
     }
 
-    private void addActiveLogout(final IPluginConfig config, final ILogoutService logoutService) {
-        final Integer maxInactiveIntervalMinutes = config.getAsInteger(CONFIG_MAX_INACTIVE_INTERVAL_MINUTES, getDefaultMaxInactiveIntervalMinutes());
-        add(new ActiveLogoutPlugin("activeLogout", maxInactiveIntervalMinutes, logoutService));
-    }
-
-    private static int getDefaultMaxInactiveIntervalMinutes() {
-        final ServletWebRequest servletRequest = (ServletWebRequest) RequestCycle.get().getRequest();
-        final HttpSession httpSession = servletRequest.getContainerRequest().getSession();
-        // round seconds down to minutes
-        return httpSession.getMaxInactiveInterval() / 60;
+    private Integer getMaxInactiveIntervalMinutes() {
+        return getPluginConfig().getAsInteger(CONFIG_MAX_INACTIVE_INTERVAL_MINUTES, WebApplicationHelper.getMaxInactiveIntervalMinutes());
     }
 
     @Override
@@ -247,6 +238,10 @@ public class RootPlugin extends TabsPlugin {
         response.render(CmsHeaderItem.get());
         response.render(ExtResourcesHeaderItem.get());
         response.render(RootPluginHeaderItem.get());
+
+        final UserActivityHeaderItem userActivity = new UserActivityHeaderItem(getMaxInactiveIntervalMinutes());
+        response.render(new MonitorExtUserActivityHeaderItem(userActivity));
+
         response.render(UsageStatisticsHeaderItem.get());
     }
 

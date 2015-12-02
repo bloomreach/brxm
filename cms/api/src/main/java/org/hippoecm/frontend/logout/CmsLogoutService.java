@@ -35,17 +35,18 @@ import static org.hippoecm.frontend.util.WebApplicationHelper.HIPPO_AUTO_LOGIN_C
  * Logs the current user out of the CMS. This implementation performs the following tasks upon logout:
  * <ol>
  *     <li>Remove the Hippo auto login cookie</li>
+ *     <li>Save pending JCR changes</li>
  *     <li>Log out the user session</li>
  *     <li>Redirect to the login page</li>
  * </ol>
  */
-public class LogoutService extends Plugin implements ILogoutService {
+public class CmsLogoutService extends Plugin implements ILogoutService {
 
-    private static final Logger log = LoggerFactory.getLogger(LogoutService.class);
+    private static final Logger log = LoggerFactory.getLogger(CmsLogoutService.class);
 
-    public LogoutService(final IPluginContext context, final IPluginConfig config) {
+    public CmsLogoutService(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-        context.registerService(this, LogoutService.SERVICE_ID);
+        context.registerService(this, SERVICE_ID);
     }
 
     @Override

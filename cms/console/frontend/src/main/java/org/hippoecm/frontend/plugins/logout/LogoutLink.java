@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,53 +18,40 @@ package org.hippoecm.frontend.plugins.logout;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.protocol.http.WebApplication;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.service.ILogoutService;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LogoutLink extends Panel {
 
-    private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(LogoutLink.class);
 
-    static final Logger log = LoggerFactory.getLogger(LogoutLink.class);
-
-    public LogoutLink(String id, IPluginContext context) {
+    public LogoutLink(final String id, final ILogoutService logoutService) {
         super(id);
 
         final DialogWindow dialogWindow = new DialogWindow("dialog");
         add(dialogWindow);
 
         AjaxLink logoutLink = new AjaxLink("logout-link") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void onClick(AjaxRequestTarget target) {
-                // Remove the Hippo Auto Login cookie
-                WebApplicationHelper.clearCookie(WebApplicationHelper.getFullyQualifiedCookieName(WebApplicationHelper.HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME));
-
                 UserSession userSession = UserSession.get();
                 try {
                     Node rootNode = userSession.getRootNode();
                     if (rootNode != null && rootNode.getSession().hasPendingChanges()) {
-                        final LogoutDialog dialog = new LogoutDialog();
+                        final LogoutDialog dialog = new LogoutDialog(logoutService);
                         dialogWindow.show(dialog);
                     } else {
-                        userSession.logout();
-                        if (WebApplication.exists()) {
-                            throw new RestartResponseException(WebApplication.get().getHomePage());
-                        }
+                        logoutService.logout();
                     }
                 } catch (RepositoryException e) {
-                    log.error(e.getMessage());
+                    log.error("Error while logging out", e);
                 }
             }
         };

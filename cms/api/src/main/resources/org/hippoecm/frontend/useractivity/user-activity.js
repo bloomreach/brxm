@@ -23,6 +23,10 @@
 
   Hippo.UserActivity = {
 
+    isAjaxUserActivity: function (ajaxOptions) {
+     return ajaxOptions[AJAX_ATTR_SYSTEM_ACTIVITY] !== true;
+    },
+
     report: function () {
       lastActive = Date.now();
     },
@@ -40,21 +44,9 @@
 
   };
 
-  function isUserActivity(ajaxOptions) {
-    return ajaxOptions[AJAX_ATTR_SYSTEM_ACTIVITY] !== true;
-  }
-
   function monitorWicketAjaxUserCalls () {
     Wicket.Event.subscribe(Wicket.Event.Topic.AJAX_CALL_BEFORE_SEND, function (attrs, jqXHR) {
-      if (isUserActivity(jqXHR)) {
-        Hippo.UserActivity.report();
-      }
-    });
-  }
-
-  function monitorExtAjaxUserCalls() {
-    Ext.Ajax.on('beforerequest', function (component, ajaxOptions) {
-      if (ajaxOptions.request && isUserActivity(ajaxOptions.request.arg)) {
+      if (Hippo.UserActivity.isAjaxUserActivity(jqXHR)) {
         Hippo.UserActivity.report();
       }
     });
@@ -84,7 +76,6 @@
   }
 
   monitorWicketAjaxUserCalls();
-  monitorExtAjaxUserCalls();
   observeInactivity();
 
 }());

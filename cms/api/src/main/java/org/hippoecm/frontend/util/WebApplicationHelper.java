@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpSession;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.wicket.Application;
@@ -151,6 +152,13 @@ public class WebApplicationHelper {
             }
         });
         return jarFiles;
+    }
+
+    public static int getMaxInactiveIntervalMinutes() {
+        final ServletWebRequest servletRequest = (ServletWebRequest) RequestCycle.get().getRequest();
+        final HttpSession httpSession = servletRequest.getContainerRequest().getSession();
+        // round seconds down to minutes
+        return httpSession.getMaxInactiveInterval() / 60;
     }
 
     private static File getBaseJarFileFromURL(final URL url) throws URISyntaxException {

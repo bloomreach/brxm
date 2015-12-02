@@ -25,7 +25,6 @@ import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.service.ILogoutService;
-import org.hippoecm.frontend.useractivity.UserActivityHeaderItem;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,11 +71,8 @@ public class ActiveLogoutPlugin extends Component {
     public void renderHead(final HtmlHeaderContainer container) {
         super.renderHead(container);
 
-        // always render the user activity API
-        final IHeaderResponse header = container.getHeaderResponse();
-        header.render(new UserActivityHeaderItem(maxInactiveIntervalMinutes));
-
         if (isActive()) {
+            final IHeaderResponse header = container.getHeaderResponse();
             header.render(OnLoadHeaderItem.forScript(createActiveLogoutScript()));
         }
     }

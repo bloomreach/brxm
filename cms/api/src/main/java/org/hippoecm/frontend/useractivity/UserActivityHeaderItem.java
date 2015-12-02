@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.useractivity;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
@@ -24,18 +23,13 @@ import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.util.template.PackageTextTemplate;
-import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.HippoHeaderItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.wicketstuff.js.ext.util.ExtResourcesHeaderItem;
 
 public class UserActivityHeaderItem extends HippoHeaderItem {
 
     public static final String AJAX_ATTR_SYSTEM_ACTIVITY = "isSystemActivity";
 
-    private static final String USER_ACTIVITY_JS = "user-activity.js";
-    private static final Logger log = LoggerFactory.getLogger(UserActivityHeaderItem.class);
+    private static final String USER_ACTIVITY_API_JS = "user-activity.js";
 
     private final int maxInactiveIntervalMinutes;
 
@@ -50,7 +44,7 @@ public class UserActivityHeaderItem extends HippoHeaderItem {
 
     @Override
     public Iterable<? extends HeaderItem> getDependencies() {
-        return Arrays.asList(CmsHeaderItem.get(), ExtResourcesHeaderItem.get());
+        return Collections.emptyList();
     }
 
     @Override
@@ -64,8 +58,8 @@ public class UserActivityHeaderItem extends HippoHeaderItem {
         scriptParams.put("maxInactiveIntervalMinutes", Integer.toString(maxInactiveIntervalMinutes));
         scriptParams.put("ajaxAttrSystemActivity", AJAX_ATTR_SYSTEM_ACTIVITY);
 
-        final PackageTextTemplate userActivityJs = new PackageTextTemplate(UserActivityHeaderItem.class, USER_ACTIVITY_JS);
-        return userActivityJs.asString(scriptParams);
+        final PackageTextTemplate javaScript = new PackageTextTemplate(UserActivityHeaderItem.class, USER_ACTIVITY_API_JS);
+        return javaScript.asString(scriptParams);
     }
 
 }
