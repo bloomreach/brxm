@@ -1,19 +1,19 @@
 /*
  * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.logout;
+package org.hippoecm.frontend.logout;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -23,10 +23,9 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.util.template.PackageTextTemplate;
-import org.hippoecm.frontend.logout.ActiveLogoutSettings;
 import org.hippoecm.frontend.service.ILogoutService;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.useractivity.UserActivityHeaderItem;
+import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,30 +38,33 @@ public class ActiveLogoutPlugin extends Component {
 
     private static final Logger log = LoggerFactory.getLogger(ActiveLogoutPlugin.class);
 
+    private final int maxInactiveIntervalMinutes;
     private final LogoutBehavior logoutBehavior;
 
     /**
      * @param id the Wicket ID of this component
+     * @param maxInactiveIntervalMinutes the number of minutes a user has to be inactive before being logged out.
+     *        A value of zero or less means means 'infinite' and will disable the active logout.
      * @param logoutService the service to use for logging out a user.
      */
-    public ActiveLogoutPlugin(final String id, final ILogoutService logoutService) {
+    public ActiveLogoutPlugin(final String id, final int maxInactiveIntervalMinutes, final ILogoutService logoutService) {
         super(id);
 
+        this.maxInactiveIntervalMinutes = maxInactiveIntervalMinutes;
         logoutBehavior = new LogoutBehavior(logoutService);
 
-        final ActiveLogoutSettings settings = ActiveLogoutSettings.get();
-        if (settings.isEnabled()) {
-            if (settings.getStaySignedIn(UserSession.get())) {
-                log.info("User chose to stay signed in and will not be actively logged out");
-            } else {
-                log.info("User chose to not stay signed in and will be actively logged out after {} seconds of inactivity", settings.getMaxInactiveIntervalSeconds());
-                add(logoutBehavior);
-            }
+        if (isActive()) {
+            log.info("Inactive user sessions will be logged out automatically after {} minutes", maxInactiveIntervalMinutes);
+            add(logoutBehavior);
         } else {
-            log.info("Active logout is disabled");
+            log.info("Inactive user sessions will not be logged out automatically");
         }
 
         setRenderBodyOnly(true);
+    }
+
+    private boolean isActive() {
+        return maxInactiveIntervalMinutes > 0 && !WebApplicationHelper.isDevelopmentMode();
     }
 
     @Override
@@ -70,11 +72,10 @@ public class ActiveLogoutPlugin extends Component {
         super.renderHead(container);
 
         // always render the user activity API
-        final ActiveLogoutSettings settings = ActiveLogoutSettings.get();
         final IHeaderResponse header = container.getHeaderResponse();
-        header.render(new UserActivityHeaderItem(settings.getMaxInactiveIntervalSeconds()));
+        header.render(new UserActivityHeaderItem(maxInactiveIntervalMinutes));
 
-        if (settings.isEnabled() && !settings.getStaySignedIn(UserSession.get())) {
+        if (isActive()) {
             header.render(OnLoadHeaderItem.forScript(createActiveLogoutScript()));
         }
     }

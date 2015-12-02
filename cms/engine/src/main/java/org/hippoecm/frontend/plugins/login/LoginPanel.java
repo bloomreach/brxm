@@ -30,7 +30,6 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
-import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -48,7 +47,6 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.Main;
-import org.hippoecm.frontend.logout.ActiveLogoutSettings;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.session.LoginException;
@@ -66,43 +64,8 @@ public class LoginPanel extends Panel {
     public static final JavaScriptResourceReference PREVENT_RESUBMIT_SCRIPT_REFERENCE =
             new JavaScriptResourceReference(LoginPanel.class, "PreventResubmit.js");
 
-    private static final int ONE_YEAR_SECONDS = 365 * 24 * 3600;
-
-    private enum LoginCookie {
-
-        LOCALE("loc", ONE_YEAR_SECONDS, null),
-        STAY_SIGNED_IN("stay-signed-in", ONE_YEAR_SECONDS, Boolean.FALSE.toString());
-
-        private final String name;
-        private final int maxAge;
-        private final String defaultValue;
-
-        LoginCookie(String name, int maxAge, String defaultValue) {
-            this.name = name;
-            this.maxAge = maxAge;
-            this.defaultValue = defaultValue;
-        }
-
-        void setValue(final String value) {
-            Cookie cookie = new Cookie(name, value);
-            cookie.setMaxAge(maxAge);
-            WebApplicationHelper.retrieveWebResponse().addCookie(cookie);
-        }
-
-        String getValue() {
-            Cookie[] cookies = WebApplicationHelper.retrieveWebRequest().getContainerRequest().getCookies();
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if (name.equals(cookie.getName())) {
-                        return cookie.getValue();
-                    }
-                }
-            }
-            return defaultValue;
-        }
-
-    }
-
+    private static final String LOCALE_COOKIE = "loc";
+    private static final int LOCALE_COOKIE_MAXAGE = 365 * 24 * 3600; // expire one year from now
     private final static String DEFAULT_KEY = "invalid.login";
 
     private final LoginHandler handler;
@@ -111,7 +74,6 @@ public class LoginPanel extends Panel {
     protected String username;
     protected String password;
     protected String selectedLocale;
-    protected boolean selectedStaySignedIn;
 
     public LoginPanel(final String id, final boolean autoComplete, final List<String> locales, final LoginHandler handler) {
         super(id);
@@ -137,7 +99,6 @@ public class LoginPanel extends Panel {
         ConcurrentLoginFilter.validateSession(session, username, false);
 
         userSession.setLocale(new Locale(selectedLocale));
-        ActiveLogoutSettings.get().setStaySignedIn(userSession, selectedStaySignedIn);
     }
 
     protected void loginFailed(final Cause cause) {
@@ -172,8 +133,6 @@ public class LoginPanel extends Panel {
         protected final DropDownChoice<String> locale;
         protected final RequiredTextField<String> usernameTextField;
         protected final PasswordTextField passwordTextField;
-        protected final Model<Boolean> staySignedIn;
-        protected final AjaxCheckBox staySignedInField;
         protected final Button submitButton;
         protected final List<Component> labels = new ArrayList<>();
 
@@ -200,7 +159,7 @@ public class LoginPanel extends Panel {
             passwordTextField.setResetPassword(false);
 
             final String defaultLocale = locales.get(0);
-            final String cookieLocale = LoginCookie.LOCALE.getValue();
+            final String cookieLocale = getCookieValue(LOCALE_COOKIE);
             final String sessionLocale = getSession().getLocale().getLanguage();
             if (cookieLocale != null && locales.contains(cookieLocale)) {
                 selectedLocale = cookieLocale;
@@ -236,7 +195,7 @@ public class LoginPanel extends Panel {
             locale.add(new OnChangeAjaxBehavior() {
                 protected void onUpdate(AjaxRequestTarget target) {
                     // Store locale in cookie
-                    LoginCookie.LOCALE.setValue(selectedLocale);
+                    setCookieValue(LOCALE_COOKIE, selectedLocale, LOCALE_COOKIE_MAXAGE);
                     // and update the session locale
                     getSession().setLocale(new Locale(selectedLocale));
 
@@ -248,29 +207,6 @@ public class LoginPanel extends Panel {
                     }
                 }
             });
-
-            staySignedIn = new Model<Boolean>() {
-                @Override
-                public Boolean getObject() {
-                    final String cookieValue = LoginCookie.STAY_SIGNED_IN.getValue();
-                    return Boolean.parseBoolean(cookieValue);
-                }
-
-                @Override
-                public void setObject(final Boolean selected) {
-                    selectedStaySignedIn = selected;
-                    LoginCookie.STAY_SIGNED_IN.setValue(selected.toString());
-                }
-            };
-            selectedStaySignedIn = staySignedIn.getObject();
-            add(staySignedInField = new AjaxCheckBox("staySignedIn", staySignedIn) {
-                @Override
-                protected void onUpdate(final AjaxRequestTarget target) {
-                    // the checkbox is already updated client-side, so do nothing
-                }
-            });
-            staySignedInField.setVisible(ActiveLogoutSettings.get().isEnabled() && WebApplicationHelper.getApplicationName().equals("cms"));
-            addLabelledComponent(new Label("stay-signed-in-label", new ResourceModel("stay-signed-in-label")));
 
             submitButton = new Button("submit", new ResourceModel("submit-label"));
             addLabelledComponent(submitButton);
@@ -309,4 +245,21 @@ public class LoginPanel extends Panel {
         }
     }
 
+    private void setCookieValue(final String cookieName, final String cookieValue, final int maxAge) {
+        Cookie localeCookie = new Cookie(cookieName, cookieValue);
+        localeCookie.setMaxAge(maxAge);
+        WebApplicationHelper.retrieveWebResponse().addCookie(localeCookie);
+    }
+
+    private String getCookieValue(final String cookieName) {
+        Cookie[] cookies = WebApplicationHelper.retrieveWebRequest().getContainerRequest().getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookieName.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
 }

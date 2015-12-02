@@ -26,6 +26,8 @@ import org.apache.wicket.request.Response;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.HippoHeaderItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.util.ExtResourcesHeaderItem;
 
 public class UserActivityHeaderItem extends HippoHeaderItem {
@@ -33,11 +35,12 @@ public class UserActivityHeaderItem extends HippoHeaderItem {
     public static final String AJAX_ATTR_SYSTEM_ACTIVITY = "isSystemActivity";
 
     private static final String USER_ACTIVITY_JS = "user-activity.js";
+    private static final Logger log = LoggerFactory.getLogger(UserActivityHeaderItem.class);
 
-    private final int maxInactiveIntervalSeconds;
+    private final int maxInactiveIntervalMinutes;
 
-    public UserActivityHeaderItem(final int maxInactiveIntervalSeconds) {
-        this.maxInactiveIntervalSeconds = maxInactiveIntervalSeconds;
+    public UserActivityHeaderItem(final int maxInactiveIntervalMinutes) {
+        this.maxInactiveIntervalMinutes = maxInactiveIntervalMinutes;
     }
 
     @Override
@@ -58,7 +61,7 @@ public class UserActivityHeaderItem extends HippoHeaderItem {
     private String createUserActivityScript() {
         final Map<String, String> scriptParams = new TreeMap<>();
 
-        scriptParams.put("maxInactiveIntervalSeconds", Integer.toString(maxInactiveIntervalSeconds));
+        scriptParams.put("maxInactiveIntervalMinutes", Integer.toString(maxInactiveIntervalMinutes));
         scriptParams.put("ajaxAttrSystemActivity", AJAX_ATTR_SYSTEM_ACTIVITY);
 
         final PackageTextTemplate userActivityJs = new PackageTextTemplate(UserActivityHeaderItem.class, USER_ACTIVITY_JS);

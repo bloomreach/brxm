@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.logout;
+package org.hippoecm.frontend.logout;
 
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.hippoecm.frontend.service.ILogoutService;
