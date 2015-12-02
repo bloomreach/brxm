@@ -305,8 +305,15 @@
   padding: 0;
 
   ul {
-    padding: 5px;
-    margin-bottom: 10px;
+    line-height: 20px;
+
+    &:last-child {
+      margin-bottom: 10px;
+    }
+  }
+
+  p {
+    margin: 5px 0; /* Extra vertical space around the text if the image variant is too large to be displayed */
   }
 }
 
