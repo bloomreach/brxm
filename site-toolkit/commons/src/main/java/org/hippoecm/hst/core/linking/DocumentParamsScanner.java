@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.parameters.DocumentLink;
@@ -67,19 +66,19 @@ public class DocumentParamsScanner {
                                                    final ClassLoader classLoader) {
 
         final String componentClassName = config.getComponentClassName();
-        if (StringUtils.isNotEmpty(componentClassName)) {
+        if (!isEmpty(componentClassName)) {
             Set<String> parameterNames = getNames(componentClassName, classLoader);
 
             for (String param : parameterNames) {
                 String documentPath = config.getParameter(param);
-                if (StringUtils.isNotEmpty(documentPath)) {
+                if (!isEmpty(documentPath)) {
                     populate.add(documentPath);
                 }
                 // add variants as well
                 for (String prefix : config.getParameterPrefixes()) {
                     final String prefixedParam = ConfigurationUtils.createPrefixedParameterName(prefix, param);
                     String variantDocumentPath = config.getParameter(prefixedParam);
-                    if (StringUtils.isNotEmpty(variantDocumentPath)) {
+                    if (!isEmpty(variantDocumentPath)) {
                         populate.add(variantDocumentPath);
                     }
                 }
@@ -89,6 +88,10 @@ public class DocumentParamsScanner {
         for (HstComponentConfiguration child : config.getChildren().values()) {
             findDocumentPathsRecursive(child, populate, classLoader);
         }
+    }
+
+    private static boolean isEmpty(final String str) {
+        return str == null || str.length() == 0;
     }
 
     /**

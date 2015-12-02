@@ -27,7 +27,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
@@ -36,7 +35,7 @@ import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL;
+import static org.hippoecm.hst.configuration.ConfigurationUtils.createPrefixedParameterName;
 
 public class HstComponentConfigurationService implements HstComponentConfiguration, ConfigurationLockInfo {
 
@@ -303,7 +302,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                             if (!parameterNamePrefixSet.contains(parameterNamePrefixes[i])) {
                                 parameterNamePrefixSet.add(parameterNamePrefixes[i]);
                             }
-                            final String prefixedParameterName = ConfigurationUtils.createPrefixedParameterName(parameterNamePrefixes[i], parameterNames[i]);
+                            final String prefixedParameterName = createPrefixedParameterName(parameterNamePrefixes[i], parameterNames[i]);
                             this.parameters.put(StringPool.get(prefixedParameterName), StringPool.get(parameterValues[i]));
                             this.localParameters.put(StringPool.get(prefixedParameterName), StringPool.get(parameterValues[i]));
                         }

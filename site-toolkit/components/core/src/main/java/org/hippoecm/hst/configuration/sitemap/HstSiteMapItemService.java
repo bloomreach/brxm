@@ -33,7 +33,6 @@ import com.google.common.collect.ImmutableSet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
@@ -49,6 +48,9 @@ import org.hippoecm.hst.core.util.PropertyParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
+import static org.hippoecm.hst.configuration.ConfigurationUtils.isWorkspaceConfig;
+import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
 import static org.hippoecm.hst.configuration.HstNodeTypes.ANY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_CACHEABLE;
@@ -199,7 +201,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         this.depth = depth;
         canonicalIdentifier = node.getValueProvider().getIdentifier();
         canonicalPath = StringPool.get(node.getValueProvider().getPath());
-        workspaceConfiguration = ConfigurationUtils.isWorkspaceConfig(node);
+        workspaceConfiguration = isWorkspaceConfig(node);
         lockedBy = node.getValueProvider().getString(GENERAL_PROPERTY_LOCKED_BY);
         lockedOn = node.getValueProvider().getDate(GENERAL_PROPERTY_LOCKED_ON);
 
@@ -522,9 +524,9 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
 
         if(node.getValueProvider().hasProperty(GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
             schemeNotMatchingResponseCode = (int)node.getValueProvider().getLong(GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE).longValue();
-            if (!ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode(schemeNotMatchingResponseCode)) {
+            if (!isSupportedSchemeNotMatchingResponseCode(schemeNotMatchingResponseCode)) {
                 log.warn("Invalid '{}' configured on '{}'. Use inherited value. Supported values are '{}'", new String[]{GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE,
-                        node.getValueProvider().getPath(), ConfigurationUtils.suppertedSchemeNotMatchingResponseCodesAsString()});
+                        node.getValueProvider().getPath(), supportedSchemeNotMatchingResponseCodesAsString()});
                 schemeNotMatchingResponseCode = -1;
             }
         }
