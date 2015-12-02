@@ -362,10 +362,13 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             script = valueProvider.getString(TEMPLATE_PROPERTY_SCRIPT);
             named = valueProvider.getBoolean(TEMPLATE_PROPERTY_IS_NAMED);
 
-            if (StringUtils.isBlank(configuredRenderPath) && script != null) {
+            if (StringUtils.isNotBlank(configuredRenderPath)) {
+                effectiveRenderPath = configuredRenderPath;
+            } else if (StringUtils.isNotBlank(script)) {
                 effectiveRenderPath = FREEMARKER_JCR_TEMPLATE_PROTOCOL + path;
             } else {
-                effectiveRenderPath = valueProvider.getString(TEMPLATE_PROPERTY_RENDERPATH);
+                log.warn("Template '{}' is invalid, supply a hst:renderpath or hst:script.", getPath());
+                effectiveRenderPath = null;
             }
         }
 
@@ -390,20 +393,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         }
 
         public boolean isValid() {
-
-            if (configuredRenderPath == null && script == null) {
-                log.warn("Template '{}' is invalid because missing property hst:renderpath and hst:script.", getPath());
-                return false;
-            }
-
-            if (configuredRenderPath != null && script == null) {
-                String resourcePath = configuredRenderPath;
-                if (StringUtils.isBlank(resourcePath)) {
-                    log.warn("Template '{}' is invalid because of empty hst:renderpath value.", getPath());
-                    return false;
-                }
-            }
-            return true;
+            return getEffectiveRenderPath() != null;
         }
     }
 
