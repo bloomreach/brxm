@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -69,22 +68,24 @@ public class TemplateHelper extends AbstractHelper {
                                       final PageCopyContext pageCopyContext,
                                       final HstComponentsConfigurationService source,
                                       final HstComponentsConfigurationService target) throws RepositoryException {
-        final String templateName = ((HstComponentConfigurationService)sourceComponent).getHstTemplate();
 
+        final String templateName = ((HstComponentConfigurationService)sourceComponent).getHstTemplate();
         final Session session = pageCopyContext.getRequestContext().getSession();
+
         if (templateName != null) {
             if (target.getTemplates().containsKey(templateName)) {
-                // if 'hst:templates' section turns out to be locked by *another* user, then the template might be
+                // If 'hst:templates' section turns out to be locked by *another* user, then the template might be
                 // present in preview but not yet in live. If the current user then publishes his changes, the template won't
-                // get published because he does not own the lock. We need to thus that if 'hst:templates' section is locked by
-                // someone else, that the template we need is already live.
+                // get published because the current user does not own the lock. We need to double check that if
+                // 'hst:templates' section is locked by someone else, that the template we need is already live.
                 final String templatesPath = getTemplatesPath(pageCopyContext.getTargetMount());
                 if (session.nodeExists(templatesPath)) {
                     // check whether locked by someone else
                     final boolean locked = lockHelper.getUnLockableNode(session.getNode(templatesPath), false, false) != null;
                     if (locked) {
-                        // hst:templates is locked. Now, if the 'templateName' is not available in live configuration, we have
-                        // to throw an exception because the cross channel page copy cannot be successfully completed
+                        // 'hst:templates' is locked by another user. Now, if the 'templateName' is not available in live
+                        // configuration, throw an exception because the cross channel page copy cannot be successfully
+                        // completed.
                         final String liveTemplatesPath = templatesPath.replace("-preview/", "/");
                         if (session.nodeExists(liveTemplatesPath + "/" + templateName)) {
                             log.debug("Template '{}' is already available in live config so no problem.", liveTemplatesPath);
@@ -94,7 +95,6 @@ public class TemplateHelper extends AbstractHelper {
                             // force an exception by trying to acquire the lock
                             lockHelper.acquireSimpleLock(session.getNode(templatesPath), 0L);
                         }
-
                     }
                 }
             } else {
