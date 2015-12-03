@@ -1,0 +1,52 @@
+{
+  "hippo:types":   {
+    "{{namespace}}:faqitem":     {
+      "en":       {
+        "{{namespace}}:question": "Question",
+        "{{namespace}}:answer": "Answer",
+        "jcr:name": "FAQ Item"
+      },
+      "nl":       {
+        "{{namespace}}:question": "Vraag",
+        "{{namespace}}:answer": "Antwoord",
+        "jcr:name": "FAQ Item"
+      },
+      "fr":       {
+        "{{namespace}}:question": "Question",
+        "{{namespace}}:answer": "Réponse",
+        "jcr:name": "Élément de FAQ"
+      },
+      "de":       {
+        "{{namespace}}:question": "Frage",
+        "{{namespace}}:answer": "Antwort",
+        "jcr:name": "FAQ-Item"
+      }
+    },
+    "{{namespace}}:faqlist":     {
+      "en":       {
+        "{{namespace}}:description": "Description",
+        "jcr:name": "FAQ List",
+        "{{namespace}}:title": "Title",
+        "{{namespace}}:faqitem": "FAQ items"
+      },
+      "nl":       {
+        "{{namespace}}:description": "Beschrijving",
+        "jcr:name": "FAQ Lijst",
+        "{{namespace}}:title": "Titel",
+        "{{namespace}}:faqitem": "FAQ items"
+      },
+      "fr":       {
+        "{{namespace}}:description": "Description",
+        "jcr:name": "Liste de FAQ",
+        "{{namespace}}:title": "Titre",
+        "{{namespace}}:faqitem": "Éléments de FAQ"
+      },
+      "de":       {
+        "{{namespace}}:description": "Beschreibung",
+        "jcr:name": "FAQ-Liste",
+        "{{namespace}}:title": "Titel",
+        "{{namespace}}:faqitem": "FAQ-Items"
+      }
+    }
+  }
+}

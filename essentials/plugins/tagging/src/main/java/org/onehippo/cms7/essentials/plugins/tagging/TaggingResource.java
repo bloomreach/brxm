@@ -26,6 +26,7 @@ import java.util.Map;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -50,6 +51,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PayloadUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.TranslationsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +70,7 @@ public class TaggingResource extends BaseResource {
     @Path("/")
     public MessageRestful addDocuments(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
         final PluginContext context = PluginContextFactory.getContext();
-        final HippoSession session = (HippoSession) context.createSession();
+        final Session session = context.createSession();
         try {
 
             final Map<String, String> values = payloadRestful.getValues();
@@ -82,7 +84,7 @@ public class TaggingResource extends BaseResource {
 
             final String templateTags = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/tagging-template-field_tags.xml"));
             final String templateSuggest = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/tagging-template-field_tag_suggest.xml"));
-            final String templateTranslations = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/tagging-template-translations.xml"));
+            final String templateTranslations = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/taggingtypes-translations.json"));
 
             if (!Strings.isNullOrEmpty(documents)) {
 
@@ -91,7 +93,6 @@ public class TaggingResource extends BaseResource {
                 final Collection<String> addedDocuments = new HashSet<>();
                 for (final String document : docs) {
                     final String fieldImportPath = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, document);
-                    final String fieldTranslationsImportPath = MessageFormat.format("/hippo:configuration/hippo:translations/hippo:types", prefix, document);
                     final String suggestFieldPath = MessageFormat.format("{0}/relateddocs", fieldImportPath);
                     if (session.nodeExists(suggestFieldPath)) {
                         log.info("Suggest field path: [{}] already exists.", fieldImportPath);
@@ -120,9 +121,9 @@ public class TaggingResource extends BaseResource {
                     }
 
                     // import field translations
-                    if (session.nodeExists(fieldTranslationsImportPath)) {
-                        final String translationData = TemplateUtils.replaceStringPlaceholders(templateTranslations, templateData);
-                        session.importEnhancedSystemViewXML(fieldTranslationsImportPath, IOUtils.toInputStream(translationData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING, ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW, null);
+                    if (session.nodeExists("/hippo:configuration/hippo:translations")) {
+                        final String json = TemplateUtils.replaceStringPlaceholders(templateTranslations, templateData);
+                        TranslationsUtils.importTranslations(json, session);
                     }
 
                     addedDocuments.add(document);

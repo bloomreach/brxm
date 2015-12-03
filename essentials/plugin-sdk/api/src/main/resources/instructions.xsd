@@ -59,6 +59,7 @@
       <xs:element type="executeType" name="execute" minOccurs="0" maxOccurs="unbounded"/>
       <!--<xs:element type="placeHoldersType" name="placeholders" minOccurs="0" maxOccurs="unbounded"/>-->
       <xs:element type="xmlType" name="xml" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element type="translationsType" name="translations" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="cndType" name="cnd" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="folderType" name="folder" minOccurs="0" maxOccurs="unbounded"/>
     </xs:choice>
@@ -151,6 +152,10 @@
         <xs:documentation>If not defined essentials template namespace will be used</xs:documentation>
       </xs:annotation>
     </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="translationsType" mixed="true">
+    <xs:attribute use="required" name="source" type="xs:string"/>
+    <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
   </xs:complexType>
 
   <xs:complexType name="folderType" mixed="true">

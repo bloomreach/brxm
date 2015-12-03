@@ -1,0 +1,22 @@
+{
+  "hippo:types" : {
+    "{{prefix}}:{{document}}" : {
+      "en" : {
+        "{{prefix}}:tags" : "Keywords",
+        "{{prefix}}:tagssupport" : "Keyword suggestions"
+      },
+      "nl" : {
+        "{{prefix}}:tags" : "Trefwoorden",
+        "{{prefix}}:tagssupport" : "Gesuggereerde trefwoorden"
+      },
+      "de" : {
+        "{{prefix}}:tags" : "Stichworte",
+        "{{prefix}}:tagssupport" : "Stichwortvorschläge"
+      },
+      "fr" : {
+        "{{prefix}}:tags" : "Mots-clés",
+        "{{prefix}}:tagssupport" : "Suggestions de mots-clés"
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "hippo:templates":   {
+    "en":     {
+      "new-events-document": "new event",
+      "new-events-folder": "new events folder"
+    },
+    "nl":     {
+      "new-events-document": "nieuw evenement",
+      "new-events-folder": "nieuwe evenementenmap"
+    },
+    "de":     {
+      "new-events-document": "Neues Event",
+      "new-events-folder": "Neuer Events-Ordner"
+    },
+    "fr":     {
+      "new-events-document": "nouvel événement",
+      "new-events-folder": "nouveau dossier événements"
+    }
+  }
+}

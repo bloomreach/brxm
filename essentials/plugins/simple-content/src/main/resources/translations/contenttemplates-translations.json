@@ -1,0 +1,20 @@
+{
+  "hippo:templates":   {
+    "en":     {
+      "new-content-folder": "new content folder",
+      "new-content-document": "new content document"
+    },
+    "nl":     {
+      "new-content-folder": "nieuwe contentmap",
+      "new-content-document": "nieuw content document"
+    },
+    "de":     {
+      "new-content-folder": "Neuer Content-Ordner",
+      "new-content-document": "Neues Content-Document"
+    },
+    "fr":     {
+      "new-content-folder": "nouveau dossier contenu",
+      "new-content-document": "nouveau document contenu"
+    }
+  }
+}

@@ -211,6 +211,7 @@
   + hippo:modules (hipposys:modulefolder) = hipposys:modulefolder
   + hippo:derivatives (hipposys:derivativesfolder) = hipposys:derivativesfolder mandatory autocreated
   + hippo:queries (hipposys:queryfolder) = hipposys:queryfolder mandatory autocreated
+  + hippo:translations (hipposys:resourcebundles) = hipposys:resourcebundles autocreated
 
 [hipposys:externalgroup] > hipposys:group
   - hipposys:syncdate (date)
@@ -279,3 +280,9 @@
   + hipposys:eventpostcondition (nt:query)
   + hipposys:eventprecondition (nt:query)
 
+[hipposys:resourcebundle] > nt:base
+- * (string)
+
+[hipposys:resourcebundles] > nt:base
++ * (hipposys:resourcebundles)
++ * (hipposys:resourcebundle)

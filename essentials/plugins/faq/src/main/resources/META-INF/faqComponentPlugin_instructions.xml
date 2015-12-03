@@ -39,9 +39,8 @@
     <!-- workspace-->
     <xml action="copy" source="instructions/hst/faqlist-workspace.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
     <!-- translations -->
-    <xml action="copy" source="instructions/xml/translations/faqitem-translations.xml" target="/hippo:configuration/hippo:translations/hippo:types"/>
-    <xml action="copy" source="instructions/xml/translations/faqlist-translations.xml" target="/hippo:configuration/hippo:translations/hippo:types"/>
-    <xml action="copy" source="instructions/xml/translations/faqtemplates-translations.xml" target="/hippo:configuration/hippo:translations"/>
+    <translations source="instructions/json/translations/faqtypes-translations.json" />
+    <translations source="instructions/json/translations/faqtemplates-translations.json" />
   </instructionSet>
 
   <instructionSet group="freemarker">

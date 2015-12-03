@@ -30,10 +30,8 @@
     <xml action="copy" source="xml/namespaces/author.xml" target="/hippo:namespaces/{{namespace}}"/>
     <xml action="copy" source="xml/namespaces/account.xml" target="/hippo:namespaces/{{namespace}}"/>
     <!-- translations -->
-    <xml action="copy" source="xml/translations/blogpost-translations.xml" target="/hippo:configuration/hippo:translations/hippo:types"/>
-    <xml action="copy" source="xml/translations/author-translations.xml" target="/hippo:namespaces/hippo:translations/hippo:types"/>
-    <xml action="copy" source="xml/translations/account-translations.xml" target="/hippo:namespaces/hippo:translations/hippo:types"/>
-    <xml action="copy" source="xml/translations/blogtemplates-translations.xml" target="/hippo:namespaces/hippo:translations"/>
+    <translations source="json/translations/blogtypes-translations.json" />
+    <translations source="json/translations/blogtemplates-translations.json" />
     <!-- beans-->
     <file action="copy" source="java/Author.txt" target="{{beansFolder}}/Author.java"/>
     <file action="copy" source="java/Blogpost.txt" target="{{beansFolder}}/Blogpost.java"/>
