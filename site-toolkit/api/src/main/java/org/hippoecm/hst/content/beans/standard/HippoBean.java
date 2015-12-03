@@ -54,11 +54,11 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
     String getDisplayName();
     
     /**
-     * This returns the localized node name of the backing jcr node for this bean. If it is a {@link HippoNode} is returns {@link HippoNode#getLocalizedName()}, 
+     * This returns the localized node name of the backing jcr node for this bean. If it is a {@link HippoNode} is returns {@link HippoNode#getDisplayName()} ()},
      * otherwise {@link Node#getName()}
      * 
      * @return the localized node name of the backing jcr node and <code>null</code> when some {@link RepositoryException} happens
-     * @deprecated use {@link #getDisplayName()} instead
+     * @deprecated use {@link #getDisplayName()} instead. Deprecated since 4.0.0
      */
     @Deprecated
     String getLocalizedName();
