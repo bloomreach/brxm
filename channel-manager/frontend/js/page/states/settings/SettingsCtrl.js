@@ -122,8 +122,6 @@
           .then(loadChannels)
           .then(loadPrototypes)
           .then(loadPage);
-          // TODO .then(loadLocations) and do not load the locations in loadPrototypes as it now done.
-          // TODO namely, we need to be able to load locations from a different channel than the current one as well
 
         $scope.showAssignNewTemplate = function () {
           $scope.template.isVisible = true;
