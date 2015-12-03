@@ -426,31 +426,4 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         return true;
     }
 
-    /**
-     * Returns a key consisting of the super's cluster (tab) based translator id, plus the document type.
-     * The document type is added to not get translations mixed up in the Wicket cache for fields of different document
-     * types with the same name (e.g. title).
-     *
-     * Inspired on org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin#getResourceProviderKey(),
-     * unfortunately this class does not extend from AbstractFieldPlugin.
-     */
-    @Override
-    public String getResourceProviderKey() {
-        String key = super.getResourceProviderKey();
-
-        final ITypeDescriptor docType = getDocumentTypeDescriptor();
-
-        if (docType != null) {
-            key = (key == null) ? "" : (key + ".");
-            key += docType.getName();
-            if (log.isDebugEnabled()) {
-                log.debug("For field {}/{}, enriched resource provider key with doc type, resulting in {}",
-                        new String[]{docType.getName(),
-                                (getTaxonomyFieldDescriptor() != null) ? getTaxonomyFieldDescriptor().getName() : "taxonomy",
-                                key});
-            }
-        }
-        return key;
-    }
-
 }
