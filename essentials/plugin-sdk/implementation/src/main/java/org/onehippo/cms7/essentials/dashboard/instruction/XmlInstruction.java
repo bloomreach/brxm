@@ -30,8 +30,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.io.IOUtils;
-import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
 import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
@@ -103,7 +101,7 @@ public class XmlInstruction extends PluginInstruction {
     }
 
     private InstructionStatus copy() {
-        final HippoSession session = (HippoSession) context.createSession();
+        final Session session = context.createSession();
         InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
         try {
             if (!session.itemExists(target)) {
@@ -120,16 +118,16 @@ public class XmlInstruction extends PluginInstruction {
                 return InstructionStatus.FAILED;
             }
 
-            final XmlNode rootXmlNode = getRootXmlNode();
-            if (!isOverwrite() && !isMerge(rootXmlNode) && nodeExists(session, rootXmlNode, destination.getPath())) {
+            // first check if node exists:
+            if (!isOverwrite() && nodeExists(session, source, destination.getPath())) {
                 eventBus.post(new InstructionEvent(this));
                 return InstructionStatus.SKIPPED;
             }
 
+
             // Import XML with replaced NAMESPACE placeholder
             final String myData = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(stream), context.getPlaceholderData());
-            session.importEnhancedSystemViewXML(destination.getPath(), IOUtils.toInputStream(myData),
-                    ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING, ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW, null);
+            session.importXML(destination.getPath(), IOUtils.toInputStream(myData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
             session.save();
             log.info("Added node to: {}", destination.getPath());
             sendEvents();
@@ -144,30 +142,26 @@ public class XmlInstruction extends PluginInstruction {
 
     }
 
-    private boolean isMerge(final XmlNode rootXmlNode) {
-        return "combine".equals(rootXmlNode.getMerge()) || "overlay".equals(rootXmlNode.getMerge());
-    }
+    private boolean nodeExists(final Session session, final String source, final String parentPath) throws RepositoryException {
 
-    private boolean nodeExists(final Session session, final XmlNode xmlNode, final String parentPath) throws RepositoryException {
-        final String name = TemplateUtils.replaceTemplateData(xmlNode.getName(), context.getPlaceholderData());
-        if (!Strings.isNullOrEmpty(name) && session.itemExists(parentPath)) {
-
-            final String absPath = parentPath.endsWith("/") ? parentPath + name : parentPath + '/' + name;
-            if (session.itemExists(absPath)) {
-                log.debug("Node already exists: {}", absPath);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private XmlNode getRootXmlNode() {
         final InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
         try {
-            return XmlUtils.parseXml(stream);
+            final XmlNode xmlNode = XmlUtils.parseXml(stream);
+            final String name = TemplateUtils.replaceTemplateData(xmlNode.getName(), context.getPlaceholderData());
+            if (!Strings.isNullOrEmpty(name) && session.itemExists(parentPath)) {
+
+                final String absPath = parentPath.endsWith("/") ? parentPath + name : parentPath + '/' + name;
+                if (session.itemExists(absPath)) {
+                    log.debug("Node already exists: {}", absPath);
+                    return true;
+                }
+            }
         } finally {
             IOUtils.closeQuietly(stream);
         }
+
+
+        return false;
     }
 
 
