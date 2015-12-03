@@ -21,8 +21,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;

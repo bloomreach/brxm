@@ -47,7 +47,6 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;

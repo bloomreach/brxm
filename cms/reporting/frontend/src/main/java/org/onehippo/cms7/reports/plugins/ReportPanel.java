@@ -17,21 +17,16 @@ package org.onehippo.cms7.reports.plugins;
 
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Map;
 
-import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.hippoecm.frontend.IStringResourceProvider;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.ITranslateService;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -43,7 +38,7 @@ import org.wicketstuff.js.ext.util.ExtClass;
  * Base class of all reports on the reporting dashboard.
  */
 @ExtClass("Hippo.Reports.Portlet")
-public class ReportPanel extends ExtPanel implements IStringResourceProvider {
+public class ReportPanel extends ExtPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -141,10 +136,6 @@ public class ReportPanel extends ExtPanel implements IStringResourceProvider {
         return DEFAULT_TITLE_SIZE;
     }
 
-    public String getResourceProviderKey() {
-        return config.getString(ITranslateService.TRANSLATOR_ID);
-    }
-
     protected final ResourceBundleModel getResourceBundleModel(final String key, Locale locale) {
         return new ResourceBundleModel("hippo:reports." + reportName, key, locale);
     }
@@ -158,32 +149,6 @@ public class ReportPanel extends ExtPanel implements IStringResourceProvider {
             ReportUtil.getTranslation(this, key, defaultValue);
         }
         return translation;
-    }
-
-    @Override
-    public String getString(Map<String, String> criteria) {
-        final String key = criteria.get(HippoNodeType.HIPPO_KEY);
-        final String language = criteria.get(HippoNodeType.HIPPO_LANGUAGE);
-        final Locale locale = language != null ? LocaleUtils.toLocale(language) : null;
-        String translation = getResourceBundleModel(key, locale).getObject();
-        if (translation != null) {
-            return translation;
-        }
-        String[] translators = config.getStringArray(ITranslateService.TRANSLATOR_ID);
-        if (translators != null) {
-            for (String translatorId : translators) {
-                ITranslateService translator = context.getService(translatorId, ITranslateService.class);
-                if (translator != null) {
-                    translation = translator.translate(criteria);
-                    if (translation != null) {
-                        log.warn("Using deprecated translator to translate {} in ReportPanel." +
-                                "Move reports translations to /hippo:configuration/hippo:translations/hippo:reports", criteria);
-                        return translation;
-                    }
-                }
-            }
-        }
-        return null;
     }
 
 }

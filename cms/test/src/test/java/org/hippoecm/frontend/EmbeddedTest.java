@@ -18,7 +18,6 @@ package org.hippoecm.frontend;
 import org.hippoecm.frontend.config.PluginConfigTest;
 import org.hippoecm.frontend.editor.compare.NodeComparerTest;
 import org.hippoecm.frontend.editor.compare.ValueComparerTest;
-import org.hippoecm.frontend.i18n.model.NodeTranslatorTest;
 import org.hippoecm.frontend.model.JcrHelperTest;
 import org.hippoecm.frontend.model.JcrItemModelTest;
 import org.hippoecm.frontend.model.JcrMultiPropertyValueModelTest;
@@ -50,8 +49,6 @@ import org.junit.runners.Suite;
     ObservationTest.class,
     JcrObjectTest.class,
     JcrConfigServiceFactoryTest.class,
-
-    NodeTranslatorTest.class,
     UserSessionTest.class,
     
     TabsTest.class,

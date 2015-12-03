@@ -44,7 +44,6 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.model.event.IObservable;

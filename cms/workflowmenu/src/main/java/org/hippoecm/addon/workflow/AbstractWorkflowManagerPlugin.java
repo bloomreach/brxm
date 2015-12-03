@@ -133,45 +133,6 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
     }
 
     @Override
-    public String getString(Map<String, String> criteria) {
-        final String key = criteria.get(HippoNodeType.HIPPO_KEY);
-        if (key != null) {
-            final Locale locale = getLocale();
-            final String language = locale.getLanguage();
-            final IModel<String> bundleModel = getResourceBundleModel(key, locale);
-            String translation;
-            if (bundleModel != null && (translation = bundleModel.getObject()) != null) {
-                return translation;
-            }
-            for (String category : categories) {
-                if (key.equals(category)) {
-                    String path = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.WORKFLOWS_PATH + "/" + category;
-                    try {
-                        Session session = getSession().getJcrSession();
-                        if (session.itemExists(path)) {
-                            Node node = (Node) session.getItem(path);
-                            if (node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
-                                NodeIterator translations = node.getNodes(HippoNodeType.HIPPO_TRANSLATION);
-                                while (translations.hasNext()) {
-                                    Node translationNode = translations.nextNode();
-                                    if (translationNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString().equals(language)) {
-                                        log.warn("Using deprecated way to translate workflow category {}. " +
-                                                "Move workflow translations to /hippo:configuration/hippo:translations/hippo:workflows");
-                                        return translationNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
-                                    }
-                                }
-                            }
-                        }
-                    } catch (RepositoryException ex) {
-                        log.error(ex.toString());
-                    }
-                }
-            }
-        }
-        return super.getString(criteria);
-    }
-
-    @Override
     protected void onDetach() {
         if (observers != null) {
             for (IObserver<JcrNodeModel> observer : observers) {

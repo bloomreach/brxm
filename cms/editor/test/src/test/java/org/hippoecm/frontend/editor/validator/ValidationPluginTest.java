@@ -26,7 +26,6 @@ import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.validator.plugins.EscapedCmsValidator;
 import org.hippoecm.frontend.editor.validator.plugins.RegExCmsValidator;
-import org.hippoecm.frontend.i18n.ConfigTraversingPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -37,7 +36,6 @@ import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.io.Serializable;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -49,7 +48,6 @@ import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
