@@ -74,6 +74,8 @@ import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+
 @Path("/hst:mount/")
 public class MountResource extends AbstractConfigResource {
     private static Logger log = LoggerFactory.getLogger(MountResource.class);
@@ -535,11 +537,11 @@ public class MountResource extends AbstractConfigResource {
             return Collections.emptyList();
         }
 
-        final String xpath = buildXPathQueryToFindMainfConfigNodesForUsers(previewConfigurationPath, userIds);
+        final String xpath = buildXPathQueryToFindMainConfigNodesForUsers(previewConfigurationPath, userIds);
         final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
 
         final NodeIterable mainConfigNodesForUsers = new NodeIterable(result.getNodes());
-        List<String> mainConfigNodeNamesForUsers = new ArrayList<String>();
+        List<String> mainConfigNodeNamesForUsers = new ArrayList<>();
         for (Node mainConfigNodeForUser : mainConfigNodesForUsers) {
             String mainConfigNodePath = mainConfigNodeForUser.getPath();
             if (!mainConfigNodePath.startsWith(previewConfigurationPath)) {
@@ -579,7 +581,7 @@ public class MountResource extends AbstractConfigResource {
         return xpath.toString();
     }
 
-    static String buildXPathQueryToFindMainfConfigNodesForUsers(String previewConfigurationPath, List<String> userIds) {
+    static String buildXPathQueryToFindMainConfigNodesForUsers(String previewConfigurationPath, List<String> userIds) {
         if (userIds.isEmpty()) {
             throw new IllegalArgumentException("List of user IDs cannot be empty");
         }
@@ -608,31 +610,30 @@ public class MountResource extends AbstractConfigResource {
                                             final String toConfig,
                                             final List<String> mainConfigNodeNames) throws RepositoryException {
         for (String mainConfigNodeName : mainConfigNodeNames) {
-            String absFromPath = fromConfig + "/" + mainConfigNodeName;
-            String absToPath = toConfig + "/" + mainConfigNodeName;
-            final Node rootNode = session.getRootNode();
-            if (rootNode.hasNode(absFromPath.substring(1)) && rootNode.hasNode(absToPath.substring(1))) {
-                final Node nodeToReplace = rootNode.getNode(absToPath.substring(1));
-                Node fromNode = rootNode.getNode(absFromPath.substring(1));
-                if (!fromNode.getParent().isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION) ||
-                        !nodeToReplace.getParent().isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION)) {
-                    log.warn("Node '{}' or '{]' is not a main node below hst:configuration. Cannot be published or revered",
-                            fromNode.getPath(), nodeToReplace.getPath());
-                    continue;
-                }
-
-                nodeToReplace.remove();
-                lockHelper.unlock(fromNode);
-                fromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
-                JcrUtils.copy(session, fromNode.getPath(), absToPath);
-            } else {
-                log.warn("Cannot copy node '{}' because live or preview version for '{}' is not available.",
-                        absToPath, mainConfigNodeName);
+            if (mainConfigNodeName.contains("/")) {
+                log.warn("Skip illegal main config node name '{}' because it contains a '/'.", mainConfigNodeName);
+                continue;
             }
+            if (mainConfigNodeName.equals(NODENAME_HST_WORKSPACE)) {
+                log.warn("Skip illegal main config node name '{}'.", mainConfigNodeName);
+                continue;
+            }
+            String absFromPath = fromConfig + "/" + mainConfigNodeName;
+            if (!session.nodeExists(absFromPath)) {
+                log.warn("Cannot copy to '{}' because source '{}' does not exist.",
+                        mainConfigNodeName, absFromPath);
+                continue;
+            }
+            String absToPath = toConfig + "/" + mainConfigNodeName;
+            if (session.nodeExists(absToPath)) {
+                // copy the entire main config node
+                session.getNode(absToPath).remove();
+            }
+            Node fromNode = session.getNode(absFromPath);
+            lockHelper.unlock(fromNode);
+            fromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
+            JcrUtils.copy(session, fromNode.getPath(), absToPath);
         }
-
-        log.info("Main config nodes '{}' pushed succesfully from '{}' to '{}'.",
-                new String[]{mainConfigNodeNames.toString(), fromConfig, toConfig});
     }
 
     private void discardChannelChanges(final Session session,
