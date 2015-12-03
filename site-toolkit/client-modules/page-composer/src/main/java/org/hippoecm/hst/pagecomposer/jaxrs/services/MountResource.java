@@ -619,20 +619,30 @@ public class MountResource extends AbstractConfigResource {
                 continue;
             }
             String absFromPath = fromConfig + "/" + mainConfigNodeName;
+            String absToPath = toConfig + "/" + mainConfigNodeName;
+
             if (!session.nodeExists(absFromPath)) {
-                log.warn("Cannot copy to '{}' because source '{}' does not exist.",
-                        mainConfigNodeName, absFromPath);
+                log.info("Copy from '{}' does not exist, implying the target must be removed.", absFromPath);
+                if (session.nodeExists(absToPath)) {
+                    // copy the entire main config node
+                    session.getNode(absToPath).remove();
+                }
                 continue;
             }
-            String absToPath = toConfig + "/" + mainConfigNodeName;
             if (session.nodeExists(absToPath)) {
                 // copy the entire main config node
                 session.getNode(absToPath).remove();
             }
             Node fromNode = session.getNode(absFromPath);
             lockHelper.unlock(fromNode);
-            fromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
-            JcrUtils.copy(session, fromNode.getPath(), absToPath);
+            final Node copy = JcrUtils.copy(session, fromNode.getPath(), absToPath);
+            if (copy.getPath().contains("-preview/")) {
+                // it was a discard
+                copy.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
+            } else {
+                // it was a publish
+                fromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
+            }
         }
     }
 
