@@ -35,6 +35,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKE
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_EDITABLE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CATALOG;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CHANNEL;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_COMPONENTS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_PAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAP;
@@ -47,7 +48,8 @@ public class LockHelper {
     private static final Logger log = LoggerFactory.getLogger(LockHelper.class);
 
     private static final String[] LOCKABLE_NODE_TYPES = {NODETYPE_HST_TEMPLATES, NODETYPE_HST_CONTAINERCOMPONENT,
-            NODETYPE_HST_CATALOG, NODETYPE_HST_PAGES, NODETYPE_HST_SITEMAP, NODETYPE_HST_SITEMENUS, NODETYPE_HST_CHANNEL};
+            NODETYPE_HST_CATALOG, NODETYPE_HST_PAGES, NODETYPE_HST_SITEMAP, NODETYPE_HST_SITEMENUS,
+            NODETYPE_HST_CHANNEL, NODETYPE_HST_COMPONENTS};
 
     /**
      * recursively unlocks <code>configNode</code> and/or any descendant
@@ -172,7 +174,7 @@ public class LockHelper {
     /**
      * if present, returns the unlockable {@link Node} wrt <code>node</code> : A <code>node</code> can be unlockable
      * (lock contained by someone else) due to an ancestor or descendant {@link Node} or because it is unlockable
-     * itself. If there are no unLockable nodes wrt <code>node</code>, then <code>node</code> is returned
+     * itself. If there are no unLockable nodes wrt <code>node</code>, then <code>null</code> is returned
      */
     Node getUnLockableNode(final Node node, boolean checkAncestors, boolean checkDescendants) throws RepositoryException {
         return getUnLockableNode(node, node.getSession().getUserID(), checkAncestors, checkDescendants);

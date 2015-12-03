@@ -331,8 +331,7 @@ public class SiteMapHelper extends AbstractHelper {
             targetPageName = targetPathInfo.replace("/", "-") + "-" + targetPageName;
         }
 
-        Node clonedPage = pagesHelper.create(session.getNodeByIdentifier(sourcePage.getCanonicalIdentifier()),
-                targetPageName, sourcePage, false, getWorkspacePath(targetMount) + "/" + NODENAME_HST_PAGES);
+        Node clonedPage = pagesHelper.copy(session, targetPageName, sourcePage, editingMount, targetMount);
         newSiteMapNode.setProperty(SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
                 NODENAME_HST_PAGES + "/" + clonedPage.getName());
 

@@ -29,6 +29,7 @@ public interface HstNodeTypes {
     String NODETYPE_HST_PAGES = "hst:pages";
     String NODETYPE_HST_ABSTRACT_COMPONENT = "hst:abstractcomponent";
     String NODETYPE_HST_COMPONENT = "hst:component";
+    String NODETYPE_HST_COMPONENTS = "hst:components";
     String NODETYPE_HST_CONTAINERCOMPONENTREFERENCE = "hst:containercomponentreference";
     String NODETYPE_HST_CONTAINERCOMPONENT = "hst:containercomponent";
     String NODETYPE_HST_CONTAINERITEMCOMPONENT = "hst:containeritemcomponent";
