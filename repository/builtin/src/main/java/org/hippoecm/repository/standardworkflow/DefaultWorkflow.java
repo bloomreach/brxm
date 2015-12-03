@@ -16,12 +16,10 @@
 package org.hippoecm.repository.standardworkflow;
 
 import java.rmi.RemoteException;
-import java.util.Locale;
 
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 
@@ -78,67 +76,6 @@ public interface DefaultWorkflow extends CopyWorkflow {
      * @throws RemoteException
      */
     public void setDisplayName(String displayName) throws WorkflowException, RepositoryException, RemoteException;
-
-    /**
-     * Gives the document a specific new name for the specific location.  A location may be a language, region or other
-     * factor that would require a different name (like live or preview site), see #Localized.  A document can only have a
-     * single normal name (see #rename), but multiple localized names.
-     * @param locale a specification is which case to use the document name
-     * @param newName the new name to be used for the specification
-     * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
-     * @throws MappingException indicates that the work-flow call failed because of configuration problems
-     * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
-     * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
-     * @deprecated no alternative, localizing the name of a document does not make sense
-     */
-    @Deprecated
-    public void localizeName(Localized locale, String newName)
-      throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    
-    /**
-     * Gives the document a specific new name for the specific location.  This is a convenience method for
-     * <code>localizeName(Localized.getInstance(locale), newName)</code>.
-     * @param locale the language locale for which to give the document a new name
-     * @param newName the new name to be used for the locale
-     * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
-     * @throws MappingException indicates that the work-flow call failed because of configuration problems
-     * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
-     * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
-     * @deprecated no alternative, localizing the name of a document does not make sense
-     */
-    @Deprecated
-    public void localizeName(Locale locale, String newName)
-      throws WorkflowException, MappingException, RepositoryException, RemoteException;
-
-    /**
-     * Gives the document a specific new name for a generic localized specification.  This is not the current default locale,
-     * but a fall-back locale, which is active when no other localized specification matches.  So if there is a English
-     * name specified, and only a name set by this localizeName method, then when retrieving a Dutch name, the name set by
-     * this localizeName method is retrieved.  If this method was not used to set a different name, the actual JCR node name
-     * is returned, which has some limitations.
-     * @param newName the new name to be used
-     * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
-     * @throws MappingException indicates that the work-flow call failed because of configuration problems
-     * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
-     * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
-     * @deprecated no alternative, localizing the name of document does not make sense
-     */
-    @Deprecated
-    public void localizeName(String newName)
-      throws WorkflowException, MappingException, RepositoryException, RemoteException;
-
-    /**
-     * Identical to {@link #localizeName(String)}, except that all existing localized names will be removed.
-     * @param newName the new name
-     * @throws WorkflowException indicates that the work-flow call failed due work-flow specific conditions
-     * @throws MappingException indicates that the work-flow call failed because of configuration problems
-     * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
-     * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
-     * @deprecated no alternative, localizing the name of a document does not make sense
-     */
-    @Deprecated
-    public void replaceAllLocalizedNames(String newName)
-      throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Moved this document from it current container document, to a new location.  The target container document should also

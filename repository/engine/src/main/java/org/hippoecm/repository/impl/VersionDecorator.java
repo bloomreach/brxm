@@ -15,15 +15,12 @@
  */
 package org.hippoecm.repository.impl;
 
-import java.util.Map;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.version.Version;
 
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 
 public class VersionDecorator extends org.hippoecm.repository.decorating.VersionDecorator {
@@ -59,16 +56,4 @@ public class VersionDecorator extends org.hippoecm.repository.decorating.Version
         return ((HippoNode) version).getDisplayName();
     }
 
-    public String getLocalizedName() throws RepositoryException {
-        return ((HippoNode)version).getLocalizedName();
-    }
-
-    public String getLocalizedName(Localized localized) throws RepositoryException {
-        return ((HippoNode)version).getLocalizedName(localized);
-    }
-
-    @Override
-    public Map<Localized, String> getLocalizedNames() throws RepositoryException {
-        return ((HippoNode)version).getLocalizedNames();
-    }
 }

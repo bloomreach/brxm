@@ -21,9 +21,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -58,7 +56,6 @@ import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -687,16 +684,6 @@ public class MockNode extends MockItem implements HippoNode {
     }
 
     @Override
-    public String getLocalizedName() throws RepositoryException {
-        return getName();
-    }
-
-    @Override
-    public Map<Localized, String> getLocalizedNames() throws RepositoryException {
-        return Collections.emptyMap();
-    }
-
-    @Override
     public PropertyIterator getReferences() {
         throw new UnsupportedOperationException();
     }
@@ -889,11 +876,6 @@ public class MockNode extends MockItem implements HippoNode {
 
     @Override
     public String[] getAllowedLifecycleTransistions() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getLocalizedName(final Localized localized) throws RepositoryException {
         throw new UnsupportedOperationException();
     }
 

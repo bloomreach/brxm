@@ -16,8 +16,6 @@
 package org.hippoecm.repository.decorating.client;
 
 import java.rmi.RemoteException;
-import java.util.Locale;
-import java.util.Map;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
@@ -31,7 +29,6 @@ import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.decorating.remote.RemoteServicingNode;
 
 public class ClientServicingNode extends ClientNode implements HippoNode {
@@ -72,31 +69,6 @@ public class ClientServicingNode extends ClientNode implements HippoNode {
             return remote.getHippoName();
         } catch (RemoteException e) {
             throw new RemoteRepositoryException(e);
-        }
-    }
-
-    public String getLocalizedName() throws RepositoryException {
-        try {
-            return remote.getLocalizedName(Localized.getInstance(Locale.getDefault()));
-        } catch (RemoteException ex) {
-            throw new RemoteRepositoryException(ex);
-        }
-    }
-
-    public String getLocalizedName(Localized localized) throws RepositoryException {
-        try {
-            return remote.getLocalizedName(localized);
-        } catch (RemoteException ex) {
-            throw new RemoteRepositoryException(ex);
-        }
-    }
-
-    @Override
-    public Map<Localized, String> getLocalizedNames() throws RepositoryException {
-        try {
-            return remote.getLocalizedNames();
-        } catch (RemoteException ex) {
-            throw new RemoteRepositoryException(ex);
         }
     }
 
