@@ -16,6 +16,7 @@
 package org.onehippo.repository.bootstrap.instructions;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -83,8 +84,8 @@ public class ResourceBundlesInstruction extends InitializeInstruction {
 
     private BundleFileInfo getBundleFileInfo() throws RepositoryException {
         if (bundleFileInfo == null) {
-            try {
-                bundleFileInfo = BundleFileInfo.readInfo(item);
+            try (final InputStream in = item.getResourceBundlesURL().openStream()) {
+                bundleFileInfo = BundleFileInfo.readInfo(in);
             } catch (IOException e) {
                 throw new RepositoryException("Failed to read bundle file", e);
             }

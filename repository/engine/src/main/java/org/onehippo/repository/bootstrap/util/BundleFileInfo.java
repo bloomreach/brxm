@@ -93,11 +93,9 @@ public class BundleFileInfo {
         return map;
     }
 
-    public static BundleFileInfo readInfo(final InitializeItem item) throws RepositoryException, IOException {
-        try (InputStream in = item.getResourceBundlesURL().openStream()) {
-            JSONObject json = JSONObject.fromObject(IOUtils.toString(in));
-            return new BundleFileInfo(parse(json, new Stack<>()));
-        }
+    public static BundleFileInfo readInfo(final InputStream in) throws RepositoryException, IOException {
+        final JSONObject json = JSONObject.fromObject(IOUtils.toString(in));
+        return new BundleFileInfo(parse(json, new Stack<>()));
     }
 
     private static boolean isBundle(JSONObject o) {
