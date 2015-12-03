@@ -272,8 +272,10 @@ public interface HippoNodeType {
 
     public static final String HIPPO_JCRREMOVE = "hipposys:jcrremove";
 
+    @Deprecated
     public static final String HIPPO_KEY = "hippo:key";
 
+    @Deprecated
     public static final String HIPPO_LANGUAGE = "hippo:language";
 
     public static final String HIPPO_LASTLOGIN = "hipposys:lastlogin";
