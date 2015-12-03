@@ -173,22 +173,9 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     }
 
     public String getLocalizedName(){
-        if(localizedName != null) {
-            return localizedName;
-        }
-        Node node = this.getJcrNode();
-        if(!(node instanceof HippoNode)){
-            localizedName =  getName();
-            return localizedName;
-        }
-        try {
-            localizedName = ((HippoNode)node).getLocalizedName();
-            return localizedName;
-        } catch (RepositoryException e) {
-            throw new RuntimeRepositoryException(e);
-        } 
+        return getDisplayName();
     }
-    
+
     public String getPath() {
       return this.nodePath;
     }
