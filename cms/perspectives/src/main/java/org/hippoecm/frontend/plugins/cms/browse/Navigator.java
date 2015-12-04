@@ -53,7 +53,6 @@ public class Navigator extends RenderPlugin {
         clusterStarted = true;
         final BrowseService browseService = new BrowseService(context, config,
                 new JcrNodeModel(config.getString("model.default.path", "/"))) {
-            private static final long serialVersionUID = 1L;
 
             @Override
             public void browse(final IModel<Node> model) {
@@ -72,8 +71,6 @@ public class Navigator extends RenderPlugin {
 
         IModel<DocumentCollection> collectionModel = browseService.getCollectionModel();
         docView = new DocumentCollectionView("documents", context, config, collectionModel, this) {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected String getExtensionPoint() {
                 return config.getString("extension.list");
@@ -87,6 +84,7 @@ public class Navigator extends RenderPlugin {
         sectionViewer = new SectionViewer("sections", sections, this) {
             @Override
             protected void onSectionChange(final String sectionName) {
+                super.onSectionChange(sectionName);
                 sectionModel.setObject(sectionName);
             }
         };
