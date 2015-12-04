@@ -18,9 +18,7 @@ package org.onehippo.taxonomy.plugin;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.util.value.IValueMap;
-import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -35,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * TaxonomyPickerDialog used by {@link TaxonomyPickerPlugin} to show picker dialog to users.
  * @version $Id$
  */
-public class TaxonomyPickerDialog extends AbstractDialog<Classification> {
+public class TaxonomyPickerDialog extends Dialog<Classification> {
 
     static final Logger log = LoggerFactory.getLogger(TaxonomyPickerDialog.class);
 
@@ -78,6 +76,8 @@ public class TaxonomyPickerDialog extends AbstractDialog<Classification> {
 
         setOkEnabled(true);
         setOutputMarkupId(true);
+        setTitleKey("taxonomy-picker");
+        setSize(DialogConstants.LARGE_AUTO);
 
         viewType = config.getString(CONFIG_TYPE, TREE);
         if (PALETTE.equals(viewType)) {
@@ -93,19 +93,6 @@ public class TaxonomyPickerDialog extends AbstractDialog<Classification> {
             add(browser = new TaxonomyBrowser("content", new Model<>(model.getObject()),
                      taxonomyModel, preferredLocale, detailsReadOnly, iconProvider));
         }
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        if (TREE.equals(viewType)) {
-            return DialogConstants.LARGE;
-        } else {
-            return new ValueMap("width=500,height=368");
-        }
-    }
-
-    public IModel<String> getTitle() {
-        return Model.of(getString("taxonomy-picker"));
     }
 
     @Override
