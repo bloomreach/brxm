@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,11 +24,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpSession;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.wicket.Application;
@@ -144,13 +144,15 @@ public class WebApplicationHelper {
                 }
             }
         }
-        Collections.sort(jarFiles, new Comparator<File>() {
-            @Override
-            public int compare(final File o1, final File o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
+        Collections.sort(jarFiles, (o1, o2) -> o1.getName().compareTo(o2.getName()));
         return jarFiles;
+    }
+
+    public static int getMaxInactiveIntervalMinutes() {
+        final ServletWebRequest servletRequest = (ServletWebRequest) RequestCycle.get().getRequest();
+        final HttpSession httpSession = servletRequest.getContainerRequest().getSession();
+        // round seconds down to minutes
+        return httpSession.getMaxInactiveInterval() / 60;
     }
 
     private static File getBaseJarFileFromURL(final URL url) throws URISyntaxException {

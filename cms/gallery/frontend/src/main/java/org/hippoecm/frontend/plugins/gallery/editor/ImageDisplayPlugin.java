@@ -156,8 +156,8 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
     protected void addImageMetaData(Node node, Fragment fragment) throws RepositoryException {
         int width = getWidthOrZero(node);
         int height = getHeightOrZero(node);
-        fragment.add(new Label("width", new Model<Integer>(width)));
-        fragment.add(new Label("height", new Model<Integer>(height)));
+        fragment.add(new Label("width", Model.of(width)));
+        fragment.add(new Label("height", Model.of(height)));
     }
 
     private int getWidthOrZero(Node imageNode) throws RepositoryException {
@@ -176,10 +176,10 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
         }
     }
 
-    private Fragment createEmbedFragment(String id, final JcrResourceStream resource, final String filename) {
+    private Fragment createEmbedFragment(String id, final JcrResourceStream resource, final String filename) throws RepositoryException {
         Fragment fragment = new Fragment(id, "embed", this);
-        fragment.add(new Label("filesize", new Model<String>(formatter.format(resource.length().bytes()))));
-        fragment.add(new Label("mimetype", new Model<String>(resource.getContentType())));
+        fragment.add(new Label("filesize", Model.of(formatter.format(resource.length().bytes()))));
+        fragment.add(new Label("mimetype", Model.of(resource.getContentType())));
         fragment.add(new ResourceLink<Void>("link", new JcrResource(resource) {
             private static final long serialVersionUID = 1L;
 
@@ -201,6 +201,8 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
             }
 
         });
+        final Node node = getModelObject();
+        addImageMetaData(node, fragment);
         return fragment;
     }
 

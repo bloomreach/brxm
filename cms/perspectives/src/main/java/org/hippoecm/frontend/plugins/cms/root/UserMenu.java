@@ -26,6 +26,7 @@ import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.logout.LogoutLink;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
+import org.hippoecm.frontend.service.ILogoutService;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.skin.Icon;
 
@@ -34,7 +35,7 @@ public class UserMenu extends Panel {
     public static final JavaScriptResourceReference SCRIPT_REFERENCE =
             new JavaScriptResourceReference(UserMenu.class, "UserMenu.js");
 
-    public UserMenu(final String id, final User user) {
+    public UserMenu(final String id, final User user, final ILogoutService logoutService) {
         super(id);
 
         setRenderBodyOnly(true);
@@ -57,7 +58,7 @@ public class UserMenu extends Panel {
         emailLabel.add(TitleAttribute.set(email));
         add(emailLabel.setVisible(StringUtils.isNotEmpty(email)));
 
-        add(new LogoutLink("logout"));
+        add(new LogoutLink("logout", logoutService));
     }
 
     @Override

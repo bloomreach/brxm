@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -406,20 +406,17 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
 
     @Override
     public CharSequence getCharSequence(String key) {
-        // TODO implement me
-        throw new UnsupportedOperationException("not implemented yet");
+        return getKey(key);
     }
 
     @Override
     public Duration getDuration(String key) throws StringValueConversionException {
-        // TODO implement me
-        throw new UnsupportedOperationException("not implemented yet");
+        return StringValue.valueOf(getKey(key)).toDuration();
     }
 
     @Override
     public Time getTime(String key) throws StringValueConversionException {
-        // TODO implement me
-        throw new UnsupportedOperationException("not implemented yet");
+        return StringValue.valueOf(getKey(key)).toTime();
     }
 
     @Override

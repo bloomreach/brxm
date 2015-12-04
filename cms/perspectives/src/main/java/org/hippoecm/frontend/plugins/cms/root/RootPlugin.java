@@ -31,6 +31,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -39,6 +40,7 @@ import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
+import org.hippoecm.frontend.plugins.cms.logout.ActiveLogoutPlugin;
 import org.hippoecm.frontend.plugins.standards.tabs.TabbedPanel;
 import org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin;
 import org.hippoecm.frontend.plugins.yui.ajax.AjaxIndicatorBehavior;
@@ -49,12 +51,16 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
+import org.hippoecm.frontend.service.ILogoutService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.ListViewService;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.usagestatistics.UsageStatisticsHeaderItem;
+import org.hippoecm.frontend.useractivity.MonitorExtUserActivityHeaderItem;
+import org.hippoecm.frontend.useractivity.UserActivityHeaderItem;
+import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.frontend.widgets.Pinger;
 import org.slf4j.Logger;
@@ -63,9 +69,10 @@ import org.wicketstuff.js.ext.util.ExtResourcesHeaderItem;
 
 public class RootPlugin extends TabsPlugin {
 
-    static final Logger log = LoggerFactory.getLogger(RootPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(RootPlugin.class);
 
     public static final String CONFIG_PINGER_INTERVAL = "pinger.interval";
+    public static final String CONFIG_MAX_INACTIVE_INTERVAL_MINUTES = "max.inactive.interval.minutes";
 
     private boolean rendered = false;
     private final ExtWidgetRegistry extWidgetRegistry;
@@ -97,15 +104,11 @@ public class RootPlugin extends TabsPlugin {
         // keep all feedback messages after each request cycle
         getApplication().getApplicationSettings().setFeedbackMessageCleanupFilter(IFeedbackMessageFilter.NONE);
 
-        if (config.containsKey(CONFIG_PINGER_INTERVAL)) {
-            add(new Pinger("pinger", config.getAsDuration(CONFIG_PINGER_INTERVAL)));
-        } else {
-            add(new Pinger("pinger"));
-        }
+        addPinger();
 
         add(new Label("pageTitle", getString("page.title", null, "Hippo CMS 10")));
 
-        add(new UserMenu("userMenu", getCurrentUser()));
+        addUserMenu();
 
         services = new LinkedList<>();
 
@@ -190,6 +193,21 @@ public class RootPlugin extends TabsPlugin {
         add(new ResourceLink("faviconLink", ((PluginApplication)getApplication()).getPluginApplicationFavIconReference()));
     }
 
+    private void addPinger() {
+        final Duration pingerInterval = getPluginConfig().getAsDuration(CONFIG_PINGER_INTERVAL);
+        add(new Pinger("pinger", pingerInterval));
+    }
+
+    private void addUserMenu() {
+        final ILogoutService logoutService = getPluginContext().getService(ILogoutService.SERVICE_ID, ILogoutService.class);
+        add(new UserMenu("userMenu", getCurrentUser(), logoutService));
+        add(new ActiveLogoutPlugin("activeLogout", getMaxInactiveIntervalMinutes(), logoutService));
+    }
+
+    private Integer getMaxInactiveIntervalMinutes() {
+        return getPluginConfig().getAsInteger(CONFIG_MAX_INACTIVE_INTERVAL_MINUTES, WebApplicationHelper.getMaxInactiveIntervalMinutes());
+    }
+
     @Override
     public void render(PluginRequestTarget target) {
         if (!rendered) {
@@ -220,6 +238,10 @@ public class RootPlugin extends TabsPlugin {
         response.render(CmsHeaderItem.get());
         response.render(ExtResourcesHeaderItem.get());
         response.render(RootPluginHeaderItem.get());
+
+        final UserActivityHeaderItem userActivity = new UserActivityHeaderItem(getMaxInactiveIntervalMinutes());
+        response.render(new MonitorExtUserActivityHeaderItem(userActivity));
+
         response.render(UsageStatisticsHeaderItem.get());
     }
 
