@@ -22,20 +22,23 @@
   Hippo.ChannelManager.TemplateComposer.ChannelEditor = Ext.extend(Hippo.IFramePanel, {
 
     constructor: function(config) {
-      this.title = config.title;
-      this.resources = config.resources;
-      this.locale = config.locale;
+      this.title = null;
+      this.antiCache = new Date().getTime();
 
       Ext.apply(config, {
-        cls: 'qa-channel-editor'
+        cls: 'qa-channel-editor',
+        iframeConfig: {
+          debug: config.debug,
+          locale: config.locale
+        }
       });
-
       Hippo.ChannelManager.TemplateComposer.ChannelEditor.superclass.constructor.call(this, config);
     },
 
     browseTo: function(data) {
       this.channelStoreFuture.when(function(config) {
-        var isEditMode, record, contextPath, cmsPreviewPrefix, renderPathInfo, renderHost;
+        var isEditMode, record, renderHost;
+
         if (Ext.isDefined(data.isEditMode)) {
           isEditMode = data.isEditMode;
         } else if (Ext.isDefined(data.channelId) && data.channelId !== this.channelId) {
@@ -49,17 +52,47 @@
         this.title = record.get('name');
         this.channel = record.data;
         this.hstMountPoint = record.get('hstMountPoint');
-
-        contextPath = record.get('contextPath') || data.contextPath || this.contextPath;
-        cmsPreviewPrefix = record.get('cmsPreviewPrefix') || data.cmsPreviewPrefix || this.cmsPreviewPrefix;
-        renderPathInfo = data.renderPathInfo || this.renderPathInfo || record.get('mountPath');
+        this.contextPath = record.get('contextPath') || data.contextPath || this.contextPath;
+        this.cmsPreviewPrefix = record.get('cmsPreviewPrefix') || data.cmsPreviewPrefix || this.cmsPreviewPrefix;
+        this.renderPathInfo = data.renderPathInfo || this.renderPathInfo || record.get('mountPath');
         renderHost = record.get('hostname');
-        console.log('Show iframe for channel "%s", contextPath: %s, cmsPreviewPrefix: %s, renderPathInfo: %s, renderHost: %s',
-          this.title, contextPath, cmsPreviewPrefix, renderPathInfo, renderHost);
-        //this.initComposer(isEditMode);
-      }.createDelegate(this));
-    }
+        console.log('Show iframe for channel "%s", contextPath: %s, cmsPreviewPrefix: %s, renderPathInfo: %s, ' +
+          'renderHost: %s, editMode: %s',
+          this.title, this.contextPath, this.cmsPreviewPrefix, this.renderPathInfo, renderHost, isEditMode);
 
+        this.initialConfig.iframeConfig = {
+          debug: this.debug,
+          locale: this.locale,
+          antiCache: this.antiCache
+        };
+
+        //this.initComposer(isEditMode);
+      }.bind(this));
+    },
+
+    initComponent: function() {
+      Hippo.ChannelManager.TemplateComposer.ChannelEditor.superclass.initComponent.call(this);
+
+      this.channelStoreFuture.when(function(config) {
+
+        // start NG app
+        var url = './angular/cmng/index.html';
+        url = Ext.urlAppend(url, 'parentExtIFramePanelId=' + this.getId());
+        url = Ext.urlAppend(url, 'antiCache=' + this.antiCache);
+        this.setLocation(url);
+
+        config.store.on('load', function() {
+          if (this.channelId) {
+            var channelRecord = config.store.getById(this.channelId);
+
+            this.channel = channelRecord.data;
+            // TODO: more?
+            console.log('update this.channel to', this.channel);
+
+          }
+        }, this);
+      }.bind(this));
+    }
   });
 
 }());
