@@ -40,6 +40,7 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +86,14 @@ public class RootResource extends AbstractConfigResource {
             log.warn("Could not determine authorization", e);
             return error("Could not determine authorization", e);
         }
+    }
+
+    @GET
+    @Path("/is-cross-channel-pagecopy-supported")
+    public Response isCrossChannelCopySupported() {
+        final Boolean crossChannelCopySupported = HstServices.getComponentManager().getContainerConfiguration().getBoolean("cross.channel.page.copy.supported", false);
+        final String msg = String.format("Cross channel copy is supported : %s", crossChannelCopySupported);
+        return ok(msg, crossChannelCopySupported);
     }
 
     private boolean workspaceFiltered(final Channel channel, final boolean workspaceRequired) throws RuntimeRepositoryException {
