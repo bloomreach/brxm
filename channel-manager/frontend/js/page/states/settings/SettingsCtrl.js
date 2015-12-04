@@ -70,6 +70,8 @@
 
         $scope.channels = [];
 
+        $scope.crossChannelPageCopySupported = false;
+        
         $scope.tooltips = {
           lastPathInfoElement: function () {
             if ($scope.form.$dirty) {
@@ -119,6 +121,7 @@
 
         // fetch data
         loadHost()
+          .then(loadCrossChannelPageCopySupported)
           .then(loadChannels)
           .then(loadPrototypes)
           .then(loadPage);
@@ -215,11 +218,20 @@
             }, setErrorFeedback);
         }
 
-        function loadChannels () {
-          return ChannelService.getPreviewChannels()
+        function loadCrossChannelPageCopySupported() {
+          return ChannelService.isCrossChannelPageCopySupported()
             .then(function (data) {
-              $scope.channels = data;
+              $scope.crossChannelPageCopySupported = data;
             }, setErrorFeedback);
+        }
+        
+        function loadChannels () {
+          if ($scope.crossChannelPageCopySupported) {
+            return ChannelService.getPreviewChannels()
+              .then(function (data) {
+                $scope.channels = data;
+              }, setErrorFeedback);
+          }
         }
 
         function loadPageLocations (mountId) {

@@ -177,7 +177,7 @@
         <div>
           <div class="input-group">
             <span class="input-group-btn">
-              <select id="channel" name="channel" class="form-control" disabled
+              <select ng-if="crossChannelPageCopySupported" id="channel" name="channel" class="form-control" disabled
                       data-chosen
                       data-ng-model="copy.mountId"
                       data-ng-options="channel.mountId as channel.name for channel in channels"

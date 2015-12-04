@@ -27,6 +27,21 @@
 
         var channelService = {};
 
+        channelService.isCrossChannelPageCopySupported = function () {
+          var deferred = $q.defer();
+
+          $http.get(ConfigService.apiUrlPrefix +
+            '/cafebabe-cafe-babe-cafe-babecafebabe./is-cross-channel-pagecopy-supported')
+            .success(function (response) {
+              deferred.resolve(response.data);
+            })
+            .error(function (error) {
+              deferred.reject(error);
+            });
+
+          return deferred.promise;
+        };
+
         channelService.getPreviewChannels = function () {
           var deferred = $q.defer();
 
