@@ -1,0 +1,11 @@
+{
+  "name": "hippo-cmng",
+  "private": true,
+  "description": "Channel manager NG for Hippo B.V.",
+  "scripts": {
+    "gulp": "./node_modules/gulp/bin/gulp.js"
+  },
+  "devDependencies": {
+    "hippo-build": "git+http://github.com/onehippo/hippo-build.git"
+  }
+}
