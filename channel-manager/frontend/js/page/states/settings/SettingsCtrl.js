@@ -74,24 +74,10 @@
         
         $scope.tooltips = {
           lastPathInfoElement: function () {
-            if ($scope.form.$dirty) {
-              if ($scope.form.lastPathInfoElement.$error.required) {
-                return translate('URL_REQUIRED');
-              } else if ($scope.form.lastPathInfoElement.$error.illegalCharacters) {
-                return translate('URL_ILLEGAL_CHARACTERS', $scope.validation);
-              }
-            }
-            return '';
+            return determineLastPathInfoSegmentTooltip($scope.form);
           },
           copyLastPathInfoElement: function () {
-            if ($scope.copyForm.$dirty) {
-              if ($scope.copyForm.lastPathInfoElement.$error.required) {
-                return translate('URL_REQUIRED');
-              } else if ($scope.copyForm.lastPathInfoElement.$error.illegalCharacters) {
-                return translate('URL_ILLEGAL_CHARACTERS', $scope.validation);
-              }
-            }
-            return '';
+            return determineLastPathInfoSegmentTooltip($scope.copyForm);
           },
           deleteButton: function () {
             if ($scope.page.isHomePage) {
@@ -313,6 +299,17 @@
 
               return currentPage;
             }, setErrorFeedback);
+        }
+
+        function determineLastPathInfoSegmentTooltip(form) {
+          if (form && form.$dirty) {
+            if (form.lastPathInfoElement.$error.required) {
+              return translate('URL_REQUIRED');
+            } else if (form.lastPathInfoElement.$error.illegalCharacters) {
+              return translate('URL_ILLEGAL_CHARACTERS', $scope.validation);
+            }
+          }
+          return '';
         }
       }
     ]);
