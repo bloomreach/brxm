@@ -37,6 +37,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.hippoecm.repository.util.WorkflowUtils.getContainingFolder;
 
 public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, InternalWorkflow {
@@ -126,12 +127,23 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
 
     @Override
     public void setDisplayName(final String hippoName) throws WorkflowException, RepositoryException, RemoteException {
-        JcrUtils.ensureIsCheckedOut(subject);
-        if (!subject.isNodeType(HippoNodeType.NT_NAMED)) {
-            subject.addMixin(HippoNodeType.NT_NAMED);
+        Node node;
+        if (subject.isNodeType(NT_HANDLE)) {
+            node = subject;
+        } else {
+            final Node parent = subject.getParent();
+            if (parent.isNodeType(NT_HANDLE)) {
+                node = parent;
+            } else {
+                throw new WorkflowException("No document handle found to set display name");
+            }
         }
-        subject.setProperty(HippoNodeType.HIPPO_NAME, hippoName);
-        subject.getSession().save();
+        JcrUtils.ensureIsCheckedOut(node);
+        if (!node.isNodeType(HippoNodeType.NT_NAMED)) {
+            node.addMixin(HippoNodeType.NT_NAMED);
+        }
+        node.setProperty(HippoNodeType.HIPPO_NAME, hippoName);
+        node.getSession().save();
     }
 
     public void copy(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
