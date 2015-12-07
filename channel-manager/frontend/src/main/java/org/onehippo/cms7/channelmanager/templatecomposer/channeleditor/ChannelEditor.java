@@ -141,7 +141,7 @@ public class ChannelEditor extends ExtPanel {
     @Override
     public void buildInstantiationJs(StringBuilder js, String extClass, JSONObject properties) {
         js.append(String.format(
-                " try { Ext.namespace(\"%s\"); window.%s = new %s(%s); } catch (e) { Ext.Msg.alert('Error', 'Error instantiating template composer. '+e); }; \n",
+                " try { Ext.namespace(\"%s\"); window.%s = new %s(%s); } catch (e) { Ext.Msg.alert('Error', 'Error creating channel editor. '+e); }; \n",
                 getMarkupId(), getMarkupId(), extClass, properties.toString()));
     }
 
@@ -209,11 +209,10 @@ public class ChannelEditor extends ExtPanel {
             log.info("User '{}' is not allowed to {}.", user, description);
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
-                log.warn("Problems while checking if user '" + user + "' is allowed to " + description
-                        + ", assuming user is not allowed.", e);
+                log.warn("Problems while checking if user '{}' is allowed to {}, assuming user is not allowed.", user, description, e);
             } else {
                 log.warn("Problems while checking if user '{}' is allowed to {}, assuming user is not allowed. {}",
-                        new Object[]{user, description, e});
+                        user, description, e);
             }
         }
         return isAllowed;
