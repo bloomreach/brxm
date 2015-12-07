@@ -15,19 +15,10 @@
  */
 package org.onehippo.cms7.channelmanager.templatecomposer.channeleditor;
 
-import java.util.Arrays;
-
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
-
 public class ChannelEditorBundle {
 
-    private static final String[] FILES = {
+    public static final String[] FILES = {
             "ChannelEditor.js"
     };
-
-    public static final JavaScriptResourceReference[] getJavaScriptReferences() {
-        return Arrays.asList(FILES).stream()
-                .map(file -> new JavaScriptResourceReference(ChannelEditorBundle.class, file))
-                .toArray(JavaScriptResourceReference[]::new);
-    }
+    public static final String ALL = "channel-editor-all.js";
 }
