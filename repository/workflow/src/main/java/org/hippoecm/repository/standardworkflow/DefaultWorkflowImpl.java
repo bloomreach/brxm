@@ -135,7 +135,7 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
             if (parent.isNodeType(NT_HANDLE)) {
                 node = parent;
             } else {
-                throw new WorkflowException("No document handle found to set display name");
+                node = subject;
             }
         }
         JcrUtils.ensureIsCheckedOut(node);
