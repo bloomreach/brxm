@@ -1,5 +1,4 @@
 # Hippo Angular Channel Manager Next Generation
-Just change the name in the package.json, bower.json and src/* files to the name of your application.
 
 ## Development environment setup
 ### Prerequisites
@@ -38,11 +37,5 @@ Run the commands below in the project root directory.
 ### Build application for development
   $ gulp build
 
-### Setup development server
-  $ gulp server
-
 ### Build optimized application for production
   $ gulp buildDist
-
-### Setup production server
-  $ gulp serverDist
