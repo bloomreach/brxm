@@ -95,25 +95,5 @@
       <sv:value>miscellaneous</sv:value>
     </sv:property>
   </sv:node>
-  <!-- deprecated, remove in future version -->
-  <sv:node sv:name="workflowMenuTranslator">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippostd:translated</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.i18n.ConfigTraversingPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="translator.id" sv:type="String">
-      <sv:value>${cluster.id}.workflow.translator</sv:value>
-    </sv:property>
-    <sv:node sv:name="hippostd:translations">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippostd:translations</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
 </sv:node>
 
