@@ -169,7 +169,7 @@
       </div>
     </form>
 
-    <form name="copyForm" role="form" data-ng-show="state.isEditable" novalidate>
+    <form name="copyForm" role="form" data-ng-if="state.isEditable" novalidate>
       <div class="form-group has-feedback" id="copyLastPathInfoElement" data-ng-class="{
                 'has-success': copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$valid,
                 'has-error': copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$invalid
@@ -195,10 +195,9 @@
             </span>
             <input type="text" name="lastPathInfoElement" class="form-control"
                    data-ng-model="copy.lastPathInfoElement"
-                   data-ng-readonly="!state.isEditable"
                    data-ng-required="true"
                    data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
-                   data-hippo-channel-tooltip-show="copy.lastPathInfoElement.$dirty && copy.lastPathInfoElement.$invalid"
+                   data-hippo-channel-tooltip-show="copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$invalid"
                    data-tooltip="{{ tooltips.copyLastPathInfoElement() }}"
                    data-tooltip-trigger="show"
                    data-tooltip-placement="top">
@@ -217,7 +216,7 @@
 
           <button class="btn btn-default btn-md"
                   data-ng-click="submitCopyPage()"
-                  data-ng-disabled="!state.isEditable || copyForm.lastPathInfoElement.$invalid">
+                  data-ng-disabled="copyForm.lastPathInfoElement.$invalid">
             <hippo-icon name="plus" size="m"></hippo-icon>
             {{ 'COPY_PAGE' | translate }}
           </button>
