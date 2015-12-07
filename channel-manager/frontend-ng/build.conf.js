@@ -1,5 +1,7 @@
 var customConfig = {
-  maven: true
+  env: {
+    maven: true
+  }
 };
 
 module.exports = customConfig;
