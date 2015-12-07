@@ -1,32 +1,17 @@
-import { MainService } from './main.service.js';
-import { MainCtrl } from './main.controller.js';
-import { alertDirective } from './alert/alert.directive.js';
-import { reverseFilter } from './reverse.filter.js';
-import { subModule } from './sub/sub.js';
-import { apiModule } from './api/api.js';
-
 function config ($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/');
 
   $stateProvider.state('main', {
     url: '/',
-    templateUrl: 'hippo-cmng.html',
-    controller: 'MainCtrl',
-    controllerAs: 'main'
+    templateUrl: 'hippo-cmng.html'
   });
 }
 
 export const hippoCmngModule = angular
   .module('hippo-cmng', [
-    'ui.router',
-    apiModule.name,
-    subModule.name
+    'ui.router'
   ])
-  .config(config)
-  .controller('MainCtrl', MainCtrl)
-  .service('MainService', MainService)
-  .directive('alert', alertDirective)
-  .filter('reverse', reverseFilter);
+  .config(config);
 
 angular.element(document).ready(function () {
   angular.bootstrap(document.body, [hippoCmngModule.name], {

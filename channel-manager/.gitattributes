@@ -14,14 +14,7 @@ frontend-api/src/main/java/org/onehippo/cms7/channelmanager/service/IDocumentUrl
 frontend-ng/README.md -text
 frontend-ng/bower.json -text
 frontend-ng/package.json -text
-frontend-ng/src/images/favicon.ico -text svneol=unset#image/x-icon
 frontend-ng/src/styles/hippo-cmng.scss -text
-frontend-ng/src/styles/sub.scss -text
-frontend-ng/src/webapp/angularjs/components/api/api.scss -text
-frontend-ng/src/webapp/angularjs/components/sub/sub.scss -text
-frontend-ng/src/webapp/angularjs/directives/alert/alert.scss -text
-frontend-ng/src/webapp/images/favicon.ico -text svneol=unset#image/x-icon
-frontend-ng/src/webapp/styles/hippo.ngbp.scss -text
 frontend/.bowerrc -text
 frontend/.jshintrc -text
 frontend/bower.json -text
