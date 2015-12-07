@@ -196,12 +196,11 @@
             <input type="text" name="lastPathInfoElement" class="form-control"
                    data-ng-model="copy.lastPathInfoElement"
                    data-ng-readonly="!state.isEditable"
-                   data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
-                   data-tooltip="{{ tooltips.copyLastPathInfoElement() }}"
                    data-ng-required="true"
-                   data-tooltip="{{ 'PAGE_TITLE_REQUIRED' | translate }}"
-                   data-tooltip-trigger="show"
+                   data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
                    data-hippo-channel-tooltip-show="copy.lastPathInfoElement.$dirty && copy.lastPathInfoElement.$invalid"
+                   data-tooltip="{{ tooltips.copyLastPathInfoElement() }}"
+                   data-tooltip-trigger="show"
                    data-tooltip-placement="top">
           </div>
           <span class="form-control-feedback">

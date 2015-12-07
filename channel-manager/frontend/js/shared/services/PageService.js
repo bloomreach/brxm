@@ -99,7 +99,6 @@
           var deferred = $q.defer(),
               url = '/' + ConfigService.sitemapId + './copy';
 
-          console.log("targetSiteMapItemUUID", targetSiteMapItemUUID);
           var req = {
             method :  'POST',
             url : pageServiceUrl(url),
