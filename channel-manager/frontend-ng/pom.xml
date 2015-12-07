@@ -62,8 +62,8 @@
             <phase>process-resources</phase>
             <goals><goal>exec</goal></goals>
             <configuration>
-              <executable>gulp</executable>
-              <commandlineArgs>buildDist --no-color</commandlineArgs>
+              <executable>npm</executable>
+              <commandlineArgs>run gulp buildDist --no-color</commandlineArgs>
             </configuration>
           </execution>
         </executions>
