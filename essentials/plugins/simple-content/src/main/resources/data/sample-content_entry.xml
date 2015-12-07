@@ -136,7 +136,7 @@
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
     </sv:property>
-    <sv:property sv:name="jcr:name" sv:type="String">
+    <sv:property sv:name="hippo:name" sv:type="String">
       <sv:value>Another sample document</sv:value>
     </sv:property>
     <sv:node sv:name="another-sample-document">

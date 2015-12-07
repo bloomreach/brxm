@@ -1,6 +1,6 @@
 {
   "hippo:types": {
-    "{{namespace}}:newsdocument":   {
+    "{{namespace}}:video":   {
       "en":     {
         "{{namespace}}:description": "Description",
         "jcr:name": "Video",

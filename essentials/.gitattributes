@@ -979,7 +979,7 @@ plugins/simple-content/src/main/resources/jsp/contentlist-main-contentlist.jsp -
 plugins/simple-content/src/main/resources/jsp/contentpage-main.jsp -text
 plugins/simple-content/src/main/resources/namespaces/contentdocument.xml -text
 plugins/simple-content/src/main/resources/translations/contenttemplates-translations.json -text
-plugins/simple-content/src/main/resources/translations/contenttype-translations.json -text
+plugins/simple-content/src/main/resources/translations/contenttypes-translations.json -text
 plugins/sitemap/pom.xml -text
 plugins/sitemap/src/main/java/org/onehippo/cms7/essentials/plugins/sitemap/SitemapParameterService.java -text
 plugins/sitemap/src/main/resources/META-INF/resources/feature/sitemapPlugin/sitemapPlugin.html -text
@@ -1084,6 +1084,4 @@ plugins/video/src/main/resources/instructions/xml/hst/video-component-catalog.xm
 plugins/video/src/main/resources/instructions/xml/hst/video-component-freemarker.xml -text
 plugins/video/src/main/resources/instructions/xml/hst/video-component-jsp.xml -text
 plugins/video/src/main/resources/instructions/xml/namespace/video-namespace.xml -text
-plugins/video/src/main/resources/instructions/xml/translations/videodocument-translations.xml -text
-plugins/video/src/main/resources/instructions/xml/translations/videotemplates-translations.xml -text
 /pom.xml -text
