@@ -15,6 +15,9 @@
   limitations under the License.
   -->
 <sv:node sv:name="logoutService" esv:merge="insert" esv:location="root" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:esv="http://www.onehippo.org/jcr/xmlimport">
+  <!--
+     Load the logoutService before the root plugin, since the latter depends on the former.
+  -->
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:plugin</sv:value>
   </sv:property>
