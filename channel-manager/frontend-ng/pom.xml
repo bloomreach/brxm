@@ -63,7 +63,7 @@
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>gulp</executable>
-              <commandlineArgs>buildMvn --no-color</commandlineArgs>
+              <commandlineArgs>buildDist --no-color</commandlineArgs>
             </configuration>
           </execution>
         </executions>
