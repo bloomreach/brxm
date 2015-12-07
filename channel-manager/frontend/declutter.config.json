@@ -28,6 +28,7 @@
     "dist/fonts/*"
   ],
   "jasmine-jquery": [],
+  "jasmine": [],
   "jquery": [
     "dist/jquery.min.js",
     "dist/jquery.min.map"
