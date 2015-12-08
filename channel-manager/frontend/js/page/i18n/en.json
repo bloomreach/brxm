@@ -26,5 +26,9 @@
   "REMOVE_PRIMARY_DOCUMENT": "Remove",
   "CONFIRM_REMOVE_PRIMARY_DOCUMENT_TITLE": "Confirm remove",
   "CONFIRM_REMOVE_PRIMARY_DOCUMENT_MESSAGE": "Are you sure you want to remove the primary document?",
-  "NONE": "None"
+  "NONE": "None",
+  "COPY_PAGE_CHANNEL": "Target channel",
+  "COPY_PAGE_URL": "Target URL",
+  "COPY_PAGE_DESCRIPTION": "Make a copy of this page",
+  "PAGE_SETTINGS_DESCRIPTION": "Edit the settings of this page"
 }

@@ -56,6 +56,9 @@
         <hippo-icon name="locked" size="m"></hippo-icon>
         {{ 'PAGE_LOCKED' | translate:lock }}
       </div>
+
+      <h4>{{ 'PAGE_SETTINGS_DESCRIPTION' | translate }}</h4>
+
       <div class="form-group has-feedback"
            data-ng-class="{
                 'has-success': form.title.$dirty && form.title.$valid,
@@ -155,8 +158,6 @@
           </div>
         </div>
 
-        <hr data-ng-show="!template.isVisible">
-
         <button type="submit" class="btn btn-default"
                 data-ng-click="submit()"
                 data-ng-disabled="form.$invalid">
@@ -168,41 +169,23 @@
         </button>
       </div>
     </form>
-
-    <form name="copyForm" role="form" data-ng-if="state.isCopyable" novalidate>
-      <div class="form-group has-feedback" id="copyLastPathInfoElement" data-ng-class="{
+    <form class="copy-form" name="copyForm" role="form" data-ng-if="state.isEditable" novalidate data-ng-class="{
                 'has-success': copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$valid,
                 'has-error': copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$invalid
             }">
-        <div>
-          <div class="input-group">
-            <span class="input-group-btn">
-              <select ng-if="crossChannelPageCopySupported" id="channel" name="channel" class="form-control" disabled
-                      data-chosen
-                      data-ng-model="copy.mountId"
-                      data-ng-options="channel.mountId as channel.name for channel in channels"
-                      data-width="'auto'"
-                      data-ng-change="copy.reloadTargets()"
-                      data-ng-required="true">
-              </select>
-
-              <select data-chosen
-                      data-ng-model="copy.target"
-                      data-ng-options="item as item.location for item in locations"
-                      data-width="'auto'"
-                      class="ng-pristine ng-untouched ng-valid localytics-chosen">
-              </select>
-            </span>
-            <input type="text" name="lastPathInfoElement" class="form-control"
-                   data-ng-model="copy.lastPathInfoElement"
-                   data-ng-required="true"
-                   data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
-                   data-hippo-channel-tooltip-show="copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$invalid"
-                   data-tooltip="{{ tooltips.copyLastPathInfoElement() }}"
-                   data-tooltip-trigger="show"
-                   data-tooltip-placement="top">
-          </div>
-          <span class="form-control-feedback">
+        <hr />
+        <h4>{{ 'COPY_PAGE_DESCRIPTION' | translate }}</h4>
+        <div ng-if="crossChannelPageCopySupported" class="form-group has-feedback">
+          <label for="channel">{{ 'COPY_PAGE_CHANNEL' | translate }}</label>
+          <select id="channel" name="channel" class="form-control" disabled
+                  data-chosen
+                  data-ng-model="copy.mountId"
+                  data-ng-options="channel.mountId as channel.name for channel in channels"
+                  data-width="'100%'"
+                  data-ng-change="copy.reloadTargets()"
+                  data-ng-required="true">
+          </select>
+          <div class="form-control-feedback ongolio">
             <hippo-icon ng-if="copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$valid"
                         name="check-circle"
                         size="m">
@@ -211,18 +194,49 @@
                         name="minus-circle"
                         size="m">
             </hippo-icon>
-          </span>
-
-
-          <button class="btn btn-default btn-md"
-                  data-ng-click="submitCopyPage()"
-                  data-ng-disabled="copyForm.lastPathInfoElement.$invalid">
-            <hippo-icon name="plus" size="m"></hippo-icon>
-            {{ 'COPY_PAGE' | translate }}
-          </button>
+          </div>
         </div>
+        <div class="form-group has-feedback">
+          <label>{{ 'COPY_PAGE_URL' | translate }}</label>
+          <div class="input-group url-widget">
+            <div class="url-dropdown pull-left">
+              <select data-chosen
+                      data-ng-model="copy.target"
+                      data-ng-options="item as item.location for item in locations"
+                      data-width="'100%'"
+                      class="ng-pristine ng-untouched ng-valid localytics-chosen">
+              </select>
+            </div>
 
-      </div>
+            <div class="url-name pull-left">
+              <input type="text" name="lastPathInfoElement" class="form-control"
+                   data-ng-model="copy.lastPathInfoElement"
+                   data-ng-required="true"
+                   data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
+                   data-hippo-channel-tooltip-show="copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$invalid"
+                   data-tooltip="{{ tooltips.copyLastPathInfoElement() }}"
+                   data-tooltip-trigger="show"
+                   data-tooltip-placement="top" />
+              <span class="form-control-feedback">
+                <hippo-icon ng-if="copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$valid"
+                            name="check-circle"
+                            size="m">
+                </hippo-icon>
+                <hippo-icon ng-if="copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$invalid"
+                            name="minus-circle"
+                            size="m">
+                </hippo-icon>
+              </span>
+
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-default btn-md"
+                data-ng-click="submitCopyPage()"
+                data-ng-disabled="copyForm.lastPathInfoElement.$invalid">
+          <hippo-icon name="plus" size="m"></hippo-icon>
+          {{ 'COPY_PAGE' | translate }}
+        </button>
     </form>
 
   </div>
