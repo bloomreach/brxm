@@ -20,19 +20,31 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.ws.rs.core.Response;
 
+import com.google.common.eventbus.AllowConcurrentEvents;
+import com.google.common.eventbus.Subscribe;
+
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.junit.Before;
 import org.junit.Test;
 
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_SITEMAP;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError.INVALID_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class PageCopyTest extends AbstractSiteMapResourceTest {
@@ -173,18 +185,124 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
 
     }
 
+    public static class PageCopyEventListener {
+
+        private ComponentManager componentManager;
+        protected PageCopyEvent receivedEvent;
+
+        public void destroy() {
+            componentManager.unregisterEventSubscriber(this);
+        }
+
+        public PageCopyEventListener(final ComponentManager componentManager) {
+            this.componentManager = componentManager;
+            componentManager.registerEventSubscriber(this);
+        }
+
+        @Subscribe
+        @AllowConcurrentEvents
+        public void onPageCopyEvent(PageCopyEvent event) {
+            if (event.getException() != null) {
+                return;
+            }
+            try {
+                final PageCopyContext pageCopyContext = event.getPageCopyContext();
+                assertEquals(pageCopyContext.getNewSiteMapItemNode().getProperty(GENERAL_PROPERTY_LOCKED_BY).getString(), "admin");
+                assertEquals(pageCopyContext.getNewPageNode().getProperty(GENERAL_PROPERTY_LOCKED_BY).getString(), "admin");
+            } catch (Exception e) {
+                event.setException(new RuntimeException(e));
+            }
+            receivedEvent = event;
+        }
+    }
+
     @Test
     public void page_copy_guava_event() throws Exception {
-        // TODO
+        PageCopyEventListener pageCopyEventListener = new PageCopyEventListener(componentManager);
+        try {
+            copyHomePageWithinSameChannel(true, "copiedHome", null);
+            final PageCopyEvent pce = pageCopyEventListener.receivedEvent;
+            assertNotNull(pce);
+            assertNull(pce.getException());
+            final PageCopyContext pcc = pce.getPageCopyContext();
+            assertNotNull(pcc);
+
+            final String previewSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/copiedHome";
+            final String previewPageNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/copiedHome";
+            final String liveSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/copiedHome";
+            final String livePageNodePath = "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/copiedHome";
+
+            assertEquals(previewSiteMapItemNodePath, pcc.getNewSiteMapItemNode().getPath());
+            assertEquals(previewPageNodePath, pcc.getNewPageNode().getPath());
+
+            // successful publication has been done
+            assertTrue(session.nodeExists(liveSiteMapItemNodePath));
+            assertTrue(session.nodeExists(livePageNodePath));
+
+            // lock assertions : Assert that during processing event the 'new sitemap node' was locked, but
+            // after the publication it now has been unlocked
+            assertFalse(session.getNode(previewSiteMapItemNodePath).hasProperty(GENERAL_PROPERTY_LOCKED_BY));
+            assertFalse(session.getNode(previewPageNodePath).hasProperty(GENERAL_PROPERTY_LOCKED_BY));
+
+        } finally {
+            pageCopyEventListener.destroy();
+        }
+    }
+
+    public static class FailingPageCopyEventListener extends PageCopyEventListener {
+        final RuntimeException exception;
+        public FailingPageCopyEventListener(final ComponentManager componentManager, final RuntimeException exception) {
+            super(componentManager);
+            this.exception = exception;
+        }
+
+        @Override
+        public void onPageCopyEvent(final PageCopyEvent event) {
+            event.setException(exception);
+            super.onPageCopyEvent(event);
+        }
     }
 
     @Test
-    public void page_copy_guava_event_short_circuiting() throws Exception {
-        // TODO
+    public void page_copy_guava_event_short_circuiting_with_runtime_exception() throws Exception {
+        FailingPageCopyEventListener failingCopyEventListener = new FailingPageCopyEventListener(componentManager, new RuntimeException());
+        try {
+            final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "localhost", "/home");
+            SiteMapResource siteMapResource = createResource();
+            final Mount editingMount = mountResource.getPageComposerContextService().getEditingMount();
+            final Response copy = siteMapResource.copy(editingMount.getIdentifier(), home.getId(), null, "copiedHome");
+            assertEquals(INTERNAL_SERVER_ERROR.getStatusCode(), copy.getStatus());
+
+            final String previewSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/copiedHome";
+            final String previewPageNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/copiedHome";
+
+            // FailingPageCopyEventListener should have short circuited the entire copy and also must have removed the session changes
+            assertFalse(session.nodeExists(previewSiteMapItemNodePath));
+            assertFalse(session.nodeExists(previewPageNodePath));
+            assertFalse(session.hasPendingChanges());
+        } finally {
+            failingCopyEventListener.destroy();
+        }
     }
 
     @Test
-    public void page_copy_already_locked() throws Exception {
+    public void page_copy_guava_event_short_circuiting_with_client_exception() throws Exception {
+        FailingPageCopyEventListener failingCopyEventListener = new FailingPageCopyEventListener(componentManager,
+                new ClientException("client exception", INVALID_NAME));
+        try {
+            final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "localhost", "/home");
+            SiteMapResource siteMapResource = createResource();
+            final Mount editingMount = mountResource.getPageComposerContextService().getEditingMount();
+            final Response copy = siteMapResource.copy(editingMount.getIdentifier(), home.getId(), null, "copiedHome");
+            assertEquals(BAD_REQUEST.getStatusCode(), copy.getStatus());
+        } finally {
+            failingCopyEventListener.destroy();
+        }
+    }
+
+    @Test
+    public void page_copy_cross_channel_already_locked_due_to_other_copy() throws Exception {
 
     }
+
 }
