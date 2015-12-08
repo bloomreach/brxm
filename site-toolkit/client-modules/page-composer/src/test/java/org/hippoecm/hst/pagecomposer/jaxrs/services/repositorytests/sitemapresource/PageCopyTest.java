@@ -26,6 +26,7 @@ import com.google.common.eventbus.Subscribe;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyEvent;
@@ -38,10 +39,12 @@ import org.junit.Test;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static javax.ws.rs.core.Response.Status.OK;
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_SITEMAP;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError.INVALID_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -337,6 +340,58 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
 
     }
 
+    @Test
+    public void page_copy_cross_channel() throws Exception {
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "localhost", "/home");
+        SiteMapResource siteMapResource = createResource();
+        final Mount targetMount = getTargetMountByAlias("subsite");
+        final Response copy = siteMapResource.copy(targetMount.getIdentifier(), home.getId(), null, "copy");
+        assertEquals(OK.getStatusCode(), copy.getStatus());
+        final String newSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestsubproject-preview/hst:workspace/hst:sitemap/copy";
+        final String newPageNodePath = "/hst:hst/hst:configurations/unittestsubproject-preview/hst:workspace/hst:pages/copy";
+        assertTrue(session.nodeExists(newSiteMapItemNodePath));
+        assertTrue(session.nodeExists(newPageNodePath));
+        assertEquals(session.getNode(newSiteMapItemNodePath).getProperty(GENERAL_PROPERTY_LOCKED_BY).getString(), "admin");
+        assertEquals(session.getNode(newPageNodePath).getProperty(GENERAL_PROPERTY_LOCKED_BY).getString(), "admin");
+        assertFalse(session.nodeExists(newSiteMapItemNodePath.replace("-preview/", "/")));
+        assertFalse(session.nodeExists(newPageNodePath.replace("-preview/", "/")));
+
+        // before we can use 'mountResource' to publish, we first have to 'switch' current request context to 'subsite'
+        getSiteMapItemRepresentation(session, "localhost", "/subsite");
+
+        assertEquals("subsite",RequestContextProvider.get().getResolvedMount().getMount().getName());
+
+        mountResource.publish();
+
+        Thread.sleep(100);
+        assertTrue(session.nodeExists(newSiteMapItemNodePath.replace("-preview/","/")));
+        assertTrue(session.nodeExists(newPageNodePath.replace("-preview/","/")));
+        assertFalse(session.getNode(newSiteMapItemNodePath).hasProperty(GENERAL_PROPERTY_LOCKED_BY));
+        assertFalse(session.getNode(newPageNodePath).hasProperty(GENERAL_PROPERTY_LOCKED_BY));
+    }
+
+    @Test
+    public void page_copy_cross_channel_pageNode_already_exists_results_in_counter_added() throws Exception {
+        // first add the 'copy' page node already, which is created by xyz
+        createPreviewWithSiteMapWorkspace("localhost", "/subsite");
+        session.getNode("/hst:hst/hst:configurations/unittestsubproject/hst:workspace").addNode("hst:pages").addNode("copy", HstNodeTypes.NODETYPE_HST_COMPONENT);
+        session.getNode("/hst:hst/hst:configurations/unittestsubproject-preview/hst:workspace").addNode("hst:pages").addNode("copy", HstNodeTypes.NODETYPE_HST_COMPONENT);
+        session.save();
+        // time for jcr events to arrive
+        Thread.sleep(100);
+
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "localhost", "/home");
+        SiteMapResource siteMapResource = createResource();
+        final Mount targetMount = getTargetMountByAlias("subsite");
+        final Response copy = siteMapResource.copy(targetMount.getIdentifier(), home.getId(), null, "copy");
+        assertEquals(OK.getStatusCode(), copy.getStatus());
+        final String newSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestsubproject-preview/hst:workspace/hst:sitemap/copy";
+        final String expectedPageNodePathWithCounter = "/hst:hst/hst:configurations/unittestsubproject-preview/hst:workspace/hst:pages/copy-1";
+        assertTrue(session.nodeExists(newSiteMapItemNodePath));
+        assertTrue(session.nodeExists(expectedPageNodePathWithCounter));
+        // and assert new sitemap item points to page with counter
+        assertEquals("hst:pages/copy-1", session.getNode(newSiteMapItemNodePath).getProperty(SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
+    }
 
     @Test
     public void page_copy_cross_channel_already_locked_due_to_other_copy() throws Exception {
