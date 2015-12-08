@@ -73,15 +73,17 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
         final String pathInfo;
         if (targetParent == null) {
             pathInfo = copyName;
+        } else if (targetParent.getIsHomePage()){
+            pathInfo = targetParent.getName() + "/" + copyName;
         } else {
             pathInfo = targetParent.getPathInfo() + "/" + copyName;
         }
+
         final String pageName = pathInfo.replaceAll("/", "-");
         final String previewSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/" + pathInfo;
         final String previewPageNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/" + pageName;
         final String liveSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/" + pathInfo;
         final String livePageNodePath = "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/" + pageName;
-        System.out.println(previewSiteMapItemNodePath);
         assertTrue(session.nodeExists(previewSiteMapItemNodePath));
         assertTrue(session.nodeExists(previewPageNodePath));
         assertFalse(session.nodeExists(liveSiteMapItemNodePath));
@@ -109,18 +111,9 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
     }
 
     @Test
-    public void page_copy_guava_event() throws Exception {
-        // TODO
-    }
-
-    @Test
-    public void page_copy_guava_event_short_circuiting() throws Exception {
-        // TODO
-    }
-
-    @Test
-    public void page_copy_already_locked() throws Exception {
-
+    public void page_copy_to_itself_within_same_channel() throws Exception {
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "localhost", "/home");
+        copyHomePageWithinSameChannel(true, "copiedHome", home);
     }
 
     @Test
@@ -177,6 +170,21 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
         Thread.sleep(100);
         assertFalse(session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/copiedHome/container")
                 .hasProperty(GENERAL_PROPERTY_LOCKED_BY));
+
+    }
+
+    @Test
+    public void page_copy_guava_event() throws Exception {
+        // TODO
+    }
+
+    @Test
+    public void page_copy_guava_event_short_circuiting() throws Exception {
+        // TODO
+    }
+
+    @Test
+    public void page_copy_already_locked() throws Exception {
 
     }
 }

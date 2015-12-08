@@ -89,11 +89,6 @@ public class ValidatorFactory {
         return new HasPreviewConfigurationValidator(pageComposerContextService, mountId);
     }
 
-    public Validator getCopyNodeValidator(final String uuidSource, final String uuidTarget) {
-        return new CopyNodeValidator(uuidSource, uuidTarget);
-    }
-
-
     public Validator getNameValidator(String name) {
         return new NameValidator(name);
     }

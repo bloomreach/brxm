@@ -21,8 +21,11 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.NodeType;
 
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -296,12 +299,7 @@ public class SiteMapHelper extends AbstractHelper {
         }
 
         validateTarget(session, target, targetMount.getHstSite().getSiteMap());
-        Node toShallowCopy = session.getNodeByIdentifier(sourceSiteMapItemUUID);
-        final Node newSiteMapNode = JcrUtils.copy(session, toShallowCopy.getPath(), target);
-        for (Node child : new NodeIterable(newSiteMapNode.getNodes())) {
-            // we need shallow copy so remove children again
-            child.remove();
-        }
+        final Node newSiteMapNode = shallowCopy(session, sourceSiteMapItemUUID, targetSiteMapItemUUID, targetName);
         lockHelper.acquireLock(newSiteMapNode, 0);
 
         // copy the page definition
@@ -335,11 +333,41 @@ public class SiteMapHelper extends AbstractHelper {
         newSiteMapNode.setProperty(SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
                 NODENAME_HST_PAGES + "/" + clonedPage.getName());
 
-        PageCopyContext pcc = new PageCopyContext(requestContext, editingMount, sourceSiteMapItem, toShallowCopy, sourcePage,
-                session.getNodeByIdentifier(sourcePage.getCanonicalIdentifier()), targetMount, targetSiteMapItem, newSiteMapNode, clonedPage);
+        PageCopyContext pcc = new PageCopyContext(requestContext, editingMount, sourceSiteMapItem, session.getNodeByIdentifier(sourceSiteMapItemUUID),
+                sourcePage, session.getNodeByIdentifier(sourcePage.getCanonicalIdentifier()), targetMount, targetSiteMapItem, newSiteMapNode, clonedPage);
 
         templateHelper.copyTemplates(pcc);
         return pcc;
+    }
+
+    /**
+     * copies the node for <code>sourceSiteMapItemUUID</code> to the node for <code>targetSiteMapItemUUID</code>. The copied
+     * node will have name <code>targetName</code>. The node is copied <strong>without</strong> its children!
+     */
+    private Node shallowCopy(final Session session, final String sourceSiteMapItemUUID,
+                             final String targetSiteMapItemUUID,
+                             final String targetName) throws RepositoryException {
+        Node source = session.getNodeByIdentifier(sourceSiteMapItemUUID);
+        Node target = session.getNodeByIdentifier(targetSiteMapItemUUID);
+
+        final Node newItem = target.addNode(targetName, source.getPrimaryNodeType().getName());
+        for (NodeType mixin : source.getMixinNodeTypes()) {
+            newItem.addMixin(mixin.getName());
+        }
+        final PropertyIterator properties = source.getProperties();
+        while (properties.hasNext()) {
+            final Property property = properties.nextProperty();
+            if (!property.getName().startsWith("hst:")) {
+                // only hst properties are needed
+                continue;
+            }
+            if (property.isMultiple()) {
+                target.setProperty(property.getName(), property.getValues());
+            } else {
+                target.setProperty(property.getName(), property.getValue());
+            }
+        }
+        return newItem;
     }
 
     private HstSiteMapItem validateAndReturnSiteMapItem(final String siteMapItemUUId, final Mount targetMount) {

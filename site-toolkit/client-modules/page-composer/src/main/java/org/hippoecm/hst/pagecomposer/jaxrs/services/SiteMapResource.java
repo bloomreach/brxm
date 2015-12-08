@@ -268,16 +268,14 @@ public class SiteMapResource extends AbstractConfigResource {
         if (StringUtils.isNotBlank(targetSiteMapItemUUID)) {
             if (StringUtils.isBlank(mountId) || getPageComposerContextService().getEditingMount().getIdentifier().equals(mountId)) {
                 preValidators.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
-                        targetSiteMapItemUUID, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
-                preValidators.add(validatorFactory.getConfigurationExistsValidator(targetSiteMapItemUUID, siteMapHelper));
-                preValidators.add(validatorFactory.getCopyNodeValidator(siteMapItemUUID,
-                        targetSiteMapItemUUID));
+                                         targetSiteMapItemUUID, HstNodeTypes.NODETYPE_HST_SITEMAPITEM))
+                             .add(validatorFactory.getConfigurationExistsValidator(targetSiteMapItemUUID, siteMapHelper));
             } else {
                 // validate targetSiteMapItemUUID is located in preview workspapce sitemap
                 preValidators.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(mountId),
-                        targetSiteMapItemUUID, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
-                // validate that the 'targetSiteMapItemUUID' is currently part of the hst model
-                preValidators.add(validatorFactory.getConfigurationExistsValidator(targetSiteMapItemUUID, mountId, siteMapHelper));
+                                        targetSiteMapItemUUID, HstNodeTypes.NODETYPE_HST_SITEMAPITEM))
+                           // validate that the 'targetSiteMapItemUUID' is currently part of the hst model
+                           .add(validatorFactory.getConfigurationExistsValidator(targetSiteMapItemUUID, mountId, siteMapHelper));
             }
         }
         

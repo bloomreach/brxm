@@ -334,7 +334,6 @@ client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/s
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/AbstractPathInfoValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/ChildExistsValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/ConfigurationExistsValidator.java -text
-client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/CopyNodeValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/CurrentPreviewConfigurationValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/HasPreviewConfigurationValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/NodePathPrefixValidator.java -text
