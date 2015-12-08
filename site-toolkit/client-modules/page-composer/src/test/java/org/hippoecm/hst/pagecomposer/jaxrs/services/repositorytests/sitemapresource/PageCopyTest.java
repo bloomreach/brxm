@@ -45,6 +45,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_SITEMAP;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError.INVALID_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -119,6 +120,13 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
             assertFalse(session.getNode(previewSiteMapItemNodePath).hasProperty(GENERAL_PROPERTY_LOCKED_BY));
             assertFalse(session.getNode(previewPageNodePath).hasProperty(GENERAL_PROPERTY_LOCKED_BY));
         }
+    }
+
+    @Test
+    public void page_copy_does_not_copy_refId() throws Exception {
+        copyHomePageWithinSameChannel(true, "copiedHome", null);
+        assertEquals("homeRefId", session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home").getProperty(SITEMAPITEM_PROPERTY_REF_ID).getString());
+        assertFalse(session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/copiedHome").hasProperty(SITEMAPITEM_PROPERTY_REF_ID));
     }
 
     @Test

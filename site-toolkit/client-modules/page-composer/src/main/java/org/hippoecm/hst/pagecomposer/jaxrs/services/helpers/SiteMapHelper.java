@@ -55,6 +55,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAP;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAPITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID;
 
 public class SiteMapHelper extends AbstractHelper {
 
@@ -368,6 +369,10 @@ public class SiteMapHelper extends AbstractHelper {
             final Property property = properties.nextProperty();
             if (!property.getName().startsWith("hst:")) {
                 // only hst properties are needed
+                continue;
+            }
+            if (property.getName().equals(SITEMAPITEM_PROPERTY_REF_ID)) {
+                // refId must be unique, hence skipped completely for copied nodes
                 continue;
             }
             if (property.isMultiple()) {
