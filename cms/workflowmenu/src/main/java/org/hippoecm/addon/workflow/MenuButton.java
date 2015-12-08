@@ -33,6 +33,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
+import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.IconSize;
@@ -108,7 +109,7 @@ class MenuButton extends Panel implements IContextMenu {
             label = descriptions.get(0).getLabel();
         }
         if (label == null) {
-            link.add(new Label("label", new StringResourceModel(name, MenuButton.this, null, name)));
+            link.add(new Label("label", new ResourceBundleModel("hippo:workflows", name)));
         } else {
             if (!"label".equals(label.getId())) {
                 throw new WicketRuntimeException("Menu label component doesn't have correct id.  Should be 'label', but was '" + label.getId() + "'");

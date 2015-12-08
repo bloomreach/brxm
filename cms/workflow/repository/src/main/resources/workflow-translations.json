@@ -1,0 +1,28 @@
+{
+  "hippo:workflows" : {
+    "en" : {
+      "document" : "Document",
+      "publication" : "Publication",
+      "request" : "Requests",
+      "miscellaneous" : "Miscellaneous"
+    },
+    "nl" : {
+      "document" : "Document",
+      "publication" : "Publicatie",
+      "request" : "Verzoeken",
+      "miscellaneous" : "Overige"
+    },
+    "de" : {
+      "document" : "Dokument",
+      "publication" : "Publikation",
+      "request" : "Anfragen",
+      "miscellaneous" : "Verschiedenes"
+    },
+    "fr" : {
+      "document" : "Document",
+      "publication" : "Publication",
+      "request" : "Requ\u00eate",
+      "miscellaneous" : "Divers"
+    }
+  }
+}

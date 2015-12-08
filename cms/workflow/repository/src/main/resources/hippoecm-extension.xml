@@ -156,4 +156,16 @@
       <sv:value>3010.02</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="hippo-workflow-translations">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>17</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:resourcebundles" sv:type="String">
+      <sv:value>workflow-translations.json</sv:value>
+    </sv:property>
+  </sv:node>
+
 </sv:node>

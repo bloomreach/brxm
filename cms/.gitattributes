@@ -2850,10 +2850,10 @@ workflow/repository/src/main/resources/hippostd-templates-translations.json -tex
 workflow/repository/src/main/resources/hippostdpubwf-type-translations.json -text
 workflow/repository/src/main/resources/reviewedactions-workflows.xml svneol=native#text/plain
 workflow/repository/src/main/resources/versioning-workflows.xml svneol=native#text/plain
+workflow/repository/src/main/resources/workflow-translations.json -text
 workflowmenu/pom.xml svneol=native#text/plain
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/MenuAction.html -text
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/MenuAction.java -text
-workflowmenu/src/main/java/org/hippoecm/addon/workflow/MenuButton_de.properties -text
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/MenuDescription.java svneol=native#text/plain
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/MenuDrop_de.properties -text
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/PluginController.java svneol=native#text/plain
