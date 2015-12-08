@@ -27,6 +27,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -47,6 +48,7 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_SITEMAP;
@@ -299,7 +301,7 @@ public class SiteMapHelper extends AbstractHelper {
         }
 
         validateTarget(session, target, targetMount.getHstSite().getSiteMap());
-        final Node newSiteMapNode = shallowCopy(session, sourceSiteMapItemUUID, targetSiteMapItemUUID, targetName);
+        final Node newSiteMapNode = shallowCopy(session, sourceSiteMapItemUUID, substringBeforeLast(target, "/"), targetName);
         lockHelper.acquireLock(newSiteMapNode, 0);
 
         // copy the page definition
@@ -345,12 +347,12 @@ public class SiteMapHelper extends AbstractHelper {
      * node will have name <code>targetName</code>. The node is copied <strong>without</strong> its children!
      */
     private Node shallowCopy(final Session session, final String sourceSiteMapItemUUID,
-                             final String targetSiteMapItemUUID,
+                             final String targetParentPath,
                              final String targetName) throws RepositoryException {
         Node source = session.getNodeByIdentifier(sourceSiteMapItemUUID);
-        Node target = session.getNodeByIdentifier(targetSiteMapItemUUID);
+        Node parentTarget = session.getNode(targetParentPath);
 
-        final Node newItem = target.addNode(targetName, source.getPrimaryNodeType().getName());
+        final Node newItem = parentTarget.addNode(targetName, NODETYPE_HST_SITEMAPITEM);
         for (NodeType mixin : source.getMixinNodeTypes()) {
             newItem.addMixin(mixin.getName());
         }
@@ -362,9 +364,9 @@ public class SiteMapHelper extends AbstractHelper {
                 continue;
             }
             if (property.isMultiple()) {
-                target.setProperty(property.getName(), property.getValues());
+                newItem.setProperty(property.getName(), property.getValues());
             } else {
-                target.setProperty(property.getName(), property.getValue());
+                newItem.setProperty(property.getName(), property.getValue());
             }
         }
         return newItem;
