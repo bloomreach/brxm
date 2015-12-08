@@ -23,6 +23,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -39,6 +40,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_REF
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_ABSTRACT_COMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_PAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID;
 import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
@@ -78,6 +80,9 @@ public class PagesHelper extends AbstractHelper {
                        final boolean skipContainerItems,
                        final String previewWorkspacePagesPath) throws RepositoryException {
         final Session session = pageComposerContextService.getRequestContext().getSession();
+        if (!session.nodeExists(previewWorkspacePagesPath)) {
+            createWorkspacePagesInPreviewAndLive(previewWorkspacePagesPath, session);
+        }
         final String validTargetPageNodeName = getValidTargetPageNodeName(previewWorkspacePagesPath, targetPageNodeName, session);
         final Node newPage = JcrUtils.copy(session, pageOrPrototype.getPath(), previewWorkspacePagesPath + "/" + validTargetPageNodeName);
 
@@ -101,6 +106,15 @@ public class PagesHelper extends AbstractHelper {
         }
 
         return newPage;
+    }
+
+    private void createWorkspacePagesInPreviewAndLive(final String previewWorkspacePagesPath, final Session session) throws RepositoryException {
+        final String previewWorkspacePath = StringUtils.substringBeforeLast(previewWorkspacePagesPath, "/");
+        session.getNode(previewWorkspacePath).addNode(NODENAME_HST_PAGES, NODETYPE_HST_PAGES);
+        final String liveWorkspacePath = previewWorkspacePath.replace("-preview/","/");
+        if (!session.nodeExists(liveWorkspacePath + "/" + NODENAME_HST_PAGES)) {
+            session.getNode(liveWorkspacePath).addNode(NODENAME_HST_PAGES, NODETYPE_HST_PAGES);
+        }
     }
 
     public Node copy(final Session session, final String targetPageName, final HstComponentConfiguration sourcePage,
@@ -284,8 +298,8 @@ public class PagesHelper extends AbstractHelper {
             return newPage;
         }
 
-        String newPagePathPrefix = "/" + HstNodeTypes.NODENAME_HST_PAGES + "/" + newPage.getName() + "/";
-        String oldPagePathPrefix = "/" + HstNodeTypes.NODENAME_HST_PAGES + "/" + oldPage.getName() + "/";
+        String newPagePathPrefix = "/" + NODENAME_HST_PAGES + "/" + newPage.getName() + "/";
+        String oldPagePathPrefix = "/" + NODENAME_HST_PAGES + "/" + oldPage.getName() + "/";
 
         List<Node> existingContainers = findContainers(oldPage);
         Session session = oldPage.getSession();
@@ -470,7 +484,7 @@ public class PagesHelper extends AbstractHelper {
     }
 
     private void deletePageNodeIfNotReferencedAnyMore(final Node pageNode) throws RepositoryException {
-        String componentConfigurationIdForPage = HstNodeTypes.NODENAME_HST_PAGES + "/" + pageNode.getName();
+        String componentConfigurationIdForPage = NODENAME_HST_PAGES + "/" + pageNode.getName();
         final Session session = pageNode.getSession();
         Node workspaceSiteMapNode = session.getNode(getPreviewWorkspacePath()).getNode(HstNodeTypes.NODENAME_HST_SITEMAP);
         Node nonWorkspaceSiteMapNode = null;

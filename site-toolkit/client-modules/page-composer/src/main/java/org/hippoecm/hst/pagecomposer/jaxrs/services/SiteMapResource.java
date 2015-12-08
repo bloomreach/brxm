@@ -38,8 +38,8 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
@@ -280,8 +280,9 @@ public class SiteMapResource extends AbstractConfigResource {
         }
         
         if (StringUtils.isNotBlank(mountId)) {
-            // validate target mount has a workspace
+            // validate target mount has preview and a workspace
             preValidators.add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService(), mountId));
+            preValidators.add(validatorFactory.getHasWorkspaceConfigurationValidator(mountId));
         }
 
         return tryExecute(new Callable<Response>() {

@@ -27,7 +27,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -44,7 +43,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +51,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKE
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_SITEMAP;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAP;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAPITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID;
@@ -269,12 +268,11 @@ public class SiteMapHelper extends AbstractHelper {
             targetMount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(mountId);
         }
 
-        final String workspaceSiteMapPath = getWorkspacePath(targetMount) + "/" + NODENAME_HST_SITEMAP;
+        final String previewWorkspaceSiteMapPath = getWorkspacePath(targetMount) + "/" + NODENAME_HST_SITEMAP;
 
         final Session session = requestContext.getSession();
-        if (!session.nodeExists(workspaceSiteMapPath)) {
-            String message = String.format("No workspace found at '%s'", workspaceSiteMapPath);
-            throw new ClientException(message, ClientError.ITEM_NOT_FOUND, Collections.singletonMap("errorReason", message));
+        if (!session.nodeExists(previewWorkspaceSiteMapPath)) {
+            createWorkspaceSiteMapInPreviewAndLive(previewWorkspaceSiteMapPath, session);
         }
 
         final HstSiteMapItem targetSiteMapItem;
@@ -284,7 +282,7 @@ public class SiteMapHelper extends AbstractHelper {
             targetSiteMapItem = null;
         }
 
-        final Node workspaceSiteMapNode = session.getNode(workspaceSiteMapPath);
+        final Node workspaceSiteMapNode = session.getNode(previewWorkspaceSiteMapPath);
 
         final String target;
         if (targetSiteMapItemUUID != null) {
@@ -340,6 +338,15 @@ public class SiteMapHelper extends AbstractHelper {
 
         templateHelper.copyTemplates(pcc);
         return pcc;
+    }
+
+    private void createWorkspaceSiteMapInPreviewAndLive(final String previewWorkspaceSiteMapPath, final Session session) throws RepositoryException {
+        final String previewWorkspacePath = substringBeforeLast(previewWorkspaceSiteMapPath, "/");
+        final String liveWorkspacePath = previewWorkspacePath.replace("-preview/","/");
+        session.getNode(previewWorkspacePath).addNode(NODENAME_HST_SITEMAP, NODETYPE_HST_SITEMAP);
+        if (!session.nodeExists(liveWorkspacePath + "/" + NODETYPE_HST_SITEMAP)) {
+            session.getNode(liveWorkspacePath).addNode(NODENAME_HST_SITEMAP, NODETYPE_HST_SITEMAP);
+        }
     }
 
     /**

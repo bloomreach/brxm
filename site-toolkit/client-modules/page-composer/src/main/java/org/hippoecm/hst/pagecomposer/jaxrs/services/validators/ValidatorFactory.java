@@ -89,6 +89,10 @@ public class ValidatorFactory {
         return new HasPreviewConfigurationValidator(pageComposerContextService, mountId);
     }
 
+    public Validator getHasWorkspaceConfigurationValidator(final String mountId) {
+        return new HasWorkspaceConfigurationValidator(mountId);
+    }
+
     public Validator getNameValidator(String name) {
         return new NameValidator(name);
     }

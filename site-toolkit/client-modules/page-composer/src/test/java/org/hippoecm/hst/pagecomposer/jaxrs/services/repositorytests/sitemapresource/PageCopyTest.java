@@ -25,6 +25,7 @@ import com.google.common.eventbus.Subscribe;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyEvent;
@@ -38,6 +39,7 @@ import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_SITEMAP;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError.INVALID_NAME;
@@ -299,6 +301,42 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
             failingCopyEventListener.destroy();
         }
     }
+
+
+    private Mount getTargetMountByAlias(final String alias) {
+        final Mount editingMount = mountResource.getPageComposerContextService().getEditingMount();
+        final VirtualHost virtualHost = editingMount.getVirtualHost();
+        final Mount target = virtualHost.getVirtualHosts().getMountByGroupAliasAndType(virtualHost.getHostGroupName(), alias, "preview");
+        return target;
+    }
+
+    @Test
+    public void page_copy_creates_missing_workspace_config_nodes() throws Exception {
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "localhost", "/home");
+        SiteMapResource siteMapResource = createResource();
+        final Mount targetMount = getTargetMountByAlias("subsite");
+
+        final String previewConfigurationPath = targetMount.getHstSite().getConfigurationPath();
+        final String liveConfigurationPath = previewConfigurationPath.replace("-preview/", "/");
+        final String[] configPaths = {previewConfigurationPath, liveConfigurationPath};
+        for (String configPath : configPaths) {
+            assertTrue(session.nodeExists(configPath + "/" + NODENAME_HST_WORKSPACE));
+            assertFalse("pages should not yet exist.", session.nodeExists(configPath + "/" + NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_PAGES));
+            assertFalse("sitemap should not yet exist.", session.nodeExists(configPath + "/" + NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_SITEMAP));
+        }
+
+        final Response copy = siteMapResource.copy(targetMount.getIdentifier(), home.getId(), null, "copy");
+        assertEquals(OK.getStatusCode(), copy.getStatus());
+
+        //  assert target channel has now also automatically added 'hst:sitemap' and 'hst:pages' below its workspace
+        for (String configPath : configPaths) {
+            assertTrue(session.nodeExists(configPath + "/" + NODENAME_HST_WORKSPACE));
+            assertTrue("pages should not yet exist.", session.nodeExists(configPath + "/" + NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_PAGES));
+            assertTrue("sitemap should not yet exist.", session.nodeExists(configPath + "/" + NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_SITEMAP));
+        }
+
+    }
+
 
     @Test
     public void page_copy_cross_channel_already_locked_due_to_other_copy() throws Exception {
