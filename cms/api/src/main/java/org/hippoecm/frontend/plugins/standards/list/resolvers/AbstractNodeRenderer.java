@@ -35,7 +35,7 @@ public abstract class AbstractNodeRenderer implements IListCellRenderer<Node> {
     public Component getRenderer(String id, IModel<Node> model) {
         if (model instanceof JcrNodeModel) {
             try {
-                Node node = (Node) model.getObject();
+                Node node = model.getObject();
                 if (node != null) {
                     return getViewer(id, node);
                 } else {

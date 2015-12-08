@@ -49,6 +49,7 @@ public class NodeNameModel extends LoadableDetachableModel<String> implements IO
     @Override
     public void detach() {
         nodeModel.detach();
+        super.detach();
     }
 
     @Override

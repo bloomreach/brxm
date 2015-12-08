@@ -21,9 +21,9 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.model.event.IObservable;
-import org.hippoecm.repository.api.HippoNode;
 
 public class NameRenderer extends AbstractNodeRenderer {
 
@@ -31,7 +31,7 @@ public class NameRenderer extends AbstractNodeRenderer {
 
     @Override
     protected Component getViewer(String id, Node node) throws RepositoryException {
-        return new Label(id, ((HippoNode)node).getDisplayName());
+        return new Label(id, new NodeNameModel(new JcrNodeModel(node)));
     }
 
     @Override
