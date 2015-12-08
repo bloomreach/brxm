@@ -107,7 +107,7 @@ public class PagesHelper extends AbstractHelper {
                      final Mount sourceMount, final Mount targetMount)
             throws RepositoryException {
         Node newPageNode = create(session.getNodeByIdentifier(sourcePage.getCanonicalIdentifier()),
-                targetPageName, null, false, getWorkspacePath(targetMount) + "/" + NODENAME_HST_PAGES);
+                targetPageName, sourcePage, false, getWorkspacePath(targetMount) + "/" + NODENAME_HST_PAGES);
 
         if (sourceMount.getIdentifier().equals(targetMount.getIdentifier())) {
             // copy within same channel. We do not need to check all referenced components
@@ -396,7 +396,10 @@ public class PagesHelper extends AbstractHelper {
         }
     }
 
-
+    /**
+     * de-normalizes referenced workspace containers that are *part* of the canonical <code>newPage</code> node structure: Inherited
+     * references (for example hst:abstractpages/base/footer) do not need to be de-normalized
+     */
     private void denormalizeContainerComponentReferences(final Node newPage,
                                                          final HstComponentConfiguration pageInstance) throws RepositoryException {
 

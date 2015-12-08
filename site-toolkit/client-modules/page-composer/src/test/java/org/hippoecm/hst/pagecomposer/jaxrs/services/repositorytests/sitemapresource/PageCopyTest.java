@@ -122,4 +122,61 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
     public void page_copy_already_locked() throws Exception {
 
     }
+
+    @Test
+    public void non_workspace_page_can_be_copied() throws Exception {
+        // move homepage out of 'hst:workspace config
+        moveHomePageOutWorkspace();
+        session.save();
+        Thread.sleep(100);
+        copyHomePageWithinSameChannel(true, "copiedHome", null);
+    }
+
+    private void moveHomePageOutWorkspace() throws RepositoryException {
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home",
+                "/hst:hst/hst:configurations/unittestproject/hst:sitemap/home");
+        session.move("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home",
+                "/hst:hst/hst:configurations/unittestproject-preview/hst:sitemap/home");
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/homepage",
+                "/hst:hst/hst:configurations/unittestproject/hst:pages/homepage");
+        session.move("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/homepage",
+                "/hst:hst/hst:configurations/unittestproject-preview/hst:pages/homepage");
+    }
+
+
+    @Test
+    public void non_workspace_page_copy_with_reference_components_get_denormalized() throws Exception {
+        moveHomePageOutWorkspace();
+
+        final Node previewWorkspace = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace");
+        final Node liveWorkspace = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace");
+        final Node[] workspaces = {previewWorkspace, liveWorkspace};
+        for (Node workspace : workspaces) {
+            final Node containers = workspace.addNode("hst:containers", "hst:containercomponentfolder");
+            final Node containerNode = containers.addNode("testcontainer", "hst:containercomponent");
+            containerNode.setProperty("hst:xtype", "HST.vBox");
+            final Node containerItem = containerNode.addNode("item", HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
+            containerItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.Item");
+            final Node homePageContainer = session.getNode(workspace.getParent().getPath() + "/hst:pages/homepage")
+                    .addNode("container", "hst:containercomponentreference");
+            homePageContainer.setProperty("hst:referencecomponent", "testcontainer");
+        }
+        session.save();
+        Thread.sleep(100);
+        copyHomePageWithinSameChannel(false, "copiedHome", null);
+
+        // assert denormalization of the hst:containercomponentreference 'container' which now should have 'item' as child node
+        // instead of a pointer to 'hst:workspace/hst:containers/testcontainer'.
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/copiedHome/container/item"));
+
+        // assert the container is locked
+        assertEquals(session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/copiedHome/container")
+                .getProperty(GENERAL_PROPERTY_LOCKED_BY).getString(), "admin");
+
+        mountResource.publish();
+        Thread.sleep(100);
+        assertFalse(session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/copiedHome/container")
+                .hasProperty(GENERAL_PROPERTY_LOCKED_BY));
+
+    }
 }
