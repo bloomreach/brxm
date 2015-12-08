@@ -105,8 +105,8 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
         assertTrue(session.nodeExists(previewPageNodePath));
         assertFalse(session.nodeExists(liveSiteMapItemNodePath));
         assertFalse(session.nodeExists(livePageNodePath));
-        assertEquals(session.getNode(previewSiteMapItemNodePath).getProperty(GENERAL_PROPERTY_LOCKED_BY).getString(), "admin");
-        assertEquals(session.getNode(previewPageNodePath).getProperty(GENERAL_PROPERTY_LOCKED_BY).getString(), "admin");
+        assertEquals("admin", session.getNode(previewSiteMapItemNodePath).getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
+        assertEquals("admin", session.getNode(previewPageNodePath).getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
 
         // no templates copied since within same channel, so templates are not locked (templates are inherited from common any way
         assertFalse(session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:templates").hasProperty(GENERAL_PROPERTY_LOCKED_BY));
@@ -180,8 +180,8 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/copiedHome/container/item"));
 
         // assert the container is locked
-        assertEquals(session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/copiedHome/container")
-                .getProperty(GENERAL_PROPERTY_LOCKED_BY).getString(), "admin");
+        assertEquals("admin", session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/copiedHome/container")
+                .getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
 
         mountResource.publish();
         Thread.sleep(100);
@@ -212,8 +212,8 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
             }
             try {
                 final PageCopyContext pageCopyContext = event.getPageCopyContext();
-                assertEquals(pageCopyContext.getNewSiteMapItemNode().getProperty(GENERAL_PROPERTY_LOCKED_BY).getString(), "admin");
-                assertEquals(pageCopyContext.getNewPageNode().getProperty(GENERAL_PROPERTY_LOCKED_BY).getString(), "admin");
+                assertEquals("admin", pageCopyContext.getNewSiteMapItemNode().getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
+                assertEquals("admin", pageCopyContext.getNewPageNode().getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
             } catch (Exception e) {
                 event.setException(new RuntimeException(e));
             }
@@ -351,8 +351,8 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
         final String newPageNodePath = "/hst:hst/hst:configurations/unittestsubproject-preview/hst:workspace/hst:pages/copy";
         assertTrue(session.nodeExists(newSiteMapItemNodePath));
         assertTrue(session.nodeExists(newPageNodePath));
-        assertEquals(session.getNode(newSiteMapItemNodePath).getProperty(GENERAL_PROPERTY_LOCKED_BY).getString(), "admin");
-        assertEquals(session.getNode(newPageNodePath).getProperty(GENERAL_PROPERTY_LOCKED_BY).getString(), "admin");
+        assertEquals("admin", session.getNode(newSiteMapItemNodePath).getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
+        assertEquals("admin", session.getNode(newPageNodePath).getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
         assertFalse(session.nodeExists(newSiteMapItemNodePath.replace("-preview/", "/")));
         assertFalse(session.nodeExists(newPageNodePath.replace("-preview/", "/")));
 
