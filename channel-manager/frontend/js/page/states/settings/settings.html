@@ -169,7 +169,7 @@
       </div>
     </form>
 
-    <form name="copyForm" role="form" data-ng-if="state.isEditable" novalidate>
+    <form name="copyForm" role="form" data-ng-if="state.isCopyable" novalidate>
       <div class="form-group has-feedback" id="copyLastPathInfoElement" data-ng-class="{
                 'has-success': copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$valid,
                 'has-error': copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$invalid
