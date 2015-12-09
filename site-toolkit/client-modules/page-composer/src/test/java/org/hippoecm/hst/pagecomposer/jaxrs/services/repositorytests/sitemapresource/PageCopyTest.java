@@ -30,7 +30,9 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyEvent;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.repository.util.JcrUtils;
@@ -376,6 +378,20 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
         assertTrue(session.nodeExists(newPageNodePath.replace("-preview/","/")));
         assertFalse(session.getNode(newSiteMapItemNodePath).hasProperty(GENERAL_PROPERTY_LOCKED_BY));
         assertFalse(session.getNode(newPageNodePath).hasProperty(GENERAL_PROPERTY_LOCKED_BY));
+    }
+
+    @Test
+    public void page_copy_cross_channel_returns_representation_wrt_target_channel() throws Exception {
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "localhost", "/home");
+        SiteMapResource siteMapResource = createResource();
+        final Mount targetMount = getTargetMountByAlias("subsite");
+        final Response copy = siteMapResource.copy(targetMount.getIdentifier(), home.getId(), null, "copy");
+        assertEquals(OK.getStatusCode(), copy.getStatus());
+        ExtResponseRepresentation extResponseRepresentation = (ExtResponseRepresentation)copy.getEntity();
+        assertEquals(SiteMapPageRepresentation.class, extResponseRepresentation.getData().getClass());
+        SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation)extResponseRepresentation.getData();
+        assertEquals("copy", siteMapPageRepresentation.getPathInfo());
+        assertEquals("/subsite/copy",siteMapPageRepresentation.getRenderPathInfo());
     }
 
     @Test

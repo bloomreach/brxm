@@ -290,12 +290,8 @@ public class SiteMapResource extends AbstractConfigResource {
             public Response call() throws Exception {
                 PageCopyContext pcc = siteMapHelper.copy(mountId, siteMapItemUUID,
                         targetSiteMapItemUUID, targetName);
-
                 publishSynchronousEvent(new PageCopyEvent(pcc));
-
-                // TODO createSiteMapPageRepresentation does not take the target  mount into account. Hence, we should instead
-                // TODO use something like createSiteMapPageRepresentation(pcc)
-                final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(pcc.getNewSiteMapItemNode().getIdentifier(), null);
+                final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(pcc.getTargetMount(), pcc.getNewSiteMapItemNode().getIdentifier(), null);
                 return ok("Item created successfully", siteMapPageRepresentation);
             }
         }, preValidators.build());
@@ -353,16 +349,18 @@ public class SiteMapResource extends AbstractConfigResource {
         }, preValidator);
     }
 
-
     private SiteMapPageRepresentation createSiteMapPageRepresentation(final String siteMapItemUUID, final String parentId) throws RepositoryException {
+        return createSiteMapPageRepresentation(getPageComposerContextService().getEditingMount(), siteMapItemUUID, parentId);
+    }
+
+    private SiteMapPageRepresentation createSiteMapPageRepresentation(final Mount target, final String siteMapItemUUID, final String parentId) throws RepositoryException {
         SiteMapPageRepresentation siteMapPageRepresentation = new SiteMapPageRepresentation();
         siteMapPageRepresentation.setId(siteMapItemUUID);
         // siteMapPathInfo without starting /
         Node siteMapItem = getPageComposerContextService().getRequestContext().getSession().getNodeByIdentifier(siteMapItemUUID);
         String siteMapPathInfo = StringUtils.substringAfter(siteMapItem.getPath(), NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_SITEMAP );
         siteMapPageRepresentation.setPathInfo(siteMapPathInfo.substring(1));
-        final Mount mount = getPageComposerContextService().getEditingMount();
-        siteMapPageRepresentation.setRenderPathInfo(mount.getMountPath() + siteMapPathInfo);
+        siteMapPageRepresentation.setRenderPathInfo(target.getMountPath() + siteMapPathInfo);
         siteMapPageRepresentation.setParentId(parentId);
         return siteMapPageRepresentation;
     }
