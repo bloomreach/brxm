@@ -229,25 +229,6 @@ public class SiteMapResource extends AbstractConfigResource {
     }
 
     @POST
-    @Path("/duplicate/{siteMapItemId}")
-    public Response copy(final @PathParam("siteMapItemId") String siteMapItemId) {
-        final ValidatorBuilder preValidators = ValidatorBuilder.builder()
-                .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))
-                .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
-                        HstNodeTypes.NODETYPE_HST_SITEMAP));
-        preValidators.add(validatorFactory.getConfigurationExistsValidator(siteMapItemId, siteMapHelper));
-
-        return tryExecute(new Callable<Response>() {
-            @Override
-            public Response call() throws Exception {
-                Node copy = siteMapHelper.duplicate(siteMapItemId);
-                final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(copy.getIdentifier(), null);
-                return ok("Item created successfully", siteMapPageRepresentation);
-            }
-        }, preValidators.build());
-    }
-
-    @POST
     @Path("/copy")
     public Response copy(
             @HeaderParam("mountId")final String mountId,

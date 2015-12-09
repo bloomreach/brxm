@@ -204,45 +204,6 @@ public class SiteMapHelper extends AbstractHelper {
     }
 
     /**
-     * utility method to create a <strong>shallow copy</strong> of {@code siteMapItemUUID} : Shallow copy means that
-     * child pages of {@code siteMapItemUUID} are not copied. The copy will be a sibling of <code>siteMapItemUUID</code>
-     */
-    public Node duplicate(final String siteMapItemUUID) throws RepositoryException {
-        HstRequestContext requestContext = pageComposerContextService.getRequestContext();
-        HstSiteMapItem hstSiteMapItem = getConfigObject(siteMapItemUUID);
-        if (hstSiteMapItem == null) {
-            String message = String.format("Cannot duplicate because there is no siteMapItem for id '%s'.", siteMapItemUUID);
-            throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED);
-        }
-
-        final Session session = requestContext.getSession();
-        final String postfix = "-duplicate";
-        String targetName = hstSiteMapItem.getValue() + postfix;
-
-        final String parentPath;
-
-        final String targetSiteMapItemUUID;
-        final CanonicalInfo parentItem = (CanonicalInfo)hstSiteMapItem.getParentItem();
-        if (parentItem == null) {
-            parentPath = getPreviewWorkspacePath() + "/" + NODENAME_HST_SITEMAP;
-            targetSiteMapItemUUID = null;
-        } else {
-            parentPath = parentItem.getCanonicalPath();
-            targetSiteMapItemUUID = parentItem.getCanonicalIdentifier();
-        }
-        String nonWorkspaceParentPath = parentPath.replace("/" + NODENAME_HST_WORKSPACE + "/", "/");
-        int counter = 0;
-        while (session.nodeExists(parentPath + "/" + targetName) || session.nodeExists(nonWorkspaceParentPath + "/" + targetName)) {
-            counter++;
-            targetName = hstSiteMapItem.getValue() + "-" + counter + postfix;
-        }
-
-        PageCopyContext pcc = copy(pageComposerContextService.getEditingMount().getIdentifier(),
-                siteMapItemUUID, targetSiteMapItemUUID, targetName);
-        return pcc.getNewSiteMapItemNode();
-    }
-
-    /**
      * utility method to create a <strong>shallow copy</strong> of {@code siteMapItemId} : Shallow copy means that
      * child pages of {@code siteMapItemId} are not copied
      *
