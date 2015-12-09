@@ -15,18 +15,6 @@
  */
 package org.onehippo.taxonomy.plugin.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.jcr.ItemExistsException;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-
-import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.LazyMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
@@ -37,6 +25,10 @@ import org.onehippo.taxonomy.plugin.api.KeyCodec;
 import org.onehippo.taxonomy.plugin.api.TaxonomyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JcrCategoryInfo extends TaxonomyObject implements EditableCategoryInfo {
 
@@ -71,7 +63,7 @@ public class JcrCategoryInfo extends TaxonomyObject implements EditableCategoryI
                         categoryNode.getParent().getPath() + "/" + encoded);
             }
         } catch (ItemExistsException ex) {
-            log.debug("Could not rename category node; a sibling with name " + encoded + " already exists");
+            log.debug("Could not rename category node; a sibling with name {} already exists", encoded);
         } catch (RepositoryException ex) {
             log.warn("Unable to update node name of category", ex);
         }
@@ -103,56 +95,49 @@ public class JcrCategoryInfo extends TaxonomyObject implements EditableCategoryI
         return super.getNode();
     }
 
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getProperties() {
+        Map<String, Object> props = new HashMap<>();
+
+        return LazyMap.decorate(props, relPath -> {
+            try {
+                Node node = getNode();
+                if (node.hasProperty((String) relPath)) {
+                    Property prop = node.getProperty((String) relPath);
+                    if (prop.getType() == PropertyType.STRING) {
+                        if (prop.isMultiple()) {
+                            return getStringArray((String) relPath);
+                        } else {
+                            return getString((String) relPath);
+                        }
+                    } else {
+                        throw new UnsupportedOperationException("The map from JcrCategoryInfo#getProperties() doesn't support non string property values.");
+                    }
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+            return null;
+        });
+    }
+
     public String getString(String property, String defaultValue) {
         try {
             Node node = getNode();
             if (node.hasProperty(property)) {
                 return node.getProperty(property).getString();
             } else {
+                log.debug("Property '{}' does not exist on node at path: {} Returning the default value '{}'", property, getNode().getPath(), defaultValue);
                 return defaultValue;
             }
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.warn("Failed to retrieve property '" + property + "' from node associated with this category", ex);
         }
         return null;
-    }
-
-    @SuppressWarnings("unchecked")
-    public Map<String, Object> getProperties() {
-        Map<String, Object> props = new HashMap<String, Object>();
-
-        return LazyMap.decorate(props, new Transformer() {
-            @Override
-            public Object transform(Object relPath) {
-                try {
-                    Node node = getNode();
-                    if (node.hasProperty((String) relPath)) {
-                        Property prop = node.getProperty((String) relPath);
-                        if (prop.getType() == PropertyType.STRING) {
-                            if (prop.isMultiple()) {
-                                return getStringArray((String) relPath);
-                            } else {
-                                return getString((String) relPath);
-                            }
-                        } else {
-                            throw new UnsupportedOperationException("The map from JcrCategoryInfo#getProperties() doesn't support non string property values.");
-                        }
-                    }
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
-                }
-                return null;
-            }
-        });
     }
 
     public String getString(String property) {
-        try {
-            return getNode().getProperty(property).getString();
-        } catch (RepositoryException ex) {
-            log.warn("Failed to retrieve property '" + property + "' from node associated with this category");
-        }
-        return null;
+        return getString(property, null);
     }
 
     public void setString(String property, String value) throws TaxonomyException {
