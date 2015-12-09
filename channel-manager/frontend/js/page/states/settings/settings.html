@@ -169,7 +169,7 @@
         </button>
       </div>
     </form>
-    <form class="copy-form" name="copyForm" role="form" data-ng-if="state.isEditable" novalidate data-ng-class="{
+    <form class="copy-form" name="copyForm" role="form" data-ng-if="state.isCopyable" novalidate data-ng-class="{
                 'has-success': copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$valid,
                 'has-error': copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$invalid
             }">
