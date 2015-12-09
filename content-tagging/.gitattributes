@@ -5,7 +5,7 @@
 src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 src/main/resources/hippofacnav_facetsubnavigation.xml svneol=native#text/plain
 src/main/resources/navigator.xml svneol=native#text/plain
-src/main/resources/section-translations.xml -text
+src/main/resources/section-translations.json -text
 src/main/resources/tagcloud.xml svneol=native#text/plain
 src/main/resources/tagging-clusterloader.xml svneol=native#text/plain
 src/main/resources/tagging-tree-view.xml svneol=native#text/plain
