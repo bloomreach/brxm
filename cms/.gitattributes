@@ -1135,6 +1135,7 @@ api/src/main/styling/styles/_typography.scss -text
 api/src/main/styling/styles/_user_menu.scss -text
 api/src/main/styling/styles/_variables.scss -text
 api/src/main/styling/styles/main.scss -text
+api/src/test/java/org/hippoecm/frontend/dialog/EscapeHtmlStringModelTest.java -text
 api/src/test/java/org/hippoecm/frontend/editor/plugins/resource/PdfParserTest.java -text
 api/src/test/java/org/hippoecm/frontend/editor/workflow/model/ReferringDocumentsProviderTest.java -text
 api/src/test/java/org/hippoecm/frontend/model/TraceMonitorTest.java -text
