@@ -147,10 +147,10 @@ public class PagesHelper extends AbstractHelper {
             if (isNotBlank(reference)) {
                 copyReferenceIfMissing(node, sourceSite, targetSite, reference, checkedNodes);
             }
-            // check all references of all the descendants as well
-            for (Node child : new NodeIterable(node.getNodes())) {
-                checkReferencesRecursive(child, sourceSite, targetSite, checkedNodes);
-            }
+        }
+        // check all references of all the descendants as well
+        for (Node child : new NodeIterable(node.getNodes())) {
+            checkReferencesRecursive(child, sourceSite, targetSite, checkedNodes);
         }
     }
 
@@ -198,10 +198,8 @@ public class PagesHelper extends AbstractHelper {
                     final String existingRelativePath = getConfigurationRelativePath(configurationRelativePathSegments.subList(0, i));
                     final Node copy = JcrUtils.copy(session, sourceSite.getConfigurationPath() + "/" + existingRelativePath + "/" + configurationRelativePathSegments.get(i),
                             targetSite.getConfigurationPath() + "/" + existingRelativePath + "/" + configurationRelativePathSegments.get(i));
-                    // repeat the same reference checking for the child nodes of the copied node
-                    for (Node child : new NodeIterable(copy.getNodes())) {
-                        checkReferencesRecursive(child, sourceSite, targetSite, checkedNodes);
-                    }
+                    // repeat the same reference checking for the copied node
+                    checkReferencesRecursive(copy, sourceSite, targetSite, checkedNodes);
                 }
             }
         }
