@@ -27,11 +27,11 @@
 
         var channelService = {};
 
-        channelService.isCrossChannelPageCopySupported = function () {
+        channelService.getFeatures = function () {
           var deferred = $q.defer();
 
           $http.get(ConfigService.apiUrlPrefix +
-            '/cafebabe-cafe-babe-cafe-babecafebabe./is-cross-channel-pagecopy-supported')
+            '/cafebabe-cafe-babe-cafe-babecafebabe./features')
             .success(function (response) {
               deferred.resolve(response.data);
             })

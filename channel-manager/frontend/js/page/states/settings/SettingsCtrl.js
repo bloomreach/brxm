@@ -205,9 +205,9 @@
         }
 
         function loadCrossChannelPageCopySupported() {
-          return ChannelService.isCrossChannelPageCopySupported()
+          return ChannelService.getFeatures()
             .then(function (data) {
-              $scope.crossChannelPageCopySupported = data;
+              $scope.crossChannelPageCopySupported = data.crossChannelPageCopySupported;
             }, setErrorFeedback);
         }
         
