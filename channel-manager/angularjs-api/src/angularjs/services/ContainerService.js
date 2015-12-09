@@ -56,8 +56,8 @@
                     });
                 }
 
-                function showPage(path) {
-                    IFrameService.publish('browseTo', prefixWithSlash(path));
+                function showPage(path, mountId) {
+                    IFrameService.publish('browseTo', prefixWithSlash(path), mountId);
                 }
 
                 return {

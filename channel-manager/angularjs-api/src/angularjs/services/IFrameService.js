@@ -55,9 +55,9 @@
           return iframePanel;
         }
 
-        function publish (event, value) {
+        function publish (event, value1, value2) {
           if (isActive) {
-            return getParentIFramePanel().iframeToHost.publish(event, value);
+            return getParentIFramePanel().iframeToHost.publish(event, value1, value2);
           }
         }
 

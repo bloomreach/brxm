@@ -132,14 +132,13 @@
         };
 
         $scope.submitCopyPage = function () {
-
           PageService.copyPage(
             $scope.copy.mountId,
             $scope.page.id,
             $scope.copy.lastPathInfoElement,
             $scope.copy.target.id)
             .then(function (data) {
-              ContainerService.showPage(data.renderPathInfo);
+              ContainerService.showPage(data.renderPathInfo, $scope.copy.mountId);
             }, function (errorResponse) {
               $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
             });
