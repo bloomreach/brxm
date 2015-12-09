@@ -40,7 +40,6 @@ import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.editor.workflow.dialog.DeleteDialog;
 import org.hippoecm.frontend.editor.workflow.dialog.WhereUsedDialog;
-import org.hippoecm.frontend.i18n.TranslatorUtils;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -55,6 +54,7 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.util.CodecUtils;
+import org.hippoecm.frontend.util.DocumentUtils;
 import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -479,7 +479,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
     private IModel<String> getDisplayName() {
         try {
-            final IModel<String> model = TranslatorUtils.getDocumentNameModel(getModel().getNode());
+            final IModel<String> model = DocumentUtils.getDocumentNameModel(getModel().getNode());
             if (model != null) {
                 return model;
             }

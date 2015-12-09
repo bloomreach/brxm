@@ -509,6 +509,7 @@ api/src/main/java/org/hippoecm/frontend/types/TypeException.java svneol=native#t
 api/src/main/java/org/hippoecm/frontend/types/TypeHelper.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/types/TypeLocator.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/usagestatistics/UsageStatisticsSettings.java -text
+api/src/main/java/org/hippoecm/frontend/util/DocumentUtils.java -text
 api/src/main/java/org/hippoecm/frontend/util/MappingException.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/util/MaxLengthNodeNameFormatter.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/util/MaxLengthStringFormatter.java svneol=native#text/plain

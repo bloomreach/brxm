@@ -39,7 +39,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.editor.icon.EditorTabIconProvider;
-import org.hippoecm.frontend.i18n.TranslatorUtils;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -48,6 +47,7 @@ import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.translation.ILocaleProvider;
+import org.hippoecm.frontend.util.DocumentUtils;
 import org.hippoecm.frontend.validation.IValidationListener;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
@@ -177,7 +177,7 @@ public class EditPerspective extends Perspective {
 
     private IModel<String> getDisplayName(JcrNodeModel model) {
         try {
-            final IModel<String> result = TranslatorUtils.getDocumentNameModel(model);
+            final IModel<String> result = DocumentUtils.getDocumentNameModel(model);
             if (result != null) {
                 return result;
             }

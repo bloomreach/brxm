@@ -123,26 +123,6 @@ public class TranslatorUtils {
         return new StringResourceModel(key, Model.of(details), t.getLocalizedMessage(), parameters);
     }
 
-    public static IModel<String> getDocumentNameModel(IModel<Node> model) throws RepositoryException {
-        return getDocumentNameModel(model.getObject());
-    }
-
-    public static IModel<String> getDocumentNameModel(final Node node) throws RepositoryException {
-        if (node == null) {
-            return null;
-        }
-        if (!node.isNodeType(NT_NAMED)) {
-            final Node parent = node.getParent();
-            if (parent != null && parent.isNodeType(NT_NAMED) && parent.isNodeType(NT_HANDLE)) {
-                return new NodeNameModel(new JcrNodeModel(parent));
-            } else {
-                return new Model<>(node.getName());
-            }
-        } else {
-            return new NodeNameModel(new JcrNodeModel(node));
-        }
-    }
-
     /**
      * Create the resource key and assemble the details.
      *

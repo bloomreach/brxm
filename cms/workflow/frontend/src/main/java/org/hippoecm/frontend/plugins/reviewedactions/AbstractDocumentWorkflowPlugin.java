@@ -28,7 +28,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.i18n.TranslatorUtils;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -37,6 +36,7 @@ import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.CodecUtils;
+import org.hippoecm.frontend.util.DocumentUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.WorkflowException;
@@ -137,7 +137,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
 
     IModel<String> getDocumentName() {
         try {
-            final IModel<String> result = TranslatorUtils.getDocumentNameModel(((WorkflowDescriptorModel) getDefaultModel()).getNode());
+            final IModel<String> result = DocumentUtils.getDocumentNameModel(((WorkflowDescriptorModel) getDefaultModel()).getNode());
             if (result != null) {
                 return result;
             }
