@@ -49,6 +49,7 @@ import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
@@ -184,16 +185,16 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
                     @Override
                     protected Dialog createRequestDialog() {
-                        HippoNode folderNode = null;
+                        Node folderNode = null;
                         try {
-                            folderNode = (HippoNode) getModel().getNode();
+                            folderNode = getModel().getNode();
                         } catch (RepositoryException e) {
                             log.error("Unable to retrieve node from WorkflowDescriptorModel, folder delete cancelled", e);
                         }
 
                         if (folderNode != null) {
                             try {
-                                final String folderName = folderNode.getDisplayName();
+                                final IModel<String> folderName = new NodeNameModel(new JcrNodeModel(folderNode));
                                 boolean deleteAllowed = true;
                                 for (NodeIterator iter = folderNode.getNodes(); iter.hasNext(); ) {
                                     Node child = iter.nextNode();
