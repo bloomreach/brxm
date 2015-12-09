@@ -391,7 +391,7 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
         assertEquals(SiteMapPageRepresentation.class, extResponseRepresentation.getData().getClass());
         SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation)extResponseRepresentation.getData();
         assertEquals("copy", siteMapPageRepresentation.getPathInfo());
-        assertEquals("/subsite/copy",siteMapPageRepresentation.getRenderPathInfo());
+        assertEquals("/subsite/copy", siteMapPageRepresentation.getRenderPathInfo());
     }
 
     @Test
@@ -420,10 +420,20 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
     public void page_copy_cross_channel_copies_missing_referenced_pages_as_well() throws Exception {
         // hst:pages/newsoverview is not available in subsite (because of movePagesFromCommonToUnitTestProject)
         // hence when copying the 'news' page, we'd expect hst:pages/standardoverview to be added to the subsite.
-        crossChannelCopyNewsOverview();
+        crossChannelCopyNewsOverview(MountAction.PUBLISH);
+    }
+    @Test
+     public void discard_after_page_copy_cross_channel_removes_added_referenced_pages_as_well() throws Exception {
+        // hst:pages/newsoverview is not available in subsite (because of movePagesFromCommonToUnitTestProject)
+        // hence when copying the 'news' page, we'd expect hst:pages/standardoverview to be added to the subsite.
+        crossChannelCopyNewsOverview(MountAction.DISCARD);
     }
 
-    private void crossChannelCopyNewsOverview() throws Exception {
+    enum MountAction {
+        PUBLISH, DISCARD
+    }
+
+    private void crossChannelCopyNewsOverview(final MountAction action) throws Exception {
         final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "localhost", "/news");
         SiteMapResource siteMapResource = createResource();
         final Mount targetMount = getTargetMountByAlias("subsite");
@@ -445,15 +455,23 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
 
         assertEquals("subsite", RequestContextProvider.get().getResolvedMount().getMount().getName());
 
-        mountResource.publish();
-
-        Thread.sleep(100);
-
-        assertFalse("hst:pages should be unlocked", session.getNode(previewPagesPath).hasProperty(GENERAL_PROPERTY_LOCKED_BY));
-        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:workspace/hst:pages/copy"));
-        assertTrue(session.nodeExists(previewPagesPath + "/standardoverview"));
-        assertTrue(session.nodeExists(livePagesPath + "/standardoverview"));
-        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject/hst:workspace/hst:pages/copy"));
+        if (action == MountAction.PUBLISH) {
+            mountResource.publish();
+            Thread.sleep(100);
+            assertFalse("hst:pages should be unlocked", session.getNode(previewPagesPath).hasProperty(GENERAL_PROPERTY_LOCKED_BY));
+            assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:workspace/hst:pages/copy"));
+            assertTrue(session.nodeExists(previewPagesPath + "/standardoverview"));
+            assertTrue(session.nodeExists(livePagesPath + "/standardoverview"));
+            assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject/hst:workspace/hst:pages/copy"));
+        } else if (action == MountAction.DISCARD) {
+            mountResource.discardChanges();
+            Thread.sleep(100);
+            assertFalse("hst:pages should be unlocked", session.getNode(previewPagesPath).hasProperty(GENERAL_PROPERTY_LOCKED_BY));
+            assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:workspace/hst:pages/copy"));
+            assertFalse(session.nodeExists(previewPagesPath + "/standardoverview"));
+            assertFalse(session.nodeExists(livePagesPath + "/standardoverview"));
+            assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject/hst:workspace/hst:pages/copy"));
+        }
     }
 
     protected void moveAbstractPagesFromCommonToUnitTestProject() throws RepositoryException {
@@ -468,10 +486,24 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
         session.save();
         Thread.sleep(100);
         assertFalse("hst:abstractpages was expected to not even exist before the copy page", session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:abstractpages"));
-        crossChannelCopyNewsOverview();
+        crossChannelCopyNewsOverview(MountAction.PUBLISH);
         // now make sure that 'hst:abstractpages/basepage is also available in preview and live subsite config
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:abstractpages/basepage"));
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject/hst:abstractpages/basepage"));
+    }
+
+    @Test
+    public void discard_changes_after_page_copy_cross_channel_removes_added_referenced_abstract_pages_as_well() throws Exception {
+        moveAbstractPagesFromCommonToUnitTestProject();
+        session.save();
+        Thread.sleep(100);
+        assertFalse("hst:abstractpages was expected to not exist before the copy page", session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:abstractpages"));
+        crossChannelCopyNewsOverview(MountAction.DISCARD);
+        // due to the discard, the 'hst:abstractpages' node should be entirely removed again since the live does not
+        // have hst:abstractpages
+        assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:abstractpages"));
+        assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject/hst:abstractpages"));
+
     }
 
     protected void moveComponentsFromCommonToUnitTestProject() throws RepositoryException {
@@ -484,7 +516,7 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
         moveComponentsFromCommonToUnitTestProject();
         session.save();
         Thread.sleep(100);
-        crossChannelCopyNewsOverview();
+        crossChannelCopyNewsOverview(MountAction.PUBLISH);
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:components/overview"));
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject/hst:components/overview"));
 
@@ -497,6 +529,15 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
         assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject/hst:components/leftmenu"));
     }
 
+    @Test
+    public void discard_changes_page_copy_cross_channel_removes_added_components_as_well() throws Exception {
+        moveComponentsFromCommonToUnitTestProject();
+        session.save();
+        Thread.sleep(100);
+        crossChannelCopyNewsOverview(MountAction.DISCARD);
+        assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:components"));
+        assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject/hst:components"));
+    }
 
     @Test
     public void page_copy_cross_channel_copies_missing_inherited_pages_abstract_pages_and_components_as_well() throws Exception {
@@ -506,7 +547,7 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
         Thread.sleep(100);
         assertFalse("hst:abstractpages was expected to not even exist before the copy page", session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:abstractpages"));
         assertFalse("hst:components was expected to not even exist before the copy page", session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:components"));
-        crossChannelCopyNewsOverview();
+        crossChannelCopyNewsOverview(MountAction.PUBLISH);
         // now make sure that 'hst:abstractpages/basepage is also available in preview and live subsite config
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:abstractpages/basepage"));
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject/hst:abstractpages/basepage"));
@@ -517,13 +558,42 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject/hst:components/leftmenu"));
     }
 
-    @Test
-     public void page_copy_cross_channel_copies_missing_templates_as_well() throws Exception {
-        //
+    protected void moveTemplatesFromCommonToUnitTestProject() throws RepositoryException {
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:templates", "/hst:hst/hst:configurations/unittestproject-preview/hst:templates");
+        session.move("/hst:hst/hst:configurations/unittestcommon/hst:templates", "/hst:hst/hst:configurations/unittestproject/hst:templates");
     }
 
     @Test
-    public void page_copy_cross_channel_already_locked_due_to_other_copy() throws Exception {
+    public void page_copy_cross_channel_copies_missing_templates_as_well() throws Exception {
+        moveTemplatesFromCommonToUnitTestProject();
+        session.save();
+        Thread.sleep(100);
+        assertFalse("hst:templates was expected to not even exist before the copy page", session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:templates"));
+        crossChannelCopyNewsOverview(MountAction.PUBLISH);
+        // make assertions about the templates that now should have become available
+        final String[] expectedTemplates = {"webpage", "overview", "header", "title", "leftmenu"};
+        for (String expectedTemplate : expectedTemplates) {
+            assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:templates/" + expectedTemplate));
+            assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject/hst:templates/" + expectedTemplate));
+        }
+    }
+
+    @Test
+    public void discard_page_copy_cross_channel_removes_added_templates_as_well() throws Exception {
+        moveTemplatesFromCommonToUnitTestProject();
+        session.save();
+        Thread.sleep(100);
+        assertFalse("hst:templates was expected to not exist before the copy page", session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:templates"));
+        crossChannelCopyNewsOverview(MountAction.DISCARD);
+        assertFalse("hst:templates was expected to not exist after the discard", session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:templates"));
+    }
+
+    @Test
+    public void page_copy_cross_channel_already_locked_exception_due_to_other_copy_locking_abstract_pages() throws Exception {
+
+    }
+    @Test
+    public void page_copy_cross_channel_already_locked_exception_due_to_other_copy_locking_templates() throws Exception {
 
     }
 
