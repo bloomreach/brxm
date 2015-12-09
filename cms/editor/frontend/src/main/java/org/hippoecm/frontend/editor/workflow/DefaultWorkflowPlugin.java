@@ -40,9 +40,9 @@ import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.editor.workflow.dialog.DeleteDialog;
 import org.hippoecm.frontend.editor.workflow.dialog.WhereUsedDialog;
+import org.hippoecm.frontend.i18n.TranslatorUtils;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
-import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
@@ -58,7 +58,6 @@ import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -72,8 +71,6 @@ import static org.apache.commons.io.FilenameUtils.EXTENSION_SEPARATOR_STR;
 import static org.apache.commons.io.FilenameUtils.getBaseName;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.apache.commons.io.FilenameUtils.isExtension;
-import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
-import static org.hippoecm.repository.api.HippoNodeType.NT_NAMED;
 
 public class DefaultWorkflowPlugin extends RenderPlugin {
 
@@ -482,20 +479,13 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
     private IModel<String> getDisplayName() {
         try {
-            final Node node = getModel().getNode();
-            if (!node.isNodeType(NT_NAMED)) {
-                final Node parent = node.getParent();
-                if (parent != null && parent.isNodeType(NT_NAMED) && parent.isNodeType(NT_HANDLE)) {
-                    return new NodeNameModel(new JcrNodeModel(parent));
-                } else {
-                    return new Model<>(node.getName());
-                }
-            } else {
-                return new NodeNameModel(new JcrNodeModel(getModel().getNode()));
+            final IModel<String> model = TranslatorUtils.getDocumentNameModel(getModel().getNode());
+            if (model != null) {
+                return model;
             }
-        } catch (RepositoryException ex) {
-            return Model.of(getString("unknown"));
+        } catch (RepositoryException ignored) {
         }
+        return Model.of(getString("unknown"));
     }
 
     IEditorManager getEditorManager() {

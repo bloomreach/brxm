@@ -35,11 +35,12 @@ import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.editor.icon.EditorTabIconProvider;
+import org.hippoecm.frontend.i18n.TranslatorUtils;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
@@ -149,7 +150,7 @@ public class EditPerspective extends Perspective {
             @Override
             protected String load() {
                 JcrNodeModel nodeModel = (JcrNodeModel) EditPerspective.this.getDefaultModel();
-                IModel<String> nodeName = new NodeNameModel(nodeModel);
+                IModel<String> nodeName = getDisplayName(nodeModel);
                 if (nodeModel != null) {
                     Node node = nodeModel.getNode();
                     if (node != null) {
@@ -172,6 +173,17 @@ public class EditPerspective extends Perspective {
                 return nodeName.getObject();
             }
         };
+    }
+
+    private IModel<String> getDisplayName(JcrNodeModel model) {
+        try {
+            final IModel<String> result = TranslatorUtils.getDocumentNameModel(model);
+            if (result != null) {
+                return result;
+            }
+        } catch (RepositoryException ignored) {
+        }
+        return Model.of(getString("unknown"));
     }
 
     @Override
