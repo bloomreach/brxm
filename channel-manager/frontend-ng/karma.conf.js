@@ -18,6 +18,8 @@ module.exports = function (config) {
       {pattern: cfg.bowerDir + '**/*', included: false, served: true},
       cfg.bowerDir + 'angular/angular.js',
       cfg.bowerDir + 'angular-ui-router/release/angular-ui-router.js',
+      cfg.bowerDir + 'angular-translate/angular-translate.js',
+      cfg.bowerDir + 'angular-translate-loader-static-files/angular-translate-loader-static-files.js',
       cfg.bowerDir + 'angular-mocks/angular-mocks.js',
       cfg.dist.indexScript,
       cfg.src.unitTests
