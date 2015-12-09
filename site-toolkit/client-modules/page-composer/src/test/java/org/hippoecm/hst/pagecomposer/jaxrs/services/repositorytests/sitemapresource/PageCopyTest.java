@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemapreso
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
 import com.google.common.eventbus.AllowConcurrentEvents;
@@ -34,6 +35,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
@@ -430,7 +432,7 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
     }
 
     enum MountAction {
-        PUBLISH, DISCARD
+        PUBLISH, DISCARD, NOOP
     }
 
     private void crossChannelCopyNewsOverview(final MountAction action) throws Exception {
@@ -471,6 +473,8 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
             assertFalse(session.nodeExists(previewPagesPath + "/standardoverview"));
             assertFalse(session.nodeExists(livePagesPath + "/standardoverview"));
             assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject/hst:workspace/hst:pages/copy"));
+        } else if (action == MountAction.NOOP) {
+            // do publication or discard
         }
     }
 
@@ -588,13 +592,112 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
         assertFalse("hst:templates was expected to not exist after the discard", session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:templates"));
     }
 
-    @Test
-    public void page_copy_cross_channel_already_locked_exception_due_to_other_copy_locking_abstract_pages() throws Exception {
-
+    protected void movePagesFromUnitTestProjectToCommon() throws RepositoryException {
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:pages", "/hst:hst/hst:configurations/unittestcommon/hst:pages");
+        session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:pages").remove();
     }
+
+    @Test
+    public void page_copy_cross_channel_different_users_succeeds_if_no_overlapping_nodes() throws Exception {
+        // move pages to common first
+        movePagesFromUnitTestProjectToCommon();
+        session.save();
+        Thread.sleep(100);
+
+        {
+            final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "localhost", "/news");
+            SiteMapResource siteMapResource = createResource();
+            final Mount targetMount = getTargetMountByAlias("subsite");
+            final Response copy = siteMapResource.copy(targetMount.getIdentifier(), news.getId(), null, "copy");
+            assertEquals(OK.getStatusCode(), copy.getStatus());
+        }
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:workspace/hst:pages/copy"));
+
+        // now a different user should be able to copy '/news' to 'copy-again'. This is possible because the previous
+        // siteMapResource.copy did not result in copied missing abstractpages, templates, components, etc.
+        final Session bob = createSession("bob", "bob");
+        try {
+            final SiteMapItemRepresentation news = getSiteMapItemRepresentation(bob, "localhost", "/news");
+            SiteMapResource siteMapResource = createResource();
+            final Mount targetMount = getTargetMountByAlias("subsite");
+            final Response copy = siteMapResource.copy(targetMount.getIdentifier(), news.getId(), null, "copy-again");
+            assertEquals(OK.getStatusCode(), copy.getStatus());
+            assertTrue(bob.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:workspace/hst:pages/copy-again"));
+            assertEquals("bob",bob.getNode("/hst:hst/hst:configurations/unittestsubproject-preview/hst:workspace/hst:pages/copy-again").getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
+
+            // before we can use 'mountResource' to publish, we first have to 'switch' current request context to 'subsite'
+            getSiteMapItemRepresentation(bob, "localhost", "/subsite");
+
+            mountResource.publish();
+            assertTrue(bob.nodeExists("/hst:hst/hst:configurations/unittestsubproject/hst:workspace/hst:pages/copy-again"));
+            // changes from 'session' are not yet published
+            assertFalse(bob.nodeExists("/hst:hst/hst:configurations/unittestsubproject/hst:workspace/hst:pages/copy"));
+        } finally {
+            bob.logout();
+        }
+    }
+
+    @Test
+    public void page_copy_cross_channel_already_locked_exception_due_to_other_copy_locking_non_workspace_pages() throws Exception {
+        crossChannelCopyNewsOverview(MountAction.NOOP);
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:workspace/hst:pages/copy"));
+        final String previewPagesPath = "/hst:hst/hst:configurations/unittestsubproject-preview/hst:pages";
+        assertTrue(session.nodeExists(previewPagesPath + "/standardoverview"));
+        assertEquals("admin", session.getNode(previewPagesPath).getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
+
+        // now a different user should NOT be able to copy '/news' to 'copy-again'. This is NOT possible because the previous
+        // siteMapResource.copy did result in copied missing hst:pages (which are still locked)
+        final Session bob = createSession("bob", "bob");
+        try {
+            final SiteMapItemRepresentation news = getSiteMapItemRepresentation(bob, "localhost", "/news");
+            SiteMapResource siteMapResource = createResource();
+            final Mount targetMount = getTargetMountByAlias("subsite");
+            final Response copy = siteMapResource.copy(targetMount.getIdentifier(), news.getId(), null, "copy-again");
+            assertEquals(BAD_REQUEST.getStatusCode(), copy.getStatus());
+            final ExtResponseRepresentation entity = (ExtResponseRepresentation)copy.getEntity();
+            final String errorCode = entity.getErrorCode();
+            assertEquals(String.valueOf(ClientError.ITEM_ALREADY_LOCKED), errorCode);
+            // error message is about this node being locked
+            assertTrue(entity.getMessage().contains("/hst:hst/hst:configurations/unittestsubproject-preview/hst:pages"));
+        } finally {
+            bob.logout();
+        }
+    }
+
     @Test
     public void page_copy_cross_channel_already_locked_exception_due_to_other_copy_locking_templates() throws Exception {
-
+        // move pages to common first otherwise 'pages' already causes the lock
+        movePagesFromUnitTestProjectToCommon();
+        moveTemplatesFromCommonToUnitTestProject();
+        session.save();
+        Thread.sleep(100);
+        {
+            final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "localhost", "/news");
+            SiteMapResource siteMapResource = createResource();
+            final Mount targetMount = getTargetMountByAlias("subsite");
+            final Response copy = siteMapResource.copy(targetMount.getIdentifier(), news.getId(), null, "copy");
+            assertEquals(OK.getStatusCode(), copy.getStatus());
+        }
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:workspace/hst:pages/copy"));
+        assertEquals("admin", session.getNode("/hst:hst/hst:configurations/unittestsubproject-preview/hst:templates").getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
+        // now a different user should NOT be able to copy '/news' to 'copy-again'. This is NOT possible because the previous
+        // siteMapResource.copy did result in copied missing templates (which are still locked)
+        final Session bob = createSession("bob", "bob");
+        try {
+            final SiteMapItemRepresentation news = getSiteMapItemRepresentation(bob, "localhost", "/news");
+            SiteMapResource siteMapResource = createResource();
+            final Mount targetMount = getTargetMountByAlias("subsite");
+            final Response copy = siteMapResource.copy(targetMount.getIdentifier(), news.getId(), null, "copy-again");
+            assertEquals(BAD_REQUEST.getStatusCode(), copy.getStatus());
+            final ExtResponseRepresentation entity = (ExtResponseRepresentation)copy.getEntity();
+            final String errorCode = entity.getErrorCode();
+            assertEquals(String.valueOf(ClientError.ITEM_ALREADY_LOCKED), errorCode);
+            // error message is about this node being locked
+            assertTrue(entity.getMessage().contains("/hst:hst/hst:configurations/unittestsubproject-preview/hst:templates"));
+        } finally {
+            bob.logout();
+        }
     }
+
 
 }
