@@ -16,7 +16,7 @@
     "grunt-newer": "1.1.0",
     "grunt-sass": "1.0.0",
     "grunt-usemin": "3.0.0",
-    "jasmine-core": "^2.4.1",
+    "jasmine-core": "2.4.1",
     "jshint-stylish": "1.0.1",
     "karma": "0.12.31",
     "karma-coverage": "0.2.7",
