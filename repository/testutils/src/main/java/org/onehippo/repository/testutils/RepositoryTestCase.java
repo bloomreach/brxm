@@ -182,11 +182,8 @@ public abstract class RepositoryTestCase {
 
     protected void removeNode(final String path) throws RepositoryException {
         while (session != null && session.nodeExists(path)) {
-            try {
-                session.getNode(path).remove();
-                session.save();
-            } catch (ItemNotFoundException ignore) {
-            }
+            session.getNode(path).remove();
+            session.save();
         }
     }
 
@@ -360,5 +357,5 @@ public abstract class RepositoryTestCase {
         }
         return ((HippoWorkspace) session.getWorkspace()).getHierarchyResolver().getNode(session.getRootNode(), path);
     }
-
+    
 }
