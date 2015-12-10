@@ -35,6 +35,9 @@
         <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>http://www.onehippo.org/robotstxt/nt/1.1</sv:value>
         </sv:property>
+        <sv:property sv:name="hipposysedit:supertype" sv:type="String">
+          <sv:value>hippo:compound</sv:value>
+        </sv:property>
         <sv:node sv:name="useragent">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hipposysedit:field</sv:value>
