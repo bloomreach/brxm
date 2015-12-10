@@ -17,7 +17,7 @@
 describe('Settings Controller', function () {
   'use strict';
 
-  var scope, PageService, PrototypeService,
+  var scope, PageService,ChannelService, PrototypeService,
     setCmsUser, createController,
     isPageInWorkspace,
     pageLockedBy, pageLockedOn;
@@ -33,6 +33,9 @@ describe('Settings Controller', function () {
 
     PageService = jasmine.createSpyObj('PageService', ['getMountInfo', 'getCurrentPage']);
     $provide.value('hippo.channel.PageService', PageService);
+
+    ChannelService = jasmine.createSpyObj('ChannelService', ['getFeatures']);
+    $provide.value('hippo.channel.ChannelService', ChannelService);
 
     PrototypeService = jasmine.createSpyObj('PrototypeService', ['getPrototypes']);
     $provide.value('hippo.channel.PrototypeService', PrototypeService);
@@ -53,7 +56,8 @@ describe('Settings Controller', function () {
 
     createController = function () {
       PageService.getMountInfo.and.callFake(function () {
-        return resolvedPromise({hostName: 'www.onehippo.com', mountPath: '/mountpath'});
+        return resolvedPromise({hostName: 'www.' +
+          'onehippo.com', mountPath: '/mountpath'});
       });
 
       PageService.getCurrentPage.and.callFake(function () {
@@ -64,6 +68,12 @@ describe('Settings Controller', function () {
           workspaceConfiguration: isPageInWorkspace,
           lockedBy: pageLockedBy,
           lockedOn: pageLockedOn
+        });
+      });
+
+      ChannelService.getFeatures.and.callFake(function() {
+        return resolvedPromise({
+          crossChannelPageCopySupported : true
         });
       });
 
