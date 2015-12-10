@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:esv="http://www.onehippo.org/jcr/xmlimport"
+         esv:merge="combine" sv:name="robotstxt">
+
+  <!-- add hippo:sysedit node for new sitemap field -->
+  <sv:node sv:name="robotstxt" esv:merge="combine">
+    <sv:node sv:name="hipposysedit:nodetype" esv:merge="combine">
+      <sv:node sv:name="hipposysedit:nodetype" esv:merge="combine">
+        <sv:node sv:name="sitemap">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>robotstxt:sitemap</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>String</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+
+  <!-- add translator nodes for new sitemap field -->
+  <sv:node sv:name="robotstxt" esv:merge="combine">
+    <sv:node sv:name="editor:templates" esv:merge="combine">
+      <sv:node sv:name="_default_" esv:merge="combine">
+        <sv:node sv:name="translator" esv:merge="combine">
+          <sv:node sv:name="hippostd:translations" esv:merge="combine">
+            <sv:node sv:name="sitemap">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>frontend:pluginconfig</sv:value>
+              </sv:property>
+              <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+                <sv:value>hippo:translated</sv:value>
+              </sv:property>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>nl</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>Sitemap</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>en</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>Sitemap</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>de</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>Sitemap</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>fr</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>Sitemap</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+
+  <!-- add editor template node for new sitemap field -->
+  <sv:node sv:name="robotstxt" esv:merge="combine">
+    <sv:node sv:name="editor:templates" esv:merge="combine">
+      <sv:node sv:name="_default_" esv:merge="combine">
+        <sv:node sv:name="sitemap">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="field" sv:type="String">
+            <sv:value>sitemap</sv:value>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="translator.id" sv:type="String">
+            <sv:value>${cluster.id}.translator</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>${cluster.id}.field</sv:value>
+          </sv:property>
+          <sv:node sv:name="cluster.options">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:pluginconfig</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+
+</sv:node>

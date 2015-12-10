@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -37,6 +37,9 @@
     </sv:property>
     <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
       <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.2.0</sv:value>
     </sv:property>
   </sv:node>
 
@@ -88,6 +91,20 @@
       <sv:value>/hippo:namespaces/robotstxt/section/editor:templates/_default_/translator/hippostd:translations</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="robotstxt-namespace-delta-3">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20102.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>translation-deltas/namespace-3.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces</sv:value>
+    </sv:property>
+  </sv:node>
   <!--HIPPLUG-1121: add missing property to make compound layout work. TODO: integrate this change for CMS 11-->
   <sv:node sv:name="robotstxt-namespace-patch-supertype">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -120,32 +137,40 @@
   </sv:node>
 
   <!--TODO: remove this initializeitem in the next major version-->
-  <sv:node sv:name="robotstxt-template-script-upgrader">
+  <!-- Keep the formatting of the script as it is. You may lose the correct linebreaks and whitespace otherwise. -->
+  <sv:node sv:name="robotstxt-template-script-upgrader-2">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>20101.3</sv:value>
     </sv:property>
-      <sv:property sv:name="hippo:contentroot" sv:type="String">
-    <sv:value>/hst:hst/hst:configurations/hst:default/hst:templates/robotstxt.ftl/hst:script</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:contentpropset" sv:type="String">
-    <sv:value>&lt;#ftl encoding="UTF-8" strip_whitespace=true attributes={"content_type": "text/plain"}&gt;
-&lt;#assign hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"] &gt;
-&lt;#if document?? &amp;&amp; document.sections??&gt;
-    &lt;#list document.sections as section&gt;
-        &lt;#if section.userAgent?? &amp;&amp; (section.disallows?? || disallowedFacNavLinks??)&gt;
-User-agent: ${section.userAgent}
-&lt;#list section.disallows as path&gt;Disallow: ${path}
-&lt;/#list&gt;
-&lt;#list disallowedFacNavLinks as facnav&gt;Disallow: &lt;@hst.link link=facnav/&gt;/
-&lt;/#list&gt;
-
-        &lt;/#if&gt;
-    &lt;/#list&gt;
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/hst:default/hst:templates/robotstxt.ftl/hst:script</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String">
+      <sv:value>&lt;#ftl encoding="UTF-8" strip_whitespace=true attributes={"content_type": "text/plain"}&gt;&#xd;
+&lt;#assign hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"] &gt;&#xd;
+&lt;#if document??&gt;&#xd;
+&lt;#if document.sections??&gt;&#xd;
+&lt;#list document.sections as section&gt;&#xd;
+&lt;#if section.userAgent?? &amp;&amp; (section.disallows?? || disallowedFacNavLinks??)&gt;&#xd;
+User-agent: ${section.userAgent}&#xd;
+&lt;#list section.disallows as path&gt;Disallow: ${path}&#xd;
+&lt;/#list&gt;&#xd;
+&lt;#list disallowedFacNavLinks as facnav&gt;Disallow: &lt;@hst.link link=facnav/&gt;/&#xd;
+&lt;/#list&gt;&#xd;
+&#xd;
+&lt;/#if&gt;&#xd;
+&lt;/#list&gt;&#xd;
+&lt;/#if&gt;&#xd;
+&lt;#if document.sitemaps??&gt;&#xd;
+&lt;#list document.sitemaps as sitemap&gt;&#xd;
+sitemap: ${sitemap}&#xd;
+&lt;/#list&gt;&#xd;
+&lt;/#if&gt;&#xd;
 &lt;/#if&gt;</sv:value>
-      </sv:property> 
+     </sv:property> 
   </sv:node>
 
   <sv:node sv:name="robotstxt-page">
