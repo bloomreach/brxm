@@ -49,7 +49,7 @@ export class IFrameService {
     let iframePanel = this.$window.parent.Ext.getCmp(this.iframePanelId);
 
     if (!angular.isObject(iframePanel)) {
-      throw new Error("Unknown iframe panel id: '" + this.iframePanelId + "'");
+      throw new Error(`Unknown iframe panel id: '${this.iframePanelId}'`);
     }
 
     return iframePanel;
@@ -93,7 +93,7 @@ export class IFrameService {
   enableLiveReload () {
     if (this.getConfig().debug) {
       this.addScriptToHead(LIVE_RELOAD_URL);
-      this.$log.info("iframe #" + this.getParentIFramePanelId() + " has live reload enabled via " + LIVE_RELOAD_URL);
+      this.$log.info(`iframe #${this.getParentIFramePanelId()} has live reload enabled via ${LIVE_RELOAD_URL}`);
     }
   }
 
