@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,21 +15,27 @@
  */
 package org.hippoecm.frontend.widgets;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxChannel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.json.JSONException;
+import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.util.time.Duration;
+import org.hippoecm.frontend.useractivity.UserActivityHeaderItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Component that pings the server regularly preventing unwanted session-timeouts.
  */
 public class Pinger extends Label {
 
-    private static final long serialVersionUID = 1L;
+    private static final int DEFAULT_INTERVAL_SECONDS = 20;
 
-    private final int DEFAULT_INTERVAL = 20;
+    private static final Logger log = LoggerFactory.getLogger(Pinger.class);
 
     /**
      * Starts a default ping wicket components which uses a default frequency between ping intervals.
@@ -37,38 +43,43 @@ public class Pinger extends Label {
      * @param id the wicket id to use
      */
     public Pinger(String id) {
-        super(id);
-        add(new PingBehavior(Duration.seconds(DEFAULT_INTERVAL)));
+        this(id, Duration.seconds(DEFAULT_INTERVAL_SECONDS));
     }
 
     /**
      * Starts a default ping wicket components which uses the indicated duration between ping intervals.
      * After the elapse of each interval a roundtrip to the server is made using an Ajax call.
      * When the duration is negative, this wicket component behaves like a plain Label widget.
-     * @param id the wicket id to use
+     * @param id       the wicket id to use
      * @param interval the time to wait between ping interfals
      */
     public Pinger(String id, Duration interval) {
         super(id);
-        if(interval != null) {
+        if (interval != null) {
             if (interval.greaterThan(0L)) {
                 add(new PingBehavior(interval));
             }
         } else {
-            add(new PingBehavior(Duration.seconds(DEFAULT_INTERVAL)));
+            add(new PingBehavior(Duration.seconds(DEFAULT_INTERVAL_SECONDS)));
         }
     }
 
     private static class PingBehavior extends AbstractAjaxTimerBehavior {
-        private static final long serialVersionUID = 1L;
 
         public PingBehavior(Duration duration) {
             super(duration);
+            log.info("Pinger interval: {}", duration.toString());
         }
 
         @Override
         protected void onTimer(AjaxRequestTarget target) {
             target.add(getComponent());
+        }
+
+        @Override
+        protected void postprocessConfiguration(final JSONObject attributesJson, final Component component) throws JSONException {
+            super.postprocessConfiguration(attributesJson, component);
+            attributesJson.put(UserActivityHeaderItem.AJAX_ATTR_SYSTEM_ACTIVITY, true);
         }
 
         @Override

@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,7 +34,6 @@ import org.apache.wicket.util.visit.IVisitor;
 
 public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
 
-    private static final long serialVersionUID = 1L;
     private static final JavaScriptResourceReference CONTEXTMENU_JS = new JavaScriptResourceReference(ContextMenuBehavior.class, "contextmenu.js");
 
     private boolean shown = false;
@@ -59,7 +58,7 @@ public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
     }
 
     /**
-     * Activate (show) the context menu.  Other open menus will be closed. 
+     * Activate (show) the context menu.  Other open menus will be closed.
      */
     public void activate(IContextMenu active) {
         AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
@@ -78,10 +77,10 @@ public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
      */
     public void collapseAll() {
         AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+        for (IContextMenu menu : getMenus(false)) {
+            menu.collapse(target);
+        }
         if (target != null) {
-            for (IContextMenu menu : getMenus(false)) {
-                menu.collapse(target);
-            }
             hide(target);
         }
     }
@@ -122,10 +121,9 @@ public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
     }
 
     private List<IContextMenu> getMenus(final boolean visibleOnly) {
-        final List<IContextMenu> menus = new LinkedList<IContextMenu>();
+        final List<IContextMenu> menus = new LinkedList<>();
         ((MarkupContainer) getComponent()).visitChildren(new IVisitor<Component, Void>() {
 
-            @SuppressWarnings("unchecked")
             public void component(Component component, IVisit<Void> visit) {
                 if (component instanceof IContextMenu) {
                     if (!visibleOnly || component.isVisible()) {
@@ -135,7 +133,7 @@ public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
                 } else if (component instanceof IContextMenuManager) {
                     visit.dontGoDeeper();
                 } else {
-                    for (Behavior behavior : (List<Behavior>) component.getBehaviors()) {
+                    for (Behavior behavior : component.getBehaviors()) {
                         if (behavior instanceof IContextMenu) {
                             if (!visibleOnly || component.isVisible()) {
                                 menus.add((IContextMenu) behavior);

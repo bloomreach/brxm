@@ -170,6 +170,7 @@
             <exclude>org/hippoecm/frontend/plugins/cms/codemirror/mode/htmlmixed/htmlmixed.js</exclude>
           </excludes>
           <predefinedVars>
+            Ext,
             Hippo,
             Wicket,
             wicketKeyCode,

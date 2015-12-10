@@ -260,6 +260,7 @@ $dashboard-panel-bgcolor:            $white;
 $dashboard-panel-border-color:       $light-shade;
 $dashboard-panel-header-bgcolor:     $light-shade;
 $dashboard-panel-header-color:       $darkest-shade;
+$dashboard-gotolink-icon-color:      $brand-primary;
 
 // Picker
 $picker-section-selection-bgcolor:  $lighter-shade;
@@ -278,3 +279,21 @@ $ajax-loader-bgcolor:               $darkest-shade;
 $file-upload-progress:              $success;
 $file-upload-error:                 $danger;
 $file-upload-stripe-bg:             $lighter-shade;
+
+// supported mimetypes that have a specific icon
+$mimetypes: (
+  audio
+  binary
+  doc docx
+  flash
+  image
+  odp ods odt
+  pdf
+  ppt pptx
+  rtf
+  sxc sxi sxw
+  text
+  video
+  xls xlsx
+  zip
+);

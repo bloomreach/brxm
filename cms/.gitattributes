@@ -169,6 +169,8 @@ api/src/main/java/org/hippoecm/frontend/plugins/gallery/imageutil/UnsupportedIma
 api/src/main/java/org/hippoecm/frontend/plugins/gallery/model/DefaultGalleryProcessor.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/gallery/model/GalleryException.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/gallery/model/NullGalleryProcessor.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/multiple/GalleryFileUploadBehavior_de.properties -text
+api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/multiple/GalleryFileUploadBehavior_fr.properties -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/ClassResourceModel.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/DocumentListFilter.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/NodeFilter.java -text
@@ -1130,6 +1132,7 @@ api/src/main/styling/styles/_typography.scss -text
 api/src/main/styling/styles/_user_menu.scss -text
 api/src/main/styling/styles/_variables.scss -text
 api/src/main/styling/styles/main.scss -text
+api/src/test/java/org/hippoecm/frontend/dialog/EscapeHtmlStringModelTest.java -text
 api/src/test/java/org/hippoecm/frontend/editor/plugins/resource/PdfParserTest.java -text
 api/src/test/java/org/hippoecm/frontend/editor/workflow/model/ReferringDocumentsProviderTest.java -text
 api/src/test/java/org/hippoecm/frontend/model/TraceMonitorTest.java -text
@@ -1324,6 +1327,7 @@ config/src/main/resources/cms-login.xml svneol=native#text/plain
 config/src/main/resources/cms-preview.xml -text svneol=unset#text/plain
 config/src/main/resources/cms-reports.xml -text svneol=unset#text/plain
 config/src/main/resources/cms-search-views.xml svneol=native#text/plain
+config/src/main/resources/cms-services-logout.xml -text
 config/src/main/resources/cms-services-passwordvalidation.xml -text
 config/src/main/resources/cms-services.xml svneol=native#text/plain
 config/src/main/resources/cms-settings.xml svneol=native#text/plain
@@ -1357,7 +1361,6 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/Bro
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin.properties -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin_nl.properties -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/ConsoleTreeTable.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/JcrConsoleTree.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/NodeIconUtils.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/add-node.png -text svneol=unset#image/png

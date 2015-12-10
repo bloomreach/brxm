@@ -103,6 +103,17 @@
   color: $primary;
 }
 
+@each $type in $mimetypes {
+  .hi-mimetype-#{$type} {
+    color: $primary;
+    fill: $white;
+
+    .hippo-list-selected & {
+      fill: $primary;
+    }
+  }
+}
+
 .hi-expand,
 .hi-compress {
   color: $dark-gray;

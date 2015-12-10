@@ -29,6 +29,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.string.AppendingStringBuffer;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
@@ -86,6 +87,25 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     @Override
     protected CharSequence getShowJavaScript() {
         return "Wicket.Window.create(settings).show();\n";
+    }
+
+    /**
+     * Adds the full dialog title for use in a tooltip.
+     * This value shouldn't be HTML-escaped, but requires JavaScript quote-escaping.
+     *
+     * @param settings buffer containing a JS snippet
+     * @return modified buffer
+     */
+    @Override
+    protected AppendingStringBuffer postProcessSettings(final AppendingStringBuffer settings) {
+        String title = new StringWithoutLineBreaksModel(dialog.getTitle()).getObject();
+        String jsEscapedTitle = StringUtils.replace(title, "\"", "\\\"");
+
+        settings.append("settings.titleTooltip = \"");
+        settings.append(jsEscapedTitle);
+        settings.append("\";\n");
+
+        return settings;
     }
 
     public void show(Dialog dialog) {
@@ -168,7 +188,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     private void internalShow(Dialog dialog) {
         this.dialog = dialog;
         dialog.setDialogService(this);
-        setTitle(new StringWithoutLineBreaksModel(dialog.getTitle()));
+        setTitle(new EscapeHtmlStringModel(new StringWithoutLineBreaksModel(dialog.getTitle())));
         setContent(dialog.getComponent());
         setWindowClosedCallback(new Callback(dialog));
 

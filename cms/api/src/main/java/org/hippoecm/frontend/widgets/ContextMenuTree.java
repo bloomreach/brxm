@@ -41,12 +41,7 @@ import org.hippoecm.frontend.skin.Icon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- */
 public class ContextMenuTree extends DefaultAbstractTree {
-    private static final long serialVersionUID = 1L;
-
     public static final Logger log = LoggerFactory.getLogger(ContextMenuTree.class);
 
     private boolean dirty;
@@ -125,7 +120,6 @@ public class ContextMenuTree extends DefaultAbstractTree {
     protected MarkupContainer newContextLink(final MarkupContainer parent, String id, final TreeNode node,
                                              MarkupContainer content) {
         AjaxLink<Void> link = new ContextLink(id, content, parent) {
-            private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
@@ -189,8 +183,6 @@ public class ContextMenuTree extends DefaultAbstractTree {
         nodeLink.add(newNodeIcon(nodeLink, "icon", node));
 
         nodeLink.add(new Label("label", new AbstractReadOnlyModel<String>() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public String getObject() {
                 return renderNode(node, level);
@@ -240,7 +232,6 @@ public class ContextMenuTree extends DefaultAbstractTree {
     }
 
     public static abstract class ContextLink extends AjaxLink<Void> implements IContextMenu {
-        private static final long serialVersionUID = 1L;
 
         MarkupContainer content;
         MarkupContainer parent;
@@ -254,7 +245,9 @@ public class ContextMenuTree extends DefaultAbstractTree {
         public void collapse(AjaxRequestTarget target) {
             if (content.isVisible()) {
                 content.setVisible(false);
-                target.add(parent);
+                if (target != null) {
+                    target.add(parent);
+                }
             }
         }
     }

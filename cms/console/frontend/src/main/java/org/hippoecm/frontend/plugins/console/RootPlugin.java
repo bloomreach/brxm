@@ -23,26 +23,32 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.logout.ActiveLogoutPlugin;
 import org.hippoecm.frontend.plugins.console.behavior.ParameterHistoryBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.PageLayoutBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.PageLayoutSettings;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
+import org.hippoecm.frontend.service.ILogoutService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.useractivity.UserActivityHeaderItem;
 import org.hippoecm.frontend.util.MappingException;
 import org.hippoecm.frontend.util.PluginConfigMapper;
+import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.hippoecm.frontend.widgets.Pinger;
 
 public class RootPlugin extends RenderPlugin {
 
-    private static final long serialVersionUID = 1L;
+    public static final String CONFIG_PINGER_INTERVAL = "pinger.interval";
+    public static final String CONFIG_MAX_INACTIVE_INTERVAL_MINUTES = "max.inactive.interval.minutes";
 
     private boolean rendered = false;
     private ParameterHistoryBehavior parameterHistoryBehavior;
@@ -50,11 +56,8 @@ public class RootPlugin extends RenderPlugin {
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        if (config.containsKey("pinger.interval")) {
-            add(new Pinger("pinger", config.getAsDuration("pinger.interval")));
-        } else {
-            add(new Pinger("pinger"));
-        }
+        addPinger();
+        addActiveLogout();
 
         if (config.getString(RenderService.MODEL_ID) != null) {
             String modelId = config.getString(RenderService.MODEL_ID);
@@ -80,6 +83,20 @@ public class RootPlugin extends RenderPlugin {
         add(new ResourceLink("faviconLink", new PackageResourceReference(RootPlugin.class, faviconPath)));
     }
 
+    private void addPinger() {
+        final Duration pingerInterval = getPluginConfig().getAsDuration(CONFIG_PINGER_INTERVAL);
+        add(new Pinger("pinger", pingerInterval));
+    }
+
+    private void addActiveLogout() {
+        final ILogoutService logoutService = getPluginContext().getService(ILogoutService.SERVICE_ID, ILogoutService.class);
+        add(new ActiveLogoutPlugin("activeLogout", getMaxInactiveIntervalMinutes(), logoutService));
+    }
+
+    private Integer getMaxInactiveIntervalMinutes() {
+        return getPluginConfig().getAsInteger(CONFIG_MAX_INACTIVE_INTERVAL_MINUTES, WebApplicationHelper.getMaxInactiveIntervalMinutes());
+    }
+
     @Override
     public void render(PluginRequestTarget target) {
         if (!rendered) {
@@ -95,6 +112,7 @@ public class RootPlugin extends RenderPlugin {
         super.renderHead(response);
 
         response.render(ConsoleHeaderItem.get());
+        response.render(new UserActivityHeaderItem(getMaxInactiveIntervalMinutes()));
     }
 
     private String getPageTitle(IPluginConfig config) {

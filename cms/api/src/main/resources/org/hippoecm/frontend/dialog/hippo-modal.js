@@ -96,8 +96,8 @@
     oldShow  = Wicket.Window.prototype.show;
     Wicket.Window.prototype.show = function() {
       oldShow.apply(this, arguments);
-      if (this.settings.title !== null) {
-        this.captionText.setAttribute('title', this.settings.title);
+      if (this.settings.titleTooltip !== null) {
+        this.captionText.setAttribute('title', this.settings.titleTooltip);
       }
     };
 

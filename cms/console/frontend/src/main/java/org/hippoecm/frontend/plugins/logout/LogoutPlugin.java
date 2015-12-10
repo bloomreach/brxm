@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,27 +16,22 @@
 package org.hippoecm.frontend.plugins.logout;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.ILogoutService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.session.UserSession;
 
 public class LogoutPlugin extends RenderPlugin {
-
-    private static final long serialVersionUID = 1L;
-
-    @SuppressWarnings("unused")
-    private String username;
 
     public LogoutPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        UserSession session = getSession();
-        username = session.getJcrSession().getUserID();
+        final String username = getSession().getJcrSession().getUserID();
+        add(new Label("username", Model.of(username)));
 
-        add(new Label("username", new PropertyModel(this, "username")));
-        add(new LogoutLink("logout-link", context));
+        final ILogoutService logoutService = getPluginContext().getService(ILogoutService.SERVICE_ID, ILogoutService.class);
+        add(new LogoutLink("logout-link", logoutService));
     }
 
 }

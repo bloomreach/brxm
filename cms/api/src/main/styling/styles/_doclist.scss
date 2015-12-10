@@ -255,21 +255,16 @@ $doclist-icon-shift-right: 2px;
       background-color: $doclist-row-selected-bgcolor;
       color: $doclist-row-selected-color;
 
-      .hi-stack > svg:first-child {
+      svg.hi, .hi-stack > svg:first-child {
         color: $doclist-row-selected-color;
       }
 
       .doclisting-icon {
-        .hi-minus-circle {
-          color: $primary;
-          fill: $doclist-row-selected-color;
-        }
-        .hi-check-circle {
-          color: $primary;
-          fill: $doclist-row-selected-color;
-        }
+        .hi-minus-circle,
+        .hi-check-circle,
         .hi-exclamation-triangle {
-          fill: $white;
+          color: $primary;
+          fill: $doclist-row-selected-color;
         }
       }
 

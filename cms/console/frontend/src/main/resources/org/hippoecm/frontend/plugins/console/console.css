@@ -293,7 +293,8 @@ li.hippo-console-menu-actions-save.session-changes a {
   background: none;
 }
 
-.hippo-console-tree .wicket-tree span.icon.fa {
+.hippo-console-tree .wicket-tree span.icon.fa,
+.wicket-tree-table-body span.icon.fa {
   width: 18px;
   min-height: 16px;
   height: 16px;

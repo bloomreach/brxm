@@ -20,7 +20,10 @@ import java.util.Collection;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.extensions.markup.html.tree.table.ColumnLocation;
 import org.apache.wicket.extensions.markup.html.tree.table.ColumnLocation.Alignment;
 import org.apache.wicket.extensions.markup.html.tree.table.ColumnLocation.Unit;
@@ -37,7 +40,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNodeComparator;
 import org.hippoecm.frontend.plugins.console.NodeModelReference;
-import org.hippoecm.frontend.plugins.console.browser.ConsoleTreeTable;
+import org.hippoecm.frontend.plugins.console.browser.NodeIconUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +73,12 @@ public class DeleteMultipleDialog extends AbstractDialog<Node> {
                 Unit.PROPORTIONAL), "Name", "nodeModel.node.name")
 
         };
-        tree = new ConsoleTreeTable("multitree", model, columns);
+        tree = new TreeTable("multitree", model, columns) {
+            @Override
+            protected Component newNodeIcon(final MarkupContainer parent, final String id, final TreeNode node) {
+                return NodeIconUtils.createJcrNodeIcon(id, node);
+            }
+        };
         tree.getTreeState().setAllowSelectMultiple(true);
         add(tree);
         if (model != null) {

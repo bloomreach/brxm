@@ -36,6 +36,8 @@
         'locationchanged'
       );
 
+      this.iframeToHost.subscribe('user-activity', Hippo.UserActivity.report);
+
       Hippo.IFramePanel.superclass.constructor.call(this, Ext.apply(config, {
         border: false,
         layout: 'fit',
@@ -58,6 +60,7 @@
           }
         },
         listeners: {
+          afterrender: this._onAfterRender,
           'resize': this._onResize,
           scope: this
         }
@@ -102,6 +105,10 @@
 
     _getFrameDom: function () {
       return Ext.getDom(this.frameId);
+    },
+
+    _onAfterRender: function () {
+      Hippo.UserActivity.report();
     },
 
     _onResize: function () {
