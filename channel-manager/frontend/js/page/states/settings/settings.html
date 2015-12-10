@@ -180,7 +180,7 @@
           <select id="channel" name="channel" class="form-control" disabled
                   data-chosen
                   data-ng-model="copy.mountId"
-                  data-ng-options="channel.mountId as channel.name for channel in availableChannels"
+                  data-ng-options="channel.mountId as channel.name for channel in availableChannelsForPageCopy"
                   data-width="'100%'"
                   data-ng-change="copy.reloadTargets()"
                   data-ng-required="true">

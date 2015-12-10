@@ -69,7 +69,7 @@
 
         $scope.locations = [];
 
-        $scope.availableChannels = [];
+        $scope.availableChannelsForPageCopy = [];
 
         $scope.crossChannelPageCopySupported = false;
         
@@ -109,7 +109,7 @@
         // fetch data
         loadHost()
           .then(loadCrossChannelPageCopySupported)
-          .then(loadAvailableChannels)
+          .then(loadAvailableChannelsForPageCopy)
           .then(loadPrototypes)
           .then(loadPage);
 
@@ -211,11 +211,11 @@
             }, setErrorFeedback);
         }
         
-        function loadAvailableChannels () {
+        function loadAvailableChannelsForPageCopy () {
           if ($scope.crossChannelPageCopySupported) {
             return ChannelService.getPreviewChannels()
               .then(function (data) {
-                $scope.availableChannels = data;
+                $scope.availableChannelsForPageCopy = data;
               }, setErrorFeedback);
           }
         }
