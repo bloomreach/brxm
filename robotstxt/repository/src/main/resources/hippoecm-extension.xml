@@ -166,7 +166,7 @@ User-agent: ${section.userAgent}&#xd;
 &lt;/#if&gt;&#xd;
 &lt;#if document.sitemaps??&gt;&#xd;
 &lt;#list document.sitemaps as sitemap&gt;&#xd;
-sitemap: ${sitemap}&#xd;
+Sitemap: ${sitemap}&#xd;
 &lt;/#list&gt;&#xd;
 &lt;/#if&gt;&#xd;
 &lt;/#if&gt;</sv:value>
