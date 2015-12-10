@@ -125,5 +125,18 @@
     </sv:property>
   </sv:node>
 
+  <!-- added in 11, to be removed in 12 -->
+  <sv:node sv:name="hippo-cms-brokenlinks-delete-translator">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>1000</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentdelete" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/cms/hippo-reports/broken-links-translator</sv:value>
+    </sv:property>
+  </sv:node>
+
 </sv:node>
 

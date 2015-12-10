@@ -30,9 +30,6 @@
     <sv:property sv:name="country" sv:type="String">
       <sv:value>us</sv:value>
     </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:translated</sv:value>
-    </sv:property>
   </sv:node>
   <sv:node sv:name="nl">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -43,9 +40,6 @@
     </sv:property>
     <sv:property sv:name="country" sv:type="String">
       <sv:value>nl</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:translated</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="de">
@@ -58,9 +52,6 @@
     <sv:property sv:name="country" sv:type="String">
       <sv:value>de</sv:value>
     </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:translated</sv:value>
-    </sv:property>
   </sv:node>
   <sv:node sv:name="fr">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -71,9 +62,6 @@
     </sv:property>
     <sv:property sv:name="country" sv:type="String">
       <sv:value>fr</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:translated</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
