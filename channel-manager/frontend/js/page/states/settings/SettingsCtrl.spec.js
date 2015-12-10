@@ -34,7 +34,7 @@ describe('Settings Controller', function () {
     PageService = jasmine.createSpyObj('PageService', ['getMountInfo', 'getCurrentPage']);
     $provide.value('hippo.channel.PageService', PageService);
 
-    ChannelService = jasmine.createSpyObj('ChannelService', ['getFeatures']);
+    ChannelService = jasmine.createSpyObj('ChannelService', ['getFeatures', 'getPreviewChannels']);
     $provide.value('hippo.channel.ChannelService', ChannelService);
 
     PrototypeService = jasmine.createSpyObj('PrototypeService', ['getPrototypes']);
@@ -67,7 +67,10 @@ describe('Settings Controller', function () {
           name: 'pageName',
           workspaceConfiguration: isPageInWorkspace,
           lockedBy: pageLockedBy,
-          lockedOn: pageLockedOn
+          lockedOn: pageLockedOn,
+          parentLocation: {
+            id : null
+          }
         });
       });
 
@@ -75,6 +78,10 @@ describe('Settings Controller', function () {
         return resolvedPromise({
           crossChannelPageCopySupported : true
         });
+      });
+
+      ChannelService.getPreviewChannels.and.callFake(function() {
+        return resolvedPromise([]);
       });
 
       PrototypeService.getPrototypes.and.callFake(function () {
