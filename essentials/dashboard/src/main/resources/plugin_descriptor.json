@@ -406,7 +406,7 @@
         "name": "Robots.txt",
         "icon" : "/essentials/images/icons/robotstxt.png",
         "introduction": "With the Robots.txt feature, you can control the content of your robots.txt file. The feature installs a special document type that can be used to read and write robots.txt.",
-        "description": "Besides the component, a sample JSP file for rendering that data into the robots.txt file. This feature wraps the 'Robots.txt' Standard Plugin.",
+        "description": "This feature adds the 'Robots.txt' Standard Plugin. Also the robots.txt sitemap item is added and an example document.",
         "imageUrls": [
             "/essentials/images/screenshots/robots01.png",
             "/essentials/images/screenshots/robots02.png"
