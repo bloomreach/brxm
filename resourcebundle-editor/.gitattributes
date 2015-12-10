@@ -7,6 +7,5 @@ src/main/java/org/onehippo/cms7/resourcebundle/ResourceBundlePlugin_fr.propertie
 src/main/java/org/onehippo/cms7/resourcebundle/description.png -text svneol=unset#image/png
 src/main/resources/hide-resourcebundle-namespace.xml svneol=native#text/plain
 src/main/resources/hippoecm-extension.xml svneol=native#text/plain
-src/main/resources/namespace-fix-mandatory-id-patch.xml svneol=native#text/plain
 src/main/resources/namespace.xml svneol=native#text/plain
 src/main/resources/type-translations.json -text
