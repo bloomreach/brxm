@@ -44,9 +44,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>20101</sv:value>
     </sv:property>
@@ -55,6 +52,12 @@
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:namespaces</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>3.0.0</sv:value>
     </sv:property>
   </sv:node>
 
@@ -238,12 +241,12 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="hippotaxonomy-section-translation">
+  <sv:node sv:name="hippotaxonomy-section-translations">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:resourcebundles" sv:type="String">
-      <sv:value>taxonomy-section-translation.json</sv:value>
+      <sv:value>taxonomy-section-translations.json</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>16</sv:value>
