@@ -442,7 +442,7 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.27.00</sv:value>
+      <sv:value>4.0.0</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippogallery-foldertype-new-image-folder">
@@ -457,6 +457,12 @@
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>601.0</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>4.0.0</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippogallery-foldertype-new-image">
