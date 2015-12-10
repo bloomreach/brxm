@@ -40,6 +40,9 @@
       <sv:property sv:name="hipposysedit:uri" sv:type="String">
         <sv:value>http://forge.onehippo.org/selection/nt/1.0</sv:value>
       </sv:property>
+      <sv:property sv:name="hipposysedit:supertype" sv:type="String">
+        <sv:value>hippo:compound</sv:value>
+      </sv:property>
       <sv:node sv:name="key">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hipposysedit:field</sv:value>
