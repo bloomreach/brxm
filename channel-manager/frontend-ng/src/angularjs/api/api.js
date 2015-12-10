@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-'use strict';
+import { IFrameService } from './iframe.service.js';
 
-describe('An example jasmine test', function () {
-  it('should pass this test', function () {
-    expect(true).toBe(true);
-  });
-});
+export const channelManagerApi = angular
+  .module('hippo-cmng-api', [])
+  .service('IFrameService', IFrameService);
+
+
