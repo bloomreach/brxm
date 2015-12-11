@@ -21,7 +21,6 @@
   </sv:property>
 
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>hippo:translated</sv:value>
     <sv:value>editor:editable</sv:value>
     <sv:value>mix:referenceable</sv:value>
   </sv:property>
@@ -122,9 +121,6 @@
         </sv:property>
         <sv:property sv:name="enable.upload" sv:type="String">
           <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="translator.id" sv:type="String">
-          <sv:value>imagepicker.translator</sv:value>
         </sv:property>
         <sv:property sv:name="validator.id" sv:type="String">
           <sv:value>service.gallery.image.validation</sv:value>
