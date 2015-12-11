@@ -19,9 +19,6 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippostd:templatequery</sv:value>
   </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-    <sv:value>hippo:translated</sv:value>
-  </sv:property>
   <sv:property sv:name="hippostd:icon" sv:type="String">
     <sv:value>adddocument_ico</sv:value>
   </sv:property>
