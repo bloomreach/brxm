@@ -50,9 +50,6 @@
     <sv:property sv:name="title" sv:type="String">
       <sv:value>section-taxonomies</sv:value>
     </sv:property>
-    <sv:property sv:name="translator.id" sv:type="String">
-      <sv:value>service.translator.config</sv:value>
-    </sv:property>
     <sv:property sv:name="model.folder" sv:type="String">
       <sv:value>${model.folder}</sv:value>
     </sv:property>
