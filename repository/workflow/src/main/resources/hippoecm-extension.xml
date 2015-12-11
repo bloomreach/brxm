@@ -122,7 +122,7 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.27.00</sv:value>
+      <sv:value>4.0.0</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="shortcuts-workflows">
@@ -422,7 +422,7 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.27.00</sv:value>
+      <sv:value>4.0.0</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippogallery-namespace">
