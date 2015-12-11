@@ -63,7 +63,6 @@
       <sv:property sv:name="frontend:references" sv:type="String">
         <sv:value>wicket.model</sv:value>
         <sv:value>engine</sv:value>
-        <sv:value>translator.id</sv:value>
         <sv:value>model.compareTo</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:services" sv:type="String">
@@ -78,9 +77,6 @@
         </sv:property>
         <sv:property sv:name="mode" sv:type="String">
           <sv:value>${mode}</sv:value>
-        </sv:property>
-        <sv:property sv:name="translator.id" sv:type="String">
-          <sv:value>${translator.id}</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
           <sv:value>org.onehippo.forge.selection.frontend.plugin.BooleanRadioGroupPlugin</sv:value>
