@@ -185,9 +185,6 @@
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
-          <sv:property sv:name="translator.id" sv:type="String">
-            <sv:value>${cluster.id}.translator</sv:value>
-          </sv:property>
           <sv:node sv:name="cluster.options">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>frontend:pluginconfig</sv:value>
@@ -209,9 +206,6 @@
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-          <sv:property sv:name="translator.id" sv:type="String">
-            <sv:value>${cluster.id}.translator</sv:value>
           </sv:property>
           <sv:node sv:name="cluster.options">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">

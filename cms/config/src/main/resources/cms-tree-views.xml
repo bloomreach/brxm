@@ -68,9 +68,6 @@
       <sv:property sv:name="title" sv:type="String">
         <sv:value>section-documents</sv:value>
       </sv:property>
-      <sv:property sv:name="translator.id" sv:type="String">
-        <sv:value>service.translator.config</sv:value>
-      </sv:property>
       <sv:property sv:name="model.folder.root" sv:type="String">
         <sv:value>${root.path}</sv:value>
       </sv:property>
@@ -219,9 +216,6 @@
       </sv:property>
       <sv:property sv:name="title" sv:type="String">
         <sv:value>section-images</sv:value>
-      </sv:property>
-      <sv:property sv:name="translator.id" sv:type="String">
-        <sv:value>service.translator.config</sv:value>
       </sv:property>
       <sv:property sv:name="model.folder.root" sv:type="String">
         <sv:value>/content/gallery</sv:value>
@@ -394,9 +388,6 @@
       <sv:property sv:name="title" sv:type="String">
         <sv:value>section-files</sv:value>
       </sv:property>
-      <sv:property sv:name="translator.id" sv:type="String">
-        <sv:value>service.translator.config</sv:value>
-      </sv:property>
       <sv:property sv:name="model.folder.root" sv:type="String">
         <sv:value>/content/assets</sv:value>
       </sv:property>
@@ -563,9 +554,6 @@
       </sv:property>
       <sv:property sv:name="title" sv:type="String">
         <sv:value>section-configuration</sv:value>
-      </sv:property>
-      <sv:property sv:name="translator.id" sv:type="String">
-        <sv:value>service.translator.config</sv:value>
       </sv:property>
       <sv:property sv:name="model.folder.root" sv:type="String">
         <sv:value>/</sv:value>

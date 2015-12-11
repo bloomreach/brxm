@@ -18,9 +18,6 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:plugincluster</sv:value>
   </sv:property>
-  <sv:property sv:name="translator.id" sv:type="String">
-    <sv:value>${cluster.id}.translator</sv:value>
-  </sv:property>
   <sv:node sv:name="registry">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -73,9 +70,6 @@
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.editor.validator.plugins.NodeReferenceValidator</sv:value>
-    </sv:property>
-    <sv:property sv:name="translator.id" sv:type="String">
-      <sv:value>validation.service.translator.config</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
