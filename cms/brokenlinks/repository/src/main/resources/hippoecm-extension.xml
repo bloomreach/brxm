@@ -96,6 +96,12 @@
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:frontend/cms/hippo-reports</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>4.0.0</sv:value>
+    </sv:property>
   </sv:node>
 
   <sv:node sv:name="brokenlinks-authorization">
