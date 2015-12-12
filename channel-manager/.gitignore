@@ -11,6 +11,7 @@ frontend-api/*.iml
 frontend-api/.project
 frontend-api/target
 frontend-ng/bower_components
+frontend-ng/coverage
 frontend-ng/dist
 frontend-ng/node_modules
 frontend/*.iml

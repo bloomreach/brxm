@@ -39,13 +39,14 @@ function config ($stateProvider, $urlRouterProvider, $translateProvider) {
     suffix: '.json'
   });
   $translateProvider.fallbackLanguage('en');
-  $translateProvider.useSanitizeValueStrategy('sanitize');
+  $translateProvider.useSanitizeValueStrategy('escaped');
 }
 
 export const hippoCmngModule = angular
   .module('hippo-cmng', [
     'pascalprecht.translate',
     'ui.router',
+    'hippo-cmng-templates',
     channelManagerApi.name
   ])
   .config(config);
