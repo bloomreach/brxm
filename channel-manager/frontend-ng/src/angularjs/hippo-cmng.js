@@ -16,6 +16,13 @@
 
 import { channelManagerApi } from './api/api.js';
 
+function translations ($translate, ConfigService) {
+  return $translate.use(ConfigService.locale)
+    .catch(function () {
+      $translate.use($translate.fallbackLanguage());
+    });
+}
+
 function config ($stateProvider, $urlRouterProvider, $translateProvider) {
   $urlRouterProvider.otherwise('/');
 
@@ -23,13 +30,7 @@ function config ($stateProvider, $urlRouterProvider, $translateProvider) {
     url: '/',
     templateUrl: 'hippo-cmng.html',
     resolve: {
-      translations: function ($translate) {
-        // TODO use locale from "config service" rather than hard-coded.
-        return $translate.use('en')
-          .catch(function () {
-            $translate.use($translate.fallbackLanguage());
-          });
-      }
+      translations: translations
     }
   });
 
@@ -42,6 +43,11 @@ function config ($stateProvider, $urlRouterProvider, $translateProvider) {
   $translateProvider.useSanitizeValueStrategy('escaped');
 }
 
+function run (IFrameService) {
+  // enable live reload
+  IFrameService.enableLiveReload();
+}
+
 export const hippoCmngModule = angular
   .module('hippo-cmng', [
     'pascalprecht.translate',
@@ -49,7 +55,8 @@ export const hippoCmngModule = angular
     'hippo-cmng-templates',
     channelManagerApi.name
   ])
-  .config(config);
+  .config(config)
+  .run(run);
 
 angular.element(document).ready(function () {
   angular.bootstrap(document.body, [hippoCmngModule.name], {
