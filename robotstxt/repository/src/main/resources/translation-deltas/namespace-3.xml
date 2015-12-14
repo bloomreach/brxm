@@ -91,6 +91,58 @@
                 </sv:property>
               </sv:node>
             </sv:node>
+            <sv:node sv:name="sitemap.hint">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>frontend:pluginconfig</sv:value>
+              </sv:property>
+              <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+                <sv:value>hippo:translated</sv:value>
+              </sv:property>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>nl</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>Voer een volledige URL in die verwijst naar een sitemap.xml bestand.</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>en</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>The value must be a fully qualified URL and point to a sitemap.xml file.</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>de</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>The value must be a fully qualified URL and point to a sitemap.xml file.</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="hippo:translation">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:translation</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:language" sv:type="String">
+                  <sv:value>fr</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:message" sv:type="String">
+                  <sv:value>The value must be a fully qualified URL and point to a sitemap.xml file.</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
           </sv:node>
         </sv:node>
       </sv:node>
@@ -107,6 +159,9 @@
           </sv:property>
           <sv:property sv:name="field" sv:type="String">
             <sv:value>sitemap</sv:value>
+          </sv:property>
+          <sv:property sv:name="hint" sv:type="String">
+            <sv:value>sitemap.hint</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
