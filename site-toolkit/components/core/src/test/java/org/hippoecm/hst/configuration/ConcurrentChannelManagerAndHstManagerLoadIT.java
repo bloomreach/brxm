@@ -242,7 +242,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 		mountNode.getSession().save();
 
 		final Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
-		assertTrue(channels.size() == 1);
+		assertTrue(channels.size() == 2);
 		final Channel existingChannel = channels.values().iterator().next();
         final EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
         try {

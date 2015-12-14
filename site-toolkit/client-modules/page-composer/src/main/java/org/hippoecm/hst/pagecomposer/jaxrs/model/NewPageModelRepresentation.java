@@ -50,6 +50,9 @@ public class NewPageModelRepresentation {
         this.prototypes = prototypes;
     }
 
+    /**
+     * @return the possible locations to add a new page to. The location
+     */
     public List<Location> getLocations() {
         return locations;
     }
@@ -58,29 +61,4 @@ public class NewPageModelRepresentation {
         this.locations = locations;
     }
 
-    public class Location {
-        private String location;
-        private String id;
-
-        public Location(final String location, final String id) {
-            this.location = location;
-            this.id = id;
-        }
-
-        public String getLocation() {
-            return location;
-        }
-
-        public void setLocation(final String location) {
-            this.location = location;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(final String id) {
-            this.id = id;
-        }
-    }
 }

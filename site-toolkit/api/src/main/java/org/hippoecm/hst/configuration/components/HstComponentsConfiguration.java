@@ -58,19 +58,30 @@ public interface HstComponentsConfiguration {
     };
 
     /**
-     * Return the map of all *non prototype* root <code>HstComponentConfiguration</code>'s where the keys are the the
-     * <code>HstComponentConfiguration</code>'s ({@link HstComponentConfiguration#getId()}). Implementations should
-     * return an unmodifiable map to avoid client code changing configuration
+     * <p>
+     *     Return the map of all *non prototype* canonical <code>HstComponentConfiguration</code>'s where the keys are the the
+     *     <code>HstComponentConfiguration</code>'s ({@link HstComponentConfiguration#getId()}). Implementations should
+     *     return an unmodifiable map to avoid client code changing configuration
+     * </p>
+     * <p>
+     *     With <strong>canonical</strong> we mean the <code>HstComponentConfiguration</code>'s that are explicitly configured
+     *     in the hst configuration and not a result of inheritance
+     * </p>
      *
      */
     Map<String, HstComponentConfiguration> getComponentConfigurations();
 
     /**
-     * Returns the root <code>HstComponentConfiguration</code> whose {@link HstComponentConfiguration#getId()} equals
-     * this <code>id</code>.
-     *
-     * @param id the id of the root <code>HstComponentConfiguration</code>
-     * @return a root <code>HstComponentConfiguration</code> whose {@link HstComponentConfiguration#getId()} equals this
+     * <p>
+     *     Returns the canonical <code>HstComponentConfiguration</code> whose {@link HstComponentConfiguration#getId()} equals
+     *     this <code>id</code>.
+     *</p>
+     * <p>
+     *     With <strong>canonical</strong> we mean the <code>HstComponentConfiguration</code>'s that are explicitly configured
+     *     in the hst configuration and not a result of inheritance
+     * </p>
+     * @param id the id of the canonical <code>HstComponentConfiguration</code>
+     * @return a canonical <code>HstComponentConfiguration</code> whose {@link HstComponentConfiguration#getId()} equals this
      *         <code>id</code>. When there is no <code>HstComponentConfiguration</code> with this <code>id</code>,
      *         <code>null</code>  is returned.
      */

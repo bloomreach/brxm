@@ -24,6 +24,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
@@ -47,6 +48,13 @@ public class ContainerItemHelper extends AbstractHelper {
     public HstComponentConfiguration getConfigObject(final String itemId) {
         final HstSite editingPreviewSite = pageComposerContextService.getEditingPreviewSite();
         return getHstComponentConfiguration(editingPreviewSite.getComponentsConfiguration(), itemId);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public HstComponentConfiguration getConfigObject(final String itemId, final Mount mount) {
+        final HstSite site = mount.getHstSite();
+        return getHstComponentConfiguration(site.getComponentsConfiguration(), itemId);
     }
 
     /**

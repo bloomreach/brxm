@@ -16,7 +16,6 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.api;
 
 import java.util.Collections;
-import java.util.EventObject;
 import java.util.List;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -27,18 +26,24 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * {@link org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent} which is put on the internal HST Guava event bus for
- * <code>synchronous</code> events dispatching where listeners to this event can inject logic or short-circuit
- * processing by setting a {@link java.lang.RuntimeException}
- * through {@link org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent#setException(java.lang.RuntimeException)}. When a
- * {@link java.lang.RuntimeException} is set on this
- * {@link org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent} by a listener, the
- * {@link org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource#publishSynchronousEvent} will rethrow the
- * exception. The reason that this has to be done via this ChannelEvent object is that Guava
- * {@link com.google.common.eventbus.EventBus} always catches an exception thrown by a listener, even when injecting a
- * custom {@link com.google.common.eventbus.SubscriberExceptionHandler}
+ * <p>
+ *      {@link ChannelEvent} which will be put on the internal HST Guava event bus for
+ *      <code>synchronous</code> events dispatching where listeners to this event can inject logic or short-circuit
+ *      processing by setting a {@link java.lang.RuntimeException}
+ *      through {@link ChannelEvent#setException(java.lang.RuntimeException)}. When a {@link java.lang.RuntimeException} is
+ *      set on this {@link ChannelEvent} by a listener, the
+ *      {@link org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource#publishSynchronousEvent} will rethrow the
+ *      exception. The reason that this has to be done via this ChannelEvent object is that Guava
+ *      {@link com.google.common.eventbus.EventBus} always catches an exception thrown by a listener, even when injecting a
+ *      custom {@link com.google.common.eventbus.SubscriberExceptionHandler}
+ * </p>
+ * <p>
+ *     <strong>Note</strong> that listeners for {@link ChannelEvent}s must <strong>never</strong> invoke
+ *     {@link javax.jcr.Session#save() HstRequestContext#getSession()#save()}. Changes in the JCR {@link javax.jcr.Session}
+ *     will always be persisted by the code that posted the {@link ChannelEvent} to the guava event bus
+ * </p>
  */
-public class ChannelEvent extends EventObject {
+public class ChannelEvent extends RuntimeExceptionEvent {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelEvent.class);
 
@@ -52,7 +57,6 @@ public class ChannelEvent extends EventObject {
     private transient final HstRequestContext requestContext;
     private transient final Mount editingMount;
     private transient final HstSite editingPreviewSite;
-    private transient RuntimeException exception;
 
     public ChannelEvent(final ChannelEventType channelEventType,
                         final List<String> userIds,
@@ -99,17 +103,9 @@ public class ChannelEvent extends EventObject {
         return editingPreviewSite;
     }
 
-    public RuntimeException getException() {
-        return exception;
-    }
-
-    public void setException(final RuntimeException exception) {
-        if (this.exception != null) {
-            log.debug("Skipping exception '{}' for ChannelEvent {} because already an exception set.", exception.toString(),
-                    this);
-            return;
-        }
-        this.exception = exception;
+    @Override
+    public Logger getLogger() {
+        return log;
     }
 
     @Override
@@ -120,7 +116,7 @@ public class ChannelEvent extends EventObject {
                 ", editingMount=" + editingMount +
                 ", editingPreviewSite=" + editingPreviewSite +
                 ", request=" + requestContext.getServletRequest() +
-                ", exception=" + exception +
+                ", exception=" + getException() +
                 '}';
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -43,11 +44,11 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtIdsRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.NewPageModelRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PageModelRepresentation;
@@ -56,6 +57,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.RelativeDocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.UserRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
@@ -71,6 +73,8 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 
 @Path("/hst:mount/")
 public class MountResource extends AbstractConfigResource {
@@ -144,8 +148,28 @@ public class MountResource extends AbstractConfigResource {
     @GET
     @Path("/newpagemodel")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNewPageModel() {
-        final Mount mount = getPageComposerContextService().getEditingMount();
+    public Response getNewPageModel(@QueryParam("mountId") final String mountId) {
+        final Mount mount;
+        if (mountId == null) {
+            mount = getPageComposerContextService().getEditingMount();
+        } else {
+            mount = RequestContextProvider.get().getVirtualHost().getVirtualHosts().getMountByIdentifier(mountId);
+        }
+        if (mount == null) {
+            String msg = String.format("Could not find a Mount for identifier + '%s'", mountId);
+            return logAndReturnClientError(new ClientException(msg, ClientError.ITEM_NOT_FOUND));
+        }
+        if (!Mount.PREVIEW_NAME.equals(mount.getType())) {
+            String msg = String.format("Expected a preview (decorated) mount but '%s' is not of " +
+                    "type preview.", mount.toString());
+            return logAndReturnClientError(new ClientException(msg, ClientError.UNKNOWN));
+        }
+        NewPageModelRepresentation newPageModelRepresentation = getNewPageModelRepresentation(mount);
+        log.info("New Page model loaded successfully");
+        return ok("New Page model loaded successfully", newPageModelRepresentation);
+    }
+
+    private NewPageModelRepresentation getNewPageModelRepresentation(final Mount mount) {
         PrototypesRepresentation prototypePagesRepresentation = new PrototypesRepresentation().represent(mount.getHstSite(),
                 true, getPageComposerContextService());
 
@@ -156,12 +180,9 @@ public class MountResource extends AbstractConfigResource {
         if (StringUtils.isNotEmpty(mount.getMountPath())) {
             prefix += mount.getMountPath();
         }
-        NewPageModelRepresentation newPageModelRepresentation = new NewPageModelRepresentation(prototypePagesRepresentation.getPrototypes(),
+        return new NewPageModelRepresentation(prototypePagesRepresentation.getPrototypes(),
                 pages.getPages(), prefix);
-        log.info("Prototype pages loaded successfully");
-        return ok("Prototype pages loaded successfully", newPageModelRepresentation);
     }
-
 
     @GET
     @Path("/userswithchanges/")
@@ -516,11 +537,11 @@ public class MountResource extends AbstractConfigResource {
             return Collections.emptyList();
         }
 
-        final String xpath = buildXPathQueryToFindMainfConfigNodesForUsers(previewConfigurationPath, userIds);
+        final String xpath = buildXPathQueryToFindMainConfigNodesForUsers(previewConfigurationPath, userIds);
         final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
 
         final NodeIterable mainConfigNodesForUsers = new NodeIterable(result.getNodes());
-        List<String> mainConfigNodeNamesForUsers = new ArrayList<String>();
+        List<String> mainConfigNodeNamesForUsers = new ArrayList<>();
         for (Node mainConfigNodeForUser : mainConfigNodesForUsers) {
             String mainConfigNodePath = mainConfigNodeForUser.getPath();
             if (!mainConfigNodePath.startsWith(previewConfigurationPath)) {
@@ -560,7 +581,7 @@ public class MountResource extends AbstractConfigResource {
         return xpath.toString();
     }
 
-    static String buildXPathQueryToFindMainfConfigNodesForUsers(String previewConfigurationPath, List<String> userIds) {
+    static String buildXPathQueryToFindMainConfigNodesForUsers(String previewConfigurationPath, List<String> userIds) {
         if (userIds.isEmpty()) {
             throw new IllegalArgumentException("List of user IDs cannot be empty");
         }
@@ -589,31 +610,40 @@ public class MountResource extends AbstractConfigResource {
                                             final String toConfig,
                                             final List<String> mainConfigNodeNames) throws RepositoryException {
         for (String mainConfigNodeName : mainConfigNodeNames) {
+            if (mainConfigNodeName.contains("/")) {
+                log.warn("Skip illegal main config node name '{}' because it contains a '/'.", mainConfigNodeName);
+                continue;
+            }
+            if (mainConfigNodeName.equals(NODENAME_HST_WORKSPACE)) {
+                log.warn("Skip illegal main config node name '{}'.", mainConfigNodeName);
+                continue;
+            }
             String absFromPath = fromConfig + "/" + mainConfigNodeName;
             String absToPath = toConfig + "/" + mainConfigNodeName;
-            final Node rootNode = session.getRootNode();
-            if (rootNode.hasNode(absFromPath.substring(1)) && rootNode.hasNode(absToPath.substring(1))) {
-                final Node nodeToReplace = rootNode.getNode(absToPath.substring(1));
-                Node fromNode = rootNode.getNode(absFromPath.substring(1));
-                if (!fromNode.getParent().isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION) ||
-                        !nodeToReplace.getParent().isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION)) {
-                    log.warn("Node '{}' or '{]' is not a main node below hst:configuration. Cannot be published or revered",
-                            fromNode.getPath(), nodeToReplace.getPath());
-                    continue;
-                }
 
-                nodeToReplace.remove();
-                lockHelper.unlock(fromNode);
-                fromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
-                JcrUtils.copy(session, fromNode.getPath(), absToPath);
+            if (!session.nodeExists(absFromPath)) {
+                log.info("Copy from '{}' does not exist, implying the target must be removed.", absFromPath);
+                if (session.nodeExists(absToPath)) {
+                    // copy the entire main config node
+                    session.getNode(absToPath).remove();
+                }
+                continue;
+            }
+            if (session.nodeExists(absToPath)) {
+                // copy the entire main config node
+                session.getNode(absToPath).remove();
+            }
+            Node fromNode = session.getNode(absFromPath);
+            lockHelper.unlock(fromNode);
+            final Node copy = JcrUtils.copy(session, fromNode.getPath(), absToPath);
+            if (copy.getPath().contains("-preview/")) {
+                // it was a discard
+                copy.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
             } else {
-                log.warn("Cannot copy node '{}' because live or preview version for '{}' is not available.",
-                        absToPath, mainConfigNodeName);
+                // it was a publish
+                fromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
             }
         }
-
-        log.info("Main config nodes '{}' pushed succesfully from '{}' to '{}'.",
-                new String[]{mainConfigNodeNames.toString(), fromConfig, toConfig});
     }
 
     private void discardChannelChanges(final Session session,

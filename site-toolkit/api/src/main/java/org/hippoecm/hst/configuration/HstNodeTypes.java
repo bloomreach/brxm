@@ -26,8 +26,10 @@ public interface HstNodeTypes {
     String NODETYPE_HST_CONFIGURATION = "hst:configuration";
     String NODETYPE_HST_SITEMAP = "hst:sitemap";
     String NODETYPE_HST_SITEMAPITEM = "hst:sitemapitem";
+    String NODETYPE_HST_PAGES = "hst:pages";
     String NODETYPE_HST_ABSTRACT_COMPONENT = "hst:abstractcomponent";
     String NODETYPE_HST_COMPONENT = "hst:component";
+    String NODETYPE_HST_COMPONENTS = "hst:components";
     String NODETYPE_HST_CONTAINERCOMPONENTREFERENCE = "hst:containercomponentreference";
     String NODETYPE_HST_CONTAINERCOMPONENT = "hst:containercomponent";
     String NODETYPE_HST_CONTAINERITEMCOMPONENT = "hst:containeritemcomponent";
@@ -46,6 +48,7 @@ public interface HstNodeTypes {
     String NODETYPE_HST_SITEMAPITEMHANDLER = "hst:sitemapitemhandler";
     String NODETYPE_HST_CONTENTMOUNT = "hst:contentmount";
     String NODETYPE_HST_TEMPLATE = "hst:template";
+    String NODETYPE_HST_TEMPLATES = "hst:templates";
     String NODETYPE_HST_CHANNELINFO = "hst:channelinfo";
     String NODETYPE_HST_CHANNEL = "hst:channel";
     String NODETYPE_HST_CHANNELS = "hst:channels";

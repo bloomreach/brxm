@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import com.google.common.collect.Lists;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
@@ -56,6 +57,12 @@ public class SiteMenuItemHelper extends AbstractHelper {
     @Override
     public Object getConfigObject(final String itemId) {
         throw new UnsupportedOperationException("Cannot fetch site menu item without menu id");
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getConfigObject(final String itemId, final Mount mount) {
+        throw new UnsupportedOperationException("not supported");
     }
 
     public Node create(Node parent, SiteMenuItemRepresentation newItem, Position position, String sibling) throws RepositoryException {

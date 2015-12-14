@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,31 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_ABSTRACT_COMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_PAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID;
 import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
@@ -48,6 +55,12 @@ public class PagesHelper extends AbstractHelper {
         throw new UnsupportedOperationException("not supported");
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public Object getConfigObject(final String itemId, final Mount mount) {
+        throw new UnsupportedOperationException("not supported");
+    }
+
     public Node create(final Node prototype, final String targetPageNodeName) throws RepositoryException {
         return create(prototype, targetPageNodeName, null, false);
     }
@@ -58,8 +71,18 @@ public class PagesHelper extends AbstractHelper {
                        final HstComponentConfiguration pageInstance,
                        final boolean skipContainerItems) throws RepositoryException {
         final String previewWorkspacePagesPath = getPreviewWorkspacePagesPath();
+        return create(pageOrPrototype, targetPageNodeName, pageInstance, skipContainerItems, previewWorkspacePagesPath);
+    }
 
+    public Node create(final Node pageOrPrototype,
+                       final String targetPageNodeName,
+                       final HstComponentConfiguration pageInstance,
+                       final boolean skipContainerItems,
+                       final String previewWorkspacePagesPath) throws RepositoryException {
         final Session session = pageComposerContextService.getRequestContext().getSession();
+        if (!session.nodeExists(previewWorkspacePagesPath)) {
+            createWorkspacePagesInPreviewAndLive(previewWorkspacePagesPath, session);
+        }
         final String validTargetPageNodeName = getValidTargetPageNodeName(previewWorkspacePagesPath, targetPageNodeName, session);
         final Node newPage = JcrUtils.copy(session, pageOrPrototype.getPath(), previewWorkspacePagesPath + "/" + validTargetPageNodeName);
 
@@ -85,6 +108,171 @@ public class PagesHelper extends AbstractHelper {
         return newPage;
     }
 
+    private void createWorkspacePagesInPreviewAndLive(final String previewWorkspacePagesPath, final Session session) throws RepositoryException {
+        final String previewWorkspacePath = StringUtils.substringBeforeLast(previewWorkspacePagesPath, "/");
+        session.getNode(previewWorkspacePath).addNode(NODENAME_HST_PAGES, NODETYPE_HST_PAGES);
+        final String liveWorkspacePath = previewWorkspacePath.replace("-preview/","/");
+        if (!session.nodeExists(liveWorkspacePath + "/" + NODENAME_HST_PAGES)) {
+            session.getNode(liveWorkspacePath).addNode(NODENAME_HST_PAGES, NODETYPE_HST_PAGES);
+        }
+    }
+
+    public Node copy(final Session session, final String targetPageName, final HstComponentConfiguration sourcePage,
+                     final Mount sourceMount, final Mount targetMount)
+            throws RepositoryException {
+        Node newPageNode = create(session.getNodeByIdentifier(sourcePage.getCanonicalIdentifier()),
+                targetPageName, sourcePage, false, getWorkspacePath(targetMount) + "/" + NODENAME_HST_PAGES);
+
+        if (sourceMount.getIdentifier().equals(targetMount.getIdentifier())) {
+            // copy within same channel. We do not need to check all referenced components
+            return newPageNode;
+        }
+        log.info("Cross channel copy between source '{}' and target '{}' requires all component references to be available in the target " +
+                "mount as well.", sourceMount, targetMount);
+        // check references and whether they can be resolved in target mount
+        HashSet<String> checkedNodes = new HashSet<>();
+        checkReferencesRecursive(newPageNode, sourceMount.getHstSite(), targetMount.getHstSite(), checkedNodes);
+
+        return newPageNode;
+    }
+
+    private void checkReferencesRecursive(final Node node, final HstSite sourceSite, final HstSite targetSite,
+                                          final HashSet<String> checkedNodes) throws RepositoryException {
+        if (checkedNodes.contains(node.getIdentifier())) {
+            log.warn("Reference recursion found for node '{}'. Skip further checking", node.getPath());
+        }
+        checkedNodes.add(node.getIdentifier());
+        if (node.hasProperty(COMPONENT_PROPERTY_REFERECENCECOMPONENT)) {
+            String reference = node.getProperty(COMPONENT_PROPERTY_REFERECENCECOMPONENT).getString();
+            if (isNotBlank(reference)) {
+                copyReferenceIfMissing(node, sourceSite, targetSite, reference, checkedNodes);
+            }
+        }
+        // check all references of all the descendants as well
+        for (Node child : new NodeIterable(node.getNodes())) {
+            checkReferencesRecursive(child, sourceSite, targetSite, checkedNodes);
+        }
+    }
+
+    private void copyReferenceIfMissing(final Node node, final HstSite sourceSite, final HstSite targetSite,
+                                        final String reference, final HashSet<String> checkedNodes) throws RepositoryException {
+        final HstComponentConfiguration targetReference = targetSite.getComponentsConfiguration().getComponentConfiguration(reference);
+        final Session session = node.getSession();
+        if (targetReference != null) {
+            // if the main config in the target is locked by someone else, it might be that the reference is not available in live
+            // configuration. In that case, a lock exception should be triggered
+            assertTargetReferenceAvailable(targetSite, reference, targetReference, session);
+            return;
+        } else {
+            log.info("Referenced component '{}' is missing in targetMount '{}'. Try to copy it from the sourceMount '{}'.",
+                    reference, targetSite, sourceSite);
+            final HstComponentConfiguration sourceReference = sourceSite.getComponentsConfiguration().getComponentConfiguration(reference);
+            if (sourceReference == null) {
+                log.warn("Referenced component '{}' is missing in targetMount '{}' but also missing in sourceMount '{}'. Skip it.");
+                return;
+            }
+            final Node referencedNode = session.getNodeByIdentifier(sourceReference.getCanonicalIdentifier());
+            final List<String> configurationRelativePathSegments = getConfigurationRelativePathSegments(referencedNode);
+            final String configurationRelativePath = getConfigurationRelativePath(configurationRelativePathSegments);
+            final String targetAbsolutePath = targetSite.getConfigurationPath() + "/" + configurationRelativePath;
+            if (session.nodeExists(targetAbsolutePath)) {
+                log.debug("Target reference '{}' exists already in '{}'. Most likely it was not yet part of the model before. " +
+                        "Nothing needs to be copied.", targetAbsolutePath, targetSite);
+                return;
+            }
+            final String mainConfigNodeName = configurationRelativePathSegments.get(0);
+            final String mainConfigNodePath = targetSite.getConfigurationPath() + "/" + mainConfigNodeName;
+            if (!session.nodeExists(mainConfigNodePath)) {
+                session.getNode(targetSite.getConfigurationPath()).addNode(mainConfigNodeName);
+            }
+            // try to acquire the lock first
+            final Node mainConfigNode = session.getNode(mainConfigNodePath);
+            lockHelper.acquireSimpleLock(mainConfigNode, 0L);
+
+            // copy the first missing node
+            Node currentNode = mainConfigNode;
+            for (int i = 1; i < configurationRelativePathSegments.size(); i++) {
+                if (!currentNode.hasNode(configurationRelativePathSegments.get(i))) {
+                    // found the missing node : This one needs to be copied
+                    // first find the original
+                    final String existingRelativePath = getConfigurationRelativePath(configurationRelativePathSegments.subList(0, i));
+                    final Node copy = JcrUtils.copy(session, sourceSite.getConfigurationPath() + "/" + existingRelativePath + "/" + configurationRelativePathSegments.get(i),
+                            targetSite.getConfigurationPath() + "/" + existingRelativePath + "/" + configurationRelativePathSegments.get(i));
+                    // repeat the same reference checking for the copied node
+                    checkReferencesRecursive(copy, sourceSite, targetSite, checkedNodes);
+                }
+            }
+        }
+    }
+
+    /**
+     * @throws RepositoryException
+     * @throws ClientException in case the targetReference is available only in preview but has been locked by someone else: In
+     * that case, the targetReference is not available in live yet
+     */
+    private void assertTargetReferenceAvailable(final HstSite targetSite,
+                                                final String reference,
+                                                final HstComponentConfiguration targetReference,
+                                                final Session session) throws RepositoryException, ClientException {
+        if (targetReference.isInherited()) {
+            // inherited implies it must be live
+            log.debug("No need to copy referenced component '{}' because referenced component '{}' already is available in targetMount '{}'",
+                    reference, targetReference, targetSite);
+            return;
+        }
+
+        final String absPreviewPath = targetReference.getCanonicalStoredLocation();
+        final String absLivePath = absPreviewPath.replace("-preview/", "/");
+        if (session.nodeExists(absLivePath)) {
+            // configuration is already live, so no problem for sure
+            log.debug("No need to copy referenced component '{}' because referenced component '{}' already is available in live targetMount '{}'",
+                    reference, targetReference, targetSite);
+            return;
+        }
+        // targetReference is present in preview, but not in live. We need to check whether the current user also owns the
+        // lock on the 'main config node'. Otherwise, it implies someone else has the lock, in which case, this action cannot
+        // be completed (because if this user would publish, the live still wouldn't have the referenced node)
+
+        final List<String> configurationRelativePathSegments = getConfigurationRelativePathSegments(session.getNode(absPreviewPath));
+        // if current user does not own the lock, the acquireSimpleLock will throw an exception which also should be the case
+        // if the lock is not owned on the main config node
+        final String mainConfigNodeName = configurationRelativePathSegments.get(0);
+        final String mainConfigNodePath = targetSite.getConfigurationPath() + "/" + mainConfigNodeName;
+        final Node mainConfigNode = session.getNode(mainConfigNodePath);
+        lockHelper.acquireSimpleLock(mainConfigNode, 0L);
+        log.debug("reference '{}' is already present in preview configuration and the lock on '{}' is also owned.",
+                absPreviewPath, mainConfigNodePath);
+        return;
+    }
+
+    /**
+     * returns a path like  {@code hst:abstractpages/base } for a list like {@code {hst:abstractpages,base} }
+     */
+    private String getConfigurationRelativePath(final List<String> configurationRelativePathSegments) {
+        StringBuilder builder = new StringBuilder();
+        for (String configurationRelativePathSegment : configurationRelativePathSegments) {
+            builder.append("/").append(configurationRelativePathSegment);
+        }
+        // remove first slash
+        return builder.substring(1);
+    }
+
+    /**
+     * returns a list like  {@code {hst:abstractpages,base} } for a node at
+     * {@code /hst:hst/hst:configurations/myproject/hst:abstractpages/base}
+     */
+    private List<String> getConfigurationRelativePathSegments(final Node referencedNode) throws RepositoryException {
+        List<String> relativeReferencePathSegments = new ArrayList<>();
+        Node component = referencedNode;
+        while (component.isNodeType(NODETYPE_HST_ABSTRACT_COMPONENT)) {
+            relativeReferencePathSegments.add(0, component.getName());
+            component = component.getParent();
+        }
+        // component now is hst:abstractpages, hst:components or hst:pages
+        relativeReferencePathSegments.add(0, component.getName());
+        return relativeReferencePathSegments;
+    }
+
     public Node rename(final Node oldPage, final String targetPageNodeName) throws RepositoryException {
         // check if not locked
         lockHelper.acquireLock(oldPage, 0);
@@ -108,8 +296,8 @@ public class PagesHelper extends AbstractHelper {
             return newPage;
         }
 
-        String newPagePathPrefix = "/" + HstNodeTypes.NODENAME_HST_PAGES + "/" + newPage.getName() + "/";
-        String oldPagePathPrefix = "/" + HstNodeTypes.NODENAME_HST_PAGES + "/" + oldPage.getName() + "/";
+        String newPagePathPrefix = "/" + NODENAME_HST_PAGES + "/" + newPage.getName() + "/";
+        String oldPagePathPrefix = "/" + NODENAME_HST_PAGES + "/" + oldPage.getName() + "/";
 
         List<Node> existingContainers = findContainers(oldPage);
         Session session = oldPage.getSession();
@@ -220,7 +408,10 @@ public class PagesHelper extends AbstractHelper {
         }
     }
 
-
+    /**
+     * de-normalizes referenced workspace containers that are *part* of the canonical <code>newPage</code> node structure: Inherited
+     * references (for example hst:abstractpages/base/footer) do not need to be de-normalized
+     */
     private void denormalizeContainerComponentReferences(final Node newPage,
                                                          final HstComponentConfiguration pageInstance) throws RepositoryException {
 
@@ -291,7 +482,7 @@ public class PagesHelper extends AbstractHelper {
     }
 
     private void deletePageNodeIfNotReferencedAnyMore(final Node pageNode) throws RepositoryException {
-        String componentConfigurationIdForPage = HstNodeTypes.NODENAME_HST_PAGES + "/" + pageNode.getName();
+        String componentConfigurationIdForPage = NODENAME_HST_PAGES + "/" + pageNode.getName();
         final Session session = pageNode.getSession();
         Node workspaceSiteMapNode = session.getNode(getPreviewWorkspacePath()).getNode(HstNodeTypes.NODENAME_HST_SITEMAP);
         Node nonWorkspaceSiteMapNode = null;

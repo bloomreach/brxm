@@ -16,14 +16,11 @@
 package org.hippoecm.hst.core.linking;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 
 import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
@@ -175,7 +172,10 @@ public class DocumentParamsScannerTest {
         expect(child2.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
 
         expect(root.getParameterPrefixes()).andReturn(Collections.emptySet()).anyTimes();
-        expect(root.getChildren()).andReturn(ImmutableMap.of("left", child1, "right", child2)).anyTimes();
+        Map<String, HstComponentConfiguration> expectedChildren = new HashMap<>();
+        expectedChildren.put("left", child1);
+        expectedChildren.put("right", child2);
+        expect(root.getChildren()).andReturn(expectedChildren).anyTimes();
         replay(root, child1, child2);
 
         final List<String> documentPaths = DocumentParamsScanner.findDocumentPathsRecursive(root, classLoader);
@@ -195,7 +195,9 @@ public class DocumentParamsScannerTest {
         expect(child1.getParameter(
                 eq(ConfigurationUtils.createPrefixedParameterName("professional","news-jcrPath"))))
                 .andReturn("/jcrPathNewsProfessional");
-        expect(child1.getParameterPrefixes()).andReturn(ImmutableSet.of("professional")).anyTimes();
+        Set<String> expectedParameterPrefixes = new HashSet<>();
+        expectedParameterPrefixes.add("professional");
+        expect(child1.getParameterPrefixes()).andReturn(expectedParameterPrefixes).anyTimes();
         expect(child1.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
 
         HstComponentConfiguration child2 = EasyMock.createNiceMock(HstComponentConfiguration.class);
@@ -204,11 +206,14 @@ public class DocumentParamsScannerTest {
         expect(child2.getParameter(
                 eq(ConfigurationUtils.createPrefixedParameterName("professional","news-documentLink"))))
                 .andReturn("/documentLinkNewsProfessional");
-        expect(child2.getParameterPrefixes()).andReturn(ImmutableSet.of("professional")).anyTimes();
+        expect(child2.getParameterPrefixes()).andReturn(expectedParameterPrefixes).anyTimes();
         expect(child2.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
 
         expect(root.getParameterPrefixes()).andReturn(Collections.emptySet()).anyTimes();
-        expect(root.getChildren()).andReturn(ImmutableMap.of("left", child1, "right", child2)).anyTimes();
+        Map<String, HstComponentConfiguration> expectedChildren = new HashMap<>();
+        expectedChildren.put("left", child1);
+        expectedChildren.put("right", child2);
+        expect(root.getChildren()).andReturn(expectedChildren).anyTimes();
         replay(root, child1, child2);
 
         final List<String> documentPaths = DocumentParamsScanner.findDocumentPathsRecursive(root, classLoader);

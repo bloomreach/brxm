@@ -284,7 +284,10 @@ client-modules/google-analytics/repository/src/site/site.xml -text
 client-modules/page-composer/pom.xml -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/builtin/components/StandardContainerComponent.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/api/ChannelEvent.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/api/PageCopyContext.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/api/PageCopyEvent.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/api/PropertyRepresentationFactory.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/api/RuntimeExceptionEvent.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/api/VariantRepresentation.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/cxf/CXFJaxrsHstConfigService.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ComponentRepresentation.java -text svneol=unset#text/plain
@@ -294,6 +297,8 @@ client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/m
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ContainerRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/DocumentRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ExtResponseRepresentation.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/FeaturesRepresentation.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/Location.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/MountRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/NewPageModelRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/PageModelRepresentation.java -text svneol=unset#text/plain
@@ -326,10 +331,13 @@ client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/s
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/helpers/ContainerItemHelper.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/helpers/PagesHelper.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/helpers/SiteMapHelper.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/helpers/TemplateHelper.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/AbstractPathInfoValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/ChildExistsValidator.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/ConfigurationExistsValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/CurrentPreviewConfigurationValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/HasPreviewConfigurationValidator.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/HasWorkspaceConfigurationValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/NodePathPrefixValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/NotNullValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/PathInfoValidator.java -text
@@ -360,6 +368,7 @@ client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/m
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ParametersInfoProcessorPopulatedPropertiesTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ParametersInfoProcessorSwitchTemplateTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ParametersInfoProcessorTest.java -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/SiteMapItemRepresentationTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/SwitchTemplatePropertyRepresentationFactoryBundleTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/property/SwitchTemplatePropertyRepresentationFactoryTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerItemComponentResourceTest.java -text
@@ -376,6 +385,7 @@ client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/s
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemapresource/DeleteTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemapresource/DiscardTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemapresource/MoveTest.java -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemapresource/PageCopyTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemapresource/PagesTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemapresource/PublicationTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemapresource/ReApplyPrototypesTest.java -text
@@ -488,6 +498,7 @@ client/src/test/resources/org/hippoecm/hst/component/support/bean/TestBaseHstCom
 client/src/test/resources/org/hippoecm/hst/utils/TestMessageUtils.properties -text
 commons/pom.xml svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/cache/NOOPHstCache.java -text
+commons/src/main/java/org/hippoecm/hst/configuration/ConfigurationUtils.java -text
 commons/src/main/java/org/hippoecm/hst/container/DelegatingFilter.java -text svneol=unset#text/plain
 commons/src/main/java/org/hippoecm/hst/container/HstContainerConfigImpl.java -text
 commons/src/main/java/org/hippoecm/hst/container/HstContainerRequestImpl.java -text
@@ -509,6 +520,7 @@ commons/src/main/java/org/hippoecm/hst/core/hosting/CustomMountAndVirtualHostAug
 commons/src/main/java/org/hippoecm/hst/core/jcr/EventListenerItemImpl.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/jcr/EventListenersContainerImpl.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/linking/AbstractResourceContainer.java svneol=native#text/plain
+commons/src/main/java/org/hippoecm/hst/core/linking/DocumentParamsScanner.java -text
 commons/src/main/java/org/hippoecm/hst/core/sitemenu/AbstractMenu.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/sitemenu/AbstractMenuItem.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/sitemenu/EditableMenuImpl.java svneol=native#text/plain
@@ -540,6 +552,7 @@ commons/src/main/java/org/hippoecm/hst/util/WebFileUtils.java -text
 commons/src/main/java/org/hippoecm/hst/util/WrapperElementUtils.java -text
 commons/src/main/java/org/hippoecm/hst/util/XmlUtils.java -text
 commons/src/site/site.xml -text
+commons/src/test/java/org/hippoecm/hst/configuration/TestConfigurationUtils.java -text
 commons/src/test/java/org/hippoecm/hst/container/TestHstContainerRequest.java -text
 commons/src/test/java/org/hippoecm/hst/container/TestRequestContextProvider.java -text
 commons/src/test/java/org/hippoecm/hst/core/component/TestHstParameterInfoProxyFactoryImpl.java -text
@@ -547,6 +560,7 @@ commons/src/test/java/org/hippoecm/hst/core/hosting/TestCustomMountAndVirtualhos
 commons/src/test/java/org/hippoecm/hst/core/internal/TestStringPool.java -text
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestEventListenerImpl.java -text svneol=unset#text/plain
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestEventListenersContainerImpl.java svneol=native#text/plain
+commons/src/test/java/org/hippoecm/hst/core/linking/DocumentParamsScannerTest.java -text
 commons/src/test/java/org/hippoecm/hst/resourcebundle/TestCompositeResourceBundle.java -text
 commons/src/test/java/org/hippoecm/hst/resourcebundle/TestResourceBundleUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestAnnotationsScanner.java -text
@@ -578,7 +592,6 @@ components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIHstPageInfo.java -te
 components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIPageRenderer.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIPageScanner.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIVarsPlaceholderResolver.java -text
-components/core/src/main/java/org/hippoecm/hst/configuration/ConfigurationUtils.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/cache/CompositeConfigurationNodes.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstConfigurationLoadingCache.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstEvent.java -text
@@ -676,7 +689,6 @@ components/core/src/main/java/org/hippoecm/hst/core/jcr/SubjectBasedRepository.j
 components/core/src/main/java/org/hippoecm/hst/core/linking/CompositeList.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/DefaultHstLinkCreator.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/DefaultRewriteContextResolver.java -text
-components/core/src/main/java/org/hippoecm/hst/core/linking/DocumentParamsScanner.java -text
 components/core/src/main/java/org/hippoecm/hst/core/linking/HstLinkImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/HstLinkProcessorChain.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/LocationMapResolver.java svneol=native#text/plain
@@ -775,7 +787,6 @@ components/core/src/test/java/org/hippoecm/hst/configuration/HstComponentsConfig
 components/core/src/test/java/org/hippoecm/hst/configuration/MatchHostAndUrlIT.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/configuration/NoChannelsOrBlueprintsIT.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/SiteMapItemHandlerIT.java -text svneol=unset#text/plain
-components/core/src/test/java/org/hippoecm/hst/configuration/TestConfigurationUtils.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/cache/AbstractHstLoadingCacheTestCase.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/cache/HstConfigurationLoadingCacheIT.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/cache/HstNodeLoadingCacheIT.java -text
@@ -832,7 +843,6 @@ components/core/src/test/java/org/hippoecm/hst/core/jcr/JvmCredentialsLoginIT.ja
 components/core/src/test/java/org/hippoecm/hst/core/jcr/LazySessionDelegatingRepositoryIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/jcr/SessionSecurityDelegationIT.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/AbstractHstLinkRewritingIT.java -text
-components/core/src/test/java/org/hippoecm/hst/core/linking/DocumentParamsScannerTest.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstBinariesLinkRewritingIT.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstContainerResourceLinkRewritingIT.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/linking/HstLinkAllRewritingIT.java -text
