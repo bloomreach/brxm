@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-import { IFrameService } from './iframe.service.js';
-import { ConfigService } from './config.service.js';
+export class ConfigService {
 
-export const channelManagerApi = angular
-  .module('hippo-cmng-api', [])
-  .service('IFrameService', IFrameService)
-  .service('ConfigService', ConfigService);
+  constructor (IFrameService) {
+    'ngInject';
 
+    // default configuration for local development without cms
+    this.apiUrlPrefix = 'http://localhost:8080/site/_rp';
+    this.locale = 'en';
+    this.antiCache = new Date().getTime();
 
+    // override default config when app runs in iframe
+    if (IFrameService.isActive) {
+      Object.assign(this, IFrameService.getConfig());
+    }
+  }
+}
