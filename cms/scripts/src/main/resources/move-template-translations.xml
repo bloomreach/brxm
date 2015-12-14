@@ -22,7 +22,7 @@
     <sv:value>10</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:description" sv:type="String">
-    <sv:value/>
+    <sv:value>Translations of template queries have been moved. Run this updater after upgrading to Hippo 11.</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:query" sv:type="String">
     <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/element(*, hippostd:templatequery)</sv:value>

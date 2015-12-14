@@ -22,7 +22,7 @@
     <sv:value>10</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:description" sv:type="String">
-    <sv:value/>
+    <sv:value>Document type translations have been moved. Run this updater after upgrading to Hippo 11.</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:dryrun" sv:type="Boolean">
     <sv:value>true</sv:value>
@@ -64,7 +64,7 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {&#xd;
     Node fieldTranslations = getFieldTranslations(node);&#xd;
     if (fieldTranslations != null) {&#xd;
       moveDocumentFieldTranslations(fieldTranslations, namespace, docTypeName);&#xd;
-      fieldTranslations.remove();&#xd;
+      fieldTranslations.getParent().remove();&#xd;
     }&#xd;
     return true&#xd;
   }&#xd;
