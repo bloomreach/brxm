@@ -158,10 +158,6 @@ public interface HippoNodeType {
 
     public static final String NT_TEMPLATETYPE = "hipposysedit:templatetype";
 
-    public static final String NT_TRANSLATED = "hippo:translated";
-
-    public static final String NT_TRANSLATION = "hippo:translation";
-
     @Deprecated
     public static final String NT_TYPE = "hipposys:type";
 
@@ -367,8 +363,6 @@ public interface HippoNodeType {
     public static final String HIPPO_SUPERTYPE = "hipposysedit:supertype";
 
     public static final String HIPPO_TEMPLATE = "hipposysedit:template";
-
-    public static final String HIPPO_TRANSLATION = "hippo:translation";
 
     public static final String HIPPOSYS_TYPE = "hipposys:type";
 
