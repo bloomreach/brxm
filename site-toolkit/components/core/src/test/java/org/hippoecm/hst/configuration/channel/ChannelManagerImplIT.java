@@ -128,7 +128,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
 
         Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
         assertEquals(2, channels.size());
-        final Channel channel = channels.values().iterator().next();
+        final Channel channel = channels.get("testchannel");
         channel.setChannelInfoClassName(getClass().getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
         channel.getProperties().put("title", "test title");
         // channel manager save triggers event path invalidation hence no explicit invalidation needed now
