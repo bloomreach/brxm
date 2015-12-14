@@ -45,8 +45,7 @@ function config ($stateProvider, $urlRouterProvider, $translateProvider) {
 }
 
 function run (IFrameService) {
-  // enable live reload
-  IFrameService.enableLiveReload();
+  IFrameService.enableBrowserSync();
 }
 
 export const hippoCmModule = angular

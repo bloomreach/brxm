@@ -26,9 +26,9 @@ module.exports = function(config) {
     }, {
       type: 'text-summary'
     }]
-  }
+  };
   options.autoWatch = false;
-  options.browsers = ['PhantomJS'];
+  options.browsers = ['Chrome'];
   options.singleRun = true;
   options.preprocessors = {};
   options.preprocessors[cfg.dist.indexScript] = ['sourcemap', 'coverage'];

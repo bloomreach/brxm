@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-const LIVE_RELOAD_URL = '//localhost:35729/livereload.js';
-const ID_PARAM = 'parentExtIFramePanelId';
-
 export class IFrameService {
 
   constructor ($window, $log) {
@@ -36,7 +33,7 @@ export class IFrameService {
 
       for (let i = 0, length = parameters.length; i < length; i++) {
         let keyValue = parameters[i].split('=');
-        if (keyValue[0] === ID_PARAM) {
+        if (keyValue[0] === 'parentExtIFramePanelId') {
           return keyValue[1];
         }
       }
@@ -57,13 +54,13 @@ export class IFrameService {
 
   publish (event, value) {
     if (this.isActive) {
-      return this._iframeToHost().publish(event, value);
+      return this.getParentIFramePanel().iframeToHost.publish(event, value);
     }
   }
 
   subscribe (event, callback, scope) {
     if (this.isActive) {
-      return this._hostToIFrame().subscribe(event, callback, scope);
+      return this.getParentIFramePanel().hostToIFrame.subscribe(event, callback, scope);
     }
   }
 
@@ -82,26 +79,19 @@ export class IFrameService {
     }
   }
 
-  addScriptToHead (scriptUrl) {
-    let head = this.$window.document.getElementsByTagName("head")[0];
+  addScriptToBody (scriptUrl) {
+    let body = this.$window.document.getElementsByTagName("body")[0];
     let script = document.createElement('script');
     script.type = 'text/javascript';
     script.src = scriptUrl;
-    head.appendChild(script);
+    body.appendChild(script);
   }
 
-  enableLiveReload () {
+  enableBrowserSync () {
+    const browserSyncUrl = '//localhost:3000/browser-sync/browser-sync-client.2.10.0.js';
     if (this.getConfig().debug) {
-      this.addScriptToHead(LIVE_RELOAD_URL);
-      this.$log.info(`iframe #${this.getParentIFramePanelId()} has live reload enabled via ${LIVE_RELOAD_URL}`);
+      this.addScriptToBody(browserSyncUrl);
+      this.$log.info(`iframe #${this.getParentIFramePanelId()} has browserSync enabled via ${browserSyncUrl}`);
     }
-  }
-
-  _hostToIFrame () {
-    return this.getParentIFramePanel().hostToIFrame;
-  }
-
-  _iframeToHost () {
-    return this.getParentIFramePanel().iframeToHost;
   }
 }

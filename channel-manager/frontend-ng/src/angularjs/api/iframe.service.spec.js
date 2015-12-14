@@ -17,7 +17,13 @@
 describe('IFrameService', function () {
   'use strict';
 
-  var iframeConfig, parentIFramePanel, $log, $window, iframeService, publishMock, subscribeMock;
+  var iframeConfig;
+  var parentIFramePanel;
+  var $log;
+  var $window;
+  var iframeService;
+  var publishMock;
+  var subscribeMock;
 
   beforeEach(function () {
     module('hippo-cm-api');
@@ -87,31 +93,35 @@ describe('IFrameService', function () {
     it('should enable live reload in debug mode', function () {
       iframeConfig.debug = true;
 
-      var head = jasmine.createSpyObj('head', ['appendChild']);
-      $window.document.getElementsByTagName.and.returnValue([head]);
+      var body = jasmine.createSpyObj('body', ['appendChild']);
+      $window.document.getElementsByTagName.and.returnValue([body]);
 
       spyOn($log, 'info');
 
-      iframeService.enableLiveReload();
+      iframeService.enableBrowserSync();
 
-      expect(head.appendChild).toHaveBeenCalled();
-      expect($log.info).toHaveBeenCalledWith('iframe #ext-42 has live reload enabled via //localhost:35729/livereload.js');
+      expect(body.appendChild).toHaveBeenCalled();
+      expect($log.info).toHaveBeenCalledWith('iframe #ext-42 has browserSync enabled via //localhost:3000/browser-sync/browser-sync-client.2.10.0.js');
     });
 
     it('should not enable live reload in non-debug mode', function () {
       iframeConfig.debug = false;
-      iframeService.enableLiveReload();
+      iframeService.enableBrowserSync();
       expect($window.document.getElementsByTagName).not.toHaveBeenCalled();
     });
 
     it("should throw an error when the parent does not contain an IFramePanel with the given ID", function () {
       spyOn($window.parent.Ext, 'getCmp').and.returnValue(undefined);
-      expect( function(){ iframeService.getConfig(); }).toThrow(new Error("Unknown iframe panel id: 'ext-42'"));
+      expect(function () {
+        iframeService.getConfig();
+      }).toThrow(new Error("Unknown iframe panel id: 'ext-42'"));
     });
 
     it("should throw an error when the parent's IFramePanel does not contain any configuration for the iframe", function () {
       parentIFramePanel.initialConfig.iframeConfig = undefined;
-      expect( function(){ iframeService.getConfig(); }).toThrow(new Error("Parent iframe panel does not contain iframe configuration"));
+      expect(function () {
+        iframeService.getConfig();
+      }).toThrow(new Error("Parent iframe panel does not contain iframe configuration"));
     });
   });
 

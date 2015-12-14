@@ -39,3 +39,6 @@ Run the commands below in the project root directory.
 
 ### Build optimized application for production
   $ gulp buildDist
+
+### Serve and watch files for development with BrowserSync
+  $ gulp serve
