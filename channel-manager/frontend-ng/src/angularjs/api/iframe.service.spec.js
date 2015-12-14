@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('IFrame Service', function () {
+describe('IFrameService', function () {
   'use strict';
 
   var iframeConfig, parentIFramePanel, $log, $window, iframeService, publishMock, subscribeMock;
