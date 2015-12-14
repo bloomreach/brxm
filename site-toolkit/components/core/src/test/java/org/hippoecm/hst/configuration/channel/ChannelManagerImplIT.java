@@ -116,9 +116,8 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
 
         Map<String, Channel> channels = manager.getVirtualHosts().getChannels("dev-localhost");
         assertEquals(2, channels.size());
-        assertEquals("testchannel", channels.keySet().iterator().next());
 
-        Channel channel = channels.values().iterator().next();
+        Channel channel = channels.get("testchannel");
         assertEquals("testchannel", channel.getId());
         assertEquals("Test Channel", channel.getName());
         assertEquals("en_EN", channel.getLocale());
@@ -138,8 +137,8 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
 
         channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
 
-        assertEquals(1, channels.size());
-        Channel savedChannel = channels.values().iterator().next();
+        assertEquals(2, channels.size());
+        Channel savedChannel = channels.get("testchannel");
 
         Map<String, Object> savedProperties = savedChannel.getProperties();
         assertTrue(savedProperties.containsKey("title"));
