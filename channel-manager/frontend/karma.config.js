@@ -43,6 +43,7 @@ module.exports = function (config) {
       build.bower + '/angular-mocks/angular-mocks.js',
 
       // apps sources
+      build.ngsource + '/shared/services/ChannelService.js',
       build.ngsource + '/shared/services/PageService.js',
 
       build.ngsource + '/menu/menu-dependencies.js',

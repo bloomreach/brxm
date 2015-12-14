@@ -45,7 +45,6 @@
     {{ 'CONFIRM_REMOVE_PRIMARY_DOCUMENT_MESSAGE' | translate:page }}
   </p>
 </div>
-
 <div class="panel panel-default flex-full flex-column">
   <div class="panel-body flex-child">
     <form name="form" role="form" novalidate>
@@ -57,6 +56,8 @@
         <hippo-icon name="locked" size="m"></hippo-icon>
         {{ 'PAGE_LOCKED' | translate:lock }}
       </div>
+
+      <h4>{{ 'PAGE_SETTINGS_DESCRIPTION' | translate }}</h4>
 
       <div class="form-group has-feedback"
            data-ng-class="{
@@ -98,31 +99,31 @@
         </select>
       </div>
 
-      <div class="form-group has-feedback" id="url" data-ng-class="{
-                'has-success': form.url.$dirty && form.url.$valid,
-                'has-error': form.url.$dirty && form.url.$invalid
+      <div class="form-group has-feedback" id="lastPathInfoElement" data-ng-class="{
+                'has-success': form.lastPathInfoElement.$dirty && form.lastPathInfoElement.$valid,
+                'has-error': form.lastPathInfoElement.$dirty && form.lastPathInfoElement.$invalid
             }">
-        <label for="page-url">{{ 'URL' | translate }}</label>
+        <label for="page-lastPathInfoElement">{{ 'URL' | translate }}</label>
         <div class="input-group">
           <span class="input-group-addon">{{ host }}/{{ page.parentPathInfo | formatParentPathInfo }}</span>
 
-          <input type="text" name="url" class="form-control" id="page-url"
-                 data-ng-model="page.url"
+          <input type="text" name="lastPathInfoElement" class="form-control" id="page-lastPathInfoElement"
+                 data-ng-model="page.lastPathInfoElement"
                  data-ng-readonly="!state.isEditable"
                  data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
-                 data-ng-focus="form.url.$setPristine();"
+                 data-ng-focus="form.lastPathInfoElement.$setPristine();"
                  data-ng-required="true"
-                 data-tooltip="{{ tooltips.url() }}"
+                 data-tooltip="{{ tooltips.lastPathInfoElement() }}"
                  data-tooltip-trigger="show"
-                 data-hippo-channel-tooltip-show="form.url.$invalid"
+                 data-hippo-channel-tooltip-show="form.lastPathInfoElement.$invalid"
                  data-tooltip-placement="top">
         </div>
         <span class="form-control-feedback">
-          <hippo-icon ng-if="form.url.$dirty && form.url.$valid"
+          <hippo-icon ng-if="form.lastPathInfoElement.$dirty && form.lastPathInfoElement.$valid"
                       name="check-circle"
                       size="m">
           </hippo-icon>
-          <hippo-icon ng-if="form.url.$dirty && form.url.$invalid"
+          <hippo-icon ng-if="form.lastPathInfoElement.$dirty && form.lastPathInfoElement.$invalid"
                       name="minus-circle"
                       size="m">
           </hippo-icon>
@@ -157,8 +158,6 @@
           </div>
         </div>
 
-        <hr data-ng-show="!template.isVisible">
-
         <button type="submit" class="btn btn-default"
                 data-ng-click="submit()"
                 data-ng-disabled="form.$invalid">
@@ -170,6 +169,76 @@
         </button>
       </div>
     </form>
+    <form class="copy-form" name="copyForm" role="form" data-ng-if="state.isCopyable" novalidate data-ng-class="{
+                'has-success': copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$valid,
+                'has-error': copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$invalid
+            }">
+        <hr />
+        <h4>{{ 'COPY_PAGE_DESCRIPTION' | translate }}</h4>
+        <div ng-if="crossChannelPageCopySupported" class="form-group has-feedback">
+          <label for="channel">{{ 'COPY_PAGE_CHANNEL' | translate }}</label>
+          <select id="channel" name="channel" class="form-control" disabled
+                  data-chosen
+                  data-ng-model="copy.mountId"
+                  data-ng-options="channel.mountId as channel.name for channel in availableChannelsForPageCopy"
+                  data-width="'100%'"
+                  data-ng-change="copy.reloadTargets()"
+                  data-ng-required="true">
+          </select>
+          <div class="form-control-feedback">
+            <hippo-icon ng-if="copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$valid"
+                        name="check-circle"
+                        size="m">
+            </hippo-icon>
+            <hippo-icon ng-if="copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$invalid"
+                        name="minus-circle"
+                        size="m">
+            </hippo-icon>
+          </div>
+        </div>
+        <div class="form-group has-feedback">
+          <label>{{ 'COPY_PAGE_URL' | translate }}</label>
+          <div class="input-group url-widget">
+            <div class="url-dropdown pull-left">
+              <select data-chosen
+                      data-ng-model="copy.target"
+                      data-ng-options="item as item.location for item in locations"
+                      data-width="'100%'"
+                      class="ng-pristine ng-untouched ng-valid localytics-chosen">
+              </select>
+            </div>
+
+            <div class="url-name pull-left">
+              <input type="text" name="lastPathInfoElement" class="form-control"
+                   data-ng-model="copy.lastPathInfoElement"
+                   data-ng-required="true"
+                   data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
+                   data-hippo-channel-tooltip-show="copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$invalid"
+                   data-tooltip="{{ tooltips.copyLastPathInfoElement() }}"
+                   data-tooltip-trigger="show"
+                   data-tooltip-placement="top" />
+              <span class="form-control-feedback">
+                <hippo-icon ng-if="copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$valid"
+                            name="check-circle"
+                            size="m">
+                </hippo-icon>
+                <hippo-icon ng-if="copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$invalid"
+                            name="minus-circle"
+                            size="m">
+                </hippo-icon>
+              </span>
+
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-default btn-md"
+                data-ng-click="submitCopyPage()"
+                data-ng-disabled="copyForm.lastPathInfoElement.$invalid">
+          <hippo-icon name="plus" size="m"></hippo-icon>
+          {{ 'COPY_PAGE' | translate }}
+        </button>
+    </form>
+
   </div>
 
   <div class="panel-footer solid-child">

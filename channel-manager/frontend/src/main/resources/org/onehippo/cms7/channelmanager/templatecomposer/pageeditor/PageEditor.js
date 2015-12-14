@@ -875,6 +875,11 @@
                     this.channelId = channelRecord.get('id');
                     this.channelName = channelRecord.get('name');
                     this.channel = channelRecord.data;
+                    if (data.renderPathInfo) {
+                        this.browseTo({
+                            renderPathInfo: data.renderPathInfo
+                        });
+                    }
                 }.createDelegate(this));
             }, this);
 
