@@ -20,7 +20,7 @@ describe('IFrameService', function () {
   var iframeConfig, parentIFramePanel, $log, $window, iframeService, publishMock, subscribeMock;
 
   beforeEach(function () {
-    module('hippo-cmng-api');
+    module('hippo-cm-api');
 
     iframeConfig = {
       testProperty: 'testValue'

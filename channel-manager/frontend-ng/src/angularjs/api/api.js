@@ -18,7 +18,7 @@ import { IFrameService } from './iframe.service.js';
 import { ConfigService } from './config.service.js';
 
 export const channelManagerApi = angular
-  .module('hippo-cmng-api', [])
+  .module('hippo-cm-api', [])
   .service('IFrameService', IFrameService)
   .service('ConfigService', ConfigService);
 

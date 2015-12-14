@@ -1,5 +1,5 @@
 {
-  "name": "hippo-cmng",
+  "name": "hippo-cm",
   "private": true,
   "description": "Channel manager NG for Hippo B.V.",
   "scripts": {

@@ -26,17 +26,18 @@ function translations ($translate, ConfigService) {
 function config ($stateProvider, $urlRouterProvider, $translateProvider) {
   $urlRouterProvider.otherwise('/');
 
-  $stateProvider.state('main', {
+  $stateProvider.state('hippo-cm', {
     url: '/',
-    templateUrl: 'hippo-cmng.html',
+    templateUrl: 'hippo-cm.html',
     resolve: {
       translations: translations
-    }
+    },
+    abstract: true
   });
 
   // translations
   $translateProvider.useStaticFilesLoader({
-    prefix: 'i18n/hippo-cmng.',
+    prefix: 'i18n/hippo-cm.',
     suffix: '.json'
   });
   $translateProvider.fallbackLanguage('en');
@@ -48,18 +49,18 @@ function run (IFrameService) {
   IFrameService.enableLiveReload();
 }
 
-export const hippoCmngModule = angular
-  .module('hippo-cmng', [
+export const hippoCmModule = angular
+  .module('hippo-cm', [
     'pascalprecht.translate',
     'ui.router',
-    'hippo-cmng-templates',
+    'hippo-cm-templates',
     channelManagerApi.name
   ])
   .config(config)
   .run(run);
 
 angular.element(document).ready(function () {
-  angular.bootstrap(document.body, [hippoCmngModule.name], {
+  angular.bootstrap(document.body, [hippoCmModule.name], {
     strictDi: true
   });
 });

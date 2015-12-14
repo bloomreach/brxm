@@ -76,7 +76,7 @@
       this.channelStoreFuture.when(function(config) {
 
         // start NG app
-        var url = './angular/hippo-cmng/index.html';
+        var url = './angular/hippo-cm/index.html';
         url = Ext.urlAppend(url, 'parentExtIFramePanelId=' + this.getId());
         url = Ext.urlAppend(url, 'antiCache=' + this.antiCache);
         this.setLocation(url);

@@ -20,7 +20,7 @@ describe('ConfigService', function () {
   var configService;
 
   beforeEach(function () {
-    module('hippo-cmng-api');
+    module('hippo-cm-api');
   });
 
   describe("provides default configuration", function () {
