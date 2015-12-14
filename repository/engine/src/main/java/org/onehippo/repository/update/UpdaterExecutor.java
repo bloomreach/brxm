@@ -100,6 +100,7 @@ public class UpdaterExecutor implements EventListener {
             if (updater instanceof BaseNodeUpdateVisitor) {
                 ((BaseNodeUpdateVisitor) updater).setLogger(getLogger());
                 ((BaseNodeUpdateVisitor) updater).setParametersMap(jsonToParamsMap(updaterInfo.getParameters()));
+                ((BaseNodeUpdateVisitor) updater).setVisitorContext(new BaseNodeUpdateVisitorContext());
             }
             updater.initialize(session);
             report.start();
@@ -418,11 +419,21 @@ public class UpdaterExecutor implements EventListener {
 
     private void commitBatchIfNeeded() throws RepositoryException {
         final boolean batchCompleted = report.getUpdateCount() != lastUpdateCount && report.getUpdateCount() % updaterInfo.getBatchSize() == 0;
+
+        if (batchCompleted) {
+            if (getLogger().isDebugEnabled()) {
+                getLogger().debug("batch unit completion indicated. updateCount: {}, batchSize: {}",
+                        report.getUpdateCount(), updaterInfo.getBatchSize());
+            }
+        }
+
         if (batchCompleted || report.isFinished()) {
             if (updaterInfo.isDryRun()) {
+                debug("discarding all pending changes currently recorded in this batch unit.");
                 session.refresh(false);
             } else {
                 try {
+                    debug("saving all pending changes currently recorded in this batch unit.");
                     session.save();
                 } catch (RepositoryException e) {
                     error("Failed to save session", e);
@@ -433,6 +444,7 @@ public class UpdaterExecutor implements EventListener {
             report.startBatch();
             saveReport();
         }
+
         if (batchCompleted) {
             lastUpdateCount = report.getUpdateCount();
             throttle(updaterInfo.getThrottle());
@@ -582,5 +594,33 @@ public class UpdaterExecutor implements EventListener {
             return Collections.emptyMap();
         }
         return JSONObject.fromObject(paramsInJson);
+    }
+
+    class BaseNodeUpdateVisitorContext implements NodeUpdateVisitorContext {
+
+        BaseNodeUpdateVisitorContext() {
+        }
+
+        @Override
+        public void reportSkipped(String path) {
+            report.skipped(path);
+        }
+
+        @Override
+        public void reportUpdated(String path) {
+            report.updated(path);
+
+            try {
+                commitBatchIfNeeded();
+            } catch (RepositoryException e) {
+                // log.error() instead of error() on purpose: report already saved
+                log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            }
+        }
+
+        @Override
+        public void reportFailed(String path) {
+            report.failed(path);
+        }
     }
 }

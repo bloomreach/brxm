@@ -29,6 +29,7 @@ public abstract class BaseNodeUpdateVisitor implements NodeUpdateVisitor {
 
     protected Logger log;
     protected Map<String, Object> parametersMap;
+    protected NodeUpdateVisitorContext visitorContext;
 
     public void setLogger(Logger log) {
         this.log = log;
@@ -36,6 +37,10 @@ public abstract class BaseNodeUpdateVisitor implements NodeUpdateVisitor {
 
     public void setParametersMap(Map<String, Object> parametersMap) {
         this.parametersMap = parametersMap;
+    }
+
+    public void setVisitorContext(NodeUpdateVisitorContext visitorContext) {
+        this.visitorContext = visitorContext;
     }
 
     @Override
