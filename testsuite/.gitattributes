@@ -193,6 +193,7 @@ dependencies/pom.xml -text
 dependencies/site/pom.xml -text
 intranet-bootstrap/configuration/pom.xml -text
 intranet-bootstrap/configuration/src/main/resources/configuration/queries/templates/new-subsite/intranet-subsite.xml -text
+intranet-bootstrap/configuration/src/main/resources/configuration/update/registry/example-news-date-field-update-demo-with-manual-update-reporting.xml -text svneol=unset#text/plain
 intranet-bootstrap/configuration/src/main/resources/hippo-configuration/hippo-frontend/cms/hst-intranet-rest-proxy-service.xml -text
 intranet-bootstrap/configuration/src/main/resources/hippo-configuration/queries/templates/new-document-intranet.xml -text
 intranet-bootstrap/configuration/src/main/resources/hippo-configuration/queries/templates/new-folder-intranet.xml -text

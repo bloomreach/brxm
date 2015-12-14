@@ -278,6 +278,11 @@
     <appender-ref ref="messages"/>
   </logger>
 
+  <!-- In order to trace batch commit/revert process. -->
+  <logger name="org.onehippo.repository.update.UpdaterExecutor" additivity="false">
+    <level value="debug"/>
+  </logger>
+
   <root>
     <level value="warn"/>
     <appender-ref ref="cms"/>
