@@ -15,6 +15,7 @@
  */
 package org.onehippo.repository.documentworkflow;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.jcr.Node;
@@ -37,6 +38,7 @@ public class WorkflowRequest extends Request {
     private static Node newRequestNode(Node parent) throws RepositoryException {
         JcrUtils.ensureIsCheckedOut(parent);
         Node requestNode = parent.addNode(HippoStdPubWfNodeType.HIPPO_REQUEST, HippoStdPubWfNodeType.NT_HIPPOSTDPUBWF_REQUEST);
+        requestNode.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE, Calendar.getInstance());
         requestNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
         return requestNode;
     }

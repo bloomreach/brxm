@@ -36,3 +36,4 @@
 - hippostdpubwf:username (String)
 - hippostdpubwf:document (Reference)
 - hippostdpubwf:refId (String)
+- hippostdpubwf:creationDate (Date)
