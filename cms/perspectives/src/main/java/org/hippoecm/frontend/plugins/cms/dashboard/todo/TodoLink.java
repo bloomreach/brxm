@@ -15,11 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.cms.dashboard.todo;
 
+import java.text.DateFormat;
+import java.util.Calendar;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -33,11 +38,28 @@ import org.slf4j.LoggerFactory;
 
 public class TodoLink extends Panel {
 
+    private static final long serialVersionUID = 1L;
+
     private static final Logger log = LoggerFactory.getLogger(TodoLink.class);
 
+    private final DateFormat dateFormatShort = DateFormat.getDateInstance(DateFormat.MEDIUM,
+            getSession().getLocale());
+
+    /**
+     * @deprecated As of release 3.2.0, replaced by
+     * {@link #TodoLink(IPluginContext, IPluginConfig, String, BrowseLinkTarget, IModel, IModel, IModel)}
+     */
+    @Deprecated
     public TodoLink(final IPluginContext context, final IPluginConfig config,
                     final String id, final BrowseLinkTarget browseLinkTarget,
                     final IModel<String> userLabelModel, final IModel<String> operationLabelModel) {
+        this(context, config, id, browseLinkTarget, userLabelModel, operationLabelModel, null);
+    }
+
+    public TodoLink(final IPluginContext context, final IPluginConfig config,
+                    final String id, final BrowseLinkTarget browseLinkTarget,
+                    final IModel<String> userLabelModel, final IModel<String> operationLabelModel,
+                    final IModel<Calendar> creationDateModel) {
         super(id);
 
         AjaxLink<Void> link = new AjaxLink<Void>("link") {
@@ -70,6 +92,11 @@ public class TodoLink extends Panel {
         Label operationLabel = new Label("operation", operationLabelModel);
         operationLabel.setEscapeModelStrings(false);
         link.add(operationLabel);
+
+        // Set the creation date or an empty string when no creation date is available
+        final String creationDate = creationDateModel != null && creationDateModel.getObject() != null ?
+                dateFormatShort.format(creationDateModel.getObject().getTime()) : StringUtils.EMPTY;
+        link.add(new Label("creationDate", new Model<>(creationDate)));
 
         Label documentLabel = new Label("document", "\"" + browseLinkTarget.getName() + "\"");
         link.add(documentLabel);
