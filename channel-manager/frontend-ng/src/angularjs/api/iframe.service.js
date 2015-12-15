@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+const BROWSER_SYNC_URL = '//localhost:3000/browser-sync/browser-sync-client.2.10.0.js';
+
 export class IFrameService {
 
   constructor ($window, $log) {
@@ -26,13 +28,13 @@ export class IFrameService {
   }
 
   getParentIFramePanelId () {
-    let search = this.$window.location.search;
+    const search = this.$window.location.search;
 
     if (search.length > 0) {
-      let parameters = search.substring(1).split('&');
+      const parameters = search.substring(1).split('&');
 
       for (let i = 0, length = parameters.length; i < length; i++) {
-        let keyValue = parameters[i].split('=');
+        const keyValue = parameters[i].split('=');
         if (keyValue[0] === 'parentExtIFramePanelId') {
           return keyValue[1];
         }
@@ -43,7 +45,7 @@ export class IFrameService {
   }
 
   getParentIFramePanel () {
-    let iframePanel = this.$window.parent.Ext.getCmp(this.iframePanelId);
+    const iframePanel = this.$window.parent.Ext.getCmp(this.iframePanelId);
 
     if (!angular.isObject(iframePanel)) {
       throw new Error(`Unknown iframe panel id: '${this.iframePanelId}'`);
@@ -66,11 +68,11 @@ export class IFrameService {
 
   getConfig () {
     if (this.isActive) {
-      let iframePanel = this.getParentIFramePanel();
-      let config = iframePanel.initialConfig.iframeConfig;
+      const iframePanel = this.getParentIFramePanel();
+      const config = iframePanel.initialConfig.iframeConfig;
 
       if (config === undefined) {
-        throw new Error("Parent iframe panel does not contain iframe configuration");
+        throw new Error('Parent iframe panel does not contain iframe configuration');
       }
 
       return config;
@@ -80,18 +82,17 @@ export class IFrameService {
   }
 
   addScriptToBody (scriptUrl) {
-    let body = this.$window.document.getElementsByTagName("body")[0];
-    let script = document.createElement('script');
+    const body = this.$window.document.getElementsByTagName('body')[0];
+    const script = document.createElement('script');
     script.type = 'text/javascript';
     script.src = scriptUrl;
     body.appendChild(script);
   }
 
   enableBrowserSync () {
-    const browserSyncUrl = '//localhost:3000/browser-sync/browser-sync-client.2.10.0.js';
     if (this.getConfig().debug) {
-      this.addScriptToBody(browserSyncUrl);
-      this.$log.info(`iframe #${this.getParentIFramePanelId()} has browserSync enabled via ${browserSyncUrl}`);
+      this.addScriptToBody(BROWSER_SYNC_URL);
+      this.$log.info(`iframe #${this.iframePanelId} has browserSync enabled via ${BROWSER_SYNC_URL}`);
     }
   }
 }
