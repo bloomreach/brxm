@@ -106,7 +106,7 @@
                   <sv:value>nl</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:message" sv:type="String">
-                  <sv:value>Voer een volledige URL in die verwijst naar een sitemap.xml bestand.</sv:value>
+                  <sv:value>Eén of meer volledige URL's die verwijzen naar een XML sitemap.</sv:value>
                 </sv:property>
               </sv:node>
               <sv:node sv:name="hippo:translation">
@@ -117,7 +117,7 @@
                   <sv:value>en</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:message" sv:type="String">
-                  <sv:value>The value must be a fully qualified URL and point to a sitemap.xml file.</sv:value>
+                  <sv:value>One or more fully qualified URLs pointing to an XML sitemap.</sv:value>
                 </sv:property>
               </sv:node>
               <sv:node sv:name="hippo:translation">
@@ -128,7 +128,7 @@
                   <sv:value>de</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:message" sv:type="String">
-                  <sv:value>The value must be a fully qualified URL and point to a sitemap.xml file.</sv:value>
+                  <sv:value>One or more fully qualified URLs pointing to an XML sitemap.</sv:value>
                 </sv:property>
               </sv:node>
               <sv:node sv:name="hippo:translation">
@@ -139,7 +139,7 @@
                   <sv:value>fr</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:message" sv:type="String">
-                  <sv:value>The value must be a fully qualified URL and point to a sitemap.xml file.</sv:value>
+                  <sv:value>One or more fully qualified URLs pointing to an XML sitemap.</sv:value>
                 </sv:property>
               </sv:node>
             </sv:node>
