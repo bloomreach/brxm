@@ -34,6 +34,9 @@ function run ($state, IFrameService, ChannelService) {
   IFrameService.subscribe('load-channel', (channel) => {
     ChannelService.load(channel).then(showChannel); // TODO: handle error.
   });
+
+  // Handle reloading of iframe
+  IFrameService.publish('reload-channel');
 }
 
 export const channelModule = angular

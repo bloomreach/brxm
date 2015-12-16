@@ -32,11 +32,19 @@
         })
       });
       Hippo.ChannelManager.TemplateComposer.ChannelEditor.superclass.constructor.call(this, config);
+
+      // In case of reloading the iframe, the ng-app will ask us to provide the channel info (again)
+      this.iframeToHost.subscribe('reload-channel', function() {
+        if (this.selectedChannelId) {
+          this.loadChannel(this.selectedChannelId);
+        }
+      }.bind(this));
     },
 
     loadChannel: function(channelId) {
-
       this.channelStoreFuture.when(function(config) {
+        this.selectedChannelId = channelId; // Remember for reloading
+
         var channelRecord = config.store.getById(channelId);
         this.setTitle(channelRecord.get('name'));
         this.hostToIFrame.publish('load-channel', channelRecord.json);
@@ -54,16 +62,16 @@
         url = Ext.urlAppend(url, 'antiCache=' + this.antiCache);
         this.setLocation(url);
 
-        config.store.on('load', function() {
-          if (this.channelId) {
-            var channelRecord = config.store.getById(this.channelId);
-
-            this.channel = channelRecord.data;
-            // TODO: more?
-            console.log('update this.channel to', this.channel);
-
-          }
-        }, this);
+        //config.store.on('load', function() {
+        //  if (this.channelId) {
+        //    var channelRecord = config.store.getById(this.channelId);
+        //
+        //    this.channel = channelRecord.data;
+        //    // TODO: more?
+        //    console.log('update this.channel to', this.channel);
+        //
+        //  }
+        //}, this);
       }.bind(this));
     }
   });
