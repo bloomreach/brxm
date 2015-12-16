@@ -132,12 +132,8 @@ public class VersionRestoreToTask extends AbstractDocumentTask {
         if (version != null) {
             clear(targetNode);
             restore(targetNode, version.getFrozenNode());
-            final DocumentVariant targetVariant = new DocumentVariant(targetNode);
-            if (targetNode.isNodeType(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT)) {
-                targetVariant.setModified(getWorkflowContext().getUserIdentity());
-            }
             targetNode.save();
-            return targetVariant;
+            return new DocumentVariant(targetNode);
         }
         return null;
     }
