@@ -24,6 +24,9 @@ module.exports = function (config) {
     },
     includeFiles: [
       cfg.bowerDir + 'angular/angular.js',
+      cfg.bowerDir + 'angular-animate/angular-animate.js',
+      cfg.bowerDir + 'angular-aria/angular-aria.js',
+      cfg.bowerDir + 'angular-material/angular-material.js',
       cfg.bowerDir + 'angular-ui-router/release/angular-ui-router.js',
       cfg.bowerDir + 'angular-translate/angular-translate.js',
       cfg.bowerDir + 'angular-translate-loader-static-files/angular-translate-loader-static-files.js',
