@@ -51,6 +51,7 @@ function run (IFrameService) {
 
 export const hippoCmModule = angular
   .module('hippo-cm', [
+    'ngMaterial',
     'pascalprecht.translate',
     'ui.router',
     'hippo-cm-templates',
