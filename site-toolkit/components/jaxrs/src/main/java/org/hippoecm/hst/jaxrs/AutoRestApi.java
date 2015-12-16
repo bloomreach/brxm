@@ -135,37 +135,39 @@ public class AutoRestApi {
     @GET
     @Path("/content/documents/{uuid}")
     public Response getDocumentsByUUID(@PathParam("uuid") String uuid) {
-        return Response.status(500).entity("{\"message\":\"TODO - another TODO is to agree on error response guidelines\"}").build();
+        return Response.status(500).entity("{\"message\":\"non supported yet\"}").build();
     }
 
+    /*
     @GET
     @Path("/content/{type}")
     public Response getNews(@PathParam("type") String type) {
-        return Response.status(500).entity("{\"message\":\"TODO - another TODO is to agree on error response guidelines\"}").build();
+        return Response.status(500).entity("{\"message\":\"non supported yet\"}").build();
     }
 
     @GET
     @Path("/content/{type}/{uuid}")
     public Response getNewsByUUID(@PathParam("type") String type, @PathParam("uuid") String uuid) {
-        return Response.status(500).entity("{\"message\":\"TODO - another TODO is to agree on error response guidelines\"}").build();
+        return Response.status(500).entity("{\"message\":\"non supported yet\"}").build();
     }
 
     @GET
     @Path("/types")
     public Response getTypes() {
-        return Response.status(500).entity("{\"message\":\"TODO - another TODO is to agree on error response guidelines\"}").build();
+        return Response.status(500).entity("{\"message\":\"non supported yet\"}").build();
     }
 
     @GET
     @Path("/types/{name}")
     public Response getTypesByName(@PathParam("name") String name) {
-        return Response.status(500).entity("{\"message\":\"TODO - another TODO is to agree on error response guidelines\"}").build();
+        return Response.status(500).entity("{\"message\":\"non supported yet\"}").build();
     }
 
     @GET
     @Path("/content/[{path}]")
     public Response getFolderContentByPath(@PathParam("path") String path) {
-        return Response.status(200).entity("{\"method\":\"getContentByPath(" + path + ")\"}").build();
+        return Response.status(500).entity("{\"message\":\"non supported yet\"}").build();
     }
+    */
 
 }
