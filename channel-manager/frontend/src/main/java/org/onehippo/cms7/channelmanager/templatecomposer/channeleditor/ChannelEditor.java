@@ -61,19 +61,11 @@ public class ChannelEditor extends ExtPanel {
 
     @ExtProperty
     @SuppressWarnings("unused")
-    private String renderPathInfo = "";
-
-    @ExtProperty
-    @SuppressWarnings("unused")
-    private String contextPath = "";
-
-    @ExtProperty
-    @SuppressWarnings("unused")
-    private String cmsPreviewPrefix;
-
-    @ExtProperty
-    @SuppressWarnings("unused")
     private String channelId;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
+    private String channelPath;
 
     @ExtProperty
     @SuppressWarnings("unused")
@@ -105,12 +97,12 @@ public class ChannelEditor extends ExtPanel {
     private ExtStoreFuture<Object> channelStoreFuture;
     private boolean redraw = false;
 
-    public ChannelEditor(final IPluginContext context, final IPluginConfig config, final String defaultContextPath,
-                         final String apiUrlPrefix, final ExtStoreFuture<Object> channelStoreFuture) {
+    public ChannelEditor(final IPluginContext context, final IPluginConfig config, final String apiUrlPrefix,
+                         final ExtStoreFuture<Object> channelStoreFuture) {
 
         this.channelStoreFuture = channelStoreFuture;
         this.apiUrlPrefix = apiUrlPrefix;
-        this.contextPath = defaultContextPath;
+        //this.contextPath = defaultContextPath;
         this.locale = Session.get().getLocale().toString();
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
         this.locale = Session.get().getLocale().toString();
@@ -165,23 +157,14 @@ public class ChannelEditor extends ExtPanel {
         }
     }
 
-    public void setChannel(final String channelId) {
+    public void setChannelId(final String channelId) {
         this.channelId = channelId;
         redraw();
     }
 
-    public void setRenderPathInfo(String pathInfo) {
-        this.renderPathInfo = pathInfo;
+    public void setChannelPath(final String channelPath) {
+        this.channelPath = channelPath;
         redraw();
-    }
-
-    public void setRenderContextPath(String contextPath) {
-        this.contextPath = contextPath;
-        redraw();
-    }
-
-    public void setCmsPreviewPrefix(final String cmsPreviewPrefix) {
-        this.cmsPreviewPrefix = cmsPreviewPrefix;
     }
 
     public void setPreviewMode(final Boolean previewMode) {

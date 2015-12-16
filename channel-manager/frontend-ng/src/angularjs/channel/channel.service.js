@@ -22,16 +22,13 @@ export class ChannelService {
     this.SessionService = SessionService;
   }
 
-  load (channel) {
+  load (channel, path = '') {
     this.channel = channel;
+    this.path = path;
     return this.SessionService.authenticate(channel);
   }
 
   getUrl () {
-    if (this.channel.url) {
-      return this.channel.url;
-    }
-
     let url = this.channel.contextPath;
     if (url === '/') {
       url = '';
@@ -41,8 +38,12 @@ export class ChannelService {
       url += '/' + this.channel.cmsPreviewPrefix;
     }
 
-    if (this.channel.renderPathInfo) {
-      url += this.channel.renderPathInfo;
+    if (this.channel.mountPath) {
+      url += this.channel.mountPath;
+    }
+
+    if (this.path) {
+      url += this.path;
     }
 
     if (url === this.channel.contextPath) {

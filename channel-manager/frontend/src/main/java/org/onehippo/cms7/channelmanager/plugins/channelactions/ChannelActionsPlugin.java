@@ -264,11 +264,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         @Override
         protected void invoke() {
             if (channelManagerService != null) {
-                // create the pathInfo of the channel manager url. The pathInfo includes the mountPath & path after the mount
-                StringBuilder pathInfo = new StringBuilder(channelDocument.getMountPath()).append(channelDocument.getPathInfo());
-                channelManagerService.viewChannel(channelDocument.getChannelId(), pathInfo.toString(),
-                        channelDocument.getContextPath(),
-                        channelDocument.getCmsPreviewPrefix());
+                channelManagerService.viewChannel(channelDocument.getChannelId(), channelDocument.getPathInfo());
             } else {
                 log.info("Cannot view channel, no channel manager service available");
             }
