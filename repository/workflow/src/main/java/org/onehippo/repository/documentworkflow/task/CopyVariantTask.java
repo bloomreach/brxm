@@ -100,11 +100,6 @@ public class CopyVariantTask extends AbstractDocumentTask {
 
         if (saveNeeded) {
             workflowSession.save();
-            if (dm.hasMultipleDocumentVariants(getTargetState())) {
-                targetDoc.getNode(workflowSession).remove();
-                workflowSession.save();
-                throw new WorkflowException("Concurrent workflow action detected");
-            }
         }
 
         dm.getDocuments().put(targetDoc.getState(), targetDoc);

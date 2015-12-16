@@ -25,6 +25,7 @@ import javax.jcr.SimpleCredentials;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.util.NodeIterable;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
@@ -39,8 +40,9 @@ public class DocumentWorkflowConcurrencyTest extends AbstractDocumentWorkflowInt
     private static final Logger log = LoggerFactory.getLogger(DocumentWorkflowConcurrencyTest.class);
 
     @Test
+    @Ignore
     public void concurrentPublishFailsOnMultiplePublishedVariants() throws Exception {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 50; i++) {
             doConcurrentPublishFailsOnMultiplePublishedVariants();
             tearDown();
             setUp();
@@ -48,7 +50,7 @@ public class DocumentWorkflowConcurrencyTest extends AbstractDocumentWorkflowInt
     }
 
     private void doConcurrentPublishFailsOnMultiplePublishedVariants() throws Exception {
-        final Session session1 = session.impersonate(new SimpleCredentials("admin", new char[] {}));
+        final Session session1 = session.impersonate(new SimpleCredentials("admin", new char[]{}));
         final Session session2 = session.impersonate(new SimpleCredentials("admin", new char[]{}));
         try {
             final Node handle1 = session1.getNode(handle.getPath());
