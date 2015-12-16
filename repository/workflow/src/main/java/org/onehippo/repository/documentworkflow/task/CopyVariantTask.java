@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -100,6 +101,16 @@ public class CopyVariantTask extends AbstractDocumentTask {
 
         if (saveNeeded) {
             workflowSession.save();
+            if (dm.hasMultipleDocumentVariants(getTargetState())) {
+                final Session deleteSession = workflowSession.impersonate(new SimpleCredentials("admin", new char[]{}));
+                try {
+                    targetDoc.getNode(deleteSession).remove();
+                    deleteSession.save();
+                } finally {
+                    deleteSession.logout();
+                }
+                throw new WorkflowException("Concurrent workflow action detected");
+            }
         }
 
         dm.getDocuments().put(targetDoc.getState(), targetDoc);

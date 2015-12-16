@@ -40,9 +40,8 @@ public class DocumentWorkflowConcurrencyTest extends AbstractDocumentWorkflowInt
     private static final Logger log = LoggerFactory.getLogger(DocumentWorkflowConcurrencyTest.class);
 
     @Test
-    @Ignore
     public void concurrentPublishFailsOnMultiplePublishedVariants() throws Exception {
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 5; i++) {
             doConcurrentPublishFailsOnMultiplePublishedVariants();
             tearDown();
             setUp();
