@@ -123,7 +123,20 @@
       <artifactId>hst-rewriter</artifactId>
       <version>${project.version}</version>
     </dependency>
-    
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-search-service-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-search-service-jcr</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-search-service-commons</artifactId>
+    </dependency>
+
     <!-- Apache CXF Runtime for JAX-RS Services Testing -->
     <dependency>
       <groupId>org.apache.cxf</groupId>
