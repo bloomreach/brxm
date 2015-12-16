@@ -51,7 +51,7 @@ module.exports = function (config) {
   options.browsers = ['PhantomJS'];
   options.singleRun = true;
   options.preprocessors = {};
-  options.preprocessors[cfg.dist.indexScript] = ['sourcemap', 'coverage'];
+  options.preprocessors[cfg.dist.indexScript] = ['coverage'];
 
   config.set(options);
 };
