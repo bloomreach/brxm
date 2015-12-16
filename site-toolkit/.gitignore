@@ -39,6 +39,7 @@ client-modules/page-composer/.classpath
 client-modules/page-composer/.project
 client-modules/page-composer/.settings
 client-modules/page-composer/hst-page-composer.iml
+client-modules/page-composer/log4j.log
 client-modules/page-composer/target
 client-modules/target
 client/.classpath
@@ -52,12 +53,14 @@ commons/.project
 commons/.settings
 commons/bin
 commons/hst-commons.iml
+commons/log4j.log
 commons/target
 components/.classpath
 components/.project
 components/.settings
 components/components.iml
 components/core/.classpath
+components/core/.lock
 components/core/.project
 components/core/.settings
 components/core/hst-core.iml
@@ -69,6 +72,7 @@ components/core/src/main/java/target
 components/core/src/main/target
 components/core/src/target
 components/core/target
+components/core/workspaces
 components/jaxrs/.classpath
 components/jaxrs/.project
 components/jaxrs/.settings
