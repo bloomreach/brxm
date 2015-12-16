@@ -27,46 +27,19 @@
 
       Ext.apply(config, {
         cls: 'qa-channel-editor',
-        iframeConfig: {
-          debug: config.debug,
-          locale: config.locale
-        }
+        iframeConfig: Ext.apply({}, config, {
+          antiCache: this.antiCache
+        })
       });
       Hippo.ChannelManager.TemplateComposer.ChannelEditor.superclass.constructor.call(this, config);
     },
 
-    browseTo: function(data) {
+    loadChannel: function(channelId) {
+
       this.channelStoreFuture.when(function(config) {
-        var isEditMode, record, renderHost;
-
-        if (Ext.isDefined(data.isEditMode)) {
-          isEditMode = data.isEditMode;
-        } else if (Ext.isDefined(data.channelId) && data.channelId !== this.channelId) {
-          isEditMode = false;
-        } else {
-          isEditMode = this.pageContainer ? !this.pageContainer.previewMode : false;
-        }
-
-        this.channelId = data.channelId || this.channelId;
-        record = config.store.getById(this.channelId);
-        this.title = record.get('name');
-        this.channel = record.data;
-        this.hstMountPoint = record.get('hstMountPoint');
-        this.contextPath = record.get('contextPath') || data.contextPath || this.contextPath;
-        this.cmsPreviewPrefix = record.get('cmsPreviewPrefix') || data.cmsPreviewPrefix || this.cmsPreviewPrefix;
-        this.renderPathInfo = data.renderPathInfo || this.renderPathInfo || record.get('mountPath');
-        renderHost = record.get('hostname');
-        console.log('Show iframe for channel "%s", contextPath: %s, cmsPreviewPrefix: %s, renderPathInfo: %s, ' +
-          'renderHost: %s, editMode: %s',
-          this.title, this.contextPath, this.cmsPreviewPrefix, this.renderPathInfo, renderHost, isEditMode);
-
-        this.initialConfig.iframeConfig = {
-          debug: this.debug,
-          locale: this.locale,
-          antiCache: this.antiCache
-        };
-
-        //this.initComposer(isEditMode);
+        var channelRecord = config.store.getById(channelId);
+        this.setTitle(channelRecord.get('name'));
+        this.hostToIFrame.publish('load-channel', channelRecord.json);
       }.bind(this));
     },
 

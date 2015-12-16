@@ -57,7 +57,7 @@ public class ChannelEditor extends ExtPanel {
 
     @ExtProperty
     @SuppressWarnings("unused")
-    private String composerRestMountPath;
+    private String apiUrlPrefix;
 
     @ExtProperty
     @SuppressWarnings("unused")
@@ -105,11 +105,11 @@ public class ChannelEditor extends ExtPanel {
     private ExtStoreFuture<Object> channelStoreFuture;
     private boolean redraw = false;
 
-
     public ChannelEditor(final IPluginContext context, final IPluginConfig config, final String defaultContextPath,
-                         final String composerRestMountPath, final ExtStoreFuture<Object> channelStoreFuture) {
+                         final String apiUrlPrefix, final ExtStoreFuture<Object> channelStoreFuture) {
+
         this.channelStoreFuture = channelStoreFuture;
-        this.composerRestMountPath = composerRestMountPath;
+        this.apiUrlPrefix = apiUrlPrefix;
         this.contextPath = defaultContextPath;
         this.locale = Session.get().getLocale().toString();
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
@@ -160,7 +160,7 @@ public class ChannelEditor extends ExtPanel {
         if (redraw) {
             JSONObject update = new JSONObject();
             ExtPropertyConverter.addProperties(this, getClass(), update);
-            target.appendJavaScript("Ext.getCmp('" + getMarkupId() + "').browseTo(" + update.toString() + ");");
+            target.appendJavaScript("Ext.getCmp('" + getMarkupId() + "').loadChannel(" + update.toString() + ");");
             redraw = false;
         }
     }

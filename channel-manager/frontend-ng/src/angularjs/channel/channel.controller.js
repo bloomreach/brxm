@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-import { IFrameService } from './iframe.service.js';
-import { ConfigService } from './config.service.js';
-import { SessionService } from './session.service.js';
+export class ChannelCtrl {
+  constructor(ChannelService) {
+    'ngInject';
 
-export const channelManagerApi = angular
-  .module('hippo-cm-api', [])
-  .service('IFrameService', IFrameService)
-  .service('ConfigService', ConfigService)
-  .service('SessionService', SessionService);
-
-
+    this.iframeUrl = ChannelService.getUrl();
+  }
+}

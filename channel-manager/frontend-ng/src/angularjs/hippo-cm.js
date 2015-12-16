@@ -15,6 +15,7 @@
  */
 
 import { channelManagerApi } from './api/api.js';
+import { channelModule } from './channel/channel.js';
 
 function translations ($translate, ConfigService) {
   return $translate.use(ConfigService.locale)
@@ -53,7 +54,8 @@ export const hippoCmModule = angular
     'pascalprecht.translate',
     'ui.router',
     'hippo-cm-templates',
-    channelManagerApi.name
+    channelManagerApi.name,
+    channelModule.name
   ])
   .config(config)
   .run(run);

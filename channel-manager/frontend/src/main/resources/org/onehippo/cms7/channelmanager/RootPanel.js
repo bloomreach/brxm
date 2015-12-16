@@ -115,7 +115,7 @@
         if (this.layout.activeItem === Hippo.ChannelManager.TemplateComposer.Instance) {
           return;
         }
-        Hippo.ChannelManager.TemplateComposer.Instance.browseTo({channelId: channelId});
+        Hippo.ChannelManager.TemplateComposer.Instance.loadChannel(channelId);
         Ext.getCmp('rootPanel').showTemplateComposer();
       };
 
@@ -314,10 +314,8 @@
             handler: function () {
               this.hide();
             }
-
           }
         ]
-
       };
 
       Ext.apply(this, Ext.apply(this.initialConfig, config));
