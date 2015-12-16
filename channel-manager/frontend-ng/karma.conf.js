@@ -6,7 +6,7 @@ module.exports = function (config) {
   var options = {};
 
   options.basePath = '.';
-  options.frameworks = ['systemjs', 'jasmine'];
+  options.frameworks = ['systemjs', 'jasmine', 'es6-shim'];
   options.files = [
     cfg.src.unitTests
   ];
@@ -45,7 +45,7 @@ module.exports = function (config) {
     ]
   };
   options.autoWatch = false;
-  options.browsers = ['Chrome'];
+  options.browsers = ['PhantomJS'];
   options.singleRun = true;
   options.preprocessors = {};
   options.preprocessors[cfg.dist.indexScript] = ['sourcemap', 'coverage'];
