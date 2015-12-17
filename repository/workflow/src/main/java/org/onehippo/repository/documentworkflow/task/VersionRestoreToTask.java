@@ -132,10 +132,6 @@ public class VersionRestoreToTask extends AbstractDocumentTask {
         if (version != null) {
             clear(targetNode);
             restore(targetNode, version.getFrozenNode());
-            if (targetNode.isNodeType(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT)) {
-                final Calendar cal = Calendar.getInstance();
-                targetNode.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE, cal);
-            }
             targetNode.save();
             return new DocumentVariant(targetNode);
         }

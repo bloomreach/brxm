@@ -69,9 +69,14 @@ public class DefaultContentHandler extends DefaultHandler {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
-            factory.setFeature(
-                    "http://xml.org/sax/features/namespace-prefixes", false);
-
+            factory.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
+            factory.setValidating(false);
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setFeature("http://xml.org/sax/features/validation", false);
+            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
             SAXParser parser = factory.newSAXParser();
             // JCR-984 & JCR-985: Log the name of the SAXParser class
             logger.debug("Using SAX parser " + parser.getClass().getName());

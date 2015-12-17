@@ -84,6 +84,7 @@
     <!-- Project Dependencies -->
     <commons-io.version>2.4</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
+    <commons-collections.version>3.2.2</commons-collections.version>
     <xmlbeans-java6.version>2.3.0</xmlbeans-java6.version>
     <pdfbox.version>1.8.8</pdfbox.version>
     <quartz.version>2.2.1</quartz.version>
@@ -212,6 +213,11 @@
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>${commons-io.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-collections</groupId>
+        <artifactId>commons-collections</artifactId>
+        <version>${commons-collections.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.pdfbox</groupId>

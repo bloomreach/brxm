@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -101,9 +102,7 @@ public class CopyVariantTask extends AbstractDocumentTask {
         if (saveNeeded) {
             workflowSession.save();
             if (dm.hasMultipleDocumentVariants(getTargetState())) {
-                targetDoc.getNode(workflowSession).remove();
-                workflowSession.save();
-                throw new WorkflowException("Concurrent workflow action detected");
+                deleteDuplicateVariant(workflowSession, dm, targetDoc, getTargetState());
             }
         }
 
@@ -112,4 +111,29 @@ public class CopyVariantTask extends AbstractDocumentTask {
         return null;
     }
 
+    /**
+     * Remove accidentally duplicated (or even more!) same state variant.
+     * Method needs to be static synchronized as well as use a separate impersonated session to prevent repository
+     * internal state corruption when two (or more!) threads do this concurrently for the same variant handle
+     * (corruption likely occurring because the document variants being same-name-siblings).
+     * For further reference see: REPO-1386
+     * @throws WorkflowException when this thread still finds a duplicate same state variant, after having deleted the variant
+     */
+    private static synchronized void deleteDuplicateVariant(Session session, DocumentHandle dm, DocumentVariant variant, String state)
+            throws RepositoryException, WorkflowException {
+        boolean fail = false;
+        final Session deleteSession = session.impersonate(new SimpleCredentials(session.getUserID(), new char[]{}));
+        try {
+            if (dm.hasMultipleDocumentVariants(state)) {
+                fail = true;
+                variant.getNode(deleteSession).remove();
+                deleteSession.save();
+            }
+        } finally {
+            deleteSession.logout();
+        }
+        if (fail) {
+            throw new WorkflowException("Concurrent workflow action detected");
+        }
+    }
 }

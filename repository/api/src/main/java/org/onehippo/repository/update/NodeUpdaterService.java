@@ -20,7 +20,7 @@ import javax.jcr.Node;
 import org.onehippo.cms7.services.SingletonService;
 
 /**
- * The node updater service runs registered &amp; not-net-completed updater visitors.
+ * The node updater service runs registered &amp; not-yet-completed updater visitors.
  * It is intended to be used by code that assumes the content to have been updated.
  * <p>
  * Since updater visitors run asynchronously, potentially taking a long time when

@@ -16,6 +16,7 @@
 package org.onehippo.repository.documentworkflow.integration;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
@@ -30,6 +31,7 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.events.HippoWorkflowEvent;
 
 import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_REASON;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.REJECTED;
@@ -193,6 +195,31 @@ public class DocumentWorkflowRequestTest extends AbstractDocumentWorkflowIntegra
         workflow.cancelRequest(request.getIdentifier());
 
         assertFalse("Request still on handle", handle.hasNode(HIPPO_REQUEST));
+    }
+
+    @Test
+    public void testRequestCreationDate() throws Exception {
+        DocumentWorkflow workflow = getDocumentWorkflow(handle);
+
+        final Calendar beforeCreation = Calendar.getInstance();
+
+        // Perform a request publication
+        workflow.requestPublication();
+
+        // Get the request
+        Node request = handle.getNode(HIPPO_REQUEST);
+        assertTrue(request.hasProperty(HIPPOSTDPUBWF_CREATION_DATE));
+
+        final Calendar afterCreation = Calendar.getInstance();
+        final Calendar creationDate = request.getProperty(HIPPOSTDPUBWF_CREATION_DATE).getDate();
+        assertTrue(creationDate.after(beforeCreation));
+        assertTrue(creationDate.before(afterCreation));
+
+        // Cancel the request
+        workflow.rejectRequest(request.getIdentifier(), "Testing");
+        final Calendar checkDate = handle.getNode(HIPPO_REQUEST).getProperty(HIPPOSTDPUBWF_CREATION_DATE).getDate();
+        assertEquals(creationDate, checkDate);
+
     }
 
     public static class HippoEventListener {
