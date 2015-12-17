@@ -112,10 +112,10 @@ public class CopyVariantTask extends AbstractDocumentTask {
     }
 
     /**
-     * Remove accidentally duplicated (or even more!) same state (type) variant.
+     * Remove accidentally duplicated (or even more!) same state variant.
      * Method needs to be static synchronized as well as use a separate impersonated session to prevent repository
      * internal state corruption when two (or more!) threads do this concurrently for the same variant handle
-     * (likely as result of the document variants being same-name-siblings).
+     * (corruption likely occurring because the document variants being same-name-siblings).
      * For further reference see: REPO-1386
      * @throws WorkflowException when this thread still finds a duplicate same state variant, after having deleted the variant
      */
