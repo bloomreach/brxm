@@ -2,14 +2,42 @@ var hippoBuild = require('hippo-build');
 var customConfig = require('./build.conf.js');
 var cfg = hippoBuild.buildConfig(customConfig);
 
-module.exports = function (config) {
+module.exports = function(config) {
   var options = {};
 
   options.basePath = '.';
+
   options.frameworks = ['systemjs', 'jasmine', 'es6-shim'];
+  options.reporters = ['progress', 'coverage'];
+  options.preprocessors = {};
+
+  options.preprocessors[cfg.src.scripts] = ['coverage'];
+  options.coverageReporter = {
+    instrumenters: {
+      isparta: require('isparta')
+    },
+    instrumenter: {
+      '**/*.js': 'isparta'
+    },
+    reporters: [{
+      type: 'html'
+    }, {
+      type: 'text-summary'
+    }]
+  };
+
+  options.preprocessors[cfg.src.templates] = ['ng-html2js'];
+  options.ngHtml2JsPreprocessor = {
+    stripPrefix: 'src/angularjs/',
+    moduleName: cfg.projectName + '-templates'
+  };
+
   options.files = [
+    cfg.src.templates,
+    cfg.src.scripts,
     cfg.src.unitTests
   ];
+
   options.systemjs = {
     config: {
       transpiler: 'babel',
@@ -33,25 +61,13 @@ module.exports = function (config) {
       cfg.bowerDir + 'angular-mocks/angular-mocks.js',
       cfg.npmDir + 'babel-core/external-helpers.js',
       cfg.npmDir + 'systemjs/dist/system-polyfills.js',
-      cfg.npmDir + 'systemjs/dist/system-register-only.js',
-      cfg.dist.indexScript
+      cfg.npmDir + 'systemjs/dist/system-register-only.js'
     ]
   };
-  options.reporters = ['progress', 'coverage'];
-  options.coverageReporter = {
-    reporters: [
-      {
-        type: 'html'
-      }, {
-        type: 'text-summary'
-      }
-    ]
-  };
-  options.autoWatch = false;
+
   options.browsers = ['PhantomJS'];
+  options.autoWatch = false;
   options.singleRun = true;
-  options.preprocessors = {};
-  options.preprocessors[cfg.dist.indexScript] = ['coverage'];
 
   config.set(options);
 };

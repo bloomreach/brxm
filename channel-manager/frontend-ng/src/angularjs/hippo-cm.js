@@ -60,9 +60,3 @@ export const hippoCmModule = angular
   ])
   .config(config)
   .run(run);
-
-angular.element(document).ready(function () {
-  angular.bootstrap(document.body, [hippoCmModule.name], {
-    strictDi: true
-  });
-});

@@ -15,7 +15,7 @@
     <!-- endbuild -->
   </head>
 
-  <body>
+  <body ng-app="hippo-cm" ng-strict-di>
     <ui-view>Loading...</ui-view>
 
     <!-- build:js scripts/hippo-cm.min.js -->
@@ -27,8 +27,6 @@
     <script src="bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
     <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
 
-    <script src="node_modules/babel-core/external-helpers.js"></script>
-    <script src="node_modules/systemjs/dist/system-register-only.js"></script>
     <script src="scripts/hippo-cm.js"></script>
     <!-- endbuild -->
   </body>
