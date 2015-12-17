@@ -438,11 +438,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         super.render(target);
     }
 
-    @Override
-    public void onModelChanged() {
-        redraw();
-    }
-
     /**
      * Returns the current editable category instance
      * which is being edited.

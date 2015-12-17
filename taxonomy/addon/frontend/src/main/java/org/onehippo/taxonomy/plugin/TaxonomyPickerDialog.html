@@ -14,24 +14,7 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:head>
-    <script type="text/javascript" language="JavaScript">
-      Wicket.Window.unloadConfirmation = false;
-    </script>
-  </wicket:head>
-  <wicket:panel>
-    <div class="taxonomy-picker hippo-dialog-picker">
-      <form wicket:id="form">
-        <div class="taxonomy-picker-form">
-          <div wicket:id="feedback" class="hippo-dialog-feedback"/>
-          <div wicket:id="content">[ browser here ]</div>
-        </div>
-        <div class="hippo-window-buttons">
-          <wicket:container wicket:id="buttons">
-            <input type="submit" wicket:id="button" />
-          </wicket:container>
-        </div>
-      </form>
-    </div>
-  </wicket:panel>
+  <wicket:extend>
+    <div wicket:id="content" class="taxonomy-picker-form">[ browser here ]</div>
+  </wicket:extend>
 </html>
