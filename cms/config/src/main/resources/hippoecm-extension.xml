@@ -414,6 +414,21 @@
       <sv:value>2.25.03</sv:value>
     </sv:property>
   </sv:node>
+  <!-- added in 3.2.0, already integrated in cms-reports.xml. Can be removed again in 4.0.0 -->
+  <sv:node sv:name="cms-reports-todoReport-query-patch">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-reports/todoReport/reporting:query/jcr:statement</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String">
+      <sv:value>SELECT * FROM hippostdpubwf:request WHERE NOT hippostdpubwf:type = 'rejected' OR hippostdpubwf:username='__USER__' ORDER BY hippostdpubwf:creationDate DESC</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>902.1</sv:value>
+    </sv:property>
+  </sv:node>
   <!-- CMS browser perspective -->
   <sv:node sv:name="cms-browser">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

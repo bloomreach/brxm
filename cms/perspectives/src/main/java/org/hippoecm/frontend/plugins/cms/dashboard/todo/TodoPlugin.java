@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.dashboard.todo;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Iterator;
 
 import javax.jcr.Node;
@@ -36,6 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TodoPlugin extends RenderPlugin {
+
+    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(TodoPlugin.class);
 
@@ -74,7 +77,8 @@ public class TodoPlugin extends RenderPlugin {
                 final Request request = new Request(nodeModel, this);
                 item.add(new TodoLink(getPluginContext(), getPluginConfig(), "link", target,
                         new PropertyModel<>(request, "username"),
-                        new PropertyModel<>(request, "localType")));
+                        new PropertyModel<>(request, "localType"),
+                        new PropertyModel<>(request, "creationDate")));
             } catch (RepositoryException e) {
                 log.error("Failed to create todo item from publication request node", e);
             }
@@ -82,6 +86,8 @@ public class TodoPlugin extends RenderPlugin {
     }
 
     private static class Request implements Serializable {
+
+        private static final long serialVersionUID = 1L;
 
         private final IModel<Node> nodeModel;
         private final Component container;
@@ -107,6 +113,23 @@ public class TodoPlugin extends RenderPlugin {
                 Node node = nodeModel.getObject();
                 return node.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNAME).getString();
             } catch (RepositoryException ignored) {
+            }
+            return null;
+        }
+
+        /**
+         * Get the creation date of the request. Returns a {@link java.util.Calendar} object when a
+         * date is available, null otherwise.
+         * @return the creation date or null
+         */
+        public Calendar getCreationDate() {
+            try {
+                Node node = nodeModel.getObject();
+                if(node.hasProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE)) {
+                    return node.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE).getDate();
+                }
+            } catch (RepositoryException e) {
+                log.warn("Error while retrieving creation date", e);
             }
             return null;
         }

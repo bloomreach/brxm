@@ -157,11 +157,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                 new IChoiceRenderer<Section>() {
                     @Override
                     public Object getDisplayValue(final Section section) {
-                        String displayValue = new ResourceBundleModel("hippo:cms.sections", section.header).getObject();
-                        if (displayValue == null) {
-                            displayValue = new StringResourceModel(section.header, SectionTreePlugin.this, null).getObject();
-                        }
-                        return displayValue;
+                        return new ResourceBundleModel("hippo:cms.sections", section.header).getObject();
                     }
 
                     @Override
