@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,12 +20,13 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
-import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
-import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.internal.StringPool;
+
+import static org.hippoecm.hst.configuration.ConfigurationUtils.isWorkspaceConfig;
 
 public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration, CanonicalInfo, ConfigurationLockInfo {
 
@@ -35,6 +36,7 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
     private final boolean workspaceConfiguration;
     private HstSiteMenusConfiguration hstSiteMenusConfiguration;
     private List<HstSiteMenuItemConfiguration> siteMenuItems = new ArrayList<HstSiteMenuItemConfiguration>();
+    private HstSiteMenuItemConfiguration prototypeItem;
 
     private String lockedBy;
     private Calendar lockedOn;
@@ -44,10 +46,14 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
         this.name = StringPool.get(siteMenu.getValueProvider().getName());
         this.canonicalIdentifier = siteMenu.getValueProvider().getIdentifier();
         this.canonicalPath =  siteMenu.getValueProvider().getPath();
-        this.workspaceConfiguration = ConfigurationUtils.isWorkspaceConfig(siteMenu);
+        this.workspaceConfiguration = isWorkspaceConfig(siteMenu);
         for (HstNode siteMenuItem : siteMenu.getNodes()) {
             HstSiteMenuItemConfiguration siteMenuItemConfiguration = new HstSiteMenuItemConfigurationService(siteMenuItem, null, this);
-            siteMenuItems.add(siteMenuItemConfiguration);
+            if (HstNodeTypes.SITEMENUITEM_HST_PROTOTYPEITEM.equals(siteMenuItem.getName())) {
+                prototypeItem = siteMenuItemConfiguration;
+            } else {
+                siteMenuItems.add(siteMenuItemConfiguration);
+            }
         }
         this.lockedBy = siteMenu.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
         this.lockedOn = siteMenu.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON);
@@ -89,5 +95,13 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
     @Override
     public Calendar getLockedOn() {
         return lockedOn;
+    }
+
+    /**
+     * @return The site menu item with name {@link HstNodeTypes#SITEMENUITEM_HST_PROTOTYPEITEM}
+     * or null if it does not exist
+     */
+    public HstSiteMenuItemConfiguration getPrototypeItem() {
+        return prototypeItem;
     }
 }

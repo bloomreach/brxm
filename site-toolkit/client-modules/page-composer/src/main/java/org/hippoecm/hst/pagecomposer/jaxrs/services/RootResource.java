@@ -15,6 +15,8 @@
 */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.List;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -25,14 +27,25 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.FeaturesRepresentation;
+import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.stream.Collectors.toList;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource {
@@ -54,6 +67,55 @@ public class RootResource extends AbstractConfigResource {
         } else {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity("Error: No http session on the request found.").build();
+        }
+    }
+
+    @GET
+    @Path("/channels")
+    public Response getChannels(@QueryParam("preview") final boolean preview, @QueryParam("workspaceRequired") final boolean workspaceRequired) {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        final VirtualHost virtualHost = requestContext.getResolvedMount().getMount().getVirtualHost();
+        try {
+            final List<Channel> channels = virtualHost.getVirtualHosts().getChannels(virtualHost.getHostGroupName())
+                    .values()
+                    .stream()
+                    .filter(channel -> channel.isPreview() == preview)
+                    .filter(channel -> workspaceFiltered(channel, workspaceRequired))
+                    .collect(toList());
+            return ok("Fetched channels successful", channels);
+        } catch (RuntimeRepositoryException e) {
+            log.warn("Could not determine authorization", e);
+            return error("Could not determine authorization", e);
+        }
+    }
+
+    @GET
+    @Path("/features")
+    public Response getFeatures() {
+        final Boolean crossChannelPageCopySupported = HstServices.getComponentManager().getContainerConfiguration().getBoolean("cross.channel.page.copy.supported", false);
+        final FeaturesRepresentation featuresRepresentation = new FeaturesRepresentation();
+        featuresRepresentation.setCrossChannelPageCopySupported(crossChannelPageCopySupported);
+        final String msg = String.format("Fetched features");
+        return ok(msg, featuresRepresentation);
+    }
+
+    private boolean workspaceFiltered(final Channel channel, final boolean workspaceRequired) throws RuntimeRepositoryException {
+        if (!workspaceRequired) {
+            return true;
+        }
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        final Mount mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(channel.getMountId());
+        final String workspacePath = mount.getHstSite().getConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
+        try {
+            final boolean workspaceExists = requestContext.getSession().nodeExists(workspacePath);
+            if (workspaceExists) {
+                log.info("Including channel {} because it has a workspace node at '{}'", workspacePath);
+            } else {
+                log.info("Skipping channel {} because it does not have a workspace node at '{}'", workspacePath);
+            }
+            return workspaceExists;
+        } catch (RepositoryException e) {
+            throw new RuntimeRepositoryException(e);
         }
     }
 

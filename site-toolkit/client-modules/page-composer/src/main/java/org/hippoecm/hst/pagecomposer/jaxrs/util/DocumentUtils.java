@@ -19,10 +19,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.IllegalFormatCodePointException;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
@@ -32,7 +30,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.parameters.DocumentLink;
@@ -48,6 +45,8 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.ConfigurationUtils.createPrefixedParameterName;
 
 public class DocumentUtils {
 
@@ -144,7 +143,7 @@ public class DocumentUtils {
                             propertyNames.add(propertyName);
                             for (String prefix : item.getParameterPrefixes()) {
                                 if (StringUtils.isNotEmpty(prefix)) {
-                                    propertyNames.add(ConfigurationUtils.createPrefixedParameterName(prefix, propertyName));
+                                    propertyNames.add(createPrefixedParameterName(prefix, propertyName));
                                 }
                             }
                             for (String parameterName : propertyNames) {

@@ -22,6 +22,7 @@ import java.util.concurrent.Callable;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -37,6 +38,8 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
@@ -156,7 +159,7 @@ public class SiteMapResource extends AbstractConfigResource {
     public Response update(final SiteMapItemRepresentation siteMapItem) {
         final ValidatorBuilder preValidatorBuilder = ValidatorBuilder.builder()
                 .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))
-                .add(validatorFactory.getCurrentPreviewConfigurationValidator(siteMapItem.getId(), siteMapHelper))
+                .add(validatorFactory.getConfigurationExistsValidator(siteMapItem.getId(), siteMapHelper))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
                         siteMapItem.getId(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
@@ -210,7 +213,7 @@ public class SiteMapResource extends AbstractConfigResource {
                 .add(validatorFactory.getPathInfoValidator(siteMapItem, parentId, siteMapHelper));
 
         if (parentId != null) {
-            preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(parentId, siteMapHelper));
+            preValidators.add(validatorFactory.getConfigurationExistsValidator(parentId, siteMapHelper));
             preValidators.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
                     parentId, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
         }
@@ -226,19 +229,50 @@ public class SiteMapResource extends AbstractConfigResource {
     }
 
     @POST
-    @Path("/duplicate/{siteMapItemId}")
-    public Response copy(final @PathParam("siteMapItemId") String siteMapItemId) {
+    @Path("/copy")
+    public Response copy(
+            @HeaderParam("mountId")final String mountId,
+            @HeaderParam("siteMapItemUUID") final String siteMapItemUUID,
+            @HeaderParam("targetSiteMapItemUUID")final String targetSiteMapItemUUID,
+            @HeaderParam("targetName")final String targetName
+            ) {
+
         final ValidatorBuilder preValidators = ValidatorBuilder.builder()
+                .add(validatorFactory.getNotNullValidator(targetName,
+                        ClientError.INVALID_NAME, "Name of the copied page is not allowed to be null"))
                 .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
-                        HstNodeTypes.NODETYPE_HST_SITEMAP));
-        preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(siteMapItemId, siteMapHelper));
+                        HstNodeTypes.NODETYPE_HST_SITEMAP))
+                .add(validatorFactory.getConfigurationExistsValidator(siteMapItemUUID, siteMapHelper));
+
+
+        if (StringUtils.isNotBlank(targetSiteMapItemUUID)) {
+            if (StringUtils.isBlank(mountId) || getPageComposerContextService().getEditingMount().getIdentifier().equals(mountId)) {
+                preValidators.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
+                                         targetSiteMapItemUUID, HstNodeTypes.NODETYPE_HST_SITEMAPITEM))
+                             .add(validatorFactory.getConfigurationExistsValidator(targetSiteMapItemUUID, siteMapHelper));
+            } else {
+                // validate targetSiteMapItemUUID is located in preview workspapce sitemap
+                preValidators.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(mountId),
+                                        targetSiteMapItemUUID, HstNodeTypes.NODETYPE_HST_SITEMAPITEM))
+                           // validate that the 'targetSiteMapItemUUID' is currently part of the hst model
+                           .add(validatorFactory.getConfigurationExistsValidator(targetSiteMapItemUUID, mountId, siteMapHelper));
+            }
+        }
+        
+        if (StringUtils.isNotBlank(mountId)) {
+            // validate target mount has preview and a workspace
+            preValidators.add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService(), mountId));
+            preValidators.add(validatorFactory.getHasWorkspaceConfigurationValidator(mountId));
+        }
 
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                Node copy = siteMapHelper.duplicate(siteMapItemId);
-                final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(copy.getIdentifier(), null);
+                PageCopyContext pcc = siteMapHelper.copy(mountId, siteMapItemUUID,
+                        targetSiteMapItemUUID, targetName);
+                publishSynchronousEvent(new PageCopyEvent(pcc));
+                final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(pcc.getTargetMount(), pcc.getNewSiteMapItemNode().getIdentifier(), null);
                 return ok("Item created successfully", siteMapPageRepresentation);
             }
         }, preValidators.build());
@@ -254,14 +288,14 @@ public class SiteMapResource extends AbstractConfigResource {
                          final @PathParam("parentId") String parentId) {
         final ValidatorBuilder preValidators = ValidatorBuilder.builder()
                 .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))
-                .add(validatorFactory.getCurrentPreviewConfigurationValidator(id, siteMapHelper))
+                .add(validatorFactory.getConfigurationExistsValidator(id, siteMapHelper))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
                         id, HstNodeTypes.NODETYPE_HST_SITEMAPITEM))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
                         HstNodeTypes.NODETYPE_HST_SITEMAP));
 
         if (parentId != null) {
-            preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(parentId, siteMapHelper));
+            preValidators.add(validatorFactory.getConfigurationExistsValidator(parentId, siteMapHelper));
             preValidators.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
                     parentId, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
         }
@@ -280,7 +314,7 @@ public class SiteMapResource extends AbstractConfigResource {
     public Response delete(final @PathParam("id") String id) {
         final Validator preValidator = ValidatorBuilder.builder()
                 .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))
-                .add(validatorFactory.getCurrentPreviewConfigurationValidator(id, siteMapHelper))
+                .add(validatorFactory.getConfigurationExistsValidator(id, siteMapHelper))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
                         id, HstNodeTypes.NODETYPE_HST_SITEMAPITEM))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
@@ -296,16 +330,18 @@ public class SiteMapResource extends AbstractConfigResource {
         }, preValidator);
     }
 
-
     private SiteMapPageRepresentation createSiteMapPageRepresentation(final String siteMapItemUUID, final String parentId) throws RepositoryException {
+        return createSiteMapPageRepresentation(getPageComposerContextService().getEditingMount(), siteMapItemUUID, parentId);
+    }
+
+    private SiteMapPageRepresentation createSiteMapPageRepresentation(final Mount target, final String siteMapItemUUID, final String parentId) throws RepositoryException {
         SiteMapPageRepresentation siteMapPageRepresentation = new SiteMapPageRepresentation();
         siteMapPageRepresentation.setId(siteMapItemUUID);
         // siteMapPathInfo without starting /
         Node siteMapItem = getPageComposerContextService().getRequestContext().getSession().getNodeByIdentifier(siteMapItemUUID);
         String siteMapPathInfo = StringUtils.substringAfter(siteMapItem.getPath(), NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_SITEMAP );
         siteMapPageRepresentation.setPathInfo(siteMapPathInfo.substring(1));
-        final Mount mount = getPageComposerContextService().getEditingMount();
-        siteMapPageRepresentation.setRenderPathInfo(mount.getMountPath() + siteMapPathInfo);
+        siteMapPageRepresentation.setRenderPathInfo(target.getMountPath() + siteMapPathInfo);
         siteMapPageRepresentation.setParentId(parentId);
         return siteMapPageRepresentation;
     }

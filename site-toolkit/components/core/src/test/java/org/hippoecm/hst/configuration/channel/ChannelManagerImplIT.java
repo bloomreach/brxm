@@ -115,10 +115,9 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         final HstManager manager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
 
         Map<String, Channel> channels = manager.getVirtualHosts().getChannels("dev-localhost");
-        assertEquals(1, channels.size());
-        assertEquals("testchannel", channels.keySet().iterator().next());
+        assertEquals(2, channels.size());
 
-        Channel channel = channels.values().iterator().next();
+        Channel channel = channels.get("testchannel");
         assertEquals("testchannel", channel.getId());
         assertEquals("Test Channel", channel.getName());
         assertEquals("en_EN", channel.getLocale());
@@ -128,8 +127,8 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
     public void channelPropertiesSaved() throws Exception {
 
         Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
-        assertEquals(1, channels.size());
-        final Channel channel = channels.values().iterator().next();
+        assertEquals(2, channels.size());
+        final Channel channel = channels.get("testchannel");
         channel.setChannelInfoClassName(getClass().getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
         channel.getProperties().put("title", "test title");
         // channel manager save triggers event path invalidation hence no explicit invalidation needed now
@@ -138,8 +137,8 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
 
         channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
 
-        assertEquals(1, channels.size());
-        Channel savedChannel = channels.values().iterator().next();
+        assertEquals(2, channels.size());
+        Channel savedChannel = channels.get("testchannel");
 
         Map<String, Object> savedProperties = savedChannel.getProperties();
         assertTrue(savedProperties.containsKey("title"));
@@ -315,8 +314,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         Node newChannel = channelsNode.addNode("cmit-test-channel", "hst:channel");
         newChannel.setProperty("hst:name", "CMIT Test Channel");
 
-        // channels must have a mount pointing to them otherwise they are skipped, hence point to this channel from
-        // subsite mount
+        // point the subsite to the new channel
         Node mountForNewChannel = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/subsite");
         mountForNewChannel.setProperty("hst:channelpath", newChannel.getPath());
 
@@ -328,7 +326,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
 
         // manager should reload
         channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
-        assertEquals(numberOfChannels + 1, channels.size());
+        assertEquals(numberOfChannels, channels.size());
         assertTrue(channels.containsKey("cmit-test-channel"));
 
         Channel created = channels.get("cmit-test-channel");

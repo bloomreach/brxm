@@ -156,11 +156,11 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         final VirtualHosts firstModel = hstManager.getVirtualHosts();
         assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.UP2DATE);
         final Map<String,Channel> channels = firstModel.getChannels("dev-localhost");
-        assertTrue(channels.size() == 1);
+        assertTrue(channels.size() == 2);
         final ResolvedMount resolvedMount = firstModel.matchMount("localhost", "/site", "home");
         assertEquals("hst:root",resolvedMount.getMount().getName());
         assertEquals("/hst:hst/hst:sites/unittestproject",resolvedMount.getMount().getMountPoint());
-        assertTrue(resolvedMount.getMount().getChannel() == channels.values().iterator().next());
+        assertTrue(resolvedMount.getMount().getChannel() == channels.get("testchannel"));
         // now remove sites node
         session.getNode("/hst:hst/hst:sites").remove();
         invalidator.eventPaths("/hst:hst/hst:sites");

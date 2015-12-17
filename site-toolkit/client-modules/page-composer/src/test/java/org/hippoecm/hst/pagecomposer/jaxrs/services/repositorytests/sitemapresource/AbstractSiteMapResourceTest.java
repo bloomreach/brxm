@@ -28,10 +28,10 @@ import javax.jcr.Value;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
@@ -47,6 +47,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.TemplateHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.AbstractMountResourceTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
 import org.hippoecm.hst.site.HstServices;
@@ -103,7 +104,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/newsoverview");
 
         session.save();
-        createPreviewWithSiteMapWorkspace();
+        createPreviewWithSiteMapWorkspace("localhost", "");
     }
 
     @After
@@ -130,8 +131,8 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         return repository.login(new SimpleCredentials(userName, password.toCharArray()));
     }
 
-    protected void createPreviewWithSiteMapWorkspace() throws Exception {
-        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "");
+    protected void createPreviewWithSiteMapWorkspace(final String hostAndPort, final String pathInfo) throws Exception {
+        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(hostAndPort, pathInfo);
 
         final String previewConfigurationPath = ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath() + "-preview";
         assertFalse("Preview config node should not exist yet.",
@@ -144,9 +145,21 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         Thread.sleep(100);
     }
 
+    /**
+     * return SiteMapItemRepresentation for <code>siteMapItemPath</code> matched against localhost
+     */
     public SiteMapItemRepresentation getSiteMapItemRepresentation(final Session requestSession,
                                                                   final String siteMapItemPath) throws Exception {
-        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", siteMapItemPath);
+        return getSiteMapItemRepresentation(requestSession, "localhost", siteMapItemPath);
+    }
+
+    public SiteMapItemRepresentation getSiteMapItemRepresentation(final Session requestSession,
+                                                                  final String hostAndPort,
+                                                                  String pathInfo) throws Exception {
+        if (StringUtils.isNotEmpty(pathInfo) && !pathInfo.startsWith("/")) {
+            pathInfo = "/" + pathInfo;
+        }
+        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(hostAndPort, pathInfo);
         ((HstMutableRequestContext) ctx).setSession(requestSession);
         final PageComposerContextService pageComposerContextService = mountResource.getPageComposerContextService();
         final HstSite site = pageComposerContextService.getEditingPreviewSite();
@@ -156,19 +169,16 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         // override the config identifier to have sitemap id
         ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, ((CanonicalInfo) site.getSiteMap()).getCanonicalIdentifier());
 
-         if (siteMapItemToRepresent == null) {
+        if (siteMapItemToRepresent == null) {
             return null;
         }
 
         Response response = createResource().getSiteMapItem(((CanonicalInfo) siteMapItemToRepresent).getCanonicalIdentifier());
-
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
         SiteMapItemRepresentation siteMapItemRepresentation =
                 (SiteMapItemRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
-
         return siteMapItemRepresentation;
-
     }
 
     protected SiteMapResource createResource() {
@@ -178,11 +188,14 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         final SiteMapHelper siteMapHelper = new SiteMapHelper();
         siteMapHelper.setPageComposerContextService(mountResource.getPageComposerContextService());
         siteMapHelper.setPagesHelper(pagesHelper);
-
+        final TemplateHelper templateHelper = new TemplateHelper();
+        siteMapHelper.setTemplateHelper(templateHelper);
         final SiteMapResource siteMapResource = new SiteMapResource();
         siteMapResource.setPageComposerContextService(mountResource.getPageComposerContextService());
         siteMapResource.setSiteMapHelper(siteMapHelper);
         siteMapResource.setValidatorFactory(new ValidatorFactory());
+
+        siteMapResource.setComponentManager(HstServices.getComponentManager());
         return siteMapResource;
     }
 

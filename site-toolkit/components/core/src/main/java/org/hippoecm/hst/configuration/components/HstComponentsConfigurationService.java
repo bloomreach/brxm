@@ -32,6 +32,11 @@ import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED;
+import static org.hippoecm.hst.configuration.HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH;
+import static org.hippoecm.hst.configuration.HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT;
+import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL;
+
 public class HstComponentsConfigurationService implements HstComponentsConfiguration {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentsConfigurationService.class);
@@ -57,6 +62,11 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
     private final Set<String> usedReferenceNames = new HashSet<>();
     private int autoCreatedCounter = 0;
+
+    /**
+     * Map from template node name to Template
+     */
+    private final Map<String, Template> templateResourceMap;
 
     public HstComponentsConfigurationService(final CompositeConfigurationNodes ccn,
                                              final List<HstComponentConfiguration> commonCatalogItem) throws ModelLoadingException {
@@ -126,7 +136,8 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
          * 4: Adding parameters from parent components to child components and override them when they already are present
          */
         
-        Map<String, HstNode> templateResourceMap = getTemplateResourceMap(ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_TEMPLATES));
+        templateResourceMap = Collections.unmodifiableMap(getTemplateResourceMap(ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_TEMPLATES)));
+
         enhanceComponentTree(templateResourceMap, nonPrototypeRootComponents);
 
     }
@@ -147,7 +158,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         }
     }
 
-    private void enhanceComponentTree(Map<String, HstNode> templateResourceMap, final List<HstComponentConfiguration> childComponents) {
+    private void enhanceComponentTree(Map<String, Template> templateResourceMap, final List<HstComponentConfiguration> childComponents) {
         // merging referenced components:  to avoid circular population, hold a list of already populated configs
         List<HstComponentConfiguration> populated = new ArrayList<HstComponentConfiguration>();
         for (HstComponentConfiguration child : canonicalComponentConfigurations.values()) {
@@ -214,6 +225,11 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     @Override
     public Map<String, HstComponentConfiguration> getPrototypePages() {
         return prototypePages;
+    }
+
+
+    public Map<String, Template> getTemplates() {
+        return templateResourceMap;
     }
 
     private void autocreateReferenceNames(HstComponentConfiguration componentConfiguration) {
@@ -306,33 +322,18 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         }
     }
 
-    private Map<String, HstNode> getTemplateResourceMap(CompositeConfigurationNodes.CompositeConfigurationNode templateNodes) throws ModelLoadingException {
+    private Map<String, Template> getTemplateResourceMap(CompositeConfigurationNodes.CompositeConfigurationNode templateNodes) throws ModelLoadingException {
         if(templateNodes == null) {
             log.info("Configuration for '{}' does not have hst:templates. Model will be loaded without templates", id);
             return Collections.emptyMap();
         }
-        Map<String, HstNode> templateResourceMap = new HashMap<String, HstNode>();
+        Map<String, Template> templateResourceMap = new HashMap<>();
 
-        for (HstNode template : templateNodes.getCompositeChildren().values()) {
-            ValueProvider valueProvider = template.getValueProvider();
-            boolean renderPathExisting = valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
-            boolean scriptExisting = valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT);
-
-            if (!renderPathExisting && !scriptExisting) {
-                log.warn("Skipping template '{}' because missing property, either hst:renderpath or hst:script.", valueProvider.getPath());
-                continue;
+        for (HstNode templateNode : templateNodes.getCompositeChildren().values()) {
+            Template template = new Template(templateNode);
+            if (template.isValid()) {
+                templateResourceMap.put(template.getName(), template);
             }
-
-            if (renderPathExisting && !scriptExisting) {
-                String resourcePath = valueProvider.getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
-
-                if (StringUtils.isBlank(resourcePath)) {
-                    log.warn("Skipping template '{}' because of invalid hst:renderpath value.", valueProvider.getPath());
-                    continue;
-                }
-            }
-
-            templateResourceMap.put(valueProvider.getName(), template);
         }
         return templateResourceMap;
     }
@@ -340,6 +341,60 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     @Override
     public String toString() {
         return "HstComponentsConfigurationService [id='"+id+"', hashcode = '"+hashCode()+"']";
+    }
+
+    public static class Template {
+
+        private final String name;
+        private final String uuid;
+        private final String path;
+        private final String configuredRenderPath;
+        private final String effectiveRenderPath;
+        private final String script;
+        private final boolean named;
+
+        public Template(HstNode templateNode){
+            final ValueProvider valueProvider = templateNode.getValueProvider();
+            name = valueProvider.getName();
+            path = valueProvider.getPath();
+            uuid = valueProvider.getIdentifier();
+            configuredRenderPath = valueProvider.getString(TEMPLATE_PROPERTY_RENDERPATH);
+            script = valueProvider.getString(TEMPLATE_PROPERTY_SCRIPT);
+            named = valueProvider.getBoolean(TEMPLATE_PROPERTY_IS_NAMED);
+
+            if (StringUtils.isNotBlank(configuredRenderPath)) {
+                effectiveRenderPath = configuredRenderPath;
+            } else if (StringUtils.isNotBlank(script)) {
+                effectiveRenderPath = FREEMARKER_JCR_TEMPLATE_PROTOCOL + path;
+            } else {
+                log.warn("Template '{}' is invalid, supply a hst:renderpath or hst:script.", getPath());
+                effectiveRenderPath = null;
+            }
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getUuid() {
+            return uuid;
+        }
+
+        public String getEffectiveRenderPath() {
+            return effectiveRenderPath;
+        }
+
+        public boolean isNamed() {
+            return named;
+        }
+
+        public boolean isValid() {
+            return getEffectiveRenderPath() != null;
+        }
     }
 
 }

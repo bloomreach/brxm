@@ -22,13 +22,13 @@ import org.hippoecm.hst.configuration.model.HstNode;
 
 public class ConfigurationUtils {
 
-    private static int[] suppertedSchemeNotMatchingResponseCodes = {HttpServletResponse.SC_OK,
+    private static int[] supportedSchemeNotMatchingResponseCodes = {HttpServletResponse.SC_OK,
             HttpServletResponse.SC_MOVED_PERMANENTLY,
             HttpServletResponse.SC_MOVED_TEMPORARILY, HttpServletResponse.SC_SEE_OTHER, HttpServletResponse.SC_TEMPORARY_REDIRECT,
             HttpServletResponse.SC_FORBIDDEN, HttpServletResponse.SC_NOT_FOUND};
 
     public static boolean isSupportedSchemeNotMatchingResponseCode(int schemeNotMatchingResponseCode) {
-        for (int code : suppertedSchemeNotMatchingResponseCodes) {
+        for (int code : supportedSchemeNotMatchingResponseCodes) {
             if (code == schemeNotMatchingResponseCode){
                 return true;
             }
@@ -36,9 +36,9 @@ public class ConfigurationUtils {
         return false;
     }
 
-    public static String suppertedSchemeNotMatchingResponseCodesAsString() {
+    public static String supportedSchemeNotMatchingResponseCodesAsString() {
         StringBuilder builder = new StringBuilder();
-        for (int code : suppertedSchemeNotMatchingResponseCodes) {
+        for (int code : supportedSchemeNotMatchingResponseCodes) {
             builder.append(code).append(", ");
         }
         return builder.substring(0, builder.length() -2).toString();
