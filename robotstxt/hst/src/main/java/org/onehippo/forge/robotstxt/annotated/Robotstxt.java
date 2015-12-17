@@ -1,5 +1,5 @@
-/**
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+/*
+ * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.hippoecm.hst.content.beans.standard.HippoDocument;
 /**
  * [robotstxt:robotstxt] > hippo:document, hippostd:publishable, hippostd:publishableSummary
  *   - robotstxt:disallowfacnav (boolean)
+ *   - robotstxt:sitemap (string) multiple
  *   + robotstxt:section (robotstxt:section) multiple
  */
 @Node(jcrType="robotstxt:robotstxt")
@@ -30,6 +31,10 @@ public class Robotstxt extends HippoDocument {
 
     public List<Section> getSections() {
         return this.getChildBeans("robotstxt:section");
+    }
+
+    public String[] getSitemaps() {
+        return getProperty("robotstxt:sitemap");
     }
 
     public boolean isDisallowFacNav() {
