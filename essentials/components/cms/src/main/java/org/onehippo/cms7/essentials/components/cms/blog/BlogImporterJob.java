@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,32 +16,6 @@
 
 package org.onehippo.cms7.essentials.components.cms.blog;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-import java.util.regex.Pattern;
-
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.hippoecm.repository.api.NodeNameCodec;
-import org.jsoup.Jsoup;
-import org.onehippo.repository.scheduling.RepositoryJob;
-import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -51,6 +25,25 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
+import org.apache.commons.lang.ArrayUtils;
+import org.hippoecm.repository.api.NodeNameCodec;
+import org.jsoup.Jsoup;
+import org.onehippo.repository.scheduling.RepositoryJob;
+import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.nodetype.NodeType;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * @version "$Id$"
@@ -66,55 +59,57 @@ public class BlogImporterJob implements RepositoryJob {
     public static final String MAX_DESCRIPTION_LENGTH = "maxDescriptionLength";
     private static final int DEFAULT_MAX_DESCRIPTION_LENGTH = 200;
     private static final Pattern PATH_PATTERN = Pattern.compile("/");
-    public static final char[] PASSWORD = new char[]{};
+    private static final String DOCUMENT_TYPE_AUTHOR = "author";
+    private static final String DOCUMENT_TYPE_BLOGPOST = "blogpost";
     public static final char SPLITTER = '|';
+
 
 
     @Override
     public void execute(final RepositoryJobExecutionContext context) throws RepositoryException {
-
-
-        log.info("+---------------------------------------------------+");
-        log.info("|          Start importing blogs                    |");
-        log.info("+---------------------------------------------------+");
-
-        final Session jcrSession = context.createSession(new SimpleCredentials("system", PASSWORD));
-
+        final Session jcrSession = context.createSystemSession();
         if (jcrSession == null) {
             log.error("Error in getting session");
             return;
         }
 
-        final String blogBasePath = context.getAttribute(BLOGS_BASE_PATH);
-        final String urlsAttribute = context.getAttribute(URLS);
-        final String authorsAttribute = context.getAttribute(AUTHORS);
-        final String[] urls = extractArray(urlsAttribute);
-
-        cleanupUrls(urls);
-        if (urls.length == 0) {
-            log.warn("There are no valid URL configured to import");
-            return;
-        }
-        final String authorsBasePath = context.getAttribute(AUTHORS_BASE_PATH);
-        final String projectNamespace = context.getAttribute(PROJECT_NAMESPACE);
-        final String[] authors = extractArray(authorsAttribute);
-        int maxDescriptionLength;
         try {
-            maxDescriptionLength = Integer.parseInt(context.getAttribute(MAX_DESCRIPTION_LENGTH));
+            log.info("+---------------------------------------------------+");
+            log.info("|          Start importing blogs                    |");
+            log.info("+---------------------------------------------------+");
 
-        } catch (NumberFormatException e) {
-            maxDescriptionLength = DEFAULT_MAX_DESCRIPTION_LENGTH;
-        }
-        if (blogBasePath != null) {
-            importBlogs(jcrSession, projectNamespace, blogBasePath, urls, authorsBasePath, authors, maxDescriptionLength);
-        } else {
-            log.warn("Import path variable not defined (base path for importing blogs): {}", BLOGS_BASE_PATH);
-        }
+            final String blogBasePath = context.getAttribute(BLOGS_BASE_PATH);
+            final String urlsAttribute = context.getAttribute(URLS);
+            final String authorsAttribute = context.getAttribute(AUTHORS);
+            final String[] urls = extractArray(urlsAttribute);
 
-        log.info("+----------------------------------------------------+");
-        log.info("|           Finished importing blogs                 |");
-        log.info("+----------------------------------------------------+");
-        jcrSession.logout();
+            cleanupUrls(urls);
+            if (urls.length == 0) {
+                log.warn("There are no valid URL configured to import");
+                return;
+            }
+            final String authorsBasePath = context.getAttribute(AUTHORS_BASE_PATH);
+            final String projectNamespace = context.getAttribute(PROJECT_NAMESPACE);
+            final String[] authors = extractArray(authorsAttribute);
+            int maxDescriptionLength;
+            try {
+                maxDescriptionLength = Integer.parseInt(context.getAttribute(MAX_DESCRIPTION_LENGTH));
+
+            } catch (NumberFormatException e) {
+                maxDescriptionLength = DEFAULT_MAX_DESCRIPTION_LENGTH;
+            }
+            if (blogBasePath != null) {
+                importBlogs(jcrSession, projectNamespace, blogBasePath, urls, authorsBasePath, authors, maxDescriptionLength);
+            } else {
+                log.warn("Import path variable not defined (base path for importing blogs): {}", BLOGS_BASE_PATH);
+            }
+
+            log.info("+----------------------------------------------------+");
+            log.info("|           Finished importing blogs                 |");
+            log.info("+----------------------------------------------------+");
+        } finally {
+            jcrSession.logout();
+        }
     }
 
     private String[] extractArray(final String value) {
@@ -154,6 +149,8 @@ public class BlogImporterJob implements RepositoryJob {
 
             final String prefixedNamespace = projectNamespace + ':';
             final String fullNameProperty = prefixedNamespace + "fullname";
+            final List<String> documentMixins = getDocumenttypeMixins(session, projectNamespace, DOCUMENT_TYPE_AUTHOR);
+
             for (int i = 0; i < blogUrls.length; i++) {
                 Node authorNode = null;
                 if (myAuthorsBasePath != null && authors != null) {
@@ -173,8 +170,8 @@ public class BlogImporterJob implements RepositoryJob {
                             } else {
                                 // create author node;
                                 log.info("Creating new Author document for name: {}", author);
-                                final Node documentNode = createDocument(prefixedNamespace, "author", authorsNode, author);
-                                setDefaultDocumentPorperties(prefixedNamespace, documentNode, Calendar.getInstance());
+                                final Node documentNode = createDocument(prefixedNamespace, DOCUMENT_TYPE_AUTHOR, authorsNode, author, documentMixins);
+                                setDefaultDocumentProperties(prefixedNamespace, documentNode, Calendar.getInstance());
                                 documentNode.setProperty(fullNameProperty, author);
                                 authorNode = authorsNode.getNode(author);
                                 session.save();
@@ -230,12 +227,13 @@ public class BlogImporterJob implements RepositoryJob {
 
     private void processFeed(final Session session, final String projectNamespace, final int maxDescriptionLength, final Node blogNode, final Node authorNode, final SyndFeed feed) {
         if (feed != null) {
+            final List<String> documentMixins = getDocumenttypeMixins(session, projectNamespace, DOCUMENT_TYPE_BLOGPOST);
             for (Object entry : feed.getEntries()) {
                 if (entry instanceof SyndEntry) {
                     SyndEntry syndEntry = (SyndEntry) entry;
                     try {
                         if (!blogExists(blogNode, syndEntry)) {
-                            createBlogDocument(projectNamespace, blogNode, authorNode, syndEntry, maxDescriptionLength);
+                            createBlogDocument(projectNamespace, blogNode, authorNode, syndEntry, maxDescriptionLength, documentMixins);
                             BlogUpdater.handleSaved(blogNode, projectNamespace);
                             session.save();
                         } else {
@@ -252,6 +250,22 @@ public class BlogImporterJob implements RepositoryJob {
         }
     }
 
+    private List<String> getDocumenttypeMixins(final Session session, final String projectNamespace, final String documentTypeName) {
+        final List<String> mixins = new ArrayList<>();
+        final String docNamespacePrototype = "hippo:namespaces/" + projectNamespace + "/" + documentTypeName + "/hipposysedit:prototypes/hipposysedit:prototype";
+        try {
+            final Node docNamespacePrototypeNode = session.getRootNode().getNode(docNamespacePrototype);
+            final NodeType[] mixinNodeTypes = docNamespacePrototypeNode.getMixinNodeTypes();
+            for(NodeType nt : mixinNodeTypes) {
+                mixins.add(nt.getName());
+            }
+        } catch (RepositoryException rExp) {
+            log.error("Error in retrieving document namespace prototype", rExp);
+        }
+
+        return mixins;
+    }
+
     private boolean blogExists(Node baseNode, SyndEntry syndEntry) throws RepositoryException {
         Node blogFolder = getBlogFolder(baseNode, syndEntry);
         String documentName = NodeNameCodec.encode(syndEntry.getTitle().replace("?", ""), true);
@@ -262,11 +276,13 @@ public class BlogImporterJob implements RepositoryJob {
         return exist;
     }
 
-    private boolean createBlogDocument(final String namespace, Node baseNode, Node authorHandleNode, SyndEntry syndEntry, int maxDescriptionLength) throws RepositoryException {
+    private boolean createBlogDocument(final String namespace, final Node baseNode, final Node authorHandleNode,
+                                       final SyndEntry syndEntry, final int maxDescriptionLength,
+                                       final List<String> mixins) throws RepositoryException {
         final String prefixedNamespace = namespace + ':';
         Node blogFolder = getBlogFolder(baseNode, syndEntry);
         String documentName = NodeNameCodec.encode(syndEntry.getTitle(), true).replace("?", "");
-        Node documentNode = createDocument(prefixedNamespace, "blogpost", blogFolder, documentName);
+        Node documentNode = createDocument(prefixedNamespace, DOCUMENT_TYPE_BLOGPOST, blogFolder, documentName, mixins);
         documentNode.setProperty(prefixedNamespace + "title", syndEntry.getTitle());
         documentNode.setProperty(prefixedNamespace + "introduction", processDescription(syndEntry, maxDescriptionLength));
         if (authorHandleNode != null) {
@@ -284,7 +300,7 @@ public class BlogImporterJob implements RepositoryJob {
         documentNode.setProperty(prefixedNamespace + "link", syndEntry.getLink());
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(syndEntry.getPublishedDate());
-        setDefaultDocumentPorperties(prefixedNamespace, documentNode, calendar);
+        setDefaultDocumentProperties(prefixedNamespace, documentNode, calendar);
         documentNode.addNode(prefixedNamespace + "content", "hippostd:html");
         documentNode.getNode(prefixedNamespace + "content").setProperty("hippostd:content", processContent(syndEntry));
         documentNode.addNode(prefixedNamespace + "image", "hippostd:html");
@@ -299,7 +315,7 @@ public class BlogImporterJob implements RepositoryJob {
         return true;
     }
 
-    private void setDefaultDocumentPorperties(final String prefixedNamespace, final Node documentNode, final Calendar calendar) throws RepositoryException {
+    private void setDefaultDocumentProperties(final String prefixedNamespace, final Node documentNode, final Calendar calendar) throws RepositoryException {
         documentNode.setProperty(prefixedNamespace + "publicationdate", calendar);
         documentNode.setProperty("hippostdpubwf:lastModifiedBy", "admin");
         documentNode.setProperty("hippostdpubwf:createdBy", "admin");
@@ -314,11 +330,14 @@ public class BlogImporterJob implements RepositoryJob {
         documentNode.setProperty("hippotranslation:id", UUID.randomUUID().toString());
     }
 
-    private Node createDocument(final String prefixedNamespace, final String docType, final Node rootNode, final String documentName) throws RepositoryException {
+    private Node createDocument(final String prefixedNamespace, final String docType, final Node rootNode,
+                                final String documentName, final List<String> mixins) throws RepositoryException {
         Node handleNode = rootNode.addNode(documentName, "hippo:handle");
         handleNode.addMixin("mix:referenceable");
         Node documentNode = handleNode.addNode(documentName, prefixedNamespace + docType);
-        documentNode.addMixin("mix:referenceable");
+        for (String mixin : mixins) {
+            documentNode.addMixin(mixin);
+        }
         documentNode.setProperty("hippo:availability", new String[]{"live", "preview"});
         return documentNode;
     }
