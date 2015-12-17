@@ -29,7 +29,6 @@ module.exports = function (config) {
       build.bower + '/jquery/dist/jquery.js',
       build.bower + '/angular/angular.js',
       build.bower + '/angular-bootstrap/ui-bootstrap.min.js',
-      build.bower + '/angular-route/angular-route.js',
       build.bower + '/hippo-theme/dist/js/main.js',
       build.bower + '/angular-translate/angular-translate.js',
       build.bower + '/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
@@ -44,6 +43,7 @@ module.exports = function (config) {
       build.bower + '/angular-mocks/angular-mocks.js',
 
       // apps sources
+      build.ngsource + '/shared/services/ChannelService.js',
       build.ngsource + '/shared/services/PageService.js',
 
       build.ngsource + '/menu/menu-dependencies.js',

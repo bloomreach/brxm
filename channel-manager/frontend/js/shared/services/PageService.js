@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,6 +85,35 @@
           }
 
           $http.post(pageServiceUrl(url), page)
+            .success(function (response) {
+              deferred.resolve(response.data);
+            })
+            .error(function (error) {
+              deferred.reject(error);
+            });
+          return deferred.promise;
+        };
+
+        pageService.copyPage = function (mountId, siteMapItemUUId, targetName, targetSiteMapItemUUID) {
+
+          var deferred = $q.defer(),
+              url = '/' + ConfigService.sitemapId + './copy';
+
+          var req = {
+            method :  'POST',
+            url : pageServiceUrl(url),
+            headers: {
+              'siteMapItemUUId': siteMapItemUUId,
+              'targetName': targetName
+            }
+          };
+          if(mountId) {
+            req.headers.mountId = mountId;
+          }
+          if(targetSiteMapItemUUID) {
+            req.headers.targetSiteMapItemUUID = targetSiteMapItemUUID;
+          }
+          $http(req)
             .success(function (response) {
               deferred.resolve(response.data);
             })

@@ -425,7 +425,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
 
         return {
             id: this.id + this.idDelimiter + item.getItemId(),
-            text: item.title,
+            text: Ext.util.Format.htmlEncode(item.title),
             cls: cls,
             iconCls: item.iconCls || ''
         };
@@ -525,7 +525,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
     onItemTitleChanged : function(item) {
         var el = this.getTabEl(item);
         if (el) {
-            Ext.fly(el).child('span.x-tab-strip-text', true).innerHTML = item.title;
+            Ext.fly(el).child('span.x-tab-strip-text', true).innerHTML = Ext.util.Format.htmlEncode(item.title);
         }
     },
 

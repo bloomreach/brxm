@@ -23,6 +23,8 @@
 
     .service('_hippo.channel.IFrameService', [
       '$window', '$log', function ($window, $log) {
+        var iframePanelId = getParentIFramePanelId(),
+          isActive = iframePanelId !== null;
 
         function getParentIFramePanelId () {
           var idParam = 'parentExtIFramePanelId',
@@ -40,12 +42,11 @@
             }
           }
 
-          throw new Error("Expected query parameter '" + idParam + "'");
+          return null;
         }
 
         function getParentIFramePanel () {
-          var iframePanelId = getParentIFramePanelId(),
-            iframePanel = $window.parent.Ext.getCmp(iframePanelId);
+          var iframePanel = $window.parent.Ext.getCmp(iframePanelId);
 
           if (!angular.isObject(iframePanel)) {
             throw new Error("Unknown iframe panel id: '" + iframePanelId + "'");
@@ -54,23 +55,31 @@
           return iframePanel;
         }
 
-        function publish (event, value) {
-          return getParentIFramePanel().iframeToHost.publish(event, value);
+        function publish () {
+          if (isActive) {
+            return getParentIFramePanel().iframeToHost.publish.apply(window, arguments);
+          }
         }
 
         function subscribe (event, callback, scope) {
-          return getParentIFramePanel().hostToIFrame.subscribe(event, callback, scope);
+          if (isActive) {
+            return getParentIFramePanel().hostToIFrame.subscribe(event, callback, scope);
+          }
         }
 
         function getConfig () {
-          var iframePanel = getParentIFramePanel(),
-            config = iframePanel.initialConfig.iframeConfig;
+          if (isActive) {
+            var iframePanel = getParentIFramePanel(),
+              config = iframePanel.initialConfig.iframeConfig;
 
-          if (config === undefined) {
-            throw new Error("Parent iframe panel does not contain iframe configuration");
+            if (config === undefined) {
+              throw new Error("Parent iframe panel does not contain iframe configuration");
+            }
+
+            return config;
+          } else {
+            return {};
           }
-
-          return config;
         }
 
         function addScriptToHead (scriptUrl) {
@@ -89,7 +98,7 @@
         }
 
         return {
-          isActive: ($window.self !== $window.top),
+          isActive: isActive,
           getConfig: getConfig,
           enableLiveReload: enableLiveReload,
           publish: publish,

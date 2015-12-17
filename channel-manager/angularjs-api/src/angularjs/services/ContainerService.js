@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,29 +38,26 @@
                 }
 
                 function handleClose() {
-                    if (IFrameService.isActive) {
+                    IFrameService.subscribe('close-request', function() {
 
-                        IFrameService.subscribe('close-request', function() {
+                        $rootScope.$broadcast('container:before-close');
 
-                            $rootScope.$broadcast('container:before-close');
+                        var closeEvent = $rootScope.$broadcast('container:close');
+                        if (!closeEvent.defaultPrevented) {
+                            performClose();
+                        }
+                    });
 
-                            var closeEvent = $rootScope.$broadcast('container:close');
-                            if (!closeEvent.defaultPrevented) {
-                                performClose();
-                            }
-                        });
-
-                        $rootScope.$on('container:close', function(event) {
-                            if (!FormStateService.isValid()) {
-                                event.preventDefault();
-                                $rootScope.$broadcast('close-confirmation:show');
-                            }
-                        });
-                    }
+                    $rootScope.$on('container:close', function(event) {
+                        if (!FormStateService.isValid()) {
+                            event.preventDefault();
+                            $rootScope.$broadcast('close-confirmation:show');
+                        }
+                    });
                 }
 
-                function showPage(path) {
-                    IFrameService.publish('browseTo', prefixWithSlash(path));
+                function showPage(path, mountId) {
+                    IFrameService.publish('browseTo', prefixWithSlash(path), mountId);
                 }
 
                 return {

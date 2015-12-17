@@ -17,7 +17,7 @@
 describe('Settings Controller', function () {
   'use strict';
 
-  var scope, PageService, PrototypeService,
+  var scope, PageService,ChannelService, PrototypeService,
     setCmsUser, createController,
     isPageInWorkspace,
     pageLockedBy, pageLockedOn;
@@ -33,6 +33,9 @@ describe('Settings Controller', function () {
 
     PageService = jasmine.createSpyObj('PageService', ['getMountInfo', 'getCurrentPage']);
     $provide.value('hippo.channel.PageService', PageService);
+
+    ChannelService = jasmine.createSpyObj('ChannelService', ['getFeatures', 'getPreviewChannels']);
+    $provide.value('hippo.channel.ChannelService', ChannelService);
 
     PrototypeService = jasmine.createSpyObj('PrototypeService', ['getPrototypes']);
     $provide.value('hippo.channel.PrototypeService', PrototypeService);
@@ -53,7 +56,8 @@ describe('Settings Controller', function () {
 
     createController = function () {
       PageService.getMountInfo.and.callFake(function () {
-        return resolvedPromise({hostName: 'www.onehippo.com', mountPath: '/mountpath'});
+        return resolvedPromise({hostName: 'www.' +
+          'onehippo.com', mountPath: '/mountpath'});
       });
 
       PageService.getCurrentPage.and.callFake(function () {
@@ -63,8 +67,21 @@ describe('Settings Controller', function () {
           name: 'pageName',
           workspaceConfiguration: isPageInWorkspace,
           lockedBy: pageLockedBy,
-          lockedOn: pageLockedOn
+          lockedOn: pageLockedOn,
+          parentLocation: {
+            id : null
+          }
         });
+      });
+
+      ChannelService.getFeatures.and.callFake(function() {
+        return resolvedPromise({
+          crossChannelPageCopySupported : true
+        });
+      });
+
+      ChannelService.getPreviewChannels.and.callFake(function() {
+        return resolvedPromise([]);
       });
 
       PrototypeService.getPrototypes.and.callFake(function () {
@@ -106,7 +123,7 @@ describe('Settings Controller', function () {
     expect(PageService.getCurrentPage).toHaveBeenCalled();
     expect(scope.page.id).toEqual('pageId');
     expect(scope.page.title).toEqual('Page Title');
-    expect(scope.page.url).toEqual('pageName');
+    expect(scope.page.lastPathInfoElement).toEqual('pageName');
   }));
 
   it('should get the lock information', function () {
