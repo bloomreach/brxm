@@ -19,20 +19,25 @@ describe('SessionService', function () {
 
   var $httpBackend;
   var sessionService;
-  var configServiceMock = {
-    apiUrlPrefix: '/testApiUrlPrefix',
-    cmsUser: 'testUser'
-  };
-  var channelMock = {
-    contextPath: '/testContextPath',
-    hostname: 'test.host.name'
-  };
+  var configServiceMock;
+  var channelMock;
+
   // built-in path to RootResource 'REST' endpoint
   var composerModePath = '/cafebabe-cafe-babe-cafe-babecafebabe./composermode/';
   var handshakeUrl = '/testContextPath/testApiUrlPrefix' + composerModePath + 'test.host.name/';
 
   beforeEach(function () {
     module('hippo-cm-api');
+
+    channelMock = {
+      contextPath: '/testContextPath',
+      hostname: 'test.host.name'
+    };
+
+    configServiceMock = {
+      apiUrlPrefix: '/testApiUrlPrefix',
+      cmsUser: 'testUser'
+    };
 
     module(function ($provide) {
       $provide.value('ConfigService', configServiceMock);
