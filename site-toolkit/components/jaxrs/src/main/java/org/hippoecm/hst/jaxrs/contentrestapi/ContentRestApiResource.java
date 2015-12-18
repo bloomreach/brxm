@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.jaxrs;
+package org.hippoecm.hst.jaxrs.contentrestapi;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,7 +45,7 @@ import org.onehippo.cms7.services.search.service.SearchServiceException;
 import org.onehippo.cms7.services.search.service.SearchServiceFactory;
 
 @Produces("application/json")
-public class AutoRestApi {
+public class ContentRestApiResource {
 
     public interface Context {
         Session getSession() throws RepositoryException;
@@ -54,7 +54,7 @@ public class AutoRestApi {
     private Context context;
     private SearchServiceFactory searchServiceFactory;
 
-    public AutoRestApi() {
+    public ContentRestApiResource() {
         this.context = new Context() {
             public Session getSession() throws RepositoryException {
                 return RequestContextProvider.get().getSession();
