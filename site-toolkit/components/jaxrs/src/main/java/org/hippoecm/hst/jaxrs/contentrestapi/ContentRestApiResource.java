@@ -211,16 +211,14 @@ public class ContentRestApiResource {
 
     @SuppressWarnings("unchecked")
     private void nodeToHashMap(Node node, HashMap<String, Object> hashMap) throws RepositoryException {
-        // Property values are serialized by the custom serializer found in JcrPropertyValueSerializer
-
         // Iterate over all properties and add those to the hashMap.
         Iterator<Property> propertyIterator = node.getProperties();
         while (propertyIterator.hasNext()) {
             Property property = propertyIterator.next();
             if (property.isMultiple()) {
-                hashMap.put(property.getName(), property.getValues());
+                hashMap.put(property.getName(), new Object[0]); //property.getValues());
             } else {
-                hashMap.put(property.getName(), property.getValue());
+                hashMap.put(property.getName(), "prop"); //property.getValue());
             }
         }
 
