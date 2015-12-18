@@ -16,6 +16,11 @@
 
 package org.hippoecm.hst.jaxrs;
 
+import java.util.HashMap;
+import java.util.UUID;
+
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.ws.rs.GET;
@@ -29,6 +34,8 @@ import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.search.jcr.service.HippoJcrSearchService;
 import org.onehippo.cms7.services.search.query.Query;
+import org.onehippo.cms7.services.search.result.Hit;
+import org.onehippo.cms7.services.search.result.HitIterator;
 import org.onehippo.cms7.services.search.result.QueryResult;
 import org.onehippo.cms7.services.search.service.QueryPersistService;
 import org.onehippo.cms7.services.search.service.SearchService;
@@ -38,15 +45,15 @@ import org.onehippo.cms7.services.search.service.SearchServiceFactory;
 @Produces("application/json")
 public class AutoRestApi {
 
-    public interface SearchSessionProvider {
+    public interface Context {
         Session getSession() throws RepositoryException;
     }
 
-    private SearchSessionProvider searchSessionProvider;
+    private Context context;
     private SearchServiceFactory searchServiceFactory;
 
     public AutoRestApi() {
-        this.searchSessionProvider = new SearchSessionProvider() {
+        this.context = new Context() {
             public Session getSession() throws RepositoryException {
                 return RequestContextProvider.get().getSession();
             }
@@ -55,8 +62,8 @@ public class AutoRestApi {
         registerSearchServiceFactory();
     }
 
-    public void setSearchSessionProvider(SearchSessionProvider provider) {
-        this.searchSessionProvider = provider;
+    public void setContext(Context context) {
+        this.context = context;
     }
 
     /* TODO
@@ -100,7 +107,35 @@ public class AutoRestApi {
         if (searchServiceFactory == null) {
             throw new RepositoryException("Cannot get SearchServiceFactory from HippoServiceRegistry");
         }
-        return searchServiceFactory.createSearchService(searchSessionProvider.getSession());
+        return searchServiceFactory.createSearchService(context.getSession());
+    }
+
+    final class Link {
+        public String url;
+    }
+
+    final class SearchResultItem {
+        public String name;
+        public String uuid;
+        public Link[] links;
+    }
+
+    final class SearchResult {
+        public long offset;
+        public long max;
+        public long count;
+        public boolean more;
+        public long total;
+        public SearchResultItem[] items;
+    }
+
+    final class Error {
+        public int status;
+        public String description;
+        Error(int status, String description) {
+            this.status = status;
+            this.description = description;
+        }
     }
 
     @GET
@@ -110,23 +145,37 @@ public class AutoRestApi {
             SearchService searchService = getSearchService();
             Query query = searchService.createQuery()
                     .from("/content")
-                    .ofType("myhippoproject:basedocument")
+                    .ofType("hippo:document")
                     .returnParentNode()
                     .orderBy(HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE)
                     .descending();
-            QueryResult result = searchService.search(query);
+            QueryResult queryResult = searchService.search(query);
 
-            // TODO use Jackson here
-            StringBuilder builder = new StringBuilder();
-            builder.append("{");
-            builder.append("  \"offset\": \"0\",");
-            builder.append("  \"max\":    \"20\",");
-            builder.append("  \"count\":  \"").append(result.getTotalHitCount()).append("\",");
-            builder.append("  \"more\":   \"false\",");
-            builder.append("  \"total\":  \"").append(result.getTotalHitCount()).append("\"");
-            builder.append("}");
+            SearchResult returnValue = new SearchResult();
+            returnValue.offset = 0;
+            returnValue.max = 100;
+            returnValue.count = queryResult.getTotalHitCount();
+            returnValue.more = false;
+            returnValue.total = queryResult.getTotalHitCount();
 
-            return Response.status(200).entity(builder.toString()).build();
+            int count = (int) queryResult.getTotalHitCount();
+            int current = 0;
+            returnValue.items = new SearchResultItem[count];
+            HitIterator iterator = queryResult.getHits();
+            while (iterator.hasNext()) {
+                Hit hit = iterator.nextHit();
+                returnValue.items[current] = new SearchResultItem();
+                String uuid = hit.getSearchDocument().getContentId().toIdentifier();
+                Node node = context.getSession().getNodeByIdentifier(uuid);
+                returnValue.items[current].name = node.getName();
+                returnValue.items[current].uuid = uuid;
+                returnValue.items[current].links = new Link[1];
+                returnValue.items[current].links[0] = new Link();
+                returnValue.items[current].links[0].url = uuid;
+                current++;
+            }
+
+            return Response.status(200).entity(returnValue).build();
         } catch (RepositoryException e) {
             return Response.status(500).entity(e.toString()).build();
         }
@@ -135,7 +184,42 @@ public class AutoRestApi {
     @GET
     @Path("/content/documents/{uuid}")
     public Response getDocumentsByUUID(@PathParam("uuid") String uuid) {
-        return Response.status(500).entity("{\"message\":\"non supported yet\"}").build();
+        try {
+            Session session = context.getSession();
+
+            // this could throw a IllegalArgumentException
+            UUID.fromString(uuid);
+
+            // this could throw a ItemNotFoundException
+            Node node = session.getNodeByIdentifier(uuid);
+
+            HashMap<String, Object> returnValue = new HashMap<>();
+
+            returnValue.put("this", "that");
+            returnValue.put("something", returnValue.clone());
+
+            return Response.status(200).entity(returnValue).build();
+        } catch (IllegalArgumentException iae) {
+            return buildErrorResponse(400, iae, "The string '" + uuid + "' is not a valid UUID.");
+        } catch (ItemNotFoundException infe) {
+            return buildErrorResponse(404, infe);
+        } catch (RepositoryException re) {
+            return buildErrorResponse(500, re);
+        }
+    }
+
+    private Response buildErrorResponse(int status, Exception exception) {
+        return buildErrorResponse(status, exception, null);
+    }
+
+    private Response buildErrorResponse(int status, Exception exception, String description) {
+        Error error;
+        if (description == null) {
+            error = new Error(status, exception.toString());
+        } else {
+            error = new Error(status, description);
+        }
+        return Response.status(status).entity(error).build();
     }
 
     /*
