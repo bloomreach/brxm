@@ -144,8 +144,8 @@ public class AutoRestApi {
         try {
             SearchService searchService = getSearchService();
             Query query = searchService.createQuery()
-                    .from("/content")
-                    .ofType("hippo:document")
+                    .from("/content/documents")
+                    .ofType("myhippoproject:basedocument")
                     .returnParentNode()
                     .orderBy(HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE)
                     .descending();
@@ -177,7 +177,7 @@ public class AutoRestApi {
 
             return Response.status(200).entity(returnValue).build();
         } catch (RepositoryException e) {
-            return Response.status(500).entity(e.toString()).build();
+            return buildErrorResponse(500, e);
         }
     }
 
