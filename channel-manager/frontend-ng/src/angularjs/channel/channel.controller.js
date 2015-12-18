@@ -19,5 +19,6 @@ export class ChannelCtrl {
     'ngInject';
 
     this.iframeUrl = ChannelService.getUrl();
+    this.isEditMode = false;
   }
 }
