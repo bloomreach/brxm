@@ -80,6 +80,7 @@
         $scope.saveVariant = function () {
             $http.post(endpoint + "/update", $scope.selectedImageModel).success(function () {
                 $scope.showBeanrewriterMessage = true;
+                $scope.showReLoginMessage = true;
                 $scope.resetVariant();
             });
         };
