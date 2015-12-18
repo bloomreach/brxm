@@ -45,7 +45,7 @@ describe('IFrameService', function () {
 
     $window = {
       location: {
-        search: '?parentExtIFramePanelId=ext-42&antiCache=1234'
+        search: '?proCache4321&parentExtIFramePanelId=ext-42&antiCache=1234'
       },
       self: $window,
       parent: {

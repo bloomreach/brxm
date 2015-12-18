@@ -14,30 +14,39 @@
  * limitations under the License.
  */
 
+const DEFAULT_SETTINGS = {
+  canWrite: false,
+  sessionId: null
+};
+
+const HANDSHAKE_PATH = '/cafebabe-cafe-babe-cafe-babecafebabe./composermode/';
+
 export class SessionService {
   constructor ($http, ConfigService) {
     'ngInject';
 
     this.$http = $http;
-    this.handshakeUrlPart = ConfigService.apiUrlPrefix + '/cafebabe-cafe-babe-cafe-babecafebabe./composermode/';
+
+    this.canWrite = DEFAULT_SETTINGS.canWrite;
+    this.sessionID = DEFAULT_SETTINGS.sessionId;
+
     this.cmsUser = ConfigService.cmsUser;
-    this.canEdit = false;
-    this.sessionID = null;
+    this.handshakePath = ConfigService.apiUrlPrefix + HANDSHAKE_PATH;
   }
 
   authenticate (channel) {
-    const url = channel.contextPath + this.handshakeUrlPart + channel.hostname + '/';
-    const httpConfig = {
-      headers: {
-        'CMS-User': this.cmsUser,
-        'FORCE_CLIENT_HOST': 'true'
-      }
+    const url = channel.contextPath + this.handshakePath + channel.hostname + '/';
+    const headers = {
+      'CMS-User': this.cmsUser,
+      'FORCE_CLIENT_HOST': 'true'
     };
+
     return new Promise((resolve, reject) => {
-      this.$http.get(url, httpConfig)
+      this.$http.get(url, { headers })
         .success((response) => {
-          this.canEdit = response.data.canWrite;
-          this.sessionId = response.data.sessionId;
+          const data = (response && response.data) || DEFAULT_SETTINGS;
+          this.canWrite = data.canWrite;
+          this.sessionId = data.sessionId;
           resolve(channel);
         })
         .error((error) => reject(error));
