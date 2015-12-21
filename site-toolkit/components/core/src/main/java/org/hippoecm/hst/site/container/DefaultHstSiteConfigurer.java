@@ -19,15 +19,8 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import javax.jcr.Credentials;
-import javax.jcr.LoginException;
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
@@ -50,8 +43,6 @@ import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.util.ServletConfigUtils;
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
 import org.onehippo.cms7.services.ServletContextRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,8 +138,6 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     private static final String HST_CONFIGURATION_REFRESH_DELAY_PARAM = "hst-config-refresh-delay";
 
-    private static final String CHECK_REPOSITORIES_RUNNING_INIT_PARAM = "check.repositories.running";
-
     private static final String FORCEFUL_REINIT_PARAM = "forceful.reinit";
 
     private static final String ASSEMBLY_OVERRIDES_CONFIGURATIONS_PARAM = "assembly.overrides";
@@ -164,8 +153,6 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
     private boolean initialized;
 
     private boolean forcefulReinitialization;
-    private boolean checkRepositoriesRunning;
-    private boolean allRepositoriesAvailable;
 
     private Configuration configuration;
 
@@ -180,10 +167,6 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
     // -------------------------------------------------------------------
     private static final String INIT_START_MSG = "HstSiteConfigurer Starting Initialization...";
     private static final String INIT_DONE_MSG = "HstSiteConfigurer Initialization complete, Ready to service requests.";
-
-    private Map<String [], Boolean> repositoryCheckingStatus = new HashMap<String [], Boolean>();
-
-    private RepositoryAvailabilityCheckerThread repositoryAvailabilityCheckerThread;
 
     private HstSiteConfigurationChangesChecker hstSiteConfigurationChangesCheckerThread;
 
@@ -271,35 +254,7 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
             assemblyOverridesConfigurations = this.configuration.getStringArray(ASSEMBLY_OVERRIDES_CONFIGURATIONS_PARAM);
         }
 
-        checkRepositoriesRunning = this.configuration.getBoolean(CHECK_REPOSITORIES_RUNNING_INIT_PARAM);
-
-        if (!checkRepositoriesRunning) {
-            initializeComponentManager();
-        } else {
-            this.allRepositoriesAvailable = false;
-            this.repositoryCheckingStatus.clear();
-
-            for (Iterator<?> it = this.configuration.getKeys(); it.hasNext(); ) {
-                String propName = (String) it.next();
-
-                if (propName.endsWith(REPOSITORY_ADDRESS_PARAM_SUFFIX)) {
-                    String repositoryAddress = this.configuration.getString(propName);
-                    String repositoryParamPrefix = propName.substring(0, propName.length() - REPOSITORY_ADDRESS_PARAM_SUFFIX.length());
-                    String repositoryUsername = this.configuration.getString(repositoryParamPrefix + ".repository.user.name");
-                    String repositoryPassword = this.configuration.getString(repositoryParamPrefix + ".repository.password");
-
-                    if (repositoryAddress != null && !"".equals(repositoryAddress.trim())) {
-                        this.repositoryCheckingStatus.put(new String [] { repositoryAddress.trim(), repositoryUsername, repositoryPassword }, Boolean.FALSE);
-                    }
-                }
-            }
-
-            if (!this.allRepositoriesAvailable) {
-                destroyRepositoryAvailabilityCheckerThread();
-                repositoryAvailabilityCheckerThread = new RepositoryAvailabilityCheckerThread();
-                repositoryAvailabilityCheckerThread.start();
-            }
-        }
+        initializeComponentManager();
     }
 
     protected synchronized boolean isInitialized() {
@@ -379,7 +334,6 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
         ServletContextRegistry.unregister(getServletContext());
         log.debug("Unregistered servlet context '{}' from {}",
                 getServletContext().getContextPath(), ServletContextRegistry.class.getName());
-        destroyRepositoryAvailabilityCheckerThread();
         destroyHstSiteConfigurationChangesCheckerThread();
 
         ComponentManager componentManager = HstServices.getComponentManager();
@@ -394,58 +348,6 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
                 HstServices.setComponentManager(null);
             }
         }
-    }
-
-    protected boolean checkAllRepositoriesRunning() {
-        boolean allRunning = true;
-
-        for (Map.Entry<String [], Boolean> entry : this.repositoryCheckingStatus.entrySet()) {
-            String [] repositoryInfo = entry.getKey();
-            String repositoryAddress = repositoryInfo[0];
-            boolean isLocalRepository = StringUtils.startsWith(repositoryAddress, "vm://");
-            String repositoryUsername = (repositoryInfo[1] != null ? repositoryInfo[1] : "");
-            String repositoryPassword = (repositoryInfo[2] != null ? repositoryInfo[2] : "");
-
-            if (!entry.getValue().booleanValue()) {
-                HippoRepository hippoRepository = null;
-                Session session = null;
-
-                try {
-                    hippoRepository = HippoRepositoryFactory.getHippoRepository(repositoryAddress);
-
-                    if (hippoRepository != null) {
-                        if (!StringUtils.isBlank(repositoryUsername) && !isLocalRepository) {
-                            try {
-                                Credentials creds = new SimpleCredentials(repositoryUsername, repositoryPassword.toCharArray());
-                                session = hippoRepository.login(creds);
-
-                                if (session != null) {
-                                    entry.setValue(Boolean.TRUE);
-                                }
-                            } catch (LoginException le) {
-                                log.info("Failed to try to log on to " + repositoryAddress + " with userID=" + repositoryUsername + ". Skip this repository.");
-                                entry.setValue(Boolean.TRUE);
-                            }
-                        } else {
-                            entry.setValue(Boolean.TRUE);
-                        }
-                    }
-                } catch (Exception e) {
-                    allRunning = false;
-                } finally {
-                    if (session != null) {
-                        try { session.logout(); } catch (Exception ce) { }
-                    }
-                    if (hippoRepository != null && !isLocalRepository) {
-                        try { hippoRepository.close(); } catch (Exception ce) { }
-                    }
-                }
-
-                log.info("checked repository: " + repositoryAddress + " --> " + (entry.getValue().booleanValue() ? "Running" : "Not running"));
-            }
-        }
-
-        return allRunning;
     }
 
     /**
@@ -733,22 +635,6 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
         return null;
     }
 
-    private void destroyRepositoryAvailabilityCheckerThread() {
-        try {
-            if (repositoryAvailabilityCheckerThread != null) {
-                if (hstSiteConfigurationChangesCheckerThread.isAlive()) {
-                    repositoryAvailabilityCheckerThread.setStopped(true);
-                    repositoryAvailabilityCheckerThread.interrupt();
-                    repositoryAvailabilityCheckerThread.join(10000L);
-                }
-            }
-        } catch (Exception e) {
-            log.warn("RepositoryAvailabilityCheckerThread interruption error", e);
-        } finally {
-            repositoryAvailabilityCheckerThread = null;
-        }
-    }
-
     private void destroyHstSiteConfigurationChangesCheckerThread() {
         try {
             if (hstSiteConfigurationChangesCheckerThread != null) {
@@ -762,41 +648,6 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
             log.warn("HstSiteConfigurationChangesCheckerThread interruption error", e);
         } finally {
             hstSiteConfigurationChangesCheckerThread = null;
-        }
-    }
-
-    private class RepositoryAvailabilityCheckerThread extends Thread {
-
-        private boolean stopped;
-
-        private RepositoryAvailabilityCheckerThread() {
-            super("RepositoryAvailabilityCheckerThread");
-            setDaemon(true);
-        }
-
-        public void setStopped(boolean stopped) {
-            this.stopped = stopped;
-        }
-
-        public void run() {
-            while (!stopped && !allRepositoriesAvailable) {
-                // check the repository is accessible
-                allRepositoriesAvailable = checkAllRepositoriesRunning();
-
-                if (!allRepositoriesAvailable) {
-                    try {
-                         Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        if (stopped) {
-                            break;
-                        }
-                    }
-                }
-             }
-
-             if (!stopped && allRepositoriesAvailable) {
-                 initializeComponentManager();
-             }
         }
     }
 
