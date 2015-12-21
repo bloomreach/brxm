@@ -38,7 +38,7 @@ describe('The hippo-cm module', function () {
 
     inject(function (ConfigService, _$httpBackend_, _$state_, _$translate_, $translationCache) {
       configService = ConfigService;
-      $httpBackend = _$httpBackend_
+      $httpBackend = _$httpBackend_;
       $state = _$state_;
       $translate = _$translate_;
       translationCache = $translationCache;
