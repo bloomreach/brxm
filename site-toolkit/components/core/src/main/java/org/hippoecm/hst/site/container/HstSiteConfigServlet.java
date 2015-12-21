@@ -228,11 +228,11 @@ public class HstSiteConfigServlet extends HttpServlet {
         }
     }
 
-    protected HstSiteConfigurer getHstSiteConfigurer() {
+    HstSiteConfigurer getHstSiteConfigurer() {
         return siteConfigurer;
     }
 
-    protected void setHstSiteConfigurer(HstSiteConfigurer siteConfigurer) {
+    void setHstSiteConfigurer(HstSiteConfigurer siteConfigurer) {
         this.siteConfigurer = siteConfigurer;
     }
 }
