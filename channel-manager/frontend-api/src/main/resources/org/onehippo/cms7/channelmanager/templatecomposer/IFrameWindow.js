@@ -67,8 +67,15 @@
               iframePanel.setLocation('about:blank');
             });
 
-            messageBus.subscribe('browseTo', function (pathInfo) {
-              Hippo.ChannelManager.TemplateComposer.Instance.browseTo({renderPathInfo: pathInfo});
+            messageBus.subscribe('browseTo', function (pathInfo, mountId) {
+              if (Ext.isDefined(mountId)) {
+                Hippo.ChannelManager.TemplateComposer.Instance.fireEvent('mountChanged', {
+                  mountId: mountId,
+                  renderPathInfo: pathInfo
+                });
+              } else {
+                Hippo.ChannelManager.TemplateComposer.Instance.browseTo({renderPathInfo: pathInfo});
+              }
               self.close();
             });
           },

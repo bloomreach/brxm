@@ -104,3 +104,27 @@ form {
 .tooltip-newlines + .tooltip > .tooltip-inner {
   white-space: pre-wrap;
 }
+
+.url-widget {
+  width: 100%;
+}
+
+.url-dropdown {
+  width: 60%;
+}
+
+.url-name {
+  width: 40%;
+}
+
+#template {
+  padding-bottom: 8px;
+}
+
+form {
+  padding-top: 0;
+}
+
+form:first-of-type {
+  padding-bottom: 0;
+}
