@@ -206,15 +206,15 @@
                 <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/devices/device-skins.txt</exclude>
 
                 <!-- ignore frontend dependencies pulled in by npm -->
-                <exclude>frontend/node_modules/**/*</exclude>
-                <exclude>angularjs-api/node_modules/**/*</exclude>
+                <exclude>**/node_modules/**/*</exclude>
+                <exclude>**/bower_components/**/*</exclude>
+                <exclude>**/coverage/**/*</exclude>
 
                 <!-- files without license header -->
-                <exclude>frontend/.bowerrc</exclude>
-                <exclude>frontend/.jshintrc</exclude>
-                <exclude>angularjs-api/.bowerrc</exclude>
-                <exclude>angularjs-api/.jshintrc</exclude>
-                <exclude>angularjs-api/.csslintrc</exclude>
+                <exclude>**/.bowerrc</exclude>
+                <exclude>**/.jshintrc</exclude>
+                <exclude>**/.csslintrc</exclude>
+                <exclude>**/*.md</exclude>
 
                 <!-- repository content XML -->
                 <exclude>repository/src/main/resources/**/*.xml</exclude>
