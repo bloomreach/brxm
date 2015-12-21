@@ -44,7 +44,7 @@ public interface ComponentManager
     /**
      * Set the ServletConfig that this object runs in.
      * @param servletConfig
-     * @deprecated ServletConfig cannot be available when HST container loaded by a listener.
+     * @deprecated deprecated since since 3.2.0 : ServletConfig cannot be available when HST container loaded by a listener.
      */
     @Deprecated
     void setServletConfig(ServletConfig servletConfig);
@@ -52,7 +52,7 @@ public interface ComponentManager
     /**
      * Returns the ServletConfig that this object runs in if available. Otherwise returns null.
      * @return the ServletConfig that this object runs in, otherwise null
-     * @deprecated ServletConfig cannot be available when HST container loaded by a listener.
+     * @deprecated deprecated since since 3.2.0 : ServletConfig cannot be available when HST container loaded by a listener.
      */
     @Deprecated
     ServletConfig getServletConfig();
