@@ -163,7 +163,7 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     private boolean initialized;
 
-    private boolean forecefulReinitialization;
+    private boolean forcefulReinitialization;
     private boolean checkRepositoriesRunning;
     private boolean allRepositoriesAvailable;
 
@@ -247,13 +247,13 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
                 getServletContext().getContextPath(), ServletContextRegistry.class.getName());
 
         // If the forceful re-initialization option is not turned on
-        // and the component manager were intialized in other web application,
+        // and the component manager were initialized in other web application,
         // then just skip the following.
         // If this servlet is initialized inside a site web application 
         // and other web application already initialized the component manager,
         // then the followings are to be skipped.
-        forecefulReinitialization = Boolean.parseBoolean(getConfigOrContextInitParameter(FORCEFUL_REINIT_PARAM, null));
-        if (!forecefulReinitialization && HstServices.isAvailable()) {
+        forcefulReinitialization = Boolean.parseBoolean(getConfigOrContextInitParameter(FORCEFUL_REINIT_PARAM, null));
+        if (!forcefulReinitialization && HstServices.isAvailable()) {
             return;
         }
 
