@@ -143,25 +143,25 @@ public class HstSiteConfigServlet extends HttpServlet {
     private static Logger log = LoggerFactory.getLogger(HstSiteConfigServlet.class);
 
     /**
-     * @deprecated Use {@link HstSiteConfigurer.HST_CONFIGURATION_PARAM} instead.
+     * @deprecated Use {@link HstSiteConfigurer#HST_CONFIGURATION_PARAM} instead.
      */
     @Deprecated
     public static final String HST_CONFIGURATION_PARAM = HstSiteConfigurer.HST_CONFIGURATION_PARAM;
 
     /**
-     * @deprecated Use {@link HstSiteConfigurer.HST_CONFIG_PROPERTIES_PARAM} instead.
+     * @deprecated Use {@link HstSiteConfigurer#HST_CONFIG_PROPERTIES_PARAM} instead.
      */
     @Deprecated
     public static final String HST_CONFIG_PROPERTIES_PARAM = HstSiteConfigurer.HST_CONFIG_PROPERTIES_PARAM;
 
     /**
-     * @deprecated Use {@link HstSiteConfigurer.HST_SYSTEM_PROPERTIES_OVERRIDE_PARAM} instead.
+     * @deprecated Use {@link HstSiteConfigurer#HST_SYSTEM_PROPERTIES_OVERRIDE_PARAM} instead.
      */
     @Deprecated
     public static final String HST_SYSTEM_PROPERTIES_OVERRIDE_PARAM = HstSiteConfigurer.HST_SYSTEM_PROPERTIES_OVERRIDE_PARAM;
 
     /**
-     * @deprecated Use {@link HstSiteConfigurer.HST_CONFIG_ENV_PROPERTIES_PARAM} instead.
+     * @deprecated Use {@link HstSiteConfigurer#HST_CONFIG_ENV_PROPERTIES_PARAM} instead.
      */
     @Deprecated
     public static final String HST_CONFIG_ENV_PROPERTIES_PARAM = HstSiteConfigurer.HST_CONFIG_ENV_PROPERTIES_PARAM;
@@ -173,7 +173,7 @@ public class HstSiteConfigServlet extends HttpServlet {
     }
 
     /**
-     * Intialize Servlet.
+     * Initialize Servlet.
      */
     @Override
     public void init(final ServletConfig config) throws ServletException {
