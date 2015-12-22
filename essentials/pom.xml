@@ -53,9 +53,9 @@
 
   </properties>
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/branches/essentials-3.2.0-rest-api</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/branches/essentials-3.2.0-rest-api</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/branches/essentials-3.2.0-rest-api</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/branches/essentials-2.2.0-rest-api</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/branches/essentials-2.2.0-rest-api</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/branches/essentials-2.2.0-rest-api</url>
   </scm>
 
   <modules>
