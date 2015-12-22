@@ -81,17 +81,12 @@ describe('SessionService', function () {
   });
 
   it('should resolve a promise with the channel as value after authenticating', function () {
-    var resolvedChannel;
+    var promiseSpy = jasmine.createSpy('promiseSpy');
     $httpBackend.expectGET(handshakeUrl).respond(200);
-    SessionService
-      .authenticate(channelMock)
-      .then(function (channel) {
-        resolvedChannel = channel;
-      });
+    SessionService.authenticate(channelMock).then(promiseSpy);
 
-    expect(resolvedChannel).toBeUndefined();
     $httpBackend.flush();
-    expect(resolvedChannel).toEqual(channelMock);
+    expect(promiseSpy).toHaveBeenCalledWith(channelMock);
   });
 
   it('should reject a promise when authentication fails', function () {
@@ -102,7 +97,6 @@ describe('SessionService', function () {
       .catch(catchSpy);
 
     $httpBackend.flush();
-
     expect(catchSpy).toHaveBeenCalled();
   });
 
