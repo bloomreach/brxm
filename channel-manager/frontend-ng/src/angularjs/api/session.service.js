@@ -22,9 +22,10 @@ const DEFAULT_SETTINGS = {
 const HANDSHAKE_PATH = '/cafebabe-cafe-babe-cafe-babecafebabe./composermode/';
 
 export class SessionService {
-  constructor ($http, ConfigService) {
+  constructor ($q, $http, ConfigService) {
     'ngInject';
 
+    this.$q = $q;
     this.$http = $http;
 
     this.canWrite = DEFAULT_SETTINGS.canWrite;
@@ -41,7 +42,7 @@ export class SessionService {
       'FORCE_CLIENT_HOST': 'true'
     };
 
-    return new Promise((resolve, reject) => {
+    return this.$q((resolve, reject) => {
       this.$http.get(url, { headers })
         .success((response) => {
           const data = (response && response.data) || DEFAULT_SETTINGS;

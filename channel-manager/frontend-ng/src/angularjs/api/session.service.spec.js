@@ -18,8 +18,8 @@ describe('SessionService', function () {
   'use strict';
 
   var $httpBackend;
-  var sessionService;
-  var configServiceMock;
+  var SessionService;
+  var ConfigServiceMock;
   var channelMock;
 
   // built-in path to RootResource 'REST' endpoint
@@ -34,22 +34,20 @@ describe('SessionService', function () {
       hostname: 'test.host.name'
     };
 
-    configServiceMock = {
+    ConfigServiceMock = {
       apiUrlPrefix: '/testApiUrlPrefix',
       cmsUser: 'testUser'
     };
 
     module(function ($provide) {
-      $provide.value('ConfigService', configServiceMock);
+      $provide.value('ConfigService', ConfigServiceMock);
+    });
+
+    inject(function (_$httpBackend_, _SessionService_) {
+      $httpBackend = _$httpBackend_;
+      SessionService = _SessionService_;
     });
   });
-
-  beforeEach(inject([
-    '$httpBackend', 'SessionService', function (httpBackend, SessionService) {
-      $httpBackend = httpBackend;
-      sessionService = SessionService;
-    }
-  ]));
 
   afterEach(function () {
     $httpBackend.verifyNoOutstandingRequest();
@@ -57,86 +55,81 @@ describe('SessionService', function () {
   });
 
   it('should exist', function () {
-    expect(sessionService).toBeDefined();
+    expect(SessionService).toBeDefined();
   });
 
   it('should have a handshakePath', function () {
-    expect(sessionService.handshakePath).toEqual(configServiceMock.apiUrlPrefix + composerModePath);
+    expect(SessionService.handshakePath).toEqual(ConfigServiceMock.apiUrlPrefix + composerModePath);
   });
 
   it('should have a cms user', function () {
-    expect(sessionService.cmsUser).toEqual(configServiceMock.cmsUser);
+    expect(SessionService.cmsUser).toEqual(ConfigServiceMock.cmsUser);
   });
 
-  it('should not have a session ID before authenticating', function() {
-    expect(sessionService.sessionID).toEqual(null);
+  it('should not have a session ID before authenticating', function () {
+    expect(SessionService.sessionID).toEqual(null);
   });
 
-  it('should always be readonly before authenticating', function() {
-    expect(sessionService.canWrite).toEqual(false);
+  it('should always be readonly before authenticating', function () {
+    expect(SessionService.canWrite).toEqual(false);
   });
 
-  it('should construct a valid handshake url when authenticating', function() {
+  it('should construct a valid handshake url when authenticating', function () {
     $httpBackend.expectGET(handshakeUrl).respond(200);
-    sessionService.authenticate(channelMock);
+    SessionService.authenticate(channelMock);
     $httpBackend.flush();
   });
 
-  it('should resolve a promise with the channel as value after authenticating', function(done) {
+  it('should resolve a promise with the channel as value after authenticating', function () {
+    var resolvedChannel;
     $httpBackend.expectGET(handshakeUrl).respond(200);
-    sessionService
+    SessionService
       .authenticate(channelMock)
-      .then(function(channel) {
-        expect(channel).toEqual(channelMock);
-        done();
+      .then(function (channel) {
+        resolvedChannel = channel;
       });
 
+    expect(resolvedChannel).toBeUndefined();
     $httpBackend.flush();
+    expect(resolvedChannel).toEqual(channelMock);
   });
 
-  it('should reject a promise when authentication fails', function(done) {
+  it('should reject a promise when authentication fails', function () {
+    var catchSpy = jasmine.createSpy('catchSpy');
     $httpBackend.expectGET(handshakeUrl).respond(500);
-    sessionService
+    SessionService
       .authenticate(channelMock)
-      .catch(done);
+      .catch(catchSpy);
 
     $httpBackend.flush();
+
+    expect(catchSpy).toHaveBeenCalled();
   });
 
-  it('should set canWrite and sessionId after authenticating', function(done) {
-    var handshakeResponse = {
+  it('should set canWrite and sessionId after authenticating', function () {
+    $httpBackend.expectGET(handshakeUrl).respond(200, {
       data: {
         canWrite: true,
         sessionId: '1234'
       }
-    };
-    $httpBackend.expectGET(handshakeUrl).respond(200, handshakeResponse);
-    sessionService
-      .authenticate(channelMock)
-      .then(function () {
-          expect(sessionService.canWrite).toEqual(true);
-          expect(sessionService.sessionId).toEqual('1234');
-          done();
-        });
-
+    });
+    SessionService.authenticate(channelMock);
     $httpBackend.flush();
+
+    expect(SessionService.canWrite).toEqual(true);
+    expect(SessionService.sessionId).toEqual('1234');
   });
 
-  it('should reset values for canWrite and sessionId when handling an invalid response', function(done) {
-
-    sessionService.canWrite = true;
-    sessionService.sessionId = '1234';
+  it('should reset values for canWrite and sessionId when handling an invalid response', function () {
+    SessionService.canWrite = true;
+    SessionService.sessionId = '1234';
 
     $httpBackend.expectGET(handshakeUrl).respond(200);
-    sessionService
-      .authenticate(channelMock)
-      .then(function() {
-        expect(sessionService.canWrite).toEqual(false);
-        expect(sessionService.sessionId).toEqual(null);
-        done();
-      });
-
+    SessionService.authenticate(channelMock);
     $httpBackend.flush();
+
+    expect(SessionService.canWrite).toEqual(false);
+    expect(SessionService.sessionId).toEqual(null);
   });
 
 });
