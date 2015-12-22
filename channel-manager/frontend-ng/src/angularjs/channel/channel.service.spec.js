@@ -17,9 +17,11 @@
 describe('ChannelService', function () {
   'use strict';
 
-  var channelService;
+  var $q;
+  var $rootScope;
+  var ChannelService;
+  var SessionServiceMock;
   var channelMock;
-  var sessionServiceMock;
 
   beforeEach(function () {
     module('hippo-cm');
@@ -29,97 +31,86 @@ describe('ChannelService', function () {
       hostname: 'test.host.name'
     };
 
-    sessionServiceMock = {
+    SessionServiceMock = {
       authenticate: function(channel) {
-        return new Promise(function(resolve, reject) {
-          resolve(channel);
-        });
+        return $q.resolve(channel);
       }
     };
 
     module(function ($provide) {
-      $provide.value('SessionService', sessionServiceMock);
+      $provide.value('SessionService', SessionServiceMock);
+    });
+
+    inject(function (_$q_, _$rootScope_, _ChannelService_) {
+      $q = _$q_;
+      $rootScope = _$rootScope_;
+      ChannelService = _ChannelService_;
     });
   });
 
-  beforeEach(inject([
-    'ChannelService', function (ChannelService) {
-      channelService = ChannelService;
-    }
-  ]));
-
-  it('should load a channel and return promise', function(done) {
-    channelService
-      .load(channelMock)
-      .then(function(channel) {
-        expect(channel).toEqual(channelMock);
-        expect(channelService.channel).toEqual(channelMock);
-        done();
-      });
+  it('should not save a reference to the channel when load fails', function() {
+    spyOn(SessionServiceMock, 'authenticate').and.callFake(function() {
+      return $q.reject();
+    });
+    ChannelService.load(channelMock);
+    $rootScope.$apply();
+    expect(ChannelService.channel).not.toEqual(channelMock);
   });
 
-  it('should load a channel with an empty path if none is provided', function(done) {
-    channelService
-      .load(channelMock)
-      .then(function() {
-        expect(channelService.path).toEqual('');
-        done();
-      });
+  it('should save a reference to the channel when load succeeds', function() {
+    ChannelService.load(channelMock);
+    expect(ChannelService.channel).not.toEqual(channelMock);
+    $rootScope.$apply();
+    expect(ChannelService.channel).toEqual(channelMock);
   });
 
-  it('should load a channel with an optional path', function(done) {
-    channelService
-      .load(channelMock, 'optional/path')
-      .then(function() {
-        expect(channelService.path).toEqual('optional/path');
-        done();
-      });
+  it('should resolve a promise with the channel when load succeeds', function() {
+    var promiseSpy = jasmine.createSpy('promiseSpy');
+    ChannelService.load(channelMock).then(promiseSpy);
+    $rootScope.$apply();
+    expect(promiseSpy).toHaveBeenCalledWith(channelMock);
   });
 
+  it('should load a channel with an empty path if none is provided', function() {
+    ChannelService.load(channelMock);
+    $rootScope.$apply();
+    expect(ChannelService.path).toEqual('');
+  });
 
-    it('should return a url that starts with the contextPath', function(done) {
-      channelService
-        .load({ contextPath: '/test' }, '/optional/path')
-        .then(function() {
-          expect(channelService.getUrl()).toEqual('/test/optional/path');
-          done();
-        });
-    });
+  it('should load a channel with an optional path', function() {
+    ChannelService.load(channelMock, 'optional/path');
+    $rootScope.$apply();
+    expect(ChannelService.path).toEqual('optional/path');
+  });
 
-    it('should return a url that ends with a slash if it equals the contextPath', function(done) {
-      channelService
-        .load({ contextPath: '/test' })
-        .then(function() {
-          expect(channelService.getUrl()).toEqual('/test/');
-          done();
-        });
-    });
+  it('should return a url that starts with the contextPath', function() {
+    ChannelService.load({ contextPath: '/test' }, '/optional/path');
+    $rootScope.$apply();
+    expect(ChannelService.getUrl()).toEqual('/test/optional/path');
+  });
 
-    it('should return a url without the contextPath if it is root', function(done) {
-      channelService
-        .load({ contextPath: '/' })
-        .then(function() {
-          expect(channelService.getUrl()).toEqual('');
-          done();
-        });
-    });
+  it('should return a url that ends with a slash if it equals the contextPath', function() {
+    ChannelService.load({ contextPath: '/test' });
+    $rootScope.$apply();
+    expect(ChannelService.getUrl()).toEqual('/test/');
+  });
 
-    it('should return a url with the cmsPreviewPrefix appended after the contextPath with a slash', function(done) {
-      channelService
-        .load({ contextPath: '/test', cmsPreviewPrefix: 'cmsPreviewPrefix' })
-        .then(function() {
-          expect(channelService.getUrl()).toEqual('/test/cmsPreviewPrefix');
-          done();
-        });
-    });
+  it('should return a url without the contextPath if it is root', function() {
+    ChannelService.load({ contextPath: '/' })
+    $rootScope.$apply();
+    expect(ChannelService.getUrl()).toEqual('');
+  });
 
-  it('should return a url with the mountPath appended after the cmsPreviewPrefix', function(done) {
-    channelService
-      .load({ contextPath: '/test', cmsPreviewPrefix: 'cmsPreviewPrefix', mountPath: '/mountPath' })
-      .then(function() {
-        expect(channelService.getUrl()).toEqual('/test/cmsPreviewPrefix/mountPath');
-        done();
-      });
+  it('should return a url with the cmsPreviewPrefix appended after the contextPath with a slash', function() {
+    ChannelService.load({ contextPath: '/test', cmsPreviewPrefix: 'cmsPreviewPrefix' });
+    $rootScope.$apply();
+    expect(ChannelService.getUrl()).toEqual('/test/cmsPreviewPrefix');
+  });
+
+  it('should return a url with the mountPath appended after the cmsPreviewPrefix', function() {
+    ChannelService.load({ contextPath: '/test', cmsPreviewPrefix: 'cmsPreviewPrefix', mountPath: '/mountPath' });
+    $rootScope.$apply();
+    expect(ChannelService.getUrl()).toEqual('/test/cmsPreviewPrefix/mountPath');
   });
 
 });

@@ -23,9 +23,14 @@ export class ChannelService {
   }
 
   load (channel, path = '') {
-    this.channel = channel;
-    this.path = path;
-    return this.SessionService.authenticate(channel);
+    return this.SessionService
+      .authenticate(channel)
+      .then(() => {
+        this.channel = channel;
+        this.path = path;
+
+        return channel;
+      });
   }
 
   getUrl () {
