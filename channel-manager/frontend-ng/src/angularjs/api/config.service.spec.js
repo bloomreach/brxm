@@ -17,7 +17,7 @@
 describe('ConfigService', function () {
   'use strict';
 
-  var configService;
+  var ConfigService;
 
   beforeEach(function () {
     window.APP_CONFIG.locale = 'nl';
@@ -25,14 +25,14 @@ describe('ConfigService', function () {
 
     module('hippo-cm-api');
 
-    inject(function (ConfigService) {
-      configService = ConfigService;
+    inject(function (_ConfigService_) {
+      ConfigService = _ConfigService_;
     });
   });
 
   it('allows custom configuration passed in by the CmsService', function() {
-    expect(configService.locale).toEqual('nl');
-    expect(configService.apiUrlPrefix).toEqual('https://127.0.0.1:9080/web/one/two');
+    expect(ConfigService.locale).toEqual('nl');
+    expect(ConfigService.apiUrlPrefix).toEqual('https://127.0.0.1:9080/web/one/two');
   });
 
 });
