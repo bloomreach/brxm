@@ -16,21 +16,28 @@
 
 package org.hippoecm.hst.jaxrs.contentrestapi;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
@@ -49,6 +56,7 @@ public class ContentRestApiResource {
     }
 
     private final Context context;
+    private final List<String> ignoredVariantProperties = Collections.unmodifiableList(Arrays.asList("jcr:uuid"));
 
     public ContentRestApiResource() {
         this.context = new Context() {
@@ -71,8 +79,12 @@ public class ContentRestApiResource {
     }
 
     private final class SearchResultItem {
+        @JsonProperty("jcr:name")
         public String name;
+
+        @JsonProperty("jcr:uuid")
         public String uuid;
+
         public Link[] links;
     }
 
@@ -146,19 +158,20 @@ public class ContentRestApiResource {
         try {
             Session session = context.getSession();
 
-            // check uuid validity, if not valid this throws an IllegalArgumentException
+            // throws an IllegalArgumentException in case the UUID is not correctly formatted
             UUID.fromString(uuid);
 
-            // this could throw an ItemNotFoundException in case the uuid does not exist or is not readable
+            // throws an ItemNotFoundException in case the uuid does not exist or is not readable
             Node node = session.getNodeByIdentifier(uuid);
 
-            // this could throw a PathNotFoundException in case there is no live variant or it is not readable
+            // throws a PathNotFoundException in case there is no live variant or it is not readable
             Node variant = node.getNode(node.getName());
 
             HashMap<String, Object> hashMap = new HashMap<>();
 
-            propertiesToHashMap(node, hashMap);
-            nodeToHashMap(variant, hashMap);
+            hashMap.put("jcr:name", node.getName());
+            propertiesToHashMap(node, hashMap, Collections.emptyList());
+            nodeToHashMap(variant, hashMap, ignoredVariantProperties);
 
             return Response.status(200).entity(hashMap).build();
         } catch (IllegalArgumentException iae) {
@@ -191,8 +204,8 @@ public class ContentRestApiResource {
     }
 
     @SuppressWarnings("unchecked")
-    private void nodeToHashMap(Node node, HashMap<String, Object> hashMap) throws RepositoryException {
-        propertiesToHashMap(node, hashMap);
+    private void nodeToHashMap(Node node, HashMap<String, Object> hashMap, List<String> ignoredProperties) throws RepositoryException {
+        propertiesToHashMap(node, hashMap, ignoredProperties);
 
         // TODO discuss with Ate
         // Iterate over all nodes and add those to the hashMap.
@@ -205,19 +218,27 @@ public class ContentRestApiResource {
             Node childNode = nodeIterator.next();
             HashMap<String, Object> childHashMap = new HashMap<>();
             hashMap.put(childNode.getName(), childHashMap);
-            nodeToHashMap(childNode, childHashMap);
+            nodeToHashMap(childNode, childHashMap, ignoredProperties);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private void propertiesToHashMap(Node node, HashMap<String, Object> hashMap) throws RepositoryException {
+    private void propertiesToHashMap(Node node, HashMap<String, Object> hashMap, List<String> ignoredProperties) throws RepositoryException {
         Iterator<Property> propertyIterator = node.getProperties();
         while (propertyIterator.hasNext()) {
             Property property = propertyIterator.next();
-            if (property.isMultiple()) {
-                hashMap.put(property.getName(), new Object[0]); //property.getValues());
-            } else {
-                hashMap.put(property.getName(), "prop"); //property.getValue());
+            boolean ignore = ignoredProperties.contains(property.getName()) || property.getType() == PropertyType.BINARY;
+            if (!ignore) {
+                if (property.isMultiple()) {
+                    Value[] jcrValues = property.getValues();
+                    String[] stringValues = new String[jcrValues.length];
+                    for (int i = 0; i < jcrValues.length; i++) {
+                        stringValues[i] = jcrValues[i].getString();
+                    }
+                    hashMap.put(property.getName(), stringValues);
+                } else {
+                    hashMap.put(property.getName(), property.getValue().getString());
+                }
             }
         }
     }
