@@ -132,7 +132,7 @@ public class ContentRestApiResource {
     }
 
     @GET
-    @Path("/content/documents")
+    @Path("/documents")
     public Response getDocuments() {
         try {
             SearchService searchService = getSearchService();
@@ -153,7 +153,7 @@ public class ContentRestApiResource {
     }
 
     @GET
-    @Path("/content/documents/{uuid}")
+    @Path("/documents/{uuid}")
     public Response getDocumentsByUUID(@PathParam("uuid") String uuid) {
         try {
             Session session = context.getSession();
