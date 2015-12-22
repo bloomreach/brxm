@@ -33,26 +33,21 @@ import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.search.jcr.service.HippoJcrSearchService;
 import org.onehippo.cms7.services.search.query.Query;
 import org.onehippo.cms7.services.search.result.Hit;
 import org.onehippo.cms7.services.search.result.HitIterator;
 import org.onehippo.cms7.services.search.result.QueryResult;
-import org.onehippo.cms7.services.search.service.QueryPersistService;
 import org.onehippo.cms7.services.search.service.SearchService;
-import org.onehippo.cms7.services.search.service.SearchServiceException;
-import org.onehippo.cms7.services.search.service.SearchServiceFactory;
 
 @Produces("application/json")
 public class ContentRestApiResource {
 
-    public interface Context {
+    private interface Context {
         Session getSession() throws RepositoryException;
     }
 
-    private Context context;
-    private SearchServiceFactory searchServiceFactory;
+    private final Context context;
 
     public ContentRestApiResource() {
         this.context = new Context() {
@@ -60,34 +55,61 @@ public class ContentRestApiResource {
                 return RequestContextProvider.get().getSession();
             }
         };
-
-        registerSearchServiceFactory();
     }
 
-    public void setContext(Context context) {
-        this.context = context;
+    ContentRestApiResource(Session session) {
+        this.context = new Context() {
+            public Session getSession() throws RepositoryException {
+                return session;
+            }
+        };
     }
 
-    final class Link {
+    private final class Link {
         public String url;
     }
 
-    final class SearchResultItem {
+    private final class SearchResultItem {
         public String name;
         public String uuid;
         public Link[] links;
     }
 
-    final class SearchResult {
+    private final class SearchResult {
         public long offset;
         public long max;
         public long count;
         public boolean more;
         public long total;
         public SearchResultItem[] items;
+
+        void initialize(QueryResult queryResult, Session session) throws RepositoryException {
+            offset = 0;
+            max = 100;
+            count = queryResult.getTotalHitCount();
+            more = false;
+            total = queryResult.getTotalHitCount();
+
+            int count = (int) queryResult.getTotalHitCount();
+            int current = 0;
+            items = new SearchResultItem[count];
+            HitIterator iterator = queryResult.getHits();
+            while (iterator.hasNext()) {
+                Hit hit = iterator.nextHit();
+                items[current] = new SearchResultItem();
+                String uuid = hit.getSearchDocument().getContentId().toIdentifier();
+                Node node = session.getNodeByIdentifier(uuid);
+                items[current].name = node.getName();
+                items[current].uuid = uuid;
+                items[current].links = new Link[1];
+                items[current].links[0] = new Link();
+                items[current].links[0].url = uuid;
+                current++;
+            }
+        }
     }
 
-    final class Error {
+    private final class Error {
         public int status;
         public String description;
         Error(int status, String description) {
@@ -108,30 +130,8 @@ public class ContentRestApiResource {
                     .orderBy(HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE)
                     .descending();
             QueryResult queryResult = searchService.search(query);
-
             SearchResult returnValue = new SearchResult();
-            returnValue.offset = 0;
-            returnValue.max = 100;
-            returnValue.count = queryResult.getTotalHitCount();
-            returnValue.more = false;
-            returnValue.total = queryResult.getTotalHitCount();
-
-            int count = (int) queryResult.getTotalHitCount();
-            int current = 0;
-            returnValue.items = new SearchResultItem[count];
-            HitIterator iterator = queryResult.getHits();
-            while (iterator.hasNext()) {
-                Hit hit = iterator.nextHit();
-                returnValue.items[current] = new SearchResultItem();
-                String uuid = hit.getSearchDocument().getContentId().toIdentifier();
-                Node node = context.getSession().getNodeByIdentifier(uuid);
-                returnValue.items[current].name = node.getName();
-                returnValue.items[current].uuid = uuid;
-                returnValue.items[current].links = new Link[1];
-                returnValue.items[current].links[0] = new Link();
-                returnValue.items[current].links[0].url = uuid;
-                current++;
-            }
+            returnValue.initialize(queryResult, context.getSession());
 
             return Response.status(200).entity(returnValue).build();
         } catch (RepositoryException e) {
@@ -165,48 +165,24 @@ public class ContentRestApiResource {
         }
     }
 
-    /* TODO
-     * Refactor the code in SearchService some how to load this factory by simply including a dependency. Advanced
-     * search contains a module that initialized this module, but that is part of the enterprise stack, see
-     * com.onehippo.cms7.search.service.SearchModule
-     */
-    private void registerSearchServiceFactory() {
-        if (HippoServiceRegistry.getService(SearchServiceFactory.class, Session.class.getName()) == null) {
-            searchServiceFactory = new SearchServiceFactory() {
-                @Override
-                public SearchService createSearchService(final Object clientObject) throws SearchServiceException {
-                    if (!(clientObject instanceof Session)) {
-                        throw new SearchServiceException("Search service argument must be of type javax.jcr.Session");
-                    }
+    private Response buildErrorResponse(int status, Exception exception) {
+        return buildErrorResponse(status, exception, null);
+    }
 
-                    final HippoJcrSearchService searchService = new HippoJcrSearchService();
-                    searchService.setSession((Session) clientObject);
-                    return searchService;
-                }
-
-                @Override
-                public QueryPersistService createQueryPersistService(final Object clientObject) throws SearchServiceException {
-                    if (!(clientObject instanceof Session)) {
-                        throw new SearchServiceException("Search service argument must be of type javax.jcr.Session");
-                    }
-
-                    final HippoJcrSearchService searchService = new HippoJcrSearchService();
-                    searchService.setSession((Session) clientObject);
-                    return searchService;
-                }
-            };
-
-            HippoServiceRegistry.registerService(searchServiceFactory, SearchServiceFactory.class, Session.class.getName());
+    private Response buildErrorResponse(int status, Exception exception, String description) {
+        Error error;
+        if (description == null) {
+            error = new Error(status, exception.toString());
+        } else {
+            error = new Error(status, description);
         }
+        return Response.status(status).entity(error).build();
     }
 
     private SearchService getSearchService() throws RepositoryException {
-        SearchServiceFactory searchServiceFactory = HippoServiceRegistry.getService(SearchServiceFactory.class,
-                Session.class.getName());
-        if (searchServiceFactory == null) {
-            throw new RepositoryException("Cannot get SearchServiceFactory from HippoServiceRegistry");
-        }
-        return searchServiceFactory.createSearchService(context.getSession());
+        final HippoJcrSearchService searchService = new HippoJcrSearchService();
+        searchService.setSession(context.getSession());
+        return searchService;
     }
 
     @SuppressWarnings("unchecked")
@@ -235,20 +211,6 @@ public class ContentRestApiResource {
             hashMap.put(childNode.getName(), childHashMap);
             nodeToHashMap(childNode, childHashMap);
         }
-    }
-
-    private Response buildErrorResponse(int status, Exception exception) {
-        return buildErrorResponse(status, exception, null);
-    }
-
-    private Response buildErrorResponse(int status, Exception exception, String description) {
-        Error error;
-        if (description == null) {
-            error = new Error(status, exception.toString());
-        } else {
-            error = new Error(status, description);
-        }
-        return Response.status(status).entity(error).build();
     }
 
 }
