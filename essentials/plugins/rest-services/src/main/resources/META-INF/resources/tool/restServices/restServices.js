@@ -19,9 +19,11 @@
     angular.module('hippo.essentials')
         .controller('restServicesCtrl', function ($scope, $sce, $log, $rootScope, $http) {
             $scope.endpoint = $rootScope.REST.dynamic + 'restservices/';
-            $scope.restName = "";
+            $scope.restName = "api";
             $scope.documentTypes = [];
             $scope.checkedDocuments = 0;
+            $scope.isGenericContentRestApiEnabled = true;
+            $scope.isManualRestResourcesEnabled = false;
 
             $scope.onChangeRestName = function () {
                 updateEndPoints();
@@ -42,8 +44,9 @@
                 var payload = Essentials.addPayloadData("restName", $scope.restName, null);
                 Essentials.addPayloadData("restType", "plain", payload);
                 Essentials.addPayloadData("javaFiles", fileString, payload);
-                $http.post($scope.endpoint, payload).success(function (data) {
-                    // TODO: display reboot message and instruction sets executed
+                Essentials.addPayloadData("genericApiEnabled", $scope.isGenericContentRestApiEnabled, payload);
+                $http.post($scope.endpoint, payload).success(function () {
+                    // empty
                 });
             };
 

@@ -25,6 +25,7 @@ public final class RestPluginConst {
     public static final String REST_NAME = "restName";
     public static final String REST_TYPE = "restType";
     public static final String JAVA_FILES = "javaFiles";
+    public static final String GENERIC_API_ENABLED = "genericApiEnabled";
 
     private RestPluginConst() {
     }

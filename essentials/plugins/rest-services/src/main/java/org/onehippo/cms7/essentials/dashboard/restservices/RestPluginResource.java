@@ -110,31 +110,25 @@ public class RestPluginResource extends BaseResource {
     @POST
     @Path("/")
     public RestfulList<MessageRestful> executeInstructionPackage(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
-
-        final RestfulList<MessageRestful> messages = new RestfulList<>();
         final Map<String, String> values = payloadRestful.getValues();
         final String restName = values.get(RestPluginConst.REST_NAME);
         final String restType = values.get(RestPluginConst.REST_TYPE);
         final String selectedBeans = values.get(RestPluginConst.JAVA_FILES);
+        final boolean isGenericApiEnabled = Boolean.valueOf(values.get(RestPluginConst.GENERIC_API_ENABLED));
+
+        final RestfulList<MessageRestful> messages = new RestfulList<>();
         if (Strings.isNullOrEmpty(restName) || Strings.isNullOrEmpty(restType)) {
             messages.add(new ErrorMessageRestful("REST service name / type or both were empty"));
             return messages;
         }
         final PluginContext context = PluginContextFactory.getContext();
-
-        final InstructionPackage instructionPackage = new RestServicesInstructionPackage();
-        // TODO: figure out injection part
-        getInjector().autowireBean(instructionPackage);
-
         final Set<ValidBean> validBeans = annotateBeans(selectedBeans, context);
 
-        instructionPackage.setProperties(new HashMap<String, Object>(values));
-        // add beans for instruction set loop:
-        instructionPackage.getProperties().put("beans", validBeans);
-        instructionPackage.execute(context);
         // create endpoint rest
         if (restType.equals("plain")) {
             final InstructionExecutor executor = new PluginInstructionExecutor();
+
+            // for each bean, add a resource to the project (site)
             for (ValidBean validBean : validBeans) {
                 final Map<String, Object> properties = new HashMap<>();
                 properties.put("beanPackage", validBean.getBeanPackage());
@@ -142,14 +136,25 @@ public class RestPluginResource extends BaseResource {
                 properties.put("beans", validBean.getFullQualifiedName());
                 properties.put("fullQualifiedName", validBean.getFullQualifiedName());
                 properties.put("fullQualifiedResourceName", validBean.getFullQualifiedResourceName());
-                final FileInstruction instruction = createFileInstruction();
-                // execute instruction:
-                final InstructionSet mySet = new PluginInstructionSet();
-                mySet.addInstruction(instruction);
                 context.addPlaceholderData(properties);
+
+                final InstructionSet mySet = new PluginInstructionSet();
+                mySet.addInstruction(createFileInstruction());
                 executor.execute(mySet, context);
             }
         }
+
+        if (isGenericApiEnabled) {
+            validBeans.add(createValidBeanForGenericRestApi());
+        }
+
+        // Set up REST mount and Spring configuration
+        final InstructionPackage instructionPackage = new RestServicesInstructionPackage();
+        getInjector().autowireBean(instructionPackage);
+        instructionPackage.setProperties(new HashMap<>(values));
+        instructionPackage.getProperties().put("beans", validBeans);
+        instructionPackage.execute(context);
+
         final String message = "HST Configuration changed, project rebuild needed";
         eventBus.post(new RebuildEvent("restServices", message));
         messages.add(new MessageRestful(message));
@@ -209,5 +214,11 @@ public class RestPluginResource extends BaseResource {
         return validBeans;
     }
 
+    private ValidBean createValidBeanForGenericRestApi() {
+        final ValidBean vb = new ValidBean();
 
+        vb.setFullQualifiedResourceName("org.hippoecm.hst.jaxrs.contentrestapi.ContentRestApiResource");
+
+        return vb;
+    }
 }

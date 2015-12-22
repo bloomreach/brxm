@@ -24,6 +24,6 @@
   </instructionSet>
   <instructionSet group="plain">
     <xml action="copy" overwrite="false" source="plain_mount.xml" target="/hst:hst/hst:hosts/dev-localhost/localhost/hst:root"/>
-    <file action="copy" overwrite="false" source="spring-plain-rest-api.xml" target="{{siteOverrideFolder}}/spring-plain-rest-api.xml"/>
+    <file action="copy" overwrite="true" source="spring-plain-rest-api.xml" target="{{siteOverrideFolder}}/spring-plain-rest-api.xml"/>
   </instructionSet>
 </instructions>
