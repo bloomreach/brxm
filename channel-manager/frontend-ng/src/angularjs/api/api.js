@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { IFrameService } from './iframe.service.js';
+import { CmsService } from './cms.service.js';
 import { ConfigService } from './config.service.js';
 import { SessionService } from './session.service.js';
 
 export const channelManagerApi = angular
   .module('hippo-cm-api', [])
-  .service('IFrameService', IFrameService)
+  .service('CmsService', CmsService)
   .service('ConfigService', ConfigService)
   .service('SessionService', SessionService);
 

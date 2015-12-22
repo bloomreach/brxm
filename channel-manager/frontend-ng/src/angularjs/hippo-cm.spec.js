@@ -32,8 +32,10 @@ describe('The hippo-cm module', function () {
   };
 
   beforeEach(function () {
-    module('hippo-cm', function($stateProvider) {
+    module('hippo-cm', function($stateProvider, $translateProvider) {
       $stateProvider.state('hippo-cm.dummy-child-state', {});
+      $translateProvider.translations('en', MOCK_TRANSLATIONS.en);
+      $translateProvider.translations('nl', MOCK_TRANSLATIONS.nl);
     });
 
     inject(function (ConfigService, _$httpBackend_, _$state_, _$translate_, $translationCache) {
@@ -44,11 +46,7 @@ describe('The hippo-cm module', function () {
       translationCache = $translationCache;
     });
 
-    $httpBackend.whenGET('i18n/hippo-cm.en.json').respond(MOCK_TRANSLATIONS.en);
-    $httpBackend.whenGET('i18n/hippo-cm.nl.json').respond(MOCK_TRANSLATIONS.nl);
     $httpBackend.whenGET("i18n/hippo-cm.no-such-locale.json").respond(404);
-
-    $httpBackend.flush();
   });
 
   it('uses English translations by default', function (done) {

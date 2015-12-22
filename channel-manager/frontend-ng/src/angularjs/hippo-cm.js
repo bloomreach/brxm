@@ -45,8 +45,8 @@ function config ($stateProvider, $urlRouterProvider, $translateProvider) {
   $translateProvider.useSanitizeValueStrategy('escaped');
 }
 
-function run (IFrameService) {
-  IFrameService.enableBrowserSync();
+function run (CmsService) {
+  CmsService.enableBrowserSync();
 }
 
 export const hippoCmModule = angular
@@ -60,3 +60,5 @@ export const hippoCmModule = angular
   ])
   .config(config)
   .run(run);
+
+

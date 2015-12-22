@@ -16,7 +16,7 @@
 
 const BROWSER_SYNC_URL = '//localhost:3000/browser-sync/browser-sync-client.2.10.0.js';
 
-export class IFrameService {
+export class CmsService {
 
   constructor ($window, $log) {
     'ngInject';
@@ -24,7 +24,6 @@ export class IFrameService {
     this.$window = $window;
     this.$log = $log;
     this.iframePanelId = this.getParentIFramePanelId();
-    this.isActive = this.iframePanelId !== null;
   }
 
   getParentIFramePanelId () {
@@ -40,8 +39,6 @@ export class IFrameService {
         }
       }
     }
-
-    return null;
   }
 
   getParentIFramePanel () {
@@ -54,31 +51,25 @@ export class IFrameService {
     return iframePanel;
   }
 
-  publish (event, value) {
-    if (this.isActive) {
-      return this.getParentIFramePanel().iframeToHost.publish(event, value);
-    }
+  publish (event, ...values) {
+    const iframeToHost = this.getParentIFramePanel().iframeToHost;
+    return iframeToHost.publish.apply(iframeToHost, arguments);
   }
 
   subscribe (event, callback, scope) {
-    if (this.isActive) {
-      return this.getParentIFramePanel().hostToIFrame.subscribe(event, callback, scope);
-    }
+    const hostToIFrame = this.getParentIFramePanel().hostToIFrame;
+    return hostToIFrame.subscribe.apply(hostToIFrame, arguments);
   }
 
   getConfig () {
-    if (this.isActive) {
-      const iframePanel = this.getParentIFramePanel();
-      const config = iframePanel.initialConfig.iframeConfig;
+    const iframePanel = this.getParentIFramePanel();
+    const config = iframePanel.initialConfig.iframeConfig;
 
-      if (config === undefined) {
-        throw new Error('Parent iframe panel does not contain iframe configuration');
-      }
-
-      return config;
-    } else {
-      return {};
+    if (config === undefined) {
+      throw new Error('Parent iframe panel does not contain iframe configuration');
     }
+
+    return config;
   }
 
   addScriptToBody (scriptUrl) {

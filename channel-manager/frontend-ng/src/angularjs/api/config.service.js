@@ -16,17 +16,12 @@
 
 export class ConfigService {
 
-  constructor (IFrameService) {
+  constructor (CmsService) {
     'ngInject';
 
-    // default configuration for local development without cms
-    this.apiUrlPrefix = 'http://localhost:8080/site/_rp';
+    // default configuration
     this.locale = 'en';
-    this.antiCache = new Date().getTime();
 
-    // override default config when app runs in iframe
-    if (IFrameService.isActive) {
-      Object.assign(this, IFrameService.getConfig());
-    }
+    Object.assign(this, CmsService.getConfig());
   }
 }

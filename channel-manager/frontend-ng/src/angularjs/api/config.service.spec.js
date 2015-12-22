@@ -20,50 +20,19 @@ describe('ConfigService', function () {
   var configService;
 
   beforeEach(function () {
+    window.APP_CONFIG.locale = 'nl';
+    window.APP_CONFIG.apiUrlPrefix = 'https://127.0.0.1:9080/web/one/two';
+
     module('hippo-cm-api');
+
+    inject(function (ConfigService) {
+      configService = ConfigService;
+    });
   });
 
-  describe("provides default configuration", function () {
-    beforeEach(inject([
-      'ConfigService', function (ConfigService) {
-        configService = ConfigService;
-      }
-    ]));
-
-    it('with sensible defaults', function() {
-      expect(configService.apiUrlPrefix).toBeDefined();
-      expect(configService.locale).toBeDefined();
-      expect(configService.antiCache).toBeDefined();
-
-      expect(configService.locale).toEqual('en');
-      expect(configService.apiUrlPrefix).toEqual('http://localhost:8080/site/_rp');
-    });
-
-  });
-
-  describe('allows custom configuration', function() {
-    beforeEach(function() {
-      module(function ($provide) {
-        $provide.value('IFrameService', {isActive: true, getConfig: function() {
-          return {
-            locale: 'nl',
-            apiUrlPrefix: 'https://127.0.0.1:9080/web/one/two'
-          };
-        }});
-      });
-    });
-
-    beforeEach(inject([
-      'ConfigService', function (ConfigService) {
-        configService = ConfigService;
-      }
-    ]));
-
-    it('passed in by the IFrameService', function() {
-      expect(configService.locale).toEqual('nl');
-      expect(configService.apiUrlPrefix).toEqual('https://127.0.0.1:9080/web/one/two');
-    });
-
+  it('allows custom configuration passed in by the CmsService', function() {
+    expect(configService.locale).toEqual('nl');
+    expect(configService.apiUrlPrefix).toEqual('https://127.0.0.1:9080/web/one/two');
   });
 
 });

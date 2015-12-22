@@ -51,6 +51,7 @@ module.exports = function(config) {
   options.files = [
     cfg.src.templates,
     cfg.src.scripts,
+    cfg.srcDir + './angularjs/mock.environment.spec.js',
     cfg.src.unitTests
   ];
 
