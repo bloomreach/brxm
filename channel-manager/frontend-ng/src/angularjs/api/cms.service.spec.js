@@ -34,7 +34,7 @@ describe('CmsService', function () {
   describe('in production mode', function () {
 
     beforeEach(function () {
-      setUp()
+      setUp();
     });
 
     it('should publish events to the CMS', function () {
@@ -57,20 +57,28 @@ describe('CmsService', function () {
       expect($window.document.getElementsByTagName).not.toHaveBeenCalled();
     });
 
-    it("should throw an error when the CMS does not contain an ExtJs IFramePanel with the given ID", function () {
+    it('should throw an error when the CMS does not contain an ExtJs IFramePanel with the given ID', function () {
       spyOn($window.parent.Ext, 'getCmp').and.returnValue(undefined);
       expect(function () {
         CmsService.getConfig();
       }).toThrow(new Error("Unknown iframe panel id: 'ext-42'"));
     });
 
-    it("should throw an error when the CMS's IFramePanel does not contain any configuration for the app", function () {
+    it('should throw an error when the CMS\'s IFramePanel does not contain any configuration for the app', function () {
       spyOn($window.parent.Ext, 'getCmp').and.returnValue({
         initialConfig: {}
       });
       expect(function() {
         CmsService.getConfig();
-      }).toThrowError(Error, "Parent iframe panel does not contain iframe configuration");
+      }).toThrowError(Error, 'Parent iframe panel does not contain iframe configuration');
+    });
+
+    it('should throw an error when the IFrame URL does not contain request parameter \'parentExtIFramePanelId\'', function() {
+      window.history.replaceState({}, document.title, '/');
+      expect(function() {
+        CmsService.getParentIFramePanelId();
+      }).toThrowError(Error, 'Request parameter \'parentExtIFramePanelId\' not found in IFrame url');
+
     });
 
   });
@@ -79,7 +87,7 @@ describe('CmsService', function () {
 
     beforeEach(function () {
       window.APP_CONFIG.debug = true;
-      setUp()
+      setUp();
     });
 
     it('should enable browser sync', function () {

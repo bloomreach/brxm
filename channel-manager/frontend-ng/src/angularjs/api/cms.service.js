@@ -39,6 +39,8 @@ export class CmsService {
         }
       }
     }
+
+    throw new Error('Request parameter \'parentExtIFramePanelId\' not found in IFrame url');
   }
 
   getParentIFramePanel () {
