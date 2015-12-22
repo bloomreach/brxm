@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -148,18 +149,22 @@ public class ContentRestApiResource {
             // check uuid validity, if not valid this throws an IllegalArgumentException
             UUID.fromString(uuid);
 
-            // this could throw an ItemNotFoundException
+            // this could throw an ItemNotFoundException in case the uuid does not exist or is not readable
             Node node = session.getNodeByIdentifier(uuid);
+
+            // this could throw a PathNotFoundException in case there is no live variant or it is not readable
+            Node variant = node.getNode(node.getName());
 
             HashMap<String, Object> hashMap = new HashMap<>();
 
-            nodeToHashMap(node, hashMap);
+            propertiesToHashMap(node, hashMap);
+            nodeToHashMap(variant, hashMap);
 
             return Response.status(200).entity(hashMap).build();
         } catch (IllegalArgumentException iae) {
             return buildErrorResponse(400, iae, "The string '" + uuid + "' is not a valid UUID.");
-        } catch (ItemNotFoundException infe) {
-            return buildErrorResponse(404, infe);
+        } catch (ItemNotFoundException|PathNotFoundException nfe) {
+            return buildErrorResponse(404, nfe);
         } catch (RepositoryException re) {
             return buildErrorResponse(500, re);
         }
@@ -187,16 +192,7 @@ public class ContentRestApiResource {
 
     @SuppressWarnings("unchecked")
     private void nodeToHashMap(Node node, HashMap<String, Object> hashMap) throws RepositoryException {
-        // Iterate over all properties and add those to the hashMap.
-        Iterator<Property> propertyIterator = node.getProperties();
-        while (propertyIterator.hasNext()) {
-            Property property = propertyIterator.next();
-            if (property.isMultiple()) {
-                hashMap.put(property.getName(), new Object[0]); //property.getValues());
-            } else {
-                hashMap.put(property.getName(), "prop"); //property.getValue());
-            }
-        }
+        propertiesToHashMap(node, hashMap);
 
         // TODO discuss with Ate
         // Iterate over all nodes and add those to the hashMap.
@@ -210,6 +206,19 @@ public class ContentRestApiResource {
             HashMap<String, Object> childHashMap = new HashMap<>();
             hashMap.put(childNode.getName(), childHashMap);
             nodeToHashMap(childNode, childHashMap);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void propertiesToHashMap(Node node, HashMap<String, Object> hashMap) throws RepositoryException {
+        Iterator<Property> propertyIterator = node.getProperties();
+        while (propertyIterator.hasNext()) {
+            Property property = propertyIterator.next();
+            if (property.isMultiple()) {
+                hashMap.put(property.getName(), new Object[0]); //property.getValues());
+            } else {
+                hashMap.put(property.getName(), "prop"); //property.getValue());
+            }
         }
     }
 
