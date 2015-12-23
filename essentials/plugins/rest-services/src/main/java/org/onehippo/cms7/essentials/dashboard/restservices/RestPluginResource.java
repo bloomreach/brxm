@@ -176,7 +176,6 @@ public class RestPluginResource extends BaseResource {
         final Set<ValidBean> validBeans = new HashSet<>();
 
         if (Strings.isNullOrEmpty(input)) {
-            log.error("No beans were selected");
             return validBeans;
         }
         final Iterable<String> split = Splitter.on(',').split(input);
