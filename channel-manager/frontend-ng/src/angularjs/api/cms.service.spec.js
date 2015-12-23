@@ -78,7 +78,6 @@ describe('CmsService', function () {
       expect(function() {
         CmsService.getParentIFramePanelId();
       }).toThrowError(Error, 'Request parameter \'parentExtIFramePanelId\' not found in IFrame url');
-
     });
 
   });
