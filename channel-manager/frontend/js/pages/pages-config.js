@@ -32,8 +32,8 @@
     .config([
       '$stateProvider',
       '$translateProvider',
-      '$tooltipProvider',
-      function ($stateProvider, $translateProvider, $tooltipProvider) {
+      '$uibTooltipProvider',
+      function ($stateProvider, $translateProvider, $uibTooltipProvider) {
 
         // routing
         $stateProvider
@@ -61,12 +61,13 @@
           suffix: '.json'
         });
         $translateProvider.fallbackLanguage('en');
+        $translateProvider.useSanitizeValueStrategy('escaped');
 
         // tooltips
-        $tooltipProvider.options({
+        $uibTooltipProvider.options({
           animation: false
         });
-        $tooltipProvider.setTriggers({
+        $uibTooltipProvider.setTriggers({
           'show': 'hide'
         });
       }

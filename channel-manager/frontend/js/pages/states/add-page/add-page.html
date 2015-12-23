@@ -35,7 +35,7 @@
                  data-ng-focus="form.title.$setPristine();"
                  data-ng-required="true"
                  data-hippo-channel-auto-focus
-                 data-tooltip="{{ 'TITLE_REQUIRED' | translate }}"
+                 data-uib-tooltip="{{ 'TITLE_REQUIRED' | translate }}"
                  data-tooltip-trigger="show"
                  data-hippo-channel-tooltip-show="form.title.$dirty && form.title.$error.required"
                  data-tooltip-placement="top">
@@ -72,7 +72,7 @@
                    data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
                    data-ng-focus="form.lastPathInfoElement.$setPristine();"
                    data-ng-required="true" data-ng-keyup="disableAutomaticLastPathInfoElementUpdate()"
-                   data-tooltip="{{ tooltips.lastPathInfoElement() }}"
+                   data-uib-tooltip="{{ tooltips.lastPathInfoElement() }}"
                    data-tooltip-trigger="show"
                    data-hippo-channel-tooltip-show="form.lastPathInfoElement.$dirty && form.lastPathInfoElement.$invalid"
                    data-tooltip-placement="top">
