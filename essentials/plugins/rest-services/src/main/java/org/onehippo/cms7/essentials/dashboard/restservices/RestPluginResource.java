@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.eventbus.EventBus;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
@@ -60,10 +64,6 @@ import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.AnnotationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
 
 /**
  * @version "$Id$"
