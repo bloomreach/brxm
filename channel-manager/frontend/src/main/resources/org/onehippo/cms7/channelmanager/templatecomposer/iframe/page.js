@@ -131,6 +131,12 @@
       $('a').each(function () {
         var link = $(this),
           url = link.prop('href');
+
+        // handle links within SVG elements
+        if (url instanceof SVGAnimatedString) {
+          url = url.baseVal;
+        }
+
         if (!startsWith(url, data.internalLinkUrlPrefix)) {
           link.attr('target', '_blank');
           link.click(function (event) {
