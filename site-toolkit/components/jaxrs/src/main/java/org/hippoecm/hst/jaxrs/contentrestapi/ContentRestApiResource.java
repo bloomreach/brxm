@@ -16,6 +16,7 @@
 
 package org.hippoecm.hst.jaxrs.contentrestapi;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -76,6 +78,9 @@ public class ContentRestApiResource {
 
     private final class Link {
         public String url;
+        public Link(String url) {
+            this.url = url;
+        }
     }
 
     private final class SearchResultItem {
@@ -86,39 +91,40 @@ public class ContentRestApiResource {
         public String uuid;
 
         public Link[] links;
+
+        public SearchResultItem(String name, String uuid, Link[] links) {
+            this.name = name;
+            this.uuid = uuid;
+            this.links = links;
+        }
     }
 
     private final class SearchResult {
         public long offset;
         public long max;
         public long count;
-        public boolean more;
         public long total;
+        public boolean more;
         public SearchResultItem[] items;
 
-        void initialize(QueryResult queryResult, Session session) throws RepositoryException {
-            offset = 0;
-            max = 100;
-            count = queryResult.getTotalHitCount();
-            more = false;
-            total = queryResult.getTotalHitCount();
-
-            int count = (int) queryResult.getTotalHitCount();
-            int current = 0;
-            items = new SearchResultItem[count];
+        void initialize(int offset, int max, QueryResult queryResult, Session session) throws RepositoryException {
+            ArrayList<SearchResultItem> itemArrayList = new ArrayList<>();
             HitIterator iterator = queryResult.getHits();
             while (iterator.hasNext()) {
                 Hit hit = iterator.nextHit();
-                items[current] = new SearchResultItem();
                 String uuid = hit.getSearchDocument().getContentId().toIdentifier();
                 Node node = session.getNodeByIdentifier(uuid);
-                items[current].name = node.getName();
-                items[current].uuid = uuid;
-                items[current].links = new Link[1];
-                items[current].links[0] = new Link();
-                items[current].links[0].url = uuid;
-                current++;
+                SearchResultItem item = new SearchResultItem(node.getName(), uuid, new Link[] { new Link(uuid) });
+                itemArrayList.add(item);
             }
+
+            this.offset = offset;
+            this.max = max;
+            count = itemArrayList.size();
+            total = queryResult.getTotalHitCount();
+            more = (offset + count) < total;
+            items = new SearchResultItem[(int)count];
+            itemArrayList.toArray(items);
         }
     }
 
@@ -131,24 +137,75 @@ public class ContentRestApiResource {
         }
     }
 
+    private int validateMax(String maxString) throws IllegalArgumentException {
+        int max = 100;
+
+        if (maxString != null) {
+            boolean error = false;
+            try {
+                max = Integer.parseInt(maxString);
+            } catch (NumberFormatException e) {
+                error = true;
+            }
+            if (error || max <= 0) {
+                throw new IllegalArgumentException("_max must be greater than or equal to zero, it was: '" + maxString + "'");
+            }
+        }
+
+        return max;
+    }
+
+    private int validateOffset(String offsetString) throws IllegalArgumentException {
+        int offset = 0;
+
+        if (offsetString != null) {
+            boolean error = false;
+            try {
+                offset = Integer.parseInt(offsetString);
+            } catch (NumberFormatException e) {
+                error = true;
+            }
+            if (error || offset < 0) {
+                throw new IllegalArgumentException("_offset must be greater than or equal to zero, it was: '" + offsetString + "'");
+            }
+        }
+
+        return offset;
+    }
+
     @GET
     @Path("/documents")
-    public Response getDocuments() {
+    public Response getDocuments(@QueryParam("_offset") String offsetString, @QueryParam("_max") String maxString) {
         try {
+            int offset = validateOffset(offsetString);
+            int max = validateMax(maxString);
+
             SearchService searchService = getSearchService();
             Query query = searchService.createQuery()
                     .from("/content/documents")
                     .ofType("myhippoproject:basedocument") // TODO change to blacklisting mechanism
                     .returnParentNode()
                     .orderBy(HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE)
-                    .descending();
+                    .descending()
+                    .offsetBy(offset)
+                    .limitTo(max);
             QueryResult queryResult = searchService.search(query);
             SearchResult returnValue = new SearchResult();
-            returnValue.initialize(queryResult, context.getSession());
+            returnValue.initialize(offset, max, queryResult, context.getSession());
 
             return Response.status(200).entity(returnValue).build();
-        } catch (RepositoryException e) {
-            return buildErrorResponse(500, e);
+        } catch (IllegalArgumentException iae) {
+            return buildErrorResponse(400, iae);
+        } catch (RepositoryException re) {
+            return buildErrorResponse(500, re);
+        }
+    }
+
+    private void validateUUID(String uuid) throws IllegalArgumentException {
+        try {
+            UUID.fromString(uuid);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("The string '" + uuid + "' is not a valid UUID");
         }
     }
 
@@ -156,10 +213,9 @@ public class ContentRestApiResource {
     @Path("/documents/{uuid}")
     public Response getDocumentsByUUID(@PathParam("uuid") String uuid) {
         try {
-            Session session = context.getSession();
+            validateUUID(uuid);
 
-            // throws an IllegalArgumentException in case the UUID is not correctly formatted
-            UUID.fromString(uuid);
+            Session session = context.getSession();
 
             // throws an ItemNotFoundException in case the uuid does not exist or is not readable
             Node node = session.getNodeByIdentifier(uuid);
@@ -175,7 +231,7 @@ public class ContentRestApiResource {
 
             return Response.status(200).entity(hashMap).build();
         } catch (IllegalArgumentException iae) {
-            return buildErrorResponse(400, iae, "The string '" + uuid + "' is not a valid UUID.");
+            return buildErrorResponse(400, iae);
         } catch (ItemNotFoundException|PathNotFoundException nfe) {
             return buildErrorResponse(404, nfe);
         } catch (RepositoryException re) {
@@ -184,17 +240,11 @@ public class ContentRestApiResource {
     }
 
     private Response buildErrorResponse(int status, Exception exception) {
-        return buildErrorResponse(status, exception, null);
+        return buildErrorResponse(status, exception.toString());
     }
 
-    private Response buildErrorResponse(int status, Exception exception, String description) {
-        Error error;
-        if (description == null) {
-            error = new Error(status, exception.toString());
-        } else {
-            error = new Error(status, description);
-        }
-        return Response.status(status).entity(error).build();
+    private Response buildErrorResponse(int status, String description) {
+        return Response.status(status).entity(new Error(status, description)).build();
     }
 
     private SearchService getSearchService() throws RepositoryException {
