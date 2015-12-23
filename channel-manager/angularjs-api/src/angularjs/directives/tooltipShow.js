@@ -41,10 +41,10 @@
                 link: function (scope, element, attrs) {
                     scope.$watch(attrs.hippoChannelTooltipShow, function (shouldShowTooltip) {
                         $timeout(function() {
-                            var evt = document.createEvent("HTMLEvents");
-                            for (var i = 0; i < element.length; i++) {
+                            if (element.length) {
+                                var evt = document.createEvent("CustomEvent");
                                 evt.initEvent(shouldShowTooltip ? 'show' : 'hide', false, true);
-                                element[i].dispatchEvent(evt);
+                                element[0].dispatchEvent(evt);
                             }
                         });
                     });
