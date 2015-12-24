@@ -137,35 +137,33 @@ public class ContentRestApiResource {
         }
     }
 
-    private int validateMax(String maxString) throws IllegalArgumentException {
+    private int parseMax(String maxString) throws IllegalArgumentException {
         int max = 100;
 
         if (maxString != null) {
-            boolean error = false;
             try {
                 max = Integer.parseInt(maxString);
             } catch (NumberFormatException e) {
-                error = true;
+                throw new IllegalArgumentException("_max must be a number, greater than zero, it was: '" + maxString + "'");
             }
-            if (error || max <= 0) {
-                throw new IllegalArgumentException("_max must be greater than or equal to zero, it was: '" + maxString + "'");
+            if (max <= 0) {
+                throw new IllegalArgumentException("_max must be greater than zero, it was: '" + maxString + "'");
             }
         }
 
         return max;
     }
 
-    private int validateOffset(String offsetString) throws IllegalArgumentException {
+    private int parseOffset(String offsetString) throws IllegalArgumentException {
         int offset = 0;
 
         if (offsetString != null) {
-            boolean error = false;
             try {
                 offset = Integer.parseInt(offsetString);
             } catch (NumberFormatException e) {
-                error = true;
+                throw new IllegalArgumentException("_offset must be a number, greater than or equal to zero, it was: '" + offsetString + "'");
             }
-            if (error || offset < 0) {
+            if (offset < 0) {
                 throw new IllegalArgumentException("_offset must be greater than or equal to zero, it was: '" + offsetString + "'");
             }
         }
@@ -177,8 +175,8 @@ public class ContentRestApiResource {
     @Path("/documents")
     public Response getDocuments(@QueryParam("_offset") String offsetString, @QueryParam("_max") String maxString) {
         try {
-            int offset = validateOffset(offsetString);
-            int max = validateMax(maxString);
+            int offset = parseOffset(offsetString);
+            int max = parseMax(maxString);
 
             SearchService searchService = getSearchService();
             Query query = searchService.createQuery()
@@ -201,9 +199,9 @@ public class ContentRestApiResource {
         }
     }
 
-    private void validateUUID(String uuid) throws IllegalArgumentException {
+    private UUID parseUUID(String uuid) throws IllegalArgumentException {
         try {
-            UUID.fromString(uuid);
+            return UUID.fromString(uuid);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("The string '" + uuid + "' is not a valid UUID");
         }
@@ -211,14 +209,14 @@ public class ContentRestApiResource {
 
     @GET
     @Path("/documents/{uuid}")
-    public Response getDocumentsByUUID(@PathParam("uuid") String uuid) {
+    public Response getDocumentsByUUID(@PathParam("uuid") String uuidString) {
         try {
-            validateUUID(uuid);
+            UUID uuid = parseUUID(uuidString);
 
             Session session = context.getSession();
 
             // throws an ItemNotFoundException in case the uuid does not exist or is not readable
-            Node node = session.getNodeByIdentifier(uuid);
+            Node node = session.getNodeByIdentifier(uuid.toString());
 
             // throws a PathNotFoundException in case there is no live variant or it is not readable
             Node variant = node.getNode(node.getName());
