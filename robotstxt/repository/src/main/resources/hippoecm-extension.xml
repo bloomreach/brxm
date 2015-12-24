@@ -68,7 +68,7 @@
       <sv:value>20102</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>translation-deltas/namespace-1.xml</sv:value>
+      <sv:value>deltas/namespace-1.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:namespaces</sv:value>
@@ -85,7 +85,7 @@
       <sv:value>/hippo:namespaces/robotstxt/section/editor:templates/_default_/translator/hippostd:translations/useragent</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>translation-deltas/namespace-2.xml</sv:value>
+      <sv:value>deltas/namespace-2.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:namespaces/robotstxt/section/editor:templates/_default_/translator/hippostd:translations</sv:value>
@@ -99,7 +99,7 @@
       <sv:value>20102.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>translation-deltas/namespace-3.xml</sv:value>
+      <sv:value>deltas/namespace-3.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:namespaces</sv:value>
