@@ -29,10 +29,10 @@ import org.slf4j.LoggerFactory;
 /**
  * DefaultTaskImpl
  */
-class DefaultTaskImpl implements Task {
+public class DefaultTaskImpl implements Task {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultTaskImpl.class);
-    
+
     private final String name;
     private Map<String, Object> attributes;
 
@@ -43,7 +43,7 @@ class DefaultTaskImpl implements Task {
     private long durationTimeMillis = -1L;
     private boolean stopped;
 
-    DefaultTaskImpl(final Task parentTask, final String name) {
+    protected DefaultTaskImpl(final Task parentTask, final String name) {
         this.parentTask = parentTask;
         this.name = name;
         this.startTimeMillis = System.currentTimeMillis();
@@ -116,7 +116,7 @@ class DefaultTaskImpl implements Task {
             childTasks = new LinkedList<Task>();
         }
 
-        Task childTask = new DefaultTaskImpl(this, name);
+        Task childTask = createSubtask(this, name);
         childTasks.add(childTask);
         HDC.setCurrentTask(childTask);
         return childTask;
@@ -156,4 +156,13 @@ class DefaultTaskImpl implements Task {
         return durationTimeMillis;
     }
 
+    /**
+     * Creates a real <code>Task</code> instance.
+     * @param parentTask parent task
+     * @param name task name
+     * @return <code>Task</code> instance
+     */
+    protected Task createSubtask(final Task parentTask, final String name) {
+        return new DefaultTaskImpl(parentTask, name);
+    }
 }

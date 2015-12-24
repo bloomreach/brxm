@@ -18,19 +18,12 @@ package org.hippoecm.hst.diagnosis;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.hippoecm.hst.diagnosis.HDC;
-import org.hippoecm.hst.diagnosis.Task;
-import org.hippoecm.hst.diagnosis.TaskLogFormatUtils;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * TestHDC
+ * TestHDC.
  */
 public class TestHDC {
-
-    private static Logger log = LoggerFactory.getLogger(TestHDC.class);
 
     private Valve1 valve1 = new Valve1();
     private Valve2 valve2 = new Valve2();
