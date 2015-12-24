@@ -154,9 +154,9 @@
     <dispatcher>INCLUDE</dispatcher>
   </filter-mapping>
 
-  <!-- HST Container Config/Init/Destroy Listener -->
+  <!-- HstContextLoaderListener configuring/initializing/destroying HST Container -->
   <listener>
-    <listener-class>org.hippoecm.hst.site.container.HstSiteConfigListener</listener-class>
+    <listener-class>org.hippoecm.hst.site.container.HstContextLoaderListener</listener-class>
   </listener>
 
   <!-- Bootstrap listener to start up root web application context. -->
