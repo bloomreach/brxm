@@ -48,9 +48,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default HST Site Container Configurer ({@link HstSiteConfigurer}) implementation.
+ * DefaultHstSiteConfigurer, implementing {@link HstSiteConfigurer}.
  * 
- * This should initialize all the components that can be accessed via HstServices
+ * This is responsible for initializing all the components that can be accessed via HstServices
  * from the each HST-based applications.
  * <P>
  * The configuration could be set by a properties file or an xml file.
@@ -73,12 +73,6 @@ import org.slf4j.LoggerFactory;
  *    &lt;param-name>hst-config-properties&lt;/param-name>
  *    &lt;param-value>/WEB-INF/hst-config.properties&lt;/param-value>
  *  &lt;/context-param>
- *  &lt;!-- SNIP -->
- *  &lt;servlet>
- *    &lt;servlet-name>HstSiteConfigServlet&lt;/servlet-name>
- *    &lt;servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet&lt;/servlet-class>
- *    &lt;load-on-startup>1&lt;/load-on-startup>
- *  &lt;/servlet>
  * </CODE></PRE>
  * <BR/>
  * If you don't provide the init parameter named 'hst-config-properties' at all, the value is set to 
@@ -94,12 +88,6 @@ import org.slf4j.LoggerFactory;
  *    &lt;param-name>hst-configuration&lt;/param-name>
  *    &lt;param-value>/WEB-INF/hst-configuration.xml&lt;/param-value>
  *  &lt;/context-param>
- *  &lt;!-- SNIP -->
- *  &lt;servlet>
- *    &lt;servlet-name>HstSiteConfigServlet&lt;/servlet-name>
- *    &lt;servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet&lt;/servlet-class>
- *    &lt;load-on-startup>1&lt;/load-on-startup>
- *  &lt;/servlet>
  * </CODE></PRE>
  * <BR/>
  * For your information, you can configure the <CODE>/WEB-INF/hst-configuration.xml</CODE> file like the following example.
@@ -141,8 +129,6 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
     private static final String FORCEFUL_REINIT_PARAM = "forceful.reinit";
 
     private static final String ASSEMBLY_OVERRIDES_CONFIGURATIONS_PARAM = "assembly.overrides";
-
-    private static final String REPOSITORY_ADDRESS_PARAM_SUFFIX = ".repository.address";
 
     private static final long DEFAULT_CONFIGURATION_REFRESH_DELAY = 0L;
 

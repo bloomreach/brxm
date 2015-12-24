@@ -27,27 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * HST Site Container Servlet
- * 
- * This servlet should initialize all the components that can be accessed via HstServices
- * from the each HST-based applications.
+ * HST Site Container Servlet, deprecated by {@link HstContextLoaderListener}.
+ *
  * <P>
- * The configuration could be set by a properties file or an xml file.
- * If you would set the configuration by a properties file, you can set an init parameter 
- * named 'hst-config-properties' for the servlet config or for the servlet context. 
+ * This can be used as a servlet, configured like the following in web.xml:
  * </P>
- * <P>
- * <EM>The parameter value for the properties file or the xml file is regarded as a web application
- * context relative path or file system relative path if the path does not start with 'file:'.
- * So, you should use a 'file:' prefixed URI for the path parameter value if you want to set an absolute path.
- * When the path starts with a leading slash ('/'), the path is regarded as a servlet context relative path
- * or an absolute file path if the servlet context relative resource is not found.
- * If the path does not start with 'file:' nor with a leading slash ('/'), it is regarded as a relative path of the file system.
- * </EM>
- * </P>
- * <P>
- * For example, you can add an init parameter named 'hst-config-properties' for this servlet config
- * like the following:
  * <PRE><CODE>
  *   &lt;servlet>
  *    &lt;servlet-name>HstSiteConfigServlet&lt;/servlet-name>
@@ -59,83 +43,24 @@ import org.slf4j.LoggerFactory;
  *    &lt;load-on-startup>1&lt;/load-on-startup>
  *  &lt;/servlet>
  * </CODE></PRE>
- * <BR/>
- * Also, you can set context init parameter instead of the config init parameter like the following: 
+ * <P>
+ * As you can see above, you can optionally set 'hst-config-properties' servlet init parameter in order to override
+ * the servlet context parameter like the following:
+ * </P>
  * <PRE><CODE>
  *  &lt;context-param>
  *    &lt;param-name>hst-config-properties&lt;/param-name>
  *    &lt;param-value>/WEB-INF/hst-config.properties&lt;/param-value>
  *  &lt;/context-param>
- *  &lt;!-- SNIP -->
- *  &lt;servlet>
- *    &lt;servlet-name>HstSiteConfigServlet&lt;/servlet-name>
- *    &lt;servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet&lt;/servlet-class>
- *    &lt;load-on-startup>1&lt;/load-on-startup>
- *  &lt;/servlet>
  * </CODE></PRE>
- * The servlet will retrieve the config init parameter first and it will retrieve the context init parameter
- * when the config init parameter is not set.
- * <BR/>
- * If you don't provide the init parameter named 'hst-config-properties' at all, the value is set to 
- * '/WEB-INF/hst-config.properties' by default.
- * </P>
  * <P>
- * Also, the configuration can be set by an XML file which is of the XML configuration format of
- * <A href="http://commons.apache.org/configuration/">Apache Commons Configuration</A>.
- * If you want to set the configuration by the Apache Commons Configuration XML file, you should provide
- * an init parameter named 'hst-configuration' for servlet config or servlet context. For example,
- * <PRE><CODE>
- *   &lt;servlet>
- *    &lt;servlet-name>HstSiteConfigServlet&lt;/servlet-name>
- *    &lt;servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet&lt;/servlet-class>
- *    &lt;init-param>
- *      &lt;param-name>hst-configuration&lt;/param-name>
- *      &lt;param-value>/WEB-INF/hst-configuration.xml&lt;/param-value>
- *    &lt;/init-param>
- *    &lt;load-on-startup>1&lt;/load-on-startup>
- *  &lt;/servlet>
- * </CODE></PRE>
- * Also, you can set context init parameter instead of the config init parameter like the following:
- * <PRE><CODE>
- *  &lt;context-param>
- *    &lt;param-name>hst-configuration&lt;/param-name>
- *    &lt;param-value>/WEB-INF/hst-configuration.xml&lt;/param-value>
- *  &lt;/context-param>
- *  &lt;!-- SNIP -->
- *  &lt;servlet>
- *    &lt;servlet-name>HstSiteConfigServlet&lt;/servlet-name>
- *    &lt;servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet&lt;/servlet-class>
- *    &lt;load-on-startup>1&lt;/load-on-startup>
- *  &lt;/servlet>
- * </CODE></PRE>
- * <BR/>
- * For your information, you can configure the <CODE>/WEB-INF/hst-configuration.xml</CODE> file like the following example.
- * In this example, you can see that system properties can be aggregated, multiple properties files can be added and 
- * system property values can be used to configure other properties file paths as well: 
- * <PRE><CODE>
- * &lt;?xml version='1.0'?>
- * &lt;configuration>
- *   &lt;system/>
- *   &lt;properties fileName='${catalina.home}/conf/hst-config-1.properties'/>
- *   &lt;properties fileName='${catalina.home}/conf/hst-config-2.properties'/>
- * &lt;/configuration>
- * </CODE></PRE>
- * <EM>Please refer to the documentation of <A href="http://commons.apache.org/configuration/">Apache Commons Configuration</A> for details.</EM>
- * <BR/>
- * The servlet will retrieve the config init parameter first and it will retrieve the context init parameter
- * when the config init parameter is not set.
- * <BR/>
- * If you don't provide the init parameter named 'hst-config-properties' at all, the value is set to 
- * '/WEB-INF/hst-configuration.xml' by default.
- * <BR/>
- * <EM>The parameter value for the properties file or the xml file is regarded as a web application
- * context relative path or file system relative path if the path does not start with 'file:'.
- * So, you should use a 'file:' prefixed URI for the path parameter value if you want to set an absolute path.
- * When the path starts with a leading slash ('/'), the path is regarded as a servlet context relative path.
- * If the path does not start with 'file:' nor with a leading slash ('/'), it is regarded as a relative path of the file system.
- * </EM>
+ * This servlet simply invokes {@link DefaultHstSiteConfigurer} to load HST Context and initialize the container.
+ * Please be referred to {@link DefaultHstSiteConfigurer} to see how it finds and loads configurations in detail.
  * </P>
+ *
+ * @deprecated Use {@link HstContextLoaderListener} instead.
  */
+@Deprecated
 public class HstSiteConfigServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
