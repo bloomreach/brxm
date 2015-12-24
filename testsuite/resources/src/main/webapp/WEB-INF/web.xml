@@ -169,14 +169,6 @@
     <listener-class>org.hippoecm.hst.site.container.session.HttpSessionEventPublisher</listener-class>
   </listener>
 
-  <!-- NOTE: HstSiteConfigListener is prefered to HstSiteConfigServlet.
-  <servlet>
-    <servlet-name>HstSiteConfigServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  -->
-
   <servlet>
     <servlet-name>BinariesServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.servlet.BinariesServlet</servlet-class>
