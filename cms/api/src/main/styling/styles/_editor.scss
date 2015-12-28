@@ -321,11 +321,7 @@
   margin: 0;
 }
 
-.invalid {
-  border-color: $validation-border !important;
-}
-
-.invalid > .hippo-editor-field {
+.invalid > .hippo-editor-field, {
   > .hippo-editor-field-title {
     color: $validation-title-color !important;
   }
@@ -334,10 +330,15 @@
     .hippo-editor-field-value-container,
     .hippo-editor-field-textarea,
     .dialog-link,
+    .btn,
     select {
       border-color: $validation-border !important;
     }
   }
+}
+
+.invalid > .hippo-editor-field-subfield .hippo-editor-field-value > .btn {
+  border-color: $validation-border !important;
 }
 
 .hippo-editor-metadata {
