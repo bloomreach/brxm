@@ -112,6 +112,11 @@ public class HstCmsEditMenuTag extends TagSupport {
                         "for matched mount '{}'.", requestContext.getResolvedMount().getMount().toString());
                 return EVAL_PAGE;
             }
+            if (!canonicalInfo.getCanonicalPath().startsWith(hstSite.getConfigurationPath() + "/")) {
+                log.debug("Skipping cms edit menu because siteMenuConfiguration found is inherited from other configuration " +
+                        "for matched mount '{}'.", requestContext.getResolvedMount().getMount().toString());
+                return EVAL_PAGE;
+            }
             try {
                write(siteMenuConfiguration);
             } catch (IOException ioe) {
