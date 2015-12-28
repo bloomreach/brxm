@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,12 +24,13 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.RuntimeExceptionEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -137,7 +138,7 @@ public class AbstractConfigResource implements ComponentManagerAware {
         }
     }
 
-    protected void publishSynchronousEvent(final ChannelEvent event) throws ClientException {
+    protected void publishSynchronousEvent(final RuntimeExceptionEvent event) throws ClientException {
         componentManager.publishEvent(event);
         if (event.getException() != null) {
             throw event.getException();
@@ -229,6 +230,16 @@ public class AbstractConfigResource implements ComponentManagerAware {
 
     protected String getPreviewConfigurationWorkspacePath() {
         return getPreviewConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
+    }
+
+    protected String getPreviewConfigurationWorkspacePath(final String mountId) {
+        final Mount mount = pageComposerContextService.getRequestContext().getVirtualHost().getVirtualHosts().getMountByIdentifier(mountId);
+        if (mount == null || !mount.getHstSite().hasPreviewConfiguration()) {
+            final String msg = String.format("Cannot find for id '%s' or the mount exists but does not have a preview configuration.", mountId);
+            throw new IllegalArgumentException(msg);
+        }
+        final String configurationPath = mount.getHstSite().getConfigurationPath();
+        return configurationPath + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
     }
 
 }

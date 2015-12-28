@@ -22,10 +22,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hippoecm.hst.configuration.ConfigurationUtils;
-import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.CompositeConfigurationNodes;
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -34,6 +33,8 @@ import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlers
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.ConfigurationUtils.isWorkspaceConfig;
 
 public class HstSiteMapService implements HstSiteMap, CanonicalInfo {
     
@@ -71,7 +72,7 @@ public class HstSiteMapService implements HstSiteMap, CanonicalInfo {
         canonicalIdentifier = siteMapNode.getMainConfigNode().getValueProvider().getIdentifier();
         canonicalPath = siteMapNode.getMainConfigNode().getValueProvider().getPath();
 
-        workspaceConfiguration = ConfigurationUtils.isWorkspaceConfig(siteMapNode.getMainConfigNode());
+        workspaceConfiguration = isWorkspaceConfig(siteMapNode.getMainConfigNode());
 
         // initialize all sitemap items
         for(HstNode child : siteMapNode.getCompositeChildren().values()) {

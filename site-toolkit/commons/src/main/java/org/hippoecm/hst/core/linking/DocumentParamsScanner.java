@@ -22,10 +22,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Predicate;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
@@ -42,6 +43,7 @@ public class DocumentParamsScanner {
     private final static ConcurrentMap<String, Set<String>> componentClassToDocumentParameterNamesCache = new ConcurrentHashMap<>();
 
 
+
     /**
      * Returns the document paths for <code>componentConfiguration</code> including its descendant
      * {@link HstComponentConfiguration}s. A document path is an method from the {@link ParametersInfo} that is
@@ -56,30 +58,45 @@ public class DocumentParamsScanner {
      */
     public static List<String> findDocumentPathsRecursive(final HstComponentConfiguration componentConfiguration,
                                                           final ClassLoader classLoader) {
-        final ArrayList<String> populate = new ArrayList<>();
-        findDocumentPathsRecursive(componentConfiguration, populate, classLoader);
-        return populate;
+        return findDocumentPathsRecursive(componentConfiguration, classLoader, config -> true);
+    }
 
+    /**
+     * Returns the same as {@link #findDocumentPathsRecursive(org.hippoecm.hst.configuration.components.HstComponentConfiguration, ClassLoader)}
+     * only this time during recursive scanning of the {@code componentConfiguration} and its descendants, the scanning
+     * can be stopped when the {@link java.util.function.Predicate} returns false for a {@link org.hippoecm.hst.configuration.components.HstComponentConfiguration}
+     * @see #findDocumentPathsRecursive(org.hippoecm.hst.configuration.components.HstComponentConfiguration, ClassLoader)
+     */
+    public static List<String> findDocumentPathsRecursive(final HstComponentConfiguration componentConfiguration,
+                                                          final ClassLoader classLoader,
+                                                          final Predicate<HstComponentConfiguration> predicate) {
+        final ArrayList<String> populate = new ArrayList<>();
+        findDocumentPathsRecursive(componentConfiguration, populate, classLoader, predicate);
+        return populate;
     }
 
     private static void findDocumentPathsRecursive(final HstComponentConfiguration config,
                                                    final List<String> populate,
-                                                   final ClassLoader classLoader) {
-
+                                                   final ClassLoader classLoader,
+                                                   final Predicate<HstComponentConfiguration> predicate) {
+        if (!predicate.test(config)) {
+            log.debug("Skip '{}' plus descendants because of predicate '{}'", config, predicate);
+            return;
+        }
         final String componentClassName = config.getComponentClassName();
-        if (StringUtils.isNotEmpty(componentClassName)) {
+        if (!isEmpty(componentClassName)) {
             Set<String> parameterNames = getNames(componentClassName, classLoader);
 
             for (String param : parameterNames) {
                 String documentPath = config.getParameter(param);
-                if (StringUtils.isNotEmpty(documentPath)) {
+                if (!isEmpty(documentPath)) {
                     populate.add(documentPath);
                 }
                 // add variants as well
                 for (String prefix : config.getParameterPrefixes()) {
                     final String prefixedParam = ConfigurationUtils.createPrefixedParameterName(prefix, param);
                     String variantDocumentPath = config.getParameter(prefixedParam);
-                    if (StringUtils.isNotEmpty(variantDocumentPath)) {
+                    if (!isEmpty(variantDocumentPath)) {
                         populate.add(variantDocumentPath);
                     }
                 }
@@ -87,8 +104,12 @@ public class DocumentParamsScanner {
         }
 
         for (HstComponentConfiguration child : config.getChildren().values()) {
-            findDocumentPathsRecursive(child, populate, classLoader);
+            findDocumentPathsRecursive(child, populate, classLoader, predicate);
         }
+    }
+
+    private static boolean isEmpty(final String str) {
+        return str == null || str.length() == 0;
     }
 
     /**

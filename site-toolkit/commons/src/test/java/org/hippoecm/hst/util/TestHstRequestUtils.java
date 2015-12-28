@@ -15,10 +15,13 @@
  */
 package org.hippoecm.hst.util;
 
+import static org.easymock.EasyMock.createControl;
 import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
+import static org.hippoecm.hst.core.container.ContainerConstants.HST_REQUEST_CONTEXT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -27,7 +30,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.container.HstContainerURL;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.junit.Test;
 
 /**
@@ -160,4 +166,55 @@ public class TestHstRequestUtils {
         assertEquals("http",farthestRequestScheme);
     }
 
+    @Test
+    public void testNoContextExternalRequestUrlWithoutQueryString() {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getRequestURL()).andReturn(new StringBuffer("http://localhost/site/foo/bar")).anyTimes();
+        expect(request.getQueryString()).andReturn("foo=bar&lux=bar").anyTimes();
+        replay(request);
+        final String externalRequestUrl = HstRequestUtils.getExternalRequestUrl(request, false);
+        assertEquals("http://localhost/site/foo/bar",externalRequestUrl);
+    }
+    @Test
+    public void testNoContextExternalRequestUrlWithQueryString() {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getRequestURL()).andReturn(new StringBuffer("http://localhost/site/foo/bar")).anyTimes();
+        expect(request.getQueryString()).andReturn("foo=bar&lux=bar").anyTimes();
+        replay(request);
+        final String externalRequestUrl = HstRequestUtils.getExternalRequestUrl(request, true);
+        assertEquals("http://localhost/site/foo/bar?foo=bar&lux=bar",externalRequestUrl);
+    }
+
+    @Test
+    public void testExternalRequestUrlWithoutQueryString() {
+        HttpServletRequest request = setupMocks();
+        final String externalRequestUrl = HstRequestUtils.getExternalRequestUrl(request, false);
+        assertEquals("http://www.example.com/foo/bar",externalRequestUrl);
+    }
+
+    @Test
+    public void testExternalRequestUrlWitQueryString() {
+        HttpServletRequest request = setupMocks();
+        final String externalRequestUrl = HstRequestUtils.getExternalRequestUrl(request, true);
+        assertEquals("http://www.example.com/foo/bar?foo=bar&lux=bar",externalRequestUrl);
+    }
+
+    private HttpServletRequest setupMocks() {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        HstRequestContext context = createNiceMock(HstRequestContext.class);
+        VirtualHost virtualHost = createNiceMock(VirtualHost.class);
+        HstContainerURL baseURL = createNiceMock(HstContainerURL.class);
+
+        expect(baseURL.getRequestPath()).andReturn("/foo/bar");
+        expect(context.getBaseURL()).andReturn(baseURL);
+        expect(context.getVirtualHost()).andReturn(virtualHost).anyTimes();
+        expect(virtualHost.getBaseURL(eq(request))).andReturn("http://www.example.com").anyTimes();
+        expect(virtualHost.isContextPathInUrl()).andReturn(false).anyTimes();
+        // some ip address which is however not the matched host but the internal server that runs the load balancer for example
+        expect(request.getRequestURL()).andReturn(new StringBuffer("10.10.100.84/foo/bar")).anyTimes();
+        expect(request.getQueryString()).andReturn("foo=bar&lux=bar").anyTimes();
+        expect(request.getAttribute(eq(HST_REQUEST_CONTEXT))).andReturn(context);
+        replay(request, baseURL, context, virtualHost);
+        return request;
+    }
 }

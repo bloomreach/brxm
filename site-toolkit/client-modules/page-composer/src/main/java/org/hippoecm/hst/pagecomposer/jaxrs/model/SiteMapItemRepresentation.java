@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
@@ -59,6 +60,7 @@ public class SiteMapItemRepresentation {
     private boolean containsWildCard;
     private boolean containsAny;
     private boolean isExplicitElement;
+    private Location parentLocation;
 
     // whether the page has at least one container item in its page definition.
     // Note that although the backing {@link HstComponentConfiguration} might have containers,
@@ -120,8 +122,28 @@ public class SiteMapItemRepresentation {
         localParameters = item.getLocalParameters();
         roles = item.getRoles();
 
+        parentLocation = findParentLocation(mount, item);
+
         return this;
 
+    }
+
+    Location findParentLocation(final Mount mount, final HstSiteMapItem item) {
+        String prefix = mount.getVirtualHost().getHostName();
+        if (StringUtils.isNotEmpty(mount.getMountPath())) {
+            prefix += mount.getMountPath();
+        }
+        if (item.getParentItem() == null) {
+            return new Location(prefix + "/", null);
+        } else {
+            pathInfo =  HstSiteMapUtils.getPath(item.getParentItem(), null);
+            if (pathInfo.equals(HstSiteMapUtils.getPath(mount, mount.getHomePage()))) {
+                pathInfo = "/";
+            } else if (!pathInfo.startsWith("/")) {
+                pathInfo = "/" + pathInfo;
+            }
+            return  new Location(prefix + pathInfo + "/", ((CanonicalInfo)item.getParentItem()).getCanonicalIdentifier());
+        }
     }
 
     private boolean hasContainerItemInPageDefinition(final HstComponentConfiguration root) {
@@ -353,4 +375,11 @@ public class SiteMapItemRepresentation {
         this.hasContainerItemInPageDefinition = hasContainerItemInPageDefinition;
     }
 
+    public Location getParentLocation() {
+        return parentLocation;
+    }
+
+    public void setParentLocation(final Location parentLocation) {
+        this.parentLocation = parentLocation;
+    }
 }

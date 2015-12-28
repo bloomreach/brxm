@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
+public class FeaturesRepresentation {
 
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.AbstractHelper;
+    private boolean crossChannelPageCopySupported;
 
-/**
- * @deprecated since HST 3.2.0 : Use {@link ConfigurationExistsValidator} instead
- */
-@Deprecated
-public class CurrentPreviewConfigurationValidator extends ConfigurationExistsValidator {
-
-    public CurrentPreviewConfigurationValidator(final String id, final AbstractHelper helper){
-        super(id, helper);
-
+    public boolean isCrossChannelPageCopySupported() {
+        return crossChannelPageCopySupported;
     }
 
+    public void setCrossChannelPageCopySupported(final boolean crossChannelPageCopySupported) {
+        this.crossChannelPageCopySupported = crossChannelPageCopySupported;
+    }
 }

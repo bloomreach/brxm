@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,8 +18,10 @@ package org.hippoecm.hst.configuration.cache;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
@@ -61,32 +63,10 @@ public class CompositeConfigurationNodes {
 
         // Add all the explicitly inherited hst:configuration nodes.
         if (configurationRootNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM)) {
-
+            final Set<String> alreadyInherited = new HashSet<>();
             String[] inherits = configurationRootNode.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM);
             for (String inheritPath : inherits) {
-                if (!inheritPath.startsWith("../")) {
-                    log.warn("hst:inheritsfrom property must start with ../ but this is not the case for '{}'. We skip this inherit", configurationRootNode.getValueProvider().getPath());
-                    continue;
-                }
-                String hstConfigsInheritedRelPath = inheritPath.substring(3);
-
-                String absHstConfigsInheritedPath = configurationsNode.getValueProvider().getPath() + "/" + hstConfigsInheritedRelPath;
-                // regardless whether absHstConfigsInheritedPath exists or not, add it to the compositeConfigurationDependencyPaths : If it gets
-                // added later on, it does impact this CompositeConfigurationNodes
-                compositeConfigurationDependenyPaths.add(absHstConfigsInheritedPath);
-                compositeConfigurationDependenyPaths.addAll(createDependencyPaths(absHstConfigsInheritedPath, relPaths, false));
-                HstNode inheritConfig = configurationsNode.getNode(hstConfigsInheritedRelPath);
-                if (inheritConfig != null && isValidInheritedNode(inheritConfig)) {
-                    orderedRootConfigurationNodeInheritanceList.add(inheritConfig);
-                    if (inheritConfig.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM)) {
-                        log.warn("Skipping inheritfrom property for configuration node '{}' because this node is already inherit. Not allowed to inherit again", inheritConfig.getValueProvider().getPath());
-                    }
-                } else {
-                    log.error("Relative inherit path '{}' for node '{}' does not point to a node of type " +
-                                    "'{}' or '{}', or it does not point to a child node of '{}', or it does not exist. Fix this path.",
-                            new String[]{inheritPath, configurationRootNode.getValueProvider().getPath(),
-                                    NODETYPE_HST_CONFIGURATION, NODETYPE_HST_WORKSPACE, NODENAME_HST_WORKSPACE});
-                }
+                addInherited(configurationRootNode, configurationsNode, inheritPath, relPaths, alreadyInherited);
             }
         }
 
@@ -95,6 +75,82 @@ public class CompositeConfigurationNodes {
         if (defaultConfigurationRootHstNode != null) {
             orderedRootConfigurationNodeInheritanceList.add(defaultConfigurationRootHstNode);
         }
+    }
+
+    private void addInherited(final HstNode configurationRootNode, final HstNode configurationsNode,
+                              final String inheritPath, final String[] relPaths, final Set<String> alreadyInherited) {
+
+
+        String hstConfigsInheritedRelPath = inheritPath.substring(3);
+        String absHstConfigsInheritedPath = configurationsNode.getValueProvider().getPath() + "/" + hstConfigsInheritedRelPath;
+        HstNode inheritConfig = configurationsNode.getNode(hstConfigsInheritedRelPath);
+        // regardless whether absHstConfigsInheritedPath exists or not, add it to the compositeConfigurationDependencyPaths : If it gets
+        // added later on, it does impact this CompositeConfigurationNodes
+        compositeConfigurationDependenyPaths.add(absHstConfigsInheritedPath);
+        compositeConfigurationDependenyPaths.addAll(createDependencyPaths(absHstConfigsInheritedPath, relPaths, false));
+        if (inheritConfig == null) {
+            log.debug("inherited configuration for '{}' is null", hstConfigsInheritedRelPath);
+            return;
+        }
+        if (alreadyInherited.contains(inheritConfig.getValueProvider().getIdentifier()  + "-" + inheritPath)) {
+            log.debug("Already inherited configuration '{}' for '{}'", configurationRootNode.getValueProvider().getPath(), inheritPath);
+            return;
+        }
+        alreadyInherited.add(inheritConfig.getValueProvider().getIdentifier() + "-" + inheritPath);
+
+        if (inheritConfig != null && isValidInheritedNode(inheritConfig)) {
+            orderedRootConfigurationNodeInheritanceList.add(inheritConfig);
+
+            HstNode rootInheritedConfiguration = getHstConfiguration(inheritConfig);
+            if (rootInheritedConfiguration.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM)) {
+                String[] cascadingInheritedPaths = rootInheritedConfiguration.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM);
+                for (String cascadingInheritedPath : cascadingInheritedPaths) {
+                    if (hstConfigsInheritedRelPath.contains("/")) {
+                        // inheritance is something like ../common/hst:workspace or ../common/hst:workspace/hst:pages
+                        // only inherit via cascading the same relative path
+                        final String relPath = StringUtils.substringAfter(hstConfigsInheritedRelPath, "/");
+                        if (cascadingInheritedPath.endsWith(hstConfigsInheritedRelPath)) {
+                            // if inherited config exists, inherit, otherwise skip
+                            final HstNode cascading = configurationsNode.getNode(StringUtils.substringBefore(hstConfigsInheritedRelPath, "/"));
+                            if (cascading == null) {
+                                log.debug("No cascading config present at '{}' for '{}'. Skip it.", relPath, configurationRootNode.getValueProvider().getPath());
+                            } else {
+                                addInherited(cascading, configurationsNode, cascadingInheritedPath, relPaths, alreadyInherited);
+                            }
+                        } else {
+                            log.debug("Do not cascade inheritance for '{}' for '{}'", cascadingInheritedPath, configurationRootNode.getValueProvider().getPath());
+                        }
+                    } else {
+                        // cascading inheritance
+                        final HstNode cascading = configurationsNode.getNode(hstConfigsInheritedRelPath);
+                        if (cascading == null) {
+                            log.debug("No cascading config present at '{}' for '{}'. Skip it.", hstConfigsInheritedRelPath, configurationRootNode.getValueProvider().getPath());
+                        } else {
+                            addInherited(cascading, configurationsNode, cascadingInheritedPath, relPaths, alreadyInherited);
+                        }
+                    }
+                }
+            }
+        } else {
+            log.error("Relative inherit path '{}' for node '{}' does not point to a node of type " +
+                            "'{}' or '{}', or it does not point to a child node of '{}', or it does not exist. Fix this path.",
+                    new String[]{inheritPath, configurationRootNode.getValueProvider().getPath(),
+                            NODETYPE_HST_CONFIGURATION, NODETYPE_HST_WORKSPACE, NODENAME_HST_WORKSPACE});
+        }
+    }
+
+    private HstNode getHstConfiguration(final HstNode inheritConfig) {
+        if  (NODETYPE_HST_CONFIGURATION.equals(inheritConfig.getNodeTypeName())) {
+            return inheritConfig;
+        }
+        if (NODETYPE_HST_WORKSPACE.equals(inheritConfig.getNodeTypeName())) {
+            return inheritConfig.getParent();
+        }
+        if (NODETYPE_HST_WORKSPACE.equals(inheritConfig.getParent().getNodeTypeName())) {
+            return inheritConfig.getParent().getParent();
+        }
+        throw new IllegalArgumentException(String.format("Illegal Inherited configuration '%s' should not be possible at this point.",
+                inheritConfig.getValueProvider().getPath()));
     }
 
     /**
@@ -151,11 +207,11 @@ public class CompositeConfigurationNodes {
                         // remove the hst:workspace part : in inherited HstNode already
                         workspaceAccountedRelativeInheritPath = relativeInheritPath.substring(NODENAME_HST_WORKSPACE.length() + 1);
                     } else if (inherited.getParent().getNodeTypeName().equals(NODETYPE_HST_WORKSPACE)
-                            && inherited.getValueProvider().getPath().endsWith(relativeInheritPath) ) {
+                            && inherited.getValueProvider().getPath().endsWith(relativeInheritPath)) {
 
-                            log.debug("Merging explicitly inherited workspace configuration for '{}'",
-                                    inherited.getValueProvider().getPath());
-                            // hst:inheritsfrom is something like ../common/hst:workspace/hst:pages
+                        log.debug("Merging explicitly inherited workspace configuration for '{}'",
+                                inherited.getValueProvider().getPath());
+                        // hst:inheritsfrom is something like ../common/hst:workspace/hst:pages
                         workspaceAccountedRelativeInheritPath = "";
 
                     } else {

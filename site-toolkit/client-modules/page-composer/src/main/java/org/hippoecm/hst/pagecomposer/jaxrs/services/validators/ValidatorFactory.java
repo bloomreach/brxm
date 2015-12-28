@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,27 +45,52 @@ public class ValidatorFactory {
     }
 
     public Validator getNotNullValidator(final Object notNull, final ClientError clientError) {
-        return new NotNullValidator(notNull, clientError);
+        return getNotNullValidator(notNull, clientError, null);
     }
 
-    public Validator getNodePathPrefixValidator(String nodePathPrefix, String id, String requiredNodeType) {
+    public Validator getNotNullValidator(final Object notNull, final ClientError clientError, final String errorMessage) {
+        return new NotNullValidator(notNull, clientError, errorMessage);
+    }
+
+    public Validator getNodePathPrefixValidator(final String nodePathPrefix, final String id, final String requiredNodeType) {
         return new NodePathPrefixValidator(nodePathPrefix, id, requiredNodeType);
     }
 
-    public Validator getSiteMenuItemRepresentationValidator(Predicate<String> uriValidator, SiteMenuItemRepresentation representation) {
+    public Validator getSiteMenuItemRepresentationValidator(final Predicate<String> uriValidator, final SiteMenuItemRepresentation representation) {
         return new SiteMenuItemRepresentationValidator(uriValidator, representation);
     }
 
-    public Validator getCurrentPreviewConfigurationValidator(String id, SiteMapHelper siteMapHelper) {
-        return new CurrentPreviewConfigurationValidator(id, siteMapHelper);
+    /**
+     * @deprecated since HST 3.2.0. Use {@link #getConfigurationExistsValidator} instead
+     */
+    @Deprecated
+    public Validator getCurrentPreviewConfigurationValidator(final String id, final SiteMapHelper siteMapHelper) {
+        return getConfigurationExistsValidator(id, siteMapHelper);
     }
 
-    public Validator getPrototypePageValidator(String prototypeUuid) {
+    public Validator getConfigurationExistsValidator(final String id, final SiteMapHelper siteMapHelper) {
+        return new ConfigurationExistsValidator(id, siteMapHelper);
+    }
+
+    public Validator getConfigurationExistsValidator(final String id, final String mountId, final SiteMapHelper siteMapHelper) {
+        return new ConfigurationExistsValidator(id, mountId, siteMapHelper);
+    }
+
+
+    public Validator getPrototypePageValidator(final String prototypeUuid) {
         return new PrototypePageValidator(prototypeUuid);
     }
 
-    public Validator getHasPreviewConfigurationValidator(PageComposerContextService pageComposerContextService) {
+    public Validator getHasPreviewConfigurationValidator(final PageComposerContextService pageComposerContextService) {
         return new HasPreviewConfigurationValidator(pageComposerContextService);
+    }
+    public Validator getHasPreviewConfigurationValidator(final PageComposerContextService pageComposerContextService,
+                                                         final String mountId) {
+        return new HasPreviewConfigurationValidator(pageComposerContextService, mountId);
+    }
+
+    public Validator getHasWorkspaceConfigurationValidator(final String mountId) {
+        return new HasWorkspaceConfigurationValidator(mountId);
     }
 
     public Validator getNameValidator(String name) {

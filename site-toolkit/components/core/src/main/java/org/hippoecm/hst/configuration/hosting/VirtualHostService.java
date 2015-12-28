@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.model.HstNode;
@@ -34,7 +33,9 @@ import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isValidContextPath;
+import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
 
 public class VirtualHostService implements MutableVirtualHost {
 
@@ -174,9 +175,9 @@ public class VirtualHostService implements MutableVirtualHost {
 
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
             schemeNotMatchingResponseCode = (int)virtualHostNode.getValueProvider().getLong(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE).longValue();
-            if (!ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode(schemeNotMatchingResponseCode)) {
+            if (!isSupportedSchemeNotMatchingResponseCode(schemeNotMatchingResponseCode)) {
                 log.warn("Invalid '{}' configured on '{}'. Use inherited value. Supported values are '{}'", new String[]{HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE,
-                        virtualHostNode.getValueProvider().getPath(), ConfigurationUtils.suppertedSchemeNotMatchingResponseCodesAsString()});
+                        virtualHostNode.getValueProvider().getPath(), supportedSchemeNotMatchingResponseCodesAsString()});
                 schemeNotMatchingResponseCode = -1;
             }
         }

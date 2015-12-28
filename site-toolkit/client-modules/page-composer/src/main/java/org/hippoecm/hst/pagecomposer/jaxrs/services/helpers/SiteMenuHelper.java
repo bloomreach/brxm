@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
@@ -34,6 +35,12 @@ public class SiteMenuHelper extends AbstractHelper {
     public HstSiteMenuConfiguration getConfigObject(final String itemId) {
         final HstSite editingPreviewSite = pageComposerContextService.getEditingPreviewSite();
         return getMenu(editingPreviewSite, itemId);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public HstSiteMenuConfiguration getConfigObject(final String itemId, final Mount mount) {
+        return getMenu(mount.getHstSite(), itemId);
     }
 
     public HstSiteMenuConfiguration getMenu(HstSite site, String menuId) {

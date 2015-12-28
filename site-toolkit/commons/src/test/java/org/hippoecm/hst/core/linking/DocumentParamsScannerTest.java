@@ -16,14 +16,12 @@
 package org.hippoecm.hst.core.linking;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
+import java.util.function.Predicate;
 
 import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
@@ -175,7 +173,10 @@ public class DocumentParamsScannerTest {
         expect(child2.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
 
         expect(root.getParameterPrefixes()).andReturn(Collections.emptySet()).anyTimes();
-        expect(root.getChildren()).andReturn(ImmutableMap.of("left", child1, "right", child2)).anyTimes();
+        Map<String, HstComponentConfiguration> expectedChildren = new HashMap<>();
+        expectedChildren.put("left", child1);
+        expectedChildren.put("right", child2);
+        expect(root.getChildren()).andReturn(expectedChildren).anyTimes();
         replay(root, child1, child2);
 
         final List<String> documentPaths = DocumentParamsScanner.findDocumentPathsRecursive(root, classLoader);
@@ -186,30 +187,7 @@ public class DocumentParamsScannerTest {
 
     @Test
     public void jcrPath_and_documentLink_from_ComponentConfiguration_tree_with_variants() {
-        HstComponentConfiguration root = EasyMock.createNiceMock(HstComponentConfiguration.class);
-        expect(root.getComponentClassName()).andReturn(GenericHstComponent.class.getName());
-
-        HstComponentConfiguration child1 = EasyMock.createNiceMock(HstComponentConfiguration.class);
-        expect(child1.getComponentClassName()).andReturn(JcrPathComponent.class.getName());
-        expect(child1.getParameter(eq("news-jcrPath"))).andReturn("/jcrPathNews");
-        expect(child1.getParameter(
-                eq(ConfigurationUtils.createPrefixedParameterName("professional","news-jcrPath"))))
-                .andReturn("/jcrPathNewsProfessional");
-        expect(child1.getParameterPrefixes()).andReturn(ImmutableSet.of("professional")).anyTimes();
-        expect(child1.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
-
-        HstComponentConfiguration child2 = EasyMock.createNiceMock(HstComponentConfiguration.class);
-        expect(child2.getComponentClassName()).andReturn(DocumentLinkComponent.class.getName());
-        expect(child2.getParameter(eq("news-documentLink"))).andReturn("/documentLinkNews");
-        expect(child2.getParameter(
-                eq(ConfigurationUtils.createPrefixedParameterName("professional","news-documentLink"))))
-                .andReturn("/documentLinkNewsProfessional");
-        expect(child2.getParameterPrefixes()).andReturn(ImmutableSet.of("professional")).anyTimes();
-        expect(child2.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
-
-        expect(root.getParameterPrefixes()).andReturn(Collections.emptySet()).anyTimes();
-        expect(root.getChildren()).andReturn(ImmutableMap.of("left", child1, "right", child2)).anyTimes();
-        replay(root, child1, child2);
+        HstComponentConfiguration root = setUpHstConfiguration();
 
         final List<String> documentPaths = DocumentParamsScanner.findDocumentPathsRecursive(root, classLoader);
         assertEquals(4, documentPaths.size());
@@ -218,5 +196,67 @@ public class DocumentParamsScannerTest {
         assertTrue(documentPaths.contains("/jcrPathNewsProfessional"));
         assertTrue(documentPaths.contains("/documentLinkNewsProfessional"));
 
+    }
+
+    private HstComponentConfiguration setUpHstConfiguration() {
+        HstComponentConfiguration root = EasyMock.createNiceMock(HstComponentConfiguration.class);
+        expect(root.getComponentClassName()).andReturn(GenericHstComponent.class.getName());
+
+        HstComponentConfiguration child1 = EasyMock.createNiceMock(HstComponentConfiguration.class);
+        expect(child1.getComponentClassName()).andReturn(JcrPathComponent.class.getName());
+        expect(child1.getParameter(eq("news-jcrPath"))).andReturn("/jcrPathNews");
+        expect(child1.getParameter(
+                eq(ConfigurationUtils.createPrefixedParameterName("professional", "news-jcrPath"))))
+                .andReturn("/jcrPathNewsProfessional");
+        Set<String> expectedParameterPrefixes = new HashSet<>();
+        expectedParameterPrefixes.add("professional");
+        expect(child1.getParameterPrefixes()).andReturn(expectedParameterPrefixes).anyTimes();
+        expect(child1.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
+
+        HstComponentConfiguration child2 = EasyMock.createNiceMock(HstComponentConfiguration.class);
+        expect(child2.getComponentClassName()).andReturn(DocumentLinkComponent.class.getName());
+        expect(child2.getParameter(eq("news-documentLink"))).andReturn("/documentLinkNews");
+        expect(child2.getParameter(
+                eq(ConfigurationUtils.createPrefixedParameterName("professional","news-documentLink"))))
+                .andReturn("/documentLinkNewsProfessional");
+        expect(child2.getParameterPrefixes()).andReturn(expectedParameterPrefixes).anyTimes();
+        expect(child2.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
+
+        expect(root.getParameterPrefixes()).andReturn(Collections.emptySet()).anyTimes();
+        Map<String, HstComponentConfiguration> expectedChildren = new HashMap<>();
+        expectedChildren.put("left", child1);
+        expectedChildren.put("right", child2);
+        expect(root.getChildren()).andReturn(expectedChildren).anyTimes();
+        expect(root.getChildByName("child1")).andReturn(child1).anyTimes();
+        expect(root.getChildByName("child2")).andReturn(child2).anyTimes();
+        replay(root, child1, child2);
+        return root;
+    }
+
+
+    @Test
+    public void test_with_predicate() {
+        HstComponentConfiguration root = setUpHstConfiguration();
+        final HstComponentConfiguration toSkip = root.getChildByName("child1");
+        final List<String> documentPaths = DocumentParamsScanner.findDocumentPathsRecursive(root, classLoader, new SkipChildPredicate(toSkip));
+        assertEquals(2, documentPaths.size());
+        assertTrue(documentPaths.contains("/documentLinkNews"));
+        assertTrue(documentPaths.contains("/documentLinkNewsProfessional"));
+    }
+
+    class SkipChildPredicate implements Predicate<HstComponentConfiguration> {
+
+        final HstComponentConfiguration toSkip;
+        SkipChildPredicate(final HstComponentConfiguration toSkip){
+            this.toSkip = toSkip;
+        }
+
+        @Override
+        public boolean test(final HstComponentConfiguration componentConfiguration) {
+            if (toSkip == componentConfiguration) {
+                return false;
+            }
+            return true;
+        }
     }
 }
