@@ -46,6 +46,11 @@ public class MockComponentManager implements ComponentManager {
         return new String[0];
     }
 
+    /**
+     * @deprecated deprecated since since 3.2.0
+     * @see ComponentManager#setServletConfig(javax.servlet.ServletConfig)
+     */
+    @Deprecated
     @Override
     public void setServletConfig(final ServletConfig servletConfig) {
         this.servletConfig = servletConfig;
@@ -54,6 +59,11 @@ public class MockComponentManager implements ComponentManager {
         }
     }
 
+    /**
+     * @deprecated deprecated since since 3.2.0
+     * @see ComponentManager#getServletConfig()
+     */
+    @Deprecated
     @Override
     public ServletConfig getServletConfig() {
         return servletConfig;

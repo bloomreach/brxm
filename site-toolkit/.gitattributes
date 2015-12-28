@@ -728,8 +728,11 @@ components/core/src/main/java/org/hippoecm/hst/site/container/ApplicationEventMe
 components/core/src/main/java/org/hippoecm/hst/site/container/BlockingEhCacheFactoryBean.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/ComponentManagerFacade.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/container/DefaultComponentManagerApplicationContext.java -text
+components/core/src/main/java/org/hippoecm/hst/site/container/DefaultHstSiteConfigurer.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/container/FilteringByExpressionListableBeanFactory.java -text
+components/core/src/main/java/org/hippoecm/hst/site/container/HstContextLoaderListener.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/container/HstSiteConfigServlet.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/site/container/HstSiteConfigurer.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/container/ModuleDescriptorUtils.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/OverridingByAttributesPropertyPlaceholderConfigurer.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/container/PropertiesUtils.java -text
@@ -861,7 +864,7 @@ components/core/src/test/java/org/hippoecm/hst/site/container/AlwaysFailingOnSta
 components/core/src/test/java/org/hippoecm/hst/site/container/MyServletContextAwareSpringBean.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/SingleBean.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/SystemDefaultSessionPoolConfigurationsIT.java -text
-components/core/src/test/java/org/hippoecm/hst/site/container/TestHstSiteConfigServlet.java svneol=native#text/plain
+components/core/src/test/java/org/hippoecm/hst/site/container/TestDefaultHstSiteConfigurer.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/container/TestModuleDescriptorUtils.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/TestResourceFactoryBean.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/TestSpringComponentManager.java svneol=native#text/plain

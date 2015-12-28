@@ -102,6 +102,11 @@ public class SpringComponentManager implements ComponentManager {
         setServletContext(servletContext);
     }
 
+    /**
+     * @deprecated deprecated since since 3.2.0
+     * @see ComponentManager#setServletConfig(javax.servlet.ServletConfig)
+     */
+    @Deprecated
     public void setServletConfig(ServletConfig servletConfig) {
         this.servletConfig = servletConfig;
         if (servletConfig != null) {
@@ -109,6 +114,11 @@ public class SpringComponentManager implements ComponentManager {
         }
     }
 
+    /**
+     * @deprecated deprecated since since 3.2.0
+     * @see ComponentManager#getServletConfig()
+     */
+    @Deprecated
     public ServletConfig getServletConfig() {
         return this.servletConfig;
     }
