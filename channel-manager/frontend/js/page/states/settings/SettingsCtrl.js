@@ -291,7 +291,7 @@
               // 2. the page is not the homepage
               // 3. the page is not locked by someone else
               $scope.state.isLocked = angular.isString(currentPage.lockedBy) && currentPage.lockedBy !== ConfigService.cmsUser;
-              $scope.state.isEditable = !$scope.page.isHomePage && !$scope.state.isLocked && currentPage.workspaceConfiguration;
+              $scope.state.isEditable = !$scope.page.isHomePage && !$scope.state.isLocked && currentPage.workspaceConfiguration && !currentPage.inherited;
               $scope.state.isCopyable = !$scope.state.isLocked;
 
               // lock information
