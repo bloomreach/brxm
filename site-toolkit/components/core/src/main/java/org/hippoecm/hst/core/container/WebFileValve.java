@@ -25,6 +25,9 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.cache.CacheElement;
@@ -53,8 +56,14 @@ public class WebFileValve extends AbstractBaseOrderableValve {
 
     private HstCache webFileCache;
 
+    Cache negativeWebFileCache;
+
     public void setWebFileCache(final HstCache webFileCache) {
         this.webFileCache = webFileCache;
+    }
+
+    public void setNegativeWebFileCacheBuilder(final CacheBuilder negativeWebFileCacheBuilder) {
+        this.negativeWebFileCache = negativeWebFileCacheBuilder.build();
     }
 
     @Override
@@ -120,8 +129,10 @@ public class WebFileValve extends AbstractBaseOrderableValve {
         final String version = getVersion(requestContext, contentPath);
         final String cacheKey = createCacheKey(bundleName, contentPath, version);
 
+        if (negativeWebFileCache.getIfPresent(cacheKey) != null) {
+            throw new WebFileNotFoundException("Negative cache contains requested web file.");
+        }
         final CacheElement cacheElement = webFileCache.get(cacheKey);
-
         if (cacheElement == null) {
             return cacheWebFile(webFileBundle, contentPath, version, cacheKey);
         } else {
@@ -195,9 +206,18 @@ public class WebFileValve extends AbstractBaseOrderableValve {
             final CacheElement element = webFileCache.createElement(cacheKey, cacheableWebFile);
             webFileCache.put(element);
             return cacheableWebFile;
-        } catch (Exception e) {
-            clearBlockingLock(cacheKey);
+        } catch (WebFileNotFoundException e) {
+            if (log.isDebugEnabled()) {
+                log.info("Cannot serve binary for '{}'.", contentPath, e);
+            } else {
+                log.info("Cannot serve binary for '{}' : ", contentPath, e.toString());
+            }
+            negativeWebFileCache.put(cacheKey, Boolean.TRUE);
             throw e;
+         } catch (Exception e) {
+            throw e;
+        } finally {
+            clearBlockingLock(cacheKey);
         }
     }
 
