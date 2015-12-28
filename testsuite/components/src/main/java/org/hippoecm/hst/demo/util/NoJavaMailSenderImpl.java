@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.demo.util;
 
+import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
@@ -24,6 +26,21 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 public class NoJavaMailSenderImpl extends JavaMailSenderImpl {
 
     private static final Logger log = LoggerFactory.getLogger(NoJavaMailSenderImpl.class);
+
+    public void init() {
+        // HSTTWO-3472: Test if we can access HST ComponentManager in a bean initialized by
+        //              Spring Framework WebApplicationContext loaded by ContextLoaderListener
+        final ComponentManager compMgr = HstServices.getComponentManager();
+
+        if (compMgr == null) {
+            log.error("!!!!!!!!!!!! HST ComponentManager is not available from Spring Framework bean! :-(");
+        } else {
+            log.info("!!!!!!!!!!!! HST ComponentManager is available from Spring Framework bean! :-)");
+        }
+    }
+
+    public void destroy() {
+    }
 
     @Override
     public void send(final SimpleMailMessage simpleMessage) throws MailException {
