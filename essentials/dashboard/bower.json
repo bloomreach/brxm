@@ -5,6 +5,7 @@
     "angular": "1.4.8",
     "angular-sanitize": "1.4.8",
     "angular-ui-router": "0.2.15",
+    "angular-bootstrap": "0.14.3",
     "hippo-theme": "./target/dependency/hippo-theme.zip",
     "jquery": "2.1.4"
   },
