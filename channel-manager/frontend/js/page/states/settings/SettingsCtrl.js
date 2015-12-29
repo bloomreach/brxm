@@ -212,12 +212,10 @@
         }
         
         function loadAvailableChannelsForPageCopy () {
-          if ($scope.crossChannelPageCopySupported) {
-            return ChannelService.getPreviewChannels()
-              .then(function (data) {
-                $scope.availableChannelsForPageCopy = data;
-              }, setErrorFeedback);
-          }
+          return ChannelService.getPreviewChannels()
+            .then(function (data) {
+              $scope.availableChannelsForPageCopy = data;
+            }, setErrorFeedback);
         }
 
         function loadPageLocations (mountId) {
@@ -293,6 +291,18 @@
               $scope.state.isLocked = angular.isString(currentPage.lockedBy) && currentPage.lockedBy !== ConfigService.cmsUser;
               $scope.state.isEditable = !$scope.page.isHomePage && !$scope.state.isLocked && currentPage.workspaceConfiguration && !currentPage.inherited;
               $scope.state.isCopyable = !$scope.state.isLocked;
+              if ($scope.state.isCopyable) {
+                // check that current mount is part of $scope.availableChannelsForPageCopy
+                // namely channels that do not have their own hst:workspage with hst:pages and hst:sitemap cannot
+                // be used for copy page
+                for (var j = 0; j < $scope.availableChannelsForPageCopy.length; j++) {
+                  $scope.state.isCopyable = false;
+                  if ($scope.copy.mountId === $scope.availableChannelsForPageCopy[j].mountId) {
+                    $scope.state.isCopyable = true;
+                    break;
+                  }
+                }
+              }
 
               // lock information
               $scope.lock.owner = currentPage.lockedBy;
