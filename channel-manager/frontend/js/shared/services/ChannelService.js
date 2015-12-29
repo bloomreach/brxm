@@ -46,7 +46,7 @@
           var deferred = $q.defer();
 
           $http.get(ConfigService.apiUrlPrefix +
-            '/cafebabe-cafe-babe-cafe-babecafebabe./channels?preview=true&workspaceRequired=true')
+            '/cafebabe-cafe-babe-cafe-babecafebabe./channels?preview=true&workspacePagesRequired=true&workspaceSiteMapRequired=true')
             .success(function (response) {
               deferred.resolve(response.data);
             })
