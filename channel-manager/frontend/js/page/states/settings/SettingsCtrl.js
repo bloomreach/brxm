@@ -290,13 +290,12 @@
               // 3. the page is not locked by someone else
               $scope.state.isLocked = angular.isString(currentPage.lockedBy) && currentPage.lockedBy !== ConfigService.cmsUser;
               $scope.state.isEditable = !$scope.page.isHomePage && !$scope.state.isLocked && currentPage.workspaceConfiguration && !currentPage.inherited;
-              $scope.state.isCopyable = !$scope.state.isLocked;
-              if ($scope.state.isCopyable) {
+              $scope.state.isCopyable = false;
+              if (!$scope.state.isLocked) {
                 // check that current mount is part of $scope.availableChannelsForPageCopy
                 // namely channels that do not have their own hst:workspage with hst:pages and hst:sitemap cannot
                 // be used for copy page
                 for (var j = 0; j < $scope.availableChannelsForPageCopy.length; j++) {
-                  $scope.state.isCopyable = false;
                   if ($scope.copy.mountId === $scope.availableChannelsForPageCopy[j].mountId) {
                     $scope.state.isCopyable = true;
                     break;
