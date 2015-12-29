@@ -104,7 +104,7 @@
           animation: false
         });
         $uibTooltipProvider.setTriggers({
-          'tobiShow': 'tobiHide'
+          'show': 'hide'
         });
       }
     ]
