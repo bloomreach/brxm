@@ -6,10 +6,17 @@
   <#if menu.siteMenuItems??>
     <ul class="nav nav-pills">
       <#list menu.siteMenuItems as item>
-        <#if  item.selected || item.expanded>
-          <li class="active"><a href="<@hst.link link=item.hstLink/>">${item.name?html}</a></li>
+        <#if item.hstLink??>
+          <#assign href><@hst.link link=item.hstLink/></#assign>
+        <#elseif item.externalLink??>
+          <#assign href>${item.externalLink}</#assign>
         <#else>
-          <li><a href="<@hst.link link=item.hstLink/>">${item.name?html}</a></li>
+          <#assign href=''>
+        </#if>
+        <#if item.selected || item.expanded>
+          <li class="active"><a href="${href}">${item.name?html}</a></li>
+        <#else>
+          <li><a href="${href}">${item.name?html}</a></li>
         </#if>
       </#list>
     </ul>
