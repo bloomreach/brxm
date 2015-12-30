@@ -42,11 +42,11 @@
           return deferred.promise;
         };
 
-        channelService.getPageModifiableChannels = function () {
+        channelService.getPageModifiableChannels = function (previewConfigRequired) {
           var deferred = $q.defer();
 
           $http.get(ConfigService.apiUrlPrefix +
-            '/cafebabe-cafe-babe-cafe-babecafebabe./channels?preview=true&workspacePagesRequired=true&workspaceSiteMapRequired=true')
+            '/cafebabe-cafe-babe-cafe-babecafebabe./channels?previewConfigRequired=' + previewConfigRequired + '&workspacePagesRequired=true&workspaceSiteMapRequired=true')
             .success(function (response) {
               deferred.resolve(response.data);
             })

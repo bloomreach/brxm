@@ -212,7 +212,7 @@
         }
         
         function loadAvailableChannelsForPageCopy () {
-          return ChannelService.getPageModifiableChannels()
+          return ChannelService.getPageModifiableChannels(true)
             .then(function (data) {
               $scope.availableChannelsForPageCopy = data;
             }, setErrorFeedback);
