@@ -67,9 +67,6 @@
         $uibTooltipProvider.options({
           animation: false
         });
-        $uibTooltipProvider.setTriggers({
-          'show': 'hide'
-        });
       }
     ]
   );

@@ -72,13 +72,17 @@
         $scope.availableChannelsForPageCopy = [];
 
         $scope.crossChannelPageCopySupported = false;
-        
+
         $scope.tooltips = {
-          lastPathInfoElement: function () {
-            return determineLastPathInfoSegmentTooltip($scope.form);
-          },
-          copyLastPathInfoElement: function () {
-            return determineLastPathInfoSegmentTooltip($scope.copyForm);
+          lastPathInfoElement: function (form) {
+            if (form && form.$dirty && form.lastPathInfoElement) {
+              if (form.lastPathInfoElement.$error.required) {
+                return translate('URL_REQUIRED');
+              } else if (form.lastPathInfoElement.$error.illegalCharacters) {
+                return translate('URL_ILLEGAL_CHARACTERS', $scope.validation);
+              }
+            }
+            return '';
           },
           deleteButton: function () {
             if ($scope.page.isHomePage) {
@@ -210,7 +214,7 @@
               $scope.crossChannelPageCopySupported = data.crossChannelPageCopySupported;
             }, setErrorFeedback);
         }
-        
+
         function loadAvailableChannelsForPageCopy () {
           return ChannelService.getPageModifiableChannels(true)
             .then(function (data) {
@@ -309,17 +313,6 @@
 
               return currentPage;
             }, setErrorFeedback);
-        }
-
-        function determineLastPathInfoSegmentTooltip(form) {
-          if (form && form.$dirty) {
-            if (form.lastPathInfoElement.$error.required) {
-              return translate('URL_REQUIRED');
-            } else if (form.lastPathInfoElement.$error.illegalCharacters) {
-              return translate('URL_ILLEGAL_CHARACTERS', $scope.validation);
-            }
-          }
-          return '';
         }
       }
     ]);

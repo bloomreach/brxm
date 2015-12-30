@@ -69,8 +69,8 @@
              data-ng-required="true"
              data-ng-blur="EditMenuItemFormCtrl.saveTitle(form)"
              data-uib-tooltip="{{ EditMenuItemCtrl.fieldFeedbackMessage.title }}"
-             data-tooltip-trigger="show"
-             data-hippo-channel-tooltip-show="form.title.$invalid"
+             data-tooltip-trigger="none"
+             data-tooltip-is-open="form.title.$invalid"
              data-tooltip-placement="top">
       <span class="form-control-feedback" data-ng-show="form.title.$dirty">
         <hippo-icon ng-if="EditMenuItemCtrl.isSaving.title"
@@ -162,8 +162,8 @@
                data-show-focus="MenuItemCtrl.selectedMenuItem.linkType == 'EXTERNAL'"
                data-ng-blur="EditMenuItemCtrl.updateLinkDestination(form)"
                data-uib-tooltip="{{ EditMenuItemCtrl.fieldFeedbackMessage.url }}"
-               data-tooltip-trigger="show"
-               data-hippo-channel-tooltip-show="form.url.$invalid && MenuItemCtrl.selectedMenuItem.linkType === 'EXTERNAL'"
+               data-tooltip-trigger="none"
+               data-tooltip-is-open="form.url.$invalid && MenuItemCtrl.selectedMenuItem.linkType === 'EXTERNAL'"
                data-tooltip-placement="top">
         <span class="form-control-feedback" data-ng-show="form.url.$dirty">
           <hippo-icon ng-if="EditMenuItemCtrl.isSaving.link"
