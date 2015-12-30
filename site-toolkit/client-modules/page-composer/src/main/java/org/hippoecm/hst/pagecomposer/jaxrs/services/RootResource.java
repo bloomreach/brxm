@@ -74,7 +74,7 @@ public class RootResource extends AbstractConfigResource {
 
     @GET
     @Path("/channels")
-    public Response getChannels(@QueryParam("preview") final boolean preview,
+    public Response getChannels(@QueryParam("previewConfigRequired") final boolean previewConfigRequired,
                                 @QueryParam("workspacePagesRequired") final boolean workspacePagesRequired,
                                 @QueryParam("workspaceSiteMapRequired") final boolean workspaceSiteMapRequired) {
         final HstRequestContext requestContext = RequestContextProvider.get();
@@ -83,7 +83,7 @@ public class RootResource extends AbstractConfigResource {
             final List<Channel> channels = virtualHost.getVirtualHosts().getChannels(virtualHost.getHostGroupName())
                     .values()
                     .stream()
-                    .filter(channel -> channel.isPreview() == preview)
+                    .filter(channel -> previewConfigRequiredFiltered(channel, previewConfigRequired))
                     .filter(channel -> workspacePagesFiltered(channel, workspacePagesRequired))
                     .filter(channel -> workspaceSiteMapFiltered(channel, workspaceSiteMapRequired))
                     .collect(toList());
@@ -92,6 +92,13 @@ public class RootResource extends AbstractConfigResource {
             log.warn("Could not determine authorization", e);
             return error("Could not determine authorization", e);
         }
+    }
+
+    private boolean previewConfigRequiredFiltered(final Channel channel, final boolean previewConfigRequired) {
+        if (!previewConfigRequired) {
+            return true;
+        }
+        return channel.isPreview();
     }
 
     @GET
