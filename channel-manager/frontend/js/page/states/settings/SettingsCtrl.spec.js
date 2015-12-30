@@ -34,7 +34,7 @@ describe('Settings Controller', function () {
     PageService = jasmine.createSpyObj('PageService', ['getMountInfo', 'getCurrentPage']);
     $provide.value('hippo.channel.PageService', PageService);
 
-    ChannelService = jasmine.createSpyObj('ChannelService', ['getFeatures', 'getPreviewChannels']);
+    ChannelService = jasmine.createSpyObj('ChannelService', ['getFeatures', 'getCopyPageChannels']);
     $provide.value('hippo.channel.ChannelService', ChannelService);
 
     PrototypeService = jasmine.createSpyObj('PrototypeService', ['getPrototypes']);
@@ -80,7 +80,7 @@ describe('Settings Controller', function () {
         });
       });
 
-      ChannelService.getPreviewChannels.and.callFake(function() {
+      ChannelService.getCopyPageChannels.and.callFake(function() {
         return resolvedPromise([]);
       });
 

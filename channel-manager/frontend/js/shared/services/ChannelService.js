@@ -42,7 +42,7 @@
           return deferred.promise;
         };
 
-        channelService.getPreviewChannels = function () {
+        channelService.getCopyPageChannels = function () {
           var deferred = $q.defer();
 
           $http.get(ConfigService.apiUrlPrefix +
