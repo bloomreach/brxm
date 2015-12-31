@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 .hippo-editor {
   color: $editor-color;
   background: $editor-bgcolor;
@@ -241,7 +240,7 @@
     color: $dark-gray;
   }
 
-  .hippo-node-field-name-selection-listitem  & {
+  .hippo-node-field-name-selection-listitem & {
     padding: 0;
   }
 
@@ -331,14 +330,18 @@
     .hippo-editor-field-textarea,
     .dialog-link,
     .btn,
+    .cke,
     select {
       border-color: $validation-border !important;
     }
   }
 }
 
-.invalid > .hippo-editor-field-subfield .hippo-editor-field-value > .btn {
-  border-color: $validation-border !important;
+.invalid > .hippo-editor-field-subfield {
+  .cke,
+  > div > .hippo-editor-field-value > .btn:first-of-type {
+    border-color: $validation-border !important;
+  }
 }
 
 .hippo-editor-metadata {
