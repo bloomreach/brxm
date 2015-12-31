@@ -56,11 +56,11 @@
             </div>
             <div class="panel panel-default" ng-show="showDescription && plugin.imageUrls.length" style="max-width: 720px">
                 <div class="panel-body">
-                    <carousel interval="interval">
-                        <slide ng-repeat="slide in slides" active="slide.active">
+                    <uib-carousel interval="interval">
+                        <uib-slide ng-repeat="slide in slides" active="slide.active">
                             <img ng-src="{{slide.image}}">
-                        </slide>
-                    </carousel>
+                        </uib-slide>
+                    </uib-carousel>
                 </div>
             </div>
         </div>

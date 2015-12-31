@@ -32,9 +32,9 @@
                     selected: '='
                 },
                 templateUrl: 'directives/essentials-folder-picker.html',
-                controller: function ($scope, $rootScope, $modal, $log, $http) {
+                controller: function ($scope, $rootScope, $uibModal, $log, $http) {
                     $scope.open = function (size) {
-                        var modalInstance = $modal.open({
+                        var modalInstance = $uibModal.open({
                             templateUrl: 'tree-picker.html',
                             controller: ModalInstanceCtrl,
                             size: size,
@@ -65,17 +65,17 @@
                     //############################################
                     // MODAL
                     //############################################
-                    var ModalInstanceCtrl = function ($scope, $modalInstance, endPoint, title) {
+                    var ModalInstanceCtrl = function ($scope, $uibModalInstance, endPoint, title) {
                         $scope.title = title;
                         $http.get(endPoint).success(function (data) {
                             $scope.treeItems = data.items;
                         });
                         $scope.ok = function () {
-                            $modalInstance.close($scope.selected);
+                            $uibModalInstance.close($scope.selected);
                         };
 
                         $scope.cancel = function () {
-                            $modalInstance.dismiss('cancel');
+                            $uibModalInstance.dismiss('cancel');
                         };
                         $scope.callbacks = {
                             accept: function () {

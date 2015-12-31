@@ -244,7 +244,7 @@
             };
         })
 
-        .service('modalService', function ($modal) {
+        .service('modalService', function ($uibModal) {
             /**
              *
              * NOTE: template must be here because if server is down,
@@ -285,18 +285,18 @@
                 angular.extend(myOptions, modalOptions, customModalOptions);
 
                 if (!myDefaults.controller) {
-                    myDefaults.controller = function ($scope, $modalInstance) {
+                    myDefaults.controller = function ($scope, $uibModalInstance) {
                         $scope.modalOptions = myOptions;
                         $scope.modalOptions.ok = function (result) {
-                            $modalInstance.close(result);
+                            $uibModalInstance.close(result);
                         };
                         $scope.modalOptions.close = function () {
-                            $modalInstance.dismiss('cancel');
+                            $uibModalInstance.dismiss('cancel');
                         };
                         myOptions = $scope.modalOptions;
                     };
                 }
-                var myResult = $modal.open(myDefaults).result;
+                var myResult = $uibModal.open(myDefaults).result;
                 myResult.options = myOptions;
                 return  myResult;
             };
