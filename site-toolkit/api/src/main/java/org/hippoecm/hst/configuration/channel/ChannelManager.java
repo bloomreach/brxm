@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,11 +14,6 @@
  *  limitations under the License.
  */
 package org.hippoecm.hst.configuration.channel;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
 
 /**
  * Management interface for {@link Channel}s.  Basic Channel operations are provided.
@@ -60,7 +55,8 @@ public interface ChannelManager {
      * @throws ChannelException with type @{link ChannelException.Type#MOUNT_NOT_FOUND} when all but the last path-step
      * in the URL path of a new channel do not map to existing mounts, or the URL path of an existing channel does not
      * map to an existing mount. The exception has one parameter: the absolute JCR path of the missing mount.
-     * @throws ChannelException with type {@link ChannelException.Type#UNKNOWN}} when the channel could not be persisted.
+     * @throws ChannelException with type {@link ChannelException.Type#CHANNEL_LOCKED}, {@link ChannelException.Type#CHANNEL_OUT_OF_SYNC}
+     * or {@link ChannelException.Type#UNKNOWN} when the channel could not be persisted.
      */
     void save(Channel channel) throws ChannelException;
 

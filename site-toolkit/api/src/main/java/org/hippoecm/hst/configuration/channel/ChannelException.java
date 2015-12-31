@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ public class ChannelException extends Exception {
     public enum Type {
 
         UNKNOWN("unknown"),
+        CHANNEL_LOCKED("channel.locked"),
+        CHANNEL_OUT_OF_SYNC("channel.out.of.sync"),
         SERVER_ERROR("server.error"),
         MOUNT_EXISTS("mount.exists"),
         MOUNT_NOT_FOUND("mount.not.found"),
