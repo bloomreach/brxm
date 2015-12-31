@@ -574,9 +574,9 @@ commons/src/test/resources/TestResourceBundleUtils.properties -text
 commons/src/test/resources/TestResourceBundleUtils_fr.properties -text
 commons/src/test/resources/TestResourceBundleUtils_fr_FR.properties -text
 components/core/pom.xml svneol=native#text/plain
-components/core/src/main/java/org/hippoecm/hst/cache/CacheContentEventListener.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ForwardPlaceHolderHstPageInfo.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/HstPageInfo.java -text
+components/core/src/main/java/org/hippoecm/hst/cache/PageCacheEventListener.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/UncacheableHstPageInfo.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/CacheElementEhCacheImpl.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/EhCacheManagerShuttingDownListener.java -text

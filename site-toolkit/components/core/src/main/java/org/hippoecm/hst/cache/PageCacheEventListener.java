@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import org.hippoecm.hst.core.jcr.GenericEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CacheContentEventListener extends GenericEventListener implements EventListenersContainerListener {
+public class PageCacheEventListener extends GenericEventListener implements EventListenersContainerListener {
 
-    private static final Logger log = LoggerFactory.getLogger(CacheContentEventListener.class);
+    private static final Logger log = LoggerFactory.getLogger(PageCacheEventListener.class);
 
     private HstCache pageCache;
 
