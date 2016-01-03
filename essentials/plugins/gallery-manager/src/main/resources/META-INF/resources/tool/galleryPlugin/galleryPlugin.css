@@ -1,0 +1,74 @@
+.left-col {
+    width: 240px;
+    border-right: 1px solid #d4d6d8;
+}
+
+.left-heading {
+    background: #ebeced;
+    border-bottom: 1px solid #d4d6d8;
+    font-size: 15px;
+    padding: 8px 12px;
+}
+
+/* override styling of list-group */
+.left-col .list-group {
+    margin: 0;
+}
+
+/* override styling of list-group-item */
+.left-col .list-group-item {
+    border: 0;
+    border-bottom: 1px solid #d4d6d8;
+    margin: 0;
+    padding: 8px 12px;
+    text-overflow: ellipsis;
+}
+
+.left-footer {
+    border-top: 1px solid #d4d6d8;
+    background: #ebeced;
+    padding: 4px;
+}
+
+.right-col {
+    padding: 0 12px;
+}
+
+.right-col .alert {
+    margin-top: 12px;
+}
+
+.right-col dd,
+.modal-body dd {
+    margin-bottom: 8px;
+}
+
+.right-col .read-only .text {
+    opacity: 0.65;
+}
+
+.right-col .table-action {
+    width: 32px;
+}
+
+.right-col .hi-search:hover {
+    color: green;
+}
+
+.right-col .hi-pencil-square:hover {
+    color: orange;
+}
+
+.right-col .hi-trash:hover,
+.modal-body .hi-trash:hover {
+    color: red;
+}
+
+input.ng-invalid.ng-pristine {
+    color: #22272f;
+    background-color: #ffffff;
+}
+
+input:focus.ng-invalid.ng-pristine {
+    border: 1px solid #d4d6d8;
+}

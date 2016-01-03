@@ -17,163 +17,337 @@
 (function () {
     "use strict";
 
+    function dimension(px) {
+        if (px === 0) {
+            return "unconstrained";
+        } else {
+            return px + "px";
+        }
+    }
+
+    // load plugin-specific CSS
+    $('head').append('<link rel="stylesheet" href="tool/galleryPlugin/galleryPlugin.css"/>');
+
     angular.module('hippo.essentials')
-        .controller('galleryPluginCtrl', ['$scope', '$rootScope', '$http',
-            function ($scope, $rootScope, $http) {
-
-        var endpoint = $rootScope.REST.dynamic + "galleryplugin";
-        $scope.imageSets = [];
-        $scope.selectedImageSet = null;
-        $scope.imageVariantName = null;
-        $scope.selectedImageModel = null;
-        $scope.updateExisting = true;
-
-        $scope.addImageSet = function () {
-            var payload = Essentials.addPayloadData("imageSetPrefix", $scope.imageSetPrefix, null);
-            Essentials.addPayloadData("imageSetName", $scope.imageSetName, payload);
-            Essentials.addPayloadData("updateExisting", $scope.updateExisting, payload);
-            $http.post(endpoint + "/create", payload).success(function () {
-                loadImageSets($scope.imageSetPrefix + ':' + $scope.imageSetName);
-                $scope.imageSetName = null;
-            });
-        };
-
-        $scope.addImageVariant = function () {
-            var exists = false;
-            angular.forEach($scope.selectedImageSet.models, function (model) {
-                if (model.name == $scope.imageVariantName) {
-                    exists = true;
+        .directive('autofocus', function () {
+            return {
+                restrict: 'A',
+                link: function (scope, element) {
+                    element[0].focus();
                 }
-            });
-            if (exists) {
-                displayError("Image variant with name '" + $scope.imageVariantName + "' already exists");
-                return;
-            }
-            var payload = Essentials.addPayloadData("imageVariantName", $scope.imageVariantName, null);
-            Essentials.addPayloadData("selectedImageSet", $scope.selectedImageSet.name, payload);
-            $http.post(endpoint + "/addvariant", payload).success(function () {
-                loadImageSets($scope.selectedImageSet.name, $scope.imageVariantName);
-                $scope.imageVariantName = null;
-            });
-        };
+            };
+        })
 
-        $scope.disableSelection = function() {
-            $scope.selectionDisabled = true;
-        };
-
-        $scope.resetVariant = function() {
-            loadImageSets($scope.selectedImageSet.name);
-            $scope.selectedImageModel = null;
-            $scope.selectionDisabled = false;
-        };
-
-        $scope.removeImageVariant = function (variant) {
-            if (variant.readOnly) {
-                displayError("Cannot remove " + variant.name + " because it is required");
-                return;
-            }
-            $http.post(endpoint + "/remove", variant).success(function () {
-                $scope.resetVariant();
-            });
-        };
-
-        $scope.saveVariant = function () {
-            $http.post(endpoint + "/update", $scope.selectedImageModel).success(function () {
-                $scope.showBeanrewriterMessage = true;
-                $scope.showReLoginMessage = true;
-                $scope.resetVariant();
-            });
-        };
-
-        $scope.addTranslation = function () {
-            if ($scope.selectedImageModel) {
-                if (!$scope.selectedImageModel.translations) {
-                    $scope.selectedImageModel.translations = [];
+        .directive('variantName', function () {
+            return {
+                require: 'ngModel',
+                restrict: 'A',
+                scope: {
+                    imageSet: '='
+                },
+                link: function (scope, element, attrs, ctrl) {
+                    ctrl.$validators.variantName = function (modelValue) {
+                        return !scope.imageSet.models.some(function (variant) {
+                            return variant.name === modelValue;
+                        });
+                    }
                 }
-                $scope.selectedImageModel.translations.push({"language": "", "message": ""});
             }
-        };
+        })
 
-        $scope.removeTranslation = function (translation) {
-            var idx = $scope.selectedImageModel.translations.indexOf(translation);
-            $scope.selectedImageModel.translations.splice(idx, 1);
-        };
+        .controller('GalleryManagerImageSetAddModalCtrl', [ '$scope', '$http', '$uibModalInstance', 'resource', 'prefix',
+            function ($scope, $http, $uibModalInstance, resource, prefix) {
 
-        $scope.init = function () {
-            loadImageSets();
-        };
+            $scope.updateExisting = true;
+            $scope.updateHint = "Selecting this checkbox has the effect that all images existing in the CMS "
+                              + "will be converted to this image set. Image (link) fields of document beans will "
+                              + "be updated to this image set, too.";
 
-        function loadImageSets(selectedImageSetName, selectedImageVariantName) {
-            $http.get(endpoint).success(function (data) {
-                $scope.imageSets = data;
-                if (selectedImageSetName) {
-                    $scope.selectedImageSet = null;
-                    angular.forEach($scope.imageSets, function(imageSet) {
-                        if (imageSet.name === selectedImageSetName) {
-                            $scope.selectedImageSet = imageSet;
+            $scope.create = function() {
+                var payload = {
+                    values: {
+                        imageSetPrefix: prefix,
+                        imageSetName: $scope.name,
+                        updateExisting: $scope.updateExisting
+                    }
+                };
 
-                            if (selectedImageVariantName) {
-                                $scope.selectedImageModel = null;
-                                angular.forEach(imageSet.models, function(variant) {
-                                    if (variant.name === selectedImageVariantName) {
-                                        $scope.selectedImageModel = variant;
-                                        $scope.disableSelection();
-                                    }
-                                });
-                            }
+                $http.post(resource, payload).success(function () {
+                    $uibModalInstance.close(prefix + ":" + $scope.name);
+                });
+            };
+
+            $scope.cancel = function() {
+                $uibModalInstance.dismiss();
+            };
+        }])
+
+        .controller('GalleryManagerVariantAddModalCtrl', ['$scope', '$http', '$uibModalInstance', 'imageSet', 'resource',
+            function($scope, $http, $uibModalInstance, imageSet, resource) {
+
+            $scope.imageSet = imageSet;
+            $scope.create = function() {
+                var payload = {
+                    values: {
+                        imageVariantName: $scope.name,
+                        selectedImageSet: $scope.imageSet.name
+                    }
+                };
+                $http.post(resource, payload).success(function () {
+                    $uibModalInstance.close($scope.name);
+                });
+            };
+            $scope.cancel = function() {
+                $uibModalInstance.dismiss();
+            };
+        }])
+
+        .controller('GalleryManagerVariantViewModalCtrl', ['$scope', '$uibModalInstance', 'variant',
+            function($scope, $uibModalInstance, variant) {
+
+            $scope.variant = variant;
+            $scope.dimension = function(px) {
+                return dimension(px);
+            };
+            $scope.upscaling = function() {
+                var map = {
+                    true: 'on',
+                    false: 'off'
+                };
+                return map[$scope.variant.upscaling];
+            };
+            $scope.optimization = function() {
+                var map = {
+                    'quality': 'quality',
+                    'speed': 'speed',
+                    'speed.and.quality': 'speed and quality',
+                    'best.quality': 'best quality',
+                    'auto': 'auto'
+                };
+                return map[$scope.variant.optimize];
+            };
+            $scope.compression = function() {
+                var map = {
+                    '1': 'uncompressed',
+                    '0.95': 'best',
+                    '0.9': 'very good',
+                    '0.8': 'good',
+                    '0.7': 'medium',
+                    '0.5': 'low'
+                };
+                return map[$scope.variant.compression];
+            };
+            $scope.dismiss = function() {
+                $uibModalInstance.dismiss();
+            };
+        }])
+
+        .controller('GalleryManagerVariantEditModalCtrl', ['$scope', '$http', '$uibModalInstance', 'variant', 'resource',
+            function($scope, $http, $uibModalInstance, variant, resource) {
+
+            $scope.variant = angular.copy(variant);
+            $scope.optimizeValues = [
+                { value: "quality", description: "quality" },
+                { value: "speed", description: "speed" },
+                { value: "speed.and.quality", description: "speed and quality" },
+                { value: "best.quality", description: "best quality" },
+                { value: "auto", description: "auto" }
+            ];
+            $scope.compressionValues = [
+                { value: 1, description: "uncompressed" },
+                { value: 0.95, description: "best" },
+                { value: 0.9, description: "very good" },
+                { value: 0.8, description: "good" },
+                { value: 0.7, description: "medium" },
+                { value: 0.5, description: "low" }
+            ];
+            $scope.addTranslation = function() {
+                $scope.variant.translations.push({
+                    language: "",
+                    message: ""
+                });
+            };
+            $scope.deleteTranslation = function(translation) {
+                $scope.variant.translations.splice($scope.variant.translations.indexOf(translation), 1);
+            };
+            $scope.save = function() {
+                $http.post(resource, $scope.variant).success(function () {
+                    $uibModalInstance.close();
+                });
+            };
+            $scope.cancel = function() {
+                $uibModalInstance.dismiss();
+            };
+        }])
+
+        .controller('GalleryManagerVariantDeleteModalCtrl', ['$scope', '$http', '$uibModalInstance', 'variant', 'resource',
+            function($scope, $http, $uibModalInstance, variant, resource) {
+
+            $scope.variant = variant;
+            $scope.ok = function() {
+                $http.post(resource, variant).success(function () {
+                    $uibModalInstance.close();
+                });
+            };
+            $scope.cancel = function() {
+                $uibModalInstance.dismiss();
+            }
+        }])
+
+        .controller('GalleryManagerMainCtrl', ['$scope', '$rootScope', '$http', '$uibModal',
+            function ($scope, $rootScope, $http, $uibModal) {
+
+            var endpoint = $rootScope.REST.dynamic + "galleryplugin";
+            $scope.imageSets = [];
+            $scope.selectedImageSet = null;
+            $scope.feedback = "You have changed image sets and may want to update your HST image set beans now. "
+                + "You can use the BeanWriter tool for this. Also, you have changed the CMS configuration. "
+                + "If you are logged in to the CMS, please log in again before uploading new images.";
+
+            $scope.selectImageSet = function(imageSet) {
+                $scope.selectedImageSet = imageSet;
+            };
+
+            $scope.isSelected = function(imageSet) {
+                return $scope.selectedImageSet === imageSet;
+            };
+
+            $scope.dimension = function (px) {
+                return dimension(px);
+            };
+
+            $scope.addImageSet = function () {
+                $uibModal.open({
+                    animation: true,
+                    templateUrl: 'imageSetAddModal.html',
+                    controller: 'GalleryManagerImageSetAddModalCtrl',
+                    resolve: {
+                        prefix: function () {
+                            return $scope.imageSetPrefix;
+                        },
+                        resource: function () {
+                            return endpoint + "/create";
+                        }
+                    }
+                }).result.then(function (newImageSetName) {
+                    loadImageSets(newImageSetName);
+                    $scope.showFeedback = true;
+                });
+            };
+
+            $scope.addVariant = function () {
+                $uibModal.open({
+                    animation: true,
+                    templateUrl: 'variantAddModal.html',
+                    controller: 'GalleryManagerVariantAddModalCtrl',
+                    resolve: {
+                        imageSet: function() {
+                            return $scope.selectedImageSet;
+                        },
+                        resource: function () {
+                            return endpoint + "/addvariant";
+                        }
+                    }
+                }).result.then(function (variantName) {
+                    loadImageSets().then(function() {
+                        // immediately open edit dialog
+                        if ($scope.selectedImageSet) {
+                            $scope.selectedImageSet.models.forEach(function(variant) {
+                                if (variant.name === variantName) {
+                                    $scope.editVariant(variant);
+                                }
+                            });
                         }
                     });
-                }
+                });
+            };
+
+            $scope.viewVariant = function (variant) {
+                $uibModal.open({
+                    animation: true,
+                    templateUrl: 'variantViewModal.html',
+                    controller: 'GalleryManagerVariantViewModalCtrl',
+                    resolve: {
+                        variant: function() {
+                            return variant;
+                        }
+                    }
+                });
+            };
+
+            $scope.editVariant = function (variant) {
+                $uibModal.open({
+                    animation: true,
+                    templateUrl: 'variantEditModal.html',
+                    controller: 'GalleryManagerVariantEditModalCtrl',
+                    resolve: {
+                        variant: function() {
+                            return variant;
+                        },
+                        resource: function() {
+                            return endpoint + "/update";
+                        }
+                    }
+                }).result.then(function () {
+                    loadImageSets();
+                    $scope.showFeedback = true;
+                });
+            };
+
+            $scope.deleteVariant = function(variant) {
+                $uibModal.open({
+                    animation: true,
+                    templateUrl: 'variantDeleteModal.html',
+                    controller: 'GalleryManagerVariantDeleteModalCtrl',
+                    resolve: {
+                        variant: function () {
+                            return variant;
+                        },
+                        resource: function () {
+                            return endpoint + "/remove";
+                        }
+                    }
+                }).result.then(function () {
+                    loadImageSets();
+                    $scope.showFeedback = true;
+                });
+            };
+
+            $scope.init = function () {
+                loadImageSets();
+            };
+
+            function loadImageSets(imageSetNameToSelect) {
+                return $http.get(endpoint).success(function (data) {
+                    $scope.imageSets = data;
+
+                    if (!imageSetNameToSelect) {
+                        if ($scope.selectedImageSet) {
+                            imageSetNameToSelect = $scope.selectedImageSet.name;
+                        } else if ($scope.imageSets.length > 0) {
+                            imageSetNameToSelect = $scope.imageSets[0].name;
+                        }
+                    }
+
+                    $scope.selectedImageSet = undefined;
+                    if (imageSetNameToSelect) {
+                        angular.forEach($scope.imageSets, function(imageSet) {
+                            if (imageSet.name === imageSetNameToSelect) {
+                                $scope.selectedImageSet = imageSet;
+                            }
+                        });
+                    }
+                });
+            }
+
+            //############################################
+            // INIT APP
+            //############################################
+
+            $http.get($rootScope.REST.PROJECT.coordinates).success(function (data) {
+                var coordinates = Essentials.keyValueAsDict(data.items);
+                $scope.imageSetPrefix = coordinates ? coordinates.namespace : '';
             });
-        }
-
-        //############################################
-        // INIT APP
-        //############################################
-
-
-        $http.get($rootScope.REST.PROJECT.coordinates).success(function (data) {
-            var coordinates = Essentials.keyValueAsDict(data.items);
-            $scope.imageSetPrefix = coordinates ? coordinates.namespace : '';
-        });
-        $scope.init();
-
-        //############################################
-        // UTIL
-        //############################################
-
-        function displayError(msg) {
-            $rootScope.feedbackMessages.push({type: 'error', message: msg});
-        }
-
-        //############################################
-        // DEFAULTS
-        //############################################
-        $scope.compressionValues = [
-            {value: 1, description: "default (uncompressed)", selected: true},
-            {value: 0.95, description: "best"},
-            {value: 0.9, description: "very good"},
-            {value: 0.8, description: "good"},
-            {value: 0.7, description: "medium"},
-            {value: 0.5, description: "low"}
-        ];
-
-        $scope.optimizeValues = [
-            {value: "quality", description: "default (quality)", selected: true},
-            {value: "speed", description: "speed"},
-            {value: "speed.and.quality", description: "speed and quality"},
-            {value: "best.quality", description: "best quality"},
-            {value: "auto", description: "auto"}
-        ];
-
-        $scope.upscalingValues = [
-            {value: false, description: "default (off)", selected: true},
-            {value: true, description: "on"}
-        ];
-        $scope.help =
-        {imageSet: "Hippo CMS stores several variants of each uploaded image." +
-            " All variants of an image are together called an image set, and can be seen in the image gallery in the CMS." +
-            " Read more about imagesets here: <a target='_blank' href='http://www.onehippo.org/library/concepts/images-and-assets/create-a-custom-image-set.html'>" +
-            "http://www.onehippo.org/library/concepts/images-and-assets/create-a-custom-image-set.html</a>"}
-    }])
+            $scope.init();
+        }]);
 }());
