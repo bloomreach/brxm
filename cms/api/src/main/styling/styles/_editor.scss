@@ -339,7 +339,8 @@
 
 .invalid > .hippo-editor-field-subfield {
   .cke,
-  > div > .hippo-editor-field-value > .btn:first-of-type {
+  > div > .hippo-editor-field-value > .btn:first-of-type,
+  .gallerypickerbuttons > .btn:first-of-type {
     border-color: $validation-border !important;
   }
 }
