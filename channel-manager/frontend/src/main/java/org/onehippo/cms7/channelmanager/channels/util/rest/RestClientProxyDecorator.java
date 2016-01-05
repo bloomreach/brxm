@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,6 +34,11 @@ public class RestClientProxyDecorator implements IRestProxyService, Serializable
     @Override
     public String getContextPath() {
         return restProxyService.getContextPath();
+    }
+
+    @Override
+    public String getRestURI() {
+        return restProxyService.getRestURI();
     }
 
     /**
