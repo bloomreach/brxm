@@ -121,9 +121,9 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
                 <button class="btn btn-primary" type="submit" ng-click="create()"
                         ng-disabled="!imageSetAddForm.$dirty || imageSetAddForm.$invalid">Create</button>
-                <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
             </div>
         </form>
     </script>
@@ -144,9 +144,9 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
                 <button class="btn btn-primary" type="submit" ng-click="create()"
                         ng-disabled="!variantAddForm.$dirty || variantAddForm.$invalid">Create</button>
-                <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
             </div>
         </form>
     </script>
@@ -267,9 +267,9 @@
                 <button class="btn btn-default" type="button" ng-click="addTranslation()">+ Add translation</button>
             </div>
             <div class="modal-footer">
+                <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
                 <button class="btn btn-primary" type="submit" ng-click="save()"
                         ng-disabled="!variantEditForm.$dirty || variantEditForm.$invalid">Save Changes</button>
-                <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
             </div>
         </form>
     </script>
@@ -283,8 +283,8 @@
             <p>Are you sure you want to delete the image variant "{{variant.name}}"?</p>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" type="submit" ng-click="cancel()" autofocus>Cancel</button>
-            <button class="btn btn-warning" type="button" ng-click="ok()">OK</button>
+            <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+            <button class="btn btn-primary" type="submit" ng-click="ok()" autofocus>OK</button>
         </div>
     </script>
 
