@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,11 @@ public interface IRestProxyService extends IClusterable {
      * @return the context path for which this rest proxy service is available, optionally <code>null</code> when not configured
      */
     String getContextPath();
+
+    /**
+     * @return the base rest URI for this {@link IRestProxyService}
+     */
+    String getRestURI();
 
     /**
      * Creates a proxy to a REST service based on the provided class
