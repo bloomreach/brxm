@@ -338,6 +338,7 @@ client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/s
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/CurrentPreviewConfigurationValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/HasPreviewConfigurationValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/HasWorkspaceConfigurationValidator.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/ItemNotSameOrDescendantOfValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/NodePathPrefixValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/NotNullValidator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validators/PathInfoValidator.java -text
@@ -390,7 +391,7 @@ client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/s
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemapresource/PublicationTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemapresource/ReApplyPrototypesTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemapresource/SiteMapItemDocumentRepresentationsTest.java -text
-client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemapresource/UpdateAndRenameTest.java -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemapresource/UpdateRenameAndMoveTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemenuresource/AbstractMenuResourceTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemenuresource/MenuCRUDTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemenuresource/MenuDiscardTest.java -text

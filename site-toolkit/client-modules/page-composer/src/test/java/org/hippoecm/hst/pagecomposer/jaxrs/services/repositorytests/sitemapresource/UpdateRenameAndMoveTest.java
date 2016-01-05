@@ -44,11 +44,11 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NodePathPrefixValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 
-import junit.framework.Assert;
-import static junit.framework.Assert.assertNull;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hippoecm.hst.configuration.HstNodeTypes.EDITABLE_PROPERTY_STATE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError.UNKNOWN;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -56,7 +56,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
+public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
 
     private LockHelper helper = new LockHelper();
 
@@ -170,7 +170,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
         final Node homeNode = session.getNodeByIdentifier(home.getId());
         assertTrue(homeNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
-        assertEquals("bob", homeNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+        assertEquals("bob", homeNode.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
 
         // attempt now to update home with admin session
         home.setComponentConfigurationId("foo");
@@ -225,22 +225,23 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
         // assert update on /news/_default_ still works
 
-        final SiteMapItemRepresentation newsDefault = getSiteMapItemRepresentation(session, "news/_default_");
+        final SiteMapItemRepresentation newsDefault = getSiteMapItemRepresentation(session, "news/2015");
         {
             newsDefault.setRelativeContentPath("foobar");
             newsDefault.setPrimaryDocumentRepresentation(null);
+            newsDefault.setParentId(news.getId());
 
             Response response = siteMapResource.update(newsDefault);
             assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
                     Response.Status.OK.getStatusCode(), response.getStatus());
             final Node newsDefaultNode = session.getNodeByIdentifier(newsDefault.getId());
             assertEquals("foobar", newsDefaultNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
-            assertEquals("admin", newsDefaultNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+            assertEquals("admin", newsDefaultNode.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
         }
 
         // assert after removing lock from _any_ we can call siteMapResource.update(news);
         newsAnyNodeByBob.removeMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
-        assertFalse(newsAnyNodeByBob.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
+        assertFalse(newsAnyNodeByBob.hasProperty(GENERAL_PROPERTY_LOCKED_BY));
         bob.save();
         bob.logout();
 
@@ -250,7 +251,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
                     Response.Status.OK.getStatusCode(), response.getStatus());
             final Node newsNode = session.getNodeByIdentifier(news.getId());
             assertEquals("foo", newsNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
-            assertEquals("admin", newsNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+            assertEquals("admin", newsNode.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
         }
 
     }
@@ -270,6 +271,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation newsAny = getSiteMapItemRepresentation(session, "news/_any_");
         newsAny.setRelativeContentPath("foo");
         newsAny.setPrimaryDocumentRepresentation(null);
+        newsAny.setParentId(news.getId());
 
         {
             Response response = siteMapResource.update(newsAny);
@@ -277,9 +279,9 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         }
 
         // assert after removing lock from _any_ we can call siteMapResource.update(news);
-        assertTrue(newsNodeByBob.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
+        assertTrue(newsNodeByBob.hasProperty(GENERAL_PROPERTY_LOCKED_BY));
         newsNodeByBob.removeMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
-        assertFalse(newsNodeByBob.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
+        assertFalse(newsNodeByBob.hasProperty(GENERAL_PROPERTY_LOCKED_BY));
         bob.save();
         bob.logout();
 
@@ -289,7 +291,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
                     Response.Status.OK.getStatusCode(), response.getStatus());
             final Node newsAnyNode = session.getNodeByIdentifier(newsAny.getId());
             assertEquals("foo", newsAnyNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
-            assertEquals("admin", newsAnyNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+            assertEquals("admin", newsAnyNode.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
         }
 
     }
@@ -319,14 +321,14 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
             assertTrue(session.nodeExists(parentPath + "/home"));
             Node deletedMarkerNode = session.getNode(parentPath + "/home");
-            assertEquals("admin", deletedMarkerNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
-            assertEquals("deleted", deletedMarkerNode.getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString());
+            assertEquals("admin", deletedMarkerNode.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
+            assertEquals("deleted", deletedMarkerNode.getProperty(EDITABLE_PROPERTY_STATE).getString());
 
             // assert page is not deleted and *not* locked
             assertTrue(session.nodeExists(configurationsPath + "/hst:pages/homepage"));
             Node pageNode = session.getNode(configurationsPath + "/hst:pages/homepage");
-            assertFalse("admin", pageNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
-            assertFalse("deleted", pageNode.hasProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE));
+            assertFalse(pageNode.hasProperty(GENERAL_PROPERTY_LOCKED_BY));
+            assertFalse(pageNode.hasProperty(EDITABLE_PROPERTY_STATE));
             assertFalse(session.nodeExists(configurationsPath + "/hst:pages/renamedHomepage"));
         }
         // assert bob cannot rename 'news' to 'home' now as it is locked.
@@ -360,7 +362,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         Response response = siteMapResource.update(home);
         assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
                 Response.Status.OK.getStatusCode(), response.getStatus());
-        assertTrue(homeNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
+        assertTrue(homeNode.hasProperty(GENERAL_PROPERTY_LOCKED_BY));
     }
 
     @Test
@@ -386,7 +388,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
                     Response.Status.OK.getStatusCode(), response.getStatus());
             assertEquals("home", homeNode.getName());
-            assertEquals("admin", homeNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+            assertEquals("admin", homeNode.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
             assertFalse(admin.nodeExists(parentPath + "/renamedHome"));
             admin.logout();
         }
@@ -427,7 +429,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
                     Response.Status.OK.getStatusCode(), response.getStatus());
             assertEquals("home", home.getName());
             Node homeNode = admin.getNodeByIdentifier(home.getId());
-            assertEquals("admin", homeNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+            assertEquals("admin", homeNode.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
             assertFalse(admin.nodeExists(parentPath + "/rename1"));
             assertFalse(admin.nodeExists(parentPath + "/rename2"));
             admin.logout();
@@ -473,8 +475,8 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
             assertTrue(admin.nodeExists(oldHomeParentPath + "/home"));
             Node renamedNewsNode = admin.getNode(oldHomeParentPath + "/home");
-            assertEquals("admin", renamedNewsNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
-            assertFalse(renamedNewsNode.hasProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE));
+            assertEquals("admin", renamedNewsNode.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
+            assertFalse(renamedNewsNode.hasProperty(EDITABLE_PROPERTY_STATE));
             admin.logout();
         }
 
@@ -564,6 +566,138 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         Response correctResponse = siteMapResource.update(home);
         assertEquals(Response.Status.OK.getStatusCode(), correctResponse.getStatus());
 
+    }
+
+    @Test
+    public void test_move_succeeds() throws Exception {
+        moveAndAssertHomeToNews(null, null);
+    }
+
+    private void moveAndAssertHomeToNews(final String newName, final String expectedHomePageNodeLockedBy) throws Exception {
+        final SiteMapResource siteMapResource = createResource();
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+        final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
+        assertEquals("hst:pages/homepage", home.getComponentConfigurationId());
+        Node homeNode = session.getNodeByIdentifier(home.getId());
+        Node newsNode = session.getNodeByIdentifier(news.getId());
+        String oldLocation = homeNode.getPath();
+        String configurationsPath = homeNode.getParent().getParent().getPath();
+
+        home.setParentId(news.getId());
+        final String finalName;
+        if (newName != null){
+            home.setName(newName);
+            finalName = newName;
+        } else {
+            finalName = home.getName();
+        }
+
+        Response response = siteMapResource.update(home);
+        if (response.getStatus() == 400) {
+            throw new ClientException("failed", UNKNOWN);
+        }
+        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                Response.Status.OK.getStatusCode(), response.getStatus());
+
+        assertTrue(session.nodeExists(newsNode.getPath() + "/" + finalName));
+        Node deletedMarkerNode = session.getNode(oldLocation);
+        assertEquals("admin", deletedMarkerNode.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
+        assertEquals("deleted", deletedMarkerNode.getProperty(EDITABLE_PROPERTY_STATE).getString());
+
+
+        assertTrue(session.nodeExists(configurationsPath + "/hst:pages/homepage"));
+        Node pageNode = session.getNode(configurationsPath + "/hst:pages/homepage");
+        if (expectedHomePageNodeLockedBy == null) {
+            // assert page is not deleted and *not* locked as result of move of sitemap item
+            assertFalse(pageNode.hasProperty(GENERAL_PROPERTY_LOCKED_BY));
+            assertFalse(pageNode.hasProperty(EDITABLE_PROPERTY_STATE));
+        } else {
+            // assert page lock is not affected as result of move of sitemap item
+            assertEquals(expectedHomePageNodeLockedBy, pageNode.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
+        }
+
+        // assert home page node does not get renamed as a result of a rename
+        assertFalse(session.nodeExists(configurationsPath + "/hst:pages/renamedHomepage"));
+    }
+
+    @Test
+    public void test_move_succeeds_if_target_contains_locked_child() throws Exception {
+        final SiteMapItemRepresentation newsDefaultMatcher = getSiteMapItemRepresentation(session, "news/2015");
+        final Node newsDefaultMatcherNode = session.getNodeByIdentifier(newsDefaultMatcher.getId());
+        new LockHelper().acquireLock(newsDefaultMatcherNode, "bob", 0L);
+        session.save();
+        moveAndAssertHomeToNews(null, null);
+    }
+
+    @Test(expected = ClientException.class)
+    public void test_move_fails_if_target_is_locked() throws Exception {
+        final SiteMapItemRepresentation newsDefaultMatcher = getSiteMapItemRepresentation(session, "news");
+        final Node newsDefaultMatcherNode = session.getNodeByIdentifier(newsDefaultMatcher.getId());
+        new LockHelper().acquireLock(newsDefaultMatcherNode, "bob", 0L);
+        session.save();
+        moveAndAssertHomeToNews(null, null);
+    }
+
+    @Test
+    public void test_move_and_rename() throws Exception {
+        moveAndAssertHomeToNews("foo", null);
+    }
+
+    @Test
+    public void test_move_and_rename_succeed_if_a_container_in_backing_page_is_locked_by_someone_else() throws Exception {
+        // first lock page that is used by 'home' page by bob
+        Node homePageNode = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/homepage");
+        new LockHelper().acquireLock(homePageNode, "bob", 0L);
+        session.save();
+        moveAndAssertHomeToNews(null, "bob");
+    }
+
+    @Test
+    public void move_non_workspace_site_map_item_fails() throws Exception {
+        final SiteMapResource siteMapResource = createResource();
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+        final SiteMapItemRepresentation notFound = getSiteMapItemRepresentation(session, "xyz");
+
+        assertEquals("hst:pages/pagenotfound",notFound.getComponentConfigurationId());
+        assertFalse(notFound.isWorkspaceConfiguration());
+
+        notFound.setParentId(home.getId());
+        final Response update = siteMapResource.update(notFound);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), update.getStatus());
+        final String message = ((ExtResponseRepresentation)update.getEntity()).getMessage();
+        assertTrue(message.contains("is not part of required node path"));
+    }
+
+    @Test
+    public void after_move_a_descendant_of_moved_item_cannot_be_moved_by_someone_else() throws Exception {
+        final SiteMapResource siteMapResource = createResource();
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+        final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
+
+        Node homeNode = session.getNodeByIdentifier(home.getId());
+
+        // move news to 'home'
+        news.setParentId(home.getId());
+        siteMapResource.update(news);
+        assertTrue(session.nodeExists(homeNode.getPath() + "/" + "news"));
+        assertTrue(session.nodeExists(homeNode.getPath() + "/" + "news/_default_"));
+
+        // since /home/news is now locked by 'admin', we should not be able to move '/home/news/_default_' by bob
+        final Session bob = createSession("bob", "bob");
+        try {
+            final SiteMapItemRepresentation newsDefaultByBob = getSiteMapItemRepresentation(bob, "home/news/2015");
+            // try to move to root item
+            newsDefaultByBob.setParentId(null);
+
+            final Response update = siteMapResource.update(newsDefaultByBob);
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), update.getStatus());
+            final String message = ((ExtResponseRepresentation)update.getEntity()).getMessage();
+            assertTrue(message.contains("cannot be locked due to someone else who has the lock"));
+        } finally {
+            if (bob != null) {
+                bob.logout();
+            }
+        }
     }
 
 }

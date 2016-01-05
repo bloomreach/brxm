@@ -30,8 +30,8 @@ import org.junit.Test;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError.INVALID_MOVE_TO_SELF_OR_DESCENDANT;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -115,7 +115,7 @@ public class MoveTest extends AbstractSiteMapResourceTest {
         SiteMapResource siteMapResource = createResource();
         final Response fail = siteMapResource.move(news.getId(), news.getId());
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-        assertThat(((ExtResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.INVALID_MOVE_TO_SELF.name()));
+        assertThat(((ExtResponseRepresentation) fail.getEntity()).getErrorCode(), is(INVALID_MOVE_TO_SELF_OR_DESCENDANT.name()));
     }
 
 

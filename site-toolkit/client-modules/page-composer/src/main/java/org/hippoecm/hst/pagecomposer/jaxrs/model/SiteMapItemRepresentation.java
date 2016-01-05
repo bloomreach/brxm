@@ -38,6 +38,7 @@ public class SiteMapItemRepresentation {
 
     private String name;
     private String id;
+    private String parentId;
     private String pathInfo;
     private String parentPathInfo;
     private boolean isHomePage;
@@ -93,6 +94,7 @@ public class SiteMapItemRepresentation {
         }
 
         if (item.getParentItem() != null) {
+            parentId = ((CanonicalInfo) item.getParentItem()).getCanonicalIdentifier();
             parentPathInfo = HstSiteMapUtils.getPath(item.getParentItem(), null);
         }
 
@@ -172,6 +174,14 @@ public class SiteMapItemRepresentation {
 
     public void setId(final String id) {
         this.id = id;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(final String parentId) {
+        this.parentId = parentId;
     }
 
     public String getName() {

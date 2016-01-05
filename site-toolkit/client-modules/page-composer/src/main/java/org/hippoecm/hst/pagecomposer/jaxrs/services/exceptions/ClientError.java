@@ -68,7 +68,7 @@ public enum ClientError {
 
     INVALID_UUID,
 
-    INVALID_MOVE_TO_SELF,
+    INVALID_MOVE_TO_SELF_OR_DESCENDANT,
 
     INVALID_NODE_TYPE,
 

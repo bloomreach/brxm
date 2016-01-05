@@ -103,6 +103,10 @@ public class ValidatorFactory {
         return new SiteMapItemBasedPathInfoValidator(siteMapItem, parentId, siteMapHelper);
     }
 
+    public Validator getItemNotSameOrDescendantOfValidator(final String validateUUID, final String targetUUID) {
+        return new ItemNotSameOrDescendantOfValidator(validateUUID, targetUUID);
+    }
+
     private static final class SiteMapItemBasedPathInfoValidator extends AbstractPathInfoValidator {
 
         private final SiteMapItemRepresentation siteMapItem;
