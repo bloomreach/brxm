@@ -198,7 +198,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
 
                 // set publication date from the published node when statesummary = live or changed
                 if(variant.hasProperty(HIPPOSTDPUBWF_PUBLICATION_DATE)) {
-                    if(PUBLISHED.equals(state) && ("live".equals(stateSummary)) || "changed".equals(stateSummary)) {
+                    if(PUBLISHED.equals(state) && ("live".equals(stateSummary) || "changed".equals(stateSummary))) {
                         publicationDate = variant.getProperty(HIPPOSTDPUBWF_PUBLICATION_DATE).getDate();
                     }
                 }
