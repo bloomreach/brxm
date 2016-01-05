@@ -36,6 +36,7 @@
           primaryDocument: '',
           availableDocumentRepresentations: [],
           lastPathInfoElement: '',
+          target: '',
           prototype: {
             id: null
           },
@@ -67,6 +68,7 @@
           illegalCharacters: '/ :'
         };
 
+        $scope.currentChannelLocations = [];
         $scope.locations = [];
 
         $scope.availableChannelsForPageCopy = [];
@@ -124,6 +126,7 @@
         $scope.submit = function () {
           var pageModel = {
             id: $scope.page.id,
+            parentId: $scope.page.target.id,
             pageTitle: $scope.page.title,
             name: $scope.page.lastPathInfoElement,
             componentConfigurationId: $scope.page.prototype.id,
@@ -240,6 +243,7 @@
             .then(function (data) {
               $scope.prototypes = data.prototypes;
               $scope.locations = data.locations || [];
+              $scope.currentChannelLocations =  data.locations || [];
               return data.prototypes;
             }, setErrorFeedback);
         }
@@ -282,6 +286,7 @@
               for (var i = 0; i < $scope.locations.length; i++) {
                 if (currentPage.parentLocation && $scope.locations[i].id === $scope.page.parentLocationId) {
                   $scope.copy.target = $scope.locations[i];
+                  $scope.page.target = $scope.locations[i];
                 }
               }
 

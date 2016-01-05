@@ -104,30 +104,40 @@
                 'has-error': form.lastPathInfoElement.$dirty && form.lastPathInfoElement.$invalid
             }">
         <label for="page-lastPathInfoElement">{{ 'URL' | translate }}</label>
-        <div class="input-group">
-          <span class="input-group-addon">{{ host }}/{{ page.parentPathInfo | formatParentPathInfo }}</span>
+        <div class="input-group url-widget">
+          <span class="input-group-addon" data-ng-if="!state.isEditable">{{ host }}/{{ page.parentPathInfo | formatParentPathInfo }}</span>
+          <div class="url-dropdown pull-left" data-ng-if="state.isEditable">
+            <select data-chosen
+                    data-ng-model="page.target"
+                    data-ng-options="item as item.location for item in currentChannelLocations"
+                    data-width="'100%'"
+                    class="ng-pristine ng-untouched ng-valid localytics-chosen">
+            </select>
+          </div>
+          <div class="url-name pull-left">
+            <input type="text" name="lastPathInfoElement" class="form-control" id="page-lastPathInfoElement"
+                   data-ng-model="page.lastPathInfoElement"
+                   data-ng-readonly="!state.isEditable"
+                   data-ng-focus="form.lastPathInfoElement.$setPristine();"
+                   data-ng-required="true"
+                   data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
+                   data-uib-tooltip="{{ tooltips.lastPathInfoElement(form) }}"
+                   data-tooltip-trigger="none"
+                   data-tooltip-is-open="form.lastPathInfoElement.$dirty && form.lastPathInfoElement.$invalid"
+                   data-tooltip-placement="top">
+            <span class="form-control-feedback">
+              <hippo-icon ng-if="form.lastPathInfoElement.$dirty && form.lastPathInfoElement.$valid"
+                          name="check-circle"
+                          size="m">
+              </hippo-icon>
+              <hippo-icon ng-if="form.lastPathInfoElement.$dirty && form.lastPathInfoElement.$invalid"
+                          name="minus-circle"
+                          size="m">
+              </hippo-icon>
+            </span>
+          </div>
 
-          <input type="text" name="lastPathInfoElement" class="form-control" id="page-lastPathInfoElement"
-                 data-ng-model="page.lastPathInfoElement"
-                 data-ng-readonly="!state.isEditable"
-                 data-ng-focus="form.lastPathInfoElement.$setPristine();"
-                 data-ng-required="true"
-                 data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
-                 data-uib-tooltip="{{ tooltips.lastPathInfoElement(form) }}"
-                 data-tooltip-trigger="none"
-                 data-tooltip-is-open="form.lastPathInfoElement.$dirty && form.lastPathInfoElement.$invalid"
-                 data-tooltip-placement="top">
         </div>
-        <span class="form-control-feedback">
-          <hippo-icon ng-if="form.lastPathInfoElement.$dirty && form.lastPathInfoElement.$valid"
-                      name="check-circle"
-                      size="m">
-          </hippo-icon>
-          <hippo-icon ng-if="form.lastPathInfoElement.$dirty && form.lastPathInfoElement.$invalid"
-                      name="minus-circle"
-                      size="m">
-          </hippo-icon>
-        </span>
       </div>
 
       <div data-ng-show="state.isEditable">
