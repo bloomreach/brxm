@@ -61,17 +61,10 @@
                 <hippo-icon name="times" class="pull-right" ng-click="showFeedback = !showFeedback"></hippo-icon>
                 <p>{{feedback}}</p>
             </div>
-            <h1>Image set details for "{{selectedImageSet.nameAfterPrefix}}"</h1>
+            <h1>{{selectedImageSet.nameAfterPrefix}}</h1>
             <dl>
                 <dt>Full image set name</dt>
                 <dd>{{selectedImageSet.name}}</dd>
-                <dt>Full definition</dt>
-                <dd>
-                    <a href="/cms/console?1&path={{selectedImageSet.path}}"
-                       target="_blank">Inspect in Hippo Console
-                        <hippo-icon name="external-link" size="m"></hippo-icon>
-                    </a>
-                </dd>
             </dl>
             <table class="table table-hover">
                 <thead>
@@ -115,8 +108,9 @@
                 <div class="form-group">
                     <label for="imageSetAddName">Image set name</label>
                     <input type="text" class="form-control" id="imageSetAddName" name="name"
-                           ng-model="name" required ng-pattern="/^[a-zA-Z]{2,}$/" autofocus>
-                    <span class="help-block">Image set names must consist of two or more alphabetic characters.</span>
+                           ng-model="name" required ng-pattern="/^[a-zA-Z]{2,}$/" autofocus
+                           uib-tooltip="Image set names must consist of two or more alphabetic characters."
+                           tooltip-placement="top" tooltip-trigger="mouseenter">
                 </div>
                 <div class="checkbox">
                     <label uib-tooltip="{{updateHint}}"
@@ -192,7 +186,7 @@
             </table>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" type="submit" ng-click="dismiss()">OK</button>
+            <button class="btn btn-primary" type="submit" ng-click="dismiss()">Close</button>
         </div>
     </script>
 
@@ -289,8 +283,8 @@
             <p>Are you sure you want to delete the image variant "{{variant.name}}"?</p>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" type="submit" ng-click="ok()" autofocus>OK</button>
-            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+            <button class="btn btn-primary" type="submit" ng-click="cancel()" autofocus>Cancel</button>
+            <button class="btn btn-warning" type="button" ng-click="ok()">OK</button>
         </div>
     </script>
 

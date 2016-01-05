@@ -201,7 +201,7 @@
             $scope.imageSets = [];
             $scope.selectedImageSet = null;
             $scope.feedback = "You have changed image sets and may want to update your HST image set beans now. "
-                + "You can use the BeanWriter tool for this. Also, you have changed the CMS configuration. "
+                + "You can use the BeanWriter tool for this. Also, this changed the CMS configuration. "
                 + "If you are logged in to the CMS, please log in again before uploading new images.";
 
             $scope.selectImageSet = function(imageSet) {
