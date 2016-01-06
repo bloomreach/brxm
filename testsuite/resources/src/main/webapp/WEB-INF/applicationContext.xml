@@ -68,7 +68,8 @@
     <property name="subject" value="My opinion" />
   </bean>
 
-  <bean id="mailSender" class="org.hippoecm.hst.demo.util.NoJavaMailSenderImpl">
+  <bean id="mailSender" class="org.hippoecm.hst.demo.util.NoJavaMailSenderImpl"
+        init-method="init" destroy-method="destroy">
     <property name="host" value="mail.mycompany.com"/>
   </bean>
 
