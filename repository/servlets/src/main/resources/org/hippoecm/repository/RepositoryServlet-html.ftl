@@ -44,6 +44,8 @@ ${response.setContentType("text/html;charset=UTF-8")}
         .logout { float: right; padding: 4px 10px 0 0;}
         .logout a { color: white; font-size: small;}
 
+        .query-input {width: 100%; height: 75px;}
+
         .search-params {padding: 20px 0 10px 0;}
         .search-params input { margin-bottom: 4px}
 
@@ -118,14 +120,14 @@ ${response.setContentType("text/html;charset=UTF-8")}
             <#--XPATH-->
             <div class="xpath-tab">
               <noscript><div>&nbsp;</div>XPath:</noscript>
-              <input name="xpath" type="text" size="60" value="${request.getParameter('xpath')!}" placeholder="XPath query"/><br/>
+              <textarea class="query-input" name="xpath" placeholder="XPath query">${request.getParameter('xpath')!}</textarea><br/>
               Limit<noscript> (XPath query)</noscript>: <input name="xpath-limit" type="text" size="5" value="${request.getParameter('xpath-limit')!1000?c}"/>
             </div>
 
             <#--SQL-->
             <div class="sql-tab">
               <noscript><div>&nbsp;</div>SQL:&nbsp;&nbsp;</noscript>
-              <input name="sql" type="text" size="60" value="${request.getParameter('sql')!}" placeholder="SQL query"/><br/>
+              <textarea class="query-input" name="sql" placeholder="SQL query">${request.getParameter('sql')!}</textarea><br/>
               Limit<noscript> (SQL query)</noscript>: <input name="sql-limit" type="text" size="5" value="${request.getParameter('sql-limit')!1000?c}"/>
             </div>
           </div>
