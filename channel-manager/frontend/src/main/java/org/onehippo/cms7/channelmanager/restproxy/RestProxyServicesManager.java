@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ public class RestProxyServicesManager implements IInitializer {
         }
     });
 
-    private static ConcurrentHashMap<String, RestProxyInfo> restProxyInfos = new ConcurrentHashMap<>();
+    private static Map<CacheKey, RestProxyInfo> restProxyInfos = new HashMap<>();
 
     public static <T> List<Future<T>> submitJobs(List<? extends Callable<T>> jobs) {
         try {
@@ -104,12 +104,14 @@ public class RestProxyServicesManager implements IInitializer {
         final long currentTime = System.currentTimeMillis();
         final List<Future<?>> futures = new ArrayList<>();
 
-        for (Map.Entry<String, IRestProxyService> entry : restProxyServiceMap.entrySet()) {
-            final String contextPath = entry.getKey();
-            final IRestProxyService proxyService = entry.getValue();
-            final RestProxyInfo restProxyInfo = getOrCreateRestProxyInfo(contextPath);
+        synchronized (RestProxyServicesManager.class) {
+            Map<CacheKey, RestProxyInfo> previousProxyInfos = new HashMap<>(restProxyInfos);
+            restProxyInfos.clear();
+            for (Map.Entry<String, IRestProxyService> entry : restProxyServiceMap.entrySet()) {
+                final String contextPath = entry.getKey();
+                final IRestProxyService proxyService = entry.getValue();
+                final RestProxyInfo restProxyInfo = getOrCreateRestProxyInfo(proxyService, previousProxyInfos);
 
-            synchronized (restProxyInfo) {
                 if (restProxyInfo.isLive && currentTime < restProxyInfo.nextCheckTimestamp) {
                     liveRestProxyServiceMap.put(contextPath, proxyService);
                 } else if (currentTime > restProxyInfo.nextCheckTimestamp) {
@@ -153,34 +155,68 @@ public class RestProxyServicesManager implements IInitializer {
                             }
                         }
                     }));
-
                 }
             }
-        }
-        // make sure that all submitted tasks are really finished
-        for (Future<?> future : futures) {
-            try {
-                future.get();
-            } catch (InterruptedException | ExecutionException e) {
-                log.warn("Exception while retrieving future.", e);
+            // make sure that all submitted tasks are really finished
+            for (Future<?> future : futures) {
+                try {
+                    future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    log.warn("Exception while retrieving future.", e);
+                }
             }
         }
 
         return Collections.unmodifiableMap(liveRestProxyServiceMap);
     }
 
-    private static RestProxyInfo getOrCreateRestProxyInfo(final String contextPath) {
-        RestProxyInfo restProxyInfo = restProxyInfos.get(contextPath);
+    private static RestProxyInfo getOrCreateRestProxyInfo(final IRestProxyService proxyService,
+                                                          final Map<CacheKey, RestProxyInfo> previousProxyInfos) {
+        final CacheKey proxyServiceCacheKey = new CacheKey(proxyService.getContextPath(), proxyService.getRestURI());
+        RestProxyInfo restProxyInfo = previousProxyInfos.get(proxyServiceCacheKey);
         if (restProxyInfo == null) {
-            synchronized (RestProxyServicesManager.class) {
-                restProxyInfo = restProxyInfos.get(contextPath);
-                if (restProxyInfo == null) {
-                    restProxyInfo = new RestProxyInfo();
-                    restProxyInfos.put(contextPath, restProxyInfo);
-                }
-            }
+            restProxyInfo = new RestProxyInfo();
         }
+        restProxyInfos.put(proxyServiceCacheKey, restProxyInfo);
         return restProxyInfo;
+    }
+
+    private static class CacheKey {
+        private final String contextPath;
+        private final String restURI;
+
+        private CacheKey(final String contextPath, final String restURI) {
+            this.contextPath = contextPath;
+            this.restURI = restURI;
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            final CacheKey cacheKey = (CacheKey)o;
+
+            if (contextPath != null ? !contextPath.equals(cacheKey.contextPath) : cacheKey.contextPath != null) {
+                return false;
+            }
+            if (restURI != null ? !restURI.equals(cacheKey.restURI) : cacheKey.restURI != null) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = contextPath != null ? contextPath.hashCode() : 0;
+            result = 31 * result + (restURI != null ? restURI.hashCode() : 0);
+            return result;
+        }
     }
 
     private static void markFailed(final RestProxyInfo restProxyInfo) {
