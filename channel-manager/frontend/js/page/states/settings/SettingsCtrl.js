@@ -72,13 +72,17 @@
         $scope.availableChannelsForPageCopy = [];
 
         $scope.crossChannelPageCopySupported = false;
-        
+
         $scope.tooltips = {
-          lastPathInfoElement: function () {
-            return determineLastPathInfoSegmentTooltip($scope.form);
-          },
-          copyLastPathInfoElement: function () {
-            return determineLastPathInfoSegmentTooltip($scope.copyForm);
+          lastPathInfoElement: function (form) {
+            if (form && form.$dirty && form.lastPathInfoElement) {
+              if (form.lastPathInfoElement.$error.required) {
+                return translate('URL_REQUIRED');
+              } else if (form.lastPathInfoElement.$error.illegalCharacters) {
+                return translate('URL_ILLEGAL_CHARACTERS', $scope.validation);
+              }
+            }
+            return '';
           },
           deleteButton: function () {
             if ($scope.page.isHomePage) {
@@ -210,14 +214,12 @@
               $scope.crossChannelPageCopySupported = data.crossChannelPageCopySupported;
             }, setErrorFeedback);
         }
-        
+
         function loadAvailableChannelsForPageCopy () {
-          if ($scope.crossChannelPageCopySupported) {
-            return ChannelService.getPreviewChannels()
-              .then(function (data) {
-                $scope.availableChannelsForPageCopy = data;
-              }, setErrorFeedback);
-          }
+          return ChannelService.getPageModifiableChannels(true)
+            .then(function (data) {
+              $scope.availableChannelsForPageCopy = data;
+            }, setErrorFeedback);
         }
 
         function loadPageLocations (mountId) {
@@ -291,8 +293,19 @@
               // 2. the page is not the homepage
               // 3. the page is not locked by someone else
               $scope.state.isLocked = angular.isString(currentPage.lockedBy) && currentPage.lockedBy !== ConfigService.cmsUser;
-              $scope.state.isEditable = !$scope.page.isHomePage && !$scope.state.isLocked && currentPage.workspaceConfiguration;
-              $scope.state.isCopyable = !$scope.state.isLocked;
+              $scope.state.isEditable = !$scope.page.isHomePage && !$scope.state.isLocked && currentPage.workspaceConfiguration && !currentPage.inherited;
+              $scope.state.isCopyable = false;
+              if (!$scope.state.isLocked) {
+                // check that current mount is part of $scope.availableChannelsForPageCopy
+                // namely channels that do not have their own hst:workspage with hst:pages and hst:sitemap cannot
+                // be used for copy page
+                for (var j = 0; j < $scope.availableChannelsForPageCopy.length; j++) {
+                  if ($scope.copy.mountId === $scope.availableChannelsForPageCopy[j].mountId) {
+                    $scope.state.isCopyable = true;
+                    break;
+                  }
+                }
+              }
 
               // lock information
               $scope.lock.owner = currentPage.lockedBy;
@@ -300,17 +313,6 @@
 
               return currentPage;
             }, setErrorFeedback);
-        }
-
-        function determineLastPathInfoSegmentTooltip(form) {
-          if (form && form.$dirty) {
-            if (form.lastPathInfoElement.$error.required) {
-              return translate('URL_REQUIRED');
-            } else if (form.lastPathInfoElement.$error.illegalCharacters) {
-              return translate('URL_ILLEGAL_CHARACTERS', $scope.validation);
-            }
-          }
-          return '';
         }
       }
     ]);

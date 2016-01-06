@@ -71,9 +71,9 @@
                data-ng-readonly="!state.isEditable"
                data-ng-focus="form.title.$setPristine();"
                data-ng-required="true"
-               data-tooltip="{{ 'PAGE_TITLE_REQUIRED' | translate }}"
-               data-tooltip-trigger="show"
-               data-hippo-channel-tooltip-show="form.title.$dirty && form.title.$invalid"
+               data-uib-tooltip="{{ 'PAGE_TITLE_REQUIRED' | translate }}"
+               data-tooltip-trigger="none"
+               data-tooltip-is-open="form.title.$dirty && form.title.$invalid"
                data-tooltip-placement="top">
         <span class="form-control-feedback">
           <hippo-icon ng-if="form.title.$dirty && form.title.$valid"
@@ -110,12 +110,12 @@
           <input type="text" name="lastPathInfoElement" class="form-control" id="page-lastPathInfoElement"
                  data-ng-model="page.lastPathInfoElement"
                  data-ng-readonly="!state.isEditable"
-                 data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
                  data-ng-focus="form.lastPathInfoElement.$setPristine();"
                  data-ng-required="true"
-                 data-tooltip="{{ tooltips.lastPathInfoElement() }}"
-                 data-tooltip-trigger="show"
-                 data-hippo-channel-tooltip-show="form.lastPathInfoElement.$invalid"
+                 data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
+                 data-uib-tooltip="{{ tooltips.lastPathInfoElement(form) }}"
+                 data-tooltip-trigger="none"
+                 data-tooltip-is-open="form.lastPathInfoElement.$dirty && form.lastPathInfoElement.$invalid"
                  data-tooltip-placement="top">
         </div>
         <span class="form-control-feedback">
@@ -213,9 +213,9 @@
                    data-ng-model="copy.lastPathInfoElement"
                    data-ng-required="true"
                    data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
-                   data-hippo-channel-tooltip-show="copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$invalid"
-                   data-tooltip="{{ tooltips.copyLastPathInfoElement() }}"
-                   data-tooltip-trigger="show"
+                   data-uib-tooltip="{{ tooltips.lastPathInfoElement(copyForm) }}"
+                   data-tooltip-trigger="none"
+                   data-tooltip-is-open="copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$invalid"
                    data-tooltip-placement="top" />
               <span class="form-control-feedback">
                 <hippo-icon ng-if="copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$valid"
@@ -243,7 +243,7 @@
 
   <div class="panel-footer solid-child">
     <div class="tooltip-newlines flex-center"
-         data-tooltip="{{ tooltips.deleteButton() }}"
+         data-uib-tooltip="{{ tooltips.deleteButton() }}"
          data-tooltip-trigger="mouseenter"
          data-tooltip-placement="top">
       <button class="btn btn-default btn-md"

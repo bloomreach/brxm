@@ -51,7 +51,7 @@
               title: $filter('incrementProperty')(menuData.items, 'title', $filter('translate')('UNTITLED'), 'items'),
               link: ''
             };
-            if (angular.isDefined(menuData.prototypeItem)) {
+            if (angular.isObject(menuData.prototypeItem)) {
               result.localParameters = angular.copy(menuData.prototypeItem.localParameters);
             }
             return result;

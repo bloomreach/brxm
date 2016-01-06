@@ -35,9 +35,9 @@
                  data-ng-focus="form.title.$setPristine();"
                  data-ng-required="true"
                  data-hippo-channel-auto-focus
-                 data-tooltip="{{ 'TITLE_REQUIRED' | translate }}"
-                 data-tooltip-trigger="show"
-                 data-hippo-channel-tooltip-show="form.title.$dirty && form.title.$error.required"
+                 data-uib-tooltip="{{ 'TITLE_REQUIRED' | translate }}"
+                 data-tooltip-trigger="none"
+                 data-tooltip-is-open="form.title.$dirty && form.title.$error.required"
                  data-tooltip-placement="top">
           <span class="form-control-feedback">
             <hippo-icon ng-if="form.title.$dirty && form.title.$valid"
@@ -72,9 +72,9 @@
                    data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
                    data-ng-focus="form.lastPathInfoElement.$setPristine();"
                    data-ng-required="true" data-ng-keyup="disableAutomaticLastPathInfoElementUpdate()"
-                   data-tooltip="{{ tooltips.lastPathInfoElement() }}"
-                   data-tooltip-trigger="show"
-                   data-hippo-channel-tooltip-show="form.lastPathInfoElement.$dirty && form.lastPathInfoElement.$invalid"
+                   data-uib-tooltip="{{ tooltips.lastPathInfoElement() }}"
+                   data-tooltip-trigger="none"
+                   data-tooltip-is-open="form.lastPathInfoElement.$dirty && form.lastPathInfoElement.$invalid"
                    data-tooltip-placement="top">
           </div>
           <span class="form-control-feedback">

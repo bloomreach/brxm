@@ -21,17 +21,36 @@
       '$scope',
       'hippo.channel.ConfigService',
       'hippo.channel.PrototypeService',
+      'hippo.channel.ChannelService',
       'hippo.channel.FeedbackService',
-      function ($scope, ConfigService, PrototypeService, FeedbackService) {
+      function ($scope, ConfigService, PrototypeService, ChannelService, FeedbackService) {
+
+        $scope.isAddPageVisible = false;
+
+        function loadAvailableChannelsAddPage () {
+          return ChannelService.getPageModifiableChannels(false)
+            .then(function (data) {
+              return data;
+            }, function (errorResponse) {
+              $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
+            });
+        }
+
         // fetch prototypes
         if (ConfigService.userCanEdit) {
-          PrototypeService.getPrototypes().then(function (data) {
-            $scope.isAddPageVisible = data.prototypes.length > 0;
-          }, function (errorResponse) {
-            $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
+          loadAvailableChannelsAddPage().then(function (channels) {
+            for (var j = 0; j < channels.length; j++) {
+              if (ConfigService.mountId === channels[j].mountId) {
+                PrototypeService.getPrototypes().then(function (data) {
+                  $scope.isAddPageVisible = data.prototypes.length > 0;
+                }, function (errorResponse) {
+                  $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
+                });
+                break;
+              }
+            }
           });
         }
       }
     ]);
-
 }());

@@ -199,6 +199,7 @@
             Hippo,
             HST,
             jQuery,
+            SVGAnimatedString,
             XPathResult,
             YAHOO,
             window
