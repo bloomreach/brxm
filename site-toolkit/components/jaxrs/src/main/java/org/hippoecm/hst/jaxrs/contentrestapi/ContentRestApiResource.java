@@ -28,6 +28,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -270,9 +271,10 @@ public class ContentRestApiResource {
         }
     }
 
-    private void addToResponse(Iterator<Property> propertyIterator, HashMap<String, Object> response, List<String> ignoredProperties) throws RepositoryException {
+    @SuppressWarnings("unchecked")
+    private void addToResponse(PropertyIterator propertyIterator, HashMap<String, Object> response, List<String> ignoredProperties) throws RepositoryException {
         while (propertyIterator.hasNext()) {
-            Property property = propertyIterator.next();
+            Property property = (Property) propertyIterator.next();
             boolean ignore = ignoredProperties.contains(property.getName()) || property.getType() == PropertyType.BINARY;
             if (!ignore) {
                 if (property.isMultiple()) {
