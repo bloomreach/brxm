@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -229,8 +229,9 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
                 try {
                     save();
                 } catch (ActionFailedException e) {
+                    final String messageWithEscapedSingleQuotes = StringUtils.replace(e.getMessage(), "'", "\\'");
                     target.appendJavaScript("(function(instance) {Hippo.Msg.alert(instance.resources['channel-properties-editor-error'], " +
-                            " instance.resources['could-not-save-changes'].format('"+e.getMessage().replaceAll("'", "")+"'), function(id) {\n" +
+                            " instance.resources['could-not-save-changes'].format('" + messageWithEscapedSingleQuotes + "'), function(id) {\n" +
                             "                instance.pageContainer.refreshIframe();\n" +
                             "            }, instance); })(Hippo.ChannelManager.TemplateComposer.Instance)");
                 }
