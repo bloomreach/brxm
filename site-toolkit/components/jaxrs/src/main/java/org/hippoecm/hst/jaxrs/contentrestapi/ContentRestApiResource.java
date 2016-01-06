@@ -221,13 +221,13 @@ public class ContentRestApiResource {
             // throws a PathNotFoundException in case there is no live variant or it is not readable
             Node variant = node.getNode(node.getName());
 
-            HashMap<String, Object> hashMap = new HashMap<>();
+            HashMap<String, Object> response = new HashMap<>();
 
-            hashMap.put("jcr:name", node.getName());
-            propertiesToHashMap(node, hashMap, Collections.emptyList());
-            nodeToHashMap(variant, hashMap, ignoredVariantProperties);
+            response.put("jcr:name", node.getName());
+            addToResponse(node.getProperties(), response, Collections.emptyList());
+            addToResponse(variant, response, ignoredVariantProperties);
 
-            return Response.status(200).entity(hashMap).build();
+            return Response.status(200).entity(response).build();
         } catch (IllegalArgumentException iae) {
             return buildErrorResponse(400, iae);
         } catch (ItemNotFoundException|PathNotFoundException nfe) {
@@ -252,11 +252,11 @@ public class ContentRestApiResource {
     }
 
     @SuppressWarnings("unchecked")
-    private void nodeToHashMap(Node node, HashMap<String, Object> hashMap, List<String> ignoredProperties) throws RepositoryException {
-        propertiesToHashMap(node, hashMap, ignoredProperties);
+    private void addToResponse(Node node, HashMap<String, Object> response, List<String> ignoredProperties) throws RepositoryException {
+        addToResponse(node.getProperties(), response, ignoredProperties);
 
         // TODO discuss with Ate
-        // Iterate over all nodes and add those to the hashMap.
+        // Iterate over all nodes and add those to the response.
         // In case of a property and a sub node with the same name, this overwrites the property.
         // In Hippo 10.x and up, it is not possible to create document types through the document type editor that
         // have this type of same-name-siblings. It is possible when creating document types in the console or when
@@ -265,14 +265,12 @@ public class ContentRestApiResource {
         while (nodeIterator.hasNext()) {
             Node childNode = nodeIterator.next();
             HashMap<String, Object> childHashMap = new HashMap<>();
-            hashMap.put(childNode.getName(), childHashMap);
-            nodeToHashMap(childNode, childHashMap, ignoredProperties);
+            response.put(childNode.getName(), childHashMap);
+            addToResponse(childNode, childHashMap, ignoredProperties);
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private void propertiesToHashMap(Node node, HashMap<String, Object> hashMap, List<String> ignoredProperties) throws RepositoryException {
-        Iterator<Property> propertyIterator = node.getProperties();
+    private void addToResponse(Iterator<Property> propertyIterator, HashMap<String, Object> response, List<String> ignoredProperties) throws RepositoryException {
         while (propertyIterator.hasNext()) {
             Property property = propertyIterator.next();
             boolean ignore = ignoredProperties.contains(property.getName()) || property.getType() == PropertyType.BINARY;
@@ -283,9 +281,9 @@ public class ContentRestApiResource {
                     for (int i = 0; i < jcrValues.length; i++) {
                         stringValues[i] = jcrValues[i].getString();
                     }
-                    hashMap.put(property.getName(), stringValues);
+                    response.put(property.getName(), stringValues);
                 } else {
-                    hashMap.put(property.getName(), property.getValue().getString());
+                    response.put(property.getName(), property.getValue().getString());
                 }
             }
         }
