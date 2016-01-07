@@ -229,6 +229,7 @@ api/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenuItem.java svneol=nat
 api/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenus.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenusManager.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/sitemenu/package-info.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/environment/EnvironmentParameters.java -text
 api/src/main/java/org/hippoecm/hst/jaxrs/JAXRSService.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/provider/PropertyMap.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/provider/ValueProvider.java svneol=native#text/plain
@@ -612,6 +613,10 @@ components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelUtil
 components/core/src/main/java/org/hippoecm/hst/configuration/components/DelegatingHstComponentInfo.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/components/HstComponentConfigurationService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/components/HstComponentsConfigurationService.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/configuration/environment/EnvironmentUtils.java -text
+components/core/src/main/java/org/hippoecm/hst/configuration/environment/HostConfigListener.java -text
+components/core/src/main/java/org/hippoecm/hst/configuration/environment/HostConfigPublisher.java -text
+components/core/src/main/java/org/hippoecm/hst/configuration/environment/OptionalEnvironmentEventListenerItemImpl.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/hosting/MountService.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/hosting/PortMountService.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/model/EventPathsInvalidator.java -text
