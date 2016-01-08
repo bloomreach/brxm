@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -227,9 +227,11 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                 } else if (child.isNodeType(NT_HANDLE)) {
                     WorkflowManager workflowManager = ((HippoWorkspace) folder.getSession().getWorkspace()).getWorkflowManager();
                     Workflow workflow = workflowManager.getWorkflow(WORKFLOW_CATEGORY, child);
-                    Serializable hint = workflow.hints().get(workflowAction);
-                    if (hint instanceof Boolean && (Boolean) hint) {
-                        documents.add(child.getIdentifier());
+                    if (workflow != null) {
+                        Serializable hint = workflow.hints().get(workflowAction);
+                        if (hint instanceof Boolean && (Boolean) hint) {
+                            documents.add(child.getIdentifier());
+                        }
                     }
                 }
             }
