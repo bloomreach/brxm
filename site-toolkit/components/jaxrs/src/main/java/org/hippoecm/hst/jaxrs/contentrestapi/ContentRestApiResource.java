@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,22 @@ package org.hippoecm.hst.jaxrs.contentrestapi;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
+import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.jcr.nodetype.NodeType;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -208,25 +210,191 @@ public class ContentRestApiResource {
         }
     }
 
+    interface Visitor {
+        void visit(Item source, Map<String, Object> destination) throws RepositoryException;
+    }
+
+    interface VisitorFactory {
+        Visitor getVisitor(Item item) throws RepositoryException;
+    }
+
+    static class DefaultNodeVisitor implements Visitor {
+        VisitorFactory factory;
+
+        DefaultNodeVisitor(VisitorFactory factory) {
+            this.factory = factory;
+        }
+
+        public void visit(final Item sourceItem, final Map<String, Object> destination) throws RepositoryException {
+            final Node sourceNode = (Node) sourceItem;
+            final String sourceNodeName = sourceNode.getName();
+            final Map<String, Object> descendants = new TreeMap<>();
+            destination.put(sourceNodeName, descendants);
+
+            visitAllSiblings(factory, sourceNode, descendants);
+        }
+
+        static void visitAllSiblings(final VisitorFactory factory, final Node source, final Map<String, Object> destination) throws RepositoryException {
+            // TODO discuss with Ate
+            // Iterate over all nodes and add those to the response.
+            // In case of a property and a sub node with the same name, this overwrites the property.
+            // In Hippo 10.x and up, it is not possible to create document types through the document type editor that
+            // have this type of same-name-siblings. It is possible when creating document types in the console or when
+            // upgrading older projects. For now, it is acceptable that in those exceptional situations there is
+            // data-loss. Note that Destination#put will log an info message when an overwrite occurs.
+
+            final PropertyIterator propertyIterator = source.getProperties();
+            while (propertyIterator.hasNext()) {
+                Property property = (Property) propertyIterator.next();
+                Visitor visitor = factory.getVisitor(property);
+                visitor.visit(property, destination);
+            }
+
+            final NodeIterator nodeIterator = source.getNodes();
+            while (nodeIterator.hasNext()) {
+                Node childNode = (Node) nodeIterator.next();
+                Visitor visitor = factory.getVisitor(childNode);
+                visitor.visit(childNode, destination);
+            }
+        }
+    }
+
+    class HandleNodeVisitor implements Visitor {
+        VisitorFactory factory;
+
+        HandleNodeVisitor(VisitorFactory factory) {
+            this.factory = factory;
+        }
+
+        public void visit(final Item sourceItem, final Map<String, Object> destination) throws RepositoryException {
+            final Node sourceNode = (Node) sourceItem;
+            final String sourceNodeName = sourceNode.getName();
+
+            destination.put("jcr:name", sourceNodeName);
+            destination.put("jcr:uuid", sourceNode.getIdentifier());
+
+            Node variant = sourceNode.getNode(sourceNodeName);
+            DefaultNodeVisitor.visitAllSiblings(factory, variant, destination);
+        }
+    }
+
+    class HtmlNodeVisitor implements Visitor {
+        VisitorFactory factory;
+
+        HtmlNodeVisitor(VisitorFactory factory) {
+            this.factory = factory;
+        }
+
+        public void visit(final Item sourceItem, final Map<String, Object> destination) throws RepositoryException {
+            final Node sourceNode = (Node) sourceItem;
+            final String sourceNodeName = sourceNode.getName();
+            final Map<String, Object> output = new TreeMap<>();
+            destination.put(sourceNodeName, output);
+
+            // TODO: what I don't like is that this is a copy-past of #visitAllSiblings
+            final PropertyIterator propertyIterator = sourceNode.getProperties();
+            while (propertyIterator.hasNext()) {
+                Property childProperty = (Property) propertyIterator.next();
+                if (childProperty.getName().equals("hippostd:content")) {
+                    // TODO do content rewriting
+                }
+                Visitor visitor = factory.getVisitor(childProperty);
+                visitor.visit(childProperty, output);
+            }
+
+            final Map<String, Object> links = new TreeMap<>();
+            output.put("hipporest:links", links);
+
+            final NodeIterator nodeIterator = sourceNode.getNodes();
+            while (nodeIterator.hasNext()) {
+                Node childNode = (Node) nodeIterator.next();
+                Visitor visitor = factory.getVisitor(childNode);
+                switch (childNode.getPrimaryNodeType().getName()) {
+                    case "hippo:facetselect":
+                        // TODO do link rewriting
+                        visitor.visit(childNode, links);
+                    default:
+                        visitor.visit(childNode, output);
+                }
+            }
+        }
+    }
+
+    class DefaultPropertyVisitor implements Visitor {
+        VisitorFactory factory;
+        DefaultPropertyVisitor(VisitorFactory factory) {
+            this.factory = factory;
+        }
+        public void visit(final Item sourceItem, final Map<String, Object> destination) throws RepositoryException {
+            final Property sourceProperty = (Property) sourceItem;
+
+            if (sourceProperty.isMultiple()) {
+                Value[] jcrValues = sourceProperty.getValues();
+                String[] stringValues = new String[jcrValues.length];
+                for (int i = 0; i < jcrValues.length; i++) {
+                    stringValues[i] = jcrValues[i].getString();
+                }
+                destination.put(sourceProperty.getName(), stringValues);
+            } else {
+                destination.put(sourceProperty.getName(), sourceProperty.getValue().getString());
+            }
+        }
+    }
+
+    class NoopVisitor implements Visitor {
+        public void visit(final Item source, final Map<String, Object> destination) {
+            // Noop
+        }
+    }
+
+    class DefaultVisitorFactory implements VisitorFactory {
+        public Visitor getVisitor(final Item item) throws RepositoryException {
+            if (item instanceof Node) {
+                Node node = (Node) item;
+                NodeType nodeType = node.getPrimaryNodeType();
+
+                switch (nodeType.getName()) {
+                    case "hippo:handle":
+                        return new HandleNodeVisitor(this);
+                    case "hippostd:html":
+                        return new HtmlNodeVisitor(this);
+                    default:
+                        return new DefaultNodeVisitor(this);
+                }
+            }
+            if (item instanceof Property) {
+                Property property = (Property) item;
+
+                switch (property.getName()) {
+                    case "jcr:uuid":
+                        return new NoopVisitor();
+                    default:
+                        return new DefaultPropertyVisitor(this);
+                }
+            }
+            return new NoopVisitor();
+        }
+    }
+
     @GET
     @Path("/documents/{uuid}")
     public Response getDocumentsByUUID(@PathParam("uuid") String uuidString) {
         try {
-            UUID uuid = parseUUID(uuidString);
-
             Session session = context.getSession();
+
+            // throws an IllegalArgumentException in case the uuid is not correctly formed
+            UUID uuid = parseUUID(uuidString);
 
             // throws an ItemNotFoundException in case the uuid does not exist or is not readable
             Node node = session.getNodeByIdentifier(uuid.toString());
 
             // throws a PathNotFoundException in case there is no live variant or it is not readable
-            Node variant = node.getNode(node.getName());
+            node.getNode(node.getName());
 
-            HashMap<String, Object> response = new HashMap<>();
-
-            response.put("jcr:name", node.getName());
-            addToResponse(node.getProperties(), response, Collections.emptyList());
-            addToResponse(variant, response, ignoredVariantProperties);
+            Map response = new TreeMap<>();
+            VisitorFactory factory = new DefaultVisitorFactory();
+            Visitor visitor = factory.getVisitor(node);
+            visitor.visit(node, response);
 
             return Response.status(200).entity(response).build();
         } catch (IllegalArgumentException iae) {
@@ -250,45 +418,6 @@ public class ContentRestApiResource {
         final HippoJcrSearchService searchService = new HippoJcrSearchService();
         searchService.setSession(context.getSession());
         return searchService;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void addToResponse(Node node, HashMap<String, Object> response, List<String> ignoredProperties) throws RepositoryException {
-        addToResponse(node.getProperties(), response, ignoredProperties);
-
-        // TODO discuss with Ate
-        // Iterate over all nodes and add those to the response.
-        // In case of a property and a sub node with the same name, this overwrites the property.
-        // In Hippo 10.x and up, it is not possible to create document types through the document type editor that
-        // have this type of same-name-siblings. It is possible when creating document types in the console or when
-        // upgrading older projects. For now, it is acceptable that in those exceptional situations there is data-loss.
-        Iterator<Node> nodeIterator = node.getNodes();
-        while (nodeIterator.hasNext()) {
-            Node childNode = nodeIterator.next();
-            HashMap<String, Object> childHashMap = new HashMap<>();
-            response.put(childNode.getName(), childHashMap);
-            addToResponse(childNode, childHashMap, ignoredProperties);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void addToResponse(PropertyIterator propertyIterator, HashMap<String, Object> response, List<String> ignoredProperties) throws RepositoryException {
-        while (propertyIterator.hasNext()) {
-            Property property = (Property) propertyIterator.next();
-            boolean ignore = ignoredProperties.contains(property.getName()) || property.getType() == PropertyType.BINARY;
-            if (!ignore) {
-                if (property.isMultiple()) {
-                    Value[] jcrValues = property.getValues();
-                    String[] stringValues = new String[jcrValues.length];
-                    for (int i = 0; i < jcrValues.length; i++) {
-                        stringValues[i] = jcrValues[i].getString();
-                    }
-                    response.put(property.getName(), stringValues);
-                } else {
-                    response.put(property.getName(), property.getValue().getString());
-                }
-            }
-        }
     }
 
 }
