@@ -174,9 +174,9 @@ public class SiteMapResource extends AbstractConfigResource {
                             .add(validatorFactory.getConfigurationExistsValidator(siteMapItem.getParentId(), siteMapHelper));
 
                     // if parent item is different than current parent, then the parent item is not allowed to be same as or a descendant of siteMapItem
-                    final HstSiteMapItem existingParent = siteMapHelper.getConfigObject(siteMapItem.getParentId());
-                    if (existingParent != null && (existingParent instanceof CanonicalInfo)
-                            && !((CanonicalInfo)existingParent).getCanonicalIdentifier().equals(siteMapItem.getParentId())) {
+                    final HstSiteMapItem existingParent = siteMapHelper.getConfigObject(siteMapItem.getId()).getParentItem();
+                    if (existingParent == null || ((existingParent instanceof CanonicalInfo)
+                            && !((CanonicalInfo)existingParent).getCanonicalIdentifier().equals(siteMapItem.getParentId()))) {
                         // update also involves a move!
                         preValidatorBuilder.add(validatorFactory.getItemNotSameOrDescendantOfValidator(siteMapItem.getParentId(), siteMapItem.getId()));
                     }

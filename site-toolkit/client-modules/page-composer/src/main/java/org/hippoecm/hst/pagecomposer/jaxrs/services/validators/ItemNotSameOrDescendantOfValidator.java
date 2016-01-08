@@ -40,7 +40,7 @@ public class ItemNotSameOrDescendantOfValidator extends AbstractValidator {
             final Session session = requestContext.getSession();
             final String validate = getNodeByIdentifier(validateUUID, session).getPath();
             final String target = getNodeByIdentifier(targetUUID, session).getPath();
-            if (validate.equals(target) || target.startsWith(validate + "/")) {
+            if (validate.equals(target) || validate.startsWith(target + "/")) {
                 final String message = String.format("Node '%s' is the same as or a descendant of '%s", validate, target);
                 throw new ClientException(message, INVALID_MOVE_TO_SELF_OR_DESCENDANT);
             }
