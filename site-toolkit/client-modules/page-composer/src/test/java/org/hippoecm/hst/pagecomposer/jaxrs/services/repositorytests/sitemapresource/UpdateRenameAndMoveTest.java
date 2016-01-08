@@ -593,7 +593,7 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
         }
 
         Response response = siteMapResource.update(home);
-        if (response.getStatus() == 400) {
+        if (response.getStatus() != 200) {
             throw new ClientException("failed", UNKNOWN);
         }
         assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),

@@ -168,20 +168,19 @@ public class SiteMapResource extends AbstractConfigResource {
                 .add(validatorFactory.getNameValidator(siteMapItem.getName()))
                 .add(validatorFactory.getPathInfoValidator(siteMapItem, null, siteMapHelper))
                 .add(new NotNullValidator(siteMapItem.getName(), ClientError.ITEM_NO_NAME));
-                if (siteMapItem.getParentId() != null) {
-                    preValidatorBuilder.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
-                            siteMapItem.getParentId(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM))
-                            .add(validatorFactory.getConfigurationExistsValidator(siteMapItem.getParentId(), siteMapHelper));
+        if (siteMapItem.getParentId() != null) {
+            preValidatorBuilder.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
+                    siteMapItem.getParentId(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM))
+                    .add(validatorFactory.getConfigurationExistsValidator(siteMapItem.getParentId(), siteMapHelper));
 
-                    // if parent item is different than current parent, then the parent item is not allowed to be same as or a descendant of siteMapItem
-                    final HstSiteMapItem existingParent = siteMapHelper.getConfigObject(siteMapItem.getId()).getParentItem();
-                    if (existingParent == null || ((existingParent instanceof CanonicalInfo)
-                            && !((CanonicalInfo)existingParent).getCanonicalIdentifier().equals(siteMapItem.getParentId()))) {
-                        // update also involves a move!
-                        preValidatorBuilder.add(validatorFactory.getItemNotSameOrDescendantOfValidator(siteMapItem.getParentId(), siteMapItem.getId()));
-                    }
-                }
-
+            // if parent item is different than current parent, then the parent item is not allowed to be same as or a descendant of siteMapItem
+            final HstSiteMapItem existingParent = siteMapHelper.getConfigObject(siteMapItem.getId()).getParentItem();
+            if (existingParent == null || ((existingParent instanceof CanonicalInfo)
+                    && !((CanonicalInfo)existingParent).getCanonicalIdentifier().equals(siteMapItem.getParentId()))) {
+                // update also involves a move!
+                preValidatorBuilder.add(validatorFactory.getItemNotSameOrDescendantOfValidator(siteMapItem.getParentId(), siteMapItem.getId()));
+            }
+        }
 
 
         // if the update has a uuid for componenent id, we need to re-apply a prototype. In that case we also need to

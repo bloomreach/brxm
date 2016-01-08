@@ -356,11 +356,8 @@ public class SiteMapHelper extends AbstractHelper {
         return hstSiteMapItem;
     }
 
-    public void move(final String sourceId, final String parentId) throws RepositoryException {
-        HstRequestContext requestContext = pageComposerContextService.getRequestContext();
-        final Session session = requestContext.getSession();
-        Node sourceNode = session.getNodeByIdentifier(sourceId);
-        moveIfNeeded(sourceId, parentId, sourceNode.getName());
+    public void move(final String sourceId, final String targetParentId) throws RepositoryException {
+        moveIfNeeded(sourceId, targetParentId, null);
     }
 
     public void moveIfNeeded(final String sourceId, final String targetParentId, final String name) throws RepositoryException {
@@ -397,7 +394,7 @@ public class SiteMapHelper extends AbstractHelper {
                 log.info("Renamed item from '{}' to '{}'", oldLocation, target);
                 return;
             }
-            log.info("No move was required since same name and same parent");
+            log.debug("No move was required since same name and same parent");
             return;
         }
         final Node unLockableNode = lockHelper.getUnLockableNode(targetParent, true, false);
@@ -410,7 +407,6 @@ public class SiteMapHelper extends AbstractHelper {
         validateTarget(session, targetParent.getPath() + "/" + finalName, pageComposerContextService.getEditingPreviewSite().getSiteMap());
         String oldLocation = sourceNode.getPath();
         session.move(currentParent.getPath() + "/" + sourceNode.getName(), targetParent.getPath() + "/" + finalName);
-        lockHelper.acquireLock(sourceNode, 0);
         createMarkedDeletedIfLiveExists(session, oldLocation);
     }
 
