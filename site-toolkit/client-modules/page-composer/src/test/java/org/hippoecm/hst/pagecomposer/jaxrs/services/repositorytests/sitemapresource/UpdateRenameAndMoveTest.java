@@ -668,6 +668,52 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
         assertTrue(message.contains("is not part of required node path"));
     }
 
+
+    @Test
+    public void after_move_a_descendant_of_moved_item_can_be_moved_by_same_user() throws Exception {
+        final SiteMapResource siteMapResource = createResource();
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+        final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
+
+        Node homeNode = session.getNodeByIdentifier(home.getId());
+
+        // move news to 'home'
+        news.setParentId(home.getId());
+        siteMapResource.update(news);
+        assertTrue(session.nodeExists(homeNode.getPath() + "/" + "news"));
+        assertTrue(session.nodeExists(homeNode.getPath() + "/" + "news/_default_"));
+
+        final SiteMapItemRepresentation newsDefault = getSiteMapItemRepresentation(session, "home/news/2015");
+        // try to move /home/news/_default_ to /home/_default_
+        newsDefault.setParentId(home.getId());
+        siteMapResource.update(newsDefault);
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home/_default_"));
+    }
+
+    @Test
+    public void move_fails_cause_target_existing_in_non_workspace() throws Exception {
+        final SiteMapResource siteMapResource = createResource();
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+        final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
+
+        Node homeNode = session.getNodeByIdentifier(home.getId());
+
+        // move news to 'home'
+        news.setParentId(home.getId());
+        siteMapResource.update(news);
+        assertTrue(session.nodeExists(homeNode.getPath() + "/" + "news"));
+        assertTrue(session.nodeExists(homeNode.getPath() + "/" + "news/_default_"));
+
+        final SiteMapItemRepresentation newsDefault = getSiteMapItemRepresentation(session, "home/news/2015");
+        // try to move /home/news/_default_ to /_default_ : Should fail since the non-workspace sitemap already contains _default_
+        newsDefault.setParentId(null);
+
+        final Response update = siteMapResource.update(newsDefault);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), update.getStatus());
+        final String message = ((ExtResponseRepresentation)update.getEntity()).getMessage();
+       assertTrue(message.contains("not allowed since the *non-workspace* sitemap already contains"));
+    }
+
     @Test
     public void after_move_a_descendant_of_moved_item_cannot_be_moved_by_someone_else() throws Exception {
         final SiteMapResource siteMapResource = createResource();
@@ -686,8 +732,8 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
         final Session bob = createSession("bob", "bob");
         try {
             final SiteMapItemRepresentation newsDefaultByBob = getSiteMapItemRepresentation(bob, "home/news/2015");
-            // try to move to root item
-            newsDefaultByBob.setParentId(null);
+            // try to move /home/news/_default_ to /home/_default_
+            newsDefaultByBob.setParentId(home.getId());
 
             final Response update = siteMapResource.update(newsDefaultByBob);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), update.getStatus());
