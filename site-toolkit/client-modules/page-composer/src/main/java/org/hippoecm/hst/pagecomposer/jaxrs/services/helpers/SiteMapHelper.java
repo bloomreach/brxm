@@ -460,6 +460,8 @@ public class SiteMapHelper extends AbstractHelper {
             final String rootContentPath = pageComposerContextService.getEditingMount().getContentPath();
             if (absPath.startsWith(rootContentPath + "/")) {
                 setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, absPath.substring(rootContentPath.length() + 1));
+            } else if (absPath.equals("")) {
+                removeProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
             } else {
                 log.info("Cannot set '{}' for relative content path because does not start with root channel content path '{}'",
                         absPath, rootContentPath + "/");
