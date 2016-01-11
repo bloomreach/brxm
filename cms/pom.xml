@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -134,7 +134,7 @@
     <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
 
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
-    <sf.htmlcleaner.version>2.16</sf.htmlcleaner.version>
+    <sf.htmlcleaner.version>2.12</sf.htmlcleaner.version>
 
   </properties>
 
