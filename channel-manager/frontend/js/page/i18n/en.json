@@ -14,6 +14,7 @@
   "DELETE_PAGE": "Delete page",
   "COPY_PAGE": "Copy page",
   "ITEM_CANNOT_BE_CLONED": "Item can not be cloned. Reason : {{ errorReason }}",
+  "INVALID_MOVE_TO_SELF_OR_DESCENDANT" : "Item can not be moved to itself or a descendant of itself",
   "CONFIRM_DELETE_TITLE": "Confirm delete",
   "CONFIRM_DELETE_MESSAGE": "Are you sure you want to delete '{{ title }}'?",
   "TOOLTIP_NOT_EDITABLE": "You cannot delete the page because it is currently not editable",

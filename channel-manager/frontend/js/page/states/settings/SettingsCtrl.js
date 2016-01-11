@@ -36,6 +36,7 @@
           primaryDocument: '',
           availableDocumentRepresentations: [],
           lastPathInfoElement: '',
+          target: '',
           prototype: {
             id: null
           },
@@ -67,6 +68,7 @@
           illegalCharacters: '/ :'
         };
 
+        $scope.currentChannelLocations = [];
         $scope.locations = [];
 
         $scope.availableChannelsForPageCopy = [];
@@ -124,6 +126,7 @@
         $scope.submit = function () {
           var pageModel = {
             id: $scope.page.id,
+            parentId: $scope.page.target.id,
             pageTitle: $scope.page.title,
             name: $scope.page.lastPathInfoElement,
             componentConfigurationId: $scope.page.prototype.id,
@@ -227,11 +230,12 @@
             .then(function (data) {
               $scope.locations = data || [];
               $scope.copy.target = '';
-              for (var i = 0; i < $scope.locations.length; i++) {
-                if ($scope.locations[i].id === $scope.page.parentLocationId) {
-                  $scope.copy.target = $scope.locations[i];
+              $scope.locations.some(function (loc) {
+                if (loc.id === $scope.page.parentLocationId) {
+                  $scope.copy.target = loc;
+                  return true;
                 }
-              }
+              });
             }, setErrorFeedback);
         }
 
@@ -240,6 +244,7 @@
             .then(function (data) {
               $scope.prototypes = data.prototypes;
               $scope.locations = data.locations || [];
+              $scope.currentChannelLocations =  data.locations || [];
               return data.prototypes;
             }, setErrorFeedback);
         }
@@ -279,11 +284,13 @@
               $scope.page.parentLocationId = currentPage.parentLocation.id;
 
               $scope.copy.lastPathInfoElement = currentPage.name;
-              for (var i = 0; i < $scope.locations.length; i++) {
-                if (currentPage.parentLocation && $scope.locations[i].id === $scope.page.parentLocationId) {
-                  $scope.copy.target = $scope.locations[i];
+              $scope.locations.some(function (loc){
+                if (currentPage.parentLocation && loc.id === $scope.page.parentLocationId) {
+                  $scope.copy.target = loc;
+                  $scope.page.target = loc;
+                  return true;
                 }
-              }
+              });
 
               $scope.page.hasContainerItem = currentPage.hasContainerItemInPageDefinition;
               $scope.page.isHomePage = currentPage.isHomePage;
@@ -299,12 +306,12 @@
                 // check that current mount is part of $scope.availableChannelsForPageCopy
                 // namely channels that do not have their own hst:workspage with hst:pages and hst:sitemap cannot
                 // be used for copy page
-                for (var j = 0; j < $scope.availableChannelsForPageCopy.length; j++) {
-                  if ($scope.copy.mountId === $scope.availableChannelsForPageCopy[j].mountId) {
-                    $scope.state.isCopyable = true;
-                    break;
-                  }
-                }
+                $scope.availableChannelsForPageCopy.some(function (channel) {
+                  $scope.copy.mountId === channel.mountId;
+                  $scope.state.isCopyable = true;
+                  return true;
+                });
+
               }
 
               // lock information
