@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,23 +23,34 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NodeComparer extends TypedComparer<Node> {
-
-    private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(NodeComparer.class);
 
+    private final ITemplateEngine templateEngine;
+
+    /**
+     * @deprecated As of version 3.1.4. replaced by {@link NodeComparer#NodeComparer(ITypeDescriptor, ITemplateEngine)}
+     * for better support comparison of compounds in compounds.
+     */
     public NodeComparer(ITypeDescriptor type) {
+        this(type, null);
+    }
+
+    public NodeComparer(ITypeDescriptor type, ITemplateEngine templateEngine) {
         super(type);
         if (!type.isNode()) {
-            throw new RuntimeException("type does not correspond to a node type");
+            throw new RuntimeException("type " + type.getName() + " does not correspond to a node type");
         }
+        this.templateEngine = templateEngine;
     }
 
     public boolean areEqual(Node baseNode, Node targetNode) {
@@ -57,7 +68,7 @@ public class NodeComparer extends TypedComparer<Node> {
                     continue;
                 }
                 if (field.getTypeDescriptor().isNode()) {
-                    NodeComparer comparer = new NodeComparer(field.getTypeDescriptor());
+                    NodeComparer comparer = new NodeComparer(field.getTypeDescriptor(), templateEngine);
                     if (field.isMultiple()) {
                         NodeIterator baseIter = baseNode.getNodes(path);
                         NodeIterator targetIter = targetNode.getNodes(path);
@@ -81,7 +92,7 @@ public class NodeComparer extends TypedComparer<Node> {
                             continue;
                         }
                         if (baseNode.hasNode(path) && targetNode.hasNode(path)) {
-                            if (!comparer.areEqual(baseNode.getNode(path), 
+                            if (!comparer.areEqual(baseNode.getNode(path),
                                     targetNode.getNode(path))) {
                                 return false;
                             }
@@ -129,9 +140,10 @@ public class NodeComparer extends TypedComparer<Node> {
         if (node == null) {
             return 0;
         }
-        HashCodeBuilder hcb = new HashCodeBuilder();
+        final HashCodeBuilder hcb = new HashCodeBuilder();
         try {
-            for (Map.Entry<String, IFieldDescriptor> entry : getType().getFields().entrySet()) {
+            ITypeDescriptor nodeTypeDescriptor = getNodeTypeDescriptor(node);
+            for (Map.Entry<String, IFieldDescriptor> entry : nodeTypeDescriptor.getFields().entrySet()) {
                 IFieldDescriptor field = entry.getValue();
                 String path = field.getPath();
                 if ("*".equals(path)) {
@@ -139,19 +151,18 @@ public class NodeComparer extends TypedComparer<Node> {
                     continue;
                 }
                 if (field.getTypeDescriptor().isNode()) {
-                    NodeComparer comparer = new NodeComparer(field.getTypeDescriptor());
                     if (field.isMultiple()) {
                         NodeIterator childIter = node.getNodes(path);
                         while (childIter.hasNext()) {
                             Node child = childIter.nextNode();
                             hcb.append(child.getName());
-                            hcb.append(comparer.getHashCode(child));
+                            hcb.append(getHashCode(child));
                         }
                     } else {
                         if (node.hasNode(path)) {
                             Node child = node.getNode(path);
                             hcb.append(child.getName());
-                            hcb.append(comparer.getHashCode(child));
+                            hcb.append(getHashCode(child));
                         }
                     }
                 } else {
@@ -174,5 +185,26 @@ public class NodeComparer extends TypedComparer<Node> {
         }
         return hcb.toHashCode();
     }
+    private ITypeDescriptor getNodeTypeDescriptor(final Node node) throws RepositoryException {
+        final ITypeDescriptor configuredType = getType();
+        final String nodeTypeName = node.getPrimaryNodeType().getName();
 
+        if (StringUtils.equals(configuredType.getName(), nodeTypeName)) {
+            return configuredType;
+        } else {
+            // configured type and node type are different, try to lookup node type descriptor from template engine
+            if (templateEngine != null) {
+                try {
+                    return templateEngine.getType(nodeTypeName);
+                } catch (TemplateEngineException e) {
+                    log.error("Cannot obtain node type descriptor of '" + nodeTypeName + "' from the template engine", e);
+                }
+            } else {
+                log.warn("Cannot obtain the type descriptor of the node type '{}' because the template engine is not set for the field at '{}'. Using the preconfigured type descriptor '{}'",
+                        nodeTypeName, node.getPath(), configuredType.getName());
+            }
+            return configuredType;
+        }
+
+    }
 }
