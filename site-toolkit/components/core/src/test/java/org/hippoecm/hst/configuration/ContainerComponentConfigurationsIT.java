@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -365,28 +365,28 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
     public void referenceable_containers_from_inherited_configuration_included_when_workspace_explicitly_inherited_and_invalidation_works() throws Exception {
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                 new String[]{"../unittestcommon", "../unittestcommon/hst:workspace"});
-        assertInheritanceAndModelReloadWorks(getLocalhostRootMountId());
+        assertInheritanceAndModelReloadWorks(getLocalhostRootMountId(), true);
     }
 
     @Test
     public void referenceable_containers_from_inherited_configuration_included_when_only_workspace_inherited_and_invalidation_works() throws Exception {
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                 new String[]{"../unittestcommon/hst:workspace"});
-        assertInheritanceAndModelReloadWorks(getLocalhostRootMountId());
+        assertInheritanceAndModelReloadWorks(getLocalhostRootMountId(), true);
     }
 
     @Test
     public void referenceable_containers_from_containers_inherited_configuration_included_when_workspace_explicitly_inherited_and_invalidation_works() throws Exception {
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                 new String[]{"../unittestcommon", "../unittestcommon/hst:workspace/hst:containers"});
-        assertInheritanceAndModelReloadWorks(getLocalhostRootMountId());
+        assertInheritanceAndModelReloadWorks(getLocalhostRootMountId(), true);
     }
 
     @Test
     public void referenceable_containers_from_containers_inherited_configuration_included_when_only_workspace_inherited_and_invalidation_works() throws Exception {
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                 new String[]{"../unittestcommon/hst:workspace/hst:containers"});
-        assertInheritanceAndModelReloadWorks(getLocalhostRootMountId());
+        assertInheritanceAndModelReloadWorks(getLocalhostRootMountId(), true);
     }
 
 
@@ -409,7 +409,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
                 new String[]{"../unittestcommon", "../unittestcommon/hst:workspace"});
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestsubproject",
                 new String[]{"../unittestproject"});
-        assertInheritanceAndModelReloadWorks(getLocalhostSubProjectMountId());
+        assertInheritanceAndModelReloadWorks(getLocalhostSubProjectMountId(), true);
     }
 
     @Test
@@ -419,7 +419,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
                 new String[]{"../unittestcommon", "../unittestcommon/hst:workspace/hst:containers"});
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestsubproject",
                 new String[]{"../unittestproject"});
-        assertInheritanceAndModelReloadWorks(getLocalhostSubProjectMountId());
+        assertInheritanceAndModelReloadWorks(getLocalhostSubProjectMountId(), true);
     }
 
     @Test
@@ -429,10 +429,10 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
                 new String[]{"../unittestcommon/hst:workspace/hst:containers"});
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestsubproject",
                 new String[]{"../unittestproject"});
-        assertInheritanceAndModelReloadWorks(getLocalhostSubProjectMountId());
+
+        assertInheritanceAndModelReloadWorks(getLocalhostSubProjectMountId(), true);
     }
 
-    @Test
     public void cascading_workspace_inheritance_order_by_first_inheritance_first() throws Exception {
         removePagesAndSiteMapFromSubConfig();
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
@@ -506,30 +506,36 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
     }
 
 
-    private void assertInheritanceAndModelReloadWorks(final String mountId) throws Exception {
+    private void assertInheritanceAndModelReloadWorks(final String mountId, final boolean expectPresentPagesFromCommon) throws Exception {
 
         createHstWorkspaceAndReferenceableContainer("myReferenceableContainer",
                 "/hst:hst/hst:configurations/unittestcommon");
 
         final String inheritedContainerName = "inheritedcontainer";
         addComponentReference(testComponent, inheritedContainerName, "myReferenceableContainer");
+        final String itemUUID;
         {
             final VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
             final Mount mount = vhosts.getMountByIdentifier(mountId);
             final HstComponentConfiguration pageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
-            final HstComponentConfiguration testComponent = pageComponent.getChildByName(TEST_COMPONENT_NODE_NAME);
-            assertNotNull(testComponent);
+            if (!expectPresentPagesFromCommon) {
+                assertNull(pageComponent);
+                return;
+            }
+            final HstComponentConfiguration testComponentConfig = pageComponent.getChildByName(TEST_COMPONENT_NODE_NAME);
+            assertNotNull(testComponentConfig);
             // container available since part of inherited BUT inherited workspace IS now inherited because explicitly inherited
-            final HstComponentConfiguration component = testComponent.getChildByName(inheritedContainerName);
+            final HstComponentConfiguration component = testComponentConfig.getChildByName(inheritedContainerName);
             assertNotNull(component);
             final HstComponentConfiguration item = component.getChildByName("item");
+            itemUUID = item.getCanonicalIdentifier();
             assertNotNull(item);
             assertEquals("value1", item.getParameter("name1"));
             assertTrue(item.isInherited());
         }
 
         // now trigger a change in the inherited component from workspace. This should trigger a reload
-        final Node componentItem = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:containers/myReferenceableContainer/item");
+        final Node componentItem = session.getNodeByIdentifier(itemUUID);
         componentItem.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"valueNew"});
         session.save();
         // trigger events as during tests the jcr event listeners are not enabled
@@ -550,6 +556,67 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
             assertTrue(item.isInherited());
         }
 
+    }
+
+    @Test
+    public void cascading_workspace_inheritance4() throws Exception {
+
+        removePagesAndSiteMapFromSubConfig();
+
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                new String[]{"../unittestcommon", "../unittestcommon/hst:workspace/hst:containers", "../unittestcommon/hst:workspace/hst:pages", "../unittestcommon/hst:workspace/hst:sitemap"});
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestsubproject",
+                new String[]{"../unittestproject/hst:workspace/hst:containers", "../unittestproject/hst:workspace/hst:pages", "../unittestproject/hst:workspace/hst:sitemap"});
+
+        final Node workspace = session.getNode("/hst:hst/hst:configurations/unittestcommon").addNode("hst:workspace");
+        workspace.addNode("hst:pages");
+        session.move(testComponent.getParent().getPath(), "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages/homepage");
+        session.save();
+        assertInheritanceAndModelReloadWorks(getLocalhostSubProjectMountId(), true);
+
+    }
+
+    @Test
+    public void cascading_workspace_inheritance5() throws Exception {
+        removePagesAndSiteMapFromSubConfig();
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                new String[]{"../unittestcommon/hst:workspace/hst:containers", "../unittestcommon/hst:workspace/hst:pages", "../unittestcommon/hst:workspace/hst:sitemap"});
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestsubproject",
+                new String[]{"../unittestproject/hst:workspace/hst:containers", "../unittestproject/hst:workspace/hst:pages", "../unittestproject/hst:workspace/hst:sitemap"});
+
+        // move homepage since only the workspace pages are inherited
+        final Node workspace = session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace");
+        workspace.addNode("hst:pages");
+        session.move(testComponent.getParent().getPath(), "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/homepage");
+        assertInheritanceAndModelReloadWorks(getLocalhostSubProjectMountId(), true);
+    }
+
+    @Test
+    public void cascading_workspace_inheritance_when_unittestproject_does_not_inherit_pages_from_common_workspace() throws Exception {
+        removePagesAndSiteMapFromSubConfig();
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                new String[]{"../unittestcommon/hst:workspace/hst:containers", "../unittestcommon/hst:workspace/hst:sitemap"});
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestsubproject",
+                new String[]{"../unittestproject/hst:workspace/hst:containers", "../unittestproject/hst:workspace/hst:sitemap"});
+
+        final Node workspace = session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace");
+        workspace.addNode("hst:pages");
+        session.move(testComponent.getParent().getPath(), "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/homepage");
+        assertInheritanceAndModelReloadWorks(getLocalhostSubProjectMountId(), false);
+    }
+
+    @Test
+    public void cascading_workspace_inheritance_unknown_inherit_paths() throws Exception {
+        removePagesAndSiteMapFromSubConfig();
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
+                new String[]{"../unittestcommon/hst:workspace/hst:foo", "../unittestcommon/hst:workspace/hst:bar", "../unittestcommon/hst:workspace/hst:lux"});
+        setWorkspaceInheritance("/hst:hst/hst:configurations/unittestsubproject",
+                new String[]{"../unittestproject/hst:workspace/hst:foo", "../unittestproject/hst:workspace/hst:bar", "../unittestproject/hst:workspace/hst:lux"});
+
+        final Node workspace = session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace");
+        workspace.addNode("hst:pages");
+        session.move(testComponent.getParent().getPath(), "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/homepage");
+        assertInheritanceAndModelReloadWorks(getLocalhostSubProjectMountId(), false);
     }
 
     @Test
