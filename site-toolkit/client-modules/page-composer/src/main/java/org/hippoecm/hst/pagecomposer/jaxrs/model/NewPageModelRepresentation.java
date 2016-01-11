@@ -36,6 +36,9 @@ public class NewPageModelRepresentation {
             if (!page.isWorkspaceConfiguration()) {
                 continue;
             }
+            if (page.isInherited()) {
+                continue;
+            }
             Location location = new Location(prefix + "/" + page.getPathInfo() + "/", page.getId());
             locations.add(location);
         }

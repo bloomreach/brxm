@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ public class SiteMapItemRepresentation {
 
     private String name;
     private String id;
+    private String parentId;
     private String pathInfo;
     private String parentPathInfo;
     private boolean isHomePage;
@@ -93,6 +94,7 @@ public class SiteMapItemRepresentation {
         }
 
         if (item.getParentItem() != null) {
+            parentId = ((CanonicalInfo) item.getParentItem()).getCanonicalIdentifier();
             parentPathInfo = HstSiteMapUtils.getPath(item.getParentItem(), null);
         }
 
@@ -172,6 +174,14 @@ public class SiteMapItemRepresentation {
 
     public void setId(final String id) {
         this.id = id;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(final String parentId) {
+        this.parentId = parentId;
     }
 
     public String getName() {

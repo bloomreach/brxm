@@ -27,6 +27,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -56,6 +57,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAPIT
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError.INVALID_MOVE_TO_SELF_OR_DESCENDANT;
 
 public class SiteMapHelper extends AbstractHelper {
 
@@ -102,14 +104,8 @@ public class SiteMapHelper extends AbstractHelper {
         lockHelper.acquireLock(siteMapItemNode, 0);
 
         final String modifiedName = NodeNameCodec.encode(siteMapItem.getName());
-        if (modifiedName != null && !modifiedName.equals(siteMapItemNode.getName())) {
-            // we do not need to check lock for parent as this is a rename within same parent
-            String oldLocation = siteMapItemNode.getPath();
-            String target = siteMapItemNode.getParent().getPath() + "/" + modifiedName;
-            validateTarget(session, target, pageComposerContextService.getEditingPreviewSite().getSiteMap());
-            session.move(siteMapItemNode.getPath(), siteMapItemNode.getParent().getPath() + "/" + modifiedName);
-            createMarkedDeletedIfLiveExists(session, oldLocation);
-        }
+
+        moveIfNeeded(itemId, siteMapItem.getParentId(), modifiedName);
 
         if (reApplyPrototype) {
             final Node newPrototypePage = session.getNodeByIdentifier(siteMapItem.getComponentConfigurationId());
@@ -360,40 +356,57 @@ public class SiteMapHelper extends AbstractHelper {
         return hstSiteMapItem;
     }
 
-    public void move(final String id, final String parentId) throws RepositoryException {
-        final String finalParentId;
-        if (parentId == null) {
-            finalParentId = getWorkspaceSiteMapId();
+    public void move(final String sourceId, final String targetParentId) throws RepositoryException {
+        moveIfNeeded(sourceId, targetParentId, null);
+    }
+
+    public void moveIfNeeded(final String sourceId, final String targetParentId, final String name) throws RepositoryException {
+        final String finalTargetParentId;
+        final String finalName;
+        if (targetParentId == null) {
+            finalTargetParentId = getWorkspaceSiteMapId();
         } else {
-            finalParentId = parentId;
+            finalTargetParentId = targetParentId;
         }
-        if (id.equals(finalParentId)) {
+        if (sourceId.equals(finalTargetParentId)) {
             final String message = "Cannot move node to become child of itself";
-            throw new ClientException(message, ClientError.INVALID_MOVE_TO_SELF);
+            throw new ClientException(message, INVALID_MOVE_TO_SELF_OR_DESCENDANT);
         }
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
         final Session session = requestContext.getSession();
-        Node nodeToMove = session.getNodeByIdentifier(id);
-        Node newParent = session.getNodeByIdentifier(finalParentId);
-        Node oldParent = nodeToMove.getParent();
-        if (oldParent.isSame(newParent)) {
-            log.info("Move to same parent for '" + nodeToMove.getPath() + "' does not result in a real move");
+        Node sourceNode = session.getNodeByIdentifier(sourceId);
+        if (StringUtils.isEmpty(name)) {
+            finalName = sourceNode.getName();
+        } else {
+            finalName = name;
+        }
+        Node targetParent = session.getNodeByIdentifier(finalTargetParentId);
+        Node currentParent = sourceNode.getParent();
+
+        if (currentParent.isSame(targetParent)) {
+            if (!sourceNode.getName().equals(finalName)) {
+                // we do not need to check lock for parent as this is a rename within same parent
+                String oldLocation = sourceNode.getPath();
+                String target = sourceNode.getParent().getPath() + "/" + finalName;
+                validateTarget(session, target, pageComposerContextService.getEditingPreviewSite().getSiteMap());
+                session.move(sourceNode.getPath(), sourceNode.getParent().getPath() + "/" + finalName);
+                createMarkedDeletedIfLiveExists(session, oldLocation);
+                log.info("Renamed item from '{}' to '{}'", oldLocation, target);
+                return;
+            }
+            log.debug("No move was required since same name and same parent");
             return;
         }
-        final Node unLockableNode = lockHelper.getUnLockableNode(newParent, true, false);
+        final Node unLockableNode = lockHelper.getUnLockableNode(targetParent, true, false);
         if (unLockableNode != null) {
             String message = String.format("Cannot move node to '%s' because that node is locked through node '%s' by '%s'",
-                    newParent.getPath(), unLockableNode.getPath(), unLockableNode.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
+                    targetParent.getPath(), unLockableNode.getPath(), unLockableNode.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
             throw new ClientException(message, ClientError.ITEM_ALREADY_LOCKED);
         }
-
-        lockHelper.acquireLock(nodeToMove, 0);
-        String nodeName = nodeToMove.getName();
-        validateTarget(session, newParent.getPath() + "/" + nodeName, pageComposerContextService.getEditingPreviewSite().getSiteMap());
-        String oldLocation = nodeToMove.getPath();
-        session.move(oldParent.getPath() + "/" + nodeName, newParent.getPath() + "/" + nodeName);
-        lockHelper.acquireLock(nodeToMove, 0);
-
+        lockHelper.acquireLock(sourceNode, 0);
+        validateTarget(session, targetParent.getPath() + "/" + finalName, pageComposerContextService.getEditingPreviewSite().getSiteMap());
+        String oldLocation = sourceNode.getPath();
+        session.move(currentParent.getPath() + "/" + sourceNode.getName(), targetParent.getPath() + "/" + finalName);
         createMarkedDeletedIfLiveExists(session, oldLocation);
     }
 

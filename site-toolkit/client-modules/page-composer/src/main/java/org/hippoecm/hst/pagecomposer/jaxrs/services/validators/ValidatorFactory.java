@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,6 +101,10 @@ public class ValidatorFactory {
                                           final String parentId,
                                           final SiteMapHelper siteMapHelper) {
         return new SiteMapItemBasedPathInfoValidator(siteMapItem, parentId, siteMapHelper);
+    }
+
+    public Validator getItemNotSameOrDescendantOfValidator(final String validateUUID, final String targetUUID) {
+        return new ItemNotSameOrDescendantOfValidator(validateUUID, targetUUID);
     }
 
     private static final class SiteMapItemBasedPathInfoValidator extends AbstractPathInfoValidator {
