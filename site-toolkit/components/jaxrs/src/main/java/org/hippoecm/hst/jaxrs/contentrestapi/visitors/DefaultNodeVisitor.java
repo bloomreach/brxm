@@ -19,23 +19,28 @@ package org.hippoecm.hst.jaxrs.contentrestapi.visitors;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-class DefaultNodeVisitor extends Visitor {
+import org.hippoecm.hst.jaxrs.contentrestapi.ResourceContext;
 
-    public DefaultNodeVisitor(VisitorFactory factory) {
-        super(factory);
+public class DefaultNodeVisitor extends AbstractBaseVisitor {
+
+    public DefaultNodeVisitor(VisitorFactory visitorFactory) {
+        super(visitorFactory);
     }
 
-    public void visit(final Item sourceItem, final Map<String, Object> destination) throws RepositoryException {
-        final Node sourceNode = (Node) sourceItem;
-        final String sourceNodeName = sourceNode.getName();
+    @Override
+    public void visit(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
         final Map<String, Object> descendantsOutput = new TreeMap<>();
-        destination.put(sourceNodeName, descendantsOutput);
-
-        visitAllSiblings(getFactory(), sourceNode, descendantsOutput);
+        destination.put(node.getName(), descendantsOutput);
+        // Iterate over all properties and child nodes and add those to the response.
+        // In case of a property and a child node with the same name, this overwrites the property.
+        // In Hippo 10.x and up, it is not possible to create document types through the document type editor that
+        // have this type of same-name-siblings. It is possible when creating document types in the console or when
+        // upgrading older projects. For now, it is acceptable that in those exceptional situations there is
+        // data-loss. Note that Destination#put will log an info message when an overwrite occurs.
+        visit(context, node.getProperties(), descendantsOutput);
+        visit(context, node.getNodes(), descendantsOutput);
     }
-
 }

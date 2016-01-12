@@ -19,34 +19,32 @@ package org.hippoecm.hst.jaxrs.contentrestapi.visitors;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.jaxrs.contentrestapi.ContentRestApiResource;
+import org.hippoecm.hst.jaxrs.contentrestapi.ResourceContext;
 
-class FacetSelectNodeVisitor extends Visitor {
+class FacetSelectNodeVisitor extends AbstractBaseVisitor {
 
     public FacetSelectNodeVisitor(VisitorFactory factory) {
         super(factory);
     }
 
-    public void visit(final Item sourceItem, final Map<String, Object> destination) throws RepositoryException {
-        final Node sourceNode = (Node) sourceItem;
-        final String sourceNodeName = sourceNode.getName();
-        final Map<String, Object> linkOutput = new TreeMap<>();
-        destination.put(sourceNodeName, linkOutput);
+    public void visit(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
+        final Map<String, Object> descendantsOutput = new TreeMap<>();
+        destination.put(node.getName(), descendantsOutput);
 
         try {
-            final Property docbase = sourceNode.getProperty("hippo:docbase");
+            final Property docbase = node.getProperty("hippo:docbase");
             // TODO link rewriting - use generic HST methods to construct URL
-            linkOutput.put(ContentRestApiResource.NAMESPACE_PREFIX + ":url", "http://localhost:8080/site/api/documents/" + docbase.getValue()
+            descendantsOutput.put(ContentRestApiResource.NAMESPACE_PREFIX + ":url", "http://localhost:8080/site/api/documents/" + docbase.getValue()
                     .getString());
         } catch (RepositoryException e) {
             // log warning
         }
-        visitAllSiblings(getFactory(), sourceNode, linkOutput);
+        visit(context, node.getProperties(), descendantsOutput);
+        visit(context, node.getNodes(), descendantsOutput);
     }
-
 }

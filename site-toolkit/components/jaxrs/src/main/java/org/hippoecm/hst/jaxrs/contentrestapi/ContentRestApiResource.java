@@ -40,12 +40,16 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.contentrestapi.visitors.DefaultVisitorFactory;
 import org.hippoecm.hst.jaxrs.contentrestapi.visitors.Visitor;
 import org.hippoecm.hst.jaxrs.contentrestapi.visitors.VisitorFactory;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.contenttype.ContentTypeService;
+import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.onehippo.cms7.services.search.jcr.service.HippoJcrSearchService;
 import org.onehippo.cms7.services.search.query.Query;
 import org.onehippo.cms7.services.search.query.QueryUtils;
@@ -66,28 +70,29 @@ public class ContentRestApiResource {
 
     public static final String NAMESPACE_PREFIX = "hipporest";
 
-    private interface ContextProvider {
-        Session getSession() throws RepositoryException;
+
+    private static class ResourceContextImpl implements ResourceContext {
+
+        private final ContentTypes contentTypes;
+
+        private ResourceContextImpl() throws RepositoryException {
+            contentTypes = HippoServiceRegistry.getService(ContentTypeService.class).getContentTypes();
+        }
+
+        @Override
+        public HstRequestContext getRequestContext() {
+            return RequestContextProvider.get();
+        }
+
+        @Override
+        public ContentTypes getContentTypes() {
+            return contentTypes;
+        }
     }
 
-    // TODO rename Context to ContextProvider
-    private final ContextProvider contextProvider;
     private final List<String> ignoredVariantProperties = Collections.unmodifiableList(Arrays.asList("jcr:uuid"));
 
     public ContentRestApiResource() {
-        this.contextProvider = new ContextProvider() {
-            public Session getSession() throws RepositoryException {
-                return RequestContextProvider.get().getSession();
-            }
-        };
-    }
-
-    ContentRestApiResource(Session session) {
-        this.contextProvider = new ContextProvider() {
-            public Session getSession() throws RepositoryException {
-                return session;
-            }
-        };
     }
 
     private final class Link {
@@ -213,6 +218,7 @@ public class ContentRestApiResource {
     @Path("/documents")
     public Response getDocuments(@QueryParam("_offset") String offsetString, @QueryParam("_max") String maxString, @QueryParam("_query") String queryString) {
         try {
+            ResourceContext context = new ResourceContextImpl();
             final int offset = parseOffset(offsetString);
             final int max = parseMax(maxString);
             final String parsedQuery = parseQuery(queryString);
@@ -223,7 +229,7 @@ public class ContentRestApiResource {
             } else {
                 availability = "live";
             }
-            final SearchService searchService = getSearchService();
+            final SearchService searchService = getSearchService(context);
             final Query query = searchService.createQuery()
                     .from(RequestContextProvider.get().getResolvedMount().getMount().getContentPath())
                     .ofType(HippoNodeType.NT_DOCUMENT)
@@ -236,7 +242,7 @@ public class ContentRestApiResource {
                     .limitTo(max);
             final QueryResult queryResult = searchService.search(query);
             final SearchResult result = new SearchResult();
-            result.populate(offset, max, queryResult, contextProvider.getSession(), NT_HANDLE);
+            result.populate(offset, max, queryResult, context.getRequestContext().getSession(), NT_HANDLE);
 
             return Response.status(200).entity(result).build();
 
@@ -275,7 +281,8 @@ public class ContentRestApiResource {
     @Path("/documents/{uuid}")
     public Response getDocumentsByUUID(@PathParam("uuid") String uuidString) {
         try {
-            final Session session = contextProvider.getSession();
+            ResourceContext context = new ResourceContextImpl();
+            final Session session = context.getRequestContext().getSession();
 
             // throws an IllegalArgumentException in case the uuid is not correctly formed
             final UUID uuid = parseUUID(uuidString);
@@ -288,8 +295,8 @@ public class ContentRestApiResource {
 
             final Map<String, Object> response = new TreeMap<>();
             final VisitorFactory factory = new DefaultVisitorFactory();
-            final Visitor visitor = factory.getVisitor(node);
-            visitor.visit(node, response);
+            final Visitor visitor = factory.getVisitor(context, node);
+            visitor.visit(context, node, response);
 
             return Response.status(200).entity(response).build();
         } catch (IllegalArgumentException iae) {
@@ -309,9 +316,9 @@ public class ContentRestApiResource {
         return Response.status(status).entity(new Error(status, description)).build();
     }
 
-    private SearchService getSearchService() throws RepositoryException {
+    private SearchService getSearchService(ResourceContext context) throws RepositoryException {
         final HippoJcrSearchService searchService = new HippoJcrSearchService();
-        searchService.setSession(contextProvider.getSession());
+        searchService.setSession(context.getRequestContext().getSession());
         return searchService;
     }
 

@@ -18,25 +18,24 @@ package org.hippoecm.hst.jaxrs.contentrestapi.visitors;
 
 import java.util.Map;
 
-import javax.jcr.Item;
 import javax.jcr.Property;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.hippoecm.hst.jaxrs.contentrestapi.ResourceContext;
+
 import static javax.jcr.PropertyType.BINARY;
 
-class DefaultPropertyVisitor extends Visitor {
+class DefaultPropertyVisitor extends AbstractBaseVisitor {
 
-    public DefaultPropertyVisitor(VisitorFactory factory) {
-        super(factory);
+    public DefaultPropertyVisitor(VisitorFactory visitorfactory) {
+        super(visitorfactory);
     }
 
-    public void visit(final Item sourceItem, final Map<String, Object> destination) throws RepositoryException {
-        final Property sourceProperty = (Property) sourceItem;
-
-        if (sourceProperty.isMultiple()) {
-            final Value[] jcrValues = sourceProperty.getValues();
+    @Override
+    public void visit(final ResourceContext context, final Property property, final Map<String, Object> destination) throws RepositoryException {
+        if (property.isMultiple()) {
+            final Value[] jcrValues = property.getValues();
             final String[] stringValues = new String[jcrValues.length];
             for (int i = 0; i < jcrValues.length; i++) {
                 // TODO what is the preferred JSON format for a date? What returns a date value for getString()
@@ -44,9 +43,9 @@ class DefaultPropertyVisitor extends Visitor {
                 stringValues[i] = getStringRepresentation(jcrValue);
 
             }
-            destination.put(sourceProperty.getName(), stringValues);
+            destination.put(property.getName(), stringValues);
         } else {
-            destination.put(sourceProperty.getName(), getStringRepresentation(sourceProperty.getValue()));
+            destination.put(property.getName(), getStringRepresentation(property.getValue()));
         }
     }
 
@@ -57,5 +56,4 @@ class DefaultPropertyVisitor extends Visitor {
             return jcrValue.getString();
         }
     }
-
 }

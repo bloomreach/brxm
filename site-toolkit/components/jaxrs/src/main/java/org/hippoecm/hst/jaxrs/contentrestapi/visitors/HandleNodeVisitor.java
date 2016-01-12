@@ -18,25 +18,25 @@ package org.hippoecm.hst.jaxrs.contentrestapi.visitors;
 
 import java.util.Map;
 
-import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-class HandleNodeVisitor extends Visitor {
+import org.hippoecm.hst.jaxrs.contentrestapi.ResourceContext;
+
+public class HandleNodeVisitor extends AbstractBaseVisitor {
 
     public HandleNodeVisitor(VisitorFactory factory) {
         super(factory);
     }
 
-    public void visit(final Item sourceItem, final Map<String, Object> destination) throws RepositoryException {
-        final Node sourceNode = (Node) sourceItem;
-        final String sourceNodeName = sourceNode.getName();
+    public void visit(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
+        final String nodeName = node.getName();
 
-        destination.put("jcr:name", sourceNodeName);
-        destination.put("jcr:uuid", sourceNode.getIdentifier());
+        destination.put("jcr:name", nodeName);
+        destination.put("jcr:uuid", node.getIdentifier());
 
-        final Node variant = sourceNode.getNode(sourceNodeName);
-        visitAllSiblings(getFactory(), variant, destination);
+        final Node variant = node.getNode(nodeName);
+        visit(context, variant.getProperties(), destination);
+        visit(context, variant.getNodes(), destination);
     }
-
 }

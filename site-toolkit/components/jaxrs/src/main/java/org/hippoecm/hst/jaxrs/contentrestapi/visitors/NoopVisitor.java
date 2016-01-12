@@ -18,16 +18,44 @@ package org.hippoecm.hst.jaxrs.contentrestapi.visitors;
 
 import java.util.Map;
 
-import javax.jcr.Item;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
+import javax.jcr.RepositoryException;
 
-class NoopVisitor extends Visitor {
+import org.hippoecm.hst.jaxrs.contentrestapi.ResourceContext;
 
-    public NoopVisitor(VisitorFactory factory) {
-        super(factory);
+public class NoopVisitor implements Visitor {
+
+    private final VisitorFactory visitorFactory;
+
+    public NoopVisitor(VisitorFactory visitorFactory) {
+        this.visitorFactory = visitorFactory;
     }
 
-    public void visit(final Item source, final Map<String, Object> destination) {
-        // Noop
+    @Override
+    public VisitorFactory getVisitorFactory() {
+        return visitorFactory;
     }
 
+    @Override
+    public void visit(final ResourceContext context, final Property property, final Map<String, Object> destination) throws RepositoryException {
+        // noop
+    }
+
+    @Override
+    public void visit(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
+        // noop
+    }
+
+    @Override
+    public void visit(final ResourceContext context, final PropertyIterator propertyIterator, final Map<String, Object> destination) throws RepositoryException {
+        // noop
+    }
+
+    @Override
+    public void visit(final ResourceContext context, final NodeIterator nodeIterator, final Map<String, Object> destination) throws RepositoryException {
+        // noop
+    }
 }
