@@ -45,6 +45,7 @@ import org.hippoecm.hst.jaxrs.contentrestapi.visitors.Visitor;
 import org.hippoecm.hst.jaxrs.contentrestapi.visitors.VisitorFactory;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.search.jcr.service.HippoJcrSearchService;
 import org.onehippo.cms7.services.search.query.Query;
 import org.onehippo.cms7.services.search.query.QueryUtils;
@@ -56,6 +57,8 @@ import org.onehippo.cms7.services.search.service.SearchServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
+
 @Produces("application/json")
 public class ContentRestApiResource {
 
@@ -63,16 +66,16 @@ public class ContentRestApiResource {
 
     public static final String NAMESPACE_PREFIX = "hipporest";
 
-    private interface Context {
+    private interface ContextProvider {
         Session getSession() throws RepositoryException;
     }
 
     // TODO rename Context to ContextProvider
-    private final Context context;
+    private final ContextProvider contextProvider;
     private final List<String> ignoredVariantProperties = Collections.unmodifiableList(Arrays.asList("jcr:uuid"));
 
     public ContentRestApiResource() {
-        this.context = new Context() {
+        this.contextProvider = new ContextProvider() {
             public Session getSession() throws RepositoryException {
                 return RequestContextProvider.get().getSession();
             }
@@ -80,7 +83,7 @@ public class ContentRestApiResource {
     }
 
     ContentRestApiResource(Session session) {
-        this.context = new Context() {
+        this.contextProvider = new ContextProvider() {
             public Session getSession() throws RepositoryException {
                 return session;
             }
@@ -132,13 +135,17 @@ public class ContentRestApiResource {
         @JsonProperty(NAMESPACE_PREFIX + ":items")
         public SearchResultItem[] items;
 
-        void initialize(int offset, int max, QueryResult queryResult, Session session) throws RepositoryException {
+        void populate(int offset, int max, QueryResult queryResult, Session session, final String expectedNodeType) throws RepositoryException {
             final List<SearchResultItem> itemArrayList = new ArrayList<>();
             final HitIterator iterator = queryResult.getHits();
             while (iterator.hasNext()) {
                 final Hit hit = iterator.nextHit();
                 final String uuid = hit.getSearchDocument().getContentId().toIdentifier();
                 final Node node = session.getNodeByIdentifier(uuid);
+                if (!node.isNodeType(expectedNodeType)) {
+                    throw new IllegalStateException(String.format("Expected node of type '%s' but was '%s'.",
+                            expectedNodeType, node.getPrimaryNodeType().getName()));
+                }
                 // TODO link rewriting - use generic HST methods to construct URL
                 final SearchResultItem item = new SearchResultItem(node.getName(), uuid,
                         new Link[] { new Link("http://localhost:8080/site/api/documents/" + uuid) });
@@ -210,23 +217,28 @@ public class ContentRestApiResource {
             final int max = parseMax(maxString);
             final String parsedQuery = parseQuery(queryString);
 
+            final String availability;
+            if (RequestContextProvider.get().isPreview() ) {
+                availability = "preview";
+            } else {
+                availability = "live";
+            }
             final SearchService searchService = getSearchService();
             final Query query = searchService.createQuery()
-                    // TODO the 'from' should be from the current its mount its 'content path'
-                    .from("/content/documents")
-                            // TODO why not for now just hippo:document AND filter folders
-                    .ofType("myhippoproject:basedocument") // TODO change to blacklisting mechanism
+                    .from(RequestContextProvider.get().getResolvedMount().getMount().getContentPath())
+                    .ofType(HippoNodeType.NT_DOCUMENT)
                     .where(QueryUtils.text().contains(parsedQuery == null ? "" : parsedQuery))
+                    .and(QueryUtils.text(HippoNodeType.HIPPO_AVAILABILITY).isEqualTo(availability))
                     .returnParentNode()
                     .orderBy(HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE)
                     .descending()
                     .offsetBy(offset)
                     .limitTo(max);
             final QueryResult queryResult = searchService.search(query);
-            final SearchResult returnValue = new SearchResult();
-            returnValue.initialize(offset, max, queryResult, context.getSession());
+            final SearchResult result = new SearchResult();
+            result.populate(offset, max, queryResult, contextProvider.getSession(), NT_HANDLE);
 
-            return Response.status(200).entity(returnValue).build();
+            return Response.status(200).entity(result).build();
 
         } catch (SearchServiceException e) {
             logException("Exception while fetching documents",e);
@@ -263,7 +275,7 @@ public class ContentRestApiResource {
     @Path("/documents/{uuid}")
     public Response getDocumentsByUUID(@PathParam("uuid") String uuidString) {
         try {
-            final Session session = context.getSession();
+            final Session session = contextProvider.getSession();
 
             // throws an IllegalArgumentException in case the uuid is not correctly formed
             final UUID uuid = parseUUID(uuidString);
@@ -299,7 +311,7 @@ public class ContentRestApiResource {
 
     private SearchService getSearchService() throws RepositoryException {
         final HippoJcrSearchService searchService = new HippoJcrSearchService();
-        searchService.setSession(context.getSession());
+        searchService.setSession(contextProvider.getSession());
         return searchService;
     }
 
