@@ -3,6 +3,7 @@
 /NOTICE -text
 /README.txt -text svneol=unset#text/plain
 api/pom.xml -text
+api/src/main/java/org/hippoecm/hst/demo/addonmodules/api/InverseOperator.java -text
 api/src/main/java/org/hippoecm/hst/demo/addonmodules/api/MatrixOperator.java -text
 api/src/main/java/org/hippoecm/hst/demo/addonmodules/api/RandomGenerator.java -text
 cms/pom.xml -text
@@ -10,6 +11,7 @@ cms/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-transl
 cms/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-translated-folder-intranet-16.png -text
 cms/src/main/webapp/WEB-INF/web.xml -text
 components/pom.xml -text
+components/src/main/java/org/hippoecm/hst/demo/addonmodules/linearalgebra/MyMatrixOperator.java -text
 components/src/main/java/org/hippoecm/hst/demo/beans/BaseBean.java svneol=native#text/plain
 components/src/main/java/org/hippoecm/hst/demo/beans/BlockBean.java -text
 components/src/main/java/org/hippoecm/hst/demo/beans/CommentBean.java svneol=native#text/plain
@@ -105,6 +107,7 @@ components/src/main/resources/META-INF/hst-assembly/overrides/event-listeners.xm
 components/src/main/resources/META-INF/hst-assembly/overrides/hst-cms-rest.xml -text
 components/src/main/resources/META-INF/hst-assembly/overrides/httpsSchemeExample-valve.xml -text svneol=unset#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/jndi-repository.xml svneol=native#text/plain
+components/src/main/resources/META-INF/hst-assembly/overrides/org/hippoecm/hst/demo/addonmodules/linearalgebra/overrideMatrixOperator.xml -text
 components/src/main/resources/META-INF/hst-assembly/overrides/page-composer-rest.xml -text svneol=unset#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/spring-bean-bridge-contact.xml -text
 components/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml -text svneol=unset#text/plain
@@ -355,6 +358,7 @@ intranet/src/main/webapp/images/hippo.gif -text
 intranet/src/main/webapp/images/onehippo.gif -text
 intranet/src/main/webapp/js/html5shiv.js -text
 linear-algebra/pom.xml -text
+linear-algebra/src/main/java/org/hippoecm/hst/demo/addonmodules/linearalgebra/InverseOperatorImpl.java -text
 linear-algebra/src/main/java/org/hippoecm/hst/demo/addonmodules/linearalgebra/MatrixOperatorImpl.java -text
 linear-algebra/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
 linear-algebra/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/demo/addonmodules/linearalgebra/base.xml -text
