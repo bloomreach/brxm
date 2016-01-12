@@ -37,8 +37,8 @@ class HtmlNodeVisitor extends Visitor {
     public void visit(final Item sourceItem, final Map<String, Object> destination) throws RepositoryException {
         final Node sourceNode = (Node) sourceItem;
         final String sourceNodeName = sourceNode.getName();
-        final Map<String, Object> output = new TreeMap<>();
-        destination.put(sourceNodeName, output);
+        final Map<String, Object> htmlNodeOutput = new TreeMap<>();
+        destination.put(sourceNodeName, htmlNodeOutput);
 
         final PropertyIterator propertyIterator = sourceNode.getProperties();
         while (propertyIterator.hasNext()) {
@@ -47,11 +47,11 @@ class HtmlNodeVisitor extends Visitor {
                 // TODO do content rewriting
             }
             Visitor visitor = getFactory().getVisitor(childProperty);
-            visitor.visit(childProperty, output);
+            visitor.visit(childProperty, htmlNodeOutput);
         }
 
-        final Map<String, Object> links = new TreeMap<>();
-        output.put(ContentRestApiResource.NAMESPACE_PREFIX + ":links", links);
+        final Map<String, Object> linksOutput = new TreeMap<>();
+        htmlNodeOutput.put(ContentRestApiResource.NAMESPACE_PREFIX + ":links", linksOutput);
 
         final NodeIterator nodeIterator = sourceNode.getNodes();
         while (nodeIterator.hasNext()) {
@@ -59,10 +59,10 @@ class HtmlNodeVisitor extends Visitor {
             Visitor visitor = getFactory().getVisitor(childNode);
             switch (childNode.getPrimaryNodeType().getName()) {
                 case "hippo:facetselect":
-                    visitor.visit(childNode, links);
+                    visitor.visit(childNode, linksOutput);
                     break;
                 default:
-                    visitor.visit(childNode, output);
+                    visitor.visit(childNode, htmlNodeOutput);
                     break;
             }
         }

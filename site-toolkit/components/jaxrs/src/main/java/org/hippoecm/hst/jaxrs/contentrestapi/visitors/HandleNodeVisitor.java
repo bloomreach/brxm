@@ -36,7 +36,7 @@ class HandleNodeVisitor extends Visitor {
         destination.put("jcr:uuid", sourceNode.getIdentifier());
 
         Node variant = sourceNode.getNode(sourceNodeName);
-        DefaultNodeVisitor.visitAllSiblings(getFactory(), variant, destination);
+        visitAllSiblings(getFactory(), variant, destination);
     }
 
 }

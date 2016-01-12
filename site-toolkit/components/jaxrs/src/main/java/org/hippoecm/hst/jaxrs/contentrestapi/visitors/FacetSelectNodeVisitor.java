@@ -35,16 +35,17 @@ class FacetSelectNodeVisitor extends Visitor {
     public void visit(final Item sourceItem, final Map<String, Object> destination) throws RepositoryException {
         final Node sourceNode = (Node) sourceItem;
         final String sourceNodeName = sourceNode.getName();
-        final Map<String, Object> output = new TreeMap<>();
-        destination.put(sourceNodeName, output);
+        final Map<String, Object> linkOutput = new TreeMap<>();
+        destination.put(sourceNodeName, linkOutput);
 
         try {
             Property docbase = sourceNode.getProperty("hippo:docbase");
-            output.put(ContentRestApiResource.NAMESPACE_PREFIX + ":url", "http://localhost:8080/site/api/documents/" + docbase.getValue().getString());
+            linkOutput.put(ContentRestApiResource.NAMESPACE_PREFIX + ":url", "http://localhost:8080/site/api/documents/" + docbase.getValue()
+                    .getString());
         } catch (RepositoryException e) {
             // log warning
         }
-        DefaultNodeVisitor.visitAllSiblings(getFactory(), sourceNode, output);
+        visitAllSiblings(getFactory(), sourceNode, linkOutput);
     }
 
 }
