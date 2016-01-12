@@ -133,7 +133,7 @@ public class ContentRestApiResource {
         public SearchResultItem[] items;
 
         void initialize(int offset, int max, QueryResult queryResult, Session session) throws RepositoryException {
-            ArrayList<SearchResultItem> itemArrayList = new ArrayList<>();
+            List<SearchResultItem> itemArrayList = new ArrayList<>();
             HitIterator iterator = queryResult.getHits();
             while (iterator.hasNext()) {
                 Hit hit = iterator.nextHit();
