@@ -60,6 +60,7 @@ public class ContentRestApiResource {
         Session getSession() throws RepositoryException;
     }
 
+    // TODO rename Context to ContextProvider
     private final Context context;
     private final List<String> ignoredVariantProperties = Collections.unmodifiableList(Arrays.asList("jcr:uuid"));
 
@@ -192,6 +193,8 @@ public class ContentRestApiResource {
 
     private String parseQuery(final String queryString) {
         // TODO: decide whether any special handing is needed here ...
+        // TODO : I'd by default recommend SearchInputParsingUtils.parse
+
         if (queryString == null) {
             return "";
         }
@@ -208,7 +211,9 @@ public class ContentRestApiResource {
 
             SearchService searchService = getSearchService();
             Query query = searchService.createQuery()
+                    // TODO the 'from' should be from the current its mount its 'content path'
                     .from("/content/documents")
+                    // TODO why not for now just hippo:document AND filter folders
                     .ofType("myhippoproject:basedocument") // TODO change to blacklisting mechanism
                     .where(QueryUtils.text().contains(parsedQuery))
                     .returnParentNode()
@@ -221,6 +226,8 @@ public class ContentRestApiResource {
             returnValue.initialize(offset, max, queryResult, context.getSession());
 
             return Response.status(200).entity(returnValue).build();
+
+            // TODO invalid queryString results in a RepositoryException
         } catch (IllegalArgumentException iae) {
             return buildErrorResponse(400, iae);
         } catch (RepositoryException re) {
@@ -251,6 +258,7 @@ public class ContentRestApiResource {
             // throws a PathNotFoundException in case there is no live variant or it is not readable
             node.getNode(node.getName());
 
+            // TODO replace Map with Map<String, Object> ??
             Map response = new TreeMap<>();
             VisitorFactory factory = new DefaultVisitorFactory();
             Visitor visitor = factory.getVisitor(node);

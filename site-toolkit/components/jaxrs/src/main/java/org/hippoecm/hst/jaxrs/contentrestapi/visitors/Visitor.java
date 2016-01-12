@@ -39,6 +39,7 @@ public abstract class Visitor {
 
     abstract public void visit(Item source, Map<String, Object> destination) throws RepositoryException;
 
+    // TODO this is not visiting all siblings : It is visiting properties & descendant nodes.
     protected void visitAllSiblings(final VisitorFactory factory, final Node source, final Map<String, Object> destination) throws RepositoryException {
         // Iterate over all nodes and add those to the response.
         // In case of a property and a sub node with the same name, this overwrites the property.
@@ -61,6 +62,7 @@ public abstract class Visitor {
 
     protected void visitAllNodes(final VisitorFactory factory, final NodeIterator source, final Map<String, Object> destination) throws RepositoryException {
         while (source.hasNext()) {
+            // TODO replace  (Node) source.next(); with source.nextNode()
             Node childNode = (Node) source.next();
             Visitor visitor = factory.getVisitor(childNode);
             visitor.visit(childNode, destination);

@@ -32,10 +32,13 @@ class DefaultPropertyVisitor extends Visitor {
     public void visit(final Item sourceItem, final Map<String, Object> destination) throws RepositoryException {
         final Property sourceProperty = (Property) sourceItem;
 
+        // TODO skip binary properties??
         if (sourceProperty.isMultiple()) {
             Value[] jcrValues = sourceProperty.getValues();
             String[] stringValues = new String[jcrValues.length];
             for (int i = 0; i < jcrValues.length; i++) {
+                // TODO does work getString on every property? Also see @throws ValueFormatException if conversion to a <code>String</code> is not possible.
+                // TODO what is the preferred JSON format for a date? What returns a date value for getString()
                 stringValues[i] = jcrValues[i].getString();
             }
             destination.put(sourceProperty.getName(), stringValues);
