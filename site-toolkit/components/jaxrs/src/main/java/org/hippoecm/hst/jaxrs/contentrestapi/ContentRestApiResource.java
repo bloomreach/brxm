@@ -216,7 +216,7 @@ public class ContentRestApiResource {
                     .from("/content/documents")
                             // TODO why not for now just hippo:document AND filter folders
                     .ofType("myhippoproject:basedocument") // TODO change to blacklisting mechanism
-                    .where(QueryUtils.text().contains(parsedQuery))
+                    .where(QueryUtils.text().contains(parsedQuery == null ? "" : parsedQuery))
                     .returnParentNode()
                     .orderBy(HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE)
                     .descending()
