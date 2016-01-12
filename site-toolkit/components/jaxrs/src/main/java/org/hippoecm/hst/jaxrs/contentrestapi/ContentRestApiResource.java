@@ -29,6 +29,7 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.InvalidQueryException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -42,6 +43,7 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.jaxrs.contentrestapi.visitors.DefaultVisitorFactory;
 import org.hippoecm.hst.jaxrs.contentrestapi.visitors.Visitor;
 import org.hippoecm.hst.jaxrs.contentrestapi.visitors.VisitorFactory;
+import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.onehippo.cms7.services.search.jcr.service.HippoJcrSearchService;
 import org.onehippo.cms7.services.search.query.Query;
@@ -50,9 +52,14 @@ import org.onehippo.cms7.services.search.result.Hit;
 import org.onehippo.cms7.services.search.result.HitIterator;
 import org.onehippo.cms7.services.search.result.QueryResult;
 import org.onehippo.cms7.services.search.service.SearchService;
+import org.onehippo.cms7.services.search.service.SearchServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Produces("application/json")
 public class ContentRestApiResource {
+
+    private static final Logger log = LoggerFactory.getLogger(ContentRestApiResource.class);
 
     public static final String NAMESPACE_PREFIX = "hipporest";
 
@@ -192,13 +199,7 @@ public class ContentRestApiResource {
     }
 
     private String parseQuery(final String queryString) {
-        // TODO: decide whether any special handing is needed here ...
-        // TODO : I'd by default recommend SearchInputParsingUtils.parse
-
-        if (queryString == null) {
-            return "";
-        }
-        return queryString;
+        return SearchInputParsingUtils.parse(queryString, true);
     }
 
     @GET
@@ -213,7 +214,7 @@ public class ContentRestApiResource {
             Query query = searchService.createQuery()
                     // TODO the 'from' should be from the current its mount its 'content path'
                     .from("/content/documents")
-                    // TODO why not for now just hippo:document AND filter folders
+                            // TODO why not for now just hippo:document AND filter folders
                     .ofType("myhippoproject:basedocument") // TODO change to blacklisting mechanism
                     .where(QueryUtils.text().contains(parsedQuery))
                     .returnParentNode()
@@ -227,11 +228,26 @@ public class ContentRestApiResource {
 
             return Response.status(200).entity(returnValue).build();
 
-            // TODO invalid queryString results in a RepositoryException
+        } catch (SearchServiceException e) {
+            logException("Exception while fetching documents",e);
+            if (e.getCause() instanceof InvalidQueryException) {
+                return buildErrorResponse(400, e.toString());
+            }
+            return buildErrorResponse(500, e);
         } catch (IllegalArgumentException iae) {
+            logException("Exception while fetching documents",iae);
             return buildErrorResponse(400, iae);
-        } catch (RepositoryException re) {
+        } catch (Exception re) {
+            logException("Exception while fetching documents",re);
             return buildErrorResponse(500, re);
+        }
+    }
+
+    private void logException(final String message, final Exception e) {
+        if (log.isDebugEnabled()) {
+            log.info(message, e);
+        } else {
+            log.info(message + ": '{}'", e.toString());
         }
     }
 
