@@ -258,8 +258,7 @@ public class ContentRestApiResource {
             // throws a PathNotFoundException in case there is no live variant or it is not readable
             node.getNode(node.getName());
 
-            // TODO replace Map with Map<String, Object> ??
-            Map response = new TreeMap<>();
+            Map<String, Object> response = new TreeMap<>();
             VisitorFactory factory = new DefaultVisitorFactory();
             Visitor visitor = factory.getVisitor(node);
             visitor.visit(node, response);
