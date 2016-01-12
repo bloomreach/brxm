@@ -20,8 +20,11 @@ import java.util.Map;
 
 import javax.jcr.Item;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+
+import static javax.jcr.PropertyType.BINARY;
 
 class DefaultPropertyVisitor extends Visitor {
 
@@ -32,18 +35,26 @@ class DefaultPropertyVisitor extends Visitor {
     public void visit(final Item sourceItem, final Map<String, Object> destination) throws RepositoryException {
         final Property sourceProperty = (Property) sourceItem;
 
-        // TODO skip binary properties??
         if (sourceProperty.isMultiple()) {
             final Value[] jcrValues = sourceProperty.getValues();
             final String[] stringValues = new String[jcrValues.length];
             for (int i = 0; i < jcrValues.length; i++) {
-                // TODO does work getString on every property? Also see @throws ValueFormatException if conversion to a <code>String</code> is not possible.
                 // TODO what is the preferred JSON format for a date? What returns a date value for getString()
-                stringValues[i] = jcrValues[i].getString();
+                final Value jcrValue = jcrValues[i];
+                stringValues[i] = getStringRepresentation(jcrValue);
+
             }
             destination.put(sourceProperty.getName(), stringValues);
         } else {
-            destination.put(sourceProperty.getName(), sourceProperty.getValue().getString());
+            destination.put(sourceProperty.getName(), getStringRepresentation(sourceProperty.getValue()));
+        }
+    }
+
+    private String getStringRepresentation(final Value jcrValue) throws RepositoryException {
+        if (jcrValue.getType() == BINARY) {
+            return jcrValue.getBinary().getSize() + " bytes.";
+        } else {
+            return jcrValue.getString();
         }
     }
 
