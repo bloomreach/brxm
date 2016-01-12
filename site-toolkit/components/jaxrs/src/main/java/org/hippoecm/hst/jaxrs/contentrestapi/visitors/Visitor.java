@@ -54,8 +54,8 @@ public abstract class Visitor {
 
     protected void visitAllProperties(final VisitorFactory factory, final PropertyIterator source, final Map<String, Object> destination) throws RepositoryException {
         while (source.hasNext()) {
-            Property property = (Property) source.next();
-            Visitor visitor = factory.getVisitor(property);
+            final Property property = (Property) source.next();
+            final Visitor visitor = factory.getVisitor(property);
             visitor.visit(property, destination);
         }
     }
@@ -63,8 +63,8 @@ public abstract class Visitor {
     protected void visitAllNodes(final VisitorFactory factory, final NodeIterator source, final Map<String, Object> destination) throws RepositoryException {
         while (source.hasNext()) {
             // TODO replace  (Node) source.next(); with source.nextNode()
-            Node childNode = (Node) source.next();
-            Visitor visitor = factory.getVisitor(childNode);
+            final Node childNode = (Node) source.next();
+            final Visitor visitor = factory.getVisitor(childNode);
             visitor.visit(childNode, destination);
         }
     }

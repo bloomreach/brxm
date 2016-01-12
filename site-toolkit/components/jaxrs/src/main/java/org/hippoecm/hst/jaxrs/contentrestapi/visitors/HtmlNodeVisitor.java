@@ -42,11 +42,11 @@ class HtmlNodeVisitor extends Visitor {
 
         final PropertyIterator propertyIterator = sourceNode.getProperties();
         while (propertyIterator.hasNext()) {
-            Property childProperty = (Property) propertyIterator.next();
+            final Property childProperty = (Property) propertyIterator.next();
             if (childProperty.getName().equals("hippostd:content")) {
                 // TODO link rewriting - the href of the binary links needs to be altered
             }
-            Visitor visitor = getFactory().getVisitor(childProperty);
+            final Visitor visitor = getFactory().getVisitor(childProperty);
             visitor.visit(childProperty, htmlNodeOutput);
         }
 
@@ -55,8 +55,8 @@ class HtmlNodeVisitor extends Visitor {
 
         final NodeIterator nodeIterator = sourceNode.getNodes();
         while (nodeIterator.hasNext()) {
-            Node childNode = (Node) nodeIterator.next();
-            Visitor visitor = getFactory().getVisitor(childNode);
+            final Node childNode = (Node) nodeIterator.next();
+            final Visitor visitor = getFactory().getVisitor(childNode);
             switch (childNode.getPrimaryNodeType().getName()) {
                 case "hippo:facetselect":
                     visitor.visit(childNode, linksOutput);

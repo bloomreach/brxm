@@ -26,8 +26,8 @@ public class DefaultVisitorFactory implements VisitorFactory {
 
     public Visitor getVisitor(final Item item) throws RepositoryException {
         if (item instanceof Node) {
-            Node node = (Node) item;
-            NodeType nodeType = node.getPrimaryNodeType();
+            final Node node = (Node) item;
+            final NodeType nodeType = node.getPrimaryNodeType();
 
             switch (nodeType.getName()) {
                 case "hippo:facetselect":
@@ -42,7 +42,7 @@ public class DefaultVisitorFactory implements VisitorFactory {
         }
 
         if (item instanceof Property) {
-            Property property = (Property) item;
+            final Property property = (Property) item;
 
             switch (property.getName()) {
                 case "jcr:uuid":

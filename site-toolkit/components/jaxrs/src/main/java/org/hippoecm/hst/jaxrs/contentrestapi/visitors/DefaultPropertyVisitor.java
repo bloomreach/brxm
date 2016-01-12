@@ -34,8 +34,8 @@ class DefaultPropertyVisitor extends Visitor {
 
         // TODO skip binary properties??
         if (sourceProperty.isMultiple()) {
-            Value[] jcrValues = sourceProperty.getValues();
-            String[] stringValues = new String[jcrValues.length];
+            final Value[] jcrValues = sourceProperty.getValues();
+            final String[] stringValues = new String[jcrValues.length];
             for (int i = 0; i < jcrValues.length; i++) {
                 // TODO does work getString on every property? Also see @throws ValueFormatException if conversion to a <code>String</code> is not possible.
                 // TODO what is the preferred JSON format for a date? What returns a date value for getString()

@@ -89,7 +89,7 @@ public class ContentRestApiResource {
 
     private final class Link {
         @JsonProperty(NAMESPACE_PREFIX + ":url")
-        public String url;
+        public final String url;
 
         public Link(String url) {
             this.url = url;
@@ -98,13 +98,13 @@ public class ContentRestApiResource {
 
     private final class SearchResultItem {
         @JsonProperty("jcr:name")
-        public String name;
+        public final String name;
 
         @JsonProperty("jcr:uuid")
-        public String uuid;
+        public final String uuid;
 
         @JsonProperty(NAMESPACE_PREFIX + ":links")
-        public Link[] links;
+        public final Link[] links;
 
         public SearchResultItem(String name, String uuid, Link[] links) {
             this.name = name;
@@ -133,14 +133,14 @@ public class ContentRestApiResource {
         public SearchResultItem[] items;
 
         void initialize(int offset, int max, QueryResult queryResult, Session session) throws RepositoryException {
-            List<SearchResultItem> itemArrayList = new ArrayList<>();
-            HitIterator iterator = queryResult.getHits();
+            final List<SearchResultItem> itemArrayList = new ArrayList<>();
+            final HitIterator iterator = queryResult.getHits();
             while (iterator.hasNext()) {
-                Hit hit = iterator.nextHit();
-                String uuid = hit.getSearchDocument().getContentId().toIdentifier();
-                Node node = session.getNodeByIdentifier(uuid);
+                final Hit hit = iterator.nextHit();
+                final String uuid = hit.getSearchDocument().getContentId().toIdentifier();
+                final Node node = session.getNodeByIdentifier(uuid);
                 // TODO link rewriting - use generic HST methods to construct URL
-                SearchResultItem item = new SearchResultItem(node.getName(), uuid,
+                final SearchResultItem item = new SearchResultItem(node.getName(), uuid,
                         new Link[] { new Link("http://localhost:8080/site/api/documents/" + uuid) });
                 itemArrayList.add(item);
             }
@@ -156,8 +156,8 @@ public class ContentRestApiResource {
     }
 
     private final class Error {
-        public int status;
-        public String description;
+        public final int status;
+        public final String description;
         Error(int status, String description) {
             this.status = status;
             this.description = description;
@@ -206,12 +206,12 @@ public class ContentRestApiResource {
     @Path("/documents")
     public Response getDocuments(@QueryParam("_offset") String offsetString, @QueryParam("_max") String maxString, @QueryParam("_query") String queryString) {
         try {
-            int offset = parseOffset(offsetString);
-            int max = parseMax(maxString);
-            String parsedQuery = parseQuery(queryString);
+            final int offset = parseOffset(offsetString);
+            final int max = parseMax(maxString);
+            final String parsedQuery = parseQuery(queryString);
 
-            SearchService searchService = getSearchService();
-            Query query = searchService.createQuery()
+            final SearchService searchService = getSearchService();
+            final Query query = searchService.createQuery()
                     // TODO the 'from' should be from the current its mount its 'content path'
                     .from("/content/documents")
                             // TODO why not for now just hippo:document AND filter folders
@@ -222,8 +222,8 @@ public class ContentRestApiResource {
                     .descending()
                     .offsetBy(offset)
                     .limitTo(max);
-            QueryResult queryResult = searchService.search(query);
-            SearchResult returnValue = new SearchResult();
+            final QueryResult queryResult = searchService.search(query);
+            final SearchResult returnValue = new SearchResult();
             returnValue.initialize(offset, max, queryResult, context.getSession());
 
             return Response.status(200).entity(returnValue).build();
@@ -263,20 +263,20 @@ public class ContentRestApiResource {
     @Path("/documents/{uuid}")
     public Response getDocumentsByUUID(@PathParam("uuid") String uuidString) {
         try {
-            Session session = context.getSession();
+            final Session session = context.getSession();
 
             // throws an IllegalArgumentException in case the uuid is not correctly formed
-            UUID uuid = parseUUID(uuidString);
+            final UUID uuid = parseUUID(uuidString);
 
             // throws an ItemNotFoundException in case the uuid does not exist or is not readable
-            Node node = session.getNodeByIdentifier(uuid.toString());
+            final Node node = session.getNodeByIdentifier(uuid.toString());
 
             // throws a PathNotFoundException in case there is no live variant or it is not readable
             node.getNode(node.getName());
 
-            Map<String, Object> response = new TreeMap<>();
-            VisitorFactory factory = new DefaultVisitorFactory();
-            Visitor visitor = factory.getVisitor(node);
+            final Map<String, Object> response = new TreeMap<>();
+            final VisitorFactory factory = new DefaultVisitorFactory();
+            final Visitor visitor = factory.getVisitor(node);
             visitor.visit(node, response);
 
             return Response.status(200).entity(response).build();
