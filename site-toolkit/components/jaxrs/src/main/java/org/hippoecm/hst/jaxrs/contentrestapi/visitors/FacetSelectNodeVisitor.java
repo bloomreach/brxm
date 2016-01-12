@@ -40,6 +40,7 @@ class FacetSelectNodeVisitor extends Visitor {
 
         try {
             Property docbase = sourceNode.getProperty("hippo:docbase");
+            // TODO link rewriting - use generic HST methods to construct URL
             linkOutput.put(ContentRestApiResource.NAMESPACE_PREFIX + ":url", "http://localhost:8080/site/api/documents/" + docbase.getValue()
                     .getString());
         } catch (RepositoryException e) {

@@ -44,7 +44,7 @@ class HtmlNodeVisitor extends Visitor {
         while (propertyIterator.hasNext()) {
             Property childProperty = (Property) propertyIterator.next();
             if (childProperty.getName().equals("hippostd:content")) {
-                // TODO do content rewriting
+                // TODO link rewriting - the href of the binary links needs to be altered
             }
             Visitor visitor = getFactory().getVisitor(childProperty);
             visitor.visit(childProperty, htmlNodeOutput);

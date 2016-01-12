@@ -131,6 +131,7 @@ public class ContentRestApiResource {
                 Hit hit = iterator.nextHit();
                 String uuid = hit.getSearchDocument().getContentId().toIdentifier();
                 Node node = session.getNodeByIdentifier(uuid);
+                // TODO link rewriting - use generic HST methods to construct URL
                 SearchResultItem item = new SearchResultItem(node.getName(), uuid,
                         new Link[] { new Link("http://localhost:8080/site/api/documents/" + uuid) });
                 itemArrayList.add(item);
