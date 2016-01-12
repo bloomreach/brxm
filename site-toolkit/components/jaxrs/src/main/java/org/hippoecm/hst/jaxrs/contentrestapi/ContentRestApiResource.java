@@ -45,6 +45,7 @@ import org.hippoecm.hst.jaxrs.contentrestapi.visitors.VisitorFactory;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.onehippo.cms7.services.search.jcr.service.HippoJcrSearchService;
 import org.onehippo.cms7.services.search.query.Query;
+import org.onehippo.cms7.services.search.query.QueryUtils;
 import org.onehippo.cms7.services.search.result.Hit;
 import org.onehippo.cms7.services.search.result.HitIterator;
 import org.onehippo.cms7.services.search.result.QueryResult;
@@ -188,17 +189,27 @@ public class ContentRestApiResource {
         return offset;
     }
 
+    private String parseQuery(final String queryString) {
+        // TODO: decide whether any special handing is needed here ...
+        if (queryString == null) {
+            return "";
+        }
+        return queryString;
+    }
+
     @GET
     @Path("/documents")
-    public Response getDocuments(@QueryParam("_offset") String offsetString, @QueryParam("_max") String maxString) {
+    public Response getDocuments(@QueryParam("_offset") String offsetString, @QueryParam("_max") String maxString, @QueryParam("_query") String queryString) {
         try {
             int offset = parseOffset(offsetString);
             int max = parseMax(maxString);
+            String parsedQuery = parseQuery(queryString);
 
             SearchService searchService = getSearchService();
             Query query = searchService.createQuery()
                     .from("/content/documents")
                     .ofType("myhippoproject:basedocument") // TODO change to blacklisting mechanism
+                    .where(QueryUtils.text().contains(parsedQuery))
                     .returnParentNode()
                     .orderBy(HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE)
                     .descending()
