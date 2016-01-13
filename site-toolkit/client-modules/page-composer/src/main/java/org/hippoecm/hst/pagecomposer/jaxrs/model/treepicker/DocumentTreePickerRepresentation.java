@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.apache.jackrabbit.commons.JcrUtils;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -46,6 +47,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation.ExpandedNodeHierarchy.createExpandedNodeHierarchy;
+import static org.hippoecm.repository.HippoStdNodeType.NT_DIRECTORY;
+import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
 import static org.hippoecm.repository.HippoStdNodeType.NT_PUBLISHABLESUMMARY;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
@@ -188,7 +191,13 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
 
         final Mount editingMount = pageComposerContextService.getEditingMount();
         final HstLink hstLink = linkCreator.create(node, editingMount);
-        if (hstLink.isNotFound() || node.isSame(node.getSession().getNode(editingMount.getContentPath()))) {
+        if (isFolder(node) && ((HstSiteMapItemService)hstLink.getHstSiteMapItem()).getExtension() != null ) {
+            // The hstLink is for a wildcard/any matcher *with* an extension while 'node' represents a folder:
+            // In general folder can be returned as a link with extension, eg, /news/2014.html if there is only a **.html
+            // matcher but not a ** matcher. However the URL /news/2014.html most of the time results in an error page
+            // because unintentional
+            setSelectable(false);
+        } else if (hstLink.isNotFound() || node.isSame(node.getSession().getNode(editingMount.getContentPath()))) {
             setSelectable(false);
         } else {
             setSelectable(true);
@@ -251,6 +260,13 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
         }
 
         return this;
+    }
+
+    private boolean isFolder(final Node node) throws RepositoryException {
+        if (node.isNodeType(NT_FOLDER) || node.isNodeType(NT_DIRECTORY)) {
+            return true;
+        }
+        return false;
     }
 
     public static class ExpandedNodeHierarchy {
