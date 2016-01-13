@@ -107,10 +107,10 @@ public class ContentRestApiResource {
     }
 
     private final class SearchResultItem {
-        @JsonProperty("jcr:name")
+        @JsonProperty(ContentRestApiResource.NAMESPACE_PREFIX + ":name")
         public final String name;
 
-        @JsonProperty("jcr:uuid")
+        @JsonProperty(ContentRestApiResource.NAMESPACE_PREFIX + ":uuid")
         public final String uuid;
 
         @JsonProperty(NAMESPACE_PREFIX + ":links")

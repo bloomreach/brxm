@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.jaxrs.contentrestapi.ContentRestApiResource;
 import org.hippoecm.hst.jaxrs.contentrestapi.ResourceContext;
 
 public class HandleNodeVisitor extends AbstractBaseVisitor {
@@ -32,8 +33,8 @@ public class HandleNodeVisitor extends AbstractBaseVisitor {
     public void visit(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
         final String nodeName = node.getName();
 
-        destination.put("jcr:name", nodeName);
-        destination.put("jcr:uuid", node.getIdentifier());
+        destination.put(ContentRestApiResource.NAMESPACE_PREFIX + ":name", nodeName);
+        destination.put(ContentRestApiResource.NAMESPACE_PREFIX + ":uuid", node.getIdentifier());
 
         final Node variant = node.getNode(nodeName);
         visit(context, variant.getProperties(), destination);
