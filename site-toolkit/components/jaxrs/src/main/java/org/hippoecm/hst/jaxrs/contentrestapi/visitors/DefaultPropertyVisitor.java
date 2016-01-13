@@ -49,7 +49,7 @@ class DefaultPropertyVisitor extends AbstractBaseVisitor {
 
     private String getStringRepresentation(final Value jcrValue) throws RepositoryException {
         if (jcrValue.getType() == BINARY) {
-            return jcrValue.getBinary().getSize() + " bytes.";
+            return "Retrieving the content of binary property values is not yet supported in the Content REST API. Use images and assets instead.";
         } else {
             return jcrValue.getString();
         }
