@@ -7,7 +7,7 @@ public class MyMatrixOperator implements MatrixOperator{
 
     private MatrixOperator delegatee;
 
-    public void MyMatrixOperator() {
+    public MyMatrixOperator() {
         this.delegatee = new MatrixOperatorImpl();
     }
 

@@ -95,6 +95,7 @@ components/src/main/java/org/hippoecm/hst/demo/wicketexamples/ItemBeanFactory.ja
 components/src/main/java/org/hippoecm/hst/demo/wicketexamples/NodeBean.java -text
 components/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserApplication.java -text
 components/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserPage.java -text
+components/src/main/resources/META-INF/hst-assembly/overrides/addon/org/hippoecm/hst/demo/addonmodules/linearalgebra/overrideMatrixOperator.xml -text
 components/src/main/resources/META-INF/hst-assembly/overrides/base.xml svneol=native#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/channelManagerListenerExample.xml -text
 components/src/main/resources/META-INF/hst-assembly/overrides/commentsRewriteContextResolver.xml -text
@@ -107,7 +108,6 @@ components/src/main/resources/META-INF/hst-assembly/overrides/event-listeners.xm
 components/src/main/resources/META-INF/hst-assembly/overrides/hst-cms-rest.xml -text
 components/src/main/resources/META-INF/hst-assembly/overrides/httpsSchemeExample-valve.xml -text svneol=unset#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/jndi-repository.xml svneol=native#text/plain
-components/src/main/resources/META-INF/hst-assembly/overrides/org/hippoecm/hst/demo/addonmodules/linearalgebra/overrideMatrixOperator.xml -text
 components/src/main/resources/META-INF/hst-assembly/overrides/page-composer-rest.xml -text svneol=unset#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/spring-bean-bridge-contact.xml -text
 components/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml -text svneol=unset#text/plain

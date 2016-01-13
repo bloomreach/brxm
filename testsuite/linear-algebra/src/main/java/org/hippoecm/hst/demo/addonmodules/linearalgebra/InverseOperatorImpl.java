@@ -6,9 +6,9 @@ import org.hippoecm.hst.demo.addonmodules.api.MatrixOperator;
 
 public class InverseOperatorImpl implements InverseOperator {
 
-    private MatrixOperatorImpl matrixOperator;
+    private MatrixOperator matrixOperator;
 
-    public void setMatrixOperator(final MatrixOperatorImpl matrixOperator) {
+    public void setMatrixOperator(final MatrixOperator matrixOperator) {
         this.matrixOperator = matrixOperator;
     }
 
