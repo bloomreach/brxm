@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.configuration.environment;
 
+import java.util.Optional;
+
 import org.onehippo.cms7.services.environment.EnvironmentSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,20 +32,32 @@ public class EnvironmentUtils {
 
     private EnvironmentUtils() {}
 
+    static Optional<String> activeHostGroupOptional;
+
     static String getActiveHostGroup() {
-
-        final EnvironmentSettings environmentSettings  = getService(EnvironmentSettings.class);
-        if (environmentSettings == null) {
-            log.info("EnvironmentSettings are not available");
-            return null;
+        if (activeHostGroupOptional != null) {
+            return activeHostGroupOptional.orElse(null);
         }
+        synchronized (EnvironmentUtils.class) {
+            if (activeHostGroupOptional != null) {
+                return activeHostGroupOptional.orElse(null);
+            }
+            final EnvironmentSettings environmentSettings = getService(EnvironmentSettings.class);
+            if (environmentSettings == null) {
+                log.info("EnvironmentSettings are not available");
+                activeHostGroupOptional = Optional.empty();
+                return null;
+            }
 
-        final String activeHostGroup = environmentSettings.get(ACTIVE_HOST_GROUP_PARAM);
-        if (activeHostGroup == null) {
-            log.info("EnvironmentSettings does not provide an active host group value for '{}'.", ACTIVE_HOST_GROUP_PARAM);
-            return null;
+            final String activeHostGroup = environmentSettings.get(ACTIVE_HOST_GROUP_PARAM);
+            if (activeHostGroup == null) {
+                log.info("EnvironmentSettings does not provide an active host group value for '{}'.", ACTIVE_HOST_GROUP_PARAM);
+                activeHostGroupOptional = Optional.empty();
+                return null;
+            }
+            activeHostGroupOptional = Optional.of(activeHostGroup);
+            return activeHostGroup;
         }
-        return activeHostGroup;
     }
 
 
