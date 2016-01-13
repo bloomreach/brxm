@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -17,29 +17,40 @@
 <div class="panel panel-default" ng-controller="restServicesCtrl">
   <div class="panel-heading">REST resources</div>
   <div class="panel-body">
-    <form novalidate name="restForm">
-      <p>The Content REST API enables you and your users to access the content in the repository through generic REST
-         resources. If you are a new Hippo user and you want to experiment with Hipo's capabilities, this is the
-         recommended mechanism to use. It can be combined with manual resources, which provide greater control over
-         the look-and-feel and capabilities of your resources, but requires more Java knowledge and some manual steps.
-      </p>
-      <p>Choose the base URL for your REST API</p>
-      <div class="input-group">
-        <span class="input-group-addon">http://localhost:8080/site/</span>
-        <input type="text" ng-model="restName" ng-pattern="/^[a-z]{1,}$/" class="form-control" ng-required="true" ng-change="onChangeRestName()" placeholder="<Endpoint name>"/>
-      </div>
+    <p>The Content REST API enables you and your users to access the content in the repository through generic REST
+      resources. If you are a new Hippo user and you want to experiment with Hipo's capabilities, this is the
+      recommended mechanism to use. It can be combined with manual resources, which provide greater control over
+      the look-and-feel and capabilities of your resources, but requires more Java knowledge and some manual steps.
+    </p>
+    <form novalidate name="genericRestForm">
       <div class="checkbox">
         <label>
-          <input type="checkbox" ng-model="isGenericContentRestApiEnabled"> Enable generic resources via Content REST API
+          <input type="checkbox" ng-model="isGenericContentRestApiEnabled"> Enable generic REST resources
         </label>
       </div>
+      <p>Choose the base URL for the generic REST resources</p>
+      <div class="input-group">
+        <span class="input-group-addon">http://localhost:8080/site/</span>
+        <input type="text" class="form-control" placeholder="<Endpoint name>"
+               ng-model="genericRestName" ng-pattern="/^[a-z\-]{1,}$/"
+               ng-required="isGenericContentRestApiEnabled"/>
+      </div>
+    </form>
+    <form novalidate name="manualRestForm">
       <div class="checkbox">
         <label>
-          <input type="checkbox" ng-model="isManualRestResourcesEnabled"> Configure manual REST resources
+          <input type="checkbox" ng-model="isManualRestResourcesEnabled"> Enable manual REST resources
         </label>
       </div>
       <div ng-show="isManualRestResourcesEnabled">
-        <div ng-show="documentTypes.length">
+        <p>Choose the base URL for the manual REST resources</p>
+        <div class="input-group">
+          <span class="input-group-addon">http://localhost:8080/site/</span>
+          <input type="text" class="form-control" placeholder="<Endpoint name>"
+                 ng-model="manualRestName" ng-pattern="/^[a-z\-]{1,}$/"
+                 ng-required="isManualRestResourcesEnabled" ng-change="onChangeManualRestName()"/>
+        </div>
+        <div ng-show="documentTypes.length" style="padding-top: 8px;">
           <p>Select document type(s) to expose through REST</p>
           <div class="alert alert-info">
             You may want to add more document types first by installing additional features from
@@ -69,8 +80,7 @@
     </form>
   </div>
   <div class="panel-footer">
-    <button ng-disabled="!restForm.$valid || (!isGenericContentRestApiEnabled && (!isManualRestResourcesEnabled || checkedDocuments == 0))"
-            class="btn btn-primary pull-right" ng-click="runRestSetup()">Run setup</button>
+    <button ng-disabled="!isDataValid()" class="btn btn-primary pull-right" ng-click="runRestSetup()">Run setup</button>
     <div class="clearfix"></div>
   </div>
 </div>

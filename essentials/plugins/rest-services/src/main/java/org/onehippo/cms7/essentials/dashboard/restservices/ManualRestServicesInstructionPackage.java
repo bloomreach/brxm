@@ -16,21 +16,15 @@
 
 package org.onehippo.cms7.essentials.dashboard.restservices;
 
+import org.onehippo.cms7.essentials.dashboard.packaging.DefaultInstructionPackage;
+
 /**
  * @version "$Id$"
  */
-public final class RestPluginConst {
+public class ManualRestServicesInstructionPackage extends DefaultInstructionPackage {
 
-    public static final String GENERIC_API_ENABLED = "genericApiEnabled";
-    public static final String GENERIC_REST_NAME = "genericRestName";
-    public static final String GENERIC_PIPELINE_NAME = "ContentRestPipeline";
-    public static final String MANUAL_API_ENABLED = "manualApiEnabled";
-    public static final String MANUAL_REST_NAME = "manualRestName";
-    public static final String MANUAL_PIPELINE_NAME = "JaxrsRestPlainPipeline";
-    public static final String PIPELINE_NAME = "pipelineName";
-    public static final String REST_NAME = "restName";
-    public static final String JAVA_FILES = "javaFiles";
-
-    private RestPluginConst() {
+    @Override
+    public String getInstructionPath() {
+        return "/META-INF/manual_rest_instructions.xml";
     }
 }

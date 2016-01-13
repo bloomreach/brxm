@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,6 @@ import org.slf4j.LoggerFactory;
 @Path("/restservices")
 public class RestPluginResource extends BaseResource {
 
-
     private static final Logger log = LoggerFactory.getLogger(RestPluginResource.class);
 
     @Inject
@@ -110,25 +109,23 @@ public class RestPluginResource extends BaseResource {
     @POST
     @Path("/")
     public RestfulList<MessageRestful> executeInstructionPackage(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
-        final Map<String, String> values = payloadRestful.getValues();
-        final String restName = values.get(RestPluginConst.REST_NAME);
-        final String restType = values.get(RestPluginConst.REST_TYPE);
-        final String selectedBeans = values.get(RestPluginConst.JAVA_FILES);
-        final boolean isGenericApiEnabled = Boolean.valueOf(values.get(RestPluginConst.GENERIC_API_ENABLED));
-
         final RestfulList<MessageRestful> messages = new RestfulList<>();
-        if (Strings.isNullOrEmpty(restName) || Strings.isNullOrEmpty(restType)) {
-            messages.add(new ErrorMessageRestful("REST service name / type or both were empty"));
-            return messages;
-        }
         final PluginContext context = PluginContextFactory.getContext();
-        final Set<ValidBean> validBeans = annotateBeans(selectedBeans, context);
+        final Map<String, String> values = payloadRestful.getValues();
+        final boolean isGenericApiEnabled = Boolean.valueOf(values.get(RestPluginConst.GENERIC_API_ENABLED));
+        final boolean isManualApiEnabled = Boolean.valueOf(values.get(RestPluginConst.MANUAL_API_ENABLED));
 
-        // create endpoint rest
-        if (restType.equals("plain")) {
+        if (isManualApiEnabled) {
+            final String manualRestName = values.get(RestPluginConst.MANUAL_REST_NAME);
+            if (Strings.isNullOrEmpty(manualRestName)) {
+                messages.add(new ErrorMessageRestful("Manual REST resource URL must be specified."));
+                return messages;
+            }
+
             final InstructionExecutor executor = new PluginInstructionExecutor();
+            final String selectedBeans = values.get(RestPluginConst.JAVA_FILES);
+            final Set<ValidBean> validBeans = annotateBeans(selectedBeans, context);
 
-            // for each bean, add a resource to the project (site)
             for (ValidBean validBean : validBeans) {
                 final Map<String, Object> properties = new HashMap<>();
                 properties.put("beanPackage", validBean.getBeanPackage());
@@ -142,18 +139,30 @@ public class RestPluginResource extends BaseResource {
                 mySet.addInstruction(createFileInstruction());
                 executor.execute(mySet, context);
             }
+
+            final InstructionPackage instructionPackage = new ManualRestServicesInstructionPackage();
+            getInjector().autowireBean(instructionPackage);
+            values.put(RestPluginConst.REST_NAME, manualRestName);
+            values.put(RestPluginConst.PIPELINE_NAME, RestPluginConst.MANUAL_PIPELINE_NAME);
+            instructionPackage.setProperties(new HashMap<>(values));
+            instructionPackage.getProperties().put("beans", validBeans);
+            instructionPackage.execute(context);
         }
 
         if (isGenericApiEnabled) {
-            validBeans.add(createValidBeanForGenericRestApi());
-        }
+            final String genericRestName = values.get(RestPluginConst.GENERIC_REST_NAME);
+            if (Strings.isNullOrEmpty(genericRestName)) {
+                messages.add(new ErrorMessageRestful("Generic REST resource URL must be specified."));
+                return messages;
+            }
 
-        // Set up REST mount and Spring configuration
-        final InstructionPackage instructionPackage = new RestServicesInstructionPackage();
-        getInjector().autowireBean(instructionPackage);
-        instructionPackage.setProperties(new HashMap<>(values));
-        instructionPackage.getProperties().put("beans", validBeans);
-        instructionPackage.execute(context);
+            final InstructionPackage instructionPackage = new ManualRestServicesInstructionPackage();
+            getInjector().autowireBean(instructionPackage);
+            values.put(RestPluginConst.REST_NAME, genericRestName);
+            values.put(RestPluginConst.PIPELINE_NAME, RestPluginConst.GENERIC_PIPELINE_NAME);
+            instructionPackage.setProperties(new HashMap<>(values));
+            instructionPackage.execute(context);
+        }
 
         final String message = "HST Configuration changed, project rebuild needed";
         eventBus.post(new RebuildEvent("restServices", message));
@@ -211,13 +220,5 @@ public class RestPluginResource extends BaseResource {
             }
         }
         return validBeans;
-    }
-
-    private ValidBean createValidBeanForGenericRestApi() {
-        final ValidBean vb = new ValidBean();
-
-        vb.setFullQualifiedResourceName("org.hippoecm.hst.jaxrs.contentrestapi.ContentRestApiResource");
-
-        return vb;
     }
 }

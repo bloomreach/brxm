@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -17,12 +17,7 @@
 
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
-  <instructionSet group="content">
-    <xml action="copy" overwrite="false" source="content_mount.xml" target="/hst:hst/hst:hosts/dev-localhost/localhost/hst:root"/>
-    <file action="copy" overwrite="false" source="HelloWorldContentResource.txt" target="{{restFolder}}/HelloWorldContentResource.java"/>
-    <file action="copy" overwrite="false" source="spring-content-rest-api.xml" target="{{siteOverrideFolder}}/spring-content-rest-api.xml"/>
-  </instructionSet>
-  <instructionSet group="plain">
+  <instructionSet>
     <xml action="copy" overwrite="false" source="plain_mount.xml" target="/hst:hst/hst:hosts/dev-localhost/localhost/hst:root"/>
     <file action="copy" overwrite="true" source="spring-plain-rest-api.xml" target="{{siteOverrideFolder}}/spring-plain-rest-api.xml"/>
   </instructionSet>
