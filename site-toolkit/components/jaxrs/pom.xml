@@ -137,6 +137,11 @@
       <artifactId>hippo-search-service-commons</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services-contenttype</artifactId>
+    </dependency>
+
     <!-- Apache CXF Runtime for JAX-RS Services Testing -->
     <dependency>
       <groupId>org.apache.cxf</groupId>

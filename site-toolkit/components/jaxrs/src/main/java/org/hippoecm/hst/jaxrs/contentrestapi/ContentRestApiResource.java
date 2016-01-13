@@ -50,6 +50,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
+import org.onehippo.cms7.services.contenttype.HippoContentTypeService;
 import org.onehippo.cms7.services.search.jcr.service.HippoJcrSearchService;
 import org.onehippo.cms7.services.search.query.Query;
 import org.onehippo.cms7.services.search.query.QueryUtils;
@@ -70,12 +71,17 @@ public class ContentRestApiResource {
 
     public static final String NAMESPACE_PREFIX = "hipporest";
 
-
     private static class ResourceContextImpl implements ResourceContext {
 
         private final ContentTypes contentTypes;
 
         private ResourceContextImpl() throws RepositoryException {
+            // TODO improve initialization
+            if (HippoServiceRegistry.getService(ContentTypeService.class) == null) {
+                HippoContentTypeService service = new HippoContentTypeService(RequestContextProvider.get().getSession());
+                HippoServiceRegistry.registerService(service, ContentTypeService.class);
+            }
+
             contentTypes = HippoServiceRegistry.getService(ContentTypeService.class).getContentTypes();
         }
 
@@ -246,18 +252,18 @@ public class ContentRestApiResource {
 
             return Response.status(200).entity(result).build();
 
-        } catch (SearchServiceException e) {
-            logException("Exception while fetching documents",e);
-            if (e.getCause() instanceof InvalidQueryException) {
-                return buildErrorResponse(400, e.toString());
+        } catch (SearchServiceException sse) {
+            logException("Exception while fetching documents", sse);
+            if (sse.getCause() instanceof InvalidQueryException) {
+                return buildErrorResponse(400, sse.toString());
             }
-            return buildErrorResponse(500, e);
+            return buildErrorResponse(500, sse);
         } catch (IllegalArgumentException iae) {
-            logException("Exception while fetching documents",iae);
+            logException("Exception while fetching documents", iae);
             return buildErrorResponse(400, iae);
-        } catch (Exception re) {
-            logException("Exception while fetching documents",re);
-            return buildErrorResponse(500, re);
+        } catch (Exception e) {
+            logException("Exception while fetching documents", e);
+            return buildErrorResponse(500, e);
         }
     }
 
