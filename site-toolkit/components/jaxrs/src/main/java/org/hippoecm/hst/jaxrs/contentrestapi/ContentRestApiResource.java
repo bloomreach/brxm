@@ -17,8 +17,6 @@
 package org.hippoecm.hst.jaxrs.contentrestapi;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -95,8 +93,6 @@ public class ContentRestApiResource {
             return contentTypes;
         }
     }
-
-    private final List<String> ignoredVariantProperties = Collections.unmodifiableList(Arrays.asList("jcr:uuid"));
 
     public ContentRestApiResource() {
     }
