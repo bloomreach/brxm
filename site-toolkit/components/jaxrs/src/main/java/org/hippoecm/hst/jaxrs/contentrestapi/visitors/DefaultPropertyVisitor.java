@@ -38,10 +38,8 @@ class DefaultPropertyVisitor extends AbstractBaseVisitor {
             final Value[] jcrValues = property.getValues();
             final String[] stringValues = new String[jcrValues.length];
             for (int i = 0; i < jcrValues.length; i++) {
-                // TODO what is the preferred JSON format for a date? What returns a date value for getString()
                 final Value jcrValue = jcrValues[i];
                 stringValues[i] = getStringRepresentation(jcrValue);
-
             }
             destination.put(property.getName(), stringValues);
         } else {
