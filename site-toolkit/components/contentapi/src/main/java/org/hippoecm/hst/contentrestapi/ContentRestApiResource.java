@@ -101,7 +101,7 @@ public class ContentRestApiResource {
         @JsonProperty(NAMESPACE_PREFIX + ":url")
         public final String url;
 
-        public Link(String url) {
+        public Link(final String url) {
             this.url = url;
         }
     }
@@ -116,7 +116,7 @@ public class ContentRestApiResource {
         @JsonProperty(NAMESPACE_PREFIX + ":links")
         public final Link[] links;
 
-        public SearchResultItem(String name, String uuid, Link[] links) {
+        public SearchResultItem(final String name, final String uuid, final Link[] links) {
             this.name = name;
             this.uuid = uuid;
             this.links = links;
@@ -142,7 +142,10 @@ public class ContentRestApiResource {
         @JsonProperty(NAMESPACE_PREFIX + ":items")
         public SearchResultItem[] items;
 
-        void populate(int offset, int max, QueryResult queryResult, Session session, final String expectedNodeType) throws RepositoryException {
+        void populate(final int offset, final int max,
+                      final QueryResult queryResult,
+                      final Session session,
+                      final String expectedNodeType) throws RepositoryException {
             final List<SearchResultItem> itemArrayList = new ArrayList<>();
             final HitIterator iterator = queryResult.getHits();
             while (iterator.hasNext()) {
@@ -172,13 +175,13 @@ public class ContentRestApiResource {
     private static final class Error {
         public final int status;
         public final String description;
-        Error(int status, String description) {
+        Error(final int status, final String description) {
             this.status = status;
             this.description = description;
         }
     }
 
-    private int parseMax(String maxString) throws IllegalArgumentException {
+    private int parseMax(final String maxString) throws IllegalArgumentException {
         int max = 100;
 
         if (maxString != null) {
@@ -195,7 +198,7 @@ public class ContentRestApiResource {
         return max;
     }
 
-    private int parseOffset(String offsetString) throws IllegalArgumentException {
+    private int parseOffset(final String offsetString) throws IllegalArgumentException {
         int offset = 0;
 
         if (offsetString != null) {
@@ -218,7 +221,9 @@ public class ContentRestApiResource {
 
     @GET
     @Path("/documents")
-    public Response getDocuments(@QueryParam("_offset") String offsetString, @QueryParam("_max") String maxString, @QueryParam("_query") String queryString) {
+    public Response getDocuments(@QueryParam("_offset") final String offsetString,
+                                 @QueryParam("_max") final String maxString,
+                                 @QueryParam("_query") final String queryString) {
         try {
             ResourceContext context = new ResourceContextImpl();
             final int offset = parseOffset(offsetString);
@@ -271,7 +276,7 @@ public class ContentRestApiResource {
         }
     }
 
-    private UUID parseUUID(String uuid) throws IllegalArgumentException {
+    private UUID parseUUID(final String uuid) throws IllegalArgumentException {
         try {
             return UUID.fromString(uuid);
         } catch (IllegalArgumentException e) {
@@ -281,7 +286,7 @@ public class ContentRestApiResource {
 
     @GET
     @Path("/documents/{uuid}")
-    public Response getDocumentsByUUID(@PathParam("uuid") String uuidString) {
+    public Response getDocumentsByUUID(@PathParam("uuid") final String uuidString) {
         try {
             ResourceContext context = new ResourceContextImpl();
             final Session session = context.getRequestContext().getSession();
@@ -310,15 +315,15 @@ public class ContentRestApiResource {
         }
     }
 
-    private Response buildErrorResponse(int status, Exception exception) {
+    private Response buildErrorResponse(final int status, final Exception exception) {
         return buildErrorResponse(status, exception.toString());
     }
 
-    private Response buildErrorResponse(int status, String description) {
+    private Response buildErrorResponse(final int status, final String description) {
         return Response.status(status).entity(new Error(status, description)).build();
     }
 
-    private SearchService getSearchService(ResourceContext context) throws RepositoryException {
+    private SearchService getSearchService(final ResourceContext context) throws RepositoryException {
         final HippoJcrSearchService searchService = new HippoJcrSearchService();
         searchService.setSession(context.getRequestContext().getSession());
         return searchService;
