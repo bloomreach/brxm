@@ -67,6 +67,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-security-cors</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-search-service-api</artifactId>
     </dependency>

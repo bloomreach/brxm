@@ -574,6 +574,8 @@ commons/src/test/resources/TestResourceBundleUtils.properties -text
 commons/src/test/resources/TestResourceBundleUtils_fr.properties -text
 commons/src/test/resources/TestResourceBundleUtils_fr_FR.properties -text
 components/contentapi/pom.xml -text
+components/contentapi/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
+components/contentapi/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/contentrestapi/SpringComponentManager-rest-content-api.xml -text
 components/contentapi/src/site/site.xml -text
 components/core/pom.xml svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/cache/CacheContentEventListener.java -text
