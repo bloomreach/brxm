@@ -23,7 +23,7 @@ public final class RestPluginConst {
 
     public static final String GENERIC_API_ENABLED = "genericApiEnabled";
     public static final String GENERIC_REST_NAME = "genericRestName";
-    public static final String GENERIC_PIPELINE_NAME = "ContentRestPipeline";
+    public static final String GENERIC_PIPELINE_NAME = "ContentApiPipeline";
     public static final String MANUAL_API_ENABLED = "manualApiEnabled";
     public static final String MANUAL_REST_NAME = "manualRestName";
     public static final String MANUAL_PIPELINE_NAME = "JaxrsRestPlainPipeline";
