@@ -25,26 +25,34 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.contentrestapi.ContentRestApiResource;
 import org.hippoecm.hst.contentrestapi.ResourceContext;
+import org.hippoecm.repository.api.HippoNodeType;
 
-class FacetSelectNodeVisitor extends AbstractBaseVisitor {
+class FacetSelectNodeVisitor extends AbstractBaseNodeVisitor {
 
     public FacetSelectNodeVisitor(VisitorFactory factory) {
         super(factory);
     }
 
+    @Override
     public void visit(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
         final Map<String, Object> descendantsOutput = new TreeMap<>();
         destination.put(node.getName(), descendantsOutput);
 
         try {
-            final Property docbase = node.getProperty("hippo:docbase");
+            final Property docbase = node.getProperty(HippoNodeType.HIPPO_DOCBASE);
             // TODO link rewriting - use generic HST methods to construct URL
-            descendantsOutput.put(ContentRestApiResource.NAMESPACE_PREFIX + ":url", "http://localhost:8080/site/api/documents/" + docbase.getValue()
-                    .getString());
+            descendantsOutput.put(
+                    ContentRestApiResource.NAMESPACE_PREFIX + ":url",
+                    "http://localhost:8080/site/api/documents/" + docbase.getValue().getString());
         } catch (RepositoryException e) {
             // log warning
         }
-        visit(context, node.getProperties(), descendantsOutput);
-        visit(context, node.getNodes(), descendantsOutput);
+
+        visitDescendants(context, node, descendantsOutput);
+    }
+
+    protected void visitDescendants(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
+        visit(context, node.getProperties(), destination);
+        visit(context, node.getNodes(), destination);
     }
 }

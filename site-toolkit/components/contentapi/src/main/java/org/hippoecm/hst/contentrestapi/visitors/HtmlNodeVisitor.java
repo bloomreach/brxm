@@ -19,7 +19,6 @@ package org.hippoecm.hst.contentrestapi.visitors;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -28,17 +27,16 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.contentrestapi.ContentRestApiResource;
 import org.hippoecm.hst.contentrestapi.ResourceContext;
+import org.hippoecm.repository.api.HippoNodeType;
 
-class HtmlNodeVisitor extends AbstractBaseVisitor {
+class HtmlNodeVisitor extends AbstractBaseNodeVisitor {
 
-    public HtmlNodeVisitor(VisitorFactory factory) {
-        super(factory);
+    public HtmlNodeVisitor(VisitorFactory visitorFactory) {
+        super(visitorFactory);
     }
 
-    public void visit(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
-        final Map<String, Object> htmlNodeOutput = new TreeMap<>();
-        destination.put(node.getName(), htmlNodeOutput);
-
+    @Override
+    protected void visitDescendants(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
         final PropertyIterator propertyIterator = node.getProperties();
         while (propertyIterator.hasNext()) {
             final Property childProperty = (Property) propertyIterator.next();
@@ -46,25 +44,24 @@ class HtmlNodeVisitor extends AbstractBaseVisitor {
                 // TODO link rewriting - the href of the binary links needs to be altered
             }
             final Visitor visitor = getVisitorFactory().getVisitor(context, childProperty);
-            visitor.visit(context, childProperty, htmlNodeOutput);
+            visitor.visit(context, childProperty, destination);
         }
 
         final Map<String, Object> linksOutput = new TreeMap<>();
-        htmlNodeOutput.put(ContentRestApiResource.NAMESPACE_PREFIX + ":links", linksOutput);
+        destination.put(ContentRestApiResource.NAMESPACE_PREFIX + ":links", linksOutput);
 
         final NodeIterator nodeIterator = node.getNodes();
         while (nodeIterator.hasNext()) {
             final Node childNode = (Node) nodeIterator.next();
             final Visitor visitor = getVisitorFactory().getVisitor(context, childNode);
             switch (childNode.getPrimaryNodeType().getName()) {
-                case "hippo:facetselect":
+                case HippoNodeType.NT_FACETSELECT:
                     visitor.visit(context, childNode, linksOutput);
                     break;
                 default:
-                    visitor.visit(context, childNode, htmlNodeOutput);
+                    visitor.visit(context, childNode, destination);
                     break;
             }
         }
     }
-
 }

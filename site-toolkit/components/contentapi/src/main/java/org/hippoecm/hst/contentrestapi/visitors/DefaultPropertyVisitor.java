@@ -40,10 +40,11 @@ class DefaultPropertyVisitor extends AbstractBaseVisitor {
 
     @Override
     public void visit(final ResourceContext context, final Property property, final Map<String, Object> destination) throws RepositoryException {
-        final ContentType contentType = context.getContentTypes().getContentTypeForNode(property.getParent());
-        final ContentTypeProperty propertyType = contentType.getProperties().get(property.getName());
+        final ContentType parentContentType = context.getContentTypes().getContentTypeForNode(property.getParent());
+        final ContentTypeProperty propertyType = parentContentType.getProperties().get(property.getName());
 
-        if (propertyType == null) {
+        // skip properties that either are unknown or for which a node with the same name is also defined
+        if (propertyType == null || parentContentType.getChildren().get(property.getName()) != null) {
             return;
         }
 

@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class DefaultVisitorFactory implements VisitorFactory {
 
@@ -37,9 +38,9 @@ public class DefaultVisitorFactory implements VisitorFactory {
     public Visitor getVisitor(final ResourceContext context, final Node node) throws RepositoryException {
         final NodeType nodeType = node.getPrimaryNodeType();
         switch (nodeType.getName()) {
-            case "hippo:facetselect":
+            case HippoNodeType.NT_FACETSELECT:
                 return new FacetSelectNodeVisitor(this);
-            case "hippo:handle":
+            case HippoNodeType.NT_HANDLE:
                 return new HandleNodeVisitor(this);
             case "hippostd:html":
                 return new HtmlNodeVisitor(this);
