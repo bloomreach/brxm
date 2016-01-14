@@ -16,33 +16,60 @@
 
 package org.hippoecm.hst.contentrestapi.visitors;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class DefaultVisitorFactory implements VisitorFactory {
 
+    private final List<String> defaultIgnoredProperties = new ArrayList<>(Arrays.asList(
+            "jcr:uuid",
+            "hippo:paths",
+            "hippo:related",
+            "hippo:availability",
+            "hippostd:holder",
+            "hippo:compute",
+            "hippo:discriminator",
+            "hippostdpubwf:createdBy",
+            "hippostdpubwf:lastModifiedBy"
+    ));
+
+    protected boolean isIgnored(Property property) throws RepositoryException {
+        return defaultIgnoredProperties.contains(property.getName());
+    }
+
+    protected boolean isIgnored(Node node) {
+        return false;
+    }
+
     public Visitor getVisitor(final ResourceContext context, final Property property) throws RepositoryException {
-        switch (property.getName()) {
-            case "jcr:uuid":
-                return new NoopVisitor(this);
-            default:
-                return new DefaultPropertyVisitor(this);
+        if (isIgnored(property)) {
+            return new NoopVisitor(this);
         }
+        return new DefaultPropertyVisitor(this);
     }
 
     public Visitor getVisitor(final ResourceContext context, final Node node) throws RepositoryException {
+        if (isIgnored(node)) {
+            return new NoopVisitor(this);
+        }
+
         final NodeType nodeType = node.getPrimaryNodeType();
         switch (nodeType.getName()) {
             case HippoNodeType.NT_FACETSELECT:
                 return new FacetSelectNodeVisitor(this);
             case HippoNodeType.NT_HANDLE:
                 return new HandleNodeVisitor(this);
-            case "hippostd:html":
+            case HippoStdNodeType.NT_HTML:
                 return new HtmlNodeVisitor(this);
             default:
                 return new DefaultNodeVisitor(this);

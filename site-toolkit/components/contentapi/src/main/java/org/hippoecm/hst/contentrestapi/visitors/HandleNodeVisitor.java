@@ -34,7 +34,7 @@ public class HandleNodeVisitor extends AbstractBaseVisitor {
         final String nodeName = node.getName();
 
         destination.put(ContentRestApiResource.NAMESPACE_PREFIX + ":name", nodeName);
-        destination.put(ContentRestApiResource.NAMESPACE_PREFIX + ":uuid", node.getIdentifier());
+        destination.put("jcr:uuid", node.getIdentifier());
 
         final Node variant = node.getNode(nodeName);
         visit(context, variant.getProperties(), destination);

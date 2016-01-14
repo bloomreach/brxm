@@ -27,6 +27,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.contentrestapi.ContentRestApiResource;
 import org.hippoecm.hst.contentrestapi.ResourceContext;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 
 class HtmlNodeVisitor extends AbstractBaseNodeVisitor {
@@ -40,7 +41,7 @@ class HtmlNodeVisitor extends AbstractBaseNodeVisitor {
         final PropertyIterator propertyIterator = node.getProperties();
         while (propertyIterator.hasNext()) {
             final Property childProperty = (Property) propertyIterator.next();
-            if (childProperty.getName().equals("hippostd:content")) {
+            if (childProperty.getName().equals(HippoStdNodeType.HIPPOSTD_CONTENT)) {
                 // TODO link rewriting - the href of the binary links needs to be altered
             }
             final Visitor visitor = getVisitorFactory().getVisitor(context, childProperty);

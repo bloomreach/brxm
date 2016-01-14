@@ -38,10 +38,10 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.contentrestapi.visitors.DefaultVisitorFactory;
 import org.hippoecm.hst.contentrestapi.visitors.Visitor;
 import org.hippoecm.hst.contentrestapi.visitors.VisitorFactory;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -59,8 +59,6 @@ import org.onehippo.cms7.services.search.service.SearchService;
 import org.onehippo.cms7.services.search.service.SearchServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 @Produces("application/json")
 public class ContentRestApiResource {
@@ -110,7 +108,7 @@ public class ContentRestApiResource {
         @JsonProperty(ContentRestApiResource.NAMESPACE_PREFIX + ":name")
         public final String name;
 
-        @JsonProperty(ContentRestApiResource.NAMESPACE_PREFIX + ":uuid")
+        @JsonProperty("jcr:uuid")
         public final String uuid;
 
         @JsonProperty(NAMESPACE_PREFIX + ":links")
