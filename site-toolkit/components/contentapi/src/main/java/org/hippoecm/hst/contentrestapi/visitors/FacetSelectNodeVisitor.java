@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.jaxrs.contentrestapi.visitors;
+package org.hippoecm.hst.contentrestapi.visitors;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -23,8 +23,8 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.jaxrs.contentrestapi.ContentRestApiResource;
-import org.hippoecm.hst.jaxrs.contentrestapi.ResourceContext;
+import org.hippoecm.hst.contentrestapi.ContentRestApiResource;
+import org.hippoecm.hst.contentrestapi.ResourceContext;
 
 class FacetSelectNodeVisitor extends AbstractBaseVisitor {
 

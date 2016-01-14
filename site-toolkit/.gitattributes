@@ -573,6 +573,8 @@ commons/src/test/java/org/hippoecm/hst/util/TestServletConfigUtils.java svneol=n
 commons/src/test/resources/TestResourceBundleUtils.properties -text
 commons/src/test/resources/TestResourceBundleUtils_fr.properties -text
 commons/src/test/resources/TestResourceBundleUtils_fr_FR.properties -text
+components/contentapi/pom.xml -text
+components/contentapi/src/site/site.xml -text
 components/core/pom.xml svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/cache/CacheContentEventListener.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ForwardPlaceHolderHstPageInfo.java -text

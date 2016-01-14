@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.jaxrs.contentrestapi;
+package org.hippoecm.hst.contentrestapi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,9 +39,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.jaxrs.contentrestapi.visitors.DefaultVisitorFactory;
-import org.hippoecm.hst.jaxrs.contentrestapi.visitors.Visitor;
-import org.hippoecm.hst.jaxrs.contentrestapi.visitors.VisitorFactory;
+import org.hippoecm.hst.contentrestapi.visitors.DefaultVisitorFactory;
+import org.hippoecm.hst.contentrestapi.visitors.Visitor;
+import org.hippoecm.hst.contentrestapi.visitors.VisitorFactory;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -244,7 +244,7 @@ public class ContentRestApiResource {
                     .limitTo(max);
             final QueryResult queryResult = searchService.search(query);
             final SearchResult result = new SearchResult();
-            result.populate(offset, max, queryResult, context.getRequestContext().getSession(), NT_HANDLE);
+            result.populate(offset, max, queryResult, context.getRequestContext().getSession(), HippoNodeType.NT_HANDLE);
 
             return Response.status(200).entity(result).build();
 

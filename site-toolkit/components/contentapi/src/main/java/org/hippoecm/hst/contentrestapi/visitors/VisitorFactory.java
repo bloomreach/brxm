@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.jaxrs.contentrestapi;
 
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.onehippo.cms7.services.contenttype.ContentTypes;
+package org.hippoecm.hst.contentrestapi.visitors;
 
-public interface ResourceContext {
-    HstRequestContext getRequestContext();
-    ContentTypes getContentTypes();
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+
+import org.hippoecm.hst.contentrestapi.ResourceContext;
+
+public interface VisitorFactory {
+    Visitor getVisitor(ResourceContext context, Property property) throws RepositoryException;
+    Visitor getVisitor(ResourceContext context, Node node) throws RepositoryException;
 }

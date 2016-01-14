@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.jaxrs.contentrestapi.visitors;
+package org.hippoecm.hst.contentrestapi.visitors;
 
 import java.util.Map;
 
@@ -24,7 +24,7 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.jaxrs.contentrestapi.ResourceContext;
+import org.hippoecm.hst.contentrestapi.ResourceContext;
 
 public interface Visitor {
     VisitorFactory getVisitorFactory();

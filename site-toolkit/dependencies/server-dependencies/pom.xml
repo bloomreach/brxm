@@ -72,6 +72,18 @@
       <scope>runtime</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.components</groupId>
+      <artifactId>hst-jaxrs</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.components</groupId>
+      <artifactId>hst-contentapi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
   </dependencies>
   
 </project>

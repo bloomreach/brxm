@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.jaxrs.contentrestapi.visitors;
+package org.hippoecm.hst.contentrestapi.visitors;
 
 import java.util.Map;
 
@@ -22,7 +22,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.hippoecm.hst.jaxrs.contentrestapi.ResourceContext;
+import org.hippoecm.hst.contentrestapi.ResourceContext;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 

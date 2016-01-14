@@ -59,6 +59,7 @@ components/.classpath
 components/.project
 components/.settings
 components/components.iml
+components/contentapi/hst-contentapi.iml
 components/core/.classpath
 components/core/.lock
 components/core/.project

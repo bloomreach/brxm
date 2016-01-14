@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.jaxrs.contentrestapi.visitors;
+package org.hippoecm.hst.contentrestapi.visitors;
 
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.jaxrs.contentrestapi.ContentRestApiResource;
-import org.hippoecm.hst.jaxrs.contentrestapi.ResourceContext;
+import org.hippoecm.hst.contentrestapi.ContentRestApiResource;
+import org.hippoecm.hst.contentrestapi.ResourceContext;
 
 public class HandleNodeVisitor extends AbstractBaseVisitor {
 

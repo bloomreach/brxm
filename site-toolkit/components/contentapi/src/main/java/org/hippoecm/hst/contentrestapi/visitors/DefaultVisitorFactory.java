@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.jaxrs.contentrestapi.visitors;
+package org.hippoecm.hst.contentrestapi.visitors;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
-import org.hippoecm.hst.jaxrs.contentrestapi.ResourceContext;
+import org.hippoecm.hst.contentrestapi.ResourceContext;
 
 public class DefaultVisitorFactory implements VisitorFactory {
 
