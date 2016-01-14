@@ -97,7 +97,7 @@ public class ContentRestApiResource {
     public ContentRestApiResource() {
     }
 
-    private final class Link {
+    private static final class Link {
         @JsonProperty(NAMESPACE_PREFIX + ":url")
         public final String url;
 
@@ -106,7 +106,7 @@ public class ContentRestApiResource {
         }
     }
 
-    private final class SearchResultItem {
+    private static final class SearchResultItem {
         @JsonProperty(ContentRestApiResource.NAMESPACE_PREFIX + ":name")
         public final String name;
 
@@ -123,7 +123,7 @@ public class ContentRestApiResource {
         }
     }
 
-    private final class SearchResult {
+    private static final class SearchResult {
         @JsonProperty(NAMESPACE_PREFIX + ":offset")
         public long offset;
 
@@ -169,7 +169,7 @@ public class ContentRestApiResource {
         }
     }
 
-    private final class Error {
+    private static final class Error {
         public final int status;
         public final String description;
         Error(int status, String description) {
