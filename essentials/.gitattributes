@@ -864,8 +864,6 @@ plugins/related-documents/src/main/resources/META-INF/web-fragment.xml -text
 plugins/related-documents/src/main/resources/related_documents_suggestion_template.xml -text
 plugins/related-documents/src/main/resources/related_documents_template.xml -text
 plugins/rest-services/pom.xml -text
-plugins/rest-services/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/GenericRestServicesInstructionPackage.java -text
-plugins/rest-services/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/ManualRestServicesInstructionPackage.java -text
 plugins/rest-services/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/MountRestful.java -text
 plugins/rest-services/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestPluginConst.java -text
 plugins/rest-services/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestPluginResource.java -text

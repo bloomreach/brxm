@@ -67,7 +67,6 @@
                         javaFiles: files.join(',')
                     }
                 };
-                console.log(payload);
                 $http.post($scope.endpoint, payload).success(function () {
                     // empty
                 });

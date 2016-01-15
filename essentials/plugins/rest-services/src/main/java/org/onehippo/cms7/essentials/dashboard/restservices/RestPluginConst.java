@@ -16,9 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.restservices;
 
-/**
- * @version "$Id$"
- */
 public final class RestPluginConst {
 
     public static final String GENERIC_API_ENABLED = "genericApiEnabled";
