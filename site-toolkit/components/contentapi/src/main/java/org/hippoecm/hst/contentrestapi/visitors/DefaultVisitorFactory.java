@@ -72,6 +72,8 @@ public class DefaultVisitorFactory implements VisitorFactory {
             case HippoStdNodeType.NT_HTML:
                 return new HtmlNodeVisitor(this);
             default:
+                // TODO this needs to be done differently. The fallback if not an explicit jcr primary type matches, a
+                // TODO #isNodeType check should be done. Falling back to 'DefaultNodeVisitor' is the last resort
                 return new DefaultNodeVisitor(this);
         }
     }
