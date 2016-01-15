@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.hippoecm.frontend.i18n;
 
 import java.util.HashMap;
@@ -45,6 +44,7 @@ import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.StringCodecFactory;
 
 public class TranslatorUtils {
 
@@ -170,7 +170,14 @@ public class TranslatorUtils {
             return null;
         }
 
-        IPluginConfig keyConfig = translations.getPluginConfig((String) criteria.get(HippoNodeType.HIPPO_KEY));
+        final String key = criteria.get(HippoNodeType.HIPPO_KEY);
+        if (key == null) {
+            return null;
+        }
+
+        // encode the key because it is used as node name
+        final String encodedKey = new StringCodecFactory.NameEncoding().encode(key);
+        final IPluginConfig keyConfig = translations.getPluginConfig(encodedKey);
         if (keyConfig == null) {
             return null;
         }
