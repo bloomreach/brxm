@@ -103,5 +103,10 @@
     </property>
   </bean>
 
+  <bean id="org.hippoecm.hst.configuration.environment.HostConfigPublisher" class="org.hippoecm.hst.configuration.environment.HostConfigPublisher">
+    <property name="repository" ref="javax.jcr.Repository.delegating" />
+    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader.delegating"/>
+  </bean>
+
 </beans>
 
