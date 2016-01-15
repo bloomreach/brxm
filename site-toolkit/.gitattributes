@@ -577,6 +577,10 @@ components/contentapi/pom.xml -text
 components/contentapi/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
 components/contentapi/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/contentrestapi/SpringComponentManager-rest-content-api.xml -text
 components/contentapi/src/site/site.xml -text
+components/contentapi/src/test/java/org/hippoecm/hst/contentrestapi/AbstractContentRestApiIT.java -text
+components/contentapi/src/test/java/org/hippoecm/hst/contentrestapi/ContentRestApiSetupIT.java -text
+components/contentapi/src/test/java/org/hippoecm/hst/contentrestapi/requests/ContentRestApiRequestsIT.java -text
+components/contentapi/src/test/resources/org/hippoecm/hst/contentrestapi/AbstractContentRestApiIT.xml -text
 components/core/pom.xml svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/cache/CacheContentEventListener.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ForwardPlaceHolderHstPageInfo.java -text
@@ -764,7 +768,7 @@ components/core/src/main/resources/org/hippoecm/hst/site/container/SpringCompone
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-content-beans.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-decorators.xml -text svneol=unset#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-esi.xml -text
-components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-fitlerDelegatee.xml -text svneol=unset#text/plain
+components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-filterDelegatee.xml -text svneol=unset#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-hstManager.xml svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-invoker.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-jcr.xml svneol=native#text/plain

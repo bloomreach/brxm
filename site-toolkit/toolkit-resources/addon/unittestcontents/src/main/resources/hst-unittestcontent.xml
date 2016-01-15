@@ -209,6 +209,9 @@
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippo:handle</sv:value>
             </sv:property>
+            <sv:property sv:name="jcr:uuid" sv:type="String">
+              <sv:value>ebebebeb-5fa8-48a8-b03b-4524373d992b</sv:value>
+            </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
               <sv:value>mix:referenceable</sv:value>
               <sv:value>hippo:translated</sv:value>

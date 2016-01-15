@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,18 +34,18 @@ import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class ModuleDescriptorUtils {
+public class ModuleDescriptorUtils {
     
     private static Logger log = LoggerFactory.getLogger(ModuleDescriptorUtils.class);
 
     private ModuleDescriptorUtils() {
         
     }
-    
-    static List<ModuleDefinition> collectAllModuleDefinitions() throws IOException {
+
+    public static List<ModuleDefinition> collectAllModuleDefinitions() throws IOException {
         return collectAllModuleDefinitions(Thread.currentThread().getContextClassLoader());
     }
-    
+
     static List<ModuleDefinition> collectAllModuleDefinitions(ClassLoader classLoader) throws IOException {
         return collectAllModuleDefinitions(classLoader, StringUtils.split(ContainerConstants.DEFAULT_ADDON_MODULE_DESCRIPTOR_PATHS, " ,"));
     }
