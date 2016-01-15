@@ -15,6 +15,7 @@
  */
 package org.onehippo.repository.mock;
 
+import javax.jcr.PropertyType;
 import javax.jcr.Value;
 import javax.jcr.nodetype.PropertyDefinition;
 
@@ -23,24 +24,64 @@ import javax.jcr.nodetype.PropertyDefinition;
  */
 public class MockPropertyDefinition extends MockItemDefinition implements PropertyDefinition {
 
-    private final boolean isMultiple;
+    private final int requiredType;
+    private final boolean multiple;
 
+    private boolean fullTextSearchable = true;
+    private boolean queryOrderable = true;
+
+    /**
+     * Constructor.
+     * @deprecated Use {@link #MockPropertyDefinition(String, int, boolean)} instead.
+     * @param name property name
+     * @param isMultiple whether or not it is multiple
+     */
+    @Deprecated
     public MockPropertyDefinition(final String name, final boolean isMultiple) {
+        this(name, PropertyType.STRING, isMultiple);
+    }
+
+    /**
+     * Constructor.
+     * @param name property name
+     * @param requiredType required type
+     * @param multiple whether or not it is multiple
+     */
+    public MockPropertyDefinition(final String name, final int requiredType, final boolean multiple) {
         super(name);
-        this.isMultiple = isMultiple;
+        this.requiredType = requiredType;
+        this.multiple = multiple;
+    }
+
+    @Override
+    public int getRequiredType() {
+        return requiredType;
     }
 
     @Override
     public boolean isMultiple() {
-        return isMultiple;
+        return multiple;
+    }
+
+    @Override
+    public boolean isFullTextSearchable() {
+        return fullTextSearchable;
+    }
+
+    public void setFullTextSearchable(boolean fullTextSearchable) {
+        this.fullTextSearchable = fullTextSearchable;
+    }
+
+    @Override
+    public boolean isQueryOrderable() {
+        return queryOrderable;
+    }
+
+    public void setQueryOrderable(boolean queryOrderable) {
+        this.queryOrderable = queryOrderable;
     }
 
     // REMAINING METHODS ARE NOT IMPLEMENTED
-
-    @Override
-    public int getRequiredType() {
-        throw new UnsupportedOperationException();
-    }
 
     @Override
     public String[] getValueConstraints() {
@@ -54,16 +95,6 @@ public class MockPropertyDefinition extends MockItemDefinition implements Proper
 
     @Override
     public String[] getAvailableQueryOperators() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isFullTextSearchable() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isQueryOrderable() {
         throw new UnsupportedOperationException();
     }
 
