@@ -263,15 +263,6 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         name = null;
         prefix = null;
 
-        superTypes.addAll(other.superTypes);
-
-        if (superType) {
-            superTypes.addAll(other.aggregatedTypes);
-        }
-        else {
-            aggregatedTypes.addAll(other.aggregatedTypes);
-        }
-
         if (!other.isCompoundType()) {
             this.compoundType = false;
         }
@@ -318,7 +309,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
                 if (cti != null) {
                     // duplicate property name
                     if (cti.isMultiple() != entry.getValue().isMultiple() ||
-                            cti.getEffectiveType().equals(entry.getValue().getEffectiveType())) {
+                            !cti.getEffectiveType().equals(entry.getValue().getEffectiveType())) {
                         log.error("Conflicting ContentType property named {} encountered while merging ContentType {} into {}. Incoming property ignored."
                                 , new String[]{cti.getName(), other.getName(), getName()});
                     }
@@ -337,6 +328,15 @@ public class ContentTypeImpl extends Sealable implements ContentType {
                     properties.put(entry.getKey(), new ContentTypePropertyImpl((ContentTypePropertyImpl)entry.getValue()));
                 }
             }
+        }
+
+        superTypes.addAll(other.superTypes);
+
+        if (superType) {
+            superTypes.addAll(other.aggregatedTypes);
+        }
+        else {
+            aggregatedTypes.addAll(other.aggregatedTypes);
         }
 
         return true;
