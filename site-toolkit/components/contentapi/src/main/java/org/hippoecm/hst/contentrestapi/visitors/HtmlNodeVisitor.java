@@ -67,7 +67,7 @@ class HtmlNodeVisitor extends AbstractNodeVisitor {
         destination.put(NAMESPACE_PREFIX + ":links", linksOutput);
 
         for (Node child : new NodeIterable(node.getNodes())) {
-            if (!(child.isNodeType(NT_MIRROR) || node.isNodeType(NT_FACETSELECT))) {
+            if (!(child.isNodeType(NT_MIRROR) || child.isNodeType(NT_FACETSELECT))) {
                 log.warn("Unexpected node type '{}' below node of type '{}'. Expected '{}' or '{}'",
                         child.getPrimaryNodeType().getName(), NT_HTML, NT_MIRROR, NT_FACETSELECT);
                 continue;
