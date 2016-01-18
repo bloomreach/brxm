@@ -307,7 +307,8 @@ public class ContentRestApiResource {
 
             if (!isNodePartOfApiContent(context, node)) {
                 // documents not within context of the mount content path "don't exist"
-                throw new ItemNotFoundException(uuidString);
+                throw new ItemNotFoundException(String.format("Item '%s' not found below scope '%s'",  uuidString,
+                context.getRequestContext().getResolvedMount().getMount().getMountPath()));
             }
 
             if (!node.isNodeType(NT_HANDLE)) {
