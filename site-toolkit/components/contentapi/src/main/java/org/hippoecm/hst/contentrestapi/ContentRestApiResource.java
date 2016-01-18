@@ -306,8 +306,8 @@ public class ContentRestApiResource {
             final Node node = session.getNodeByIdentifier(uuid.toString());
 
             if (!isNodePartOfApiContent(context, node)) {
-                throw new IllegalArgumentException(String.format("Uuid '%s' does not belong to the content of '%s'.",
-                        uuidString, context.getRequestContext().getResolvedMount().getMount().getMountPath()));
+                // documents not within context of the mount content path "don't exist"
+                throw new ItemNotFoundException(uuidString);
             }
 
             if (!node.isNodeType(NT_HANDLE)) {
@@ -317,7 +317,7 @@ public class ContentRestApiResource {
             // throws a PathNotFoundException in case there is no live variant or it is not readable
             final Node doc = node.getNode(node.getName());
             if (!doc.isNodeType(NT_DOCUMENT)) {
-                throw new IllegalArgumentException(String.format("Doc '%s' should belong to a node of type '%s'.",
+                throw new IllegalArgumentException(String.format("Document '%s' should be of type '%s'.",
                         doc.getIdentifier(), NT_DOCUMENT));
             }
 
