@@ -59,7 +59,7 @@ public class ContentRestApiRequestsIT extends AbstractContentRestApiIT {
         assertEquals("published", deserializedAboutUs.get("hippostd:state"));
         assertEquals("2010-01-21T12:34:11.055+02:00", deserializedAboutUs.get("hippostdpubwf:creationDate"));
 
-        final ImmutableList<String> mixins = ImmutableList.of("hippotranslated:translated", "mix:versionable");
+        final ImmutableList<String> mixins = ImmutableList.of("hippotranslation:translated", "mix:versionable");
         assertEquals(mixins, deserializedAboutUs.get("jcr:mixinTypes"));
     }
 
