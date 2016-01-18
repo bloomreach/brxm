@@ -44,9 +44,8 @@ import org.springframework.mock.web.MockServletContext;
 public class AbstractContentRestApiIT {
 
     protected SpringComponentManager componentManager;
-    protected HstManager hstManager;
     protected final MockServletContext servletContext = new MockServletContext();
-
+    protected Filter filter;
 
     @Before
     public void setUp() throws Exception {
@@ -66,7 +65,7 @@ public class AbstractContentRestApiIT {
         componentManager.initialize();
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());
-        hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        filter = HstServices.getComponentManager().getComponent("org.hippoecm.hst.container.HstFilter");
     }
 
     @After

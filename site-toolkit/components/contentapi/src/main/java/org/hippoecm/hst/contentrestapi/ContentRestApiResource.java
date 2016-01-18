@@ -60,6 +60,9 @@ import org.onehippo.cms7.services.search.service.SearchServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
+
 @Produces("application/json")
 public class ContentRestApiResource {
 
@@ -247,7 +250,7 @@ public class ContentRestApiResource {
                     .limitTo(max);
             final QueryResult queryResult = searchService.search(query);
             final SearchResult result = new SearchResult();
-            result.populate(offset, max, queryResult, context.getRequestContext().getSession(), HippoNodeType.NT_HANDLE);
+            result.populate(offset, max, queryResult, context.getRequestContext().getSession(), NT_HANDLE);
 
             return Response.status(200).entity(result).build();
 
@@ -287,6 +290,8 @@ public class ContentRestApiResource {
     public Response getDocumentsByUUID(@PathParam("uuid") final String uuidString) {
         try {
             ResourceContext context = new ResourceContextImpl();
+
+
             final Session session = context.getRequestContext().getSession();
 
             // throws an IllegalArgumentException in case the uuid is not correctly formed
@@ -295,8 +300,21 @@ public class ContentRestApiResource {
             // throws an ItemNotFoundException in case the uuid does not exist or is not readable
             final Node node = session.getNodeByIdentifier(uuid.toString());
 
+            if (!isNodePartOfApiContent(context, node)) {
+                throw new IllegalArgumentException(String.format("Uuid '%s' does not belong to the content of '%s'.",
+                        uuidString, context.getRequestContext().getResolvedMount().getMount().getMountPath()));
+            }
+
+            if (!node.isNodeType(NT_HANDLE)) {
+                throw new IllegalArgumentException(String.format("Uuid '%s' should belong to a node of type '%s'.",
+                        uuidString, NT_HANDLE));
+            }
             // throws a PathNotFoundException in case there is no live variant or it is not readable
-            node.getNode(node.getName());
+            final Node doc = node.getNode(node.getName());
+            if (!doc.isNodeType(NT_DOCUMENT)) {
+                throw new IllegalArgumentException(String.format("Doc '%s' should belong to a node of type '%s'.",
+                        doc.getIdentifier(), NT_DOCUMENT));
+            }
 
             final Map<String, Object> response = new TreeMap<>();
             final VisitorFactory factory = new DefaultVisitorFactory();
@@ -311,6 +329,14 @@ public class ContentRestApiResource {
         } catch (RepositoryException re) {
             return buildErrorResponse(500, re);
         }
+    }
+
+    private boolean isNodePartOfApiContent(final ResourceContext context, final Node node) throws RepositoryException {
+        // context.getRequestContext().getResolvedMount().getMount().getContentPath();
+        if (node.getPath().startsWith(context.getRequestContext().getResolvedMount().getMount().getContentPath() + "/")) {
+            return true;
+        }
+        return false;
     }
 
     private Response buildErrorResponse(final int status, final Exception exception) {

@@ -15,19 +15,15 @@
  */
 package org.hippoecm.hst.contentrestapi.requests;
 
-import java.io.IOException;
 import java.util.Map;
 
-import javax.jcr.RepositoryException;
-import javax.servlet.Filter;
-import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.contentrestapi.AbstractContentRestApiIT;
-import org.hippoecm.hst.site.HstServices;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -38,13 +34,12 @@ import static org.junit.Assert.assertTrue;
 public class ContentRestApiRequestsIT extends AbstractContentRestApiIT {
 
     private static ObjectMapper mapper = new ObjectMapper();
-    @Test
-    public void test_about_us_document() throws IOException, ServletException, RepositoryException {
 
-        final Filter filter = HstServices.getComponentManager().getComponent("org.hippoecm.hst.container.HstFilter");
+    @Test
+    public void test_about_us_document() throws Exception {
 
         // about-us  handle identifier is 'ebebebeb-5fa8-48a8-b03b-4524373d992b'
-        final RequestResponseMock requestResponse = mockGetRequestResponse(filter, "http", "localhost", "/api/documents/ebebebeb-5fa8-48a8-b03b-4524373d992b", null);
+        final RequestResponseMock requestResponse = mockGetRequestResponse(filter, "http", "localhost", "/api/documents/30092f4e-2ef7-4c72-86a5-8ce895908937", null);
 
         final MockHttpServletRequest request = requestResponse.getRequest();
         final MockHttpServletResponse response = requestResponse.getResponse();
@@ -61,6 +56,31 @@ public class ContentRestApiRequestsIT extends AbstractContentRestApiIT {
 
         final ImmutableList<String> mixins = ImmutableList.of("hippotranslation:translated", "mix:versionable");
         assertEquals(mixins, deserializedAboutUs.get("jcr:mixinTypes"));
+    }
+
+    @Test
+    public void non_handle_nodes_are_not_allowed() throws Exception {
+        // ebebebeb-5fa8-48a8-b03b-4524373d992a is folder node
+        final RequestResponseMock requestResponse = mockGetRequestResponse(filter, "http", "localhost", "/api/documents/ebebebeb-5fa8-48a8-b03b-4524373d992a", null);
+        final MockHttpServletRequest request = requestResponse.getRequest();
+        final MockHttpServletResponse response = requestResponse.getResponse();
+
+        filter.doFilter(request, response, requestResponse.getFilterChain());
+        assertEquals(HttpServletResponse.SC_BAD_REQUEST, response.getStatus());
+        assertTrue(response.getContentAsString().contains("should belong to a node of type"));
+    }
+
+    @Test
+    public void handle_node_of_content_outside_api_mount_is_not_allowdd() throws Exception {
+        // a62a34ae-5f42-4482-a27a-7f39459ec8ee homepage of subsite
+        final RequestResponseMock requestResponse = mockGetRequestResponse(filter, "http", "localhost", "/api/documents/a62a34ae-5f42-4482-a27a-7f39459ec8ee", null);
+        final MockHttpServletRequest request = requestResponse.getRequest();
+        final MockHttpServletResponse response = requestResponse.getResponse();
+
+        filter.doFilter(request, response, requestResponse.getFilterChain());
+        assertEquals(HttpServletResponse.SC_BAD_REQUEST, response.getStatus());
+        System.out.println(response.getContentAsString());
+        assertTrue(response.getContentAsString().contains("does not belong to the content of '/api'"));
     }
 
 }

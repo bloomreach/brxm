@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -210,7 +210,7 @@
               <sv:value>hippo:handle</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:uuid" sv:type="String">
-              <sv:value>ebebebeb-5fa8-48a8-b03b-4524373d992b</sv:value>
+              <sv:value>30092f4e-2ef7-4c72-86a5-8ce895908937</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
               <sv:value>mix:referenceable</sv:value>
@@ -757,6 +757,9 @@
           <sv:node sv:name="homepage">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>unittestproject:textpage</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:uuid" sv:type="String">
+              <sv:value>a62a34ae-5f42-4482-a27a-7f39459ec8ee</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
               <sv:value>mix:versionable</sv:value>
