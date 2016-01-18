@@ -28,6 +28,8 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -47,7 +49,6 @@ public class ContentRestApiRequestsIT extends AbstractContentRestApiIT {
         filter.doFilter(request, response, requestResponse.getFilterChain());
 
         final String restResponse = response.getContentAsString();
-        System.out.println(restResponse);
         assertTrue(StringUtils.isNotEmpty(restResponse));
 
         final Map<String, Object> deserializedAboutUs = mapper.reader(Map.class).readValue(restResponse);
@@ -67,7 +68,7 @@ public class ContentRestApiRequestsIT extends AbstractContentRestApiIT {
         final MockHttpServletResponse response = requestResponse.getResponse();
 
         filter.doFilter(request, response, requestResponse.getFilterChain());
-        assertEquals(HttpServletResponse.SC_BAD_REQUEST, response.getStatus());
+        assertEquals(SC_BAD_REQUEST, response.getStatus());
         assertTrue(response.getContentAsString().contains("should belong to a node of type"));
     }
 
@@ -79,7 +80,7 @@ public class ContentRestApiRequestsIT extends AbstractContentRestApiIT {
         final MockHttpServletResponse response = requestResponse.getResponse();
 
         filter.doFilter(request, response, requestResponse.getFilterChain());
-        assertEquals(HttpServletResponse.SC_BAD_REQUEST, response.getStatus());
+        assertEquals(SC_NOT_FOUND, response.getStatus());
         System.out.println(response.getContentAsString());
         assertTrue(response.getContentAsString().contains("does not belong to the content of '/api'"));
     }
