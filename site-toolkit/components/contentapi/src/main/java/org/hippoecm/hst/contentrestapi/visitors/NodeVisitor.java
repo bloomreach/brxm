@@ -16,13 +16,9 @@
 
 package org.hippoecm.hst.contentrestapi.visitors;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
@@ -30,7 +26,5 @@ import org.hippoecm.hst.contentrestapi.ResourceContext;
 public interface NodeVisitor {
     VisitorFactory getVisitorFactory();
     String getNodeType();
-    void visit(ResourceContext context, Node node, final Map<String, Object> destination) throws RepositoryException;
-    void visit(ResourceContext context, Iterator<Node> nodeIterator, final Map<String, Object> destination) throws RepositoryException;
-
+    void visit(ResourceContext context, Node node, final Map<String, Object> response) throws RepositoryException;
 }

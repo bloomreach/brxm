@@ -25,17 +25,17 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
 import org.hippoecm.repository.util.NodeIterable;
-import org.hippoecm.repository.util.PropertyIterable;
+import org.onehippo.cms7.services.contenttype.ContentTypeChild;
+import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.contentrestapi.ContentRestApiResource.NAMESPACE_PREFIX;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_CONTENT;
 import static org.hippoecm.repository.HippoStdNodeType.NT_HTML;
 import static org.hippoecm.repository.api.HippoNodeType.NT_FACETSELECT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_MIRROR;
 
-class HtmlNodeVisitor extends AbstractNodeVisitor {
+class HtmlNodeVisitor extends DefaultNodeVisitor {
 
     private static final Logger log = LoggerFactory.getLogger(HtmlNodeVisitor.class);
 
@@ -49,26 +49,41 @@ class HtmlNodeVisitor extends AbstractNodeVisitor {
     }
 
     @Override
-    protected void visitChildren(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
-        for (Property property : new PropertyIterable(node.getProperties())) {
-            if (property.getName().equals(HIPPOSTD_CONTENT)) {
-                destination.put(property.getName(), property.getValue().getString());
-                // TODO link rewriting - the href of the binary links needs to be altered
-            }
-        }
+    protected void visitNode(final ResourceContext context, final Node node, final Map<String, Object> response) throws RepositoryException {
+        super.visitNode(context, node, response);
 
-        final Map<String, Object> linksOutput = new LinkedHashMap<>();
-        destination.put(NAMESPACE_PREFIX + ":links", linksOutput);
+        Property content = node.getProperty(HIPPOSTD_CONTENT);
+        response.put("content", content.getString());
+        // TODO link rewriting - the href of the binary links needs to be altered
+
+        final Map<String, Object> links = new LinkedHashMap<>();
 
         for (Node child : new NodeIterable(node.getNodes())) {
             if (!(child.isNodeType(NT_MIRROR) || child.isNodeType(NT_FACETSELECT))) {
-                log.warn("Unexpected node type '{}' below node of type '{}'. Expected '{}' or '{}'",
-                        child.getPrimaryNodeType().getName(), NT_HTML, NT_MIRROR, NT_FACETSELECT);
                 continue;
             }
             final NodeVisitor visitor = getVisitorFactory().getVisitor(context, child);
-            visitor.visit(context, child, linksOutput);
+            visitor.visit(context, child, links);
         }
+        if (!links.isEmpty()) {
+            response.put("links", links);
+        }
+    }
 
+    protected boolean skipProperty(final ResourceContext context, final ContentTypeProperty propertyType,
+                                   final Property property) throws RepositoryException {
+        if (HIPPOSTD_CONTENT.equals(property.getName())) {
+            return true;
+        }
+        return super.skipProperty(context, propertyType, property);
+    }
+
+    protected boolean skipChild(final ResourceContext context, final ContentTypeChild childType,
+                                final Node child) throws RepositoryException {
+        if (child.isNodeType(NT_MIRROR) || child.isNodeType(NT_FACETSELECT)) {
+            return true;
+        } else {
+            return super.skipChild(context, childType, child);
+        }
     }
 }

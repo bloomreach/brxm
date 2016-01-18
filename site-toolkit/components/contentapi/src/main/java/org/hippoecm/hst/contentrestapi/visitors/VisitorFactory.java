@@ -17,7 +17,6 @@
 package org.hippoecm.hst.contentrestapi.visitors;
 
 import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;

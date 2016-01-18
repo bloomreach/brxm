@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.hippoecm.hst.contentrestapi.visitors;
 
 import java.util.Map;
@@ -22,46 +21,41 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.contentrestapi.ResourceContext;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_DOCBASE;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_FACETS;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MODES;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VALUES;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
 
-abstract class AbstractLinkVisitor extends DefaultNodeVisitor {
+public class HippoPublicationWorkflowDocumentNodeVisitor extends HippoPublishableDocumentNodeVisitor {
 
-    public AbstractLinkVisitor(VisitorFactory factory) {
-        super(factory);
+    public HippoPublicationWorkflowDocumentNodeVisitor(final VisitorFactory visitorFactory) {
+        super(visitorFactory);
     }
 
     @Override
-    protected void visitNode(final ResourceContext context, final Node node, final Map<String, Object> response) throws RepositoryException {
+    public String getNodeType() {
+        return HIPPOSTDPUBWF_DOCUMENT;
+    }
+
+    protected void visitNode(final ResourceContext context, final Node node, final Map<String, Object> response)
+            throws RepositoryException {
         super.visitNode(context, node, response);
-        try {
-            final String docbase = node.getProperty(HIPPO_DOCBASE).getString();
-            if (StringUtils.isBlank(docbase) || docbase.equals("cafebabe-cafe-babe-cafe-babecafebabe")) {
-                // noop
-            }
-            else {
-                response.put("id","http://localhost:8080/site/api/documents/" + docbase);
-                // TODO link rewriting - use generic HST methods to construct URL
-                response.put("url","http://localhost:8080/site/api/documents/" + docbase);
-            }
-        } catch (RepositoryException e) {
-            // log warning
+        response.put("pubwfCreationDate", node.getProperty(HIPPOSTDPUBWF_CREATION_DATE).getString());
+        response.put("pubwfLastModificationDate", node.getProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE).getString());
+        if (node.hasProperty(HIPPOSTDPUBWF_PUBLICATION_DATE)) {
+            response.put("pubwfPublicationDate", node.getProperty(HIPPOSTDPUBWF_PUBLICATION_DATE).getString());
         }
     }
 
     protected boolean skipProperty(final ResourceContext context, final ContentTypeProperty propertyType,
                                    final Property property) throws RepositoryException {
         switch (property.getName()) {
-            case HIPPO_DOCBASE:
-            case HIPPO_FACETS:
-            case HIPPO_MODES:
-            case HIPPO_VALUES:
+            case HIPPOSTDPUBWF_CREATION_DATE:
+            case HIPPOSTDPUBWF_LAST_MODIFIED_DATE:
+            case HIPPOSTDPUBWF_PUBLICATION_DATE:
                 return true;
             default:
                 return super.skipProperty(context, propertyType, property);

@@ -16,13 +16,9 @@
 
 package org.hippoecm.hst.contentrestapi.visitors;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
@@ -47,11 +43,6 @@ public class NoopVisitor implements NodeVisitor {
 
     @Override
     public void visit(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
-        // noop
-    }
-
-    @Override
-    public void visit(final ResourceContext context, final Iterator<Node> iterator, final Map<String, Object> destination) throws RepositoryException {
         // noop
     }
 }

@@ -17,9 +17,9 @@
 package org.hippoecm.hst.contentrestapi;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.UUID;
 
 import javax.jcr.ItemNotFoundException;
@@ -321,7 +321,7 @@ public class ContentRestApiResource {
                         doc.getIdentifier(), NT_DOCUMENT));
             }
 
-            final Map<String, Object> response = new TreeMap<>();
+            final Map<String, Object> response = new LinkedHashMap<>();
             final NodeVisitor visitor = visitorFactory.getVisitor(context, node);
             visitor.visit(context, node, response);
 

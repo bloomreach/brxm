@@ -128,6 +128,8 @@
         <bean id="handleVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HandleNodeVisitor" parent="abstractNodeVisitor"/>
         <bean id="hippoFolderVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoFolderNodeVisitor" parent="abstractNodeVisitor"/>
         <bean id="hippoDirectoryVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoDirectoryNodeVisitor" parent="abstractNodeVisitor"/>
+        <bean id="hippoPublicationWorkflowDocumentVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoPublicationWorkflowDocumentNodeVisitor" parent="abstractNodeVisitor"/>
+        <bean id="hippoPublishableDocumentVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoPublishableDocumentNodeVisitor" parent="abstractNodeVisitor"/>
         <bean id="hippoDocumentVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoDocumentNodeVisitor" parent="abstractNodeVisitor"/>
         <bean id="htmlNodeVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HtmlNodeVisitor" parent="abstractNodeVisitor"/>
         <bean id="facetSelectNodeVisitor" class="org.hippoecm.hst.contentrestapi.visitors.FacetSelectNodeVisitor" parent="abstractNodeVisitor"/>

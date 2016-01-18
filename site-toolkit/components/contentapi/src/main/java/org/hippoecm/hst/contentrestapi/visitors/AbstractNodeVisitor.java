@@ -17,18 +17,22 @@
 package org.hippoecm.hst.contentrestapi.visitors;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
+import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeChild;
+import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
 import static javax.jcr.PropertyType.BINARY;
 import static javax.jcr.PropertyType.BOOLEAN;
@@ -38,6 +42,17 @@ import static javax.jcr.PropertyType.LONG;
 
 public abstract class AbstractNodeVisitor implements NodeVisitor {
 
+    private final List<String> defaultIgnoredProperties = new ArrayList<>(Arrays.asList(
+            "jcr:uuid",
+            "hippo:paths",
+            "hippo:related",
+            "hippo:availability",
+            "hippostd:holder",
+            "hippo:compute",
+            "hippo:discriminator",
+            "hippostdpubwf:createdBy",
+            "hippostdpubwf:lastModifiedBy"
+    ));
 
     private final VisitorFactory visitorFactory;
 
@@ -51,47 +66,95 @@ public abstract class AbstractNodeVisitor implements NodeVisitor {
     }
 
     @Override
-    public void visit(final ResourceContext context, final Iterator<Node> iterator, final Map<String, Object> destination) throws RepositoryException {
-        while (iterator.hasNext()) {
-            final Node node = iterator.next();
-            final NodeVisitor visitor = getVisitorFactory().getVisitor(context, node);
-            visitor.visit(context, node, destination);
-        }
-    }
-
-    @Override
-    public void visit(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
+    public void visit(final ResourceContext context, final Node node, final Map<String, Object> response) throws RepositoryException {
         final ContentType parentContentType = context.getContentTypes().getContentTypeForNode(node.getParent());
         final ContentTypeChild nodeType = parentContentType.getChildren().get(node.getName());
 
-        // skip nodes that either are unknown or for which a property with the same name is also defined
-        if (nodeType == null || parentContentType.getProperties().get(node.getName()) != null) {
-            return;
-        }
-
-        final Map<String, Object> descendantsOutput = new LinkedHashMap<>();
-        if (nodeType.isMultiple()) {
-            List<Object> siblings = (List<Object>)destination.get(node.getName());
+        final Map<String, Object> nodeResponse = new LinkedHashMap<>();
+        if ((nodeType != null && nodeType.isMultiple()) || node.getDefinition().allowsSameNameSiblings()) {
+            List<Object> siblings = (List<Object>) response.get(node.getName());
             if (siblings == null) {
                 siblings = new ArrayList<>();
-                destination.put(node.getName(), siblings);
+                response.put(node.getName(), siblings);
             }
-            siblings.add(descendantsOutput);
+            siblings.add(nodeResponse);
         } else {
-            if (destination.get(node.getName()) != null) {
+            if (response.get(node.getName()) != null) {
                 return;
             }
-            destination.put(node.getName(), descendantsOutput);
+            response.put(node.getName(), nodeResponse);
         }
 
-        visitChildren(context, node, descendantsOutput);
+        visitNode(context, node, nodeResponse);
+        visitNodeItems(context, node, nodeResponse);
     }
 
-    protected abstract void visitChildren(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException;
+    protected void visitNode(final ResourceContext context, final Node node, final Map<String, Object> response)
+            throws RepositoryException {
+    }
 
-    public Object getValueRepresentation(final Value jcrValue) throws RepositoryException {
-        // Date is rendered by JackRabbit including timezone, no need for special handling
+    protected void visitNodeItems(final ResourceContext context, final Node node, final Map<String, Object> response)
+            throws RepositoryException {
+        final Map<String, Object> content = new LinkedHashMap<>();
+        visitProperties(context, node, content);
+        visitChildren(context, node, content);
+        if (!content.isEmpty()) {
+            response.put("items", content);
+        }
+    }
 
+    protected void visitProperties(final ResourceContext context, final Node node, final Map<String, Object> response)
+            throws RepositoryException {
+        for (Property property : new PropertyIterable(node.getProperties())) {
+            final ContentType parentContentType = context.getContentTypes().getContentTypeForNode(property.getParent());
+            final ContentTypeProperty propertyType = parentContentType.getProperties().get(property.getName());
+
+            // skip properties that either are unknown or for which a node with the same name is also defined
+            if (propertyType == null || parentContentType.getChildren().get(property.getName()) != null) {
+                return;
+            }
+
+            if (!skipProperty(context, propertyType, property)) {
+                visitProperty(context, propertyType, property, response);
+            }
+        }
+    }
+
+    protected void visitProperty(final ResourceContext context, final ContentTypeProperty propertyType,
+                                 final Property property, final Map<String, Object> response)
+            throws RepositoryException {
+        if ((propertyType != null && propertyType.isMultiple()) || property.getDefinition().isMultiple()) {
+            final Value[] jcrValues = property.getValues();
+            final Object[] representations = new Object[jcrValues.length];
+            for (int i = 0; i < jcrValues.length; i++) {
+                final Value jcrValue = jcrValues[i];
+                representations[i] = getValueRepresentation(jcrValue);
+            }
+            response.put(property.getName(), representations);
+        } else {
+            response.put(property.getName(), getValueRepresentation(property.getValue()));
+        }
+    }
+
+    protected void visitChildren(final ResourceContext context, final Node node, final Map<String, Object> response)
+            throws RepositoryException {
+        for (Node child : new NodeIterable(node.getNodes())) {
+            final ContentType nodeContentType = context.getContentTypes().getContentTypeForNode(node);
+            final ContentTypeChild childType = nodeContentType.getChildren().get(child.getName());
+
+            // skip nodes that are known for which a property with the same name is also defined
+            if (childType != null && nodeContentType.getProperties().get(child.getName()) != null) {
+                return;
+            }
+
+            if (!skipChild(context, childType, child)) {
+                NodeVisitor childVisitor = getVisitorFactory().getVisitor(context, child);
+                childVisitor.visit(context, child, response);
+            }
+        }
+    }
+
+    protected Object getValueRepresentation(final Value jcrValue) throws RepositoryException {
         switch (jcrValue.getType()) {
             case BINARY:
                 return "Retrieving the content of binary property values is not yet supported in the Content REST API. Use images and assets instead.";
@@ -104,8 +167,18 @@ public abstract class AbstractNodeVisitor implements NodeVisitor {
             case DECIMAL:
                 return jcrValue.getDecimal();
             default:
+                // Date is rendered by JackRabbit including timezone, no need for special handling
                 return jcrValue.getString();
         }
     }
 
+    protected boolean skipProperty(final ResourceContext context, final ContentTypeProperty propertyType,
+                                            final Property property) throws RepositoryException {
+        return defaultIgnoredProperties.contains(property.getName());
+    }
+
+    protected boolean skipChild(final ResourceContext context, final ContentTypeChild childType,
+                                         final Node child) throws RepositoryException {
+        return false;
+    }
 }

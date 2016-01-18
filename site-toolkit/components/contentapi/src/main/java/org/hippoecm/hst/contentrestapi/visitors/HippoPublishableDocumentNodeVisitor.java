@@ -13,39 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.hippoecm.hst.contentrestapi.visitors;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
+import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
-public class DefaultNodeVisitor extends AbstractNodeVisitor {
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
+import static org.hippoecm.repository.HippoStdNodeType.NT_PUBLISHABLE;
 
-    public DefaultNodeVisitor(VisitorFactory visitorFactory) {
+public class HippoPublishableDocumentNodeVisitor extends DefaultNodeVisitor {
+
+    public HippoPublishableDocumentNodeVisitor(final VisitorFactory visitorFactory) {
         super(visitorFactory);
     }
 
     @Override
     public String getNodeType() {
-        return "nt:base";
+        return NT_PUBLISHABLE;
     }
 
     protected void visitNode(final ResourceContext context, final Node node, final Map<String, Object> response)
             throws RepositoryException {
-        response.put("type", node.getPrimaryNodeType().getName());
-        ArrayList<String> mixins = new ArrayList<>();
-        for (NodeType mixin : node.getMixinNodeTypes()) {
-            mixins.add(mixin.getName());
-        }
-        if (!mixins.isEmpty()) {
-            response.put("mixins", mixins);
-        }
         super.visitNode(context, node, response);
+        response.put("pubState", node.getProperty(HIPPOSTD_STATE).getString());
+    }
+
+    protected boolean skipProperty(final ResourceContext context, final ContentTypeProperty propertyType,
+                                   final Property property) throws RepositoryException {
+        if (NT_PUBLISHABLE.equals(property.getName())) {
+            return true;
+        }
+        return super.skipProperty(context, propertyType, property);
     }
 }

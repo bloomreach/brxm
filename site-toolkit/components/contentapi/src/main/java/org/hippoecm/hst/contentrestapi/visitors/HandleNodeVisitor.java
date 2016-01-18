@@ -16,14 +16,12 @@
 
 package org.hippoecm.hst.contentrestapi.visitors;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
-import org.hippoecm.repository.util.NodeIterable;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
@@ -38,21 +36,14 @@ public class HandleNodeVisitor extends AbstractNodeVisitor {
         return NT_HANDLE;
     }
 
-    public void visit(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
+    public void visit(final ResourceContext context, final Node node, final Map<String, Object> response) throws RepositoryException {
         final String nodeName = node.getName();
 
-        destination.put("id", node.getIdentifier());
-        destination.put("name", nodeName);
+        response.put("id", node.getIdentifier());
+        response.put("name", nodeName);
 
         final Node variant = node.getNode(nodeName);
-        Map<String, Object> content = new LinkedHashMap<>();
-        destination.put("content", nodeName);
-
-        visit(context, new NodeIterable(variant.getNodes()).iterator(), content);
-    }
-
-    @Override
-    protected void visitChildren(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
-        // variant already handled above.
+        NodeVisitor variantVisitor = getVisitorFactory().getVisitor(context, variant);
+        variantVisitor.visit(context, variant, response);
     }
 }
