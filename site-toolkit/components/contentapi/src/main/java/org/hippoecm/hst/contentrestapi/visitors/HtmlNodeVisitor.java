@@ -16,20 +16,14 @@
 
 package org.hippoecm.hst.contentrestapi.visitors;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.contentrestapi.ContentRestApiResource;
 import org.hippoecm.hst.contentrestapi.ResourceContext;
-import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.slf4j.Logger;
@@ -63,7 +57,7 @@ class HtmlNodeVisitor extends AbstractNodeVisitor {
             }
         }
 
-        final Map<String, Object> linksOutput = new TreeMap<>();
+        final Map<String, Object> linksOutput = new LinkedHashMap<>();
         destination.put(NAMESPACE_PREFIX + ":links", linksOutput);
 
         for (Node child : new NodeIterable(node.getNodes())) {

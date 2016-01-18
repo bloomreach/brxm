@@ -16,8 +16,8 @@
 
 package org.hippoecm.hst.contentrestapi.visitors;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -37,7 +37,7 @@ abstract class AbstractLinkVisitor extends AbstractNodeVisitor {
 
     @Override
     public void visit(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
-        final Map<String, Object> descendantsOutput = new TreeMap<>();
+        final Map<String, Object> descendantsOutput = new LinkedHashMap<>();
 
         try {
             final String docbase = node.getProperty(HIPPO_DOCBASE).getString();

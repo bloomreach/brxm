@@ -16,15 +16,14 @@
 
 package org.hippoecm.hst.contentrestapi.visitors;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.contentrestapi.ContentRestApiResource;
 import org.hippoecm.hst.contentrestapi.ResourceContext;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.NodeIterable;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
@@ -47,7 +46,7 @@ public class HandleNodeVisitor extends AbstractNodeVisitor {
         destination.put("name", nodeName);
 
         final Node variant = node.getNode(nodeName);
-        Map<String, Object> content = new TreeMap<>();
+        Map<String, Object> content = new LinkedHashMap<>();
         destination.put("content", nodeName);
 
         visit(context, new NodeIterable(variant.getNodes()).iterator(), content);

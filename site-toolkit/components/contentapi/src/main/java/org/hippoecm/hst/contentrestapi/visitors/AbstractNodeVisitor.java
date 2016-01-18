@@ -18,13 +18,11 @@ package org.hippoecm.hst.contentrestapi.visitors;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
@@ -71,7 +69,7 @@ public abstract class AbstractNodeVisitor implements NodeVisitor {
             return;
         }
 
-        final Map<String, Object> descendantsOutput = new TreeMap<>();
+        final Map<String, Object> descendantsOutput = new LinkedHashMap<>();
         if (nodeType.isMultiple()) {
             List<Object> siblings = (List<Object>)destination.get(node.getName());
             if (siblings == null) {
