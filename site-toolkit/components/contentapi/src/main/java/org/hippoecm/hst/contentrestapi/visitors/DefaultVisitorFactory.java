@@ -16,6 +16,8 @@
 
 package org.hippoecm.hst.contentrestapi.visitors;
 
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -23,33 +25,28 @@ import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
 
-import static org.hippoecm.repository.HippoStdNodeType.NT_HTML;
-import static org.hippoecm.repository.api.HippoNodeType.NT_FACETSELECT;
-import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
-import static org.hippoecm.repository.api.HippoNodeType.NT_MIRROR;
-
 public class DefaultVisitorFactory implements VisitorFactory {
 
-    public Visitor getVisitor(final ResourceContext context, final Property property) throws RepositoryException {
-        return new DefaultPropertyVisitor(this);
-    }
+    private List<NodeVisitor> fallbackNodeVisitors;
 
-    public Visitor getVisitor(final ResourceContext context, final Node node) throws RepositoryException {
+    public NodeVisitor getVisitor(final ResourceContext context, final Node node) throws RepositoryException {
 
         final NodeType nodeType = node.getPrimaryNodeType();
-        switch (nodeType.getName()) {
-            case NT_FACETSELECT:
-                return new FacetSelectNodeVisitor(this);
-            case NT_MIRROR:
-                return new MirrorNodeVisitor(this);
-            case NT_HANDLE:
-                return new HandleNodeVisitor(this);
-            case NT_HTML:
-                return new HtmlNodeVisitor(this);
-            default:
-                // TODO this needs to be done differently. The fallback if not an explicit jcr primary type matches, a
-                // TODO #isNodeType check should be done. Falling back to 'DefaultNodeVisitor' is the last resort
-                return new DefaultNodeVisitor(this);
+        // TODO iter through primary node type matching (via annotation scanning scanned beans)
+
+        // if not explicit match, try a fallback match
+        for (NodeVisitor nodeVisitor : fallbackNodeVisitors) {
+            if (node.isNodeType(nodeVisitor.getNodeType())) {
+                return nodeVisitor;
+            }
         }
+
+        // apparently the DefaultNodeVisitor is removed from fallbackNodeVisitors otherwise this can never happen
+        return new NoopVisitor(this);
+    }
+
+
+    public void setFallbackNodeVisitors(final List<NodeVisitor> fallbackNodeVisitors) {
+        this.fallbackNodeVisitors = fallbackNodeVisitors;
     }
 }

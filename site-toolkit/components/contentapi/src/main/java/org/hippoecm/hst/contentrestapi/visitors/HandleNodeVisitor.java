@@ -17,27 +17,44 @@
 package org.hippoecm.hst.contentrestapi.visitors;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.contentrestapi.ContentRestApiResource;
 import org.hippoecm.hst.contentrestapi.ResourceContext;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.NodeIterable;
 
-public class HandleNodeVisitor extends AbstractBaseVisitor {
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
+
+public class HandleNodeVisitor extends AbstractNodeVisitor {
 
     public HandleNodeVisitor(VisitorFactory factory) {
         super(factory);
     }
 
+    @Override
+    public String getNodeType() {
+        return NT_HANDLE;
+    }
+
     public void visit(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
         final String nodeName = node.getName();
 
-        destination.put(ContentRestApiResource.NAMESPACE_PREFIX + ":name", nodeName);
-        destination.put("jcr:uuid", node.getIdentifier());
+        destination.put("id", node.getIdentifier());
+        destination.put("name", nodeName);
 
         final Node variant = node.getNode(nodeName);
-        visit(context, variant.getProperties(), destination);
-        visit(context, variant.getNodes(), destination);
+        Map<String, Object> content = new TreeMap<>();
+        destination.put("content", nodeName);
+
+        visit(context, new NodeIterable(variant.getNodes()).iterator(), content);
+    }
+
+    @Override
+    protected void visitChildren(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
+        // variant already handled above.
     }
 }

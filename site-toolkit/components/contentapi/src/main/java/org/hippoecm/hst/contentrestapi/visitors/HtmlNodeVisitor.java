@@ -28,41 +28,53 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.contentrestapi.ContentRestApiResource;
 import org.hippoecm.hst.contentrestapi.ResourceContext;
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.PropertyIterable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-class HtmlNodeVisitor extends AbstractBaseNodeVisitor {
+import static org.hippoecm.hst.contentrestapi.ContentRestApiResource.NAMESPACE_PREFIX;
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_CONTENT;
+import static org.hippoecm.repository.HippoStdNodeType.NT_HTML;
+import static org.hippoecm.repository.api.HippoNodeType.NT_FACETSELECT;
+import static org.hippoecm.repository.api.HippoNodeType.NT_MIRROR;
+
+class HtmlNodeVisitor extends AbstractNodeVisitor {
+
+    private static final Logger log = LoggerFactory.getLogger(HtmlNodeVisitor.class);
 
     public HtmlNodeVisitor(VisitorFactory visitorFactory) {
         super(visitorFactory);
     }
 
     @Override
-    protected void visitDescendants(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
-        final PropertyIterator propertyIterator = node.getProperties();
-        while (propertyIterator.hasNext()) {
-            final Property childProperty = (Property) propertyIterator.next();
-            if (childProperty.getName().equals(HippoStdNodeType.HIPPOSTD_CONTENT)) {
+    public String getNodeType() {
+        return NT_HTML;
+    }
+
+    @Override
+    protected void visitChildren(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
+        for (Property property : new PropertyIterable(node.getProperties())) {
+            if (property.getName().equals(HIPPOSTD_CONTENT)) {
+                destination.put(property.getName(), property.getValue().getString());
                 // TODO link rewriting - the href of the binary links needs to be altered
             }
-            final Visitor visitor = getVisitorFactory().getVisitor(context, childProperty);
-            visitor.visit(context, childProperty, destination);
         }
 
         final Map<String, Object> linksOutput = new TreeMap<>();
-        destination.put(ContentRestApiResource.NAMESPACE_PREFIX + ":links", linksOutput);
+        destination.put(NAMESPACE_PREFIX + ":links", linksOutput);
 
-        final NodeIterator nodeIterator = node.getNodes();
-        while (nodeIterator.hasNext()) {
-            final Node childNode = (Node) nodeIterator.next();
-            final Visitor visitor = getVisitorFactory().getVisitor(context, childNode);
-            switch (childNode.getPrimaryNodeType().getName()) {
-                case HippoNodeType.NT_FACETSELECT:
-                    visitor.visit(context, childNode, linksOutput);
-                    break;
-                default:
-                    visitor.visit(context, childNode, destination);
-                    break;
+        for (Node child : new NodeIterable(node.getNodes())) {
+            if (!(child.isNodeType(NT_MIRROR) || node.isNodeType(NT_FACETSELECT))) {
+                log.warn("Unexpected node type '{}' below node of type '{}'. Expected '{}' or '{}'",
+                        child.getPrimaryNodeType().getName(), NT_HTML, NT_MIRROR, NT_FACETSELECT);
+                continue;
             }
+            final NodeVisitor visitor = getVisitorFactory().getVisitor(context, child);
+            visitor.visit(context, child, linksOutput);
         }
+
     }
 }

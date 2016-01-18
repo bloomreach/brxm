@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.hippoecm.hst.contentrestapi.visitors;
 
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
 
-public interface Visitor {
-    VisitorFactory getVisitorFactory();
-    void visit(ResourceContext context, Property property, final Map<String, Object> destination) throws RepositoryException;
-    void visit(ResourceContext context, Node node, final Map<String, Object> destination) throws RepositoryException;
-    void visit(ResourceContext context, PropertyIterator propertyIterator, final Map<String, Object> destination) throws RepositoryException;
-    void visit(ResourceContext context, NodeIterator nodeIterator, final Map<String, Object> destination) throws RepositoryException;
+public abstract class AbstractFolderNodeVisitor extends AbstractNodeVisitor {
+
+    protected AbstractFolderNodeVisitor(final VisitorFactory visitorFactory) {
+        super(visitorFactory);
+    }
+
+    @Override
+    protected void visitChildren(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
+        // do not traverse folders otherwise you might end up traversing almost the entire repository
+    }
 }

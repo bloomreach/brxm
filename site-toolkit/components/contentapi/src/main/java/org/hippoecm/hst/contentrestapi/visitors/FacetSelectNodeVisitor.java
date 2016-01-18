@@ -16,10 +16,16 @@
 
 package org.hippoecm.hst.contentrestapi.visitors;
 
+import static org.hippoecm.repository.api.HippoNodeType.NT_FACETSELECT;
+
 class FacetSelectNodeVisitor extends AbstractLinkVisitor {
 
     public FacetSelectNodeVisitor(VisitorFactory factory) {
         super(factory);
     }
 
+    @Override
+    public String getNodeType() {
+        return NT_FACETSELECT;
+    }
 }

@@ -16,10 +16,16 @@
 
 package org.hippoecm.hst.contentrestapi.visitors;
 
+import static org.hippoecm.repository.api.HippoNodeType.NT_MIRROR;
+
 class MirrorNodeVisitor extends AbstractLinkVisitor {
 
     public MirrorNodeVisitor(VisitorFactory factory) {
         super(factory);
     }
 
+    @Override
+    public String getNodeType() {
+        return NT_MIRROR;
+    }
 }

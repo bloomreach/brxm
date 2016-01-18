@@ -574,7 +574,11 @@ commons/src/test/resources/TestResourceBundleUtils.properties -text
 commons/src/test/resources/TestResourceBundleUtils_fr.properties -text
 commons/src/test/resources/TestResourceBundleUtils_fr_FR.properties -text
 components/contentapi/pom.xml -text
+components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/visitors/AbstractFolderNodeVisitor.java -text
 components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/visitors/AbstractLinkVisitor.java -text
+components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/visitors/HippoDirectoryNodeVisitor.java -text
+components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/visitors/HippoDocumentNodeVisitor.java -text
+components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/visitors/HippoFolderNodeVisitor.java -text
 components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/visitors/MirrorNodeVisitor.java -text
 components/contentapi/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
 components/contentapi/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/contentrestapi/SpringComponentManager-rest-content-api.xml -text

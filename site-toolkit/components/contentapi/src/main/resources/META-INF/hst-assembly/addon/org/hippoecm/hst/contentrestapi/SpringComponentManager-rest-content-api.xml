@@ -117,7 +117,33 @@
     </property>
   </bean>
 
-  <bean id="contentRestApiResource" class="org.hippoecm.hst.contentrestapi.ContentRestApiResource"/>
+
+  <bean id="abstractNodeVisitor" abstract="true">
+    <constructor-arg ref="org.hippoecm.hst.contentrestapi.visitors.VisitorFactory"/>
+  </bean>
+
+  <bean id="fallbackNodeVisitors" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <bean id="handleVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HandleNodeVisitor" parent="abstractNodeVisitor"/>
+        <bean id="hippoFolderVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoFolderNodeVisitor" parent="abstractNodeVisitor"/>
+        <bean id="hippoDirectoryVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoDirectoryNodeVisitor" parent="abstractNodeVisitor"/>
+        <bean id="hippoDocumentVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoDocumentNodeVisitor" parent="abstractNodeVisitor"/>
+        <bean id="htmlNodeVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HtmlNodeVisitor" parent="abstractNodeVisitor"/>
+        <bean id="facetSelectNodeVisitor" class="org.hippoecm.hst.contentrestapi.visitors.FacetSelectNodeVisitor" parent="abstractNodeVisitor"/>
+        <bean id="mirrorNodeVisitor" class="org.hippoecm.hst.contentrestapi.visitors.MirrorNodeVisitor" parent="abstractNodeVisitor"/>
+        <bean id="defaultNodeVisitor" class="org.hippoecm.hst.contentrestapi.visitors.DefaultNodeVisitor" parent="abstractNodeVisitor"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="org.hippoecm.hst.contentrestapi.visitors.VisitorFactory" class="org.hippoecm.hst.contentrestapi.visitors.DefaultVisitorFactory">
+    <property name="fallbackNodeVisitors" ref="fallbackNodeVisitors"/>
+  </bean>
+
+  <bean id="contentRestApiResource" class="org.hippoecm.hst.contentrestapi.ContentRestApiResource">
+    <property name="visitorFactory" ref="org.hippoecm.hst.contentrestapi.visitors.VisitorFactory"/>
+  </bean>
 
   <bean id="defaultContentApiResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">

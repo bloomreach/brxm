@@ -24,11 +24,12 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.contentrestapi.ResourceContext;
+import org.hippoecm.repository.util.NodeIterable;
 
 import static org.hippoecm.hst.contentrestapi.ContentRestApiResource.NAMESPACE_PREFIX;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_DOCBASE;
 
-class AbstractLinkVisitor extends AbstractBaseNodeVisitor {
+abstract class AbstractLinkVisitor extends AbstractNodeVisitor {
 
     public AbstractLinkVisitor(VisitorFactory factory) {
         super(factory);
@@ -51,11 +52,10 @@ class AbstractLinkVisitor extends AbstractBaseNodeVisitor {
         }
 
         destination.put(node.getName(), descendantsOutput);
-        visitDescendants(context, node, descendantsOutput);
+        visitChildren(context, node, descendantsOutput);
     }
 
-    protected void visitDescendants(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
-        visit(context, node.getProperties(), destination);
-        visit(context, node.getNodes(), destination);
+    protected void visitChildren(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
+        visit(context, new NodeIterable(node.getNodes()).iterator(), destination);
     }
 }

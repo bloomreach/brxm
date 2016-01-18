@@ -17,21 +17,48 @@
 package org.hippoecm.hst.contentrestapi.visitors;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeChild;
 
-public abstract class AbstractBaseNodeVisitor extends AbstractBaseVisitor {
+import static javax.jcr.PropertyType.BINARY;
+import static javax.jcr.PropertyType.BOOLEAN;
+import static javax.jcr.PropertyType.DECIMAL;
+import static javax.jcr.PropertyType.DOUBLE;
+import static javax.jcr.PropertyType.LONG;
 
-    protected AbstractBaseNodeVisitor(final VisitorFactory visitorFactory) {
-        super(visitorFactory);
+public abstract class AbstractNodeVisitor implements NodeVisitor {
+
+
+    private final VisitorFactory visitorFactory;
+
+    protected AbstractNodeVisitor(final VisitorFactory visitorFactory) {
+        this.visitorFactory = visitorFactory;
+    }
+
+    @Override
+    public VisitorFactory getVisitorFactory() {
+        return visitorFactory;
+    }
+
+    @Override
+    public void visit(final ResourceContext context, final Iterator<Node> iterator, final Map<String, Object> destination) throws RepositoryException {
+        while (iterator.hasNext()) {
+            final Node node = iterator.next();
+            final NodeVisitor visitor = getVisitorFactory().getVisitor(context, node);
+            visitor.visit(context, node, destination);
+        }
     }
 
     @Override
@@ -59,8 +86,28 @@ public abstract class AbstractBaseNodeVisitor extends AbstractBaseVisitor {
             destination.put(node.getName(), descendantsOutput);
         }
 
-        visitDescendants(context, node, descendantsOutput);
+        visitChildren(context, node, descendantsOutput);
     }
 
-    protected abstract void visitDescendants(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException;
+    protected abstract void visitChildren(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException;
+
+    public Object getValueRepresentation(final Value jcrValue) throws RepositoryException {
+        // Date is rendered by JackRabbit including timezone, no need for special handling
+
+        switch (jcrValue.getType()) {
+            case BINARY:
+                return "Retrieving the content of binary property values is not yet supported in the Content REST API. Use images and assets instead.";
+            case LONG:
+                return jcrValue.getLong();
+            case DOUBLE:
+                return jcrValue.getDouble();
+            case BOOLEAN:
+                return jcrValue.getBoolean();
+            case DECIMAL:
+                return jcrValue.getDecimal();
+            default:
+                return jcrValue.getString();
+        }
+    }
+
 }

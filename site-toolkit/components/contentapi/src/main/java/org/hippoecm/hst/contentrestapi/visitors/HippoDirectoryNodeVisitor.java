@@ -13,31 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.hippoecm.hst.contentrestapi.visitors;
 
-import java.util.Map;
+import static org.hippoecm.repository.HippoStdNodeType.NT_DIRECTORY;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
+public class HippoDirectoryNodeVisitor extends AbstractFolderNodeVisitor {
 
-import org.hippoecm.hst.contentrestapi.ResourceContext;
-import org.hippoecm.repository.util.NodeIterable;
-
-public class DefaultNodeVisitor extends AbstractNodeVisitor {
-
-    public DefaultNodeVisitor(VisitorFactory visitorFactory) {
+    public HippoDirectoryNodeVisitor(final VisitorFactory visitorFactory) {
         super(visitorFactory);
     }
 
     @Override
     public String getNodeType() {
-        return "nt:base";
+        return NT_DIRECTORY;
     }
-
-    @Override
-    protected void visitChildren(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
-        visit(context, new NodeIterable(node.getNodes()).iterator(), destination);
-    }
-
 }

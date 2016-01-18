@@ -38,8 +38,7 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.contentrestapi.visitors.DefaultVisitorFactory;
-import org.hippoecm.hst.contentrestapi.visitors.Visitor;
+import org.hippoecm.hst.contentrestapi.visitors.NodeVisitor;
 import org.hippoecm.hst.contentrestapi.visitors.VisitorFactory;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
@@ -68,7 +67,13 @@ public class ContentRestApiResource {
 
     private static final Logger log = LoggerFactory.getLogger(ContentRestApiResource.class);
 
+    private VisitorFactory visitorFactory;
+
     public static final String NAMESPACE_PREFIX = "hipporest";
+
+    public void setVisitorFactory(final VisitorFactory visitorFactory) {
+        this.visitorFactory = visitorFactory;
+    }
 
     private static class ResourceContextImpl implements ResourceContext {
 
@@ -317,8 +322,7 @@ public class ContentRestApiResource {
             }
 
             final Map<String, Object> response = new TreeMap<>();
-            final VisitorFactory factory = new DefaultVisitorFactory();
-            final Visitor visitor = factory.getVisitor(context, node);
+            final NodeVisitor visitor = visitorFactory.getVisitor(context, node);
             visitor.visit(context, node, response);
 
             return Response.status(200).entity(response).build();

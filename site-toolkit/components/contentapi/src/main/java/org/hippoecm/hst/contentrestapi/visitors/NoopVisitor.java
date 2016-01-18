@@ -16,6 +16,7 @@
 
 package org.hippoecm.hst.contentrestapi.visitors;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -26,9 +27,14 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
 
-public class NoopVisitor implements Visitor {
+public class NoopVisitor implements NodeVisitor {
 
     private final VisitorFactory visitorFactory;
+
+    @Override
+    public String getNodeType() {
+        throw new UnsupportedOperationException();
+    }
 
     public NoopVisitor(VisitorFactory visitorFactory) {
         this.visitorFactory = visitorFactory;
@@ -40,22 +46,12 @@ public class NoopVisitor implements Visitor {
     }
 
     @Override
-    public void visit(final ResourceContext context, final Property property, final Map<String, Object> destination) throws RepositoryException {
-        // noop
-    }
-
-    @Override
     public void visit(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
         // noop
     }
 
     @Override
-    public void visit(final ResourceContext context, final PropertyIterator propertyIterator, final Map<String, Object> destination) throws RepositoryException {
-        // noop
-    }
-
-    @Override
-    public void visit(final ResourceContext context, final NodeIterator nodeIterator, final Map<String, Object> destination) throws RepositoryException {
+    public void visit(final ResourceContext context, final Iterator<Node> iterator, final Map<String, Object> destination) throws RepositoryException {
         // noop
     }
 }

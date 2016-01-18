@@ -23,6 +23,5 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.contentrestapi.ResourceContext;
 
 public interface VisitorFactory {
-    Visitor getVisitor(ResourceContext context, Property property) throws RepositoryException;
-    Visitor getVisitor(ResourceContext context, Node node) throws RepositoryException;
+    NodeVisitor getVisitor(ResourceContext context, Node node) throws RepositoryException;
 }

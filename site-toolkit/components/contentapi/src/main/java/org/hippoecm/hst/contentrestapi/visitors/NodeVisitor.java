@@ -16,28 +16,21 @@
 
 package org.hippoecm.hst.contentrestapi.visitors;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
-import org.hippoecm.repository.util.NodeIterable;
 
-public class DefaultNodeVisitor extends AbstractNodeVisitor {
-
-    public DefaultNodeVisitor(VisitorFactory visitorFactory) {
-        super(visitorFactory);
-    }
-
-    @Override
-    public String getNodeType() {
-        return "nt:base";
-    }
-
-    @Override
-    protected void visitChildren(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
-        visit(context, new NodeIterable(node.getNodes()).iterator(), destination);
-    }
+public interface NodeVisitor {
+    VisitorFactory getVisitorFactory();
+    String getNodeType();
+    void visit(ResourceContext context, Node node, final Map<String, Object> destination) throws RepositoryException;
+    void visit(ResourceContext context, Iterator<Node> nodeIterator, final Map<String, Object> destination) throws RepositoryException;
 
 }
