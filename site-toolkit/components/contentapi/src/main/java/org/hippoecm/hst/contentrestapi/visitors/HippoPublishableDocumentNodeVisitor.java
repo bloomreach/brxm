@@ -27,7 +27,7 @@ import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.NT_PUBLISHABLE;
 
-public class HippoPublishableDocumentNodeVisitor extends DefaultNodeVisitor {
+public class HippoPublishableDocumentNodeVisitor extends HippoDocumentNodeVisitor {
 
     public HippoPublishableDocumentNodeVisitor(final VisitorFactory visitorFactory) {
         super(visitorFactory);

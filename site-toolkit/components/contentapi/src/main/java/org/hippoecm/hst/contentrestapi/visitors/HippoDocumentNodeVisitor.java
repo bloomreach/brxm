@@ -35,9 +35,8 @@ public class HippoDocumentNodeVisitor extends DefaultNodeVisitor {
         return NT_DOCUMENT;
     }
 
-    @Override
-    public void visit(final ResourceContext context, final Node node, final Map<String, Object> response) throws RepositoryException {
-        visitNode(context, node, response);
-        visitNodeItems(context, node, response);
+    protected void visitNode(final ResourceContext context, final Node node, final Map<String, Object> response)
+            throws RepositoryException {
+        super.visitNode(context, node, response);
     }
 }
