@@ -18,7 +18,6 @@ package org.hippoecm.hst.contentrestapi.visitors;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;

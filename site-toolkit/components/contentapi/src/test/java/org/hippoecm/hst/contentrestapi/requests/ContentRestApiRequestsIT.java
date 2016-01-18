@@ -72,7 +72,7 @@ public class ContentRestApiRequestsIT extends AbstractContentRestApiIT {
     }
 
     @Test
-    public void handle_node_of_content_outside_api_mount_is_not_allowdd() throws Exception {
+    public void handle_node_of_content_outside_api_mount_is_not_allowed() throws Exception {
         // a62a34ae-5f42-4482-a27a-7f39459ec8ee homepage of subsite
         final RequestResponseMock requestResponse = mockGetRequestResponse(filter, "http", "localhost", "/api/documents/a62a34ae-5f42-4482-a27a-7f39459ec8ee", null);
         final MockHttpServletRequest request = requestResponse.getRequest();
