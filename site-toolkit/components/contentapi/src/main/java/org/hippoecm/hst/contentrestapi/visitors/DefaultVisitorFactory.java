@@ -16,18 +16,12 @@
 
 package org.hippoecm.hst.contentrestapi.visitors;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
-import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.api.HippoNodeType;
 
 import static org.hippoecm.repository.HippoStdNodeType.NT_HTML;
 import static org.hippoecm.repository.api.HippoNodeType.NT_FACETSELECT;
@@ -36,37 +30,11 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_MIRROR;
 
 public class DefaultVisitorFactory implements VisitorFactory {
 
-    private final List<String> defaultIgnoredProperties = new ArrayList<>(Arrays.asList(
-            "jcr:uuid",
-            "hippo:paths",
-            "hippo:related",
-            "hippo:availability",
-            "hippostd:holder",
-            "hippo:compute",
-            "hippo:discriminator",
-            "hippostdpubwf:createdBy",
-            "hippostdpubwf:lastModifiedBy"
-    ));
-
-    protected boolean isIgnored(Property property) throws RepositoryException {
-        return defaultIgnoredProperties.contains(property.getName());
-    }
-
-    protected boolean isIgnored(Node node) {
-        return false;
-    }
-
     public Visitor getVisitor(final ResourceContext context, final Property property) throws RepositoryException {
-        if (isIgnored(property)) {
-            return new NoopVisitor(this);
-        }
         return new DefaultPropertyVisitor(this);
     }
 
     public Visitor getVisitor(final ResourceContext context, final Node node) throws RepositoryException {
-        if (isIgnored(node)) {
-            return new NoopVisitor(this);
-        }
 
         final NodeType nodeType = node.getPrimaryNodeType();
         switch (nodeType.getName()) {
