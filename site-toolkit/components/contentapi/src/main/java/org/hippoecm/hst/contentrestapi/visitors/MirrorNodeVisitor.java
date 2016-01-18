@@ -16,9 +16,9 @@
 
 package org.hippoecm.hst.contentrestapi.visitors;
 
-class FacetSelectNodeVisitor extends AbstractLinkVisitor {
+class MirrorNodeVisitor extends AbstractLinkVisitor {
 
-    public FacetSelectNodeVisitor(VisitorFactory factory) {
+    public MirrorNodeVisitor(VisitorFactory factory) {
         super(factory);
     }
 

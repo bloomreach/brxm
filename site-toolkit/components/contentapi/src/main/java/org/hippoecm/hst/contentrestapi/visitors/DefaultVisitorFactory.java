@@ -29,6 +29,11 @@ import org.hippoecm.hst.contentrestapi.ResourceContext;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 
+import static org.hippoecm.repository.HippoStdNodeType.NT_HTML;
+import static org.hippoecm.repository.api.HippoNodeType.NT_FACETSELECT;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
+import static org.hippoecm.repository.api.HippoNodeType.NT_MIRROR;
+
 public class DefaultVisitorFactory implements VisitorFactory {
 
     private final List<String> defaultIgnoredProperties = new ArrayList<>(Arrays.asList(
@@ -65,11 +70,13 @@ public class DefaultVisitorFactory implements VisitorFactory {
 
         final NodeType nodeType = node.getPrimaryNodeType();
         switch (nodeType.getName()) {
-            case HippoNodeType.NT_FACETSELECT:
+            case NT_FACETSELECT:
                 return new FacetSelectNodeVisitor(this);
-            case HippoNodeType.NT_HANDLE:
+            case NT_MIRROR:
+                return new MirrorNodeVisitor(this);
+            case NT_HANDLE:
                 return new HandleNodeVisitor(this);
-            case HippoStdNodeType.NT_HTML:
+            case NT_HTML:
                 return new HtmlNodeVisitor(this);
             default:
                 // TODO this needs to be done differently. The fallback if not an explicit jcr primary type matches, a
