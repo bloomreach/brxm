@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<div class="flex-full flex-column" data-ng-controller="hippo.channel.pages.StateCtrl">
+<div class="flex-full flex-column qa-overview-pages" data-ng-controller="hippo.channel.pages.StateCtrl">
   <div class="list-group flex-child" data-ng-show="pages">
     <a class="list-group-item" data-ng-repeat="page in pages" data-ng-click="showPage(page)" href="#">
       <p class="list-group-item-text">{{ page.pathInfo | startWithSlash }}</p>
@@ -29,7 +29,7 @@
          data-uib-tooltip="{{ !userIsEditing ? ('ADD_NEW_PAGE_DISABLED_TOOLTIP' | translate) : '' }}"
          data-tooltip-trigger="mouseenter"
          data-tooltip-placement="top">
-      <button class="btn btn-default btn-md"
+      <button class="btn btn-default btn-md qa-add-new-page"
               data-ng-click="navigateTo('add-page')"
               data-ng-disabled="!userIsEditing">
         <hippo-icon name="plus" size=""></hippo-icon>

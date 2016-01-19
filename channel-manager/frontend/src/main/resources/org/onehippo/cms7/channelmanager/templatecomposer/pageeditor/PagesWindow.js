@@ -23,6 +23,7 @@
         constructor: function(config) {
             Ext.apply(config, {
                 title: config.resources['pages-window-title'],
+                cls: "qa-cm-tc-pages",
                 width: 587,
                 height: 533,
                 modal: true,
