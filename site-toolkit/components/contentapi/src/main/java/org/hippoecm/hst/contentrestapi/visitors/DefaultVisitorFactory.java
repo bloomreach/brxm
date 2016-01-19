@@ -17,6 +17,7 @@
 package org.hippoecm.hst.contentrestapi.visitors;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -28,7 +29,7 @@ import org.hippoecm.hst.contentrestapi.ResourceContext;
 public class DefaultVisitorFactory implements VisitorFactory {
 
     private List<NodeVisitor> explicitNodeVisitors = new ArrayList<>();
-    private List<NodeVisitor> fallbackNodeVisitors;
+    private List<NodeVisitor> fallbackNodeVisitors = Collections.EMPTY_LIST;
 
     public DefaultVisitorFactory() {
         // TODO replace by annotation scanning
