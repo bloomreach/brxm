@@ -36,7 +36,7 @@ import static org.hippoecm.repository.HippoStdNodeType.NT_HTML;
 import static org.hippoecm.repository.api.HippoNodeType.NT_FACETSELECT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_MIRROR;
 
-class HippoStdHtmlVisitor extends DefaultNodeVisitor {
+public class HippoStdHtmlVisitor extends DefaultNodeVisitor {
 
     private static final Logger log = LoggerFactory.getLogger(HippoStdHtmlVisitor.class);
 

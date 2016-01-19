@@ -18,7 +18,7 @@ package org.hippoecm.hst.contentrestapi.visitors;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_MIRROR;
 
-class HippoMirrorVisitor extends AbstractLinkVisitor {
+public class HippoMirrorVisitor extends AbstractLinkVisitor {
 
     public HippoMirrorVisitor(VisitorFactory factory) {
         super(factory);

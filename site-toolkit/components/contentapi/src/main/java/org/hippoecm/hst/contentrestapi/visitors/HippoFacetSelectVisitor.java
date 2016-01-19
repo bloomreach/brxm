@@ -18,7 +18,7 @@ package org.hippoecm.hst.contentrestapi.visitors;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_FACETSELECT;
 
-class HippoFacetSelectVisitor extends AbstractLinkVisitor {
+public class HippoFacetSelectVisitor extends AbstractLinkVisitor {
 
     public HippoFacetSelectVisitor(VisitorFactory factory) {
         super(factory);
