@@ -36,13 +36,13 @@ import static org.hippoecm.repository.HippoStdNodeType.NT_HTML;
 import static org.hippoecm.repository.api.HippoNodeType.NT_FACETSELECT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_MIRROR;
 
-class HtmlNodeVisitor extends DefaultNodeVisitor {
+class HippoStdHtmlVisitor extends DefaultNodeVisitor {
 
-    private static final Logger log = LoggerFactory.getLogger(HtmlNodeVisitor.class);
+    private static final Logger log = LoggerFactory.getLogger(HippoStdHtmlVisitor.class);
 
     private ContentRestApiHtmlRewriter contentRewriter;
 
-    public HtmlNodeVisitor(VisitorFactory visitorFactory) {
+    public HippoStdHtmlVisitor(VisitorFactory visitorFactory) {
         super(visitorFactory);
     }
 
