@@ -118,9 +118,10 @@
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
-            <manifestEntries>
-              <Hippo-Modules>org.onehippo.cms7.services.contenttype.ContentTypeServiceModule</Hippo-Modules>
-            </manifestEntries>
+             <!--
+               Hippo-Modules entry is defined in custom manifest file which will be merged at runtime. See: CMS-9885
+            -->
+            <manifestFile>target/classes/META-INF/MANIFEST.MF</manifestFile>
           </archive>
         </configuration>
       </plugin>
