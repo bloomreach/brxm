@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.contentrestapi.visitors;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -26,10 +29,20 @@ import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
 
 public class HippoPublicationWorkflowDocumentNodeVisitor extends HippoPublishableDocumentNodeVisitor {
+
+    private static final List<String> skipProperties = new ArrayList<>(Arrays.asList(
+            HIPPOSTDPUBWF_CREATION_DATE,
+            HIPPOSTDPUBWF_CREATED_BY,
+            HIPPOSTDPUBWF_LAST_MODIFIED_DATE,
+            HIPPOSTDPUBWF_LAST_MODIFIED_BY,
+            HIPPOSTDPUBWF_PUBLICATION_DATE
+    ));
 
     public HippoPublicationWorkflowDocumentNodeVisitor(final VisitorFactory visitorFactory) {
         super(visitorFactory);
@@ -52,13 +65,9 @@ public class HippoPublicationWorkflowDocumentNodeVisitor extends HippoPublishabl
 
     protected boolean skipProperty(final ResourceContext context, final ContentTypeProperty propertyType,
                                    final Property property) throws RepositoryException {
-        switch (property.getName()) {
-            case HIPPOSTDPUBWF_CREATION_DATE:
-            case HIPPOSTDPUBWF_LAST_MODIFIED_DATE:
-            case HIPPOSTDPUBWF_PUBLICATION_DATE:
-                return true;
-            default:
-                return super.skipProperty(context, propertyType, property);
+        if (skipProperties.contains(property.getName())) {
+            return true;
         }
+        return super.skipProperty(context, propertyType, property);
     }
 }

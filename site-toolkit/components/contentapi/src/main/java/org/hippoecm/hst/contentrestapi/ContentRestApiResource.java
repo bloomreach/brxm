@@ -69,8 +69,6 @@ public class ContentRestApiResource {
 
     private VisitorFactory visitorFactory;
 
-    public static final String NAMESPACE_PREFIX = "hipporest";
-
     public void setVisitorFactory(final VisitorFactory visitorFactory) {
         this.visitorFactory = visitorFactory;
     }
@@ -104,7 +102,7 @@ public class ContentRestApiResource {
     }
 
     private static final class Link {
-        @JsonProperty(NAMESPACE_PREFIX + ":url")
+        @JsonProperty("url")
         public final String url;
 
         public Link(final String url) {
@@ -113,13 +111,13 @@ public class ContentRestApiResource {
     }
 
     private static final class SearchResultItem {
-        @JsonProperty(ContentRestApiResource.NAMESPACE_PREFIX + ":name")
+        @JsonProperty("name")
         public final String name;
 
-        @JsonProperty("jcr:uuid")
+        @JsonProperty("id")
         public final String uuid;
 
-        @JsonProperty(NAMESPACE_PREFIX + ":links")
+        @JsonProperty("links")
         public final Link[] links;
 
         public SearchResultItem(final String name, final String uuid, final Link[] links) {
@@ -130,22 +128,22 @@ public class ContentRestApiResource {
     }
 
     private static final class SearchResult {
-        @JsonProperty(NAMESPACE_PREFIX + ":offset")
+        @JsonProperty("offset")
         public long offset;
 
-        @JsonProperty(NAMESPACE_PREFIX + ":max")
+        @JsonProperty("max")
         public long max;
 
-        @JsonProperty(NAMESPACE_PREFIX + ":count")
+        @JsonProperty("count")
         public long count;
 
-        @JsonProperty(NAMESPACE_PREFIX + ":total")
+        @JsonProperty("total")
         public long total;
 
-        @JsonProperty(NAMESPACE_PREFIX + ":more")
+        @JsonProperty("more")
         public boolean more;
 
-        @JsonProperty(NAMESPACE_PREFIX + ":items")
+        @JsonProperty("items")
         public SearchResultItem[] items;
 
         void populate(final int offset, final int max,

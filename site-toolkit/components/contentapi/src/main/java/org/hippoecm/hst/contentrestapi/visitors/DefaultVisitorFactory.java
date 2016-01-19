@@ -19,7 +19,6 @@ package org.hippoecm.hst.contentrestapi.visitors;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
@@ -44,7 +43,6 @@ public class DefaultVisitorFactory implements VisitorFactory {
         // apparently the DefaultNodeVisitor is removed from fallbackNodeVisitors otherwise this can never happen
         return new NoopVisitor(this);
     }
-
 
     public void setFallbackNodeVisitors(final List<NodeVisitor> fallbackNodeVisitors) {
         this.fallbackNodeVisitors = fallbackNodeVisitors;

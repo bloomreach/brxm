@@ -24,51 +24,35 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
-import static org.onehippo.repository.util.JcrConstants.JCR_UUID;
-import static org.onehippo.repository.util.JcrConstants.JCR_MIXIN_TYPES;
-import static org.onehippo.repository.util.JcrConstants.JCR_PRIMARY_TYPE;
-import static org.onehippo.repository.util.JcrConstants.NT_BASE;
-import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_COMPUTE;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
+public class HippoGalleryImageVisitor extends HippoResourceVisitor {
 
-public class DefaultNodeVisitor extends AbstractNodeVisitor {
+    protected static final String NT_IMAGE = "hippogallery:image";
+    protected static final String IMAGE_WIDTH = "hippogallery:width";
+    protected static final String IMAGE_HEIGHT = "hippogallery:height";
 
     private static final List<String> skipProperties = new ArrayList<>(Arrays.asList(
-            JCR_UUID,
-            JCR_PRIMARY_TYPE,
-            JCR_MIXIN_TYPES,
-            HIPPOSTD_STATESUMMARY,
-            HIPPO_COMPUTE,
-            HIPPO_RELATED
+            IMAGE_WIDTH,
+            IMAGE_HEIGHT
     ));
 
-    public DefaultNodeVisitor(VisitorFactory visitorFactory) {
+    public HippoGalleryImageVisitor(final VisitorFactory visitorFactory) {
         super(visitorFactory);
     }
 
     @Override
     public String getNodeType() {
-        return NT_BASE;
+        return NT_IMAGE;
     }
 
     protected void visitNode(final ResourceContext context, final Node node, final Map<String, Object> response)
             throws RepositoryException {
         super.visitNode(context, node, response);
-        response.put("type", node.getPrimaryNodeType().getName());
-        NodeType[] mixinTypes = node.getMixinNodeTypes();
-        if (mixinTypes.length > 0) {
-            ArrayList<String> mixins = new ArrayList<>();
-            for (NodeType mixin : mixinTypes) {
-                mixins.add(mixin.getName());
-            }
-            response.put("mixins", mixins);
-        }
+        response.put("width", node.getProperty(IMAGE_WIDTH).getLong());
+        response.put("height", node.getProperty(IMAGE_HEIGHT).getLong());
     }
 
     protected boolean skipProperty(final ResourceContext context, final ContentTypeProperty propertyType,

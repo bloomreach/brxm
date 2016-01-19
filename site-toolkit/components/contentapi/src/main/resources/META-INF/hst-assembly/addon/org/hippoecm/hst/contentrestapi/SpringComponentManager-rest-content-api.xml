@@ -134,6 +134,8 @@
         <bean id="htmlNodeVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HtmlNodeVisitor" parent="abstractNodeVisitor"/>
         <bean id="facetSelectNodeVisitor" class="org.hippoecm.hst.contentrestapi.visitors.FacetSelectNodeVisitor" parent="abstractNodeVisitor"/>
         <bean id="mirrorNodeVisitor" class="org.hippoecm.hst.contentrestapi.visitors.MirrorNodeVisitor" parent="abstractNodeVisitor"/>
+        <bean id="hippoGalleryImageVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoGalleryImageVisitor" parent="abstractNodeVisitor"/>
+        <bean id="hippoResourceVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoResourceVisitor" parent="abstractNodeVisitor"/>
         <bean id="defaultNodeVisitor" class="org.hippoecm.hst.contentrestapi.visitors.DefaultNodeVisitor" parent="abstractNodeVisitor"/>
       </list>
     </property>

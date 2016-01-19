@@ -17,7 +17,6 @@
 package org.hippoecm.hst.contentrestapi.visitors;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,18 +41,6 @@ import static javax.jcr.PropertyType.LONG;
 
 public abstract class AbstractNodeVisitor implements NodeVisitor {
 
-    private final List<String> defaultIgnoredProperties = new ArrayList<>(Arrays.asList(
-            "jcr:uuid",
-            "hippo:paths",
-            "hippo:related",
-            "hippo:availability",
-            "hippostd:holder",
-            "hippo:compute",
-            "hippo:discriminator",
-            "hippostdpubwf:createdBy",
-            "hippostdpubwf:lastModifiedBy"
-    ));
-
     private final VisitorFactory visitorFactory;
 
     protected AbstractNodeVisitor(final VisitorFactory visitorFactory) {
@@ -71,7 +58,7 @@ public abstract class AbstractNodeVisitor implements NodeVisitor {
         final ContentTypeChild nodeType = parentContentType.getChildren().get(node.getName());
 
         final Map<String, Object> nodeResponse = new LinkedHashMap<>();
-        if ((nodeType != null && nodeType.isMultiple()) || node.getDefinition().allowsSameNameSiblings()) {
+        if (nodeType != null && nodeType.isMultiple() || nodeType == null && node.getDefinition().allowsSameNameSiblings()) {
             List<Object> siblings = (List<Object>) response.get(node.getName());
             if (siblings == null) {
                 siblings = new ArrayList<>();
@@ -110,7 +97,9 @@ public abstract class AbstractNodeVisitor implements NodeVisitor {
             final ContentTypeProperty propertyType = parentContentType.getProperties().get(property.getName());
 
             // skip properties that either are unknown or for which a node with the same name is also defined
-            if (propertyType == null || parentContentType.getChildren().get(property.getName()) != null) {
+            if (propertyType == null || parentContentType.getChildren().get(property.getName()) != null ||
+                    parentContentType.getEffectiveNodeType().getChildren().get(property.getName()) != null ||
+                    node.hasNode(property.getName())) {
                 return;
             }
 
@@ -123,7 +112,7 @@ public abstract class AbstractNodeVisitor implements NodeVisitor {
     protected void visitProperty(final ResourceContext context, final ContentTypeProperty propertyType,
                                  final Property property, final Map<String, Object> response)
             throws RepositoryException {
-        if ((propertyType != null && propertyType.isMultiple()) || property.getDefinition().isMultiple()) {
+        if ((propertyType != null && propertyType.isMultiple()) || propertyType == null && property.getDefinition().isMultiple()) {
             final Value[] jcrValues = property.getValues();
             final Object[] representations = new Object[jcrValues.length];
             for (int i = 0; i < jcrValues.length; i++) {
@@ -174,7 +163,7 @@ public abstract class AbstractNodeVisitor implements NodeVisitor {
 
     protected boolean skipProperty(final ResourceContext context, final ContentTypeProperty propertyType,
                                             final Property property) throws RepositoryException {
-        return defaultIgnoredProperties.contains(property.getName());
+        return false;
     }
 
     protected boolean skipChild(final ResourceContext context, final ContentTypeChild childType,

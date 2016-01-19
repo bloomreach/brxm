@@ -15,16 +15,32 @@
  */
 package org.hippoecm.hst.contentrestapi.visitors;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
+import org.hippoecm.repository.translation.HippoTranslationNodeType;
+import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 
 public class HippoDocumentNodeVisitor extends DefaultNodeVisitor {
+
+    private static final List<String> skipProperties = new ArrayList<>(Arrays.asList(
+            HIPPO_AVAILABILITY,
+            HIPPO_PATHS,
+            HippoTranslationNodeType.ID,
+            HippoTranslationNodeType.SOURCELOCALE,
+            HippoTranslationNodeType.LOCALE
+    ));
 
     public HippoDocumentNodeVisitor(final VisitorFactory visitorFactory) {
         super(visitorFactory);
@@ -35,8 +51,25 @@ public class HippoDocumentNodeVisitor extends DefaultNodeVisitor {
         return NT_DOCUMENT;
     }
 
+    @Override
+    public void visit(final ResourceContext context, final Node node, final Map<String, Object> response) throws RepositoryException {
+        visitNode(context, node, response);
+        visitNodeItems(context, node, response);
+    }
+
     protected void visitNode(final ResourceContext context, final Node node, final Map<String, Object> response)
             throws RepositoryException {
         super.visitNode(context, node, response);
+        if (node.hasProperty(HippoTranslationNodeType.LOCALE)) {
+            response.put("locale", node.getProperty(HippoTranslationNodeType.LOCALE).getString());
+        }
+    }
+
+    protected boolean skipProperty(final ResourceContext context, final ContentTypeProperty propertyType,
+                                   final Property property) throws RepositoryException {
+        if (skipProperties.contains(property.getName())) {
+            return true;
+        }
+        return super.skipProperty(context, propertyType, property);
     }
 }

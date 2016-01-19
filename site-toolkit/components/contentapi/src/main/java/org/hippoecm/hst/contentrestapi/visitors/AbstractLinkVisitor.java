@@ -16,6 +16,9 @@
 
 package org.hippoecm.hst.contentrestapi.visitors;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -33,6 +36,13 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VALUES;
 
 abstract class AbstractLinkVisitor extends DefaultNodeVisitor {
 
+    private static final List<String> skipProperties = new ArrayList<>(Arrays.asList(
+            HIPPO_DOCBASE,
+            HIPPO_FACETS,
+            HIPPO_MODES,
+            HIPPO_VALUES
+    ));
+
     public AbstractLinkVisitor(VisitorFactory factory) {
         super(factory);
     }
@@ -46,7 +56,7 @@ abstract class AbstractLinkVisitor extends DefaultNodeVisitor {
                 // noop
             }
             else {
-                response.put("id","http://localhost:8080/site/api/documents/" + docbase);
+                response.put("id",docbase);
                 // TODO link rewriting - use generic HST methods to construct URL
                 response.put("url","http://localhost:8080/site/api/documents/" + docbase);
             }
@@ -57,14 +67,9 @@ abstract class AbstractLinkVisitor extends DefaultNodeVisitor {
 
     protected boolean skipProperty(final ResourceContext context, final ContentTypeProperty propertyType,
                                    final Property property) throws RepositoryException {
-        switch (property.getName()) {
-            case HIPPO_DOCBASE:
-            case HIPPO_FACETS:
-            case HIPPO_MODES:
-            case HIPPO_VALUES:
-                return true;
-            default:
-                return super.skipProperty(context, propertyType, property);
+        if (skipProperties.contains(property.getName())) {
+            return true;
         }
+        return super.skipProperty(context, propertyType, property);
     }
 }

@@ -22,6 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
+import org.hippoecm.repository.api.HippoNode;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
@@ -41,6 +42,10 @@ public class HandleNodeVisitor extends AbstractNodeVisitor {
 
         response.put("id", node.getIdentifier());
         response.put("name", nodeName);
+
+        if (node instanceof HippoNode) {
+            response.put("displayName", ((HippoNode)node).getLocalizedName());
+        }
 
         final Node variant = node.getNode(nodeName);
         NodeVisitor variantVisitor = getVisitorFactory().getVisitor(context, variant);
