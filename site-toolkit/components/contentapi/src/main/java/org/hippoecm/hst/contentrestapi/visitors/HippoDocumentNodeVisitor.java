@@ -60,6 +60,11 @@ public class HippoDocumentNodeVisitor extends DefaultNodeVisitor {
     protected void visitNode(final ResourceContext context, final Node node, final Map<String, Object> response)
             throws RepositoryException {
         super.visitNode(context, node, response);
+        visitLocaleProperty(context, node, response);
+    }
+
+    protected void visitLocaleProperty(final ResourceContext context, final Node node, Map<String, Object> response)
+            throws RepositoryException {
         if (node.hasProperty(HippoTranslationNodeType.LOCALE)) {
             response.put("locale", node.getProperty(HippoTranslationNodeType.LOCALE).getString());
         }
