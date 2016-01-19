@@ -47,7 +47,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
-import org.onehippo.cms7.services.contenttype.HippoContentTypeService;
 import org.onehippo.cms7.services.search.jcr.service.HippoJcrSearchService;
 import org.onehippo.cms7.services.search.query.Query;
 import org.onehippo.cms7.services.search.query.QueryUtils;
@@ -78,12 +77,6 @@ public class ContentRestApiResource {
         private final ContentTypes contentTypes;
 
         private ResourceContextImpl() throws RepositoryException {
-            // TODO improve initialization
-            if (HippoServiceRegistry.getService(ContentTypeService.class) == null) {
-                HippoContentTypeService service = new HippoContentTypeService(RequestContextProvider.get().getSession());
-                HippoServiceRegistry.registerService(service, ContentTypeService.class);
-            }
-
             contentTypes = HippoServiceRegistry.getService(ContentTypeService.class).getContentTypes();
         }
 
