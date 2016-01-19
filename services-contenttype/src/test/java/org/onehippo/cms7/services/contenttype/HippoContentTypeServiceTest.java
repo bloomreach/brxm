@@ -35,8 +35,6 @@ import static org.junit.Assert.fail;
 
 public class HippoContentTypeServiceTest extends PluginTest {
 
-    private ContentTypeServiceModule serviceModule;
-
     @Override
     @Before
     public void setUp() throws Exception {
@@ -50,14 +48,11 @@ public class HippoContentTypeServiceTest extends PluginTest {
                 ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
         session.save();
         session.refresh(false);
-        serviceModule = new ContentTypeServiceModule();
-        serviceModule.initialize(session);
     }
 
     @Override
     @After
     public void tearDown() throws Exception {
-        serviceModule.shutdown();
         if (session != null ) {
             if (session.getRootNode().hasNode("hippo:namespaces/test")) {
                 session.getRootNode().getNode("hippo:namespaces/test").remove();
