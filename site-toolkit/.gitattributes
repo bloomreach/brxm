@@ -574,7 +574,7 @@ commons/src/test/resources/TestResourceBundleUtils.properties -text
 commons/src/test/resources/TestResourceBundleUtils_fr.properties -text
 commons/src/test/resources/TestResourceBundleUtils_fr_FR.properties -text
 components/contentapi/pom.xml -text
-components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/html/ContentRestApiHtmlRewriter.java -text
+components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/html/ContentRestApiHtmlParser.java -text
 components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/html/HtmlCleanerFactoryBean.java -text
 components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/html/ParsedContent.java -text
 components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/linking/ContentApiLinkCreator.java -text

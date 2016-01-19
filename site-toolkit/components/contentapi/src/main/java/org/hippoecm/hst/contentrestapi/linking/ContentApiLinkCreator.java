@@ -16,7 +16,6 @@
 
 package org.hippoecm.hst.contentrestapi.linking;
 
-import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;

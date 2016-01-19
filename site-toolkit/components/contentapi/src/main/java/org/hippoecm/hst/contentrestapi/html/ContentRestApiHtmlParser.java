@@ -16,10 +16,8 @@
 package org.hippoecm.hst.contentrestapi.html;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -27,25 +25,23 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter;
+import org.hippoecm.hst.contentrestapi.ResourceContext;
 import org.hippoecm.hst.contentrestapi.linking.ContentApiLinkCreator;
 import org.hippoecm.hst.contentrestapi.linking.Link;
-import org.hippoecm.hst.contentrestapi.ResourceContext;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.repository.HippoStdNodeType;
 import org.htmlcleaner.ContentNode;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.commons.lang.StringUtils.indexOf;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.substringAfter;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_CONTENT;
 import static org.hippoecm.repository.HippoStdNodeType.NT_HTML;
 
-public class ContentRestApiHtmlRewriter {
+public class ContentRestApiHtmlParser {
 
     private final static Logger log =
             LoggerFactory.getLogger(SimpleContentRewriter.class);

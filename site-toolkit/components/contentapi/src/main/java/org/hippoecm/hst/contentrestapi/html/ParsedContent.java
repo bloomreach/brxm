@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.contentrestapi.html;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.hippoecm.hst.contentrestapi.linking.Link;

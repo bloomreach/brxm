@@ -132,7 +132,9 @@
         <bean id="hippoPublicationWorkflowDocumentVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoPublicationWorkflowDocumentNodeVisitor" parent="abstractNodeVisitor"/>
         <bean id="hippoPublishableDocumentVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoPublishableDocumentNodeVisitor" parent="abstractNodeVisitor"/>
         <bean id="hippoDocumentVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoDocumentNodeVisitor" parent="abstractNodeVisitor"/>
-        <bean id="hippoStdHtmlVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoStdHtmlVisitor" parent="abstractNodeVisitor"/>
+        <bean id="hippoStdHtmlVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoStdHtmlVisitor" parent="abstractNodeVisitor">
+          <property name="contentParser" ref="contentRestApiHtmlParser"/>
+        </bean>
         <bean id="hippoFacetSelectVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoFacetSelectVisitor" parent="abstractNodeVisitor"/>
         <bean id="hippoMirrorVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoMirrorVisitor" parent="abstractNodeVisitor"/>
         <bean id="hippoGalleryImageVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoGalleryImageVisitor" parent="abstractNodeVisitor"/>
@@ -209,7 +211,7 @@
 
   <bean id="htmlCleaner" class="org.hippoecm.hst.contentrestapi.html.HtmlCleanerFactoryBean"/>
 
-  <bean id="contentRestApiHtmlRewriter" class="org.hippoecm.hst.contentrestapi.html.ContentRestApiHtmlRewriter">
+  <bean id="contentRestApiHtmlParser" class="org.hippoecm.hst.contentrestapi.html.ContentRestApiHtmlParser">
     <property name="htmlCleaner" ref="htmlCleaner"/>
     <property name="contentApiLinkCreator" ref="contentApiLinkCreator"/>
   </bean>
