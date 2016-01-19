@@ -81,8 +81,7 @@ public class ContentRestApiRequestsIT extends AbstractContentRestApiIT {
 
         filter.doFilter(request, response, requestResponse.getFilterChain());
         assertEquals(SC_NOT_FOUND, response.getStatus());
-        System.out.println(response.getContentAsString());
-        assertTrue(response.getContentAsString().contains("does not belong to the content of '/api'"));
+        assertTrue(response.getContentAsString().contains("not found below scope '/api'"));
     }
 
 }
