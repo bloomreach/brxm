@@ -16,6 +16,7 @@
 
 package org.hippoecm.hst.contentrestapi.visitors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -26,12 +27,23 @@ import org.hippoecm.hst.contentrestapi.ResourceContext;
 
 public class DefaultVisitorFactory implements VisitorFactory {
 
+    private List<NodeVisitor> explicitNodeVisitors = new ArrayList<>();
     private List<NodeVisitor> fallbackNodeVisitors;
+
+    public DefaultVisitorFactory() {
+        // TODO replace by annotation scanning
+        final ResourceBundleVisitor resourceBundleVisitor = new ResourceBundleVisitor(this);
+        explicitNodeVisitors.add(resourceBundleVisitor);
+    }
 
     public NodeVisitor getVisitor(final ResourceContext context, final Node node) throws RepositoryException {
 
         final NodeType nodeType = node.getPrimaryNodeType();
-        // TODO iter through primary node type matching (via annotation scanning scanned beans)
+        for (NodeVisitor nodeVisitor : explicitNodeVisitors) {
+            if (node.getPrimaryNodeType().getName().equals(nodeVisitor.getNodeType())) {
+                return nodeVisitor;
+            }
+        }
 
         // if not explicit match, try a fallback match
         for (NodeVisitor nodeVisitor : fallbackNodeVisitors) {
