@@ -205,5 +205,14 @@
     </property>
   </bean>
 
+  <bean id="contentApiLinkCreator" class="org.hippoecm.hst.contentrestapi.linking.ContentApiLinkCreator"/>
+
+  <bean id="htmlCleaner" class="org.hippoecm.hst.contentrestapi.html.HtmlCleanerFactoryBean"/>
+
+  <bean id="contentRestApiHtmlRewriter" class="org.hippoecm.hst.contentrestapi.html.ContentRestApiHtmlRewriter">
+    <property name="htmlCleaner" ref="htmlCleaner"/>
+    <property name="contentApiLinkCreator" ref="contentApiLinkCreator"/>
+  </bean>
+
 </beans>
 

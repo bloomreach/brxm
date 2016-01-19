@@ -38,6 +38,7 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.contentrestapi.linking.Link;
 import org.hippoecm.hst.contentrestapi.visitors.NodeVisitor;
 import org.hippoecm.hst.contentrestapi.visitors.VisitorFactory;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -94,15 +95,6 @@ public class ContentRestApiResource {
     public ContentRestApiResource() {
     }
 
-    private static final class Link {
-        @JsonProperty("url")
-        public final String url;
-
-        public Link(final String url) {
-            this.url = url;
-        }
-    }
-
     private static final class SearchResultItem {
         @JsonProperty("name")
         public final String name;
@@ -155,7 +147,7 @@ public class ContentRestApiResource {
                 }
                 // TODO link rewriting - use generic HST methods to construct URL
                 final SearchResultItem item = new SearchResultItem(node.getName(), uuid,
-                        new Link[] { new Link("http://localhost:8080/site/api/documents/" + uuid) });
+                        new Link[] { new Link(uuid, "http://localhost:8080/site/api/documents/" + uuid) });
                 itemArrayList.add(item);
             }
 

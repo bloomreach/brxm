@@ -16,7 +16,6 @@
 
 package org.hippoecm.hst.contentrestapi.visitors;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -24,7 +23,9 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
-import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.hst.contentrestapi.html.ContentRestApiHtmlRewriter;
+import org.hippoecm.hst.contentrestapi.html.ParsedContent;
+import org.hippoecm.hst.contentrestapi.linking.Link;
 import org.onehippo.cms7.services.contenttype.ContentTypeChild;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 import org.slf4j.Logger;
@@ -39,8 +40,15 @@ class HtmlNodeVisitor extends DefaultNodeVisitor {
 
     private static final Logger log = LoggerFactory.getLogger(HtmlNodeVisitor.class);
 
+    private ContentRestApiHtmlRewriter contentRewriter;
+
     public HtmlNodeVisitor(VisitorFactory visitorFactory) {
         super(visitorFactory);
+    }
+
+
+    public void setContentRewriter(ContentRestApiHtmlRewriter contentRewriter) {
+        this.contentRewriter = contentRewriter;
     }
 
     @Override
@@ -52,19 +60,12 @@ class HtmlNodeVisitor extends DefaultNodeVisitor {
     protected void visitNode(final ResourceContext context, final Node node, final Map<String, Object> response) throws RepositoryException {
         super.visitNode(context, node, response);
 
-        Property content = node.getProperty(HIPPOSTD_CONTENT);
-        response.put("content", content.getString());
-        // TODO link rewriting - the href of the binary links needs to be altered
-
-        final Map<String, Object> links = new LinkedHashMap<>();
-
-        for (Node child : new NodeIterable(node.getNodes())) {
-            if (!(child.isNodeType(NT_MIRROR) || child.isNodeType(NT_FACETSELECT))) {
-                continue;
-            }
-            final NodeVisitor visitor = getVisitorFactory().getVisitor(context, child);
-            visitor.visit(context, child, links);
+        final ParsedContent parsedContent = contentRewriter.parseContent(context, node);
+        if (parsedContent == null) {
+            return;
         }
+        response.put("content", parsedContent.getRewrittenHtml());
+        final Map<String, Link> links = parsedContent.getLinks();
         if (!links.isEmpty()) {
             response.put("links", links);
         }
