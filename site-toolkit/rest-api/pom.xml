@@ -24,7 +24,7 @@
 
   <name>Hippo Site Toolkit REST Models</name>
   <description>Hippo Site Toolkit REST models</description>
-  <artifactId>hst-rest-api</artifactId>
+  <artifactId>hst-cms-restapi</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>

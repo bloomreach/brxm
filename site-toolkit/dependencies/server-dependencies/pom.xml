@@ -49,7 +49,7 @@
 
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-rest-api</artifactId>
+      <artifactId>hst-cms-restapi</artifactId>
       <version>${project.version}</version>
     </dependency>
 
