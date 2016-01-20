@@ -19,10 +19,8 @@ import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
-import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.contentrestapi.AbstractContentRestApiIT;
@@ -31,8 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -74,8 +70,8 @@ public class ContentRestApiRequestsIT extends AbstractContentRestApiIT {
         final MockHttpServletResponse response = requestResponse.getResponse();
 
         filter.doFilter(request, response, requestResponse.getFilterChain());
-        assertEquals(SC_BAD_REQUEST, response.getStatus());
-        assertTrue(response.getContentAsString().contains("should belong to a node of type"));
+        assertEquals(SC_NOT_FOUND, response.getStatus());
+        assertTrue(response.getContentAsString().contains("not found below scope '/api'"));
     }
 
     @Test

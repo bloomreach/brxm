@@ -277,9 +277,7 @@ public class ContentRestApiResource {
     @Path("/documents/{uuid}")
     public Response getDocumentsByUUID(@PathParam("uuid") final String uuidString) {
         try {
-            ResourceContext context = new ResourceContextImpl();
-
-
+            final ResourceContext context = new ResourceContextImpl();
             final Session session = context.getRequestContext().getSession();
 
             // throws an IllegalArgumentException in case the uuid is not correctly formed
@@ -291,18 +289,19 @@ public class ContentRestApiResource {
             if (!isNodePartOfApiContent(context, node)) {
                 // documents not within context of the mount content path "don't exist"
                 throw new ItemNotFoundException(String.format("Item '%s' not found below scope '%s'",  uuidString,
-                context.getRequestContext().getResolvedMount().getMount().getMountPath()));
+                        context.getRequestContext().getResolvedMount().getMount().getMountPath()));
             }
 
             if (!node.isNodeType(NT_HANDLE)) {
-                throw new IllegalArgumentException(String.format("Uuid '%s' should belong to a node of type '%s'.",
-                        uuidString, NT_HANDLE));
+                throw new ItemNotFoundException(String.format("Item '%s' not found below scope '%s'",  uuidString,
+                        context.getRequestContext().getResolvedMount().getMount().getMountPath()));
             }
+
             // throws a PathNotFoundException in case there is no live variant or it is not readable
             final Node doc = node.getNode(node.getName());
             if (!doc.isNodeType(NT_DOCUMENT)) {
-                throw new IllegalArgumentException(String.format("Document '%s' should be of type '%s'.",
-                        doc.getIdentifier(), NT_DOCUMENT));
+                throw new ItemNotFoundException(String.format("Item '%s' not found below scope '%s'",  uuidString,
+                        context.getRequestContext().getResolvedMount().getMount().getMountPath()));
             }
 
             final Map<String, Object> response = new LinkedHashMap<>();
@@ -310,6 +309,7 @@ public class ContentRestApiResource {
             visitor.visit(context, node, response);
 
             return Response.status(200).entity(response).build();
+
         } catch (IllegalArgumentException iae) {
             return buildErrorResponse(400, iae);
         } catch (ItemNotFoundException|PathNotFoundException nfe) {
@@ -340,5 +340,4 @@ public class ContentRestApiResource {
         searchService.setSession(context.getRequestContext().getSession());
         return searchService;
     }
-
 }
