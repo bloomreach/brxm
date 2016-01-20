@@ -68,7 +68,7 @@
             <sv:value>false</sv:value>
           </sv:property>
           <sv:property sv:name="hst:namedpipeline" sv:type="String">
-            <sv:value>ContentApiPipeline</sv:value>
+            <sv:value>RestApiPipeline</sv:value>
           </sv:property>
           <sv:property sv:name="hst:types" sv:type="String" sv:multiple="true">
             <sv:value>rest</sv:value>
