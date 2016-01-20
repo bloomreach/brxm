@@ -17,6 +17,8 @@ package org.hippoecm.hst.contentrestapi.requests;
 
 import java.util.Map;
 
+import javax.jcr.Node;
+import javax.jcr.Session;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +27,8 @@ import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.contentrestapi.AbstractContentRestApiIT;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -34,6 +38,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ContentRestApiRequestsIT extends AbstractContentRestApiIT {
+
+    private static final Logger log = LoggerFactory.getLogger(ContentRestApiRequestsIT.class);
 
     private static ObjectMapper mapper = new ObjectMapper();
 
@@ -84,4 +90,46 @@ public class ContentRestApiRequestsIT extends AbstractContentRestApiIT {
         assertTrue(response.getContentAsString().contains("not found below scope '/api'"));
     }
 
+    @Test
+    public void test_global_content_api() throws Exception {
+
+        final Session session = createSession("admin", "admin");
+        try {
+            final Node medusaNews = session.getNode("/unittestcontent/documents/myhippoproject/news/2015/12/the-medusa-news");
+
+            final RequestResponseMock requestResponse = mockGetRequestResponse(filter, "http", "onehippo.io", "/documents/" + medusaNews.getIdentifier(), null);
+            final MockHttpServletRequest request = requestResponse.getRequest();
+            final MockHttpServletResponse response = requestResponse.getResponse();
+
+            filter.doFilter(request, response, requestResponse.getFilterChain());
+            final String restResponse = response.getContentAsString();
+            System.out.println(restResponse);
+        } catch (Exception e) {
+            log.error("error : ",e);
+        } finally {
+            session.logout();
+        }
+    }
+
+
+    @Test
+    public void test_myhippoproject_content_api() throws Exception {
+        final Session session = createSession("admin", "admin");
+        try {
+            final Node medusaNews = session.getNode("/unittestcontent/documents/myhippoproject/news/2015/12/the-medusa-news");
+
+            final RequestResponseMock requestResponse = mockGetRequestResponse(filter, "http", "onehippo.io", "/myhippoproject/documents/" + medusaNews.getIdentifier(), null);
+            final MockHttpServletRequest request = requestResponse.getRequest();
+            final MockHttpServletResponse response = requestResponse.getResponse();
+
+            filter.doFilter(request, response, requestResponse.getFilterChain());
+            final String restResponse = response.getContentAsString();
+            System.out.println(restResponse);
+        } catch (Exception e) {
+            log.error("error : ",e);
+        } finally {
+            session.logout();
+        }
+
+    }
 }

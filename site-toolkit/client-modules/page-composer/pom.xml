@@ -142,6 +142,11 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-editor-repository</artifactId>
+   </dependency>
+
   </dependencies>
   
  <build>

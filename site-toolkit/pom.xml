@@ -82,6 +82,7 @@
 
     <hippo.commons.version>2.2.0-SNAPSHOT</hippo.commons.version>
     <hippo.repository.version>3.2.0-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>3.2.0-SNAPSHOT</hippo.cms.version>
     <hippo.utilities.version>2.2.0-SNAPSHOT</hippo.utilities.version>
     <hippo.services.version>2.2.0-SNAPSHOT</hippo.services.version>
     <hippo.services.eventbus.version>2.2.0-SNAPSHOT</hippo.services.eventbus.version>

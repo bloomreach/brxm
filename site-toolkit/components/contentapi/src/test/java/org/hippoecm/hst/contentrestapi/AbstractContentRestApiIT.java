@@ -18,6 +18,10 @@ package org.hippoecm.hst.contentrestapi;
 import java.io.IOException;
 import java.util.List;
 
+import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.servlet.Filter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -87,6 +91,12 @@ public class AbstractContentRestApiIT {
 
     protected ComponentManager getComponentManager() {
         return this.componentManager;
+    }
+
+
+    protected Session createSession(final String userName, final String password) throws RepositoryException {
+        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
+        return repository.login(new SimpleCredentials(userName, password.toCharArray()));
     }
 
     /**
