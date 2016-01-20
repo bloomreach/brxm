@@ -148,9 +148,13 @@
     <property name="fallbackNodeVisitors" ref="fallbackNodeVisitors"/>
   </bean>
 
-  <bean id="documentsResource" class="org.hippoecm.hst.restapi.content.DocumentsResource">
+
+  <bean id="abstractResource" class="org.hippoecm.hst.restapi.AbstractResource" abstract="true">
     <property name="resourceContextFactory" ref="resourceContextFactory"/>
   </bean>
+
+
+  <bean id="documentsResource" class="org.hippoecm.hst.restapi.content.DocumentsResource" parent="abstractResource"/>
 
   <bean id="defaultRestApiResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">

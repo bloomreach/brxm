@@ -16,9 +16,7 @@
 
 package org.hippoecm.hst.restapi.content;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -35,20 +33,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.restapi.content.linking.Link;
+import org.hippoecm.hst.restapi.AbstractResource;
+import org.hippoecm.hst.restapi.content.search.SearchResult;
 import org.hippoecm.hst.restapi.content.visitors.NodeVisitor;
-import org.hippoecm.hst.restapi.content.visitors.ResourceContextFactory;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.onehippo.cms7.services.search.jcr.service.HippoJcrSearchService;
 import org.onehippo.cms7.services.search.query.Query;
 import org.onehippo.cms7.services.search.query.QueryUtils;
-import org.onehippo.cms7.services.search.result.Hit;
-import org.onehippo.cms7.services.search.result.HitIterator;
 import org.onehippo.cms7.services.search.result.QueryResult;
 import org.onehippo.cms7.services.search.service.SearchService;
 import org.onehippo.cms7.services.search.service.SearchServiceException;
@@ -59,90 +52,13 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 @Produces("application/json")
-public class DocumentsResource {
+public class DocumentsResource extends AbstractResource {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentsResource.class);
 
-    private  ResourceContextFactory resourceContextFactory;
-
-    public void setResourceContextFactory(final ResourceContextFactory resourceContextFactory) {
-        this.resourceContextFactory = resourceContextFactory;
-    }
-
-
-    private static final class SearchResultItem {
-        @JsonProperty("name")
-        public final String name;
-
-        @JsonProperty("id")
-        public final String uuid;
-
-        @JsonProperty("links")
-        public final Link[] links;
-
-        public SearchResultItem(final String name, final String uuid, final Link[] links) {
-            this.name = name;
-            this.uuid = uuid;
-            this.links = links;
-        }
-    }
-
-    private static final class SearchResult {
-        @JsonProperty("offset")
-        public long offset;
-
-        @JsonProperty("max")
-        public long max;
-
-        @JsonProperty("count")
-        public long count;
-
-        @JsonProperty("total")
-        public long total;
-
-        @JsonProperty("more")
-        public boolean more;
-
-        @JsonProperty("items")
-        public SearchResultItem[] items;
-
-        void populate(final int offset, final int max,
-                      final QueryResult queryResult,
-                      final Session session,
-                      final String expectedNodeType) throws RepositoryException {
-            final List<SearchResultItem> itemArrayList = new ArrayList<>();
-            final HitIterator iterator = queryResult.getHits();
-            while (iterator.hasNext()) {
-                final Hit hit = iterator.nextHit();
-                final String uuid = hit.getSearchDocument().getContentId().toIdentifier();
-                final Node node = session.getNodeByIdentifier(uuid);
-                if (!node.isNodeType(expectedNodeType)) {
-                    throw new IllegalStateException(String.format("Expected node of type '%s' but was '%s'.",
-                            expectedNodeType, node.getPrimaryNodeType().getName()));
-                }
-                // TODO link rewriting - use generic HST methods to construct URL
-                final SearchResultItem item = new SearchResultItem(node.getName(), uuid,
-                        new Link[] { new Link(uuid, "http://localhost:8080/site/api/documents/" + uuid) });
-                itemArrayList.add(item);
-            }
-
-            this.offset = offset;
-            this.max = max;
-            count = itemArrayList.size();
-            total = queryResult.getTotalHitCount();
-            more = (offset + count) < total;
-            items = new SearchResultItem[(int)count];
-            itemArrayList.toArray(items);
-        }
-    }
-
-    private static final class Error {
-        public final int status;
-        public final String description;
-        Error(final int status, final String description) {
-            this.status = status;
-            this.description = description;
-        }
+    @Override
+    public Logger getLogger() {
+        return log;
     }
 
     private int parseMax(final String maxString) throws IllegalArgumentException {
@@ -189,7 +105,7 @@ public class DocumentsResource {
                                  @QueryParam("_max") final String maxString,
                                  @QueryParam("_query") final String queryString) {
         try {
-            ResourceContext context = resourceContextFactory.createResourceContext();
+            ResourceContext context = getResourceContextFactory().createResourceContext();
             final int offset = parseOffset(offsetString);
             final int max = parseMax(maxString);
             final String parsedQuery = parseQuery(queryString);
@@ -232,27 +148,11 @@ public class DocumentsResource {
         }
     }
 
-    private void logException(final String message, final Exception e) {
-        if (log.isDebugEnabled()) {
-            log.info(message, e);
-        } else {
-            log.info(message + ": '{}'", e.toString());
-        }
-    }
-
-    private UUID parseUUID(final String uuid) throws IllegalArgumentException {
-        try {
-            return UUID.fromString(uuid);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("The string '" + uuid + "' is not a valid UUID");
-        }
-    }
-
     @GET
     @Path("/documents/{uuid}")
     public Response getDocumentsByUUID(@PathParam("uuid") final String uuidString) {
         try {
-            final ResourceContext context = resourceContextFactory.createResourceContext();
+            final ResourceContext context = getResourceContextFactory().createResourceContext();
             final Session session = context.getRequestContext().getSession();
 
             // throws an IllegalArgumentException in case the uuid is not correctly formed
@@ -295,25 +195,4 @@ public class DocumentsResource {
         }
     }
 
-    private boolean isNodePartOfApiContent(final ResourceContext context, final Node node) throws RepositoryException {
-        // context.getRequestContext().getResolvedMount().getMount().getContentPath();
-        if (node.getPath().startsWith(context.getRequestContext().getResolvedMount().getMount().getContentPath() + "/")) {
-            return true;
-        }
-        return false;
-    }
-
-    private Response buildErrorResponse(final int status, final Exception exception) {
-        return buildErrorResponse(status, exception.toString());
-    }
-
-    private Response buildErrorResponse(final int status, final String description) {
-        return Response.status(status).entity(new Error(status, description)).build();
-    }
-
-    private SearchService getSearchService(final ResourceContext context) throws RepositoryException {
-        final HippoJcrSearchService searchService = new HippoJcrSearchService();
-        searchService.setSession(context.getRequestContext().getSession());
-        return searchService;
-    }
 }
