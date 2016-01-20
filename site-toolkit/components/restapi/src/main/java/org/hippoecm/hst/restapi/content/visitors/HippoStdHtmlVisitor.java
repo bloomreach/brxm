@@ -23,7 +23,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.restapi.content.ResourceContext;
-import org.hippoecm.hst.restapi.content.html.ContentRestApiHtmlParser;
+import org.hippoecm.hst.restapi.content.html.RestApiHtmlParser;
 import org.hippoecm.hst.restapi.content.html.ParsedContent;
 import org.hippoecm.hst.restapi.content.linking.Link;
 import org.onehippo.cms7.services.contenttype.ContentTypeChild;
@@ -40,10 +40,10 @@ public class HippoStdHtmlVisitor extends DefaultNodeVisitor {
 
     private static final Logger log = LoggerFactory.getLogger(HippoStdHtmlVisitor.class);
 
-    private ContentRestApiHtmlParser contentParser;
+    private RestApiHtmlParser restApiHtmlParser;
 
-    public void setContentParser(ContentRestApiHtmlParser contentParser) {
-        this.contentParser = contentParser;
+    public void setRestApiHtmlParser(RestApiHtmlParser restApiHtmlParser) {
+        this.restApiHtmlParser = restApiHtmlParser;
     }
 
     @Override
@@ -55,7 +55,7 @@ public class HippoStdHtmlVisitor extends DefaultNodeVisitor {
     protected void visitNode(final ResourceContext context, final Node node, final Map<String, Object> response) throws RepositoryException {
         super.visitNode(context, node, response);
 
-        final ParsedContent parsedContent = contentParser.parseContent(context, node);
+        final ParsedContent parsedContent = restApiHtmlParser.parseContent(context, node);
         if (parsedContent == null) {
             return;
         }

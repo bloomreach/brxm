@@ -28,7 +28,7 @@ import org.hippoecm.hst.util.HstRequestUtils;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
-public class ContentApiLinkCreator {
+public class RestApiLinkCreator {
 
     public Link create(final ResourceContext context, final String uuid) throws RepositoryException {
         final HstRequestContext requestContext = context.getRequestContext();

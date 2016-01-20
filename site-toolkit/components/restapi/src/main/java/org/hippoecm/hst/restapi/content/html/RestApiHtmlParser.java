@@ -26,7 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter;
 import org.hippoecm.hst.restapi.content.ResourceContext;
-import org.hippoecm.hst.restapi.content.linking.ContentApiLinkCreator;
+import org.hippoecm.hst.restapi.content.linking.RestApiLinkCreator;
 import org.hippoecm.hst.restapi.content.linking.Link;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -41,21 +41,21 @@ import static org.apache.commons.lang.StringUtils.substringAfter;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_CONTENT;
 import static org.hippoecm.repository.HippoStdNodeType.NT_HTML;
 
-public class ContentRestApiHtmlParser {
+public class RestApiHtmlParser {
 
     private final static Logger log =
             LoggerFactory.getLogger(SimpleContentRewriter.class);
     public static final String DATA_HIPPO_LINK_ATTR = "data-hippo-link";
 
     private HtmlCleaner htmlCleaner;
-    private ContentApiLinkCreator contentApiLinkCreator;
+    private RestApiLinkCreator restApiLinkCreator;
 
     public void setHtmlCleaner(final HtmlCleaner htmlCleaner) {
         this.htmlCleaner = htmlCleaner;
     }
 
-    public void setContentApiLinkCreator(final ContentApiLinkCreator contentApiLinkCreator) {
-        this.contentApiLinkCreator = contentApiLinkCreator;
+    public void setRestApiLinkCreator(final RestApiLinkCreator restApiLinkCreator) {
+        this.restApiLinkCreator = restApiLinkCreator;
     }
 
     /**
@@ -69,7 +69,7 @@ public class ContentRestApiHtmlParser {
                     "is '{}'.", NT_HTML, htmlNode.getPath(), htmlNode.getPrimaryNodeType().getName());
             throw new IllegalArgumentException(String.format("Only nodes of type '%s' can be parsed for their content", NT_HTML));
         }
-        final ContentParser parser = new ContentParser(context, htmlNode, htmlCleaner, contentApiLinkCreator);
+        final ContentParser parser = new ContentParser(context, htmlNode, htmlCleaner, restApiLinkCreator);
         return parser.parse();
     }
 
@@ -82,14 +82,14 @@ public class ContentRestApiHtmlParser {
         private final ResourceContext context;
         private final Node htmlNode;
         private final HtmlCleaner htmlCleaner;
-        private final ContentApiLinkCreator contentApiLinkCreator;
+        private final RestApiLinkCreator restApiLinkCreator;
         private Map<String, Link> linkMap = new LinkedHashMap<>();
 
-        public ContentParser(final ResourceContext context, final Node htmlNode, final HtmlCleaner htmlCleaner, final ContentApiLinkCreator contentApiLinkCreator) {
+        public ContentParser(final ResourceContext context, final Node htmlNode, final HtmlCleaner htmlCleaner, final RestApiLinkCreator restApiLinkCreator) {
             this.context = context;
             this.htmlNode = htmlNode;
             this.htmlCleaner = htmlCleaner;
-            this.contentApiLinkCreator = contentApiLinkCreator;
+            this.restApiLinkCreator = restApiLinkCreator;
         }
 
         public ParsedContent parse() throws RepositoryException {
@@ -131,11 +131,11 @@ public class ContentRestApiHtmlParser {
                                 linkMap.put(documentPath, new Link(hstLink.toUrlForm(requestContext, true)));
                             } else {
                                 // convert document HstLink to a content api link
-                                linkMap.put(documentPath, contentApiLinkCreator.convert(context, hstLink));
+                                linkMap.put(documentPath, restApiLinkCreator.convert(context, hstLink));
                             }
                             link.removeAttribute("href");
                             link.addAttribute(DATA_HIPPO_LINK_ATTR, documentPath);
-                        } catch (ContentApiLinkCreator.LinkConversionException e) {
+                        } catch (RestApiLinkCreator.LinkConversionException e) {
                             log.warn("Could not convert HstLink content api : {}", e.toString());
                             removeLinkElement(link, true);
                             continue;

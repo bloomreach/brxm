@@ -18,11 +18,11 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-  <bean id="contentApiJacksonObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
-    <property name="annotationIntrospector" ref="contentApiJacksonJaxbIntrospector"/>
+  <bean id="restApiJacksonObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
+    <property name="annotationIntrospector" ref="restApiJacksonJaxbIntrospector"/>
   </bean>
 
-  <bean id="contentApiJacksonJaxbIntrospector" class="com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair" factory-method="pair">
+  <bean id="restApiJacksonJaxbIntrospector" class="com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair" factory-method="pair">
     <constructor-arg>
       <bean class="com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector"/>
     </constructor-arg>
@@ -31,43 +31,43 @@
     </constructor-arg>
   </bean>
 
-  <bean id="contentApiJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
-    <property name="mapper" ref="contentApiJacksonObjectMapper" />
+  <bean id="restApiJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
+    <property name="mapper" ref="restApiJacksonObjectMapper" />
   </bean>
 
-  <bean id="contentApiCorsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter"/>
+  <bean id="restApiCorsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter"/>
 
   <!-- Built-in Entity Providers which are annotated with javax.ws.rs.ext.Provider. -->
-  <bean id="defaultContentApiEntityProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+  <bean id="defaultRestApiEntityProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
-        <ref bean="contentApiJsonProvider"/>
-        <ref bean="contentApiCorsFilter"/>
+        <ref bean="restApiJsonProvider"/>
+        <ref bean="restApiCorsFilter"/>
       </list>
     </property>
   </bean>
 
   <!-- Custom Entity Providers which are annotated with javax.ws.rs.ext.Provider. -->
-  <bean id="customContentApiEntityProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+  <bean id="customRestApiEntityProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
       </list>
     </property>
   </bean>
 
-  <bean id="contentApiAllEntityProviders" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="restApiAllEntityProviders" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
     <property name="targetMethod" value="union" />
     <property name="arguments">
       <list>
-        <ref bean="defaultContentApiEntityProviders" />
-        <ref bean="customContentApiEntityProviders" />
+        <ref bean="defaultRestApiEntityProviders" />
+        <ref bean="customRestApiEntityProviders" />
       </list>
     </property>
   </bean>
 
 
-  <bean id="contentApiServiceQueryStringReplacingInterceptor" class="org.hippoecm.hst.jaxrs.cxf.QueryStringReplacingInterceptor">
+  <bean id="restApiServiceQueryStringReplacingInterceptor" class="org.hippoecm.hst.jaxrs.cxf.QueryStringReplacingInterceptor">
     <property name="paramNameReplaces">
       <map>
         <!-- The following will replace '_format' parameter name with '_type' parameter name before JAX-RS processing.
@@ -83,7 +83,7 @@
     </property>
   </bean>
 
-  <bean id="contentApiServiceValve" class="org.hippoecm.hst.core.container.JaxrsRestServiceValve"
+  <bean id="restApiServiceValve" class="org.hippoecm.hst.core.container.JaxrsRestServiceValve"
         init-method="initialize" destroy-method="destroy">
     <constructor-arg>
       <bean class="org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService">
@@ -92,27 +92,27 @@
         <property name="jaxrsServerFactoryBean">
           <bean class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
             <property name="address" value="/" />
-            <property name="providers" ref="contentApiAllEntityProviders" />
-            <property name="resourceProviders" ref="contentApiResourceProviders" />
+            <property name="providers" ref="restApiAllEntityProviders" />
+            <property name="resourceProviders" ref="restApiResourceProviders" />
           </bean>
         </property>
         <property name="inInterceptors">
           <list>
-            <ref bean="contentApiServiceQueryStringReplacingInterceptor" />
+            <ref bean="restApiServiceQueryStringReplacingInterceptor" />
           </list>
         </property>
       </bean>
     </constructor-arg>
-    <property name="valveName" value="contentApiServiceValve" />
+    <property name="valveName" value="restApiServiceValve" />
   </bean>
 
-  <bean id="contentApiResourceProviders" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="restApiResourceProviders" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
     <property name="targetMethod" value="union" />
     <property name="arguments">
       <list>
-        <ref bean="customContentApiResourceProviders" />
-        <ref bean="defaultContentApiResourceProviders" />
+        <ref bean="customRestApiResourceProviders" />
+        <ref bean="defaultRestApiResourceProviders" />
       </list>
     </property>
   </bean>
@@ -127,7 +127,7 @@
         <bean id="hippoPublishableDocumentVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoPublishableDocumentNodeVisitor"/>
         <bean id="hippoDocumentVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoDocumentNodeVisitor"/>
         <bean id="hippoStdHtmlVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoStdHtmlVisitor">
-          <property name="contentParser" ref="contentRestApiHtmlParser"/>
+          <property name="restApiHtmlParser" ref="restApiHtmlParser"/>
         </bean>
         <bean id="hippoFacetSelectVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoFacetSelectVisitor"/>
         <bean id="hippoMirrorVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoMirrorVisitor"/>
@@ -148,16 +148,16 @@
     <property name="fallbackNodeVisitors" ref="fallbackNodeVisitors"/>
   </bean>
 
-  <bean id="contentRestApiResource" class="org.hippoecm.hst.restapi.content.DocumentsResource">
+  <bean id="documentsResource" class="org.hippoecm.hst.restapi.content.DocumentsResource">
     <property name="resourceContextFactory" ref="resourceContextFactory"/>
   </bean>
 
-  <bean id="defaultContentApiResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+  <bean id="defaultRestApiResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <ref bean="contentRestApiResource"/>
+            <ref bean="documentsResource"/>
           </constructor-arg>
         </bean>
       </list>
@@ -165,14 +165,14 @@
   </bean>
 
   <!-- Default empty list of custom plain resource providers to be overriden. -->
-  <bean id="customContentApiResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+  <bean id="customRestApiResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
       </list>
     </property>
   </bean>
 
-  <bean id="contentApiPipeline" class="org.hippoecm.hst.core.container.HstSitePipeline">
+  <bean id="restApiPipeline" class="org.hippoecm.hst.core.container.HstSitePipeline">
     <property name="initializationValves">
       <list>
         <ref bean="initializationValve" />
@@ -180,7 +180,7 @@
     </property>
     <property name="processingValves">
       <list>
-        <ref bean="contentApiServiceValve" />
+        <ref bean="restApiServiceValve" />
       </list>
     </property>
     <property name="cleanupValves">
@@ -201,19 +201,19 @@
     <property name="targetMethod" value="put" />
     <property name="arguments">
       <list>
-        <value>ContentApiPipeline</value>
-        <ref bean="contentApiPipeline"/>
+        <value>RestApiPipeline</value>
+        <ref bean="restApiPipeline"/>
       </list>
     </property>
   </bean>
 
-  <bean id="contentApiLinkCreator" class="org.hippoecm.hst.restapi.content.linking.ContentApiLinkCreator"/>
+  <bean id="restApiLinkCreator" class="org.hippoecm.hst.restapi.content.linking.RestApiLinkCreator"/>
 
   <bean id="htmlCleaner" class="org.hippoecm.hst.restapi.content.html.HtmlCleanerFactoryBean"/>
 
-  <bean id="contentRestApiHtmlParser" class="org.hippoecm.hst.restapi.content.html.ContentRestApiHtmlParser">
+  <bean id="restApiHtmlParser" class="org.hippoecm.hst.restapi.content.html.RestApiHtmlParser">
     <property name="htmlCleaner" ref="htmlCleaner"/>
-    <property name="contentApiLinkCreator" ref="contentApiLinkCreator"/>
+    <property name="restApiLinkCreator" ref="restApiLinkCreator"/>
   </bean>
 
 </beans>
