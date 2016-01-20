@@ -32,7 +32,7 @@ import org.hippoecm.hst.restapi.content.visitors.HippoPublicationWorkflowDocumen
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
-@VisitorNodeType(value = "resourcebundle:resourcebundle")
+@VisitorNodeType
 public class ResourceBundleVisitor extends HippoPublicationWorkflowDocumentVisitor {
 
     protected static final String NT_RESOURCEBUNDLE = "resourcebundle:resourcebundle";
@@ -57,6 +57,7 @@ public class ResourceBundleVisitor extends HippoPublicationWorkflowDocumentVisit
             valuesList.get(i).put(propertyName, values[i].getString());
         }
     }
+
     protected void visitNode(final ResourceContext context, final Node node, final Map<String, Object> response)
             throws RepositoryException {
         super.visitNode(context, node, response);
