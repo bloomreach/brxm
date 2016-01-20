@@ -30,20 +30,24 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 public class RestApiLinkCreator {
 
-    public Link create(final ResourceContext context, final String uuid) throws RepositoryException {
+    public Link create(final ResourceContext context, final String uuid) throws LinkConversionException {
         final HstRequestContext requestContext = context.getRequestContext();
         final Mount apiMount = requestContext.getResolvedMount().getMount();
-        final Node node = requestContext.getSession().getNodeByIdentifier(uuid);
-        // TODO make it pluggable that different types can use a different created link, for example /folders for folders instead of
-        // TODO /documents
-        if (!node.isNodeType(NT_HANDLE)) {
-            throw new IllegalArgumentException("Only links to documents are supported at this moment");
+        try {
+            final Node node = requestContext.getSession().getNodeByIdentifier(uuid);
+            // TODO make it pluggable that different types can use a different created link, for example /folders for folders instead of
+            // TODO /documents
+            if (!node.isNodeType(NT_HANDLE)) {
+                throw new LinkConversionException("Only links to documents are supported at this moment");
+            }
+            final String apiURL = getApiURL(requestContext, apiMount);
+            return new Link(node.getIdentifier(), apiURL + "/documents/" + node.getIdentifier());
+        } catch (RepositoryException e) {
+            throw new LinkConversionException("Exception while conversing to api link", e);
         }
-        final String apiURL = getApiURL(requestContext, apiMount);
-        return new Link(node.getIdentifier(), apiURL + "/documents/" + node.getIdentifier());
     }
 
-    public Link convert(final ResourceContext context, final HstLink hstLink) throws RepositoryException, LinkConversionException {
+    public Link convert(final ResourceContext context, final HstLink hstLink) throws LinkConversionException {
         final HstRequestContext requestContext = context.getRequestContext();
         final Mount apiMount = requestContext.getResolvedMount().getMount();
         if (hstLink.getMount() != apiMount) {
@@ -53,17 +57,18 @@ public class RestApiLinkCreator {
         final Node node;
         try {
             node  = requestContext.getSession().getNode(mountContentPath + "/" + hstLink.getPath());
-        } catch (PathNotFoundException e) {
-            throw new LinkConversionException(String.format("Cannot find node at '%s'", mountContentPath + "/" + hstLink.getPath()));
-        }
-        // TODO make it pluggable that different types can use a different created link, for example /folders for folders instead of
-        // TODO /documents
-        if (!node.isNodeType(NT_HANDLE)) {
-            throw new LinkConversionException("Only links to documents are supported at this moment");
+            // TODO make it pluggable that different types can use a different created link, for example /folders for folders instead of
+            // TODO /documents
+            if (!node.isNodeType(NT_HANDLE)) {
+                throw new LinkConversionException("Only links to documents are supported at this moment");
+            }
+
+            final String apiURL = getApiURL(requestContext, apiMount);
+            return new Link(node.getIdentifier(), apiURL + "/documents/" + node.getIdentifier());
+        } catch (RepositoryException e) {
+            throw new LinkConversionException("Exception while conversing to api link", e);
         }
 
-        final String apiURL = getApiURL(requestContext, apiMount);
-        return new Link(node.getIdentifier(), apiURL + "/documents/" + node.getIdentifier());
     }
 
     private String getApiURL(final HstRequestContext requestContext, final Mount apiMount) {
@@ -87,10 +92,4 @@ public class RestApiLinkCreator {
         return scheme + "://" + hostName + portNumberPath + contextPath + mountPath;
     }
 
-    public class LinkConversionException extends RuntimeException {
-
-        public LinkConversionException(final String msg) {
-            super(msg);
-        }
-    }
 }

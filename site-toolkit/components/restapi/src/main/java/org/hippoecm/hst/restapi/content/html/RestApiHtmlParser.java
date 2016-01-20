@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter;
 import org.hippoecm.hst.restapi.content.ResourceContext;
+import org.hippoecm.hst.restapi.content.linking.LinkConversionException;
 import org.hippoecm.hst.restapi.content.linking.RestApiLinkCreator;
 import org.hippoecm.hst.restapi.content.linking.Link;
 import org.hippoecm.hst.core.linking.HstLink;
@@ -98,10 +99,7 @@ public class RestApiHtmlParser {
             final Mount targetMount = context.getRequestContext().getResolvedMount().getMount();
 
             if (html == null) {
-                if (html == null || HTML_TAG_PATTERN.matcher(html).find() ||
-                        BODY_TAG_PATTERN.matcher(html).find()) {
-                    return null;
-                }
+                return null;
             }
 
             TagNode rootNode = htmlCleaner.clean(html);
@@ -135,7 +133,7 @@ public class RestApiHtmlParser {
                             }
                             link.removeAttribute("href");
                             link.addAttribute(DATA_HIPPO_LINK_ATTR, documentPath);
-                        } catch (RestApiLinkCreator.LinkConversionException e) {
+                        } catch (LinkConversionException e) {
                             log.warn("Could not convert HstLink content api : {}", e.toString());
                             removeLinkElement(link, true);
                             continue;
