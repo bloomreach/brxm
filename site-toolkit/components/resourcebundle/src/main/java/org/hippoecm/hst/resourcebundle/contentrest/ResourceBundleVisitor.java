@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.contentrestapi.annotated.visitors;
+package org.hippoecm.hst.resourcebundle.contentrest;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
