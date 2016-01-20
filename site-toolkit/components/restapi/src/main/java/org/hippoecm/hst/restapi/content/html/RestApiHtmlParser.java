@@ -25,12 +25,11 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter;
-import org.hippoecm.hst.restapi.content.ResourceContext;
-import org.hippoecm.hst.restapi.content.linking.LinkConversionException;
-import org.hippoecm.hst.restapi.content.linking.RestApiLinkCreator;
-import org.hippoecm.hst.restapi.content.linking.Link;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.restapi.content.ResourceContext;
+import org.hippoecm.hst.restapi.content.linking.Link;
+import org.hippoecm.hst.restapi.content.linking.LinkConversionException;
 import org.htmlcleaner.ContentNode;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
@@ -49,14 +48,9 @@ public class RestApiHtmlParser {
     public static final String DATA_HIPPO_LINK_ATTR = "data-hippo-link";
 
     private HtmlCleaner htmlCleaner;
-    private RestApiLinkCreator restApiLinkCreator;
 
     public void setHtmlCleaner(final HtmlCleaner htmlCleaner) {
         this.htmlCleaner = htmlCleaner;
-    }
-
-    public void setRestApiLinkCreator(final RestApiLinkCreator restApiLinkCreator) {
-        this.restApiLinkCreator = restApiLinkCreator;
     }
 
     /**
@@ -70,7 +64,7 @@ public class RestApiHtmlParser {
                     "is '{}'.", NT_HTML, htmlNode.getPath(), htmlNode.getPrimaryNodeType().getName());
             throw new IllegalArgumentException(String.format("Only nodes of type '%s' can be parsed for their content", NT_HTML));
         }
-        final ContentParser parser = new ContentParser(context, htmlNode, htmlCleaner, restApiLinkCreator);
+        final ContentParser parser = new ContentParser(context, htmlNode, htmlCleaner);
         return parser.parse();
     }
 
@@ -83,14 +77,12 @@ public class RestApiHtmlParser {
         private final ResourceContext context;
         private final Node htmlNode;
         private final HtmlCleaner htmlCleaner;
-        private final RestApiLinkCreator restApiLinkCreator;
         private Map<String, Link> linkMap = new LinkedHashMap<>();
 
-        public ContentParser(final ResourceContext context, final Node htmlNode, final HtmlCleaner htmlCleaner, final RestApiLinkCreator restApiLinkCreator) {
+        public ContentParser(final ResourceContext context, final Node htmlNode, final HtmlCleaner htmlCleaner) {
             this.context = context;
             this.htmlNode = htmlNode;
             this.htmlCleaner = htmlCleaner;
-            this.restApiLinkCreator = restApiLinkCreator;
         }
 
         public ParsedContent parse() throws RepositoryException {
@@ -129,7 +121,7 @@ public class RestApiHtmlParser {
                                 linkMap.put(documentPath, new Link(hstLink.toUrlForm(requestContext, true)));
                             } else {
                                 // convert document HstLink to a content api link
-                                linkMap.put(documentPath, restApiLinkCreator.convert(context, hstLink));
+                                linkMap.put(documentPath, context.getRestApiLinkCreator().convert(context, hstLink));
                             }
                             link.removeAttribute("href");
                             link.addAttribute(DATA_HIPPO_LINK_ATTR, documentPath);

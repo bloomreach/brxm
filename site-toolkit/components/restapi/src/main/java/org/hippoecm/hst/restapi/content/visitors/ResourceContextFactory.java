@@ -25,15 +25,21 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.restapi.content.ResourceContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.restapi.content.linking.RestApiLinkCreator;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
 
 public class ResourceContextFactory {
 
+    private RestApiLinkCreator restApiLinkCreator;
     private List<NodeVisitor> explicitNodeVisitors;
     private List<NodeVisitor> fallbackNodeVisitors = Collections.EMPTY_LIST;
 
+
+    public void setRestApiLinkCreator(final RestApiLinkCreator restApiLinkCreator) {
+        this.restApiLinkCreator = restApiLinkCreator;
+    }
 
     public void setFallbackNodeVisitors(final List<NodeVisitor> fallbackNodeVisitors) {
         this.fallbackNodeVisitors = fallbackNodeVisitors;
@@ -45,16 +51,20 @@ public class ResourceContextFactory {
 
 
     public ResourceContext createResourceContext()  throws RepositoryException {
-        return new ResourceContextImpl(explicitNodeVisitors, fallbackNodeVisitors);
+        return new ResourceContextImpl(restApiLinkCreator, explicitNodeVisitors, fallbackNodeVisitors);
     }
 
     private static class ResourceContextImpl implements ResourceContext {
 
         private final ContentTypes contentTypes;
+        private RestApiLinkCreator restApiLinkCreator;
         private final List<NodeVisitor> explicitNodeVisitors;
         private final List<NodeVisitor> fallbackNodeVisitors;
 
-        public ResourceContextImpl(final List<NodeVisitor> explicitNodeVisitors, final List<NodeVisitor> fallbackNodeVisitors) throws RepositoryException {
+        public ResourceContextImpl(final RestApiLinkCreator restApiLinkCreator,
+                                   final List<NodeVisitor> explicitNodeVisitors,
+                                   final List<NodeVisitor> fallbackNodeVisitors) throws RepositoryException {
+            this.restApiLinkCreator = restApiLinkCreator;
             this.explicitNodeVisitors = explicitNodeVisitors;
             this.fallbackNodeVisitors = fallbackNodeVisitors;
             contentTypes = HippoServiceRegistry.getService(ContentTypeService.class).getContentTypes();
@@ -69,6 +79,11 @@ public class ResourceContextFactory {
         @Override
         public ContentTypes getContentTypes() {
             return contentTypes;
+        }
+
+        @Override
+        public RestApiLinkCreator getRestApiLinkCreator() {
+            return restApiLinkCreator;
         }
 
         public NodeVisitor getVisitor(final Node node) throws RepositoryException {

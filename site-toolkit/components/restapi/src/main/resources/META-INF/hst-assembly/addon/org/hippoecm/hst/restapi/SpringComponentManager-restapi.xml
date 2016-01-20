@@ -142,8 +142,10 @@
     <property name="classpathResourceScanner" ref="org.hippoecm.hst.util.ClasspathResourceScanner" />
   </bean>
 
-  <bean id="resourceContextFactory"
-        class="org.hippoecm.hst.restapi.content.visitors.ResourceContextFactory">
+  <bean id="restApiLinkCreator" class="org.hippoecm.hst.restapi.content.linking.RestApiLinkCreator"/>
+
+  <bean id="resourceContextFactory" class="org.hippoecm.hst.restapi.content.visitors.ResourceContextFactory">
+    <property name="restApiLinkCreator" ref="restApiLinkCreator"/>
     <property name="annotationBasedNodeVisitors" ref="annotationBasedNodeVisitors"/>
     <property name="fallbackNodeVisitors" ref="fallbackNodeVisitors"/>
   </bean>
@@ -211,13 +213,10 @@
     </property>
   </bean>
 
-  <bean id="restApiLinkCreator" class="org.hippoecm.hst.restapi.content.linking.RestApiLinkCreator"/>
-
   <bean id="htmlCleaner" class="org.hippoecm.hst.restapi.content.html.HtmlCleanerFactoryBean"/>
 
   <bean id="restApiHtmlParser" class="org.hippoecm.hst.restapi.content.html.RestApiHtmlParser">
     <property name="htmlCleaner" ref="htmlCleaner"/>
-    <property name="restApiLinkCreator" ref="restApiLinkCreator"/>
   </bean>
 
 </beans>

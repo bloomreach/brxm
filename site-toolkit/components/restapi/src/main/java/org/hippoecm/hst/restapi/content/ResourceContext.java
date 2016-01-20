@@ -18,6 +18,7 @@ package org.hippoecm.hst.restapi.content;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.restapi.content.linking.RestApiLinkCreator;
 import org.hippoecm.hst.restapi.content.visitors.NodeVisitor;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
@@ -26,4 +27,5 @@ public interface ResourceContext {
     HstRequestContext getRequestContext();
     ContentTypes getContentTypes();
     NodeVisitor getVisitor(Node node) throws RepositoryException;
+    RestApiLinkCreator getRestApiLinkCreator();
 }
