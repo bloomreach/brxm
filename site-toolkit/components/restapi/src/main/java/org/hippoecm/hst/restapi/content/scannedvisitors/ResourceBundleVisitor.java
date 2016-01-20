@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.resourcebundle.restapi.content;
+package org.hippoecm.hst.restapi.content.scannedvisitors;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

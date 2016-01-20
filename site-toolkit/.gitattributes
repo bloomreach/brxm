@@ -1010,7 +1010,6 @@ components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/DefaultMutableResourceBundleRegistry.java -text
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/HippoRepositoryResourceBundleEventListener.java -text
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/HippoRepositoryResourceBundleFamilyFactory.java -text
-components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/restapi/content/ResourceBundleVisitor.java -text
 components/resourcebundle/src/site/site.xml -text
 components/resourcebundle/src/test/java/org/hippoecm/hst/resourcebundle/TestDefaultResourceBundleRegistry.java -text
 components/resourcebundle/src/test/java/org/hippoecm/hst/resourcebundle/internal/TestHippoRepositoryResourceBundleFamilyFactory.java -text
@@ -1028,6 +1027,7 @@ components/restapi/src/main/java/org/hippoecm/hst/restapi/content/html/ParsedCon
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/html/RestApiHtmlParser.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/linking/Link.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/linking/RestApiLinkCreator.java -text
+components/restapi/src/main/java/org/hippoecm/hst/restapi/content/scannedvisitors/ResourceBundleVisitor.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/scanning/AnnotationBasedNodeVisitorsFactoryBean.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/scanning/VisitorNodeType.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/AbstractFolderNodeVisitor.java -text
