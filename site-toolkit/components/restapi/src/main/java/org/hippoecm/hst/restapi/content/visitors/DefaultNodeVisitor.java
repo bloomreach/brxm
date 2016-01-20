@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.hst.restapi.content.ResourceContext;
+import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
@@ -45,9 +46,15 @@ public class DefaultNodeVisitor extends AbstractNodeVisitor {
         if (mixinTypes.length > 0) {
             ArrayList<String> mixins = new ArrayList<>();
             for (NodeType mixin : mixinTypes) {
-                mixins.add(mixin.getName());
+                ContentType mixinType = context.getContentTypes().getType(mixin.getName());
+                // only output mixin names which are explicitly defined in the hippo namespaces configuration
+                if (mixinType != null && !mixinType.isDerivedType()) {
+                    mixins.add(mixin.getName());
+                }
             }
-            response.put("mixins", mixins);
+            if (!mixins.isEmpty()) {
+                response.put("mixins", mixins);
+            }
         }
     }
 
