@@ -16,57 +16,68 @@
 
 package org.hippoecm.hst.restapi.content.linking;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.restapi.content.ResourceContext;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.restapi.content.ResourceContext;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 public class RestApiLinkCreator {
 
-    public Link create(final ResourceContext context, final String uuid) throws LinkConversionException {
-        final HstRequestContext requestContext = context.getRequestContext();
-        final Mount apiMount = requestContext.getResolvedMount().getMount();
-        try {
-            final Node node = requestContext.getSession().getNodeByIdentifier(uuid);
-            // TODO make it pluggable that different types can use a different created link, for example /folders for folders instead of
-            // TODO /documents
-            if (!node.isNodeType(NT_HANDLE)) {
-                throw new LinkConversionException("Only links to documents are supported at this moment");
-            }
-            final String apiURL = getApiURL(requestContext, apiMount);
-            return new Link(node.getIdentifier(), apiURL + "/documents/" + node.getIdentifier());
-        } catch (RepositoryException e) {
-            throw new LinkConversionException("Exception while conversing to api link", e);
-        }
-    }
+    private static final Logger log = LoggerFactory.getLogger(RestApiLinkCreator.class);
 
-    public Link convert(final ResourceContext context, final HstLink hstLink) throws LinkConversionException {
+    /**
+     *
+     * @param context the ResourceContext
+     * @param uuid the UUID of the node for which the {@code hstLink} was created. When the {@code hstLink} is a
+     *             container resource ({@link org.hippoecm.hst.core.linking.HstLink#isContainerResource()}, the {@code uuid}
+     *             is allowed to be {@code null}
+     * @param hstLink the <code>hstLink</code> for {@code uuid}. If {@code null}, a {@link  Link#invalid} is returned
+     * @return
+     */
+    public Link convert(final ResourceContext context, final String uuid, final HstLink hstLink)  {
         final HstRequestContext requestContext = context.getRequestContext();
         final Mount apiMount = requestContext.getResolvedMount().getMount();
-        if (hstLink.getMount() != apiMount) {
-            throw new IllegalArgumentException("Can only convert an HstLink to a content api Link if it belongs to the api mount");
+
+        if (hstLink == null || hstLink.isNotFound() || hstLink.getPath() == null) {
+            return Link.invalid;
         }
-        final String mountContentPath = hstLink.getMount().getContentPath();
+
+        if (hstLink.isContainerResource()) {
+            return Link.binary(hstLink.toUrlForm(requestContext, true));
+        }
+
         final Node node;
         try {
-            node  = requestContext.getSession().getNode(mountContentPath + "/" + hstLink.getPath());
+
+            node  = requestContext.getSession().getNodeByIdentifier(uuid);
+            if (hstLink.getMount() != apiMount) {
+                log.info("Link is to another mount. Return external link without URL, just the identifier");
+                return Link.external(node.getIdentifier());
+            }
             // TODO make it pluggable that different types can use a different created link, for example /folders for folders instead of
             // TODO /documents
             if (!node.isNodeType(NT_HANDLE)) {
-                throw new LinkConversionException("Only links to documents are supported at this moment");
+                log.info("Invalid nodetype '{}' for an api link.", node.getPrimaryNodeType().getName());
+                return Link.invalid;
             }
 
             final String apiURL = getApiURL(requestContext, apiMount);
-            return new Link(node.getIdentifier(), apiURL + "/documents/" + node.getIdentifier());
+            return Link.local(node.getIdentifier(), apiURL + "/documents/" + node.getIdentifier());
+        } catch (ItemNotFoundException e) {
+            log.info("Cannot find node for id '{}'", uuid);
+            return Link.invalid;
         } catch (RepositoryException e) {
-            throw new LinkConversionException("Exception while conversing to api link", e);
+            log.warn("Repository exception during link creation. Return link of type invaled : {}", e.toString());
+            return Link.invalid;
         }
 
     }

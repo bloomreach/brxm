@@ -129,7 +129,7 @@ public class DocumentsResource extends AbstractResource {
                     .limitTo(max);
             final QueryResult queryResult = searchService.search(query);
             final SearchResult result = new SearchResult();
-            result.populate(offset, max, queryResult, context.getRequestContext().getSession(), NT_HANDLE);
+            result.populate(offset, max, queryResult, context, NT_HANDLE);
 
             return Response.status(200).entity(result).build();
 

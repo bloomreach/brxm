@@ -26,12 +26,12 @@ public class SearchResultItem {
         @JsonProperty("id")
         public final String uuid;
 
-        @JsonProperty("links")
-        public final Link[] links;
+        @JsonProperty("link")
+        public final Link link;
 
-        public SearchResultItem(final String name, final String uuid, final Link[] links) {
+        public SearchResultItem(final String name, final String uuid, final Link link) {
             this.name = name;
             this.uuid = uuid;
-            this.links = links;
+            this.link = link;
         }
     }

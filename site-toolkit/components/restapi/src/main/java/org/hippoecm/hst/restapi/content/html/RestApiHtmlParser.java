@@ -29,8 +29,7 @@ import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.restapi.content.ResourceContext;
 import org.hippoecm.hst.restapi.content.linking.Link;
-import org.hippoecm.hst.restapi.content.linking.LinkConversionException;
-import org.htmlcleaner.ContentNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 import org.slf4j.Logger;
@@ -88,7 +87,6 @@ public class RestApiHtmlParser {
         public ParsedContent parse() throws RepositoryException {
             final String html = htmlNode.getProperty(HIPPOSTD_CONTENT).getString();
             final HstRequestContext requestContext = context.getRequestContext();
-            final Mount targetMount = context.getRequestContext().getResolvedMount().getMount();
 
             if (html == null) {
                 return null;
@@ -107,30 +105,23 @@ public class RestApiHtmlParser {
                         log.debug("Remove query string '{}' for '{}' for content node '{}'", queryString, documentPath, htmlNode.getPrimaryItem());
                         documentPath = StringUtils.substringBefore(documentPath, "?");
                     }
-                    HstLink hstLink = getDocumentLink(documentPath, htmlNode, requestContext, targetMount);
-                    if (hstLink == null || hstLink.isNotFound() || hstLink.getPath() == null) {
-                        // remove the <a> element and just keep the text
-                        log.info("non existing link for '{}' in content '{}', either due to removed document or not allowed to read document. " +
-                                " only insert the text, and remove the link", documentPath, htmlNode.getPath());
-                        removeLinkElement(link, true);
-                        continue;
+                    // NOTE do not include the current Mount as target mount since then cross mount hst links won't be resolved
+                    final HstLink hstLink = getDocumentLink(documentPath, htmlNode, requestContext, null);
+                    final Link apiLink;
+                    if (hstLink == null) {
+                        apiLink = Link.invalid;
                     } else {
-                        try {
-                            if (hstLink.isContainerResource()) {
-                                // documentPath is link to a binary
-                                linkMap.put(documentPath, new Link(hstLink.toUrlForm(requestContext, true)));
-                            } else {
-                                // convert document HstLink to a content api link
-                                linkMap.put(documentPath, context.getRestApiLinkCreator().convert(context, hstLink));
-                            }
-                            link.removeAttribute("href");
-                            link.addAttribute(DATA_HIPPO_LINK_ATTR, documentPath);
-                        } catch (LinkConversionException e) {
-                            log.warn("Could not convert HstLink content api : {}", e.toString());
-                            removeLinkElement(link, true);
-                            continue;
+                        final String uuid = getHandleUuidForLink(documentPath, htmlNode);
+                        if (uuid == null) {
+                            apiLink = Link.invalid;
+                        } else {
+                            apiLink = context.getRestApiLinkCreator().convert(context, uuid, hstLink);
                         }
                     }
+
+                    linkMap.put(documentPath, apiLink);
+                    link.removeAttribute("href");
+                    link.addAttribute(DATA_HIPPO_LINK_ATTR, documentPath);
                 }
             }
 
@@ -141,21 +132,12 @@ public class RestApiHtmlParser {
                 if (isEmpty(srcPath) || isExternal(srcPath)) {
                     continue;
                 } else {
-                    HstLink binaryLink = getBinaryLink(srcPath, htmlNode, requestContext, targetMount);
-                    if (binaryLink != null) {
-                        if (binaryLink.isNotFound() || binaryLink.getPath() == null) {
-                            removeImageElement(image);
-                        } else {
-                            image.removeAttribute("src");
-
-                            final String shortPath = shortenPath(srcPath, shortPathToSrcPathMap);
-
-                            image.addAttribute(DATA_HIPPO_LINK_ATTR, shortPath);
-                            linkMap.put(shortPath, new Link(binaryLink.toUrlForm(requestContext, true)));
-                        }
-                    } else {
-                        removeImageElement(image);
-                    }
+                    // NOTE do not include the current Mount as target mount since then cross mount hst links won't be resolved
+                    HstLink binaryLink = getBinaryLink(srcPath, htmlNode, requestContext, null);
+                    image.removeAttribute("src");
+                    final String shortPath = shortenPath(srcPath, shortPathToSrcPathMap);
+                    image.addAttribute(DATA_HIPPO_LINK_ATTR, shortPath);
+                    linkMap.put(shortPath, context.getRestApiLinkCreator().convert(context, null, binaryLink));
                 }
             }
 
@@ -169,17 +151,26 @@ public class RestApiHtmlParser {
             }
         }
 
-
-        private void removeLinkElement(final TagNode link, final boolean keepText) {
-            if (keepText) {
-                final ContentNode contentNode = new ContentNode(link.getText().toString());
-                link.getParent().insertChildBefore(link, contentNode);
+        // TODO would be better if we can get this from SimpleContentRewriter instead of reproducing same logic!!
+        private String getHandleUuidForLink(final String path, final Node htmlNode) {
+            final String linkPath = decodePath(path);
+            if (linkPath.startsWith("/")) {
+                // was absolute path
+                return null;
             }
-            link.getParent().removeChild(link);
-        }
-
-        private void removeImageElement(final TagNode image) {
-            image.getParent().removeChild(image);
+            final String mirrorRelPath = StringUtils.substringBefore(linkPath, "/");
+            try {
+                final Node mirrorNode = htmlNode.getNode(mirrorRelPath);
+                if (!mirrorNode.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
+                    return null;
+                }
+                final String uuid = mirrorNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                Node referencedNode = mirrorNode.getSession().getNodeByIdentifier(uuid);
+                return referencedNode.getIdentifier();
+            } catch (RepositoryException e) {
+                log.info("Could not find handle id for path '{}' : {}", e.toString(), linkPath);
+                return null;
+            }
         }
 
         /**

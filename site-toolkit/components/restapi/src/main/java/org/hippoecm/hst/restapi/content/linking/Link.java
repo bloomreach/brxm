@@ -19,17 +19,56 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Link {
 
+    private static enum Type {
+
+        LOCAL("local"),
+        EXTERNAL("external"),
+        BINARY("binary"),
+        INVALID("invalid");
+
+        private String value;
+
+        private Type(final String value) {
+            this.value = value;
+        }
+
+        /**
+         * @return string representation for json serialization
+         */
+        private String getString() {
+            return value;
+        }
+    }
+
+    @JsonProperty("type")
+    public final String type;
+
     @JsonProperty("id")
     public final String id;
     @JsonProperty("url")
     public final String url;
 
 
-    public Link(final String url) {
-        this(null, url);
+    public static final Link invalid = new Link(null, null, Type.INVALID);
+
+    public static final Link external(final String id) {
+        return new Link(id, null, Type.EXTERNAL);
     }
 
-    public Link(final String id, final String url) {
+    public static final Link local(final String id, final String url) {
+        return new Link(id, url, Type.LOCAL);
+    }
+
+    public static final Link binary(final String url) {
+        return new Link(url, Type.BINARY);
+    }
+
+    private Link(final String url, final Type type) {
+        this(null, url, type);
+    }
+
+    private Link(final String id, final String url, final Type type) {
+        this.type = type.getString();
         this.id = id;
         this.url = url;
     }

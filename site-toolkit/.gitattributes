@@ -1041,7 +1041,6 @@ components/restapi/src/main/java/org/hippoecm/hst/restapi/content/html/HtmlClean
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/html/ParsedContent.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/html/RestApiHtmlParser.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/linking/Link.java -text
-components/restapi/src/main/java/org/hippoecm/hst/restapi/content/linking/LinkConversionException.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/linking/RestApiLinkCreator.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/scannedvisitors/ResourceBundleVisitor.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/scanning/AnnotationBasedNodeVisitorsFactoryBean.java -text

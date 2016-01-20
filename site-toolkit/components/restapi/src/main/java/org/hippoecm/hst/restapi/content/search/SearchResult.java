@@ -24,12 +24,15 @@ import javax.jcr.Session;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.hippoecm.hst.restapi.content.linking.Link;
+import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.restapi.content.ResourceContext;
+import org.hippoecm.hst.restapi.content.linking.RestApiLinkCreator;
 import org.onehippo.cms7.services.search.result.Hit;
 import org.onehippo.cms7.services.search.result.HitIterator;
 import org.onehippo.cms7.services.search.result.QueryResult;
 
 public class SearchResult {
+
     @JsonProperty("offset")
     public long offset;
 
@@ -49,11 +52,13 @@ public class SearchResult {
     public SearchResultItem[] items;
 
     public void populate(final int offset, final int max,
-                  final QueryResult queryResult,
-                  final Session session,
-                  final String expectedNodeType) throws RepositoryException {
+                         final QueryResult queryResult,
+                         final ResourceContext context,
+                         final String expectedNodeType) throws RepositoryException {
         final List<SearchResultItem> itemArrayList = new ArrayList<>();
         final HitIterator iterator = queryResult.getHits();
+        final Session session = context.getRequestContext().getSession();
+        final RestApiLinkCreator restApiLinkCreator = context.getRestApiLinkCreator();
         while (iterator.hasNext()) {
             final Hit hit = iterator.nextHit();
             final String uuid = hit.getSearchDocument().getContentId().toIdentifier();
@@ -62,19 +67,18 @@ public class SearchResult {
                 throw new IllegalStateException(String.format("Expected node of type '%s' but was '%s'.",
                         expectedNodeType, node.getPrimaryNodeType().getName()));
             }
-            // TODO link rewriting - use generic HST methods to construct URL
 
-            final SearchResultItem item = new SearchResultItem(node.getName(), uuid,
-                    new Link[] { new Link(uuid, "http://localhost:8080/site/api/documents/" + uuid) });
+            final HstLink hstLink = context.getRequestContext().getHstLinkCreator().create(node, context.getRequestContext());
+            final SearchResultItem item = new SearchResultItem(node.getName(), uuid, restApiLinkCreator.convert(context, node.getIdentifier(), hstLink));
             itemArrayList.add(item);
-        }
 
-        this.offset = offset;
-        this.max = max;
-        count = itemArrayList.size();
-        total = queryResult.getTotalHitCount();
-        more = (offset + count) < total;
-        items = new SearchResultItem[(int)count];
-        itemArrayList.toArray(items);
+            this.offset = offset;
+            this.max = max;
+            count = itemArrayList.size();
+            total = queryResult.getTotalHitCount();
+            more = (offset + count) < total;
+            items = new SearchResultItem[(int)count];
+            itemArrayList.toArray(items);
+        }
     }
 }

@@ -26,8 +26,13 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.restapi.content.ResourceContext;
+import org.hippoecm.hst.restapi.content.linking.Link;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_DOCBASE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_FACETS;
@@ -35,6 +40,8 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MODES;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VALUES;
 
 abstract class AbstractLinkVisitor extends DefaultNodeVisitor {
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractLinkVisitor.class);
 
     private static final List<String> skipProperties = new ArrayList<>(Arrays.asList(
             HIPPO_DOCBASE,
@@ -46,18 +53,16 @@ abstract class AbstractLinkVisitor extends DefaultNodeVisitor {
     @Override
     protected void visitNode(final ResourceContext context, final Node node, final Map<String, Object> response) throws RepositoryException {
         super.visitNode(context, node, response);
-        try {
-            final String docbase = node.getProperty(HIPPO_DOCBASE).getString();
-            if (StringUtils.isBlank(docbase) || docbase.equals("cafebabe-cafe-babe-cafe-babecafebabe")) {
-                // noop
-            }
-            else {
-                response.put("id",docbase);
-                // TODO link rewriting - use generic HST methods to construct URL
-                response.put("url","http://localhost:8080/site/api/documents/" + docbase);
-            }
-        } catch (RepositoryException e) {
-            // log warning
+        final String docbase = node.getProperty(HIPPO_DOCBASE).getString();
+        if (StringUtils.isBlank(docbase) || docbase.equals("cafebabe-cafe-babe-cafe-babecafebabe")) {
+            response.put("link", Link.invalid);
+            return;
+        }
+        else {
+            final HstRequestContext requestContext = context.getRequestContext();
+            final HstLink hstLink = requestContext.getHstLinkCreator().create(docbase, requestContext.getSession(), requestContext);
+            final Link link = context.getRestApiLinkCreator().convert(context, docbase, hstLink);
+            response.put("link", link);
         }
     }
 

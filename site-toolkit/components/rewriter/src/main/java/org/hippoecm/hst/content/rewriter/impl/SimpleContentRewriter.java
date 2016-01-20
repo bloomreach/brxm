@@ -318,14 +318,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
     
     protected HstLink getLink(final String path, final Node hippoHtmlNode, final HstRequestContext requestContext,
                               final Mount targetMount) {
-        String linkPath;
-        try {
-            linkPath = URLDecoder.decode(path, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            log.warn("UnsupportedEncodingException for documentPath");
-            linkPath = path;
-        }
-
+        final String linkPath = decodePath(path);
         // translate the documentPath to a URL in combination with the Node and the mapping object
         if (linkPath.startsWith("/")) {
             // this is an absolute path, which is not an internal content link. We just try to create a link for it directly
@@ -419,6 +412,15 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
             }
         }
         return null;
+    }
+
+    protected String decodePath(final String path) {
+        try {
+            return URLDecoder.decode(path, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            log.warn("UnsupportedEncodingException for documentPath");
+            return path;
+        }
     }
 
     /**
