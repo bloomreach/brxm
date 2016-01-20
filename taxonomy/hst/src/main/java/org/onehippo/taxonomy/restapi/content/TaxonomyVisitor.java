@@ -13,18 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.taxonomy.contentrestapi;
+package org.onehippo.taxonomy.restapi.content;
 
-import org.hippoecm.hst.contentrestapi.visitors.HippoPublicationWorkflowDocumentNodeVisitor;
-import org.hippoecm.hst.contentrestapi.visitors.VisitorFactory;
+import org.hippoecm.hst.restapi.content.visitors.HippoPublicationWorkflowDocumentVisitor;
 
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TAXONOMY;
 
-public class TaxonomyVisitor extends HippoPublicationWorkflowDocumentNodeVisitor {
-
-    public TaxonomyVisitor(final VisitorFactory visitorFactory) {
-        super(visitorFactory);
-    }
+public class TaxonomyVisitor extends HippoPublicationWorkflowDocumentVisitor {
 
     @Override
     public String getNodeType() {
