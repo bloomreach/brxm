@@ -20,10 +20,6 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_FACETSELECT;
 
 public class HippoFacetSelectVisitor extends AbstractLinkVisitor {
 
-    public HippoFacetSelectVisitor(VisitorFactory factory) {
-        super(factory);
-    }
-
     @Override
     public String getNodeType() {
         return NT_FACETSELECT;

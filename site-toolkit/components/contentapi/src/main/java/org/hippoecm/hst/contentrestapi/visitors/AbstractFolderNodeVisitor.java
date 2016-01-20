@@ -24,10 +24,6 @@ import org.hippoecm.hst.contentrestapi.ResourceContext;
 
 public abstract class AbstractFolderNodeVisitor extends AbstractNodeVisitor {
 
-    protected AbstractFolderNodeVisitor(final VisitorFactory visitorFactory) {
-        super(visitorFactory);
-    }
-
     @Override
     protected void visitChildren(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
         // do not traverse folders otherwise you might end up traversing almost the entire repository

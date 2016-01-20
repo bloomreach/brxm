@@ -43,10 +43,6 @@ abstract class AbstractLinkVisitor extends DefaultNodeVisitor {
             HIPPO_VALUES
     ));
 
-    public AbstractLinkVisitor(VisitorFactory factory) {
-        super(factory);
-    }
-
     @Override
     protected void visitNode(final ResourceContext context, final Node node, final Map<String, Object> response) throws RepositoryException {
         super.visitNode(context, node, response);

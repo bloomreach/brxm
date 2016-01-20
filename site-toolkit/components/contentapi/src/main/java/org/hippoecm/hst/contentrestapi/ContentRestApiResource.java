@@ -40,14 +40,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.contentrestapi.linking.Link;
 import org.hippoecm.hst.contentrestapi.visitors.NodeVisitor;
-import org.hippoecm.hst.contentrestapi.visitors.VisitorFactory;
-import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.contentrestapi.visitors.ResourceContextFactory;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.contenttype.ContentTypeService;
-import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.onehippo.cms7.services.search.jcr.service.HippoJcrSearchService;
 import org.onehippo.cms7.services.search.query.Query;
 import org.onehippo.cms7.services.search.query.QueryUtils;
@@ -67,33 +63,12 @@ public class ContentRestApiResource {
 
     private static final Logger log = LoggerFactory.getLogger(ContentRestApiResource.class);
 
-    private VisitorFactory visitorFactory;
+    private  ResourceContextFactory resourceContextFactory;
 
-    public void setVisitorFactory(final VisitorFactory visitorFactory) {
-        this.visitorFactory = visitorFactory;
+    public void setResourceContextFactory(final ResourceContextFactory resourceContextFactory) {
+        this.resourceContextFactory = resourceContextFactory;
     }
 
-    private static class ResourceContextImpl implements ResourceContext {
-
-        private final ContentTypes contentTypes;
-
-        private ResourceContextImpl() throws RepositoryException {
-            contentTypes = HippoServiceRegistry.getService(ContentTypeService.class).getContentTypes();
-        }
-
-        @Override
-        public HstRequestContext getRequestContext() {
-            return RequestContextProvider.get();
-        }
-
-        @Override
-        public ContentTypes getContentTypes() {
-            return contentTypes;
-        }
-    }
-
-    public ContentRestApiResource() {
-    }
 
     private static final class SearchResultItem {
         @JsonProperty("name")
@@ -214,7 +189,7 @@ public class ContentRestApiResource {
                                  @QueryParam("_max") final String maxString,
                                  @QueryParam("_query") final String queryString) {
         try {
-            ResourceContext context = new ResourceContextImpl();
+            ResourceContext context = resourceContextFactory.createResourceContext();
             final int offset = parseOffset(offsetString);
             final int max = parseMax(maxString);
             final String parsedQuery = parseQuery(queryString);
@@ -277,7 +252,7 @@ public class ContentRestApiResource {
     @Path("/documents/{uuid}")
     public Response getDocumentsByUUID(@PathParam("uuid") final String uuidString) {
         try {
-            final ResourceContext context = new ResourceContextImpl();
+            final ResourceContext context = resourceContextFactory.createResourceContext();
             final Session session = context.getRequestContext().getSession();
 
             // throws an IllegalArgumentException in case the uuid is not correctly formed
@@ -305,7 +280,8 @@ public class ContentRestApiResource {
             }
 
             final Map<String, Object> response = new LinkedHashMap<>();
-            final NodeVisitor visitor = visitorFactory.getVisitor(context, node);
+
+            final NodeVisitor visitor = context.getVisitor(node);
             visitor.visit(context, node, response);
 
             return Response.status(200).entity(response).build();

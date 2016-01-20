@@ -117,38 +117,39 @@
     </property>
   </bean>
 
-
-  <bean id="abstractNodeVisitor" abstract="true">
-    <constructor-arg ref="org.hippoecm.hst.contentrestapi.visitors.VisitorFactory"/>
-  </bean>
-
   <bean id="fallbackNodeVisitors" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
-        <bean id="handleVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HandleNodeVisitor" parent="abstractNodeVisitor"/>
-        <bean id="hippoFolderVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoFolderNodeVisitor" parent="abstractNodeVisitor"/>
-        <bean id="hippoDirectoryVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoDirectoryNodeVisitor" parent="abstractNodeVisitor"/>
-        <bean id="hippoPublicationWorkflowDocumentVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoPublicationWorkflowDocumentNodeVisitor" parent="abstractNodeVisitor"/>
-        <bean id="hippoPublishableDocumentVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoPublishableDocumentNodeVisitor" parent="abstractNodeVisitor"/>
-        <bean id="hippoDocumentVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoDocumentNodeVisitor" parent="abstractNodeVisitor"/>
-        <bean id="hippoStdHtmlVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoStdHtmlVisitor" parent="abstractNodeVisitor">
+        <bean id="handleVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HandleNodeVisitor"/>
+        <bean id="hippoFolderVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoFolderNodeVisitor"/>
+        <bean id="hippoDirectoryVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoDirectoryNodeVisitor"/>
+        <bean id="hippoPublicationWorkflowDocumentVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoPublicationWorkflowDocumentNodeVisitor"/>
+        <bean id="hippoPublishableDocumentVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoPublishableDocumentNodeVisitor"/>
+        <bean id="hippoDocumentVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoDocumentNodeVisitor"/>
+        <bean id="hippoStdHtmlVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoStdHtmlVisitor">
           <property name="contentParser" ref="contentRestApiHtmlParser"/>
         </bean>
-        <bean id="hippoFacetSelectVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoFacetSelectVisitor" parent="abstractNodeVisitor"/>
-        <bean id="hippoMirrorVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoMirrorVisitor" parent="abstractNodeVisitor"/>
-        <bean id="hippoGalleryImageVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoGalleryImageVisitor" parent="abstractNodeVisitor"/>
-        <bean id="hippoResourceVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoResourceVisitor" parent="abstractNodeVisitor"/>
-        <bean id="defaultNodeVisitor" class="org.hippoecm.hst.contentrestapi.visitors.DefaultNodeVisitor" parent="abstractNodeVisitor"/>
+        <bean id="hippoFacetSelectVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoFacetSelectVisitor"/>
+        <bean id="hippoMirrorVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoMirrorVisitor"/>
+        <bean id="hippoGalleryImageVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoGalleryImageVisitor"/>
+        <bean id="hippoResourceVisitor" class="org.hippoecm.hst.contentrestapi.visitors.HippoResourceVisitor"/>
+        <bean id="defaultNodeVisitor" class="org.hippoecm.hst.contentrestapi.visitors.DefaultNodeVisitor"/>
       </list>
     </property>
   </bean>
 
-  <bean id="org.hippoecm.hst.contentrestapi.visitors.VisitorFactory" class="org.hippoecm.hst.contentrestapi.visitors.DefaultVisitorFactory">
+  <bean id="annotationBasedNodeVisitors" class="org.hippoecm.hst.contentrestapi.scanning.AnnotationBasedNodeVisitorsFactoryBean">
+    <property name="classpathResourceScanner" ref="org.hippoecm.hst.util.ClasspathResourceScanner" />
+  </bean>
+
+  <bean id="resourceContextFactory"
+        class="org.hippoecm.hst.contentrestapi.visitors.ResourceContextFactory">
+    <property name="annotationBasedNodeVisitors" ref="annotationBasedNodeVisitors"/>
     <property name="fallbackNodeVisitors" ref="fallbackNodeVisitors"/>
   </bean>
 
   <bean id="contentRestApiResource" class="org.hippoecm.hst.contentrestapi.ContentRestApiResource">
-    <property name="visitorFactory" ref="org.hippoecm.hst.contentrestapi.visitors.VisitorFactory"/>
+    <property name="resourceContextFactory" ref="resourceContextFactory"/>
   </bean>
 
   <bean id="defaultContentApiResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">

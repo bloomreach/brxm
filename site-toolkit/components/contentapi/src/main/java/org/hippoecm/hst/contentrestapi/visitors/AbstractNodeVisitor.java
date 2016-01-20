@@ -41,17 +41,6 @@ import static javax.jcr.PropertyType.LONG;
 
 public abstract class AbstractNodeVisitor implements NodeVisitor {
 
-    private final VisitorFactory visitorFactory;
-
-    protected AbstractNodeVisitor(final VisitorFactory visitorFactory) {
-        this.visitorFactory = visitorFactory;
-    }
-
-    @Override
-    public VisitorFactory getVisitorFactory() {
-        return visitorFactory;
-    }
-
     @Override
     public void visit(final ResourceContext context, final Node node, final Map<String, Object> response) throws RepositoryException {
         final ContentType parentContentType = context.getContentTypes().getContentTypeForNode(node.getParent());
@@ -167,7 +156,7 @@ public abstract class AbstractNodeVisitor implements NodeVisitor {
                     && !childType.isDerivedItem()            // defined in a (inherited) document type
                     && !skipChild(context, childType, child) // not marked to be skipped
             ) {
-                NodeVisitor childVisitor = getVisitorFactory().getVisitor(context, child);
+                NodeVisitor childVisitor = context.getVisitor(child);
                 childVisitor.visit(context, child, response);
             }
         }

@@ -19,10 +19,6 @@ import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
 
 public class HippoFolderNodeVisitor extends AbstractFolderNodeVisitor {
 
-    public HippoFolderNodeVisitor(final VisitorFactory visitorFactory) {
-        super(visitorFactory);
-    }
-
     @Override
     public String getNodeType() {
         return NT_FOLDER;

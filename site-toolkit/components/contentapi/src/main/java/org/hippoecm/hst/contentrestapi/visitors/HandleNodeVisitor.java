@@ -28,10 +28,6 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 public class HandleNodeVisitor extends AbstractNodeVisitor {
 
-    public HandleNodeVisitor(VisitorFactory factory) {
-        super(factory);
-    }
-
     @Override
     public String getNodeType() {
         return NT_HANDLE;
@@ -48,7 +44,7 @@ public class HandleNodeVisitor extends AbstractNodeVisitor {
         }
 
         final Node variant = node.getNode(nodeName);
-        NodeVisitor variantVisitor = getVisitorFactory().getVisitor(context, variant);
+        NodeVisitor variantVisitor = context.getVisitor(variant);
         variantVisitor.visit(context, variant, response);
     }
 }

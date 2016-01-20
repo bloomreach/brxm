@@ -24,7 +24,6 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.contentrestapi.ResourceContext;
 
 public interface NodeVisitor {
-    VisitorFactory getVisitorFactory();
     String getNodeType();
     void visit(ResourceContext context, Node node, final Map<String, Object> response) throws RepositoryException;
 }

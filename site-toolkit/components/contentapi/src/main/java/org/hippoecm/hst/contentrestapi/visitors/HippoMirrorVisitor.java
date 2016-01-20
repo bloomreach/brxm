@@ -20,10 +20,6 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_MIRROR;
 
 public class HippoMirrorVisitor extends AbstractLinkVisitor {
 
-    public HippoMirrorVisitor(VisitorFactory factory) {
-        super(factory);
-    }
-
     @Override
     public String getNodeType() {
         return NT_MIRROR;

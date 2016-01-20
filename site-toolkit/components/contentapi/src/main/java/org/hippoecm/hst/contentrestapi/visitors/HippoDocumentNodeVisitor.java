@@ -30,10 +30,6 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 
 public class HippoDocumentNodeVisitor extends DefaultNodeVisitor {
 
-    public HippoDocumentNodeVisitor(final VisitorFactory visitorFactory) {
-        super(visitorFactory);
-    }
-
     @Override
     public String getNodeType() {
         return NT_DOCUMENT;

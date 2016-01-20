@@ -42,11 +42,6 @@ public class HippoStdHtmlVisitor extends DefaultNodeVisitor {
 
     private ContentRestApiHtmlParser contentParser;
 
-    public HippoStdHtmlVisitor(VisitorFactory visitorFactory) {
-        super(visitorFactory);
-    }
-
-
     public void setContentParser(ContentRestApiHtmlParser contentParser) {
         this.contentParser = contentParser;
     }

@@ -27,8 +27,8 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.contentrestapi.ResourceContext;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
-import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_HOLDER;
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.NT_PUBLISHABLE;
 
 public class HippoPublishableDocumentNodeVisitor extends HippoDocumentNodeVisitor {
@@ -37,10 +37,6 @@ public class HippoPublishableDocumentNodeVisitor extends HippoDocumentNodeVisito
             HIPPOSTD_STATE,
             HIPPOSTD_HOLDER
     ));
-
-    public HippoPublishableDocumentNodeVisitor(final VisitorFactory visitorFactory) {
-        super(visitorFactory);
-    }
 
     @Override
     public String getNodeType() {

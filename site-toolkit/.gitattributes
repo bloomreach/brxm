@@ -574,11 +574,14 @@ commons/src/test/resources/TestResourceBundleUtils.properties -text
 commons/src/test/resources/TestResourceBundleUtils_fr.properties -text
 commons/src/test/resources/TestResourceBundleUtils_fr_FR.properties -text
 components/contentapi/pom.xml -text
+components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/annotated/visitors/ResourceBundleVisitor.java -text
 components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/html/ContentRestApiHtmlParser.java -text
 components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/html/HtmlCleanerFactoryBean.java -text
 components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/html/ParsedContent.java -text
 components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/linking/ContentApiLinkCreator.java -text
 components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/linking/Link.java -text
+components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/scanning/AnnotationBasedNodeVisitorsFactoryBean.java -text
+components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/scanning/VisitorNodeType.java -text
 components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/visitors/AbstractFolderNodeVisitor.java -text
 components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/visitors/AbstractLinkVisitor.java -text
 components/contentapi/src/main/java/org/hippoecm/hst/contentrestapi/visitors/HippoDirectoryNodeVisitor.java -text

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.contentrestapi.visitors;
+package org.hippoecm.hst.contentrestapi.annotated.visitors;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -27,9 +27,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.hippoecm.hst.contentrestapi.ResourceContext;
+import org.hippoecm.hst.contentrestapi.scanning.VisitorNodeType;
+import org.hippoecm.hst.contentrestapi.visitors.HippoPublicationWorkflowDocumentNodeVisitor;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
+@VisitorNodeType(value = "resourcebundle:resourcebundle")
 public class ResourceBundleVisitor extends HippoPublicationWorkflowDocumentNodeVisitor {
 
     protected static final String NT_RESOURCEBUNDLE = "resourcebundle:resourcebundle";
@@ -37,10 +40,6 @@ public class ResourceBundleVisitor extends HippoPublicationWorkflowDocumentNodeV
     protected static final String KEYS = "resourcebundle:keys";
     protected static final String DESCRIPTIONS = "resourcebundle:descriptions";
     protected static final String MESSAGES = "resourcebundle:messages";
-
-    public ResourceBundleVisitor(final VisitorFactory visitorFactory) {
-        super(visitorFactory);
-    }
 
     @Override
     public String getNodeType() {

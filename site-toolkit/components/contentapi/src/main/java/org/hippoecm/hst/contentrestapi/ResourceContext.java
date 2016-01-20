@@ -15,10 +15,15 @@
  */
 package org.hippoecm.hst.contentrestapi;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.hippoecm.hst.contentrestapi.visitors.NodeVisitor;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
 
 public interface ResourceContext {
     HstRequestContext getRequestContext();
     ContentTypes getContentTypes();
+    NodeVisitor getVisitor(Node node) throws RepositoryException;
 }

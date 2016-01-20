@@ -27,11 +27,11 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.contentrestapi.ResourceContext;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
-import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT;
-import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY;
-import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
 
 public class HippoPublicationWorkflowDocumentNodeVisitor extends HippoPublishableDocumentNodeVisitor {
@@ -43,10 +43,6 @@ public class HippoPublicationWorkflowDocumentNodeVisitor extends HippoPublishabl
             HIPPOSTDPUBWF_LAST_MODIFIED_BY,
             HIPPOSTDPUBWF_PUBLICATION_DATE
     ));
-
-    public HippoPublicationWorkflowDocumentNodeVisitor(final VisitorFactory visitorFactory) {
-        super(visitorFactory);
-    }
 
     @Override
     public String getNodeType() {

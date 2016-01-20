@@ -28,13 +28,13 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.contentrestapi.ResourceContext;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
-import static org.onehippo.repository.util.JcrConstants.JCR_ENCODING;
-import static org.onehippo.repository.util.JcrConstants.JCR_DATA;
-import static org.onehippo.repository.util.JcrConstants.JCR_MIME_TYPE;
-import static org.onehippo.repository.util.JcrConstants.JCR_LAST_MODIFIED;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_TEXT;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_FILENAME;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_TEXT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_RESOURCE;
+import static org.onehippo.repository.util.JcrConstants.JCR_DATA;
+import static org.onehippo.repository.util.JcrConstants.JCR_ENCODING;
+import static org.onehippo.repository.util.JcrConstants.JCR_LAST_MODIFIED;
+import static org.onehippo.repository.util.JcrConstants.JCR_MIME_TYPE;
 
 public class HippoResourceVisitor extends DefaultNodeVisitor {
 
@@ -51,10 +51,6 @@ public class HippoResourceVisitor extends DefaultNodeVisitor {
      * If a resource contains MIME type application/vnd.hippo.blank it is marked as blank and contains no usable data.
      */
     protected static final String MIME_TYPE_HIPPO_BLANK = "application/vnd.hippo.blank";
-
-    public HippoResourceVisitor(final VisitorFactory visitorFactory) {
-        super(visitorFactory);
-    }
 
     @Override
     public String getNodeType() {

@@ -39,10 +39,6 @@ public class HippoGalleryImageVisitor extends HippoResourceVisitor {
             IMAGE_HEIGHT
     ));
 
-    public HippoGalleryImageVisitor(final VisitorFactory visitorFactory) {
-        super(visitorFactory);
-    }
-
     @Override
     public String getNodeType() {
         return NT_IMAGE;

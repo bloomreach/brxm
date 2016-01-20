@@ -27,14 +27,10 @@ import javax.jcr.nodetype.NodeType;
 import org.hippoecm.hst.contentrestapi.ResourceContext;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
-import static org.onehippo.repository.util.JcrConstants.NT_BASE;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
+import static org.onehippo.repository.util.JcrConstants.NT_BASE;
 
 public class DefaultNodeVisitor extends AbstractNodeVisitor {
-
-    public DefaultNodeVisitor(VisitorFactory visitorFactory) {
-        super(visitorFactory);
-    }
 
     @Override
     public String getNodeType() {
