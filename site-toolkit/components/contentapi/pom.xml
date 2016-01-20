@@ -25,7 +25,7 @@
   <name>Hippo Site Toolkit Content Api</name>
   <description>Hippo Site Toolkit Content Api</description>
   <groupId>org.onehippo.cms7.hst.components</groupId>
-  <artifactId>hst-contentapi</artifactId>
+  <artifactId>hst-restapi</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
