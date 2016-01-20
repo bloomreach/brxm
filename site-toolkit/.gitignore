@@ -60,6 +60,7 @@ components/.project
 components/.settings
 components/components.iml
 components/contentapi/hst-contentapi.iml
+components/contentapi/log4j.log
 components/core/.classpath
 components/core/.lock
 components/core/.project
