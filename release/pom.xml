@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@
     <hippo.cms.version>3.2.0-SNAPSHOT</hippo.cms.version>
     <hippo.frontend.plugins.version>2.2.0-SNAPSHOT</hippo.frontend.plugins.version>
     <hippo.frontend.theme.version>2.2.0-SNAPSHOT</hippo.frontend.theme.version>
-    <hippo.hst.version>3.2.0-SNAPSHOT</hippo.hst.version>
+    <hippo.hst.version>3.2.0-rest-api-SNAPSHOT</hippo.hst.version>
     <hippo.packages.version>3.2.0-SNAPSHOT</hippo.packages.version>
     <hippo.repository.version>3.2.0-SNAPSHOT</hippo.repository.version>
     <hippo.services.version>2.2.0-SNAPSHOT</hippo.services.version>
@@ -70,7 +70,7 @@
     <hippo.plugin.selections.version>3.2.0-SNAPSHOT</hippo.plugin.selections.version>
     <hippo.plugin.seo-support.version>2.2.0-SNAPSHOT</hippo.plugin.seo-support.version>
     <hippo.plugin.sitemap.version>2.2.0-SNAPSHOT</hippo.plugin.sitemap.version>
-    <hippo.plugin.taxonomy.version>2.2.0-SNAPSHOT</hippo.plugin.taxonomy.version>
+    <hippo.plugin.taxonomy.version>2.2.0-rest-api-SNAPSHOT</hippo.plugin.taxonomy.version>
 
   </properties>
 
