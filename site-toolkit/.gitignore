@@ -89,6 +89,7 @@ components/resourcebundle/.project
 components/resourcebundle/.settings
 components/resourcebundle/target
 components/restapi/hst-contentapi.iml
+components/restapi/hst-restapi.iml
 components/restapi/log4j.log
 components/rewriter/.classpath
 components/rewriter/.project
