@@ -97,7 +97,8 @@ public class ContentRestApiRequestsIT extends AbstractContentRestApiIT {
         try {
             final Node medusaNews = session.getNode("/unittestcontent/documents/myhippoproject/news/2015/12/the-medusa-news");
 
-            final RequestResponseMock requestResponse = mockGetRequestResponse(filter, "http", "onehippo.io", "/documents/" + medusaNews.getIdentifier(), null);
+            final RequestResponseMock requestResponse = mockGetRequestResponse(filter,
+                    "http", "onehippo.io", "/documents/" + medusaNews.getIdentifier(), null);
             final MockHttpServletRequest request = requestResponse.getRequest();
             final MockHttpServletResponse response = requestResponse.getResponse();
 
@@ -118,7 +119,8 @@ public class ContentRestApiRequestsIT extends AbstractContentRestApiIT {
         try {
             final Node medusaNews = session.getNode("/unittestcontent/documents/myhippoproject/news/2015/12/the-medusa-news");
 
-            final RequestResponseMock requestResponse = mockGetRequestResponse(filter, "http", "onehippo.io", "/myhippoproject/documents/" + medusaNews.getIdentifier(), null);
+            final RequestResponseMock requestResponse = mockGetRequestResponse(filter,
+                    "http", "onehippo.io", "/myhippoproject/documents/" + medusaNews.getIdentifier(), null);
             final MockHttpServletRequest request = requestResponse.getRequest();
             final MockHttpServletResponse response = requestResponse.getResponse();
 
