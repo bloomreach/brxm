@@ -104,6 +104,10 @@ public class ContentRestApiRequestsIT extends AbstractContentRestApiIT {
 
             filter.doFilter(request, response, requestResponse.getFilterChain());
             final String restResponse = response.getContentAsString();
+
+            final Map<String, Object> deserializedAboutUs = mapper.reader(Map.class).readValue(restResponse);
+            assertTrue(deserializedAboutUs.get("name").equals("the-medusa-news"));
+
             System.out.println(restResponse);
         } catch (Exception e) {
             log.error("error : ",e);
