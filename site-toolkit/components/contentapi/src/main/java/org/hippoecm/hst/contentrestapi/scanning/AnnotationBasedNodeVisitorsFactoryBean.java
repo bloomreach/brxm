@@ -98,7 +98,7 @@ public class AnnotationBasedNodeVisitorsFactoryBean extends AbstractFactoryBean<
             try {
 
                 // add our annotated visitors package as well to the annotatedClassesResourcePath: org.hippoecm.hst.contentrestapi.annotated.visitors
-                annotatedClassesResourcePath = annotatedClassesResourcePath + ",classpath*:org.hippoecm.hst.contentrestapi.annotated.visitors/**/*.class";
+                annotatedClassesResourcePath = annotatedClassesResourcePath + ",classpath*:org/hippoecm/hst/**/*.class";
                 final String[] annotatedClassesResourcePaths = StringUtils.split(annotatedClassesResourcePath, ", \t\r\n");
 
                 annotatedClasses = getAnnotatedClasses(classpathResourceScanner, annotatedClassesResourcePaths);
