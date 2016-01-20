@@ -187,6 +187,12 @@
   <bean id="webFileValve" parent="abstractValve" class="org.hippoecm.hst.core.container.WebFileValve">
     <property name="valveName" value="webFileValve" />
     <property name="webFileCache" ref="webFileCache"/>
+    <property name="negativeWebFileCacheBuilder">
+      <bean class="com.google.common.cache.CacheBuilder"
+            factory-method="from">
+        <constructor-arg value="${negativeWebFileCacheBuilder.from}" />
+      </bean>
+    </property>
   </bean>
 
   <!-- Pipelines -->

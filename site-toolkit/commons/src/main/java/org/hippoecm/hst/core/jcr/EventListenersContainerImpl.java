@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -170,6 +170,11 @@ public class EventListenersContainerImpl implements EventListenersContainer {
             for (EventListenerItem item : getEventListenerItems()) {
 
                 EventListener eventListener = item.getEventListener();
+                if (!item.isEnabled()) {
+                    log.info("Skipping eventListener for '{}' because not enabled.", item.toString());
+                    continue;
+                }
+
                 int eventTypes = item.getEventTypes();
                 String absolutePath = item.getAbsolutePath();
                 boolean isDeep = item.isDeep();
@@ -239,6 +244,9 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                 firstInitializationDone = true;
                 
                 for (EventListenerItem item : getEventListenerItems()) {
+                    if (!item.isEnabled()) {
+                        continue;
+                    }
                     EventListener eventListener = item.getEventListener();
                     
                     if (eventListener instanceof EventListenersContainerListener) {
@@ -257,6 +265,9 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                 log.info("EventListenersContainer's initialization done.");
             } else {
                 for (EventListenerItem item : getEventListenerItems()) {
+                    if (!item.isEnabled()) {
+                        continue;
+                    }
                     EventListener eventListener = item.getEventListener();
                     
                     if (eventListener instanceof EventListenersContainerListener) {
@@ -322,6 +333,9 @@ public class EventListenersContainerImpl implements EventListenersContainer {
         }
         
         for (EventListenerItem item : getEventListenerItems()) {
+            if (!item.isEnabled()) {
+                continue;
+            }
             EventListener eventListener = item.getEventListener();
             
             if (eventListener instanceof EventListenersContainerListener) {
@@ -341,6 +355,9 @@ public class EventListenersContainerImpl implements EventListenersContainer {
     protected void doDeinit() {
         if (this.observationManager != null) {
             for (EventListenerItem item : getEventListenerItems()) {
+                if (!item.isEnabled()) {
+                    continue;
+                }
                 try {
                     EventListener eventListener = item.getEventListener();
                     if (eventListener == null) {

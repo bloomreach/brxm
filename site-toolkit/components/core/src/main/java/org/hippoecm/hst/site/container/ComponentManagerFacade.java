@@ -43,10 +43,20 @@ public class ComponentManagerFacade implements ComponentManagerAware, ComponentM
         return this.componentManager;
     }
 
+    /**
+     * @deprecated deprecated since since 3.2.0
+     * @see ComponentManager#setServletConfig(javax.servlet.ServletConfig)
+     */
+    @Deprecated
     public void setServletConfig(ServletConfig servletConfig) {
         this.componentManager.setServletConfig(servletConfig);
     }
 
+    /**
+     * @deprecated deprecated since since 3.2.0
+     * @see ComponentManager#getServletConfig()
+     */
+    @Deprecated
     public ServletConfig getServletConfig() {
         return this.componentManager.getServletConfig();
     }

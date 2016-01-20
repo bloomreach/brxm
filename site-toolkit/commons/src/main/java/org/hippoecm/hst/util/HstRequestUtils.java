@@ -624,13 +624,16 @@ public class HstRequestUtils {
         final HstRequestContext context = getHstRequestContext(request);
         if (context == null) {
             // no context (e.g. in unit tests), simply return the request URL
-            return request.getRequestURL().toString();
+            if (includeQueryString) {
+                return request.getRequestURL().toString() + "?" + request.getQueryString();
+            } else {
+                return request.getRequestURL().toString();
+            }
         }
 
         final VirtualHost virtualHost = context.getVirtualHost();
-        final StringBuilder url = new StringBuilder();
+        final StringBuilder url = new StringBuilder(virtualHost.getBaseURL(request));
 
-        url.append(virtualHost.getBaseURL(request));
         if (virtualHost.isContextPathInUrl()) {
             url.append(request.getContextPath());
         }

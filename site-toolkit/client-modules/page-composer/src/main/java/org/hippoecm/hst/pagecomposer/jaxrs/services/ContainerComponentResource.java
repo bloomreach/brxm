@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,6 +46,8 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
+
 @Path("/hst:containercomponent/")
 public class ContainerComponentResource extends AbstractConfigResource {
     private static Logger log = LoggerFactory.getLogger(ContainerComponentResource.class);
@@ -82,7 +84,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
                 log.warn("ItemNotFoundException: unknown uuid '{}'. Cannot create item", itemUUID);
                 return error("ItemNotFoundException: unknown uuid '"+itemUUID+"'. Cannot create item");
             }
-            if (!containerItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+            if (!containerItem.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
                 log.warn("The container component where the item should be created in is not of the correct type. Cannot create item '{}'", itemUUID);
                 return error("The container component where the item should be created in is not of the correct type. Cannot create item '"+itemUUID+"'");
             }
@@ -177,7 +179,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
             log.info("Item order for container[{}] has been updated.", container.getId());
             return ok("Item order for container[" + container.getId() + "] has been updated.", container);
 
-        } catch (RepositoryException e) {
+        } catch (RepositoryException | IllegalArgumentException e) {
             log.warn("Exception during updating container item: {}", e);
             return error("Exception during updating container item: " + e.getMessage(), container);
         }
@@ -198,7 +200,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
                 log.warn("ItemNotFoundException: unknown uuid '{}'. Cannot delete item", itemUUID);
                 return error("ItemNotFoundException: unknown uuid '"+itemUUID+"'. Cannot delete item");
             }
-            if (!containerItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+            if (!containerItem.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
                 log.warn("The item to be deleted is not of the correct type. Cannot delete item '{}'", itemUUID);
                 return error("The item to be deleted is not of the correct type. Cannot delete item '"+itemUUID+"'");
             }
@@ -244,9 +246,20 @@ public class ContainerComponentResource extends AbstractConfigResource {
                               final Session session) throws RepositoryException, NotFoundException {
         String parentPath = parent.getPath();
         Node childNode = session.getNodeByIdentifier(childId);
+        if (!childNode.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+            final String msg = String.format("Expected a move of a node of type '{}' but was '{}'.", NODETYPE_HST_CONTAINERITEMCOMPONENT,
+                    childNode.getPrimaryNodeType().getName());
+            throw new IllegalArgumentException(msg);
+        }
         String childPath = childNode.getPath();
         String childParentPath = childPath.substring(0, childPath.lastIndexOf('/'));
         if (!parentPath.equals(childParentPath)) {
+            // lock the container from which the node gets removed
+            // note that the 'timestamp' check must not be the timestamp of the 'target' container
+            // since this one can be different. We do not need a 'source' timestamp check, since, if the source
+            // has changed it is either locked, or if the child item does not exist any more on the server, another
+            // error occurs already
+            containerHelper.acquireLock(childNode.getParent(), 0);
             String name = childPath.substring(childPath.lastIndexOf('/') + 1);
             name = findNewName(name, parent);
             String newChildPath = parentPath + "/" + name;

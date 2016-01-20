@@ -194,8 +194,8 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
 
         long start = System.currentTimeMillis();
         while (hstManager.getMarkStaleCounter() == 0) {
-            if ((System.currentTimeMillis() - start) > 1000) {
-                fail("There should had arrived a jcr event within 1 sec marking the HstManager to be stale and triggering a " +
+            if ((System.currentTimeMillis() - start) > 10000) {
+                fail("There should had arrived a jcr event within 10 sec marking the HstManager to be stale and triggering a " +
                         "model reload");
             }
             Thread.sleep(10);
@@ -258,8 +258,8 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
     private void tryUntilModelReloaded(final VirtualHosts prevModel) throws ContainerException, InterruptedException {
         long start = System.currentTimeMillis();
         while (prevModel == hstManager.getVirtualHosts()) {
-            if ((System.currentTimeMillis() - start) > 1000) {
-                fail("There should had arrived a jcr event within 1 sec (since localSession refresh invoked) " +
+            if ((System.currentTimeMillis() - start) > 10000) {
+                fail("There should had arrived a jcr event within 10 sec (since localSession refresh invoked) " +
                         "marking the HstManager to be stale and triggering a model reload");
             }
             Thread.sleep(10);

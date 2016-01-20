@@ -46,6 +46,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toList;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_SITEMAP;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource {
@@ -72,21 +74,31 @@ public class RootResource extends AbstractConfigResource {
 
     @GET
     @Path("/channels")
-    public Response getChannels(@QueryParam("preview") final boolean preview, @QueryParam("workspaceRequired") final boolean workspaceRequired) {
+    public Response getChannels(@QueryParam("previewConfigRequired") final boolean previewConfigRequired,
+                                @QueryParam("workspacePagesRequired") final boolean workspacePagesRequired,
+                                @QueryParam("workspaceSiteMapRequired") final boolean workspaceSiteMapRequired) {
         final HstRequestContext requestContext = RequestContextProvider.get();
         final VirtualHost virtualHost = requestContext.getResolvedMount().getMount().getVirtualHost();
         try {
             final List<Channel> channels = virtualHost.getVirtualHosts().getChannels(virtualHost.getHostGroupName())
                     .values()
                     .stream()
-                    .filter(channel -> channel.isPreview() == preview)
-                    .filter(channel -> workspaceFiltered(channel, workspaceRequired))
+                    .filter(channel -> previewConfigRequiredFiltered(channel, previewConfigRequired))
+                    .filter(channel -> workspacePagesFiltered(channel, workspacePagesRequired))
+                    .filter(channel -> workspaceSiteMapFiltered(channel, workspaceSiteMapRequired))
                     .collect(toList());
             return ok("Fetched channels successful", channels);
         } catch (RuntimeRepositoryException e) {
             log.warn("Could not determine authorization", e);
             return error("Could not determine authorization", e);
         }
+    }
+
+    private boolean previewConfigRequiredFiltered(final Channel channel, final boolean previewConfigRequired) {
+        if (!previewConfigRequired) {
+            return true;
+        }
+        return channel.isPreview();
     }
 
     @GET
@@ -99,21 +111,25 @@ public class RootResource extends AbstractConfigResource {
         return ok(msg, featuresRepresentation);
     }
 
-    private boolean workspaceFiltered(final Channel channel, final boolean workspaceRequired) throws RuntimeRepositoryException {
-        if (!workspaceRequired) {
+    private boolean workspacePagesFiltered(final Channel channel, final boolean required) throws RuntimeRepositoryException {
+        return workspaceRequiredConfig(channel, required, NODENAME_HST_PAGES);
+    }
+
+    private boolean workspaceSiteMapFiltered(final Channel channel, final boolean required) throws RuntimeRepositoryException {
+        return workspaceRequiredConfig(channel, required, NODENAME_HST_SITEMAP);
+    }
+
+    private boolean workspaceRequiredConfig(final Channel channel, final boolean required, final String nodeName) {
+        if (!required) {
             return true;
         }
         final HstRequestContext requestContext = RequestContextProvider.get();
         final Mount mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(channel.getMountId());
         final String workspacePath = mount.getHstSite().getConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
+        final String requiredPath = workspacePath + "/" + nodeName;
         try {
-            final boolean workspaceExists = requestContext.getSession().nodeExists(workspacePath);
-            if (workspaceExists) {
-                log.info("Including channel {} because it has a workspace node at '{}'", workspacePath);
-            } else {
-                log.info("Skipping channel {} because it does not have a workspace node at '{}'", workspacePath);
-            }
-            return workspaceExists;
+            final boolean requiredPathExists = RequestContextProvider.get().getSession().nodeExists(requiredPath);
+            return requiredPathExists;
         } catch (RepositoryException e) {
             throw new RuntimeRepositoryException(e);
         }

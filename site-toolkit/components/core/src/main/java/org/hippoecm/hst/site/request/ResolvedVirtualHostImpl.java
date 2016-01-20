@@ -93,6 +93,7 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost {
                 log.debug("Mount '{}' cannot be used because the contextPath '{}' is not valid for this Mount, because it is only for context path. Try parent Mount's if present.'"
                         +mount.getContextPath()+"' ", mount.getName(), contextPath);
                 mount = mount.getParent();
+                position--;
             }
         }
         

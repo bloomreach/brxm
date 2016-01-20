@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -123,9 +123,9 @@ public class ChannelManagerImpl implements ChannelManager {
                 final Session session = getSession();
                 Node configNode = session.getNode(hstNodeLoadingCache.getRootPath());
                 String channelId = createUniqueChannelId(channel.getName(), session);
+                channel.setId(channelId);
                 Node createdContentNode = createChannel(configNode, blueprint, session, channelId, channel);
-
-                ChannelManagerEvent event = new ChannelManagerEventImpl(blueprint, channelId, channel, configNode);
+                ChannelManagerEvent event = new ChannelManagerEventImpl(blueprint, channel, configNode);
                 for (ChannelManagerEventListener listener : channelManagerEventListeners) {
                     try {
                         listener.channelCreated(event);
@@ -204,7 +204,7 @@ public class ChannelManagerImpl implements ChannelManager {
                 Node configNode = session.getNode(hstNodeLoadingCache.getRootPath());
                 updateChannel(configNode, channel);
 
-                ChannelManagerEvent event = new ChannelManagerEventImpl(null, null, channel, configNode);
+                ChannelManagerEvent event = new ChannelManagerEventImpl(null, channel, configNode);
                 for (ChannelManagerEventListener listener : channelManagerEventListeners) {
                     try {
                         listener.channelUpdated(event);
@@ -620,13 +620,14 @@ public class ChannelManagerImpl implements ChannelManager {
     private static class ChannelManagerEventImpl implements ChannelManagerEvent {
 
         private Blueprint blueprint;
-        private String channelId;
         private Channel channel;
         private Node configRootNode;
 
-        private ChannelManagerEventImpl(Blueprint blueprint, String channelId, Channel channel, Node configRootNode) {
+        private ChannelManagerEventImpl(final Blueprint blueprint, final Channel channel, final Node configRootNode) {
+            if (channel == null || configRootNode == null) {
+                throw new IllegalArgumentException("Channel and configRootNode are not allowed to be null in a channel manager event");
+            }
             this.blueprint = blueprint;
-            this.channelId = channelId;
             this.channel = channel;
             this.configRootNode = configRootNode;
         }
@@ -635,14 +636,12 @@ public class ChannelManagerImpl implements ChannelManager {
             return blueprint;
         }
 
+        /**
+         * @deprecated since 3.2.0 (CMS 10.2.0). Use {@link Channel#getId() getChannel().getId()} instead
+         */
+        @Deprecated
         public String getChannelId() {
-            if (channelId != null) {
-                return channelId;
-            } else if (channel != null) {
-                return channel.getId();
-            }
-
-            return null;
+            return channel.getId();
         }
 
         public Channel getChannel() {

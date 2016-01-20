@@ -257,8 +257,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                         requestContext.setRenderHost(renderingHost);
                         if (requestComesFromCms(vHosts, resolvedMount) && session != null && Boolean.TRUE.equals(session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED))) {
                             requestContext.setCmsRequest(true);
-                            session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, resolvedMount.getMount().getIdentifier());
-                            session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
                             if (resolvedMount instanceof MutableResolvedMount) {
                                 Mount undecoratedMount = resolvedMount.getMount();
                                 if (!(undecoratedMount instanceof ContextualizableMount)) {
@@ -309,7 +307,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
                     log.debug("{} matched to sitemapitem  '{}'", containerRequest, resolvedSiteMapItem.getHstSiteMapItem());
                     requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
-                    requestContext.matchingFinished();
+                    finishMatchingPhase(requestContext);
                 }
 
                 if (!isSupportedScheme(requestContext, resolvedSiteMapItem, farthestRequestScheme)) {
@@ -358,7 +356,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     return;
                 }
                 else {
-                    requestContext.matchingFinished();
+                    finishMatchingPhase(requestContext);
                     if (!isSupportedScheme(requestContext, resolvedMount, farthestRequestScheme)) {
                         final Mount mount = resolvedMount.getMount();
                         final String urlWithExplicitSchemeForRequest;
@@ -424,6 +422,26 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             if (rootTask != null) {
                 HDC.cleanUp();
             }
+        }
+    }
+
+    private void finishMatchingPhase(final HstMutableRequestContext requestContext) {
+        requestContext.matchingFinished();
+        if (!requestContext.isCmsRequest()) {
+            return;
+        }
+        final HttpSession session = requestContext.getServletRequest().getSession(false);
+        if (session == null) {
+            return;
+        }
+        final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+        // we must not set the CMS_REQUEST_RENDERING_MOUNT_ID on the http session in case the resolved sitemap item
+        // is a 'container resource' : A container resource always matches the root mount, and loading an image, css, js
+        // etc file should not (re)set the CMS_REQUEST_RENDERING_MOUNT_ID as it will break in case of concurrent requests
+        // for a submount if container resource requests are also involved
+        if (resolvedSiteMapItem == null || !resolvedSiteMapItem.getHstSiteMapItem().isContainerResource()) {
+            session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, requestContext.getResolvedMount().getMount().getIdentifier());
+            session.setAttribute(ContainerConstants.RENDERING_HOST, requestContext.getRenderHost());
         }
     }
 

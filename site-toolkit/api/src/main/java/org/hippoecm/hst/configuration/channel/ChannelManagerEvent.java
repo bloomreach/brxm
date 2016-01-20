@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,19 +32,19 @@ public interface ChannelManagerEvent {
     Blueprint getBlueprint();
 
     /**
-     * Returns the ID of the channel which is being created or updated.
-     * If a channel is created, you must use this method to get the ID of the created channel.
-     * Otherwise, this method will return the same value as <CODE>getChannel().getId()</CODE>.
+     * @deprecated since 3.2.0 (CMS 10.2.0). Use {@link Channel#getId() getChannel().getId()} instead
      */
+    @Deprecated
     String getChannelId();
 
     /**
-     * Returns the channel which was used as an input during channel creation or update.
+     * @return the {@link Channel} which was used as an input during channel creation or update. This will never return
+     * <code>null</code>
      */
     Channel getChannel();
 
     /**
-     * Returns the HST Configuration root node. e.g., /hst:hst
+     * @return the {@link Node} for /hst:hst. This will never return <code>null</code>
      */
     Node getConfigRootNode();
 

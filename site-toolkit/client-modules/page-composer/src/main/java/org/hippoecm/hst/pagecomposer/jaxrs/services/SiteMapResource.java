@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -165,7 +166,22 @@ public class SiteMapResource extends AbstractConfigResource {
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
                         HstNodeTypes.NODETYPE_HST_SITEMAP))
                 .add(validatorFactory.getNameValidator(siteMapItem.getName()))
-                .add(validatorFactory.getPathInfoValidator(siteMapItem, null, siteMapHelper));
+                .add(validatorFactory.getPathInfoValidator(siteMapItem, null, siteMapHelper))
+                .add(new NotNullValidator(siteMapItem.getName(), ClientError.ITEM_NO_NAME));
+        if (siteMapItem.getParentId() != null) {
+            preValidatorBuilder.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
+                    siteMapItem.getParentId(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM))
+                    .add(validatorFactory.getConfigurationExistsValidator(siteMapItem.getParentId(), siteMapHelper));
+
+            // if parent item is different than current parent, then the parent item is not allowed to be same as or a descendant of siteMapItem
+            final HstSiteMapItem existingParent = siteMapHelper.getConfigObject(siteMapItem.getId()).getParentItem();
+            if (existingParent == null || ((existingParent instanceof CanonicalInfo)
+                    && !((CanonicalInfo)existingParent).getCanonicalIdentifier().equals(siteMapItem.getParentId()))) {
+                // update also involves a move!
+                preValidatorBuilder.add(validatorFactory.getItemNotSameOrDescendantOfValidator(siteMapItem.getParentId(), siteMapItem.getId()));
+            }
+        }
+
 
         // if the update has a uuid for componenent id, we need to re-apply a prototype. In that case we also need to
         // validate the prototype page
@@ -182,7 +198,6 @@ public class SiteMapResource extends AbstractConfigResource {
         }
 
         final boolean reapplyPrototype = isCompIdUUID;
-        preValidatorBuilder.add(new NotNullValidator(siteMapItem.getName(), ClientError.ITEM_NO_NAME));
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
