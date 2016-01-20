@@ -696,7 +696,7 @@
     <module>components</module>
     <module>client</module>
     <module>client-modules</module>
-    <module>rest-api</module>
+    <module>cms-restapi</module>
     <module>dependencies</module>
     <module>sandbox</module>
     <module>integration</module>
