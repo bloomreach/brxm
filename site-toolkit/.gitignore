@@ -48,6 +48,11 @@ client/.settings
 client/bin
 client/hst-client.iml
 client/target
+cms-restapi/*.iml
+cms-restapi/.classpath
+cms-restapi/.project
+cms-restapi/.settings
+cms-restapi/target
 commons/.classpath
 commons/.project
 commons/.settings
@@ -161,11 +166,6 @@ mock/.settings
 mock/hst-mock.iml
 mock/target
 /repository
-rest-api/*.iml
-rest-api/.classpath
-rest-api/.project
-rest-api/.settings
-rest-api/target
 sandbox/.project
 sandbox/.settings
 sandbox/ocm/.classpath
