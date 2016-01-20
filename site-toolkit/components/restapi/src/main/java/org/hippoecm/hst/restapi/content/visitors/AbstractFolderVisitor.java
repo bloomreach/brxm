@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.hippoecm.hst.restapi.content.visitors;
 
 import java.util.Map;
@@ -22,29 +21,11 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.restapi.content.ResourceContext;
-import org.hippoecm.repository.api.HippoNode;
 
-import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
-
-public class HandleNodeVisitor extends AbstractNodeVisitor {
+public abstract class AbstractFolderVisitor extends AbstractNodeVisitor {
 
     @Override
-    public String getNodeType() {
-        return NT_HANDLE;
-    }
-
-    public void visit(final ResourceContext context, final Node node, final Map<String, Object> response) throws RepositoryException {
-        final String nodeName = node.getName();
-
-        response.put("id", node.getIdentifier());
-        response.put("name", nodeName);
-
-        if (node instanceof HippoNode) {
-            response.put("displayName", ((HippoNode)node).getLocalizedName());
-        }
-
-        final Node variant = node.getNode(nodeName);
-        NodeVisitor variantVisitor = context.getVisitor(variant);
-        variantVisitor.visit(context, variant, response);
+    protected void visitChildren(final ResourceContext context, final Node node, final Map<String, Object> destination) throws RepositoryException {
+        // do not traverse folders otherwise you might end up traversing almost the entire repository
     }
 }

@@ -28,7 +28,7 @@ import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 
-public class HippoDocumentNodeVisitor extends DefaultNodeVisitor {
+public class HippoDocumentVisitor extends DefaultNodeVisitor {
 
     @Override
     public String getNodeType() {

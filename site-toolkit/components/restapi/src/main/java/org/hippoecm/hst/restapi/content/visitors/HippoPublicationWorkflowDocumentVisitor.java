@@ -27,26 +27,36 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.restapi.content.ResourceContext;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
-import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_HOLDER;
-import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
-import static org.hippoecm.repository.HippoStdNodeType.NT_PUBLISHABLE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
 
-public class HippoPublishableDocumentNodeVisitor extends HippoDocumentNodeVisitor {
+public class HippoPublicationWorkflowDocumentVisitor extends HippoPublishableDocumentVisitor {
 
     private static final List<String> skipProperties = new ArrayList<>(Arrays.asList(
-            HIPPOSTD_STATE,
-            HIPPOSTD_HOLDER
+            HIPPOSTDPUBWF_CREATION_DATE,
+            HIPPOSTDPUBWF_CREATED_BY,
+            HIPPOSTDPUBWF_LAST_MODIFIED_DATE,
+            HIPPOSTDPUBWF_LAST_MODIFIED_BY,
+            HIPPOSTDPUBWF_PUBLICATION_DATE
     ));
 
     @Override
     public String getNodeType() {
-        return NT_PUBLISHABLE;
+        return HIPPOSTDPUBWF_DOCUMENT;
     }
 
     protected void visitNode(final ResourceContext context, final Node node, final Map<String, Object> response)
             throws RepositoryException {
         super.visitNode(context, node, response);
-        response.put("pubState", node.getProperty(HIPPOSTD_STATE).getString());
+        response.put("pubwfCreationDate", node.getProperty(HIPPOSTDPUBWF_CREATION_DATE).getString());
+        response.put("pubwfLastModificationDate", node.getProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE).getString());
+        if (node.hasProperty(HIPPOSTDPUBWF_PUBLICATION_DATE)) {
+            response.put("pubwfPublicationDate", node.getProperty(HIPPOSTDPUBWF_PUBLICATION_DATE).getString());
+        }
     }
 
     protected boolean skipProperty(final ResourceContext context, final ContentTypeProperty propertyType,

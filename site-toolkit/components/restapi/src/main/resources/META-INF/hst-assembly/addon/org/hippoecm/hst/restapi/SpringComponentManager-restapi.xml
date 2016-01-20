@@ -120,12 +120,12 @@
   <bean id="fallbackNodeVisitors" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
-        <bean id="handleVisitor" class="org.hippoecm.hst.restapi.content.visitors.HandleNodeVisitor"/>
-        <bean id="hippoFolderVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoFolderNodeVisitor"/>
-        <bean id="hippoDirectoryVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoDirectoryNodeVisitor"/>
-        <bean id="hippoPublicationWorkflowDocumentVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoPublicationWorkflowDocumentNodeVisitor"/>
-        <bean id="hippoPublishableDocumentVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoPublishableDocumentNodeVisitor"/>
-        <bean id="hippoDocumentVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoDocumentNodeVisitor"/>
+        <bean id="hippoHandleVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoHandleVisitor"/>
+        <bean id="hippoFolderVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoFolderVisitor"/>
+        <bean id="hippoDirectoryVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoDirectoryVisitor"/>
+        <bean id="hippoPublicationWorkflowDocumentVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoPublicationWorkflowDocumentVisitor"/>
+        <bean id="hippoPublishableDocumentVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoPublishableDocumentVisitor"/>
+        <bean id="hippoDocumentVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoDocumentVisitor"/>
         <bean id="hippoStdHtmlVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoStdHtmlVisitor">
           <property name="restApiHtmlParser" ref="restApiHtmlParser"/>
         </bean>

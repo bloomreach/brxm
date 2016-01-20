@@ -1030,11 +1030,11 @@ components/restapi/src/main/java/org/hippoecm/hst/restapi/content/linking/RestAp
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/scannedvisitors/ResourceBundleVisitor.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/scanning/AnnotationBasedNodeVisitorsFactoryBean.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/scanning/VisitorNodeType.java -text
-components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/AbstractFolderNodeVisitor.java -text
+components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/AbstractFolderVisitor.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/AbstractLinkVisitor.java -text
-components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/HippoDirectoryNodeVisitor.java -text
-components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/HippoDocumentNodeVisitor.java -text
-components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/HippoFolderNodeVisitor.java -text
+components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/HippoDirectoryVisitor.java -text
+components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/HippoDocumentVisitor.java -text
+components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/HippoFolderVisitor.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/HippoMirrorVisitor.java -text
 components/restapi/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
 components/restapi/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/restapi/SpringComponentManager-restapi.xml -text

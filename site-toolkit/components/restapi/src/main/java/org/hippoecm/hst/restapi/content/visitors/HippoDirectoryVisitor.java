@@ -17,7 +17,7 @@ package org.hippoecm.hst.restapi.content.visitors;
 
 import static org.hippoecm.repository.HippoStdNodeType.NT_DIRECTORY;
 
-public class HippoDirectoryNodeVisitor extends AbstractFolderNodeVisitor {
+public class HippoDirectoryVisitor extends AbstractFolderVisitor {
 
     @Override
     public String getNodeType() {
