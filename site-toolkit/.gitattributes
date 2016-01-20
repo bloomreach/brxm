@@ -609,7 +609,6 @@ components/contentapi/src/test/resources/namespaces/myhippoproject/TestCompound.
 components/contentapi/src/test/resources/namespaces/myhippoproject/TestDocumentType.xml -text
 components/contentapi/src/test/resources/namespaces/myhippoproject/basedocument.xml -text
 components/contentapi/src/test/resources/namespaces/myhippoproject/newsdocument.xml -text
-components/contentapi/src/test/resources/org/hippoecm/hst/contentrestapi/AbstractContentRestApiIT.xml -text
 components/contentapi/src/test/resources/org/hippoecm/hst/restapi/content/AbstractContentRestApiIT.xml -text
 components/core/pom.xml svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/cache/CacheContentEventListener.java -text
