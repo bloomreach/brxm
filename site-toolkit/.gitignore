@@ -59,8 +59,6 @@ components/.classpath
 components/.project
 components/.settings
 components/components.iml
-components/contentapi/hst-contentapi.iml
-components/contentapi/log4j.log
 components/core/.classpath
 components/core/.lock
 components/core/.project
@@ -90,6 +88,8 @@ components/resourcebundle/.classpath
 components/resourcebundle/.project
 components/resourcebundle/.settings
 components/resourcebundle/target
+components/restapi/hst-contentapi.iml
+components/restapi/log4j.log
 components/rewriter/.classpath
 components/rewriter/.project
 components/rewriter/.settings
