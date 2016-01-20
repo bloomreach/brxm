@@ -589,7 +589,6 @@ components/contentapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/Hi
 components/contentapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/HippoMirrorVisitor.java -text
 components/contentapi/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
 components/contentapi/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/restapi/SpringComponentManager-restapi.xml -text
-components/contentapi/src/site/site.xml -text
 components/contentapi/src/test/java/org/hippoecm/hst/restapi/content/AbstractContentRestApiIT.java -text
 components/contentapi/src/test/java/org/hippoecm/hst/restapi/content/ContentRestApiSetupIT.java -text
 components/contentapi/src/test/java/org/hippoecm/hst/restapi/content/requests/ContentRestApiRequestsIT.java -text
