@@ -606,6 +606,9 @@ components/contentapi/src/site/site.xml -text
 components/contentapi/src/test/java/org/hippoecm/hst/contentrestapi/AbstractContentRestApiIT.java -text
 components/contentapi/src/test/java/org/hippoecm/hst/contentrestapi/ContentRestApiSetupIT.java -text
 components/contentapi/src/test/java/org/hippoecm/hst/contentrestapi/requests/ContentRestApiRequestsIT.java -text
+components/contentapi/src/test/java/org/hippoecm/hst/restapi/content/AbstractContentRestApiIT.java -text
+components/contentapi/src/test/java/org/hippoecm/hst/restapi/content/ContentRestApiSetupIT.java -text
+components/contentapi/src/test/java/org/hippoecm/hst/restapi/content/requests/ContentRestApiRequestsIT.java -text
 components/contentapi/src/test/resources/content/documents/myhippoproject.xml -text
 components/contentapi/src/test/resources/content/documents/myhippoproject/news.xml -text
 components/contentapi/src/test/resources/content/documents/myhippoproject/testdocs.xml -text
@@ -624,6 +627,7 @@ components/contentapi/src/test/resources/namespaces/myhippoproject/TestDocumentT
 components/contentapi/src/test/resources/namespaces/myhippoproject/basedocument.xml -text
 components/contentapi/src/test/resources/namespaces/myhippoproject/newsdocument.xml -text
 components/contentapi/src/test/resources/org/hippoecm/hst/contentrestapi/AbstractContentRestApiIT.xml -text
+components/contentapi/src/test/resources/org/hippoecm/hst/restapi/content/AbstractContentRestApiIT.xml -text
 components/core/pom.xml svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/cache/CacheContentEventListener.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ForwardPlaceHolderHstPageInfo.java -text
