@@ -194,13 +194,6 @@
 
     <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
-      <artifactId>hst-resourcebundle</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-rewriter</artifactId>
       <version>${project.version}</version>
     </dependency>

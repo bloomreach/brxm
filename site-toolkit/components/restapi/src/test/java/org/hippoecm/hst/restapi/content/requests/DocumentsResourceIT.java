@@ -23,7 +23,7 @@ import javax.jcr.Session;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.restapi.content.AbstractContentRestApiIT;
+import org.hippoecm.hst.restapi.AbstractRestApiIT;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +33,9 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class ContentRestApiRequestsIT extends AbstractContentRestApiIT {
+public class DocumentsResourceIT extends AbstractRestApiIT {
 
-    private static final Logger log = LoggerFactory.getLogger(ContentRestApiRequestsIT.class);
+    private static final Logger log = LoggerFactory.getLogger(DocumentsResourceIT.class);
 
     private static ObjectMapper mapper = new ObjectMapper();
 

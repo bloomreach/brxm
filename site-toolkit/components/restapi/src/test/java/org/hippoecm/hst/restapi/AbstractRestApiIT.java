@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.restapi.content;
+package org.hippoecm.hst.restapi;
 
 import java.io.IOException;
 import java.util.List;
@@ -44,7 +44,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 
 
-public class AbstractContentRestApiIT {
+public class AbstractRestApiIT {
 
     protected SpringComponentManager componentManager;
     protected final MockServletContext servletContext = new MockServletContext();
@@ -83,8 +83,8 @@ public class AbstractContentRestApiIT {
     }
 
     protected String[] getConfigurations() {
-        String classXmlFileName = AbstractContentRestApiIT.class.getName().replace(".", "/") + ".xml";
-        String classXmlFileName2 = AbstractContentRestApiIT.class.getName().replace(".", "/") + "-*.xml";
+        String classXmlFileName = AbstractRestApiIT.class.getName().replace(".", "/") + ".xml";
+        String classXmlFileName2 = AbstractRestApiIT.class.getName().replace(".", "/") + "-*.xml";
         return new String[]{classXmlFileName, classXmlFileName2};
     }
 

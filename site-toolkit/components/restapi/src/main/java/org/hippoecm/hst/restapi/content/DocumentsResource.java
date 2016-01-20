@@ -59,9 +59,9 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 @Produces("application/json")
-public class ContentRestApiResource {
+public class DocumentsResource {
 
-    private static final Logger log = LoggerFactory.getLogger(ContentRestApiResource.class);
+    private static final Logger log = LoggerFactory.getLogger(DocumentsResource.class);
 
     private  ResourceContextFactory resourceContextFactory;
 

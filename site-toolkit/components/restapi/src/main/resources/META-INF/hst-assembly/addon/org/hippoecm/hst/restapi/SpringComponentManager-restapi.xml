@@ -148,7 +148,7 @@
     <property name="fallbackNodeVisitors" ref="fallbackNodeVisitors"/>
   </bean>
 
-  <bean id="contentRestApiResource" class="org.hippoecm.hst.restapi.content.ContentRestApiResource">
+  <bean id="contentRestApiResource" class="org.hippoecm.hst.restapi.content.DocumentsResource">
     <property name="resourceContextFactory" ref="resourceContextFactory"/>
   </bean>
 
