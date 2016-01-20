@@ -17,8 +17,6 @@
 package org.hippoecm.hst.contentrestapi.visitors;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -29,24 +27,10 @@ import javax.jcr.nodetype.NodeType;
 import org.hippoecm.hst.contentrestapi.ResourceContext;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
-import static org.onehippo.repository.util.JcrConstants.JCR_UUID;
-import static org.onehippo.repository.util.JcrConstants.JCR_MIXIN_TYPES;
-import static org.onehippo.repository.util.JcrConstants.JCR_PRIMARY_TYPE;
 import static org.onehippo.repository.util.JcrConstants.NT_BASE;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_COMPUTE;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
 
 public class DefaultNodeVisitor extends AbstractNodeVisitor {
-
-    private static final List<String> skipProperties = new ArrayList<>(Arrays.asList(
-            JCR_UUID,
-            JCR_PRIMARY_TYPE,
-            JCR_MIXIN_TYPES,
-            HIPPOSTD_STATESUMMARY,
-            HIPPO_COMPUTE,
-            HIPPO_RELATED
-    ));
 
     public DefaultNodeVisitor(VisitorFactory visitorFactory) {
         super(visitorFactory);
@@ -73,7 +57,7 @@ public class DefaultNodeVisitor extends AbstractNodeVisitor {
 
     protected boolean skipProperty(final ResourceContext context, final ContentTypeProperty propertyType,
                                    final Property property) throws RepositoryException {
-        if (skipProperties.contains(property.getName())) {
+        if (HIPPOSTD_STATESUMMARY.equals(property.getName())) {
             return true;
         }
         return super.skipProperty(context, propertyType, property);

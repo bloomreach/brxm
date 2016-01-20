@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.contentrestapi.visitors;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -29,18 +26,9 @@ import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 
 public class HippoDocumentNodeVisitor extends DefaultNodeVisitor {
-
-    private static final List<String> skipProperties = new ArrayList<>(Arrays.asList(
-            HIPPO_AVAILABILITY,
-            HIPPO_PATHS,
-            HippoTranslationNodeType.ID,
-            HippoTranslationNodeType.SOURCELOCALE,
-            HippoTranslationNodeType.LOCALE
-    ));
 
     public HippoDocumentNodeVisitor(final VisitorFactory visitorFactory) {
         super(visitorFactory);
@@ -72,7 +60,7 @@ public class HippoDocumentNodeVisitor extends DefaultNodeVisitor {
 
     protected boolean skipProperty(final ResourceContext context, final ContentTypeProperty propertyType,
                                    final Property property) throws RepositoryException {
-        if (skipProperties.contains(property.getName())) {
+        if (HIPPO_AVAILABILITY.equals(property.getName())) {
             return true;
         }
         return super.skipProperty(context, propertyType, property);

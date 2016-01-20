@@ -90,20 +90,34 @@ public abstract class AbstractNodeVisitor implements NodeVisitor {
         }
     }
 
+    /**
+     * Visit all supported properties of the current node
+     * <p>
+     *     Properties are only visited when they are:
+     *     <ul>
+     *       <li>defined in a (inherited) document type (not-derived) with an explicit path (not-residual)</li>
+     *       <li>are not marked to be skipped by this (or inherited) visitor</li>
+     *     </ul>
+     * </p>
+     * <p>
+     *     Note that no same-named child will be visited through {@link #visitChildren(ResourceContext, Node, Map)}
+     *     as the content type service will ignore/hide properties for which such same-named child is defined.
+     * </p>
+     * @param context ResourceContent
+     * @param node the current node
+     * @param response the response
+     * @throws RepositoryException
+     */
     protected void visitProperties(final ResourceContext context, final Node node, final Map<String, Object> response)
             throws RepositoryException {
         for (Property property : new PropertyIterable(node.getProperties())) {
             final ContentType parentContentType = context.getContentTypes().getContentTypeForNode(property.getParent());
             final ContentTypeProperty propertyType = parentContentType.getProperties().get(property.getName());
 
-            // skip properties that either are unknown or for which a node with the same name is also defined
-            if (propertyType == null || parentContentType.getChildren().get(property.getName()) != null ||
-                    parentContentType.getEffectiveNodeType().getChildren().get(property.getName()) != null ||
-                    node.hasNode(property.getName())) {
-                return;
-            }
-
-            if (!skipProperty(context, propertyType, property)) {
+            if (propertyType != null                                  // explicit and non-residual property type
+                    && !propertyType.isDerivedItem()                  // defined in a (inherited) document type
+                    && !skipProperty(context, propertyType, property) // not marked to be skipped
+            ) {
                 visitProperty(context, propertyType, property, response);
             }
         }
@@ -125,18 +139,34 @@ public abstract class AbstractNodeVisitor implements NodeVisitor {
         }
     }
 
+    /**
+     * Visit all supported child nodes of the current node
+     * <p>
+     *     Child nodes are only visited when they are:
+     *     <ul>
+     *       <li>defined in a (inherited) document type (not-derived) with an explicit path (not-residual)</li>
+     *       <li>are not marked to be skipped by this (or inherited) visitor</li>
+     *     </ul>
+     * </p>
+     * <p>
+     *     Note that no same-named property will be visited through {@link #visitProperties(ResourceContext, Node, Map)}
+     *     as the content type service will ignore/hide properties for which such same-named child is defined.
+     * </p>
+     * @param context ResourceContent
+     * @param node the current node
+     * @param response the response
+     * @throws RepositoryException
+     */
     protected void visitChildren(final ResourceContext context, final Node node, final Map<String, Object> response)
             throws RepositoryException {
         for (Node child : new NodeIterable(node.getNodes())) {
             final ContentType nodeContentType = context.getContentTypes().getContentTypeForNode(node);
             final ContentTypeChild childType = nodeContentType.getChildren().get(child.getName());
 
-            // skip nodes that are known for which a property with the same name is also defined
-            if (childType != null && nodeContentType.getProperties().get(child.getName()) != null) {
-                return;
-            }
-
-            if (!skipChild(context, childType, child)) {
+            if (childType != null                            // explicit and non-residual child type
+                    && !childType.isDerivedItem()            // defined in a (inherited) document type
+                    && !skipChild(context, childType, child) // not marked to be skipped
+            ) {
                 NodeVisitor childVisitor = getVisitorFactory().getVisitor(context, child);
                 childVisitor.visit(context, child, response);
             }

@@ -17,7 +17,6 @@
 package org.hippoecm.hst.contentrestapi.visitors;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,13 +46,6 @@ public class ResourceBundleVisitor extends HippoPublicationWorkflowDocumentNodeV
     public String getNodeType() {
         return NT_RESOURCEBUNDLE;
     }
-
-    private static final List<String> skipProperties = new ArrayList<>(Arrays.asList(
-            ID,
-            KEYS,
-            DESCRIPTIONS,
-            MESSAGES
-    ));
 
     protected void mapValues(final Property property, final String propertyName,
                              final List<Map<String, String>> valuesList)
@@ -101,7 +93,7 @@ public class ResourceBundleVisitor extends HippoPublicationWorkflowDocumentNodeV
 
     protected boolean skipProperty(final ResourceContext context, final ContentTypeProperty propertyType,
                                    final Property property) throws RepositoryException {
-        if (skipProperties.contains(property.getName())) {
+        if (ID.equals(property.getName())) {
             return true;
         }
         if (property.getName().startsWith(MESSAGES+"_")) {
