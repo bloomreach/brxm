@@ -38,6 +38,7 @@ import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TAXONOMY;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TRANSLATION;
 
+@SuppressWarnings("ALL")
 @NodeVisitorType
 public class HippoTaxonomyVisitor extends HippoPublicationWorkflowDocumentVisitor {
 
