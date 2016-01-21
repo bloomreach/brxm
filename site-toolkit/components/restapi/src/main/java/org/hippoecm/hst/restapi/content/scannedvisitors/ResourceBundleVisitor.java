@@ -26,13 +26,13 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.hippoecm.hst.restapi.content.ResourceContext;
-import org.hippoecm.hst.restapi.content.scanning.VisitorNodeType;
+import org.hippoecm.hst.restapi.ResourceContext;
+import org.hippoecm.hst.restapi.scanning.NodeVisitorType;
 import org.hippoecm.hst.restapi.content.visitors.HippoPublicationWorkflowDocumentVisitor;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
-@VisitorNodeType
+@NodeVisitorType
 public class ResourceBundleVisitor extends HippoPublicationWorkflowDocumentVisitor {
 
     protected static final String NT_RESOURCEBUNDLE = "resourcebundle:resourcebundle";

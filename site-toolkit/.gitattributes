@@ -1043,8 +1043,6 @@ components/restapi/src/main/java/org/hippoecm/hst/restapi/content/html/RestApiHt
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/linking/Link.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/linking/RestApiLinkCreator.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/scannedvisitors/ResourceBundleVisitor.java -text
-components/restapi/src/main/java/org/hippoecm/hst/restapi/content/scanning/AnnotationBasedNodeVisitorsFactoryBean.java -text
-components/restapi/src/main/java/org/hippoecm/hst/restapi/content/scanning/VisitorNodeType.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/search/SearchResult.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/search/SearchResultItem.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/AbstractFolderVisitor.java -text
@@ -1053,6 +1051,8 @@ components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/Hippo
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/HippoDocumentVisitor.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/HippoFolderVisitor.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/HippoMirrorVisitor.java -text
+components/restapi/src/main/java/org/hippoecm/hst/restapi/scanning/AnnotationBasedNodeVisitorsFactoryBean.java -text
+components/restapi/src/main/java/org/hippoecm/hst/restapi/scanning/NodeVisitorType.java -text
 components/restapi/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
 components/restapi/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/restapi/SpringComponentManager-restapi.xml -text
 components/restapi/src/test/java/org/hippoecm/hst/restapi/AbstractRestApiIT.java -text

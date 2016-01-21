@@ -35,8 +35,9 @@ import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.restapi.AbstractResource;
+import org.hippoecm.hst.restapi.ResourceContext;
 import org.hippoecm.hst.restapi.content.search.SearchResult;
-import org.hippoecm.hst.restapi.content.visitors.NodeVisitor;
+import org.hippoecm.hst.restapi.NodeVisitor;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;

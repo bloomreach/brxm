@@ -21,7 +21,8 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.restapi.content.ResourceContext;
+import org.hippoecm.hst.restapi.NodeVisitor;
+import org.hippoecm.hst.restapi.ResourceContext;
 import org.hippoecm.repository.api.HippoNode;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;

@@ -20,7 +20,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.restapi.content.ResourceContext;
+import org.hippoecm.hst.restapi.ResourceContext;
 
 public abstract class AbstractFolderVisitor extends AbstractNodeVisitor {
 

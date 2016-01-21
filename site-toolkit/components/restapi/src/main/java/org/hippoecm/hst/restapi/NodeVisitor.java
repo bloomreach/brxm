@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.restapi.content.visitors;
+package org.hippoecm.hst.restapi;
 
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-
-import org.hippoecm.hst.restapi.content.ResourceContext;
 
 public interface NodeVisitor {
     String getNodeType();

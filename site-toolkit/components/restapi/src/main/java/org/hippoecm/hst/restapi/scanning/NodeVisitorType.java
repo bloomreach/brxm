@@ -1,4 +1,4 @@
-package org.hippoecm.hst.restapi.content.scanning;
+package org.hippoecm.hst.restapi.scanning;
 /*
  *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
@@ -23,5 +23,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 @Inherited
-public @interface VisitorNodeType {
+public @interface NodeVisitorType {
 }

@@ -22,7 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.restapi.content.ResourceContext;
+import org.hippoecm.hst.restapi.ResourceContext;
 import org.hippoecm.hst.restapi.content.html.RestApiHtmlParser;
 import org.hippoecm.hst.restapi.content.html.ParsedContent;
 import org.hippoecm.hst.restapi.content.linking.Link;

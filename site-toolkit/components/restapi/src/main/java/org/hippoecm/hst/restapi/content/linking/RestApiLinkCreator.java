@@ -23,7 +23,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.restapi.content.ResourceContext;
+import org.hippoecm.hst.restapi.ResourceContext;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.restapi.content;
+package org.hippoecm.hst.restapi;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.restapi.content.linking.RestApiLinkCreator;
-import org.hippoecm.hst.restapi.content.visitors.NodeVisitor;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
 

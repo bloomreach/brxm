@@ -138,13 +138,13 @@
     </property>
   </bean>
 
-  <bean id="annotationBasedNodeVisitors" class="org.hippoecm.hst.restapi.content.scanning.AnnotationBasedNodeVisitorsFactoryBean">
+  <bean id="annotationBasedNodeVisitors" class="org.hippoecm.hst.restapi.scanning.AnnotationBasedNodeVisitorsFactoryBean">
     <property name="classpathResourceScanner" ref="org.hippoecm.hst.util.ClasspathResourceScanner" />
   </bean>
 
   <bean id="restApiLinkCreator" class="org.hippoecm.hst.restapi.content.linking.RestApiLinkCreator"/>
 
-  <bean id="resourceContextFactory" class="org.hippoecm.hst.restapi.content.visitors.ResourceContextFactory">
+  <bean id="resourceContextFactory" class="org.hippoecm.hst.restapi.ResourceContextFactory">
     <property name="restApiLinkCreator" ref="restApiLinkCreator"/>
     <property name="annotationBasedNodeVisitors" ref="annotationBasedNodeVisitors"/>
     <property name="fallbackNodeVisitors" ref="fallbackNodeVisitors"/>

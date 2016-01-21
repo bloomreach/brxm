@@ -22,9 +22,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.restapi.content.ResourceContext;
-import org.hippoecm.hst.restapi.content.linking.RestApiLinkCreator;
-import org.hippoecm.hst.restapi.content.visitors.ResourceContextFactory;
 import org.onehippo.cms7.services.search.jcr.service.HippoJcrSearchService;
 import org.onehippo.cms7.services.search.service.SearchService;
 import org.slf4j.Logger;

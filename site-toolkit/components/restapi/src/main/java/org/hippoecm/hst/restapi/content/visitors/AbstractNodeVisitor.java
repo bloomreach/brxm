@@ -26,7 +26,8 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.hippoecm.hst.restapi.content.ResourceContext;
+import org.hippoecm.hst.restapi.NodeVisitor;
+import org.hippoecm.hst.restapi.ResourceContext;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cms7.services.contenttype.ContentType;

@@ -25,7 +25,7 @@ import javax.jcr.Session;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.restapi.content.ResourceContext;
+import org.hippoecm.hst.restapi.ResourceContext;
 import org.hippoecm.hst.restapi.content.linking.RestApiLinkCreator;
 import org.onehippo.cms7.services.search.result.Hit;
 import org.onehippo.cms7.services.search.result.HitIterator;

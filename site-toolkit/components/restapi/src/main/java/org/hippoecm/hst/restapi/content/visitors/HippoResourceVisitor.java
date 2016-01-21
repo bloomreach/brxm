@@ -26,9 +26,8 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.restapi.content.ResourceContext;
+import org.hippoecm.hst.restapi.ResourceContext;
 import org.hippoecm.hst.restapi.content.linking.Link;
-import org.hippoecm.hst.restapi.content.search.SearchResultItem;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_FILENAME;

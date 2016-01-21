@@ -25,7 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.restapi.content.ResourceContext;
+import org.hippoecm.hst.restapi.ResourceContext;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
 public class HippoGalleryImageVisitor extends HippoResourceVisitor {

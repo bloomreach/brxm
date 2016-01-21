@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.restapi.content.scanning;
+package org.hippoecm.hst.restapi.scanning;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -25,7 +25,7 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.restapi.content.visitors.NodeVisitor;
+import org.hippoecm.hst.restapi.NodeVisitor;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.util.ClasspathResourceScanner;
@@ -119,7 +119,7 @@ public class AnnotationBasedNodeVisitorsFactoryBean extends AbstractFactoryBean<
     public static List<Class<? extends NodeVisitor>> getAnnotatedClasses(final ClasspathResourceScanner resourceScanner, String ... locationPatterns) throws IOException {
 
         final List<Class<? extends NodeVisitor>> annotatedClasses = new ArrayList<>();
-        final Set<String> annotatedClassNames = resourceScanner.scanClassNamesAnnotatedBy(VisitorNodeType.class, false, locationPatterns);
+        final Set<String> annotatedClassNames = resourceScanner.scanClassNamesAnnotatedBy(NodeVisitorType.class, false, locationPatterns);
 
         if (annotatedClassNames != null && !annotatedClassNames.isEmpty()) {
             Class<?> clazz;
