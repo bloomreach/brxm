@@ -32,7 +32,6 @@ import org.slf4j.Logger;
 public abstract class AbstractResource {
 
     private ResourceContextFactory resourceContextFactory;
-    private RestApiLinkCreator restApiLinkCreator;
 
     public abstract Logger getLogger();
 
