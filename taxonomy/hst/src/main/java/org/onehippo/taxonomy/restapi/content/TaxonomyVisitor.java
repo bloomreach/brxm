@@ -23,8 +23,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.hippoecm.hst.restapi.content.ResourceContext;
-import org.hippoecm.hst.restapi.content.scanning.VisitorNodeType;
+import org.hippoecm.hst.restapi.ResourceContext;
+import org.hippoecm.hst.restapi.scanning.NodeVisitorType;
 import org.hippoecm.hst.restapi.content.visitors.HippoPublicationWorkflowDocumentVisitor;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.contenttype.ContentTypeChild;
@@ -38,7 +38,7 @@ import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TAXONOMY;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TRANSLATION;
 
-@VisitorNodeType
+@NodeVisitorType
 public class TaxonomyVisitor extends HippoPublicationWorkflowDocumentVisitor {
 
     @Override
