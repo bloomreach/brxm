@@ -68,14 +68,8 @@ public class HippoResourceVisitor extends DefaultNodeVisitor {
             filename = node.getProperty(HIPPO_FILENAME).getString();
             response.put("filename", filename);
         }
-        try {
-            // TODO: is length() a costly call? If so, then maybe we should not return it
-            long length = node.getProperty(JCR_DATA).getLength();
-            response.put("length", length);
-        }
-        catch (RepositoryException e) {
-            // ignore;
-        }
+        long length = node.getProperty(JCR_DATA).getLength();
+        response.put("length", length);
 
         // TODO link rewriting - use generic HST methods to construct URL
         String id = node.getIdentifier();
