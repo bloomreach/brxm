@@ -119,7 +119,7 @@ public class AnnotationBasedNodeVisitorsFactoryBean extends AbstractFactoryBean<
     public static List<Class<? extends NodeVisitor>> getAnnotatedClasses(final ClasspathResourceScanner resourceScanner, String ... locationPatterns) throws IOException {
 
         final List<Class<? extends NodeVisitor>> annotatedClasses = new ArrayList<>();
-        final Set<String> annotatedClassNames = resourceScanner.scanClassNamesAnnotatedBy(NodeVisitorType.class, false, locationPatterns);
+        final Set<String> annotatedClassNames = resourceScanner.scanClassNamesAnnotatedBy(PrimaryNodeTypeNodeVisitor.class, false, locationPatterns);
 
         if (annotatedClassNames != null && !annotatedClassNames.isEmpty()) {
             Class<?> clazz;

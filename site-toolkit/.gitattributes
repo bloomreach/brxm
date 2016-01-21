@@ -1052,7 +1052,7 @@ components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/Hippo
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/HippoFolderVisitor.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/content/visitors/HippoMirrorVisitor.java -text
 components/restapi/src/main/java/org/hippoecm/hst/restapi/scanning/AnnotationBasedNodeVisitorsFactoryBean.java -text
-components/restapi/src/main/java/org/hippoecm/hst/restapi/scanning/NodeVisitorType.java -text
+components/restapi/src/main/java/org/hippoecm/hst/restapi/scanning/PrimaryNodeTypeNodeVisitor.java -text
 components/restapi/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
 components/restapi/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/restapi/SpringComponentManager-restapi.xml -text
 components/restapi/src/test/java/org/hippoecm/hst/restapi/AbstractRestApiIT.java -text
