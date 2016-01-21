@@ -25,7 +25,10 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.restapi.content.ResourceContext;
+import org.hippoecm.hst.restapi.content.linking.Link;
+import org.hippoecm.hst.restapi.content.search.SearchResultItem;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_FILENAME;
@@ -71,13 +74,9 @@ public class HippoResourceVisitor extends DefaultNodeVisitor {
         long length = node.getProperty(JCR_DATA).getLength();
         response.put("length", length);
 
-        // TODO link rewriting - use generic HST methods to construct URL
-        String id = node.getIdentifier();
-        response.put("id", id);
-        response.put("url","http://localhost:8080/site/api/documents/" + id);
-        if (filename != null) {
-            response.put("fileUrl","http://localhost:8080/site/api/documents/" + id + "/"+filename);
-        }
+        final HstLink hstLink = context.getRequestContext().getHstLinkCreator().create(node, context.getRequestContext());
+        Link link = context.getRestApiLinkCreator().convert(context, node.getIdentifier(), hstLink);
+        response.put("link",link);
     }
 
     protected boolean skipProperty(final ResourceContext context, final ContentTypeProperty propertyType,
