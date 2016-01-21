@@ -43,33 +43,58 @@ public class Link {
     @JsonProperty("type")
     public final String type;
 
-    @JsonProperty("id")
-    public final String id;
-    @JsonProperty("url")
-    public final String url;
-
-
-    public static final Link invalid = new Link(null, null, Type.INVALID);
+    public static final Link invalid = new InvalidLink();
 
     public static final Link external(final String id) {
-        return new Link(id, null, Type.EXTERNAL);
+        return new ExternalLink(id);
     }
 
     public static final Link local(final String id, final String url) {
-        return new Link(id, url, Type.LOCAL);
+        return new LocalLink(id, url);
     }
 
     public static final Link binary(final String url) {
-        return new Link(url, Type.BINARY);
+        return new BinaryLink(url);
     }
 
-    private Link(final String url, final Type type) {
-        this(null, url, type);
-    }
-
-    private Link(final String id, final String url, final Type type) {
+    private Link(final Type type) {
         this.type = type.getString();
-        this.id = id;
-        this.url = url;
     }
+
+    public static class InvalidLink extends Link {
+        public InvalidLink() {
+            super(Type.INVALID);
+        }
+    }
+
+    public static class ExternalLink extends Link {
+        @JsonProperty("id")
+        public final String id;
+        public ExternalLink(final String id) {
+            super(Type.EXTERNAL);
+            this.id = id;
+        }
+    }
+
+    public static class BinaryLink extends Link {
+        @JsonProperty("url")
+        public final String url;
+        public BinaryLink(final String url) {
+            super(Type.BINARY);
+            this.url = url;
+        }
+    }
+
+    public static class LocalLink extends Link {
+        @JsonProperty("id")
+        public final String id;
+        @JsonProperty("url")
+        public final String url;
+        public LocalLink(final String id, final String url) {
+            super(Type.LOCAL);
+            this.id = id;
+            this.url = url;
+        }
+    }
+
 }
