@@ -128,7 +128,7 @@
                   <sv:value>de</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:message" sv:type="String">
-                  <sv:value>One or more fully qualified URLs pointing to an XML sitemap.</sv:value>
+                  <sv:value>Eine oder mehrere vollqualifizierte URLs, die auf eine XML-Sitemap verweisen.</sv:value>
                 </sv:property>
               </sv:node>
               <sv:node sv:name="hippo:translation">
@@ -139,7 +139,7 @@
                   <sv:value>fr</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:message" sv:type="String">
-                  <sv:value>One or more fully qualified URLs pointing to an XML sitemap.</sv:value>
+                  <sv:value>Une ou plusieurs URL entièrement qualifiées indiquant un sitemap XML.</sv:value>
                 </sv:property>
               </sv:node>
             </sv:node>
