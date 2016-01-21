@@ -31,6 +31,18 @@ import org.onehippo.cms7.services.contenttype.ContentTypes;
 
 public class ResourceContextFactory {
 
+    private static final NodeVisitor NOOP_VISITOR = new NodeVisitor() {
+        @Override
+        public String getNodeType() {
+            return null;
+        }
+
+        @Override
+        public void visit(final ResourceContext context, final Node node, final Map<String, Object> response) throws RepositoryException {
+
+        }
+    };
+
     private RestApiLinkCreator restApiLinkCreator;
     private List<NodeVisitor> explicitNodeVisitors;
     private List<NodeVisitor> fallbackNodeVisitors = Collections.EMPTY_LIST;
@@ -87,7 +99,7 @@ public class ResourceContextFactory {
 
         public NodeVisitor getVisitor(final Node node) throws RepositoryException {
 
-            NodeVisitor primary = getVisitorPrimaryVisitor(node);
+            NodeVisitor primary = getPrimaryNodeTypeVisitor(node);
             if (primary != null) {
                 return primary;
             }
@@ -100,22 +112,11 @@ public class ResourceContextFactory {
             }
 
             // apparently the DefaultNodeVisitor is removed from fallbackNodeVisitors otherwise this can never happen. Return a noop visitor
-            return new NodeVisitor() {
-
-                @Override
-                public String getNodeType() {
-                    return null;
-                }
-
-                @Override
-                public void visit(final ResourceContext context, final Node node, final Map<String, Object> response) throws RepositoryException {
-
-                }
-            };
+            return NOOP_VISITOR;
         }
 
         @Override
-        public NodeVisitor getVisitorPrimaryVisitor(final Node node) throws RepositoryException {
+        public NodeVisitor getPrimaryNodeTypeVisitor(final Node node) throws RepositoryException {
             if (explicitNodeVisitors != null) {
                 for (NodeVisitor nodeVisitor : explicitNodeVisitors) {
                     if (node.getPrimaryNodeType().getName().equals(nodeVisitor.getNodeType())) {

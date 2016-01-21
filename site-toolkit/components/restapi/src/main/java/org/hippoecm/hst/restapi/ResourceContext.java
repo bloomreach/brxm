@@ -26,7 +26,7 @@ public interface ResourceContext {
     HstRequestContext getRequestContext();
     ContentTypes getContentTypes();
     NodeVisitor getVisitor(Node node) throws RepositoryException;
-    NodeVisitor getVisitorPrimaryVisitor(Node node) throws RepositoryException;
+    NodeVisitor getPrimaryNodeTypeVisitor(Node node) throws RepositoryException;
     RestApiLinkCreator getRestApiLinkCreator();
 
 }

@@ -134,8 +134,9 @@ public abstract class AbstractNodeVisitor implements NodeVisitor {
      * <p>
      *     Child nodes are only visited when they are:
      *     <ul>
-     *       <li>defined in a (inherited) document type (not-derived) with an explicit path (not-residual)</li>
-     *       <li>are not marked to be skipped by this (or inherited) visitor</li>
+     *       <li>defined in a (inherited) document type (not-derived) with an explicit path (not-residual) or</li>
+     *       <li>or for the derived document type an explicit matching PrimaryNodeTypeNodeVisitor is available,</li>
+     *       <li>and are not marked to be skipped by this (or inherited) visitor</li>
      *     </ul>
      * </p>
      * <p>
@@ -158,7 +159,7 @@ public abstract class AbstractNodeVisitor implements NodeVisitor {
                 continue;
             }
             // test defined in a (inherited) document type or has primary visitor
-            if (childType.isDerivedItem() && context.getVisitorPrimaryVisitor(node) == null) {
+            if (childType.isDerivedItem() && context.getPrimaryNodeTypeVisitor(node) == null) {
                 continue;
             }
             // test whether marked to be skipped
