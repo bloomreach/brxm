@@ -153,15 +153,25 @@ public abstract class AbstractNodeVisitor implements NodeVisitor {
             final ContentType nodeContentType = context.getContentTypes().getContentTypeForNode(node);
             final ContentTypeChild childType = nodeContentType.getChildren().get(child.getName());
 
-            if (childType != null                            // explicit and non-residual child type
-                    && !childType.isDerivedItem()            // defined in a (inherited) document type
-                    && !skipChild(context, childType, child) // not marked to be skipped
-            ) {
-                NodeVisitor childVisitor = context.getVisitor(child);
-                childVisitor.visit(context, child, response);
+            // test explicit and non-residual child type
+            if (childType == null) {
+                continue;
             }
+            // test defined in a (inherited) document type or has primary visitor
+            if (childType.isDerivedItem() && context.getVisitorPrimaryVisitor(node) == null) {
+                continue;
+            }
+            // test whether marked to be skipped
+            if (skipChild(context, childType, child)) {
+                continue;
+            }
+
+            NodeVisitor childVisitor = context.getVisitor(child);
+            childVisitor.visit(context, child, response);
         }
     }
+
+
 
     protected Object getValueRepresentation(final Value jcrValue) throws RepositoryException {
         switch (jcrValue.getType()) {

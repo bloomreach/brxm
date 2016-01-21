@@ -87,13 +87,9 @@ public class ResourceContextFactory {
 
         public NodeVisitor getVisitor(final Node node) throws RepositoryException {
 
-            if (explicitNodeVisitors != null) {
-                for (NodeVisitor nodeVisitor : explicitNodeVisitors) {
-                    if (node.getPrimaryNodeType().getName().equals(nodeVisitor.getNodeType())) {
-                        return nodeVisitor;
-                    }
-
-                }
+            NodeVisitor primary = getVisitorPrimaryVisitor(node);
+            if (primary != null) {
+                return primary;
             }
 
             // if not explicit match, try a fallback match
@@ -118,7 +114,18 @@ public class ResourceContextFactory {
             };
         }
 
+        @Override
+        public NodeVisitor getVisitorPrimaryVisitor(final Node node) throws RepositoryException {
+            if (explicitNodeVisitors != null) {
+                for (NodeVisitor nodeVisitor : explicitNodeVisitors) {
+                    if (node.getPrimaryNodeType().getName().equals(nodeVisitor.getNodeType())) {
+                        return nodeVisitor;
+                    }
 
+                }
+            }
+            return null;
+        }
     }
 
 }
