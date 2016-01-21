@@ -39,7 +39,7 @@ import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TRANSLATION;
 
 @NodeVisitorType
-public class TaxonomyVisitor extends HippoPublicationWorkflowDocumentVisitor {
+public class HippoTaxonomyVisitor extends HippoPublicationWorkflowDocumentVisitor {
 
     @Override
     public String getNodeType() {
