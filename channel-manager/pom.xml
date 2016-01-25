@@ -209,8 +209,10 @@
                 <exclude>angularjs-api/node_modules/**/*</exclude>
 
                 <!-- files without license header -->
+                <exclude>frontend/.npmrc</exclude>
                 <exclude>frontend/.bowerrc</exclude>
                 <exclude>frontend/.jshintrc</exclude>
+                <exclude>angularjs-api/.npmrc</exclude>
                 <exclude>angularjs-api/.bowerrc</exclude>
                 <exclude>angularjs-api/.jshintrc</exclude>
                 <exclude>angularjs-api/.csslintrc</exclude>
