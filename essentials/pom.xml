@@ -229,6 +229,7 @@
                 <exclude>**/*.md</exclude>
                 <exclude>*/.idea/**</exclude>
                 <exclude>*/.bowerrc/**</exclude>
+                <exclude>*/.npmrc/**</exclude>
                 <exclude>**/*.svg</exclude>
                 <exclude>**/*.woff</exclude>
                 <exclude>**/*.ttf</exclude>
