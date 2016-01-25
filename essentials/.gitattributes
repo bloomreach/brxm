@@ -89,8 +89,10 @@ components/hst/src/test/resources/log4j.xml -text
 components/pom.xml -text
 dashboard-dependencies/pom.xml -text
 dashboard/.bowerrc -text
+dashboard/.npmrc -text
 dashboard/bower.json -text
 dashboard/declutter.config.json -text
+dashboard/npm-shrinkwrap.json -text
 dashboard/package.json -text
 dashboard/pom.xml -text
 dashboard/src/main/appended-resources/META-INF/LICENSE -text
