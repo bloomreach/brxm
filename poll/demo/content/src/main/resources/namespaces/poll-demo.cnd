@@ -12,9 +12,6 @@
 [polldemo:newsdocument] > hippostd:relaxed, polldemo:basedocument
   orderable
 
-[polldemo:polldocument] > hippostd:relaxed, polldemo:basedocument
-  orderable
-
 [polldemo:textdocument] > hippostd:relaxed, polldemo:basedocument
   orderable
 
