@@ -53,6 +53,7 @@ addon-cms/src/main/java/org/onehippo/forge/relateddocs/providers/ReferringRelate
 addon-cms/src/main/java/org/onehippo/forge/relateddocs/providers/SimilaritySearchRelatedDocsProvider.java -text
 addon-cms/src/main/resources/hippoecm-extension.xml -text
 addon-cms/src/main/resources/relateddocs-clusterloader.xml -text
+addon-cms/src/main/resources/relateddocs-namespaces.xml -text
 addon-cms/src/main/resources/relateddocs-types.cnd -text
 addon-cms/src/main/resources/relateddocsproviders.xml -text
 hst/pom.xml -text
