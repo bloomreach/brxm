@@ -45,8 +45,8 @@ public class Link {
 
     public static final Link invalid = new InvalidLink();
 
-    public static final Link external(final String id) {
-        return new ExternalLink(id);
+    public static final Link external(final String id, final String url) {
+        return new ExternalLink(id, url);
     }
 
     public static final Link local(final String id, final String url) {
@@ -70,7 +70,7 @@ public class Link {
     public static class ExternalLink extends Link {
         @JsonProperty("id")
         public final String id;
-        public ExternalLink(final String id) {
+        public ExternalLink(final String id, final String url) {
             super(Type.EXTERNAL);
             this.id = id;
         }

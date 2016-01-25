@@ -61,7 +61,7 @@ public class RestApiLinkCreator {
             node  = requestContext.getSession().getNodeByIdentifier(uuid);
             if (hstLink.getMount() != apiMount) {
                 log.info("Link is to another mount. Return external link without URL, just the identifier");
-                return Link.external(node.getIdentifier());
+                return Link.external(node.getIdentifier(), hstLink.toUrlForm(requestContext, true));
             }
             // TODO make it pluggable that different types can use a different created link, for example /folders for folders instead of
             // TODO /documents
