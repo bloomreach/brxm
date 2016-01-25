@@ -73,9 +73,9 @@
 
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/branches/archetype-3.2.x-rest-api</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/branches/archetype-3.2.x-rest-api</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/branches/archetype-3.2.x-rest-api</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk</url>
   </scm>
 
   <build>
