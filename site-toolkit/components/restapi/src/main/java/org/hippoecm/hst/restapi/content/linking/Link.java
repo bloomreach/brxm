@@ -70,9 +70,12 @@ public class Link {
     public static class ExternalLink extends Link {
         @JsonProperty("id")
         public final String id;
+        @JsonProperty("url")
+        public final String url;
         public ExternalLink(final String id, final String url) {
             super(Type.EXTERNAL);
             this.id = id;
+            this.url = url;
         }
     }
 
