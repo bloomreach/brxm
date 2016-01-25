@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugin Taxonomy</notice.project.name>
 
+    <hippo.services.version>2.2.0-SNAPSHOT</hippo.services.version>
     <hippo.cms.version>3.2.0-SNAPSHOT</hippo.cms.version>
     <hippo.repository.version>3.2.0-SNAPSHOT</hippo.repository.version>
     <hippo.hst.version>3.2.0-SNAPSHOT</hippo.hst.version>
@@ -98,6 +99,13 @@
         <artifactId>junit</artifactId>
         <version>${junit.version}</version>
         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services</artifactId>
+        <version>${hippo.services.version}</version>
+        <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -174,6 +182,13 @@
       <dependency>
         <groupId>org.onehippo.cms7.hst</groupId>
         <artifactId>hst-content-beans</artifactId>
+        <version>${hippo.hst.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7.hst.components</groupId>
+        <artifactId>hst-restapi</artifactId>
         <version>${hippo.hst.version}</version>
         <scope>provided</scope>
       </dependency>
