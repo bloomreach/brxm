@@ -66,10 +66,6 @@
       <artifactId>freemarker</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.hst.components</groupId>
-      <artifactId>hst-jaxrs</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.onehippo.cms7.hst.client-modules</groupId>
       <artifactId>hst-cms-rest</artifactId>
     </dependency>
