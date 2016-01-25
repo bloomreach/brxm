@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
  * @version $Id: SimpleContentRewriter.java 24267 2010-10-11 09:09:56Z aschrijvers $
  */
 public class SimpleContentRewriter extends AbstractContentRewriter<String> {
-    
+
     private static final Logger log = LoggerFactory.getLogger(SimpleContentRewriter.class);
 
     /**
@@ -60,7 +60,8 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         "callto:", 
         "data:", 
         "tel:", 
-        "sms:", 
+        "sms:",
+        "/",
         "$" };
 
     protected static final String LINK_TAG = "<a";
@@ -468,6 +469,9 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
             if (tagReference.startsWith(prefix)) {
                 return true;
             }
+        }
+        if (tagReference.contains("://")) {
+            return true;
         }
         return false;
     }
