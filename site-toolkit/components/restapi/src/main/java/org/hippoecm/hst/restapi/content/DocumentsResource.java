@@ -50,6 +50,8 @@ import org.onehippo.cms7.services.search.service.SearchServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
@@ -118,15 +120,19 @@ public class DocumentsResource extends AbstractResource {
 
     private String parseNodeType(final ResourceContext context, final String nodeTypeString) throws IllegalArgumentException {
         if (nodeTypeString == null) {
-            return HippoNodeType.NT_DOCUMENT;
+            return NT_DOCUMENT;
         }
 
         final ContentType type = context.getContentTypes().getType(nodeTypeString);
         if (type == null) {
-            throw new IllegalArgumentException("_nodetype must be a known node type, it was: '" + nodeTypeString + "'");
+            throw new IllegalArgumentException(String.format("_nodetype must be a known node type, it was: '%s'", nodeTypeString));
         }
 
-        return type.getName();
+        if (NT_DOCUMENT.equals(type) || type.getSuperTypes().contains(NT_DOCUMENT)) {
+            return nodeTypeString;
+        }
+
+        throw new IllegalArgumentException(String.format("_nodetype must be of (sub)type: '%s'", NT_DOCUMENT));
     }
 
     @GET
@@ -153,9 +159,9 @@ public class DocumentsResource extends AbstractResource {
                     .from(RequestContextProvider.get().getResolvedMount().getMount().getContentPath())
                     .ofType(parsedNodeType)
                     .where(QueryUtils.text().contains(parsedQuery == null ? "" : parsedQuery))
-                    .and(QueryUtils.text(HippoNodeType.HIPPO_AVAILABILITY).isEqualTo(availability))
+                    .and(QueryUtils.text(HIPPO_AVAILABILITY).isEqualTo(availability))
                     .returnParentNode()
-                    .orderBy(HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE)
+                    .orderBy(HIPPOSTDPUBWF_PUBLICATION_DATE)
                     .descending()
                     .offsetBy(offset)
                     .limitTo(max);
