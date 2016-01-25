@@ -159,7 +159,7 @@ public abstract class AbstractNodeVisitor implements NodeVisitor {
                 continue;
             }
             // test defined in a (inherited) document type or has primary visitor
-            if (childType.isDerivedItem() && context.getPrimaryNodeTypeVisitor(node) == null) {
+            if (childType.isDerivedItem() && context.getPrimaryNodeTypeVisitor(child) == null) {
                 continue;
             }
             // test whether marked to be skipped
