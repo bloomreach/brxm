@@ -65,7 +65,6 @@
     <!-- ***END temporary override of versions*** -->
 
     <essentials.version>2.2.0-SNAPSHOT</essentials.version>
-
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.1</taglibs.version>
     <xalan.version>2.7.1</xalan.version>
