@@ -21,13 +21,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>10.2.0-rest-api-SNAPSHOT</version>
+    <version>10.2.0-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Essentials</name>
   <description>Hippo Essentials</description>
   <artifactId>hippo-essentials</artifactId>
-  <version>2.2.0-rest-api-SNAPSHOT</version>
+  <version>2.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -54,9 +54,9 @@
 
   </properties>
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/branches/essentials-2.2.0-rest-api</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/branches/essentials-2.2.0-rest-api</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/branches/essentials-2.2.0-rest-api</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk</url>
   </scm>
 
   <modules>
