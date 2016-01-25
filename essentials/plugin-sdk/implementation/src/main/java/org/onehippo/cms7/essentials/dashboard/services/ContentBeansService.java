@@ -63,10 +63,10 @@ import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoContentPrope
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoEssentialsGeneratedObject;
 import org.onehippo.cms7.essentials.dashboard.utils.code.EssentialsGeneratedMethod;
 import org.onehippo.cms7.essentials.dashboard.utils.code.ExistingMethodsVisitor;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
-import org.onehippo.cms7.services.contenttype.HippoContentTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -338,7 +338,7 @@ public class ContentBeansService {
         final Set<ContentType> projectContentTypes = new HashSet<>();
         final Session session = context.createSession();
         try {
-            final ContentTypeService service = new HippoContentTypeService(session);
+            final ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
             final ContentTypes contentTypes = service.getContentTypes();
             final SortedMap<String, Set<ContentType>> typesByPrefix = contentTypes.getTypesByPrefix();
             for (Map.Entry<String, Set<ContentType>> entry : typesByPrefix.entrySet()) {
