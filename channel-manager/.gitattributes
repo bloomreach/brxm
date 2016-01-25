@@ -3,7 +3,9 @@
 /NOTICE -text
 angularjs-api/.bowerrc -text
 angularjs-api/.jshintrc -text
+angularjs-api/.npmrc -text
 angularjs-api/bower.json -text
+angularjs-api/npm-shrinkwrap.json -text
 angularjs-api/package.json -text
 angularjs-api/src/angularjs/directives/showFocus.js -text
 angularjs-api/src/angularjs/directives/showFocus.spec.js -text
