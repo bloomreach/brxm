@@ -58,17 +58,32 @@ public class DocumentsResource extends AbstractResource {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentsResource.class);
 
+    private static final int DEFAULT_MAX_SEARCH_RESULT_ITEMS = 100;
+    private int maxSearchResultItems = DEFAULT_MAX_SEARCH_RESULT_ITEMS;
+
     @Override
     public Logger getLogger() {
         return log;
     }
 
+
+    public void setMaxSearchResultItems(final Integer maxSearchResultItems) {
+        if (maxSearchResultItems != null) {
+            this.maxSearchResultItems = maxSearchResultItems;
+        }
+    }
+
     private int parseMax(final String maxString) throws IllegalArgumentException {
-        int max = 100;
+        int max = maxSearchResultItems;
 
         if (maxString != null) {
             try {
                 max = Integer.parseInt(maxString);
+                if (max > maxSearchResultItems) {
+                    log.debug("Max '{}' exceeds maximum search result items of '{}'. Reducing max to '{}'.",
+                            max, maxSearchResultItems, maxSearchResultItems);
+                    max = maxSearchResultItems;
+                }
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("_max must be a number, greater than zero, it was: '" + maxString + "'");
             }
@@ -211,5 +226,4 @@ public class DocumentsResource extends AbstractResource {
             return buildErrorResponse(500, re);
         }
     }
-
 }
