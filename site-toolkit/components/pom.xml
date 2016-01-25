@@ -35,6 +35,7 @@
     <module>session-pool</module>
     <module>core</module>
     <module>jaxrs</module>
+    <module>restapi</module>
   </modules>
   
 </project>

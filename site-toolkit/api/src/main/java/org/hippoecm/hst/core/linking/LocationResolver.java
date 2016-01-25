@@ -38,7 +38,8 @@ public interface LocationResolver {
      * is created. Do not store any of the arguments as instance variables as they should not be referenced from a LocationResolver
      * @param node
      * @param mount the {@link Mount} where the HstLink should be created for
-     * @param locationMapTree inversed HstSiteMapItem's object
+     * @param locationMapTree inversed HstSiteMapItem's object, which can be <code>null</code> in case of a mount that
+     *                        is not mapped ({@link Mount#isMapped()} or when it does not have a site map
      * @return the resolved HstLink for the node, or <code>null</code> when not able to create one
      */
     HstLink resolve(Node node, Mount mount, LocationMapTree locationMapTree);
