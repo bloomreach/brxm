@@ -128,7 +128,7 @@ public class DocumentsResource extends AbstractResource {
             throw new IllegalArgumentException(String.format("_nodetype must be a known node type, it was: '%s'", nodeTypeString));
         }
 
-        if (NT_DOCUMENT.equals(type) || type.getSuperTypes().contains(NT_DOCUMENT)) {
+        if (NT_DOCUMENT.equals(nodeTypeString) || type.getSuperTypes().contains(NT_DOCUMENT)) {
             return nodeTypeString;
         }
 
