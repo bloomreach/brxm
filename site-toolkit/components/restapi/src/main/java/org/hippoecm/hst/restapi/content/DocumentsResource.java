@@ -35,12 +35,13 @@ import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.restapi.AbstractResource;
+import org.hippoecm.hst.restapi.NodeVisitor;
 import org.hippoecm.hst.restapi.ResourceContext;
 import org.hippoecm.hst.restapi.content.search.SearchResult;
-import org.hippoecm.hst.restapi.NodeVisitor;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.search.query.Query;
 import org.onehippo.cms7.services.search.query.QueryUtils;
 import org.onehippo.cms7.services.search.result.QueryResult;
@@ -100,16 +101,31 @@ public class DocumentsResource extends AbstractResource {
         return SearchInputParsingUtils.parse(queryString, true);
     }
 
+    private String parseNodeType(final ResourceContext context, final String nodeTypeString) throws IllegalArgumentException {
+        if (nodeTypeString == null) {
+            return HippoNodeType.NT_DOCUMENT;
+        }
+
+        final ContentType type = context.getContentTypes().getType(nodeTypeString);
+        if (type == null) {
+            throw new IllegalArgumentException("_nodetype must be a known node type, it was: '" + nodeTypeString + "'");
+        }
+
+        return type.getName();
+    }
+
     @GET
     @Path("/documents")
     public Response getDocuments(@QueryParam("_offset") final String offsetString,
                                  @QueryParam("_max") final String maxString,
-                                 @QueryParam("_query") final String queryString) {
+                                 @QueryParam("_query") final String queryString,
+                                 @QueryParam("_nodetype") final String nodeTypeString) {
         try {
             ResourceContext context = getResourceContextFactory().createResourceContext();
             final int offset = parseOffset(offsetString);
             final int max = parseMax(maxString);
             final String parsedQuery = parseQuery(queryString);
+            final String parsedNodeType = parseNodeType(context, nodeTypeString);
 
             final String availability;
             if (RequestContextProvider.get().isPreview() ) {
@@ -120,7 +136,7 @@ public class DocumentsResource extends AbstractResource {
             final SearchService searchService = getSearchService(context);
             final Query query = searchService.createQuery()
                     .from(RequestContextProvider.get().getResolvedMount().getMount().getContentPath())
-                    .ofType(HippoNodeType.NT_DOCUMENT)
+                    .ofType(parsedNodeType)
                     .where(QueryUtils.text().contains(parsedQuery == null ? "" : parsedQuery))
                     .and(QueryUtils.text(HippoNodeType.HIPPO_AVAILABILITY).isEqualTo(availability))
                     .returnParentNode()
