@@ -32,8 +32,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-services-contenttype</artifactId>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-core-asl</artifactId>
+      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>com.wordnik</groupId>
