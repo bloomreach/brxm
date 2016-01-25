@@ -333,6 +333,17 @@
             </configuration>
           </execution>
           <execution>
+            <id>npm-rebuild</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>npm</executable>
+              <commandlineArgs>rebuild</commandlineArgs>
+            </configuration>
+          </execution>
+          <execution>
             <id>bower-install</id>
             <phase>process-resources</phase>
             <goals>

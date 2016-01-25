@@ -15,6 +15,7 @@ frontend-api/src/main/appended-resources/META-INF/LICENSE -text
 frontend-api/src/main/java/org/onehippo/cms7/channelmanager/service/IDocumentUrlService.java -text
 frontend/.bowerrc -text
 frontend/.jshintrc -text
+frontend/.npmrc -text
 frontend/bower.json -text
 frontend/declutter.config.json -text
 frontend/js/menu/assets/styles/menu.scss -text
@@ -48,6 +49,7 @@ frontend/js/pages/states/add-page/AddPageCtrl.js -text
 frontend/js/pages/states/add-page/add-page.html -text
 frontend/js/pages/states/overview-pages/StateCtrl.js -text
 frontend/js/shared/services/ChannelService.js -text
+frontend/npm-shrinkwrap.json -text
 frontend/package.json -text
 frontend/pom.xml eol=lf
 frontend/src/main/appended-resources/META-INF/LICENSE -text
