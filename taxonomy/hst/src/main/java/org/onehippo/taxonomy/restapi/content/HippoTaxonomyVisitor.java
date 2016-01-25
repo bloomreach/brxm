@@ -13,6 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.onehippo.taxonomy.restapi.content;
 
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TAXONOMY;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TRANSLATION;
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("unused")
 @PrimaryNodeTypeNodeVisitor
 public class HippoTaxonomyVisitor extends HippoPublicationWorkflowDocumentVisitor {
 
