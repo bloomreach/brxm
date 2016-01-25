@@ -908,11 +908,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
 
             for (Mount candidateMount : mountsForHostGroup) {
 
-                if(!candidateMount.isMapped()) {
-                    // not a mount for a HstSite
-                    continue;
-                }
-
                 // (a)
                 if (rewritePath.startsWith(candidateMount.getContentPath() + "/") || rewritePath.equals(candidateMount.getContentPath())) {
                     // check whether one of the types of this Mount matches the types of the currentMount: if so, we have a possible hit.
