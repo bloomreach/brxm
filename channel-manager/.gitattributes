@@ -3,7 +3,9 @@
 /NOTICE -text
 angularjs-api/.bowerrc -text
 angularjs-api/.jshintrc -text
+angularjs-api/.npmrc -text
 angularjs-api/bower.json -text
+angularjs-api/npm-shrinkwrap.json -text
 angularjs-api/package.json -text
 angularjs-api/src/angularjs/directives/showFocus.js -text
 angularjs-api/src/angularjs/directives/showFocus.spec.js -text
@@ -19,6 +21,7 @@ frontend-ng/src/i18n/hippo-cm.nl.json -text
 frontend-ng/src/styles/hippo-cm.scss -text
 frontend/.bowerrc -text
 frontend/.jshintrc -text
+frontend/.npmrc -text
 frontend/bower.json -text
 frontend/declutter.config.json -text
 frontend/js/menu/assets/styles/menu.scss -text
@@ -52,6 +55,7 @@ frontend/js/pages/states/add-page/AddPageCtrl.js -text
 frontend/js/pages/states/add-page/add-page.html -text
 frontend/js/pages/states/overview-pages/StateCtrl.js -text
 frontend/js/shared/services/ChannelService.js -text
+frontend/npm-shrinkwrap.json -text
 frontend/package.json -text
 frontend/pom.xml eol=lf
 frontend/src/main/appended-resources/META-INF/LICENSE -text

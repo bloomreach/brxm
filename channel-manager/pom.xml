@@ -211,10 +211,13 @@
                 <exclude>**/coverage/**/*</exclude>
 
                 <!-- files without license header -->
-                <exclude>**/.bowerrc</exclude>
-                <exclude>**/.jshintrc</exclude>
-                <exclude>**/.csslintrc</exclude>
-                <exclude>**/*.md</exclude>
+                <exclude>frontend/.npmrc</exclude>
+                <exclude>frontend/.bowerrc</exclude>
+                <exclude>frontend/.jshintrc</exclude>
+                <exclude>angularjs-api/.npmrc</exclude>
+                <exclude>angularjs-api/.bowerrc</exclude>
+                <exclude>angularjs-api/.jshintrc</exclude>
+                <exclude>angularjs-api/.csslintrc</exclude>
 
                 <!-- repository content XML -->
                 <exclude>repository/src/main/resources/**/*.xml</exclude>
