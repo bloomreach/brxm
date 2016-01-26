@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-module.exports = function (config) {
+module.exports = function karmaConfig(config) {
 
   var build = require('./build.config.js');
 
@@ -25,6 +25,7 @@ module.exports = function (config) {
 
     // list of files / patterns to load in the browser
     files: [
+
       // dependencies
       build.bower + '/jquery/dist/jquery.js',
       build.bower + '/angular/angular.js',
@@ -61,8 +62,8 @@ module.exports = function (config) {
       // tests
       {
         pattern: build.ngsource + '/**/*.spec.js',
-        included: false
-      }
+        included: false,
+      },
     ],
 
     // list of files to exclude
@@ -105,12 +106,12 @@ module.exports = function (config) {
     preprocessors: {
       '<%= build.ngsource %>/menu/**/!(*spec).js': ['coverage'],
       '<%= build.ngsource %>/page/**/!(*spec).js': ['coverage'],
-      '<%= build.ngsource %>/pages/**/!(*spec).js': ['coverage']
+      '<%= build.ngsource %>/pages/**/!(*spec).js': ['coverage'],
     },
 
     junitReporter: {
-      outputFile: './target/surefire-reports/TEST-karma-results.xml'
-    }
-
+      outputDir: './target/surefire-reports/',
+      outputFile: 'TEST-karma-results.xml',
+    },
   });
 };
