@@ -19,7 +19,7 @@
 
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms7-project</artifactId>
-  <version>27.5</version>
+  <version>27.6-SNAPSHOT</version>
 
   <name>Hippo CMS7 Project POM</name>
   <description>Hippo CMS7 Project POM</description>
@@ -151,9 +151,9 @@
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html
   -->
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/project/tags/hippo-cms7-project-27.5</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/project/tags/hippo-cms7-project-27.5</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/project/tags/hippo-cms7-project-27.5</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/project/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/project/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/project/trunk</url>
   </scm>
 
   <issueManagement>
