@@ -173,6 +173,11 @@ public class SiteMapHelper extends AbstractHelper {
         }
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
         final Session session = requestContext.getSession();
+
+        final String previewWorkspaceSiteMapPath = getPreviewWorkspacePath() + "/" + NODENAME_HST_SITEMAP;
+        if (!session.nodeExists(previewWorkspaceSiteMapPath)) {
+            createWorkspaceSiteMapInPreviewAndLive(previewWorkspaceSiteMapPath, session);
+        }
         Node parent = session.getNodeByIdentifier(finalParentId);
 
         final String encodedName = NodeNameCodec.encode(siteMapItem.getName());

@@ -75,8 +75,7 @@ public class RootResource extends AbstractConfigResource {
     @GET
     @Path("/channels")
     public Response getChannels(@QueryParam("previewConfigRequired") final boolean previewConfigRequired,
-                                @QueryParam("workspacePagesRequired") final boolean workspacePagesRequired,
-                                @QueryParam("workspaceSiteMapRequired") final boolean workspaceSiteMapRequired) {
+                                @QueryParam("workspaceRequired") final boolean workspaceRequired) {
         final HstRequestContext requestContext = RequestContextProvider.get();
         final VirtualHost virtualHost = requestContext.getResolvedMount().getMount().getVirtualHost();
         try {
@@ -84,8 +83,7 @@ public class RootResource extends AbstractConfigResource {
                     .values()
                     .stream()
                     .filter(channel -> previewConfigRequiredFiltered(channel, previewConfigRequired))
-                    .filter(channel -> workspacePagesFiltered(channel, workspacePagesRequired))
-                    .filter(channel -> workspaceSiteMapFiltered(channel, workspaceSiteMapRequired))
+                    .filter(channel -> workspaceFiltered(channel, workspaceRequired))
                     .collect(toList());
             return ok("Fetched channels successful", channels);
         } catch (RuntimeRepositoryException e) {
@@ -111,25 +109,16 @@ public class RootResource extends AbstractConfigResource {
         return ok(msg, featuresRepresentation);
     }
 
-    private boolean workspacePagesFiltered(final Channel channel, final boolean required) throws RuntimeRepositoryException {
-        return workspaceRequiredConfig(channel, required, NODENAME_HST_PAGES);
-    }
-
-    private boolean workspaceSiteMapFiltered(final Channel channel, final boolean required) throws RuntimeRepositoryException {
-        return workspaceRequiredConfig(channel, required, NODENAME_HST_SITEMAP);
-    }
-
-    private boolean workspaceRequiredConfig(final Channel channel, final boolean required, final String nodeName) {
+    private boolean workspaceFiltered(final Channel channel, final boolean required) throws RuntimeRepositoryException {
         if (!required) {
             return true;
         }
         final HstRequestContext requestContext = RequestContextProvider.get();
         final Mount mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(channel.getMountId());
         final String workspacePath = mount.getHstSite().getConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
-        final String requiredPath = workspacePath + "/" + nodeName;
         try {
-            final boolean requiredPathExists = RequestContextProvider.get().getSession().nodeExists(requiredPath);
-            return requiredPathExists;
+            final boolean workspacePathExists = RequestContextProvider.get().getSession().nodeExists(workspacePath);
+            return workspacePathExists;
         } catch (RepositoryException e) {
             throw new RuntimeRepositoryException(e);
         }
