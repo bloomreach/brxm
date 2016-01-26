@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,6 @@ import org.slf4j.LoggerFactory;
 
 public class CustomValueListProvider extends Plugin implements IValueListProvider {
 
-    private static final long serialVersionUID = 666349519288021987L;
-
     static final Logger log = LoggerFactory.getLogger(CustomValueListProvider.class);
 
     public CustomValueListProvider(IPluginContext context, IPluginConfig config) {
@@ -66,8 +64,7 @@ public class CustomValueListProvider extends Plugin implements IValueListProvide
             valuelist.add(new ListItem("custom1", "Custom Waarde 1"));
             valuelist.add(new ListItem("custom2", "Custom Waarde 2"));
             valuelist.add(new ListItem("custom3", "Custom Waarde 3"));
-        }
-        else {
+        } else {
             valuelist.add(new ListItem("custom1", "Custom Value 1"));
             valuelist.add(new ListItem("custom2", "Custom Value 2"));
             valuelist.add(new ListItem("custom3", "Custom Value 3"));
@@ -77,7 +74,7 @@ public class CustomValueListProvider extends Plugin implements IValueListProvide
     }
 
     public List<String> getValueListNames() {
-        ArrayList<String> list = new ArrayList<String>(1);
+        ArrayList<String> list = new ArrayList<>(1);
         list.add("values");
         return list;
     }
