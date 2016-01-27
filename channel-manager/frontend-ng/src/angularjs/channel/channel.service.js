@@ -15,14 +15,14 @@
  */
 
 export class ChannelService {
-  constructor (SessionService) {
+  constructor(SessionService) {
     'ngInject';
 
     this.channel = {};
     this.SessionService = SessionService;
   }
 
-  load (channel, path = '') {
+  load(channel, path = '') {
     return this.SessionService
       .authenticate(channel)
       .then(() => {
@@ -33,7 +33,7 @@ export class ChannelService {
       });
   }
 
-  getUrl () {
+  getUrl() {
     let url = this.channel.contextPath;
     if (url === '/') {
       url = '';
@@ -56,6 +56,7 @@ export class ChannelService {
       // The iframe url should therefore end with '/'.
       url += '/';
     }
+
     return url;
   }
 }

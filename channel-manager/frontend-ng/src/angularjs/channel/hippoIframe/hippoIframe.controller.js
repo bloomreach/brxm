@@ -15,8 +15,7 @@
  */
 
 export class HippoIframeCtrl {
-  constructor () {
+  constructor() {
     'ngInject';
   }
-
 }

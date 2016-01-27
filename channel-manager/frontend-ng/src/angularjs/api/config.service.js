@@ -16,7 +16,7 @@
 
 export class ConfigService {
 
-  constructor (CmsService) {
+  constructor(CmsService) {
     'ngInject';
 
     // default configuration

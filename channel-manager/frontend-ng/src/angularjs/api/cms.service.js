@@ -18,7 +18,7 @@ const BROWSER_SYNC_URL = '//localhost:3000/browser-sync/browser-sync-client.2.10
 
 export class CmsService {
 
-  constructor ($window, $log) {
+  constructor($window, $log) {
     'ngInject';
 
     this.$window = $window;
@@ -26,7 +26,7 @@ export class CmsService {
     this.iframePanelId = this.getParentIFramePanelId();
   }
 
-  getParentIFramePanelId () {
+  getParentIFramePanelId() {
     const search = this.$window.location.search;
 
     if (search.length > 0) {
@@ -43,7 +43,7 @@ export class CmsService {
     throw new Error('Request parameter \'parentExtIFramePanelId\' not found in IFrame url');
   }
 
-  getParentIFramePanel () {
+  getParentIFramePanel() {
     const iframePanel = this.$window.parent.Ext.getCmp(this.iframePanelId);
 
     if (!angular.isObject(iframePanel)) {
@@ -53,17 +53,17 @@ export class CmsService {
     return iframePanel;
   }
 
-  publish (event, ...values) {
+  publish() {
     const iframeToHost = this.getParentIFramePanel().iframeToHost;
     return iframeToHost.publish.apply(iframeToHost, arguments);
   }
 
-  subscribe (event, callback, scope) {
+  subscribe() {
     const hostToIFrame = this.getParentIFramePanel().hostToIFrame;
     return hostToIFrame.subscribe.apply(hostToIFrame, arguments);
   }
 
-  getConfig () {
+  getConfig() {
     const iframePanel = this.getParentIFramePanel();
     const config = iframePanel.initialConfig.iframeConfig;
 
@@ -74,7 +74,7 @@ export class CmsService {
     return config;
   }
 
-  addScriptToBody (scriptUrl) {
+  addScriptToBody(scriptUrl) {
     const body = this.$window.document.getElementsByTagName('body')[0];
     const script = document.createElement('script');
     script.type = 'text/javascript';
@@ -82,7 +82,7 @@ export class CmsService {
     body.appendChild(script);
   }
 
-  enableBrowserSync () {
+  enableBrowserSync() {
     if (this.getConfig().debug) {
       this.addScriptToBody(BROWSER_SYNC_URL);
       this.$log.info(`iframe #${this.iframePanelId} has browserSync enabled via ${BROWSER_SYNC_URL}`);

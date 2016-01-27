@@ -17,28 +17,8 @@
 import { ChannelCtrl } from './channel.controller';
 import { ChannelService } from './channel.service';
 import { channelHippoIframeModule } from './hippoIframe/hippoIframe';
-
-function config ($stateProvider) {
-  $stateProvider.state('hippo-cm.channel', {
-    url: '/channel/:channelId/',
-    controller: 'ChannelCtrl as channelCtrl',
-    templateUrl: 'channel/channel.html'
-  });
-}
-
-function run ($state, CmsService, ChannelService) {
-
-  function showChannel(channel) {
-    $state.go('hippo-cm.channel', {channelId: channel.id}, {reload:true});
-  }
-
-  CmsService.subscribe('load-channel', (channel) => {
-    ChannelService.load(channel).then(showChannel); // TODO: handle error.
-  });
-
-  // Handle reloading of iframe by BrowserSync during development
-  CmsService.publish('reload-channel');
-}
+import { config } from './channel.config';
+import { run } from './channel.run';
 
 export const channelModule = angular
   .module('hippo-cm.channel', [
@@ -49,5 +29,3 @@ export const channelModule = angular
   .controller('ChannelCtrl', ChannelCtrl)
   .service('ChannelService', ChannelService)
   .run(run);
-
-

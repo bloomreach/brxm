@@ -23,5 +23,3 @@ export const channelManagerApi = angular
   .service('CmsService', CmsService)
   .service('ConfigService', ConfigService)
   .service('SessionService', SessionService);
-
-

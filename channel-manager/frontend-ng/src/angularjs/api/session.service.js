@@ -16,13 +16,13 @@
 
 const DEFAULT_SETTINGS = {
   canWrite: false,
-  sessionId: null
+  sessionId: null,
 };
 
 const HANDSHAKE_PATH = '/cafebabe-cafe-babe-cafe-babecafebabe./composermode/';
 
 export class SessionService {
-  constructor ($q, $http, ConfigService) {
+  constructor($q, $http, ConfigService) {
     'ngInject';
 
     this.$q = $q;
@@ -35,11 +35,11 @@ export class SessionService {
     this.handshakePath = ConfigService.apiUrlPrefix + HANDSHAKE_PATH;
   }
 
-  authenticate (channel) {
+  authenticate(channel) {
     const url = channel.contextPath + this.handshakePath + channel.hostname + '/';
     const headers = {
       'CMS-User': this.cmsUser,
-      'FORCE_CLIENT_HOST': 'true'
+      FORCE_CLIENT_HOST: 'true',
     };
 
     return this.$q((resolve, reject) => {
