@@ -53,7 +53,7 @@
     </esi:remove>
   </p>
   <p>
-    <hst:messagesReplace variablePrefix="${" variableSuffix="}" escapeChar="\\">
+    <hst:messagesReplace variablePrefix="\${" variableSuffix="}" escapeChar="\\">
       <%="Download charge for Community Edition: $${key.download.charge}."%>
     </hst:messagesReplace>
   </p>
