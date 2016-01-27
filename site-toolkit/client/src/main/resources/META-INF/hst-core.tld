@@ -1060,7 +1060,7 @@
         The variable reference prefix. The default value is "${".
         If the body content content contains variable references surrounded by variablePrefix and variableSuffix,
         then this tag replaces each variable reference by the value found in either the current locale context
-        or the provided resource bundle.
+        or the provided resource bundle. Note that if you specify the value "${" yourself, you need to use "\${"
       </description>
       <name>variablePrefix</name>
       <required>false</required>
