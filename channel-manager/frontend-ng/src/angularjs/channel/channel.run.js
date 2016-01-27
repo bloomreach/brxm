@@ -1,4 +1,5 @@
 export function run($state, CmsService, ChannelService) {
+  'ngInject';
 
   function showChannel(channel) {
     $state.go('hippo-cm.channel', { channelId: channel.id }, { reload: true });
