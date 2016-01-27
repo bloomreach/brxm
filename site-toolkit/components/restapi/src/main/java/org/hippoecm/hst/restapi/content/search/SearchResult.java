@@ -31,6 +31,8 @@ import org.onehippo.cms7.services.search.result.Hit;
 import org.onehippo.cms7.services.search.result.HitIterator;
 import org.onehippo.cms7.services.search.result.QueryResult;
 
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
+
 public class SearchResult {
 
     @JsonProperty("offset")
@@ -51,10 +53,9 @@ public class SearchResult {
     @JsonProperty("items")
     public SearchResultItem[] items;
 
-    public void populate(final int offset, final int max,
-                         final QueryResult queryResult,
-                         final ResourceContext context,
-                         final String expectedNodeType) throws RepositoryException {
+    public void populateFromDocument(final int offset, final int max,
+                                     final QueryResult queryResult,
+                                     final ResourceContext context) throws RepositoryException {
         final List<SearchResultItem> itemArrayList = new ArrayList<>();
         final HitIterator iterator = queryResult.getHits();
         final Session session = context.getRequestContext().getSession();
@@ -63,9 +64,9 @@ public class SearchResult {
             final Hit hit = iterator.nextHit();
             final String uuid = hit.getSearchDocument().getContentId().toIdentifier();
             final Node node = session.getNodeByIdentifier(uuid).getParent();
-            if (!node.isNodeType(expectedNodeType)) {
-                throw new IllegalStateException(String.format("Expected node of type '%s' but was '%s'.",
-                        expectedNodeType, node.getPrimaryNodeType().getName()));
+            if (!node.isNodeType(NT_HANDLE)) {
+                throw new IllegalStateException(String.format("Expected node of type 'NT_HANDLE' but was '%s'.",
+                        node.getPrimaryNodeType().getName()));
             }
 
             final HstLink hstLink = context.getRequestContext().getHstLinkCreator().create(node, context.getRequestContext());

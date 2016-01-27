@@ -154,17 +154,22 @@ public class DocumentsResource extends AbstractResource {
             }
             final SearchService searchService = getSearchService(context);
             final Query query = searchService.createQuery()
-                    .from(RequestContextProvider.get().getResolvedMount().getMount().getContentPath())
+                    .from(RequestContextProvider.get()
+                            .getResolvedMount()
+                            .getMount()
+                            .getContentPath())
                     .ofType(parsedNodeType)
-                    .where(QueryUtils.text().contains(parsedQuery == null ? "" : parsedQuery))
-                    .and(QueryUtils.text(HIPPO_AVAILABILITY).isEqualTo(availability))
+                    .where(QueryUtils.text()
+                            .contains(parsedQuery == null ? "" : parsedQuery))
+                    .and(QueryUtils.text(HIPPO_AVAILABILITY)
+                            .isEqualTo(availability))
                     .orderBy(HIPPOSTDPUBWF_PUBLICATION_DATE)
                     .descending()
                     .offsetBy(offset)
                     .limitTo(max);
             final QueryResult queryResult = searchService.search(query);
             final SearchResult result = new SearchResult();
-            result.populate(offset, max, queryResult, context, NT_HANDLE);
+            result.populateFromDocument(offset, max, queryResult, context);
 
             return Response.status(200).entity(result).build();
 
