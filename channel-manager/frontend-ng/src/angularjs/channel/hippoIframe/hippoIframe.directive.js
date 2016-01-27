@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+function link(scope, element, attr, iframe) {
+  const iframeElement = $(element).find('iframe');
+
+  $(iframeElement).on('load', () => iframe.onLoad(iframeElement[0].contentWindow));
+}
+
 export function hippoIframe() {
   'ngInject';
 
@@ -26,5 +32,6 @@ export function hippoIframe() {
     templateUrl: 'channel/hippoIframe/hippoIframe.html',
     controller: 'hippoIframeCtrl',
     controllerAs: 'iframe',
+    link,
   };
 }

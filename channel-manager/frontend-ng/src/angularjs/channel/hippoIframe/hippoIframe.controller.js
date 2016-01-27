@@ -18,4 +18,17 @@ export class HippoIframeCtrl {
   constructor() {
     'ngInject';
   }
+
+  onLoad(iframeWindow) {
+    this.processNewUrl(iframeWindow.location.pathname);
+  }
+
+  processNewUrl(/* iframeUrl */) {
+
+    // TODO: check if new URL is in current channel. If not, signal the channel switch to the outside world.
+    // We may want HST to include the mount ID (and other meta data) in a comment, so we can parse that rather than
+    // digesting arbitrary URLs here.
+
+  }
+
 }
