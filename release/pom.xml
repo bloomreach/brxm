@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>27.4</version>
+    <version>28-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
@@ -39,38 +39,38 @@
   </scm>
 
   <properties>
-    <hippo.release.version>10.2.0-SNAPSHOT</hippo.release.version>
+    <hippo.release.version>11.0.0-SNAPSHOT</hippo.release.version>
 
-    <hippo.addon-hst-configuration-editor.version>2.2.0-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
-    <hippo.addon-channel-manager.version>3.2.0-SNAPSHOT</hippo.addon-channel-manager.version>
-    <hippo.addon-search-service.version>2.2.0-SNAPSHOT</hippo.addon-search-service.version>
-    <hippo.commons.version>2.2.0-SNAPSHOT</hippo.commons.version>
-    <hippo.cms.version>3.2.0-SNAPSHOT</hippo.cms.version>
-    <hippo.frontend.plugins.version>2.2.0-SNAPSHOT</hippo.frontend.plugins.version>
-    <hippo.frontend.theme.version>2.2.0-SNAPSHOT</hippo.frontend.theme.version>
-    <hippo.hst.version>3.2.0-SNAPSHOT</hippo.hst.version>
-    <hippo.packages.version>3.2.0-SNAPSHOT</hippo.packages.version>
-    <hippo.repository.version>3.2.0-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>2.2.0-SNAPSHOT</hippo.services.version>
-    <hippo.services.autoreload.version>2.2.0-SNAPSHOT</hippo.services.autoreload.version>
-    <hippo.services.contenttype.version>2.2.0-SNAPSHOT</hippo.services.contenttype.version>
-    <hippo.services.eventbus.version>2.2.0-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.services.webfiles.version>2.2.0-SNAPSHOT</hippo.services.webfiles.version>
-    <hippo.utilities.version>2.2.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.addon-hst-configuration-editor.version>3.0.0-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
+    <hippo.addon-channel-manager.version>4.0.0-SNAPSHOT</hippo.addon-channel-manager.version>
+    <hippo.addon-search-service.version>3.0.0-SNAPSHOT</hippo.addon-search-service.version>
+    <hippo.commons.version>3.0.0-SNAPSHOT</hippo.commons.version>
+    <hippo.cms.version>4.0.0-SNAPSHOT</hippo.cms.version>
+    <hippo.frontend.plugins.version>3.0.0-SNAPSHOT</hippo.frontend.plugins.version>
+    <hippo.frontend.theme.version>3.0.0-SNAPSHOT</hippo.frontend.theme.version>
+    <hippo.hst.version>4.0.0-SNAPSHOT</hippo.hst.version>
+    <hippo.packages.version>4.0.0-SNAPSHOT</hippo.packages.version>
+    <hippo.repository.version>4.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.services.version>3.0.0-SNAPSHOT</hippo.services.version>
+    <hippo.services.autoreload.version>3.0.0-SNAPSHOT</hippo.services.autoreload.version>
+    <hippo.services.contenttype.version>3.0.0-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.services.eventbus.version>3.0.0-SNAPSHOT</hippo.services.eventbus.version>
+    <hippo.services.webfiles.version>3.0.0-SNAPSHOT</hippo.services.webfiles.version>
+    <hippo.utilities.version>3.0.0-SNAPSHOT</hippo.utilities.version>
 
     <!-- Hippo standard plugin versions -->
-    <hippo.plugin.content-blocks.version>2.2.0-SNAPSHOT</hippo.plugin.content-blocks.version>
-    <hippo.plugin.content-tagging.version>5.2.0-SNAPSHOT</hippo.plugin.content-tagging.version>
-    <hippo.plugin.dashboard-document-wizard.version>2.2.0-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
-    <hippo.plugin.gallerypicker.version>2.2.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
-    <hippo.plugin.poll.version>2.2.0-SNAPSHOT</hippo.plugin.poll.version>
-    <hippo.plugin.relateddocs.version>3.2.0-SNAPSHOT</hippo.plugin.relateddocs.version>
-    <hippo.plugin.resourcebundle-editor.version>2.2.0-SNAPSHOT</hippo.plugin.resourcebundle-editor.version>
-    <hippo.plugin.robotstxt.version>2.2.0-SNAPSHOT</hippo.plugin.robotstxt.version>
-    <hippo.plugin.selections.version>3.2.0-SNAPSHOT</hippo.plugin.selections.version>
-    <hippo.plugin.seo-support.version>2.2.0-SNAPSHOT</hippo.plugin.seo-support.version>
-    <hippo.plugin.sitemap.version>2.2.0-SNAPSHOT</hippo.plugin.sitemap.version>
-    <hippo.plugin.taxonomy.version>2.2.0-SNAPSHOT</hippo.plugin.taxonomy.version>
+    <hippo.plugin.content-blocks.version>3.0.0-SNAPSHOT</hippo.plugin.content-blocks.version>
+    <hippo.plugin.content-tagging.version>6.0.0-SNAPSHOT</hippo.plugin.content-tagging.version>
+    <hippo.plugin.dashboard-document-wizard.version>3.0.0-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
+    <hippo.plugin.gallerypicker.version>3.0.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
+    <hippo.plugin.poll.version>3.0.0-SNAPSHOT</hippo.plugin.poll.version>
+    <hippo.plugin.relateddocs.version>4.0.0-SNAPSHOT</hippo.plugin.relateddocs.version>
+    <hippo.plugin.resourcebundle-editor.version>3.0.0-SNAPSHOT</hippo.plugin.resourcebundle-editor.version>
+    <hippo.plugin.robotstxt.version>3.0.0-SNAPSHOT</hippo.plugin.robotstxt.version>
+    <hippo.plugin.selections.version>4.0.0-SNAPSHOT</hippo.plugin.selections.version>
+    <hippo.plugin.seo-support.version>3.0.0-SNAPSHOT</hippo.plugin.seo-support.version>
+    <hippo.plugin.sitemap.version>3.0.0-SNAPSHOT</hippo.plugin.sitemap.version>
+    <hippo.plugin.taxonomy.version>3.0.0-SNAPSHOT</hippo.plugin.taxonomy.version>
 
   </properties>
 
