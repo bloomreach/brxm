@@ -218,28 +218,28 @@
                 <exclude>**/MANIFEST.MF</exclude>
                 <!-- exclude IntelliJ module files of sub-projects -->
                 <exclude>**/*.iml</exclude>
+                <exclude>*/.idea/**</exclude>
                 <!-- exclude IntelliJ Atlassian plugin file -->
                 <exclude>**/atlassian-ide-plugin.xml</exclude>
                 <!-- essentials specific -->
                 <exclude>VERSIONS</exclude>
-                <exclude>dashboard/*.txt</exclude>
-                <exclude>dashboard/node_modules/**</exclude>
-                <exclude>dashboard/src/main/webapp/js/lib/**</exclude>
-                <exclude>dashboard/src/main/webapp/docs/rest-api/**</exclude>
-                <exclude>archetype/**</exclude>
-                <exclude>**/*.md</exclude>
-                <exclude>*/.idea/**</exclude>
-                <exclude>*/.bowerrc/**</exclude>
-                <exclude>*/.npmrc/**</exclude>
-                <exclude>**/*.svg</exclude>
-                <exclude>**/*.woff</exclude>
-                <exclude>**/*.ttf</exclude>
                 <exclude>jar-dependencies.txt</exclude>
                 <exclude>plugins/skeleton-package/src/main/resources/instructions/bootstrap/**</exclude>
                 <exclude>plugins/skeleton-package/src/main/resources/instructions/js/bootstrap*.js</exclude>
                 <exclude>plugins/skeleton-package/src/main/resources/instructions/js/jquery*.js</exclude>
                 <exclude>plugins/**/*.ftl</exclude>
                 <exclude>plugins/**/*.jsp</exclude>
+
+                <!-- front-end code -->
+                <exclude>**/*.md</exclude>
+                <exclude>dashboard/.*</exclude>
+                <exclude>dashboard/dist/**/*</exclude>
+                <exclude>dashboard/tmp/**/*</exclude>
+                <exclude>dashboard/**/lib/**/*</exclude>
+                <exclude>dashboard/**/docs/**/*</exclude>
+                <exclude>dashboard/node_modules/**/*</exclude>
+                <exclude>dashboard/bower_components/**/*</exclude>
+                <exclude>dashboard/DIST_LICENSE</exclude>
               </excludes>
             </configuration>
           </plugin>
