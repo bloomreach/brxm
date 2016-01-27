@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.jcr.Repository;
 import javax.servlet.FilterChain;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -65,6 +66,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.context.ServletContextAware;
 
+import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN;
+import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR;
 import static org.hippoecm.hst.util.HstRequestUtils.createURLWithExplicitSchemeForRequest;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRemoteAddr;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestHost;
@@ -151,6 +154,16 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         HttpServletRequest req = (HttpServletRequest)request;
         HttpServletResponse res = (HttpServletResponse)response;
 
+        HttpSession session = req.getSession(false);
+        final boolean isJaasLoginAttempt = session != null
+                && session.getAttribute(HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN) != null
+                && session.getAttribute(HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN).equals(req.getParameter("token"));
+        // make sure to not handle FORWARD requests for jaas authentication by the HST
+        if (isJaasLoginAttempt && req.getAttribute(RequestDispatcher.FORWARD_SERVLET_PATH) != null) {
+            chain.doFilter(req, res);
+            return;
+        }
+
         request.setAttribute(FILTER_DONE_KEY, Boolean.TRUE);
 
         boolean requestContextSetToProvider = false;
@@ -207,19 +220,16 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
              * always a http redirect is done by the container. Hence we check below whether there is an attribute
              * on the http session that is only present after a jaas login attempt. If present, we do another redirect.
              */
-            HttpSession session = req.getSession(false);
-            if (session != null && session.getAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN) != null ) {
-                if (session.getAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN).equals(req.getParameter("token"))) {
-                    // we are dealing with client side redirect from the container after JAAS login. This redirect typically
-                    // fails in case of proxy taking care of the context path in front of the application.
-                    // hence we need another redirect.
-                    String resourceURL = (String)session.getAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
-                    session.removeAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
-                    session.removeAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN);
-                    log.debug("Redirect {} to '{}'", containerRequest, resourceURL);
-                    res.sendRedirect(resourceURL);
-                    return;
-                }
+            if (isJaasLoginAttempt) {
+                // we are dealing with client side redirect from the container after JAAS login. This redirect typically
+                // fails in case of proxy taking care of the context path in front of the application.
+                // hence we need another redirect.
+                String resourceURL = (String)session.getAttribute(HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
+                session.removeAttribute(HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
+                session.removeAttribute(HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN);
+                log.debug("Redirect {} to '{}'", containerRequest, resourceURL);
+                res.sendRedirect(resourceURL);
+                return;
             }
 
             request.setAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR, resolvedVirtualHost);
