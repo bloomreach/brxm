@@ -16,8 +16,13 @@ frontend-api/src/main/java/org/onehippo/cms7/channelmanager/service/IDocumentUrl
 frontend-ng/README.md -text
 frontend-ng/bower.json -text
 frontend-ng/package.json -text
+frontend-ng/src/angularjs/channel/hippoIframe/hippoIframe.controller.js -text
+frontend-ng/src/angularjs/channel/hippoIframe/hippoIframe.directive.js -text
+frontend-ng/src/angularjs/channel/hippoIframe/hippoIframe.html -text
+frontend-ng/src/angularjs/channel/hippoIframe/hippoIframe.js -text
 frontend-ng/src/i18n/hippo-cm.en.json -text
 frontend-ng/src/i18n/hippo-cm.nl.json -text
+frontend-ng/src/styles/_overlay.scss -text
 frontend-ng/src/styles/hippo-cm.scss -text
 frontend/.bowerrc -text
 frontend/.jshintrc -text

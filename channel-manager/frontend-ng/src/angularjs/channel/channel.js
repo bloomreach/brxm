@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { ChannelCtrl } from './channel.controller.js';
-import { ChannelService } from './channel.service.js';
+import { ChannelCtrl } from './channel.controller';
+import { ChannelService } from './channel.service';
+import { channelHippoIframeModule } from './hippoIframe/hippoIframe';
 
 function config ($stateProvider) {
   $stateProvider.state('hippo-cm.channel', {
@@ -40,7 +41,10 @@ function run ($state, CmsService, ChannelService) {
 }
 
 export const channelModule = angular
-  .module('hippo-cm.channel', ['hippo-cm-api'])
+  .module('hippo-cm.channel', [
+    'hippo-cm-api',
+    channelHippoIframeModule.name,
+  ])
   .config(config)
   .controller('ChannelCtrl', ChannelCtrl)
   .service('ChannelService', ChannelService)
