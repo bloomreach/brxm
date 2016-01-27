@@ -62,15 +62,15 @@ public class SearchResult {
         final RestApiLinkCreator restApiLinkCreator = context.getRestApiLinkCreator();
         while (iterator.hasNext()) {
             final Hit hit = iterator.nextHit();
-            final String uuid = hit.getSearchDocument().getContentId().toIdentifier();
-            final Node node = session.getNodeByIdentifier(uuid).getParent();
-            if (!node.isNodeType(NT_HANDLE)) {
+            final String variantUUID = hit.getSearchDocument().getContentId().toIdentifier();
+            final Node handleNode = session.getNodeByIdentifier(variantUUID).getParent();
+            if (!handleNode.isNodeType(NT_HANDLE)) {
                 throw new IllegalStateException(String.format("Expected node of type 'NT_HANDLE' but was '%s'.",
-                        node.getPrimaryNodeType().getName()));
+                        handleNode.getPrimaryNodeType().getName()));
             }
 
-            final HstLink hstLink = context.getRequestContext().getHstLinkCreator().create(node, context.getRequestContext());
-            final SearchResultItem item = new SearchResultItem(node.getName(), uuid, restApiLinkCreator.convert(context, node.getIdentifier(), hstLink));
+            final HstLink hstLink = context.getRequestContext().getHstLinkCreator().create(handleNode, context.getRequestContext());
+            final SearchResultItem item = new SearchResultItem(handleNode.getName(), handleNode.getIdentifier(), restApiLinkCreator.convert(context, handleNode.getIdentifier(), hstLink));
             itemArrayList.add(item);
 
             this.offset = offset;
