@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>27.4</version>
+    <version>28-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-plugin-dashboard-document-wizard</artifactId>
@@ -49,9 +49,9 @@
   </issueManagement>
 
   <properties>
-    <hippo.repository.version>3.2.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>3.2.0-SNAPSHOT</hippo.cms.version>
-    <hippo.plugins.selections.version>3.2.0-SNAPSHOT</hippo.plugins.selections.version>
+    <hippo.repository.version>4.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>4.0.0-SNAPSHOT</hippo.cms.version>
+    <hippo.plugins.selections.version>4.0.0-SNAPSHOT</hippo.plugins.selections.version>
 
     <testng.version>6.0.1</testng.version>
 
