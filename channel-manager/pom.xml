@@ -204,18 +204,21 @@
                 <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/*</exclude>
                 <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/devices/device-skins.txt</exclude>
 
-                <!-- ignore frontend dependencies pulled in by npm -->
+                <exclude>frontend/.*</exclude>
+                <exclude>frontend/*.md</exclude>
+                <exclude>frontend/dist/**/*</exclude>
+                <exclude>frontend/tmp/**/*</exclude>
                 <exclude>frontend/node_modules/**/*</exclude>
-                <exclude>angularjs-api/node_modules/**/*</exclude>
+                <exclude>frontend/bower_components/**/*</exclude>
+                <exclude>frontend/DIST_LICENSE</exclude>
 
-                <!-- files without license header -->
-                <exclude>frontend/.npmrc</exclude>
-                <exclude>frontend/.bowerrc</exclude>
-                <exclude>frontend/.jshintrc</exclude>
-                <exclude>angularjs-api/.npmrc</exclude>
-                <exclude>angularjs-api/.bowerrc</exclude>
-                <exclude>angularjs-api/.jshintrc</exclude>
-                <exclude>angularjs-api/.csslintrc</exclude>
+                <exclude>angularjs-api/.*</exclude>
+                <exclude>angularjs-api/*.md</exclude>
+                <exclude>angularjs-api/dist/**/*</exclude>
+                <exclude>angularjs-api/tmp/**/*</exclude>
+                <exclude>angularjs-api/node_modules/**/*</exclude>
+                <exclude>angularjs-api/bower_components/**/*</exclude>
+                <exclude>angularjs-api/DIST_LICENSE</exclude>
 
                 <!-- repository content XML -->
                 <exclude>repository/src/main/resources/**/*.xml</exclude>
