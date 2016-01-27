@@ -62,7 +62,7 @@ public class SearchResult {
         while (iterator.hasNext()) {
             final Hit hit = iterator.nextHit();
             final String uuid = hit.getSearchDocument().getContentId().toIdentifier();
-            final Node node = session.getNodeByIdentifier(uuid);
+            final Node node = session.getNodeByIdentifier(uuid).getParent();
             if (!node.isNodeType(expectedNodeType)) {
                 throw new IllegalStateException(String.format("Expected node of type '%s' but was '%s'.",
                         expectedNodeType, node.getPrimaryNodeType().getName()));

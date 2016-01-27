@@ -88,7 +88,6 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
 
     @Test
     public void test_global_content_api() throws Exception {
-
         final Session session = createSession("admin", "admin");
         try {
             final Node medusaNews = session.getNode("/unittestcontent/documents/myhippoproject/news/2015/12/the-medusa-news");
@@ -112,7 +111,6 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
         }
     }
 
-
     @Test
     public void test_myhippoproject_content_api() throws Exception {
         final Session session = createSession("admin", "admin");
@@ -132,6 +130,41 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
         } finally {
             session.logout();
         }
+    }
 
+    @Test
+    public void test_search_result_is_ordered_on_publication_date() throws Exception {
+        // Added for HSTTWO-3578
+        final Session session = createSession("admin", "admin");
+        try {
+            final RequestResponseMock requestResponse = mockGetRequestResponse(filter,
+                    "http", "onehippo.io", "/myhippoproject/documents/", null);
+            final MockHttpServletRequest request = requestResponse.getRequest();
+            final MockHttpServletResponse response = requestResponse.getResponse();
+
+            filter.doFilter(request, response, requestResponse.getFilterChain());
+
+            final String restResponse = response.getContentAsString();
+
+            // the test content appears in the following order in the import file
+
+            final int gastropoda = restResponse.indexOf("gastropoda");
+            //  <sv:value>2013-11-12T12:52:00.000+01:00</sv:value>
+
+            final int medusa = restResponse.indexOf("medusa");
+            // <sv:value>2013-11-12T13:04:00.000+01:00</sv:value>
+
+            final int harvest = restResponse.indexOf("harvest");
+            // <sv:value>2013-11-12T14:31:00.000+01:00</sv:value>
+
+            assertTrue(harvest < medusa);
+            assertTrue(medusa < gastropoda);
+
+            System.out.println(restResponse);
+        } catch (Exception e) {
+            log.error("error : ",e);
+        } finally {
+            session.logout();
+        }
     }
 }

@@ -39,8 +39,6 @@ import org.hippoecm.hst.restapi.NodeVisitor;
 import org.hippoecm.hst.restapi.ResourceContext;
 import org.hippoecm.hst.restapi.content.search.SearchResult;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
-import org.hippoecm.repository.HippoStdPubWfNodeType;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.search.query.Query;
 import org.onehippo.cms7.services.search.query.QueryUtils;
@@ -160,7 +158,6 @@ public class DocumentsResource extends AbstractResource {
                     .ofType(parsedNodeType)
                     .where(QueryUtils.text().contains(parsedQuery == null ? "" : parsedQuery))
                     .and(QueryUtils.text(HIPPO_AVAILABILITY).isEqualTo(availability))
-                    .returnParentNode()
                     .orderBy(HIPPOSTDPUBWF_PUBLICATION_DATE)
                     .descending()
                     .offsetBy(offset)
