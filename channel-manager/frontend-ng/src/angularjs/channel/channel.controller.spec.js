@@ -25,16 +25,16 @@ describe('ChannelCtrl', function () {
     inject(function ($controller, ChannelService) {
       spyOn(ChannelService, 'getUrl').and.returnValue('/test/url');
       ChannelCtrl = $controller('ChannelCtrl', {
-        ChannelService: ChannelService
+        ChannelService: ChannelService,
       });
     });
   });
 
-  it('gets the iframe URL from the channel service', function() {
+  it('gets the iframe URL from the channel service', function () {
     expect(ChannelCtrl.iframeUrl).toEqual('/test/url');
   });
 
-  it('is not in edit mode by default', function() {
+  it('is not in edit mode by default', function () {
     expect(ChannelCtrl.isEditMode).toEqual(false);
   });
 

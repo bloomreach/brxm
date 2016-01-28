@@ -31,12 +31,12 @@ describe('SessionService', function () {
 
     channelMock = {
       contextPath: '/testContextPath',
-      hostname: 'test.host.name'
+      hostname: 'test.host.name',
     };
 
     ConfigServiceMock = {
       apiUrlPrefix: '/testApiUrlPrefix',
-      cmsUser: 'testUser'
+      cmsUser: 'testUser',
     };
 
     module(function ($provide) {
@@ -104,8 +104,8 @@ describe('SessionService', function () {
     $httpBackend.expectGET(handshakeUrl).respond(200, {
       data: {
         canWrite: true,
-        sessionId: '1234'
-      }
+        sessionId: '1234',
+      },
     });
     SessionService.authenticate(channelMock);
     $httpBackend.flush();

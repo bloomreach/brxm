@@ -66,16 +66,16 @@ describe('CmsService', function () {
 
     it('should throw an error when the CMS\'s IFramePanel does not contain any configuration for the app', function () {
       spyOn($window.parent.Ext, 'getCmp').and.returnValue({
-        initialConfig: {}
+        initialConfig: {},
       });
-      expect(function() {
+      expect(function () {
         CmsService.getConfig();
       }).toThrowError(Error, 'Parent iframe panel does not contain iframe configuration');
     });
 
-    it('should throw an error when the IFrame URL does not contain request parameter \'parentExtIFramePanelId\'', function() {
+    it('should throw an error when the IFrame URL does not contain request parameter \'parentExtIFramePanelId\'', function () {
       window.history.replaceState({}, document.title, '/');
-      expect(function() {
+      expect(function () {
         CmsService.getParentIFramePanelId();
       }).toThrowError(Error, 'Request parameter \'parentExtIFramePanelId\' not found in IFrame url');
     });
@@ -90,9 +90,9 @@ describe('CmsService', function () {
     });
 
     it('should enable browser sync', function () {
+      var body = jasmine.createSpyObj('body', ['appendChild']);
       spyOn($window.document, 'getElementsByTagName');
 
-      var body = jasmine.createSpyObj('body', ['appendChild']);
       $window.document.getElementsByTagName.and.returnValue([body]);
 
       spyOn($log, 'info');

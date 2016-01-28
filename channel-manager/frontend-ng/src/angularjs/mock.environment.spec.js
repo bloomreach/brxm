@@ -19,18 +19,22 @@
   function createMessageBus() {
     var subscriptions = {};
 
-    function addCallback (list, callback, scope) {
+    function addCallback(list, callback, scope) {
       list.push({
         callback: callback,
-        scope: scope || window
+        scope: scope || window,
       });
     }
 
-    function call (entries, args) {
-      var i, len, entry;
+    function call(entries, args) {
+      var i;
+      var len;
+      var entry;
+
       if (entries === undefined) {
         return true;
       }
+
       len = entries.length;
       for (i = 0; i < len; i++) {
         entry = entries[i];
@@ -38,6 +42,7 @@
           return false;
         }
       }
+
       return true;
     }
 
@@ -52,23 +57,25 @@
         if (subscriptions[topic] === undefined) {
           subscriptions[topic] = [];
         }
+
         addCallback(subscriptions[topic], callback, scope);
-      }
+      },
 
     };
   }
 
   function mockHost() {
+    var parentIFramePanel;
     window.APP_CONFIG = {};
     window.APP_TO_CMS = createMessageBus();
     window.CMS_TO_APP = createMessageBus();
 
-    var parentIFramePanel = {
+    parentIFramePanel = {
       initialConfig: {
-        iframeConfig: window.APP_CONFIG
+        iframeConfig: window.APP_CONFIG,
       },
       iframeToHost: window.APP_TO_CMS,
-      hostToIFrame: window.CMS_TO_APP
+      hostToIFrame: window.CMS_TO_APP,
     };
 
     window.history.replaceState({}, document.title, window.location.href + '?proCache4321&parentExtIFramePanelId=ext-42&antiCache=1234');
@@ -77,8 +84,8 @@
       Ext: {
         getCmp: function () {
           return parentIFramePanel;
-        }
-      }
+        },
+      },
     };
 
     spyOn(window.CMS_TO_APP, 'subscribe').and.callThrough();
@@ -88,11 +95,10 @@
   function mockFallbackTranslations() {
     module('hippo-cm', function ($provide, $translateProvider) {
       $translateProvider.translations('en', {});
-    })
+    });
   }
 
   beforeEach(mockHost);
   beforeEach(mockFallbackTranslations);
 
 }());
-

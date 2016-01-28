@@ -28,13 +28,13 @@ describe('ChannelService', function () {
 
     channelMock = {
       contextPath: '/testContextPath',
-      hostname: 'test.host.name'
+      hostname: 'test.host.name',
     };
 
     SessionServiceMock = {
-      authenticate: function(channel) {
+      authenticate: function (channel) {
         return $q.resolve(channel);
-      }
+      },
     };
 
     module(function ($provide) {
@@ -48,8 +48,8 @@ describe('ChannelService', function () {
     });
   });
 
-  it('should not save a reference to the channel when load fails', function() {
-    spyOn(SessionServiceMock, 'authenticate').and.callFake(function() {
+  it('should not save a reference to the channel when load fails', function () {
+    spyOn(SessionServiceMock, 'authenticate').and.callFake(function () {
       return $q.reject();
     });
     ChannelService.load(channelMock);
@@ -57,57 +57,57 @@ describe('ChannelService', function () {
     expect(ChannelService.channel).not.toEqual(channelMock);
   });
 
-  it('should save a reference to the channel when load succeeds', function() {
+  it('should save a reference to the channel when load succeeds', function () {
     ChannelService.load(channelMock);
     expect(ChannelService.channel).not.toEqual(channelMock);
     $rootScope.$apply();
     expect(ChannelService.channel).toEqual(channelMock);
   });
 
-  it('should resolve a promise with the channel when load succeeds', function() {
+  it('should resolve a promise with the channel when load succeeds', function () {
     var promiseSpy = jasmine.createSpy('promiseSpy');
     ChannelService.load(channelMock).then(promiseSpy);
     $rootScope.$apply();
     expect(promiseSpy).toHaveBeenCalledWith(channelMock);
   });
 
-  it('should load a channel with an empty path if none is provided', function() {
+  it('should load a channel with an empty path if none is provided', function () {
     ChannelService.load(channelMock);
     $rootScope.$apply();
     expect(ChannelService.path).toEqual('');
   });
 
-  it('should load a channel with an optional path', function() {
+  it('should load a channel with an optional path', function () {
     ChannelService.load(channelMock, 'optional/path');
     $rootScope.$apply();
     expect(ChannelService.path).toEqual('optional/path');
   });
 
-  it('should return a url that starts with the contextPath', function() {
+  it('should return a url that starts with the contextPath', function () {
     ChannelService.load({ contextPath: '/test' }, '/optional/path');
     $rootScope.$apply();
     expect(ChannelService.getUrl()).toEqual('/test/optional/path');
   });
 
-  it('should return a url that ends with a slash if it equals the contextPath', function() {
+  it('should return a url that ends with a slash if it equals the contextPath', function () {
     ChannelService.load({ contextPath: '/test' });
     $rootScope.$apply();
     expect(ChannelService.getUrl()).toEqual('/test/');
   });
 
-  it('should return a url without the contextPath if it is root', function() {
-    ChannelService.load({ contextPath: '/' })
+  it('should return a url without the contextPath if it is root', function () {
+    ChannelService.load({ contextPath: '/' });
     $rootScope.$apply();
     expect(ChannelService.getUrl()).toEqual('');
   });
 
-  it('should return a url with the cmsPreviewPrefix appended after the contextPath with a slash', function() {
+  it('should return a url with the cmsPreviewPrefix appended after the contextPath with a slash', function () {
     ChannelService.load({ contextPath: '/test', cmsPreviewPrefix: 'cmsPreviewPrefix' });
     $rootScope.$apply();
     expect(ChannelService.getUrl()).toEqual('/test/cmsPreviewPrefix');
   });
 
-  it('should return a url with the mountPath appended after the cmsPreviewPrefix', function() {
+  it('should return a url with the mountPath appended after the cmsPreviewPrefix', function () {
     ChannelService.load({ contextPath: '/test', cmsPreviewPrefix: 'cmsPreviewPrefix', mountPath: '/mountPath' });
     $rootScope.$apply();
     expect(ChannelService.getUrl()).toEqual('/test/cmsPreviewPrefix/mountPath');

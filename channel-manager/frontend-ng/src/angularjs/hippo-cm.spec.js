@@ -20,68 +20,73 @@ describe('The hippo-cm module', function () {
 
   'use strict';
 
-  var configService, $httpBackend, $state, $translate, translationCache;
+  var configService;
+  var $httpBackend;
+  var $state;
+  var $translate;
 
   var MOCK_TRANSLATIONS = {
     en: {
-      HIPPO: 'Hippo'
+      HIPPO: 'Hippo',
     },
     nl: {
-      HIPPO: 'Nijlpaard'
-    }
+      HIPPO: 'Nijlpaard',
+    },
   };
 
   beforeEach(function () {
-    module('hippo-cm', function($stateProvider, $translateProvider) {
+    module('hippo-cm', function ($stateProvider, $translateProvider) {
       $stateProvider.state('hippo-cm.dummy-child-state', {});
       $translateProvider.translations('en', MOCK_TRANSLATIONS.en);
       $translateProvider.translations('nl', MOCK_TRANSLATIONS.nl);
     });
 
-    inject(function (ConfigService, _$httpBackend_, _$state_, _$translate_, $translationCache) {
+    inject(function (ConfigService, _$httpBackend_, _$state_, _$translate_) {
       configService = ConfigService;
       $httpBackend = _$httpBackend_;
       $state = _$state_;
       $translate = _$translate_;
-      translationCache = $translationCache;
     });
 
-    $httpBackend.whenGET("i18n/hippo-cm.no-such-locale.json").respond(404);
+    $httpBackend.whenGET('i18n/hippo-cm.no-such-locale.json').respond(404);
   });
 
   it('uses English translations by default', function (done) {
     $state.go('hippo-cm.dummy-child-state').then(function () {
-      expect($translate.instant('HIPPO')).toEqual("Hippo");
+      expect($translate.instant('HIPPO')).toEqual('Hippo');
       done();
     });
+
     $httpBackend.flush();
   });
 
   it('uses the locale specified in the config service', function (done) {
     configService.locale = 'nl';
     $state.go('hippo-cm.dummy-child-state').then(function () {
-      expect($translate.instant('HIPPO')).toEqual("Nijlpaard");
+      expect($translate.instant('HIPPO')).toEqual('Nijlpaard');
       done();
     });
+
     $httpBackend.flush();
   });
-
 
   it('falls back to English translations for unknown locales', function (done) {
     configService.locale = 'no-such-locale';
     $state.go('hippo-cm.dummy-child-state').then(function () {
-      expect($translate.instant('HIPPO')).toEqual("Hippo");
+      expect($translate.instant('HIPPO')).toEqual('Hippo');
       done();
     });
+
     $httpBackend.flush();
   });
 
   it("falls back to English translations when translations for another locale won't load", function (done) {
     configService.locale = 'no-such-locale';
     $state.go('hippo-cm.dummy-child-state').then(function () {
-      expect($translate.instant('HIPPO')).toEqual("Hippo");
+      expect($translate.instant('HIPPO')).toEqual('Hippo');
       done();
     });
+
     $httpBackend.flush();
   });
 

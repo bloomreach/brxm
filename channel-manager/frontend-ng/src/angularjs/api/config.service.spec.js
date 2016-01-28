@@ -30,9 +30,8 @@ describe('ConfigService', function () {
     });
   });
 
-  it('allows custom configuration passed in by the CmsService', function() {
+  it('allows custom configuration passed in by the CmsService', function () {
     expect(ConfigService.locale).toEqual('nl');
     expect(ConfigService.apiUrlPrefix).toEqual('https://127.0.0.1:9080/web/one/two');
   });
-
 });
