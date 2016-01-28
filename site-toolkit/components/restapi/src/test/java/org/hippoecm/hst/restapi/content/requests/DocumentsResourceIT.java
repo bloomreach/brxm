@@ -15,10 +15,14 @@
  */
 package org.hippoecm.hst.restapi.content.requests;
 
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
+import javax.servlet.ServletException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,8 +33,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class DocumentsResourceIT extends AbstractRestApiIT {
@@ -39,16 +47,14 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
 
     private static ObjectMapper mapper = new ObjectMapper();
 
+
     @Test
     public void test_about_us_document() throws Exception {
 
         // about-us  handle identifier is 'ebebebeb-5fa8-48a8-b03b-4524373d992b'
         final RequestResponseMock requestResponse = mockGetRequestResponse(filter, "http", "localhost", "/api/documents/30092f4e-2ef7-4c72-86a5-8ce895908937", null);
 
-        final MockHttpServletRequest request = requestResponse.getRequest();
-        final MockHttpServletResponse response = requestResponse.getResponse();
-
-        filter.doFilter(request, response, requestResponse.getFilterChain());
+        final MockHttpServletResponse response = render(requestResponse);
 
         final String restResponse = response.getContentAsString();
         assertTrue(StringUtils.isNotEmpty(restResponse));
@@ -66,10 +72,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
     public void non_handle_nodes_are_not_allowed() throws Exception {
         // ebebebeb-5fa8-48a8-b03b-4524373d992a is folder node
         final RequestResponseMock requestResponse = mockGetRequestResponse(filter, "http", "localhost", "/api/documents/ebebebeb-5fa8-48a8-b03b-4524373d992a", null);
-        final MockHttpServletRequest request = requestResponse.getRequest();
-        final MockHttpServletResponse response = requestResponse.getResponse();
-
-        filter.doFilter(request, response, requestResponse.getFilterChain());
+        final MockHttpServletResponse response = render(requestResponse);
         assertEquals(SC_NOT_FOUND, response.getStatus());
         assertTrue(response.getContentAsString().contains("not found below scope '/api'"));
     }
@@ -78,10 +81,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
     public void handle_node_of_content_outside_api_mount_is_not_allowed() throws Exception {
         // a62a34ae-5f42-4482-a27a-7f39459ec8ee homepage of subsite
         final RequestResponseMock requestResponse = mockGetRequestResponse(filter, "http", "localhost", "/api/documents/a62a34ae-5f42-4482-a27a-7f39459ec8ee", null);
-        final MockHttpServletRequest request = requestResponse.getRequest();
-        final MockHttpServletResponse response = requestResponse.getResponse();
-
-        filter.doFilter(request, response, requestResponse.getFilterChain());
+        final MockHttpServletResponse response = render(requestResponse);
         assertEquals(SC_NOT_FOUND, response.getStatus());
         assertTrue(response.getContentAsString().contains("not found below scope '/api'"));
     }
@@ -94,18 +94,12 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
 
             final RequestResponseMock requestResponse = mockGetRequestResponse(filter,
                     "http", "onehippo.io", "/documents/" + medusaNews.getIdentifier(), null);
-            final MockHttpServletRequest request = requestResponse.getRequest();
-            final MockHttpServletResponse response = requestResponse.getResponse();
-
-            filter.doFilter(request, response, requestResponse.getFilterChain());
+            final MockHttpServletResponse response = render(requestResponse);
             final String restResponse = response.getContentAsString();
 
             final Map<String, Object> deserializedAboutUs = mapper.reader(Map.class).readValue(restResponse);
             assertTrue(deserializedAboutUs.get("name").equals("the-medusa-news"));
 
-            System.out.println(restResponse);
-        } catch (Exception e) {
-            log.error("error : ",e);
         } finally {
             session.logout();
         }
@@ -119,12 +113,9 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
 
             final RequestResponseMock requestResponse = mockGetRequestResponse(filter,
                     "http", "onehippo.io", "/myhippoproject/documents/" + medusaNews.getIdentifier(), null);
-            final MockHttpServletRequest request = requestResponse.getRequest();
-            final MockHttpServletResponse response = requestResponse.getResponse();
-
-            filter.doFilter(request, response, requestResponse.getFilterChain());
+            final MockHttpServletResponse response = render(requestResponse);
             final String restResponse = response.getContentAsString();
-            System.out.println(restResponse);
+            // TODO assertions
         } catch (Exception e) {
             log.error("error : ",e);
         } finally {
@@ -133,38 +124,75 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
     }
 
     @Test
-    public void test_search_result_is_ordered_on_publication_date() throws Exception {
-        // Added for HSTTWO-3578
-        final Session session = createSession("admin", "admin");
+    public void test_search_result_contains_handle_uuids() throws Exception {
+        Session liveUser = createLiveUserSession();
         try {
             final RequestResponseMock requestResponse = mockGetRequestResponse(filter,
                     "http", "onehippo.io", "/myhippoproject/documents/", null);
-            final MockHttpServletRequest request = requestResponse.getRequest();
-            final MockHttpServletResponse response = requestResponse.getResponse();
 
-            filter.doFilter(request, response, requestResponse.getFilterChain());
+            final MockHttpServletResponse response = render(requestResponse);
+            final String restResponse = response.getContentAsString();
+            final Map<String, Object> searchResult = mapper.reader(Map.class).readValue(restResponse);
 
+            final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
+            for (Map<String, Object> item : itemsList) {
+                final Node node = liveUser.getNodeByIdentifier((String)item.get("id"));
+                assertTrue(node.isNodeType(NT_HANDLE));
+            }
+        } finally {
+            if (liveUser != null) {
+                liveUser.logout();
+            }
+        }
+    }
+
+    @Test
+    public void test_search_result_is_ordered_by_default_on_publication_date_descending() throws Exception {
+        Session liveUser = createLiveUserSession();
+        try {
+            final RequestResponseMock requestResponse = mockGetRequestResponse(filter,
+                    "http", "onehippo.io", "/myhippoproject/documents/", null);
+
+            final MockHttpServletResponse response = render(requestResponse);
             final String restResponse = response.getContentAsString();
 
-            // the test content appears in the following order in the import file
+            final Map<String, Object> searchResult = mapper.reader(Map.class).readValue(restResponse);
 
-            final int gastropoda = restResponse.indexOf("gastropoda");
-            //  <sv:value>2013-11-12T12:52:00.000+01:00</sv:value>
+            final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
 
-            final int medusa = restResponse.indexOf("medusa");
-            // <sv:value>2013-11-12T13:04:00.000+01:00</sv:value>
-
-            final int harvest = restResponse.indexOf("harvest");
-            // <sv:value>2013-11-12T14:31:00.000+01:00</sv:value>
-
-            assertTrue(harvest < medusa);
-            assertTrue(medusa < gastropoda);
-
-            System.out.println(restResponse);
-        } catch (Exception e) {
-            log.error("error : ",e);
+            Calendar prev = null;
+            for (Map<String, Object> item : itemsList) {
+                final Node handleNode = liveUser.getNodeByIdentifier((String)item.get("id"));
+                final Node node = handleNode.getNode(handleNode.getName());
+                if (!node.hasProperty(HIPPOSTDPUBWF_PUBLICATION_DATE)) {
+                    continue;
+                }
+                final Calendar date = node.getProperty(HIPPOSTDPUBWF_PUBLICATION_DATE).getDate();
+                if (prev != null) {
+                    assertTrue(prev.after(date) || prev.equals(date));
+                }
+                prev = date;
+            }
         } finally {
-            session.logout();
+            if (liveUser != null) {
+                liveUser.logout();
+            }
         }
+    }
+
+    private MockHttpServletResponse render(final RequestResponseMock requestResponse) throws IOException, ServletException {
+        final MockHttpServletRequest request = requestResponse.getRequest();
+        final MockHttpServletResponse response = requestResponse.getResponse();
+
+        filter.doFilter(request, response, requestResponse.getFilterChain());
+        return response;
+    }
+
+
+    private List<Map<String, Object>> getItemsFromSearchResult(final Map<String, Object> searchResult) {
+        final Object items = searchResult.get("items");
+        assertNotNull(items);
+        assertTrue(items instanceof List);
+        return (List)items;
     }
 }

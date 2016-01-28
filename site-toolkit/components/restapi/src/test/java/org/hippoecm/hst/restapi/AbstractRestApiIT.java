@@ -18,6 +18,7 @@ package org.hippoecm.hst.restapi;
 import java.io.IOException;
 import java.util.List;
 
+import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -92,6 +93,11 @@ public class AbstractRestApiIT {
         return this.componentManager;
     }
 
+    protected Session createLiveUserSession() throws RepositoryException {
+        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
+        Credentials credentials= HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".default.delegating");
+        return repository.login(credentials);
+    }
 
     protected Session createSession(final String userName, final String password) throws RepositoryException {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
