@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 // Tests exist alongside the component they are testing with no separate test directory required; the build process
 // should be sophisticated enough to handle this. via https://github.com/ngbp/ng-boilerplate#philosophy
 
-module.exports = function (config) {
+module.exports = function karmaConfig(config) {
 
   var buildConfig = require('./build.config.js');
 
@@ -36,7 +37,7 @@ module.exports = function (config) {
       buildConfig.components_dir + '/angular-mocks/angular-mocks.js',
       buildConfig.mainjs,
       buildConfig.jstpl,
-      buildConfig.src_dir + '/angularjs/**/*.js'
+      buildConfig.src_dir + '/angularjs/**/*.js',
     ],
 
     // list of files to exclude
@@ -52,7 +53,8 @@ module.exports = function (config) {
     reporters: ['progress', 'junit'],
 
     junitReporter: {
-      outputFile: 'target/test-results.xml'
+      outputDir: './target/surefire-reports/',
+      outputFile: 'TEST-karma-results.xml',
     },
 
     // web server port
@@ -74,6 +76,6 @@ module.exports = function (config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: false,
   });
 };

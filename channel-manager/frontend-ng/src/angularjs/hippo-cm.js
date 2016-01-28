@@ -16,38 +16,8 @@
 
 import { channelManagerApi } from './api/api.js';
 import { channelModule } from './channel/channel.js';
-
-function translations($translate, ConfigService) {
-  return $translate.use(ConfigService.locale)
-    .catch(() => {
-      $translate.use($translate.fallbackLanguage());
-    });
-}
-
-function config($stateProvider, $urlRouterProvider, $translateProvider) {
-  $urlRouterProvider.otherwise('/');
-
-  $stateProvider.state('hippo-cm', {
-    url: '/',
-    templateUrl: 'hippo-cm.html',
-    resolve: {
-      translations: translations,
-    },
-    abstract: true,
-  });
-
-  // translations
-  $translateProvider.useStaticFilesLoader({
-    prefix: 'i18n/hippo-cm.',
-    suffix: '.json',
-  });
-  $translateProvider.fallbackLanguage('en');
-  $translateProvider.useSanitizeValueStrategy('escaped');
-}
-
-function run(CmsService) {
-  CmsService.enableBrowserSync();
-}
+import { config } from './hippo-cms.config.js';
+import { run } from './hippo-cm.run.js';
 
 export const hippoCmModule = angular
   .module('hippo-cm', [

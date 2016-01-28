@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>27.2</version>
+    <version>28-SNAPSHOT</version>
   </parent>
 
 
@@ -35,13 +35,13 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Addon Channel Manager</notice.project.name>
 
-    <hippo.repository.version>3.2.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>3.2.0-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>3.2.0-SNAPSHOT</hippo.hst.version>
-    <hippo.commons.version>2.2.0-SNAPSHOT</hippo.commons.version>
-    <hippo.addon-hst-configuration-editor.version>2.2.0-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
-    <hippo.frontend.plugins.version>2.2.0-SNAPSHOT</hippo.frontend.plugins.version>
-    <hippo.frontend.theme.version>3.0.0-cmng-psp1-SNAPSHOT</hippo.frontend.theme.version>
+    <hippo.repository.version>4.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>4.0.0-SNAPSHOT</hippo.cms.version>
+    <hippo.hst.version>4.0.0-SNAPSHOT</hippo.hst.version>
+    <hippo.commons.version>3.0.0-SNAPSHOT</hippo.commons.version>
+    <hippo.addon-hst-configuration-editor.version>3.0.0-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
+    <hippo.frontend.plugins.version>3.0.0-SNAPSHOT</hippo.frontend.plugins.version>
+    <hippo.frontend.theme.version>3.0.0-SNAPSHOT</hippo.frontend.theme.version>
 
     <commons-lang.version>2.6</commons-lang.version>
     <lib.json.version>20090211</lib.json.version>
@@ -205,20 +205,29 @@
                 <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/*</exclude>
                 <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/devices/device-skins.txt</exclude>
 
-                <!-- ignore frontend dependencies pulled in by npm -->
-                <exclude>**/node_modules/**/*</exclude>
-                <exclude>**/bower_components/**/*</exclude>
-                <exclude>**/coverage/**/*</exclude>
+                <exclude>frontend/.*</exclude>
+                <exclude>frontend/*.md</exclude>
+                <exclude>frontend/dist/**/*</exclude>
+                <exclude>frontend/tmp/**/*</exclude>
+                <exclude>frontend/node_modules/**/*</exclude>
+                <exclude>frontend/bower_components/**/*</exclude>
+                <exclude>frontend/DIST_LICENSE</exclude>
 
-                <!-- files without license header -->
-                <exclude>frontend/.npmrc</exclude>
-                <exclude>frontend/.bowerrc</exclude>
-                <exclude>frontend/.jshintrc</exclude>
-                <exclude>angularjs-api/.npmrc</exclude>
-                <exclude>angularjs-api/.bowerrc</exclude>
-                <exclude>angularjs-api/.jshintrc</exclude>
-                <exclude>angularjs-api/.csslintrc</exclude>
-                <exclude>**/*.md</exclude>
+                <exclude>frontend-ng/.*</exclude>
+                <exclude>frontend-ng/*.md</exclude>
+                <exclude>frontend-ng/dist/**/*</exclude>
+                <exclude>frontend-ng/tmp/**/*</exclude>
+                <exclude>frontend-ng/node_modules/**/*</exclude>
+                <exclude>frontend-ng/bower_components/**/*</exclude>
+                <exclude>frontend-ng/DIST_LICENSE</exclude>
+
+                <exclude>angularjs-api/.*</exclude>
+                <exclude>angularjs-api/*.md</exclude>
+                <exclude>angularjs-api/dist/**/*</exclude>
+                <exclude>angularjs-api/tmp/**/*</exclude>
+                <exclude>angularjs-api/node_modules/**/*</exclude>
+                <exclude>angularjs-api/bower_components/**/*</exclude>
+                <exclude>angularjs-api/DIST_LICENSE</exclude>
 
                 <!-- repository content XML -->
                 <exclude>repository/src/main/resources/**/*.xml</exclude>
