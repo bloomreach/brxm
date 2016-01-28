@@ -93,12 +93,6 @@
               return translate('TOOLTIP_NOT_EDITABLE');
             }
             return '';
-          },
-          copyButton: function () {
-            if (!$scope.state.isEditable) {
-              return translate('TOOLTIP_NOT_COPYABLE');
-            }
-            return '';
           }
         };
 

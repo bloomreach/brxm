@@ -18,7 +18,6 @@
   "CONFIRM_DELETE_TITLE": "Confirm delete",
   "CONFIRM_DELETE_MESSAGE": "Are you sure you want to delete '{{ title }}'?",
   "TOOLTIP_NOT_EDITABLE": "You cannot delete the page because it is currently not editable",
-  "TOOLTIP_NOT_COPYABLE": "You cannot copy the page because it is not editable",
   "TOOLTIP_IS_HOMEPAGE": "The homepage cannot be deleted",
   "PAGE_LOCKED": "This page is locked by {{ owner }} at {{ timestamp | date:'M/d/yyyy h:mm a' }}",
   "TECHNICAL_ERROR": "A technical error has occurred",
