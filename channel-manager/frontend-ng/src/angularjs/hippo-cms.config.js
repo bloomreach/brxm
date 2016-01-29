@@ -15,6 +15,8 @@
  */
 
 export function config($stateProvider, $urlRouterProvider, $translateProvider) {
+  'ngInject';
+
   $urlRouterProvider.otherwise('/');
 
   $stateProvider.state('hippo-cm', {

@@ -15,5 +15,7 @@
  */
 
 export function run(CmsService) {
+  'ngInject';
+
   CmsService.enableBrowserSync();
 }
