@@ -100,7 +100,7 @@ describe('CmsService', function () {
       CmsService.enableBrowserSync();
 
       expect(body.appendChild).toHaveBeenCalled();
-      expect($log.info).toHaveBeenCalledWith('iframe #ext-42 has browserSync enabled via //localhost:3000/browser-sync/browser-sync-client.2.10.0.js');
+      expect($log.info).toHaveBeenCalledWith('iframe #ext-42 has browserSync enabled via //localhost:3000/browser-sync/browser-sync-client.2.11.1.js');
     });
 
   });
