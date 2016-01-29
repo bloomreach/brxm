@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.channelmanager;
 
 public interface ChannelManagerConstants {
 
+    String HST_TYPE = "HST-Type";
     static final String HST_MOUNT_ID = "HST-Mount-Id";
     static final String HST_SITE_ID = "HST-Site-Id";
     static final String HST_PAGE_ID = "HST-Page-Id";
@@ -32,5 +33,7 @@ public interface ChannelManagerConstants {
     static final String HST_LOCKED_BY_CURRENT_USER = "HST-LockedBy-Current-User";
     static final String HST_LOCKED_ON = "HST-LockedOn";
     static final String HST_LAST_MODIFIED = "HST-LastModified";
+
+    String HST_TYPE_PAGE_META_DATA = "PAGE-META-DATA";
 
 }

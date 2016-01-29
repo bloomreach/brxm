@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -68,24 +68,26 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
         final HstRequestContext requestContext = request.getRequestContext();
         Mount mount = requestContext.getResolvedMount().getMount();
         if (isTopHstResponse(rootWindow, rootRenderingWindow, window)) {
-            response.addHeader(ChannelManagerConstants.HST_MOUNT_ID, mount.getIdentifier());
-            response.addHeader(ChannelManagerConstants.HST_SITE_ID, mount.getHstSite().getCanonicalIdentifier());
-            response.addHeader(ChannelManagerConstants.HST_PAGE_ID, compConfig.getCanonicalIdentifier());
+            Map<String, String> pageMetaData = new HashMap<>();
+
+            pageMetaData.put(ChannelManagerConstants.HST_MOUNT_ID, mount.getIdentifier());
+            pageMetaData.put(ChannelManagerConstants.HST_SITE_ID, mount.getHstSite().getCanonicalIdentifier());
+            pageMetaData.put(ChannelManagerConstants.HST_PAGE_ID, compConfig.getCanonicalIdentifier());
 
             final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
             if (resolvedSiteMapItem != null) {
                 final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
-                response.addHeader(ChannelManagerConstants.HST_SITEMAPITEM_ID, ((CanonicalInfo) hstSiteMapItem).getCanonicalIdentifier());
+                pageMetaData.put(ChannelManagerConstants.HST_SITEMAPITEM_ID, ((CanonicalInfo) hstSiteMapItem).getCanonicalIdentifier());
                 final HstSiteMap siteMap = hstSiteMapItem.getHstSiteMap();
                 if (siteMap instanceof CanonicalInfo) {
                     final CanonicalInfo canonicalInfo = (CanonicalInfo) siteMap;
-                    response.addHeader(ChannelManagerConstants.HST_SITEMAP_ID, canonicalInfo.getCanonicalIdentifier());
+                    pageMetaData.put(ChannelManagerConstants.HST_SITEMAP_ID, canonicalInfo.getCanonicalIdentifier());
                     if (canonicalInfo.getCanonicalPath().contains(WORKSPACE_PATH_ELEMENT) &&
                             canonicalInfo.getCanonicalPath().startsWith(mount.getHstSite().getConfigurationPath())) {
                         // sitemap item is part of workspace && of current site configuration (thus not inherited)
-                        response.addHeader(ChannelManagerConstants.HST_PAGE_EDITABLE, "true");
+                        pageMetaData.put(ChannelManagerConstants.HST_PAGE_EDITABLE, "true");
                     } else {
-                        response.addHeader(ChannelManagerConstants.HST_PAGE_EDITABLE, "false");
+                        pageMetaData.put(ChannelManagerConstants.HST_PAGE_EDITABLE, "false");
                     }
                 } else {
                     log.warn("Expected sitemap of subtype {}. Cannot set sitemap id.", CanonicalInfo.class.getName());
@@ -96,8 +98,14 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             if (variant == null) {
                 variant = ContainerConstants.DEFAULT_PARAMETER_PREFIX;
             }
-            response.addHeader(ChannelManagerConstants.HST_RENDER_VARIANT, variant.toString());
-            response.addHeader(ChannelManagerConstants.HST_SITE_HAS_PREVIEW_CONFIG, String.valueOf(mount.getHstSite().hasPreviewConfiguration()));
+            pageMetaData.put(ChannelManagerConstants.HST_RENDER_VARIANT, variant.toString());
+            pageMetaData.put(ChannelManagerConstants.HST_SITE_HAS_PREVIEW_CONFIG, String.valueOf(mount.getHstSite().hasPreviewConfiguration()));
+
+            for (Map.Entry<String, String> entry : pageMetaData.entrySet()) {
+                response.addHeader(entry.getKey(), entry.getValue());
+            }
+            pageMetaData.put(ChannelManagerConstants.HST_TYPE, ChannelManagerConstants.HST_TYPE_PAGE_META_DATA);
+            response.addEpilogue(createCommentWithAttr(pageMetaData, response));
         } else if (isComposerMode(request)) {
             if (!isContainerOrContainerItem(compConfig)) {
                 return;
