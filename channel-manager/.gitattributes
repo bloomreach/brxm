@@ -26,7 +26,7 @@ frontend-ng/src/angularjs/hippo-cm.run.js -text
 frontend-ng/src/angularjs/hippo-cms.config.js -text
 frontend-ng/src/i18n/hippo-cm.en.json -text
 frontend-ng/src/i18n/hippo-cm.nl.json -text
-frontend-ng/src/styles/_overlay.scss -text
+frontend-ng/src/styles/_iframe.scss -text
 frontend-ng/src/styles/hippo-cm.scss -text
 frontend/.bowerrc -text
 frontend/.jshintrc -text
