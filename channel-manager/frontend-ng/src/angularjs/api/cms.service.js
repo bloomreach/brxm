@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const BROWSER_SYNC_URL = '//localhost:3000/browser-sync/browser-sync-client.2.10.0.js';
+const BROWSER_SYNC_URL = '//localhost:3000/browser-sync/browser-sync-client.2.11.1.js';
 
 export class CmsService {
 
