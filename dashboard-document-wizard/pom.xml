@@ -51,7 +51,7 @@
   <properties>
     <hippo.repository.version>4.0.0-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>4.0.0-SNAPSHOT</hippo.cms.version>
-    <hippo.plugins.selections.version>4.0.0-SNAPSHOT</hippo.plugins.selections.version>
+    <hippo.plugin.selections.version>4.0.0-SNAPSHOT</hippo.plugin.selections.version>
 
     <testng.version>6.0.1</testng.version>
 
@@ -97,14 +97,14 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-selections-addon-repository</artifactId>
-      <version>${hippo.plugins.selections.version}</version>
+      <version>${hippo.plugin.selections.version}</version>
       <scope>runtime</scope>
     </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-selections-addon-cms</artifactId>
-      <version>${hippo.plugins.selections.version}</version>
+      <version>${hippo.plugin.selections.version}</version>
       <scope>provided</scope>
     </dependency>
 
