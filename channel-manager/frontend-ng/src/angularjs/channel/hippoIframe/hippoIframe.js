@@ -16,8 +16,10 @@
 
 import { hippoIframe } from './hippoIframe.directive';
 import { HippoIframeCtrl } from './hippoIframe.controller';
+import { HstCommentsProcessorService } from './hstCommentsProcessor.service';
 
 export const channelHippoIframeModule = angular
   .module('hippo-cm.channel.hippoIframe', [])
   .directive('hippoIframe', hippoIframe)
-  .controller('hippoIframeCtrl', HippoIframeCtrl);
+  .controller('hippoIframeCtrl', HippoIframeCtrl)
+  .service('hstCommentsProcessorService', HstCommentsProcessorService);

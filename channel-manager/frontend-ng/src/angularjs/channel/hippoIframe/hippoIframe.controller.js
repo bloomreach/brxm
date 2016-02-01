@@ -15,12 +15,16 @@
  */
 
 export class HippoIframeCtrl {
-  constructor() {
+  constructor(hstCommentsProcessorService, HST_CONSTANT) {
     'ngInject';
+
+    this.hstCommentsProcessorService = hstCommentsProcessorService;
+    this.HST_CONSTANT = HST_CONSTANT;
   }
 
   onLoad(iframeWindow) {
     this.processNewUrl(iframeWindow.location.pathname);
+    this.parseHstComments();
   }
 
   processNewUrl(/* iframeUrl */) {
@@ -29,6 +33,24 @@ export class HippoIframeCtrl {
     // We may want HST to include the mount ID (and other meta data) in a comment, so we can parse that rather than
     // digesting arbitrary URLs here.
 
+  }
+
+  parseHstComments() {
+
+    const iframeDom = this.iframe.contents()[0];
+
+    const processHstComment = (commentElement, json) => {
+      switch (json[this.HST_CONSTANT.TYPE]) {
+        case this.HST_CONSTANT.TYPE_PAGE_META_DATA:
+          // TODO: process page meta-data.
+          console.log('processing page meta data:', json);
+          break;
+        default:
+          break;
+      }
+    };
+
+    this.hstCommentsProcessorService.run(iframeDom, processHstComment);
   }
 
 }

@@ -14,25 +14,8 @@
  * limitations under the License.
  */
 
-function link(scope, element, attr, iframe) {
-  const iframeElement = $(element).find('iframe');
-
-  iframe.iframe = iframeElement;
-  $(iframeElement).on('load', () => iframe.onLoad(iframeElement[0].contentWindow));
-}
-
-export function hippoIframe() {
-  'ngInject';
-
-  return {
-    restrict: 'E',
-    scope: {},
-    bindToController: {
-      path: '=',
-    },
-    templateUrl: 'channel/hippoIframe/hippoIframe.html',
-    controller: 'hippoIframeCtrl',
-    controllerAs: 'iframe',
-    link,
-  };
-}
+// Should match HST's org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.
+export const HST_CONSTANT = {
+  TYPE: 'HST-Type',
+  TYPE_PAGE_META_DATA: 'PAGE-META-DATA',
+};
