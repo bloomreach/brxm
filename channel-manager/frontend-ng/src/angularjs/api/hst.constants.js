@@ -18,4 +18,6 @@
 export const HST_CONSTANT = {
   TYPE: 'HST-Type',
   TYPE_PAGE_META_DATA: 'PAGE-META-DATA',
+  PATH_INFO: 'HST-Path-Info',
+  MOUNT_ID: 'HST-Mount-Id',
 };

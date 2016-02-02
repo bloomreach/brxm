@@ -26,4 +26,7 @@
   </div>
 </md-toolbar>
 
-<hippo-iframe flex layout="row" path="channelCtrl.iframeUrl"></hippo-iframe>
+<hippo-iframe flex layout="row"
+              path="channelCtrl.iframeUrl"
+              mount-id="channelCtrl.getMountId()"
+              on-channel-switch="channelCtrl.switchToChannel(mountId)"></hippo-iframe>

@@ -15,10 +15,8 @@
  */
 
 function link(scope, element, attr, iframe) {
-  const iframeElement = $(element).find('iframe');
-
-  iframe.iframe = iframeElement;
-  $(iframeElement).on('load', () => iframe.onLoad(iframeElement[0].contentWindow));
+  iframe.iframe = $(element).find('iframe');
+  iframe.iframe.on('load', () => iframe.onLoad());
 }
 
 export function hippoIframe() {
@@ -29,6 +27,8 @@ export function hippoIframe() {
     scope: {},
     bindToController: {
       path: '=',
+      mountId: '=',
+      onChannelSwitch: '&',
     },
     templateUrl: 'channel/hippoIframe/hippoIframe.html',
     controller: 'hippoIframeCtrl',

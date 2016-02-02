@@ -18,15 +18,20 @@ describe('ChannelCtrl', function () {
   'use strict';
 
   var ChannelCtrl;
+  var ChannelService;
 
   beforeEach(function () {
     module('hippo-cm');
 
-    inject(function ($controller, ChannelService) {
+    inject(function ($controller, _ChannelService_) {
+      ChannelService = _ChannelService_;
+      spyOn(ChannelService, 'switchToChannel');
       spyOn(ChannelService, 'getUrl').and.returnValue('/test/url');
+      spyOn(ChannelService, 'getMountId').and.returnValue('test-mount-id');
       ChannelCtrl = $controller('ChannelCtrl', {
         ChannelService: ChannelService,
       });
+
     });
   });
 
@@ -36,6 +41,15 @@ describe('ChannelCtrl', function () {
 
   it('is not in edit mode by default', function () {
     expect(ChannelCtrl.isEditMode).toEqual(false);
+  });
+
+  it('relays the mount id retrieval to the channel service', function () {
+    expect(ChannelCtrl.getMountId()).toEqual('test-mount-id');
+  });
+
+  it('relays the switch-to mount id to the channel service', function () {
+    ChannelCtrl.switchToChannel('test-mount-id');
+    expect(ChannelService.switchToChannel).toHaveBeenCalled();
   });
 
 });

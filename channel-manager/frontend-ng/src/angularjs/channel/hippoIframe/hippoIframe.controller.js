@@ -19,36 +19,27 @@ export class HippoIframeCtrl {
     'ngInject';
 
     this.hstCommentsProcessorService = hstCommentsProcessorService;
-    this.HST_CONSTANT = HST_CONSTANT;
+    this.HST = HST_CONSTANT;
   }
 
-  onLoad(iframeWindow) {
-    this.processNewUrl(iframeWindow.location.pathname);
+  onLoad() {
     this.parseHstComments();
   }
 
-  processNewUrl(/* iframeUrl */) {
-
-    // TODO: check if new URL is in current channel. If not, signal the channel switch to the outside world.
-    // We may want HST to include the mount ID (and other meta data) in a comment, so we can parse that rather than
-    // digesting arbitrary URLs here.
-
-  }
-
   parseHstComments() {
-
-    const iframeDom = this.iframe.contents()[0];
-
     const processHstComment = (commentElement, json) => {
-      switch (json[this.HST_CONSTANT.TYPE]) {
-        case this.HST_CONSTANT.TYPE_PAGE_META_DATA:
-          // TODO: process page meta-data.
-          console.log('processing page meta data:', json);
+      switch (json[this.HST.TYPE]) {
+        case this.HST.TYPE_PAGE_META_DATA:
+          this.path = json[this.HST.PATH_INFO];
+          if (json[this.HST.MOUNT_ID] !== this.mountId) {
+            this.onChannelSwitch({ mountId: json[this.HST.MOUNT_ID] });
+          }
           break;
         default:
           break;
       }
     };
+    const iframeDom = this.iframe.contents()[0];
 
     this.hstCommentsProcessorService.run(iframeDom, processHstComment);
   }

@@ -113,4 +113,10 @@ describe('ChannelService', function () {
     expect(ChannelService.getUrl()).toEqual('/test/cmsPreviewPrefix/mountPath');
   });
 
+  it('should return the mountId of the current channel', function () {
+    ChannelService.load({ mountId: 'test-mount-id' });
+    $rootScope.$apply();
+    expect(ChannelService.getMountId()).toEqual('test-mount-id');
+  });
+
 });

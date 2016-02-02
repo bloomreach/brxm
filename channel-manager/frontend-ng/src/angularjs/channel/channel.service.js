@@ -59,4 +59,12 @@ export class ChannelService {
 
     return url;
   }
+
+  getMountId() {
+    return this.channel.mountId;
+  }
+
+  switchToChannel(mountId) {
+    console.log('Switch to channel ', mountId);
+  }
 }
