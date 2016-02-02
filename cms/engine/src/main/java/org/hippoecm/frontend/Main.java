@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -81,6 +81,7 @@ import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.settings.IExceptionSettings;
 import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.IContextProvider;
+import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.string.StringValue;
@@ -653,17 +654,20 @@ public class Main extends PluginApplication {
         }
 
         @Override
-        public void sendRedirect(final String url) {
+        public void sendRedirect(String url) {
+            Args.notNull(url, "url");
             if (containsCRorLF(url)) {
                 throw new IllegalArgumentException("CR or LF detected in redirect URL: possible http response splitting attack");
             }
+
+            if (url.equals("./")) {
+                url += "?";
+            }
+
             super.sendRedirect(url);
         }
 
         private boolean containsCRorLF(String s) {
-            if (null == s) {
-                return false;
-            }
 
             int length = s.length();
 
