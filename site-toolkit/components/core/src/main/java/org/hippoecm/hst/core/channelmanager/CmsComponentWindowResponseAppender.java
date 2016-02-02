@@ -105,6 +105,7 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
                 response.addHeader(entry.getKey(), entry.getValue());
             }
             pageMetaData.put(ChannelManagerConstants.HST_TYPE, ChannelManagerConstants.HST_TYPE_PAGE_META_DATA);
+            pageMetaData.put(ChannelManagerConstants.HST_PATH_INFO, requestContext.getBaseURL().getPathInfo());
             response.addEpilogue(createCommentWithAttr(pageMetaData, response));
         } else if (isComposerMode(request)) {
             if (!isContainerOrContainerItem(compConfig)) {
