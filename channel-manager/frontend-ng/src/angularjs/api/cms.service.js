@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-const BROWSER_SYNC_URL = '//localhost:3000/browser-sync/browser-sync-client.2.11.1.js';
-
 export class CmsService {
 
   constructor($window, $log) {
@@ -72,20 +70,5 @@ export class CmsService {
     }
 
     return config;
-  }
-
-  addScriptToBody(scriptUrl) {
-    const body = this.$window.document.getElementsByTagName('body')[0];
-    const script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = scriptUrl;
-    body.appendChild(script);
-  }
-
-  enableBrowserSync() {
-    if (this.getConfig().debug) {
-      this.addScriptToBody(BROWSER_SYNC_URL);
-      this.$log.info(`iframe #${this.iframePanelId} has browserSync enabled via ${BROWSER_SYNC_URL}`);
-    }
   }
 }

@@ -18,25 +18,18 @@ describe('CmsService', function () {
   'use strict';
 
   var $window;
-  var $log;
   var CmsService;
 
-  function setUp() {
+  beforeEach(function () {
     module('hippo-cm-api');
 
-    inject(function (_$window_, _$log_, _CmsService_) {
+    inject(function (_$window_, _CmsService_) {
       $window = _$window_;
-      $log = _$log_;
       CmsService = _CmsService_;
     });
-  }
+  });
 
   describe('in production mode', function () {
-
-    beforeEach(function () {
-      setUp();
-    });
-
     it('should publish events to the CMS', function () {
       CmsService.publish('browseTo', '/about');
       expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('browseTo', '/about');
@@ -49,12 +42,6 @@ describe('CmsService', function () {
 
     it('should return the app configuration specified by the CMS', function () {
       expect(CmsService.getConfig()).toEqual(window.APP_CONFIG);
-    });
-
-    it('should not enable browser sync', function () {
-      spyOn($window.document, 'getElementsByTagName');
-      CmsService.enableBrowserSync();
-      expect($window.document.getElementsByTagName).not.toHaveBeenCalled();
     });
 
     it('should throw an error when the CMS does not contain an ExtJs IFramePanel with the given ID', function () {
@@ -79,30 +66,5 @@ describe('CmsService', function () {
         CmsService.getParentIFramePanelId();
       }).toThrowError(Error, 'Request parameter \'parentExtIFramePanelId\' not found in IFrame url');
     });
-
   });
-
-  describe('in development mode', function () {
-
-    beforeEach(function () {
-      window.APP_CONFIG.debug = true;
-      setUp();
-    });
-
-    it('should enable browser sync', function () {
-      var body = jasmine.createSpyObj('body', ['appendChild']);
-      spyOn($window.document, 'getElementsByTagName');
-
-      $window.document.getElementsByTagName.and.returnValue([body]);
-
-      spyOn($log, 'info');
-
-      CmsService.enableBrowserSync();
-
-      expect(body.appendChild).toHaveBeenCalled();
-      expect($log.info).toHaveBeenCalledWith('iframe #ext-42 has browserSync enabled via //localhost:3000/browser-sync/browser-sync-client.2.11.1.js');
-    });
-
-  });
-
 });

@@ -16,5 +16,6 @@
 
 var hippoBuild = require('hippo-build');
 var customConfig = require('./build.conf.js');
+var gulp = require('gulp');
 
-hippoBuild.buildTasks(customConfig);
+hippoBuild.buildTasks(customConfig, gulp);

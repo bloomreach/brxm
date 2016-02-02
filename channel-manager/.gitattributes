@@ -24,7 +24,6 @@ frontend-ng/src/angularjs/channel/hippoIframe/hippoIframe.directive.js -text
 frontend-ng/src/angularjs/channel/hippoIframe/hippoIframe.html -text
 frontend-ng/src/angularjs/channel/hippoIframe/hippoIframe.js -text
 frontend-ng/src/angularjs/channel/hippoIframe/hstCommentsProcessor.service.js -text
-frontend-ng/src/angularjs/hippo-cm.run.js -text
 frontend-ng/src/angularjs/hippo-cms.config.js -text
 frontend-ng/src/i18n/hippo-cm.en.json -text
 frontend-ng/src/i18n/hippo-cm.nl.json -text
