@@ -180,8 +180,8 @@
       </div>
     </form>
     <form class="copy-form" name="copyForm" role="form" data-ng-if="state.isCopyable" novalidate data-ng-class="{
-                'has-success': copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$valid,
-                'has-error': copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$invalid
+                'has-success': copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$valid && copyForm.channel.$valid,
+                'has-error': (copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$invalid) || copyForm.channel.$invalid
             }">
         <hr />
         <h4>{{ 'COPY_PAGE_DESCRIPTION' | translate }}</h4>
@@ -196,11 +196,11 @@
                   data-ng-required="true">
           </select>
           <div class="form-control-feedback">
-            <hippo-icon ng-if="copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$valid"
+            <hippo-icon ng-if="copyForm.channel.$valid"
                         name="check-circle"
                         size="m">
             </hippo-icon>
-            <hippo-icon ng-if="copyForm.lastPathInfoElement.$dirty && copyForm.lastPathInfoElement.$invalid"
+            <hippo-icon ng-if="copyForm.channel.$invalid"
                         name="minus-circle"
                         size="m">
             </hippo-icon>
@@ -243,7 +243,7 @@
         </div>
         <button class="btn btn-default btn-md"
                 data-ng-click="submitCopyPage()"
-                data-ng-disabled="copyForm.lastPathInfoElement.$invalid">
+                data-ng-disabled="copyForm.lastPathInfoElement.$invalid || copyForm.channel.$invalid">
           <hippo-icon name="plus" size="m"></hippo-icon>
           {{ 'COPY_PAGE' | translate }}
         </button>

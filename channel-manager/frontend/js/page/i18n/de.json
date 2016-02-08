@@ -18,7 +18,6 @@
   "CONFIRM_DELETE_TITLE": "Löschen bestätigen",
   "CONFIRM_DELETE_MESSAGE": "Sind Sie sicher, dass Sie '{{ title }}' löschen möchten?",
   "TOOLTIP_NOT_EDITABLE": "Diese Seite kann nicht gelöscht werden, weil sie zurzeit nicht bearbeitet werden kann",
-  "TOOLTIP_NOT_COPYABLE": "Sie können die Seite nicht kopieren, da sie nicht bearbeitbar ist.",
   "TOOLTIP_IS_HOMEPAGE": "Die Homepage kann nicht gelöscht werden",
   "PAGE_LOCKED": "Diese Seite wurde von {{ owner }} am {{ timestamp | date:'d-M-yyyy H:mm' }} gesperrt",
   "TECHNICAL_ERROR": "Es ist ein technischer Fehler aufgetreten",

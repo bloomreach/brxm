@@ -18,7 +18,6 @@
   "CONFIRM_DELETE_TITLE": "Confirmer la suppression",
   "CONFIRM_DELETE_MESSAGE": "Souhaitez-vous vraiment supprimer '{{ title }}'?",
   "TOOLTIP_NOT_EDITABLE": "Cette page ne peut pas être supprimée, car elle n'est actuellement pas modifiable",
-  "TOOLTIP_NOT_COPYABLE": "Vous ne pouvez pas copier la page, car elle n'est pas modifiable",
   "TOOLTIP_IS_HOMEPAGE": "La page d'accueil ne peut pas être supprimée",
   "PAGE_LOCKED": "Cette page a été verrouillée par {{ owner }} à {{ timestamp | date:'M/d/yyyy h:mm a' }}",
   "TECHNICAL_ERROR": "Une erreur technique s'est produite",
