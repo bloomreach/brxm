@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,6 @@
 
 package org.onehippo.cms7.ckeditor;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.UrlResourceReference;
 import org.junit.Test;
 
@@ -35,20 +31,9 @@ public class CKEditorConstantsTest {
         assertConstantRefersToFileOnClassPath(CKEditorConstants.CKEDITOR_OPTIMIZED_JS);
     }
 
-    @Test
-    public void ckeditorSrcJsConstantRefersToFileOnClassPath() {
-        assertConstantRefersToFileOnClassPath(CKEditorConstants.CKEDITOR_SRC_JS);
-    }
-
-    private static void assertConstantRefersToFileOnClassPath(final ResourceReference constant) {
-        final String url = ((UrlResourceReference)constant).getUrl().getPath();
-        final InputStream js = CKEditorConstants.class.getResourceAsStream("/" + url);
-        assertNotNull("The file '" + url + "' does not exist on the classpath", js);
-        try {
-            js.close();
-        } catch (IOException e) {
-            // ignore
-        }
+    private static void assertConstantRefersToFileOnClassPath(final UrlResourceReference ref) {
+        final String path = ref.getUrl().getPath();
+        assertNotNull("The file '" + path + "' does not exist on the classpath", CKEditorConstants.existsOnClassPath(ref));
     }
 
 }

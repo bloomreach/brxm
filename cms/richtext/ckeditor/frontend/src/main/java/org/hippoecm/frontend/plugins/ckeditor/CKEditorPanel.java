@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.ckeditor;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -51,10 +51,9 @@ public class CKEditorPanel extends Panel {
 
     private static final String WICKET_ID_EDITOR = "editor";
     private static final ResourceReference CKEDITOR_PANEL_JS = new PackageResourceReference(CKEditorPanel.class, "CKEditorPanel.js") {
-        private final List<CmsHeaderItem> dependencies = Arrays.asList(CmsHeaderItem.get());
         @Override
         public Iterable<? extends HeaderItem> getDependencies() {
-            return dependencies;
+            return Collections.singleton(CmsHeaderItem.get());
         }
     };
     private static final String CKEDITOR_TIMESTAMP = RandomStringUtils.randomAlphanumeric(4);
@@ -125,7 +124,8 @@ public class CKEditorPanel extends Panel {
     }
 
     public static ResourceReference getCKEditorJsReference() {
-        if (Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT)) {
+        if (Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT)
+                && CKEditorConstants.existsOnClassPath(CKEditorConstants.CKEDITOR_SRC_JS)) {
             log.info("Using non-optimized CKEditor sources.");
             return CKEditorConstants.CKEDITOR_SRC_JS;
         }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -45,19 +45,31 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-ckeditor</artifactId>
-      <classifier>sources</classifier>
-      <version>${hippo.ckeditor.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
 
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>include-sources</id>
+      <activation>
+        <property>
+          <name>include.ckeditor.sources</name>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.onehippo.cms7</groupId>
+          <artifactId>hippo-ckeditor</artifactId>
+          <classifier>sources</classifier>
+          <version>${hippo.ckeditor.version}</version>
+          <scope>runtime</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 
 </project>
