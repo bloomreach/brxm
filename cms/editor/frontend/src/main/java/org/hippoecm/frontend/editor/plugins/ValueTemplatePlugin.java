@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,15 +21,19 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.hippoecm.frontend.model.properties.LongConverter;
 import org.hippoecm.frontend.model.properties.StringConverter;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.diff.TextDiffModel;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.widgets.NumberFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.PropertyType;
 
 public class ValueTemplatePlugin extends RenderPlugin<String> {
 
@@ -44,14 +48,19 @@ public class ValueTemplatePlugin extends RenderPlugin<String> {
         final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
         switch (mode) {
             case EDIT:
-                TextFieldWidget widget = new TextFieldWidget("value", stringModel);
-                if (config.getString("size") != null) {
-                    widget.setSize(config.getString("size"));
+                if (((JcrPropertyValueModel) getModel()).getType() == PropertyType.LONG) {
+                    final LongConverter longModel = new LongConverter((JcrPropertyValueModel) getModel());
+                    add(new NumberFieldWidget("value", longModel));
+                } else {
+                    TextFieldWidget textFieldWidget = new TextFieldWidget("value", stringModel);
+                    if (config.getString("size") != null) {
+                        textFieldWidget.setSize(config.getString("size"));
+                    }
+                    if (config.getString("maxlength") != null) {
+                        textFieldWidget.setMaxlength(config.getString("maxlength"));
+                    }
+                    add(textFieldWidget);
                 }
-                if (config.getString("maxlength") != null) {
-                    widget.setMaxlength(config.getString("maxlength"));
-                }
-                add(widget);
                 break;
             case COMPARE:
                 final IModel<?> baseModel = context.getService(config.getString("model.compareTo"), IModelReference.class)
