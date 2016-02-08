@@ -19,7 +19,7 @@ const DEFAULT_SETTINGS = {
   sessionId: null,
 };
 
-const HANDSHAKE_PATH = '/cafebabe-cafe-babe-cafe-babecafebabe./composermode/';
+const HANDSHAKE_PATH = '/composermode/';
 
 export class SessionService {
   constructor($q, $http, ConfigService) {
@@ -32,7 +32,7 @@ export class SessionService {
     this.sessionID = DEFAULT_SETTINGS.sessionId;
 
     this.cmsUser = ConfigService.cmsUser;
-    this.handshakePath = ConfigService.apiUrlPrefix + HANDSHAKE_PATH;
+    this.handshakePath = ConfigService.apiUrlPrefix + ConfigService.rootResource + HANDSHAKE_PATH;
   }
 
   authenticate(channel) {

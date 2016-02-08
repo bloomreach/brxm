@@ -15,7 +15,6 @@
  */
 
 import { ChannelCtrl } from './channel.controller';
-import { ChannelService } from './channel.service';
 import { channelHippoIframeModule } from './hippoIframe/hippoIframe';
 import { config } from './channel.config';
 import { run } from './channel.run';
@@ -27,5 +26,4 @@ export const channelModule = angular
   ])
   .config(config)
   .controller('ChannelCtrl', ChannelCtrl)
-  .service('ChannelService', ChannelService)
   .run(run);

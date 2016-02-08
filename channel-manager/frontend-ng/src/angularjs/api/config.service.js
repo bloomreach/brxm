@@ -23,5 +23,6 @@ export class ConfigService {
     this.locale = 'en';
 
     Object.assign(this, CmsService.getConfig());
+    this.rootResource = '/cafebabe-cafe-babe-cafe-babecafebabe.';
   }
 }

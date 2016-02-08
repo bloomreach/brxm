@@ -27,8 +27,6 @@ export function hippoIframe() {
     scope: {},
     bindToController: {
       path: '=',
-      mountId: '=',
-      onChannelSwitch: '&',
     },
     templateUrl: 'channel/hippoIframe/hippoIframe.html',
     controller: 'hippoIframeCtrl',

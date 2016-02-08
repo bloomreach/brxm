@@ -39,14 +39,27 @@
           this.loadChannel(this.selectedChannelId);
         }
       }.bind(this));
+
+      this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
+    },
+
+    _setChannel: function(channelId) {
+      return new Hippo.Future(function (success, failure) {
+        this.channelStoreFuture.when(function (config) {
+          var channelRecord = config.store.getById(channelId);
+          if (channelRecord) {
+            this.selectedChannelId = channelId; // Remember for reloading
+            this.setTitle(channelRecord.get('name')); // Update breadcrumb
+            success(channelRecord);
+          } else {
+            failure();
+          }
+        }.bind(this));
+      }.bind(this));
     },
 
     loadChannel: function(channelId) {
-      this.channelStoreFuture.when(function(config) {
-        this.selectedChannelId = channelId; // Remember for reloading
-
-        var channelRecord = config.store.getById(channelId);
-        this.setTitle(channelRecord.get('name'));
+      this._setChannel(channelId).when(function(channelRecord) {
         this.hostToIFrame.publish('load-channel', channelRecord.json);
       }.bind(this));
     },

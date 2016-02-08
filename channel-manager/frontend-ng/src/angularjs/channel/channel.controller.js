@@ -19,15 +19,8 @@ export class ChannelCtrl {
     'ngInject';
 
     this.channelService = ChannelService;
-    this.iframeUrl = ChannelService.getUrl();
+    this.iframeUrl = ChannelService.getUrlForPath('');
     this.isEditMode = false;
   }
 
-  getMountId() {
-    return this.channelService.getMountId();
-  }
-
-  switchToChannel(mountId) {
-    this.channelService.switchToChannel(mountId);
-  }
 }

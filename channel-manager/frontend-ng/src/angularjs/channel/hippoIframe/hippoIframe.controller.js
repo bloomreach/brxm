@@ -15,11 +15,12 @@
  */
 
 export class HippoIframeCtrl {
-  constructor(hstCommentsProcessorService, HST_CONSTANT) {
+  constructor(hstCommentsProcessorService, HST_CONSTANT, ChannelService) {
     'ngInject';
 
     this.hstCommentsProcessorService = hstCommentsProcessorService;
     this.HST = HST_CONSTANT;
+    this.channelService = ChannelService;
   }
 
   onLoad() {
@@ -30,9 +31,9 @@ export class HippoIframeCtrl {
     const processHstComment = (commentElement, json) => {
       switch (json[this.HST.TYPE]) {
         case this.HST.TYPE_PAGE_META_DATA:
-          this.path = json[this.HST.PATH_INFO];
-          if (json[this.HST.MOUNT_ID] !== this.mountId) {
-            this.onChannelSwitch({ mountId: json[this.HST.MOUNT_ID] });
+          const channelId = json[this.HST.CHANNEL_ID];
+          if (channelId !== this.channelService.getId()) {
+            this.channelService.switchToChannel(channelId);
           }
           break;
         default:

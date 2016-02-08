@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,10 @@ describe('ChannelService', function () {
 
   var $q;
   var $rootScope;
+  var $httpBackend;
   var ChannelService;
   var SessionServiceMock;
+  var ConfigServiceMock;
   var channelMock;
 
   beforeEach(function () {
@@ -37,15 +39,27 @@ describe('ChannelService', function () {
       },
     };
 
+    ConfigServiceMock = {
+      apiUrlPrefix: '/testApiUrlPrefix',
+      rootResource: '/testRootResource',
+    };
+
     module(function ($provide) {
       $provide.value('SessionService', SessionServiceMock);
+      $provide.value('ConfigService', ConfigServiceMock);
     });
 
-    inject(function (_$q_, _$rootScope_, _ChannelService_) {
+    inject(function (_$q_, _$rootScope_, _$httpBackend_, _ChannelService_) {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      $httpBackend = _$httpBackend_;
       ChannelService = _ChannelService_;
     });
+  });
+
+  afterEach(function () {
+    $httpBackend.verifyNoOutstandingRequest();
+    $httpBackend.verifyNoOutstandingExpectation();
   });
 
   it('should not save a reference to the channel when load fails', function () {
@@ -71,52 +85,60 @@ describe('ChannelService', function () {
     expect(promiseSpy).toHaveBeenCalledWith(channelMock);
   });
 
-  it('should load a channel with an empty path if none is provided', function () {
-    ChannelService.load(channelMock);
-    $rootScope.$apply();
-    expect(ChannelService.path).toEqual('');
-  });
-
-  it('should load a channel with an optional path', function () {
-    ChannelService.load(channelMock, 'optional/path');
-    $rootScope.$apply();
-    expect(ChannelService.path).toEqual('optional/path');
-  });
-
   it('should return a url that starts with the contextPath', function () {
-    ChannelService.load({ contextPath: '/test' }, '/optional/path');
+    ChannelService.load({ contextPath: '/test' });
     $rootScope.$apply();
-    expect(ChannelService.getUrl()).toEqual('/test/optional/path');
+    expect(ChannelService.getUrlForPath('/optional/path')).toEqual('/test/optional/path');
   });
 
   it('should return a url that ends with a slash if it equals the contextPath', function () {
     ChannelService.load({ contextPath: '/test' });
     $rootScope.$apply();
-    expect(ChannelService.getUrl()).toEqual('/test/');
+    expect(ChannelService.getUrlForPath('')).toEqual('/test/');
   });
 
   it('should return a url without the contextPath if it is root', function () {
     ChannelService.load({ contextPath: '/' });
     $rootScope.$apply();
-    expect(ChannelService.getUrl()).toEqual('');
+    expect(ChannelService.getUrlForPath('')).toEqual('');
   });
 
   it('should return a url with the cmsPreviewPrefix appended after the contextPath with a slash', function () {
     ChannelService.load({ contextPath: '/test', cmsPreviewPrefix: 'cmsPreviewPrefix' });
     $rootScope.$apply();
-    expect(ChannelService.getUrl()).toEqual('/test/cmsPreviewPrefix');
+    expect(ChannelService.getUrlForPath('')).toEqual('/test/cmsPreviewPrefix');
   });
 
   it('should return a url with the mountPath appended after the cmsPreviewPrefix', function () {
     ChannelService.load({ contextPath: '/test', cmsPreviewPrefix: 'cmsPreviewPrefix', mountPath: '/mountPath' });
     $rootScope.$apply();
-    expect(ChannelService.getUrl()).toEqual('/test/cmsPreviewPrefix/mountPath');
+    expect(ChannelService.getUrlForPath('')).toEqual('/test/cmsPreviewPrefix/mountPath');
   });
 
   it('should return the mountId of the current channel', function () {
-    ChannelService.load({ mountId: 'test-mount-id' });
+    ChannelService.load({ id: 'test-id' });
     $rootScope.$apply();
-    expect(ChannelService.getMountId()).toEqual('test-mount-id');
+    expect(ChannelService.getId()).toEqual('test-id');
   });
+
+  it('should request the details of a new channel', function () {
+    var id = 'test-id';
+    var contextPath = '/test';
+    var url = contextPath + ConfigServiceMock.apiUrlPrefix + ConfigServiceMock.rootResource + '/channels/' + id;
+
+    // set the ChannelService's state (to validate the requested URL)
+    ChannelService.load({ contextPath: contextPath });
+    $rootScope.$apply();
+
+    $httpBackend.expectGET(url).respond(200, {
+      id: 'backend-id',
+    });
+    ChannelService.switchToChannel(id);
+    $httpBackend.flush();
+
+    expect(ChannelService.getId()).toEqual('backend-id');
+  });
+
+  // TODO: add a test where the server returns an error upon the ChannelService's request for channel details.
 
 });

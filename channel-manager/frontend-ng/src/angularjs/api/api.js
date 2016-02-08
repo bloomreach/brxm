@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { CmsService } from './cms.service.js';
-import { ConfigService } from './config.service.js';
-import { SessionService } from './session.service.js';
+import { CmsService } from './cms.service';
+import { ConfigService } from './config.service';
+import { SessionService } from './session.service';
+import { ChannelService } from './channel.service';
 import { HST_CONSTANT } from './hst.constants';
 
 export const channelManagerApi = angular
@@ -24,4 +25,5 @@ export const channelManagerApi = angular
   .service('CmsService', CmsService)
   .service('ConfigService', ConfigService)
   .service('SessionService', SessionService)
+  .service('ChannelService', ChannelService)
   .constant('HST_CONSTANT', HST_CONSTANT);
