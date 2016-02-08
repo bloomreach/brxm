@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,13 @@
  */
 package org.onehippo.cms7.ckeditor;
 
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import org.apache.wicket.request.Url;
-import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.request.resource.UrlResourceReference;
+import org.apache.wicket.util.io.IOUtils;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 
 /**
@@ -35,8 +37,8 @@ public class CKEditorConstants {
      * {@code org.onehippo.cms7.utilities.servlet.ResourceServlet} should be configured that serves files from jars
      * that start with /ckeditor.
      */
-    public static final ResourceReference CKEDITOR_OPTIMIZED_JS = WebApplicationHelper.createUniqueUrlResourceReference(new Url(Arrays.asList("ckeditor", "optimized", "ckeditor.js"), Charset.forName("UTF-8")));
-    public static final ResourceReference CKEDITOR_SRC_JS = WebApplicationHelper.createUniqueUrlResourceReference(new Url(Arrays.asList("ckeditor", "ckeditor.js"), Charset.forName("UTF-8")));
+    public static final UrlResourceReference CKEDITOR_OPTIMIZED_JS = WebApplicationHelper.createUniqueUrlResourceReference(new Url(Arrays.asList("ckeditor", "optimized", "ckeditor.js"), Charset.forName("UTF-8")));
+    public static final UrlResourceReference CKEDITOR_SRC_JS = WebApplicationHelper.createUniqueUrlResourceReference(new Url(Arrays.asList("ckeditor", "ckeditor.js"), Charset.forName("UTF-8")));
 
     /**
      * CKEDITOR constants for keyboard shortcuts
@@ -59,5 +61,16 @@ public class CKEditorConstants {
      * CKEditor plugin names
      */
     public static final String PLUGIN_DIVAREA = "divarea";
+
+    /**
+     * Checks whether a CKEditor resource reference exists on the class path.
+     * @param ref a CKEditor resource reference.
+     */
+    public static boolean existsOnClassPath(final UrlResourceReference ref) {
+        final String path = ref.getUrl().getPath();
+        final InputStream resource = CKEditorConstants.class.getResourceAsStream("/" + path);
+        IOUtils.closeQuietly(resource);
+        return resource != null;
+    }
 
 }

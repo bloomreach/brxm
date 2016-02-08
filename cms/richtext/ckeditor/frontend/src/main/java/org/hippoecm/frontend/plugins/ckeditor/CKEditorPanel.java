@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,7 +125,8 @@ public class CKEditorPanel extends Panel {
     }
 
     public static ResourceReference getCKEditorJsReference() {
-        if (Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT)) {
+        if (Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT)
+                && CKEditorConstants.existsOnClassPath(CKEditorConstants.CKEDITOR_SRC_JS)) {
             log.info("Using non-optimized CKEditor sources.");
             return CKEditorConstants.CKEDITOR_SRC_JS;
         }
