@@ -92,6 +92,21 @@ public class RootResource extends AbstractConfigResource {
         }
     }
 
+    @GET
+    @Path("/channels/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getChannel(@PathParam("id") String channelId) {
+        final VirtualHost virtualHost = RequestContextProvider.get().getResolvedMount().getMount().getVirtualHost();
+        try {
+            Channel channel = virtualHost.getVirtualHosts().getChannelById(virtualHost.getHostGroupName(), channelId);
+            return Response.ok().entity(channel).build();
+        } catch (RuntimeRepositoryException e) {
+            final String error = "Could not determine authorization";
+            log.warn(error, e);
+            return Response.serverError().entity(error).build();
+        }
+    }
+
     private boolean previewConfigRequiredFiltered(final Channel channel, final boolean previewConfigRequired) {
         if (!previewConfigRequired) {
             return true;
