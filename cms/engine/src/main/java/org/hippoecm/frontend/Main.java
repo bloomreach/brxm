@@ -89,6 +89,7 @@ import org.apache.wicket.util.string.StringValueConversionException;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.diagnosis.DiagnosticsRequestCycleListener;
+import org.hippoecm.frontend.http.CsrfPreventionRequestCycleListener;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.UserCredentials;
@@ -160,6 +161,8 @@ public class Main extends PluginApplication {
     @Override
     protected void init() {
         super.init();
+
+        getRequestCycleListeners().add(new CsrfPreventionRequestCycleListener());
 
         addRequestCycleListeners();
 

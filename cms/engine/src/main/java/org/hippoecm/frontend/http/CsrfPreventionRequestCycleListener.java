@@ -38,6 +38,8 @@ import org.apache.wicket.util.string.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.frontend.util.RequestUtils.getFarthestRequestScheme;
+
 
 /**
  * Semi-fork of wicket's CsrfPreventionRequestCycleListener. First check in is the CsrfPreventionRequestCycleListener from wicket 6.21.0 as is.
@@ -551,6 +553,18 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
      */
     private String getLocationHeaderOrigin(HttpServletRequest request)
     {
+
+        String host = request.getHeader("X-Forwarded-Host");
+        if (host != null) {
+            String[] hosts = host.split(",");
+            return getFarthestRequestScheme(request) + "://" + hosts[0];
+        }
+
+        host = request.getHeader("Host");
+        if (host != null && !"".equals(host)) {
+            return getFarthestRequestScheme(request) + "://" + host;
+        }
+        
         // Build scheme://host:port from request
         StringBuilder target = new StringBuilder();
         String scheme = request.getScheme();
@@ -565,7 +579,7 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
         target.append(scheme);
         target.append("://");
 
-        String host = request.getServerName();
+        host = request.getServerName();
         if (host == null)
         {
             return null;
