@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.ckeditor;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -51,10 +51,9 @@ public class CKEditorPanel extends Panel {
 
     private static final String WICKET_ID_EDITOR = "editor";
     private static final ResourceReference CKEDITOR_PANEL_JS = new PackageResourceReference(CKEditorPanel.class, "CKEditorPanel.js") {
-        private final List<CmsHeaderItem> dependencies = Arrays.asList(CmsHeaderItem.get());
         @Override
         public Iterable<? extends HeaderItem> getDependencies() {
-            return dependencies;
+            return Collections.singleton(CmsHeaderItem.get());
         }
     };
     private static final String CKEDITOR_TIMESTAMP = RandomStringUtils.randomAlphanumeric(4);
