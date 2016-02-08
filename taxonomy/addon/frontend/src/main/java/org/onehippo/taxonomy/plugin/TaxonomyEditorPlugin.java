@@ -806,6 +806,13 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
         @Override
         public void onClick(AjaxRequestTarget target) {
+            final TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
+            final CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
+
+            if(categoryNode == null || categoryNode.getCategory() == null) {
+                return;
+            }
+
             IDialogService dialogService = getDialogService();
             final List<String> keys = new ArrayList<>();
             final Model<String> classificationIdModel = new Model<>();
@@ -888,10 +895,14 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
         @Override
         public void onClick(AjaxRequestTarget target) {
-            IDialogService dialogService = getDialogService();
-
             final TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
             final CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
+
+            if(categoryNode == null || categoryNode.getCategory() == null) {
+                return;
+            }
+
+            IDialogService dialogService = getDialogService();
 
             if (!categoryNode.isLeaf()) {
                 dialogService.show(
