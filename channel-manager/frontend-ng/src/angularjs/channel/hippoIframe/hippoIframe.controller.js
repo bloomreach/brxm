@@ -14,17 +14,32 @@
  * limitations under the License.
  */
 
+function constructUrl(location, ...fragments) {
+  let url = `${location.protocol}//${location.host}`;
+  fragments.forEach((fragment) => {
+    if (angular.isString(fragment) && fragment.length) {
+      const urlAndSlash = url.charAt(url.length - 1) === '/' ? url : `${url}/`;
+      const noSlashAndFragment = fragment.charAt(0) === '/' ? fragment.substring(1) : fragment;
+      url = urlAndSlash + noSlashAndFragment;
+    }
+  });
+  return url;
+}
+
 export class HippoIframeCtrl {
-  constructor(hstCommentsProcessorService, HST_CONSTANT, ChannelService) {
+  constructor(linkProcessorService, hstCommentsProcessorService, HST_CONSTANT, ChannelService) {
     'ngInject';
 
+    this.linkProcessorService = linkProcessorService;
     this.hstCommentsProcessorService = hstCommentsProcessorService;
     this.HST = HST_CONSTANT;
+    this.ChannelService = ChannelService;
     this.channelService = ChannelService;
   }
 
   onLoad() {
     this.parseHstComments();
+    this.parseLinks();
   }
 
   parseHstComments() {
@@ -43,6 +58,14 @@ export class HippoIframeCtrl {
     const iframeDom = this.iframe.contents()[0];
 
     this.hstCommentsProcessorService.run(iframeDom, processHstComment);
+  }
+
+  parseLinks() {
+    const iframeDom = this.iframe.contents()[0];
+    const channel = this.ChannelService.channel;
+    const internalLinkPrefix = constructUrl(iframeDom.location, channel.contextPath, channel.cmsPreviewPrefix);
+
+    this.linkProcessorService.run(iframeDom, internalLinkPrefix);
   }
 
 }
