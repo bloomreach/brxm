@@ -1,7 +1,7 @@
 *.iml
 /.idea/
-.project/
-.settings
+.project
+.settings/
 target/
 /.classpath
 /.lock
