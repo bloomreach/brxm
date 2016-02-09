@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.onehippo.cms7.services.webfiles.watch;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,11 +30,11 @@ public class WebFilesWatcherJavaConfig implements WebFilesWatcherConfig {
     private long maxFileLengthBytes;
 
     public WebFilesWatcherJavaConfig() {
-        watchedModules = new ArrayList<>();
-        includedFiles = new ArrayList<>();
-        excludedDirs = new ArrayList<>();
-        useWatchServiceOnOsNames = new ArrayList<>();
-        watchDelayMillis = 0;
+        watchedModules = new ArrayList<>(Arrays.asList(DEFAULT_WATCHED_MODULES));
+        includedFiles = new ArrayList<>(Arrays.asList(DEFAULT_INCLUDED_FILES));
+        excludedDirs = new ArrayList<>(Arrays.asList(DEFAULT_EXCLUDED_DIRECTORIES));
+        useWatchServiceOnOsNames = new ArrayList<>(Arrays.asList(DEFAULT_USE_WATCH_SERVICE_ON_OS_NAMES));
+        watchDelayMillis = DEFAULT_WATCH_DELAY_MILLIS;
         maxFileLengthBytes = 1024 * DEFAULT_MAX_FILE_LENGTH_KB;
     }
 
