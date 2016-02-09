@@ -85,7 +85,7 @@ public class HstRenderPathEditor extends Panel {
                 break;
             case 1:
                 validationIcon.add(CssClass.append(FontAwesomeIcon.CHECK.cssClass() + " check-ok"));
-                validationIcon.add(TitleAttribute.append("Web File Found"));
+                validationIcon.add(TitleAttribute.append("Web File Found at path " + webFilePaths.get(0)));
                 break;
             default:
                 validationIcon.add(CssClass.append(FontAwesomeIcon.CHECK.cssClass() + " check-ok"));
