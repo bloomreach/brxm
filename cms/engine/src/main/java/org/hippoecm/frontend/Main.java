@@ -124,6 +124,9 @@ public class Main extends PluginApplication {
     public final static String ENCRYPT_URLS = "encrypt-urls";
     public final static String OUTPUT_WICKETPATHS = "output-wicketpaths";
     public final static String PLUGIN_APPLICATION_NAME_PARAMETER = "config";
+
+    // comma separated init parameter
+    public final static String ACCEPTED_ORIGIN_WHITELIST = "accepted-origin-whitelist";
     /**
      * Custom Wicket {@link IRequestCycleListener} class names parameter which can be comma or whitespace-separated
      * string to set multiple {@link IRequestCycleListener}s.
@@ -161,8 +164,6 @@ public class Main extends PluginApplication {
     @Override
     protected void init() {
         super.init();
-
-        getRequestCycleListeners().add(new CsrfPreventionRequestCycleListener());
 
         addRequestCycleListeners();
 
@@ -607,7 +608,9 @@ public class Main extends PluginApplication {
     }
 
     /**
-     * Adds the default built-in {@link IRequestCycleListener} or configured custom {@link IRequestCycleListener}s.
+     * Adds the default built-in {@link IRequestCycleListener} or configured custom {@link IRequestCycleListener}s. Note that the
+     * default <code>CsrfPreventionRequestCycleListener</code> always gets added, regardless whether custom  {@link IRequestCycleListener}s
+     * are configured.
      * <P>
      * If no custom {@link IRequestCycleListener}s are configured, then this simply registers the default built-in
      * listeners such as {@link org.hippoecm.frontend.diagnosis.DiagnosticsRequestCycleListener} and {@link RepositoryRuntimeExceptionHandlingRequestCycleListener}.
@@ -617,6 +620,8 @@ public class Main extends PluginApplication {
     private void addRequestCycleListeners() {
         String[] listenerClassNames = StringUtils.split(getConfigurationParameter(REQUEST_CYCLE_LISTENERS_PARAM, null), " ,\t\r\n");
         RequestCycleListenerCollection requestCycleListenerCollection = getRequestCycleListeners();
+
+        addCsrfPreventionRequestCycleListener(requestCycleListenerCollection);
 
         if (listenerClassNames == null || listenerClassNames.length == 0) {
             requestCycleListenerCollection.add(new DiagnosticsRequestCycleListener());
@@ -632,6 +637,18 @@ public class Main extends PluginApplication {
                 }
             }
         }
+    }
+
+    private void addCsrfPreventionRequestCycleListener(final RequestCycleListenerCollection requestCycleListenerCollection) {
+        final CsrfPreventionRequestCycleListener listener = new CsrfPreventionRequestCycleListener();
+        // split on tab (\t), line feed (\n), carriage return (\r), form feed (\f), " ", and ","
+        final String[] acceptedOrigins = StringUtils.split(getConfigurationParameter(ACCEPTED_ORIGIN_WHITELIST, null), " ,\t\f\r\n");
+        if (acceptedOrigins != null && acceptedOrigins.length > 0) {
+            for (String acceptedOrigin : acceptedOrigins) {
+                listener.addAcceptedOrigin(acceptedOrigin);
+            }
+        }
+        requestCycleListenerCollection.add(listener);
     }
 
     private static class ResponseSplittingProtectingServletWebResponse extends ServletWebResponse {
