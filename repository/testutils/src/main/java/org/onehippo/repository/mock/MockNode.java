@@ -21,7 +21,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,7 +46,6 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.lock.Lock;
 import javax.jcr.nodetype.ConstraintViolationException;
@@ -57,7 +55,6 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
-import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.Localized;
@@ -277,9 +274,12 @@ public class MockNode extends MockItem implements HippoNode {
 
     @Override
     public Property setProperty(final String name, final Value[] values) throws RepositoryException {
-        Property p = getPropertyOrAddNew(name, values[0].getType());
-        p.setValue(values);
-        return p;
+        if (values.length > 0) {
+            return setProperty(name, values, values[0].getType());
+        } else {
+            // If type cannot be inferred by the given value, then let's assume it as string in mock utils..
+            return setProperty(name, values, PropertyType.STRING);
+        }
     }
 
     @Override
