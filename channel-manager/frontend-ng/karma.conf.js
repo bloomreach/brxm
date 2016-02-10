@@ -32,14 +32,14 @@ module.exports = function karmaConfig(config) {
     cfg.bowerDir + 'angular-mocks/angular-mocks.js',
     cfg.npmDir + 'babel-core/external-helpers.js',
     cfg.npmDir + 'systemjs/dist/system-polyfills.js',
-    cfg.npmDir + 'systemjs/dist/system-register-only.js'
+    cfg.npmDir + 'systemjs/dist/system-register-only.js',
   ];
 
   options.files = [
     cfg.src.templates,
     cfg.src.scripts,
     cfg.src.unitTests,
-    cfg.srcDir + './angularjs/mock.environment.spec.js'
+    cfg.srcDir + './angularjs/mock.environment.spec.js',
   ];
 
   config.set(options);
