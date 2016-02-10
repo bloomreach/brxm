@@ -219,6 +219,7 @@
                 <exclude>frontend-ng/tmp/**/*</exclude>
                 <exclude>frontend-ng/node_modules/**/*</exclude>
                 <exclude>frontend-ng/bower_components/**/*</exclude>
+                <exclude>frontend-ng/coverage/**/*</exclude>
                 <exclude>frontend-ng/DIST_LICENSE</exclude>
 
                 <exclude>angularjs-api/.*</exclude>
