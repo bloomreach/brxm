@@ -1,8 +1,9 @@
+*.log
 *.iml
-/.idea/
-.project/
 .settings
+.idea/
+.project/
 target/
 node_modules/
 bower_components/
-frontend/*.log
+coverage/
