@@ -397,6 +397,7 @@
                 <exclude>console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/tree/tree.css</exclude>
                 <!-- forked from Apache Tomcat sources -->
                 <exclude>engine/src/main/java/org/hippoecm/frontend/custom/ServerCookie.java</exclude>
+                <exclude>engine/src/main/java/org/hippoecm/frontend/http/CsrfPreventionRequestCycleListener.java</exclude>
                 <!-- external contributions -->
                 <exclude>gotolink/src/test/java/org/hippoecm/frontend/plugins/gotolink/GotolinkDocumentsShortcutPluginTest.java</exclude>
                 <exclude>gotolink/src/test/java/org/hippoecm/frontend/plugins/gotolink/MyHomePage.java</exclude>
