@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -70,6 +70,7 @@ import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.util.XMLChar;
+import org.hippoecm.repository.nodetypes.NodeTypesChangeTracker;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.dataprovider.MirrorNodeId;
 import org.hippoecm.repository.decorating.NodeDecorator;
@@ -107,6 +108,7 @@ abstract class SessionImplHelper {
      */
     private final Map<String, String> namespaces = new HashMap<String, String>();
     private AuthorizationQuery authorizationQuery;
+    private int nodeTypesChangeCounter = -1;
 
     /**
      * Clears the local namespace mappings. Subclasses that for example
@@ -298,17 +300,6 @@ abstract class SessionImplHelper {
      * @throws RepositoryException
      */
     void init() throws RepositoryException {
-        final RepositoryImpl repository = (RepositoryImpl) context.getRepository();
-        HippoQueryHandler queryHandler = repository.getHippoQueryHandler(session.getWorkspace().getName());
-        if (queryHandler != null) {
-            this.authorizationQuery = new AuthorizationQuery(context.getSessionImpl().getSubject(),
-                                                         queryHandler.getNamespaceMappings(),
-                                                         queryHandler.getIndexingConfig(),
-                                                         context.getNodeTypeManager(),
-                                                         context.getSessionImpl(),
-                                                         userId);
-        }
-
         HippoLocalItemStateManager localISM = (HippoLocalItemStateManager)(context.getWorkspace().getItemStateManager());
         ((RepositoryImpl)context.getRepository()).initializeLocalItemStateManager(localISM, context.getSessionImpl(), subject);
     }
@@ -613,7 +604,25 @@ abstract class SessionImplHelper {
     }
 
     public AuthorizationQuery getAuthorizationQuery() {
-        return this.authorizationQuery;
+        if (authorizationQuery == null || NodeTypesChangeTracker.getChangesCounter() != nodeTypesChangeCounter) {
+            nodeTypesChangeCounter = NodeTypesChangeTracker.getChangesCounter();
+            try {
+                final RepositoryImpl repository = (RepositoryImpl)context.getRepository();
+                HippoQueryHandler queryHandler = repository.getHippoQueryHandler(session.getWorkspace().getName());
+                if (queryHandler != null) {
+                    authorizationQuery = new AuthorizationQuery(context.getSessionImpl().getSubject(),
+                            queryHandler.getNamespaceMappings(),
+                            queryHandler.getIndexingConfig(),
+                            context.getNodeTypeManager(),
+                            context.getSessionImpl(),
+                            userId);
+                }
+            } catch (RepositoryException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return authorizationQuery;
     }
 
 }
