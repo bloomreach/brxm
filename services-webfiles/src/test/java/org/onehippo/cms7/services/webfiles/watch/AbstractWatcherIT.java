@@ -66,10 +66,7 @@ public class AbstractWatcherIT {
         FileUtils.copyDirectory(testBundleFixture, testBundleDir);
 
         emptyDir = new File(testBundleDir, "empty");
-        if (!emptyDir.exists()) {
-            emptyDir.mkdir();
-        }
-        assertTrue(emptyDir.isDirectory());
+        emptyDir.mkdir();
 
         cssDir = new File(testBundleDir, "css");
         assertTrue(cssDir.isDirectory());
