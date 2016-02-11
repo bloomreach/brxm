@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -207,6 +207,10 @@ div.taxonomy-details a:hover {
 .taxonomy-editor .hippo-toolbar-menu .hippo-toolbar-section > li.menu-item:hover a.menu-action.taxonomy-disabled-action .menu-action-icon svg,
 .taxonomy-editor .hippo-toolbar-menu .hippo-toolbar-section > li.menu-item:hover a.menu-action.taxonomy-disabled-action .menu-action-text {
     color: #bdbdbd;
+}
+
+.taxonomy-editor .hippo-toolbar-menu .hippo-toolbar-section > li.menu-item a.menu-action.taxonomy-disabled-action .menu-action-icon svg {
+    fill: #d4d6d8;
 }
 
 .hippo-preview-document .taxonomy-editor .hippo-editor-field select {
