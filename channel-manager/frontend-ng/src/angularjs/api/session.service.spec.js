@@ -22,21 +22,25 @@ describe('SessionService', function () {
   var ConfigServiceMock;
   var channelMock;
 
-  // built-in path to RootResource 'REST' endpoint
-  var composerModePath = '/cafebabe-cafe-babe-cafe-babecafebabe./composermode/';
-  var handshakeUrl = '/testContextPath/testApiUrlPrefix' + composerModePath + 'test.host.name/';
+  var rootResource = '/cafebabe.';
+  var apiUrlPrefix = '/testApiUrlPrefix';
+  var composerMode = '/composermode';
+  var contextPath = '/testContextPath';
+  var hostname = 'test.host.name';
+  var handshakeUrl = contextPath + apiUrlPrefix + rootResource + composerMode + '/' + hostname + '/';
 
   beforeEach(function () {
     module('hippo-cm-api');
 
     channelMock = {
-      contextPath: '/testContextPath',
-      hostname: 'test.host.name',
+      contextPath: contextPath,
+      hostname: hostname,
     };
 
     ConfigServiceMock = {
-      apiUrlPrefix: '/testApiUrlPrefix',
+      apiUrlPrefix: apiUrlPrefix,
       cmsUser: 'testUser',
+      rootResource: rootResource,
     };
 
     module(function ($provide) {
@@ -59,7 +63,7 @@ describe('SessionService', function () {
   });
 
   it('should have a handshakePath', function () {
-    expect(SessionService.handshakePath).toEqual(ConfigServiceMock.apiUrlPrefix + composerModePath);
+    expect(SessionService.handshakePath).toEqual(apiUrlPrefix + rootResource + composerMode + '/');
   });
 
   it('should have a cms user', function () {
