@@ -66,6 +66,15 @@
               <commandlineArgs>run gulp buildDist -- --fail-on-gulp-error</commandlineArgs>
             </configuration>
           </execution>
+          <execution>
+            <id>gulp-test</id>
+            <phase>test</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <executable>npm</executable>
+              <commandlineArgs>run gulp test -- --fail-on-gulp-error</commandlineArgs>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
