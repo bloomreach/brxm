@@ -4,10 +4,23 @@
 <#if menu??>
 <ul class="nav nav-pills nav-stacked">
     <#list menu.siteMenuItems as item>
-        <#if  item.selected || item.expanded>
-            <li class="active"><a href="<@hst.link link=item.hstLink/>">${item.name?html}</a></li>
+        <#if !item.hstLink?? && !item.externalLink??>
+            <#if item.selected || item.expanded>
+              <li class="active"><span>${item.name?html}</span></li>
+            <#else>
+              <li><span>${item.name?html}</span></li>
+            </#if>
         <#else>
-            <li><a href="<@hst.link link=item.hstLink/>">${item.name?html}</a></li>
+            <#if item.hstLink??>
+                <#assign href><@hst.link link=item.hstLink/></#assign>
+            <#elseif item.externalLink??>
+                <#assign href>${item.externalLink?replace("\"", "")}</#assign>
+            </#if>
+            <#if  item.selected || item.expanded>
+              <li class="active"><a href="${href}">${item.name?html}</a></li>
+            <#else>
+              <li><a href="${href}">${item.name?html}</a></li>
+            </#if>
         </#if>
     </#list>
 </ul>

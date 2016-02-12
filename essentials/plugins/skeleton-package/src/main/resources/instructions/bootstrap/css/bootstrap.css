@@ -3863,21 +3863,25 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   position: relative;
   display: block;
 }
-.nav > li > a {
+.nav > li > a, span {
   position: relative;
   display: block;
   padding: 10px 15px;
 }
 .nav > li > a:hover,
-.nav > li > a:focus {
+.nav > li > a:focus,
+.nav > li > span:hover,
+.nav > li > span:focus{
   text-decoration: none;
   background-color: #eee;
 }
-.nav > li.disabled > a {
+.nav > li.disabled > a, span {
   color: #777;
 }
 .nav > li.disabled > a:hover,
-.nav > li.disabled > a:focus {
+.nav > li.disabled > a:focus,
+.nav > li.disabled > span:hover,
+.nav > li.disabled > span:focus {
   color: #777;
   text-decoration: none;
   cursor: not-allowed;
@@ -3970,7 +3974,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav-pills > li {
   float: left;
 }
-.nav-pills > li > a {
+.nav-pills > li > a, span  {
   border-radius: 4px;
 }
 .nav-pills > li + li {
@@ -4835,6 +4839,9 @@ a.badge:focus {
   margin-right: 5px;
 }
 .nav-pills > li > a > .badge {
+  margin-left: 3px;
+}
+.nav-pills > li > span > .badge {
   margin-left: 3px;
 }
 .jumbotron {
