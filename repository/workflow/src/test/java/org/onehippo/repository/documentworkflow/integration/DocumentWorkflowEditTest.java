@@ -36,6 +36,7 @@ import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
@@ -77,13 +78,13 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
         // this should also (re)create the UNPUBLISHED variant and an initial version of its published content
         getDocumentWorkflow(handle).obtainEditableInstance();
 
-        final Value[] liveValues = variant.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues();
+        final Value[] liveValues = variant.getProperty(HIPPO_AVAILABILITY).getValues();
         assertTrue(liveValues.length == 1);
         assertEquals("live", liveValues[0].getString());
 
         variant = getVariant(UNPUBLISHED);
 
-        final Value[] values = variant.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues();
+        final Value[] values = variant.getProperty(HIPPO_AVAILABILITY).getValues();
         assertTrue(values.length == 1);
         assertEquals("preview", values[0].getString());
 
