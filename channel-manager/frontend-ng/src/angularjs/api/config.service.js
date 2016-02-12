@@ -19,10 +19,9 @@ export class ConfigService {
   constructor(CmsService) {
     'ngInject';
 
-    // default configuration
     this.locale = 'en';
+    this.rootResource = '/cafebabe-cafe-babe-cafe-babecafebabe.';
 
     Object.assign(this, CmsService.getConfig());
-    this.rootResource = '/cafebabe-cafe-babe-cafe-babecafebabe.';
   }
 }
