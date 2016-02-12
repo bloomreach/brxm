@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.google.common.net.InetAddresses;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -277,24 +279,18 @@ public class VirtualHostService implements MutableVirtualHost {
         }
 
         String fullName = virtualHostNode.getValueProvider().getName();
-        String[] nameSegments = fullName.split("\\.");
+        String[] nameSegments = fullName.split("[.]");
 
         VirtualHostService attachPortMountToHost = this;
 
-        if(nameSegments.length > 1) {
-            // check whether the hostname is an ip adres as only ip adresses are allowed to contain a "." in their name. For example www.onehippo.org should be configured
-            // hierarchically
-            for(String segment : nameSegments){
-               try {
-                   Integer.parseInt(segment);
-               } catch (NumberFormatException e) {
-                   // one of the segments was not an integer. This is not a valid hostname
-                   throw new ModelLoadingException("Node hst:virtualhost is not allowed to be '"+fullName+"'. Only ip-addresses are allowed to have a '.' in the nodename. Re-configure the host to a hierarchical structure");
-               }
+        if (nameSegments.length > 1) {
+            if (!InetAddresses.isInetAddress(fullName)) {
+                throw new ModelLoadingException("Node hst:virtualhost is not allowed to be '" + fullName +
+                        "'. Only ip-addresses are allowed to have a '.' in the nodename. Re-configure the host to a hierarchical structure");
             }
 
-            // if the fullName is for example 127.0.0.1, then this items name is '1', its child is 0 which has a child 0, which has
-            // the last child is '127'
+            // fullName represents an IP address. Recursively build a hierarchy of VirtualHostServices.
+            // e.g. "127.0.0.1" gets translated into virtual child hosts 1/0/0/127.
             this.name = StringPool.get(nameSegments[nameSegments.length - 1]);
             // add child host services
             int depth = nameSegments.length - 2;
