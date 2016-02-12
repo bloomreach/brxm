@@ -17,10 +17,13 @@ package org.onehippo.repository.documentworkflow.integration;
 
 import javax.jcr.Node;
 import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.Value;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
@@ -33,6 +36,8 @@ import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegrationTest {
@@ -47,6 +52,7 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
     @Test
     public void firstEditOfPublishedOnlyDocumentCreatesInitialVersion() throws Exception {
         Node variant = getVariant(PUBLISHED);
+
         assertNull(variant);
         variant = getVariant(UNPUBLISHED);
         assertNotNull(variant);
@@ -67,9 +73,20 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
         }
         variant = getVariant(PUBLISHED);
         assertNotNull(variant);
+
         // this should also (re)create the UNPUBLISHED variant and an initial version of its published content
         getDocumentWorkflow(handle).obtainEditableInstance();
+
+        final Value[] liveValues = variant.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues();
+        assertTrue(liveValues.length == 1);
+        assertEquals("live", liveValues[0].getString());
+
         variant = getVariant(UNPUBLISHED);
+
+        final Value[] values = variant.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues();
+        assertTrue(values.length == 1);
+        assertEquals("preview", values[0].getString());
+
         assertNotNull(variant);
         // will throw an exception if their is no version history
         VersionHistory versionHistory = versionManager.getVersionHistory(variant.getPath());
