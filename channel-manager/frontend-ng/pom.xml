@@ -63,7 +63,7 @@
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>npm</executable>
-              <commandlineArgs>run gulp buildDist --no-color</commandlineArgs>
+              <commandlineArgs>run gulp buildDist -- --fail-on-gulp-error</commandlineArgs>
             </configuration>
           </execution>
         </executions>
