@@ -279,7 +279,7 @@ public class VirtualHostService implements MutableVirtualHost {
         }
 
         String fullName = virtualHostNode.getValueProvider().getName();
-        String[] nameSegments = fullName.split("\\.");
+        String[] nameSegments = fullName.split("[.]");
 
         VirtualHostService attachPortMountToHost = this;
 
