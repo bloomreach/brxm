@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>27.3</version>
+    <version>28-SNAPSHOT</version>
   </parent>
 
   <name>Hippo CMS7 Project Archetype</name>
@@ -29,7 +29,7 @@
   </description>
 
   <artifactId>hippo-project-archetype</artifactId>
-  <version>3.x-translations-1.0-SNAPSHOT</version>
+  <version>4.0.0-translations-psp1-SNAPSHOT</version>
   <packaging>maven-archetype</packaging>
 
   <properties>
@@ -73,9 +73,9 @@
 
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/branches/archetype-3.1.0-translations-1</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/branches/archetype-3.1.0-translations-1</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/branches/archetype-3.1.0-translations-1</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk</url>
   </scm>
 
   <build>
