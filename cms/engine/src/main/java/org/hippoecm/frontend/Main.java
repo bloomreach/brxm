@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -81,6 +81,7 @@ import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.settings.IExceptionSettings;
 import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.IContextProvider;
+import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.string.StringValue;
@@ -88,6 +89,7 @@ import org.apache.wicket.util.string.StringValueConversionException;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.diagnosis.DiagnosticsRequestCycleListener;
+import org.hippoecm.frontend.http.CsrfPreventionRequestCycleListener;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.UserCredentials;
@@ -122,6 +124,9 @@ public class Main extends PluginApplication {
     public final static String ENCRYPT_URLS = "encrypt-urls";
     public final static String OUTPUT_WICKETPATHS = "output-wicketpaths";
     public final static String PLUGIN_APPLICATION_NAME_PARAMETER = "config";
+
+    // comma separated init parameter
+    public final static String ACCEPTED_ORIGIN_WHITELIST = "accepted-origin-whitelist";
     /**
      * Custom Wicket {@link IRequestCycleListener} class names parameter which can be comma or whitespace-separated
      * string to set multiple {@link IRequestCycleListener}s.
@@ -599,7 +604,9 @@ public class Main extends PluginApplication {
     }
 
     /**
-     * Adds the default built-in {@link IRequestCycleListener} or configured custom {@link IRequestCycleListener}s.
+     * Adds the default built-in {@link IRequestCycleListener} or configured custom {@link IRequestCycleListener}s. Note that the
+     * default <code>CsrfPreventionRequestCycleListener</code> always gets added, regardless whether custom  {@link IRequestCycleListener}s
+     * are configured.
      * <P>
      * If no custom {@link IRequestCycleListener}s are configured, then this simply registers the default built-in
      * listeners such as {@link org.hippoecm.frontend.diagnosis.DiagnosticsRequestCycleListener} and {@link RepositoryRuntimeExceptionHandlingRequestCycleListener}.
@@ -609,6 +616,8 @@ public class Main extends PluginApplication {
     private void addRequestCycleListeners() {
         String[] listenerClassNames = StringUtils.split(getConfigurationParameter(REQUEST_CYCLE_LISTENERS_PARAM, null), " ,\t\r\n");
         RequestCycleListenerCollection requestCycleListenerCollection = getRequestCycleListeners();
+
+        addCsrfPreventionRequestCycleListener(requestCycleListenerCollection);
 
         if (listenerClassNames == null || listenerClassNames.length == 0) {
             requestCycleListenerCollection.add(new DiagnosticsRequestCycleListener());
@@ -624,6 +633,18 @@ public class Main extends PluginApplication {
                 }
             }
         }
+    }
+
+    private void addCsrfPreventionRequestCycleListener(final RequestCycleListenerCollection requestCycleListenerCollection) {
+        final CsrfPreventionRequestCycleListener listener = new CsrfPreventionRequestCycleListener();
+        // split on tab (\t), line feed (\n), carriage return (\r), form feed (\f), " ", and ","
+        final String[] acceptedOrigins = StringUtils.split(getConfigurationParameter(ACCEPTED_ORIGIN_WHITELIST, null), " ,\t\f\r\n");
+        if (acceptedOrigins != null && acceptedOrigins.length > 0) {
+            for (String acceptedOrigin : acceptedOrigins) {
+                listener.addAcceptedOrigin(acceptedOrigin);
+            }
+        }
+        requestCycleListenerCollection.add(listener);
     }
 
     private static class ResponseSplittingProtectingServletWebResponse extends ServletWebResponse {
@@ -649,17 +670,20 @@ public class Main extends PluginApplication {
         }
 
         @Override
-        public void sendRedirect(final String url) {
+        public void sendRedirect(String url) {
+            Args.notNull(url, "url");
             if (containsCRorLF(url)) {
                 throw new IllegalArgumentException("CR or LF detected in redirect URL: possible http response splitting attack");
             }
+
+            if (url.equals("./")) {
+                url += "?";
+            }
+
             super.sendRedirect(url);
         }
 
         private boolean containsCRorLF(String s) {
-            if (null == s) {
-                return false;
-            }
 
             int length = s.length();
 

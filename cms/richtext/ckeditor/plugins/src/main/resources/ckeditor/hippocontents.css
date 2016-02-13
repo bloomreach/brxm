@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -145,7 +145,7 @@
 .cke_wysiwyg_div.cke_editable h4:first-child,
 .cke_wysiwyg_div.cke_editable h5:first-child,
 .cke_wysiwyg_div.cke_editable h6:first-child,
-.cke_wysiwyg_div.cke_editable p {
+.cke_wysiwyg_div.cke_editable p:first-child {
     margin-top: 0;
 }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.jcr.Node;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -47,15 +48,32 @@ public abstract class DocumentListingPlugin<T> extends ExpandCollapseListingPlug
 
     @Override
     protected List<IListColumnProvider> getDefaultColumnProviders() {
-        return Collections.singletonList(CssTypeIconListColumnProvider.INSTANCE);
+        return Collections.singletonList(new CssTypeIconListColumnProvider());
+    }
+
+    protected static ListColumn<Node> createNameColumn() {
+        final ClassResourceModel displayModel = new ClassResourceModel("doclisting-name", DocumentListingPlugin.class);
+        final ListColumn<Node> column = new ListColumn<>(displayModel, "name");
+        column.setComparator(NameComparator.getInstance());
+        column.setAttributeModifier(DocumentAttributeModifier.getInstance());
+        column.setCssClass(DocumentListColumn.NAME.getCssClass());
+        return column;
+    }
+
+    protected static ListColumn<Node> createTypeColumn() {
+        final ClassResourceModel displayModel = new ClassResourceModel("doclisting-type", DocumentListingPlugin.class);
+        final ListColumn<Node> column = new ListColumn<>(displayModel, "type");
+        column.setComparator(TypeComparator.getInstance());
+        column.setRenderer(TypeRenderer.getInstance());
+        column.setCssClass(DocumentListColumn.TYPE.getCssClass());
+        return column;
     }
 
     private static class CssTypeIconListColumnProvider implements IListColumnProvider {
 
-        private static final ListColumn<Node> NAME_COLUMN = createNameColumn();
-        private static final ListColumn<Node> TYPE_COLUMN = createTypeColumn();
-        private static final ListColumn<Node> TYPE_ICON_COLUMN = createTypeIconColumn();
-        private static final CssTypeIconListColumnProvider INSTANCE = new CssTypeIconListColumnProvider();
+        private final ListColumn<Node> NAME_COLUMN = createNameColumn();
+        private final ListColumn<Node> TYPE_COLUMN = createTypeColumn();
+        private final ListColumn<Node> TYPE_ICON_COLUMN = createTypeIconColumn();
 
         @Override
         public List<ListColumn<Node>> getColumns() {
@@ -67,26 +85,9 @@ public abstract class DocumentListingPlugin<T> extends ExpandCollapseListingPlug
             return Arrays.asList(TYPE_ICON_COLUMN, NAME_COLUMN, TYPE_COLUMN);
         }
 
-        private static ListColumn<Node> createNameColumn() {
-            final ClassResourceModel displayModel = new ClassResourceModel("doclisting-name", DocumentListingPlugin.class);
-            final ListColumn<Node> column = new ListColumn<>(displayModel, "name");
-            column.setComparator(NameComparator.getInstance());
-            column.setAttributeModifier(DocumentAttributeModifier.getInstance());
-            column.setCssClass(DocumentListColumn.NAME.getCssClass());
-            return column;
-        }
-
-        private static ListColumn<Node> createTypeColumn() {
-            final ClassResourceModel displayModel = new ClassResourceModel("doclisting-type", DocumentListingPlugin.class);
-            final ListColumn<Node> column = new ListColumn<>(displayModel, "type");
-            column.setComparator(TypeComparator.getInstance());
-            column.setRenderer(TypeRenderer.getInstance());
-            column.setCssClass(DocumentListColumn.TYPE.getCssClass());
-            return column;
-        }
-
         private static ListColumn<Node> createTypeIconColumn() {
-            final ListColumn<Node> column = new ListColumn<>(Model.of(""), "icon");
+            final Model<String> iconHeader = Model.of(StringUtils.EMPTY);
+            final ListColumn<Node> column = new ListColumn<>(iconHeader, "icon");
             column.setComparator(TypeComparator.getInstance());
             column.setRenderer(EmptyRenderer.getInstance());
             column.setAttributeModifier(DocumentTypeIconAttributeModifier.getInstance());

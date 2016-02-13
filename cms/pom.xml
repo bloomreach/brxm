@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,11 +20,11 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>27.3</version>
+    <version>28-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-cms</artifactId>
-  <version>3.x-translations-1.0-SNAPSHOT</version>
+  <version>4.0.0-translations-psp1-SNAPSHOT</version>
 
   <inceptionYear>2007</inceptionYear>
 
@@ -86,11 +86,11 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
 
-    <hippo.commons.version>2.1.0-SNAPSHOT</hippo.commons.version>
-    <hippo.frontend.theme.version>2.1.0-SNAPSHOT</hippo.frontend.theme.version>
-    <hippo.utilities.version>2.1.0-SNAPSHOT</hippo.utilities.version>
-    <hippo.services.version>2.1.0-SNAPSHOT</hippo.services.version>
-    <hippo.repository.version>3.x-translations-1.0-SNAPSHOT</hippo.repository.version>
+    <hippo.commons.version>2.2.0-SNAPSHOT</hippo.commons.version>
+    <hippo.frontend.theme.version>2.2.0-SNAPSHOT</hippo.frontend.theme.version>
+    <hippo.utilities.version>2.2.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.services.version>2.2.0-SNAPSHOT</hippo.services.version>
+    <hippo.repository.version>3.2.0-SNAPSHOT</hippo.repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>2.4</easymock.version>
@@ -139,9 +139,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/branches/cms-3.1.0-translations-1</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/branches/cms-3.1.0-translations-1</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/branches/cms-3.1.0-translations-1</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</url>
   </scm>
 
   <build>

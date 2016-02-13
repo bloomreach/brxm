@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.util;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.wicket.request.Request;
@@ -74,5 +75,60 @@ public class RequestUtils {
         }
 
         return ArrayUtils.EMPTY_STRING_ARRAY;
+    }
+
+    public static String getFarthestRequestScheme(HttpServletRequest request) {
+        String [] schemes = getCommaSeparatedMultipleHeaderValues(request, "X-Forwarded-Proto");
+
+        if (schemes != null && schemes.length != 0) {
+            return schemes[0].toLowerCase();
+        }
+
+        schemes = getCommaSeparatedMultipleHeaderValues(request, "X-Forwarded-Scheme");
+
+        if (schemes != null && schemes.length != 0) {
+            return schemes[0].toLowerCase();
+        }
+
+        String [] sslEnabledArray = getCommaSeparatedMultipleHeaderValues(request, "X-SSL-Enabled");
+
+        if (sslEnabledArray == null) {
+            sslEnabledArray = getCommaSeparatedMultipleHeaderValues(request, "Front-End-Https");
+        }
+
+        if (sslEnabledArray != null && sslEnabledArray.length != 0) {
+            String sslEnabled = sslEnabledArray[0];
+
+            if (sslEnabled.equalsIgnoreCase("on") || sslEnabled.equalsIgnoreCase("yes") || sslEnabled.equals("1")) {
+                return "https";
+            }
+        }
+
+        return request.getScheme();
+    }
+
+
+
+    /**
+     * Parse comma separated multiple header value and return an array if the header exists.
+     * If the header doesn't exist, it returns null.
+     * @param request
+     * @param headerName
+     * @return null if the header doesn't exist or an array parsed from the comma separated string header value.
+     */
+    private static String [] getCommaSeparatedMultipleHeaderValues(final HttpServletRequest request, final String headerName) {
+        String value = request.getHeader(headerName);
+
+        if (value == null) {
+            return null;
+        }
+
+        String [] tokens = value.split(",");
+
+        for (int i = 0; i < tokens.length; i++) {
+            tokens[i] = tokens[i].trim();
+        }
+
+        return tokens;
     }
 }
