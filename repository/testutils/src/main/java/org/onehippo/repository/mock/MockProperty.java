@@ -38,9 +38,10 @@ import org.apache.jackrabbit.util.ISO8601;
  */
 public class MockProperty extends MockItem implements Property {
 
-    private int type;
-    private List<MockValue> values;
+    private final int type;
     private boolean multiple;
+    private List<MockValue> values;
+    private MockPropertyDefinition propertyDefinition;
 
     MockProperty(String name, int type) {
         super(name);
@@ -133,7 +134,11 @@ public class MockProperty extends MockItem implements Property {
 
     @Override
     public PropertyDefinition getDefinition() {
-        return new MockPropertyDefinition(getName(), multiple);
+        if (propertyDefinition == null) {
+            propertyDefinition = new MockPropertyDefinition(getName(), getType(), isMultiple());
+        }
+
+        return propertyDefinition;
     }
 
     @Override

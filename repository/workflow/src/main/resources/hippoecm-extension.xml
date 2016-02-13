@@ -36,7 +36,7 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.24.02</sv:value>
+      <sv:value>3.2.0</sv:value>
     </sv:property>
   </sv:node>
 

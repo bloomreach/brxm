@@ -53,7 +53,7 @@ public abstract class MockItem implements Item {
     }
 
     protected boolean isRootNode() {
-        return parent == null;
+        return isNode() && parent == null;
     }
 
     void setParent(final MockNode parent) {
@@ -62,7 +62,7 @@ public abstract class MockItem implements Item {
 
     @Override
     public MockNode getParent() throws ItemNotFoundException {
-        if (isRootNode()) {
+        if (isRootNode() || parent == null) {
             throw new ItemNotFoundException("A root node does not have a parent");
         }
         return parent;

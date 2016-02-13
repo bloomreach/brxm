@@ -112,4 +112,8 @@ public class DocumentVariant extends Document {
         }
         return date;
     }
+
+    public String getLastModifiedBy() throws RepositoryException {
+        return getStringProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY);
+    }
 }

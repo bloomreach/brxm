@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,12 +34,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.fs.FileSystemException;
+import org.hippoecm.repository.nodetypes.NodeTypesChangeTracker;
 import org.onehippo.repository.bootstrap.InitializationProcessor;
 import org.onehippo.repository.bootstrap.PostStartupTask;
 import org.hippoecm.repository.api.ReferenceWorkspace;
@@ -89,6 +89,8 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     private String repoConfig;
 
     private ModuleManager moduleManager;
+
+    private NodeTypesChangeTracker nodeTypesChangeTracker;
 
     protected LocalHippoRepository() {
         super();
@@ -181,7 +183,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             repoPath = getWorkingDirectory();
         }
         else if (new File(path).isAbsolute() || basePath == null) {
-                repoPath = path;
+            repoPath = path;
         }
         else {
             repoPath = basePath + System.getProperty("file.separator") + path;
@@ -294,6 +296,9 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
             moduleManager = new ModuleManager(rootSession.impersonate(new SimpleCredentials("system", new char[]{})));
             moduleManager.start();
+
+            nodeTypesChangeTracker = new NodeTypesChangeTracker(rootSession.impersonate(new SimpleCredentials("system", new char[]{})));
+            nodeTypesChangeTracker.start();
 
             log.debug("Executing post-startup tasks");
             for (PostStartupTask task : postStartupTasks) {
@@ -419,6 +424,10 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         if (moduleManager != null) {
             moduleManager.stop();
             moduleManager = null;
+        }
+        if (nodeTypesChangeTracker != null) {
+            nodeTypesChangeTracker.stop();
+            nodeTypesChangeTracker = null;
         }
         if (jackrabbitRepository != null) {
             try {
