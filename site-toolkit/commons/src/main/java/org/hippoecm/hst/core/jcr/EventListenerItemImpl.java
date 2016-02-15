@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 package org.hippoecm.hst.core.jcr;
+
+import java.util.Arrays;
 
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventListener;
@@ -158,7 +160,12 @@ public class EventListenerItemImpl implements EventListenerItem {
     public boolean isNoLocal() {
         return noLocal;
     }
-    
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
     public void setNoLocal(boolean noLocal) {
         this.noLocal = noLocal;
     }
@@ -171,4 +178,17 @@ public class EventListenerItemImpl implements EventListenerItem {
         this.eventListener = eventListener;
     }
 
+    @Override
+    public String toString() {
+        return "EventListenerItemImpl{" +
+                "eventTypes=" + eventTypes +
+                ", absolutePath='" + getAbsolutePath() + '\'' +
+                ", deep=" + deep +
+                ", uuids=" + Arrays.toString(uuids) +
+                ", nodeTypeNames=" + Arrays.toString(nodeTypeNames) +
+                ", noLocal=" + noLocal +
+                ", enabled=" + isEnabled() +
+                ", eventListener=" + eventListener.getClass().getName() +
+                '}';
+    }
 }

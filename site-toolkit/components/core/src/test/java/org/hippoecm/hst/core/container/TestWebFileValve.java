@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -23,9 +24,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+
+import com.google.common.cache.CacheBuilder;
 
 import org.easymock.EasyMock;
 import org.hippoecm.hst.cache.CacheElement;
@@ -41,7 +45,6 @@ import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.mock.core.request.MockResolvedSiteMapItem;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webfiles.Binary;
@@ -61,6 +64,7 @@ import static org.hippoecm.hst.core.container.WebFileValve.WHITE_LIST_CONTENT_PA
 import static org.hippoecm.hst.core.container.WebFileValve.createCacheKey;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -94,6 +98,7 @@ public class TestWebFileValve {
 
         cache = EasyMock.createNiceMock(HstCache.class);
         valve.setWebFileCache(cache);
+        valve.setNegativeWebFileCacheBuilder(CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).expireAfterWrite(1, TimeUnit.HOURS));
 
         webFilesService = EasyMock.createMock(WebFilesService.class);
         webFileBundle = EasyMock.createMock(WebFileBundle.class);
@@ -373,6 +378,24 @@ public class TestWebFileValve {
         assertEquals("nothing should be written to the response", "", response.getContentAsString());
         assertFalse("Next valve should not have been invoked", valveContext.isNextValveInvoked());
         assertEquals("response code", 404, response.getStatusCode());
+    }
+
+    @Test
+    public void non_exising_webfile_ends_up_in_negative_cache() throws Exception {
+        expect(webFileBundle.getAntiCacheValue()).andReturn("bundleVersion").anyTimes();
+        expect(webFileBundle.get("/hst-whitelist.txt")).andReturn(whitelist());
+        expect(webFileBundle.get("/css/style.css")).andThrow(new WebFileNotFoundException("Could not find file"));
+        replayMocks();
+
+        valve.invoke(valveContext);
+
+        assertEquals("nothing should be written to the response", "", response.getContentAsString());
+        assertFalse("Next valve should not have been invoked", valveContext.isNextValveInvoked());
+        assertEquals("response code", 404, response.getStatusCode());
+
+        // assert negative cache has the entry
+        final String cacheKey = createCacheKey("site", "/css/style.css", "bundleVersion");
+        assertNotNull(valve.negativeWebFileCache.getIfPresent(cacheKey));
     }
 
     private void assertCssIsWritten(final WebFile styleCss) throws UnsupportedEncodingException {

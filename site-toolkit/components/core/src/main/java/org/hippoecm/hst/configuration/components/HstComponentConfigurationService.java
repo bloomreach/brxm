@@ -1024,7 +1024,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         if (template != null) {
             this.serveResourcePath = StringPool.get(template.getEffectiveRenderPath());
-            isNamedRenderer = template.isNamed();
+            isNamedResourceServer = template.isNamed();
         }
         for (HstComponentConfigurationService child : orderedListConfigs) {
             child.setServeResourcePath(templateResourceMap);

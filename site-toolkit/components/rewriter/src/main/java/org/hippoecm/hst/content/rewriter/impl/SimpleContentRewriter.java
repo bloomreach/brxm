@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
  * @version $Id: SimpleContentRewriter.java 24267 2010-10-11 09:09:56Z aschrijvers $
  */
 public class SimpleContentRewriter extends AbstractContentRewriter<String> {
-    
+
     private static final Logger log = LoggerFactory.getLogger(SimpleContentRewriter.class);
 
     /**
@@ -60,7 +60,8 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         "callto:", 
         "data:", 
         "tel:", 
-        "sms:", 
+        "sms:",
+        "/",
         "$" };
 
     protected static final String LINK_TAG = "<a";
@@ -318,14 +319,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
     
     protected HstLink getLink(final String path, final Node hippoHtmlNode, final HstRequestContext requestContext,
                               final Mount targetMount) {
-        String linkPath;
-        try {
-            linkPath = URLDecoder.decode(path, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            log.warn("UnsupportedEncodingException for documentPath");
-            linkPath = path;
-        }
-
+        final String linkPath = decodePath(path);
         // translate the documentPath to a URL in combination with the Node and the mapping object
         if (linkPath.startsWith("/")) {
             // this is an absolute path, which is not an internal content link. We just try to create a link for it directly
@@ -421,6 +415,15 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         return null;
     }
 
+    protected String decodePath(final String path) {
+        try {
+            return URLDecoder.decode(path, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            log.warn("UnsupportedEncodingException for documentPath");
+            return path;
+        }
+    }
+
     /**
      * Create an HstLink to a referenced node in rich text.
      * @param referencedNode the node to create a link to
@@ -466,6 +469,9 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
             if (tagReference.startsWith(prefix)) {
                 return true;
             }
+        }
+        if (tagReference.contains("://")) {
+            return true;
         }
         return false;
     }

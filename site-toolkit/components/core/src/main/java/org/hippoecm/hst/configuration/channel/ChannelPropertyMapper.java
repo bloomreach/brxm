@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,6 +39,9 @@ import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.parameters.HstValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.channel.ChannelException.Type.CHANNEL_LOCKED;
+import static org.hippoecm.hst.configuration.channel.ChannelException.Type.CHANNEL_OUT_OF_SYNC;
 
 public class ChannelPropertyMapper {
 
@@ -383,7 +386,7 @@ public class ChannelPropertyMapper {
         Session session = nodeToLock.getSession();
         if (isLockedBySomeoneElse(nodeToLock)) {
             log.info("Node '{}' is already locked by someone else.", nodeToLock.getPath());
-            throw new ChannelException("Node '"+nodeToLock.getPath()+"' is already locked by someone else.");
+            throw new ChannelException("Node '"+nodeToLock.getPath()+"' is already locked by someone else.", CHANNEL_LOCKED);
         }
         if (isLockedBySession(nodeToLock)) {
             log.debug("Container '{}' already has a lock for user '{}'.", nodeToLock.getPath(), session.getUserID());
@@ -401,7 +404,7 @@ public class ChannelPropertyMapper {
                 log.info("Node '{}' has been modified at '{}' but validation timestamp was '{}'. Cannot acquire lock now for user '{}'.",
                         new String[]{nodeToLock.getPath(), dateFormat.format(existing.getTime()),
                                 dateFormat.format(validate.getTime()) , session.getUserID()});
-                throw new ChannelException("Node '"+nodeToLock.getPath()+"' cannot be changed because timestamp validation did not pass.");
+                throw new ChannelException("Node '"+nodeToLock.getPath()+"' cannot be changed because timestamp validation did not pass.", CHANNEL_OUT_OF_SYNC);
             }
         }
         log.info("Node '{}' gets a lock for user '{}'.", nodeToLock.getPath(), session.getUserID());

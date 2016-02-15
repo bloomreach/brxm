@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>components</artifactId>
-    <version>3.x-translations-1.0-SNAPSHOT</version>
+    <version>4.0.0-translations-psp1-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit Core Component</name>
@@ -224,6 +224,11 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+
     <!-- Test dependencies -->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -268,10 +273,12 @@
 
   <build>
     <plugins>
+<!--  HSTTWO-3542: manually (re)generate hst-addon-module-x_y.xsd locally if needed by temporarily
+                   enable the following and copy/merge the result under src/main/resources/META-INF/schema/
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jaxb2-maven-plugin</artifactId>
-        <version>${maven.plugins.jaxb-schemagen.version}</version>
+        <version>1.6</version>
         <executions>
           <execution>
             <id>schemagen</id>
@@ -292,6 +299,7 @@
           </transformSchemas>
         </configuration>
       </plugin>
+-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -324,18 +332,6 @@
         </executions>
       </plugin>
     </plugins>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>false</filtering>
-      </resource>
-      <resource>
-        <directory>${project.build.directory}/generated-resources/schemagen</directory>
-        <includes>
-          <include>**/*.xsd</include>
-        </includes>
-      </resource>
-    </resources>
   </build>
 
 </project>

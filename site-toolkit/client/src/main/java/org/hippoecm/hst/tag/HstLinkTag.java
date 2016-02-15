@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.hippoecm.hst.tag;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +35,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.core.linking.HstLink;
@@ -59,10 +59,13 @@ public class HstLinkTag extends ParamContainerTag {
     private final static Logger log = LoggerFactory.getLogger(HstLinkTag.class);
     
     private static final long serialVersionUID = 1L;
+    public static final String UNALLOWED_ATTR_COMBINATION_MSG = "Incorrect usage of hst:link tag. Not allowed to specifcy two of the attributes 'link', 'hippobean', 'path', nodeId or 'siteMapItemRefId' at same time.";
 
     protected HstLink link;
     
     protected IdentifiableContentBean identifiableContentBean;
+
+    protected String nodeId;
 
     protected String path;
 
@@ -153,6 +156,15 @@ public class HstLinkTag extends ParamContainerTag {
                 } else {
                     // TOOD enable custom linkrewriters
                     writeOrSetVar(identifiableContentBean.getIdentifier(), var, pageContext, scope);
+                    return EVAL_PAGE;
+                }
+            }
+
+            if (hippoBean == null && nodeId != null) {
+                try {
+                    hippoBean = (HippoBean) reqContext.getObjectBeanManager().getObjectByUuid(nodeId);
+                } catch (ObjectBeanManagerException e) {
+                    log.warn("Cannot find content bean by id: '{}'.", nodeId);
                     return EVAL_PAGE;
                 }
             }
@@ -346,6 +358,7 @@ public class HstLinkTag extends ParamContainerTag {
         super.cleanup();
         var = null;
         identifiableContentBean = null;
+        nodeId = null;
         scope = null;
         path = null;
         siteMapItemRefId = null;
@@ -392,6 +405,10 @@ public class HstLinkTag extends ParamContainerTag {
         return this.identifiableContentBean;
     }
     
+    public String getNodeId(){
+        return this.nodeId;
+    }
+    
     public String getPath(){
         return path;
     }
@@ -410,7 +427,7 @@ public class HstLinkTag extends ParamContainerTag {
 
     public void setLink(HstLink hstLink) {
         if(linkForAttributeSet) {
-           log.warn("Incorrect usage of hst:link tag. Not allowed to specifcy two of the attributes 'link', 'hippobean', 'path' or 'siteMapItemRefId' at same time. Ignore the attr link '{}'", link);
+           log.warn(UNALLOWED_ATTR_COMBINATION_MSG + " Ignore the attr link '{}'", link);
            return;    
         } 
         linkForAttributeSet = true;
@@ -427,7 +444,7 @@ public class HstLinkTag extends ParamContainerTag {
     
     public void setPath(String path) {
         if(linkForAttributeSet) {
-            log.warn("Incorrect usage of hst:link tag. Not allowed to specifcy two of the attributes 'link', 'hippobean', 'path' or 'siteMapItemRefId' at same time. Ignore the attr path '{}'", path);
+            log.warn(UNALLOWED_ATTR_COMBINATION_MSG + " Ignore the attr path '{}'", path);
             return;    
          } 
          linkForAttributeSet = true;
@@ -436,7 +453,7 @@ public class HstLinkTag extends ParamContainerTag {
 
     public void setSiteMapItemRefId(String siteMapItemRefId) {
         if(linkForAttributeSet) {
-            log.warn("Incorrect usage of hst:link tag. Not allowed to specifcy two of the attributes 'link', 'hippobean', 'path' or 'siteMapItemRefId' at same time. Ignore the attr siteMapItemRefId '{}'", siteMapItemRefId);
+            log.warn(UNALLOWED_ATTR_COMBINATION_MSG + " Ignore the attr siteMapItemRefId '{}'", siteMapItemRefId);
             return;    
          } 
          linkForAttributeSet = true;
@@ -457,13 +474,22 @@ public class HstLinkTag extends ParamContainerTag {
     
     public void setHippobean(IdentifiableContentBean identifiableContentBean) {
         if(linkForAttributeSet) {
-            log.warn("Incorrect usage of hst:link tag. Not allowed to specifcy two of the attributes 'link', 'hippobean', 'path' or 'siteMapItemRefId' at same time. Ignore the attr identifiableContentBean '{}'", identifiableContentBean.getIdentifier());
+            log.warn(UNALLOWED_ATTR_COMBINATION_MSG + " Ignore the attr identifiableContentBean '{}'", identifiableContentBean.getIdentifier());
             return;    
          } 
          linkForAttributeSet = true;
         this.identifiableContentBean = identifiableContentBean;
     }
-    
+
+    public void setNodeId(String nodeId) {
+        if(linkForAttributeSet) {
+            log.warn(UNALLOWED_ATTR_COMBINATION_MSG + " Ignore the attr nodeId '{}'", nodeId);
+            return;
+        }
+        linkForAttributeSet = true;
+        this.nodeId = nodeId;
+    }
+
     public void setMount(String mount) {
         this.mountAlias = mount;
     }

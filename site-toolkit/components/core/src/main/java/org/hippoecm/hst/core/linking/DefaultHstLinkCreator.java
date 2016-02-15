@@ -502,7 +502,15 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                      */
                     for(LocationResolver resolver : locationResolvers) {
                         if(node.isNodeType(resolver.getNodeType())) {
-                            HstLink link = resolver.resolve(node, mount, mount.getHstSite().getLocationMapTree());
+
+                            final LocationMapTree locationMapTree;
+                            if (mount.isMapped() && mount.getHstSite() != null) {
+                                locationMapTree = mount.getHstSite().getLocationMapTree();
+                            } else {
+                                locationMapTree = null;
+                            }
+                            
+                            HstLink link = resolver.resolve(node, mount, locationMapTree);
                             if(link != null) {
                                return link;
                             } else {
