@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,13 +16,16 @@
 package org.hippoecm.repository.facetnavigation;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.commons.iterator.NodeIterable;
+import com.google.common.collect.ImmutableList;
+
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -391,6 +394,194 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
                 }
                 prevBrandValue = brand;
             }
+        }
+    }
+
+    @Test
+    public void testSortResultSetOnStringPropertyWithSortFunction() throws RepositoryException, IOException {
+        commonStart();
+        Node testNode = session.getRootNode().getNode("test");
+        createSimpleStructure1(testNode);
+        final Node cars = testNode.getNode("documents").getNode("cars");
+        {
+            // car 'grey' but now as 'Grey'
+            Node handle = cars.addNode("car25", "hippo:handle");
+            handle.addMixin("hippo:hardhandle");
+            final Node car = handle.addNode("car25", "hippo:testcardocument");
+            car.addMixin("mix:versionable");
+            car.setProperty("hippo:brand", "mercedes");
+            car.setProperty("hippo:color", "Grey");
+            car.setProperty("hippo:product", "car");
+            car.setProperty("hippo:date", globalCal);
+            car.setProperty("hippo:price", 12000.0D);
+            car.setProperty("hippo:travelled", 122000L);
+        }
+        {
+            // car 'blue' but now as 'Blue'
+            Node handle = cars.addNode("car26", "hippo:handle");
+            handle.addMixin("hippo:hardhandle");
+            final Node car = handle.addNode("car26", "hippo:testcardocument");
+            car.addMixin("mix:versionable");
+            car.setProperty("hippo:brand", "mercedes");
+            car.setProperty("hippo:color", "Blue");
+            car.setProperty("hippo:product", "car");
+            car.setProperty("hippo:date", globalCal);
+            car.setProperty("hippo:price", 12000.0D);
+            car.setProperty("hippo:travelled", 122000L);
+        }
+
+        createFacetNodeSingleValues(testNode);
+
+        Node navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+        navigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTBY, new String[] { "hippo:color"});
+        navigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTORDER, new String[] { "ascending"});
+        session.save();
+
+        {
+            // assert sorting FIRST without sort function: Then we expect case sensitive sorting since that is the default
+            final List<String> result = new ArrayList<>();
+            navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+            {
+                NodeIterator it = navigation.getNode("hippo:resultset").getNodes();
+                while (it.hasNext()) {
+                    Node n = it.nextNode();
+                    if (n.hasProperty("hippo:color")) {
+                        result.add(n.getProperty("hippo:color").getString());
+                    }
+                }
+            }
+            final List<String> expectation = ImmutableList.of("Blue", "Grey", "blue", "grey", "grey", "grey");
+            assertEquals(expectation, result);
+        }
+
+        // add sort function
+        navigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTFUNCTION, new String[] { "lower-case"});
+        session.save();
+
+        {
+            // now case *insensitive sorting expected!
+            final List<String> result = new ArrayList<>();
+            navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+            {
+                NodeIterator it = navigation.getNode("hippo:resultset").getNodes();
+                while (it.hasNext()) {
+                    Node n = it.nextNode();
+                    if (n.hasProperty("hippo:color")) {
+                        // make sorted list also to lowercase to assure expected list equal
+                        result.add(n.getProperty("hippo:color").getString().toLowerCase());
+                    }
+                }
+            }
+            final List<String> expectation = ImmutableList.of("blue", "blue", "grey", "grey", "grey", "grey");
+            assertEquals(expectation, result);
+        }
+
+
+        {
+            // car 'grey' but now as 'GrĔy'
+            Node handle = cars.addNode("car27", "hippo:handle");
+            handle.addMixin("hippo:hardhandle");
+            final Node car = handle.addNode("car27", "hippo:testcardocument");
+            car.addMixin("mix:versionable");
+            car.setProperty("hippo:brand", "mercedes");
+            // '\u0114': // Ĕ  [LATIN CAPITAL LETTER E WITH BREVE]
+            car.setProperty("hippo:color", "Gr"+'\u0114'+"y");
+            car.setProperty("hippo:product", "car");
+            car.setProperty("hippo:date", globalCal);
+            car.setProperty("hippo:price", 12000.0D);
+            car.setProperty("hippo:travelled", 122000L);
+        }
+        {
+            // car 'blue' but now as 'BlỦe'
+            Node handle = cars.addNode("car28", "hippo:handle");
+            handle.addMixin("hippo:hardhandle");
+            final Node car = handle.addNode("car28", "hippo:testcardocument");
+            car.addMixin("mix:versionable");
+            car.setProperty("hippo:brand", "mercedes");
+            // '\u1EE6': // Ủ  [LATIN CAPITAL LETTER U WITH HOOK ABOVE]
+            car.setProperty("hippo:color", "Bl"+'\u1EE6'+"e");
+            car.setProperty("hippo:product", "car");
+            car.setProperty("hippo:date", globalCal);
+            car.setProperty("hippo:price", 12000.0D);
+            car.setProperty("hippo:travelled", 122000L);
+        }
+        {
+            // car 'blue' but now as 'Blue' just to make sure we have a car after BlỦe
+            Node handle = cars.addNode("car29", "hippo:handle");
+            handle.addMixin("hippo:hardhandle");
+            final Node car = handle.addNode("car29", "hippo:testcardocument");
+            car.addMixin("mix:versionable");
+            car.setProperty("hippo:brand", "mercedes");
+            // '\u1EE6': // Ủ  [LATIN CAPITAL LETTER U WITH HOOK ABOVE]
+            car.setProperty("hippo:color", "Blue");
+            car.setProperty("hippo:product", "car");
+            car.setProperty("hippo:date", globalCal);
+            car.setProperty("hippo:price", 12000.0D);
+            car.setProperty("hippo:travelled", 122000L);
+        }
+
+        {
+            // car Âlue  :
+            Node handle = cars.addNode("car30", "hippo:handle");
+            handle.addMixin("hippo:hardhandle");
+            final Node car = handle.addNode("car30", "hippo:testcardocument");
+            car.addMixin("mix:versionable");
+            car.setProperty("hippo:brand", "mercedes");
+            // '\u00C2': // Â  [LATIN CAPITAL LETTER A WITH CIRCUMFLEX]
+            car.setProperty("hippo:color", '\u00C2' + "lue");
+            car.setProperty("hippo:product", "car");
+            car.setProperty("hippo:date", globalCal);
+            car.setProperty("hippo:price", 12000.0D);
+            car.setProperty("hippo:travelled", 122000L);
+        }
+
+        session.save();
+
+        {
+            // now case *insensitive* sorting expected!
+            final List<String> result = new ArrayList<>();
+            navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+            {
+                NodeIterator it = navigation.getNode("hippo:resultset").getNodes();
+                while (it.hasNext()) {
+                    Node n = it.nextNode();
+                    if (n.hasProperty("hippo:color")) {
+                        // make sorted list also to lowercase to assure expected list equal
+                        result.add(n.getProperty("hippo:color").getString().toLowerCase());
+                    }
+                }
+            }
+
+            // '\u00E2': // â  [LATIN SMALL LETTER A WITH CIRCUMFLEX]
+            // '\u0115': // ĕ  [LATIN SMALL LETTER E WITH BREVE]
+            // '\u1EE7': // ủ  [LATIN SMALL LETTER U WITH HOOK ABOVE]
+            // only case insensitive sorting, hence we expect the ĕ and  ủ after 'e' and 'u' and that Âlue is last
+            final List<String> expectation = ImmutableList.of("blue", "blue", "blue","bl"+'\u1EE7'+"e", "grey", "grey", "grey", "grey", "gr"+'\u0115'+"y", '\u00E2' + "lue");
+            assertEquals(expectation, result);
+        }
+
+        // now sort with 'normalize' : Meaning case insensitive and regardless diacritics, see org.apache.jackrabbit.core.query.lucene.NormalizeSortComparator.NormalizeSortComparator()
+        // set sort function to 'normalize'
+        navigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTFUNCTION, new String[] { "normalize"});
+        session.save();
+
+        {
+            // now case *normaized* () sorting expected!
+            final List<String> result = new ArrayList<>();
+            navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+            {
+                NodeIterator it = navigation.getNode("hippo:resultset").getNodes();
+                while (it.hasNext()) {
+                    Node n = it.nextNode();
+                    if (n.hasProperty("hippo:color")) {
+                        // make sorted list also to lowercase to assure expected list equal
+                        result.add(n.getProperty("hippo:color").getString().toLowerCase());
+                    }
+                }
+            }
+            // normalized sorting : We expect Âlue is first
+            final List<String> expectation = ImmutableList.of('\u00E2' + "lue", "blue", "blue", "bl"+'\u1EE7'+"e", "grey", "grey", "grey", "grey", "gr"+'\u0115'+"y");
+            assertEquals(expectation, result);
         }
     }
 

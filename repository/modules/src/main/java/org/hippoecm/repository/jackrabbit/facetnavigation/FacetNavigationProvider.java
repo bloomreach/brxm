@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,6 +46,10 @@ import org.hippoecm.repository.jackrabbit.FacetResultSetProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType.HIPPOFACNAV_FACETSORTBY;
+import static org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType.HIPPOFACNAV_FACETSORTFUNCTION;
+import static org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType.HIPPOFACNAV_FACETSORTORDER;
+
 public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
 
     private final Logger log = LoggerFactory.getLogger(FacetNavigationProvider.class);
@@ -59,6 +63,7 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
     Name facetLimit;
     Name facetSortBy;
     Name facetSortOrder;
+    Name facetSortFunction;
     Name facetFilters;
     Name skipResultSetFacedNavigationRoot;
     Name skipResultSetFacetsAvailableName;
@@ -72,9 +77,9 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         facetNodeNamesName = resolveName(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES);
 
         facetLimit = resolveName(FacNavNodeType.HIPPOFACNAV_FACETLIMIT);
-        facetSortBy = resolveName(FacNavNodeType.HIPPOFACNAV_FACETSORTBY);
-        facetSortOrder = resolveName(FacNavNodeType.HIPPOFACNAV_FACETSORTORDER);
-        
+        facetSortBy = resolveName(HIPPOFACNAV_FACETSORTBY);
+        facetSortOrder = resolveName(HIPPOFACNAV_FACETSORTORDER);
+        facetSortFunction = resolveName(HIPPOFACNAV_FACETSORTFUNCTION);
         facetFilters = resolveName(FacNavNodeType.HIPPOFACNAV_FILTERS);
         skipResultSetFacedNavigationRoot = resolveName(FacNavNodeType.HIPPOFACNAV_SKIP_RESULTSET_FOR_FACET_NAVIGATION_ROOT);
         skipResultSetFacetsAvailableName = resolveName(FacNavNodeType.HIPPOFACNAV_SKIP_RESULTSET_FOR_FACETS_AVAILABLE);
@@ -114,6 +119,7 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         String[] facetNodeNames = getProperty(nodeId, facetNodeNamesName, null);
         String[] sortbys = getProperty(nodeId, facetSortBy, null);
         String[] sortorders = getProperty(nodeId, facetSortOrder, null);
+        String[] sortfunctions = getProperty(nodeId, facetSortFunction, null);
         String[] filters = getProperty(nodeId, facetFilters, null);
         
         // check whether to skip resultset for root faceted navigation node
@@ -137,13 +143,24 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
 
         List<OrderBy> orderByList = null;
         if(sortbys != null) {
-            orderByList = new ArrayList<OrderBy>();
-            if(sortorders != null && sortorders.length != sortbys.length) {
-                log.warn("When using multivalued '{}', and '{}', then both should have equal number of values (or delete property "+FacNavNodeType.HIPPOFACNAV_FACETSORTORDER+" at all)", FacNavNodeType.HIPPOFACNAV_FACETSORTBY, FacNavNodeType.HIPPOFACNAV_FACETSORTORDER);
+            orderByList = new ArrayList<>();
+
+            if (sortorders != null && sortorders.length != sortbys.length) {
+                log.warn("When using multivalued '{}', and '{}', then both should have equal number of values " +
+                        "(or delete property '{}' at all)", HIPPOFACNAV_FACETSORTBY, HIPPOFACNAV_FACETSORTORDER, HIPPOFACNAV_FACETSORTORDER);
                 // we always need to populate the count
                 populateCount(state, 0);
                 return state;
             }
+
+            if (sortfunctions != null  && sortfunctions.length != sortbys.length) {
+                log.warn("When using multivalued '{}', and '{}', then both should have equal number of values " +
+                        "(or delete property '{}' at all)", HIPPOFACNAV_FACETSORTBY, HIPPOFACNAV_FACETSORTFUNCTION, HIPPOFACNAV_FACETSORTFUNCTION);
+                // we always need to populate the count
+                populateCount(state, 0);
+                return state;
+            }
+
             for(int i = 0; i < sortbys.length; i++) {
                 try {
                     if (sortbys[i].equals("")) {
@@ -151,13 +168,15 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
                         continue;
                     }
 
-                    Name propertyName = resolveName(NodeNameCodec.encode(sortbys[i]));
-                    if(sortorders != null && "descending".equals(sortorders[i])) {
-                        orderByList.add(new OrderBy(propertyName.toString(), true));
-                    } else {
-                        // default orderby is ascending
-                        orderByList.add(new OrderBy(propertyName.toString()));
+                    final Name propertyName = resolveName(NodeNameCodec.encode(sortbys[i]));
+                    final OrderBy orderBy = new OrderBy(propertyName.toString());
+                    if (sortorders != null && "descending".equals(sortorders[i])) {
+                        orderBy.setDescending("descending".equals(sortorders[i]));
                     }
+                    if (sortfunctions != null) {
+                        orderBy.setOrderFunction(sortfunctions[i]);
+                    }
+                    orderByList.add(orderBy);
                 } catch (IllegalNameException|NamespaceException e) {
                     log.warn("Skipping illegal name \"{}\" as sortby for facet node {} because: ", sortbys[i], nodeId, e.getMessage());
                 }
