@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,14 +15,9 @@
   limitations under the License.
   -->
 
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="{{restName}}">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:mount</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:alias" sv:type="String">
-    <sv:value>{{restName}}</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:namedpipeline" sv:type="String">
-    <sv:value>JaxrsRestContentPipeline</sv:value>
-  </sv:property>
-</sv:node>
+<instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
+  <instructionSet>
+    <xml action="copy" overwrite="false" source="plain_mount.xml" target="/hst:hst/hst:hosts/dev-localhost/localhost/hst:root"/>
+  </instructionSet>
+</instructions>

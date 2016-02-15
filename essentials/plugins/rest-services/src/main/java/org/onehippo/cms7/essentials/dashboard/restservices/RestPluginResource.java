@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.eventbus.EventBus;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
@@ -45,6 +49,7 @@ import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
+import org.onehippo.cms7.essentials.dashboard.packaging.DefaultInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
@@ -61,18 +66,10 @@ import org.onehippo.cms7.essentials.dashboard.utils.annotations.AnnotationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
-
-/**
- * @version "$Id$"
- */
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/restservices")
 public class RestPluginResource extends BaseResource {
-
 
     private static final Logger log = LoggerFactory.getLogger(RestPluginResource.class);
 
@@ -110,31 +107,29 @@ public class RestPluginResource extends BaseResource {
     @POST
     @Path("/")
     public RestfulList<MessageRestful> executeInstructionPackage(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
-
         final RestfulList<MessageRestful> messages = new RestfulList<>();
+        final PluginContext context = PluginContextFactory.getContext();
         final Map<String, String> values = payloadRestful.getValues();
-        final String restName = values.get(RestPluginConst.REST_NAME);
-        final String restType = values.get(RestPluginConst.REST_TYPE);
-        final String selectedBeans = values.get(RestPluginConst.JAVA_FILES);
-        if (Strings.isNullOrEmpty(restName) || Strings.isNullOrEmpty(restType)) {
-            messages.add(new ErrorMessageRestful("REST service name / type or both were empty"));
+        final boolean isGenericApiEnabled = Boolean.valueOf(values.get(RestPluginConst.GENERIC_API_ENABLED));
+        final boolean isManualApiEnabled = Boolean.valueOf(values.get(RestPluginConst.MANUAL_API_ENABLED));
+        final String genericRestName = values.get(RestPluginConst.GENERIC_REST_NAME);
+        final String manualRestName = values.get(RestPluginConst.MANUAL_REST_NAME);
+
+        if (isGenericApiEnabled && isManualApiEnabled && genericRestName.equals(manualRestName)) {
+            messages.add(new ErrorMessageRestful("Generic and manual REST resources must use different URLs."));
             return messages;
         }
-        final PluginContext context = PluginContextFactory.getContext();
 
-        final InstructionPackage instructionPackage = new RestServicesInstructionPackage();
-        // TODO: figure out injection part
-        getInjector().autowireBean(instructionPackage);
+        if (isManualApiEnabled) {
+            if (Strings.isNullOrEmpty(manualRestName)) {
+                messages.add(new ErrorMessageRestful("Manual REST resource URL must be specified."));
+                return messages;
+            }
 
-        final Set<ValidBean> validBeans = annotateBeans(selectedBeans, context);
-
-        instructionPackage.setProperties(new HashMap<String, Object>(values));
-        // add beans for instruction set loop:
-        instructionPackage.getProperties().put("beans", validBeans);
-        instructionPackage.execute(context);
-        // create endpoint rest
-        if (restType.equals("plain")) {
             final InstructionExecutor executor = new PluginInstructionExecutor();
+            final String selectedBeans = values.get(RestPluginConst.JAVA_FILES);
+            final Set<ValidBean> validBeans = annotateBeans(selectedBeans, context);
+
             for (ValidBean validBean : validBeans) {
                 final Map<String, Object> properties = new HashMap<>();
                 properties.put("beanPackage", validBean.getBeanPackage());
@@ -142,16 +137,51 @@ public class RestPluginResource extends BaseResource {
                 properties.put("beans", validBean.getFullQualifiedName());
                 properties.put("fullQualifiedName", validBean.getFullQualifiedName());
                 properties.put("fullQualifiedResourceName", validBean.getFullQualifiedResourceName());
-                final FileInstruction instruction = createFileInstruction();
-                // execute instruction:
-                final InstructionSet mySet = new PluginInstructionSet();
-                mySet.addInstruction(instruction);
                 context.addPlaceholderData(properties);
+
+                final InstructionSet mySet = new PluginInstructionSet();
+                mySet.addInstruction(createFileInstruction());
                 executor.execute(mySet, context);
             }
+
+            final InstructionPackage instructionPackage = new DefaultInstructionPackage() {
+                @Override
+                public String getInstructionPath() {
+                    return "/META-INF/manual_rest_instructions.xml";
+                }
+            };
+            getInjector().autowireBean(instructionPackage);
+            values.put(RestPluginConst.REST_NAME, manualRestName);
+            values.put(RestPluginConst.PIPELINE_NAME, RestPluginConst.MANUAL_PIPELINE_NAME);
+            instructionPackage.setProperties(new HashMap<>(values));
+            instructionPackage.getProperties().put("beans", validBeans);
+            instructionPackage.execute(context);
+
+            final String message = "Spring configuration changed, project rebuild needed.";
+            eventBus.post(new RebuildEvent("restServices", message));
+            messages.add(new MessageRestful(message));
         }
-        final String message = "HST Configuration changed, project rebuild needed";
-        eventBus.post(new RebuildEvent("restServices", message));
+
+        if (isGenericApiEnabled) {
+            if (Strings.isNullOrEmpty(genericRestName)) {
+                messages.add(new ErrorMessageRestful("Generic REST resource URL must be specified."));
+                return messages;
+            }
+
+            final InstructionPackage instructionPackage = new DefaultInstructionPackage() {
+                @Override
+                public String getInstructionPath() {
+                    return "/META-INF/generic_rest_instructions.xml";
+                }
+            };
+            getInjector().autowireBean(instructionPackage);
+            values.put(RestPluginConst.REST_NAME, genericRestName);
+            values.put(RestPluginConst.PIPELINE_NAME, RestPluginConst.GENERIC_PIPELINE_NAME);
+            instructionPackage.setProperties(new HashMap<>(values));
+            instructionPackage.execute(context);
+        }
+
+        final String message = "REST configuration setup was successful.";
         messages.add(new MessageRestful(message));
         return messages;
     }
@@ -171,7 +201,6 @@ public class RestPluginResource extends BaseResource {
         final Set<ValidBean> validBeans = new HashSet<>();
 
         if (Strings.isNullOrEmpty(input)) {
-            log.error("No beans were selected");
             return validBeans;
         }
         final Iterable<String> split = Splitter.on(',').split(input);
@@ -208,6 +237,4 @@ public class RestPluginResource extends BaseResource {
         }
         return validBeans;
     }
-
-
 }

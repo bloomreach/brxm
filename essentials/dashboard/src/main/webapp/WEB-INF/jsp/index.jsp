@@ -80,7 +80,7 @@
       </div>
     </div>
 
-    <div class="navbar-collapse collapse hippo-sidenav ng-scope" ng-controller="mainMenuCtrl" collapse="isCollapsed" ng-hide="INTRODUCTION_DISPLAYED">
+    <div class="navbar-collapse collapse hippo-sidenav ng-scope" ng-controller="mainMenuCtrl" uib-collapse="isCollapsed" ng-hide="INTRODUCTION_DISPLAYED">
       <ul class="nav navbar-nav" ng-hide="INTRODUCTION_DISPLAYED">
         <li ng-class="{true:'active', false:''}[isPageSelected('#/library')]">
           <a href="#/library">

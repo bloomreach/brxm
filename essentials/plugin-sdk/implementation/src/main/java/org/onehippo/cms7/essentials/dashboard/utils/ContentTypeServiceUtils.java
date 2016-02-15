@@ -40,10 +40,10 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.DocumentRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.contenttypeservice.ContentTypeFilter;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
-import org.onehippo.cms7.services.contenttype.HippoContentTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +73,7 @@ public class ContentTypeServiceUtils {
         final List<DocumentRestful> documents = new ArrayList<>();
         final Session session = context.createSession();
         try {
-            final ContentTypeService service = new HippoContentTypeService(session);
+            final ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
             final ContentTypes contentTypes = service.getContentTypes();
             final SortedMap<String, Set<ContentType>> typesByPrefix = contentTypes.getTypesByPrefix();
 

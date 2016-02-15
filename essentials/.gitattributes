@@ -89,8 +89,10 @@ components/hst/src/test/resources/log4j.xml -text
 components/pom.xml -text
 dashboard-dependencies/pom.xml -text
 dashboard/.bowerrc -text
+dashboard/.npmrc -text
 dashboard/bower.json -text
 dashboard/declutter.config.json -text
+dashboard/npm-shrinkwrap.json -text
 dashboard/package.json -text
 dashboard/pom.xml -text
 dashboard/src/main/appended-resources/META-INF/LICENSE -text
@@ -883,17 +885,16 @@ plugins/rest-services/pom.xml -text
 plugins/rest-services/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/MountRestful.java -text
 plugins/rest-services/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestPluginConst.java -text
 plugins/rest-services/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestPluginResource.java -text
-plugins/rest-services/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestServicesInstructionPackage.java -text
 plugins/rest-services/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/ValidBean.java -text
 plugins/rest-services/src/main/resources/BeanNameResource.txt -text
 plugins/rest-services/src/main/resources/HelloWorldContentResource.txt -text
+plugins/rest-services/src/main/resources/META-INF/generic_rest_instructions.xml -text svneol=unset#application/xml
+plugins/rest-services/src/main/resources/META-INF/manual_rest_instructions.xml -text
 plugins/rest-services/src/main/resources/META-INF/resources/tool/restServices/restServices.html -text
 plugins/rest-services/src/main/resources/META-INF/resources/tool/restServices/restServices.js -text
-plugins/rest-services/src/main/resources/META-INF/rest_instructions.xml -text
 plugins/rest-services/src/main/resources/META-INF/web-fragment.xml -text
 plugins/rest-services/src/main/resources/content_mount.xml -text
 plugins/rest-services/src/main/resources/plain_mount.xml -text
-plugins/rest-services/src/main/resources/spring-content-rest-api.xml -text
 plugins/rest-services/src/main/resources/spring-plain-rest-api.xml -text
 plugins/robots/pom.xml -text
 plugins/robots/src/main/java/org/onehippo/cms7/essentials/plugins/robots/RobotsInstruction.java -text

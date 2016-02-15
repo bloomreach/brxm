@@ -23,7 +23,12 @@
             <p>You have changed image sets and may want to update your HST image set beans now.
                 You can use the <a href="/essentials/#/tools/beanwriter">BeanWriter tool</a> for this.</p>
         </div>
-        <div><h4>Create Custom Image Set</h4>
+        <div ng-show="showReLoginMessage" class="alert alert-warning">
+          <p>You have changed the CMS configuration. If you are logged in to the CMS,
+             please log in again before uploading new images.</p>
+        </div>
+        <div>
+            <h4>Create Custom Image Set</h4>
 
             <form novalidate name="newImageSetForm" class="form-horizontal">
                 <essentials-help help-reference="help.imageSet" show-hide-variable="myHelp"></essentials-help>
