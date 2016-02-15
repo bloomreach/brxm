@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -322,7 +322,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     public void testDocumentsAreOrderedBelowHandle() throws RepositoryException {
         Node testRoot = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testRoot.addNode("doc", "hippo:handle");
-        handle.addMixin("hippo:hardhandle");
+
 
         Node doc = handle.addNode("doc", "hippo:authtestdocument");
         doc = handle.addNode("doc", "hippo:authtestdocument");
@@ -343,7 +343,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     public void testDocumentsAreOrderedBelowHandleWithOtherNodesPresent() throws RepositoryException {
         Node testRoot = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testRoot.addNode("doc", "hippo:handle");
-        handle.addMixin("hippo:hardhandle");
+
         handle.addMixin("hippo:translated");
 
         Node doc = handle.addNode("doc", "hippo:authtestdocument");
@@ -370,7 +370,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     public void testDocumentsAreOrderedAfterModification() throws RepositoryException {
         Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testData.addNode("doc", "hippo:handle");
-        handle.addMixin("hippo:hardhandle");
+
 
         Node doc = handle.addNode("doc", "hippo:authtestdocument");
         doc = handle.addNode("doc", "hippo:authtestdocument");
@@ -398,7 +398,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     public void testAccessIsNotCached() throws RepositoryException {
         Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testData.addNode("doc", "hippo:handle");
-        handle.addMixin("hippo:hardhandle");
+
 
         Node doc = handle.addNode("doc", "hippo:authtestdocument");
         doc = handle.addNode("doc", "hippo:authtestdocument");
@@ -424,7 +424,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     public void testAccessIsNotCachedWhenHandleChanges() throws RepositoryException {
         Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testData.addNode("doc", "hippo:handle");
-        handle.addMixin("hippo:hardhandle");
+
 
         Node doc = handle.addNode("doc", "hippo:authtestdocument");
         doc.setProperty("authtest", "canread");
@@ -450,7 +450,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     public void testDocumentAccessIsSwitched() throws RepositoryException {
         Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testData.addNode("doc", "hippo:handle");
-        handle.addMixin("hippo:hardhandle");
+
 
         Node doc1 = handle.addNode("doc", "hippo:authtestdocument");
         Node doc2 = handle.addNode("doc", "hippo:authtestdocument");
@@ -475,7 +475,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     public void testAccessChangesBasedWhenPropertyIsUpdated() throws RepositoryException {
         Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testData.addNode("doc", "hippo:handle");
-        handle.addMixin("hippo:hardhandle");
+
 
         Node doc1 = handle.addNode("doc", "hippo:authtestdocument");
         doc1.setProperty("authtest", "cannotread");
@@ -501,7 +501,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     public void testAccessForChildNodeFollowsParent() throws RepositoryException {
         Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testData.addNode("doc", "hippo:handle");
-        handle.addMixin("hippo:hardhandle");
+
 
         Node doc = handle.addNode("doc", "hippo:authtestdocument");
         doc.addMixin("hippo:container");

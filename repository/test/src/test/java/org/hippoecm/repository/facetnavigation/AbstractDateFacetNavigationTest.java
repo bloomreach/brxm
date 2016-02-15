@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -102,7 +102,6 @@ public abstract class AbstractDateFacetNavigationTest extends RepositoryTestCase
             PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException,
             ConstraintViolationException, RepositoryException {
         Node carDoc = carDocs.addNode(name, "hippo:handle");
-        carDoc.addMixin("hippo:hardhandle");
         carDoc = carDoc.addNode(name, "hippo:testcardocument");
         carDoc.addMixin("mix:versionable");
         carDoc.setProperty("hippo:date", cal);
