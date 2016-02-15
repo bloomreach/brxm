@@ -26,7 +26,7 @@ describe('ChannelCtrl', function () {
     inject(function ($controller, _ChannelService_) {
       ChannelService = _ChannelService_;
       spyOn(ChannelService, 'switchToChannel');
-      spyOn(ChannelService, 'getUrlForPath').and.returnValue('/test/url');
+      spyOn(ChannelService, 'getUrl').and.returnValue('/test/url');
       spyOn(ChannelService, 'getId').and.returnValue('test-id');
       ChannelCtrl = $controller('ChannelCtrl', {
         ChannelService: ChannelService,

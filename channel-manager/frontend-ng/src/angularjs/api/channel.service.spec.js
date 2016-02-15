@@ -88,31 +88,31 @@ describe('ChannelService', function () {
   it('should return a url that starts with the contextPath', function () {
     ChannelService.load({ contextPath: '/test' });
     $rootScope.$apply();
-    expect(ChannelService.getUrlForPath('/optional/path')).toEqual('/test/optional/path');
+    expect(ChannelService.getUrl('/optional/path')).toEqual('/test/optional/path');
   });
 
   it('should return a url that ends with a slash if it equals the contextPath', function () {
     ChannelService.load({ contextPath: '/test' });
     $rootScope.$apply();
-    expect(ChannelService.getUrlForPath('')).toEqual('/test/');
+    expect(ChannelService.getUrl()).toEqual('/test/');
   });
 
   it('should return a url without the contextPath if it is root', function () {
     ChannelService.load({ contextPath: '/' });
     $rootScope.$apply();
-    expect(ChannelService.getUrlForPath('')).toEqual('');
+    expect(ChannelService.getUrl()).toEqual('');
   });
 
   it('should return a url with the cmsPreviewPrefix appended after the contextPath with a slash', function () {
     ChannelService.load({ contextPath: '/test', cmsPreviewPrefix: 'cmsPreviewPrefix' });
     $rootScope.$apply();
-    expect(ChannelService.getUrlForPath('')).toEqual('/test/cmsPreviewPrefix');
+    expect(ChannelService.getUrl()).toEqual('/test/cmsPreviewPrefix');
   });
 
   it('should return a url with the mountPath appended after the cmsPreviewPrefix', function () {
     ChannelService.load({ contextPath: '/test', cmsPreviewPrefix: 'cmsPreviewPrefix', mountPath: '/mountPath' });
     $rootScope.$apply();
-    expect(ChannelService.getUrlForPath('')).toEqual('/test/cmsPreviewPrefix/mountPath');
+    expect(ChannelService.getUrl()).toEqual('/test/cmsPreviewPrefix/mountPath');
   });
 
   it('should return the mountId of the current channel', function () {

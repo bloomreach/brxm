@@ -29,14 +29,10 @@ export class ChannelService {
   load(channel) {
     return this.SessionService
       .authenticate(channel)
-      .then(() => {
-        this.channel = channel;
-
-        return channel;
-      });
+      .then(() => this.channel = channel);
   }
 
-  getUrlForPath(path) {
+  getUrl(path) {
     let url = this.channel.contextPath;
     if (url === '/') {
       url = '';
