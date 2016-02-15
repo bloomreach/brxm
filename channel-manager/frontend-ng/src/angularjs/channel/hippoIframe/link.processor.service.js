@@ -15,7 +15,7 @@
  */
 
 function startsWith(str, prefix) {
-  if (str === undefined || prefix === undefined) {
+  if (str === undefined || str === null || prefix === undefined || prefix === null) {
     return false;
   }
   return prefix === str.slice(0, prefix.length);
@@ -40,7 +40,7 @@ export class LinkProcessorService {
       }
 
       // intercept all clicks on external links: open them in a new tab if confirmed by the user
-      if (!startsWith(url, internalLinkPrefix)) {
+      if (url && !startsWith(url, internalLinkPrefix)) {
         link.attr('target', '_blank');
         link.click((event) => {
           if (!confirm(this.$translate.instant('CONFIRM_OPEN_EXTERNAL_LINK'))) {
