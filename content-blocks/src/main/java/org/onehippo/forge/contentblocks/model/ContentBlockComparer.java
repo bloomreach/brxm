@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,6 @@ import org.slf4j.LoggerFactory;
  * @version "$Id$"
  */
 public class ContentBlockComparer implements IComparer<Node> {
-    private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(ContentBlockComparer.class);
 
     private ITemplateEngine engine;
@@ -51,8 +49,8 @@ public class ContentBlockComparer implements IComparer<Node> {
             if (!baseNode.getPrimaryNodeType().getName().equals(targetNode.getPrimaryNodeType().getName())) {
                 return false;
             }
-            ITypeDescriptor type = engine.getType(baseNode.getPrimaryNodeType().getName());
-            NodeComparer comparer = new NodeComparer(type);
+            final ITypeDescriptor type = engine.getType(baseNode.getPrimaryNodeType().getName());
+            final NodeComparer comparer = new NodeComparer(type, engine);
             return comparer.areEqual(baseNode, targetNode);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage(), ex);
@@ -68,8 +66,8 @@ public class ContentBlockComparer implements IComparer<Node> {
             return 0;
         }
         try {
-            ITypeDescriptor type = engine.getType(node.getPrimaryNodeType().getName());
-            NodeComparer comparer = new NodeComparer(type);
+            final ITypeDescriptor type = engine.getType(node.getPrimaryNodeType().getName());
+            final NodeComparer comparer = new NodeComparer(type, engine);
             return comparer.getHashCode(node);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage(), ex);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,26 +20,27 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>27.2</version>
+    <version>28-SNAPSHOT</version>
   </parent>
 
   <inceptionYear>2009</inceptionYear>
 
   <name>Hippo Plugin Content Blocks</name>
   <description>Hippo Plugin Content Blocks</description>
+  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-content-blocks</artifactId>
-  <version>2.x-translations-1.0-SNAPSHOT</version>
+  <version>3.0.0-translations-psp1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/branches/content-blocks-2.1.0-translations-1</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/branches/content-blocks-2.1.0-translations-1</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/branches/content-blocks-2.1.0-translations-1</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/trunk/</url>
   </scm>
 
   <properties>
-    <hippo.repository.version>3.0.0</hippo.repository.version>
-    <hippo.cms.version>3.x-translations-1.0-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>4.0.0-translations-psp1-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>4.0.0-translations-psp1-SNAPSHOT</hippo.cms.version>
   </properties>
 
   <repositories>
