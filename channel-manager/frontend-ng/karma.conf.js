@@ -35,11 +35,17 @@ module.exports = function karmaConfig(config) {
     cfg.npmDir + 'systemjs/dist/system-register-only.js',
   ];
 
+  options.proxies = {
+    "/spec/javascripts/fixtures/": "/base/src/angularjs/",
+    "/spec/javascripts/fixtures/json/": "/base/src/angularjs/",
+  };
+
   options.files = [
     cfg.src.templates,
     cfg.src.scripts,
     cfg.src.unitTests,
     cfg.srcDir + './angularjs/mock.environment.spec.js',
+    { pattern: '**/*.fixture.*', included: false },
   ];
 
   config.set(options);
