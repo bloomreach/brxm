@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -514,28 +514,28 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                     if(freeSearchInjectedSort != null) {
                         // we already have a sort from the xpath or sql free search. Use this one
                         sort = freeSearchInjectedSort;
-                    } else  if (hitsRequested.getOrderByList().size() > 0) {
-                        List<Path> orderPropertiesList = new ArrayList<Path>();
-                        List<Boolean> ascSpecsList = new ArrayList<Boolean>();
-                        for (OrderBy orderBy : hitsRequested.getOrderByList()) {
+                    } else if (hitsRequested.getOrderByList().size() > 0) {
+                        final int size = hitsRequested.getOrderByList().size();
+                        Path[] orderProperties = new Path[size];
+                        boolean[] orderSpecs = new boolean[size];
+                        String[] orderFunctions = new String[size];
+                        for (int i = 0; i < size; i++) {
+                            final OrderBy orderBy = hitsRequested.getOrderByList().get(i);
                             try {
-                               Name orderByProp = NameFactoryImpl.getInstance().create(orderBy.getName());
-                               boolean isAscending = !orderBy.isDescending();
-                               orderPropertiesList.add(createPath(orderByProp));
-                               ascSpecsList.add(isAscending);
-                            } catch (IllegalArgumentException e) {
-                               log.warn("Skip property '{}' because cannot create a Name for it: {}",orderBy.getName(), e.toString());
+                                Name orderByProp = NameFactoryImpl.getInstance().create(orderBy.getName());
+                                orderProperties[i] = createPath(orderByProp);
+                                orderSpecs[i] = !orderBy.isDescending();
+                                orderFunctions[i] = orderBy.getOrderFunction();
+                            } catch (Exception e) {
+                                log.warn("Skip property '{}' because cannot create a Name for it: {}",orderBy.getName(), e.toString());
+                                // remove 1 element from the arrays
+                                orderProperties = Arrays.copyOf(orderProperties, orderProperties.length - 1);
+                                orderSpecs = Arrays.copyOf(orderSpecs, orderSpecs.length - 1);
+                                orderFunctions = Arrays.copyOf(orderFunctions, orderFunctions.length - 1);
                             }
                         }
-                        if(orderPropertiesList.size() > 0) {
-                            Path[] orderProperties = orderPropertiesList.toArray(new Path[orderPropertiesList.size()]);
-                            boolean[] ascSpecs = new boolean[ascSpecsList.size()];
-                            int i = 0;
-                            for(Boolean b : ascSpecsList) {
-                                ascSpecs[i] = b;
-                                i++;
-                            }
-                            sort = new Sort(createSortFields(orderProperties, ascSpecs, new String[orderProperties.length]));
+                        if(orderProperties.length > 0) {
+                            sort = new Sort(createSortFields(orderProperties, orderSpecs, orderFunctions));
                         }
                     }
 
