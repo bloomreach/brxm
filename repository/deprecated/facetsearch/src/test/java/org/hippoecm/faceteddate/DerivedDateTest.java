@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -100,7 +100,7 @@ public class DerivedDateTest extends RepositoryTestCase {
         docs.addMixin("mix:referenceable");
 
         Node handle = docs.addNode("doc", "hippo:handle");
-        handle.addMixin("hippo:hardhandle");
+
         Node doc = handle.addNode("doc", "hippo:datedocument1");
         doc.addMixin("mix:versionable");
         doc = doc.addNode("hippo:d");
@@ -122,7 +122,7 @@ public class DerivedDateTest extends RepositoryTestCase {
     public void testSearchMultiLevel() throws Exception {
         root.addNode("docs","nt:unstructured").addMixin("mix:referenceable");
         Node handle = root.getNode("docs").addNode("doc", "hippo:handle");
-        handle.addMixin("hippo:hardhandle");
+
         Node doc = handle.addNode("doc", "hippo:datedocument1");
         doc.addMixin("mix:versionable");
         doc = doc.addNode("hippo:d");
@@ -158,7 +158,6 @@ public class DerivedDateTest extends RepositoryTestCase {
                     child3.addMixin("mix:versionable");
                     for (int i4 = 0; i4 < level4; i4++) {
                         Node handle = child3.addNode("document" + i4, "hippo:handle");
-                        handle.addMixin("hippo:hardhandle");
                         Node document = handle.addNode("document" + i4, "hippo:datedocument1");
                         document.addMixin("mix:versionable");
                         Node date = document.addNode("hippo:d");

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -54,7 +54,6 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
         "/test/folder", "hippostd:folder",
             "jcr:mixinTypes", "mix:versionable",
         "/test/folder/document", "hippo:handle",
-            "jcr:mixinTypes", "hippo:hardhandle",
         "/test/folder/document/document", "hippo:testdocument",
             "hippostd:state", "unpublished",
             "hippostd:holder", "admin",
