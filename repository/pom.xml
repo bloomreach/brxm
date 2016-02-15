@@ -26,7 +26,7 @@
   <name>Repository</name>
   <description>Hippo Repository</description>
   <artifactId>hippo-repository</artifactId>
-  <version>4.0.0-translations-psp1-SNAPSHOT</version
+  <version>4.0.0-translations-psp1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2007</inceptionYear>

@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-repository</artifactId>
-    <version>4.0.0-translations-psp1-SNAPSHOT</version
+    <version>4.0.0-translations-psp1-SNAPSHOT</version>
   </parent>
 
   <name>Repository Builtin workflow</name>
