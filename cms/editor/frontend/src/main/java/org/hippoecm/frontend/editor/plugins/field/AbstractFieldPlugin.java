@@ -67,8 +67,6 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> extends ListViewPlugin<Node> implements
         ITemplateFactory<C> {
 
-    private static final long serialVersionUID = 1L;
-
     private static final String CLUSTER_OPTIONS = "cluster.options";
     private static final String MAX_ITEMS = "maxitems";
 
@@ -79,8 +77,6 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     private IPluginConfig parameters;
 
     abstract static class ValidationFilter extends Model<String> {
-        private static final long serialVersionUID = 1L;
-
         private static final String INVALID = "invalid";
 
         private boolean valid = true;
@@ -135,8 +131,6 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         helper = new FieldPluginHelper(context, config);
         if (helper.getValidationModel() != null && helper.getValidationModel() instanceof IObservable) {
             context.registerService(new Observer<IObservable>((IObservable) helper.getValidationModel()) {
-                private static final long serialVersionUID = 1L;
-
                 public void onEvent(Iterator events) {
                     for (ValidationFilter listener : new ArrayList<>(listeners.values())) {
                         IValidationResult validationResult = helper.getValidationModel().getObject();
@@ -187,8 +181,6 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             IFieldDescriptor field = helper.getField();
             if (field != null && !doesTemplateSupportValidation()) {
                 filter = new ValidationFilter() {
-                    private static final long serialVersionUID = 1L;
-
                     @Override
                     public void onValidation(IValidationResult validation) {
                         // nothing; is updated on render
