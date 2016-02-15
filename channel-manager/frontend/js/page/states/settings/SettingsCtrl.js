@@ -36,6 +36,7 @@
           primaryDocument: '',
           availableDocumentRepresentations: [],
           lastPathInfoElement: '',
+          target: '',
           prototype: {
             id: null
           },
@@ -43,7 +44,7 @@
         };
 
         $scope.copy = {
-          mountId : ConfigService.mountId,
+          mountId : null,
           target: '',
           lastPathInfoElement: ''
         };
@@ -67,30 +68,29 @@
           illegalCharacters: '/ :'
         };
 
+        $scope.currentChannelLocations = [];
         $scope.locations = [];
 
         $scope.availableChannelsForPageCopy = [];
 
         $scope.crossChannelPageCopySupported = false;
-        
+
         $scope.tooltips = {
-          lastPathInfoElement: function () {
-            return determineLastPathInfoSegmentTooltip($scope.form);
-          },
-          copyLastPathInfoElement: function () {
-            return determineLastPathInfoSegmentTooltip($scope.copyForm);
+          lastPathInfoElement: function (form) {
+            if (form && form.$dirty && form.lastPathInfoElement) {
+              if (form.lastPathInfoElement.$error.required) {
+                return translate('URL_REQUIRED');
+              } else if (form.lastPathInfoElement.$error.illegalCharacters) {
+                return translate('URL_ILLEGAL_CHARACTERS', $scope.validation);
+              }
+            }
+            return '';
           },
           deleteButton: function () {
             if ($scope.page.isHomePage) {
               return translate('TOOLTIP_IS_HOMEPAGE');
             } else if (!$scope.state.isEditable) {
               return translate('TOOLTIP_NOT_EDITABLE');
-            }
-            return '';
-          },
-          copyButton: function () {
-            if (!$scope.state.isEditable) {
-              return translate('TOOLTIP_NOT_COPYABLE');
             }
             return '';
           }
@@ -120,6 +120,7 @@
         $scope.submit = function () {
           var pageModel = {
             id: $scope.page.id,
+            parentId: $scope.page.target.id,
             pageTitle: $scope.page.title,
             name: $scope.page.lastPathInfoElement,
             componentConfigurationId: $scope.page.prototype.id,
@@ -210,14 +211,12 @@
               $scope.crossChannelPageCopySupported = data.crossChannelPageCopySupported;
             }, setErrorFeedback);
         }
-        
+
         function loadAvailableChannelsForPageCopy () {
-          if ($scope.crossChannelPageCopySupported) {
-            return ChannelService.getPreviewChannels()
-              .then(function (data) {
-                $scope.availableChannelsForPageCopy = data;
-              }, setErrorFeedback);
-          }
+          return ChannelService.getPageModifiableChannels(true)
+            .then(function (data) {
+              $scope.availableChannelsForPageCopy = data;
+            }, setErrorFeedback);
         }
 
         function loadPageLocations (mountId) {
@@ -225,11 +224,12 @@
             .then(function (data) {
               $scope.locations = data || [];
               $scope.copy.target = '';
-              for (var i = 0; i < $scope.locations.length; i++) {
-                if ($scope.locations[i].id === $scope.page.parentLocationId) {
-                  $scope.copy.target = $scope.locations[i];
+              $scope.locations.some(function (loc) {
+                if (loc.id === $scope.page.parentLocationId) {
+                  $scope.copy.target = loc;
+                  return true;
                 }
-              }
+              });
             }, setErrorFeedback);
         }
 
@@ -238,6 +238,7 @@
             .then(function (data) {
               $scope.prototypes = data.prototypes;
               $scope.locations = data.locations || [];
+              $scope.currentChannelLocations =  data.locations || [];
               return data.prototypes;
             }, setErrorFeedback);
         }
@@ -277,11 +278,13 @@
               $scope.page.parentLocationId = currentPage.parentLocation.id;
 
               $scope.copy.lastPathInfoElement = currentPage.name;
-              for (var i = 0; i < $scope.locations.length; i++) {
-                if (currentPage.parentLocation && $scope.locations[i].id === $scope.page.parentLocationId) {
-                  $scope.copy.target = $scope.locations[i];
+              $scope.locations.some(function (loc){
+                if (currentPage.parentLocation && loc.id === $scope.page.parentLocationId) {
+                  $scope.copy.target = loc;
+                  $scope.page.target = loc;
+                  return true;
                 }
-              }
+              });
 
               $scope.page.hasContainerItem = currentPage.hasContainerItemInPageDefinition;
               $scope.page.isHomePage = currentPage.isHomePage;
@@ -291,8 +294,15 @@
               // 2. the page is not the homepage
               // 3. the page is not locked by someone else
               $scope.state.isLocked = angular.isString(currentPage.lockedBy) && currentPage.lockedBy !== ConfigService.cmsUser;
-              $scope.state.isEditable = !$scope.page.isHomePage && !$scope.state.isLocked && currentPage.workspaceConfiguration;
-              $scope.state.isCopyable = !$scope.state.isLocked;
+              $scope.state.isEditable = !$scope.page.isHomePage && !$scope.state.isLocked && currentPage.workspaceConfiguration && !currentPage.inherited;
+              $scope.state.isCopyable = !$scope.state.isLocked && $scope.availableChannelsForPageCopy.length;
+
+              $scope.availableChannelsForPageCopy.some(function (channel) {
+                if (ConfigService.mountId === channel.mountId) {
+                  $scope.copy.mountId = channel.mountId;
+                }
+                return true;
+              });
 
               // lock information
               $scope.lock.owner = currentPage.lockedBy;
@@ -300,17 +310,6 @@
 
               return currentPage;
             }, setErrorFeedback);
-        }
-
-        function determineLastPathInfoSegmentTooltip(form) {
-          if (form && form.$dirty) {
-            if (form.lastPathInfoElement.$error.required) {
-              return translate('URL_REQUIRED');
-            } else if (form.lastPathInfoElement.$error.illegalCharacters) {
-              return translate('URL_ILLEGAL_CHARACTERS', $scope.validation);
-            }
-          }
-          return '';
         }
       }
     ]);

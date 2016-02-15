@@ -13,13 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div class="flex-full flex-column">
+<div class="flex-full flex-column qa-add-page">
   <div class="panel panel-default flex-child">
     <div class="list-group">
       <form name="form" role="form" novalidate>
         <h1>{{ 'CREATE_NEW_PAGE' | translate }}</h1>
 
-        <div class="alert alert-danger" data-ng-show="errorFeedback.message">
+        <div class="alert alert-danger qa-feedback" data-ng-show="errorFeedback.message">
           {{ errorFeedback.message }}
         </div>
 
@@ -29,15 +29,15 @@
                         'has-error': form.title.$dirty && form.title.$invalid
                     }">
           <label for="page-title">{{ 'PAGE_TITLE' | translate }}</label>
-          <input type="text" name="title" class="form-control" id="page-title"
+          <input type="text" name="title" class="form-control qa-page-title" id="page-title"
                  data-ng-attr-placeholder="{{ 'PAGE_TITLE' | translate }}"
                  data-ng-model="page.title"
                  data-ng-focus="form.title.$setPristine();"
                  data-ng-required="true"
                  data-hippo-channel-auto-focus
-                 data-tooltip="{{ 'TITLE_REQUIRED' | translate }}"
-                 data-tooltip-trigger="show"
-                 data-hippo-channel-tooltip-show="form.title.$dirty && form.title.$error.required"
+                 data-uib-tooltip="{{ 'TITLE_REQUIRED' | translate }}"
+                 data-tooltip-trigger="none"
+                 data-tooltip-is-open="form.title.$dirty && form.title.$error.required"
                  data-tooltip-placement="top">
           <span class="form-control-feedback">
             <hippo-icon ng-if="form.title.$dirty && form.title.$valid"
@@ -51,7 +51,7 @@
           </span>
         </div>
 
-        <div class="form-group has-feedback url-selector" id="lastPathInfoElement" data-ng-class="{
+        <div class="form-group has-feedback url-selector qa-url" id="lastPathInfoElement" data-ng-class="{
                         'has-success': form.lastPathInfoElement.$valid,
                         'has-error': form.lastPathInfoElement.$dirty && form.lastPathInfoElement.$invalid
                     }">
@@ -67,14 +67,14 @@
                       class="ng-pristine ng-untouched ng-valid localytics-chosen">
               </select>
             </span>
-            <input type="text" name="lastPathInfoElement" class="form-control" id="page-lastPathInfoElement"
+            <input type="text" name="lastPathInfoElement" class="form-control qa-url-name" id="page-lastPathInfoElement"
                    data-ng-model="page.lastPathInfoElement"
                    data-hippo-channel-illegal-characters="{{ validation.illegalCharacters }}"
                    data-ng-focus="form.lastPathInfoElement.$setPristine();"
                    data-ng-required="true" data-ng-keyup="disableAutomaticLastPathInfoElementUpdate()"
-                   data-tooltip="{{ tooltips.lastPathInfoElement() }}"
-                   data-tooltip-trigger="show"
-                   data-hippo-channel-tooltip-show="form.lastPathInfoElement.$dirty && form.lastPathInfoElement.$invalid"
+                   data-uib-tooltip="{{ tooltips.lastPathInfoElement() }}"
+                   data-tooltip-trigger="none"
+                   data-tooltip-is-open="form.lastPathInfoElement.$dirty && form.lastPathInfoElement.$invalid"
                    data-tooltip-placement="top">
           </div>
           <span class="form-control-feedback">
@@ -91,7 +91,7 @@
           </span>
         </div>
 
-        <div class="form-group" id="template">
+        <div class="form-group qa-page-template" id="template">
           <label for="page-prototype">{{ 'PAGE_TEMPLATE' | translate }}</label>
           <select class="form-control"
                   id="page-prototype"
@@ -105,12 +105,12 @@
 
         <hr/>
 
-        <button type="submit" class="btn btn-default"
+        <button type="submit" class="btn btn-default qa-create-page"
                 data-ng-click="submit()"
                 data-ng-disabled="form.$invalid">
           {{ 'CREATE_PAGE' | translate }}
         </button>
-        <button type="submit" class="btn btn-link" data-ng-click="navigateTo('overview-pages')" data-ng-controller="hippo.channel.pages.NavigationCtrl">{{ 'CANCEL' | translate }}</button>
+        <button type="submit" class="btn btn-link qa-cancel" data-ng-click="navigateTo('overview-pages')" data-ng-controller="hippo.channel.pages.NavigationCtrl">{{ 'CANCEL' | translate }}</button>
       </form>
     </div>
   </div>

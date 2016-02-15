@@ -41,7 +41,11 @@
                 link: function (scope, element, attrs) {
                     scope.$watch(attrs.hippoChannelTooltipShow, function (shouldShowTooltip) {
                         $timeout(function() {
-                            element.triggerHandler(shouldShowTooltip ? 'show' : 'hide');
+                            if (element.length) {
+                                var evt = document.createEvent("CustomEvent");
+                                evt.initEvent(shouldShowTooltip ? 'show' : 'hide', false, true);
+                                element[0].dispatchEvent(evt);
+                            }
                         });
                     });
                 }

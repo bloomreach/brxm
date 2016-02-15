@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     "angular": "1.4.8",
+    "angular-bootstrap": "0.14.3",
     "angular-translate": "2.8.1",
     "angular-translate-loader-static-files": "2.8.1",
     "angular-ui-router": "0.2.15",

@@ -68,9 +68,9 @@
              data-ng-model="MenuItemCtrl.selectedMenuItem.title"
              data-ng-required="true"
              data-ng-blur="EditMenuItemFormCtrl.saveTitle(form)"
-             data-tooltip="{{ EditMenuItemCtrl.fieldFeedbackMessage.title }}"
-             data-tooltip-trigger="show"
-             data-hippo-channel-tooltip-show="form.title.$invalid"
+             data-uib-tooltip="{{ EditMenuItemCtrl.fieldFeedbackMessage.title }}"
+             data-tooltip-trigger="none"
+             data-tooltip-is-open="form.title.$invalid"
              data-tooltip-placement="top">
       <span class="form-control-feedback" data-ng-show="form.title.$dirty">
         <hippo-icon ng-if="EditMenuItemCtrl.isSaving.title"
@@ -133,9 +133,8 @@
                data-ng-blur="EditMenuItemCtrl.updateLinkDestination(form)"
                data-ng-readonly="'true'">
         <span class="input-group-btn">
-          <div data-tooltip
-               data-placement="left"
-               data-title="{{ tooltip }}"
+          <div data-uib-tooltip="{{ tooltip }}"
+               data-tooltip-placement="left"
                data-ng-mouseenter="showTooltip()"
                data-ng-mouseleave="hideTooltip()">
             <button class="btn btn-default" type="button" data-ng-click="EditMenuItemCtrl.internalLink.openPicker()">
@@ -162,9 +161,9 @@
                data-ng-required="true"
                data-show-focus="MenuItemCtrl.selectedMenuItem.linkType == 'EXTERNAL'"
                data-ng-blur="EditMenuItemCtrl.updateLinkDestination(form)"
-               data-tooltip="{{ EditMenuItemCtrl.fieldFeedbackMessage.url }}"
-               data-tooltip-trigger="show"
-               data-hippo-channel-tooltip-show="form.url.$invalid && MenuItemCtrl.selectedMenuItem.linkType === 'EXTERNAL'"
+               data-uib-tooltip="{{ EditMenuItemCtrl.fieldFeedbackMessage.url }}"
+               data-tooltip-trigger="none"
+               data-tooltip-is-open="form.url.$invalid && MenuItemCtrl.selectedMenuItem.linkType === 'EXTERNAL'"
                data-tooltip-placement="top">
         <span class="form-control-feedback" data-ng-show="form.url.$dirty">
           <hippo-icon ng-if="EditMenuItemCtrl.isSaving.link"
