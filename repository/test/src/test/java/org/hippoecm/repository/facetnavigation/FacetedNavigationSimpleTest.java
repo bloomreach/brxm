@@ -26,6 +26,8 @@ import javax.jcr.RepositoryException;
 
 import com.google.common.collect.ImmutableList;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.lucene.analysis.ASCIIFoldingFilter;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -541,7 +543,7 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
                     Node n = it.nextNode();
                     if (n.hasProperty("hippo:color")) {
                         // make sorted list also to lowercase to assure expected list equal
-                        result.add(n.getProperty("hippo:color").getString().toLowerCase());
+                        result.add(removeDiacritics(n.getProperty("hippo:color").getString().toLowerCase()));
                     }
                 }
             }
@@ -550,7 +552,7 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
             // '\u0115': // ĕ  [LATIN SMALL LETTER E WITH BREVE]
             // '\u1EE7': // ủ  [LATIN SMALL LETTER U WITH HOOK ABOVE]
             // only case insensitive sorting, hence we expect the ĕ and  ủ after 'e' and 'u' and that Âlue is last
-            final List<String> expectation = ImmutableList.of("blue", "blue", "blue","bl"+'\u1EE7'+"e", "grey", "grey", "grey", "grey", "gr"+'\u0115'+"y", '\u00E2' + "lue");
+            final List<String> expectation = ImmutableList.of("blue", "blue", "blue","blue", "grey", "grey", "grey", "grey", "grey", "alue");
             assertEquals(expectation, result);
         }
 
@@ -569,14 +571,23 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
                     Node n = it.nextNode();
                     if (n.hasProperty("hippo:color")) {
                         // make sorted list also to lowercase to assure expected list equal
-                        result.add(n.getProperty("hippo:color").getString().toLowerCase());
+                        result.add(removeDiacritics(n.getProperty("hippo:color").getString().toLowerCase()));
                     }
                 }
             }
             // normalized sorting : We expect Âlue is first
-            final List<String> expectation = ImmutableList.of('\u00E2' + "lue", "blue", "blue", "bl"+'\u1EE7'+"e", "grey", "grey", "grey", "grey", "gr"+'\u0115'+"y");
+            final List<String> expectation = ImmutableList.of("alue", "blue", "blue", "blue", "blue", "grey", "grey", "grey", "grey", "grey");
             assertEquals(expectation, result);
         }
+    }
+
+    private String removeDiacritics(final String s) {
+        char[] input = s.toCharArray();
+
+        char[] output = new char[input.length];
+        ASCIIFoldingFilter.foldToASCII(
+                input, 0, output, 0, input.length);
+        return new String(output);
     }
 
     @Test
@@ -682,7 +693,6 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
         
         // car with emtpy facet value for brand
         Node car = cars.addNode("car_emptybrand", "hippo:handle");
-        car.addMixin("hippo:hardhandle");
         car = car.addNode("car_emptybrand", "hippo:testcardocument");
         car.addMixin("mix:versionable");
         car.setProperty("hippo:brand", "");
@@ -764,13 +774,11 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
          * car that has no facets, so should not be visible at all in facet
          */
         Node car = cars.addNode("car0", "hippo:handle");
-        car.addMixin("hippo:hardhandle");
         car = car.addNode("car0", "hippo:testcardocument");
         car.addMixin("mix:versionable");
 
         // car 1
         car = cars.addNode("car1", "hippo:handle");
-        car.addMixin("hippo:hardhandle");
         car = car.addNode("car1", "hippo:testcardocument");
         car.addMixin("mix:versionable");
         car.setProperty("hippo:brand", "mercedes");
@@ -782,7 +790,6 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
 
         // car 2
         car = cars.addNode("car2", "hippo:handle");
-        car.addMixin("hippo:hardhandle");
         car = car.addNode("car2", "hippo:testcardocument");
         car.addMixin("mix:versionable");
         car.setProperty("hippo:brand", "volkswagen");
@@ -794,7 +801,6 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
 
         // car 3
         car = cars.addNode("car3", "hippo:handle");
-        car.addMixin("hippo:hardhandle");
         car = car.addNode("car3", "hippo:testcardocument");
         car.addMixin("mix:versionable");
         car.setProperty("hippo:brand", "peugeot");
@@ -808,7 +814,6 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
 
         // car 4
         car = cars.addNode("car4", "hippo:handle");
-        car.addMixin("hippo:hardhandle");
         car = car.addNode("car4", "hippo:testcardocument");
         car.addMixin("mix:versionable");
 
@@ -836,14 +841,12 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
 
         // car 1
         Node car = cars.addNode("car1", "hippo:handle");
-        car.addMixin("hippo:hardhandle");
         car = car.addNode("car1", "hippo:testtagdocument");
         car.addMixin("mix:versionable");
         String[] tags1 = { "mercedes", "expensive", "lease" };
         car.setProperty("tags", tags1);
         // car 2
         car = cars.addNode("car2", "hippo:handle");
-        car.addMixin("hippo:hardhandle");
         car = car.addNode("car2", "hippo:testtagdocument");
         car.addMixin("mix:versionable");
         String[] tags2 = { "toyota", "environment", "economical", "lease" };
@@ -862,7 +865,6 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
 
     private void addDocumentWithState(Node node, String name, String state) throws RepositoryException {
         Node article = node.addNode(name, "hippo:handle");
-        article.addMixin("hippo:hardhandle");
         article = article.addNode(name, "hippo:document");
         article.addMixin("mix:versionable");
         article.addMixin(HippoStdNodeType.NT_PUBLISHABLE);
