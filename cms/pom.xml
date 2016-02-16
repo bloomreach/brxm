@@ -448,10 +448,12 @@
                 <exclude>translations/repository/src/main/resources/*.xml</exclude>
                 <exclude>workflow/repository/src/main/resources/*.xml</exclude>
                 <!--  files without license header  -->
+                <exclude>api/node_modules/**</exclude>
                 <exclude>api/.bowerrc</exclude>
                 <exclude>api/.csslintrc</exclude>
                 <exclude>api/README.md</exclude>
                 <exclude>upgrade_notes.txt</exclude>
+                <exclude>console/frontend/node_modules/**</exclude>
                 <exclude>console/frontend/.bowerrc</exclude>
                 <exclude>console/frontend/README.md</exclude>
               </excludes>
