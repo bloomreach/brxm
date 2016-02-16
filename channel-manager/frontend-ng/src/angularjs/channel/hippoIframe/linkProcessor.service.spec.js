@@ -48,7 +48,7 @@ describe('LinkProcessorService', function () {
     });
   }
 
-  describe('running with a valid interalLinkPrefix', function () {
+  describe('running with a valid internalLinkPrefix', function () {
     it('should set attribute target to _blank for external links', function () {
       linkProcessorService.run($document, previewUrl);
       expectTargetAttrToBeBlank('.qa-external-link');
@@ -56,7 +56,7 @@ describe('LinkProcessorService', function () {
     });
   });
 
-  describe('running with an undefined interalLinkPrefix', function () {
+  describe('running with an undefined internalLinkPrefix', function () {
     it('should set attribute target to _blank for both internal and external links', function () {
       linkProcessorService.run($document);
       expectTargetAttrToBeBlank('.qa-external-link, .qa-internal-link');
@@ -64,7 +64,7 @@ describe('LinkProcessorService', function () {
     });
   });
 
-  describe('running with a null interalLinkPrefix', function () {
+  describe('running with a null internalLinkPrefix', function () {
     it('should set attribute target to _blank for both internal and external links', function () {
       linkProcessorService.run($document);
       expectTargetAttrToBeBlank('.qa-external-link, .qa-internal-link');
@@ -74,11 +74,11 @@ describe('LinkProcessorService', function () {
 
   it('should show a confirm when clicking an external link', function () {
     var nrOfExternalLinks = $j('.qa-external-link', $document).length;
-    var cofirmSpy = spyOn(window, 'confirm').and.returnValue(true);
+    var confirmSpy = spyOn(window, 'confirm').and.returnValue(true);
 
     linkProcessorService.run($document, previewUrl);
     $j('a', $document).click();
-    expect(cofirmSpy.calls.count()).toEqual(nrOfExternalLinks);
+    expect(confirmSpy.calls.count()).toEqual(nrOfExternalLinks);
   });
 
   it('should prevent opening an external link if confirm is cancelled', function () {
