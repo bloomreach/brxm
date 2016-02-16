@@ -109,7 +109,7 @@ class MenuButton extends Panel implements IContextMenu {
             label = descriptions.get(0).getLabel();
         }
         if (label == null) {
-            link.add(new Label("label", new ResourceBundleModel("hippo:workflows", name)));
+            link.add(new Label("label", new ResourceBundleModel("hippo:workflows", name, name)));
         } else {
             if (!"label".equals(label.getId())) {
                 throw new WicketRuntimeException("Menu label component doesn't have correct id.  Should be 'label', but was '" + label.getId() + "'");

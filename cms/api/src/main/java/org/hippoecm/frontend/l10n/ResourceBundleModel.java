@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,16 +28,31 @@ public class ResourceBundleModel extends LoadableDetachableModel<String> {
     private final String bundleName;
     private final String key;
     private final Locale locale;
+    private final String defaultValue;
+    // keeps track of whether a defaultValue is set. This is needed because defaultValue parameter {@code null} results
+    // in slightly different behavior than the constructor without defaultValue
+    private final boolean defaultValueSet;
 
     public ResourceBundleModel(final String bundleName, final String key) {
-        this.bundleName = bundleName;
-        this.key = key;
-        this.locale = null;
+        this(bundleName, key, null, false, null);
+    }
+    public ResourceBundleModel(final String bundleName, final String key, final String defaultValue) {
+        this(bundleName, key, defaultValue, true, null);
     }
 
     public ResourceBundleModel(final String bundleName, final String key, final Locale locale) {
+        this(bundleName, key, null, false, locale);
+    }
+
+    public ResourceBundleModel(final String bundleName, final String key, final String defaultValue, final Locale locale) {
+        this(bundleName, key, defaultValue, true, locale);
+    }
+
+    private ResourceBundleModel(final String bundleName, final String key, final String defaultValue, final boolean defaultValueSet, final Locale locale) {
         this.bundleName = bundleName;
         this.key = key;
+        this.defaultValue = defaultValue;
+        this.defaultValueSet = defaultValueSet;
         this.locale = locale;
     }
 
@@ -48,10 +63,21 @@ public class ResourceBundleModel extends LoadableDetachableModel<String> {
             Locale locale = this.locale != null ? this.locale : Session.get().getLocale();
             final ResourceBundle bundle = localizationService.getResourceBundle(bundleName, locale);
             if (bundle != null) {
-                return bundle.getString(key);
+                final String value = bundle.getString(key);
+                if (value != null) {
+                    return value;
+                }
+                return missingValue();
             }
         }
-        return null;
+        return missingValue();
+    }
+
+    private String missingValue() {
+        if (defaultValueSet) {
+            return defaultValue;
+        }
+        return "???" + key + "???";
     }
 
     @Override
