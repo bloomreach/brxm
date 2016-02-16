@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -21,13 +21,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>27.2</version>
+    <version>28-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Plugin Poll</name>
   <description>Hippo Plugin Poll</description>
   <artifactId>hippo-plugin-poll</artifactId>
-  <version>2.x-translations-1.0-SNAPSHOT</version>
+  <version>3.0.0-translations-psp1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -42,10 +42,10 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugin Poll</notice.project.name>
 
-    <hippo.cms.version>3.2.0-SNAPSHOT</hippo.cms.version>
-    <hippo.repository.version>3.2.0-SNAPSHOT</hippo.repository.version>
-    <hippo.hst.version>3.2.0-SNAPSHOT</hippo.hst.version>
-    <hippo.commons.version>2.2.0-SNAPSHOT</hippo.commons.version>
+    <hippo.cms.version>4.0.0-translations-psp1-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>4.0.0-translations-psp1-SNAPSHOT</hippo.repository.version>
+    <hippo.hst.version>4.0.0-translations-psp1-SNAPSHOT</hippo.hst.version>
+    <hippo.commons.version>3.0.0-SNAPSHOT</hippo.commons.version>
   </properties>
 
   <repositories>
@@ -61,7 +61,7 @@
       </releases>
     </repository>
   </repositories>
-  
+
   <issueManagement>
     <system>Hippo Forge</system>
     <url>https://issues.onehippo.com/browse/HIPPLUG/component/10874</url>
