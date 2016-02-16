@@ -432,9 +432,10 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
 
                     // add the not-encoded document name as translation
                     if (!documentName.equals(encodedDocumentName)) {
+
                         DefaultWorkflow defaultWorkflow = (DefaultWorkflow)workflowMgr.getWorkflow("core", nodeModel.getNode());
                         if (defaultWorkflow != null) {
-                            defaultWorkflow.localizeName(documentName);
+                            defaultWorkflow.setDisplayName(documentName);
                         }
                     }
                 }

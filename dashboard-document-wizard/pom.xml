@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,11 +20,11 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>27.2</version>
+    <version>28-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-plugin-dashboard-document-wizard</artifactId>
-  <version>2.x-translations-1.0-SNAPSHOT</version>
+  <version>3.0.0-translations-psp1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <inceptionYear>2010</inceptionYear>
@@ -38,9 +38,9 @@
   </description>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/branches/dashboard-document-wizard-2.x-translations-1</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/branches/dashboard-document-wizard-2.x-translations-1</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/branches/dashboard-document-wizard-2.x-translations-1</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/trunk/</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/trunk/</url>
   </scm>
 
   <issueManagement>
@@ -49,9 +49,9 @@
   </issueManagement>
 
   <properties>
-    <hippo.repository.version>3.2.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>3.x-translations-1.0-SNAPSHOT</hippo.cms.version>
-    <hippo.plugins.selections.version>3.2.0-SNAPSHOT</hippo.plugins.selections.version>
+    <hippo.repository.version>4.0.0-translations-psp1-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>4.0.0-translations-psp1-SNAPSHOT</hippo.cms.version>
+    <hippo.plugin.selections.version>4.0.0-translations-psp1-SNAPSHOT</hippo.plugin.selections.version>
 
     <testng.version>6.0.1</testng.version>
 
@@ -71,7 +71,7 @@
       </releases>
     </repository>
   </repositories>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
@@ -97,14 +97,14 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-selections-addon-repository</artifactId>
-      <version>${hippo.plugins.selections.version}</version>
+      <version>${hippo.plugin.selections.version}</version>
       <scope>runtime</scope>
     </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-selections-addon-cms</artifactId>
-      <version>${hippo.plugins.selections.version}</version>
+      <version>${hippo.plugin.selections.version}</version>
       <scope>provided</scope>
     </dependency>
 
