@@ -20,13 +20,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>27.2</version>
+    <version>28-SNAPSHOT</version>
   </parent>
+
+  <inceptionYear>2013</inceptionYear>
 
   <artifactId>hippo-plugin-resourcebundle-editor</artifactId>
   <name>Hippo Plugin Resourcebundle Editor</name>
-  <version>2.x-translations-1.0-SNAPSHOT</version>
-  <inceptionYear>2013</inceptionYear>
+  <version>3.0.0-translations-psp1-SNAPSHOT</version>
 
   <scm>
     <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/resourcebundle-editor/trunk/</connection>
@@ -35,7 +36,7 @@
   </scm>
 
   <properties>
-    <hippo.cms.version>3.2.0-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>4.0.0-translations-psp1-SNAPSHOT</hippo.cms.version>
   </properties>
 
   <repositories>
