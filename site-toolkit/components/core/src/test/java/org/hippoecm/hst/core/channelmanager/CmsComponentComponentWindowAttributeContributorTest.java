@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type.CONTAINER_COMPONENT;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_TYPE;
 import static org.junit.Assert.assertThat;
 
 public class CmsComponentComponentWindowAttributeContributorTest {
@@ -78,7 +79,7 @@ public class CmsComponentComponentWindowAttributeContributorTest {
         assertThat(map.containsKey("inherited"), is(false));
 
         assertThat(map.containsKey("uuid"), is(true));
-        assertThat(map.containsKey("type"), is(true));
+        assertThat(map.containsKey(HST_TYPE), is(true));
         assertThat(map.containsKey("refNS"), is(true));
         assertThat(map.containsKey("url"), is(true));
     }

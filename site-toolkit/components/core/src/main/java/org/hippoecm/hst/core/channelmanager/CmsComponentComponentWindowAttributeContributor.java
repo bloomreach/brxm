@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,9 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
         if (compConfig.isInherited()) {
             populatingAttributesMap.put("inherited", "true");
         }
-        populatingAttributesMap.put("type", compConfig.getComponentType().toString());
+
+        final String componentType = compConfig.getComponentType().toString();
+        populatingAttributesMap.put(ChannelManagerConstants.HST_TYPE, componentType);
         HstURLFactory urlFactory = requestContext.getURLFactory();
         HstURL url = urlFactory.createURL(HstURL.COMPONENT_RENDERING_TYPE, window.getReferenceNamespace(), null, requestContext);
         populatingAttributesMap.put("url", url.toString());
