@@ -33,19 +33,14 @@ module.exports = function karmaConfig(config) {
     cfg.npmDir + 'babel-core/external-helpers.js',
     cfg.npmDir + 'systemjs/dist/system-polyfills.js',
     cfg.npmDir + 'systemjs/dist/system-register-only.js',
+    cfg.src.fixtures,
   ];
-
-  options.proxies = {
-    "/spec/javascripts/fixtures/": "/base/src/angularjs/",
-    "/spec/javascripts/fixtures/json/": "/base/src/angularjs/",
-  };
 
   options.files = [
     cfg.src.templates,
     cfg.src.scripts,
-    cfg.src.unitTests,
     cfg.srcDir + './angularjs/mock.environment.spec.js',
-    { pattern: '**/*.fixture.*', included: false },
+    cfg.src.unitTests,
   ];
 
   config.set(options);
