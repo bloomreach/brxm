@@ -39,7 +39,7 @@ import org.hippoecm.frontend.service.IRestProxyService;
 import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
 import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
 import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerApiHeaderItem;
-import org.onehippo.cms7.channelmanager.templatecomposer.channeleditor.ChannelEditor;
+import org.onehippo.cms7.channelmanager.channeleditor.ChannelEditor;
 
 public class ChannelManagerPerspective extends Perspective implements IChannelManagerService {
 

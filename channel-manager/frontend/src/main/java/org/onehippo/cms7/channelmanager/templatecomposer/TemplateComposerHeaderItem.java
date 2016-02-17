@@ -27,7 +27,7 @@ import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistryHeaderItem;
 import org.onehippo.cms7.channelmanager.common.CommonBundle;
-import org.onehippo.cms7.channelmanager.templatecomposer.channeleditor.ChannelEditorBundle;
+import org.onehippo.cms7.channelmanager.channeleditor.ChannelEditorBundle;
 import org.onehippo.cms7.channelmanager.templatecomposer.pageeditor.PageEditorBundle;
 import org.onehippo.cms7.channelmanager.templatecomposer.plugins.PluginsBundle;
 
