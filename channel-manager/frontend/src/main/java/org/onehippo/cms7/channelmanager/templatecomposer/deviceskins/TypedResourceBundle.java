@@ -15,7 +15,6 @@
  */
 package org.onehippo.cms7.channelmanager.templatecomposer.deviceskins;
 
-import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;

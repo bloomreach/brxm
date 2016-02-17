@@ -36,10 +36,10 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IRestProxyService;
+import org.onehippo.cms7.channelmanager.channeleditor.ChannelEditor;
+import org.onehippo.cms7.channelmanager.channeleditor.ChannelEditorApiHeaderItem;
 import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
 import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
-import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerApiHeaderItem;
-import org.onehippo.cms7.channelmanager.channeleditor.ChannelEditor;
 
 public class ChannelManagerPerspective extends Perspective implements IChannelManagerService {
 
@@ -114,7 +114,7 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
         super.renderHead(response);
 
         response.render(CssHeaderItem.forReference(CHANNEL_MANAGER_PERSPECTIVE_CSS));
-        response.render(TemplateComposerApiHeaderItem.get());
+        response.render(ChannelEditorApiHeaderItem.get());
     }
 
     public void removeRenderService(final IRenderService service) {

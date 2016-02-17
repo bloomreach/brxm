@@ -24,7 +24,7 @@ import org.wicketstuff.js.ext.util.ExtClass;
 /**
  * Base class for a component properties editor.
  */
-@ExtClass("Hippo.ChannelManager.TemplateComposer.PlainPropertiesEditor")
+@ExtClass("Hippo.ChannelManager.TemplateComposer.PlainComponentPropertiesEditor")
 public class PlainPropertiesEditor extends PropertiesEditor {
 
     public PlainPropertiesEditor(IPluginContext context, IPluginConfig config) {

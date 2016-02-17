@@ -26,7 +26,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
  */
 public class PropertiesEditor extends ExtWidget {
 
-    private static final String XTYPE = "Hippo.ChannelManager.TemplateComposer.PropertiesEditor";
+    private static final String XTYPE = "Hippo.ChannelManager.TemplateComposer.ComponentPropertiesEditor";
 
     public PropertiesEditor(IPluginContext context, IPluginConfig config) {
         super(XTYPE, context);

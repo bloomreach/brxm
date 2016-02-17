@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.cms7.channelmanager.templatecomposer;
+package org.onehippo.cms7.channelmanager.channeleditor;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.markup.head.HeaderItem;
@@ -27,37 +28,35 @@ import org.hippoecm.frontend.extjs.ExtUtilsHeaderItem;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistryHeaderItem;
 import org.wicketstuff.js.ext.util.ExtResourcesHeaderItem;
 
-public class TemplateComposerApiHeaderItem extends HeaderItem {
+public class ChannelEditorApiHeaderItem extends HeaderItem {
 
     // All individual javascript files used in the template composer API. The array order determines the include order,
     // which matters. All files listed below should also be present in the aggregation section in frontend-api/pom.xml.
-    private static final String[] JAVASCRIPT_FILES = {
+    private static final String[] FILES = {
             "ComponentPropertiesEditor.js",
             "PlainComponentPropertiesEditor.js",
             "ComponentVariantAdder.js",
-            "PlainComponentVariantAdder.js",
-            "IFramePanel.js",
-            "IFrameWindow.js"
+            "PlainComponentVariantAdder.js"
     };
-    private static final JavaScriptResourceReference[] JAVASCRIPT_REFERENCES;
+    private static final JavaScriptResourceReference[] RESOURCES;
 
-    private static final JavaScriptResourceReference ALL_JAVASCRIPT =
-            new JavaScriptResourceReference(TemplateComposerApiHeaderItem.class, "template-composer-api-all.js");
+    private static final JavaScriptResourceReference CONCATENATED_RESOURCES =
+            new JavaScriptResourceReference(ChannelEditorApiHeaderItem.class, "channel-editor-api-bundle.js");
 
     static {
-        JAVASCRIPT_REFERENCES = new JavaScriptResourceReference[JAVASCRIPT_FILES.length];
-        for (int i = 0; i < JAVASCRIPT_FILES.length; i++) {
-            JAVASCRIPT_REFERENCES[i] = new JavaScriptResourceReference(TemplateComposerApiHeaderItem.class, JAVASCRIPT_FILES[i]);
+        RESOURCES = new JavaScriptResourceReference[FILES.length];
+        for (int i = 0; i < FILES.length; i++) {
+            RESOURCES[i] = new JavaScriptResourceReference(ChannelEditorApiHeaderItem.class, FILES[i]);
         }
     }
 
-    private static final TemplateComposerApiHeaderItem INSTANCE = new TemplateComposerApiHeaderItem();
+    private static final ChannelEditorApiHeaderItem INSTANCE = new ChannelEditorApiHeaderItem();
 
-    public static TemplateComposerApiHeaderItem get() {
+    public static ChannelEditorApiHeaderItem get() {
         return INSTANCE;
     }
 
-    private TemplateComposerApiHeaderItem() {}
+    private ChannelEditorApiHeaderItem() {}
 
     @Override
     public Iterable<? extends HeaderItem> getDependencies() {
@@ -66,17 +65,17 @@ public class TemplateComposerApiHeaderItem extends HeaderItem {
 
     @Override
     public Iterable<?> getRenderTokens() {
-        return Arrays.asList("template-composer-api-header-item");
+        return Collections.singletonList("channel-editor-api-header-item");
     }
 
     @Override
     public void render(final Response response) {
         if (Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {
-            for (JavaScriptResourceReference resourceReference : JAVASCRIPT_REFERENCES) {
+            for (JavaScriptResourceReference resourceReference : RESOURCES) {
                 JavaScriptHeaderItem.forReference(resourceReference).render(response);
             }
         } else {
-            JavaScriptHeaderItem.forReference(ALL_JAVASCRIPT).render(response);
+            JavaScriptHeaderItem.forReference(CONCATENATED_RESOURCES).render(response);
         }
     }
 

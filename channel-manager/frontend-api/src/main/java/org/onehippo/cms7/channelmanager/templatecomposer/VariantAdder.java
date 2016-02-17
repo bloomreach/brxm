@@ -27,7 +27,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 public class VariantAdder extends ExtWidget {
 
     public VariantAdder(IPluginContext context, IPluginConfig config) {
-        super("Hippo.ChannelManager.TemplateComposer.VariantAdder", context);
+        super("Hippo.ChannelManager.TemplateComposer.ComponentVariantAdder", context);
     }
 
     @Override

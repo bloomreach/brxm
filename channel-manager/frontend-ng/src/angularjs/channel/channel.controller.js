@@ -15,12 +15,29 @@
  */
 
 export class ChannelCtrl {
-  constructor(ChannelService) {
+  constructor(ChannelService, CmsService) {
     'ngInject';
 
     this.channelService = ChannelService;
+    this.cmsService = CmsService;
+
     this.iframeUrl = ChannelService.getUrl();
     this.isEditMode = false;
+  }
+
+  editComponent() {
+    this.cmsService.publish('show-component-properties', {
+      component: {
+        id: '1234-5678',
+        name: 'Test',
+        lastModifiedTimestamp: '3846283764782',
+      },
+      container: {
+        isDisabled: false,
+        isInherited: false,
+      },
+      pageRequestVariants: ['aap', 'noot', 'mies'],
+    });
   }
 
 }

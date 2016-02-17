@@ -27,12 +27,12 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.CmsHeaderItem;
+import org.onehippo.cms7.channelmanager.channeleditor.ChannelEditorApiHeaderItem;
 import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelIconPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelOverview;
 import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesWindow;
 import org.onehippo.cms7.channelmanager.common.CommonBundle;
-import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerApiHeaderItem;
 import org.wicketstuff.js.ext.util.ExtResourcesHeaderItem;
 
 public class ChannelManagerHeaderItem extends HeaderItem {
@@ -76,7 +76,7 @@ public class ChannelManagerHeaderItem extends HeaderItem {
 
     @Override
     public Iterable<? extends HeaderItem> getDependencies() {
-        return Arrays.asList(CmsHeaderItem.get(), ExtResourcesHeaderItem.get(), TemplateComposerApiHeaderItem.get());
+        return Arrays.asList(CmsHeaderItem.get(), ExtResourcesHeaderItem.get(), ChannelEditorApiHeaderItem.get());
     }
 
     @Override

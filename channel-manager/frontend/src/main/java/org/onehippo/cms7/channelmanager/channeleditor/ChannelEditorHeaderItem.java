@@ -32,6 +32,10 @@ public class ChannelEditorHeaderItem extends HeaderItem {
             "plugins/colorfield/colorfield.js",
             "plugins/floatingwindow/FloatingWindow.js",
             "plugins/vtabs/VerticalTabPanel.js",
+            "ComponentVariants.js",
+            "ComponentPropertiesForm.js",
+            "ComponentPropertiesPanel.js",
+            "ComponentPropertiesWindow.js",
             "ChannelEditor.js"
     };
 

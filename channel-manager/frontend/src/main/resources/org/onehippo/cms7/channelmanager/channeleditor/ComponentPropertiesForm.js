@@ -1,23 +1,23 @@
 /*
- *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 (function ($) {
 
   "use strict";
 
-  Ext.namespace('Hippo.ChannelManager.TemplateComposer');
+  Ext.namespace('Hippo.ChannelManager.ChannelEditor');
 
   function copyStore (store) {
     var newRecords = [], newStore;
@@ -38,7 +38,7 @@
     formElement.removeAttribute('style');
   }
 
-  Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel, {
+  Hippo.ChannelManager.ChannelEditor.ComponentPropertiesForm = Ext.extend(Ext.FormPanel, {
 
     mountId: null,
     variant: null,
@@ -60,14 +60,14 @@
       this.lastModifiedTimestamp = config.lastModifiedTimestamp;
       this.isReadOnly = config.isReadOnly;
 
-      Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.constructor.call(this, Ext.apply(config, {
-        cls: 'templateComposerPropertiesForm qa-properties-form',
+      Hippo.ChannelManager.ChannelEditor.ComponentPropertiesForm.superclass.constructor.call(this, Ext.apply(config, {
+        cls: 'ChannelEditorPropertiesForm qa-properties-form',
         maskDisabled: false
       }));
     },
 
     createCopy: function (newVariant) {
-      var copy = new Hippo.ChannelManager.TemplateComposer.PropertiesForm(this.initialConfig);
+      var copy = new Hippo.ChannelManager.ChannelEditor.ComponentPropertiesForm(this.initialConfig);
       copy.variant = newVariant;
       copy.store = copyStore(this.store);
       copy._initStoreListeners();
@@ -80,7 +80,7 @@
 
       if (this.variant.id !== 'hippo-default') {
         this.deleteButton = new Ext.Button({
-          text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-delete'],
+          text: Hippo.ChannelManager.ChannelEditor.Resources['properties-form-button-delete'],
           cls: 'btn btn-default qa-delete-button',
           handler: function () {
             Ext.Ajax.request({
@@ -115,7 +115,7 @@
         buttons: buttons
       });
 
-      Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.initComponent.apply(this, arguments);
+      Hippo.ChannelManager.ChannelEditor.ComponentPropertiesForm.superclass.initComponent.apply(this, arguments);
 
       this.addEvents('propertiesChanged', 'variantDirty', 'variantPristine', 'propertiesSaved', 'close', 'propertiesDeleted');
     },
@@ -190,12 +190,16 @@
           onSuccess(this.newVariantId);
         },
         failure: function () {
-          Hippo.Msg.alert(Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['toolkit-store-error-message-title'],
-            Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['toolkit-store-error-message'], function () {
-              Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').pageContainer.pageContext = null;
+/*
+          TODO: show error message? Old code:
+
+          Hippo.Msg.alert(Hippo.ChannelManager.ChannelEditor.Resources['toolkit-store-error-message-title'],
+            Hippo.ChannelManager.ChannelEditor.Resources['toolkit-store-error-message'], function () {
+              Ext.getCmp('Hippo.ChannelManager.ChannelEditor.Instance').pageContainer.pageContext = null;
               // reload channel manager
-              Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').pageContainer.refreshIframe();
+              Ext.getCmp('Hippo.ChannelManager.ChannelEditor.Instance').pageContainer.refreshIframe();
             });
+*/
           onFail();
         },
         scope: this
@@ -217,7 +221,7 @@
 
     _initZeroFields: function () {
       this.add({
-        html: "<div style='padding:5px' align='center'>" + Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-no-properties'] + "</div>",
+        html: "<div style='padding:5px' align='center'>" + Hippo.ChannelManager.ChannelEditor.Resources['properties-form-no-properties'] + "</div>",
         xtype: "panel",
         autoWidth: true,
         layout: 'fit'
@@ -338,7 +342,7 @@
           bodyCfg: {
             tag: 'div',
             cls: 'create-document-link',
-            html: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-document-link-text'].format('<a href="#" id="' + createDocumentLinkId + '">&nbsp;', '&nbsp;</a>&nbsp;')
+            html: Hippo.ChannelManager.ChannelEditor.Resources['properties-form-create-new-document-link-text'].format('<a href="#" id="' + createDocumentLinkId + '">&nbsp;', '&nbsp;</a>&nbsp;')
           },
           border: false
         });
@@ -360,7 +364,7 @@
 
       createUrl = this.composerRestMountUrl + '/' + this.mountId + './create?FORCE_CLIENT_HOST=true';
       createDocumentWindow = new Ext.Window({
-        title: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-new-document-window-title'],
+        title: Hippo.ChannelManager.ChannelEditor.Resources['properties-form-create-new-document-window-title'],
         height: 200,
         width: 450,
         modal: true,
@@ -377,13 +381,13 @@
             items: [
               {
                 xtype: 'textfield',
-                fieldLabel: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-new-document-field-name'],
+                fieldLabel: Hippo.ChannelManager.ChannelEditor.Resources['properties-form-create-new-document-field-name'],
                 allowBlank: false
               },
               {
                 xtype: 'textfield',
                 disabled: true,
-                fieldLabel: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-new-document-field-location'],
+                fieldLabel: Hippo.ChannelManager.ChannelEditor.Resources['properties-form-create-new-document-field-location'],
                 value: options.docLocation
               }
             ]
@@ -393,7 +397,7 @@
         buttons: [
           {
             cls: 'btn btn-default',
-            text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-new-document-button'],
+            text: Hippo.ChannelManager.ChannelEditor.Resources['properties-form-create-new-document-button-create'],
             handler: function () {
               var createDocForm = Ext.getCmp('createDocumentForm').getForm();
               createDocForm.submit();
@@ -411,10 +415,10 @@
                   Ext.getCmp(options.comboId).setValue(options.docLocation + "/" + options.docName);
                 },
                 failure: function () {
-                  Hippo.Msg.alert(Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-new-document-message'],
-                    Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-new-document-failed'],
+                  Hippo.Msg.alert(Hippo.ChannelManager.ChannelEditor.Resources['properties-form-create-new-document-message'],
+                    Hippo.ChannelManager.ChannelEditor.Resources['properties-form-create-new-document-failed'],
                     function () {
-                      Hippo.ChannelManager.TemplateComposer.Instance.initComposer();
+                      Hippo.ChannelManager.ChannelEditor.Instance.initComposer();
                     }
                   );
                 }
@@ -427,7 +431,7 @@
       createDocumentWindow.addButton(
         {
           cls: 'btn btn-default',
-          text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-new-document-button-cancel']
+          text: Hippo.ChannelManager.ChannelEditor.Resources['properties-form-create-new-document-button-cancel']
         },
         function () {
           this.hide();
@@ -562,15 +566,15 @@
     },
 
     _loadException: function (proxy, type, actions, options, response) {
-      var errorText = Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-load-exception-text'].format(actions);
+      var errorText = Hippo.ChannelManager.ChannelEditor.Resources['properties-form-load-exception-text'].format(actions);
       if (type === 'response') {
-        errorText += '\n' + Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-load-exception-response'].format(response.statusText, response.status, options.url);
+        errorText += '\n' + Hippo.ChannelManager.ChannelEditor.Resources['properties-form-load-exception-response'].format(response.statusText, response.status, options.url);
       }
 
       this.add({
         xtype: 'label',
         text: errorText,
-        fieldLabel: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-error-field-label']
+        fieldLabel: Hippo.ChannelManager.ChannelEditor.Resources['properties-form-load-exception-field-label']
       });
     },
 
@@ -670,6 +674,6 @@
 
   });
 
-  Ext.reg('Hippo.ChannelManager.TemplateComposer.PropertiesForm', Hippo.ChannelManager.TemplateComposer.PropertiesForm);
+  Ext.reg('Hippo.ChannelManager.ChannelEditor.ComponentPropertiesForm', Hippo.ChannelManager.ChannelEditor.ComponentPropertiesForm);
 
 }(jQuery));

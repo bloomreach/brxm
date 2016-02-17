@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -25,6 +25,10 @@
   <artifactId>hippo-addon-channel-manager-frontend-api</artifactId>
 
   <name>Addon Channel Manager Frontend API</name>
+
+  <properties>
+    <channel.editor.api.package>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channeleditor</channel.editor.api.package>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -55,18 +59,15 @@
         <artifactId>yuicompressor-maven-plugin</artifactId>
         <configuration>
           <aggregations>
-            <!-- template composer API bundle -->
             <aggregation>
               <insertNewLine>true</insertNewLine>
               <includes>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/PropertiesEditor.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/PlainPropertiesEditor.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/VariantAdder.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/PlainVariantAdder.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/IFramePanel.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/IFrameWindow.js</include>
+                <include>${channel.editor.api.package}/ComponentPropertiesEditor.js</include>
+                <include>${channel.editor.api.package}/PlainComponentPropertiesEditor.js</include>
+                <include>${channel.editor.api.package}/ComponentVariantAdder.js</include>
+                <include>${channel.editor.api.package}/PlainComponentVariantAdder.js</include>
               </includes>
-              <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/template-composer-api-all.js</output>
+              <output>${channel.editor.api.package}/channel-editor-api-bundle.js</output>
             </aggregation>
           </aggregations>
         </configuration>

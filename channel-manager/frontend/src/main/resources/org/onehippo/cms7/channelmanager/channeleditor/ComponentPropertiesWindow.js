@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 (function () {
   "use strict";
 
-  Ext.namespace('Hippo.ChannelManager.TemplateComposer');
+  Ext.namespace('Hippo.ChannelManager.ChannelEditor');
 
-  Hippo.ChannelManager.TemplateComposer.PropertiesWindow = Ext.extend(Hippo.ux.window.FloatingWindow, {
+  Hippo.ChannelManager.ChannelEditor.ComponentPropertiesWindow = Ext.extend(Hippo.ux.window.FloatingWindow, {
 
     _formStates: {},
 
@@ -26,8 +26,7 @@
       var buttons = [],
         windowWidth = config.width;
 
-      this.propertiesPanel = new Hippo.ChannelManager.TemplateComposer.PropertiesPanel({
-        id: 'componentPropertiesPanel',
+      this.componentPropertiesPanel = new Hippo.ChannelManager.ChannelEditor.ComponentPropertiesPanel({
         bubbleEvents: ['save', 'delete', 'propertiesChanged'],
         resources: config.resources,
         locale: config.locale,
@@ -54,18 +53,20 @@
       });
 
       if (Ext.isDefined(config.variantsUuid)) {
-        windowWidth += this.propertiesPanel.tabWidth;
+        windowWidth += this.componentPropertiesPanel.tabWidth;
       }
 
       this.saveButton = new Ext.Button({
         xtype: 'button',
         cls: 'btn btn-default qa-save-button',
-        text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-save'],
+        text: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-button-save'],
         scope: this,
         handler: function () {
-          this.propertiesPanel.saveAll().then(function () {
+          this.componentPropertiesPanel.saveAll().then(function () {
             this._resetFormStates();
-            Hippo.ChannelManager.TemplateComposer.Instance.templateComposerApi.channelChanged();
+            console.log('TODO: notify channel changed');
+            // Old code:
+            // Hippo.ChannelManager.TemplateComposer.Instance.templateComposerApi.channelChanged();
           }.bind(this));
         }
       });
@@ -74,31 +75,33 @@
       buttons.push({
         xtype: 'button',
         cls: 'btn btn-default qa-close-button',
-        text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-close'],
+        text: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-button-close'],
         scope: this,
         handler: function () {
-          this.propertiesPanel.fireEvent('close');
+          this.componentPropertiesPanel.fireEvent('close');
         }
       });
 
-      Hippo.ChannelManager.TemplateComposer.PropertiesWindow.superclass.constructor.call(this, Ext.apply(config, {
+      Hippo.ChannelManager.ChannelEditor.ComponentPropertiesWindow.superclass.constructor.call(this, Ext.apply(config, {
         layout: 'fit',
         width: windowWidth,
-        items: this.propertiesPanel,
+        items: this.componentPropertiesPanel,
         buttons: buttons
       }));
     },
 
     initComponent: function () {
-      Hippo.ChannelManager.TemplateComposer.PropertiesWindow.superclass.initComponent.apply(this, arguments);
+      Hippo.ChannelManager.ChannelEditor.ComponentPropertiesWindow.superclass.initComponent.apply(this, arguments);
 
       this.addEvents('save', 'close', 'delete', 'propertiesChanged');
 
-      this.on('hide', this.propertiesPanel.onHide, this.propertiesPanel);
+      this.on('hide', this.componentPropertiesPanel.onHide, this.componentPropertiesPanel);
     },
 
     _adjustHeight: function (propertiesPanelVisibleHeight) {
+      console.log("TODO: get real iframe height");
       var newVisibleHeight = propertiesPanelVisibleHeight + this.getFrameHeight(),
+        // TODO: get real iframe height
         pageEditorHeight = Ext.getCmp('pageEditorIFrame').getHeight(),
         windowY = this.getPosition()[1],
         spaceBetweenWindowAndBottom = 4,
@@ -142,6 +145,10 @@
       }
 
       this.saveButton.setDisabled(disableSaveButton);
+    },
+
+    showComponent: function (componentId, pageRequestVariants, lastModifiedTimestamp, container) {
+      this.componentPropertiesPanel.showComponent(componentId, pageRequestVariants, lastModifiedTimestamp, container);
     }
 
   });

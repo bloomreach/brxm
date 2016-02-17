@@ -1,23 +1,23 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 (function ($) {
 
   "use strict";
 
-  Ext.namespace('Hippo.ChannelManager.TemplateComposer');
+  Ext.namespace('Hippo.ChannelManager.ChannelEditor');
 
   function getVariantName (variant) {
     return variant.variantName || variant.name;
@@ -29,12 +29,11 @@
    *
    * @type {*}
    */
-  Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2ivn.VrTabPanel, {
+  Hippo.ChannelManager.ChannelEditor.ComponentPropertiesPanel = Ext.extend(Ext.ux.tot2ivn.VrTabPanel, {
 
     // set in constructor
     composerRestMountUrl: null,
     mountId: null,
-    resources: null,
     variantsUuid: null,
     locale: null,
     firePropertiesChangedEvents: false,
@@ -52,7 +51,6 @@
       this.variantsUuid = config.variantsUuid;
       this.pageRequestVariants = config.pageRequestVariants;
       this.mountId = config.mountId;
-      this.resources = config.resources;
       this.locale = config.locale;
 
       this.componentMessageBus = Hippo.createMessageBus('properties-panel');
@@ -60,18 +58,15 @@
       this.variantAdderXType = config.variantAdderXType;
       this.propertiesEditorXType = config.propertiesEditorXType;
 
-      // also store the resources in a global variable, since pluggable subclasses need to access them too
-      Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources = config.resources;
-
       config = Ext.apply(config, {activeTab: 0});
-      Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.constructor.call(this, Ext.apply(config, {
+      Hippo.ChannelManager.ChannelEditor.ComponentPropertiesPanel.superclass.constructor.call(this, Ext.apply(config, {
         border: false,
         tabMarginTop: 0
       }));
     },
 
     initComponent: function () {
-      Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.initComponent.apply(this, arguments);
+      Hippo.ChannelManager.ChannelEditor.ComponentPropertiesPanel.superclass.initComponent.apply(this, arguments);
 
       this.addEvents('visibleHeightChanged', 'onLoad');
 
@@ -89,8 +84,8 @@
       }, this);
 
       this.on('tabchange', function (panel, tab) {
-        if (this.firePropertiesChangedEvents && tab && tab.propertiesForm) {
-          tab.propertiesForm.firePropertiesChanged();
+        if (this.firePropertiesChangedEvents && tab && tab.componentPropertiesForm) {
+          tab.componentPropertiesForm.firePropertiesChanged();
           tab.syncVisibleHeight();
         }
       }, this);
@@ -106,7 +101,7 @@
      * @param container object with information about the container of this component.
      * Available properties are 'isDisabled' and 'isInherited'.
      */
-    load: function (componentId, pageRequestVariants, lastModifiedTimestamp, container) {
+    showComponent: function (componentId, pageRequestVariants, lastModifiedTimestamp, container) {
       if (this.componentVariants !== null) {
         this.componentVariants.un('invalidated', this.updateUI, this);
         this._fireInitialPropertiesChangedIfNeeded();
@@ -117,12 +112,11 @@
       this.lastModifiedTimestamp = lastModifiedTimestamp;
       this.container = container;
 
-      this.componentVariants = new Hippo.ChannelManager.TemplateComposer.ComponentVariants({
+      this.componentVariants = new Hippo.ChannelManager.ChannelEditor.ComponentVariants({
         componentId: componentId,
         lastModifiedTimestamp: lastModifiedTimestamp,
         composerRestMountUrl: this.composerRestMountUrl,
         variantsUuid: this.variantsUuid,
-        resources: this.resources,
         locale: this.locale
       });
 
@@ -187,13 +181,13 @@
     _stopValidationMonitoring: function () {
       var activeTab = this.getActiveTab();
 
-      if (activeTab && activeTab.propertiesForm) {
-        activeTab.propertiesForm.stopMonitoring();
+      if (activeTab && activeTab.componentPropertiesForm) {
+        activeTab.componentPropertiesForm.stopMonitoring();
       }
     },
 
     _fireInitialPropertiesChangedIfNeeded: function () {
-      var isActiveTabDirty = this.getActiveTab().propertiesForm.isDirty();
+      var isActiveTabDirty = this.getActiveTab().componentPropertiesForm.isDirty();
 
       if (this.firePropertiesChangedEvents) {
         this.componentVariants.get().when(function (variants) {
@@ -208,14 +202,14 @@
     },
 
     _initTabs: function (variants, reusableTabs) {
-      var reusablePropertiesForms = {};
+      var reusableComponentPropertiesForms = {};
 
       reusableTabs.forEach(function (tab) {
-        reusablePropertiesForms[tab.variant.id] = tab.propertiesForm;
+        reusableComponentPropertiesForms[tab.variant.id] = tab.componentPropertiesForm;
       });
 
       Ext.each(variants, function (variant) {
-        var tab, propertiesForm;
+        var tab, componentPropertiesForm;
 
         if ('plus' === variant.id) {
           if (!this.container.isDisabled) {
@@ -223,15 +217,15 @@
             this.add(tab);
           }
         } else {
-          propertiesForm = this._createOrReusePropertiesForm(variant, reusablePropertiesForms);
-          tab = this._createPropertiesEditor(variant, variants, propertiesForm);
+          componentPropertiesForm = this._createOrReuseComponentPropertiesForm(variant, reusableComponentPropertiesForms);
+          tab = this._createComponentPropertiesEditor(variant, variants, componentPropertiesForm);
           this.add(tab);
         }
       }, this);
     },
 
     _createVariantAdder: function (variant, skipVariantIds) {
-      return Hippo.ExtWidgets.create('Hippo.ChannelManager.TemplateComposer.VariantAdder', {
+      return Hippo.ExtWidgets.create('Hippo.ChannelManager.ChannelEditor.ComponentVariantAdder', {
         composerRestMountUrl: this.composerRestMountUrl,
         componentId: this.componentId,
         locale: this.locale,
@@ -247,11 +241,11 @@
       });
     },
 
-    _createOrReusePropertiesForm: function (variant, formsToReuse) {
+    _createOrReuseComponentPropertiesForm: function (variant, formsToReuse) {
       if (formsToReuse.hasOwnProperty(variant.id)) {
         return formsToReuse[variant.id].createCopy(variant);
       } else {
-        return new Hippo.ChannelManager.TemplateComposer.PropertiesForm({
+        return new Hippo.ChannelManager.ChannelEditor.ComponentPropertiesForm({
           variant: variant,
           mountId: this.mountId,
           composerRestMountUrl: this.composerRestMountUrl,
@@ -307,14 +301,14 @@
       });
     },
 
-    _createPropertiesEditor: function (variant, variants, propertiesForm) {
-      var editor = Hippo.ExtWidgets.create('Hippo.ChannelManager.TemplateComposer.PropertiesEditor', {
+    _createComponentPropertiesEditor: function (variant, variants, componentPropertiesForm) {
+      var editor = Hippo.ExtWidgets.create('Hippo.ChannelManager.ChannelEditor.ComponentPropertiesEditor', {
         cls: 'component-properties-editor',
         componentId: this.componentId,
         variant: variant,
         allVariants: variants.slice(0, variants.length - 1),
         title: getVariantName(variant),
-        propertiesForm: propertiesForm,
+        componentPropertiesForm: componentPropertiesForm,
         isReadOnly: this.container.isDisabled,
         isInherited: this.container.isInherited,
         componentMessageBus: this.componentMessageBus
@@ -333,11 +327,11 @@
       }, editor);
 
       editor.on('beforeactivate', function () {
-        propertiesForm.startMonitoring();
+        componentPropertiesForm.startMonitoring();
       });
 
       editor.on('beforedeactivate', function () {
-        propertiesForm.stopMonitoring();
+        componentPropertiesForm.stopMonitoring();
       });
 
       editor.on('variantsDeleted', this._onVariantsDeleted, this);
@@ -431,10 +425,10 @@
       var existingTab, newPropertiesForm, newTab, newTabIndex;
 
       existingTab = this._getTab(existingVariantId);
-      if (Ext.isDefined(existingTab) && existingTab instanceof Hippo.ChannelManager.TemplateComposer.PropertiesEditor) {
-        newPropertiesForm = existingTab.propertiesForm.createCopy(newVariant);
+      if (Ext.isDefined(existingTab) && existingTab instanceof Hippo.ChannelManager.ChannelEditor.ComponentPropertiesEditor) {
+        newPropertiesForm = existingTab.componentPropertiesForm.createCopy(newVariant);
         newPropertiesForm.hideDelete();
-        newTab = this._createPropertiesEditor(
+        newTab = this._createComponentPropertiesEditor(
           newVariant,
           Ext.pluck(this.items.getRange(), "variant"),
           newPropertiesForm);
@@ -468,7 +462,7 @@
     _getDirtyEditors: function () {
       var editors = [];
       this.items.each(function (item) {
-        if (Ext.isDefined(item.propertiesForm) && item.propertiesForm.isDirty()) {
+        if (Ext.isDefined(item.componentPropertiesForm) && item.componentPropertiesForm.isDirty()) {
           editors.push(item);
         }
       });
@@ -476,7 +470,7 @@
     },
 
     // Update the activeVariantId based on the mapping between old and new variant id after save.
-    // @see PropertiesEditor#save for more detail
+    // @see ComponentPropertiesEditor#save for more detail
     _findActiveVariantId: function(mapVariantIds, activeVariantId) {
       mapVariantIds.some(function (entry) {
         if (entry.oldId === activeVariantId) {
