@@ -17,9 +17,9 @@
 (function() {
   "use strict";
 
-  Ext.namespace('Hippo.ChannelManager.TemplateComposer');
+  Ext.namespace('Hippo.ChannelManager.ChannelEditor');
 
-  Hippo.ChannelManager.TemplateComposer.ChannelEditor = Ext.extend(Hippo.IFramePanel, {
+  Hippo.ChannelManager.ChannelEditor.ChannelEditor = Ext.extend(Hippo.IFramePanel, {
 
     constructor: function(config) {
       this.title = null;
@@ -31,7 +31,7 @@
           antiCache: this.antiCache
         })
       });
-      Hippo.ChannelManager.TemplateComposer.ChannelEditor.superclass.constructor.call(this, config);
+      Hippo.ChannelManager.ChannelEditor.ChannelEditor.superclass.constructor.call(this, config);
 
       // In case of reloading the iframe, the ng-app will ask us to provide the channel info (again)
       this.iframeToHost.subscribe('reload-channel', function() {
@@ -65,7 +65,7 @@
     },
 
     initComponent: function() {
-      Hippo.ChannelManager.TemplateComposer.ChannelEditor.superclass.initComponent.call(this);
+      Hippo.ChannelManager.ChannelEditor.ChannelEditor.superclass.initComponent.call(this);
 
       this.channelStoreFuture.when(function(config) {
 

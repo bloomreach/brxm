@@ -30,7 +30,6 @@ import org.hippoecm.frontend.session.UserSession;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.ExtStoreFuture;
-import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerHeaderItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtPanel;
@@ -39,7 +38,7 @@ import org.wicketstuff.js.ext.util.ExtProperty;
 import org.wicketstuff.js.ext.util.ExtPropertyConverter;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
 
-@ExtClass("Hippo.ChannelManager.TemplateComposer.ChannelEditor")
+@ExtClass("Hippo.ChannelManager.ChannelEditor.ChannelEditor")
 public class ChannelEditor extends ExtPanel {
     public static final Logger log = LoggerFactory.getLogger(ChannelEditor.class);
 
@@ -127,7 +126,7 @@ public class ChannelEditor extends ExtPanel {
     @Override
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
-        response.render(TemplateComposerHeaderItem.get());
+        response.render(ChannelEditorHeaderItem.get());
     }
 
     @Override
@@ -139,7 +138,7 @@ public class ChannelEditor extends ExtPanel {
 
     @Override
     public String getMarkupId() {
-        return "Hippo.ChannelManager.TemplateComposer.Instance";
+        return "Hippo.ChannelManager.ChannelEditor.Instance";
     }
 
     @Override

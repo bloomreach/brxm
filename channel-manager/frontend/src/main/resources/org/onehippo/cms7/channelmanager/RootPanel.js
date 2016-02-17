@@ -111,18 +111,18 @@
 
       channelSelectedHandler = function (channelId, record) {
         this.selectedChannelId = channelId;
-        // don't activate template composer when it is already active
-        if (this.layout.activeItem === Hippo.ChannelManager.TemplateComposer.Instance) {
+        // don't activate channel editor when it is already active
+        if (this.layout.activeItem === Hippo.ChannelManager.ChannelEditor.Instance) {
           return;
         }
-        Hippo.ChannelManager.TemplateComposer.Instance.loadChannel(channelId);
+        Hippo.ChannelManager.ChannelEditor.Instance.loadChannel(channelId);
         Ext.getCmp('rootPanel').showTemplateComposer();
       };
 
       this.gridPanel.on('channel-selected', channelSelectedHandler, this);
       this.channelIconPanel.on('channel-selected', channelSelectedHandler, this);
 
-      Hippo.ChannelManager.TemplateComposer.Instance.on('mountChanged', function (data) {
+      Hippo.ChannelManager.ChannelEditor.Instance.on('mountChanged', function (data) {
         var channelRecord = this.gridPanel.getChannelByMountId(data.mountId),
           firstChange = data.oldMountId === null;
         if (!firstChange && this.selectedChannelId !== channelRecord.get('id')) {

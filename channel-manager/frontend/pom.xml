@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -31,6 +31,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <channel.manager.package>${project.build.directory}/classes/org/onehippo/cms7/channelmanager</channel.manager.package>
+    <channel.editor.package>${channel.manager.package}/channeleditor</channel.editor.package>
   </properties>
 
   <dependencies>
@@ -207,90 +209,33 @@
         <artifactId>yuicompressor-maven-plugin</artifactId>
         <configuration>
           <aggregations>
-            <!-- iframe bundle -->
             <aggregation>
               <insertNewLine>true</insertNewLine>
               <includes>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/templatecomposerglobal.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/util.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/dragdrop.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/factory.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/page.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/widgets.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/surfandedit.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/last.js</include>
+                <include>${channel.manager.package}/common/MarkRequiredFields.js</include>
+                <include>${channel.manager.package}/ExtStoreFuture.js</include>
+                <include>${channel.manager.package}/BreadcrumbToolbar.js</include>
+                <include>${channel.manager.package}/Pinger.js</include>
+                <include>${channel.manager.package}/RootPanel.js</include>
+                <include>${channel.manager.package}/BlueprintListPanel.js</include>
+                <include>${channel.manager.package}/ChannelFormPanel.js</include>
+                <include>${channel.manager.package}/channels/ChannelOverview.js</include>
+                <include>${channel.manager.package}/channels/ChannelPropertiesWindow.js</include>
+                <include>${channel.manager.package}/channels/ChannelGridPanel.js</include>
+                <include>${channel.manager.package}/channels/ChannelIconPanel.js</include>
               </includes>
-              <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/iframe-all.js</output>
+              <output>${channel.manager.package}/channel-manager-bundle.js</output>
             </aggregation>
-
-            <!-- page editor bundle -->
             <aggregation>
               <insertNewLine>true</insertNewLine>
               <includes>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/templatecomposerglobal.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/common/MarkRequiredFields.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/IconGridView.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/ToolkitGridPanel.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/IconToolbarWindow.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/ManageChangesWindow.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageSettingsWindow.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PagesWindow.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/EditMenuWindow.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/Notification.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/DragDropOne.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/Hippo.Msg.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/RestStore.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/ToolkitStore.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageModelStore.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageContext.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageContainer.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/ComponentVariants.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/ValidatorField.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PropertiesForm.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PropertiesPanel.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PropertiesWindow.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageEditor.js</include>
+                <include>${channel.manager.package}/common/MarkRequiredFields.js</include>
+                <include>${channel.editor.package}/plugins/colorfield/colorfield.js</include>
+                <include>${channel.editor.package}/plugins/floatingwindow/FloatingWindow.js</include>
+                <include>${channel.editor.package}/plugins/vtabs/VerticalTabPanel.js</include>
+                <include>${channel.editor.package}/ChannelEditor.js</include>
               </includes>
-              <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/page-editor-all.js</output>
-            </aggregation>
-
-            <!-- channel editor bundle -->
-            <aggregation>
-              <insertNewLine>true</insertNewLine>
-              <includes>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/channeleditor/ChannelEditor.js</include>
-              </includes>
-              <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/channeleditor/channel-editor-all.js</output>
-            </aggregation>
-
-            <!-- plugins bundle -->
-            <aggregation>
-              <insertNewLine>true</insertNewLine>
-              <includes>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/colorfield.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/floatingwindow/FloatingWindow.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/VerticalTabPanel.js</include>
-              </includes>
-              <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/plugins-all.js</output>
-            </aggregation>
-
-            <!-- channel manager bundle -->
-            <aggregation>
-              <insertNewLine>true</insertNewLine>
-              <includes>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/common/MarkRequiredFields.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/ExtStoreFuture.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/BreadcrumbToolbar.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/Pinger.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/RootPanel.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/BlueprintListPanel.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/ChannelFormPanel.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channels/ChannelOverview.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesWindow.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channels/ChannelIconPanel.js</include>
-              </includes>
-              <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channel-manager-all.js</output>
+              <output>${channel.editor.package}/channel-editor-bundle.js</output>
             </aggregation>
           </aggregations>
         </configuration>

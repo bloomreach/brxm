@@ -39,8 +39,8 @@ public class ChannelManagerHeaderItem extends HeaderItem {
 
     private static final long serialVersionUID = 1L;
 
-    private static final JavaScriptResourceReference ALL = new JavaScriptResourceReference(ChannelManagerHeaderItem.class,
-            "channel-manager-all.js");
+    private static final JavaScriptResourceReference BUNDLE = new JavaScriptResourceReference(ChannelManagerHeaderItem.class,
+            "channel-manager-bundle.js");
 
     private static final String ROOT_PANEL = "RootPanel.js";
     private static final String BLUEPRINT_LIST_PANEL = "BlueprintListPanel.js";
@@ -91,7 +91,7 @@ public class ChannelManagerHeaderItem extends HeaderItem {
                 JavaScriptHeaderItem.forReference(resourceReference).render(response);
             }
         } else {
-            JavaScriptHeaderItem.forReference(ALL).render(response);
+            JavaScriptHeaderItem.forReference(BUNDLE).render(response);
         }
     }
 
