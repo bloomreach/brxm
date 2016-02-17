@@ -73,6 +73,7 @@
             <configuration>
               <executable>npm</executable>
               <commandlineArgs>run gulp test -- --fail-on-gulp-error</commandlineArgs>
+              <skip>${skipTests}</skip>
             </configuration>
           </execution>
         </executions>
