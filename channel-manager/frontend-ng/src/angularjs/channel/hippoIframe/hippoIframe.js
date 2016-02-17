@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
+import { overlayModule } from './overlay/overlay';
 import { hippoIframe } from './hippoIframe.directive';
 import { HippoIframeCtrl } from './hippoIframe.controller';
 import { HstCommentsProcessorService } from './hstCommentsProcessor.service';
 import { LinkProcessorService } from './linkProcessor.service';
 
 export const channelHippoIframeModule = angular
-  .module('hippo-cm.channel.hippoIframe', [])
+  .module('hippo-cm.channel.hippoIframe', [
+    overlayModule.name,
+  ])
   .directive('hippoIframe', hippoIframe)
   .controller('hippoIframeCtrl', HippoIframeCtrl)
   .service('hstCommentsProcessorService', HstCommentsProcessorService)

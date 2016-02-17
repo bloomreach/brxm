@@ -27,25 +27,34 @@ function constructUrl(location, ...fragments) {
 }
 
 export class HippoIframeCtrl {
-  constructor(linkProcessorService, hstCommentsProcessorService, HST_CONSTANT, ChannelService) {
+  constructor($rootScope, linkProcessorService, hstCommentsProcessorService, HST_CONSTANT, ChannelService,
+              PageStructureService, OverlaySyncService) {
     'ngInject';
 
+    this.$rootScope = $rootScope;
     this.linkProcessorService = linkProcessorService;
     this.hstCommentsProcessorService = hstCommentsProcessorService;
     this.HST = HST_CONSTANT;
     this.ChannelService = ChannelService;
+    this.PageStructureService = PageStructureService;
+    this.OverlaySyncService = OverlaySyncService;
   }
 
   onLoad() {
-    this.parseHstComments();
-    this.parseLinks();
+    this.$rootScope.$apply(() => {
+
+      this._parseHstComments();
+      this._parseLinks();
+
+      this.OverlaySyncService.startObserving(this.iframe, this.overlay);
+    });
   }
 
-  parseHstComments() {
-    const processHstComment = (commentElement, json) => {
-      switch (json[this.HST.TYPE]) {
-        case this.HST.TYPE_PAGE_META_DATA:
-          const channelId = json[this.HST.CHANNEL_ID];
+  _parseHstComments() {
+    const processHstComment = (commentElement, metaData) => {
+      switch (metaData[this.HST.TYPE]) {
+        case this.HST.TYPE_PAGE:
+          const channelId = metaData[this.HST.CHANNEL_ID];
           if (channelId !== this.ChannelService.getId()) {
             this.ChannelService.switchToChannel(channelId);
           }
@@ -53,18 +62,25 @@ export class HippoIframeCtrl {
         default:
           break;
       }
+      this.PageStructureService.registerParsedElement(commentElement, metaData);
     };
     const iframeDom = this.iframe.contents()[0];
 
+    this.PageStructureService.clearParsedElements();
     this.hstCommentsProcessorService.run(iframeDom, processHstComment);
+    this.PageStructureService.printParsedElements();
   }
 
-  parseLinks() {
+  _parseLinks() {
     const iframeDom = this.iframe.contents()[0];
     const channel = this.ChannelService.channel;
     const internalLinkPrefix = constructUrl(iframeDom.location, channel.contextPath, channel.cmsPreviewPrefix);
 
     this.linkProcessorService.run(iframeDom, internalLinkPrefix);
+  }
+
+  getContainers() {
+    return this.PageStructureService.containers;
   }
 
 }

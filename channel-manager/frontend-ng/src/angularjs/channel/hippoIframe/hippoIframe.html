@@ -14,8 +14,18 @@
   limitations under the License.
   -->
 
-<md-content flex layout="row">
+<md-content flex layout="row" class="channel-iframe-base">
 
-  <iframe class="channel-iframe qa-view flex" ng-src="{{ iframe.path }}"></iframe>
+  <iframe flex class="qa-view" ng-src="{{ iframe.path }}"></iframe>
+
+  <div class="overlay">
+    <overlay-element ng-repeat="container in iframe.getContainers()"
+                     structure-element="container">
+      <overlay-element ng-class="{ 'component': iframe.selectMode }"
+                       ng-repeat="component in container.getComponents()"
+                       structure-element="component">
+      </overlay-element>
+    </overlay-element>
+  </div>
 
 </md-content>

@@ -14,36 +14,8 @@
  * limitations under the License.
  */
 
-.channel-iframe-base {
-  position: relative;
+import { PageStructureService } from './pageStructure.service';
 
-  iframe {
-    border: 0;
-  }
-
-  .overlay {
-    bottom: 0;
-    left: 0;
-    pointer-events: none;
-    position: absolute;
-    right: 0;
-    top: 0;
-
-    overlay-element {
-      border-style: solid;
-      border-width: 0;
-      box-sizing: border-box;
-      position: absolute;
-
-      &.component {
-        border-width: 2px;
-        border-color: #0086f8;
-        cursor: pointer;
-
-        &:hover {
-          border-color: #3dcc3d;
-        }
-      }
-    }
-  }
-}
+export const channelPageModule = angular
+  .module('hippo-cm.channel.page', [])
+  .service('PageStructureService', PageStructureService);

@@ -17,7 +17,9 @@
 // Should match HST's org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.
 export const HST_CONSTANT = {
   TYPE: 'HST-Type',
-  TYPE_PAGE_META_DATA: 'PAGE-META-DATA',
+  TYPE_PAGE: 'PAGE-META-DATA',
+  TYPE_CONTAINER: 'CONTAINER_COMPONENT',
+  TYPE_COMPONENT: 'CONTAINER_ITEM_COMPONENT',
   PATH_INFO: 'HST-Path-Info',
   CHANNEL_ID: 'HST-Channel-Id',
 };

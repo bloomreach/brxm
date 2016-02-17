@@ -16,6 +16,7 @@
 
 function link(scope, element, attr, iframe) {
   iframe.iframe = $(element).find('iframe');
+  iframe.overlay = $(element).find('.overlay');
   iframe.iframe.on('load', () => iframe.onLoad());
 }
 
@@ -27,6 +28,7 @@ export function hippoIframe() {
     scope: {},
     bindToController: {
       path: '=',
+      selectMode: '=',
     },
     templateUrl: 'channel/hippoIframe/hippoIframe.html',
     controller: 'hippoIframeCtrl',
