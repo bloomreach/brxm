@@ -34,7 +34,6 @@ export class HippoIframeCtrl {
     this.hstCommentsProcessorService = hstCommentsProcessorService;
     this.HST = HST_CONSTANT;
     this.ChannelService = ChannelService;
-    this.channelService = ChannelService;
   }
 
   onLoad() {
@@ -47,8 +46,8 @@ export class HippoIframeCtrl {
       switch (json[this.HST.TYPE]) {
         case this.HST.TYPE_PAGE_META_DATA:
           const channelId = json[this.HST.CHANNEL_ID];
-          if (channelId !== this.channelService.getId()) {
-            this.channelService.switchToChannel(channelId);
+          if (channelId !== this.ChannelService.getId()) {
+            this.ChannelService.switchToChannel(channelId);
           }
           break;
         default:
