@@ -20,7 +20,6 @@ describe('LinkProcessorService', function () {
   var linkProcessorService;
   var $document;
   var previewUrl = 'http://localhost:8080/site';
-  var $j = window.$j;
 
   beforeEach(function () {
     module('hippo-cm.channel.hippoIframe');
