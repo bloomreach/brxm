@@ -1,5 +1,5 @@
 /*
-*  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+*  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -46,8 +46,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toList;
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_SITEMAP;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource {
@@ -98,7 +96,7 @@ public class RootResource extends AbstractConfigResource {
     public Response getChannel(@PathParam("id") String channelId) {
         final VirtualHost virtualHost = RequestContextProvider.get().getResolvedMount().getMount().getVirtualHost();
         try {
-            Channel channel = virtualHost.getVirtualHosts().getChannelById(virtualHost.getHostGroupName(), channelId);
+            final Channel channel = virtualHost.getVirtualHosts().getChannelById(virtualHost.getHostGroupName(), channelId);
             return Response.ok().entity(channel).build();
         } catch (RuntimeRepositoryException e) {
             final String error = "Could not determine authorization";
@@ -108,10 +106,7 @@ public class RootResource extends AbstractConfigResource {
     }
 
     private boolean previewConfigRequiredFiltered(final Channel channel, final boolean previewConfigRequired) {
-        if (!previewConfigRequired) {
-            return true;
-        }
-        return channel.isPreview();
+        return !previewConfigRequired || channel.isPreview();
     }
 
     @GET
@@ -120,8 +115,7 @@ public class RootResource extends AbstractConfigResource {
         final Boolean crossChannelPageCopySupported = HstServices.getComponentManager().getContainerConfiguration().getBoolean("cross.channel.page.copy.supported", false);
         final FeaturesRepresentation featuresRepresentation = new FeaturesRepresentation();
         featuresRepresentation.setCrossChannelPageCopySupported(crossChannelPageCopySupported);
-        final String msg = String.format("Fetched features");
-        return ok(msg, featuresRepresentation);
+        return ok("Fetched features", featuresRepresentation);
     }
 
     private boolean workspaceFiltered(final Channel channel, final boolean required) throws RuntimeRepositoryException {
@@ -132,8 +126,7 @@ public class RootResource extends AbstractConfigResource {
         final Mount mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(channel.getMountId());
         final String workspacePath = mount.getHstSite().getConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
         try {
-            final boolean workspacePathExists = RequestContextProvider.get().getSession().nodeExists(workspacePath);
-            return workspacePathExists;
+            return RequestContextProvider.get().getSession().nodeExists(workspacePath);
         } catch (RepositoryException e) {
             throw new RuntimeRepositoryException(e);
         }
