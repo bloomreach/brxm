@@ -65,7 +65,7 @@ describe('LinkProcessorService', function () {
 
   describe('running with a null internalLinkPrefix', function () {
     it('should set attribute target to _blank for both internal and external links', function () {
-      linkProcessorService.run($document);
+      linkProcessorService.run($document, null);
       expectTargetAttrToBeBlank('.qa-external-link, .qa-internal-link');
       expectTargetAttrNotToBeBlank('.qa-local-link');
     });
