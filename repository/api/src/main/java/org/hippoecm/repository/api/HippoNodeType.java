@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -158,8 +158,16 @@ public interface HippoNodeType {
 
     public static final String NT_TEMPLATETYPE = "hipposysedit:templatetype";
 
+    /**
+     * @deprecated since REPO 4.0.0 (CMS 11.0)
+     */
+    @Deprecated
     public static final String NT_TRANSLATED = "hippo:translated";
 
+    /**
+     * @deprecated since REPO 4.0.0 (CMS 11.0)
+     */
+    @Deprecated
     public static final String NT_TRANSLATION = "hippo:translation";
 
     @Deprecated
@@ -284,6 +292,10 @@ public interface HippoNodeType {
 
     public static final String HIPPO_MEMBERS = "hipposys:members";
 
+    /**
+     * @deprecated since REPO 4.0.0 (CMS 11.0)
+     */
+    @Deprecated
     public static final String HIPPO_MESSAGE = "hippo:message";
 
     public static final String HIPPO_MANDATORY = "hipposysedit:mandatory";
@@ -368,6 +380,10 @@ public interface HippoNodeType {
 
     public static final String HIPPO_TEMPLATE = "hipposysedit:template";
 
+    /**
+     * @deprecated since REPO 4.0.0 (CMS 11.0)
+     */
+    @Deprecated
     public static final String HIPPO_TRANSLATION = "hippo:translation";
 
     public static final String HIPPOSYS_TYPE = "hipposys:type";

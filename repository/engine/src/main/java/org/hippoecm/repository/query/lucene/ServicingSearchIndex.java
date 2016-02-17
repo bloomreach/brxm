@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -395,105 +395,108 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
     @Override
     public void updateNodes(Iterator<NodeId> remove, Iterator<NodeState> add) throws RepositoryException, IOException {
+
+        final Set<NodeId> augmentedRemove = new HashSet<>();
+        while (remove.hasNext()) {
+            augmentedRemove.add(remove.next());
+        }
+
+        // NodeState does not implement equals hence we need NodeId
+        final Map<NodeId, NodeState> augmentedAdd = new HashMap<>();
+        while (add.hasNext()) {
+            final NodeState nodeState = add.next();
+            // since NodeState does not have hashcode/equals impls, we need to use NodeId for equals in Map
+            augmentedAdd.put(nodeState.getNodeId(), nodeState);
+        }
+
+        appendDocumentsThatHaveChangedChildNodesOrChangedHandles(augmentedRemove, augmentedAdd);
+
+        //  now filter out documents that have a 'skip index' marker
+        Map<NodeId, NodeState> includedNodeStates = getSkipIndexFilteredNodeStates(augmentedAdd);
+
+        super.updateNodes(augmentedRemove.iterator(),
+                includedNodeStates.values().iterator());
+
+    }
+
+    private Map<NodeId, NodeState> getSkipIndexFilteredNodeStates(final Map<NodeId, NodeState> augmentedAdd) throws RepositoryException {
         Map<NodeId, NodeState> includedNodeStates = new HashMap<>();
         // since NodeState does not have hashcode/equals impls, we need to use NodeId for caches
         Set<NodeId> excludedIdsCache = new HashSet<>();
         Set<NodeId> includedIdsCache = new HashSet<>();
-        while (add.hasNext()) {
-            NodeState state = add.next();
-            if (state != null) {
-                if (!skipIndexing(state, excludedIdsCache, includedIdsCache)) {
-                    includedNodeStates.put(state.getNodeId(), state);
+
+        for (NodeState nodeState : augmentedAdd.values()) {
+            if (nodeState != null) {
+                if (!skipIndexing(nodeState, excludedIdsCache, includedIdsCache)) {
+                    includedNodeStates.put(nodeState.getNodeId(), nodeState);
                 } else {
-                    log.debug("Nodestate '{}' is marked to be skipped for indexing.", state.getId());
+                    log.debug("Nodestate '{}' is marked to be skipped for indexing.", nodeState.getId());
                 }
             }
         }
-
-        NodeIdsNodeStatesHolder augmentedNodeIdsNodeStatesHolder = new NodeIdsNodeStatesHolder(remove, includedNodeStates);
-        augmentDocumentsToUpdate(augmentedNodeIdsNodeStatesHolder);
-
-        super.updateNodes(augmentedNodeIdsNodeStatesHolder.remove.iterator(),
-                augmentedNodeIdsNodeStatesHolder.add.values().iterator());
-
-    }
-
-    private void augmentDocumentsToUpdate(final NodeIdsNodeStatesHolder augmentedNodeIdsNodeStatesHolder) throws IOException, RepositoryException {
-        appendContainingDocumentStates(augmentedNodeIdsNodeStatesHolder);
-        appendDocumentsForTranslations(augmentedNodeIdsNodeStatesHolder);
-    }
-
-    private void appendDocumentsForTranslations(NodeIdsNodeStatesHolder nodeIdsNodeStatesHolder) throws IOException, RepositoryException {
-        List<NodeState> toAdd = new ArrayList<>();
-        for (Map.Entry<NodeId, NodeState> addEntry : nodeIdsNodeStatesHolder.add.entrySet()) {
-            final NodeState addedState = addEntry.getValue();
-            if (!isTranslation(addedState.getNodeTypeName())) {
-                continue;
-            }
-            try {
-                final NodeId parentId = addedState.getParentId();
-                if (parentId == null) {
-                    continue;
-                }
-                final NodeState parentState = getNodeState(parentId);
-                if (!isHandle(parentState)) {
-                    continue;
-                }
-                for (ChildNodeEntry siblingNodeEntry : parentState.getChildNodeEntries()) {
-                    final NodeId siblingId = siblingNodeEntry.getId();
-
-                    if(nodeIdsNodeStatesHolder.add.containsKey(siblingId) ||
-                            nodeIdsNodeStatesHolder.remove.contains(siblingId)) {
-                        continue;
-                    }
-
-                    final NodeState siblingState = getNodeState(siblingId);
-                    if (!isHippoDocument(siblingState)) {
-                        continue;
-                    }
-
-                    if(nodeIdsNodeStatesHolder.add.containsKey(siblingId) ||
-                            nodeIdsNodeStatesHolder.remove.contains(siblingId)) {
-                        continue;
-                    }
-                    toAdd.add(siblingState);
-                }
-            } catch (ItemStateException e) {
-                log.debug("Unable to retrieve state: {}", e.getMessage());
-            }
-        }
-        for (NodeState nodeState : toAdd) {
-            nodeIdsNodeStatesHolder.add.put(nodeState.getNodeId(), nodeState);
-            nodeIdsNodeStatesHolder.remove.add(nodeState.getNodeId());
-        }
+        return includedNodeStates;
     }
 
     /*
-     * If node states have been updated that are descendants of hippo:document nodes, then those hippo:document
-     * nodes need to be re-indexed.
+     * If node states (below documents) have been newly ADDED (can not yet be found via retrieveAggregateRoot
+     * since no org.apache.jackrabbit.core.query.lucene.FieldNames.AGGREGATED_NODE_UUID indexed on document level )
+     * that are descendants of hippo:document nodes, then those hippo:document nodes need to be re-indexed.
+     *
+     * Also re-index documents below changed handles
      */
-    private void appendContainingDocumentStates(NodeIdsNodeStatesHolder nodeIdsNodeStatesHolder) throws RepositoryException, IOException {
+    private void appendDocumentsThatHaveChangedChildNodesOrChangedHandles(final Set<NodeId> augmentedRemove,
+                                                                          final Map<NodeId, NodeState> augmentedAdd) throws RepositoryException, IOException {
         final Set<NodeId> checkedIds = new HashSet<>();
-        List<NodeState> toAdd = new ArrayList<>();
-        for (Map.Entry<NodeId, NodeState> addEntry : nodeIdsNodeStatesHolder.add.entrySet()) {
+        List<NodeState> nodeStatesToAdd = new ArrayList<>();
+        final ItemStateManager itemStateManager = getItemStateManager();
+        for (Map.Entry<NodeId, NodeState> addEntry : augmentedAdd.entrySet()) {
             try {
-                NodeState document = getContainingDocument(addEntry.getValue(), checkedIds);
-                if (document != null) {
-                    final NodeId nodeId = document.getNodeId();
-                    if(nodeIdsNodeStatesHolder.add.containsKey(nodeId) ||
-                            nodeIdsNodeStatesHolder.remove.contains(nodeId)) {
-                        continue;
+                final NodeState state = addEntry.getValue();
+                if (isHandle(state)) {
+                    // changed handle (hippo:name translation perhaps, hence re-index the variants)
+                    for (ChildNodeEntry childNodeEntry : state.getChildNodeEntries()) {
+                        if (childNodeEntry.getId() instanceof HippoNodeId) {
+                            // do not index virtual child nodes, ever
+                            continue;
+                        }
+
+                        final NodeState childState = (NodeState)itemStateManager.getItemState(childNodeEntry.getId());
+                        if (isHippoDocument(childState)) {
+                            // found document below changed handle. Add document to be reindexed
+                            addStateIfNeeded(augmentedRemove, augmentedAdd, nodeStatesToAdd, childState);
+                        }
                     }
-                    toAdd.add(document);
+                    continue;
+                }
+
+                NodeState document = getContainingDocument(state, checkedIds, itemStateManager);
+                if (document != null) {
+                    addStateIfNeeded(augmentedRemove, augmentedAdd, nodeStatesToAdd, document);
+                    continue;
                 }
             } catch (ItemStateException e) {
                 log.debug("Unable to retrieve state: {}", e.getMessage());
             }
         }
-        for (NodeState nodeState : toAdd) {
-            nodeIdsNodeStatesHolder.add.put(nodeState.getNodeId(), nodeState);
-            nodeIdsNodeStatesHolder.remove.add(nodeState.getNodeId());
+        for (NodeState nodeState : nodeStatesToAdd) {
+            augmentedAdd.put(nodeState.getNodeId(), nodeState);
+            augmentedRemove.add(nodeState.getNodeId());
         }
+    }
+
+    private void addStateIfNeeded(final Set<NodeId> augmentedRemove,
+                                  final Map<NodeId, NodeState> augmentedAdd,
+                                  final List<NodeState> nodeStates, final NodeState state) {
+        final NodeId nodeId = state.getNodeId();
+        if (nodeId instanceof HippoNodeId) {
+            // do not index virtual child nodes, ever
+            return;
+        }
+        if (augmentedAdd.containsKey(nodeId) ||
+                augmentedRemove.contains(nodeId)) {
+            return;
+        }
+        nodeStates.add(state);
     }
 
     @Override
@@ -616,19 +619,15 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         return false;
     }
 
-    private boolean isHandle(NodeState node) {
+    private boolean isHandle(final NodeState node) {
         return node.getNodeTypeName().equals(getIndexingConfig().getHippoHandleName());
     }
 
-    private boolean isTranslated(NodeState state) {
-        return state.getMixinTypeNames().contains(getIndexingConfig().getHippoTranslatedName());
+    private boolean isTranslation(final NodeState state) {
+        return state.getMixinTypeNames().contains(getIndexingConfig().getHippoNamedName());
     }
 
-    private boolean isTranslation(Name name) {
-        return name.equals(getIndexingConfig().getHippoTranslationName());
-    }
-
-    private boolean isHippoDocument(NodeState node) {
+    private boolean isHippoDocument(final NodeState node) {
         try {
             final EffectiveNodeType nodeType = getContext().getNodeTypeRegistry().getEffectiveNodeType(node.getNodeTypeName());
             return nodeType.includesNodeType(getIndexingConfig().getHippoDocumentName());
@@ -642,7 +641,8 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
      * @return the <code>NodeState</code> of the Document variant which is an ancestor of the state
      * or <code>null</code> if this state was not a child of a document variant
      */
-    private NodeState getContainingDocument(NodeState state, Set<NodeId> checkedIds) throws ItemStateException {
+    private NodeState getContainingDocument(final NodeState state, final Set<NodeId> checkedIds,
+                                            final ItemStateManager itemStateManager) throws ItemStateException {
         if (checkedIds.contains(state.getNodeId())) {
             // already checked these ancestors: no need to do it again
             return null;
@@ -651,24 +651,27 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         if (isDocumentVariant(state)) {
             return state;
         }
-        ItemStateManager ism = getItemStateManager();
         if (state.getParentId() == null) {
             return null;
         }
-        NodeState parent = (NodeState) ism.getItemState(state.getParentId());
+        NodeState parent = (NodeState) itemStateManager.getItemState(state.getParentId());
         if (parent == null) {
             return null;
 
         }
-        return getContainingDocument(parent, checkedIds);
+        return getContainingDocument(parent, checkedIds, itemStateManager);
     }
 
     /**
      * Adds the fulltext index field of the child states to Document doc
+     *
      * @param aggregateChildTypes When <code>true</code>, properties of child nodes will also be indexed as explicit
-     *                            fields on <code>doc</code> if configured as aggregate/childType in indexing_configuration.xml
+     *                            fields on <code>doc</code> if configured as aggregate/childType in
+     *                            indexing_configuration.xml
      */
-    private void aggregateDescendants(NodeState state, Document doc, IndexFormatVersion indexFormatVersion, ServicingNodeIndexer indexer,  boolean aggregateChildTypes) {
+    private void aggregateDescendants(final NodeState state, final Document doc,
+                                      final IndexFormatVersion indexFormatVersion,
+                                      final ServicingNodeIndexer indexer, final boolean aggregateChildTypes) {
         for (ChildNodeEntry childNodeEntry : state.getChildNodeEntries()) {
             if (childNodeEntry.getId() instanceof HippoNodeId) {
                 // do not index virtual child nodes, ever
@@ -753,25 +756,19 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             if (parentId == null) {
                 return;
             }
-            final NodeState parentState = getNodeState(parentId);
-            if (!isHandle(parentState) || !isTranslated(parentState)) {
+            final NodeState handleState = getNodeState(parentId);
+            if (!isHandle(handleState)) {
                 return;
             }
-            for (ChildNodeEntry childNodeEntry : parentState.getChildNodeEntries()) {
-                final Name childName = childNodeEntry.getName();
-                if (!isTranslation(childName)) {
-                    continue;
-                }
-                final NodeId translationId = childNodeEntry.getId();
-                final NodeState translationState = getNodeState(translationId);
-                final PropertyId messagePropertyId = new PropertyId(translationState.getNodeId(), getIndexingConfig().getHippoMessageName());
-                final PropertyState messagePropertyState = getPropertyState(messagePropertyId);
-                if (messagePropertyState.getValues().length == 0 || messagePropertyState.getValues()[0] == null || messagePropertyState.getValues()[0].getString().isEmpty()) {
-                    continue;
-                }
-                doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, translationId.toString(), Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
-                indexer.addStringValue(doc, getIndexingConfig().getTranslationMessageFieldName(), messagePropertyState.getValues()[0].getString(), true, true, 2.0f, true, false);
+            if (isTranslation(handleState)) {
+                final PropertyId namePropertyId = new PropertyId(handleState.getNodeId(), getIndexingConfig().getHippoNameName());
+                final PropertyState namePropertyState = getPropertyState(namePropertyId);
+                indexer.addStringValue(doc, getIndexingConfig().getHippoNameFieldName(), namePropertyState.getValues()[0].getString(), true, true, 2.0f, true, false);
+
             }
+            // make sure that if the handle gets the mixin 'hippo:named' or gets its 'hippo:name' changed, it triggers a re-index on the documents (variants)
+            doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, parentId.toString(), Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
+
         } catch (ItemStateException | RepositoryException e) {
             final String message = "Unable to add index translations of document " + state.getId();
             if (log.isDebugEnabled()) {
@@ -792,20 +789,6 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
     private ItemStateManager getItemStateManager() {
         return getContext().getItemStateManager();
-    }
-
-    private class NodeIdsNodeStatesHolder {
-
-        Set<NodeId> remove = new HashSet<>();
-        // NodeState does not implement equals hence we need NodeId
-        Map<NodeId, NodeState> add = new HashMap<>();
-
-        NodeIdsNodeStatesHolder(Iterator<NodeId> remove, Map<NodeId, NodeState> add) {
-            while(remove.hasNext()) {
-                this.remove.add(remove.next());
-            }
-            this.add = add;
-        }
     }
 
 }

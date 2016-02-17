@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,7 +35,6 @@ import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
 import org.apache.jackrabbit.spi.commons.conversion.ParsingNameResolver;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
@@ -44,6 +43,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NAME;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_TEXT;
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
+import static org.hippoecm.repository.api.HippoNodeType.NT_NAMED;
+import static org.hippoecm.repository.api.HippoNodeType.NT_SKIPINDEX;
 
 public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImpl implements ServicingIndexingConfiguration {
 
@@ -73,13 +80,11 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
 
     private Name hippoDocument;
 
-    private Name hippoTranslation;
+    private Name hippoNamed;
 
-    private Name hippoMessage;
+    private Name hippoName;
 
-    private Name hippoTranslated;
-
-    private String translationMessageFieldName;
+    private String hippoNameFieldName;
 
     /**
      * QName's of all the child node that should be aggregated
@@ -191,16 +196,15 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
             }
 
         }
-        hippoPath = nameResolver.getQName(HippoNodeType.HIPPO_PATHS);
-        hippoText = nameResolver.getQName(HippoNodeType.HIPPO_TEXT);
-        hippoHandle = nameResolver.getQName(HippoNodeType.NT_HANDLE);
-        hippoDocument = nameResolver.getQName(HippoNodeType.NT_DOCUMENT);
-        hippoTranslation = nameResolver.getQName(HippoNodeType.HIPPO_TRANSLATION);
-        hippoMessage = nameResolver.getQName(HippoNodeType.HIPPO_MESSAGE);
-        hippoTranslated = nameResolver.getQName(HippoNodeType.NT_TRANSLATED);
-        skipIndex = nameResolver.getQName(HippoNodeType.NT_SKIPINDEX);
+        hippoPath = nameResolver.getQName(HIPPO_PATHS);
+        hippoText = nameResolver.getQName(HIPPO_TEXT);
+        hippoHandle = nameResolver.getQName(NT_HANDLE);
+        hippoDocument = nameResolver.getQName(NT_DOCUMENT);
+        hippoNamed = nameResolver.getQName(NT_NAMED);
+        hippoName = nameResolver.getQName(HIPPO_NAME);
+        hippoNameFieldName = nameResolver.getJCRName(hippoName);
+        skipIndex = nameResolver.getQName(NT_SKIPINDEX);
         hippoAggregates = idxHippoAggregates.toArray(new Name[idxHippoAggregates.size()]);
-        translationMessageFieldName = nameResolver.getJCRName(hippoTranslation) + "/" + nameResolver.getJCRName(hippoMessage);
         aggregateRules = super.getAggregateRules();
         if (aggregateRules == null) {
             aggregateRules = new AggregateRule[0];
@@ -306,24 +310,20 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         return hippoDocument;
     }
 
+
     @Override
-    public Name getHippoTranslationName() {
-        return hippoTranslation;
+    public Name getHippoNamedName() {
+        return hippoNamed;
     }
 
     @Override
-    public Name getHippoMessageName() {
-        return hippoMessage;
+    public Name getHippoNameName() {
+        return hippoName;
     }
 
     @Override
-    public Name getHippoTranslatedName() {
-        return hippoTranslated;
-    }
-
-    @Override
-    public String getTranslationMessageFieldName() {
-        return translationMessageFieldName;
+    public String getHippoNameFieldName() {
+        return hippoNameFieldName;
     }
 
     public Name getHippoPathPropertyName() {
