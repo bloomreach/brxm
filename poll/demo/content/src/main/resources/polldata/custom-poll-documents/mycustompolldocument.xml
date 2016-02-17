@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="mycustompolldocument">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>poll:polldata</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+    <sv:value>mix:lockable</sv:value>
+  </sv:property>
+  <sv:node sv:name="yes">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>poll:votes</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+      <sv:value>mix:lockable</sv:value>
+    </sv:property>
+    <sv:property sv:name="poll:count" sv:type="Long">
+      <sv:value>13664</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="no">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>poll:votes</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+      <sv:value>mix:lockable</sv:value>
+    </sv:property>
+    <sv:property sv:name="poll:count" sv:type="Long">
+      <sv:value>547</sv:value>
+    </sv:property>
+  </sv:node>
+</sv:node>
