@@ -122,6 +122,11 @@
               <excludes combine.children="append">
                 <!-- repository content XML -->
                 <exclude>src/main/resources/*.xml</exclude>
+                <exclude>demo/bootstrap/configuration/src/main/resources/**/*.xml</exclude>
+                <exclude>demo/bootstrap/content/src/main/resources/**/*.xml</exclude>
+                <!-- 3rd party -->
+                <exclude>demo/site/src/main/webapp/js/html5shiv.js</exclude>
+                <exclude>demo/site/src/main/webapp/css/style.css</exclude>
               </excludes>
             </configuration>
           </plugin>
