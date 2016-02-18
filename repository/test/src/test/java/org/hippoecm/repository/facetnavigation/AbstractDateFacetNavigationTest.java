@@ -102,6 +102,7 @@ public abstract class AbstractDateFacetNavigationTest extends RepositoryTestCase
             PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException,
             ConstraintViolationException, RepositoryException {
         Node carDoc = carDocs.addNode(name, "hippo:handle");
+        carDoc.addMixin("mix:referenceable");
         carDoc = carDoc.addNode(name, "hippo:testcardocument");
         carDoc.addMixin("mix:versionable");
         carDoc.setProperty("hippo:date", cal);

@@ -134,6 +134,7 @@ public abstract class AbstractRangesFacetNavigationTest extends RepositoryTestCa
             throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException,
             VersionException, ConstraintViolationException, RepositoryException {
         Node carDoc = dateDocs.addNode(name, "hippo:handle");
+        carDoc.addMixin("mix:referenceable");
         carDoc = carDoc.addNode(name, "hippo:testcardocument");
         carDoc.addMixin("mix:versionable");
         carDoc.setProperty("hippo:date", cal);

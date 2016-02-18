@@ -99,6 +99,7 @@ public class FreeTextSearchTest extends RepositoryTestCase {
 
     private void addCarDoc(Node carDocs, String name, Calendar cal, String contents, String brand, String color) throws RepositoryException {
         Node carDoc = carDocs.addNode(name, "hippo:handle");
+        carDoc.addMixin("mix:referenceable");
         carDoc = carDoc.addNode(name, "hippo:testcardocument");
         carDoc.addMixin("mix:versionable");
         carDoc.setProperty("hippo:date", cal);

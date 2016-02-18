@@ -54,6 +54,7 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
         "/test/folder", "hippostd:folder",
             "jcr:mixinTypes", "mix:versionable",
         "/test/folder/document", "hippo:handle",
+            "jcr:mixinTypes", "mix:referenceable",
         "/test/folder/document/document", "hippo:testdocument",
             "hippostd:state", "unpublished",
             "hippostd:holder", "admin",

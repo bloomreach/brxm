@@ -322,6 +322,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     public void testDocumentsAreOrderedBelowHandle() throws RepositoryException {
         Node testRoot = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testRoot.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
 
 
         Node doc = handle.addNode("doc", "hippo:authtestdocument");
@@ -343,6 +344,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     public void testDocumentsAreOrderedBelowHandleWithOtherNodesPresent() throws RepositoryException {
         Node testRoot = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testRoot.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
 
         handle.addMixin("hippo:translated");
 
@@ -370,6 +372,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     public void testDocumentsAreOrderedAfterModification() throws RepositoryException {
         Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
 
 
         Node doc = handle.addNode("doc", "hippo:authtestdocument");
@@ -398,6 +401,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     public void testAccessIsNotCached() throws RepositoryException {
         Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
 
 
         Node doc = handle.addNode("doc", "hippo:authtestdocument");
@@ -424,6 +428,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     public void testAccessIsNotCachedWhenHandleChanges() throws RepositoryException {
         Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
 
 
         Node doc = handle.addNode("doc", "hippo:authtestdocument");
@@ -450,6 +455,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     public void testDocumentAccessIsSwitched() throws RepositoryException {
         Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
 
 
         Node doc1 = handle.addNode("doc", "hippo:authtestdocument");
@@ -475,6 +481,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     public void testAccessChangesBasedWhenPropertyIsUpdated() throws RepositoryException {
         Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
 
 
         Node doc1 = handle.addNode("doc", "hippo:authtestdocument");
@@ -501,6 +508,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     public void testAccessForChildNodeFollowsParent() throws RepositoryException {
         Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
 
 
         Node doc = handle.addNode("doc", "hippo:authtestdocument");

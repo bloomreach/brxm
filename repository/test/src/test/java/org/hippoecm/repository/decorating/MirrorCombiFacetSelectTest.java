@@ -32,6 +32,7 @@ public class MirrorCombiFacetSelectTest extends RepositoryTestCase {
         "/test/documents/articles/foo",                                      "nt:unstructured",
         "jcr:mixinTypes", "mix:referenceable",
         "/test/documents/articles/foo/brave-new-world",                      "hippo:handle",
+            "jcr:mixinTypes",  "mix:referenceable",
         "/test/documents/articles/foo/brave-new-world/brave-new-world",      "hippo:testdocument",
         "language","english",
         "state","published",

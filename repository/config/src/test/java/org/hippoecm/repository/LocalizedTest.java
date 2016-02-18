@@ -43,6 +43,7 @@ public class LocalizedTest extends RepositoryTestCase {
         "hippo:language",                          "nl",
         "hippo:message",                           "aap",
         "/test/folder/document",                   "hippo:handle",
+            "jcr:mixinTypes",                          "mix:referenceable",
         "jcr:mixinTypes",                          "hippo:translated",
         "/test/folder/document/hippo:translation", "hippo:translation",
         "hippo:language",                          "en",

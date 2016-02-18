@@ -59,6 +59,7 @@ public class MirrorPerfTestCase extends RepositoryTestCase {
             }
             for(int i=0; i<docsPerNode; i++) {
                 Node child = node.addNode("document"+i, "hippo:handle");
+                child.addMixin("mix:referenceable");
                 child = child.addNode("document"+i, "hippo:testdocument");
                 child.addMixin("mix:versionable");
                 ++total;
@@ -66,6 +67,7 @@ public class MirrorPerfTestCase extends RepositoryTestCase {
         } else {
             for(int i=0; i<docsPerLeaf; i++) {
                 Node child = node.addNode("document"+i, "hippo:handle");
+                child.addMixin("mix:referenceable");
                 child = child.addNode("document"+i, "hippo:testdocument");
                 child.addMixin("mix:versionable");
                 ++total;

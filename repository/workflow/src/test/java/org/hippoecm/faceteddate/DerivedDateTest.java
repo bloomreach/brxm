@@ -116,7 +116,7 @@ public class DerivedDateTest extends RepositoryTestCase {
     @Test
     public void testFacetedDateCustom() throws Exception {
         Node handle = session.getNode("/test").addNode("doc", "hippo:handle");
-
+        handle.addMixin("mix:referenceable");
         Node node = handle.addNode("doc", "hippo:datedocument2");
         node.addMixin("mix:versionable");
         node.setProperty("hippo:d1", date);
@@ -129,7 +129,7 @@ public class DerivedDateTest extends RepositoryTestCase {
     @Test
     public void testFacetedDateOptional() throws Exception {
         Node handle = session.getNode("/test").addNode("doc", "hippo:handle");
-
+        handle.addMixin("mix:referenceable");
         Node node = handle.addNode("doc", "hippo:datedocument2");
         node.addMixin("mix:versionable");
         node.setProperty("hippo:d1", date);

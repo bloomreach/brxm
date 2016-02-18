@@ -281,6 +281,7 @@ public class FacetedNavigationConcurrencyTest extends RepositoryTestCase {
                // add a car
                String carName = "car"+System.currentTimeMillis();
                Node car = cars.addNode(carName, "hippo:handle");
+               car.addMixin("mix:referenceable");
                car = car.addNode(carName, "hippo:testcardocument");
                car.addMixin("mix:versionable");
                car.setProperty("hippo:brand", "mercedes");
@@ -317,12 +318,14 @@ public class FacetedNavigationConcurrencyTest extends RepositoryTestCase {
          * car that has no facets, so should not be visible at all in facet
          */
         Node car = cars.addNode("car0", "hippo:handle");
+        car.addMixin("mix:referenceable");
 
         car = car.addNode("car0", "hippo:testcardocument");
         car.addMixin("mix:versionable");
 
         // car 1
         car = cars.addNode("car1", "hippo:handle");
+        car.addMixin("mix:referenceable");
 
         car = car.addNode("car1", "hippo:testcardocument");
         car.addMixin("mix:versionable");
@@ -335,6 +338,7 @@ public class FacetedNavigationConcurrencyTest extends RepositoryTestCase {
 
         // car 2
         car = cars.addNode("car2", "hippo:handle");
+        car.addMixin("mix:referenceable");
         car = car.addNode("car2", "hippo:testcardocument");
         car.addMixin("mix:versionable");
         car.setProperty("hippo:brand", "volkswagen");
@@ -346,6 +350,7 @@ public class FacetedNavigationConcurrencyTest extends RepositoryTestCase {
 
         // car 3
         car = cars.addNode("car3", "hippo:handle");
+        car.addMixin("mix:referenceable");
         car = car.addNode("car3", "hippo:testcardocument");
         car.addMixin("mix:versionable");
         car.setProperty("hippo:brand", "peugeot");
@@ -359,6 +364,7 @@ public class FacetedNavigationConcurrencyTest extends RepositoryTestCase {
 
         // car 4
         car = cars.addNode("car4", "hippo:handle");
+        car.addMixin("mix:referenceable");
         car = car.addNode("car4", "hippo:testcardocument");
         car.addMixin("mix:versionable");
 

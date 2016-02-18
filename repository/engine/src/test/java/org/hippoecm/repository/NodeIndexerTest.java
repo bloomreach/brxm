@@ -43,6 +43,7 @@ public class NodeIndexerTest extends RepositoryTestCase {
     static String[] content = {
             "/test", "nt:unstructured",
                 "/test/doc", "hippo:handle",
+                    "jcr:mixinTypes",  "mix:referenceable",
                     "/test/doc/doc", "hippo:testdocument",
                         "jcr:mixinTypes", "mix:versionable"
     };

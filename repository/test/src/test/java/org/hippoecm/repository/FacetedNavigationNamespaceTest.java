@@ -45,6 +45,7 @@ public class FacetedNavigationNamespaceTest extends RepositoryTestCase {
     
     public void createDocuments(Node docNode) throws RepositoryException {
         Node normalNode = docNode.addNode("normal", "hippo:handle");
+        normalNode.addMixin("mix:referenceable");
         Node namespaceNode = docNode.addNode("namespace", "hippo:handle");
         Node bothNode = docNode.addNode("both", "hippo:handle");
         Node node;
