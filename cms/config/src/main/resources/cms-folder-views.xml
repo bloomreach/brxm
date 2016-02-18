@@ -37,10 +37,10 @@
       <sv:value>wicket.id</sv:value>
     </sv:property>
     <sv:property sv:name="list.page.size" sv:type="String">
-      <sv:value>500</sv:value>
+      <sv:value>50</sv:value>
     </sv:property>
     <sv:property sv:name="list.view.size" sv:type="String">
-      <sv:value>3</sv:value>
+      <sv:value>5</sv:value>
     </sv:property>
     <sv:property sv:name="gallery.thumbnail.size" sv:type="String">
       <sv:value>60</sv:value>
@@ -169,10 +169,10 @@
       <sv:value>wicket.id</sv:value>
     </sv:property>
     <sv:property sv:name="list.page.size" sv:type="String">
-      <sv:value>500</sv:value>
+      <sv:value>50</sv:value>
     </sv:property>
     <sv:property sv:name="list.view.size" sv:type="String">
-      <sv:value>3</sv:value>
+      <sv:value>5</sv:value>
     </sv:property>
     <sv:node sv:name="root">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -462,10 +462,10 @@
       <sv:value>wicket.id</sv:value>
     </sv:property>
     <sv:property sv:name="list.page.size" sv:type="String">
-      <sv:value>500</sv:value>
+      <sv:value>50</sv:value>
     </sv:property>
     <sv:property sv:name="list.view.size" sv:type="String">
-      <sv:value>3</sv:value>
+      <sv:value>5</sv:value>
     </sv:property>
     <sv:node sv:name="root">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -619,10 +619,10 @@
       <sv:value>wicket.id</sv:value>
     </sv:property>
     <sv:property sv:name="list.page.size" sv:type="String">
-      <sv:value>500</sv:value>
+      <sv:value>50</sv:value>
     </sv:property>
     <sv:property sv:name="list.view.size" sv:type="String">
-      <sv:value>3</sv:value>
+      <sv:value>5</sv:value>
     </sv:property>
     <sv:node sv:name="root">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -776,10 +776,10 @@
       <sv:value>wicket.id</sv:value>
     </sv:property>
     <sv:property sv:name="list.page.size" sv:type="String">
-      <sv:value>500</sv:value>
+      <sv:value>50</sv:value>
     </sv:property>
     <sv:property sv:name="list.view.size" sv:type="String">
-      <sv:value>3</sv:value>
+      <sv:value>5</sv:value>
     </sv:property>
     <sv:node sv:name="root">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -861,10 +861,10 @@
       <sv:value>wicket.id</sv:value>
     </sv:property>
     <sv:property sv:name="list.page.size" sv:type="String">
-      <sv:value>500</sv:value>
+      <sv:value>50</sv:value>
     </sv:property>
     <sv:property sv:name="list.view.size" sv:type="String">
-      <sv:value>3</sv:value>
+      <sv:value>5</sv:value>
     </sv:property>
     <sv:node sv:name="root">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -902,10 +902,10 @@
       <sv:value>wicket.id</sv:value>
     </sv:property>
     <sv:property sv:name="list.page.size" sv:type="String">
-      <sv:value>500</sv:value>
+      <sv:value>50</sv:value>
     </sv:property>
     <sv:property sv:name="list.view.size" sv:type="String">
-      <sv:value>3</sv:value>
+      <sv:value>5</sv:value>
     </sv:property>
     <sv:node sv:name="root">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
