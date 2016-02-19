@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-function link(scope, element, attr, iframe) {
-  // push the iframe and overlay elements onto the iframe controller
-  iframe.onLink($(element).find('iframe'), $(element).find('.overlay'));
-}
-
 export function hippoIframe() {
   'ngInject';
 
@@ -32,6 +27,8 @@ export function hippoIframe() {
     templateUrl: 'channel/hippoIframe/hippoIframe.html',
     controller: 'hippoIframeCtrl',
     controllerAs: 'iframe',
-    link,
+    link: function(scope, element, attr, iframe) {
+      iframe.onLink(element);
+    },
   };
 }

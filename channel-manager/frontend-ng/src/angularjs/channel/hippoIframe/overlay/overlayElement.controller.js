@@ -15,8 +15,29 @@
  */
 
 export class OverlayElementCtrl {
-  constructor() {
+  constructor($scope, OverlaySyncService) {
     'ngInject';
 
+    this.OverlaySyncService = OverlaySyncService;
+    this.ensureVisibilityOfEmptyContainer($scope);
+  }
+
+  // overlay sync'ing can only start after the structure element was bound to the overlay dom element.
+  onLink(overlayJQueryElement) {
+    this.structureElement.setJQueryElement('overlay', overlayJQueryElement);
+    this.OverlaySyncService.registerElement(this.structureElement);
+  }
+
+  ensureVisibilityOfEmptyContainer($scope) {
+    if (this.structureElement.type === 'container' && this.structureElement.isEmpty()) {
+      const iframeDomElement = this.structureElement.getJQueryElement('iframe')[0];
+      const minHeight = iframeDomElement.style.minHeight || 'auto';
+      iframeDomElement.style.minHeight = '40px';
+
+      // reset styling when element is destroyed
+      $scope.$on('$destroy', () => {
+        iframeDomElement.style.minHeight = minHeight;
+      });
+    }
   }
 }

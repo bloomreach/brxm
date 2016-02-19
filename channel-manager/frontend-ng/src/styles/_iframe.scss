@@ -35,17 +35,17 @@
       box-sizing: border-box;
       position: absolute;
 
-      &.container {
-        .inner,
-        span {
-          display: none;
-        }
+      .contrast,
+      .overlay-label {
+        display: none;
+      }
 
+      &.container {
         &.empty {
           border-width: 2px;
           border-color: black;
 
-          .inner {
+          .contrast {
             border-color: white;
             border-style: solid;
             border-width: 2px;
@@ -53,7 +53,7 @@
             display: block;
           }
 
-          span {
+          .overlay-label {
             background-color: black;
             color: white;
             display: inline;
@@ -72,7 +72,7 @@
         cursor: pointer;
         pointer-events: auto;
 
-        .inner {
+        .contrast {
           border-color: white;
           border-style: solid;
           border-width: 2px;
@@ -80,10 +80,9 @@
           display: block;
         }
 
-        span {
+        .overlay-label {
           background-color: #0086f8;
           color: white;
-          display: none;
           font-size: 10px;
           left: 0;
           padding: 0 4px 2px 4px;
@@ -92,7 +91,7 @@
         }
 
         &:hover {
-          span {
+          .overlay-label {
             display: inline;
           }
         }

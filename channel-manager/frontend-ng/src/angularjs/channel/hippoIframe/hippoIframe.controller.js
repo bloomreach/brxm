@@ -40,9 +40,9 @@ export class HippoIframeCtrl {
     this.OverlaySyncService = OverlaySyncService;
   }
 
-  onLink(iframeJQueryElement, overlayJQueryElement) {
-    this.iframeJQueryElement = iframeJQueryElement;
-    this.overlayJQueryElement = overlayJQueryElement;
+  onLink(iframeDomElement) {
+    this.iframeJQueryElement = $(iframeDomElement).find('iframe');
+    this.overlayJQueryElement = $(iframeDomElement).find('.overlay');
 
     iframeJQueryElement.on('load', () => this.onLoad());
   }

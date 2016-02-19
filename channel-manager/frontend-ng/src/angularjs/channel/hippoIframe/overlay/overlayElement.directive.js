@@ -14,37 +14,18 @@
  * limitations under the License.
  */
 
-function ensureVisibilityOfEmptyContainer(scope) {
-  if (scope.structureElement.type === 'container' && scope.structureElement.isEmpty()) {
-    const iframeDomElement = scope.structureElement.getJQueryElement('iframe')[0];
-    const minHeight = iframeDomElement.style.minHeight || 'auto';
-    iframeDomElement.style.minHeight = '40px';
-
-    // reset styling when element is destroyed
-    scope.$on('$destroy', () => {
-      iframeDomElement.style.minHeight = minHeight;
-    });
-  }
-}
-
-export function overlayElementDirective(OverlaySyncService) {
+export function overlayElementDirective() {
   'ngInject';
 
   return {
     restrict: 'E',
-    scope: {
-      structureElement: '=',
-    },
     bindToController: {
       structureElement: '=',
     },
     templateUrl: 'channel/hippoIframe/overlay/overlayElement.html',
     controller: 'OverlayElementCtrl as overlayElement',
-    link: (scope, element) => {
-      ensureVisibilityOfEmptyContainer(scope);
-
-      scope.structureElement.setJQueryElement('overlay', element);
-      OverlaySyncService.registerElement(scope.structureElement);
+    link: function(scope, element, attr, overlayElement) {
+      overlayElement.onLink(element);
     },
   };
 }
