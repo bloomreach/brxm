@@ -40,4 +40,10 @@ public interface NodeUpdateVisitorContext {
      */
     void reportFailed(String path);
 
+    /**
+     * Returns true if the current execution is on dry run mode.
+     * @return true if the current execution is on dry run mode
+     */
+    boolean isDryRun();
+
 }
