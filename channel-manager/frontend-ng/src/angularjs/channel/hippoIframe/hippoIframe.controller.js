@@ -40,14 +40,25 @@ export class HippoIframeCtrl {
     this.OverlaySyncService = OverlaySyncService;
   }
 
+  onLink(iframeJQueryElement, overlayJQueryElement) {
+    this.iframeJQueryElement = iframeJQueryElement;
+    this.overlayJQueryElement = overlayJQueryElement;
+
+    iframeJQueryElement.on('load', () => this.onLoad());
+  }
+
   onLoad() {
     this.$rootScope.$apply(() => {
 
       this._parseHstComments();
       this._parseLinks();
 
-      this.OverlaySyncService.startObserving(this.iframe, this.overlay);
+      this.OverlaySyncService.startObserving(this.iframeJQueryElement, this.overlayJQueryElement);
     });
+  }
+
+  show(structureElement) {
+    console.log('show details of structure element', structureElement);
   }
 
   _parseHstComments() {
@@ -64,7 +75,7 @@ export class HippoIframeCtrl {
       }
       this.PageStructureService.registerParsedElement(commentElement, metaData);
     };
-    const iframeDom = this.iframe.contents()[0];
+    const iframeDom = this.iframeJQueryElement.contents()[0];
 
     this.PageStructureService.clearParsedElements();
     this.hstCommentsProcessorService.run(iframeDom, processHstComment);
@@ -72,7 +83,7 @@ export class HippoIframeCtrl {
   }
 
   _parseLinks() {
-    const iframeDom = this.iframe.contents()[0];
+    const iframeDom = this.iframeJQueryElement.contents()[0];
     const channel = this.ChannelService.channel;
     const internalLinkPrefix = constructUrl(iframeDom.location, channel.contextPath, channel.cmsPreviewPrefix);
 
@@ -80,7 +91,7 @@ export class HippoIframeCtrl {
   }
 
   getContainers() {
-    return this.PageStructureService.containers;
+    return this.selectMode ? this.PageStructureService.containers : [];
   }
 
 }

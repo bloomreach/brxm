@@ -15,9 +15,11 @@
  */
 
 import { overlayElementDirective } from './overlayElement.directive';
+import { OverlayElementCtrl } from './overlayElement.controller';
 import { OverlaySyncService } from './overlaySync.service';
 
 export const overlayModule = angular
   .module('hippo-cm.channel.hippoIframe.overlay', [])
   .directive('overlayElement', overlayElementDirective)
+  .controller('OverlayElementCtrl', OverlayElementCtrl)
   .service('OverlaySyncService', OverlaySyncService);

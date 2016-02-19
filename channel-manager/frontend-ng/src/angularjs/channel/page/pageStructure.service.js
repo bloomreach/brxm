@@ -33,7 +33,7 @@ export class PageStructureService {
   registerParsedElement(commentDomElement, metaData) {
     switch (metaData[this.HST.TYPE]) {
       case this.HST.TYPE_CONTAINER:
-        this.containers.push(new ContainerElement($(commentDomElement).next()));
+        this.containers.push(new ContainerElement(commentDomElement, metaData));
         break;
 
       case this.HST.TYPE_COMPONENT:
@@ -43,7 +43,7 @@ export class PageStructureService {
         }
 
         const container = this.containers[this.containers.length - 1];
-        container.addComponent(new ComponentElement($(commentDomElement).parent(), container));
+        container.addComponent(new ComponentElement(commentDomElement, metaData, container));
         break;
 
       default:
@@ -62,8 +62,9 @@ export class PageStructureService {
 }
 
 class PageStructureElement {
-  constructor(type, jQueryElement) {
+  constructor(type, jQueryElement, metaData) {
     this.type = type;
+    this.metaData = metaData;
     this.jQueryElements = {};
 
     this.setJQueryElement('iframe', jQueryElement);
@@ -79,10 +80,14 @@ class PageStructureElement {
 }
 
 class ContainerElement extends PageStructureElement {
-  constructor(jQueryElement) {
-    super('container', jQueryElement);
+  constructor(commentDomElement, metaData) {
+    super('container', $(commentDomElement).next(), metaData);
 
     this.items = [];
+  }
+
+  isEmpty() {
+    return this.items.length === 0;
   }
 
   addComponent(component) {
@@ -95,8 +100,8 @@ class ContainerElement extends PageStructureElement {
 }
 
 class ComponentElement extends PageStructureElement {
-  constructor(jQueryElement, container) {
-    super('component', jQueryElement);
+  constructor(commentDomElement, metaData, container) {
+    super('component', $(commentDomElement).parent(), metaData);
 
     this.container = container;
   }

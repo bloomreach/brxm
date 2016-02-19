@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-/*
-// ensure that containers and components are always visible
-function ensureVisibilityOfIframeElement(domElement, scope) {
-  const minHeight = domElement.style.minHeight || 'auto';
-  domElement.style.minHeight = '40px';
+function ensureVisibilityOfEmptyContainer(scope) {
+  if (scope.structureElement.type === 'container' && scope.structureElement.isEmpty()) {
+    const iframeDomElement = scope.structureElement.getJQueryElement('iframe')[0];
+    const minHeight = iframeDomElement.style.minHeight || 'auto';
+    iframeDomElement.style.minHeight = '40px';
 
-  // reset styling when element is destroyed
-  scope.$on('$destroy', () => {
-    domElement.style.minHeight = minHeight;
-  });
+    // reset styling when element is destroyed
+    scope.$on('$destroy', () => {
+      iframeDomElement.style.minHeight = minHeight;
+    });
+  }
 }
-*/
 
 export function overlayElementDirective(OverlaySyncService) {
   'ngInject';
@@ -35,8 +35,13 @@ export function overlayElementDirective(OverlaySyncService) {
     scope: {
       structureElement: '=',
     },
+    bindToController: {
+      structureElement: '=',
+    },
+    templateUrl: 'channel/hippoIframe/overlay/overlayElement.html',
+    controller: 'OverlayElementCtrl as overlayElement',
     link: (scope, element) => {
-//      ensureVisibilityOfIframeElement(scope.structureElement.getJQueryElement('iframe')[0], scope);
+      ensureVisibilityOfEmptyContainer(scope);
 
       scope.structureElement.setJQueryElement('overlay', element);
       OverlaySyncService.registerElement(scope.structureElement);

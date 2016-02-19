@@ -27,24 +27,14 @@ function throttle(callback, limit) {
   };
 }
 
-function getParentOffset(structureElement) {
-  if (structureElement.type === 'component') {
-    const containerRect = structureElement.container.getJQueryElement('iframe')[0].getBoundingClientRect();
-
-    return [containerRect.top, containerRect.left];
-  }
-  return [0, 0];
-}
-
 function syncElement(structureElement) {
   const overlayJQueryElement = structureElement.getJQueryElement('overlay');
   const iframeJQueryElement = structureElement.getJQueryElement('iframe');
 
   const rect = iframeJQueryElement[0].getBoundingClientRect();
-  const [parentTop, parentLeft] = getParentOffset(structureElement);
 
-  overlayJQueryElement.css('top', (rect.top - parentTop) + 'px');
-  overlayJQueryElement.css('left', (rect.left - parentLeft) + 'px');
+  overlayJQueryElement.css('top', rect.top + 'px');
+  overlayJQueryElement.css('left', rect.left + 'px');
   overlayJQueryElement.css('height', rect.height + 'px');
   overlayJQueryElement.css('width', rect.width + 'px');
 }
