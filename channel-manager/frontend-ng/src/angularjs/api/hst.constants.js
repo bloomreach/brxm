@@ -22,4 +22,5 @@ export const HST_CONSTANT = {
   TYPE_COMPONENT: 'CONTAINER_ITEM_COMPONENT',
   PATH_INFO: 'HST-Path-Info',
   CHANNEL_ID: 'HST-Channel-Id',
+  LABEL: 'HST-Label',
 };

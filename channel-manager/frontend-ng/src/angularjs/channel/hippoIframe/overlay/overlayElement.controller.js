@@ -28,6 +28,10 @@ export class OverlayElementCtrl {
     this.OverlaySyncService.registerElement(this.structureElement);
   }
 
+  getLabel() {
+    return this.structureElement.getLabel();
+  }
+
   ensureVisibilityOfEmptyContainer($scope) {
     if (this.structureElement.type === 'container' && this.structureElement.isEmpty()) {
       const iframeDomElement = this.structureElement.getJQueryElement('iframe')[0];

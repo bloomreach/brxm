@@ -77,6 +77,10 @@ class PageStructureElement {
   getJQueryElement(elementType) {
     return this.jQueryElements[elementType];
   }
+
+  getLabel() {
+    return this.metaData[this.HST.LABEL];
+  }
 }
 
 class ContainerElement extends PageStructureElement {

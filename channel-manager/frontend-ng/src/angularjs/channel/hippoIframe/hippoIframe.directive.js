@@ -27,7 +27,7 @@ export function hippoIframe() {
     templateUrl: 'channel/hippoIframe/hippoIframe.html',
     controller: 'hippoIframeCtrl',
     controllerAs: 'iframe',
-    link: function(scope, element, attr, iframe) {
+    link: function (scope, element, attr, iframe) {
       iframe.onLink(element);
     },
   };

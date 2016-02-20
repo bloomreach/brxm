@@ -23,8 +23,9 @@ export function overlayElementDirective() {
       structureElement: '=',
     },
     templateUrl: 'channel/hippoIframe/overlay/overlayElement.html',
-    controller: 'OverlayElementCtrl as overlayElement',
-    link: function(scope, element, attr, overlayElement) {
+    controller: 'OverlayElementCtrl',
+    controllerAs: 'overlayElement',
+    link: function (scope, element, attr, overlayElement) {
       overlayElement.onLink(element);
     },
   };

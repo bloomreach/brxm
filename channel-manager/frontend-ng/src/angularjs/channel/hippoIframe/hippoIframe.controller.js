@@ -44,7 +44,7 @@ export class HippoIframeCtrl {
     this.iframeJQueryElement = $(iframeDomElement).find('iframe');
     this.overlayJQueryElement = $(iframeDomElement).find('.overlay');
 
-    iframeJQueryElement.on('load', () => this.onLoad());
+    this.iframeJQueryElement.on('load', () => this.onLoad());
   }
 
   onLoad() {
