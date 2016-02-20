@@ -45,6 +45,7 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
 
         final String componentType = compConfig.getComponentType().toString();
         populatingAttributesMap.put(ChannelManagerConstants.HST_TYPE, componentType);
+        populatingAttributesMap.put(ChannelManagerConstants.HST_LABEL, compConfig.getLabel());
         HstURLFactory urlFactory = requestContext.getURLFactory();
         HstURL url = urlFactory.createURL(HstURL.COMPONENT_RENDERING_TYPE, window.getReferenceNamespace(), null, requestContext);
         populatingAttributesMap.put("url", url.toString());
