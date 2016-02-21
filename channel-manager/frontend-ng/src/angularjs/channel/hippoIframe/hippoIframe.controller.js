@@ -62,23 +62,11 @@ export class HippoIframeCtrl {
   }
 
   _parseHstComments() {
-    const processHstComment = (commentElement, metaData) => {
-      switch (metaData[this.HST.TYPE]) {
-        case this.HST.TYPE_PAGE:
-          const channelId = metaData[this.HST.CHANNEL_ID];
-          if (channelId !== this.ChannelService.getId()) {
-            this.ChannelService.switchToChannel(channelId);
-          }
-          break;
-        default:
-          break;
-      }
-      this.PageStructureService.registerParsedElement(commentElement, metaData);
-    };
     const iframeDom = this.iframeJQueryElement.contents()[0];
 
     this.PageStructureService.clearParsedElements();
-    this.hstCommentsProcessorService.run(iframeDom, processHstComment);
+    this.hstCommentsProcessorService.run(iframeDom,
+      this.PageStructureService.registerParsedElement.bind(this.PageStructureService));
     this.PageStructureService.printParsedElements();
   }
 

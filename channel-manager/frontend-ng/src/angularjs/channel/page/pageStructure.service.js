@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
+import { ContainerElement } from './element/containerElement';
+import { ComponentElement } from './element/componentElement';
+
 export class PageStructureService {
 
-  constructor($log, HST_CONSTANT) {
+  constructor($log, HST_CONSTANT, ChannelService) {
     'ngInject';
 
     // Injected
     this.$log = $log;
     this.HST = HST_CONSTANT;
+    this.ChannelService = ChannelService;
 
     this.clearParsedElements();
   }
@@ -46,6 +50,13 @@ export class PageStructureService {
         container.addComponent(new ComponentElement(commentDomElement, metaData, container));
         break;
 
+      case this.HST.TYPE_PAGE:
+        const channelId = metaData[this.HST.CHANNEL_ID];
+        if (channelId !== this.ChannelService.getId()) {
+          this.ChannelService.switchToChannel(channelId);
+        }
+        break;
+
       default:
         break;
     }
@@ -58,55 +69,5 @@ export class PageStructureService {
         this.$log.debug(`  Component ${itemIndex}`, component);
       });
     });
-  }
-}
-
-class PageStructureElement {
-  constructor(type, jQueryElement, metaData) {
-    this.type = type;
-    this.metaData = metaData;
-    this.jQueryElements = {};
-
-    this.setJQueryElement('iframe', jQueryElement);
-  }
-
-  setJQueryElement(elementType, element) {
-    this.jQueryElements[elementType] = element;
-  }
-
-  getJQueryElement(elementType) {
-    return this.jQueryElements[elementType];
-  }
-
-  getLabel() {
-    return this.metaData[this.HST.LABEL];
-  }
-}
-
-class ContainerElement extends PageStructureElement {
-  constructor(commentDomElement, metaData) {
-    super('container', $(commentDomElement).next(), metaData);
-
-    this.items = [];
-  }
-
-  isEmpty() {
-    return this.items.length === 0;
-  }
-
-  addComponent(component) {
-    this.items.push(component);
-  }
-
-  getComponents() {
-    return this.items;
-  }
-}
-
-class ComponentElement extends PageStructureElement {
-  constructor(commentDomElement, metaData, container) {
-    super('component', $(commentDomElement).parent(), metaData);
-
-    this.container = container;
   }
 }
