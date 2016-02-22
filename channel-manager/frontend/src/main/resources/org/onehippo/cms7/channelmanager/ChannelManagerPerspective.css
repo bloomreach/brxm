@@ -323,6 +323,10 @@
   background-color: #ffffff;
 }
 
+#componentPropertiesWindow .x-window-body {
+  background-color: #ffffff;
+}
+
 #componentPropertiesWindow .field-group-title {
   display: block;
   font-weight: bold;

@@ -98,8 +98,6 @@
         closeAction: 'hide',
         collapsible: false,
         constrainHeader: true,
-        bodyStyle: 'background-color: #ffffff',
-        cls: 'component-properties',
         renderTo: this.el,
         constrain: true,
         hidden: true,
