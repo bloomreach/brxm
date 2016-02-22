@@ -58,12 +58,7 @@
         this.channelStoreFuture.when(function (config) {
           var channelRecord = config.store.getById(channelId);
           if (channelRecord) {
-            // remember for reloading
-            this.selectedChannel = channelRecord.json;
-
-            // update breadcrumb
-            this.setTitle(channelRecord.get('name'));
-
+            this._initialize(channelRecord.json);
             success(channelRecord);
           } else {
             failure();
@@ -72,18 +67,16 @@
       }.bind(this));
     },
 
-    _showComponentProperties: function(selected) {
-      var componentPropertiesWindow = this._createComponentPropertiesWindow();
+    _initialize: function(channel) {
+      this.selectedChannel = channel;
 
-      componentPropertiesWindow.showComponent(
-        selected.component.id,
-        selected.pageRequestVariants,
-        selected.component.lastModifiedTimestamp,
-        selected.container
-      );
+      if (this.componentPropertiesWindow) {
+        this.componentPropertiesWindow.destroy();
+      }
+      this.componentPropertiesWindow = this._createComponentPropertiesWindow();
 
-      componentPropertiesWindow.setTitle(selected.component.name);
-      componentPropertiesWindow.show();
+      // update breadcrumb
+      this.setTitle(channel.name);
     },
 
     _createComponentPropertiesWindow: function() {
@@ -140,28 +133,28 @@
       });
     },
 
+    _showComponentProperties: function(selected) {
+      this.componentPropertiesWindow.showComponent(
+        selected.component.id,
+        selected.pageRequestVariants,
+        selected.component.lastModifiedTimestamp,
+        selected.container
+      );
+      this.componentPropertiesWindow.setTitle(selected.component.name);
+      this.componentPropertiesWindow.show();
+    },
+
     initComponent: function() {
       Hippo.ChannelManager.ChannelEditor.ChannelEditor.superclass.initComponent.call(this);
 
-      this.channelStoreFuture.when(function(config) {
+      this.channelStoreFuture.when(this._startApp.bind(this));
+    },
 
-        // start NG app
-        var url = './angular/hippo-cm/index.html';
-        url = Ext.urlAppend(url, 'parentExtIFramePanelId=' + this.getId());
-        url = Ext.urlAppend(url, 'antiCache=' + this.antiCache);
-        this.setLocation(url);
-
-        //config.store.on('load', function() {
-        //  if (this.channelId) {
-        //    var channelRecord = config.store.getById(this.channelId);
-        //
-        //    this.channel = channelRecord.data;
-        //    // TODO: more?
-        //    console.log('update this.channel to', this.channel);
-        //
-        //  }
-        //}, this);
-      }.bind(this));
+    _startApp: function() {
+      var url = './angular/hippo-cm/index.html';
+      url = Ext.urlAppend(url, 'parentExtIFramePanelId=' + this.getId());
+      url = Ext.urlAppend(url, 'antiCache=' + this.antiCache);
+      this.setLocation(url);
     }
   });
 
