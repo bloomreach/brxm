@@ -15,7 +15,25 @@
  */
 
 let log;
-let CONST_HST_CONSTANT;
+let HST;
+
+export class HstCommentsProcessorService {
+
+  constructor($log, HstConstants) {
+    'ngInject';
+    log = $log;
+    HST = HstConstants;
+  }
+
+  run(document, callback) {
+    // IE doesn't support 'evaluate', see https://developer.mozilla.org/en/docs/Web/API/Document/evaluate#Browser_compatibility
+    if (!!document.evaluate) {
+      processCommentsWithXPath(document, callback);
+    } else {
+      processCommentsWithDomWalking(document, callback);
+    }
+  }
+}
 
 function getCommentData(element) {
   if (element.length < 0) {
@@ -34,7 +52,7 @@ function getCommentData(element) {
 }
 
 function isHstComment(data) {
-  return data !== null && data.startsWith(' {') && data.endsWith('} ') && data.includes(CONST_HST_CONSTANT.TYPE);
+  return data !== null && data.startsWith(' {') && data.endsWith('} ') && data.includes(HST.TYPE);
 }
 
 function processComment(element, callback) {
@@ -71,24 +89,6 @@ function processCommentsWithDomWalking(node, callback) {
   } else {
     for (let i = 0; i < node.childNodes.length; i++) {
       processCommentsWithDomWalking(node.childNodes[i], callback);
-    }
-  }
-}
-
-export class HstCommentsProcessorService {
-
-  constructor($log, HST_CONSTANT) {
-    'ngInject';
-    log = $log;
-    CONST_HST_CONSTANT = HST_CONSTANT;
-  }
-
-  run(document, callback) {
-    // IE doesn't support 'evaluate', see https://developer.mozilla.org/en/docs/Web/API/Document/evaluate#Browser_compatibility
-    if (!!document.evaluate) {
-      processCommentsWithXPath(document, callback);
-    } else {
-      processCommentsWithDomWalking(document, callback);
     }
   }
 }

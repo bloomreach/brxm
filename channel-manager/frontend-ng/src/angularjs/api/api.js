@@ -18,7 +18,7 @@ import { CmsService } from './cms.service';
 import { ConfigService } from './config.service';
 import { SessionService } from './session.service';
 import { ChannelService } from './channel.service';
-import { HST_CONSTANT } from './hst.constants';
+import { HstConstants } from './hst.constants';
 
 export const channelManagerApi = angular
   .module('hippo-cm-api', [])
@@ -26,4 +26,4 @@ export const channelManagerApi = angular
   .service('ConfigService', ConfigService)
   .service('SessionService', SessionService)
   .service('ChannelService', ChannelService)
-  .constant('HST_CONSTANT', HST_CONSTANT);
+  .constant('HstConstants', HstConstants);
