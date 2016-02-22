@@ -1,5 +1,0 @@
-desktop
-ipad_landscape
-ipad_portrait
-iphone_landscape
-iphone_portrait
