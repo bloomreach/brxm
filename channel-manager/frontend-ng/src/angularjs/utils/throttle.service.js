@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-// Should match HST's org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.
-export const HstConstants = {
-  TYPE: 'HST-Type',
-  TYPE_PAGE: 'PAGE-META-DATA',
-  TYPE_CONTAINER: 'CONTAINER_COMPONENT',
-  TYPE_COMPONENT: 'CONTAINER_ITEM_COMPONENT',
-  PATH_INFO: 'HST-Path-Info',
-  CHANNEL_ID: 'HST-Channel-Id',
-  LABEL: 'HST-Label',
-};
+export class ThrottleService {
+  constructor() {
+    'ngInject';
+  }
+
+  throttle(callback, limit) {
+    let wait = false;            // Initially, we're not waiting
+    return () => {               // We return a throttled function
+      if (!wait) {               // If we're not waiting
+        callback.call();         // Execute users function
+        wait = true;             // Prevent future invocations
+        setTimeout(() => {       // After a period of time
+          wait = false;          // And allow future invocations
+        }, limit);
+      }
+    };
+  }
+}

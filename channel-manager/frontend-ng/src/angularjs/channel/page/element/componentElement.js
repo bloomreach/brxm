@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
@@ -14,13 +15,12 @@
  * limitations under the License.
  */
 
-// Should match HST's org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.
-export const HstConstants = {
-  TYPE: 'HST-Type',
-  TYPE_PAGE: 'PAGE-META-DATA',
-  TYPE_CONTAINER: 'CONTAINER_COMPONENT',
-  TYPE_COMPONENT: 'CONTAINER_ITEM_COMPONENT',
-  PATH_INFO: 'HST-Path-Info',
-  CHANNEL_ID: 'HST-Channel-Id',
-  LABEL: 'HST-Label',
-};
+import { PageStructureElement } from './pageStructureElement';
+
+export class ComponentElement extends PageStructureElement {
+  constructor(commentDomElement, metaData, container) {
+    super('component', $(commentDomElement).parent(), metaData);
+
+    this.container = container;
+  }
+}

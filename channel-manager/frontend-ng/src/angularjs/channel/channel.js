@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-import { ChannelCtrl } from './channel.controller';
+import { channelPageModule } from './page/page';
 import { channelHippoIframeModule } from './hippoIframe/hippoIframe';
 import { config } from './channel.config';
+import { ChannelCtrl } from './channel.controller';
 import { run } from './channel.run';
 
 export const channelModule = angular
   .module('hippo-cm.channel', [
     'hippo-cm-api',
+    channelPageModule.name,
     channelHippoIframeModule.name,
   ])
   .config(config)

@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-// Should match HST's org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.
-export const HstConstants = {
-  TYPE: 'HST-Type',
-  TYPE_PAGE: 'PAGE-META-DATA',
-  TYPE_CONTAINER: 'CONTAINER_COMPONENT',
-  TYPE_COMPONENT: 'CONTAINER_ITEM_COMPONENT',
-  PATH_INFO: 'HST-Path-Info',
-  CHANNEL_ID: 'HST-Channel-Id',
-  LABEL: 'HST-Label',
-};
+export function overlayElementDirective() {
+  'ngInject';
+
+  return {
+    restrict: 'E',
+    bindToController: {
+      structureElement: '=',
+    },
+    templateUrl: 'channel/hippoIframe/overlay/overlayElement.html',
+    controller: 'OverlayElementCtrl',
+    controllerAs: 'overlayElement',
+  };
+}

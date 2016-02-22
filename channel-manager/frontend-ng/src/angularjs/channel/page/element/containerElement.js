@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-// Should match HST's org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.
-export const HstConstants = {
-  TYPE: 'HST-Type',
-  TYPE_PAGE: 'PAGE-META-DATA',
-  TYPE_CONTAINER: 'CONTAINER_COMPONENT',
-  TYPE_COMPONENT: 'CONTAINER_ITEM_COMPONENT',
-  PATH_INFO: 'HST-Path-Info',
-  CHANNEL_ID: 'HST-Channel-Id',
-  LABEL: 'HST-Label',
-};
+import { PageStructureElement } from './pageStructureElement';
+
+export class ContainerElement extends PageStructureElement {
+  constructor(commentDomElement, metaData) {
+    super('container', $(commentDomElement).next(), metaData);
+
+    this.items = [];
+  }
+
+  isEmpty() {
+    return this.items.length === 0;
+  }
+
+  addComponent(component) {
+    this.items.push(component);
+  }
+
+  getComponents() {
+    return this.items;
+  }
+}

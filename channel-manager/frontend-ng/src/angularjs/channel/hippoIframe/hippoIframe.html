@@ -14,8 +14,23 @@
   limitations under the License.
   -->
 
-<md-content flex layout="row">
+<md-content flex layout="row" class="channel-iframe-base">
 
-  <iframe class="channel-iframe qa-view flex" ng-src="{{ iframe.path }}"></iframe>
+  <iframe flex class="qa-view" ng-src="{{ iframe.path }}"></iframe>
+
+  <div class="overlay">
+    <div ng-repeat="container in iframe.getContainers()">
+      <overlay-element class="container" layout="row"
+                       ng-class="{ 'empty': container.isEmpty() }"
+                       structure-element="container">
+      </overlay-element>
+      <div ng-repeat="component in container.getComponents()">
+        <overlay-element class="component" layout="row"
+                         structure-element="component"
+                         ng-click="iframe.show(component)">
+        </overlay-element>
+      </div>
+    </div>
+  </div>
 
 </md-content>

@@ -27,44 +27,56 @@ function constructUrl(location, ...fragments) {
 }
 
 export class HippoIframeCtrl {
-  constructor(linkProcessorService, hstCommentsProcessorService, HST_CONSTANT, ChannelService) {
+  constructor($rootScope, $element, linkProcessorService, hstCommentsProcessorService, ChannelService,
+              PageStructureService, OverlaySyncService) {
     'ngInject';
 
+    this.$rootScope = $rootScope;
     this.linkProcessorService = linkProcessorService;
     this.hstCommentsProcessorService = hstCommentsProcessorService;
-    this.HST = HST_CONSTANT;
     this.ChannelService = ChannelService;
+    this.PageStructureService = PageStructureService;
+    this.OverlaySyncService = OverlaySyncService;
+
+    this.iframeJQueryElement = $element.find('iframe');
+    this.iframeJQueryElement.on('load', () => this.onLoad());
+
+    OverlaySyncService.init(this.iframeJQueryElement, $element.find('.overlay'));
   }
 
   onLoad() {
-    this.parseHstComments();
-    this.parseLinks();
+    this.$rootScope.$apply(() => {
+
+      this._parseHstComments();
+      this._parseLinks();
+
+      this.OverlaySyncService.startObserving();
+    });
   }
 
-  parseHstComments() {
-    const processHstComment = (commentElement, json) => {
-      switch (json[this.HST.TYPE]) {
-        case this.HST.TYPE_PAGE_META_DATA:
-          const channelId = json[this.HST.CHANNEL_ID];
-          if (channelId !== this.ChannelService.getId()) {
-            this.ChannelService.switchToChannel(channelId);
-          }
-          break;
-        default:
-          break;
-      }
-    };
-    const iframeDom = this.iframe.contents()[0];
-
-    this.hstCommentsProcessorService.run(iframeDom, processHstComment);
+  show(structureElement) {
+    console.log('show details of structure element', structureElement);
   }
 
-  parseLinks() {
-    const iframeDom = this.iframe.contents()[0];
+  _parseHstComments() {
+    const iframeDom = this.iframeJQueryElement.contents()[0];
+
+    this.PageStructureService.clearParsedElements();
+    this.hstCommentsProcessorService.run(iframeDom,
+      this.PageStructureService.registerParsedElement.bind(this.PageStructureService));
+    this.PageStructureService.printParsedElements();
+  }
+
+  _parseLinks() {
+    const iframeDom = this.iframeJQueryElement.contents()[0];
     const channel = this.ChannelService.channel;
     const internalLinkPrefix = constructUrl(iframeDom.location, channel.contextPath, channel.cmsPreviewPrefix);
 
     this.linkProcessorService.run(iframeDom, internalLinkPrefix);
+  }
+
+  getContainers() {
+    return this.selectMode ? this.PageStructureService.containers : [];
   }
 
 }

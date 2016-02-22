@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-// Should match HST's org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.
-export const HstConstants = {
-  TYPE: 'HST-Type',
-  TYPE_PAGE: 'PAGE-META-DATA',
-  TYPE_CONTAINER: 'CONTAINER_COMPONENT',
-  TYPE_COMPONENT: 'CONTAINER_ITEM_COMPONENT',
-  PATH_INFO: 'HST-Path-Info',
-  CHANNEL_ID: 'HST-Channel-Id',
-  LABEL: 'HST-Label',
-};
+import { utilsModule } from '../../../utils/utils';
+import { overlayElementDirective } from './overlayElement.directive';
+import { OverlayElementCtrl } from './overlayElement.controller';
+import { OverlaySyncService } from './overlaySync.service';
+
+export const overlayModule = angular
+  .module('hippo-cm.channel.hippoIframe.overlay', [
+    utilsModule.name,
+  ])
+  .directive('overlayElement', overlayElementDirective)
+  .controller('OverlayElementCtrl', OverlayElementCtrl)
+  .service('OverlaySyncService', OverlaySyncService);

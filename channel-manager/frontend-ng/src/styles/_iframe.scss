@@ -14,6 +14,88 @@
  * limitations under the License.
  */
 
-.channel-iframe {
-  border: 0;
+.channel-iframe-base {
+  position: relative;
+
+  iframe {
+    border: 0;
+  }
+
+  .overlay {
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    overlay-element {
+      border-style: solid;
+      border-width: 0;
+      box-sizing: border-box;
+      position: absolute;
+
+      .contrast,
+      .overlay-label {
+        display: none;
+      }
+
+      &.container {
+        &.empty {
+          border-width: 2px;
+          border-color: black;
+
+          .contrast {
+            border-color: white;
+            border-style: solid;
+            border-width: 2px;
+            box-sizing: border-box;
+            display: block;
+          }
+
+          .overlay-label {
+            background-color: black;
+            color: white;
+            display: inline;
+            font-size: 10px;
+            left: 0;
+            padding: 0 4px 2px 4px;
+            position: absolute;
+            top: 0;
+          }
+        }
+      }
+
+      &.component {
+        border-width: 2px;
+        border-color: #0086f8;
+        cursor: pointer;
+        pointer-events: auto;
+
+        .contrast {
+          border-color: white;
+          border-style: solid;
+          border-width: 2px;
+          box-sizing: border-box;
+          display: block;
+        }
+
+        .overlay-label {
+          background-color: #0086f8;
+          color: white;
+          font-size: 10px;
+          left: 0;
+          padding: 0 4px 2px 4px;
+          position: absolute;
+          top: 0;
+        }
+
+        &:hover {
+          .overlay-label {
+            display: inline;
+          }
+        }
+      }
+    }
+  }
 }
