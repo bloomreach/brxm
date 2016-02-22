@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { HST_CONSTANT } from '../../../api/hst.constants';
+
 export class PageStructureElement {
   constructor(type, jQueryElement, metaData) {
     this.type = type;
@@ -32,6 +34,10 @@ export class PageStructureElement {
   }
 
   getLabel() {
-    return this.metaData[this.HST.LABEL];
+    let label = this.metaData[HST_CONSTANT.LABEL];
+    if (label === 'null') {
+      label = this.type; // no label available, fallback to type.
+    }
+    return label;
   }
 }
