@@ -27,7 +27,7 @@ function constructUrl(location, ...fragments) {
 }
 
 export class HippoIframeCtrl {
-  constructor($rootScope, linkProcessorService, hstCommentsProcessorService, HST_CONSTANT, ChannelService,
+  constructor($rootScope, $element, linkProcessorService, hstCommentsProcessorService, HST_CONSTANT, ChannelService,
               PageStructureService, OverlaySyncService) {
     'ngInject';
 
@@ -38,13 +38,11 @@ export class HippoIframeCtrl {
     this.ChannelService = ChannelService;
     this.PageStructureService = PageStructureService;
     this.OverlaySyncService = OverlaySyncService;
-  }
 
-  onLink(iframeDomElement) {
-    this.iframeJQueryElement = $(iframeDomElement).find('iframe');
-    this.overlayJQueryElement = $(iframeDomElement).find('.overlay');
-
+    this.iframeJQueryElement = $element.find('iframe');
     this.iframeJQueryElement.on('load', () => this.onLoad());
+
+    OverlaySyncService.init(this.iframeJQueryElement, $element.find('.overlay'));
   }
 
   onLoad() {
@@ -53,7 +51,7 @@ export class HippoIframeCtrl {
       this._parseHstComments();
       this._parseLinks();
 
-      this.OverlaySyncService.startObserving(this.iframeJQueryElement, this.overlayJQueryElement);
+      this.OverlaySyncService.startObserving();
     });
   }
 

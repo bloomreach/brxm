@@ -14,18 +14,8 @@
  * limitations under the License.
  */
 
-export function hippoIframe() {
-  'ngInject';
+import { ThrottleService } from './throttle.service';
 
-  return {
-    restrict: 'E',
-    scope: {},
-    bindToController: {
-      path: '=',
-      selectMode: '=',
-    },
-    templateUrl: 'channel/hippoIframe/hippoIframe.html',
-    controller: 'hippoIframeCtrl',
-    controllerAs: 'iframe',
-  };
-}
+export const utilsModule = angular
+  .module('hippo-cm.utils', [])
+  .service('ThrottleService', ThrottleService);

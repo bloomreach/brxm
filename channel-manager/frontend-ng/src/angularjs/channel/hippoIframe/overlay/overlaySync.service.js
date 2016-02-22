@@ -14,54 +14,32 @@
  * limitations under the License.
  */
 
-function throttle(callback, limit) {
-  let wait = false;            // Initially, we're not waiting
-  return () => {         // We return a throttled function
-    if (!wait) {               // If we're not waiting
-      callback.call();         // Execute users function
-      wait = true;             // Prevent future invocations
-      setTimeout(() => { // After a period of time
-        wait = false;          // And allow future invocations
-      }, limit);
-    }
-  };
-}
-
-function syncElement(structureElement) {
-  const overlayJQueryElement = structureElement.getJQueryElement('overlay');
-  const iframeJQueryElement = structureElement.getJQueryElement('iframe');
-
-  const rect = iframeJQueryElement[0].getBoundingClientRect();
-
-  overlayJQueryElement.css('top', rect.top + 'px');
-  overlayJQueryElement.css('left', rect.left + 'px');
-  overlayJQueryElement.css('height', rect.height + 'px');
-  overlayJQueryElement.css('width', rect.width + 'px');
-}
-
 export class OverlaySyncService {
 
-  constructor($rootScope, $window) {
+  constructor($rootScope, $window, ThrottleService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
 
     this.overlayElements = [];
-    this.observer = new MutationObserver(throttle(() => this._syncIframe(), 100));
+    this.observer = new MutationObserver(ThrottleService.throttle(() => this._syncIframe(), 100));
     $($window).on('resize', () => this._syncIframe());
   }
 
-  startObserving(iframe, overlay) {
-    this.iframe = iframe;
-    this.overlay = overlay;
-    this.observer.observe(iframe[0].contentWindow.document, {
+  init(iframeJQueryElement, overlayJQueryElement) {
+    this.iframeJQueryElement = iframeJQueryElement;
+    this.overlayJQueryElement = overlayJQueryElement;
+  }
+
+  startObserving() {
+    this.observer.observe(this.iframeJQueryElement[0].contentWindow.document, {
       childList: true,
       attributes: true,
       characterData: true,
       subtree: true,
     });
 
-    $(this.iframe[0].contentWindow).on('beforeunload', () => {
+    $(this.iframeJQueryElement[0].contentWindow).on('beforeunload', () => {
       this.$rootScope.$apply(() => {
         this.overlayElements = [];
         this.observer.disconnect();
@@ -71,7 +49,7 @@ export class OverlaySyncService {
 
   registerElement(structureElement) {
     this.overlayElements.push(structureElement);
-    syncElement(structureElement);
+    this._syncElement(structureElement);
   }
 
   _syncIframe() {
@@ -80,8 +58,8 @@ export class OverlaySyncService {
   }
 
   _syncHeight() {
-    if (this.iframe && this.overlay) {
-      const html = this.iframe[0].contentWindow.document.documentElement;
+    if (this.iframeJQueryElement && this.overlayJQueryElement) {
+      const html = this.iframeJQueryElement[0].contentWindow.document.documentElement;
 
       if (html !== null) {
         const height = html.offsetHeight;
@@ -89,14 +67,26 @@ export class OverlaySyncService {
         // Prevent weird twitching at certain widths
         html.style.overflow = 'hidden';
 
-        this.iframe.height(height);
-        this.overlay.height(height);
+        this.iframeJQueryElement.height(height);
+        this.overlayJQueryElement.height(height);
       }
     }
   }
 
   _syncOverlayElements() {
-    this.overlayElements.forEach((element) => syncElement(element));
+    this.overlayElements.forEach((element) => this._syncElement(element));
+  }
+
+  _syncElement(structureElement) {
+    const overlayJQueryElement = structureElement.getJQueryElement('overlay');
+    const iframeJQueryElement = structureElement.getJQueryElement('iframe');
+
+    const rect = iframeJQueryElement[0].getBoundingClientRect();
+
+    overlayJQueryElement.css('top', rect.top + 'px');
+    overlayJQueryElement.css('left', rect.left + 'px');
+    overlayJQueryElement.css('height', rect.height + 'px');
+    overlayJQueryElement.css('width', rect.width + 'px');
   }
 
 }

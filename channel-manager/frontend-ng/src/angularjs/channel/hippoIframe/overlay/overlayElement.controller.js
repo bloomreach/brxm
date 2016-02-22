@@ -15,24 +15,20 @@
  */
 
 export class OverlayElementCtrl {
-  constructor($scope, OverlaySyncService) {
+  constructor($scope, $element, OverlaySyncService) {
     'ngInject';
 
-    this.OverlaySyncService = OverlaySyncService;
-    this.ensureVisibilityOfEmptyContainer($scope);
-  }
+    this.structureElement.setJQueryElement('overlay', $element);
+    OverlaySyncService.registerElement(this.structureElement);
 
-  // overlay sync'ing can only start after the structure element was bound to the overlay dom element.
-  onLink(overlayJQueryElement) {
-    this.structureElement.setJQueryElement('overlay', overlayJQueryElement);
-    this.OverlaySyncService.registerElement(this.structureElement);
+    this._ensureVisibilityOfEmptyContainer($scope);
   }
 
   getLabel() {
     return this.structureElement.getLabel();
   }
 
-  ensureVisibilityOfEmptyContainer($scope) {
+  _ensureVisibilityOfEmptyContainer($scope) {
     if (this.structureElement.type === 'container' && this.structureElement.isEmpty()) {
       const iframeDomElement = this.structureElement.getJQueryElement('iframe')[0];
       const minHeight = iframeDomElement.style.minHeight || 'auto';
