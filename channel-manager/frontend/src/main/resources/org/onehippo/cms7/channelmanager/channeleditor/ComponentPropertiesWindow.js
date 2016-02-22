@@ -99,10 +99,8 @@
     },
 
     _adjustHeight: function (propertiesPanelVisibleHeight) {
-      console.log("TODO: get real iframe height");
       var newVisibleHeight = propertiesPanelVisibleHeight + this.getFrameHeight(),
-        // TODO: get real iframe height
-        pageEditorHeight = Ext.getCmp('pageEditorIFrame').getHeight(),
+        pageEditorHeight = Hippo.ChannelManager.ChannelEditor.Instance.getHeight(),
         windowY = this.getPosition()[1],
         spaceBetweenWindowAndBottom = 4,
         maxHeight = pageEditorHeight - windowY - spaceBetweenWindowAndBottom,
