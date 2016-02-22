@@ -23,4 +23,7 @@ export const HstConstants = {
   PATH_INFO: 'HST-Path-Info',
   CHANNEL_ID: 'HST-Channel-Id',
   LABEL: 'HST-Label',
+  LAST_MODIFIED: 'HST-LastModified',
+  CONTAINER_DISABLED: 'HST-Container-disabled',
+  CONTAINER_INHERITED: 'HST-Container-inherited',
 };

@@ -19,13 +19,14 @@ import { ComponentElement } from './element/componentElement';
 
 export class PageStructureService {
 
-  constructor($log, HstConstants, ChannelService) {
+  constructor($log, HstConstants, ChannelService, CmsService) {
     'ngInject';
 
     // Injected
     this.$log = $log;
     this.HST = HstConstants;
     this.ChannelService = ChannelService;
+    this.CmsService = CmsService;
 
     this.clearParsedElements();
   }
@@ -60,6 +61,22 @@ export class PageStructureService {
       default:
         break;
     }
+  }
+
+  showComponentProperties(componentElement) {
+    this.CmsService.publish('show-component-properties', {
+      component: {
+        id: componentElement.metaData.uuid,
+        name: componentElement.metaData[this.HST.LABEL],
+        lastModifiedTimestamp: componentElement.metaData[this.HST.LAST_MODIFIED],
+      },
+      container: {
+        isDisabled: componentElement.container.metaData[this.HST.CONTAINER_DISABLED],
+        isInherited: componentElement.container.metaData[this.HST.CONTAINER_INHERITED],
+      },
+      // TODO: pass the request variants of the current page
+      pageRequestVariants: [],
+    });
   }
 
   printParsedElements() {

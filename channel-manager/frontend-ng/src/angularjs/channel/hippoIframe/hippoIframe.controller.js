@@ -54,8 +54,8 @@ export class HippoIframeCtrl {
     });
   }
 
-  show(structureElement) {
-    console.log('show details of structure element', structureElement);
+  showComponentProperties(structureElement) {
+    this.PageStructureService.showComponentProperties(structureElement);
   }
 
   _parseHstComments() {
