@@ -87,9 +87,6 @@
     },
 
     _createComponentPropertiesWindow: function() {
-      // TODO: render to iframe
-      var channelEditorIframe = window.document.body;
-
       return new Hippo.ChannelManager.ChannelEditor.ComponentPropertiesWindow({
         id: 'componentPropertiesWindow',
         title: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-default-title'],
@@ -103,7 +100,7 @@
         constrainHeader: true,
         bodyStyle: 'background-color: #ffffff',
         cls: 'component-properties',
-        renderTo: channelEditorIframe,
+        renderTo: this.el,
         constrain: true,
         hidden: true,
         composerRestMountUrl: this.selectedChannel.contextPath + this.apiUrlPrefix,
