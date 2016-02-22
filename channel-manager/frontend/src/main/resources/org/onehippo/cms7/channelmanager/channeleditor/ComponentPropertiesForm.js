@@ -61,7 +61,7 @@
       this.isReadOnly = config.isReadOnly;
 
       Hippo.ChannelManager.ChannelEditor.ComponentPropertiesForm.superclass.constructor.call(this, Ext.apply(config, {
-        cls: 'ChannelEditorPropertiesForm qa-properties-form',
+        cls: 'componentPropertiesForm qa-properties-form',
         maskDisabled: false
       }));
     },
