@@ -18,6 +18,8 @@ package org.hippoecm.hst.core.channelmanager;
 
 import java.util.Map;
 
+import com.google.common.base.Strings;
+
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -37,7 +39,7 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
 
         populatingAttributesMap.put("uuid", compConfig.getCanonicalIdentifier());
         if (compConfig.getXType() != null) {
-            populatingAttributesMap.put("xtype", compConfig.getXType());
+            populatingAttributesMap.put(ChannelManagerConstants.HST_XTYPE, compConfig.getXType());
         }
         if (compConfig.isInherited()) {
             populatingAttributesMap.put("inherited", "true");
@@ -45,7 +47,7 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
 
         final String componentType = compConfig.getComponentType().toString();
         populatingAttributesMap.put(ChannelManagerConstants.HST_TYPE, componentType);
-        populatingAttributesMap.put(ChannelManagerConstants.HST_LABEL, compConfig.getLabel());
+        populatingAttributesMap.put(ChannelManagerConstants.HST_LABEL, getLabel(compConfig));
         HstURLFactory urlFactory = requestContext.getURLFactory();
         HstURL url = urlFactory.createURL(HstURL.COMPONENT_RENDERING_TYPE, window.getReferenceNamespace(), null, requestContext);
         populatingAttributesMap.put("url", url.toString());
@@ -69,5 +71,13 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
             populatingAttributesMap.put(ChannelManagerConstants.HST_LAST_MODIFIED, String.valueOf(compConfig.getLastModified().getTimeInMillis()));
         }
 
+    }
+
+    private String getLabel(HstComponentConfiguration config) {
+        String label = config.getLabel();
+        if (Strings.isNullOrEmpty(label)) {
+            label = config.getName();
+        }
+        return label;
     }
 }
