@@ -32,6 +32,8 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.swing.tree.TreeNode;
 
+import com.google.common.base.Strings;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
@@ -605,7 +607,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
          * @param uiLocale        the locale by which the language name is determined
          */
         public LanguageSelection(Locale selectionLocale, Locale uiLocale) {
-            this(selectionLocale.getLanguage(), selectionLocale.getDisplayLanguage(uiLocale));
+            this(selectionLocale.toString(), getDisplayLanguage(selectionLocale, uiLocale));
         }
 
         public LanguageSelection(String languageCode, String displayName) {
@@ -663,6 +665,14 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         public String toString() {
             return super.toString() + " [ " + languageCode + ", " + displayName + " }";
         }
+    }
+
+    private static String getDisplayLanguage(final Locale selectionLocale, final Locale uiLocale) {
+        final String displayName = selectionLocale.getDisplayName(uiLocale);
+        if (Strings.isNullOrEmpty(displayName)) {
+            return selectionLocale.getDisplayLanguage(uiLocale);
+        }
+        return displayName;
     }
 
     private void updateToolbarForCategory(final Category category) {
