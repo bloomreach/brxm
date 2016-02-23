@@ -32,8 +32,6 @@
         locale: config.locale,
         composerRestMountUrl: config.composerRestMountUrl,
         variantsUuid: config.variantsUuid,
-        globalVariantsStore: config.globalVariantsStore,
-        globalVariantsStoreFuture: config.globalVariantsStoreFuture,
         mountId: config.mountId,
         listeners: {
           visibleHeightChanged: this._adjustHeight,

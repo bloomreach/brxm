@@ -97,8 +97,6 @@
         composerRestMountUrl: this.selectedChannel.contextPath + this.apiUrlPrefix,
         locale: this.locale,
         variantsUuid: this.variantsUuid,
-        globalVariantsStore: this.globalVariantsStore,
-        globalVariantsStoreFuture: this.globalVariantsStoreFuture,
         mountId: this.selectedChannel.mountId,
         listeners: {
           save: function() {
