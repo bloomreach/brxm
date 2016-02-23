@@ -13,14 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 export class ChannelCtrl {
-  constructor(ChannelService, CmsService) {
+
+  constructor(ChannelService) {
     'ngInject';
-
-    this.channelService = ChannelService;
-    this.cmsService = CmsService;
-
     this.iframeUrl = ChannelService.getUrl();
     this.isEditMode = false;
   }
