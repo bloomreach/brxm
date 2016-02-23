@@ -1,5 +1,5 @@
 /*
- * Copyright 2007-2009 Hippo
+ * Copyright 2007-2016 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@
 - hippofacnav:facetvalueslimit (long)
 - hippofacnav:sortby (string) multiple
 - hippofacnav:sortorder (string) multiple < 'descending', 'ascending'
+- hippofacnav:sortfunction (string) multiple < 'lower-case', 'normalize'
 - hippofacnav:filters (string) multiple
 - hippofacnav:skipresultsetfacetnavigationroot (boolean)
 - hippofacnav:skipresultsetfacetsavailable (boolean)

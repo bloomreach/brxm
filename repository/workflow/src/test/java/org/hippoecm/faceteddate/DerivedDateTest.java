@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -116,7 +116,7 @@ public class DerivedDateTest extends RepositoryTestCase {
     @Test
     public void testFacetedDateCustom() throws Exception {
         Node handle = session.getNode("/test").addNode("doc", "hippo:handle");
-        handle.addMixin("hippo:hardhandle");
+        handle.addMixin("mix:referenceable");
         Node node = handle.addNode("doc", "hippo:datedocument2");
         node.addMixin("mix:versionable");
         node.setProperty("hippo:d1", date);
@@ -129,7 +129,7 @@ public class DerivedDateTest extends RepositoryTestCase {
     @Test
     public void testFacetedDateOptional() throws Exception {
         Node handle = session.getNode("/test").addNode("doc", "hippo:handle");
-        handle.addMixin("hippo:hardhandle");
+        handle.addMixin("mix:referenceable");
         Node node = handle.addNode("doc", "hippo:datedocument2");
         node.addMixin("mix:versionable");
         node.setProperty("hippo:d1", date);

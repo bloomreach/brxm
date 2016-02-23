@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,14 +19,10 @@ public class OrderBy {
 
     private String name;
     private boolean descending;
+    private String orderFunction;
 
     public OrderBy(String name) {
         this.name = name;
-    }
-
-    public OrderBy(String name, boolean descending) {
-        this.name = name;
-        this.descending = descending;
     }
 
     public String getName() {
@@ -35,5 +31,17 @@ public class OrderBy {
 
     public boolean isDescending() {
         return descending;
+    }
+
+    public void setDescending(final boolean descending) {
+        this.descending = descending;
+    }
+
+    public void setOrderFunction(final String orderFunction) {
+        this.orderFunction = orderFunction;
+    }
+
+    public String getOrderFunction() {
+        return orderFunction;
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,7 +59,6 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
     private Name jcrMixinTypesName;
     private Name hippoUUIDName;
     private Name documentName;
-    private Name hardHandleName;
     private Name softDocumentName;
     private Name softHandleName;
     private Name mixinReferenceableName;
@@ -78,7 +77,6 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         jcrMixinTypesName = resolveName("jcr:mixinTypes");
         hippoUUIDName = resolveName(HippoNodeType.HIPPO_UUID);
         documentName = resolveName(HippoNodeType.NT_DOCUMENT);
-        hardHandleName = resolveName(HippoNodeType.NT_HARDHANDLE);
         softDocumentName = resolveName(HippoNodeType.NT_SOFTDOCUMENT);
         softHandleName = resolveName("hipposys:softhandle");
         mixinReferenceableName = resolveName("mix:referenceable");

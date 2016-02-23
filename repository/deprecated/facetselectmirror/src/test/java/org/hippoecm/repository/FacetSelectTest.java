@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class FacetSelectTest extends RepositoryTestCase {
         "/test/docs",         "hippo:testdocument",
         "jcr:mixinTypes",     "mix:versionable",
         "/test/docs/doc",     "hippo:handle",
-        "jcr:mixinTypes",     "hippo:hardhandle",
+            "jcr:mixinTypes",  "mix:referenceable",
         "/test/docs/doc/doc", "hippo:document",
         "jcr:mixinTypes",     "mix:versionable",
         "/test/mirror",       "hippo:facetselect",
@@ -72,25 +72,24 @@ public class FacetSelectTest extends RepositoryTestCase {
         "/test/docs",         "hippo:testdocument",
         "jcr:mixinTypes",     "mix:versionable",
         "/test/docs/one",     "hippo:handle",
-        "jcr:mixinTypes",     "hippo:hardhandle",
+            "jcr:mixinTypes",  "mix:referenceable",
         "/test/docs/one/one", "hippo:testdocument",
         "jcr:mixinTypes",     "mix:versionable",
         "vehicle", "car",
         "color", "red",
         "/test/docs/two",     "hippo:handle",
-        "jcr:mixinTypes",     "hippo:hardhandle",
         "/test/docs/two/two", "hippo:testdocument",
         "jcr:mixinTypes",     "mix:versionable",
         "vehicle", "car",
         "color", "blue",
         "/test/docs/three",     "hippo:handle",
-        "jcr:mixinTypes",     "hippo:hardhandle",
+            "jcr:mixinTypes",  "mix:referenceable",
         "/test/docs/three/three", "hippo:testdocument",
         "jcr:mixinTypes",     "mix:versionable",
         "vehicle", "bike",
         "color", "red",
         "/test/docs/four",     "hippo:handle",
-        "jcr:mixinTypes",     "hippo:hardhandle",
+            "jcr:mixinTypes",  "mix:referenceable",
         "/test/docs/four/four", "hippo:testdocument",
         "jcr:mixinTypes",     "mix:versionable",
         "vehicle", "bike",
@@ -462,7 +461,6 @@ public class FacetSelectTest extends RepositoryTestCase {
             "/test/docs", "hippo:testdocument",
                 "jcr:mixinTypes", "mix:versionable",
             "/test/docs/doc", "hippo:handle",
-                "jcr:mixinTypes", "hippo:hardhandle",
             "/test/docs/doc/doc", "hippo:testdocument",
                 "jcr:mixinTypes", "mix:versionable",
             "/test/test4", "hippo:facetselect",

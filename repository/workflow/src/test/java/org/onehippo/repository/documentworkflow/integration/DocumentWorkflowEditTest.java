@@ -16,16 +16,29 @@
 package org.onehippo.repository.documentworkflow.integration;
 
 import javax.jcr.Node;
+import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.Value;
+import javax.jcr.version.VersionHistory;
+import javax.jcr.version.VersionManager;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.repository.util.JcrConstants;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
+import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegrationTest {
@@ -35,6 +48,51 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
         DocumentWorkflow workflow = getDocumentWorkflow(handle);
         final Node variant = workflow.obtainEditableInstance().getNode(session);
         assertEquals("hippostd:state property is not 'draft'", DRAFT, JcrUtils.getStringProperty(variant, HIPPOSTD_STATE, null));
+    }
+
+    @Test
+    public void firstEditOfPublishedOnlyDocumentCreatesInitialVersion() throws Exception {
+        Node variant = getVariant(PUBLISHED);
+
+        assertNull(variant);
+        variant = getVariant(UNPUBLISHED);
+        assertNotNull(variant);
+        if (variant.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+            // remove version history
+            variant.removeMixin(JcrConstants.MIX_VERSIONABLE);
+        }
+        // change unpublished only variant into published only variant
+        variant.setProperty(HIPPOSTD_STATE, PUBLISHED);
+        session.save();
+        VersionManager versionManager = session.getWorkspace().getVersionManager();
+        try {
+            // this should now fail
+            versionManager.getVersionHistory(variant.getPath());
+        }
+        catch (UnsupportedRepositoryOperationException e) {
+            // expected because published variant (now) should no longer be versioned.
+        }
+        variant = getVariant(PUBLISHED);
+        assertNotNull(variant);
+
+        // this should also (re)create the UNPUBLISHED variant and an initial version of its published content
+        getDocumentWorkflow(handle).obtainEditableInstance();
+
+        final Value[] liveValues = variant.getProperty(HIPPO_AVAILABILITY).getValues();
+        assertTrue(liveValues.length == 1);
+        assertEquals("live", liveValues[0].getString());
+
+        variant = getVariant(UNPUBLISHED);
+
+        final Value[] values = variant.getProperty(HIPPO_AVAILABILITY).getValues();
+        assertTrue(values.length == 1);
+        assertEquals("preview", values[0].getString());
+
+        assertNotNull(variant);
+        // will throw an exception if their is no version history
+        VersionHistory versionHistory = versionManager.getVersionHistory(variant.getPath());
+        // will throw an exception if their is no first version
+        versionHistory.getVersion("1.0");
     }
 
     @Test

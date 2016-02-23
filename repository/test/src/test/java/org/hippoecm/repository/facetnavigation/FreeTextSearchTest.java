@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -99,7 +99,7 @@ public class FreeTextSearchTest extends RepositoryTestCase {
 
     private void addCarDoc(Node carDocs, String name, Calendar cal, String contents, String brand, String color) throws RepositoryException {
         Node carDoc = carDocs.addNode(name, "hippo:handle");
-        carDoc.addMixin("hippo:hardhandle");
+        carDoc.addMixin("mix:referenceable");
         carDoc = carDoc.addNode(name, "hippo:testcardocument");
         carDoc.addMixin("mix:versionable");
         carDoc.setProperty("hippo:date", cal);

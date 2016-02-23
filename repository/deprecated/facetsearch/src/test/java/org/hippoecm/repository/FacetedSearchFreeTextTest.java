@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,14 +36,14 @@ public class FacetedSearchFreeTextTest extends RepositoryTestCase {
             "/test/docs",      "nt:unstructured",
                 "jcr:mixinTypes",  "mix:referenceable",
                 "/test/docs/a",    "hippo:handle",
-                    "jcr:mixinTypes",  "hippo:hardhandle",
+                    "jcr:mixinTypes",  "mix:referenceable",
                     "/test/docs/a/a",  "hippo:testdocument",
                         "jcr:mixinTypes",  "mix:versionable",
                         "x",               "a",
                         "y",               "z",
                         "text",            "aap",
                 "/test/docs/b",    "hippo:handle",
-                    "jcr:mixinTypes",  "hippo:hardhandle",
+                    "jcr:mixinTypes",  "mix:referenceable",
                     "/test/docs/b/b",  "hippo:testdocument",
                         "jcr:mixinTypes",  "mix:versionable",
                         "x",               "b",

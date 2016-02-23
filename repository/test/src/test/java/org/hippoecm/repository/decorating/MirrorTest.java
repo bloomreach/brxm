@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public class MirrorTest extends RepositoryTestCase {
         "lachen", "zucht",
         "/test/documents/test3/test4/test5", "nt:unstructured",
         "/test/documents/test5", "hippo:handle",
-        "jcr:mixinTypes", "hippo:hardhandle",
+            "jcr:mixinTypes", "mix:referenceable",
         "/test/documents/test5/test5", "hippo:document",
         "jcr:mixinTypes", "mix:versionable",
         "/test/documents/testmore", "nt:unstructured",
