@@ -233,6 +233,10 @@
                 <include>${channel.editor.package}/plugins/colorfield/colorfield.js</include>
                 <include>${channel.editor.package}/plugins/floatingwindow/FloatingWindow.js</include>
                 <include>${channel.editor.package}/plugins/vtabs/VerticalTabPanel.js</include>
+                <include>${channel.editor.package}/ComponentVariants.js</include>
+                <include>${channel.editor.package}/ComponentPropertiesForm.js</include>
+                <include>${channel.editor.package}/ComponentPropertiesPanel.js</include>
+                <include>${channel.editor.package}/ComponentPropertiesWindow.js</include>
                 <include>${channel.editor.package}/ChannelEditor.js</include>
               </includes>
               <output>${channel.editor.package}/channel-editor-bundle.js</output>
