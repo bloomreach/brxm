@@ -40,23 +40,12 @@
       this.getCurrentVariant = config.getCurrentVariant;
       this.componentMessageBus = config.componentMessageBus;
 
-      this.globalVariantsStore = new Hippo.ChannelManager.ChannelEditor.GlobalVariantsStore({
-        composerRestMountUrl: this.composerRestMountUrl,
-        locale: config.locale,
-        skipIds: config.skipVariantIds,
-        variantsUuid: this.variantsUuid
-      });
-
       Hippo.ChannelManager.ChannelEditor.ComponentVariantAdder.superclass.constructor.call(this, config);
     },
 
     initComponent: function () {
       Hippo.ChannelManager.ChannelEditor.ComponentVariantAdder.superclass.initComponent.apply(this, arguments);
       this.addEvents('beforeactive', 'save');
-    },
-
-    getGlobalVariantsStore: function () {
-      return this.globalVariantsStore;
     },
 
     saveVariant: function (variant) {
@@ -75,11 +64,7 @@
     },
 
     load: function () {
-      return new Hippo.Future(function (success, fail) {
-        this.globalVariantsStore.on('load', success, {single: true});
-        this.globalVariantsStore.on('exception', fail, {single: true});
-        this.globalVariantsStore.load();
-      }.bind(this));
+      // sub-classes can override this method to load state
     }
   });
 
