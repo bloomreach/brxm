@@ -1,22 +1,22 @@
 /*
- *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 (function () {
   "use strict";
 
-  Ext.namespace('Hippo.ChannelManager.TemplateComposer');
+  Ext.namespace('Hippo.ChannelManager.ChannelEditor');
 
   /**
    * Window that shows a single IFramePanel. The ID of the enclosed IFramePanel is passed to the iframe
@@ -28,7 +28,7 @@
    *
    * @type {*}
    */
-  Hippo.ChannelManager.TemplateComposer.IFrameWindow = Ext.extend(Ext.Window, {
+  Hippo.ChannelManager.ChannelEditor.IFrameWindow = Ext.extend(Ext.Window, {
 
     performCloseHandshake: true,
 
@@ -45,7 +45,7 @@
         layout: 'fit',
         items: [
           {
-            xtype: 'Hippo.ChannelManager.TemplateComposer.IFramePanel',
+            xtype: 'Hippo.IFramePanel',
             id: this.iframePanelId,
             url: url,
             iframeConfig: config.iframeConfig
@@ -69,12 +69,14 @@
 
             messageBus.subscribe('browseTo', function (pathInfo, mountId) {
               if (Ext.isDefined(mountId)) {
-                Hippo.ChannelManager.TemplateComposer.Instance.fireEvent('mountChanged', {
+                Hippo.ChannelManager.ChannelEditor.Instance.fireEvent('mountChanged', {
                   mountId: mountId,
                   renderPathInfo: pathInfo
                 });
               } else {
-                Hippo.ChannelManager.TemplateComposer.Instance.browseTo({renderPathInfo: pathInfo});
+                // TODO: open page
+                console.log('TODO: open page ' + pathInfo);
+                // old code: Hippo.ChannelManager.ChannelEditor.Instance.browseTo({renderPathInfo: pathInfo});
               }
               self.close();
             });
@@ -88,7 +90,7 @@
         }
       });
 
-      Hippo.ChannelManager.TemplateComposer.IFrameWindow.superclass.constructor.call(this, config);
+      Hippo.ChannelManager.ChannelEditor.IFrameWindow.superclass.constructor.call(this, config);
     },
 
     getIFramePanel: function () {
@@ -97,6 +99,6 @@
 
   });
 
-  Ext.reg('Hippo.ChannelManager.TemplateComposer.IFrameWindow', Hippo.ChannelManager.TemplateComposer.IFrameWindow);
+  Ext.reg('Hippo.ChannelManager.ChannelEditor.IFrameWindow', Hippo.ChannelManager.ChannelEditor.IFrameWindow);
 
 }());

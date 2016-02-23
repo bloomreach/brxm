@@ -20,28 +20,7 @@
 
     Hippo.ChannelManager.ChannelEditor.PlainComponentVariantAdder = Ext.extend(Hippo.ChannelManager.ChannelEditor.ComponentVariantAdder, {
 
-        initComponent: function() {
-            var comboBox = new Ext.form.ComboBox({
-                store: this.getGlobalVariantsStore(),
-                valueField: 'id',
-                displayField: 'name',
-                triggerAction: 'all'
-            });
-
-            this.items = [ comboBox ];
-            this.buttons = [
-                {
-                    text: Hippo.ChannelManager.ChannelEditor.Resources['properties-form-button-add-variant'],
-                    handler: function() {
-                        var variant = comboBox.getValue();
-                        this.saveVariant(variant);
-                    },
-                    scope: this
-                }
-            ];
-
-            Hippo.ChannelManager.ChannelEditor.PlainComponentVariantAdder.superclass.initComponent.apply(this, arguments);
-        }
+        // don't show anything by default
 
     });
 

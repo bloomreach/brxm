@@ -33,6 +33,7 @@ public class ChannelEditorApiHeaderItem extends HeaderItem {
     // All individual javascript files used in the template composer API. The array order determines the include order,
     // which matters. All files listed below should also be present in the aggregation section in frontend-api/pom.xml.
     private static final String[] FILES = {
+            "IFrameWindow.js",
             "ComponentPropertiesEditor.js",
             "PlainComponentPropertiesEditor.js",
             "ComponentVariantAdder.js",

@@ -62,6 +62,7 @@
             <aggregation>
               <insertNewLine>true</insertNewLine>
               <includes>
+                <include>${channel.editor.api.package}/IFrameWindow.js</include>
                 <include>${channel.editor.api.package}/ComponentPropertiesEditor.js</include>
                 <include>${channel.editor.api.package}/PlainComponentPropertiesEditor.js</include>
                 <include>${channel.editor.api.package}/ComponentVariantAdder.js</include>
