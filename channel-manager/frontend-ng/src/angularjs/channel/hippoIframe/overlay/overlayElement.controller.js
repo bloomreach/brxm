@@ -21,15 +21,16 @@ export class OverlayElementCtrl {
     this.structureElement.setJQueryElement('overlay', $element);
     OverlaySyncService.registerElement(this.structureElement);
 
-    this._ensureVisibilityOfEmptyContainer($scope);
+    this._ensureVisibilityOfSmallComponent($scope);
   }
 
   getLabel() {
     return this.structureElement.getLabel();
   }
 
-  _ensureVisibilityOfEmptyContainer($scope) {
-    if (this.structureElement.type === 'container' && this.structureElement.isEmpty()) {
+  _ensureVisibilityOfSmallComponent($scope) {
+    if (this.structureElement.type === 'container' && this.structureElement.isEmpty()
+      || this.structureElement.type === 'component') {
       const iframeDomElement = this.structureElement.getJQueryElement('iframe')[0];
       const minHeight = iframeDomElement.style.minHeight || 'auto';
       iframeDomElement.style.minHeight = '40px';
