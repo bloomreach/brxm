@@ -23,4 +23,6 @@ export const HstConstants = {
   PATH_INFO: 'HST-Path-Info',
   CHANNEL_ID: 'HST-Channel-Id',
   LABEL: 'HST-Label',
+  XTYPE: 'HST-XType',
+  XTYPE_TRANSPARENT: 'HST.Transparent',
 };

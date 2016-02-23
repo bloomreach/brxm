@@ -19,7 +19,15 @@ import { PageStructureElement } from './pageStructureElement';
 
 export class ComponentElement extends PageStructureElement {
   constructor(commentDomElement, metaData, container) {
-    super('component', $(commentDomElement).parent(), metaData);
+    let jQueryElement;
+
+    if (PageStructureElement.isTransparentXType(container.metaData)) {
+      jQueryElement = $(commentDomElement).next();
+    } else {
+      jQueryElement = $(commentDomElement).parent();
+    }
+
+    super('component', jQueryElement, metaData);
 
     this.container = container;
   }

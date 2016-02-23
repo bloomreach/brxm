@@ -47,7 +47,11 @@ export class PageStructureService {
         }
 
         const container = this.containers[this.containers.length - 1];
-        container.addComponent(new ComponentElement(commentDomElement, metaData, container));
+        try {
+          container.addComponent(new ComponentElement(commentDomElement, metaData, container));
+        } catch (exception) {
+          this.$log.debug(exception, metaData);
+        }
         break;
 
       case this.HST.TYPE_PAGE:

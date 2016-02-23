@@ -138,4 +138,51 @@ describe('PageStructureService', function () {
 
     expect(PageStructureService.containers[0].getJQueryElement('test')).toEqual(container2);
   });
+
+  it('should find the DOM element of a transparent container as parent of the comment', function () {
+    var containerT = $j('#container-transparent', $document);
+
+    PageStructureService.registerParsedElement(containerT[0].childNodes[0], {
+      'HST-Type': 'CONTAINER_COMPONENT',
+      'HST-XType': 'hst.transparent',
+    });
+
+    expect(PageStructureService.containers.length).toEqual(1);
+    expect(PageStructureService.containers[0].getJQueryElement('iframe')).toEqual(containerT);
+  });
+
+  it('should find the DOM element of a component of a transparent container as next sibling of the comment', function () {
+    var containerT = $j('#container-transparent', $document);
+    var componentT = $j('#component-transparent', $document);
+
+    PageStructureService.registerParsedElement(containerT[0].childNodes[0], {
+      'HST-Type': 'CONTAINER_COMPONENT',
+      'HST-XType': 'hst.transparent',
+    });
+    PageStructureService.registerParsedElement(componentT[0].previousSibling, {
+      'HST-Type': 'CONTAINER_ITEM_COMPONENT',
+    });
+
+    expect(PageStructureService.containers.length).toEqual(1);
+    expect(PageStructureService.containers[0].isEmpty()).toEqual(false);
+    expect(PageStructureService.containers[0].getComponents().length).toEqual(1);
+    expect(PageStructureService.containers[0].getComponents()[0].getJQueryElement('iframe')).toEqual(componentT);
+  });
+
+  it('should ignore components of a transparent container which have no root DOM element', function () {
+    var containerT = $j('#container-transparent', $document);
+    var componentT = $j('#component-transparent', $document);
+    spyOn($log, 'debug');
+
+    PageStructureService.registerParsedElement(containerT[0].childNodes[0], {
+      'HST-Type': 'CONTAINER_COMPONENT',
+      'HST-XType': 'hst.transparent',
+    });
+    PageStructureService.registerParsedElement(componentT[0].nextSibling, {
+      'HST-Type': 'CONTAINER_ITEM_COMPONENT',
+    });
+
+    expect(PageStructureService.containers[0].isEmpty()).toEqual(true);
+    expect($log.debug).toHaveBeenCalled();
+  });
 });
