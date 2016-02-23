@@ -18,13 +18,13 @@
 
   <iframe flex class="qa-view" ng-src="{{ iframe.path }}"></iframe>
 
-  <div class="overlay">
-    <div ng-repeat="container in iframe.getContainers()">
+  <div class="overlay qa-overlay">
+    <div ng-repeat="container in iframe.getContainers()" class="qa-container">
       <overlay-element class="container" layout="row"
                        ng-class="{ 'empty': container.isEmpty() }"
                        structure-element="container">
       </overlay-element>
-      <div ng-repeat="component in container.getComponents()">
+      <div ng-repeat="component in container.getComponents()" class="qa-component">
         <overlay-element class="component" layout="row"
                          structure-element="component"
                          ng-click="iframe.show(component)">
