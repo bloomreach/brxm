@@ -44,7 +44,7 @@ public class FreeTextSearchTest extends RepositoryTestCase {
     public static final String COMPOUNDDOCUMENT_TITLE_PART = "bar";
     public static final String  HTML_CONTENT_PART = "lux";
     public static final String  BINARY_CONTENT_PART = "dog";
-    private static final String TRANSLATED_DOCUMENT_NAME = "xyzyx";
+    private static final String DOCUMENT_DISPLAYNAME = "xyzyx";
 
     private String[] defaultContent = new String[] {
             "/test", "nt:unstructured",
@@ -82,10 +82,10 @@ public class FreeTextSearchTest extends RepositoryTestCase {
         resource.setProperty("jcr:data", new ByteArrayInputStream(data.toByteArray()));
         resource.setProperty("jcr:lastModified", Calendar.getInstance());
 
-        // set translation
+        // set display name
         Node handle = session.getNode("/test/Document1");
         handle.addMixin(NT_NAMED);
-        handle.setProperty(HIPPO_NAME, TRANSLATED_DOCUMENT_NAME);
+        handle.setProperty(HIPPO_NAME, DOCUMENT_DISPLAYNAME);
 
         session.save();
         flushIndex(session.getRepository());
@@ -374,13 +374,13 @@ public class FreeTextSearchTest extends RepositoryTestCase {
     }
 
     /**
-     * new style translation : hippo:name on handle must be indexed on document level
+     * hippo:name on handle must be indexed on document level
      */
     @Test
-    public void test_translation_SearchOnTranslatedDocumentName() throws Exception {
+    public void test_displayname_SearchOnDocumentName() throws Exception {
         createContent(defaultContent);
 
-        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+TRANSLATED_DOCUMENT_NAME+"')] order by @jcr:score descending";
+        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+ DOCUMENT_DISPLAYNAME +"')] order by @jcr:score descending";
         final QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         final NodeIterator nodes = queryResult.getNodes();
         assertEquals(1L, nodes.getSize());
@@ -389,7 +389,7 @@ public class FreeTextSearchTest extends RepositoryTestCase {
     }
 
     @Test
-    public void test_translation_RemoveTranslation_andAddTranslation_UpdatesDocumentIndex() throws Exception {
+    public void test_displayname_RemoveName_andAddName_UpdatesDocumentIndex() throws Exception {
         createContent(defaultContent);
         final Node handle = session.getNode("/test/Document1");
         handle.removeMixin(NT_NAMED);
@@ -397,19 +397,19 @@ public class FreeTextSearchTest extends RepositoryTestCase {
         flushIndex(session.getRepository());
 
         {
-            String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'" + TRANSLATED_DOCUMENT_NAME + "')] order by @jcr:score descending";
+            String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'" + DOCUMENT_DISPLAYNAME + "')] order by @jcr:score descending";
             final QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             final NodeIterator nodes = queryResult.getNodes();
             assertEquals(0L, nodes.getSize());
         }
 
-        // again adding the translation should result in the document being found by TRANSLATED_DOCUMENT_NAME
+        // again adding the display name should result in the document being found by DOCUMENT_DISPLAYNAME
         handle.addMixin(NT_NAMED);
-        handle.setProperty(HIPPO_NAME, TRANSLATED_DOCUMENT_NAME);
+        handle.setProperty(HIPPO_NAME, DOCUMENT_DISPLAYNAME);
         session.save();
         flushIndex(session.getRepository());
         {
-            String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+TRANSLATED_DOCUMENT_NAME+"')] order by @jcr:score descending";
+            String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+ DOCUMENT_DISPLAYNAME +"')] order by @jcr:score descending";
             final QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             final NodeIterator nodes = queryResult.getNodes();
             assertEquals(1L, nodes.getSize());

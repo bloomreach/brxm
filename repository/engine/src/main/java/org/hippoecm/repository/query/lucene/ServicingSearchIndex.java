@@ -472,7 +472,6 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                 NodeState document = getContainingDocument(state, checkedIds, itemStateManager);
                 if (document != null) {
                     addStateIfNeeded(augmentedRemove, augmentedAdd, nodeStatesToAdd, document);
-                    continue;
                 }
             } catch (ItemStateException e) {
                 log.debug("Unable to retrieve state: {}", e.getMessage());
@@ -532,7 +531,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                 // for free text searching. We use aggregateChildTypes = true only for child
                 // nodes directly below a hippo document.
                 aggregateDescendants(node, doc, indexFormatVersion, indexer, true);
-                aggregateTranslations(node, doc, indexer);
+                aggregateHandle(node, doc, indexer);
             }
         } catch (ItemStateException e) {
             log.debug("Unable to get state '{}'", e.getMessage());
@@ -623,7 +622,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         return node.getNodeTypeName().equals(getIndexingConfig().getHippoHandleName());
     }
 
-    private boolean isTranslation(final NodeState state) {
+    private boolean isHippoNamed(final NodeState state) {
         return state.getMixinTypeNames().contains(getIndexingConfig().getHippoNamedName());
     }
 
@@ -747,7 +746,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         }
     }
 
-    private void aggregateTranslations(final NodeState state, final Document doc, final ServicingNodeIndexer indexer) {
+    private void aggregateHandle(final NodeState state, final Document doc, final ServicingNodeIndexer indexer) {
         try {
             if (!isHippoDocument(state)) {
                 return;
@@ -756,12 +755,12 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             if (parentId == null) {
                 return;
             }
-            final NodeState handleState = getNodeState(parentId);
-            if (!isHandle(handleState)) {
+            final NodeState parentState = getNodeState(parentId);
+            if (!isHandle(parentState)) {
                 return;
             }
-            if (isTranslation(handleState)) {
-                final PropertyId namePropertyId = new PropertyId(handleState.getNodeId(), getIndexingConfig().getHippoNameName());
+            if (isHippoNamed(parentState)) {
+                final PropertyId namePropertyId = new PropertyId(parentState.getNodeId(), getIndexingConfig().getHippoNameName());
                 final PropertyState namePropertyState = getPropertyState(namePropertyId);
                 indexer.addStringValue(doc, getIndexingConfig().getHippoNameFieldName(), namePropertyState.getValues()[0].getString(), true, true, 2.0f, true, false);
 
