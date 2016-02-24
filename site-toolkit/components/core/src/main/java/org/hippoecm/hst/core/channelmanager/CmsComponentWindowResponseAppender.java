@@ -132,9 +132,9 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
     }
 
     final void populateAttributes(HstComponentWindow window, HstRequest request,
-                                  Map<String, String> preambleAttirbutes, Map<String, String> epilogueAttributes) {
+                                  Map<String, String> preambleAttributes, Map<String, String> epilogueAttributes) {
         for (ComponentWindowAttributeContributor attributeContributor : attributeContributors) {
-            attributeContributor.contributePreamble(window, request, preambleAttirbutes);
+            attributeContributor.contributePreamble(window, request, preambleAttributes);
             attributeContributor.contributeEpilogue(window, request, epilogueAttributes);
         }
     }
