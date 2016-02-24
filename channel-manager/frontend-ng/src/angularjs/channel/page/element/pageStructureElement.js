@@ -52,7 +52,7 @@ export class PageStructureElement {
   }
 
   getLastModified() {
-    return this.metaData[HstConstants.LAST_MODIFIED];
+    return this.metaData[HstConstants.LAST_MODIFIED] || 0;
   }
 
   isLocked() {

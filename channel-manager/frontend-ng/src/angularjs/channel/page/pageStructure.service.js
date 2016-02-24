@@ -77,7 +77,7 @@ export class PageStructureService {
       component: {
         id: componentElement.getId(),
         label: componentElement.getLabel(),
-        lastModifiedTimestamp: componentElement.getLastModified(),
+        lastModified: componentElement.getLastModified(),
       },
       container: {
         isDisabled: componentElement.container.isDisabled(),
