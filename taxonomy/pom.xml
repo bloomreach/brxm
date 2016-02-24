@@ -255,6 +255,8 @@
               <excludes combine.children="append">
                 <!-- repository content XML -->
                 <exclude>addon/repository/src/main/resources/*.xml</exclude>
+                <exclude>demo/content/src/main/resources/**/*.xml</exclude>
+                <exclude>demo/plugin/src/main/resources/**/*.xml</exclude>
               </excludes>
             </configuration>
           </plugin>
