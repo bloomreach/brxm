@@ -37,6 +37,7 @@ public interface ChannelManagerConstants {
     String HST_LOCKED_BY_CURRENT_USER = "HST-LockedBy-Current-User";
     String HST_LOCKED_ON = "HST-LockedOn";
     String HST_LAST_MODIFIED = "HST-LastModified";
+    String HST_INHERITED = "HST-Inherited";
     String HST_TYPE_PAGE_META_DATA = "PAGE-META-DATA";
 
 }

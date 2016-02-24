@@ -37,7 +37,9 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type.CONTAINER_COMPONENT;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_INHERITED;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_TYPE;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_XTYPE;
 import static org.junit.Assert.assertThat;
 
 public class CmsComponentComponentWindowAttributeContributorTest {
@@ -59,7 +61,6 @@ public class CmsComponentComponentWindowAttributeContributorTest {
 
     @Test
     public void testContribute() {
-
         final HstComponentConfiguration config = mock(HstComponentConfiguration.class);
         expect(window.getComponentInfo()).andReturn(config);
         expect(window.getReferenceNamespace()).andReturn("reference-namespace");
@@ -75,8 +76,8 @@ public class CmsComponentComponentWindowAttributeContributorTest {
         final Map<String, String> map = new HashMap<>();
         contributor.contribute(window, request, map);
 
-        assertThat(map.containsKey("xtype"), is(false));
-        assertThat(map.containsKey("inherited"), is(false));
+        assertThat(map.containsKey(HST_XTYPE), is(false));
+        assertThat(map.containsKey(HST_INHERITED), is(false));
 
         assertThat(map.containsKey("uuid"), is(true));
         assertThat(map.containsKey(HST_TYPE), is(true));

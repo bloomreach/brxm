@@ -42,7 +42,7 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
             populatingAttributesMap.put(ChannelManagerConstants.HST_XTYPE, compConfig.getXType());
         }
         if (compConfig.isInherited()) {
-            populatingAttributesMap.put("inherited", "true");
+            populatingAttributesMap.put(ChannelManagerConstants.HST_INHERITED, "true");
         }
 
         final String componentType = compConfig.getComponentType().toString();
