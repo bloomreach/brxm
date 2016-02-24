@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.cms7.channelmanager.templatecomposer;
+package org.onehippo.cms7.channelmanager.channeleditor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,24 +25,34 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistryHeaderItem;
-import org.onehippo.cms7.channelmanager.common.CommonBundle;
-import org.onehippo.cms7.channelmanager.templatecomposer.pageeditor.PageEditorBundle;
 
-public class TemplateComposerHeaderItem extends HeaderItem {
+public class ChannelEditorHeaderItem extends HeaderItem {
+
+    // This list should be identical to the one defined in the pom.xml of this module.
+    // The order of items matters.
+    private static final String[] RESOURCES = {
+            "plugins/colorfield/colorfield.js",
+            "plugins/floatingwindow/FloatingWindow.js",
+            "plugins/vtabs/VerticalTabPanel.js",
+            "ComponentVariants.js",
+            "ComponentPropertiesForm.js",
+            "ComponentPropertiesPanel.js",
+            "ComponentPropertiesWindow.js",
+            "ChannelEditor.js"
+    };
+
+    private static final String CONCATENATED_RESOURCES = "channel-editor-bundle.js";
 
     private static final List<JavaScriptResourceReference> DEVELOPMENT_REFERENCES;
     private static final List<JavaScriptResourceReference> DEPLOYMENT_REFERENCES;
 
     static {
-        List<JavaScriptResourceReference> developmentRefs = new ArrayList<>();
-        developmentRefs.add(new JavaScriptResourceReference(TemplateComposerGlobalBundle.class, TemplateComposerGlobalBundle.GLOBALS));
-        developmentRefs.add(new JavaScriptResourceReference(CommonBundle.class, CommonBundle.MARK_REQUIRED_FIELDS));
-        developmentRefs.addAll(javaScriptResources(PageEditorBundle.class, PageEditorBundle.FILES));
+        final List<JavaScriptResourceReference> developmentRefs = new ArrayList<>();
+        developmentRefs.addAll(javaScriptResources(ChannelEditorHeaderItem.class, RESOURCES));
         DEVELOPMENT_REFERENCES = Collections.unmodifiableList(developmentRefs);
 
-        List<JavaScriptResourceReference> deploymentRefs = new ArrayList<>();
-        deploymentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.ALL));
-        DEPLOYMENT_REFERENCES = Collections.unmodifiableList(deploymentRefs);
+        final JavaScriptResourceReference concatenatedRef = new JavaScriptResourceReference(ChannelEditorHeaderItem.class, CONCATENATED_RESOURCES);
+        DEPLOYMENT_REFERENCES = Collections.singletonList(concatenatedRef);
     }
 
     private static List<JavaScriptResourceReference> javaScriptResources(Class scope, String... sources) {
@@ -54,22 +63,22 @@ public class TemplateComposerHeaderItem extends HeaderItem {
         return resources;
     }
 
-    private static final TemplateComposerHeaderItem INSTANCE = new TemplateComposerHeaderItem();
+    private static final ChannelEditorHeaderItem INSTANCE = new ChannelEditorHeaderItem();
 
-    public static TemplateComposerHeaderItem get() {
+    public static ChannelEditorHeaderItem get() {
         return INSTANCE;
     }
 
-    private TemplateComposerHeaderItem() {}
+    private ChannelEditorHeaderItem() {}
 
     @Override
     public Iterable<? extends HeaderItem> getDependencies() {
-        return Arrays.asList(ExtWidgetRegistryHeaderItem.get());
+        return Collections.singleton(ExtWidgetRegistryHeaderItem.get());
     }
 
     @Override
     public Iterable<?> getRenderTokens() {
-        return Arrays.asList("template-composer-header-item");
+        return Collections.singletonList("channel-editor-header-item");
     }
 
     @Override

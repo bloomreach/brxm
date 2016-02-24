@@ -21,8 +21,13 @@ export const HstConstants = {
   TYPE_CONTAINER: 'CONTAINER_COMPONENT',
   TYPE_COMPONENT: 'CONTAINER_ITEM_COMPONENT',
   PATH_INFO: 'HST-Path-Info',
+  PAGE_REQUEST_VARIANTS: 'HST-Page-Request-Variants',
   CHANNEL_ID: 'HST-Channel-Id',
+  INHERITED: 'HST-Inherited',
   LABEL: 'HST-Label',
+  LAST_MODIFIED: 'HST-LastModified',
+  LOCKED_BY: 'HST-LockedBy',
+  LOCKED_BY_CURRENT_USER: 'HST-LockedBy-Current-User',
   XTYPE: 'HST-XType',
   XTYPE_TRANSPARENT: 'HST.Transparent',
 };

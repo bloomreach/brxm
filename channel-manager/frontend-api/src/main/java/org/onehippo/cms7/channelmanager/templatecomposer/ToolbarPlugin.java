@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package org.onehippo.cms7.channelmanager.templatecomposer;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.hippoecm.frontend.extjs.ExtWidget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -37,7 +35,10 @@ import org.slf4j.LoggerFactory;
  * </ul>
  * The default value of both 'position.view' and 'position.edit' is 'last', so by default a toolbar plugin is added
  * as the last item in both 'view' and 'edit' mode.
+ *
+ * @deprecated TODO: create a replacement for Hippo 11 (or not)
  */
+@Deprecated
 public class ToolbarPlugin extends ExtWidget {
 
     private static final String CONFIG_PLUGIN_CLASS = "plugin.class";
@@ -61,13 +62,6 @@ public class ToolbarPlugin extends ExtWidget {
         log.info("Registering template composer toolbar plugin '{}' at view position '{}' and edit position '{}'",
                 new Object[]{getXType(), positionView, positionEdit});
         context.registerService(this, SERVICE_ID);
-    }
-
-    @Override
-    public void renderHead(final Component component, final IHeaderResponse response) {
-        super.renderHead(component, response);
-
-        response.render(TemplateComposerApiHeaderItem.get());
     }
 
     public String getPositionView() {

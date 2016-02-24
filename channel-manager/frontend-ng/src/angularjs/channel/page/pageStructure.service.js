@@ -19,19 +19,21 @@ import { ComponentElement } from './element/componentElement';
 
 export class PageStructureService {
 
-  constructor($log, HstConstants, ChannelService) {
+  constructor($log, HstConstants, ChannelService, CmsService) {
     'ngInject';
 
     // Injected
     this.$log = $log;
     this.HST = HstConstants;
     this.ChannelService = ChannelService;
+    this.CmsService = CmsService;
 
     this.clearParsedElements();
   }
 
   clearParsedElements() {
     this.containers = [];
+    this.requestVariants = {};
   }
 
   registerParsedElement(commentDomElement, metaData) {
@@ -55,15 +57,34 @@ export class PageStructureService {
         break;
 
       case this.HST.TYPE_PAGE:
-        const channelId = metaData[this.HST.CHANNEL_ID];
-        if (channelId !== this.ChannelService.getId()) {
-          this.ChannelService.switchToChannel(channelId);
+        if (metaData.hasOwnProperty(this.HST.CHANNEL_ID)) {
+          const channelId = metaData[this.HST.CHANNEL_ID];
+          if (channelId !== this.ChannelService.getId()) {
+            this.ChannelService.switchToChannel(channelId);
+          }
+        } else if (angular.isString(metaData[this.HST.PAGE_REQUEST_VARIANTS])) {
+          this.requestVariants = JSON.parse(metaData[this.HST.PAGE_REQUEST_VARIANTS]);
         }
         break;
 
       default:
         break;
     }
+  }
+
+  showComponentProperties(componentElement) {
+    this.CmsService.publish('show-component-properties', {
+      component: {
+        id: componentElement.getId(),
+        label: componentElement.getLabel(),
+        lastModifiedTimestamp: componentElement.getLastModified(),
+      },
+      container: {
+        isDisabled: componentElement.container.isDisabled(),
+        isInherited: componentElement.container.isInherited(),
+      },
+      pageRequestVariants: this.requestVariants,
+    });
   }
 
   printParsedElements() {

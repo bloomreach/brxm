@@ -36,7 +36,7 @@ import org.onehippo.cms7.channelmanager.channels.ChannelStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelStoreFactory;
 import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
 import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
-import org.onehippo.cms7.channelmanager.templatecomposer.channeleditor.ChannelEditor;
+import org.onehippo.cms7.channelmanager.channeleditor.ChannelEditor;
 import org.onehippo.cms7.channelmanager.widgets.ExtLinkPicker;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.layout.BorderLayout;
