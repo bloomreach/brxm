@@ -27,4 +27,5 @@ export const HstConstants = {
   LOCKED_BY: 'HST-LockedBy',
   LOCKED_BY_CURRENT_USER: 'HST-LockedBy-Current-User',
   INHERITED: 'HST-Inherited',
+  PAGE_REQUEST_VARIANTS: 'HST-Page-Request-Variants',
 };

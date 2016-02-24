@@ -33,6 +33,7 @@ export class PageStructureService {
 
   clearParsedElements() {
     this.containers = [];
+    this.requestVariants = {};
   }
 
   registerParsedElement(commentDomElement, metaData) {
@@ -52,9 +53,13 @@ export class PageStructureService {
         break;
 
       case this.HST.TYPE_PAGE:
-        const channelId = metaData[this.HST.CHANNEL_ID];
-        if (channelId !== this.ChannelService.getId()) {
-          this.ChannelService.switchToChannel(channelId);
+        if (metaData.hasOwnProperty(this.HST.CHANNEL_ID)) {
+          const channelId = metaData[this.HST.CHANNEL_ID];
+          if (channelId !== this.ChannelService.getId()) {
+            this.ChannelService.switchToChannel(channelId);
+          }
+        } else if (angular.isString(metaData[this.HST.PAGE_REQUEST_VARIANTS])) {
+          this.requestVariants = JSON.parse(metaData[this.HST.PAGE_REQUEST_VARIANTS]);
         }
         break;
 
@@ -74,8 +79,7 @@ export class PageStructureService {
         isDisabled: componentElement.container.isDisabled(),
         isInherited: componentElement.container.isInherited(),
       },
-      // TODO: pass the request variants of the current page
-      pageRequestVariants: [],
+      pageRequestVariants: this.requestVariants,
     });
   }
 
