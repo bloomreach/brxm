@@ -36,7 +36,7 @@
         constructor: function(config) {
             this.variantsUuid = config.variantsUuid;
             this.componentId = config.componentId;
-            this.lastModifiedTimestamp = config.lastModifiedTimestamp;
+            this.lastModified = config.lastModified;
             this.composerRestMountUrl = config.composerRestMountUrl;
             this.locale = config.locale;
 
@@ -138,7 +138,7 @@
                         headers: {
                             'FORCE_CLIENT_HOST': 'true',
                             'Content-Type': 'application/json',
-                            'lastModifiedTimestamp': this.lastModifiedTimestamp
+                            'lastModifiedTimestamp': this.lastModified
                         },
                         params: Ext.util.JSON.encode(variantIds),
                         scope: this,

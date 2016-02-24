@@ -103,8 +103,8 @@
             console.log('TODO: save component');
             // old code: this.fireEvent('channelChanged');
           },
-          'delete': function() {
-            console.log('TODO: delete component');
+          deleteVariant: function() {
+            console.log('TODO: delete variant');
             // old code: this.fireEvent('channelChanged');
           },
           propertiesChanged: function(componentId, propertiesMap) {
@@ -132,13 +132,13 @@
     },
 
     _showComponentProperties: function(selected) {
-      this.componentPropertiesWindow.showComponent(
+      this.componentPropertiesWindow.setComponent(
         selected.component.id,
         selected.pageRequestVariants,
-        selected.component.lastModifiedTimestamp,
+        selected.component.lastModified,
         selected.container
       );
-      this.componentPropertiesWindow.setTitle(selected.component.name);
+      this.componentPropertiesWindow.setTitle(selected.component.label);
       this.componentPropertiesWindow.show();
     },
 

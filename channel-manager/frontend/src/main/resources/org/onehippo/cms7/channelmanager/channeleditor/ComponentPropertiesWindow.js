@@ -27,7 +27,7 @@
         windowWidth = config.width;
 
       this.componentPropertiesPanel = new Hippo.ChannelManager.ChannelEditor.ComponentPropertiesPanel({
-        bubbleEvents: ['save', 'delete', 'propertiesChanged'],
+        bubbleEvents: ['save', 'deleteVariant', 'propertiesChanged'],
         resources: config.resources,
         locale: config.locale,
         composerRestMountUrl: config.composerRestMountUrl,
@@ -62,7 +62,7 @@
         handler: function () {
           this.componentPropertiesPanel.saveAll().then(function () {
             this._resetFormStates();
-            console.log('TODO: notify channel changed');
+            console.log('TODO: notify other parts that the channel changed? Or not?');
             // Old code:
             // Hippo.ChannelManager.TemplateComposer.Instance.templateComposerApi.channelChanged();
           }.bind(this));
@@ -91,7 +91,7 @@
     initComponent: function () {
       Hippo.ChannelManager.ChannelEditor.ComponentPropertiesWindow.superclass.initComponent.apply(this, arguments);
 
-      this.addEvents('save', 'close', 'delete', 'propertiesChanged');
+      this.addEvents('save', 'close', 'deleteVariant', 'propertiesChanged');
 
       this.on('hide', this.componentPropertiesPanel.onHide, this.componentPropertiesPanel);
     },
@@ -143,8 +143,8 @@
       this.saveButton.setDisabled(disableSaveButton);
     },
 
-    showComponent: function (componentId, pageRequestVariants, lastModifiedTimestamp, container) {
-      this.componentPropertiesPanel.showComponent(componentId, pageRequestVariants, lastModifiedTimestamp, container);
+    setComponent: function (componentId, pageRequestVariants, lastModified, container) {
+      this.componentPropertiesPanel.setComponent(componentId, pageRequestVariants, lastModified, container);
     }
 
   });

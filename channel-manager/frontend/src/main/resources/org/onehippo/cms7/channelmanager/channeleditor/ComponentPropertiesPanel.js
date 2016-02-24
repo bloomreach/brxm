@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@
     componentId: null,
     pageRequestVariants: {},
     componentVariants: null,
-    lastModifiedTimestamp: null,
+    lastModified: null,
 
     constructor: function (config) {
       this.composerRestMountUrl = config.composerRestMountUrl;
@@ -97,11 +97,11 @@
      *
      * @param componentId the UUID of the component
      * @param pageRequestVariants the possible page request variants
-     * @param lastModifiedTimestamp the time this component has last been modified
+     * @param lastModified the time this component has last been modified
      * @param container object with information about the container of this component.
      * Available properties are 'isDisabled' and 'isInherited'.
      */
-    showComponent: function (componentId, pageRequestVariants, lastModifiedTimestamp, container) {
+    setComponent: function (componentId, pageRequestVariants, lastModified, container) {
       if (this.componentVariants !== null) {
         this.componentVariants.un('invalidated', this.updateUI, this);
         this._fireInitialPropertiesChangedIfNeeded();
@@ -109,12 +109,12 @@
 
       this.componentId = componentId;
       this.pageRequestVariants = pageRequestVariants;
-      this.lastModifiedTimestamp = lastModifiedTimestamp;
+      this.lastModified = lastModified;
       this.container = container;
 
       this.componentVariants = new Hippo.ChannelManager.ChannelEditor.ComponentVariants({
         componentId: componentId,
-        lastModifiedTimestamp: lastModifiedTimestamp,
+        lastModified: lastModified,
         composerRestMountUrl: this.composerRestMountUrl,
         variantsUuid: this.variantsUuid,
         locale: this.locale
@@ -251,7 +251,7 @@
           composerRestMountUrl: this.composerRestMountUrl,
           locale: this.locale,
           componentId: this.componentId,
-          lastModifiedTimestamp: this.lastModifiedTimestamp,
+          lastModified: this.lastModified,
           isReadOnly: this.container.isDisabled,
           bubbleEvents: ['variantDirty', 'variantPristine', 'clientvalidation'],
           listeners: {
@@ -283,11 +283,11 @@
 
     _onPropertiesDeleted: function (deletedVariantId) {
       // set the active tab be the first one (i.e. the hippo-default variant)
-      this._reloadCleanupAndFireEvent([deletedVariantId], 'hippo-default', 'delete');
+      this._reloadCleanupAndFireEvent([deletedVariantId], 'hippo-default', 'deleteVariant');
     },
 
     _onVariantsDeleted: function (deletedVariantIds, newActiveVariantId) {
-      this._reloadCleanupAndFireEvent(deletedVariantIds, newActiveVariantId, 'delete');
+      this._reloadCleanupAndFireEvent(deletedVariantIds, newActiveVariantId, 'deleteVariant');
     },
 
     _reloadCleanupAndFireEvent: function (changedVariantIds, activeVariantId, event) {

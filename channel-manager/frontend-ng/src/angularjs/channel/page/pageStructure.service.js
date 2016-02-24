@@ -67,7 +67,7 @@ export class PageStructureService {
     this.CmsService.publish('show-component-properties', {
       component: {
         id: componentElement.metaData.uuid,
-        name: componentElement.metaData[this.HST.LABEL],
+        label: componentElement.metaData[this.HST.LABEL],
         lastModifiedTimestamp: componentElement.metaData[this.HST.LAST_MODIFIED],
       },
       container: {

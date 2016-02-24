@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,6 +67,10 @@
               iframePanel.setLocation('about:blank');
             });
 
+
+/*
+            TODO: potential dead code. Determine if it is still used and remove it if not.
+
             messageBus.subscribe('browseTo', function (pathInfo, mountId) {
               if (Ext.isDefined(mountId)) {
                 Hippo.ChannelManager.ChannelEditor.Instance.fireEvent('mountChanged', {
@@ -80,6 +84,7 @@
               }
               self.close();
             });
+*/
           },
           'beforeclose': function (self) {
             if (self.performCloseHandshake && !isClosing) {

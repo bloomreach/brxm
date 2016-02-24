@@ -57,7 +57,7 @@
       this.composerRestMountUrl = config.composerRestMountUrl;
       this.locale = config.locale;
       this.componentId = config.componentId;
-      this.lastModifiedTimestamp = config.lastModifiedTimestamp;
+      this.lastModified = config.lastModified;
       this.isReadOnly = config.isReadOnly;
 
       Hippo.ChannelManager.ChannelEditor.ComponentPropertiesForm.superclass.constructor.call(this, Ext.apply(config, {
@@ -179,7 +179,7 @@
       form.submit({
         headers: {
           'FORCE_CLIENT_HOST': 'true',
-          'lastModifiedTimestamp': this.lastModifiedTimestamp
+          'lastModifiedTimestamp': this.lastModified
         },
         params: uncheckedValues,
         url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/rename/' + encodeURIComponent(this.newVariantId) + '?FORCE_CLIENT_HOST=true',
