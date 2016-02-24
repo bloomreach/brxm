@@ -24,6 +24,7 @@ export const HstConstants = {
   CHANNEL_ID: 'HST-Channel-Id',
   LABEL: 'HST-Label',
   LAST_MODIFIED: 'HST-LastModified',
-  CONTAINER_DISABLED: 'HST-Container-disabled',
-  CONTAINER_INHERITED: 'HST-Container-inherited',
+  LOCKED_BY: 'HST-LockedBy',
+  LOCKED_BY_CURRENT_USER: 'HST-LockedBy-Current-User',
+  INHERITED: 'HST-Inherited',
 };

@@ -33,6 +33,10 @@ export class PageStructureElement {
     return this.jQueryElements[elementType];
   }
 
+  getId() {
+    return this.metaData.uuid;
+  }
+
   getLabel() {
     let label = this.metaData[HstConstants.LABEL];
     if (label === 'null') {
@@ -40,4 +44,21 @@ export class PageStructureElement {
     }
     return label;
   }
+
+  getLastModified() {
+    return this.metaData[HstConstants.LAST_MODIFIED];
+  }
+
+  isLocked() {
+    return angular.isDefined(this.getLockedBy());
+  }
+
+  getLockedBy() {
+    return this.metaData[HstConstants.LOCKED_BY];
+  }
+
+  isLockedByCurrentUser() {
+    return this.metaData[HstConstants.LOCKED_BY_CURRENT_USER] === 'true';
+  }
+
 }

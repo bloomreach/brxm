@@ -66,13 +66,13 @@ export class PageStructureService {
   showComponentProperties(componentElement) {
     this.CmsService.publish('show-component-properties', {
       component: {
-        id: componentElement.metaData.uuid,
-        label: componentElement.metaData[this.HST.LABEL],
-        lastModifiedTimestamp: componentElement.metaData[this.HST.LAST_MODIFIED],
+        id: componentElement.getId(),
+        label: componentElement.getLabel(),
+        lastModifiedTimestamp: componentElement.getLastModified(),
       },
       container: {
-        isDisabled: componentElement.container.metaData[this.HST.CONTAINER_DISABLED],
-        isInherited: componentElement.container.metaData[this.HST.CONTAINER_INHERITED],
+        isDisabled: componentElement.container.isDisabled(),
+        isInherited: componentElement.container.isInherited(),
       },
       // TODO: pass the request variants of the current page
       pageRequestVariants: [],

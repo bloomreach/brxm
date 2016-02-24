@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { HstConstants } from '../../../api/hst.constants';
 import { PageStructureElement } from './pageStructureElement';
 
 export class ContainerElement extends PageStructureElement {
@@ -25,6 +26,14 @@ export class ContainerElement extends PageStructureElement {
 
   isEmpty() {
     return this.items.length === 0;
+  }
+
+  isDisabled() {
+    return this.isInherited() || (this.isLocked() && !this.isLockedByCurrentUser());
+  }
+
+  isInherited() {
+    return this.metaData[HstConstants.INHERITED] === 'true';
   }
 
   addComponent(component) {
