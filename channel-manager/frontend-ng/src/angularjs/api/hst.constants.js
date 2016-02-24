@@ -21,7 +21,6 @@ export const HstConstants = {
   TYPE_CONTAINER: 'CONTAINER_COMPONENT',
   TYPE_COMPONENT: 'CONTAINER_ITEM_COMPONENT',
   PATH_INFO: 'HST-Path-Info',
-  PAGE_REQUEST_VARIANTS: 'HST-Page-Request-Variants',
   CHANNEL_ID: 'HST-Channel-Id',
   INHERITED: 'HST-Inherited',
   LABEL: 'HST-Label',

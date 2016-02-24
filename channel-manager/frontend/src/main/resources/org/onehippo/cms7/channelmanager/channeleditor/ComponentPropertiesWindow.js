@@ -143,8 +143,10 @@
       this.saveButton.setDisabled(disableSaveButton);
     },
 
-    setComponent: function (componentId, pageRequestVariants, lastModified, container) {
-      this.componentPropertiesPanel.setComponent(componentId, pageRequestVariants, lastModified, container);
+    showComponent: function (component, container, page) {
+      this.setTitle(component.label);
+      this.componentPropertiesPanel.setComponent(component, container, page);
+      this.show();
     }
 
   });

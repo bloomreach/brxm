@@ -33,7 +33,7 @@ export class PageStructureService {
 
   clearParsedElements() {
     this.containers = [];
-    this.requestVariants = {};
+    this.pageMetaData = {};
   }
 
   registerParsedElement(commentDomElement, metaData) {
@@ -57,13 +57,13 @@ export class PageStructureService {
         break;
 
       case this.HST.TYPE_PAGE:
+        Object.assign(this.pageMetaData, metaData);
+
         if (metaData.hasOwnProperty(this.HST.CHANNEL_ID)) {
           const channelId = metaData[this.HST.CHANNEL_ID];
           if (channelId !== this.ChannelService.getId()) {
             this.ChannelService.switchToChannel(channelId);
           }
-        } else if (angular.isString(metaData[this.HST.PAGE_REQUEST_VARIANTS])) {
-          this.requestVariants = JSON.parse(metaData[this.HST.PAGE_REQUEST_VARIANTS]);
         }
         break;
 
@@ -83,7 +83,7 @@ export class PageStructureService {
         isDisabled: componentElement.container.isDisabled(),
         isInherited: componentElement.container.isInherited(),
       },
-      pageRequestVariants: this.requestVariants,
+      page: this.pageMetaData,
     });
   }
 

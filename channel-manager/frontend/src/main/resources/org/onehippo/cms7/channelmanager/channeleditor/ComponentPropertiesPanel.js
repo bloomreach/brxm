@@ -95,26 +95,24 @@
      * Load and show all variant tabs for the given component. The initially selected tab is determined by
      * the available page request variants (e.g. the possible variants for which this page can be rendered).
      *
-     * @param componentId the UUID of the component
-     * @param pageRequestVariants the possible page request variants
-     * @param lastModified the time this component has last been modified
-     * @param container object with information about the container of this component.
-     * Available properties are 'isDisabled' and 'isInherited'.
+     * @param component object with all information about the component.
+     * @param container object with information about the container of the component.
+     * @param page object with all page meta-data.
      */
-    setComponent: function (componentId, pageRequestVariants, lastModified, container) {
+    setComponent: function (component, container, page) {
       if (this.componentVariants !== null) {
         this.componentVariants.un('invalidated', this.updateUI, this);
         this._fireInitialPropertiesChangedIfNeeded();
       }
 
-      this.componentId = componentId;
-      this.pageRequestVariants = pageRequestVariants;
-      this.lastModified = lastModified;
+      this.componentId = component.id;
+      this.pageRequestVariants = JSON.parse(page['HST-Page-Request-Variants'] || '{}');
+      this.lastModified = component.lastModified;
       this.container = container;
 
       this.componentVariants = new Hippo.ChannelManager.ChannelEditor.ComponentVariants({
-        componentId: componentId,
-        lastModified: lastModified,
+        componentId: component.id,
+        lastModified: component.lastModified,
         composerRestMountUrl: this.composerRestMountUrl,
         variantsUuid: this.variantsUuid,
         locale: this.locale

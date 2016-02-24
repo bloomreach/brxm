@@ -132,14 +132,11 @@
     },
 
     _showComponentProperties: function(selected) {
-      this.componentPropertiesWindow.setComponent(
-        selected.component.id,
-        selected.pageRequestVariants,
-        selected.component.lastModified,
-        selected.container
+      this.componentPropertiesWindow.showComponent(
+        selected.component,
+        selected.container,
+        selected.page
       );
-      this.componentPropertiesWindow.setTitle(selected.component.label);
-      this.componentPropertiesWindow.show();
     },
 
     initComponent: function() {
