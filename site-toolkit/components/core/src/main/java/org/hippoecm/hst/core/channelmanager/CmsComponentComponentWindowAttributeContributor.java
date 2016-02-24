@@ -77,7 +77,7 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
     public void contributeEpilogue(HstComponentWindow window, HstRequest request, Map<String, String> populatingAttributesMap) {
         HstComponentConfiguration config = ((HstComponentConfiguration) window.getComponentInfo());
 
-        populatingAttributesMap.put(ChannelManagerConstants.HST_TYPE, config.getComponentType().toString() + "-END");
+        populatingAttributesMap.put(ChannelManagerConstants.HST_END_MARKER, "true");
         populatingAttributesMap.put("uuid", config.getCanonicalIdentifier());
     }
 

@@ -40,6 +40,7 @@ import static org.hippoecm.hst.configuration.components.HstComponentConfiguratio
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_INHERITED;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_TYPE;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_XTYPE;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_END_MARKER;
 import static org.junit.Assert.assertThat;
 
 public class CmsComponentComponentWindowAttributeContributorTest {
@@ -96,8 +97,7 @@ public class CmsComponentComponentWindowAttributeContributorTest {
         contributor.contributeEpilogue(window, request, map);
 
         assertThat(map.containsKey("uuid"), is(true));
-        assertThat(map.containsKey(HST_TYPE), is(true));
-        assertThat(map.get(HST_TYPE), is(CONTAINER_COMPONENT + "-END"));
+        assertThat(map.containsKey(HST_END_MARKER), is(true));
     }
 
     private <T> T mock(final Class<T> type) {
