@@ -34,6 +34,14 @@ public interface ComponentWindowAttributeContributor {
      * @param request      the current request
      * @param populatingAttributesMap a map containing attributes as key-value pairs
      */
-    void contribute(HstComponentWindow window, HstRequest request, Map<String, String> populatingAttributesMap);
+    void contributePreamble(HstComponentWindow window, HstRequest request, Map<String, String> populatingAttributesMap);
 
+    /**
+     * Populate an attributes map to be used as a preamble comment for the given component.
+     *
+     * @param window       a hst component window for which to contribute attributes
+     * @param request      the current request
+     * @param populatingAttributesMap a map containing attributes as key-value pairs
+     */
+    void contributeEpilogue(HstComponentWindow window, HstRequest request, Map<String, String> populatingAttributesMap);
 }

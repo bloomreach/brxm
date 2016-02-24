@@ -117,8 +117,11 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
                 return;
             }
 
-            final Map<String, String> attributes = getAttributeMap(window, request);
-            response.addPreamble(createCommentWithAttr(attributes, response));
+            final Map<String, String> preambleAttributes = new HashMap<>();
+            final Map<String, String> epilogueAttributes = new HashMap<>();
+            populateAttributes(window, request, preambleAttributes, epilogueAttributes);
+            response.addPreamble(createCommentWithAttr(preambleAttributes, response));
+            response.addEpilogue(createCommentWithAttr(epilogueAttributes, response));
         }
 
     }
@@ -128,11 +131,11 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
                 || CONTAINER_COMPONENT.equals(compConfig.getComponentType());
     }
 
-    final Map<String, String> getAttributeMap(HstComponentWindow window, HstRequest request) {
-        final Map<String, String> map = new HashMap<>();
+    final void populateAttributes(HstComponentWindow window, HstRequest request,
+                                  Map<String, String> preambleAttirbutes, Map<String, String> epilogueAttributes) {
         for (ComponentWindowAttributeContributor attributeContributor : attributeContributors) {
-            attributeContributor.contribute(window, request, map);
+            attributeContributor.contributePreamble(window, request, preambleAttirbutes);
+            attributeContributor.contributeEpilogue(window, request, epilogueAttributes);
         }
-        return map;
     }
 }

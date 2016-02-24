@@ -32,7 +32,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public class CmsComponentComponentWindowAttributeContributor implements ComponentWindowAttributeContributor {
 
     @Override
-    public void contribute(HstComponentWindow window, HstRequest request, Map<String, String> populatingAttributesMap) {
+    public void contributePreamble(HstComponentWindow window, HstRequest request, Map<String, String> populatingAttributesMap) {
 
         HstComponentConfiguration compConfig = ((HstComponentConfiguration) window.getComponentInfo());
         final HstRequestContext requestContext = request.getRequestContext();
@@ -71,6 +71,14 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
             populatingAttributesMap.put(ChannelManagerConstants.HST_LAST_MODIFIED, String.valueOf(compConfig.getLastModified().getTimeInMillis()));
         }
 
+    }
+
+    @Override
+    public void contributeEpilogue(HstComponentWindow window, HstRequest request, Map<String, String> populatingAttributesMap) {
+        HstComponentConfiguration config = ((HstComponentConfiguration) window.getComponentInfo());
+
+        populatingAttributesMap.put(ChannelManagerConstants.HST_TYPE, config.getComponentType().toString() + "-END");
+        populatingAttributesMap.put("uuid", config.getCanonicalIdentifier());
     }
 
     private String getLabel(HstComponentConfiguration config) {

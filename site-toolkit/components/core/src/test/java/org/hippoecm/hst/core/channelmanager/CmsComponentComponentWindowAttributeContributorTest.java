@@ -60,7 +60,7 @@ public class CmsComponentComponentWindowAttributeContributorTest {
     }
 
     @Test
-    public void testContribute() {
+    public void testContributePreamble() {
         final HstComponentConfiguration config = mock(HstComponentConfiguration.class);
         expect(window.getComponentInfo()).andReturn(config);
         expect(window.getReferenceNamespace()).andReturn("reference-namespace");
@@ -74,7 +74,7 @@ public class CmsComponentComponentWindowAttributeContributorTest {
         replay(mocks.toArray());
 
         final Map<String, String> map = new HashMap<>();
-        contributor.contribute(window, request, map);
+        contributor.contributePreamble(window, request, map);
 
         assertThat(map.containsKey(HST_XTYPE), is(false));
         assertThat(map.containsKey(HST_INHERITED), is(false));
@@ -83,6 +83,21 @@ public class CmsComponentComponentWindowAttributeContributorTest {
         assertThat(map.containsKey(HST_TYPE), is(true));
         assertThat(map.containsKey("refNS"), is(true));
         assertThat(map.containsKey("url"), is(true));
+    }
+
+    @Test
+    public void testContributeEpilogue() {
+        final HstComponentConfiguration config = mock(HstComponentConfiguration.class);
+        expect(window.getComponentInfo()).andReturn(config);
+        expect(config.getComponentType()).andReturn(CONTAINER_COMPONENT);
+        replay(mocks.toArray());
+
+        final Map<String, String> map = new HashMap<>();
+        contributor.contributeEpilogue(window, request, map);
+
+        assertThat(map.containsKey("uuid"), is(true));
+        assertThat(map.containsKey(HST_TYPE), is(true));
+        assertThat(map.get(HST_TYPE), is(CONTAINER_COMPONENT + "-END"));
     }
 
     private <T> T mock(final Class<T> type) {
