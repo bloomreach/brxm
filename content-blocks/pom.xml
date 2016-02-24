@@ -121,6 +121,7 @@
             <configuration>
               <excludes combine.children="append">
                 <!-- repository content XML -->
+                <exclude>README.md</exclude>
                 <exclude>src/main/resources/*.xml</exclude>
                 <exclude>demo/bootstrap/configuration/src/main/resources/**/*.xml</exclude>
                 <exclude>demo/bootstrap/content/src/main/resources/**/*.xml</exclude>
