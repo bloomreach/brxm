@@ -42,9 +42,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/trunk</url>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-services-eventbus.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-services-eventbus.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-services-eventbus</url>
   </scm>
 
   <repositories>
