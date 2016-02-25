@@ -161,24 +161,47 @@ describe('PageStructureService', function () {
     });
     PageStructureService.registerParsedElement(componentT[0].previousSibling, {
       'HST-Type': 'CONTAINER_ITEM_COMPONENT',
+      uuid: 'test-uuid',
     });
 
     expect(PageStructureService.containers.length).toEqual(1);
     expect(PageStructureService.containers[0].isEmpty()).toEqual(false);
     expect(PageStructureService.containers[0].getComponents().length).toEqual(1);
     expect(PageStructureService.containers[0].getComponents()[0].getJQueryElement('iframe')).toEqual(componentT);
+    expect(PageStructureService.containers[0].getComponents()[0].hasNoIFrameDomElement()).not.toEqual(true);
+  });
+
+  it('should register a placeholder iframe element in case of a transparent, empty component', function () {
+    var containerT = $j('#container-transparent', $document);
+    var componentTE = $j('#component-transparent-empty', $document);
+    var comment = $j(componentTE[0].nextSibling);
+
+    PageStructureService.registerParsedElement(containerT[0].childNodes[0], {
+      'HST-Type': 'CONTAINER_COMPONENT',
+      'HST-XType': 'hst.transparent',
+    });
+    PageStructureService.registerParsedElement(comment[0], {
+      'HST-Type': 'CONTAINER_ITEM_COMPONENT',
+      uuid: 'test-uuid',
+    });
+
+    expect(PageStructureService.containers.length).toEqual(1);
+    expect(PageStructureService.containers[0].isEmpty()).toEqual(false);
+    expect(PageStructureService.containers[0].getComponents().length).toEqual(1);
+    expect(PageStructureService.containers[0].getComponents()[0].getJQueryElement('iframe')).toEqual(comment);
+    expect(PageStructureService.containers[0].getComponents()[0].hasNoIFrameDomElement()).toEqual(true);
   });
 
   it('should ignore components of a transparent container which have no root DOM element', function () {
     var containerT = $j('#container-transparent', $document);
-    var componentT = $j('#component-transparent', $document);
+    var componentA = $j('#componentA', $document);
     spyOn($log, 'debug');
 
     PageStructureService.registerParsedElement(containerT[0].childNodes[0], {
       'HST-Type': 'CONTAINER_COMPONENT',
       'HST-XType': 'hst.transparent',
     });
-    PageStructureService.registerParsedElement(componentT[0].nextSibling, {
+    PageStructureService.registerParsedElement(componentA[0].childNodes[0], {
       'HST-Type': 'CONTAINER_ITEM_COMPONENT',
     });
 

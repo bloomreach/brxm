@@ -19,7 +19,7 @@ import { ComponentElement } from './element/componentElement';
 
 export class PageStructureService {
 
-  constructor($log, HstConstants, ChannelService, CmsService) {
+  constructor($log, HstConstants, hstCommentsProcessorService, ChannelService, CmsService) {
     'ngInject';
 
     // Injected
@@ -27,6 +27,7 @@ export class PageStructureService {
     this.HST = HstConstants;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.hstCommentsProcessorService = hstCommentsProcessorService;
 
     this.clearParsedElements();
   }
@@ -50,7 +51,8 @@ export class PageStructureService {
 
         const container = this.containers[this.containers.length - 1];
         try {
-          container.addComponent(new ComponentElement(commentDomElement, metaData, container));
+          container.addComponent(new ComponentElement(commentDomElement, metaData,
+                                                      container, this.hstCommentsProcessorService));
         } catch (exception) {
           this.$log.debug(exception, metaData);
         }

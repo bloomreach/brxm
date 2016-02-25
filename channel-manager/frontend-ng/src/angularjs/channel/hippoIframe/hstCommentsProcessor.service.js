@@ -91,6 +91,10 @@ export class HstCommentsProcessorService {
     return data !== null && data.startsWith(' {') && data.endsWith('} ') && data.includes(HST.TYPE);
   }
 
+  _isHstEndMarker(data) {
+    return data !== null && data.startsWith(' {') && data.endsWith('} ') && data.includes(HST.END_MARKER);
+  }
+
   _parseJson(data) {
     try {
       return JSON.parse(data);
@@ -98,5 +102,18 @@ export class HstCommentsProcessorService {
       log.warn('Error parsing HST comment as JSON', e, data);
     }
     return null;
+  }
+
+  isEndMarker(domElement, id) {
+    if (domElement.nodeType === 8) {
+      const data = this._getCommentData(domElement);
+      if (this._isHstEndMarker(data)) {
+        const json = this._parseJson(data);
+        if (json !== null) {
+          return json.uuid === id;
+        }
+      }
+    }
+    return false;
   }
 }

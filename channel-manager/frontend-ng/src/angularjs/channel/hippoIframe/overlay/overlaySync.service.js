@@ -52,6 +52,13 @@ export class OverlaySyncService {
     this._syncElement(structureElement);
   }
 
+  unregisterElement(structureElement) {
+    const index = this.overlayElements.indexOf(structureElement);
+    if (index > -1) {
+      this.overlayElements.splice(index, 1);
+    }
+  }
+
   _syncIframe() {
     this._syncHeight();
     this._syncOverlayElements();

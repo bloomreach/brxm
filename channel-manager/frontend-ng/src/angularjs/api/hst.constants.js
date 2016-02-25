@@ -29,4 +29,5 @@ export const HstConstants = {
   LOCKED_BY_CURRENT_USER: 'HST-LockedBy-Current-User',
   XTYPE: 'HST-XType',
   XTYPE_TRANSPARENT: 'HST.Transparent',
+  END_MARKER: 'HST-End',
 };

@@ -14,31 +14,54 @@
  * limitations under the License.
  */
 
+const MIN_HEIGHT = '40px';
+
 export class OverlayElementCtrl {
   constructor($scope, $element, OverlaySyncService) {
     'ngInject';
 
+    this.OverlaySyncService = OverlaySyncService;
     this.structureElement.setJQueryElement('overlay', $element);
-    OverlaySyncService.registerElement(this.structureElement);
+    this._prepareIframeElement($scope);
 
-    this._ensureVisibilityOfSmallComponent($scope);
+    OverlaySyncService.registerElement(this.structureElement);
   }
 
   getLabel() {
     return this.structureElement.getLabel();
   }
 
-  _ensureVisibilityOfSmallComponent($scope) {
-    if (this.structureElement.type === 'container' && this.structureElement.isEmpty()
-      || this.structureElement.type === 'component') {
-      const iframeDomElement = this.structureElement.getJQueryElement('iframe')[0];
-      const minHeight = iframeDomElement.style.minHeight || 'auto';
-      iframeDomElement.style.minHeight = '40px';
+  _prepareIframeElement($scope) {
+    const iframeJQueryElement = this.structureElement.getJQueryElement('iframe');
+    let iframeJQueryDomRoot = iframeJQueryElement;
+    const isIframeJQueryElementInserted = this.structureElement.hasNoIFrameDomElement();
 
-      // reset styling when element is destroyed
-      $scope.$on('$destroy', () => {
-        iframeDomElement.style.minHeight = minHeight;
-      });
+    if (isIframeJQueryElementInserted) {
+      // iframeJQueryElement refers to HST-comment, insert a placeholder <div>
+      const div = document.createElement('div');
+      if (iframeJQueryElement[0].nextSibling !== null) {
+        // this should always be the case due to the presence of the HST-End marker
+        iframeJQueryElement.parent()[0].insertBefore(div, iframeJQueryElement[0].nextSibling);
+      } else {
+        iframeJQueryElement.parent()[0].appendChild(div);
+      }
+
+      iframeJQueryDomRoot = $(div);
+      this.structureElement.setJQueryElement('iframe', iframeJQueryDomRoot);
     }
+
+    // Set a minimal height of the element to ensure visibility / clickability.
+    const minHeight = iframeJQueryDomRoot[0].style.minHeight || 'auto';
+    iframeJQueryDomRoot[0].style.minHeight = MIN_HEIGHT;
+
+    $scope.$on('$destroy', () => {
+      this.OverlaySyncService.unregisterElement(this.structureElement);
+      if (isIframeJQueryElementInserted) {
+        iframeJQueryDomRoot.detach();
+        this.structureElement.setJQueryElement('iframe', iframeJQueryElement); // reset
+      } else {
+        iframeJQueryElement[0].style.minHeight = minHeight;
+      }
+    });
   }
 }

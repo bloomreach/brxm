@@ -67,6 +67,10 @@ export class PageStructureElement {
     return this.metaData[HstConstants.LOCKED_BY_CURRENT_USER] === 'true';
   }
 
+  hasNoIFrameDomElement() {
+    return this.metaData.hasNoDom;
+  }
+
   static isTransparentXType(metaData) {
     const metaDataXType = metaData[HstConstants.XTYPE];
 
