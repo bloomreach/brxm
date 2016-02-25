@@ -64,9 +64,9 @@
   </dependencies>
 
  <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/utilities/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/utilities/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/utilities/trunk</url>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-cms-utilities.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-cms-utilities.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-cms-utilities</url>
   </scm>
 
   <repositories>
