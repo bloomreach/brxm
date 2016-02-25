@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:hippostd="http://www.onehippo.org/jcr/hippostd/nt/2.0" xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0.4" xmlns:hippotaxonomy="http://www.hippoecm.org/hippotaxonomy/nt/1.2" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="taxonomies">
+<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="taxonomies">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippotaxonomy:container</sv:value>
   </sv:property>
@@ -57,7 +56,7 @@
           <sv:value>hippotaxonomy:category</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>hippotaxonomy:translated</sv:value>
+          <sv:value>hippotaxonomy:localized</sv:value>
         </sv:property>
         <sv:property sv:name="hippotaxonomy:key" sv:type="String">
           <sv:value>key_3d25266f-c316-4fa0-b28a-55483718058b</sv:value>
@@ -67,7 +66,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_a5985f1a-3f6f-4ee0-b5c8-19d3e2372e18</sv:value>
@@ -88,16 +87,18 @@
               <sv:value>key_bb090c2e-4b42-4930-9eee-b6ca6822d784</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Air_transport</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Air_transport</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Public_transport">
@@ -105,7 +106,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_4630aa34-bccb-4b4d-bf4a-d026b3f84a3a</sv:value>
@@ -158,16 +159,18 @@
               <sv:value>key_c5782cd7-d9d9-440a-836b-373093610a80</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Public_transport</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Public_transport</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Roads_and_road_transport">
@@ -175,7 +178,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_ebdcefb0-2942-4009-8bf2-0caa2999b0de</sv:value>
@@ -244,16 +247,18 @@
               <sv:value>key_784cbcdf-f194-4adf-9faf-5b101dee3c6b</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Roads_and_road_transport</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Roads_and_road_transport</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Technical_infrastructure">
@@ -261,7 +266,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_ee4dcf3e-e893-4791-9e8c-846604ddef6c</sv:value>
@@ -314,16 +319,18 @@
               <sv:value>key_d365f3bb-9d20-4dea-96b7-c6a7798ce65b</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Technical_infrastructure</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Technical_infrastructure</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Water_transport">
@@ -331,21 +338,23 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_5d958606-b8a3-4a88-a028-c7e5ad0a1505</sv:value>
           </sv:property>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Water_transport</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Water_transport</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Services_and_amenities">
@@ -353,7 +362,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_54358136-625a-4d07-9e50-8766fe9a3648</sv:value>
@@ -486,28 +495,32 @@
               </sv:property>
             </sv:node>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Services_and_amenities</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Services_and_amenities</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
-        <sv:node sv:name="hippotaxonomy:translation">
+        <sv:node sv:name="hippotaxonomy:locales">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippotaxonomy:translation</sv:value>
+            <sv:value>hippotaxonomy:locales</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>en</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Transport_and_infrastructure</sv:value>
-          </sv:property>
+          <sv:node sv:name="en">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippotaxonomy:locale</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+              <sv:value>Transport_and_infrastructure</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
       </sv:node>
       <sv:node sv:name="Urban_environment">
@@ -515,7 +528,7 @@
           <sv:value>hippotaxonomy:category</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>hippotaxonomy:translated</sv:value>
+          <sv:value>hippotaxonomy:localized</sv:value>
         </sv:property>
         <sv:property sv:name="hippotaxonomy:key" sv:type="String">
           <sv:value>key_9b620864-86a7-44dd-a05e-07195320a40d</sv:value>
@@ -525,7 +538,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_baa9cdd2-d9a0-4fbc-a5be-379bc98f8e9a</sv:value>
@@ -618,16 +631,18 @@
               <sv:value>key_4b1caedd-fec2-405a-ae0e-20077a5b4297</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Environmental_sustainability</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Environmental_sustainability</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Land_use">
@@ -635,7 +650,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_f940c93f-6c26-4c93-af0b-f705f76ceacd</sv:value>
@@ -680,16 +695,18 @@
               <sv:value>key_f51bf88c-fc69-4239-91cd-f045cdfee0f4</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Land_use</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Land_use</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Urban_renewal">
@@ -697,7 +714,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_cabea3b9-4136-4181-8531-96cfa7533dc3</sv:value>
@@ -742,16 +759,18 @@
               <sv:value>key_5b25bf34-c9aa-44ba-b6aa-37181cb3fd48</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Urban_renewal</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Urban_renewal</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Cultural_heritage">
@@ -759,7 +778,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_ce67c579-dd78-4ea8-92ee-f3531fdbb633</sv:value>
@@ -780,28 +799,32 @@
               <sv:value>key_7aab70e3-05ee-4412-ba89-667e5b43211b</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Cultural_heritage</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Cultural_heritage</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
-        <sv:node sv:name="hippotaxonomy:translation">
+        <sv:node sv:name="hippotaxonomy:locales">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippotaxonomy:translation</sv:value>
+            <sv:value>hippotaxonomy:locales</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>en</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Urban_environment</sv:value>
-          </sv:property>
+          <sv:node sv:name="en">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippotaxonomy:locale</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+              <sv:value>Urban_environment</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
       </sv:node>
       <sv:node sv:name="Economy_knowledge_and_employment">
@@ -809,7 +832,7 @@
           <sv:value>hippotaxonomy:category</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>hippotaxonomy:translated</sv:value>
+          <sv:value>hippotaxonomy:localized</sv:value>
         </sv:property>
         <sv:property sv:name="hippotaxonomy:key" sv:type="String">
           <sv:value>key_77536ad5-c640-451d-b663-c10f55a94317</sv:value>
@@ -819,7 +842,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_8fe3d1ff-6455-475b-a545-55e377624dc5</sv:value>
@@ -829,7 +852,7 @@
               <sv:value>hippotaxonomy:category</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-              <sv:value>hippotaxonomy:translated</sv:value>
+              <sv:value>hippotaxonomy:localized</sv:value>
             </sv:property>
             <sv:property sv:name="hippotaxonomy:key" sv:type="String">
               <sv:value>key_b14b95e1-b089-44ec-b7ca-2e8845f79c5e</sv:value>
@@ -850,16 +873,18 @@
                 <sv:value>key_4206c804-fe73-467c-ad6b-995542774430</sv:value>
               </sv:property>
             </sv:node>
-            <sv:node sv:name="hippotaxonomy:translation">
+            <sv:node sv:name="hippotaxonomy:locales">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippotaxonomy:translation</sv:value>
+                <sv:value>hippotaxonomy:locales</sv:value>
               </sv:property>
-              <sv:property sv:name="hippo:language" sv:type="String">
-                <sv:value>en</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:message" sv:type="String">
-                <sv:value>Universities_and_spin_offs</sv:value>
-              </sv:property>
+              <sv:node sv:name="en">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippotaxonomy:locale</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                  <sv:value>Universities_and_spin_offs</sv:value>
+                </sv:property>
+              </sv:node>
             </sv:node>
           </sv:node>
           <sv:node sv:name="Implementation_and_production">
@@ -867,7 +892,7 @@
               <sv:value>hippotaxonomy:category</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-              <sv:value>hippotaxonomy:translated</sv:value>
+              <sv:value>hippotaxonomy:localized</sv:value>
             </sv:property>
             <sv:property sv:name="hippotaxonomy:key" sv:type="String">
               <sv:value>key_ad293060-ad3c-4f3b-bb92-5863f1f8cce9</sv:value>
@@ -896,28 +921,32 @@
                 <sv:value>key_363b2355-b7d6-4255-b98c-d17709416596</sv:value>
               </sv:property>
             </sv:node>
-            <sv:node sv:name="hippotaxonomy:translation">
+            <sv:node sv:name="hippotaxonomy:locales">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippotaxonomy:translation</sv:value>
+                <sv:value>hippotaxonomy:locales</sv:value>
               </sv:property>
-              <sv:property sv:name="hippo:language" sv:type="String">
-                <sv:value>en</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:message" sv:type="String">
-                <sv:value>Implementation_and_production</sv:value>
-              </sv:property>
+              <sv:node sv:name="en">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippotaxonomy:locale</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                  <sv:value>Implementation_and_production</sv:value>
+                </sv:property>
+              </sv:node>
             </sv:node>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Research_and_innovation</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Research_and_innovation</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Working_patterns">
@@ -925,7 +954,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_7fac4f20-5aaa-4b4d-9382-3166365938d8</sv:value>
@@ -935,21 +964,23 @@
               <sv:value>hippotaxonomy:category</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-              <sv:value>hippotaxonomy:translated</sv:value>
+              <sv:value>hippotaxonomy:localized</sv:value>
             </sv:property>
             <sv:property sv:name="hippotaxonomy:key" sv:type="String">
               <sv:value>key_4c0e0e45-183d-43ab-91b2-1d43fe746505</sv:value>
             </sv:property>
-            <sv:node sv:name="hippotaxonomy:translation">
+            <sv:node sv:name="hippotaxonomy:locales">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippotaxonomy:translation</sv:value>
+                <sv:value>hippotaxonomy:locales</sv:value>
               </sv:property>
-              <sv:property sv:name="hippo:language" sv:type="String">
-                <sv:value>en</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:message" sv:type="String">
-                <sv:value>Commuting</sv:value>
-              </sv:property>
+              <sv:node sv:name="en">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippotaxonomy:locale</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                  <sv:value>Commuting</sv:value>
+                </sv:property>
+              </sv:node>
             </sv:node>
           </sv:node>
           <sv:node sv:name="Remote_working">
@@ -957,7 +988,7 @@
               <sv:value>hippotaxonomy:category</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-              <sv:value>hippotaxonomy:translated</sv:value>
+              <sv:value>hippotaxonomy:localized</sv:value>
             </sv:property>
             <sv:property sv:name="hippotaxonomy:key" sv:type="String">
               <sv:value>key_8d647784-9fd2-462a-885b-8eba9bc37cb8</sv:value>
@@ -978,16 +1009,18 @@
                 <sv:value>key_f5834084-f387-447d-b31f-f457676840da</sv:value>
               </sv:property>
             </sv:node>
-            <sv:node sv:name="hippotaxonomy:translation">
+            <sv:node sv:name="hippotaxonomy:locales">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippotaxonomy:translation</sv:value>
+                <sv:value>hippotaxonomy:locales</sv:value>
               </sv:property>
-              <sv:property sv:name="hippo:language" sv:type="String">
-                <sv:value>en</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:message" sv:type="String">
-                <sv:value>Remote_working</sv:value>
-              </sv:property>
+              <sv:node sv:name="en">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippotaxonomy:locale</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                  <sv:value>Remote_working</sv:value>
+                </sv:property>
+              </sv:node>
             </sv:node>
           </sv:node>
           <sv:node sv:name="Flexible_working">
@@ -995,7 +1028,7 @@
               <sv:value>hippotaxonomy:category</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-              <sv:value>hippotaxonomy:translated</sv:value>
+              <sv:value>hippotaxonomy:localized</sv:value>
             </sv:property>
             <sv:property sv:name="hippotaxonomy:key" sv:type="String">
               <sv:value>key_ca0a8c2f-1667-4189-94e8-53ed624f4c16</sv:value>
@@ -1016,28 +1049,32 @@
                 <sv:value>key_8560a2ec-6749-42e6-b93b-bf22aded6af5</sv:value>
               </sv:property>
             </sv:node>
-            <sv:node sv:name="hippotaxonomy:translation">
+            <sv:node sv:name="hippotaxonomy:locales">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippotaxonomy:translation</sv:value>
+                <sv:value>hippotaxonomy:locales</sv:value>
               </sv:property>
-              <sv:property sv:name="hippo:language" sv:type="String">
-                <sv:value>en</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:message" sv:type="String">
-                <sv:value>Flexible_working</sv:value>
-              </sv:property>
+              <sv:node sv:name="en">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippotaxonomy:locale</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                  <sv:value>Flexible_working</sv:value>
+                </sv:property>
+              </sv:node>
             </sv:node>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Working_patterns</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Working_patterns</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Urban_economy">
@@ -1045,7 +1082,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_bfee8c4f-f438-4212-836e-4ab8716c7381</sv:value>
@@ -1055,7 +1092,7 @@
               <sv:value>hippotaxonomy:category</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-              <sv:value>hippotaxonomy:translated</sv:value>
+              <sv:value>hippotaxonomy:localized</sv:value>
             </sv:property>
             <sv:property sv:name="hippotaxonomy:key" sv:type="String">
               <sv:value>key_98c2f154-85eb-4447-b666-30d440abdbb2</sv:value>
@@ -1092,16 +1129,18 @@
                 <sv:value>key_565fc0e8-f2cf-4491-94be-9b560321cf8d</sv:value>
               </sv:property>
             </sv:node>
-            <sv:node sv:name="hippotaxonomy:translation">
+            <sv:node sv:name="hippotaxonomy:locales">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippotaxonomy:translation</sv:value>
+                <sv:value>hippotaxonomy:locales</sv:value>
               </sv:property>
-              <sv:property sv:name="hippo:language" sv:type="String">
-                <sv:value>en</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:message" sv:type="String">
-                <sv:value>Employment</sv:value>
-              </sv:property>
+              <sv:node sv:name="en">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippotaxonomy:locale</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                  <sv:value>Employment</sv:value>
+                </sv:property>
+              </sv:node>
             </sv:node>
           </sv:node>
           <sv:node sv:name="Specific_sectors">
@@ -1109,7 +1148,7 @@
               <sv:value>hippotaxonomy:category</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-              <sv:value>hippotaxonomy:translated</sv:value>
+              <sv:value>hippotaxonomy:localized</sv:value>
             </sv:property>
             <sv:property sv:name="hippotaxonomy:key" sv:type="String">
               <sv:value>key_7f50fd04-cf49-4c4c-9dfb-d6b5021b83a0</sv:value>
@@ -1178,16 +1217,18 @@
                 <sv:value>key_f6b9d3d2-faed-4726-bc0f-52503e12f6d2</sv:value>
               </sv:property>
             </sv:node>
-            <sv:node sv:name="hippotaxonomy:translation">
+            <sv:node sv:name="hippotaxonomy:locales">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippotaxonomy:translation</sv:value>
+                <sv:value>hippotaxonomy:locales</sv:value>
               </sv:property>
-              <sv:property sv:name="hippo:language" sv:type="String">
-                <sv:value>en</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:message" sv:type="String">
-                <sv:value>Specific_sectors</sv:value>
-              </sv:property>
+              <sv:node sv:name="en">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippotaxonomy:locale</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                  <sv:value>Specific_sectors</sv:value>
+                </sv:property>
+              </sv:node>
             </sv:node>
           </sv:node>
           <sv:node sv:name="Business_support">
@@ -1195,7 +1236,7 @@
               <sv:value>hippotaxonomy:category</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-              <sv:value>hippotaxonomy:translated</sv:value>
+              <sv:value>hippotaxonomy:localized</sv:value>
             </sv:property>
             <sv:property sv:name="hippotaxonomy:key" sv:type="String">
               <sv:value>key_175f5a4b-09ad-4e79-96ec-087eeedd5e5d</sv:value>
@@ -1256,16 +1297,18 @@
                 <sv:value>key_6fa93eec-1da7-4cc7-ba6c-17519d2e1d9e</sv:value>
               </sv:property>
             </sv:node>
-            <sv:node sv:name="hippotaxonomy:translation">
+            <sv:node sv:name="hippotaxonomy:locales">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippotaxonomy:translation</sv:value>
+                <sv:value>hippotaxonomy:locales</sv:value>
               </sv:property>
-              <sv:property sv:name="hippo:language" sv:type="String">
-                <sv:value>en</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:message" sv:type="String">
-                <sv:value>Business_support</sv:value>
-              </sv:property>
+              <sv:node sv:name="en">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippotaxonomy:locale</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                  <sv:value>Business_support</sv:value>
+                </sv:property>
+              </sv:node>
             </sv:node>
           </sv:node>
           <sv:node sv:name="Competitiveness">
@@ -1273,7 +1316,7 @@
               <sv:value>hippotaxonomy:category</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-              <sv:value>hippotaxonomy:translated</sv:value>
+              <sv:value>hippotaxonomy:localized</sv:value>
             </sv:property>
             <sv:property sv:name="hippotaxonomy:key" sv:type="String">
               <sv:value>key_39849b1c-3765-4423-b106-da3fd37217d5</sv:value>
@@ -1310,28 +1353,32 @@
                 <sv:value>key_cee3f52e-638a-4529-994d-74f5187544f3</sv:value>
               </sv:property>
             </sv:node>
-            <sv:node sv:name="hippotaxonomy:translation">
+            <sv:node sv:name="hippotaxonomy:locales">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippotaxonomy:translation</sv:value>
+                <sv:value>hippotaxonomy:locales</sv:value>
               </sv:property>
-              <sv:property sv:name="hippo:language" sv:type="String">
-                <sv:value>en</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:message" sv:type="String">
-                <sv:value>Competitiveness</sv:value>
-              </sv:property>
+              <sv:node sv:name="en">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippotaxonomy:locale</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                  <sv:value>Competitiveness</sv:value>
+                </sv:property>
+              </sv:node>
             </sv:node>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Urban_economy</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Urban_economy</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Training">
@@ -1339,7 +1386,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_615455c6-402d-49bb-8f5d-62ba3bcc111d</sv:value>
@@ -1349,21 +1396,23 @@
               <sv:value>hippotaxonomy:category</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-              <sv:value>hippotaxonomy:translated</sv:value>
+              <sv:value>hippotaxonomy:localized</sv:value>
             </sv:property>
             <sv:property sv:name="hippotaxonomy:key" sv:type="String">
               <sv:value>key_f36e8e62-e681-47e8-92c3-fee525ce1125</sv:value>
             </sv:property>
-            <sv:node sv:name="hippotaxonomy:translation">
+            <sv:node sv:name="hippotaxonomy:locales">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippotaxonomy:translation</sv:value>
+                <sv:value>hippotaxonomy:locales</sv:value>
               </sv:property>
-              <sv:property sv:name="hippo:language" sv:type="String">
-                <sv:value>en</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:message" sv:type="String">
-                <sv:value>Vocational_training</sv:value>
-              </sv:property>
+              <sv:node sv:name="en">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippotaxonomy:locale</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                  <sv:value>Vocational_training</sv:value>
+                </sv:property>
+              </sv:node>
             </sv:node>
           </sv:node>
           <sv:node sv:name="Coaching">
@@ -1371,21 +1420,23 @@
               <sv:value>hippotaxonomy:category</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-              <sv:value>hippotaxonomy:translated</sv:value>
+              <sv:value>hippotaxonomy:localized</sv:value>
             </sv:property>
             <sv:property sv:name="hippotaxonomy:key" sv:type="String">
               <sv:value>key_77a9e437-3ba1-4faf-bf8d-030610b8444a</sv:value>
             </sv:property>
-            <sv:node sv:name="hippotaxonomy:translation">
+            <sv:node sv:name="hippotaxonomy:locales">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippotaxonomy:translation</sv:value>
+                <sv:value>hippotaxonomy:locales</sv:value>
               </sv:property>
-              <sv:property sv:name="hippo:language" sv:type="String">
-                <sv:value>en</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:message" sv:type="String">
-                <sv:value>Coaching</sv:value>
-              </sv:property>
+              <sv:node sv:name="en">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippotaxonomy:locale</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                  <sv:value>Coaching</sv:value>
+                </sv:property>
+              </sv:node>
             </sv:node>
           </sv:node>
           <sv:node sv:name="Training_for_new_professions">
@@ -1393,21 +1444,23 @@
               <sv:value>hippotaxonomy:category</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-              <sv:value>hippotaxonomy:translated</sv:value>
+              <sv:value>hippotaxonomy:localized</sv:value>
             </sv:property>
             <sv:property sv:name="hippotaxonomy:key" sv:type="String">
               <sv:value>key_4479e78a-2899-4df4-a6b6-c5c019c7ab38</sv:value>
             </sv:property>
-            <sv:node sv:name="hippotaxonomy:translation">
+            <sv:node sv:name="hippotaxonomy:locales">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippotaxonomy:translation</sv:value>
+                <sv:value>hippotaxonomy:locales</sv:value>
               </sv:property>
-              <sv:property sv:name="hippo:language" sv:type="String">
-                <sv:value>en</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:message" sv:type="String">
-                <sv:value>Training_for_new_professions</sv:value>
-              </sv:property>
+              <sv:node sv:name="en">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippotaxonomy:locale</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                  <sv:value>Training_for_new_professions</sv:value>
+                </sv:property>
+              </sv:node>
             </sv:node>
           </sv:node>
           <sv:node sv:name="Lifelong_learning">
@@ -1415,33 +1468,37 @@
               <sv:value>hippotaxonomy:category</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-              <sv:value>hippotaxonomy:translated</sv:value>
+              <sv:value>hippotaxonomy:localized</sv:value>
             </sv:property>
             <sv:property sv:name="hippotaxonomy:key" sv:type="String">
               <sv:value>key_d848a5d6-1784-4d8e-aa74-e7ea2d09c94d</sv:value>
             </sv:property>
-            <sv:node sv:name="hippotaxonomy:translation">
+            <sv:node sv:name="hippotaxonomy:locales">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippotaxonomy:translation</sv:value>
+                <sv:value>hippotaxonomy:locales</sv:value>
               </sv:property>
-              <sv:property sv:name="hippo:language" sv:type="String">
-                <sv:value>en</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:message" sv:type="String">
-                <sv:value>Lifelong_learning</sv:value>
-              </sv:property>
+              <sv:node sv:name="en">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippotaxonomy:locale</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                  <sv:value>Lifelong_learning</sv:value>
+                </sv:property>
+              </sv:node>
             </sv:node>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Training</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Training</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Digital_services">
@@ -1449,7 +1506,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_49adf60a-c317-4527-9d39-cb427214c0d8</sv:value>
@@ -1459,7 +1516,7 @@
               <sv:value>hippotaxonomy:category</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-              <sv:value>hippotaxonomy:translated</sv:value>
+              <sv:value>hippotaxonomy:localized</sv:value>
             </sv:property>
             <sv:property sv:name="hippotaxonomy:key" sv:type="String">
               <sv:value>key_597722c9-3212-48b1-9a89-af96d1ba5d3a</sv:value>
@@ -1480,80 +1537,80 @@
                 <sv:value>key_0176195a-8c45-42c3-b4d6-dab56b4f035a</sv:value>
               </sv:property>
             </sv:node>
-            <sv:node sv:name="hippotaxonomy:translation">
+            <sv:node sv:name="hippotaxonomy:locales">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippotaxonomy:translation</sv:value>
+                <sv:value>hippotaxonomy:locales</sv:value>
               </sv:property>
-              <sv:property sv:name="hippo:language" sv:type="String">
-                <sv:value>en</sv:value>
+              <sv:node sv:name="en">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippotaxonomy:locale</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                  <sv:value>Internet_access</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+          <sv:node sv:name="hippotaxonomy:locales">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippotaxonomy:locales</sv:value>
+            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
               </sv:property>
-              <sv:property sv:name="hippo:message" sv:type="String">
-                <sv:value>Internet_access</sv:value>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Digital_services</sv:value>
               </sv:property>
             </sv:node>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+        </sv:node>
+        <sv:node sv:name="hippotaxonomy:locales">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippotaxonomy:locales</sv:value>
+          </sv:property>
+          <sv:node sv:name="en">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locale</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
+            <sv:property sv:name="hippotaxonomy:description" sv:type="String">
+              <sv:value>Category of Economy knowledge and employment</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Digital_services</sv:value>
+            <sv:property sv:name="hippotaxonomy:fulldescription" sv:type="String">
+              <sv:value>This is a Category of Economy knowledge and employment</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+              <sv:value>Economy knowledge and employment</sv:value>
             </sv:property>
           </sv:node>
-        </sv:node>
-        <sv:node sv:name="hippotaxonomy:translation">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippotaxonomy:translation</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>en</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Economy knowledge and employment</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotaxonomy:description" sv:type="String">
-            <sv:value>Category of Economy knowledge and employment</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotaxonomy:fulldescription" sv:type="String">
-            <sv:value>This is a Category of Economy knowledge and employment</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hippotaxonomy:translation">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippotaxonomy:translation</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>fr</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Économie de la connaissance et de l'emploi</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotaxonomy:description" sv:type="String">
-            <sv:value>Catégorie de l'économie du savoir et de l'emploi</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotaxonomy:fulldescription" sv:type="String">
-            <sv:value>Il s'agit d'une catégorie de l'économie du savoir et de l'emploi</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hippotaxonomy:translation">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippotaxonomy:translation</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>nl</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Kennis economie en werkgelegenheid</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotaxonomy:description" sv:type="String">
-            <sv:value>Categorie voor kennis economie en werkgelegenheid</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotaxonomy:fulldescription" sv:type="String">
-            <sv:value>Dit is een categorie voor kennis economie en werkgelegenheid</sv:value>
-          </sv:property>
+          <sv:node sv:name="fr">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippotaxonomy:locale</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippotaxonomy:description" sv:type="String">
+              <sv:value>Catégorie de l'économie du savoir et de l'emploi</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippotaxonomy:fulldescription" sv:type="String">
+              <sv:value>Il s'agit d'une catégorie de l'économie du savoir et de l'emploi</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+              <sv:value>Économie de la connaissance et de l'emploi</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="nl">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippotaxonomy:locale</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippotaxonomy:description" sv:type="String">
+              <sv:value>Categorie voor kennis economie en werkgelegenheid</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippotaxonomy:fulldescription" sv:type="String">
+              <sv:value>Dit is een categorie voor kennis economie en werkgelegenheid</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+              <sv:value>Kennis economie en werkgelegenheid</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
       </sv:node>
       <sv:node sv:name="Housing">
@@ -1561,7 +1618,7 @@
           <sv:value>hippotaxonomy:category</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>hippotaxonomy:translated</sv:value>
+          <sv:value>hippotaxonomy:localized</sv:value>
         </sv:property>
         <sv:property sv:name="hippotaxonomy:key" sv:type="String">
           <sv:value>key_471efec8-e782-48ac-9ab3-93ab97a21859</sv:value>
@@ -1571,7 +1628,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_fcd7f530-b5b5-4231-9fb8-d73fdf32a926</sv:value>
@@ -1624,16 +1681,18 @@
               </sv:property>
             </sv:node>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Housing_quality</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Housing_quality</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Housing_policy">
@@ -1641,7 +1700,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_b13745e5-7192-4301-81c9-db5c3fc2bcd7</sv:value>
@@ -1742,16 +1801,18 @@
               <sv:value>key_312b2f69-a557-49b7-be96-3c579101dbe7</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Housing_policy</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Housing_policy</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Housing_management">
@@ -1759,7 +1820,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_88c636c3-cde8-4cc6-be81-727e49b44a5b</sv:value>
@@ -1900,28 +1961,32 @@
               </sv:property>
             </sv:node>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Housing_management</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Housing_management</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
-        <sv:node sv:name="hippotaxonomy:translation">
+        <sv:node sv:name="hippotaxonomy:locales">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippotaxonomy:translation</sv:value>
+            <sv:value>hippotaxonomy:locales</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>en</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Housing</sv:value>
-          </sv:property>
+          <sv:node sv:name="en">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippotaxonomy:locale</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+              <sv:value>Housing</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
       </sv:node>
       <sv:node sv:name="Security_and_crime_prevention">
@@ -1929,7 +1994,7 @@
           <sv:value>hippotaxonomy:category</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>hippotaxonomy:translated</sv:value>
+          <sv:value>hippotaxonomy:localized</sv:value>
         </sv:property>
         <sv:property sv:name="hippotaxonomy:key" sv:type="String">
           <sv:value>key_b88adb86-7204-4374-9561-502e372d6a0b</sv:value>
@@ -1939,7 +2004,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_4a6ba69d-eb36-4b1e-82fd-f5f9982a11d6</sv:value>
@@ -2024,16 +2089,18 @@
               <sv:value>key_df238ae6-03b0-4b9d-9ec7-0a9920e909b1</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Anti_crime_policy</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Anti_crime_policy</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Tackling_crime">
@@ -2041,7 +2108,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_48f6d482-904f-4ba7-b384-f6968256afff</sv:value>
@@ -2126,16 +2193,18 @@
               </sv:property>
             </sv:node>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Tackling_crime</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Tackling_crime</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Crime_prevention">
@@ -2143,7 +2212,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_65338dad-c563-462a-b4d9-e0cfdf175afe</sv:value>
@@ -2172,16 +2241,18 @@
               <sv:value>key_da1ce436-7a89-4432-999f-9547b8d8df84</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Crime_prevention</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Crime_prevention</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Sense_of_insecurity">
@@ -2189,7 +2260,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_1863b2a4-f84f-4709-8557-7b657fe0905a</sv:value>
@@ -2266,16 +2337,18 @@
               </sv:property>
             </sv:node>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Sense_of_insecurity</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Sense_of_insecurity</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Risk_management">
@@ -2283,7 +2356,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_a76a1e49-a7d6-4427-b4ab-fc4df22dd212</sv:value>
@@ -2320,28 +2393,32 @@
               <sv:value>key_4df19f6d-e2a8-4685-9bc3-97841b656cbf</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Risk_management</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Risk_management</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
-        <sv:node sv:name="hippotaxonomy:translation">
+        <sv:node sv:name="hippotaxonomy:locales">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippotaxonomy:translation</sv:value>
+            <sv:value>hippotaxonomy:locales</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>en</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Security_and_crime_prevention</sv:value>
-          </sv:property>
+          <sv:node sv:name="en">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippotaxonomy:locale</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+              <sv:value>Security_and_crime_prevention</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
       </sv:node>
       <sv:node sv:name="Social_inclusion_and_integration">
@@ -2349,7 +2426,7 @@
           <sv:value>hippotaxonomy:category</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>hippotaxonomy:translated</sv:value>
+          <sv:value>hippotaxonomy:localized</sv:value>
         </sv:property>
         <sv:property sv:name="hippotaxonomy:key" sv:type="String">
           <sv:value>key_f8af5b98-6db5-4968-9c2e-ac47c1f6567f</sv:value>
@@ -2359,7 +2436,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_9f1cdb72-313d-4509-9aa7-c4ba74a8e813</sv:value>
@@ -2388,16 +2465,18 @@
               <sv:value>key_531ea673-fc80-4d4a-85d5-65632bfd56c3</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Equality</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Equality</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Quality_of_life">
@@ -2405,7 +2484,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_82460888-315b-40ea-929c-04928a443363</sv:value>
@@ -2578,16 +2657,18 @@
               </sv:property>
             </sv:node>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Quality_of_life</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Quality_of_life</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Community_development">
@@ -2595,7 +2676,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_6e0edc12-b525-4305-b593-1aa7e0b62370</sv:value>
@@ -2648,16 +2729,18 @@
               <sv:value>key_4dadcdf5-f533-47de-8490-9100cad32790</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Community_development</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Community_development</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Integration_of_social_groups">
@@ -2665,7 +2748,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_5e42c2ac-cdeb-411f-a1b9-b44be87f5b93</sv:value>
@@ -2718,16 +2801,18 @@
               <sv:value>key_99fcfaca-0d1b-4b27-a8d1-f8cd20672bf8</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Integration_of_social_groups</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Integration_of_social_groups</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
         <sv:node sv:name="Education">
@@ -2735,7 +2820,7 @@
             <sv:value>hippotaxonomy:category</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>hippotaxonomy:translated</sv:value>
+            <sv:value>hippotaxonomy:localized</sv:value>
           </sv:property>
           <sv:property sv:name="hippotaxonomy:key" sv:type="String">
             <sv:value>key_c1643fe9-d2a4-4f0e-9bb5-11b2e2d3726f</sv:value>
@@ -2764,28 +2849,32 @@
               <sv:value>key_c9c28dae-f22c-41ee-bcac-f1e7ba3aa2ce</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="hippotaxonomy:translation">
+          <sv:node sv:name="hippotaxonomy:locales">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotaxonomy:translation</sv:value>
+              <sv:value>hippotaxonomy:locales</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value>en</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Education</sv:value>
-            </sv:property>
+            <sv:node sv:name="en">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippotaxonomy:locale</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+                <sv:value>Education</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
-        <sv:node sv:name="hippotaxonomy:translation">
+        <sv:node sv:name="hippotaxonomy:locales">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippotaxonomy:translation</sv:value>
+            <sv:value>hippotaxonomy:locales</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>en</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Social_inclusion_and_integration</sv:value>
-          </sv:property>
+          <sv:node sv:name="en">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippotaxonomy:locale</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippotaxonomy:message" sv:type="String">
+              <sv:value>Social_inclusion_and_integration</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
       </sv:node>
     </sv:node>
