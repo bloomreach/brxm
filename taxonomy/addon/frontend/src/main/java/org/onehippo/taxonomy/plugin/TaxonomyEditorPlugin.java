@@ -320,9 +320,8 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                 controls.add(removeControl);
 
                 if (editing) {
-                    TextFieldWidget input = new TextFieldWidget("synonym", item.getModel());
-                    FormComponent fc = (FormComponent) input.get("widget");
-                    fc.add(StringValidator.minimumLength(1));
+                    final TextFieldWidget input = new TextFieldWidget("synonym", item.getModel());
+                    input.getFormComponent().add(StringValidator.minimumLength(1));
                     item.add(input);
                 } else {
                     item.add(new Label("synonym", item.getModel()));
