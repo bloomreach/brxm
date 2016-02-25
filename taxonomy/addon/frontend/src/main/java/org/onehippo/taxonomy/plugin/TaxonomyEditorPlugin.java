@@ -886,7 +886,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
         public RemoveButton() {
             super(ID);
-            add(HippoIcon.fromSprite("remove-category-icon", Icon.TIMES_CIRCLE));
+            add(HippoIcon.fromSprite("remove-category-icon", Icon.TIMES));
         }
 
         @Override

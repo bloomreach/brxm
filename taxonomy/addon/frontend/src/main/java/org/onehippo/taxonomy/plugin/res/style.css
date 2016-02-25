@@ -210,8 +210,8 @@ div.taxonomy-details a:hover {
   color: #bdbdbd;
 }
 
-.taxonomy-editor .hippo-toolbar-menu .hippo-toolbar-section > li.menu-item a.menu-action.taxonomy-disabled-action .menu-action-icon svg {
-  fill: #d4d6d8;
+.taxonomy-editor .hippo-toolbar-menu .hippo-toolbar-section > li .menu-action .remove-category-icon svg {
+  color: #ff4040;
 }
 
 .hippo-preview-document .taxonomy-editor .hippo-editor-field select {
