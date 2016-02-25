@@ -27,7 +27,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.ocm.JcrObject;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
 import org.onehippo.taxonomy.plugin.ITaxonomyService;
@@ -37,6 +36,13 @@ import org.onehippo.taxonomy.plugin.api.TaxonomyException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALE;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALES;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALIZED;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_MESSAGE;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TAXONOMY;
 
 public class TaxonomyObject extends JcrObject {
 
@@ -115,7 +121,7 @@ public class TaxonomyObject extends JcrObject {
             categoryName = encoded + "_" + (++index);
         }
         Node taxonomyNode = parent;
-        while (!taxonomyNode.isNodeType(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TAXONOMY)) {
+        while (!taxonomyNode.isNodeType(NODETYPE_HIPPOTAXONOMY_TAXONOMY)) {
             taxonomyNode = taxonomyNode.getParent();
         }
         JcrTaxonomy taxonomy = toTaxonomy(new JcrNodeModel(taxonomyNode), true);
@@ -123,20 +129,24 @@ public class TaxonomyObject extends JcrObject {
             throw new TaxonomyException("Key " + key + " already exists");
         }
 
-        Node child = parent.addNode(categoryName, TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY);
-        child.setProperty(TaxonomyNodeTypes.HIPPOTAXONOMY_KEY, key);
+        final Node category = parent.addNode(categoryName, NODETYPE_HIPPOTAXONOMY_CATEGORY);
+        category.setProperty(TaxonomyNodeTypes.HIPPOTAXONOMY_KEY, key);
 
         if (locale != null) {
-            if (!JcrHelper.isNodeType(child, TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TRANSLATED)) {
-                child.addMixin(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TRANSLATED);
+            if (!JcrHelper.isNodeType(category, HIPPOTAXONOMY_LOCALIZED)) {
+                category.addMixin(HIPPOTAXONOMY_LOCALIZED);
             }
-            Node translationChildNode = child.addNode(TaxonomyNodeTypes.HIPPOTAXONOMY_TRANSLATION,
-                    TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TRANSLATION);
-            translationChildNode.setProperty(HippoNodeType.HIPPO_LANGUAGE, locale);
-            translationChildNode.setProperty(HippoNodeType.HIPPO_MESSAGE, name);
+            final Node localesNode;
+            if (!category.hasNode(HIPPOTAXONOMY_LOCALES)) {
+                localesNode = category.addNode(HIPPOTAXONOMY_LOCALES, HIPPOTAXONOMY_LOCALES);
+            } else {
+                localesNode = category.getNode(HIPPOTAXONOMY_LOCALES);
+            }
+            final Node localeNode = localesNode.addNode(locale, HIPPOTAXONOMY_LOCALE);
+            localeNode.setProperty(HIPPOTAXONOMY_MESSAGE, name);
         }
 
-        return toCategory(new JcrNodeModel(child), true);
+        return toCategory(new JcrNodeModel(category), true);
     }
 
     // Factory methods to subclass, e.g. to customize node creation.

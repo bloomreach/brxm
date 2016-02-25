@@ -18,8 +18,6 @@ package org.onehippo.taxonomy.plugin.model;
 import org.apache.commons.collections.map.LazyMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
 import org.onehippo.taxonomy.plugin.api.EditableCategoryInfo;
 import org.onehippo.taxonomy.plugin.api.KeyCodec;
 import org.onehippo.taxonomy.plugin.api.TaxonomyException;
@@ -29,6 +27,10 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.*;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_DESCRIPTION;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_MESSAGE;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_SYNONYMS;
 
 public class JcrCategoryInfo extends TaxonomyObject implements EditableCategoryInfo {
 
@@ -42,7 +44,7 @@ public class JcrCategoryInfo extends TaxonomyObject implements EditableCategoryI
 
     public String getName() {
         if (name == null) {
-            name = getString(HippoNodeType.HIPPO_MESSAGE);
+            name = getString(HIPPOTAXONOMY_MESSAGE);
         }
         return name;
     }
@@ -51,13 +53,13 @@ public class JcrCategoryInfo extends TaxonomyObject implements EditableCategoryI
         checkEditable();
 
         this.name = name;
-        setString(HippoNodeType.HIPPO_MESSAGE, name);
+        setString(HIPPOTAXONOMY_MESSAGE, name);
         String encoded = "";
         if(StringUtils.isNotBlank(name)) {
             encoded = KeyCodec.encode(name);
         }
         try {
-            Node categoryNode = getNode().getParent();
+            Node categoryNode = getNode().getParent().getParent();
             if (categoryNode.isNew()) {
                 categoryNode.getSession().move(categoryNode.getPath(),
                         categoryNode.getParent().getPath() + "/" + encoded);
@@ -70,25 +72,30 @@ public class JcrCategoryInfo extends TaxonomyObject implements EditableCategoryI
     }
 
     public String getLanguage() {
-        return getString(HippoNodeType.HIPPO_LANGUAGE);
+        try {
+            return getNode().getName();
+        } catch (RepositoryException e) {
+            log.warn("Failed to read name of category info node");
+        }
+        return "<unknown>";
     }
 
     public String getDescription() {
-        return getString(TaxonomyNodeTypes.HIPPOTAXONOMY_DESCRIPTION, "");
+        return getString(HIPPOTAXONOMY_DESCRIPTION, "");
     }
 
     public void setDescription(String description) throws TaxonomyException {
         checkEditable();
-        setString(TaxonomyNodeTypes.HIPPOTAXONOMY_DESCRIPTION, description);
+        setString(HIPPOTAXONOMY_DESCRIPTION, description);
     }
 
     public String[] getSynonyms() {
-        return getStringArray(TaxonomyNodeTypes.HIPPOTAXONOMY_SYNONYMS);
+        return getStringArray(HIPPOTAXONOMY_SYNONYMS);
     }
 
     public void setSynonyms(String[] synonyms) throws TaxonomyException {
         checkEditable();
-        setStringArray(TaxonomyNodeTypes.HIPPOTAXONOMY_SYNONYMS, synonyms);
+        setStringArray(HIPPOTAXONOMY_SYNONYMS, synonyms);
     }
 
     public Node getNode() throws ItemNotFoundException {

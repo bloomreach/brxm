@@ -40,6 +40,10 @@ import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALES;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALIZED;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY;
+
 public class CategoryImpl extends AbstractJCRService implements Category {
 
     static Logger log = LoggerFactory.getLogger(CategoryImpl.class);
@@ -67,17 +71,15 @@ public class CategoryImpl extends AbstractJCRService implements Category {
             this.key = this.getValueProvider().getString(TaxonomyNodeTypes.HIPPOTAXONOMY_KEY);
 
             // populate translations
-            if (item.isNodeType(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TRANSLATED)) {
-                NodeIterator nodes = item.getNodes(TaxonomyNodeTypes.HIPPOTAXONOMY_TRANSLATION);
-                while (nodes.hasNext()) {
-                    Node childItem = nodes.nextNode();
-                    if (childItem != null) {
-                        try {
-                            CategoryInfo translation = new CategoryInfoImpl(childItem);
-                            translations.put(translation.getLanguage(), translation);
-                        } catch (ServiceException e) {
-                            log.warn("Skipping translation because '{}', {}", e.getMessage(), e);
-                        }
+            if (item.isNodeType(HIPPOTAXONOMY_LOCALIZED) && item.hasNode(HIPPOTAXONOMY_LOCALES)) {
+                NodeIterator locales = item.getNode(HIPPOTAXONOMY_LOCALES).getNodes();
+                while (locales.hasNext()) {
+                    final Node locale = locales.nextNode();
+                    try {
+                        CategoryInfo info = new CategoryInfoImpl(locale);
+                        translations.put(info.getLanguage(), info);
+                    } catch (ServiceException e) {
+                        log.warn("Skipping translation because '{}', {}", e.getMessage(), e);
                     }
                 }
             }
@@ -87,7 +89,7 @@ public class CategoryImpl extends AbstractJCRService implements Category {
             while (nodes.hasNext()) {
                 Node childItem = nodes.nextNode();
                 if (childItem != null) {
-                    if (childItem.isNodeType(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY)) {
+                    if (childItem.isNodeType(NODETYPE_HIPPOTAXONOMY_CATEGORY)) {
                         try {
                             Category taxonomyItem = new CategoryImpl(childItem, this, taxonomyImpl);
                             childCategories.add(taxonomyItem);
@@ -95,13 +97,9 @@ public class CategoryImpl extends AbstractJCRService implements Category {
                             log.warn("Skipping category because '{}', {}", e.getMessage(), e);
                         }
                     } else {
-                        // warn, except when it concerns a (valid) translation
-                        if (!childItem.isNodeType(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TRANSLATION)) {
-                            log.warn("Skipping child nodes that are not of type '{}' or '{}'.",
-                                    TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY, 
-                                    TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TRANSLATION
-                                    + " Primary node type is " + childItem.getPrimaryNodeType().getName() + ".");
-                        }
+                        log.warn("Skipping child nodes that are not of type '{}'. Primary node type is '{}'.", 
+                                NODETYPE_HIPPOTAXONOMY_CATEGORY, childItem.getPrimaryNodeType().getName());
+                        
                     }
                 }
             }

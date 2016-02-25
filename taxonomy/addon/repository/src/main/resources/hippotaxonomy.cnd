@@ -7,7 +7,7 @@
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <hippotaxonomy='http://www.hippoecm.org/hippotaxonomy/nt/1.2'>
 
-// translation
+// deprecated: replaced by hippotaxonomy:locale
 [hippotaxonomy:translation] > hippo:translation
 - hippotaxonomy:synonyms (string) multiple
 - hippotaxonomy:description (string)
@@ -15,7 +15,7 @@
 - * (string)
 - * (string) multiple
 
-// FIXME: extend hippo:translated?
+// deprecated: replaced by hippotaxonomy:localized
 [hippotaxonomy:translated] mixin
 + hippotaxonomy:translation (hippotaxonomy:translation) multiple
 
@@ -38,3 +38,17 @@
 // set this mixin on a document to be able to canonise it
 [hippotaxonomy:canonised] > hippotaxonomy:classifiable mixin
 - hippotaxonomy:canonkey (string) mandatory
+
+[hippotaxonomy:locale] > nt:base
+- hippotaxonomy:message (string)
+- hippotaxonomy:description (string)
+- hippotaxonomy:synonyms (string) multiple
+// for extensibility, it's allowed to add ad hoc string/string[] properties in the category translation node.
+- * (string)
+- * (string) multiple
+
+[hippotaxonomy:locales] > nt:base
++ * (hippotaxonomy:locale)
+
+[hippotaxonomy:localized] mixin
++ hippotaxonomy:locales (hippotaxonomy:locales)
