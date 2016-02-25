@@ -33,9 +33,9 @@
   <inceptionYear>2009</inceptionYear>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/selections/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/selections/trunk/</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/selections/trunk/</url>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-plugin-selections.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-plugin-selections.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-plugin-selections</url>
   </scm>
 
 
