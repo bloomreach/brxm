@@ -200,9 +200,8 @@
             <configuration>
               <excludes combine.children="append">
                 <!-- 3rd-party licenses -->
-                <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/*</exclude>
-                <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/*</exclude>
-                <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/devices/device-skins.txt</exclude>
+                <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/channeleditor/plugins/colorfield/*</exclude>
+                <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/channeleditor/plugins/vtabs/*</exclude>
 
                 <exclude>frontend/.*</exclude>
                 <exclude>frontend/*.md</exclude>
