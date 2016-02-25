@@ -139,9 +139,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/branches/hippo-cms-3.2.x</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/branches/hippo-cms-3.2.x</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/branches/hippo-cms-3.2.x</url>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-cms.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-cms.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-cms</url>
   </scm>
 
   <build>
