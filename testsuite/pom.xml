@@ -350,9 +350,9 @@
   </profiles>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/trunk</url>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-testsuite.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-testsuite.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-testsuite</url>
   </scm>
 
 </project>
