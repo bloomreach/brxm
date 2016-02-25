@@ -73,9 +73,9 @@
 
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk</url>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-project-archetype.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-project-archetype.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-project-archetype</url>
   </scm>
 
   <build>
