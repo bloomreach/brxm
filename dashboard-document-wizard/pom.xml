@@ -144,6 +144,7 @@
             <inherited>false</inherited>
             <configuration>
               <excludes combine.children="append">
+                <exclude>README.md</exclude>
                 <!-- 3rd party -->
                 <exclude>demo/site/src/main/webapp/js/*.js</exclude>
                 <exclude>demo/site/src/main/webapp/fonts/*</exclude>
