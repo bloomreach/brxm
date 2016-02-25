@@ -54,9 +54,9 @@
 
   </properties>
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/branches/hippo-essentials-2.2.x</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/branches/hippo-essentials-2.2.x</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/branches/hippo-essentials-2.2.x</url>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-essentials.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-essentials.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-essentials</url>
   </scm>
 
   <modules>
