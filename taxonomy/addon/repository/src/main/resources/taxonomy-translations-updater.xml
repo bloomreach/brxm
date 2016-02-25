@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="TaxonomyTranslatedToLocalized" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hipposys:updaterinfo</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:batchsize" sv:type="Long">
+    <sv:value>10</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:description" sv:type="String">
+    <sv:value>The taxonomy category localization model was based on deprecated hippo:translated and hippo:translation types and made use of same-name sibling nodes. This model has been changed to one that does not make use of same-name siblings and is not based on deprecated node types. This updater will migrate taxonomies to make use of the new taxonomy localization model. Run this updater after upgrading to Hippo 11.</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:dryrun" sv:type="Boolean">
+    <sv:value>false</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:parameters" sv:type="String">
+    <sv:value/>
+  </sv:property>
+  <sv:property sv:name="hipposys:query" sv:type="String">
+    <sv:value>//element(*, hippotaxonomy:translated)</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:script" sv:type="String">
+    <sv:value>package org.hippoecm.frontend.plugins.cms.admin.updater&#xd;
+      &#xd;
+      import org.hippoecm.repository.util.NodeIterable&#xd;
+      import org.hippoecm.repository.util.PropertyIterable&#xd;
+      import org.onehippo.repository.update.BaseNodeUpdateVisitor&#xd;
+      import javax.jcr.Node&#xd;
+      import javax.jcr.Property&#xd;
+      &#xd;
+      class TaxonomyTranslationsUpdater extends BaseNodeUpdateVisitor {&#xd;
+      &#xd;
+      boolean doUpdate(Node node) {&#xd;
+      if (!node.isNodeType("hippotaxonomy:localized")) {&#xd;
+      node.addMixin("hippotaxonomy:localized")&#xd;
+      }&#xd;
+      if (!node.hasNode("hippotaxonomy:locales")) {&#xd;
+      node.addNode("hippotaxonomy:locales", "hippotaxonomy:locales")&#xd;
+      }&#xd;
+      Node locales = node.getNode("hippotaxonomy:locales")&#xd;
+      for (Node translationNode : new NodeIterable(node.getNodes("hippotaxonomy:translation"))) {&#xd;
+      String language = translationNode.getProperty("hippo:language").getString()&#xd;
+      Node locale = locales.addNode(language, "hippotaxonomy:locale")&#xd;
+      for (Property property : new PropertyIterable(translationNode.getProperties())) {&#xd;
+      if (property.getName().startsWith("jcr:") || property.getName().equals("hippo:language")) {&#xd;
+      continue&#xd;
+      }&#xd;
+      if (property.getName().equals("hippo:message")) {&#xd;
+      locale.setProperty("hippotaxonomy:message", property.getValue())&#xd;
+      continue&#xd;
+      }&#xd;
+      if (property.isMultiple()) {&#xd;
+      locale.setProperty(property.getName(), property.getValues())&#xd;
+      } else {&#xd;
+      locale.setProperty(property.getName(), property.getValue())&#xd;
+      }&#xd;
+      }&#xd;
+      translationNode.remove()&#xd;
+      }&#xd;
+      node.removeMixin("hippotaxonomy:translated");&#xd;
+      return true;&#xd;
+      }&#xd;
+      &#xd;
+      boolean undoUpdate(Node node) {&#xd;
+      throw new UnsupportedOperationException('Updater does not implement undoUpdate method')&#xd;
+      }&#xd;
+      &#xd;
+      }</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:throttle" sv:type="Long">
+    <sv:value>1000</sv:value>
+  </sv:property>
+</sv:node>
