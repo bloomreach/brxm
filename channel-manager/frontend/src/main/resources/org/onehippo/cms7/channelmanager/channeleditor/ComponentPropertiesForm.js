@@ -85,8 +85,10 @@
           handler: function () {
             Ext.Ajax.request({
               method: 'DELETE',
-              url: this.composerRestMountUrl + '/' + this.componentId + './' +
-              encodeURIComponent(this.variant.id) + '?FORCE_CLIENT_HOST=true',
+              url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id),
+              headers: {
+                'FORCE_CLIENT_HOST': 'true',
+              },
               success: function () {
                 this.fireEvent('propertiesDeleted', this.variant.id);
               },
@@ -182,7 +184,7 @@
           'lastModifiedTimestamp': this.lastModified
         },
         params: uncheckedValues,
-        url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/rename/' + encodeURIComponent(this.newVariantId) + '?FORCE_CLIENT_HOST=true',
+        url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/rename/' + encodeURIComponent(this.newVariantId),
         method: 'POST',
         success: function () {
           this.fireEvent('propertiesSaved', this.newVariantId);
@@ -362,7 +364,7 @@
     _createDocument: function (ev, target, options) {
       var createUrl, createDocumentWindow;
 
-      createUrl = this.composerRestMountUrl + '/' + this.mountId + './create?FORCE_CLIENT_HOST=true';
+      createUrl = this.composerRestMountUrl + '/' + this.mountId + './create';
       createDocumentWindow = new Ext.Window({
         title: Hippo.ChannelManager.ChannelEditor.Resources['properties-form-create-new-document-window-title'],
         height: 200,
@@ -411,6 +413,9 @@
               Ext.Ajax.request({
                 url: createUrl,
                 params: options,
+                headers: {
+                  'FORCE_CLIENT_HOST': 'true'
+                },
                 success: function () {
                   Ext.getCmp(options.comboId).setValue(options.docLocation + "/" + options.docName);
                 },

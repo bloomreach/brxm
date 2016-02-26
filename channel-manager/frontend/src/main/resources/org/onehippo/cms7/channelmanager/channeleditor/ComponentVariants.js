@@ -76,7 +76,10 @@
                 return new Hippo.Future(function(success, fail) {
                     if (self.componentId) {
                         Ext.Ajax.request({
-                            url: self.composerRestMountUrl + '/' + self.componentId + './?FORCE_CLIENT_HOST=true',
+                            url: self.composerRestMountUrl + '/' + self.componentId,
+                            headers: {
+                                'FORCE_CLIENT_HOST': 'true'
+                            },
                             success: function(result) {
                                 var jsonData = Ext.util.JSON.decode(result.responseText),
                                     variantIds = jsonData.data;
@@ -104,10 +107,11 @@
         _loadComponentVariants: function(variantIds) {
             return new Hippo.Future(function(success, fail) {
                 Ext.Ajax.request({
-                    url: this.composerRestMountUrl + '/' + this.variantsUuid + './componentvariants?locale=' + this.locale + '&FORCE_CLIENT_HOST=true',
+                    url: this.composerRestMountUrl + '/' + this.variantsUuid + './componentvariants?locale=' + this.locale,
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'FORCE_CLIENT_HOST': 'true'
                     },
                     params: Ext.util.JSON.encode(variantIds),
                     success: function(result) {
@@ -134,7 +138,7 @@
                     });
                     Ext.Ajax.request({
                         method: 'POST',
-                        url: this.composerRestMountUrl + '/' + this.componentId + './' + '?FORCE_CLIENT_HOST=true',
+                        url: this.composerRestMountUrl + '/' + this.componentId,
                         headers: {
                             'FORCE_CLIENT_HOST': 'true',
                             'Content-Type': 'application/json',
