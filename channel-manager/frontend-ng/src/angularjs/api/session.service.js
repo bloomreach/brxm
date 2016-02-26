@@ -14,43 +14,20 @@
  * limitations under the License.
  */
 
-const DEFAULT_SETTINGS = {
-  canWrite: false,
-  sessionId: null,
-};
-
-const HANDSHAKE_PATH = '/composermode/';
-
 export class SessionService {
-  constructor($q, $http, ConfigService) {
+  constructor(HstService) {
     'ngInject';
 
-    this.$q = $q;
-    this.$http = $http;
-
-    this.canWrite = DEFAULT_SETTINGS.canWrite;
-    this.sessionID = DEFAULT_SETTINGS.sessionId;
-
-    this.cmsUser = ConfigService.cmsUser;
-    this.handshakePath = ConfigService.apiUrlPrefix + ConfigService.rootResource + HANDSHAKE_PATH;
+    this.hstService = HstService;
+    this.canWrite = false;
   }
 
-  authenticate(channel) {
-    const url = channel.contextPath + this.handshakePath + channel.hostname + '/';
-    const headers = {
-      'CMS-User': this.cmsUser,
-      FORCE_CLIENT_HOST: 'true',
-    };
-
-    return this.$q((resolve, reject) => {
-      this.$http.get(url, { headers })
-        .success((response) => {
-          const data = (response && response.data) || DEFAULT_SETTINGS;
-          this.canWrite = data.canWrite;
-          this.sessionId = data.sessionId;
-          resolve(channel);
-        })
-        .error((error) => reject(error));
-    });
+  initialize(channel) {
+    return this.hstService
+      .initializeSession(channel)
+      .then((canWrite) => {
+        this.canWrite = canWrite;
+        return channel;
+      });
   }
 }

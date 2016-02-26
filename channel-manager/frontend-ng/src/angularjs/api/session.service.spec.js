@@ -17,117 +17,57 @@
 describe('SessionService', function () {
   'use strict';
 
-  var $httpBackend;
-  var SessionService;
-  var ConfigServiceMock;
-  var channelMock;
-
-  var rootResource = '/cafebabe.';
-  var apiUrlPrefix = '/testApiUrlPrefix';
-  var composerMode = '/composermode';
-  var contextPath = '/testContextPath';
-  var hostname = 'test.host.name';
-  var handshakeUrl = contextPath + apiUrlPrefix + rootResource + composerMode + '/' + hostname + '/';
+  var $rootScope;
+  var deferred;
+  var sessionService;
+  var channelMock = 'channelMock';
 
   beforeEach(function () {
     module('hippo-cm-api');
 
-    channelMock = {
-      contextPath: contextPath,
-      hostname: hostname,
-    };
-
-    ConfigServiceMock = {
-      apiUrlPrefix: apiUrlPrefix,
-      cmsUser: 'testUser',
-      rootResource: rootResource,
-    };
-
-    module(function ($provide) {
-      $provide.value('ConfigService', ConfigServiceMock);
+    inject(function ($q, _$rootScope_, SessionService, HstService) {
+      $rootScope = _$rootScope_;
+      sessionService = SessionService;
+      deferred = $q.defer();
+      spyOn(HstService, 'initializeSession').and.returnValue(deferred.promise);
     });
-
-    inject(function (_$httpBackend_, _SessionService_) {
-      $httpBackend = _$httpBackend_;
-      SessionService = _SessionService_;
-    });
-  });
-
-  afterEach(function () {
-    $httpBackend.verifyNoOutstandingRequest();
-    $httpBackend.verifyNoOutstandingExpectation();
   });
 
   it('should exist', function () {
-    expect(SessionService).toBeDefined();
+    expect(sessionService).toBeDefined();
   });
 
-  it('should have a handshakePath', function () {
-    expect(SessionService.handshakePath).toEqual(apiUrlPrefix + rootResource + composerMode + '/');
+  it('should always be readonly before initialization', function () {
+    expect(sessionService.canWrite).toEqual(false);
   });
 
-  it('should have a cms user', function () {
-    expect(SessionService.cmsUser).toEqual(ConfigServiceMock.cmsUser);
-  });
-
-  it('should not have a session ID before authenticating', function () {
-    expect(SessionService.sessionID).toEqual(null);
-  });
-
-  it('should always be readonly before authenticating', function () {
-    expect(SessionService.canWrite).toEqual(false);
-  });
-
-  it('should construct a valid handshake url when authenticating', function () {
-    $httpBackend.expectGET(handshakeUrl).respond(200);
-    SessionService.authenticate(channelMock);
-    $httpBackend.flush();
-  });
-
-  it('should resolve a promise with the channel as value after authenticating', function () {
+  it('should resolve a promise with the channel argument when initialization is successful', function () {
     var promiseSpy = jasmine.createSpy('promiseSpy');
-    $httpBackend.expectGET(handshakeUrl).respond(200);
-    SessionService.authenticate(channelMock).then(promiseSpy);
+    sessionService
+      .initialize(channelMock)
+      .then(promiseSpy);
 
-    $httpBackend.flush();
+    deferred.resolve();
+    $rootScope.$apply();
     expect(promiseSpy).toHaveBeenCalledWith(channelMock);
   });
 
-  it('should reject a promise when authentication fails', function () {
+  it('should reject a promise when initialization fails', function () {
     var catchSpy = jasmine.createSpy('catchSpy');
-    $httpBackend.expectGET(handshakeUrl).respond(500);
-    SessionService
-      .authenticate(channelMock)
+    sessionService
+      .initialize(channelMock)
       .catch(catchSpy);
 
-    $httpBackend.flush();
+    deferred.reject();
+    $rootScope.$apply();
     expect(catchSpy).toHaveBeenCalled();
   });
 
-  it('should set canWrite and sessionId after authenticating', function () {
-    $httpBackend.expectGET(handshakeUrl).respond(200, {
-      data: {
-        canWrite: true,
-        sessionId: '1234',
-      },
-    });
-    SessionService.authenticate(channelMock);
-    $httpBackend.flush();
-
-    expect(SessionService.canWrite).toEqual(true);
-    expect(SessionService.sessionId).toEqual('1234');
-  });
-
-  it('should reset values for canWrite and sessionId when handling an invalid response', function () {
-    SessionService.canWrite = true;
-    SessionService.sessionId = '1234';
-
-    $httpBackend.expectGET(handshakeUrl).respond(200);
-    SessionService.authenticate(channelMock);
-    $httpBackend.flush();
-
-    expect(SessionService.canWrite).toEqual(false);
-    expect(SessionService.sessionId).toEqual(null);
+  it('should set canWrite after initializing', function () {
+    sessionService.initialize(channelMock);
+    deferred.resolve(true);
+    $rootScope.$apply();
+    expect(sessionService.canWrite).toEqual(true);
   });
 
 });

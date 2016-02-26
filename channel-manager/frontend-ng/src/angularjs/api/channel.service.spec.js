@@ -34,7 +34,7 @@ describe('ChannelService', function () {
     };
 
     SessionServiceMock = {
-      authenticate: function (channel) {
+      initialize: function (channel) {
         return $q.resolve(channel);
       },
     };
@@ -63,7 +63,7 @@ describe('ChannelService', function () {
   });
 
   it('should not save a reference to the channel when load fails', function () {
-    spyOn(SessionServiceMock, 'authenticate').and.callFake(function () {
+    spyOn(SessionServiceMock, 'initialize').and.callFake(function () {
       return $q.reject();
     });
     ChannelService.load(channelMock);

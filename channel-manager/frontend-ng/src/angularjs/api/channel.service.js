@@ -28,7 +28,7 @@ export class ChannelService {
 
   load(channel) {
     return this.SessionService
-      .authenticate(channel)
+      .initialize(channel)
       .then(() => this.channel = channel);
   }
 
