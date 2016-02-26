@@ -77,13 +77,13 @@ public class HippoTaxonomyVisitor extends HippoPublicationWorkflowDocumentVisito
                 for (Node locale : new NodeIterable(child.getNodes())) {
                     final LinkedHashMap<String, Object> localeProperties = new LinkedHashMap<>();
                     category.put(locale.getName(), localeProperties);
-                    localeProperties.put("message", child.getProperty(HIPPOTAXONOMY_MESSAGE).getString());
-                    if (child.hasProperty(HIPPOTAXONOMY_DESCRIPTION)) {
-                        localeProperties.put("description", child.getProperty(HIPPOTAXONOMY_DESCRIPTION).getString());
+                    localeProperties.put("message", locale.getProperty(HIPPOTAXONOMY_MESSAGE).getString());
+                    if (locale.hasProperty(HIPPOTAXONOMY_DESCRIPTION)) {
+                        localeProperties.put("description", locale.getProperty(HIPPOTAXONOMY_DESCRIPTION).getString());
                     }
-                    if (child.hasProperty(HIPPOTAXONOMY_SYNONYMS)) {
+                    if (locale.hasProperty(HIPPOTAXONOMY_SYNONYMS)) {
                         final ArrayList<String> synonyms = new ArrayList<>();
-                        for (Value value : child.getProperty(HIPPOTAXONOMY_SYNONYMS).getValues()) {
+                        for (Value value : locale.getProperty(HIPPOTAXONOMY_SYNONYMS).getValues()) {
                             if (value.getString() != null) {
                                 synonyms.add(value.getString());
                             }
