@@ -14,18 +14,6 @@
  * limitations under the License.
  */
 
-function constructUrl(location, ...fragments) {
-  let url = `${location.protocol}//${location.host}`;
-  fragments.forEach((fragment) => {
-    if (angular.isString(fragment) && fragment.length) {
-      const urlAndSlash = url.charAt(url.length - 1) === '/' ? url : `${url}/`;
-      const noSlashAndFragment = fragment.charAt(0) === '/' ? fragment.substring(1) : fragment;
-      url = urlAndSlash + noSlashAndFragment;
-    }
-  });
-  return url;
-}
-
 export class HippoIframeCtrl {
   constructor($rootScope, $element, linkProcessorService, hstCommentsProcessorService, ChannelService,
               PageStructureService, OverlaySyncService) {
@@ -69,8 +57,7 @@ export class HippoIframeCtrl {
 
   _parseLinks() {
     const iframeDom = this.iframeJQueryElement.contents()[0];
-    const channel = this.ChannelService.channel;
-    const internalLinkPrefix = constructUrl(iframeDom.location, channel.contextPath, channel.cmsPreviewPrefix);
+    const internalLinkPrefix = `${iframeDom.location.protocol}//${iframeDom.location.host}${this.ChannelService.getUrl()}`;
 
     this.linkProcessorService.run(iframeDom, internalLinkPrefix);
   }
