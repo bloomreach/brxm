@@ -115,4 +115,32 @@ describe('HstService', function () {
     $httpBackend.flush();
     expect(catchSpy).toHaveBeenCalled();
   });
+
+  it('should load a channel by id', function () {
+    var channelA = {
+      id: 'channelA',
+      contextPath: '/a',
+    };
+    var url = contextPath + apiUrlPrefix + rootResource + '/channels/' + channelA.id;
+    var catchSpy = jasmine.createSpy('catchSpy');
+
+    $httpBackend.expectGET(url).respond(200, channelA);
+    hstService.loadChannel('channelA')
+      .then(catchSpy);
+
+    $httpBackend.flush();
+    expect(catchSpy).toHaveBeenCalledWith(channelA);
+  });
+
+  it('should reject a promise when a channel load fails', function () {
+    var catchSpy = jasmine.createSpy('catchSpy');
+    var url = contextPath + apiUrlPrefix + rootResource + '/channels/test';
+    $httpBackend.expectGET(url).respond(500);
+    hstService.
+      loadChannel('test')
+      .catch(catchSpy);
+
+    $httpBackend.flush();
+    expect(catchSpy).toHaveBeenCalled();
+  });
 });
