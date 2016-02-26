@@ -24,7 +24,7 @@ export class SessionService {
 
   initialize(channel) {
     return this.hstService
-      .initializeSession(channel)
+      .initializeSession(channel.hostname)
       .then((canWrite) => {
         this.canWrite = canWrite;
         return channel;

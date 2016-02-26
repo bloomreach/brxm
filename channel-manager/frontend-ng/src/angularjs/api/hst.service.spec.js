@@ -20,27 +20,20 @@ describe('HstService', function () {
   var $httpBackend;
   var hstService;
   var ConfigServiceMock;
-  var channelMock;
 
   var rootResource = '/cafebabe.';
   var apiUrlPrefix = '/testApiUrlPrefix';
-  var composerMode = '/composermode';
   var contextPath = '/testContextPath';
   var hostname = 'test.host.name';
-  var handshakeUrl = contextPath + apiUrlPrefix + rootResource + composerMode + '/' + hostname + '/';
+  var handshakeUrl = contextPath + apiUrlPrefix + rootResource + '/composermode/' + hostname + '/';
 
   beforeEach(function () {
     module('hippo-cm-api');
 
-    channelMock = {
-      contextPath: contextPath,
-      hostname: hostname,
-    };
-
     ConfigServiceMock = {
-      defaultContextPath: contextPath,
       apiUrlPrefix: apiUrlPrefix,
       cmsUser: 'testUser',
+      defaultContextPath: contextPath,
       rootResource: rootResource,
     };
 
@@ -69,7 +62,7 @@ describe('HstService', function () {
 
   it('should construct a valid handshake url when initializing a channel session', function () {
     $httpBackend.expectGET(handshakeUrl).respond(200);
-    hstService.initializeSession(channelMock);
+    hstService.initializeSession(hostname);
     $httpBackend.flush();
   });
 
@@ -82,7 +75,7 @@ describe('HstService', function () {
     it('should resolve a promise', function () {
       var promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200);
-      hstService.initializeSession(channelMock).then(promiseSpy);
+      hstService.initializeSession(hostname).then(promiseSpy);
       $httpBackend.flush();
       expect(promiseSpy).toHaveBeenCalled();
     });
@@ -90,7 +83,7 @@ describe('HstService', function () {
     it('should resolve with true if response data parameter canWrite is true', function () {
       var promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200, { data: { canWrite: true } });
-      hstService.initializeSession(channelMock).then(promiseSpy);
+      hstService.initializeSession(hostname).then(promiseSpy);
       $httpBackend.flush();
       expect(promiseSpy).toHaveBeenCalledWith(true);
     });
@@ -98,7 +91,7 @@ describe('HstService', function () {
     it('should resolve with false if response data parameter canWrite is false', function () {
       var promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200, { data: { canWrite: false } });
-      hstService.initializeSession(channelMock).then(promiseSpy);
+      hstService.initializeSession(hostname).then(promiseSpy);
       $httpBackend.flush();
       expect(promiseSpy).toHaveBeenCalledWith(false);
     });
@@ -106,7 +99,7 @@ describe('HstService', function () {
     it('should resolve with false if response data parameter is missing', function () {
       var promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200);
-      hstService.initializeSession(channelMock).then(promiseSpy);
+      hstService.initializeSession(hostname).then(promiseSpy);
       $httpBackend.flush();
       expect(promiseSpy).toHaveBeenCalledWith(false);
     });
@@ -116,7 +109,7 @@ describe('HstService', function () {
     var catchSpy = jasmine.createSpy('catchSpy');
     $httpBackend.expectGET(handshakeUrl).respond(500);
     hstService
-      .initializeSession(channelMock)
+      .initializeSession(hostname)
       .catch(catchSpy);
 
     $httpBackend.flush();

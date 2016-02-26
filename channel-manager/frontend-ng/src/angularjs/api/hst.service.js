@@ -42,8 +42,8 @@ export class HstService {
     return this._contextPath + this.config.apiUrlPrefix + this.config.rootResource;
   }
 
-  initializeSession(channel) {
-    const url = this.apiPath + HANDSHAKE_PATH + channel.hostname + '/';
+  initializeSession(hostname) {
+    const url = this.apiPath + HANDSHAKE_PATH + hostname + '/';
     return this.doGet(url)
       .then((response) => !!(response && response.data && response.data.canWrite));
   }
