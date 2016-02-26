@@ -20,4 +20,9 @@ export class ChannelCtrl {
     this.iframeUrl = ChannelService.getUrl();
     this.isEditMode = false;
   }
+
+  toggleEditMode() {
+    this.isEditMode = !this.isEditMode;
+  }
+
 }

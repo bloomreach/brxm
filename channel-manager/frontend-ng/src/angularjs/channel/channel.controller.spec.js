@@ -43,4 +43,11 @@ describe('ChannelCtrl', function () {
     expect(ChannelCtrl.isEditMode).toEqual(false);
   });
 
+  it('enables and disables edit mode when toggling it', function () {
+    ChannelCtrl.toggleEditMode();
+    expect(ChannelCtrl.isEditMode).toEqual(true);
+    ChannelCtrl.toggleEditMode();
+    expect(ChannelCtrl.isEditMode).toEqual(false);
+  });
+
 });

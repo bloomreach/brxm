@@ -1,7 +1,7 @@
 {
   "TOOLBAR_BUTTON_PAGES": "Pages",
   "TOOLBAR_SWITCH_VIEWER_MODE": "Viewer mode",
-  "TOOLBAR_SWITCH_VIEWER_MODE_EDIT": "EDIT",
-  "TOOLBAR_SWITCH_VIEWER_MODE_PREVIEW": "PREVIEW",
+  "TOOLBAR_SWITCH_VIEWER_MODE_EDIT": "Edit",
+  "TOOLBAR_SWITCH_VIEWER_MODE_PREVIEW": "View",
   "CONFIRM_OPEN_EXTERNAL_LINK": "This external link will be opened in a new tab.\nDo you want to continue?"
 }
