@@ -24,7 +24,16 @@ export class ChannelService {
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
 
-    this.channel = {};
+    this._channel = {};
+  }
+
+  set channel(channel) {
+    this._channel = channel;
+    this.hstService.contextPath = channel.contextPath;
+  }
+
+  get channel() {
+    return this._channel;
   }
 
   load(channel) {
@@ -32,7 +41,7 @@ export class ChannelService {
       .initialize(channel)
       .then(() => {
         this.channel = channel;
-        this.hstService.contextPath = channel.contextPath;
+        return channel;
       });
   }
 
@@ -68,18 +77,10 @@ export class ChannelService {
   }
 
   switchToChannel(id) {
-    const url = this.channel.contextPath
-      + this.ConfigService.apiUrlPrefix
-      + this.ConfigService.rootResource
-      + '/channels/' + id;
-    const headers = {
-      FORCE_CLIENT_HOST: 'true',
-    };
-
-    this.$http.get(url, { headers })
-      .success((channel) => {
+    this.hstService.loadChannel(id)
+      .then((channel) => {
         this.channel = channel;
         this.CmsService.publish('switch-channel', channel.id); // update breadcrumb.
-      }); // TODO add error handling
+      });// TODO add error handling
   }
 }

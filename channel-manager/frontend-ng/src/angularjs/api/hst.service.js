@@ -44,7 +44,16 @@ export class HstService {
 
   initializeSession(channel) {
     const url = this.apiPath + HANDSHAKE_PATH + channel.hostname + '/';
+    return this.doGet(url)
+      .then((response) => !!(response && response.data && response.data.canWrite));
+  }
 
+  loadChannel(id) {
+    const url = this.apiPath + '/channels/' + id;
+    return this.doGet(url);
+  }
+
+  doGet(url) {
     const headers = {
       'CMS-User': this.config.cmsUser,
       FORCE_CLIENT_HOST: 'true',
@@ -52,7 +61,7 @@ export class HstService {
 
     return q((resolve, reject) => {
       http.get(url, { headers })
-        .success((response) => resolve(!!(response && response.data && response.data.canWrite)))
+        .success((response) => resolve(response))
         .error((error) => reject(error));
     });
   }
