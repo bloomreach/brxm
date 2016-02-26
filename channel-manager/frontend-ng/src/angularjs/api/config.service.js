@@ -21,7 +21,12 @@ export class ConfigService {
 
     this.locale = 'en';
     this.rootResource = '/cafebabe-cafe-babe-cafe-babecafebabe.';
+    this.defaultContextPath = '/site';
 
     Object.assign(this, CmsService.getConfig());
+
+    if (this.contextPaths && this.contextPaths.length > 0) {
+      this.defaultContextPath = this.contextPaths[0];
+    }
   }
 }
