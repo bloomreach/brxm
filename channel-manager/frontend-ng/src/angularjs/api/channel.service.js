@@ -15,11 +15,12 @@
  */
 
 export class ChannelService {
-  constructor($http, SessionService, CmsService, ConfigService) {
+  constructor($http, SessionService, HstService, CmsService, ConfigService) {
     'ngInject';
 
     this.$http = $http;
     this.SessionService = SessionService;
+    this.hstService = HstService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
 
@@ -29,7 +30,10 @@ export class ChannelService {
   load(channel) {
     return this.SessionService
       .initialize(channel)
-      .then(() => this.channel = channel);
+      .then(() => {
+        this.channel = channel;
+        this.hstService.contextPath = channel.contextPath;
+      });
   }
 
   getUrl(path) {
