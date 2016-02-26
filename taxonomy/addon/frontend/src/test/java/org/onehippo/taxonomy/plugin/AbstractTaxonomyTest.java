@@ -34,6 +34,7 @@ import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_KEY;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALE;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALES;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALIZED;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_MESSAGE;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_SYNONYMS;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY;
 
@@ -66,7 +67,7 @@ public abstract class AbstractTaxonomyTest extends PluginTest {
                             HIPPOTAXONOMY_KEY, BRANCH_KEY,
                             "/test/taxonomy/top/branch/" + HIPPOTAXONOMY_LOCALES, HIPPOTAXONOMY_LOCALES,
                                 "/test/taxonomy/top/branch/" + HIPPOTAXONOMY_LOCALES + "/en", HIPPOTAXONOMY_LOCALE,
-                                "hippo:message", BRANCH_NAME_EN,
+                                HIPPOTAXONOMY_MESSAGE, BRANCH_NAME_EN,
                                 HIPPOTAXONOMY_SYNONYMS, BRANCH_SYNONYM,
     };
 
