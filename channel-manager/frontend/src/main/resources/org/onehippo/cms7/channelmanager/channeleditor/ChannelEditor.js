@@ -100,7 +100,7 @@
         mountId: this.selectedChannel.mountId,
         listeners: {
           save: function() {
-            console.log('TODO: save component');
+            console.log('TODO: re-render saved component');
             // old code: this.fireEvent('channelChanged');
           },
           deleteVariant: function() {
