@@ -60,12 +60,7 @@
         text: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-button-save'],
         scope: this,
         handler: function () {
-          this.componentPropertiesPanel.saveAll().then(function () {
-            this._resetFormStates();
-            console.log('TODO: notify other parts that the channel changed? Or not?');
-            // Old code:
-            // Hippo.ChannelManager.TemplateComposer.Instance.templateComposerApi.channelChanged();
-          }.bind(this));
+          this.componentPropertiesPanel.saveAll().then(this._resetFormStates.bind(this));
         }
       });
 
