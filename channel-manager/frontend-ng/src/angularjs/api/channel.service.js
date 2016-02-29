@@ -15,21 +15,34 @@
  */
 
 export class ChannelService {
-  constructor($http, SessionService, CmsService, ConfigService) {
+  constructor($http, SessionService, HstService, CmsService, ConfigService) {
     'ngInject';
 
     this.$http = $http;
     this.SessionService = SessionService;
+    this.HstService = HstService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
 
     this.channel = {};
   }
 
+  _setChannel(channel) {
+    this.channel = channel;
+    this.HstService.setContextPath(channel.contextPath);
+  }
+
+  getChannel() {
+    return this.channel;
+  }
+
   load(channel) {
     return this.SessionService
-      .authenticate(channel)
-      .then(() => this.channel = channel);
+      .initialize(channel)
+      .then(() => {
+        this._setChannel(channel);
+        return channel;
+      });
   }
 
   getUrl(path) {
@@ -64,18 +77,10 @@ export class ChannelService {
   }
 
   switchToChannel(id) {
-    const url = this.channel.contextPath
-      + this.ConfigService.apiUrlPrefix
-      + this.ConfigService.rootResource
-      + '/channels/' + id;
-    const headers = {
-      FORCE_CLIENT_HOST: 'true',
-    };
-
-    this.$http.get(url, { headers })
-      .success((channel) => {
-        this.channel = channel;
+    this.HstService.getChannel(id)
+      .then((channel) => {
+        this._setChannel(channel);
         this.CmsService.publish('switch-channel', channel.id); // update breadcrumb.
-      }); // TODO add error handling
+      });// TODO add error handling
   }
 }

@@ -19,10 +19,10 @@ describe('ChannelService', function () {
 
   var $q;
   var $rootScope;
-  var $httpBackend;
   var ChannelService;
   var SessionServiceMock;
   var ConfigServiceMock;
+  var HstServiceMock;
   var channelMock;
 
   beforeEach(function () {
@@ -34,111 +34,131 @@ describe('ChannelService', function () {
     };
 
     SessionServiceMock = {
-      authenticate: function (channel) {
+      initialize: function (channel) {
         return $q.resolve(channel);
       },
     };
 
     ConfigServiceMock = {
       apiUrlPrefix: '/testApiUrlPrefix',
-      rootResource: '/testRootResource',
+      rootUuid: 'testRootUuid',
     };
+
+    HstServiceMock = jasmine.createSpyObj('HstService', ['setContextPath', 'getChannel']);
 
     module(function ($provide) {
       $provide.value('SessionService', SessionServiceMock);
       $provide.value('ConfigService', ConfigServiceMock);
+      $provide.value('HstService', HstServiceMock);
     });
 
-    inject(function (_$q_, _$rootScope_, _$httpBackend_, _ChannelService_) {
+    inject(function (_$q_, _$rootScope_, _ChannelService_) {
       $q = _$q_;
       $rootScope = _$rootScope_;
-      $httpBackend = _$httpBackend_;
       ChannelService = _ChannelService_;
     });
   });
 
-  afterEach(function () {
-    $httpBackend.verifyNoOutstandingRequest();
-    $httpBackend.verifyNoOutstandingExpectation();
-  });
-
   it('should not save a reference to the channel when load fails', function () {
-    spyOn(SessionServiceMock, 'authenticate').and.callFake(function () {
+    spyOn(SessionServiceMock, 'initialize').and.callFake(function () {
       return $q.reject();
     });
     ChannelService.load(channelMock);
-    $rootScope.$apply();
-    expect(ChannelService.channel).not.toEqual(channelMock);
+    $rootScope.$digest();
+    expect(ChannelService.getChannel()).not.toEqual(channelMock);
   });
 
   it('should save a reference to the channel when load succeeds', function () {
     ChannelService.load(channelMock);
-    expect(ChannelService.channel).not.toEqual(channelMock);
-    $rootScope.$apply();
-    expect(ChannelService.channel).toEqual(channelMock);
+    expect(ChannelService.getChannel()).not.toEqual(channelMock);
+    $rootScope.$digest();
+    expect(ChannelService.getChannel()).toEqual(channelMock);
   });
 
   it('should resolve a promise with the channel when load succeeds', function () {
     var promiseSpy = jasmine.createSpy('promiseSpy');
     ChannelService.load(channelMock).then(promiseSpy);
-    $rootScope.$apply();
+    $rootScope.$digest();
     expect(promiseSpy).toHaveBeenCalledWith(channelMock);
   });
 
   it('should return a url that starts with the contextPath', function () {
     ChannelService.load({ contextPath: '/test' });
-    $rootScope.$apply();
+    $rootScope.$digest();
     expect(ChannelService.getUrl('/optional/path')).toEqual('/test/optional/path');
   });
 
   it('should return a url that ends with a slash if it equals the contextPath', function () {
     ChannelService.load({ contextPath: '/test' });
-    $rootScope.$apply();
+    $rootScope.$digest();
     expect(ChannelService.getUrl()).toEqual('/test/');
   });
 
   it('should return a url without the contextPath if it is root', function () {
     ChannelService.load({ contextPath: '/' });
-    $rootScope.$apply();
+    $rootScope.$digest();
     expect(ChannelService.getUrl()).toEqual('');
   });
 
   it('should return a url with the cmsPreviewPrefix appended after the contextPath with a slash', function () {
     ChannelService.load({ contextPath: '/test', cmsPreviewPrefix: 'cmsPreviewPrefix' });
-    $rootScope.$apply();
+    $rootScope.$digest();
     expect(ChannelService.getUrl()).toEqual('/test/cmsPreviewPrefix');
   });
 
   it('should return a url with the mountPath appended after the cmsPreviewPrefix', function () {
     ChannelService.load({ contextPath: '/test', cmsPreviewPrefix: 'cmsPreviewPrefix', mountPath: '/mountPath' });
-    $rootScope.$apply();
+    $rootScope.$digest();
     expect(ChannelService.getUrl()).toEqual('/test/cmsPreviewPrefix/mountPath');
   });
 
   it('should return the mountId of the current channel', function () {
     ChannelService.load({ id: 'test-id' });
-    $rootScope.$apply();
+    $rootScope.$digest();
     expect(ChannelService.getId()).toEqual('test-id');
   });
 
-  it('should request the details of a new channel', function () {
-    var id = 'test-id';
-    var contextPath = '/test';
-    var url = contextPath + ConfigServiceMock.apiUrlPrefix + ConfigServiceMock.rootResource + '/channels/' + id;
+  it('should update the HstService\'s context path when the channel reference is updated', function () {
+    var channelA = {
+      id: 'channelA',
+      contextPath: '/a',
+    };
+    var channelB = {
+      id: 'channelB',
+      contextPath: '/b',
+    };
 
-    // set the ChannelService's state (to validate the requested URL)
-    ChannelService.load({ contextPath: contextPath });
-    $rootScope.$apply();
+    ChannelService.load(channelA);
+    $rootScope.$digest();
+    expect(HstServiceMock.setContextPath).toHaveBeenCalledWith(channelA.contextPath);
 
-    $httpBackend.expectGET(url).respond(200, {
-      id: 'backend-id',
-    });
-    ChannelService.switchToChannel(id);
-    $httpBackend.flush();
-
-    expect(ChannelService.getId()).toEqual('backend-id');
+    ChannelService.load(channelB);
+    $rootScope.$digest();
+    expect(HstServiceMock.setContextPath).toHaveBeenCalledWith(channelB.contextPath);
   });
 
+  it('should switch to a new channel', function () {
+    var channelA = {
+      id: 'channelA',
+      contextPath: '/a',
+    };
+    var channelB = {
+      id: 'channelB',
+      contextPath: '/b',
+    };
+
+    ChannelService.load(channelA);
+    $rootScope.$digest();
+
+    HstServiceMock.getChannel.and.callFake(function () {
+      return $q.resolve(channelB);
+    });
+    ChannelService.switchToChannel(channelB.id);
+    $rootScope.$digest();
+
+    expect(ChannelService.getId()).toEqual(channelB.id);
+    expect(ChannelService.getChannel()).toEqual(channelB);
+  });
   // TODO: add a test where the server returns an error upon the ChannelService's request for channel details.
 
 });

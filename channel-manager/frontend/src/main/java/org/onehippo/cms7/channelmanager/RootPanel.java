@@ -151,7 +151,7 @@ public class RootPanel extends ExtPanel {
 
         add(channelManagerCard);
 
-        channelEditor = new ChannelEditor(context, editorConfig, composerRestMountPath, channelStoreFuture);
+        channelEditor = new ChannelEditor(context, editorConfig, composerRestMountPath, channelStoreFuture, contextPaths);
         add(channelEditor);
 
         // card 2: HST config editor

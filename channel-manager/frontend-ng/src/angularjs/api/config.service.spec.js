@@ -22,6 +22,7 @@ describe('ConfigService', function () {
   beforeEach(function () {
     window.APP_CONFIG.locale = 'nl';
     window.APP_CONFIG.apiUrlPrefix = 'https://127.0.0.1:9080/web/one/two';
+    window.APP_CONFIG.contextPaths = ['/one', '/two'];
 
     module('hippo-cm-api');
 
@@ -33,5 +34,6 @@ describe('ConfigService', function () {
   it('allows custom configuration passed in by the CmsService', function () {
     expect(ConfigService.locale).toEqual('nl');
     expect(ConfigService.apiUrlPrefix).toEqual('https://127.0.0.1:9080/web/one/two');
+    expect(ConfigService.defaultContextPath).toEqual('/one');
   });
 });

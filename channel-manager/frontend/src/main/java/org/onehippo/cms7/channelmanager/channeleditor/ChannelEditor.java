@@ -70,6 +70,10 @@ public class ChannelEditor extends ExtPanel {
 
     @ExtProperty
     @SuppressWarnings("unused")
+    private final String[] contextPaths;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
     private String cmsUser;
 
     @ExtProperty
@@ -99,11 +103,11 @@ public class ChannelEditor extends ExtPanel {
     private boolean redraw = false;
 
     public ChannelEditor(final IPluginContext context, final IPluginConfig config, final String apiUrlPrefix,
-                         final ExtStoreFuture<Object> channelStoreFuture) {
+                         final ExtStoreFuture<Object> channelStoreFuture, final String[] contextPaths) {
 
         this.channelStoreFuture = channelStoreFuture;
         this.apiUrlPrefix = apiUrlPrefix;
-        //this.contextPath = defaultContextPath;
+        this.contextPaths = contextPaths;
         this.locale = Session.get().getLocale().toString();
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
         this.locale = Session.get().getLocale().toString();
