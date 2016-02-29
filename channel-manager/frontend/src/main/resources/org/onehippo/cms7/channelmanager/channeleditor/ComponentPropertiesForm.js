@@ -87,7 +87,7 @@
               method: 'DELETE',
               url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id),
               headers: {
-                'FORCE_CLIENT_HOST': 'true',
+                'FORCE_CLIENT_HOST': 'true'
               },
               success: function () {
                 this.fireEvent('propertiesDeleted', this.variant.id);
