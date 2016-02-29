@@ -2,6 +2,6 @@
   "TOOLBAR_BUTTON_PAGES": "Pagina's",
   "TOOLBAR_SWITCH_VIEWER_MODE": "Viewer modus",
   "TOOLBAR_SWITCH_VIEWER_MODE_EDIT": "Bewerk",
-  "TOOLBAR_SWITCH_VIEWER_MODE_PREVIEW": "Bekijk",
+  "TOOLBAR_SWITCH_VIEWER_MODE_VIEW": "Bekijk",
   "CONFIRM_OPEN_EXTERNAL_LINK": "Deze externe link zal in een nieuwe tab worden geopened.\nWilt u doorgaan?"
 }
