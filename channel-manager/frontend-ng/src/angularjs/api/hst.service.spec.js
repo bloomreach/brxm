@@ -21,11 +21,11 @@ describe('HstService', function () {
   var hstService;
   var ConfigServiceMock;
 
-  var rootResource = '/cafebabe.';
-  var apiUrlPrefix = '/testApiUrlPrefix';
   var contextPath = '/testContextPath';
+  var apiUrlPrefix = '/testApiUrlPrefix';
+  var rootUuid = 'cafebabe';
   var hostname = 'test.host.name';
-  var handshakeUrl = contextPath + apiUrlPrefix + rootResource + '/composermode/' + hostname + '/';
+  var handshakeUrl = contextPath + apiUrlPrefix + '/' + rootUuid + './composermode/' + hostname;
 
   beforeEach(function () {
     module('hippo-cm-api');
@@ -34,7 +34,7 @@ describe('HstService', function () {
       apiUrlPrefix: apiUrlPrefix,
       cmsUser: 'testUser',
       defaultContextPath: contextPath,
-      rootResource: rootResource,
+      rootUuid: rootUuid,
     };
 
     module(function ($provide) {
@@ -57,7 +57,23 @@ describe('HstService', function () {
   });
 
   it('should have a default contextPath', function () {
-    expect(hstService.contextPath).toEqual(ConfigServiceMock.defaultContextPath);
+    expect(hstService.getContextPath()).toEqual(ConfigServiceMock.defaultContextPath);
+  });
+
+  it('should prefix all API urls with the context path and api url prefix', function () {
+    expect(hstService._createApiUrl('1234', ['somepath'])).toEqual('/testContextPath/testApiUrlPrefix/1234./somepath');
+  });
+
+  it('should trim concatenated path elements', function () {
+    expect(hstService._createApiUrl('1234', ['  foo ', ' bar'])).toEqual('/testContextPath/testApiUrlPrefix/1234./foo/bar');
+  });
+
+  it('should remove clashing slashes from concatenated path elements', function () {
+    expect(hstService._createApiUrl('1234', ['/foo/', '/bar'])).toEqual('/testContextPath/testApiUrlPrefix/1234./foo/bar');
+  });
+
+  it('should be able to create an APIURL with only a UUID', function () {
+    expect(hstService._createApiUrl('1234', [])).toEqual('/testContextPath/testApiUrlPrefix/1234./');
   });
 
   it('should construct a valid handshake url when initializing a channel session', function () {
@@ -66,9 +82,16 @@ describe('HstService', function () {
     $httpBackend.flush();
   });
 
-  it('should use the new contextPath after is has been updated', function () {
-    hstService.contextPath = '/newSite';
-    expect(hstService.apiPath).toEqual('/newSite' + apiUrlPrefix + rootResource);
+  it('should use the new context path after it has been changed', function () {
+    $httpBackend.expectGET('/testContextPath/testApiUrlPrefix/1234./test').respond(200);
+    hstService.doGet('1234', 'test');
+    $httpBackend.flush();
+
+    hstService.setContextPath('/newContextPath');
+
+    $httpBackend.expectGET('/newContextPath/testApiUrlPrefix/1234./test').respond(200);
+    hstService.doGet('1234', 'test');
+    $httpBackend.flush();
   });
 
   describe('when initialization is successful', function () {
@@ -116,16 +139,16 @@ describe('HstService', function () {
     expect(catchSpy).toHaveBeenCalled();
   });
 
-  it('should load a channel by id', function () {
+  it('should get a channel by id', function () {
     var channelA = {
       id: 'channelA',
       contextPath: '/a',
     };
-    var url = contextPath + apiUrlPrefix + rootResource + '/channels/' + channelA.id;
+    var url = contextPath + apiUrlPrefix + '/' + rootUuid + './channels/' + channelA.id;
     var catchSpy = jasmine.createSpy('catchSpy');
 
     $httpBackend.expectGET(url).respond(200, channelA);
-    hstService.loadChannel('channelA')
+    hstService.getChannel('channelA')
       .then(catchSpy);
 
     $httpBackend.flush();
@@ -134,10 +157,10 @@ describe('HstService', function () {
 
   it('should reject a promise when a channel load fails', function () {
     var catchSpy = jasmine.createSpy('catchSpy');
-    var url = contextPath + apiUrlPrefix + rootResource + '/channels/test';
+    var url = contextPath + apiUrlPrefix + '/' + rootUuid + './channels/test';
     $httpBackend.expectGET(url).respond(500);
     hstService.
-      loadChannel('test')
+      getChannel('test')
       .catch(catchSpy);
 
     $httpBackend.flush();

@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-const HANDSHAKE_PATH = '/composermode/';
-
 let q;
 let http;
+
+function removeLeadingSlashes(path) {
+  return path.replace(/^\/*/, '');
+}
+
+function removeTrailingSlashes(path) {
+  return path.replace(/\/*$/, '');
+}
+
+function concatPaths(path1, path2) {
+  return removeTrailingSlashes(path1.trim()) + '/' + removeLeadingSlashes(path2.trim());
+}
 
 export class HstService {
   constructor($q, $http, ConfigService) {
@@ -27,42 +37,49 @@ export class HstService {
     http = $http;
 
     this.config = ConfigService;
-    this._contextPath = ConfigService.defaultContextPath;
+    this.contextPath = ConfigService.defaultContextPath;
   }
 
-  get contextPath() {
-    return this._contextPath;
+  getContextPath() {
+    return this.contextPath;
   }
 
-  set contextPath(path) {
-    this._contextPath = path;
-  }
-
-  get apiPath() {
-    return this._contextPath + this.config.apiUrlPrefix + this.config.rootResource;
+  setContextPath(path) {
+    this.contextPath = path;
   }
 
   initializeSession(hostname) {
-    const url = this.apiPath + HANDSHAKE_PATH + hostname + '/';
-    return this.doGet(url)
+    return this.doGet(this.config.rootUuid, 'composermode', hostname)
       .then((response) => !!(response && response.data && response.data.canWrite));
   }
 
-  loadChannel(id) {
-    const url = this.apiPath + '/channels/' + id;
-    return this.doGet(url);
+  getChannel(id) {
+    return this.doGet(this.config.rootUuid, 'channels', id);
   }
 
-  doGet(url) {
+  doGet(uuid, ...pathElements) {
+    const url = this._createApiUrl(uuid, pathElements);
     const headers = {
       'CMS-User': this.config.cmsUser,
       FORCE_CLIENT_HOST: 'true',
     };
-
     return q((resolve, reject) => {
       http.get(url, { headers })
         .success((response) => resolve(response))
         .error((error) => reject(error));
     });
   }
+
+  _createApiUrl(uuid, pathElements) {
+    let apiUrl = concatPaths(this.contextPath, this.config.apiUrlPrefix);
+    apiUrl = concatPaths(apiUrl, uuid);
+    apiUrl += './';
+
+    pathElements.forEach((pathElement) => {
+      apiUrl = concatPaths(apiUrl, pathElement);
+    });
+
+    return apiUrl;
+  }
+
 }

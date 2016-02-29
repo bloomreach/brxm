@@ -20,27 +20,27 @@ export class ChannelService {
 
     this.$http = $http;
     this.SessionService = SessionService;
-    this.hstService = HstService;
+    this.HstService = HstService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
 
-    this._channel = {};
+    this.channel = {};
   }
 
-  set channel(channel) {
-    this._channel = channel;
-    this.hstService.contextPath = channel.contextPath;
+  _setChannel(channel) {
+    this.channel = channel;
+    this.HstService.setContextPath(channel.contextPath);
   }
 
-  get channel() {
-    return this._channel;
+  getChannel() {
+    return this.channel;
   }
 
   load(channel) {
     return this.SessionService
       .initialize(channel)
       .then(() => {
-        this.channel = channel;
+        this._setChannel(channel);
         return channel;
       });
   }
@@ -77,9 +77,9 @@ export class ChannelService {
   }
 
   switchToChannel(id) {
-    this.hstService.loadChannel(id)
+    this.HstService.getChannel(id)
       .then((channel) => {
-        this.channel = channel;
+        this._setChannel(channel);
         this.CmsService.publish('switch-channel', channel.id); // update breadcrumb.
       });// TODO add error handling
   }

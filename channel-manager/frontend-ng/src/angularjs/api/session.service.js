@@ -18,12 +18,12 @@ export class SessionService {
   constructor(HstService) {
     'ngInject';
 
-    this.hstService = HstService;
+    this.HstService = HstService;
     this.canWrite = false;
   }
 
   initialize(channel) {
-    return this.hstService
+    return this.HstService
       .initializeSession(channel.hostname)
       .then((canWrite) => {
         this.canWrite = canWrite;

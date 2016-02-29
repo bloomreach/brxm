@@ -41,12 +41,10 @@ describe('ChannelService', function () {
 
     ConfigServiceMock = {
       apiUrlPrefix: '/testApiUrlPrefix',
-      rootResource: '/testRootResource',
+      rootUuid: 'testRootUuid',
     };
 
-    HstServiceMock = {
-      loadChannel: function () {},
-    };
+    HstServiceMock = jasmine.createSpyObj('HstService', ['setContextPath', 'getChannel']);
 
     module(function ($provide) {
       $provide.value('SessionService', SessionServiceMock);
@@ -66,78 +64,61 @@ describe('ChannelService', function () {
       return $q.reject();
     });
     ChannelService.load(channelMock);
-    $rootScope.$apply();
-    expect(ChannelService.channel).not.toEqual(channelMock);
+    $rootScope.$digest();
+    expect(ChannelService.getChannel()).not.toEqual(channelMock);
   });
 
   it('should save a reference to the channel when load succeeds', function () {
     ChannelService.load(channelMock);
-    expect(ChannelService.channel).not.toEqual(channelMock);
-    $rootScope.$apply();
-    expect(ChannelService.channel).toEqual(channelMock);
+    expect(ChannelService.getChannel()).not.toEqual(channelMock);
+    $rootScope.$digest();
+    expect(ChannelService.getChannel()).toEqual(channelMock);
   });
 
   it('should resolve a promise with the channel when load succeeds', function () {
     var promiseSpy = jasmine.createSpy('promiseSpy');
     ChannelService.load(channelMock).then(promiseSpy);
-    $rootScope.$apply();
+    $rootScope.$digest();
     expect(promiseSpy).toHaveBeenCalledWith(channelMock);
   });
 
   it('should return a url that starts with the contextPath', function () {
     ChannelService.load({ contextPath: '/test' });
-    $rootScope.$apply();
+    $rootScope.$digest();
     expect(ChannelService.getUrl('/optional/path')).toEqual('/test/optional/path');
   });
 
   it('should return a url that ends with a slash if it equals the contextPath', function () {
     ChannelService.load({ contextPath: '/test' });
-    $rootScope.$apply();
+    $rootScope.$digest();
     expect(ChannelService.getUrl()).toEqual('/test/');
   });
 
   it('should return a url without the contextPath if it is root', function () {
     ChannelService.load({ contextPath: '/' });
-    $rootScope.$apply();
+    $rootScope.$digest();
     expect(ChannelService.getUrl()).toEqual('');
   });
 
   it('should return a url with the cmsPreviewPrefix appended after the contextPath with a slash', function () {
     ChannelService.load({ contextPath: '/test', cmsPreviewPrefix: 'cmsPreviewPrefix' });
-    $rootScope.$apply();
+    $rootScope.$digest();
     expect(ChannelService.getUrl()).toEqual('/test/cmsPreviewPrefix');
   });
 
   it('should return a url with the mountPath appended after the cmsPreviewPrefix', function () {
     ChannelService.load({ contextPath: '/test', cmsPreviewPrefix: 'cmsPreviewPrefix', mountPath: '/mountPath' });
-    $rootScope.$apply();
+    $rootScope.$digest();
     expect(ChannelService.getUrl()).toEqual('/test/cmsPreviewPrefix/mountPath');
   });
 
   it('should return the mountId of the current channel', function () {
     ChannelService.load({ id: 'test-id' });
-    $rootScope.$apply();
+    $rootScope.$digest();
     expect(ChannelService.getId()).toEqual('test-id');
   });
 
-  it('should update HstService.contextpath when the channel reference is updated', function () {
-    var channelA = {
-      id: 'channelA',
-      contextPath: '/a',
-    };
-    var channelB = {
-      id: 'channelB',
-      contextPath: '/b',
-    };
-
-    ChannelService.channel = channelA;
-    expect(HstServiceMock.contextPath).toEqual(channelA.contextPath);
-
-    ChannelService.channel = channelB;
-    expect(HstServiceMock.contextPath).toEqual(channelB.contextPath);
-  });
-
-  it('should request the details of a new channel', function () {
+  it('should update the HstService\'s context path when the channel reference is updated', function () {
     var channelA = {
       id: 'channelA',
       contextPath: '/a',
@@ -148,16 +129,35 @@ describe('ChannelService', function () {
     };
 
     ChannelService.load(channelA);
-    $rootScope.$apply();
+    $rootScope.$digest();
+    expect(HstServiceMock.setContextPath).toHaveBeenCalledWith(channelA.contextPath);
 
-    spyOn(HstServiceMock, 'loadChannel').and.callFake(function () {
+    ChannelService.load(channelB);
+    $rootScope.$digest();
+    expect(HstServiceMock.setContextPath).toHaveBeenCalledWith(channelB.contextPath);
+  });
+
+  it('should switch to a new channel', function () {
+    var channelA = {
+      id: 'channelA',
+      contextPath: '/a',
+    };
+    var channelB = {
+      id: 'channelB',
+      contextPath: '/b',
+    };
+
+    ChannelService.load(channelA);
+    $rootScope.$digest();
+
+    HstServiceMock.getChannel.and.callFake(function () {
       return $q.resolve(channelB);
     });
     ChannelService.switchToChannel(channelB.id);
-    $rootScope.$apply();
+    $rootScope.$digest();
 
     expect(ChannelService.getId()).toEqual(channelB.id);
-    expect(ChannelService.channel).toEqual(channelB);
+    expect(ChannelService.getChannel()).toEqual(channelB);
   });
   // TODO: add a test where the server returns an error upon the ChannelService's request for channel details.
 
