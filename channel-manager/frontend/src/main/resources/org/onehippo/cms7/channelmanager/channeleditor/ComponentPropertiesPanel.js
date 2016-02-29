@@ -100,6 +100,10 @@
      * @param page object with all page meta-data.
      */
     setComponent: function (component, container, page) {
+      if (this.componentId === component.id) {
+        return;
+      }
+
       if (this.componentVariants !== null) {
         this.componentVariants.un('invalidated', this.updateUI, this);
         this._fireInitialPropertiesChangedIfNeeded();
