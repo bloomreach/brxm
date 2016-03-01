@@ -100,10 +100,15 @@
      * @param page object with all page meta-data.
      */
     setComponent: function (component, container, page) {
-      if (this.componentId === component.id) {
-        return;
+      if (this.componentId !== component.id) {
+        this._setNewComponent(component, container, page);
+      } else {
+        this._startValidationMonitoring();
       }
+      this.fireEvent('onLoad');
+    },
 
+    _setNewComponent: function (component, container, page) {
       if (this.componentVariants !== null) {
         this.componentVariants.un('invalidated', this.updateUI, this);
         this._fireInitialPropertiesChangedIfNeeded();
@@ -129,7 +134,6 @@
       this.componentVariants.on('invalidated', this.updateUI, this);
 
       this.updateUI();
-      this.fireEvent('onLoad');
     },
 
     updateUI: function (changedVariantIds, activeVariantId) {
@@ -180,9 +184,15 @@
       this._renderInitialComponentState();
     },
 
+    _startValidationMonitoring: function () {
+      var activeTab = this.getActiveTab();
+      if (activeTab && activeTab.componentPropertiesForm) {
+        activeTab.componentPropertiesForm.startMonitoring();
+      }
+    },
+
     _stopValidationMonitoring: function () {
       var activeTab = this.getActiveTab();
-
       if (activeTab && activeTab.componentPropertiesForm) {
         activeTab.componentPropertiesForm.stopMonitoring();
       }
