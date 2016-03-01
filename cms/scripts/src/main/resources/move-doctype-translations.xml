@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -65,6 +65,7 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {&#xd;
     if (fieldTranslations != null) {&#xd;
       moveDocumentFieldTranslations(fieldTranslations, namespace, docTypeName);&#xd;
       fieldTranslations.getParent().remove();&#xd;
+      removeTranslatorIds(node);&#xd;
     }&#xd;
     return true&#xd;
   }&#xd;
@@ -107,6 +108,17 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {&#xd;
     }&#xd;
   }&#xd;
 &#xd;
+  void removeTranslatorIds(Node node) {&#xd;
+    Node fields = JcrUtils.getNodeIfExists(node, FIELDS_PATH);&#xd;
+    if (fields != null) {&#xd;
+      for (Node field : new NodeIterable(fields.getNodes())) {&#xd;
+        if (field.hasProperty("translator.id")) {&#xd;
+          field.getProperty("translator.id").remove()&#xd;
+        }&#xd;
+      }    &#xd;
+    }&#xd;
+  }&#xd;
+  &#xd;
   Node getOrCreateDocTypeResourceBundles(Node typesTranslations, String docTypeName) throws RepositoryException {&#xd;
     if (typesTranslations.hasNode(docTypeName)) {&#xd;
       return typesTranslations.getNode(docTypeName);&#xd;
@@ -133,3 +145,4 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {&#xd;
     <sv:value>1000</sv:value>
   </sv:property>
 </sv:node>
+
