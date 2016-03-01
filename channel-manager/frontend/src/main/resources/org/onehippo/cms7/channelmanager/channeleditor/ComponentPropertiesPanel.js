@@ -110,7 +110,7 @@
       }
 
       this.componentId = component.id;
-      this.pageRequestVariants = JSON.parse(page['HST-Page-Request-Variants'] || '{}');
+      this.pageRequestVariants = page['HST-Page-Request-Variants'] || {};
       this.lastModified = component.lastModified;
       this.container = container;
 
