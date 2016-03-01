@@ -15,6 +15,17 @@
  */
 package org.onehippo.taxonomy.plugin.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.jcr.ItemExistsException;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+
 import org.apache.commons.collections.map.LazyMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
@@ -24,12 +35,8 @@ import org.onehippo.taxonomy.plugin.api.TaxonomyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.*;
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_DESCRIPTION;
-import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_MESSAGE;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_NAME;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_SYNONYMS;
 
 public class JcrCategoryInfo extends TaxonomyObject implements EditableCategoryInfo {
@@ -44,7 +51,7 @@ public class JcrCategoryInfo extends TaxonomyObject implements EditableCategoryI
 
     public String getName() {
         if (name == null) {
-            name = getString(HIPPOTAXONOMY_MESSAGE);
+            name = getString(HIPPOTAXONOMY_NAME);
         }
         return name;
     }
@@ -53,7 +60,7 @@ public class JcrCategoryInfo extends TaxonomyObject implements EditableCategoryI
         checkEditable();
 
         this.name = name;
-        setString(HIPPOTAXONOMY_MESSAGE, name);
+        setString(HIPPOTAXONOMY_NAME, name);
         String encoded = "";
         if(StringUtils.isNotBlank(name)) {
             encoded = KeyCodec.encode(name);

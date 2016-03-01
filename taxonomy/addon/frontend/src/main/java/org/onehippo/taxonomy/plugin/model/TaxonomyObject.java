@@ -33,14 +33,12 @@ import org.onehippo.taxonomy.plugin.ITaxonomyService;
 import org.onehippo.taxonomy.plugin.api.JcrCategoryFilter;
 import org.onehippo.taxonomy.plugin.api.KeyCodec;
 import org.onehippo.taxonomy.plugin.api.TaxonomyException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALE;
-import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALES;
-import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALIZED;
-import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_MESSAGE;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_CATEGORYINFO;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_CATEGORYINFOS;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_NAME;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TAXONOMY;
 
@@ -133,17 +131,14 @@ public class TaxonomyObject extends JcrObject {
         category.setProperty(TaxonomyNodeTypes.HIPPOTAXONOMY_KEY, key);
 
         if (locale != null) {
-            if (!JcrHelper.isNodeType(category, HIPPOTAXONOMY_LOCALIZED)) {
-                category.addMixin(HIPPOTAXONOMY_LOCALIZED);
-            }
-            final Node localesNode;
-            if (!category.hasNode(HIPPOTAXONOMY_LOCALES)) {
-                localesNode = category.addNode(HIPPOTAXONOMY_LOCALES, HIPPOTAXONOMY_LOCALES);
+            final Node infosNode;
+            if (!category.hasNode(HIPPOTAXONOMY_CATEGORYINFOS)) {
+                infosNode = category.addNode(HIPPOTAXONOMY_CATEGORYINFOS, HIPPOTAXONOMY_CATEGORYINFOS);
             } else {
-                localesNode = category.getNode(HIPPOTAXONOMY_LOCALES);
+                infosNode = category.getNode(HIPPOTAXONOMY_CATEGORYINFOS);
             }
-            final Node localeNode = localesNode.addNode(locale, HIPPOTAXONOMY_LOCALE);
-            localeNode.setProperty(HIPPOTAXONOMY_MESSAGE, name);
+            final Node infoNode = infosNode.addNode(locale, HIPPOTAXONOMY_CATEGORYINFO);
+            infoNode.setProperty(HIPPOTAXONOMY_NAME, name);
         }
 
         return toCategory(new JcrNodeModel(category), true);

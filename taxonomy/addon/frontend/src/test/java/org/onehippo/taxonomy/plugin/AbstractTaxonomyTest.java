@@ -21,7 +21,6 @@ import java.util.List;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.HippoStdNodeType;
-import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
 import org.onehippo.taxonomy.plugin.api.EditableTaxonomy;
 import org.onehippo.taxonomy.plugin.api.JcrCategoryFilter;
@@ -30,11 +29,10 @@ import org.onehippo.taxonomy.plugin.model.JcrTaxonomy;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_CATEGORYINFO;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_CATEGORYINFOS;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_KEY;
-import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALE;
-import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALES;
-import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALIZED;
-import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_MESSAGE;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_NAME;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_SYNONYMS;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY;
 
@@ -63,11 +61,10 @@ public abstract class AbstractTaxonomyTest extends PluginTest {
                     "/test/taxonomy/top", NODETYPE_HIPPOTAXONOMY_CATEGORY,
                         HIPPOTAXONOMY_KEY, TOP_KEY,
                         "/test/taxonomy/top/branch", NODETYPE_HIPPOTAXONOMY_CATEGORY,
-                            "jcr:mixinTypes", HIPPOTAXONOMY_LOCALIZED,
                             HIPPOTAXONOMY_KEY, BRANCH_KEY,
-                            "/test/taxonomy/top/branch/" + HIPPOTAXONOMY_LOCALES, HIPPOTAXONOMY_LOCALES,
-                                "/test/taxonomy/top/branch/" + HIPPOTAXONOMY_LOCALES + "/en", HIPPOTAXONOMY_LOCALE,
-                                HIPPOTAXONOMY_MESSAGE, BRANCH_NAME_EN,
+                            "/test/taxonomy/top/branch/" + HIPPOTAXONOMY_CATEGORYINFOS, HIPPOTAXONOMY_CATEGORYINFOS,
+                                "/test/taxonomy/top/branch/" + HIPPOTAXONOMY_CATEGORYINFOS + "/en", HIPPOTAXONOMY_CATEGORYINFO,
+                                HIPPOTAXONOMY_NAME, BRANCH_NAME_EN,
                                 HIPPOTAXONOMY_SYNONYMS, BRANCH_SYNONYM,
     };
 

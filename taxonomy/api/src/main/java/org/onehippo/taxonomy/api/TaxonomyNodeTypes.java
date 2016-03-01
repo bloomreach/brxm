@@ -23,23 +23,14 @@ public interface TaxonomyNodeTypes {
     static final String NODETYPE_HIPPOTAXONOMY_CLASSIFIABLE = "hippotaxonomy:classifiable";
     static final String NODETYPE_HIPPOTAXONOMY_CANONISED = "hippotaxonomy:canonised";
     
-    @Deprecated
-    /**  @deprecated replaced by {@link HIPPOTAXONOMY_LOCALIZED} */
-    static final String NODETYPE_HIPPOTAXONOMY_TRANSLATED = "hippotaxonomy:translated";
-    @Deprecated
-    /** @deprecated replaced by {@link HIPPOTAXONOMY_LOCALE} */
-    static final String NODETYPE_HIPPOTAXONOMY_TRANSLATION = "hippotaxonomy:translation";
-
-    static final String HIPPOTAXONOMY_LOCALIZED = "hippotaxonomy:localized";
-    static final String HIPPOTAXONOMY_LOCALES = "hippotaxonomy:locales";
-    static final String HIPPOTAXONOMY_LOCALE = "hippotaxonomy:locale";
+    static final String HIPPOTAXONOMY_CATEGORYINFOS = "hippotaxonomy:categoryinfos";
+    static final String HIPPOTAXONOMY_CATEGORYINFO = "hippotaxonomy:categoryinfo";
     
-    static final String HIPPOTAXONOMY_MESSAGE = "hippotaxonomy:message";
+    static final String HIPPOTAXONOMY_LOCALES = "hippotaxonomy:locales";
+    
+    static final String HIPPOTAXONOMY_NAME = "hippotaxonomy:name";
     static final String HIPPOTAXONOMY_DESCRIPTION = "hippotaxonomy:description";
     static final String HIPPOTAXONOMY_SYNONYMS = "hippotaxonomy:synonyms";
-    @Deprecated
-    /** @deprecated replaced by {@link HIPPOTAXONOMY_LOCALE} */
-    static final String HIPPOTAXONOMY_TRANSLATION = "hippotaxonomy:translation";
 
     static final String HIPPOTAXONOMY_KEY = "hippotaxonomy:key";
     static final String HIPPOTAXONOMY_KEYS = "hippotaxonomy:keys";

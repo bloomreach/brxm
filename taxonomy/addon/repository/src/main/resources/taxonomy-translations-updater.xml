@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="TaxonomyTranslatedToLocalized" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="TaxonomyTranslatedUpdater" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:updaterinfo</sv:value>
   </sv:property>
@@ -30,34 +30,31 @@
       class TaxonomyTranslationsUpdater extends BaseNodeUpdateVisitor {&#xd;
       &#xd;
       boolean doUpdate(Node node) {&#xd;
-      if (!node.isNodeType("hippotaxonomy:localized")) {&#xd;
-      node.addMixin("hippotaxonomy:localized")&#xd;
-      }&#xd;
-      if (!node.hasNode("hippotaxonomy:locales")) {&#xd;
-      node.addNode("hippotaxonomy:locales", "hippotaxonomy:locales")&#xd;
-      }&#xd;
-      Node locales = node.getNode("hippotaxonomy:locales")&#xd;
-      for (Node translationNode : new NodeIterable(node.getNodes("hippotaxonomy:translation"))) {&#xd;
-      String language = translationNode.getProperty("hippo:language").getString()&#xd;
-      Node locale = locales.addNode(language, "hippotaxonomy:locale")&#xd;
-      for (Property property : new PropertyIterable(translationNode.getProperties())) {&#xd;
-      if (property.getName().startsWith("jcr:") || property.getName().equals("hippo:language")) {&#xd;
-      continue&#xd;
-      }&#xd;
-      if (property.getName().equals("hippo:message")) {&#xd;
-      locale.setProperty("hippotaxonomy:message", property.getValue())&#xd;
-      continue&#xd;
-      }&#xd;
-      if (property.isMultiple()) {&#xd;
-      locale.setProperty(property.getName(), property.getValues())&#xd;
-      } else {&#xd;
-      locale.setProperty(property.getName(), property.getValue())&#xd;
-      }&#xd;
-      }&#xd;
-      translationNode.remove()&#xd;
-      }&#xd;
-      node.removeMixin("hippotaxonomy:translated");&#xd;
-      return true;&#xd;
+        if (!node.hasNode("hippotaxonomy:categoryinfos")) {&#xd;
+            node.addNode("hippotaxonomy:categoryinfos", "hippotaxonomy:categoryinfos")&#xd;
+        }&#xd;
+        Node infoNodes = node.getNode("hippotaxonomy:categoryinfos")&#xd;
+        for (Node translationNode : new NodeIterable(node.getNodes("hippotaxonomy:translation"))) {&#xd;
+            String language = translationNode.getProperty("hippo:language").getString()&#xd;
+            Node infoNode = infoNodes.addNode(language, "hippotaxonomy:categoryinfo")&#xd;
+            for (Property property : new PropertyIterable(translationNode.getProperties())) {&#xd;
+                if (property.getName().startsWith("jcr:") || property.getName().equals("hippo:language")) {&#xd;
+                    continue&#xd;
+                }&#xd;
+                if (property.getName().equals("hippo:message")) {&#xd;
+                    infoNode.setProperty("hippotaxonomy:name", property.getValue())&#xd;
+                    continue&#xd;
+                }&#xd;
+                if (property.isMultiple()) {&#xd;
+                    infoNode.setProperty(property.getName(), property.getValues())&#xd;
+                } else {&#xd;
+                    infoNode.setProperty(property.getName(), property.getValue())&#xd;
+                }&#xd;
+            }&#xd;
+            translationNode.remove()&#xd;
+        }&#xd;
+        node.removeMixin("hippotaxonomy:translated");&#xd;
+        return true;&#xd;
       }&#xd;
       &#xd;
       boolean undoUpdate(Node node) {&#xd;
@@ -70,3 +67,4 @@
     <sv:value>1000</sv:value>
   </sv:property>
 </sv:node>
+

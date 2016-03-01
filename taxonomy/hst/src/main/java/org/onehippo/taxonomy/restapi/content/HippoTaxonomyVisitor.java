@@ -30,10 +30,10 @@ import org.hippoecm.hst.restapi.scanning.PrimaryNodeTypeNodeVisitor;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.contenttype.ContentTypeChild;
 
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_CATEGORYINFOS;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_DESCRIPTION;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_KEY;
-import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALES;
-import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_MESSAGE;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_NAME;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_SYNONYMS;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TAXONOMY;
@@ -73,17 +73,17 @@ public class HippoTaxonomyVisitor extends HippoPublicationWorkflowDocumentVisito
             if (child.isNodeType(NODETYPE_HIPPOTAXONOMY_CATEGORY)) {
                 visitCategory(context, child, categories);
             }
-            else if (child.isNodeType(HIPPOTAXONOMY_LOCALES)) {
-                for (Node locale : new NodeIterable(child.getNodes())) {
+            else if (child.isNodeType(HIPPOTAXONOMY_CATEGORYINFOS)) {
+                for (Node infoNodes : new NodeIterable(child.getNodes())) {
                     final LinkedHashMap<String, Object> localeProperties = new LinkedHashMap<>();
-                    category.put(locale.getName(), localeProperties);
-                    localeProperties.put("message", locale.getProperty(HIPPOTAXONOMY_MESSAGE).getString());
-                    if (locale.hasProperty(HIPPOTAXONOMY_DESCRIPTION)) {
-                        localeProperties.put("description", locale.getProperty(HIPPOTAXONOMY_DESCRIPTION).getString());
+                    category.put(infoNodes.getName(), localeProperties);
+                    localeProperties.put("name", infoNodes.getProperty(HIPPOTAXONOMY_NAME).getString());
+                    if (infoNodes.hasProperty(HIPPOTAXONOMY_DESCRIPTION)) {
+                        localeProperties.put("description", infoNodes.getProperty(HIPPOTAXONOMY_DESCRIPTION).getString());
                     }
-                    if (locale.hasProperty(HIPPOTAXONOMY_SYNONYMS)) {
+                    if (infoNodes.hasProperty(HIPPOTAXONOMY_SYNONYMS)) {
                         final ArrayList<String> synonyms = new ArrayList<>();
-                        for (Value value : locale.getProperty(HIPPOTAXONOMY_SYNONYMS).getValues()) {
+                        for (Value value : infoNodes.getProperty(HIPPOTAXONOMY_SYNONYMS).getValues()) {
                             if (value.getString() != null) {
                                 synonyms.add(value.getString());
                             }
