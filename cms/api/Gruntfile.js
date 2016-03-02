@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -150,12 +150,12 @@ module.exports = function (grunt) {
       },
       js: {
         src: [
+          '<%= build.bower %>/jquery-file-upload/js/vendor/jquery.ui.widget.js',
           '<%= build.bower %>/jquery-selectric/public/jquery.selectric.js',
           '<%= build.bower %>/blueimp-canvas-to-blob/js/canvas-to-blob.js',
           '<%= build.bower %>/blueimp-load-image/js/load-image.js',
           '<%= build.bower %>/blueimp-load-image/js/load-image-meta.js',
           '<%= build.bower %>/blueimp-tmpl/js/tmpl.js',
-          '<%= build.bower %>/jquery-file-upload/js/vendor/jquery.ui.widget.js',
           '<%= build.bower %>/jquery-file-upload/js/jquery.fileupload.js',
           '<%= build.bower %>/jquery-file-upload/js/jquery.fileupload-process.js',
           '<%= build.bower %>/jquery-file-upload/js/jquery.fileupload-validate.js',
