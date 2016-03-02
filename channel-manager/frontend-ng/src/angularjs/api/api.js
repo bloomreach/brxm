@@ -18,6 +18,7 @@ import { ChannelService } from './channel.service';
 import { CmsService } from './cms.service';
 import { ConfigService } from './config.service';
 import { HstService } from './hst.service';
+import { MountService } from './mount.service';
 import { SessionService } from './session.service';
 import { HstConstants } from './hst.constants';
 
@@ -27,5 +28,6 @@ export const channelManagerApi = angular
   .service('CmsService', CmsService)
   .service('ConfigService', ConfigService)
   .service('HstService', HstService)
+  .service('MountService', MountService)
   .service('SessionService', SessionService)
   .constant('HstConstants', HstConstants);

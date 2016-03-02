@@ -20,7 +20,7 @@
       {{ 'TOOLBAR_BUTTON_PAGES' | translate }}
     </md-button>
     <span flex></span>
-    <md-button ng-click="channelCtrl.toggleEditMode()">
+    <md-button ng-click="channelCtrl.toggleEditMode()" ng-disabled="channelCtrl.isCreatingPreview">
       <md-icon class="material-icons">{{ channelCtrl.isEditMode ? 'remove_red_eye' : 'mode_edit' }}</md-icon>
       {{ channelCtrl.isEditMode ? 'TOOLBAR_SWITCH_VIEWER_MODE_VIEW' : 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
     </md-button>

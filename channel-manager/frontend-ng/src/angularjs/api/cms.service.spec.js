@@ -21,6 +21,9 @@ describe('CmsService', function () {
   var CmsService;
 
   beforeEach(function () {
+    spyOn(window.APP_TO_CMS, 'publish');
+    spyOn(window.CMS_TO_APP, 'subscribe');
+
     module('hippo-cm-api');
 
     inject(function (_$window_, _CmsService_) {
@@ -30,28 +33,28 @@ describe('CmsService', function () {
   });
 
   describe('in production mode', function () {
-    it('should publish events to the CMS', function () {
+    it('publishes events to the CMS', function () {
       CmsService.publish('browseTo', '/about');
       expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('browseTo', '/about');
     });
 
-    it('should subscribe to events from the CMS', function () {
+    it('subscribes to events from the CMS', function () {
       CmsService.subscribe('test', 'callback', 'scope');
       expect($window.CMS_TO_APP.subscribe).toHaveBeenCalledWith('test', 'callback', 'scope');
     });
 
-    it('should return the app configuration specified by the CMS', function () {
+    it('returns the app configuration specified by the CMS', function () {
       expect(CmsService.getConfig()).toEqual(window.APP_CONFIG);
     });
 
-    it('should throw an error when the CMS does not contain an ExtJs IFramePanel with the given ID', function () {
+    it('throws an error when the CMS does not contain an ExtJs IFramePanel with the given ID', function () {
       spyOn($window.parent.Ext, 'getCmp').and.returnValue(undefined);
       expect(function () {
         CmsService.getConfig();
       }).toThrow(new Error("Unknown iframe panel id: 'ext-42'"));
     });
 
-    it('should throw an error when the CMS\'s IFramePanel does not contain any configuration for the app', function () {
+    it('throws an error when the CMS\'s IFramePanel does not contain any configuration for the app', function () {
       spyOn($window.parent.Ext, 'getCmp').and.returnValue({
         initialConfig: {},
       });
@@ -60,7 +63,7 @@ describe('CmsService', function () {
       }).toThrowError(Error, 'Parent iframe panel does not contain iframe configuration');
     });
 
-    it('should throw an error when the IFrame URL does not contain request parameter \'parentExtIFramePanelId\'', function () {
+    it('throws an error when the IFrame URL does not contain request parameter \'parentExtIFramePanelId\'', function () {
       window.history.replaceState({}, document.title, '/');
       expect(function () {
         CmsService.getParentIFramePanelId();

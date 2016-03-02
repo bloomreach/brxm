@@ -19,7 +19,7 @@ import { ComponentElement } from './element/componentElement';
 
 export class PageStructureService {
 
-  constructor($log, HstConstants, hstCommentsProcessorService, ChannelService, CmsService) {
+  constructor($log, HstConstants, hstCommentsProcessorService, ChannelService, CmsService, PageMetaDataService) {
     'ngInject';
 
     // Injected
@@ -28,13 +28,14 @@ export class PageStructureService {
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.hstCommentsProcessorService = hstCommentsProcessorService;
+    this.pageMetaData = PageMetaDataService;
 
     this.clearParsedElements();
   }
 
   clearParsedElements() {
     this.containers = [];
-    this.pageMetaData = {};
+    this.pageMetaData.clear();
   }
 
   registerParsedElement(commentDomElement, metaData) {
@@ -59,7 +60,9 @@ export class PageStructureService {
         break;
 
       case this.HST.TYPE_PAGE:
-        Object.assign(this.pageMetaData, metaData);
+        const registeredMetaData = angular.copy(metaData);
+        delete registeredMetaData[this.HST.TYPE];
+        this.pageMetaData.add(registeredMetaData);
 
         if (metaData.hasOwnProperty(this.HST.CHANNEL_ID)) {
           const channelId = metaData[this.HST.CHANNEL_ID];
@@ -85,7 +88,7 @@ export class PageStructureService {
         isDisabled: componentElement.container.isDisabled(),
         isInherited: componentElement.container.isInherited(),
       },
-      page: this.pageMetaData,
+      page: this.pageMetaData.get(),
     });
   }
 

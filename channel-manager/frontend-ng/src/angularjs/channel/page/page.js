@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import { PageMetaDataService } from './pageMetaData.service';
 import { PageStructureService } from './pageStructure.service';
 
 export const channelPageModule = angular
   .module('hippo-cm.channel.page', [])
+  .service('PageMetaDataService', PageMetaDataService)
   .service('PageStructureService', PageStructureService);
