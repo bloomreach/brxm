@@ -47,6 +47,7 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {&#xd;
   &#xd;
   static final String TYPES_TRANSLATIONS_PATH = "/hippo:configuration/hippo:translations/hippo:types";&#xd;
   static final String FIELD_TRANSLATIONS_PATH = "editor:templates/_default_/translator/hippostd:translations";&#xd;
+  static final String FIELDS_PATH = "editor:templates/_default_";&#xd;
   static final Collection&lt;String&gt; SKIP_NAMESPACES = Arrays.asList("system", "hippo", "hippostd", "hippostdpubwf", "hipposysedit", "hippogallery", "hippogallerypicker", "hst", "selection", "seosupport", "resourcebundle");&#xd;
 &#xd;
   boolean doUpdate(Node node) {&#xd;
