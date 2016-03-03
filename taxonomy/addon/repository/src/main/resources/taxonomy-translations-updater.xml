@@ -16,62 +16,10 @@
     <sv:value/>
   </sv:property>
   <sv:property sv:name="hipposys:query" sv:type="String">
-    <sv:value>//element(*, hippotaxonomy:translated)</sv:value>
+    <sv:value>//element(*, hippotaxonomy:taxonomy)</sv:value>
   </sv:property>
-  <sv:property sv:name="hipposys:script" sv:type="String">
-    <sv:value>package org.hippoecm.frontend.plugins.cms.admin.updater&#xd;
-      &#xd;
-      import org.hippoecm.repository.util.NodeIterable&#xd;
-      import org.hippoecm.repository.util.PropertyIterable&#xd;
-      import org.onehippo.repository.update.BaseNodeUpdateVisitor&#xd;
-      import javax.jcr.Node&#xd;
-      import javax.jcr.Property&#xd;
-      &#xd;
-      class TaxonomyTranslationsUpdater extends BaseNodeUpdateVisitor {&#xd;
-      &#xd;
-      boolean doUpdate(Node node) {&#xd;
-        if (!node.hasNode("hippotaxonomy:categoryinfos")) {&#xd;
-            node.addNode("hippotaxonomy:categoryinfos", "hippotaxonomy:categoryinfos")&#xd;
-        }&#xd;
-        Node infoNodes = node.getNode("hippotaxonomy:categoryinfos")&#xd;
-        for (Node translationNode : new NodeIterable(node.getNodes("hippotaxonomy:translation"))) {&#xd;
-            String language = translationNode.getProperty("hippo:language").getString()&#xd;
-            Node infoNode&#xd;
-            if (!infoNodes.hasNode(language)) {&#xd;
-                infoNode = infoNodes.addNode(language, "hippotaxonomy:categoryinfo")&#xd;
-            } else {&#xd;
-                infoNode = infoNodes.getNode(language)&#xd;
-            }&#xd;
-            for (Property property : new PropertyIterable(translationNode.getProperties())) {&#xd;
-                if (infoNode.hasProperty(property.getName())) { // don't overwrite, existing is newer&#xd;
-                    continue&#xd;
-                }&#xd;
-                if (property.getName().startsWith("jcr:") || property.getName().equals("hippo:language")) {&#xd;
-                    continue&#xd;
-                }&#xd;
-                if (property.getName().equals("hippo:message")) {&#xd;
-                    if (!infoNode.hasProperty("hippotaxonomy:name")) { // don't overwrite, existing is newer&#xd;
-                        infoNode.setProperty("hippotaxonomy:name", property.getValue())&#xd;
-                    }&#xd;
-                    continue&#xd;
-                }&#xd;
-                if (property.isMultiple()) {&#xd;
-                    infoNode.setProperty(property.getName(), property.getValues())&#xd;
-                } else {&#xd;
-                    infoNode.setProperty(property.getName(), property.getValue())&#xd;
-                }&#xd;
-            }&#xd;
-            translationNode.remove()&#xd;
-        }&#xd;
-        node.removeMixin("hippotaxonomy:translated");&#xd;
-        return true;&#xd;
-      }&#xd;
-      &#xd;
-      boolean undoUpdate(Node node) {&#xd;
-      throw new UnsupportedOperationException('Updater does not implement undoUpdate method')&#xd;
-      }&#xd;
-      &#xd;
-      }</sv:value>
+  <sv:property sv:name="hipposys:class" sv:type="String">
+    <sv:value>org.onehippo.taxonomy.plugin.TaxonomyTranslationsUpdater</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:throttle" sv:type="Long">
     <sv:value>1000</sv:value>
