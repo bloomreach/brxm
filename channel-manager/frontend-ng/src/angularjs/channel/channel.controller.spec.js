@@ -23,13 +23,15 @@ describe('ChannelCtrl', function () {
   beforeEach(function () {
     module('hippo-cm');
 
-    inject(function ($controller, _ChannelService_) {
+    inject(function ($controller, $rootScope, _ChannelService_) {
+      var scope = $rootScope.$new();
       ChannelService = _ChannelService_;
       spyOn(ChannelService, 'switchToChannel');
       spyOn(ChannelService, 'getUrl').and.returnValue('/test/url');
       spyOn(ChannelService, 'getId').and.returnValue('test-id');
       ChannelCtrl = $controller('ChannelCtrl', {
         ChannelService: ChannelService,
+        $scope: scope,
       });
 
     });

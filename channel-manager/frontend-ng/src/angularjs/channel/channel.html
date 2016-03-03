@@ -19,6 +19,10 @@
     <md-button aria-label="{{ 'TOOLBAR_BUTTON_PAGES' | translate }}">
       {{ 'TOOLBAR_BUTTON_PAGES' | translate }}
     </md-button>
+    <md-button aria-label="{{ 'TOOLBAR_BUTTON_COMPONENTS' | translate }}"
+               ng-click="channelCtrl.toggleSidenav('components')">
+      {{ 'TOOLBAR_BUTTON_COMPONENTS' | translate }}
+    </md-button>
     <span flex></span>
     <md-button ng-click="channelCtrl.toggleEditMode()">
       <md-icon class="material-icons">{{ channelCtrl.isEditMode ? 'remove_red_eye' : 'mode_edit' }}</md-icon>
@@ -27,9 +31,27 @@
   </div>
 </md-toolbar>
 
-<hippo-iframe
-  flex
-  layout="row"
-  path="channelCtrl.iframeUrl"
-  select-mode="channelCtrl.isEditMode">
-</hippo-iframe>
+<md-content layout="row" flex>
+  <md-sidenav class="md-sidenav-left" md-component-id="components">
+    <md-list md-no-ink class="catalog">
+      <md-list-item class="md-1-line catalog-component" catalog-component="component"
+                    ng-repeat="component in channelCtrl.components">
+        <div class="component-icon">
+          <img ng-src="{{component.icon}}"/>
+        </div>
+        <div class="md-list-item-text">
+          {{ component.name }}
+        </div>
+        <md-divider ng-if="!$last"></md-divider>
+      </md-list-item>
+    </md-list>
+  </md-sidenav>
+
+  <hippo-iframe
+    flex
+    layout="row"
+    path="channelCtrl.iframeUrl"
+    select-mode="channelCtrl.isEditMode">
+  </hippo-iframe>
+
+</md-content>

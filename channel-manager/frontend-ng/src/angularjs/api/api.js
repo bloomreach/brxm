@@ -15,6 +15,7 @@
  */
 
 import { ChannelService } from './channel.service';
+import { ComponentsService } from './components.service';
 import { CmsService } from './cms.service';
 import { ConfigService } from './config.service';
 import { HstService } from './hst.service';
@@ -24,6 +25,7 @@ import { HstConstants } from './hst.constants';
 export const channelManagerApi = angular
   .module('hippo-cm-api', [])
   .service('ChannelService', ChannelService)
+  .service('ComponentsService', ComponentsService)
   .service('CmsService', CmsService)
   .service('ConfigService', ConfigService)
   .service('HstService', HstService)
