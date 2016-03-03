@@ -38,7 +38,7 @@
 
 overlay-element {
   box-sizing: border-box;
-  outline: 1px dashed;
+  outline: 1px solid;
   position: absolute;
 }
 
@@ -54,6 +54,7 @@ overlay-element {
     display: inline-block;
   }
 }
+
 
 .overlay-element-component {
   box-shadow: inset 0 0 0 1px $white;
