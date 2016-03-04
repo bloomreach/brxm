@@ -195,11 +195,10 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
      * When overiding, make sure to call super.onActivated() in order to keep the usage statistics working.
      */
     protected void onActivated() {
-        String event = eventId;
         if (StringUtils.isNotEmpty(eventId) && cmsEventNamesList.contains(eventId)) {
-            event = EVENT_PARAM_CMS + eventId.substring(0, 1).toUpperCase() + eventId.substring(1);
+            final String event = EVENT_PARAM_CMS + StringUtils.capitalize(eventId);
+            publishEvent(event);
         }
-        publishEvent(event);
     }
 
     /**
