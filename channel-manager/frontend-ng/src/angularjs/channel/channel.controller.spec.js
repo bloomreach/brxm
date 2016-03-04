@@ -17,23 +17,48 @@
 describe('ChannelCtrl', function () {
   'use strict';
 
-  var ChannelCtrl;
   var ChannelService;
+  var MountService;
+  var PageMetaDataService;
+  var ChannelCtrl;
+  var $rootScope;
+  var $q;
 
   beforeEach(function () {
     module('hippo-cm');
 
-    inject(function ($controller, $rootScope, _ChannelService_) {
-      var scope = $rootScope.$new();
-      ChannelService = _ChannelService_;
-      spyOn(ChannelService, 'switchToChannel');
-      spyOn(ChannelService, 'getUrl').and.returnValue('/test/url');
-      spyOn(ChannelService, 'getId').and.returnValue('test-id');
+    inject(function ($controller, _$rootScope_, _$q_) {
+      var resolvedPromise = _$q_.when();
+
+      $rootScope = _$rootScope_;
+      $q = _$q_;
+
+      ChannelService = jasmine.createSpyObj('ChannelService', [
+        'getUrl',
+      ]);
+      MountService = jasmine.createSpyObj('MountService', [
+        'createPreviewConfiguration',
+      ]);
+      PageMetaDataService = jasmine.createSpyObj('PageMetaDataService', [
+        'getMountId',
+        'hasPreviewConfiguration',
+      ]);
+
+      ComponentsService = jasmine.createSpyObj('ComponentsService', [
+        'components',
+      ]);
+
+      ChannelService.getUrl.and.returnValue('/test/url');
+
       ChannelCtrl = $controller('ChannelCtrl', {
+        $scope: _$rootScope_.$new(),
+        ComponentsService: ComponentsService,
         ChannelService: ChannelService,
-        $scope: scope,
+        MountService: MountService,
+        PageMetaDataService: PageMetaDataService,
       });
 
+      MountService.createPreviewConfiguration.and.returnValue(resolvedPromise);
     });
   });
 
@@ -46,10 +71,40 @@ describe('ChannelCtrl', function () {
   });
 
   it('enables and disables edit mode when toggling it', function () {
+    PageMetaDataService.hasPreviewConfiguration.and.returnValue(true);
+
     ChannelCtrl.toggleEditMode();
     expect(ChannelCtrl.isEditMode).toEqual(true);
     ChannelCtrl.toggleEditMode();
     expect(ChannelCtrl.isEditMode).toEqual(false);
+  });
+
+  it('creates preview configuration when it has not been created yet before enabling edit mode', function () {
+    var deferCreatePreview = $q.defer();
+
+    PageMetaDataService.hasPreviewConfiguration.and.returnValue(false);
+    PageMetaDataService.getMountId.and.returnValue('testMountId');
+
+    MountService.createPreviewConfiguration.and.returnValue(deferCreatePreview.promise);
+
+    expect(ChannelCtrl.isCreatingPreview).toEqual(false);
+    ChannelCtrl.toggleEditMode();
+
+    expect(MountService.createPreviewConfiguration).toHaveBeenCalledWith('testMountId');
+    expect(ChannelCtrl.isCreatingPreview).toEqual(true);
+    expect(ChannelCtrl.isEditMode).toEqual(false);
+
+    deferCreatePreview.resolve();
+    $rootScope.$digest();
+
+    expect(ChannelCtrl.isCreatingPreview).toEqual(false);
+    expect(ChannelCtrl.isEditMode).toEqual(true);
+  });
+
+  it('does not create preview configuration when it has already been created when enabling edit mode', function () {
+    PageMetaDataService.hasPreviewConfiguration.and.returnValue(true);
+    ChannelCtrl.toggleEditMode();
+    expect(MountService.createPreviewConfiguration).not.toHaveBeenCalled();
   });
 
 });

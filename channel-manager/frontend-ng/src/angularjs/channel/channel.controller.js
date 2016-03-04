@@ -24,12 +24,18 @@ const SIDENAVS = ['components'];
 
 export class ChannelCtrl {
 
-  constructor($mdSidenav, $scope, ChannelService, ComponentsService) {
+  constructor($mdSidenav, $scope, ChannelService, ComponentsService, MountService, PageMetaDataService) {
     'ngInject';
+
+    this.MountService = MountService;
+    this.PageMetaDataService = PageMetaDataService;
+
     this.$mdSidenav = $mdSidenav;
+
     this.components = ComponentsService.components;
     this.iframeUrl = ChannelService.getUrl();
     this.isEditMode = false;
+    this.isCreatingPreview = false;
 
     $scope.$watch('prototype.viewport', (viewport) => {
       this.viewportWidth = VIEWPORT_WIDTH[viewport];
@@ -38,7 +44,24 @@ export class ChannelCtrl {
   }
 
   toggleEditMode() {
-    this.isEditMode = !this.isEditMode;
+    if (!this.isEditMode && !this.PageMetaDataService.hasPreviewConfiguration()) {
+      this._createPreviewConfiguration();
+    } else {
+      this.isEditMode = !this.isEditMode;
+    }
+  }
+
+  _createPreviewConfiguration() {
+    const currentMountId = this.PageMetaDataService.getMountId();
+    this.isCreatingPreview = true;
+    this.MountService.createPreviewConfiguration(currentMountId)
+      .then(() => {
+        this.isEditMode = true;
+      })
+      // TODO: handle error response
+      .finally(() => {
+        this.isCreatingPreview = false;
+      });
   }
 
   toggleSidenav(name) {
