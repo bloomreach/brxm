@@ -19,6 +19,7 @@ describe('ChannelCtrl', function () {
 
   var ChannelService;
   var MountService;
+  var ComponentsService;
   var PageMetaDataService;
   var ChannelCtrl;
   var $rootScope;
@@ -38,6 +39,7 @@ describe('ChannelCtrl', function () {
       ]);
       MountService = jasmine.createSpyObj('MountService', [
         'createPreviewConfiguration',
+        'getComponentsToolkit',
       ]);
       PageMetaDataService = jasmine.createSpyObj('PageMetaDataService', [
         'getMountId',
@@ -46,12 +48,13 @@ describe('ChannelCtrl', function () {
 
       ComponentsService = jasmine.createSpyObj('ComponentsService', [
         'components',
+        'getComponents',
       ]);
+      ComponentsService.getComponents.and.returnValue($q.defer().promise);
 
       ChannelService.getUrl.and.returnValue('/test/url');
 
       ChannelCtrl = $controller('ChannelCtrl', {
-        $scope: _$rootScope_.$new(),
         ComponentsService: ComponentsService,
         ChannelService: ChannelService,
         MountService: MountService,

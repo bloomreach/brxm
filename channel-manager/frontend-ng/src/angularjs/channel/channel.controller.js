@@ -15,31 +15,26 @@
  */
 const ANGULAR_MATERIAL_SIDENAV_EASING = [0.25, 0.8, 0.25, 1];
 const ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS = 400;
-const VIEWPORT_WIDTH = {
-  desktop: 0,
-  tablet: 768,
-  mobile: 320,
-};
 const SIDENAVS = ['components'];
 
 export class ChannelCtrl {
 
-  constructor($mdSidenav, $scope, ChannelService, ComponentsService, MountService, PageMetaDataService) {
+  constructor($log, $mdSidenav, ChannelService, ComponentsService, MountService, PageMetaDataService) {
     'ngInject';
 
+    this.$log = $log;
     this.MountService = MountService;
     this.PageMetaDataService = PageMetaDataService;
 
     this.$mdSidenav = $mdSidenav;
 
-    this.components = ComponentsService.components;
     this.iframeUrl = ChannelService.getUrl();
     this.isEditMode = false;
     this.isCreatingPreview = false;
 
-    $scope.$watch('prototype.viewport', (viewport) => {
-      this.viewportWidth = VIEWPORT_WIDTH[viewport];
-      this.transformHippoIFrame();
+    ComponentsService.getComponents().then((components) => {
+      this.$log.info('Component toolkit:', components);
+      this.components = components;
     });
   }
 

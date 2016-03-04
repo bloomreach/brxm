@@ -31,13 +31,24 @@
 
 export class MountService {
 
-  constructor(HstService) {
+  constructor(HstService, ChannelService) {
     'ngInject';
 
     this.HstService = HstService;
+    this.ChannelService = ChannelService;
   }
 
   createPreviewConfiguration(mountId) {
     return this.HstService.doPost(mountId, 'edit');
+  }
+
+  _getMountId() {
+    var channel = this.ChannelService.getChannel();
+    return channel.mountId;
+  }
+
+  getComponentsToolkit() {
+    return this.HstService.doGet(this._getMountId(), 'toolkit')
+      .then((response) => response && response.data);
   }
 }

@@ -37,10 +37,10 @@
       <md-list-item class="md-1-line catalog-component" catalog-component="component"
                     ng-repeat="component in channelCtrl.components">
         <div class="component-icon">
-          <img ng-src="{{component.icon}}"/>
+          <img ng-src="{{component.iconURL}}"/>
         </div>
         <div class="md-list-item-text">
-          {{ component.name }}
+          {{ component.label }}
         </div>
         <md-divider ng-if="!$last"></md-divider>
       </md-list-item>
