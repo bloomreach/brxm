@@ -15,14 +15,36 @@
  */
 export class ChannelCtrl {
 
-  constructor(ChannelService) {
+  constructor(ChannelService, MountService, PageMetaDataService) {
     'ngInject';
+
+    this.MountService = MountService;
+    this.PageMetaDataService = PageMetaDataService;
+
     this.iframeUrl = ChannelService.getUrl();
     this.isEditMode = false;
+    this.isCreatingPreview = false;
   }
 
   toggleEditMode() {
-    this.isEditMode = !this.isEditMode;
+    if (!this.isEditMode && !this.PageMetaDataService.hasPreviewConfiguration()) {
+      this._createPreviewConfiguration();
+    } else {
+      this.isEditMode = !this.isEditMode;
+    }
+  }
+
+  _createPreviewConfiguration() {
+    const currentMountId = this.PageMetaDataService.getMountId();
+    this.isCreatingPreview = true;
+    this.MountService.createPreviewConfiguration(currentMountId)
+      .then(() => {
+        this.isEditMode = true;
+      })
+      // TODO: handle error response
+      .finally(() => {
+        this.isCreatingPreview = false;
+      });
   }
 
 }

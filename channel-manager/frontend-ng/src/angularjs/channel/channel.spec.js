@@ -26,6 +26,8 @@ describe('The hippo-cm.channel module', function () {
   var ChannelService;
 
   beforeEach(function () {
+    spyOn(window.APP_TO_CMS, 'publish').and.callThrough();
+    spyOn(window.CMS_TO_APP, 'subscribe').and.callThrough();
 
     module('hippo-cm', function ($provide, ChannelServiceProvider) {
       var channelService = ChannelServiceProvider.$get();

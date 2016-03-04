@@ -87,9 +87,6 @@
         },
       },
     };
-
-    spyOn(window.CMS_TO_APP, 'subscribe').and.callThrough();
-    spyOn(window.APP_TO_CMS, 'publish').and.callThrough();
   }
 
   function mockFallbackTranslations() {

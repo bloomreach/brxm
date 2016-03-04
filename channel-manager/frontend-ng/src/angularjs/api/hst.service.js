@@ -58,13 +58,21 @@ export class HstService {
   }
 
   doGet(uuid, ...pathElements) {
+    return this._callHst(http.get, uuid, pathElements);
+  }
+
+  doPost(uuid, ...pathElements) {
+    return this._callHst(http.post, uuid, pathElements);
+  }
+
+  _callHst(httpOperation, uuid, pathElements) {
     const url = this._createApiUrl(uuid, pathElements);
     const headers = {
       'CMS-User': this.config.cmsUser,
       FORCE_CLIENT_HOST: 'true',
     };
     return q((resolve, reject) => {
-      http.get(url, { headers })
+      httpOperation.call(http, url, { headers })
         .success((response) => resolve(response))
         .error((error) => reject(error));
     });
