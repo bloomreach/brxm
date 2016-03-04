@@ -28,19 +28,23 @@ export class ChannelCtrl {
 
   toggleEditMode() {
     if (!this.isEditMode && !this.PageMetaDataService.hasPreviewConfiguration()) {
-      const currentMountId = this.PageMetaDataService.getMountId();
-      this.isCreatingPreview = true;
-      this.MountService.createPreviewConfiguration(currentMountId)
-        .then(() => {
-          this.isEditMode = true;
-        })
-        // TODO: handle error response
-        .finally(() => {
-          this.isCreatingPreview = false;
-        });
+      this._createPreviewConfiguration();
     } else {
       this.isEditMode = !this.isEditMode;
     }
+  }
+
+  _createPreviewConfiguration() {
+    const currentMountId = this.PageMetaDataService.getMountId();
+    this.isCreatingPreview = true;
+    this.MountService.createPreviewConfiguration(currentMountId)
+      .then(() => {
+        this.isEditMode = true;
+      })
+      // TODO: handle error response
+      .finally(() => {
+        this.isCreatingPreview = false;
+      });
   }
 
 }
