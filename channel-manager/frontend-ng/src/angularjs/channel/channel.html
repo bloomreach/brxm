@@ -20,7 +20,8 @@
       {{ 'TOOLBAR_BUTTON_PAGES' | translate }}
     </md-button>
     <md-button aria-label="{{ 'TOOLBAR_BUTTON_COMPONENTS' | translate }}"
-               ng-click="channelCtrl.toggleSidenav('components')">
+               ng-click="channelCtrl.toggleSidenav('components')"
+               ng-show="channelCtrl.isEditMode">
       {{ 'TOOLBAR_BUTTON_COMPONENTS' | translate }}
     </md-button>
     <span flex></span>

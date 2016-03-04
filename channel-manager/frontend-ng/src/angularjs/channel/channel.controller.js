@@ -44,6 +44,16 @@ export class ChannelCtrl {
     } else {
       this.isEditMode = !this.isEditMode;
     }
+    this._closeSidenavs();
+  }
+
+  _closeSidenavs() {
+    SIDENAVS.forEach((sidenav) => {
+      if (this.isSidenavOpen(sidenav)) {
+        this.$mdSidenav(sidenav).close();
+      }
+    });
+    this.transformHippoIFrame();
   }
 
   _createPreviewConfiguration() {

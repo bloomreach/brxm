@@ -50,7 +50,7 @@ describe('ChannelCtrl', function () {
         'components',
         'getComponents',
       ]);
-      ComponentsService.getComponents.and.returnValue($q.defer().promise);
+      ComponentsService.getComponents.and.returnValue(resolvedPromise);
 
       ChannelService.getUrl.and.returnValue('/test/url');
 
@@ -60,6 +60,7 @@ describe('ChannelCtrl', function () {
         MountService: MountService,
         PageMetaDataService: PageMetaDataService,
       });
+      spyOn(ChannelCtrl, 'transformHippoIFrame');
 
       MountService.createPreviewConfiguration.and.returnValue(resolvedPromise);
     });
