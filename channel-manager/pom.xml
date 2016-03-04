@@ -135,8 +135,8 @@
   <modules>
     <module>angularjs-api</module>
     <module>frontend-api</module>
-    <module>frontend</module>
     <module>frontend-ng</module>
+    <module>frontend</module>
     <module>repository</module>
   </modules>
 
