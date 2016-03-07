@@ -82,7 +82,7 @@
 
   function registerLogoutEvent () {
     $('.hippo-logout > .btn').click(function () {
-      Hippo.Events.publish('logout');
+      Hippo.Events.publish('CMSLogout');
     });
   }
 
