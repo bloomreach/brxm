@@ -25,6 +25,7 @@ import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionIterator;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoVersionManager;
 import org.hippoecm.repository.util.JcrUtils;
@@ -61,7 +62,8 @@ public class TaxonomyTranslationsUpdater extends BaseNodeUpdateVisitor {
             migrateVersionHistory(tmpNode, versionHistory);
             copy(taxonomyNode, tmpNode);
             updateTaxonomy(tmpNode);
-            session.move(tmpNode.getPath(), taxonomyNode.getPath());
+            final String destPath = StringUtils.substringBefore(taxonomyNode.getPath(), "[");
+            session.move(tmpNode.getPath(), destPath);
             session.save();
             taxonomyNode.remove();
             session.save();
