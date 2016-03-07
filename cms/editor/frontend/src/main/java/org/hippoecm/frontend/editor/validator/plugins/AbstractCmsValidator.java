@@ -46,12 +46,19 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
         return getResourceBundleModel(getName(), Session.get().getLocale());
     }
 
+    protected IModel<String> getTranslation(String subKey) {
+        String key = getName() + "#" + subKey;
+        return getResourceBundleModel(key, Session.get().getLocale());
+    }
+
     /**
      * Return translations of the default messages (those in {@link ValidatorMessages})
      *
+     * This method is deprecated. Instead, use {@link #getTranslation()} which uses repository resource bundles.
      * @param key the key for a default message
-     * @return a model of the translation of the default mmessage
+     * @return a model of the translation of the default message
      */
+    @Deprecated
     protected IModel<String> getDefaultMessage(String key) {
         return new ClassResourceModel(key, ValidatorMessages.class);
     }
