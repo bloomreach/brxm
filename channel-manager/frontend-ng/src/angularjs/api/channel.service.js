@@ -15,14 +15,13 @@
  */
 
 export class ChannelService {
-  constructor($http, SessionService, HstService, CmsService, ConfigService) {
+  constructor($http, SessionService, HstService, CmsService) {
     'ngInject';
 
     this.$http = $http;
     this.SessionService = SessionService;
     this.HstService = HstService;
     this.CmsService = CmsService;
-    this.ConfigService = ConfigService;
 
     this.channel = {};
   }
