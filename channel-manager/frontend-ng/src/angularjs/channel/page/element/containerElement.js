@@ -51,4 +51,12 @@ export class ContainerElement extends PageStructureElement {
   getComponents() {
     return this.items;
   }
+
+  getComponent(componentId) {
+    const component = this.items.find((item) => {
+      return item.getId() === componentId;
+    });
+    return angular.isDefined(component) ? component : null;
+  }
+
 }
