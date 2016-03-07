@@ -33,6 +33,8 @@ import javax.jcr.Session;
 import javax.jcr.Workspace;
 import javax.jcr.nodetype.NodeType;
 
+import com.google.common.net.InetAddresses;
+
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
@@ -378,7 +380,13 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     private Node getOrCreateVirtualHost(final Node configRoot, final String hostName) throws RepositoryException, ChannelException {
-        final String[] elements = hostName.split("[.]");
+        String[] elements;
+
+        if (InetAddresses.isInetAddress(hostName)) {
+            elements = new String[]{ hostName };
+        } else {
+            elements = hostName.split("[.]");
+        }
 
         // FIXME: move all modification methods to the 'cmsrest' module and use the
         // CmsRestSecurityValve#HOST_GROUP_NAME_FOR_CMS_HOST constant instead of the hardcoded string "HOST_GROUP_NAME_FOR_CMS_HOST"
