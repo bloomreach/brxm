@@ -33,7 +33,6 @@ export class ChannelCtrl {
     this.isCreatingPreview = false;
 
     ComponentsService.getComponents().then((components) => {
-      this.$log.info('Component toolkit:', components);
       this.components = components;
     });
   }
