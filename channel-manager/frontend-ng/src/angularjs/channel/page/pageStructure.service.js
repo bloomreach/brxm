@@ -77,6 +77,15 @@ export class PageStructureService {
     }
   }
 
+  getComponent(componentId) {
+    let component = null;
+    this.containers.find((container) => {
+      component = container.getComponent(componentId);
+      return angular.isDefined(component);
+    });
+    return component;
+  }
+
   showComponentProperties(componentElement) {
     this.CmsService.publish('show-component-properties', {
       component: {

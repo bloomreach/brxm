@@ -258,6 +258,28 @@ describe('PageStructureService', function () {
     });
   });
 
+  it('returns a known component', function () {
+    var container = $j('#container1', $document);
+    var component = $j('#componentA', $document);
+
+    PageStructureService.registerParsedElement(container[0].previousSibling, {
+      'HST-Type': 'CONTAINER_COMPONENT',
+    });
+    PageStructureService.registerParsedElement(component[0].childNodes[0], {
+      'HST-Type': 'CONTAINER_ITEM_COMPONENT',
+      'HST-Label': 'Test Component',
+      uuid: '1234',
+    });
+
+    component = PageStructureService.getComponent('1234');
+    expect(component.getId()).toEqual('1234');
+    expect(component.getLabel()).toEqual('Test Component');
+  });
+
+  it('returns null when getting an unknown component', function () {
+    expect(PageStructureService.getComponent('no-such-component')).toBeNull();
+  });
+
   it('triggers an event to show the component properties dialog', function () {
     var componentElement = jasmine.createSpyObj(['getId', 'getLabel', 'getLastModified']);
     componentElement.getId.and.returnValue('testId');
