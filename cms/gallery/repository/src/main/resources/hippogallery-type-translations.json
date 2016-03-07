@@ -42,7 +42,7 @@
         "jcr:name" : "Image"
       }
     },
-    "hippogallery:imageSet" : {
+    "hippogallery:imageset" : {
       "en" : {
         "jcr:name" : "Image",
         "hippogallery:thumbnail" : "Thumbnail",
