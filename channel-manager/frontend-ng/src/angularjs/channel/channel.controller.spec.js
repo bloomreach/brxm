@@ -60,7 +60,6 @@ describe('ChannelCtrl', function () {
         MountService: MountService,
         PageMetaDataService: PageMetaDataService,
       });
-      spyOn(ChannelCtrl, 'transformHippoIFrame');
 
       MountService.createPreviewConfiguration.and.returnValue(resolvedPromise);
     });

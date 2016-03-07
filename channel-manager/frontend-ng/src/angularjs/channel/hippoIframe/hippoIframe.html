@@ -15,21 +15,24 @@
   -->
 
 <md-content flex layout="row" class="channel-iframe-base">
-  <iframe flex class="qa-view" ng-src="{{ iframe.path }}"></iframe>
+  <div class="channel-iframe-canvas" flex layout="row">
 
-  <div class="overlay qa-overlay" ng-class="{'overlay-enabled': iframe.selectMode}">
-    <div ng-repeat="container in iframe.getContainers()" class="qa-container">
-      <overlay-element class="overlay-element-container"
-                       layout="row"
-                       ng-class="{ 'overlay-element-container-visible': container.isEmpty() }"
-                       structure-element="container">
-      </overlay-element>
-      <div ng-repeat="component in container.getComponents()" class="qa-component">
-        <overlay-element class="overlay-element-component"
+    <iframe flex class="qa-view cm-scale" ng-src="{{ iframe.path }}"></iframe>
+
+    <div class="overlay qa-overlay cm-scale" ng-class="{'overlay-enabled': iframe.selectMode}">
+      <div ng-repeat="container in iframe.getContainers()" class="qa-container">
+        <overlay-element class="overlay-element-container"
                          layout="row"
-                         structure-element="component"
-                         ng-click="iframe.showComponentProperties(component)">
+                         ng-class="{ 'overlay-element-container-visible': container.isEmpty() }"
+                         structure-element="container">
         </overlay-element>
+        <div ng-repeat="component in container.getComponents()" class="qa-component">
+          <overlay-element class="overlay-element-component"
+                           layout="row"
+                           structure-element="component"
+                           ng-click="iframe.showComponentProperties(component)">
+          </overlay-element>
+        </div>
       </div>
     </div>
   </div>

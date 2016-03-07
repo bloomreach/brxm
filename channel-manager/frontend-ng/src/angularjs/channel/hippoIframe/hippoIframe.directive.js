@@ -23,6 +23,7 @@ export function hippoIframe() {
     bindToController: {
       path: '=',
       selectMode: '=',
+      pushWidth: '=',
     },
     templateUrl: 'channel/hippoIframe/hippoIframe.html',
     controller: 'hippoIframeCtrl',

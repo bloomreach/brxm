@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const ANGULAR_MATERIAL_SIDENAV_EASING = [0.25, 0.8, 0.25, 1];
-const ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS = 400;
+
 const SIDENAVS = ['components'];
 
 export class ChannelCtrl {
@@ -31,6 +30,7 @@ export class ChannelCtrl {
     this.iframeUrl = ChannelService.getUrl();
     this.isEditMode = false;
     this.isCreatingPreview = false;
+    this.pushWidth = 0; // all sidenavs are closed to start with
 
     ComponentsService.getComponents().then((components) => {
       this.components = components;
@@ -48,11 +48,11 @@ export class ChannelCtrl {
 
   _closeSidenavs() {
     SIDENAVS.forEach((sidenav) => {
-      if (this.isSidenavOpen(sidenav)) {
+      if (this._isSidenavOpen(sidenav)) {
         this.$mdSidenav(sidenav).close();
       }
     });
-    this.transformHippoIFrame();
+    this._updatePushWidth();
   }
 
   _createPreviewConfiguration() {
@@ -70,65 +70,25 @@ export class ChannelCtrl {
 
   toggleSidenav(name) {
     SIDENAVS.forEach((sidenav) => {
-      if (sidenav !== name && this.isSidenavOpen(sidenav)) {
+      if (sidenav !== name && this._isSidenavOpen(sidenav)) {
         this.$mdSidenav(sidenav).close();
       }
     });
     this.$mdSidenav(name).toggle();
-    this.transformHippoIFrame();
+    this._updatePushWidth();
   }
 
-  isSidenavOpen(name) {
+  _isSidenavOpen(name) {
     return this.$mdSidenav(name).isOpen();
   }
 
-  isAnySidenavOpen() {
+  _isAnySidenavOpen() {
     return SIDENAVS.some((sidenav) => {
-      return this.isSidenavOpen(sidenav);
+      return this._isSidenavOpen(sidenav);
     });
   }
 
-  transformHippoIFrame() {
-    const sidenavWidth = $('.md-sidenav-left').width();
-    const hippoIframe = $('hippo-iframe');
-
-    function getCanvasWidth() {
-      const iframeCanvasWidth = $('.hippo-iframe-canvas', hippoIframe).width();
-      const iframeShift = parseInt(hippoIframe.css('margin-left'), 10);
-      return iframeCanvasWidth + iframeShift;
-    }
-
-    function calculateIFrameShift(canvasWidth, viewportWidth) {
-      const canvasBorderWidth = canvasWidth - viewportWidth;
-      return Math.min(canvasBorderWidth, sidenavWidth);
-    }
-
-    function shiftIFrame(pixels) {
-      hippoIframe.velocity('finish');
-      hippoIframe.velocity({
-        'margin-left': pixels,
-      }, {
-        duration: ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS,
-        easing: ANGULAR_MATERIAL_SIDENAV_EASING,
-      });
-    }
-
-    if (this.isAnySidenavOpen()) {
-      const canvasWidth = getCanvasWidth();
-      const viewportWidth = this.viewport === 'desktop' ? canvasWidth : this.viewportWidth;
-
-      const shiftPixels = calculateIFrameShift(canvasWidth, viewportWidth);
-      shiftIFrame(shiftPixels);
-
-      const visibleCanvasWidth = canvasWidth - sidenavWidth;
-      if (visibleCanvasWidth < viewportWidth) {
-        this.iframeScale = visibleCanvasWidth / viewportWidth;
-      } else {
-        this.iframeScale = 1;
-      }
-    } else {
-      shiftIFrame(0);
-      this.iframeScale = 1;
-    }
+  _updatePushWidth() {
+    this.pushWidth = this._isAnySidenavOpen() ? $('.md-sidenav-left').width() : 0;
   }
 }
