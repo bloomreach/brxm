@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,16 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.console.browser;
 
-import java.util.Collection;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
@@ -36,7 +28,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -59,8 +50,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.console.NodeModelReference;
 import org.hippoecm.frontend.plugins.console.icons.FontAwesomeIcon;
-import org.hippoecm.frontend.plugins.console.icons.IconLabel;
-import org.hippoecm.frontend.plugins.console.icons.JcrNodeIcon;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentExportDialog;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentImportDialog;
 import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;
@@ -72,7 +61,6 @@ import org.hippoecm.frontend.plugins.console.menu.recompute.RecomputeDialog;
 import org.hippoecm.frontend.plugins.console.menu.rename.RenameDialog;
 import org.hippoecm.frontend.plugins.console.menu.t9ids.T9idsDialog;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.plugins.yui.scrollbehavior.ScrollBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.tree.TreeWidgetBehavior;
@@ -83,6 +71,12 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import java.util.Collection;
 
 public class BrowserPlugin extends RenderPlugin<Node> {
 
@@ -164,6 +158,10 @@ public class BrowserPlugin extends RenderPlugin<Node> {
 
     protected void onSelect(final IJcrTreeNode treeNodeModel, AjaxRequestTarget target) {
         setDefaultModel(treeNodeModel.getNodeModel());
+        IContextMenuManager manager = findParent(IContextMenuManager.class);
+        if (manager != null) {
+            manager.collapseAllContextMenus();
+        }
     }
 
     @Override

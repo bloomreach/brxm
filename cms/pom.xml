@@ -139,9 +139,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</url>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-cms.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-cms.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-cms</url>
   </scm>
 
   <build>
@@ -448,10 +448,12 @@
                 <exclude>translations/repository/src/main/resources/*.xml</exclude>
                 <exclude>workflow/repository/src/main/resources/*.xml</exclude>
                 <!--  files without license header  -->
+                <exclude>api/node_modules/**</exclude>
                 <exclude>api/.bowerrc</exclude>
                 <exclude>api/.csslintrc</exclude>
                 <exclude>api/README.md</exclude>
                 <exclude>upgrade_notes.txt</exclude>
+                <exclude>console/frontend/node_modules/**</exclude>
                 <exclude>console/frontend/.bowerrc</exclude>
                 <exclude>console/frontend/README.md</exclude>
               </excludes>
