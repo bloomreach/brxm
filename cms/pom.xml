@@ -447,15 +447,17 @@
                 <exclude>brokenlinks/repository/src/main/resources/*.xml</exclude>
                 <exclude>translations/repository/src/main/resources/*.xml</exclude>
                 <exclude>workflow/repository/src/main/resources/*.xml</exclude>
-                <!--  files without license header  -->
-                <exclude>api/node_modules/**</exclude>
+                <!-- front-end build configuration files without license header -->
                 <exclude>api/.bowerrc</exclude>
                 <exclude>api/.csslintrc</exclude>
-                <exclude>api/README.md</exclude>
-                <exclude>upgrade_notes.txt</exclude>
-                <exclude>console/frontend/node_modules/**</exclude>
+                <exclude>api/.npmrc</exclude>
                 <exclude>console/frontend/.bowerrc</exclude>
-                <exclude>console/frontend/README.md</exclude>
+                <exclude>console/frontend/.npmrc</exclude>
+                <!-- front-end build external dependencies -->
+                <exclude>api/node_modules/**</exclude>
+                <exclude>console/frontend/node_modules/**</exclude>
+                <!-- files without license header  -->
+                <exclude>upgrade_notes.txt</exclude>
               </excludes>
             </configuration>
           </plugin>

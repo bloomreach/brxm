@@ -4,7 +4,7 @@ Prerequisites
 
  - Java 8
  - Maven 3.0.5 or higher
- - Node.js 0.12 (http://nodejs.org)
+ - Node.js (http://nodejs.org)
  - Grunt (http://gruntjs.org)
  - Bower (http://bower.io)
  - Git (http://git-scm.org) - needed by Bower
@@ -13,11 +13,11 @@ Grunt and Bower can be installed with Node Package Manager (provided and install
 
  $ sudo npm install -g grunt-cli bower
 
------------------------------
+-------------------
 Nodejs instructions
------------------------------
+-------------------
 
-For installing Node.js 0.12 on any OS go to https://nodejs.org/download/
+For installing Node.js on any OS go to https://nodejs.org/download/
 Download your distribution and if needed follow instructions in their README.
 
 -----
@@ -46,7 +46,7 @@ Build with snapshot dependencies:
 Front-end Installation
 ----------------------
 
-Run the commands below in the api directory.
+* Run these commands from either the api or the console/frontend module
 
 1. Get latest version of npm
 Before setting up Grunt ensure that your npm is up-to-date by running
@@ -67,15 +67,15 @@ Install both npm and bower dependencies
     $ npm install
     $ bower install
 
----------------------------------------------
-Useful commands from within the api directory
----------------------------------------------
+-------------------------------------------
+Building and developing the front-end theme
+-------------------------------------------
 
 Build front-end code:
 
     $ grunt build
 
-After installing the api module:
+After building the frontend-end code:
 
     $ grunt watch
 
@@ -95,12 +95,10 @@ Live reload browser plugins
 You need a browser extension to use live reload.
 
 Safari:
-http://download.livereload.com/2.0.9/LiveReload-2.0.9.safariextz
+http://download.livereload.com/2.1.0/LiveReload-2.1.0.safariextz
 
 Chrome:
 https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei
 
 Firefox:
-http://download.livereload.com/2.0.8/LiveReload-2.0.8.xpi
-
-
+http://download.livereload.com/2.1.0/LiveReload-2.1.0.xpi
