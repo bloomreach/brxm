@@ -257,11 +257,12 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
         @Override
         public void render(final Response response) {
-            final UsageEvent perspectiveActivated = new UsageEvent(EVENT_PERSPECTIVE_ACTIVATED);
-            perspectiveActivated.setParameter(EVENT_PARAM_PERSPECTIVE_ID, perspectiveId);
+            if(StringUtils.isNotEmpty(perspectiveId)) {
+                final UsageEvent perspectiveActivated = new UsageEvent(perspectiveId);
 
-            final String eventJs = perspectiveActivated.getJavaScript();
-            OnLoadHeaderItem.forScript(eventJs).render(response);
+                final String eventJs = perspectiveActivated.getJavaScript();
+                OnLoadHeaderItem.forScript(eventJs).render(response);
+            }
         }
     }
 
