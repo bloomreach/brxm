@@ -42,12 +42,34 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
         return name;
     }
 
+    /**
+     * Gets the translation for the default validator message in the locale of the currently logged-in user.
+     * Validator messages are stored as repository based resource bundles at:
+     *
+     * /hippo:configuration/hippo:translations/hippo:cms/validators
+     *
+     * To retrieve the message from the resource bundle, the key is constructed using the last section of
+     * this plugin's name.
+     *
+     * @return a model of the translation of the message
+     */
     protected IModel<String> getTranslation() {
         return getResourceBundleModel(getName(), Session.get().getLocale());
     }
 
-    protected IModel<String> getTranslation(String subKey) {
-        String key = getName() + "#" + subKey;
+    /**
+     * Gets the translation for the alternate validator message {@code alternateKey} in the locale of the currently
+     * logged-in user. Validator messages are stored as repository based resource bundles at:
+     *
+     * /hippo:configuration/hippo:translations/hippo:cms/validators
+     *
+     * To retrieve the message from the resource bundle, the key is constructed using the pattern
+     * {@code "<name>#<alternateKey>"} where name is the last section of this plugin's name.
+     *
+     * @return a model of the translation of the message
+     */
+    protected IModel<String> getTranslation(String alternateKey) {
+        String key = getName() + "#" + alternateKey;
         return getResourceBundleModel(key, Session.get().getLocale());
     }
 
