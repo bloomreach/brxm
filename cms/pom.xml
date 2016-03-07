@@ -447,14 +447,12 @@
                 <exclude>brokenlinks/repository/src/main/resources/*.xml</exclude>
                 <exclude>translations/repository/src/main/resources/*.xml</exclude>
                 <exclude>workflow/repository/src/main/resources/*.xml</exclude>
-                <!-- documentation without license header -->
-                <exclude>api/README.md</exclude>
-                <exclude>console/frontend/README.md</exclude>
                 <!-- front-end build configuration files without license header -->
                 <exclude>api/.bowerrc</exclude>
                 <exclude>api/.csslintrc</exclude>
                 <exclude>api/.npmrc</exclude>
                 <exclude>console/frontend/.bowerrc</exclude>
+                <exclude>console/frontend/.npmrc</exclude>
                 <!-- front-end build external dependencies -->
                 <exclude>api/node_modules/**</exclude>
                 <exclude>console/frontend/node_modules/**</exclude>
