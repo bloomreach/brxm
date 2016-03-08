@@ -45,7 +45,6 @@
 
       this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
-      this.iframeToHost.subscribe('close-component-properties', this._closeComponentProperties, this);
     },
 
     loadChannel: function(channelId) {
@@ -135,10 +134,6 @@
 
     _deleteComponent: function (componentId) {
       this.hostToIFrame.publish('delete-component', componentId);
-    },
-
-    _closeComponentProperties: function() {
-      this.componentPropertiesWindow.close();
     },
 
     _showComponentProperties: function(selected) {

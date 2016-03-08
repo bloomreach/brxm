@@ -529,6 +529,7 @@
      */
     deleteComponent: function () {
       this.fireEvent('deleteComponent', this.componentId);
+      this.fireEvent('close', this.componentId);
     }
   });
 

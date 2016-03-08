@@ -19,12 +19,13 @@ import { ComponentElement } from './element/componentElement';
 
 export class PageStructureService {
 
-  constructor($log, HstConstants, hstCommentsProcessorService, ChannelService, CmsService, PageMetaDataService) {
+  constructor($log, HstConstants, hstCommentsProcessorService, HstService, ChannelService, CmsService, PageMetaDataService) {
     'ngInject';
 
     // Injected
     this.$log = $log;
     this.HST = HstConstants;
+    this.HstService = HstService;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.hstCommentsProcessorService = hstCommentsProcessorService;
@@ -84,6 +85,33 @@ export class PageStructureService {
       return angular.isDefined(component);
     });
     return component;
+  }
+
+  /**
+   * Remove the component identified by given Id
+   * @param componentId
+   * @returns {*} the removed component object
+   */
+  removeComponent(componentId) {
+    let component = null;
+    let foundContainer = this.containers.find((container) => {
+      component = container.removeComponent(componentId);
+      return component;
+    });
+
+    if (!foundContainer) {
+      console.log('Remove component ' + componentId + ' failed');
+      return null;
+    }
+    // request back-end to remove component
+    return this._removeHstComponent(foundContainer.getId(), componentId)
+      .then(() => {
+        component.removeFromDOM();
+      });
+  }
+
+  _removeHstComponent(containerId, componentId) {
+    return this.HstService.doGet(containerId, 'delete', componentId);
   }
 
   showComponentProperties(componentElement) {
