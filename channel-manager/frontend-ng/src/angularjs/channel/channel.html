@@ -33,7 +33,7 @@
   <md-sidenav class="md-sidenav-left" md-component-id="components">
     <md-list md-no-ink class="catalog">
       <md-list-item class="md-1-line catalog-component" catalog-component="component"
-                    ng-repeat="component in channelCtrl.components">
+                    ng-repeat="component in channelCtrl.getCatalog()">
         <div class="component-icon">
           <img ng-src="{{component.iconURL}}"/>
         </div>

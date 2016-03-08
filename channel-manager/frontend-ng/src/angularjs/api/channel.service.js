@@ -15,11 +15,12 @@
  */
 
 export class ChannelService {
-  constructor($http, SessionService, HstService, CmsService) {
+  constructor($http, SessionService, CatalogService, HstService, CmsService) {
     'ngInject';
 
     this.$http = $http;
     this.SessionService = SessionService;
+    this.CatalogService = CatalogService;
     this.HstService = HstService;
     this.CmsService = CmsService;
 
@@ -28,7 +29,8 @@ export class ChannelService {
 
   _setChannel(channel) {
     this.channel = channel;
-    this.HstService.setContextPath(channel.contextPath);
+    this.HstService.setContextPath(channel.contextPath); // TODO: keep contextPath state in ChannelService?
+    this.CatalogService.load(this._getMountId());
   }
 
   getChannel() {
@@ -81,5 +83,21 @@ export class ChannelService {
         this._setChannel(channel);
         this.CmsService.publish('switch-channel', channel.id); // update breadcrumb.
       });// TODO add error handling
+  }
+
+  hasPreviewConfiguration() {
+    return this.channel.previewHstConfigExists === 'true';
+  }
+
+  createPreviewConfiguration() {
+    return this.HstService.doPost(this._getMountId(), 'edit');
+  }
+
+  getCatalog() {
+    return this.CatalogService.getComponents();
+  }
+
+  _getMountId() {
+    return this.channel.mountId;
   }
 }

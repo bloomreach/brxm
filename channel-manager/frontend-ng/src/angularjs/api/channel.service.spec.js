@@ -20,6 +20,7 @@ describe('ChannelService', function () {
   var $q;
   var $rootScope;
   var ChannelService;
+  var CatalogServiceMock;
   var SessionServiceMock;
   var ConfigServiceMock;
   var HstServiceMock;
@@ -39,6 +40,12 @@ describe('ChannelService', function () {
       },
     };
 
+    CatalogServiceMock = jasmine.createSpyObj('CatalogService', [
+      'load',
+      'getComponents',
+    ]);
+    CatalogServiceMock.getComponents.and.returnValue([]);
+
     ConfigServiceMock = {
       apiUrlPrefix: '/testApiUrlPrefix',
       rootUuid: 'testRootUuid',
@@ -50,6 +57,7 @@ describe('ChannelService', function () {
       $provide.value('SessionService', SessionServiceMock);
       $provide.value('ConfigService', ConfigServiceMock);
       $provide.value('HstService', HstServiceMock);
+      $provide.value('CatalogService', CatalogServiceMock);
     });
 
     inject(function (_$q_, _$rootScope_, _ChannelService_) {

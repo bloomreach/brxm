@@ -18,27 +18,21 @@ const SIDENAVS = ['components'];
 
 export class ChannelCtrl {
 
-  constructor($log, $mdSidenav, ChannelService, ComponentsService, MountService, PageMetaDataService) {
+  constructor($log, $mdSidenav, ChannelService) {
     'ngInject';
 
     this.$log = $log;
-    this.MountService = MountService;
-    this.PageMetaDataService = PageMetaDataService;
-
     this.$mdSidenav = $mdSidenav;
+    this.ChannelService = ChannelService;
 
     this.iframeUrl = ChannelService.getUrl();
     this.isEditMode = false;
     this.isCreatingPreview = false;
     this.pushWidth = 0; // all sidenavs are closed to start with
-
-    ComponentsService.getComponents().then((components) => {
-      this.components = components;
-    });
   }
 
   toggleEditMode() {
-    if (!this.isEditMode && !this.PageMetaDataService.hasPreviewConfiguration()) {
+    if (!this.isEditMode && !this.ChannelService.hasPreviewConfiguration()) {
       this._createPreviewConfiguration();
     } else {
       this.isEditMode = !this.isEditMode;
@@ -56,9 +50,8 @@ export class ChannelCtrl {
   }
 
   _createPreviewConfiguration() {
-    const currentMountId = this.PageMetaDataService.getMountId();
     this.isCreatingPreview = true;
-    this.MountService.createPreviewConfiguration(currentMountId)
+    this.ChannelService.createPreviewConfiguration()
       .then(() => {
         this.isEditMode = true;
       })
@@ -76,6 +69,10 @@ export class ChannelCtrl {
     });
     this.$mdSidenav(name).toggle();
     this._updatePushWidth();
+  }
+
+  getCatalog() {
+    return this.ChannelService.getCatalog();
   }
 
   _isSidenavOpen(name) {

@@ -50,12 +50,4 @@ export class PageMetaDataService {
     return this.data;
   }
 
-  getMountId() {
-    return this.data[this.HstConstants.MOUNT_ID];
-  }
-
-  hasPreviewConfiguration() {
-    return this.data[this.HstConstants.HAS_PREVIEW_CONFIGURATION] === 'true';
-  }
-
 }

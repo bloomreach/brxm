@@ -18,9 +18,7 @@ describe('ChannelCtrl', function () {
   'use strict';
 
   var ChannelService;
-  var MountService;
   var ComponentsService;
-  var PageMetaDataService;
   var ChannelCtrl;
   var $rootScope;
   var $q;
@@ -36,15 +34,11 @@ describe('ChannelCtrl', function () {
 
       ChannelService = jasmine.createSpyObj('ChannelService', [
         'getUrl',
-      ]);
-      MountService = jasmine.createSpyObj('MountService', [
-        'createPreviewConfiguration',
-        'getComponentsToolkit',
-      ]);
-      PageMetaDataService = jasmine.createSpyObj('PageMetaDataService', [
-        'getMountId',
         'hasPreviewConfiguration',
+        'createPreviewConfiguration',
       ]);
+      ChannelService.getUrl.and.returnValue('/test/url');
+      ChannelService.createPreviewConfiguration.and.returnValue(resolvedPromise);
 
       ComponentsService = jasmine.createSpyObj('ComponentsService', [
         'components',
@@ -52,16 +46,10 @@ describe('ChannelCtrl', function () {
       ]);
       ComponentsService.getComponents.and.returnValue(resolvedPromise);
 
-      ChannelService.getUrl.and.returnValue('/test/url');
-
       ChannelCtrl = $controller('ChannelCtrl', {
         ComponentsService: ComponentsService,
         ChannelService: ChannelService,
-        MountService: MountService,
-        PageMetaDataService: PageMetaDataService,
       });
-
-      MountService.createPreviewConfiguration.and.returnValue(resolvedPromise);
     });
   });
 
@@ -74,7 +62,7 @@ describe('ChannelCtrl', function () {
   });
 
   it('enables and disables edit mode when toggling it', function () {
-    PageMetaDataService.hasPreviewConfiguration.and.returnValue(true);
+    ChannelService.hasPreviewConfiguration.and.returnValue(true);
 
     ChannelCtrl.toggleEditMode();
     expect(ChannelCtrl.isEditMode).toEqual(true);
@@ -85,15 +73,13 @@ describe('ChannelCtrl', function () {
   it('creates preview configuration when it has not been created yet before enabling edit mode', function () {
     var deferCreatePreview = $q.defer();
 
-    PageMetaDataService.hasPreviewConfiguration.and.returnValue(false);
-    PageMetaDataService.getMountId.and.returnValue('testMountId');
-
-    MountService.createPreviewConfiguration.and.returnValue(deferCreatePreview.promise);
+    ChannelService.hasPreviewConfiguration.and.returnValue(false);
+    ChannelService.createPreviewConfiguration.and.returnValue(deferCreatePreview.promise);
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
     ChannelCtrl.toggleEditMode();
 
-    expect(MountService.createPreviewConfiguration).toHaveBeenCalledWith('testMountId');
+    expect(ChannelService.createPreviewConfiguration).toHaveBeenCalled();
     expect(ChannelCtrl.isCreatingPreview).toEqual(true);
     expect(ChannelCtrl.isEditMode).toEqual(false);
 
@@ -105,9 +91,9 @@ describe('ChannelCtrl', function () {
   });
 
   it('does not create preview configuration when it has already been created when enabling edit mode', function () {
-    PageMetaDataService.hasPreviewConfiguration.and.returnValue(true);
+    ChannelService.hasPreviewConfiguration.and.returnValue(true);
     ChannelCtrl.toggleEditMode();
-    expect(MountService.createPreviewConfiguration).not.toHaveBeenCalled();
+    expect(ChannelService.createPreviewConfiguration).not.toHaveBeenCalled();
   });
 
 });

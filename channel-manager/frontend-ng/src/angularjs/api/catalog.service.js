@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 
-export class ComponentsService {
-  constructor(MountService) {
+export class CatalogService {
+  constructor(HstService) {
     'ngInject';
 
-    this.MountService = MountService;
+    this.HstService = HstService;
+    this.components = [];
+  }
+
+  load(mountId) {
+    return this.HstService.doGet(mountId, 'toolkit')
+      .then((response) => {
+        if (response && response.data) {
+          let components = response.data;
+          components.sort((a, b) => a.label.localeCompare(b.label));
+          this.components = components;
+        }
+        // TODO: handle error?
+      });
   }
 
   getComponents() {
-    return this.MountService.getComponentsToolkit().then((components) => {
-      components.sort((a, b) => a.label.localeCompare(b.label));
-      return components;
-    });
+    return this.components;
   }
-
-  setCatalogElement(component, element) {
-    component.element = element;
-  }
-
-  getComponentByElement(element) {
-    return this.components.find((component) => component.element === element);
-  }
-
 }
