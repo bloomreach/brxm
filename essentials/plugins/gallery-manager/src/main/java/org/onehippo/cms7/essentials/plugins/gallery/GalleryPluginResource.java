@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
@@ -37,7 +38,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import com.google.common.base.Strings;
+import com.google.common.eventbus.EventBus;
+
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstruction;
@@ -56,16 +62,12 @@ import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GalleryUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.TranslationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
+import static org.hippoecm.repository.api.HippoNodeType.NT_RESOURCEBUNDLE;
+import static org.hippoecm.repository.api.HippoNodeType.NT_RESOURCEBUNDLES;
 
-/**
- * @version "$Id$"
- */
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/galleryplugin")
@@ -73,8 +75,6 @@ public class GalleryPluginResource extends BaseResource {
 
 
     private static final Pattern NS_PATTERN = Pattern.compile(":");
-    public static final String HIPPO_TRANSLATION = "hippo:translation";
-    public static final String HIPPO_PROPERTY = "hippo:property";
     public static final String HIPPOSYSEDIT_NODETYPE = "hipposysedit:nodetype";
     public static final String HIPPOSYSEDIT_PROTOTYPE = "hipposysedit:prototype";
     private static Logger log = LoggerFactory.getLogger(GalleryPluginResource.class);
@@ -96,7 +96,7 @@ public class GalleryPluginResource extends BaseResource {
             final String myType = payload.getType();
             final Node namespaceNode = session.getNode("/hippo:namespaces/" + GlobalUtils.getNamespacePrefix(payload.getParentNamespace()) + '/' + GlobalUtils.getNameAfterPrefix(payload.getParentNamespace()));
             // add translations...
-            processTranslations(payload, myType, namespaceNode, false);
+            updateTranslations(payload, myType, namespaceNode);
             // add processor stuff...
             updateProcessorNode(payload, session, myType);
             // update sets
@@ -128,7 +128,7 @@ public class GalleryPluginResource extends BaseResource {
             }
             final Node namespaceNode = session.getNode("/hippo:namespaces/" + GlobalUtils.getNamespacePrefix(payload.getParentNamespace()) + '/' + GlobalUtils.getNameAfterPrefix(payload.getParentNamespace()));
             // remove translations...
-            processTranslations(payload, myType, namespaceNode, true);
+            removeTranslations(namespaceNode, myType);
             // remove template, prototype and node type:
             final Node nodeTypeNode = namespaceNode.getNode(HIPPOSYSEDIT_NODETYPE).getNode(HIPPOSYSEDIT_NODETYPE);
             final String name = payload.getName();
@@ -390,21 +390,9 @@ public class GalleryPluginResource extends BaseResource {
         processingNode.setProperty("compression", payload.getCompression());
     }
 
-    private void processTranslations(final ImageModel payload, final String myType, final Node namespaceNode, final boolean justRemove) throws RepositoryException {
-        final NodeIterator nodes = namespaceNode.getNodes();
-        while (nodes.hasNext()) {
-            final Node aNode = nodes.nextNode();
-            final String propName = HippoNodeUtils.getStringProperty(aNode, HIPPO_PROPERTY);
-            if (aNode.getName().equals(HIPPO_TRANSLATION)
-                    && propName != null
-                    && propName.equals(myType)) {
-                // remove
-                aNode.remove();
-            }
-        }
-        if (justRemove) {
-            return;
-        }
+    private void updateTranslations(final ImageModel payload, final String variant, final Node nodeTypeNode) throws RepositoryException {
+        removeTranslations(nodeTypeNode, variant);
+        final Node bundles = getOrCreateBundles(nodeTypeNode);
         // add new translations
         final List<TranslationModel> translations = payload.getTranslations();
         for (TranslationModel trans : translations) {
@@ -412,13 +400,36 @@ public class GalleryPluginResource extends BaseResource {
                 log.debug("Skipping empty language for translation: {}", trans);
                 continue;
             }
-            final Node node = namespaceNode.addNode(HIPPO_TRANSLATION, HIPPO_TRANSLATION);
-            node.setProperty("hippo:language", trans.getLanguage());
-            node.setProperty("hippo:message", trans.getMessage());
-            node.setProperty(HIPPO_PROPERTY, myType);
+            final Node bundle;
+            if (bundles.hasNode(trans.getLanguage())) {
+                bundle = bundles.getNode(trans.getLanguage());
+            } else {
+                bundle = bundles.addNode(trans.getLanguage(), NT_RESOURCEBUNDLE);
+            }
+            bundle.setProperty(variant, trans.getMessage());
         }
     }
 
+    private void removeTranslations(final Node nodeTypeNode, final String variant) throws RepositoryException {
+        final Node bundles = getOrCreateBundles(nodeTypeNode);
+        for (Node bundle : new NodeIterable(bundles.getNodes())) {
+            if (bundle.hasProperty(variant)) {
+                bundle.getProperty(variant).remove();
+            }
+        }
+    }
+
+    private Node getOrCreateBundles(final Node nodeTypeNode) throws RepositoryException {
+        final String nodeTypeName = nodeTypeNode.getParent().getName() + ":" + nodeTypeNode.getName();
+        final Node typesBundles = nodeTypeNode.getSession().getNode("/hippo:configuration/hippo:translations/hippo:types");
+        final Node bundles;
+        if (!typesBundles.hasNode(nodeTypeName)) {
+            bundles = typesBundles.addNode(nodeTypeName, NT_RESOURCEBUNDLES);
+        } else {
+            bundles = typesBundles.getNode(nodeTypeName);
+        }
+        return bundles;
+    }
 
     private List<ImageModel> populateTypes(final Session session, final Node imagesetTemplate, final String parentNs) throws RepositoryException {
         final List<ImageModel> images = new ArrayList<>();
@@ -460,8 +471,16 @@ public class GalleryPluginResource extends BaseResource {
      */
     private static List<TranslationModel> retrieveTranslationsForVariant(final Node imagesetTemplate, final String variant) throws RepositoryException {
         final List<TranslationModel> translations = new ArrayList<>();
-        for (Node node : TranslationUtils.getTranslationsFromNode(imagesetTemplate, variant)) {
-            translations.add(new TranslationModel(TranslationUtils.getHippoLanguage(node), TranslationUtils.getHippoMessage(node), TranslationUtils.getHippoProperty(node)));
+        final Node typesBundles = imagesetTemplate.getSession().getNode("/hippo:configuration/hippo:translations/hippo:types");
+        final String nodeTypeName = imagesetTemplate.getParent().getName() + ":" + imagesetTemplate.getName();
+        if (typesBundles.hasNode(nodeTypeName)) {
+            for (Node typeBundle : new NodeIterable(typesBundles.getNode(nodeTypeName).getNodes())) {
+                for (Property property : new PropertyIterable(typeBundle.getProperties())) {
+                    if (!property.getName().startsWith("jcr:") && property.getName().equals(variant)) {
+                        translations.add(new TranslationModel(typeBundle.getName(), property.getString(), property.getName()));
+                    }
+                }
+            }
         }
         return translations;
     }

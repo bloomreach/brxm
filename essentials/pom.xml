@@ -35,6 +35,7 @@
     <essentialsBuildNumber>${project.version}</essentialsBuildNumber>
 
     <!--***START temporary override of versions*** -->
+    <hippo.repository.version>4.0.0-translations-psp1-SNAPSHOT</hippo.repository.version>
     <!-- ***END temporary override of versions*** -->
 
     <jsp-api.version>2.2</jsp-api.version>
