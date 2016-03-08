@@ -47,8 +47,8 @@ export class ComponentRenderingService {
       const keyValuePairs = [];
       for (const property in json) {
         if (json.hasOwnProperty(property)) {
-          let key = encodeURIComponent(property);
-          let value = encodeURIComponent(json[property]);
+          const key = encodeURIComponent(property);
+          const value = encodeURIComponent(json[property]);
           keyValuePairs.push(`${key}=${value}`);
         }
       }
