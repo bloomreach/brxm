@@ -44,7 +44,6 @@ describe('ChannelService', function () {
       'load',
       'getComponents',
     ]);
-    CatalogServiceMock.getComponents.and.returnValue([]);
 
     ConfigServiceMock = jasmine.createSpyObj('ConfigService', ['setContextPath']);
     ConfigServiceMock.apiUrlPrefix = '/testApiUrlPrefix';
@@ -167,5 +166,20 @@ describe('ChannelService', function () {
     expect(ChannelService.getChannel()).toEqual(channelB);
   });
   // TODO: add a test where the server returns an error upon the ChannelService's request for channel details.
+
+  it('should trigger loading of the channel\'s catalog', function () {
+    ChannelService.load({ mountId: '1234' });
+    $rootScope.$digest();
+    expect(CatalogServiceMock.load).toHaveBeenCalledWith('1234');
+  });
+
+  it('should relay the request for catalog components to the CatalogService', function () {
+    var mockCatalog = [
+      { label: 'componentA' },
+      { label: 'componentB' },
+    ];
+    CatalogServiceMock.getComponents.and.returnValue(mockCatalog);
+    expect(ChannelService.getCatalog()).toEqual(mockCatalog);
+  });
 
 });
