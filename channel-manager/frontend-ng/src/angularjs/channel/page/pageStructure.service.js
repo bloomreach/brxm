@@ -81,7 +81,7 @@ export class PageStructureService {
     let component = null;
     this.containers.some((container) => {
       component = container.getComponent(componentId);
-      return component !== null;
+      return component;
     });
     return component;
   }
