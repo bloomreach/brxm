@@ -276,6 +276,30 @@ describe('PageStructureService', function () {
     expect(component.getLabel()).toEqual('Test Component');
   });
 
+  it('returns a known component when the first container is empty', function () {
+    var emptyContainer = $j('#container1', $document);
+    var filledContainer = $j('#container2', $document);
+    var component = $j('#componentA', $document);
+
+    PageStructureService.registerParsedElement(emptyContainer[0].previousSibling, {
+      'HST-Type': 'CONTAINER_COMPONENT',
+    });
+    PageStructureService.registerParsedElement(filledContainer[0].previousSibling, {
+      'HST-Type': 'CONTAINER_COMPONENT',
+    });
+    PageStructureService.registerParsedElement(component[0].childNodes[0], {
+      'HST-Type': 'CONTAINER_ITEM_COMPONENT',
+      'HST-Label': 'Test Component',
+      uuid: '1234',
+    });
+
+    component = PageStructureService.getComponent('1234');
+    expect(component).not.toBeNull();
+    expect(component.getId()).toEqual('1234');
+    expect(component.getLabel()).toEqual('Test Component');
+  });
+
+
   it('returns null when getting an unknown component', function () {
     expect(PageStructureService.getComponent('no-such-component')).toBeNull();
   });

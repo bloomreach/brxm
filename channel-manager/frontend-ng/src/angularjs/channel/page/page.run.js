@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-import { ComponentRenderingService } from './componentRendering.service';
-import { PageMetaDataService } from './pageMetaData.service';
-import { PageStructureService } from './pageStructure.service';
-import { run } from './page.run';
+export function run(ComponentRenderingService) {
+  'ngInject';
 
-export const channelPageModule = angular
-  .module('hippo-cm.channel.page', [])
-  .service('ComponentRenderingService', ComponentRenderingService)
-  .service('PageMetaDataService', PageMetaDataService)
-  .service('PageStructureService', PageStructureService)
-  .run(run);
+  ComponentRenderingService.initialize();
+}

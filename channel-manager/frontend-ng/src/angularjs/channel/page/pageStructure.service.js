@@ -79,9 +79,9 @@ export class PageStructureService {
 
   getComponent(componentId) {
     let component = null;
-    this.containers.find((container) => {
+    this.containers.some((container) => {
       component = container.getComponent(componentId);
-      return angular.isDefined(component);
+      return component !== null;
     });
     return component;
   }
