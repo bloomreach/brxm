@@ -57,11 +57,8 @@ export class HippoIframeCtrl {
 
   onLoad() {
     this.$rootScope.$apply(() => {
-
       this._parseHstComments();
       this._parseLinks();
-
-      this.OverlaySyncService.startObserving();
     });
   }
 
