@@ -33,7 +33,7 @@ describe('HstService', function () {
     ConfigServiceMock = {
       apiUrlPrefix: apiUrlPrefix,
       cmsUser: 'testUser',
-      defaultContextPath: contextPath,
+      contextPath: contextPath,
       rootUuid: rootUuid,
     };
 
@@ -54,10 +54,6 @@ describe('HstService', function () {
 
   it('should exist', function () {
     expect(hstService).toBeDefined();
-  });
-
-  it('should have a default contextPath', function () {
-    expect(hstService.getContextPath()).toEqual(ConfigServiceMock.defaultContextPath);
   });
 
   it('should prefix all API urls with the context path and api url prefix', function () {
@@ -87,7 +83,7 @@ describe('HstService', function () {
     hstService.doGet('1234', 'test');
     $httpBackend.flush();
 
-    hstService.setContextPath('/newContextPath');
+    ConfigServiceMock.contextPath = '/newContextPath';
 
     $httpBackend.expectGET('/newContextPath/testApiUrlPrefix/1234./test').respond(200);
     hstService.doGet('1234', 'test');

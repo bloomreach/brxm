@@ -46,10 +46,9 @@ describe('ChannelService', function () {
     ]);
     CatalogServiceMock.getComponents.and.returnValue([]);
 
-    ConfigServiceMock = {
-      apiUrlPrefix: '/testApiUrlPrefix',
-      rootUuid: 'testRootUuid',
-    };
+    ConfigServiceMock = jasmine.createSpyObj('ConfigService', ['setContextPath']);
+    ConfigServiceMock.apiUrlPrefix = '/testApiUrlPrefix';
+    ConfigServiceMock.rootUuid = 'testRootUuid';
 
     HstServiceMock = jasmine.createSpyObj('HstService', ['setContextPath', 'getChannel']);
 
@@ -126,7 +125,7 @@ describe('ChannelService', function () {
     expect(ChannelService.getId()).toEqual('test-id');
   });
 
-  it('should update the HstService\'s context path when the channel reference is updated', function () {
+  it('should update the ConfigService\'s context path when the channel reference is updated', function () {
     var channelA = {
       id: 'channelA',
       contextPath: '/a',
@@ -138,11 +137,11 @@ describe('ChannelService', function () {
 
     ChannelService.load(channelA);
     $rootScope.$digest();
-    expect(HstServiceMock.setContextPath).toHaveBeenCalledWith(channelA.contextPath);
+    expect(ConfigServiceMock.setContextPath).toHaveBeenCalledWith(channelA.contextPath);
 
     ChannelService.load(channelB);
     $rootScope.$digest();
-    expect(HstServiceMock.setContextPath).toHaveBeenCalledWith(channelB.contextPath);
+    expect(ConfigServiceMock.setContextPath).toHaveBeenCalledWith(channelB.contextPath);
   });
 
   it('should switch to a new channel', function () {

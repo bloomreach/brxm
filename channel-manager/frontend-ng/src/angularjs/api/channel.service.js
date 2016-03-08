@@ -15,13 +15,14 @@
  */
 
 export class ChannelService {
-  constructor($http, SessionService, CatalogService, HstService, CmsService) {
+  constructor($http, SessionService, CatalogService, HstService, ConfigService, CmsService) {
     'ngInject';
 
     this.$http = $http;
     this.SessionService = SessionService;
     this.CatalogService = CatalogService;
     this.HstService = HstService;
+    this.ConfigService = ConfigService;
     this.CmsService = CmsService;
 
     this.channel = {};
@@ -29,7 +30,7 @@ export class ChannelService {
 
   _setChannel(channel) {
     this.channel = channel;
-    this.HstService.setContextPath(channel.contextPath); // TODO: keep contextPath state in ChannelService?
+    this.ConfigService.setContextPath(channel.contextPath);
     this.CatalogService.load(this._getMountId());
   }
 
