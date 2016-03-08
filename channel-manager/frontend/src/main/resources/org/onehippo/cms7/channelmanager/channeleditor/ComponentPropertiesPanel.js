@@ -522,6 +522,13 @@
         });
         return $.when.apply($, afterSavePromises);
       }.bind(this));
+    },
+
+    /**
+     * Fire the 'deleteComponent' event to delete current component
+     */
+    deleteComponent: function () {
+      this.fireEvent('deleteComponent', this.componentId);
     }
   });
 
