@@ -80,9 +80,9 @@ export class HippoIframeCtrl {
 
   _parseLinks() {
     const iframeDom = this.iframeJQueryElement.contents()[0];
-    const internalLinkPrefix = `${iframeDom.location.protocol}//${iframeDom.location.host}${this.ChannelService.getUrl()}`;
-
-    this.linkProcessorService.run(iframeDom, internalLinkPrefix);
+    const schemeAndHost = `${iframeDom.location.protocol}//${iframeDom.location.host}`;
+    const previewUrl = `${schemeAndHost}${this.ChannelService.getPreviewPath()}`;
+    this.linkProcessorService.run(iframeDom, previewUrl);
   }
 
   getContainers() {

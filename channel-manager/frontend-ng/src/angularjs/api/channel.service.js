@@ -47,15 +47,20 @@ export class ChannelService {
       });
   }
 
-  getUrl(path) {
-    let url = this.channel.contextPath;
-    if (url === '/') {
-      url = '';
+  getPreviewPath() {
+    let path = this.channel.contextPath;
+    if (path === '/') {
+      path = '';
     }
 
     if (this.channel.cmsPreviewPrefix) {
-      url += '/' + this.channel.cmsPreviewPrefix;
+      path += '/' + this.channel.cmsPreviewPrefix;
     }
+    return path;
+  }
+
+  getUrl(path) {
+    let url = this.getPreviewPath();
 
     if (this.channel.mountPath) {
       url += this.channel.mountPath;
