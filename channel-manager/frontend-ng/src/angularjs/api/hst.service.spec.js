@@ -25,7 +25,8 @@ describe('HstService', function () {
   var apiUrlPrefix = '/testApiUrlPrefix';
   var rootUuid = 'cafebabe';
   var hostname = 'test.host.name';
-  var handshakeUrl = contextPath + apiUrlPrefix + '/' + rootUuid + './composermode/' + hostname;
+  var mountId = '1234';
+  var handshakeUrl = contextPath + apiUrlPrefix + '/' + rootUuid + './composermode/' + hostname + '/' + mountId;
 
   beforeEach(function () {
     module('hippo-cm-api');
@@ -74,7 +75,7 @@ describe('HstService', function () {
 
   it('should construct a valid handshake url when initializing a channel session', function () {
     $httpBackend.expectGET(handshakeUrl).respond(200);
-    hstService.initializeSession(hostname);
+    hstService.initializeSession(hostname, mountId);
     $httpBackend.flush();
   });
 
@@ -94,7 +95,7 @@ describe('HstService', function () {
     it('should resolve a promise', function () {
       var promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200);
-      hstService.initializeSession(hostname).then(promiseSpy);
+      hstService.initializeSession(hostname, mountId).then(promiseSpy);
       $httpBackend.flush();
       expect(promiseSpy).toHaveBeenCalled();
     });
@@ -102,7 +103,7 @@ describe('HstService', function () {
     it('should resolve with true if response data parameter canWrite is true', function () {
       var promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200, { data: { canWrite: true } });
-      hstService.initializeSession(hostname).then(promiseSpy);
+      hstService.initializeSession(hostname, mountId).then(promiseSpy);
       $httpBackend.flush();
       expect(promiseSpy).toHaveBeenCalledWith(true);
     });
@@ -110,7 +111,7 @@ describe('HstService', function () {
     it('should resolve with false if response data parameter canWrite is false', function () {
       var promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200, { data: { canWrite: false } });
-      hstService.initializeSession(hostname).then(promiseSpy);
+      hstService.initializeSession(hostname, mountId).then(promiseSpy);
       $httpBackend.flush();
       expect(promiseSpy).toHaveBeenCalledWith(false);
     });
@@ -118,7 +119,7 @@ describe('HstService', function () {
     it('should resolve with false if response data parameter is missing', function () {
       var promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200);
-      hstService.initializeSession(hostname).then(promiseSpy);
+      hstService.initializeSession(hostname, mountId).then(promiseSpy);
       $httpBackend.flush();
       expect(promiseSpy).toHaveBeenCalledWith(false);
     });
@@ -128,7 +129,7 @@ describe('HstService', function () {
     var catchSpy = jasmine.createSpy('catchSpy');
     $httpBackend.expectGET(handshakeUrl).respond(500);
     hstService
-      .initializeSession(hostname)
+      .initializeSession(hostname, mountId)
       .catch(catchSpy);
 
     $httpBackend.flush();
