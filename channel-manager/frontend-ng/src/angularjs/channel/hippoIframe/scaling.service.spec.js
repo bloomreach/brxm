@@ -38,7 +38,7 @@ describe('ScalingService', function () {
     elementsToScale = jasmine.createSpyObj('elementsToScale', ['velocity']);
 
     spyOn(iframeJQueryElement, 'find').and.callFake(function (selector) {
-      return selector === '.cm-scale' ? elementsToScale : $j(selector);
+      return selector === '.cm-scale' ? elementsToScale : $j('#test-hippo-iframe ' + selector);
     });
   });
 
@@ -141,7 +141,7 @@ describe('ScalingService', function () {
 
     expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
     expect(elementsToScale.velocity).toHaveBeenCalledWith('scroll', {
-      container: $j('.channel-iframe-base'),
+      container: baseJQueryElement,
       offset: -25,
       duration: ScalingService.scaleDuration,
       easing: ScalingService.scaleEasing,
