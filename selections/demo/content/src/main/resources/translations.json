@@ -1,0 +1,22 @@
+{"hippo:types": {
+  "selectiondemo:textdocument":   {
+    "nl":     {
+      "selectiondemo:choice.true": "Ja",
+      "selectiondemo:choice.false": "Nee"
+    },
+    "en":     {
+      "selectiondemo:choice.true": "Yes",
+      "selectiondemo:choice.false": "No"
+    }
+  },
+  "selectiondemo:multilingualdocument":   {
+    "nl":     {
+      "selectiondemo:choice.true": "Ja",
+      "selectiondemo:choice.false": "Nee"
+    },
+    "en":     {
+      "selectiondemo:choice.true": "Yes",
+      "selectiondemo:choice.false": "No"
+    }
+  }
+}}
