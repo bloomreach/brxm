@@ -39,8 +39,8 @@ export class HstService {
     this.config = ConfigService;
   }
 
-  initializeSession(hostname) {
-    return this.doGet(this.config.rootUuid, 'composermode', hostname)
+  initializeSession(hostname, mountId) {
+    return this.doGet(this.config.rootUuid, 'composermode', hostname, mountId)
       .then((response) => !!(response && response.data && response.data.canWrite));
   }
 
