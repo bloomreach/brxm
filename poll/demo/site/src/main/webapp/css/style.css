@@ -1,0 +1,101 @@
+/*
+ * Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+body {
+  font-family: Verdana,Helvetica,sans-serif;
+}
+
+#content {
+  float: left;
+  width: 60%;
+  position: relative;
+}
+
+#content .overview-item {
+  position: relative;
+}
+
+#leftmenu, #right {
+  float:left;
+  width:20%;
+}
+
+ul#paging-nav {
+  margin-left:11.5em;
+}
+
+ul#paging-nav li {
+  display:inline;
+}
+
+ul#paging-nav li.active {
+  font-weight:bold;
+}
+
+ul.sitenav {
+  list-style: none;
+}
+
+div.lightgrey {
+ background-color:#D3D3D3;
+}
+
+div.grey {
+ background-color:#C0C0C0;
+}
+
+ul.hst-container {
+  padding:0;
+  margin:0;
+}
+
+ul.hst-container li {
+  list-style-type:none;
+}
+
+h1.subsite {
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  padding: 10px 0 10px;
+}
+
+@media print {
+/* print specific styling here*/
+}
+
+#poll {
+    margin: 0 20px 20px 0;
+    border: 1px solid #d3d3d3;
+    width: 500px;
+    padding: 10px;
+    float: left;
+}
+
+#poll li {
+    display: block;
+    float: left;
+    width: 400px;
+    margin: 0 0 5px 0;
+    font-size: 12px;
+}
+
+.poll-graph-bar .poll-meter {
+    background-color: #0069ab;
+    height: 14px;
+    display: block;
+    float: left;
+    padding: 0;
+    margin: 0;
+}
