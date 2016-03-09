@@ -19,6 +19,7 @@ import { hippoIframe } from './hippoIframe.directive';
 import { HippoIframeCtrl } from './hippoIframe.controller';
 import { HstCommentsProcessorService } from './hstCommentsProcessor.service';
 import { LinkProcessorService } from './linkProcessor.service';
+import { ScalingService } from './scaling.service';
 
 export const channelHippoIframeModule = angular
   .module('hippo-cm.channel.hippoIframe', [
@@ -27,4 +28,5 @@ export const channelHippoIframeModule = angular
   .directive('hippoIframe', hippoIframe)
   .controller('hippoIframeCtrl', HippoIframeCtrl)
   .service('hstCommentsProcessorService', HstCommentsProcessorService)
-  .service('linkProcessorService', LinkProcessorService);
+  .service('linkProcessorService', LinkProcessorService)
+  .service('ScalingService', ScalingService);

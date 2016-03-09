@@ -19,6 +19,7 @@ describe('ChannelCtrl', function () {
 
   var ChannelService;
   var ComponentsService;
+  var ScalingService;
   var ChannelCtrl;
   var $rootScope;
   var $q;
@@ -46,9 +47,15 @@ describe('ChannelCtrl', function () {
       ]);
       ComponentsService.getComponents.and.returnValue(resolvedPromise);
 
+      ScalingService = jasmine.createSpyObj('ScalingService', [
+        'init',
+        'updatePushWidth',
+      ]);
+
       ChannelCtrl = $controller('ChannelCtrl', {
         ComponentsService: ComponentsService,
         ChannelService: ChannelService,
+        ScalingService: ScalingService,
       });
     });
   });

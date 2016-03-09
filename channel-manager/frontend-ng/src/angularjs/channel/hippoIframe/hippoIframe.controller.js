@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-const ANGULAR_MATERIAL_SIDENAV_EASING = [0.25, 0.8, 0.25, 1];
-const ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS = 400;
-
 export class HippoIframeCtrl {
-  constructor($scope, $rootScope, $element, $window, linkProcessorService, hstCommentsProcessorService, ChannelService,
-              PageStructureService, OverlaySyncService) {
+  constructor($rootScope, $element, linkProcessorService, hstCommentsProcessorService, ChannelService,
+              PageStructureService, OverlaySyncService, ScalingService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
@@ -33,26 +30,7 @@ export class HippoIframeCtrl {
     this.iframeJQueryElement.on('load', () => this.onLoad());
 
     OverlaySyncService.init(this.iframeJQueryElement, $element.find('.overlay'));
-
-    this.elementsToScale = $('.cm-scale');
-    this.scrollTop = 0;
-    this.scaleFactor = 1.0;
-    this.scaleDuration = ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS;
-    this.scaleEasing = ANGULAR_MATERIAL_SIDENAV_EASING;
-
-    $element.scroll(() => {
-      this.scrollTop = $element.scrollTop();
-    });
-
-    $scope.$watch('iframe.pushWidth', () => {
-      this._updateScaling($element);
-    });
-
-    angular.element($window).bind('resize', () => {
-      $rootScope.$apply(() => {
-        this._updateScaling($element);
-      });
-    });
+    ScalingService.init($element);
   }
 
   onLoad() {
@@ -84,39 +62,6 @@ export class HippoIframeCtrl {
 
   getContainers() {
     return this.selectMode ? this.PageStructureService.containers : [];
-  }
-
-  _updateScaling($element) {
-    const canvasWidth = $element.find('.channel-iframe-canvas').width();
-    const visibleCanvasWidth = canvasWidth - this.pushWidth;
-
-    const oldScale = this.scaleFactor;
-    const newScale = visibleCanvasWidth / canvasWidth;
-
-    const startScaling = oldScale === 1.0 && newScale !== 1.0;
-    const stopScaling = oldScale !== 1.0 && newScale === 1.0;
-    const animationDuration = (startScaling || stopScaling) ? this.scaleDuration : 0;
-
-    this.elementsToScale.velocity('finish');
-
-    if (startScaling || stopScaling) {
-      this.elementsToScale.velocity('scroll', {
-        container: $element,
-        offset: startScaling ? newScale * this.scrollTop : this.scrollTop / oldScale,
-        duration: animationDuration,
-        easing: this.scaleEasing,
-        queue: false,
-      });
-    }
-
-    this.elementsToScale.velocity({
-      scale: newScale,
-    }, {
-      duration: animationDuration,
-      easing: this.scaleEasing,
-    });
-
-    this.scaleFactor = newScale;
   }
 
 }

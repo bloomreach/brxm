@@ -18,17 +18,17 @@ const SIDENAVS = ['components'];
 
 export class ChannelCtrl {
 
-  constructor($log, $mdSidenav, ChannelService) {
+  constructor($log, $mdSidenav, ChannelService, ScalingService) {
     'ngInject';
 
     this.$log = $log;
     this.$mdSidenav = $mdSidenav;
     this.ChannelService = ChannelService;
+    this.ScalingService = ScalingService;
 
     this.iframeUrl = ChannelService.getUrl();
     this.isEditMode = false;
     this.isCreatingPreview = false;
-    this.pushWidth = 0; // all sidenavs are closed to start with
   }
 
   toggleEditMode() {
@@ -46,7 +46,7 @@ export class ChannelCtrl {
         this.$mdSidenav(sidenav).close();
       }
     });
-    this._updatePushWidth();
+    this.ScalingService.updatePushWidth(0);
   }
 
   _createPreviewConfiguration() {
@@ -68,7 +68,7 @@ export class ChannelCtrl {
       }
     });
     this.$mdSidenav(name).toggle();
-    this._updatePushWidth();
+    this.ScalingService.updatePushWidth(this._isSidenavOpen(name) ? $('.md-sidenav-left').width() : 0);
   }
 
   getCatalog() {
@@ -77,15 +77,5 @@ export class ChannelCtrl {
 
   _isSidenavOpen(name) {
     return this.$mdSidenav(name).isOpen();
-  }
-
-  _isAnySidenavOpen() {
-    return SIDENAVS.some((sidenav) => {
-      return this._isSidenavOpen(sidenav);
-    });
-  }
-
-  _updatePushWidth() {
-    this.pushWidth = this._isAnySidenavOpen() ? $('.md-sidenav-left').width() : 0;
   }
 }
