@@ -18,13 +18,14 @@ const SIDENAVS = ['components'];
 
 export class ChannelCtrl {
 
-  constructor($log, $mdSidenav, ChannelService, ScalingService) {
+  constructor($log, $mdSidenav, ChannelService, ScalingService, SessionService) {
     'ngInject';
 
     this.$log = $log;
     this.$mdSidenav = $mdSidenav;
     this.ChannelService = ChannelService;
     this.ScalingService = ScalingService;
+    this.SessionService = SessionService;
 
     this.iframeUrl = ChannelService.getUrl();
     this.isEditMode = false;
@@ -38,6 +39,10 @@ export class ChannelCtrl {
       this.isEditMode = !this.isEditMode;
     }
     this._closeSidenavs();
+  }
+
+  isEditable() {
+    return this.SessionService.hasWriteAccess();
   }
 
   _closeSidenavs() {

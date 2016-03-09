@@ -22,7 +22,9 @@
       {{ 'TOOLBAR_BUTTON_COMPONENTS' | translate }}
     </md-button>
     <span flex></span>
-    <md-button ng-click="channelCtrl.toggleEditMode()" ng-disabled="channelCtrl.isCreatingPreview">
+    <md-button ng-if="channelCtrl.isEditable()"
+               ng-disabled="channelCtrl.isCreatingPreview"
+               ng-click="channelCtrl.toggleEditMode()">
       <md-icon class="material-icons">{{ channelCtrl.isEditMode ? 'remove_red_eye' : 'mode_edit' }}</md-icon>
       {{ channelCtrl.isEditMode ? 'TOOLBAR_SWITCH_VIEWER_MODE_VIEW' : 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
     </md-button>

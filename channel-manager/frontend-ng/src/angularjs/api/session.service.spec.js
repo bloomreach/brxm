@@ -38,7 +38,7 @@ describe('SessionService', function () {
   });
 
   it('should always be readonly before initialization', function () {
-    expect(sessionService.canWrite).toEqual(false);
+    expect(sessionService.hasWriteAccess()).toEqual(false);
   });
 
   it('should resolve a promise with the channel argument when initialization is successful', function () {
@@ -67,7 +67,7 @@ describe('SessionService', function () {
     sessionService.initialize(channelMock);
     deferred.resolve(true);
     $rootScope.$apply();
-    expect(sessionService.canWrite).toEqual(true);
+    expect(sessionService.hasWriteAccess()).toEqual(true);
   });
 
 });
