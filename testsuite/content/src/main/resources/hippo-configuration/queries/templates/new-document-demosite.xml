@@ -1,15 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="new-document-demosite" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="new-document-demosite">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippostd:templatequery</sv:value>
-  </sv:property>
-  <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>hippo:translated</sv:value>
   </sv:property>
   <sv:property sv:name="hippostd:icon" sv:type="String">
     <sv:value>adddocument_ico</sv:value>
   </sv:property>
-  <sv:property sv:multiple="true" sv:name="hippostd:modify" sv:type="String">
+  <sv:property sv:name="hippostd:modify" sv:type="String" sv:multiple="true">
     <sv:value>./_name</sv:value>
     <sv:value>$name</sv:value>
     <sv:value>./hippotranslation:locale</sv:value>
@@ -33,74 +29,4 @@
   <sv:property sv:name="jcr:statement" sv:type="String">
     <sv:value>//element(*,hipposysedit:namespacefolder)/demosite/element(*,hipposysedit:templatetype)/hipposysedit:prototypes/element(hipposysedit:prototype,hippo:document)</sv:value>
   </sv:property>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:class" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>en</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>new document</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:class" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>nl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>nieuw document</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:class" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>fr</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>nouveau document</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:class" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>it</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>nouvo documento</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:class" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>de</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Neues Dokument</sv:value>
-    </sv:property>
-  </sv:node>
 </sv:node>
