@@ -28,7 +28,7 @@ public class ImageCropSettingsTest {
 
     @Test
     public void testFixedDimensionUpscaling() {
-        ImageCropSettings imageCropSettings = new ImageCropSettings("", "", new Dimension(1000, 2000), new Dimension(100, 200), new Dimension(10, 20), true);
+        ImageCropSettings imageCropSettings = new ImageCropSettings("", "", new Dimension(1000, 2000), new Dimension(100, 200), new Dimension(10, 20), true, false);
         assertEquals(ImageCropSettings.FIXED_BOTH, imageCropSettings.getFixedDimension());
         assertEquals(16,imageCropSettings.getMinimumWidth());
         assertEquals(16,imageCropSettings.getMinimumHeight());
@@ -36,7 +36,7 @@ public class ImageCropSettingsTest {
 
     @Test
     public void testFixedDimensionNoUpscaling() {
-        ImageCropSettings imageCropSettings = new ImageCropSettings("", "", new Dimension(1000, 2000), new Dimension(100, 200), new Dimension(10, 20), false);
+        ImageCropSettings imageCropSettings = new ImageCropSettings("", "", new Dimension(1000, 2000), new Dimension(100, 200), new Dimension(10, 20), false, false);
         assertEquals(ImageCropSettings.FIXED_BOTH, imageCropSettings.getFixedDimension());
         assertEquals(100,imageCropSettings.getMinimumWidth());
         assertEquals(200,imageCropSettings.getMinimumHeight());
@@ -44,7 +44,7 @@ public class ImageCropSettingsTest {
 
     @Test
     public void testFixedWidthUpscaling() {
-        ImageCropSettings imageCropSettings = new ImageCropSettings("", "", new Dimension(1000, 2000), new Dimension(100, 0), new Dimension(10, 20), true);
+        ImageCropSettings imageCropSettings = new ImageCropSettings("", "", new Dimension(1000, 2000), new Dimension(100, 0), new Dimension(10, 20), true, false);
         assertEquals(ImageCropSettings.FIXED_WIDTH, imageCropSettings.getFixedDimension());
         assertEquals(16,imageCropSettings.getMinimumWidth());
         assertEquals(16,imageCropSettings.getMinimumHeight());
@@ -52,7 +52,7 @@ public class ImageCropSettingsTest {
 
     @Test
     public void testFixedWidthNoUpscaling() {
-        ImageCropSettings imageCropSettings = new ImageCropSettings("", "", new Dimension(1000, 2000), new Dimension(100, 0), new Dimension(10, 20), false);
+        ImageCropSettings imageCropSettings = new ImageCropSettings("", "", new Dimension(1000, 2000), new Dimension(100, 0), new Dimension(10, 20), false, false);
         assertEquals(ImageCropSettings.FIXED_WIDTH, imageCropSettings.getFixedDimension());
         assertEquals(100,imageCropSettings.getMinimumWidth());
         assertEquals(16,imageCropSettings.getMinimumHeight());
@@ -60,7 +60,7 @@ public class ImageCropSettingsTest {
 
     @Test
     public void testFixedHeightUpscaling() {
-        ImageCropSettings imageCropSettings = new ImageCropSettings("", "", new Dimension(1000, 2000), new Dimension(0, 200), new Dimension(10, 20), true);
+        ImageCropSettings imageCropSettings = new ImageCropSettings("", "", new Dimension(1000, 2000), new Dimension(0, 200), new Dimension(10, 20), true, false);
         assertEquals(ImageCropSettings.FIXED_HEIGHT, imageCropSettings.getFixedDimension());
         assertEquals(16,imageCropSettings.getMinimumWidth());
         assertEquals(16,imageCropSettings.getMinimumHeight());
@@ -68,7 +68,7 @@ public class ImageCropSettingsTest {
 
     @Test
     public void testFixedHeightNoUpscaling() {
-        ImageCropSettings imageCropSettings = new ImageCropSettings("", "", new Dimension(1000, 2000), new Dimension(0, 200), new Dimension(10, 20), false);
+        ImageCropSettings imageCropSettings = new ImageCropSettings("", "", new Dimension(1000, 2000), new Dimension(0, 200), new Dimension(10, 20), false, false);
         assertEquals(ImageCropSettings.FIXED_HEIGHT, imageCropSettings.getFixedDimension());
         assertEquals(16,imageCropSettings.getMinimumWidth());
         assertEquals(200,imageCropSettings.getMinimumHeight());

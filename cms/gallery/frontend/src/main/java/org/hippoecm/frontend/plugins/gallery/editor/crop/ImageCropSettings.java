@@ -24,12 +24,11 @@ import org.hippoecm.frontend.plugins.yui.widget.WidgetSettings;
 public class ImageCropSettings extends WidgetSettings {
 
     private static final int MAX_PREVIEW_RESOLUTION = 1600;
-
+    private static final long serialVersionUID = 1L;
     static final String FIXED_NONE = "";
     static final String FIXED_BOTH = "both";
     static final String FIXED_WIDTH = "width";
     static final String FIXED_HEIGHT = "height";
-
     private String regionInputId;
     private String imagePreviewContainerId;
     
@@ -46,12 +45,16 @@ public class ImageCropSettings extends WidgetSettings {
     private boolean upscalingEnabled;
     private boolean previewVisible;
     private boolean status;
+    /**
+     * fit image into view when dialog is in full screen mode
+     */
+    private boolean fitFullScreenSize;
 
     private String fixedDimension = FIXED_NONE;
     private String thumbnailSizeLabelId = "";
 
     public ImageCropSettings(String regionInputId, String imagePreviewContainerId, Dimension originalImageDimension,
-                             Dimension configuredDimension, Dimension thumbnailDimension, boolean upscalingEnabled) {
+                             Dimension configuredDimension, Dimension thumbnailDimension, boolean upscalingEnabled, boolean fitFullScreenSize) {
         this.regionInputId = regionInputId;
         this.imagePreviewContainerId = imagePreviewContainerId;
 
@@ -61,6 +64,7 @@ public class ImageCropSettings extends WidgetSettings {
         this.thumbnailHeight = (int) thumbnailDimension.getHeight();
 
         this.upscalingEnabled = upscalingEnabled;
+        this.fitFullScreenSize = fitFullScreenSize;
         previewVisible = thumbnailWidth <= MAX_PREVIEW_RESOLUTION;
 
         if (initialX + configuredDimension.getWidth() >= originalWidth) {
@@ -90,10 +94,10 @@ public class ImageCropSettings extends WidgetSettings {
     }
 
     public ImageCropSettings(String regionInputId, String imagePreviewContainerId, Dimension originalImageDimension,
-                             Dimension configuredDimension, Dimension thumbnailDimension, boolean upscalingEnabled,
+                             Dimension configuredDimension, Dimension thumbnailDimension, boolean upscalingEnabled, boolean fitFullScreenSize,
                              String thumbnailSizeLabelId) {
     	this(regionInputId, imagePreviewContainerId, originalImageDimension, configuredDimension, thumbnailDimension, 
-                upscalingEnabled);
+                upscalingEnabled, fitFullScreenSize);
     	
         this.thumbnailSizeLabelId = thumbnailSizeLabelId;
     }
@@ -216,5 +220,13 @@ public class ImageCropSettings extends WidgetSettings {
 
     public void setThumbnailSizeLabelId(String thumbnailSizeLabelId){
     	this.thumbnailSizeLabelId = thumbnailSizeLabelId;
+    }
+
+    public boolean isFitFullScreenSize() {
+        return fitFullScreenSize;
+    }
+
+    public void setFitFullScreenSize(final boolean fitFullScreenSize) {
+        this.fitFullScreenSize = fitFullScreenSize;
     }
 }
