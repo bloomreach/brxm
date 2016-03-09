@@ -133,13 +133,15 @@ public class RootResource extends AbstractConfigResource {
     }
 
     @GET
-    @Path("/composermode/{renderingHost}/")
+    @Path("/composermode/{renderingHost}/{mountId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response composerModeGet(@Context HttpServletRequest servletRequest,
-                                    @PathParam("renderingHost") String renderingHost) {
+                                    @PathParam("renderingHost") String renderingHost,
+                                    @PathParam("mountId") String mountId) {
         HttpSession session = servletRequest.getSession(true);
         session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
         session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
+        session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
         boolean canWrite;
         try {
             HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
