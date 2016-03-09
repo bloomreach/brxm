@@ -33,9 +33,9 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/trunk/</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/content-blocks/trunk/</url>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-plugin-content-blocks.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-plugin-content-blocks.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-plugin-content-blocks</url>
   </scm>
 
   <properties>
@@ -122,7 +122,13 @@
             <configuration>
               <excludes combine.children="append">
                 <!-- repository content XML -->
+                <exclude>README.md</exclude>
                 <exclude>src/main/resources/*.xml</exclude>
+                <exclude>demo/bootstrap/configuration/src/main/resources/**/*.xml</exclude>
+                <exclude>demo/bootstrap/content/src/main/resources/**/*.xml</exclude>
+                <!-- 3rd party -->
+                <exclude>demo/site/src/main/webapp/js/html5shiv.js</exclude>
+                <exclude>demo/site/src/main/webapp/css/style.css</exclude>
               </excludes>
             </configuration>
           </plugin>
