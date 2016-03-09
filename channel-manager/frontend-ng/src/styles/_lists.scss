@@ -15,4 +15,8 @@
 md-list-item .component-icon {
   width: 40px;
   padding-right: 4px;
+
+  img {
+    max-width: 100%;
+  }
 }
