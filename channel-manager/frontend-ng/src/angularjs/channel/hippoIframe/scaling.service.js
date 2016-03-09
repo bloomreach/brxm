@@ -24,7 +24,7 @@ export class ScalingService {
 
     this.$rootScope = $rootScope;
 
-    this.pushWidth = 0; // all sidenavs are closed to start with
+    this.pushWidth = 0; // all sidenavs are initially closed
     this.scaleFactor = 1.0;
     this.scaleDuration = ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS;
     this.scaleEasing = ANGULAR_MATERIAL_SIDENAV_EASING;
