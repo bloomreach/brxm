@@ -45,12 +45,14 @@ export class ScalingService {
 
   setPushWidth(pushWidth) {
     this.pushWidth = pushWidth;
-    if (this.hippoIframeJQueryElement) {
-      this._updateScaling();
-    }
+    this._updateScaling();
   }
 
   _updateScaling() {
+    if (!this.hippoIframeJQueryElement) {
+      return;
+    }
+
     const iframeBaseJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-base');
     const elementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
     const canvasWidth = this.hippoIframeJQueryElement.find('.channel-iframe-canvas').width();
