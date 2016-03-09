@@ -38,9 +38,9 @@
   </description>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/trunk/</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/trunk/</url>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-plugin-dashboard-document-wizard.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-plugin-dashboard-document-wizard.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-plugin-dashboard-document-wizard</url>
   </scm>
 
   <issueManagement>
@@ -142,6 +142,18 @@
             <groupId>org.apache.rat</groupId>
             <artifactId>apache-rat-plugin</artifactId>
             <inherited>false</inherited>
+            <configuration>
+              <excludes combine.children="append">
+                <exclude>README.md</exclude>
+                <!-- 3rd party -->
+                <exclude>demo/site/src/main/webapp/js/*.js</exclude>
+                <exclude>demo/site/src/main/webapp/fonts/*</exclude>
+                <!-- repository content XML -->
+                <exclude>demo/bootstrap/configuration/src/main/resources/**/*.xml</exclude>
+                <exclude>demo/bootstrap/content/src/main/resources/**/*.xml</exclude>
+                <exclude>demo/essentials/src/main/resources/*.xml</exclude>
+              </excludes>
+            </configuration>
           </plugin>
         </plugins>
       </build>
