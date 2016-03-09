@@ -19,10 +19,11 @@ import { ComponentElement } from './element/componentElement';
 
 export class PageStructureService {
 
-  constructor($log, HstConstants, hstCommentsProcessorService, HstService, ChannelService, CmsService, PageMetaDataService) {
+  constructor($q, $log, HstConstants, hstCommentsProcessorService, HstService, ChannelService, CmsService, PageMetaDataService) {
     'ngInject';
 
     // Injected
+    this.$q = $q;
     this.$log = $log;
     this.HST = HstConstants;
     this.HstService = HstService;
@@ -90,7 +91,7 @@ export class PageStructureService {
   /**
    * Remove the component identified by given Id
    * @param componentId
-   * @returns {*} the removed component object
+   * @returns {*} a promise with removed successfully component
    */
   removeComponent(componentId) {
     let component = null;
@@ -100,13 +101,13 @@ export class PageStructureService {
     });
 
     if (!foundContainer) {
-      console.log('Remove component ' + componentId + ' failed');
-      return null;
+      return this.$q.reject();
     }
     // request back-end to remove component
     return this._removeHstComponent(foundContainer.getId(), componentId)
       .then(() => {
         component.removeFromDOM();
+        return component;
       });
   }
 
