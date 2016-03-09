@@ -51,7 +51,7 @@ export class ChannelCtrl {
         this.$mdSidenav(sidenav).close();
       }
     });
-    this.ScalingService.updatePushWidth(0);
+    this.ScalingService.setPushWidth(0);
   }
 
   _createPreviewConfiguration() {
@@ -73,7 +73,7 @@ export class ChannelCtrl {
       }
     });
     this.$mdSidenav(name).toggle();
-    this.ScalingService.updatePushWidth(this._isSidenavOpen(name) ? $('.md-sidenav-left').width() : 0);
+    this.ScalingService.setPushWidth(this._isSidenavOpen(name) ? $('.md-sidenav-left').width() : 0);
   }
 
   getCatalog() {

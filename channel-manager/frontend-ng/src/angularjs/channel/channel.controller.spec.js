@@ -49,7 +49,7 @@ describe('ChannelCtrl', function () {
 
       ScalingService = jasmine.createSpyObj('ScalingService', [
         'init',
-        'updatePushWidth',
+        'setPushWidth',
       ]);
 
       ChannelCtrl = $controller('ChannelCtrl', {

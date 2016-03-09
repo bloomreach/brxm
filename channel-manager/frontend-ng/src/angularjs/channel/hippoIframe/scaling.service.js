@@ -40,11 +40,10 @@ export class ScalingService {
 
   init(hippoIframeJQueryElement) {
     this.hippoIframeJQueryElement = hippoIframeJQueryElement;
-
     this._updateScaling();
   }
 
-  updatePushWidth(pushWidth) {
+  setPushWidth(pushWidth) {
     this.pushWidth = pushWidth;
     if (this.hippoIframeJQueryElement) {
       this._updateScaling();
