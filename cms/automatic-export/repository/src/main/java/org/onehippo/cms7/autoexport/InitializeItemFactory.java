@@ -62,7 +62,7 @@ class InitializeItemFactory {
             sequence = 30000.1;
         }
         else if (path.startsWith("/hippo:configuration/hippo:translations")) {
-            sequence = 30000.1;
+            sequence = 30000.2;
             name = namePrefix + "translations";
             resourceBundles = "translations.json";
         }
