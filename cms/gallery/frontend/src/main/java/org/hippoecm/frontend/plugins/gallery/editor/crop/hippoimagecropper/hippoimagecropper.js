@@ -299,7 +299,7 @@ if (!YAHOO.hippo.ImageCropper) {
             calculateRatio: function(me) {
                 var fs = me.fullScreenMode;
                 // need this check here because of timing issue:
-                // it happens that original size is 0:
+                // it happens that original image size is 0 (async loading issue):
                 if (!me.initOriginal(me)) {
                     return;
                 }
@@ -335,7 +335,6 @@ if (!YAHOO.hippo.ImageCropper) {
             },
             initOriginal: function(me) {
                 if (!me.validSize(me)) {
-                    console.log("============ AGAIN ===========");
                     me.original_width = me.originalImage.offsetWidth;
                     me.original_height = me.originalImage.offsetHeight;
                     return me.validSize(me);
