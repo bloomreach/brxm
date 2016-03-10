@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+const SIDENAVS = ['components'];
+
 export class ChannelCtrl {
 
-  constructor(ChannelService, MountService, PageMetaDataService) {
+  constructor($log, $mdSidenav, ChannelService, ScalingService, SessionService) {
     'ngInject';
 
-    this.MountService = MountService;
-    this.PageMetaDataService = PageMetaDataService;
+    this.$log = $log;
+    this.$mdSidenav = $mdSidenav;
+    this.ChannelService = ChannelService;
+    this.ScalingService = ScalingService;
+    this.SessionService = SessionService;
 
     this.iframeUrl = ChannelService.getUrl();
     this.isEditMode = false;
@@ -27,17 +33,30 @@ export class ChannelCtrl {
   }
 
   toggleEditMode() {
-    if (!this.isEditMode && !this.PageMetaDataService.hasPreviewConfiguration()) {
+    if (!this.isEditMode && !this.ChannelService.hasPreviewConfiguration()) {
       this._createPreviewConfiguration();
     } else {
       this.isEditMode = !this.isEditMode;
     }
+    this._closeSidenavs();
+  }
+
+  isEditable() {
+    return this.SessionService.hasWriteAccess();
+  }
+
+  _closeSidenavs() {
+    SIDENAVS.forEach((sidenav) => {
+      if (this._isSidenavOpen(sidenav)) {
+        this.$mdSidenav(sidenav).close();
+      }
+    });
+    this.ScalingService.setPushWidth(0);
   }
 
   _createPreviewConfiguration() {
-    const currentMountId = this.PageMetaDataService.getMountId();
     this.isCreatingPreview = true;
-    this.MountService.createPreviewConfiguration(currentMountId)
+    this.ChannelService.createPreviewConfiguration()
       .then(() => {
         this.isEditMode = true;
       })
@@ -47,4 +66,21 @@ export class ChannelCtrl {
       });
   }
 
+  toggleSidenav(name) {
+    SIDENAVS.forEach((sidenav) => {
+      if (sidenav !== name && this._isSidenavOpen(sidenav)) {
+        this.$mdSidenav(sidenav).close();
+      }
+    });
+    this.$mdSidenav(name).toggle();
+    this.ScalingService.setPushWidth(this._isSidenavOpen(name) ? $('.md-sidenav-left').width() : 0);
+  }
+
+  getCatalog() {
+    return this.ChannelService.getCatalog();
+  }
+
+  _isSidenavOpen(name) {
+    return this.$mdSidenav(name).isOpen();
+  }
 }

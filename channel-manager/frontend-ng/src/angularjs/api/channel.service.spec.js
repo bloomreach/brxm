@@ -20,6 +20,7 @@ describe('ChannelService', function () {
   var $q;
   var $rootScope;
   var ChannelService;
+  var CatalogServiceMock;
   var SessionServiceMock;
   var ConfigServiceMock;
   var HstServiceMock;
@@ -39,10 +40,14 @@ describe('ChannelService', function () {
       },
     };
 
-    ConfigServiceMock = {
-      apiUrlPrefix: '/testApiUrlPrefix',
-      rootUuid: 'testRootUuid',
-    };
+    CatalogServiceMock = jasmine.createSpyObj('CatalogService', [
+      'load',
+      'getComponents',
+    ]);
+
+    ConfigServiceMock = jasmine.createSpyObj('ConfigService', ['setContextPath']);
+    ConfigServiceMock.apiUrlPrefix = '/testApiUrlPrefix';
+    ConfigServiceMock.rootUuid = 'testRootUuid';
 
     HstServiceMock = jasmine.createSpyObj('HstService', ['setContextPath', 'getChannel']);
 
@@ -50,6 +55,7 @@ describe('ChannelService', function () {
       $provide.value('SessionService', SessionServiceMock);
       $provide.value('ConfigService', ConfigServiceMock);
       $provide.value('HstService', HstServiceMock);
+      $provide.value('CatalogService', CatalogServiceMock);
     });
 
     inject(function (_$q_, _$rootScope_, _ChannelService_) {
@@ -82,34 +88,44 @@ describe('ChannelService', function () {
     expect(promiseSpy).toHaveBeenCalledWith(channelMock);
   });
 
-  it('should return a url that starts with the contextPath', function () {
-    ChannelService.load({ contextPath: '/test' });
+  it('should ignore the contextPath if it is /', function () {
+    ChannelService.load({ contextPath: '/' });
     $rootScope.$digest();
-    expect(ChannelService.getUrl('/optional/path')).toEqual('/test/optional/path');
+    expect(ChannelService.getPreviewPath()).toEqual('');
+    expect(ChannelService.getUrl()).toEqual('');
+
+    ChannelService.load({ contextPath: '/', cmsPreviewPrefix: 'cmsPreviewPrefix' });
+    $rootScope.$digest();
+    expect(ChannelService.getPreviewPath()).toEqual('/cmsPreviewPrefix');
+    expect(ChannelService.getUrl()).toEqual('/cmsPreviewPrefix');
+  });
+
+  it('should return a preview path that starts with the contextPath', function () {
+    ChannelService.load({ contextPath: '/contextPath' });
+    $rootScope.$digest();
+    expect(ChannelService.getPreviewPath()).toEqual('/contextPath');
+
+    ChannelService.load({ contextPath: '/contextPath', cmsPreviewPrefix: 'cmsPreviewPrefix' });
+    $rootScope.$digest();
+    expect(ChannelService.getPreviewPath()).toEqual('/contextPath/cmsPreviewPrefix');
   });
 
   it('should return a url that ends with a slash if it equals the contextPath', function () {
-    ChannelService.load({ contextPath: '/test' });
+    ChannelService.load({ contextPath: '/contextPath' });
     $rootScope.$digest();
-    expect(ChannelService.getUrl()).toEqual('/test/');
-  });
-
-  it('should return a url without the contextPath if it is root', function () {
-    ChannelService.load({ contextPath: '/' });
-    $rootScope.$digest();
-    expect(ChannelService.getUrl()).toEqual('');
-  });
-
-  it('should return a url with the cmsPreviewPrefix appended after the contextPath with a slash', function () {
-    ChannelService.load({ contextPath: '/test', cmsPreviewPrefix: 'cmsPreviewPrefix' });
-    $rootScope.$digest();
-    expect(ChannelService.getUrl()).toEqual('/test/cmsPreviewPrefix');
+    expect(ChannelService.getUrl()).toEqual('/contextPath/');
   });
 
   it('should return a url with the mountPath appended after the cmsPreviewPrefix', function () {
-    ChannelService.load({ contextPath: '/test', cmsPreviewPrefix: 'cmsPreviewPrefix', mountPath: '/mountPath' });
+    ChannelService.load({ contextPath: '/contextPath', cmsPreviewPrefix: 'cmsPreviewPrefix', mountPath: '/mountPath' });
     $rootScope.$digest();
-    expect(ChannelService.getUrl()).toEqual('/test/cmsPreviewPrefix/mountPath');
+    expect(ChannelService.getUrl()).toEqual('/contextPath/cmsPreviewPrefix/mountPath');
+  });
+
+  it('should append argument path to the url', function () {
+    ChannelService.load({ contextPath: '/contextPath', cmsPreviewPrefix: 'cmsPreviewPrefix', mountPath: '/mountPath' });
+    $rootScope.$digest();
+    expect(ChannelService.getUrl('/optional/path')).toEqual('/contextPath/cmsPreviewPrefix/mountPath/optional/path');
   });
 
   it('should return the mountId of the current channel', function () {
@@ -118,7 +134,7 @@ describe('ChannelService', function () {
     expect(ChannelService.getId()).toEqual('test-id');
   });
 
-  it('should update the HstService\'s context path when the channel reference is updated', function () {
+  it('should update the ConfigService\'s context path when the channel reference is updated', function () {
     var channelA = {
       id: 'channelA',
       contextPath: '/a',
@@ -130,11 +146,11 @@ describe('ChannelService', function () {
 
     ChannelService.load(channelA);
     $rootScope.$digest();
-    expect(HstServiceMock.setContextPath).toHaveBeenCalledWith(channelA.contextPath);
+    expect(ConfigServiceMock.setContextPath).toHaveBeenCalledWith(channelA.contextPath);
 
     ChannelService.load(channelB);
     $rootScope.$digest();
-    expect(HstServiceMock.setContextPath).toHaveBeenCalledWith(channelB.contextPath);
+    expect(ConfigServiceMock.setContextPath).toHaveBeenCalledWith(channelB.contextPath);
   });
 
   it('should switch to a new channel', function () {
@@ -160,5 +176,20 @@ describe('ChannelService', function () {
     expect(ChannelService.getChannel()).toEqual(channelB);
   });
   // TODO: add a test where the server returns an error upon the ChannelService's request for channel details.
+
+  it('should trigger loading of the channel\'s catalog', function () {
+    ChannelService.load({ mountId: '1234' });
+    $rootScope.$digest();
+    expect(CatalogServiceMock.load).toHaveBeenCalledWith('1234');
+  });
+
+  it('should relay the request for catalog components to the CatalogService', function () {
+    var mockCatalog = [
+      { label: 'componentA' },
+      { label: 'componentB' },
+    ];
+    CatalogServiceMock.getComponents.and.returnValue(mockCatalog);
+    expect(ChannelService.getCatalog()).toEqual(mockCatalog);
+  });
 
 });

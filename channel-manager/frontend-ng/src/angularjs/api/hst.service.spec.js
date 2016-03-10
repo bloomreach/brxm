@@ -25,7 +25,8 @@ describe('HstService', function () {
   var apiUrlPrefix = '/testApiUrlPrefix';
   var rootUuid = 'cafebabe';
   var hostname = 'test.host.name';
-  var handshakeUrl = contextPath + apiUrlPrefix + '/' + rootUuid + './composermode/' + hostname;
+  var mountId = '1234';
+  var handshakeUrl = contextPath + apiUrlPrefix + '/' + rootUuid + './composermode/' + hostname + '/' + mountId;
 
   beforeEach(function () {
     module('hippo-cm-api');
@@ -33,7 +34,7 @@ describe('HstService', function () {
     ConfigServiceMock = {
       apiUrlPrefix: apiUrlPrefix,
       cmsUser: 'testUser',
-      defaultContextPath: contextPath,
+      contextPath: contextPath,
       rootUuid: rootUuid,
     };
 
@@ -56,10 +57,6 @@ describe('HstService', function () {
     expect(hstService).toBeDefined();
   });
 
-  it('should have a default contextPath', function () {
-    expect(hstService.getContextPath()).toEqual(ConfigServiceMock.defaultContextPath);
-  });
-
   it('should prefix all API urls with the context path and api url prefix', function () {
     expect(hstService._createApiUrl('1234', ['somepath'])).toEqual('/testContextPath/testApiUrlPrefix/1234./somepath');
   });
@@ -78,7 +75,7 @@ describe('HstService', function () {
 
   it('should construct a valid handshake url when initializing a channel session', function () {
     $httpBackend.expectGET(handshakeUrl).respond(200);
-    hstService.initializeSession(hostname);
+    hstService.initializeSession(hostname, mountId);
     $httpBackend.flush();
   });
 
@@ -87,7 +84,7 @@ describe('HstService', function () {
     hstService.doGet('1234', 'test');
     $httpBackend.flush();
 
-    hstService.setContextPath('/newContextPath');
+    ConfigServiceMock.contextPath = '/newContextPath';
 
     $httpBackend.expectGET('/newContextPath/testApiUrlPrefix/1234./test').respond(200);
     hstService.doGet('1234', 'test');
@@ -98,7 +95,7 @@ describe('HstService', function () {
     it('should resolve a promise', function () {
       var promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200);
-      hstService.initializeSession(hostname).then(promiseSpy);
+      hstService.initializeSession(hostname, mountId).then(promiseSpy);
       $httpBackend.flush();
       expect(promiseSpy).toHaveBeenCalled();
     });
@@ -106,7 +103,7 @@ describe('HstService', function () {
     it('should resolve with true if response data parameter canWrite is true', function () {
       var promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200, { data: { canWrite: true } });
-      hstService.initializeSession(hostname).then(promiseSpy);
+      hstService.initializeSession(hostname, mountId).then(promiseSpy);
       $httpBackend.flush();
       expect(promiseSpy).toHaveBeenCalledWith(true);
     });
@@ -114,7 +111,7 @@ describe('HstService', function () {
     it('should resolve with false if response data parameter canWrite is false', function () {
       var promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200, { data: { canWrite: false } });
-      hstService.initializeSession(hostname).then(promiseSpy);
+      hstService.initializeSession(hostname, mountId).then(promiseSpy);
       $httpBackend.flush();
       expect(promiseSpy).toHaveBeenCalledWith(false);
     });
@@ -122,7 +119,7 @@ describe('HstService', function () {
     it('should resolve with false if response data parameter is missing', function () {
       var promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200);
-      hstService.initializeSession(hostname).then(promiseSpy);
+      hstService.initializeSession(hostname, mountId).then(promiseSpy);
       $httpBackend.flush();
       expect(promiseSpy).toHaveBeenCalledWith(false);
     });
@@ -132,7 +129,7 @@ describe('HstService', function () {
     var catchSpy = jasmine.createSpy('catchSpy');
     $httpBackend.expectGET(handshakeUrl).respond(500);
     hstService
-      .initializeSession(hostname)
+      .initializeSession(hostname, mountId)
       .catch(catchSpy);
 
     $httpBackend.flush();

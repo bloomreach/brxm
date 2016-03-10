@@ -109,8 +109,7 @@
             // old code: this.fireEvent('channelChanged');
           },
           propertiesChanged: function(componentId, propertiesMap) {
-            console.log('TODO: re-render component ' + componentId + ' with properties', propertiesMap);
-            // old code: this.renderComponent(componentId, propertiesMap);
+            this.hostToIFrame.publish('render-component', componentId, propertiesMap);
           },
           hide: function() {
             console.log('TODO: deselectComponents? Or leave the selection as-is?');

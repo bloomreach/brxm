@@ -14,14 +14,27 @@
  * limitations under the License.
  */
 
-import { ComponentRenderingService } from './componentRendering.service';
-import { PageMetaDataService } from './pageMetaData.service';
-import { PageStructureService } from './pageStructure.service';
-import { run } from './page.run';
+export class CatalogService {
+  constructor(HstService) {
+    'ngInject';
 
-export const channelPageModule = angular
-  .module('hippo-cm.channel.page', [])
-  .service('ComponentRenderingService', ComponentRenderingService)
-  .service('PageMetaDataService', PageMetaDataService)
-  .service('PageStructureService', PageStructureService)
-  .run(run);
+    this.HstService = HstService;
+    this.components = [];
+  }
+
+  load(mountId) {
+    return this.HstService.doGet(mountId, 'toolkit')
+      .then((response) => {
+        if (response && response.data) {
+          let components = response.data;
+          components.sort((a, b) => a.label.localeCompare(b.label));
+          this.components = components;
+        }
+        // TODO: handle error?
+      });
+  }
+
+  getComponents() {
+    return this.components;
+  }
+}

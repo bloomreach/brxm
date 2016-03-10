@@ -15,21 +15,23 @@
  */
 
 export class ChannelService {
-  constructor($http, SessionService, HstService, CmsService, ConfigService) {
+  constructor($http, SessionService, CatalogService, HstService, ConfigService, CmsService) {
     'ngInject';
 
     this.$http = $http;
     this.SessionService = SessionService;
+    this.CatalogService = CatalogService;
     this.HstService = HstService;
-    this.CmsService = CmsService;
     this.ConfigService = ConfigService;
+    this.CmsService = CmsService;
 
     this.channel = {};
   }
 
   _setChannel(channel) {
     this.channel = channel;
-    this.HstService.setContextPath(channel.contextPath);
+    this.ConfigService.setContextPath(channel.contextPath);
+    this.CatalogService.load(this._getMountId());
   }
 
   getChannel() {
@@ -45,15 +47,20 @@ export class ChannelService {
       });
   }
 
-  getUrl(path) {
-    let url = this.channel.contextPath;
-    if (url === '/') {
-      url = '';
+  getPreviewPath() {
+    let path = this.channel.contextPath;
+    if (path === '/') {
+      path = '';
     }
 
     if (this.channel.cmsPreviewPrefix) {
-      url += '/' + this.channel.cmsPreviewPrefix;
+      path += '/' + this.channel.cmsPreviewPrefix;
     }
+    return path;
+  }
+
+  getUrl(path) {
+    let url = this.getPreviewPath();
 
     if (this.channel.mountPath) {
       url += this.channel.mountPath;
@@ -82,5 +89,21 @@ export class ChannelService {
         this._setChannel(channel);
         this.CmsService.publish('switch-channel', channel.id); // update breadcrumb.
       });// TODO add error handling
+  }
+
+  hasPreviewConfiguration() {
+    return this.channel.previewHstConfigExists === 'true';
+  }
+
+  createPreviewConfiguration() {
+    return this.HstService.doPost(this._getMountId(), 'edit');
+  }
+
+  getCatalog() {
+    return this.CatalogService.getComponents();
+  }
+
+  _getMountId() {
+    return this.channel.mountId;
   }
 }

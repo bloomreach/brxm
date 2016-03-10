@@ -37,19 +37,10 @@ export class HstService {
     http = $http;
 
     this.config = ConfigService;
-    this.contextPath = ConfigService.defaultContextPath;
   }
 
-  getContextPath() {
-    return this.contextPath;
-  }
-
-  setContextPath(path) {
-    this.contextPath = path;
-  }
-
-  initializeSession(hostname) {
-    return this.doGet(this.config.rootUuid, 'composermode', hostname)
+  initializeSession(hostname, mountId) {
+    return this.doGet(this.config.rootUuid, 'composermode', hostname, mountId)
       .then((response) => !!(response && response.data && response.data.canWrite));
   }
 
@@ -79,7 +70,7 @@ export class HstService {
   }
 
   _createApiUrl(uuid, pathElements) {
-    let apiUrl = concatPaths(this.contextPath, this.config.apiUrlPrefix);
+    let apiUrl = concatPaths(this.config.contextPath, this.config.apiUrlPrefix);
     apiUrl = concatPaths(apiUrl, uuid);
     apiUrl += './';
 

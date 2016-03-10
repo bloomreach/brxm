@@ -71,6 +71,10 @@ export class PageStructureElement {
     return this.metaData.hasNoDom;
   }
 
+  getRenderUrl() {
+    return this.metaData[HstConstants.RENDER_URL];
+  }
+
   static isTransparentXType(metaData) {
     const metaDataXType = metaData[HstConstants.XTYPE];
 

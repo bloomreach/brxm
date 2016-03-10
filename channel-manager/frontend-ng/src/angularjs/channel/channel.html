@@ -16,20 +16,42 @@
 
 <md-toolbar class="qa-toolbar">
   <div class="md-toolbar-tools">
-    <md-button aria-label="{{ 'TOOLBAR_BUTTON_PAGES' | translate }}">
-      {{ 'TOOLBAR_BUTTON_PAGES' | translate }}
+    <md-button aria-label="{{ 'TOOLBAR_BUTTON_COMPONENTS' | translate }}"
+               ng-click="channelCtrl.toggleSidenav('components')"
+               ng-if="channelCtrl.isEditMode">
+      {{ 'TOOLBAR_BUTTON_COMPONENTS' | translate }}
     </md-button>
     <span flex></span>
-    <md-button ng-click="channelCtrl.toggleEditMode()" ng-disabled="channelCtrl.isCreatingPreview">
+    <md-button ng-if="channelCtrl.isEditable()"
+               ng-disabled="channelCtrl.isCreatingPreview"
+               ng-click="channelCtrl.toggleEditMode()">
       <md-icon class="material-icons">{{ channelCtrl.isEditMode ? 'remove_red_eye' : 'mode_edit' }}</md-icon>
       {{ channelCtrl.isEditMode ? 'TOOLBAR_SWITCH_VIEWER_MODE_VIEW' : 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
     </md-button>
   </div>
 </md-toolbar>
 
-<hippo-iframe
-  flex
-  layout="row"
-  path="channelCtrl.iframeUrl"
-  select-mode="channelCtrl.isEditMode">
-</hippo-iframe>
+<md-content layout="row" flex>
+  <md-sidenav class="md-sidenav-left qa-catalog" md-component-id="components">
+    <md-list md-no-ink>
+      <md-list-item class="md-1-line"
+                    ng-repeat="component in channelCtrl.getCatalog()">
+        <div class="component-icon">
+          <img ng-src="{{component.iconURL}}"/>
+        </div>
+        <div class="md-list-item-text qa-name">
+          {{ component.label }}
+        </div>
+        <md-divider ng-if="!$last"></md-divider>
+      </md-list-item>
+    </md-list>
+  </md-sidenav>
+
+  <hippo-iframe
+    flex
+    layout="row"
+    path="channelCtrl.iframeUrl"
+    select-mode="channelCtrl.isEditMode">
+  </hippo-iframe>
+
+</md-content>

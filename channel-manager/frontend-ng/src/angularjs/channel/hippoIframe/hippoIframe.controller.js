@@ -15,8 +15,8 @@
  */
 
 export class HippoIframeCtrl {
-  constructor($rootScope, $element, $translate, $mdDialog, linkProcessorService, hstCommentsProcessorService, CmsService, ChannelService,
-              PageStructureService, OverlaySyncService) {
+  constructor($rootScope, $element, linkProcessorService, hstCommentsProcessorService, CmsService, ChannelService,
+              PageStructureService, OverlaySyncService, ScalingService, $translate, $mdDialog) {
     'ngInject';
 
     this.$rootScope = $rootScope;
@@ -37,15 +37,14 @@ export class HippoIframeCtrl {
     CmsService.subscribe('delete-component', (componentId) => {
       this.deleteComponent(componentId);
     });
+
+    ScalingService.init($element);
   }
 
   onLoad() {
     this.$rootScope.$apply(() => {
-
       this._parseHstComments();
       this._parseLinks();
-
-      this.OverlaySyncService.startObserving();
     });
   }
 

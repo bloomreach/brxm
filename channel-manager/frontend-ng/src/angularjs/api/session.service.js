@@ -19,15 +19,20 @@ export class SessionService {
     'ngInject';
 
     this.HstService = HstService;
-    this.canWrite = false;
+
+    this._canWrite = false;
   }
 
   initialize(channel) {
     return this.HstService
-      .initializeSession(channel.hostname)
+      .initializeSession(channel.hostname, channel.mountId)
       .then((canWrite) => {
-        this.canWrite = canWrite;
+        this._canWrite = canWrite;
         return channel;
       });
+  }
+
+  hasWriteAccess() {
+    return this._canWrite;
   }
 }

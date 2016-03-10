@@ -20,31 +20,17 @@ export class OverlaySyncService {
     'ngInject';
 
     this.$rootScope = $rootScope;
+    this.$window = $window;
 
     this.overlayElements = [];
     this.observer = new MutationObserver(ThrottleService.throttle(() => this._syncIframe(), 100));
-    $($window).on('resize', () => this._syncIframe());
   }
 
   init(iframeJQueryElement, overlayJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
     this.overlayJQueryElement = overlayJQueryElement;
-  }
 
-  startObserving() {
-    this.observer.observe(this.iframeJQueryElement[0].contentWindow.document, {
-      childList: true,
-      attributes: true,
-      characterData: true,
-      subtree: true,
-    });
-
-    $(this.iframeJQueryElement[0].contentWindow).on('beforeunload', () => {
-      this.$rootScope.$apply(() => {
-        this.overlayElements = [];
-        this.observer.disconnect();
-      });
-    });
+    this.iframeJQueryElement.on('load', () => this._onLoad());
   }
 
   registerElement(structureElement) {
@@ -59,6 +45,28 @@ export class OverlaySyncService {
     }
   }
 
+  _onLoad() {
+    this._syncIframe();
+
+    const iframeWindow = this._getIframeWindow();
+    this.observer.observe(iframeWindow.document, {
+      childList: true,
+      attributes: true,
+      characterData: true,
+      subtree: true,
+    });
+    $(iframeWindow).on('beforeunload', () => this._onUnLoad());
+    $(this.$window).on('resize.overlaysync', () => this._syncIframe());
+  }
+
+  _onUnLoad() {
+    this.$rootScope.$apply(() => {
+      this.overlayElements = [];
+      this.observer.disconnect();
+      $(this.$window).off('.overlaysync');
+    });
+  }
+
   _syncIframe() {
     this._syncHeight();
     this._syncOverlayElements();
@@ -66,10 +74,15 @@ export class OverlaySyncService {
 
   _syncHeight() {
     if (this.iframeJQueryElement && this.overlayJQueryElement) {
-      const html = this.iframeJQueryElement[0].contentWindow.document.documentElement;
+      const doc = this._getIframeWindow().document;
 
-      if (html !== null) {
-        const height = html.offsetHeight;
+      if (doc) {
+        const html = doc.documentElement;
+        const body = doc.body;
+
+        // cross-browser document height checking
+        const height = Math.max(body.scrollHeight, body.offsetHeight,
+                                html.clientHeight, html.scrollHeight, html.offsetHeight);
 
         // Prevent weird twitching at certain widths
         html.style.overflow = 'hidden';
@@ -96,4 +109,7 @@ export class OverlaySyncService {
     overlayJQueryElement.css('width', rect.width + 'px');
   }
 
+  _getIframeWindow() {
+    return this.iframeJQueryElement[0].contentWindow;
+  }
 }

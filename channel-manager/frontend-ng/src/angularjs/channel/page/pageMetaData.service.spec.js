@@ -68,31 +68,4 @@ describe('PageMetaDataService', function () {
     expect(PageMetaDataService.get()).toEqual({});
   });
 
-  it('returns the latest mount id', function () {
-    PageMetaDataService.add({
-      'HST-Mount-Id': 'testMountId',
-    });
-    expect(PageMetaDataService.getMountId()).toEqual('testMountId');
-
-    PageMetaDataService.add({
-      'HST-Mount-Id': 'anotherMountId',
-    });
-    expect(PageMetaDataService.getMountId()).toEqual('anotherMountId');
-  });
-
-  it('returns whether there is preview configuration', function () {
-    PageMetaDataService.add({
-      'HST-Site-HasPreviewConfig': 'true',
-    });
-    expect(PageMetaDataService.hasPreviewConfiguration()).toEqual(true);
-  });
-
-  it('returns whether there is no preview configuration', function () {
-    expect(PageMetaDataService.hasPreviewConfiguration()).toEqual(false);
-    PageMetaDataService.add({
-      'HST-Site-HasPreviewConfig': 'false',
-    });
-    expect(PageMetaDataService.hasPreviewConfiguration()).toEqual(false);
-  });
-
 });
