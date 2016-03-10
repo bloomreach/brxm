@@ -1,22 +1,22 @@
 {"hippo:types": {
   "selectiondemo:textdocument":   {
     "nl":     {
-      "selectiondemo:choice.true": "Ja",
-      "selectiondemo:choice.false": "Nee"
+      "selectiondemo:booleanradiogroup=true": "Ja",
+      "selectiondemo:booleanradiogroup=false": "Nee"
     },
     "en":     {
-      "selectiondemo:choice.true": "Yes",
-      "selectiondemo:choice.false": "No"
+      "selectiondemo:booleanradiogroup=true": "Yes",
+      "selectiondemo:booleanradiogroup=false": "No"
     }
   },
   "selectiondemo:multilingualdocument":   {
     "nl":     {
-      "selectiondemo:choice.true": "Ja",
-      "selectiondemo:choice.false": "Nee"
+      "selectiondemo:booleanradiogroup=true": "Ja",
+      "selectiondemo:booleanradiogroup=false": "Nee"
     },
     "en":     {
-      "selectiondemo:choice.true": "Yes",
-      "selectiondemo:choice.false": "No"
+      "selectiondemo:booleanradiogroup=true": "Yes",
+      "selectiondemo:booleanradiogroup=false": "No"
     }
   }
 }}

@@ -46,7 +46,6 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.ITemplateEngine;

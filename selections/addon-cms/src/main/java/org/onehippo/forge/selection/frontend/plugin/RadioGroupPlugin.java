@@ -16,14 +16,18 @@
 
 package org.onehippo.forge.selection.frontend.plugin;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.IModelReference;
+import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -32,6 +36,8 @@ import org.onehippo.forge.selection.frontend.model.ListItem;
 import org.onehippo.forge.selection.frontend.wicket.RadioGroupWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 
 /**
  * Radio group plugin.
@@ -184,16 +190,16 @@ public class RadioGroupPlugin extends AbstractChoicePlugin {
         if (currentListItem != null) {
             currentLabel = currentListItem.getLabel();
         }
-        fragment.add(new Label("new", new StringResourceModel(currentLabel, this, null, currentLabel))
-                .add(new CssClassAppender(new Model("hippo-diff-added"))));
+        fragment.add(new Label("new", getLabelModel(currentLabel))
+                .add(new CssClassAppender(new Model<>("hippo-diff-added"))));
 
         ListItem baseListItem = getValueItem(base);
         String baseLabel = "";
         if (baseListItem != null) {
             baseLabel = baseListItem.getLabel();
         }
-        fragment.add(new Label("old", new StringResourceModel(baseLabel, this, null, baseLabel))
-                .add(new CssClassAppender(new Model("hippo-diff-removed"))));
+        fragment.add(new Label("old", getLabelModel(baseLabel))
+                .add(new CssClassAppender(new Model<>("hippo-diff-removed"))));
 
         add(fragment);
     }
@@ -206,12 +212,39 @@ public class RadioGroupPlugin extends AbstractChoicePlugin {
      */
     protected void addSelectedValueLabel(final MarkupContainer container) {
         ListItem selectedListItem = getSelectedValueItem();
-        String valueShown = "";
+        String defaultLabel = "";
         if (selectedListItem != null) {
-            valueShown = selectedListItem.getLabel();
+            defaultLabel = selectedListItem.getLabel();
         }
-        Label valueLabel = new Label("selectLabel", new StringResourceModel(valueShown, this, null, valueShown));
+        Label valueLabel = new Label("selectLabel", getLabelModel(defaultLabel));
         container.add(valueLabel);
     }
 
+    private IModel<String> getLabelModel(final String currentLabel) {
+        return new ResourceBundleModel("hippo:types." + getDocumentType(), getValueKey(), currentLabel);
+    }
+
+    private String getDocumentType() {
+        Node currentNode = (Node) ((JcrPropertyValueModel) getDefaultModel()).getJcrPropertymodel().getItemModel().getParentModel().getObject();
+        try {
+            while (!currentNode.isNodeType(NT_DOCUMENT)) {
+                currentNode = currentNode.getParent();
+            }
+            return currentNode.getPrimaryNodeType().getName();
+        } catch (RepositoryException e) {
+            log.warn("Failed to find containing document of radio group", e);
+        }
+        return "<unknown>";
+    }
+    
+    private String getValueKey() {
+        JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getDefaultModel();
+        JcrPropertyModel propertyModel = propertyValueModel.getJcrPropertymodel();
+        try {
+            return propertyModel.getProperty().getName() + "=" + propertyValueModel.getValue().getString();
+        } catch (RepositoryException e) {
+            log.warn("Failed to determine property value translation key");
+        }
+        return "<unknown>";
+    }
 }
