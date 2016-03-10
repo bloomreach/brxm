@@ -33,10 +33,11 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
@@ -82,7 +83,7 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
     private Dimension configuredDimension;
     private Dimension thumbnailDimension;
     private float compressionQuality;
-    private boolean fitFullScreenSize = true;
+    private boolean fitFullScreenSize;
 
     public ImageCropEditorDialog(IModel<Node> jcrImageNodeModel, GalleryProcessor galleryProcessor) {
         super(jcrImageNodeModel);
@@ -142,9 +143,7 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
         Label thumbnailSize = new Label("thumbnail-size", new StringResourceModel("thumbnail-size", this, null));
         thumbnailSize.setOutputMarkupId(true);
         add(thumbnailSize);
-
-
-        // TODO: get fitFullScreenSize from settings (?)
+        //
         final ImageCropSettings cropSettings = new ImageCropSettings(regionField.getMarkupId(),
                 imagePreviewContainer.getMarkupId(),
                 originalImageDimension,
@@ -153,7 +152,31 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
                 isUpscalingEnabled,
                 fitFullScreenSize,
                 thumbnailSize.getMarkupId(true));
-        originalImage.add(new ImageCropBehavior(cropSettings));
+        final ImageCropBehavior imageCropBehavior = new ImageCropBehavior(cropSettings);
+        final IModel<Boolean> fitFullScreenSizeModel = new PropertyModel<>(this, "fitFullScreenSize");
+        final AjaxCheckBox fullScreenCheckbox = new AjaxCheckBox("fit-fullscreen", fitFullScreenSizeModel) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                final String updateScript = imageCropBehavior.getUpdateScript();
+                /**
+                 *  NOTE: this calls widget {@code update()} method,
+                 *  which dispatches call js call to {@code render()} method
+                 */
+                target.appendJavaScript(updateScript);
+            }
+
+        };
+        fullScreenCheckbox.setOutputMarkupId(true);
+        add(fullScreenCheckbox);
+        // add label
+        final Label fitFullScreenSizeLabel = new Label("fit-fullscreen-label", new StringResourceModel("fit-fullscreen", this, null));
+        fitFullScreenSizeLabel.setOutputMarkupId(true);
+        add(fitFullScreenSizeLabel);
+
+
+        originalImage.add(imageCropBehavior);
         originalImage.setOutputMarkupId(true);
 
         add(originalImage);

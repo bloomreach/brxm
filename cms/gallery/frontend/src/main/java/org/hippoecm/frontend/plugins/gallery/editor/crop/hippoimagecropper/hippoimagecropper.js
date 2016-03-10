@@ -36,10 +36,12 @@ if (!YAHOO.hippo.ImageCropper) {
         YAHOO.hippo.ImageCropper = function(id, config) {
             YAHOO.hippo.ImageCropper.superclass.constructor.apply(this, arguments);
             this.container = this.el.parentNode;
+            this.rendered = false;
             this.originalImage = this.el;
             // flag which indicates when crop window is in full screen mode
-            this.fullScreenScaled = false;
+            this.fullScreenMode = false;
             this.fitFullScreenSize = config.fitFullScreenSize;
+            // NOTE: this are 0 at this stage, re-initialized in render method
             this.original_width = this.originalImage.offsetWidth;
             this.original_height = this.originalImage.offsetHeight;
             this.regionInputId = config.regionInputId;
@@ -80,6 +82,22 @@ if (!YAHOO.hippo.ImageCropper) {
         YAHOO.extend(YAHOO.hippo.ImageCropper, YAHOO.hippo.Widget, {
 
             render: function() {
+                /**
+                 * NOTE: render is called second time from wicket component, through update() method.
+                 * We use this only to reset fitFullScreenSize (so, no additional rendering processing is needed)
+                 */
+                if (this.rendered) {
+                    // just toggle fullscreen view:
+                    this.fitFullScreenSize = !this.fitFullScreenSize;
+                    if (this.fitFullScreenSize) {
+                        this.scaleToFit(this.calculateRatio(this));
+                    } else {
+                        this.reset();
+                    }
+                    return;
+                }
+                this.rendered = true;
+
                 var scalingFactor;
                 if (this.previewVisible) {
                     this.previewImage = Dom.getFirstChild(this.imagePreviewContainerId);
@@ -95,6 +113,7 @@ if (!YAHOO.hippo.ImageCropper) {
 
                 }
                 this.previewLabelTemplate = Dom.get(this.thumbnailSizeLabelId).innerHTML;
+                // by now we should have real image render size:
                 this.original_width = this.originalImage.offsetWidth;
                 this.original_height = this.originalImage.offsetHeight;
                 // Call second render phase after image has loaded completely and add a timeout
@@ -133,6 +152,9 @@ if (!YAHOO.hippo.ImageCropper) {
                 }
 
                 this.subscribe();
+                if (this.fitFullScreenSize) {
+                    this.scaleToFit(this.calculateRatio(this));
+                }
             },
 
             subscribe: function() {
@@ -146,33 +168,23 @@ if (!YAHOO.hippo.ImageCropper) {
             },
 
             normalSize: function(type, args, me) {
-                this.fullScreenScaled = false;
+                me.fullScreenMode = false;
                 Dom.setStyle(me.leftCropArea, 'width', me.leftCropAreaRegion.width + 'px');
                 Dom.setStyle(me.leftCropArea, 'height', me.leftCropAreaRegion.height + 'px');
-
+                if (me.fitFullScreenSize) {
+                    me.scaleToFit(me.calculateRatio(me));
+                }
             },
 
             // left crop area has margin 5px so subtract 10px from width&height to prevent unwanted scrollbars
             fullSize: function(type, args, me) {
-                var ratio = me.calculateRatio(me);
-                /**
-                 * when in full screen, check if enabled, and if so enable fullScreenScaled.
-                 * also check if image is bigger than view size and resize if so
-                 */
-                if (me.fitFullScreenSize && ratio.r < 1) {
-                    me.fullScreenScaled = true;
-                    me.fitSize(me.container, ratio);
-                    me.fitSize(me.originalImage, ratio);
-                    me.fitSize(me.cropper._mask, ratio);
-                    me.fitSize(me.cropper._wrap, ratio);
-                    // fix background behind the mask, so crop result (preview) is shown properly:
-                    var back = me.cropper._resizeMaskEl;
-                    Dom.setStyle(back, "background-size", ratio.w + 'px ' + ratio.h + 'px');
-                }
-
+                me.fullScreenMode = true;
                 var dim = args[0];
                 Dom.setStyle(me.leftCropArea, 'width', (dim.w - 10) + 'px');
                 Dom.setStyle(me.leftCropArea, 'height', (dim.h - 10) + 'px');
+                if (me.fitFullScreenSize) {
+                    me.scaleToFit(me.calculateRatio(me));
+                }
             },
 
             // left crop area has margin 5px so subtract 10px from width&height to prevent unwanted scrollbars
@@ -264,7 +276,7 @@ if (!YAHOO.hippo.ImageCropper) {
             updateRegionInputValue: function(coords) {
                 var regionInput = Dom.get(this.regionInputId);
                 if (regionInput) {
-                    if (this.fullScreenScaled) {
+                    if (this.fitFullScreenSize) {
                         var newWidth = this.originalImage.offsetWidth;
                         var newHeight = this.originalImage.offsetHeight;
                         var width_ratio = this.original_width / newWidth;
@@ -285,14 +297,51 @@ if (!YAHOO.hippo.ImageCropper) {
                 Dom.get(this.thumbnailSizeLabelId).innerHTML = label;
             },
             calculateRatio: function(me) {
-                var maxWidth = Dom.getViewportWidth() - this.viewMarginWidth;
-                var maxHeight = Dom.getViewportHeight() - this.viewMarginHeight;
+                var fs = me.fullScreenMode;
+                // need this check here because of timing issue:
+                // it happens that original size is 0:
+                if (!me.initOriginal(me)) {
+                    return;
+                }
+                var maxWidth = fs ? Dom.getViewportWidth() - this.viewMarginWidth : me.leftCropAreaRegion.width;
+                var maxHeight = fs ? Dom.getViewportHeight() - this.viewMarginHeight : me.leftCropAreaRegion.height;
                 var ratio = Math.min(maxWidth / me.original_width, maxHeight / me.original_height);
                 return {w: me.original_width * ratio, h: me.original_height * ratio, r: ratio};
             },
             fitSize: function(el, ratio) {
                 Dom.setStyle(el, 'width', ratio.w + 'px');
                 Dom.setStyle(el, 'height', ratio.h + 'px');
+            },
+            scaleToFit: function(ratio) {
+                /**
+                 * when in full screen, check if enabled, and if so enable fullScreenScaled.
+                 * also check if image is bigger than view size and resize if so
+                 */
+                if (ratio.r < 1) {
+                    this.fitSize(this.container, ratio);
+                    this.fitSize(this.originalImage, ratio);
+                    this.fitSize(this.cropper._mask, ratio);
+                    this.fitSize(this.cropper._wrap, ratio);
+                    // fix background behind the mask, so crop result (preview) is shown properly:
+                    var back = this.cropper._resizeMaskEl;
+                    Dom.setStyle(back, "background-size", ratio.w + 'px ' + ratio.h + 'px');
+                }
+            },
+            reset: function() {
+                this.scaleToFit({w: this.original_width, h: this.original_height, r: 0.1})
+            },
+            validSize: function(me) {
+                return me.original_width != 0 && me.original_height != 0;
+            },
+            initOriginal: function(me) {
+                if (!me.validSize(me)) {
+                    console.log("============ AGAIN ===========");
+                    me.original_width = me.originalImage.offsetWidth;
+                    me.original_height = me.originalImage.offsetHeight;
+                    return me.validSize(me);
+                }
+                return true;
+
             }
 
         });
