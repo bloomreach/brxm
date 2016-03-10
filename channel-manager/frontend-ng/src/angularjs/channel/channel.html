@@ -32,14 +32,14 @@
 </md-toolbar>
 
 <md-content layout="row" flex>
-  <md-sidenav class="md-sidenav-left" md-component-id="components">
+  <md-sidenav class="md-sidenav-left qa-catalog" md-component-id="components">
     <md-list md-no-ink>
       <md-list-item class="md-1-line"
                     ng-repeat="component in channelCtrl.getCatalog()">
         <div class="component-icon">
           <img ng-src="{{component.iconURL}}"/>
         </div>
-        <div class="md-list-item-text">
+        <div class="md-list-item-text qa-name">
           {{ component.label }}
         </div>
         <md-divider ng-if="!$last"></md-divider>
