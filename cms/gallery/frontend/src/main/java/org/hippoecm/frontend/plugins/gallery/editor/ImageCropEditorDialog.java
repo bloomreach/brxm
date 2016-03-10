@@ -83,7 +83,7 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
     private Dimension configuredDimension;
     private Dimension thumbnailDimension;
     private float compressionQuality;
-    private boolean fitFullScreenSize;
+    private boolean fitView;
 
     public ImageCropEditorDialog(IModel<Node> jcrImageNodeModel, GalleryProcessor galleryProcessor) {
         super(jcrImageNodeModel);
@@ -150,11 +150,11 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
                 configuredDimension,
                 thumbnailDimension,
                 isUpscalingEnabled,
-                fitFullScreenSize,
+                fitView,
                 thumbnailSize.getMarkupId(true));
         final ImageCropBehavior imageCropBehavior = new ImageCropBehavior(cropSettings);
-        final IModel<Boolean> fitFullScreenSizeModel = new PropertyModel<>(this, "fitFullScreenSize");
-        final AjaxCheckBox fullScreenCheckbox = new AjaxCheckBox("fit-fullscreen", fitFullScreenSizeModel) {
+        final IModel<Boolean> fitViewModel = new PropertyModel<>(this, "fitView");
+        final AjaxCheckBox fitViewCheckbox = new AjaxCheckBox("fit-view", fitViewModel) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -168,12 +168,12 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
             }
 
         };
-        fullScreenCheckbox.setOutputMarkupId(true);
-        add(fullScreenCheckbox);
+        fitViewCheckbox.setOutputMarkupId(true);
+        add(fitViewCheckbox);
         // add label
-        final Label fitFullScreenSizeLabel = new Label("fit-fullscreen-label", new StringResourceModel("fit-fullscreen", this, null));
-        fitFullScreenSizeLabel.setOutputMarkupId(true);
-        add(fitFullScreenSizeLabel);
+        final Label fitViewLabel = new Label("fit-view-label", new StringResourceModel("fit-view", this, null));
+        fitViewLabel.setOutputMarkupId(true);
+        add(fitViewLabel);
 
 
         originalImage.add(imageCropBehavior);

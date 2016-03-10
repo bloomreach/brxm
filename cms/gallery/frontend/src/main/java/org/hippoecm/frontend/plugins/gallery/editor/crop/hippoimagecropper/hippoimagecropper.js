@@ -40,7 +40,7 @@ if (!YAHOO.hippo.ImageCropper) {
             this.originalImage = this.el;
             // flag which indicates when crop window is in full screen mode
             this.fullScreenMode = false;
-            this.fitFullScreenSize = config.fitFullScreenSize;
+            this.fitFullScreenSize = config.fitView;
             // NOTE: this are 0 at this stage, re-initialized in render method
             this.original_width = this.originalImage.offsetWidth;
             this.original_height = this.originalImage.offsetHeight;
@@ -84,12 +84,12 @@ if (!YAHOO.hippo.ImageCropper) {
             render: function() {
                 /**
                  * NOTE: render is called second time from wicket component, through update() method.
-                 * We use this only to reset fitFullScreenSize (so, no additional rendering processing is needed)
+                 * We use this only to reset fitView (so, no additional rendering processing is needed)
                  */
                 if (this.rendered) {
                     // just toggle fullscreen view:
-                    this.fitFullScreenSize = !this.fitFullScreenSize;
-                    if (this.fitFullScreenSize) {
+                    this.fitView = !this.fitView;
+                    if (this.fitView) {
                         this.scaleToFit(this.calculateRatio(this));
                     } else {
                         this.reset();
@@ -113,9 +113,6 @@ if (!YAHOO.hippo.ImageCropper) {
 
                 }
                 this.previewLabelTemplate = Dom.get(this.thumbnailSizeLabelId).innerHTML;
-                // by now we should have real image render size:
-                this.original_width = this.originalImage.offsetWidth;
-                this.original_height = this.originalImage.offsetHeight;
                 // Call second render phase after image has loaded completely and add a timeout
                 // to force IE to behave the same all the time.
                 var img = new Image();
@@ -143,6 +140,7 @@ if (!YAHOO.hippo.ImageCropper) {
                             status: this.status
                         }
                 );
+                this.initImageSize(this);
                 this.cropper.on('moveEvent', this.onMove, null, this);
                 this.updateRegionInputValue(this.cropper.getCropCoords());
                 this.updatePreviewLabel(this.thumbnailWidth, this.thumbnailHeight);
@@ -152,7 +150,7 @@ if (!YAHOO.hippo.ImageCropper) {
                 }
 
                 this.subscribe();
-                if (this.fitFullScreenSize) {
+                if (this.fitView) {
                     this.scaleToFit(this.calculateRatio(this));
                 }
             },
@@ -171,7 +169,7 @@ if (!YAHOO.hippo.ImageCropper) {
                 me.fullScreenMode = false;
                 Dom.setStyle(me.leftCropArea, 'width', me.leftCropAreaRegion.width + 'px');
                 Dom.setStyle(me.leftCropArea, 'height', me.leftCropAreaRegion.height + 'px');
-                if (me.fitFullScreenSize) {
+                if (me.fitView) {
                     me.scaleToFit(me.calculateRatio(me));
                 }
             },
@@ -182,7 +180,7 @@ if (!YAHOO.hippo.ImageCropper) {
                 var dim = args[0];
                 Dom.setStyle(me.leftCropArea, 'width', (dim.w - 10) + 'px');
                 Dom.setStyle(me.leftCropArea, 'height', (dim.h - 10) + 'px');
-                if (me.fitFullScreenSize) {
+                if (me.fitView) {
                     me.scaleToFit(me.calculateRatio(me));
                 }
             },
@@ -276,7 +274,7 @@ if (!YAHOO.hippo.ImageCropper) {
             updateRegionInputValue: function(coords) {
                 var regionInput = Dom.get(this.regionInputId);
                 if (regionInput) {
-                    if (this.fitFullScreenSize) {
+                    if (this.fitView) {
                         var newWidth = this.originalImage.offsetWidth;
                         var newHeight = this.originalImage.offsetHeight;
                         var width_ratio = this.original_width / newWidth;
@@ -328,21 +326,24 @@ if (!YAHOO.hippo.ImageCropper) {
                 }
             },
             reset: function() {
-                this.scaleToFit({w: this.original_width, h: this.original_height, r: 0.1})
+                if (this.initOriginal(this)) {
+                    this.scaleToFit({w: this.original_width, h: this.original_height, r: 0.1})
+                }
             },
             validSize: function(me) {
                 return me.original_width != 0 && me.original_height != 0;
             },
             initOriginal: function(me) {
                 if (!me.validSize(me)) {
-                    me.original_width = me.originalImage.offsetWidth;
-                    me.original_height = me.originalImage.offsetHeight;
+                    me.initImageSize(me);
                     return me.validSize(me);
                 }
                 return true;
-
+            },
+            initImageSize: function(me) {
+                me.original_width = me.originalImage.offsetWidth;
+                me.original_height = me.originalImage.offsetHeight;
             }
-
         });
     })();
 

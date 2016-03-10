@@ -48,13 +48,13 @@ public class ImageCropSettings extends WidgetSettings {
     /**
      * fit image into view when dialog is in full screen mode
      */
-    private boolean fitFullScreenSize;
+    private boolean fitView;
 
     private String fixedDimension = FIXED_NONE;
     private String thumbnailSizeLabelId = "";
 
     public ImageCropSettings(String regionInputId, String imagePreviewContainerId, Dimension originalImageDimension,
-                             Dimension configuredDimension, Dimension thumbnailDimension, boolean upscalingEnabled, boolean fitFullScreenSize) {
+                             Dimension configuredDimension, Dimension thumbnailDimension, boolean upscalingEnabled, boolean fitView) {
         this.regionInputId = regionInputId;
         this.imagePreviewContainerId = imagePreviewContainerId;
 
@@ -64,7 +64,7 @@ public class ImageCropSettings extends WidgetSettings {
         this.thumbnailHeight = (int) thumbnailDimension.getHeight();
 
         this.upscalingEnabled = upscalingEnabled;
-        this.fitFullScreenSize = fitFullScreenSize;
+        this.fitView = fitView;
         previewVisible = thumbnailWidth <= MAX_PREVIEW_RESOLUTION;
 
         if (initialX + configuredDimension.getWidth() >= originalWidth) {
@@ -94,10 +94,10 @@ public class ImageCropSettings extends WidgetSettings {
     }
 
     public ImageCropSettings(String regionInputId, String imagePreviewContainerId, Dimension originalImageDimension,
-                             Dimension configuredDimension, Dimension thumbnailDimension, boolean upscalingEnabled, boolean fitFullScreenSize,
+                             Dimension configuredDimension, Dimension thumbnailDimension, boolean upscalingEnabled, boolean fitView,
                              String thumbnailSizeLabelId) {
     	this(regionInputId, imagePreviewContainerId, originalImageDimension, configuredDimension, thumbnailDimension, 
-                upscalingEnabled, fitFullScreenSize);
+                upscalingEnabled, fitView);
     	
         this.thumbnailSizeLabelId = thumbnailSizeLabelId;
     }
@@ -222,11 +222,11 @@ public class ImageCropSettings extends WidgetSettings {
     	this.thumbnailSizeLabelId = thumbnailSizeLabelId;
     }
 
-    public boolean isFitFullScreenSize() {
-        return fitFullScreenSize;
+    public boolean isFitView() {
+        return fitView;
     }
 
-    public void setFitFullScreenSize(final boolean fitFullScreenSize) {
-        this.fitFullScreenSize = fitFullScreenSize;
+    public void setFitView(final boolean fitView) {
+        this.fitView = fitView;
     }
 }
