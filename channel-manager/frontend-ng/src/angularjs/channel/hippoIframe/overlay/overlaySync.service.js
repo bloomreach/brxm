@@ -77,16 +77,12 @@ export class OverlaySyncService {
       const doc = this._getIframeWindow().document;
 
       if (doc) {
-        const html = doc.documentElement;
-        const body = doc.body;
-
-        // cross-browser document height checking
-        const height = Math.max(body.scrollHeight, body.offsetHeight,
-                                html.clientHeight, html.scrollHeight, html.offsetHeight);
-
+        // Reset the height, as the document height will always be at least the iframe height
+        this.iframeJQueryElement.height('');
         // Prevent weird twitching at certain widths
-        html.style.overflow = 'hidden';
+        $(doc.documentElement).css('overflow', 'hidden');
 
+        const height = $(doc).height();
         this.iframeJQueryElement.height(height);
         this.overlayJQueryElement.height(height);
       }
