@@ -60,7 +60,10 @@ export class DragDropService {
       });
       this.drake.on('dragend', () => this._stopDrag());
 
-      this._onComponentClick(containers, (component) => this.PageStructureService.showComponentProperties(component));
+      this._onComponentClick(containers, (component) => {
+        this.dragging = false;
+        this.PageStructureService.showComponentProperties(component);
+      });
     });
   }
 
