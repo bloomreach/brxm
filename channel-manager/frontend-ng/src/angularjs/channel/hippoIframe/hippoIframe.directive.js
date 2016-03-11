@@ -22,7 +22,7 @@ export function hippoIframe() {
     scope: {},
     bindToController: {
       path: '=',
-      selectMode: '=',
+      editMode: '=',
     },
     templateUrl: 'channel/hippoIframe/hippoIframe.html',
     controller: 'hippoIframeCtrl',

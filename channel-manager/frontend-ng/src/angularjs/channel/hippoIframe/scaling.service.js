@@ -31,9 +31,7 @@ export class ScalingService {
 
     angular.element($window).bind('resize', () => {
       if (this.hippoIframeJQueryElement) {
-        $rootScope.$apply(() => {
-          this._updateScaling();
-        });
+        $rootScope.$apply(() => this._updateScaling());
       }
     });
   }
@@ -46,6 +44,10 @@ export class ScalingService {
   setPushWidth(pushWidth) {
     this.pushWidth = pushWidth;
     this._updateScaling();
+  }
+
+  getScaleFactor() {
+    return this.scaleFactor;
   }
 
   _updateScaling() {

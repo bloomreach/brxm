@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import { DomService } from './dom.service';
 import { ThrottleService } from './throttle.service';
 
 export const utilsModule = angular
   .module('hippo-cm.utils', [])
+  .service('DomService', DomService)
   .service('ThrottleService', ThrottleService);
