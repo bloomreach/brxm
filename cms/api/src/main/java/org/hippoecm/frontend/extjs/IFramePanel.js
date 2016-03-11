@@ -71,7 +71,7 @@
       var frameWindow = this._getFrameWindow();
 
       if (frameWindow !== null) {
-        frameWindow.addEventListener('unload', this._detachFrame, this);
+        frameWindow.addEventListener('unload', this._detachFrame.bind(this));
       }
 
       this.previousLocation = this.currentLocation;
