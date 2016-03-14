@@ -34,7 +34,6 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 
 /**
@@ -102,7 +101,7 @@ public class RadioGroupWidget<T extends Serializable> extends Panel {
 
                 org.onehippo.forge.selection.frontend.model.ListItem valueListItem = (org.onehippo.forge.selection.frontend.model.ListItem) item
                         .getModelObject();
-                radio.setLabel(new StringResourceModel(valueListItem.getLabel(), this, null, valueListItem.getLabel()));
+                radio.setLabel(getLabelModel(valueListItem.getLabel(), valueListItem.getKey()));
                 item.add(new SimpleFormComponentLabel("label", radio));
             }
         });
@@ -126,6 +125,10 @@ public class RadioGroupWidget<T extends Serializable> extends Panel {
      * @param object Object held by the selected {@link Radio} component
      */
     protected void onChange(AjaxRequestTarget target, Object object) {
+    }
+
+    protected IModel<String> getLabelModel(final String defaultLabel, final String propertyValue) {
+        return Model.of(defaultLabel);
     }
 
 }

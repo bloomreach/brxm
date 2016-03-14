@@ -16,6 +16,8 @@
 
 package org.onehippo.forge.selection.frontend.plugin;
 
+import java.util.Locale;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -33,6 +35,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.onehippo.forge.selection.frontend.model.ListItem;
+import org.onehippo.forge.selection.frontend.utils.SelectionUtils;
 import org.onehippo.forge.selection.frontend.wicket.RadioGroupWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,6 +133,10 @@ public class RadioGroupPlugin extends AbstractChoicePlugin {
                 }
             }
 
+            @Override
+            protected IModel<String> getLabelModel(final String defaultLabel, final String propertyValue) {
+                return RadioGroupPlugin.this.getLabelModel(defaultLabel, propertyValue);
+            }
         };
 
         container.add(radioGroup);
@@ -190,7 +197,7 @@ public class RadioGroupPlugin extends AbstractChoicePlugin {
         if (currentListItem != null) {
             currentLabel = currentListItem.getLabel();
         }
-        fragment.add(new Label("new", getLabelModel(currentLabel))
+        fragment.add(new Label("new", getSelectedLabelModel(currentLabel))
                 .add(new CssClassAppender(new Model<>("hippo-diff-added"))));
 
         ListItem baseListItem = getValueItem(base);
@@ -198,7 +205,7 @@ public class RadioGroupPlugin extends AbstractChoicePlugin {
         if (baseListItem != null) {
             baseLabel = baseListItem.getLabel();
         }
-        fragment.add(new Label("old", getLabelModel(baseLabel))
+        fragment.add(new Label("old", getSelectedLabelModel(baseLabel))
                 .add(new CssClassAppender(new Model<>("hippo-diff-removed"))));
 
         add(fragment);
@@ -216,12 +223,17 @@ public class RadioGroupPlugin extends AbstractChoicePlugin {
         if (selectedListItem != null) {
             defaultLabel = selectedListItem.getLabel();
         }
-        Label valueLabel = new Label("selectLabel", getLabelModel(defaultLabel));
+        Label valueLabel = new Label("selectLabel", getSelectedLabelModel(defaultLabel));
         container.add(valueLabel);
     }
 
-    private IModel<String> getLabelModel(final String currentLabel) {
-        return new ResourceBundleModel("hippo:types." + getDocumentType(), getValueKey(), currentLabel);
+    private IModel<String> getSelectedLabelModel(String defaultLabel) {
+        return getLabelModel(defaultLabel, getSelectedValue());
+    }
+    
+    private IModel<String> getLabelModel(final String defaultLabel, final String propertyValue) {
+        final Locale locale = SelectionUtils.getLocale(SelectionUtils.getNode(getModel()));
+        return new ResourceBundleModel("hippo:types." + getDocumentType(), getValueKey(propertyValue), defaultLabel, locale);
     }
 
     private String getDocumentType() {
@@ -237,11 +249,21 @@ public class RadioGroupPlugin extends AbstractChoicePlugin {
         return "<unknown>";
     }
     
-    private String getValueKey() {
+    private String getSelectedValue() {
+        JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getDefaultModel();
+        try {
+            return propertyValueModel.getValue().getString();
+        } catch (RepositoryException e) {
+            log.warn("Failed to read property value");
+        }
+        return "<unknown>";
+    }
+    
+    private String getValueKey(final String value) {
         JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getDefaultModel();
         JcrPropertyModel propertyModel = propertyValueModel.getJcrPropertymodel();
         try {
-            return propertyModel.getProperty().getName() + "=" + propertyValueModel.getValue().getString();
+            return propertyModel.getProperty().getName() + "=" + value;
         } catch (RepositoryException e) {
             log.warn("Failed to determine property value translation key");
         }
