@@ -53,33 +53,77 @@ describe('HstService', function () {
     $httpBackend.verifyNoOutstandingExpectation();
   });
 
-  it('should exist', function () {
+  it('exists', function () {
     expect(hstService).toBeDefined();
   });
 
-  it('should prefix all API urls with the context path and api url prefix', function () {
+  it('prefixes all API urls with the context path and api url prefix', function () {
     expect(hstService._createApiUrl('1234', ['somepath'])).toEqual('/testContextPath/testApiUrlPrefix/1234./somepath');
   });
 
-  it('should trim concatenated path elements', function () {
+  it('trims concatenated path elements', function () {
     expect(hstService._createApiUrl('1234', ['  foo ', ' bar'])).toEqual('/testContextPath/testApiUrlPrefix/1234./foo/bar');
   });
 
-  it('should remove clashing slashes from concatenated path elements', function () {
+  it('removes clashing slashes from concatenated path elements', function () {
     expect(hstService._createApiUrl('1234', ['/foo/', '/bar'])).toEqual('/testContextPath/testApiUrlPrefix/1234./foo/bar');
   });
 
-  it('should be able to create an APIURL with only a UUID', function () {
+  it('can create an API URL with only a UUID', function () {
     expect(hstService._createApiUrl('1234', [])).toEqual('/testContextPath/testApiUrlPrefix/1234./');
   });
 
-  it('should construct a valid handshake url when initializing a channel session', function () {
+  it('can do a GET call', function () {
+    $httpBackend.expectGET(contextPath + apiUrlPrefix + '/some-uuid./one/two/three', {
+      'CMS-User': 'testUser',
+      FORCE_CLIENT_HOST: 'true',
+      Accept: 'application/json, text/plain, */*',
+    }).respond(200);
+    hstService.doGet('some-uuid', 'one', 'two', 'three').catch(fail);
+    $httpBackend.flush();
+  });
+
+  it('returns a rejected promise when a GET call fails', function () {
+    $httpBackend.expectGET(contextPath + apiUrlPrefix + '/some-uuid./one/two/three').respond(500);
+    hstService.doGet('some-uuid', 'one', 'two', 'three').then(fail);
+    $httpBackend.flush();
+  });
+
+  it('can do a POST call', function () {
+    $httpBackend.expectPOST(contextPath + apiUrlPrefix + '/some-uuid./one/two/three', { foo: 1 }, {
+      'CMS-User': 'testUser',
+      FORCE_CLIENT_HOST: 'true',
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': 'application/json;charset=utf-8',
+    }).respond(200);
+    hstService.doPost({ foo: 1 }, 'some-uuid', 'one', 'two', 'three').catch(fail);
+    $httpBackend.flush();
+  });
+
+  it('can do a POST call without data', function () {
+    $httpBackend.expectPOST(contextPath + apiUrlPrefix + '/some-uuid./one/two/three', null, {
+      'CMS-User': 'testUser',
+      FORCE_CLIENT_HOST: 'true',
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': 'application/json;charset=utf-8',
+    }).respond(200);
+    hstService.doPost(null, 'some-uuid', 'one', 'two', 'three').catch(fail);
+    $httpBackend.flush();
+  });
+
+  it('returns a rejected promise when a POST call fails', function () {
+    $httpBackend.expectPOST(contextPath + apiUrlPrefix + '/some-uuid./one/two/three', { foo: 1 }).respond(500);
+    hstService.doPost({ foo: 1 }, 'some-uuid', 'one', 'two', 'three').then(fail);
+    $httpBackend.flush();
+  });
+
+  it('constructs a valid handshake url when initializing a channel session', function () {
     $httpBackend.expectGET(handshakeUrl).respond(200);
     hstService.initializeSession(hostname, mountId);
     $httpBackend.flush();
   });
 
-  it('should use the new context path after it has been changed', function () {
+  it('uses the new context path after it has been changed', function () {
     $httpBackend.expectGET('/testContextPath/testApiUrlPrefix/1234./test').respond(200);
     hstService.doGet('1234', 'test');
     $httpBackend.flush();
@@ -92,7 +136,7 @@ describe('HstService', function () {
   });
 
   describe('when initialization is successful', function () {
-    it('should resolve a promise', function () {
+    it('resolves a promise', function () {
       var promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200);
       hstService.initializeSession(hostname, mountId).then(promiseSpy);
@@ -100,7 +144,7 @@ describe('HstService', function () {
       expect(promiseSpy).toHaveBeenCalled();
     });
 
-    it('should resolve with true if response data parameter canWrite is true', function () {
+    it('resolves with true if response data parameter canWrite is true', function () {
       var promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200, { data: { canWrite: true } });
       hstService.initializeSession(hostname, mountId).then(promiseSpy);
@@ -108,7 +152,7 @@ describe('HstService', function () {
       expect(promiseSpy).toHaveBeenCalledWith(true);
     });
 
-    it('should resolve with false if response data parameter canWrite is false', function () {
+    it('resolves with false if response data parameter canWrite is false', function () {
       var promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200, { data: { canWrite: false } });
       hstService.initializeSession(hostname, mountId).then(promiseSpy);
@@ -116,7 +160,7 @@ describe('HstService', function () {
       expect(promiseSpy).toHaveBeenCalledWith(false);
     });
 
-    it('should resolve with false if response data parameter is missing', function () {
+    it('resolves with false if response data parameter is missing', function () {
       var promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200);
       hstService.initializeSession(hostname, mountId).then(promiseSpy);
@@ -125,7 +169,7 @@ describe('HstService', function () {
     });
   });
 
-  it('should reject a promise when initialization fails', function () {
+  it('rejects a promise when initialization fails', function () {
     var catchSpy = jasmine.createSpy('catchSpy');
     $httpBackend.expectGET(handshakeUrl).respond(500);
     hstService
@@ -136,7 +180,7 @@ describe('HstService', function () {
     expect(catchSpy).toHaveBeenCalled();
   });
 
-  it('should get a channel by id', function () {
+  it('gets a channel by id', function () {
     var channelA = {
       id: 'channelA',
       contextPath: '/a',
@@ -152,7 +196,7 @@ describe('HstService', function () {
     expect(catchSpy).toHaveBeenCalledWith(channelA);
   });
 
-  it('should reject a promise when a channel load fails', function () {
+  it('rejects a promise when a channel load fails', function () {
     var catchSpy = jasmine.createSpy('catchSpy');
     var url = contextPath + apiUrlPrefix + '/' + rootUuid + './channels/test';
     $httpBackend.expectGET(url).respond(500);
