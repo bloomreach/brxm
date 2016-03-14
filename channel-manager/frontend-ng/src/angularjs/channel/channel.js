@@ -19,6 +19,7 @@ import { channelHippoIframeModule } from './hippoIframe/hippoIframe';
 import { config } from './channel.config';
 import { ChannelCtrl } from './channel.controller';
 import { run } from './channel.run';
+import { CatalogComponentDirective } from './catalog.component.directive';
 
 export const channelModule = angular
   .module('hippo-cm.channel', [
@@ -28,4 +29,5 @@ export const channelModule = angular
   ])
   .config(config)
   .controller('ChannelCtrl', ChannelCtrl)
+  .directive('catalogComponent', CatalogComponentDirective)
   .run(run);

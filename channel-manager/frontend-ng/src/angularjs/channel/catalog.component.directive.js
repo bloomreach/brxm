@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-export function hippoIframe() {
+export function CatalogComponentDirective(CatalogService) {
   'ngInject';
 
   return {
-    restrict: 'E',
-    scope: {},
-    bindToController: {
-      path: '=',
-      editMode: '=',
-      addMode: '=',
+    restrict: 'A',
+    scope: {
+      catalogComponent: '=',
     },
-    templateUrl: 'channel/hippoIframe/hippoIframe.html',
-    controller: 'hippoIframeCtrl',
-    controllerAs: 'iframe',
+    link: function (scope, element) {
+      CatalogService.setCatalogElement(scope.catalogComponent, element);
+    },
   };
 }

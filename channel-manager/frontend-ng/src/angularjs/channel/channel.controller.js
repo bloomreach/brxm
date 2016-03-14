@@ -18,10 +18,12 @@ const SIDENAVS = ['components'];
 
 export class ChannelCtrl {
 
-  constructor($log, $mdSidenav, ChannelService, ScalingService, SessionService) {
+  constructor($log, $scope, $mdSidenav, ChannelService, ScalingService, SessionService, CatalogService,
+              PageStructureService) {
     'ngInject';
 
     this.$log = $log;
+    this.$scope = $scope;
     this.$mdSidenav = $mdSidenav;
     this.ChannelService = ChannelService;
     this.ScalingService = ScalingService;
@@ -33,6 +35,56 @@ export class ChannelCtrl {
 
     // reset service state to avoid weird scaling when controller is reloaded due to state change
     ScalingService.setPushWidth(0);
+
+    this.addComponentDrake = window.dragula({
+      ignoreInputTextSelection: false,
+      isContainer: function (el) {
+        return el.classList.contains('catalog-dd-container') || el.classList.contains('overlay-element-container');
+      },
+      copy: true,
+      moves: function (el) {
+        return el.classList.contains('catalog-dd-container-item');
+      },
+      accepts: function (el, target) {
+        return target.classList.contains('overlay-element-container');
+      },
+    });
+    this.addComponentDrake.on('cloned', (clone, original) => {
+      $scope.$apply(() => {
+        this.newComponent = CatalogService.getComponentByDomElement(original); // remember the to-be-added component
+        this.isAddingComponent = true; // tell the iframe to render "add mode"
+      });
+    });
+    this.addComponentDrake.on('dragend', () => {
+      $scope.$apply(() => {
+        this.isAddingComponent = false;
+      });
+    });
+    this.addComponentDrake.on('over', (el, container) => {
+      $scope.$apply(() => {
+        $(container).addClass('has-shadow'); // CSS :hover doesn't work, use the over and out events instead.
+      });
+    });
+    this.addComponentDrake.on('out', (el, container) => {
+      $scope.$apply(() => {
+        $(container).removeClass('has-shadow');
+      });
+    });
+    this.addComponentDrake.on('shadow', (el) => {
+      $scope.$apply(() => {
+        $(el).addClass('gu-hide'); // never show the shadow when adding a component
+      });
+    });
+    this.addComponentDrake.on('drop', (el, target) => {
+      if (target !== null) {
+        $scope.$apply(() => {
+          $(target).removeClass('has-shadow');
+          $(el).detach(); // delete the (hidden) dropped DOM element.
+
+          PageStructureService.addComponentToContainer(this.newComponent, target);
+        });
+      }
+    });
   }
 
   toggleEditMode() {

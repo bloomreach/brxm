@@ -53,6 +53,7 @@ describe('ChannelCtrl', function () {
       ]);
 
       ChannelCtrl = $controller('ChannelCtrl', {
+        $scope: $rootScope.$new(),
         ComponentsService: ComponentsService,
         ChannelService: ChannelService,
         ScalingService: ScalingService,

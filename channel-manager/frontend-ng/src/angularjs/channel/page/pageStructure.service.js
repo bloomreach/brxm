@@ -109,4 +109,19 @@ export class PageStructureService {
       });
     });
   }
+
+  addComponentToContainer(catalogComponent, overlayDomElementOfContainer) {
+    const container = this.containers.find((c) => c.getJQueryElement('overlay')[0] === overlayDomElementOfContainer);
+
+    if (container) {
+      console.log(`Adding '${catalogComponent.label}' component to container '${container.getLabel()}'.`);
+      console.log(catalogComponent, container);
+
+      // TODO: tell HST to add a new copy of this.newComponent to container,
+      // re-render the container and update the page structure.
+      // create a new component in the page structure, and focus on it.
+    } else {
+      console.log('container not found');
+    }
+  }
 }
