@@ -63,6 +63,10 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             throw new IllegalStateException("HttpSession should never be null here.");
         }
 
+        if (isComposerMode(request)) {
+            populateComponentMetaData(request, response, window);
+        }
+
         // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
         HstComponentConfiguration compConfig = ((HstComponentConfiguration) window.getComponentInfo());
         final HstRequestContext requestContext = request.getRequestContext();
@@ -108,27 +112,27 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             pageMetaData.put(ChannelManagerConstants.HST_PATH_INFO, requestContext.getBaseURL().getPathInfo());
             pageMetaData.put(ChannelManagerConstants.HST_CHANNEL_ID, mount.getChannel().getId());
             response.addEpilogue(createCommentWithAttr(pageMetaData, response));
-        } else if (isComposerMode(request)) {
-            if (!isContainerOrContainerItem(compConfig)) {
-                return;
-            }
-            if (!compConfig.getCanonicalStoredLocation().contains(WORKSPACE_PATH_ELEMENT)) {
-                log.debug("Component '{}' not editable as not part of hst:workspace configuration", compConfig.toString());
-                return;
-            }
-
-            final Map<String, String> preambleAttributes = new HashMap<>();
-            final Map<String, String> epilogueAttributes = new HashMap<>();
-            populateAttributes(window, request, preambleAttributes, epilogueAttributes);
-            response.addPreamble(createCommentWithAttr(preambleAttributes, response));
-            response.addEpilogue(createCommentWithAttr(epilogueAttributes, response));
         }
-
     }
 
-    private boolean isContainerOrContainerItem(final HstComponentConfiguration compConfig) {
-        return CONTAINER_ITEM_COMPONENT.equals(compConfig.getComponentType())
-                || CONTAINER_COMPONENT.equals(compConfig.getComponentType());
+    private void populateComponentMetaData(final HstRequest request, final HstResponse response,
+                                           final HstComponentWindow window) {
+        final HstComponentConfiguration config = (HstComponentConfiguration)window.getComponentInfo();
+        final HstComponentConfiguration.Type type = config.getComponentType();
+
+        if (!type.equals(CONTAINER_ITEM_COMPONENT) && !type.equals(CONTAINER_COMPONENT)) {
+            return;
+        }
+        if (!config.getCanonicalStoredLocation().contains(WORKSPACE_PATH_ELEMENT)) {
+            log.debug("Component '{}' not editable as not part of hst:workspace configuration", config.toString());
+            return;
+        }
+
+        final Map<String, String> preambleAttributes = new HashMap<>();
+        final Map<String, String> epilogueAttributes = new HashMap<>();
+        populateAttributes(window, request, preambleAttributes, epilogueAttributes);
+        response.addPreamble(createCommentWithAttr(preambleAttributes, response));
+        response.addEpilogue(createCommentWithAttr(epilogueAttributes, response));
     }
 
     final void populateAttributes(HstComponentWindow window, HstRequest request,
