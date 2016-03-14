@@ -25,7 +25,7 @@
     <sv:value>Document type translations have been moved. Run this updater after upgrading to Hippo 11.</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:dryrun" sv:type="Boolean">
-    <sv:value>true</sv:value>
+    <sv:value>false</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:parameters" sv:type="String">
     <sv:value/>
@@ -47,6 +47,7 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {&#xd;
   &#xd;
   static final String TYPES_TRANSLATIONS_PATH = "/hippo:configuration/hippo:translations/hippo:types";&#xd;
   static final String FIELD_TRANSLATIONS_PATH = "editor:templates/_default_/translator/hippostd:translations";&#xd;
+  static final String NODE_TYPE_PATH = "hipposysedit:nodetype/hipposysedit:nodetype";&#xd;
   static final String FIELDS_PATH = "editor:templates/_default_";&#xd;
   static final Collection&lt;String&gt; SKIP_NAMESPACES = Arrays.asList("system", "hippo", "hippostd", "hippostdpubwf", "hipposysedit", "hippogallery", "hippogallerypicker", "hst", "selection", "seosupport", "resourcebundle");&#xd;
 &#xd;
@@ -64,25 +65,34 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {&#xd;
     }&#xd;
     Node fieldTranslations = getFieldTranslations(node);&#xd;
     if (fieldTranslations != null) {&#xd;
-      moveDocumentFieldTranslations(fieldTranslations, namespace, docTypeName);&#xd;
+      Node nodeType = getNodeType(node);&#xd;
+      moveDocumentFieldTranslations(fieldTranslations, namespace, docTypeName, nodeType);&#xd;
       fieldTranslations.getParent().remove();&#xd;
       removeTranslatorIds(node);&#xd;
     }&#xd;
     return true&#xd;
   }&#xd;
 &#xd;
-  void moveDocumentFieldTranslations(final Node fieldTranslations, final String namespace, final String docTypeName) throws RepositoryException {&#xd;
+  void moveDocumentFieldTranslations(final Node fieldTranslations, final String namespace, final String docTypeName, final Node nodeType) &#xd;
+      throws RepositoryException {&#xd;
     Node typesTranslations = fieldTranslations.getSession().getNode(TYPES_TRANSLATIONS_PATH);&#xd;
     Node docTypeBundles = getOrCreateDocTypeResourceBundles(typesTranslations, docTypeName);&#xd;
     for (Node node : new NodeIterable(fieldTranslations.getNodes())) {&#xd;
-      String fieldName = namespace + ":" + node.getName();&#xd;
-      String keyName = fieldName.endsWith(".hint") ? fieldName.replace(".hint", "#hint") : fieldName;&#xd;
+      String oldKey = node.getName();&#xd;
+      String newKey;&#xd;
+      if (nodeType.hasNode(oldKey)) {&#xd;
+        newKey = namespace + ":" + oldKey;&#xd;
+      } else {&#xd;
+        newKey = oldKey + "-" + UUID.randomUUID();&#xd;
+        log.warn "no corresponding field found for translation key ${oldKey}. moving it to randomized key ${newKey}"&#xd;
+      }&#xd;
+      newKey = newKey.endsWith(".hint") ? newKey.replace(".hint", "#hint") : newKey;&#xd;
       for (Node translation : new NodeIterable(node.getNodes("hippo:translation"))) {&#xd;
         String language = translation.getProperty("hippo:language").getString();&#xd;
         String message = translation.getProperty("hippo:message").getString();&#xd;
         if (StringUtils.isNotEmpty(language)) {&#xd;
           Node bundle = getOrCreateResourceBundle(docTypeBundles, language);&#xd;
-          bundle.setProperty(keyName, message);&#xd;
+          bundle.setProperty(newKey, message);&#xd;
         }&#xd;
       }&#xd;
     }&#xd;
@@ -90,6 +100,10 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {&#xd;
 &#xd;
   Node getFieldTranslations(final Node node) throws RepositoryException {&#xd;
     return JcrUtils.getNodeIfExists(node, FIELD_TRANSLATIONS_PATH);&#xd;
+  }&#xd;
+&#xd;
+  Node getNodeType(final Node node) throws RepositoryException {&#xd;
+    return JcrUtils.getNodeIfExists(node, NODE_TYPE_PATH);&#xd;
   }&#xd;
 &#xd;
   void moveDocumentTypeTranslations(Node node, String docTypeName) throws RepositoryException {&#xd;
