@@ -19,11 +19,12 @@ import { ComponentElement } from './element/componentElement';
 
 export class PageStructureService {
 
-  constructor($log, HstConstants, hstCommentsProcessorService, ChannelService, CmsService, PageMetaDataService) {
+  constructor($log, $q, HstConstants, hstCommentsProcessorService, ChannelService, CmsService, PageMetaDataService) {
     'ngInject';
 
     // Injected
     this.$log = $log;
+    this.$q = $q;
     this.HST = HstConstants;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
@@ -84,6 +85,10 @@ export class PageStructureService {
       return component;
     });
     return component;
+  }
+
+  getContainerByIframeElement(containerIFrameElement) {
+    return this.containers.find((container) => container.getJQueryElement('iframe').is(containerIFrameElement));
   }
 
   showComponentProperties(componentElement) {

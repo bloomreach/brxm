@@ -16,12 +16,13 @@
 
 export class DragDropService {
 
-  constructor($rootScope, $q, DomService, PageStructureService, ScalingService) {
+  constructor($rootScope, $q, DomService, HstService, PageStructureService, ScalingService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
     this.$q = $q;
     this.DomService = DomService;
+    this.HstService = HstService;
     this.PageStructureService = PageStructureService;
     this.ScalingService = ScalingService;
 
@@ -59,6 +60,7 @@ export class DragDropService {
         ignoreInputTextSelection: false,
       });
       this.drake.on('dragend', () => this._stopDrag());
+      this.drake.on('drop', this._onDrop.bind(this));
 
       this._onComponentClick(containers, (component) => {
         this.dragging = false;
@@ -103,6 +105,26 @@ export class DragDropService {
   _stopDrag() {
     this.dragging = false;
     this.$rootScope.$digest();
+  }
+
+  _onDrop(movedElement, targetContainerElement, sourceContainerElement, targetNextComponentElement) {
+    const sourceContainer = this.PageStructureService.getContainerByIframeElement(sourceContainerElement);
+    const movedComponent = sourceContainer.getComponentByIframeElement(movedElement);
+    const targetContainer = this.PageStructureService.getContainerByIframeElement(targetContainerElement);
+    const targetNextComponent = targetContainer.getComponentByIframeElement(targetNextComponentElement);
+
+    sourceContainer.removeComponent(movedComponent);
+    targetContainer.addComponentBefore(movedComponent, targetNextComponent);
+
+    this._updateContainer(sourceContainer);
+
+    if (sourceContainer.getId() !== targetContainer.getId()) {
+      this._updateContainer(targetContainer);
+    }
+  }
+
+  _updateContainer(container) {
+    this.HstService.doPost(container.getHstRepresentation(), container.getId(), 'update');
   }
 
   _dispatchEventInIframe($event, structureElement) {

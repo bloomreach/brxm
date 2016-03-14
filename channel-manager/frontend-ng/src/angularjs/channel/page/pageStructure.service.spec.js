@@ -281,16 +281,34 @@ describe('PageStructureService', function () {
     expect(component.getLabel()).toEqual('Test Component');
   });
 
-
   it('returns null when getting an unknown component', function () {
     expect(PageStructureService.getComponent('no-such-component')).toBeNull();
+  });
+
+  it('returns a container by iframe element', function () {
+    var container1 = $j('#container1', $document);
+    var container2 = $j('#container2', $document);
+    var container;
+
+    PageStructureService.registerParsedElement(container1[0].previousSibling, {
+      'HST-Type': 'CONTAINER_COMPONENT',
+      uuid: 'container-1',
+    });
+    PageStructureService.registerParsedElement(container2[0].previousSibling, {
+      'HST-Type': 'CONTAINER_COMPONENT',
+      uuid: 'container-2',
+    });
+
+    container = PageStructureService.getContainerByIframeElement(container2[0]);
+    expect(container).not.toBeNull();
+    expect(container.getId()).toEqual('container-2');
   });
 
   it('triggers an event to show the component properties dialog', function () {
     var componentElement = jasmine.createSpyObj(['getId', 'getLabel', 'getLastModified']);
     componentElement.getId.and.returnValue('testId');
     componentElement.getLabel.and.returnValue('testLabel');
-    componentElement.getLastModified.and.returnValue('12345');
+    componentElement.getLastModified.and.returnValue(12345);
     componentElement.container = jasmine.createSpyObj(['isDisabled', 'isInherited']);
     componentElement.container.isDisabled.and.returnValue(true);
     componentElement.container.isInherited.and.returnValue(false);
@@ -307,7 +325,7 @@ describe('PageStructureService', function () {
       component: {
         id: 'testId',
         label: 'testLabel',
-        lastModified: '12345',
+        lastModified: 12345,
       },
       container: {
         isDisabled: true,
