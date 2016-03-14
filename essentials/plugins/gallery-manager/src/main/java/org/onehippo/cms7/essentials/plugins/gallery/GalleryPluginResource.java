@@ -183,11 +183,14 @@ public class GalleryPluginResource extends BaseResource {
         try {
             if (imageSet.isSuccessMessage()) {
                 final String rootDestination = "/hippo:configuration/hippo:queries/hippo:templates";
+
                 // image
                 final Node imageNode = JcrUtils.copy(session, rootDestination + "/new-image", rootDestination + '/' + imageName);
                 final String oldImageQuery = imageNode.getProperty("jcr:statement").getString();
                 final String newImageQuery = oldImageQuery.replaceAll("new\\-image", imageName);
                 imageNode.setProperty("jcr:statement", newImageQuery);
+                copyTemplateTranslations(session, "new-image", imageName);
+
                 // folder
                 final Node folderNode = JcrUtils.copy(session, rootDestination + "/new-image-folder", rootDestination + '/' + folderName);
                 final String oldFolderQuery = folderNode.getProperty("jcr:statement").getString();
@@ -196,6 +199,8 @@ public class GalleryPluginResource extends BaseResource {
                 final Node imageGalleryNode = folderNode.getNode("hippostd:templates").getNode("image gallery");
                 imageGalleryNode.setProperty("hippostd:foldertype", new String[]{folderName});
                 imageGalleryNode.setProperty("hippostd:gallerytype", new String[]{newImageNamespace});
+                copyTemplateTranslations(session, "new-image-folder", folderName);
+
                 if (updateExisting) {
                     // update existing folders:
                     final Query query = session.getWorkspace().getQueryManager().createQuery("//content//element(*, hippogallery:stdImageGallery)", "xpath");
@@ -407,6 +412,17 @@ public class GalleryPluginResource extends BaseResource {
                 bundle = bundles.addNode(trans.getLanguage(), NT_RESOURCEBUNDLE);
             }
             bundle.setProperty(variant, trans.getMessage());
+        }
+    }
+
+    private void copyTemplateTranslations(final Session session, final String sourceKey, final String destinationKey) throws RepositoryException {
+        final Node bundles = session.getNode("/hippo:configuration/hippo:translations/hippo:templates");
+        for (Node bundle : new NodeIterable(bundles.getNodes())) {
+            if (bundle.hasProperty(sourceKey)) {
+                bundle.setProperty(destinationKey, bundle.getProperty(sourceKey).getValue());
+            } else {
+                log.debug("Cannot set translation for template {}, cannot find source {}", destinationKey, sourceKey);
+            }
         }
     }
 
