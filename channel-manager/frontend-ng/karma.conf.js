@@ -34,7 +34,6 @@ module.exports = function karmaConfig(config) {
     cfg.npmDir + 'babel-core/external-helpers.js',
     cfg.npmDir + 'systemjs/dist/system-polyfills.js',
     cfg.npmDir + 'systemjs/dist/system-register-only.js',
-    cfg.src.fixtures,
   ];
 
   options.files = [
@@ -42,6 +41,7 @@ module.exports = function karmaConfig(config) {
     cfg.src.scripts,
     cfg.srcDir + './angularjs/mock.environment.spec.js',
     cfg.src.unitTests,
+    cfg.src.fixtures,
   ];
 
   config.set(options);
