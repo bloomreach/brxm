@@ -19,12 +19,13 @@ import { ComponentElement } from './element/componentElement';
 
 export class PageStructureService {
 
-  constructor($log, HstConstants, hstCommentsProcessorService, ChannelService, CmsService, PageMetaDataService) {
+  constructor($log, HstConstants, hstCommentsProcessorService, HstService, ChannelService, CmsService, PageMetaDataService) {
     'ngInject';
 
     // Injected
     this.$log = $log;
     this.HST = HstConstants;
+    this.HstService = HstService;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.hstCommentsProcessorService = hstCommentsProcessorService;
@@ -113,9 +114,14 @@ export class PageStructureService {
   addComponentToContainer(catalogComponent, overlayDomElementOfContainer) {
     const container = this.containers.find((c) => c.getJQueryElement('overlay')[0] === overlayDomElementOfContainer);
 
+    console.log('container droppped ', overlayDomElementOfContainer);
     if (container) {
       console.log(`Adding '${catalogComponent.label}' component to container '${container.getLabel()}'.`);
       console.log(catalogComponent, container);
+
+      this._createHstComponent(catalogComponent.id, container.getId()).then(() => {
+        console.log('added component', catalogComponent);
+      });
 
       // TODO: tell HST to add a new copy of this.newComponent to container,
       // re-render the container and update the page structure.
@@ -123,5 +129,9 @@ export class PageStructureService {
     } else {
       console.log('container not found');
     }
+  }
+
+  _createHstComponent(componentId, containerId) {
+    return this.HstService.doPost(containerId, 'create', componentId);
   }
 }
