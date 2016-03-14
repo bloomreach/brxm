@@ -127,12 +127,10 @@ public class ContainerComponentResource extends AbstractConfigResource {
 
 
     @POST
-    @Path("/update/{itemUUID}")
+    @Path("/update/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateContainer(final @PathParam("itemUUID") String itemUUID,
-                                    final @QueryParam("lastModifiedTimestamp") long versionStamp,
-                                    final PostRepresentation<ContainerRepresentation> post) {
+    public Response updateContainer(final PostRepresentation<ContainerRepresentation> post) {
 
         ContainerRepresentation container = post.getData();
 
@@ -142,7 +140,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
             Node containerNode = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
             try {
                 // the acquireLock also checks all ancestors whether they are not locked by someone else
-                containerHelper.acquireLock(containerNode, versionStamp);
+                containerHelper.acquireLock(containerNode, container.getLastModifiedTimestamp());
             } catch (ClientException e) {
                 log.info("Exception while trying to lock '" + containerNode.getPath() + "': ", e);
                 return error(e.getMessage());
@@ -171,8 +169,8 @@ public class ContainerComponentResource extends AbstractConfigResource {
                         --index;
                     }
                 } catch (ItemNotFoundException e) {
-                    log.warn("ItemNotFoundException: Cannot update item '{}' for containerNode '{}'.",itemUUID, containerNode.getPath());
-                    return error("ItemNotFoundException: Cannot update item '"+itemUUID+"'");
+                    log.warn("ItemNotFoundException: Cannot update containerNode '{}'.", containerNode.getPath(), e);
+                    return error("ItemNotFoundException: Cannot update containerNode '" + containerNode.getPath() + "'");
                 }
             }
             HstConfigurationUtils.persistChanges(session);
