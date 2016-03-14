@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
@@ -108,4 +107,13 @@ export class ComponentElement extends PageStructureElement {
       e.remove();
     }
   }
+
+  getContainer() {
+    return this.container;
+  }
+
+  setContainer(container) {
+    this.container = container;
+  }
+
 }

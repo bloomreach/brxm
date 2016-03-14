@@ -26,6 +26,10 @@
   pointer-events: auto;
 }
 
+.overlay-dragging {
+  pointer-events: none;
+}
+
 .overlay-label {
   border: 1px solid $white;
   color: $white;

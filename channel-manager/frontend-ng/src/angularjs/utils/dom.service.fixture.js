@@ -14,18 +14,4 @@
  * limitations under the License.
  */
 
-export function hippoIframe() {
-  'ngInject';
-
-  return {
-    restrict: 'E',
-    scope: {},
-    bindToController: {
-      path: '=',
-      editMode: '=',
-    },
-    templateUrl: 'channel/hippoIframe/hippoIframe.html',
-    controller: 'hippoIframeCtrl',
-    controllerAs: 'iframe',
-  };
-}
+window.DomServiceTestScriptLoaded = true;

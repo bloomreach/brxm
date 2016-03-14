@@ -60,6 +60,16 @@ describe('ChannelCtrl', function () {
     });
   });
 
+  it('resets the ScalingService pushWidth state during initialization', function () {
+    ScalingService.setPushWidth.calls.reset();
+    inject(function ($controller) {
+      $controller('ChannelCtrl', {
+        ScalingService: ScalingService,
+      });
+      expect(ScalingService.setPushWidth).toHaveBeenCalledWith(0);
+    });
+  });
+
   it('gets the iframe URL from the channel service', function () {
     expect(ChannelCtrl.iframeUrl).toEqual('/test/url');
   });

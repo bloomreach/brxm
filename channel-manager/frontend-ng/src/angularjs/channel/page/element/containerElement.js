@@ -46,6 +46,26 @@ export class ContainerElement extends PageStructureElement {
 
   addComponent(component) {
     this.items.push(component);
+    component.setContainer(this);
+  }
+
+  addComponentBefore(component, nextComponent) {
+    const nextIndex = nextComponent ? this.items.indexOf(nextComponent) : -1;
+    if (nextIndex > -1) {
+      this.items.splice(nextIndex, 0, component);
+    } else {
+      this.items.push(component);
+    }
+
+    component.setContainer(this);
+  }
+
+  removeComponent(component) {
+    const index = this.items.indexOf(component);
+    if (index > -1) {
+      this.items.splice(index, 1);
+      component.setContainer(null);
+    }
   }
 
   getComponents() {
@@ -67,7 +87,21 @@ export class ContainerElement extends PageStructureElement {
       this.items.splice(this.items.indexOf(component), 1);
       return component;
     }
+
     return null;
   }
 
+  getComponentByIframeElement(iframeElement) {
+    return this.items.find((item) => item.getJQueryElement('iframe').is(iframeElement));
+  }
+
+  getHstRepresentation() {
+    return {
+      data: {
+        id: this.getId(),
+        lastModifiedTimestamp: this.getLastModified(),
+        children: this.items.map((item) => item.getId()),
+      },
+    };
+  }
 }

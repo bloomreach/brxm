@@ -96,7 +96,7 @@ export class ChannelService {
   }
 
   createPreviewConfiguration() {
-    return this.HstService.doPost(this._getMountId(), 'edit');
+    return this.HstService.doPost(null, this._getMountId(), 'edit');
   }
 
   getCatalog() {

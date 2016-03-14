@@ -30,6 +30,9 @@ export class ChannelCtrl {
     this.iframeUrl = ChannelService.getUrl();
     this.isEditMode = false;
     this.isCreatingPreview = false;
+
+    // reset service state to avoid weird scaling when controller is reloaded due to state change
+    ScalingService.setPushWidth(0);
   }
 
   toggleEditMode() {

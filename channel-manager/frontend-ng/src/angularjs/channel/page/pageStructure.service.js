@@ -19,12 +19,13 @@ import { ComponentElement } from './element/componentElement';
 
 export class PageStructureService {
 
-  constructor($q, $log, HstConstants, hstCommentsProcessorService, HstService, ChannelService, CmsService, PageMetaDataService) {
+  constructor($log, $q, HstConstants, hstCommentsProcessorService, ChannelService, CmsService, PageMetaDataService, HstService) {
     'ngInject';
 
     // Injected
     this.$q = $q;
     this.$log = $log;
+    this.$q = $q;
     this.HST = HstConstants;
     this.HstService = HstService;
     this.ChannelService = ChannelService;
@@ -59,6 +60,7 @@ export class PageStructureService {
         } catch (exception) {
           this.$log.debug(exception, metaData);
         }
+
         break;
 
       case this.HST.TYPE_PAGE:
@@ -72,6 +74,7 @@ export class PageStructureService {
             this.ChannelService.switchToChannel(channelId);
           }
         }
+
         break;
 
       default:
@@ -103,6 +106,7 @@ export class PageStructureService {
     if (!foundContainer) {
       return this.$q.reject();
     }
+
     // request back-end to remove component
     return this._removeHstComponent(foundContainer.getId(), componentId)
       .then(() => {
@@ -113,6 +117,10 @@ export class PageStructureService {
 
   _removeHstComponent(containerId, componentId) {
     return this.HstService.doGet(containerId, 'delete', componentId);
+  }
+
+  getContainerByIframeElement(containerIFrameElement) {
+    return this.containers.find((container) => container.getJQueryElement('iframe').is(containerIFrameElement));
   }
 
   showComponentProperties(componentElement) {

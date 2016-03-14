@@ -75,5 +75,4 @@ describe('hippoIframeCtrl', function () {
     expect($mdDialog.show).toHaveBeenCalled();
     expect(PageStructureService.removeComponent).toHaveBeenCalledWith('1234');
   });
-
 });

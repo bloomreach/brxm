@@ -19,18 +19,20 @@
 
     <iframe flex class="qa-view cm-scale" ng-src="{{ iframe.path }}"></iframe>
 
-    <div class="overlay qa-overlay cm-scale" ng-class="{'overlay-enabled': iframe.selectMode}">
+    <div class="overlay qa-overlay cm-scale" ng-class="{'overlay-enabled': iframe.editMode, 'overlay-dragging': iframe.isDragging() }">
       <div ng-repeat="container in iframe.getContainers()" class="qa-container">
         <overlay-element class="overlay-element-container"
                          layout="row"
-                         ng-class="{ 'overlay-element-container-visible': container.isEmpty() }"
+                         ng-class="{ 'overlay-element-container-visible': container.isEmpty(), 'overlay-dragging': iframe.isDragging() }"
                          structure-element="container">
         </overlay-element>
         <div ng-repeat="component in container.getComponents()" class="qa-component">
           <overlay-element class="overlay-element-component"
                            layout="row"
                            structure-element="component"
-                           ng-click="iframe.showComponentProperties(component)">
+                           ng-class="{ 'overlay-dragging': iframe.isDragging() }"
+                           ng-click="iframe.showComponentProperties(component)"
+                           ng-mousedown="iframe.startDrag($event, component)">
           </overlay-element>
         </div>
       </div>

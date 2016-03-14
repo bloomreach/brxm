@@ -15,8 +15,8 @@
  */
 
 export class HippoIframeCtrl {
-  constructor($rootScope, $element, linkProcessorService, hstCommentsProcessorService, CmsService, ChannelService,
-              PageStructureService, OverlaySyncService, ScalingService, $translate, $mdDialog) {
+  constructor($rootScope, $scope, $element, linkProcessorService, hstCommentsProcessorService, CmsService, ChannelService,
+              PageStructureService, OverlaySyncService, ScalingService, $translate, $mdDialog, DragDropService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
@@ -28,6 +28,7 @@ export class HippoIframeCtrl {
     this.ChannelService = ChannelService;
     this.PageStructureService = PageStructureService;
     this.OverlaySyncService = OverlaySyncService;
+    this.DragDropService = DragDropService;
 
     this.iframeJQueryElement = $element.find('iframe');
     this.iframeJQueryElement.on('load', () => this.onLoad());
@@ -39,6 +40,9 @@ export class HippoIframeCtrl {
     });
 
     ScalingService.init($element);
+    DragDropService.init(this.iframeJQueryElement, $element.find('.channel-iframe-base'));
+
+    $scope.$watch('iframe.editMode', () => this._enableDragDrop());
   }
 
   onLoad() {
@@ -75,6 +79,22 @@ export class HippoIframeCtrl {
     return this.$mdDialog.show(confirm);
   }
 
+  _enableDragDrop() {
+    if (this.editMode) {
+      this.DragDropService.enable(this.PageStructureService.containers);
+    } else {
+      this.DragDropService.disable();
+    }
+  }
+
+  startDrag($event, structureElement) {
+    this.DragDropService.startDrag($event, structureElement);
+  }
+
+  isDragging() {
+    return this.DragDropService.isDragging();
+  }
+
   _parseHstComments() {
     const iframeDom = this._getIframeDOM(this);
 
@@ -96,7 +116,6 @@ export class HippoIframeCtrl {
   }
 
   getContainers() {
-    return this.selectMode ? this.PageStructureService.containers : [];
+    return this.editMode ? this.PageStructureService.containers : [];
   }
-
 }

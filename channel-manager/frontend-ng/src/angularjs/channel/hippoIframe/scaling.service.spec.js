@@ -60,7 +60,7 @@ describe('ScalingService', function () {
         easing: ScalingService.scaleEasing,
       }
     );
-    expect(ScalingService.scaleFactor).toEqual(1.0);
+    expect(ScalingService.getScaleFactor()).toEqual(1.0);
   });
 
   it('should change the scaling factor animated when setting pushWidth', function () {
@@ -79,7 +79,7 @@ describe('ScalingService', function () {
         easing: ScalingService.scaleEasing,
       }
     );
-    expect(ScalingService.scaleFactor).toEqual(0.75);
+    expect(ScalingService.getScaleFactor()).toEqual(0.75);
   });
 
   it('should reset the scaling factor animated to 1.0 when setting pushWidth to 0', function () {
@@ -101,7 +101,7 @@ describe('ScalingService', function () {
         easing: ScalingService.scaleEasing,
       }
     );
-    expect(ScalingService.scaleFactor).toEqual(1.0);
+    expect(ScalingService.getScaleFactor()).toEqual(1.0);
   });
 
   it('should change the scaling factor instantly when the window is resized', function () {
@@ -122,7 +122,7 @@ describe('ScalingService', function () {
         easing: ScalingService.scaleEasing,
       }
     );
-    expect(ScalingService.scaleFactor).toEqual(0.5);
+    expect(ScalingService.getScaleFactor()).toEqual(0.5);
   });
 
   it('should update the scroll position instantly while scaling', function () {
@@ -156,7 +156,7 @@ describe('ScalingService', function () {
         easing: ScalingService.scaleEasing,
       }
     );
-    expect(ScalingService.scaleFactor).toEqual(0.75);
+    expect(ScalingService.getScaleFactor()).toEqual(0.75);
   });
 
 });
