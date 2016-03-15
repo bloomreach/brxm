@@ -17,58 +17,15 @@
 
 import { PageStructureElement } from './pageStructureElement';
 
-/**
- * Components inside a 'transparent' container may be represented by nothing but
- * a set of HTML comments rendered by HST. HST renders a start and end comment
- * so we know how far to go looking for the component's potentially empty DOM
- * tree. This function tries to extract the component's root DOM element. If it
- * determines that there is none, i.e. it finds HST's end-marker before it found
- * a valid root DOM element, it marks the page structure element and uses HST's
- * initial comment DOM element instead. The controller of the overlay element
- * will take this into account and inject a placeholder <div> into the iframe
- * when in edit mode, so the user can interact with the component.
- *
- * @param commentDomElement DOM element representing HST's first comment
- * @param metaData          meta-data provided by HST
- * @param commentProcessor  service to find HST's end marker comment
- * @returns {*}             the DOM element to be registered with the structure element.
- */
-function extractDomRoot(commentDomElement, metaData, commentProcessor) {
-  let nextSibling = commentDomElement.nextSibling;
-  let domRoot;
-
-  while (nextSibling !== null) {
-    if (nextSibling.nodeType === 1 && !domRoot) {
-      domRoot = nextSibling; // use the first element of type 1 as component DOM root.
-    }
-    if (commentProcessor.isEndMarker(nextSibling, metaData.uuid)) {
-      if (!domRoot) {
-        // this component currently renders no DOM root element.
-        // We put a mark on the component and register the comment DOM element instead.
-        metaData.hasNoDom = true;
-        domRoot = commentDomElement;
-      }
-
-      return domRoot;
-    }
-    nextSibling = nextSibling.nextSibling;
-  }
-
-  const exception = `No component end marker found for '${metaData.uuid}'.`;
-  throw exception;
-}
-
 export class ComponentElement extends PageStructureElement {
-  constructor(commentDomElement, metaData, container, commentProcessor) {
-    let jQueryElement;
+  constructor(startCommentDomElement, metaData, container, commentProcessor) {
+    let [boxDomElement, endCommentDomElement] = commentProcessor.locateComponent(metaData.uuid, startCommentDomElement);
 
-    if (PageStructureElement.isTransparentXType(container.metaData)) {
-      jQueryElement = $(extractDomRoot(commentDomElement, metaData, commentProcessor));
-    } else {
-      jQueryElement = $(commentDomElement).parent();
+    if (!PageStructureElement.isTransparentXType(container.metaData)) {
+      boxDomElement = startCommentDomElement.parentNode;
     }
 
-    super('component', jQueryElement, metaData);
+    super('component', metaData, startCommentDomElement, endCommentDomElement, boxDomElement);
 
     this.container = container;
   }

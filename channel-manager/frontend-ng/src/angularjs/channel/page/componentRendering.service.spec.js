@@ -57,7 +57,7 @@ describe('ComponentRenderingService', function () {
     });
     $httpBackend.flush();
 
-    expect(component.getJQueryElement).toHaveBeenCalledWith('iframe');
+    expect(component.getJQueryElement).toHaveBeenCalledWith('iframeBoxElement');
     expect(iframeElement.html()).toEqual('<div>component markup</div>');
   });
 

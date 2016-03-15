@@ -104,7 +104,25 @@ export class HstCommentsProcessorService {
     return null;
   }
 
-  isEndMarker(domElement, id) {
+  locateComponent(id, startingDomElement) {
+    let nextSibling = startingDomElement.nextSibling;
+    let boxDomElement;
+
+    while (nextSibling !== null) {
+      if (nextSibling.nodeType === 1 && !boxDomElement) {
+        boxDomElement = nextSibling; // use the first element of type 1 to draw the overlay box
+      }
+      if (this._isEndMarker(nextSibling, id)) {
+        return [boxDomElement, nextSibling];
+      }
+      nextSibling = nextSibling.nextSibling;
+    }
+
+    const exception = `No component end marker found for '${id}'.`;
+    throw exception;
+  }
+
+  _isEndMarker(domElement, id) {
     if (domElement.nodeType === 8) {
       const data = this._getCommentData(domElement);
       if (this._isHstEndMarker(data)) {

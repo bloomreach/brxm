@@ -18,16 +18,14 @@ import { HstConstants } from '../../../api/hst.constants';
 import { PageStructureElement } from './pageStructureElement';
 
 export class ContainerElement extends PageStructureElement {
-  constructor(commentDomElement, metaData) {
-    let jQueryElement;
+  constructor(startCommentDomElement, metaData, commentProcessor) {
+    let [boxDomElement, endCommentDomElement] = commentProcessor.locateComponent(metaData.uuid, startCommentDomElement);
 
     if (PageStructureElement.isTransparentXType(metaData)) {
-      jQueryElement = $(commentDomElement).parent();
-    } else {
-      jQueryElement = $(commentDomElement).next();
+      boxDomElement = startCommentDomElement.parentNode;
     }
 
-    super('container', jQueryElement, metaData);
+    super('container', metaData, startCommentDomElement, endCommentDomElement, boxDomElement);
 
     this.items = [];
   }

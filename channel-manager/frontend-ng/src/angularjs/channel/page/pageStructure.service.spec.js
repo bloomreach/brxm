@@ -73,13 +73,13 @@ describe('PageStructureService', function () {
     expect(PageStructureService.containers[0].type).toEqual('container');
     expect(PageStructureService.containers[0].isEmpty()).toEqual(true);
     expect(PageStructureService.containers[0].getComponents()).toEqual([]);
-    expect(PageStructureService.containers[0].getJQueryElement('iframe')).toEqual(container1);
+    expect(PageStructureService.containers[0].getJQueryElement('iframeBoxElement')).toEqual(container1);
     expect(PageStructureService.containers[0].getLabel()).toEqual('container 1');
 
     expect(PageStructureService.containers[1].type).toEqual('container');
     expect(PageStructureService.containers[1].isEmpty()).toEqual(true);
     expect(PageStructureService.containers[1].getComponents()).toEqual([]);
-    expect(PageStructureService.containers[1].getJQueryElement('iframe')).toEqual(container2);
+    expect(PageStructureService.containers[1].getJQueryElement('iframeBoxElement')).toEqual(container2);
     expect(PageStructureService.containers[1].getLabel()).toEqual('container 2');
   });
 
@@ -109,12 +109,12 @@ describe('PageStructureService', function () {
     expect(PageStructureService.containers[1].getComponents().length).toEqual(2);
 
     expect(PageStructureService.containers[1].getComponents()[0].type).toEqual('component');
-    expect(PageStructureService.containers[1].getComponents()[0].getJQueryElement('iframe')).toEqual(componentA);
+    expect(PageStructureService.containers[1].getComponents()[0].getJQueryElement('iframeBoxElement')).toEqual(componentA);
     expect(PageStructureService.containers[1].getComponents()[0].getLabel()).toEqual('component A');
     expect(PageStructureService.containers[1].getComponents()[0].container).toEqual(PageStructureService.containers[1]);
 
     expect(PageStructureService.containers[1].getComponents()[1].type).toEqual('component');
-    expect(PageStructureService.containers[1].getComponents()[1].getJQueryElement('iframe')).toEqual(componentB);
+    expect(PageStructureService.containers[1].getComponents()[1].getJQueryElement('iframeBoxElement')).toEqual(componentB);
     expect(PageStructureService.containers[1].getComponents()[1].getLabel()).toEqual('component B');
     expect(PageStructureService.containers[1].getComponents()[1].container).toEqual(PageStructureService.containers[1]);
   });
@@ -154,7 +154,7 @@ describe('PageStructureService', function () {
     });
 
     expect(PageStructureService.containers.length).toEqual(1);
-    expect(PageStructureService.containers[0].getJQueryElement('iframe')).toEqual(containerT);
+    expect(PageStructureService.containers[0].getJQueryElement('iframeBoxElement')).toEqual(containerT);
   });
 
   it('finds the DOM element of a component of a transparent container as next sibling of the comment', function () {
@@ -173,7 +173,7 @@ describe('PageStructureService', function () {
     expect(PageStructureService.containers.length).toEqual(1);
     expect(PageStructureService.containers[0].isEmpty()).toEqual(false);
     expect(PageStructureService.containers[0].getComponents().length).toEqual(1);
-    expect(PageStructureService.containers[0].getComponents()[0].getJQueryElement('iframe')).toEqual(componentT);
+    expect(PageStructureService.containers[0].getComponents()[0].getJQueryElement('iframeBoxElement')).toEqual(componentT);
     expect(PageStructureService.containers[0].getComponents()[0].hasNoIFrameDomElement()).not.toEqual(true);
   });
 
@@ -194,7 +194,7 @@ describe('PageStructureService', function () {
     expect(PageStructureService.containers.length).toEqual(1);
     expect(PageStructureService.containers[0].isEmpty()).toEqual(false);
     expect(PageStructureService.containers[0].getComponents().length).toEqual(1);
-    expect(PageStructureService.containers[0].getComponents()[0].getJQueryElement('iframe')).toEqual(comment);
+    expect(PageStructureService.containers[0].getComponents()[0].getJQueryElement('iframeBoxElement').length).toEqual(0);
     expect(PageStructureService.containers[0].getComponents()[0].hasNoIFrameDomElement()).toEqual(true);
   });
 

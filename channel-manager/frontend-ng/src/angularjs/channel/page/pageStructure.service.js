@@ -42,7 +42,7 @@ export class PageStructureService {
   registerParsedElement(commentDomElement, metaData) {
     switch (metaData[this.HST.TYPE]) {
       case this.HST.TYPE_CONTAINER:
-        this.containers.push(new ContainerElement(commentDomElement, metaData));
+        this.containers.push(new ContainerElement(commentDomElement, metaData, this.hstCommentsProcessorService));
         break;
 
       case this.HST.TYPE_COMPONENT:

@@ -32,36 +32,41 @@ export class OverlayElementCtrl {
   }
 
   _prepareIframeElement($scope) {
-    const iframeJQueryElement = this.structureElement.getJQueryElement('iframe');
-    let iframeJQueryDomRoot = iframeJQueryElement;
-    const isIframeJQueryElementInserted = this.structureElement.hasNoIFrameDomElement();
+    let boxJQueryElement = this.structureElement.getJQueryElement('iframeBoxElement');
+    let insertedTemporaryBox;
 
-    if (isIframeJQueryElementInserted) {
-      // iframeJQueryElement refers to HST-comment, insert a placeholder <div>
-      const div = document.createElement('div');
-      if (iframeJQueryElement[0].nextSibling !== null) {
-        // this should always be the case due to the presence of the HST-End marker
-        iframeJQueryElement.parent()[0].insertBefore(div, iframeJQueryElement[0].nextSibling);
-      } else {
-        iframeJQueryElement.parent()[0].appendChild(div);
-      }
-
-      iframeJQueryDomRoot = $(div);
-      this.structureElement.setJQueryElement('iframe', iframeJQueryDomRoot);
+    if (boxJQueryElement.length === 0) {
+      boxJQueryElement = this._createAndInsertTemporaryBox();
+      this.structureElement.setJQueryElement('iframeBoxElement', boxJQueryElement);
+      insertedTemporaryBox = true;
     }
 
     // Set a minimal height of the element to ensure visibility / clickability.
-    const minHeight = iframeJQueryDomRoot[0].style.minHeight || 'auto';
-    iframeJQueryDomRoot[0].style.minHeight = MIN_HEIGHT;
+    const minHeight = boxJQueryElement[0].style.minHeight || 'auto';
+    boxJQueryElement[0].style.minHeight = MIN_HEIGHT;
 
     $scope.$on('$destroy', () => {
       this.OverlaySyncService.unregisterElement(this.structureElement);
-      if (isIframeJQueryElementInserted) {
-        iframeJQueryDomRoot.detach();
-        this.structureElement.setJQueryElement('iframe', iframeJQueryElement); // reset
+      if (insertedTemporaryBox) {
+        boxJQueryElement.detach();
+        this.structureElement.setJQueryElement('iframe', undefined); // reset
       } else {
-        iframeJQueryElement[0].style.minHeight = minHeight;
+        boxJQueryElement[0].style.minHeight = minHeight;
       }
     });
+  }
+
+  _createAndInsertTemporaryBox() {
+    const startCommentJQueryElement = this.structureElement.getJQueryElement('iframeStartComment');
+    const div = document.createElement('div');
+
+    if (startCommentJQueryElement[0].nextSibling !== null) {
+      // this should always be the case due to the presence of the HST-End marker
+      startCommentJQueryElement.parent()[0].insertBefore(div, startCommentJQueryElement[0].nextSibling);
+    } else {
+      startCommentJQueryElement.parent()[0].appendChild(div);
+    }
+
+    return $(div);
   }
 }

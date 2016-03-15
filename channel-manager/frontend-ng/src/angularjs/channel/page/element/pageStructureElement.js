@@ -17,18 +17,15 @@
 import { HstConstants } from '../../../api/hst.constants';
 
 export class PageStructureElement {
-  constructor(type, jQueryElement, metaData) {
-
-    if (jQueryElement.length === 0) {
-      const exception = 'No jQuery element representing this component could be found';
-      throw exception; // ES-lint doesn't allow me to specify the string expression directly...
-    }
+  constructor(type, metaData, startCommentDomElement, endCommentDomElement, boxDomElement) {
 
     this.type = type;
     this.metaData = metaData;
     this.jQueryElements = {};
 
-    this.setJQueryElement('iframe', jQueryElement);
+    this.setJQueryElement('iframeStartComment', $(startCommentDomElement));
+    this.setJQueryElement('iframeEndComment', $(endCommentDomElement));
+    this.setJQueryElement('iframeBoxElement', $(boxDomElement));
   }
 
   setJQueryElement(elementType, element) {
