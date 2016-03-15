@@ -63,66 +63,65 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             throw new IllegalStateException("HttpSession should never be null here.");
         }
 
-        if (isComposerMode(request)) {
-            populateComponentMetaData(request, response, window);
-        }
-
         // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
         HstComponentConfiguration compConfig = ((HstComponentConfiguration) window.getComponentInfo());
-        final HstRequestContext requestContext = request.getRequestContext();
-        Mount mount = requestContext.getResolvedMount().getMount();
-        if (isTopHstResponse(rootWindow, rootRenderingWindow, window)) {
-            Map<String, String> pageMetaData = new HashMap<>();
 
-            pageMetaData.put(ChannelManagerConstants.HST_MOUNT_ID, mount.getIdentifier());
-            pageMetaData.put(ChannelManagerConstants.HST_SITE_ID, mount.getHstSite().getCanonicalIdentifier());
-            pageMetaData.put(ChannelManagerConstants.HST_PAGE_ID, compConfig.getCanonicalIdentifier());
+        if (isContainerOrContainerItem(compConfig)) {
+            if (isComposerMode(request)) {
+                populateComponentMetaData(request, response, window);
+            }
+        } else {
+            if (isTopHstResponse(rootWindow, rootRenderingWindow, window)) {
+                final HstRequestContext requestContext = request.getRequestContext();
+                final Mount mount = requestContext.getResolvedMount().getMount();
+                final Map<String, String> pageMetaData = new HashMap<>();
 
-            final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
-            if (resolvedSiteMapItem != null) {
-                final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
-                pageMetaData.put(ChannelManagerConstants.HST_SITEMAPITEM_ID, ((CanonicalInfo) hstSiteMapItem).getCanonicalIdentifier());
-                final HstSiteMap siteMap = hstSiteMapItem.getHstSiteMap();
-                if (siteMap instanceof CanonicalInfo) {
-                    final CanonicalInfo canonicalInfo = (CanonicalInfo) siteMap;
-                    pageMetaData.put(ChannelManagerConstants.HST_SITEMAP_ID, canonicalInfo.getCanonicalIdentifier());
-                    if (canonicalInfo.getCanonicalPath().contains(WORKSPACE_PATH_ELEMENT) &&
-                            canonicalInfo.getCanonicalPath().startsWith(mount.getHstSite().getConfigurationPath())) {
-                        // sitemap item is part of workspace && of current site configuration (thus not inherited)
-                        pageMetaData.put(ChannelManagerConstants.HST_PAGE_EDITABLE, "true");
+                pageMetaData.put(ChannelManagerConstants.HST_MOUNT_ID, mount.getIdentifier());
+                pageMetaData.put(ChannelManagerConstants.HST_SITE_ID, mount.getHstSite().getCanonicalIdentifier());
+                pageMetaData.put(ChannelManagerConstants.HST_PAGE_ID, compConfig.getCanonicalIdentifier());
+
+                final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+                if (resolvedSiteMapItem != null) {
+                    final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
+                    pageMetaData.put(ChannelManagerConstants.HST_SITEMAPITEM_ID, ((CanonicalInfo) hstSiteMapItem).getCanonicalIdentifier());
+                    final HstSiteMap siteMap = hstSiteMapItem.getHstSiteMap();
+                    if (siteMap instanceof CanonicalInfo) {
+                        final CanonicalInfo canonicalInfo = (CanonicalInfo) siteMap;
+                        pageMetaData.put(ChannelManagerConstants.HST_SITEMAP_ID, canonicalInfo.getCanonicalIdentifier());
+                        if (canonicalInfo.getCanonicalPath().contains(WORKSPACE_PATH_ELEMENT) &&
+                                canonicalInfo.getCanonicalPath().startsWith(mount.getHstSite().getConfigurationPath())) {
+                            // sitemap item is part of workspace && of current site configuration (thus not inherited)
+                            pageMetaData.put(ChannelManagerConstants.HST_PAGE_EDITABLE, "true");
+                        } else {
+                            pageMetaData.put(ChannelManagerConstants.HST_PAGE_EDITABLE, "false");
+                        }
                     } else {
-                        pageMetaData.put(ChannelManagerConstants.HST_PAGE_EDITABLE, "false");
+                        log.warn("Expected sitemap of subtype {}. Cannot set sitemap id.", CanonicalInfo.class.getName());
                     }
-                } else {
-                    log.warn("Expected sitemap of subtype {}. Cannot set sitemap id.", CanonicalInfo.class.getName());
                 }
-            }
 
-            Object variant = session.getAttribute(ContainerConstants.RENDER_VARIANT);
-            if (variant == null) {
-                variant = ContainerConstants.DEFAULT_PARAMETER_PREFIX;
-            }
-            pageMetaData.put(ChannelManagerConstants.HST_RENDER_VARIANT, variant.toString());
-            pageMetaData.put(ChannelManagerConstants.HST_SITE_HAS_PREVIEW_CONFIG, String.valueOf(mount.getHstSite().hasPreviewConfiguration()));
+                Object variant = session.getAttribute(ContainerConstants.RENDER_VARIANT);
+                if (variant == null) {
+                    variant = ContainerConstants.DEFAULT_PARAMETER_PREFIX;
+                }
+                pageMetaData.put(ChannelManagerConstants.HST_RENDER_VARIANT, variant.toString());
+                pageMetaData.put(ChannelManagerConstants.HST_SITE_HAS_PREVIEW_CONFIG, String.valueOf(mount.getHstSite().hasPreviewConfiguration()));
 
-            for (Map.Entry<String, String> entry : pageMetaData.entrySet()) {
-                response.addHeader(entry.getKey(), entry.getValue());
+                for (Map.Entry<String, String> entry : pageMetaData.entrySet()) {
+                    response.addHeader(entry.getKey(), entry.getValue());
+                }
+                pageMetaData.put(ChannelManagerConstants.HST_TYPE, ChannelManagerConstants.HST_TYPE_PAGE_META_DATA);
+                pageMetaData.put(ChannelManagerConstants.HST_PATH_INFO, requestContext.getBaseURL().getPathInfo());
+                pageMetaData.put(ChannelManagerConstants.HST_CHANNEL_ID, mount.getChannel().getId());
+                response.addEpilogue(createCommentWithAttr(pageMetaData, response));
             }
-            pageMetaData.put(ChannelManagerConstants.HST_TYPE, ChannelManagerConstants.HST_TYPE_PAGE_META_DATA);
-            pageMetaData.put(ChannelManagerConstants.HST_PATH_INFO, requestContext.getBaseURL().getPathInfo());
-            pageMetaData.put(ChannelManagerConstants.HST_CHANNEL_ID, mount.getChannel().getId());
-            response.addEpilogue(createCommentWithAttr(pageMetaData, response));
         }
     }
 
     private void populateComponentMetaData(final HstRequest request, final HstResponse response,
                                            final HstComponentWindow window) {
         final HstComponentConfiguration config = (HstComponentConfiguration)window.getComponentInfo();
-        final HstComponentConfiguration.Type type = config.getComponentType();
 
-        if (!type.equals(CONTAINER_ITEM_COMPONENT) && !type.equals(CONTAINER_COMPONENT)) {
-            return;
-        }
         if (!config.getCanonicalStoredLocation().contains(WORKSPACE_PATH_ELEMENT)) {
             log.debug("Component '{}' not editable as not part of hst:workspace configuration", config.toString());
             return;
@@ -133,6 +132,11 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
         populateAttributes(window, request, preambleAttributes, epilogueAttributes);
         response.addPreamble(createCommentWithAttr(preambleAttributes, response));
         response.addEpilogue(createCommentWithAttr(epilogueAttributes, response));
+    }
+
+    private boolean isContainerOrContainerItem(final HstComponentConfiguration compConfig) {
+        return CONTAINER_ITEM_COMPONENT.equals(compConfig.getComponentType())
+                || CONTAINER_COMPONENT.equals(compConfig.getComponentType());
     }
 
     final void populateAttributes(HstComponentWindow window, HstRequest request,
