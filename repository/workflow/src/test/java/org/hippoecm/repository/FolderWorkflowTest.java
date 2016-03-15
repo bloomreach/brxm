@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -156,6 +156,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
 
     @Test
     public void testDeleteFolderWithTranslationsButNoHandlesPass() throws Exception {
+        // although "hippo:translated" is deprecated, let's keep this test for now
         final Node g = node.addNode("g", "hippostd:folder");
         g.addMixin("hippo:translated");
         Node translation = g.addNode("hippo:translation", "hippo:translation");
