@@ -34,25 +34,24 @@ import { PageStructureElement } from './pageStructureElement';
  */
 function extractDomRoot(commentDomElement, metaData, commentProcessor) {
   let nextSibling = commentDomElement.nextSibling;
-  let domRoot;
-  let commentEndMarker;
+  let componentDomRoot;
 
   while (nextSibling !== null) {
-    if (nextSibling.nodeType === 1 && !domRoot) {
-      domRoot = nextSibling; // use the first element of type 1 as component DOM root.
+    if (nextSibling.nodeType === 1 && !componentDomRoot) {
+      componentDomRoot = nextSibling; // use the first element of type 1 as component DOM root.
     }
     if (commentProcessor.isEndMarker(nextSibling, metaData.uuid)) {
-      commentEndMarker = nextSibling;
-      if (!domRoot) {
+      const commentEndMarker = nextSibling;
+      if (!componentDomRoot) {
         // this component currently renders no DOM root element.
         // We put a mark on the component and register the comment DOM element instead.
         metaData.hasNoDom = true;
-        domRoot = commentDomElement;
+        componentDomRoot = commentDomElement;
       }
 
       return {
-        componentDomRoot: domRoot,
-        commentEndMarker: commentEndMarker,
+        componentDomRoot,
+        commentEndMarker,
       };
     }
     nextSibling = nextSibling.nextSibling;
@@ -68,7 +67,7 @@ export class ComponentElement extends PageStructureElement {
     let commentEndMarker;
 
     if (PageStructureElement.isTransparentXType(container.metaData)) {
-      let domRoot = extractDomRoot(commentDomElement, metaData, commentProcessor);
+      const domRoot = extractDomRoot(commentDomElement, metaData, commentProcessor);
       jQueryElement = $(domRoot.componentDomRoot);
       commentEndMarker = $(domRoot.commentEndMarker);
     } else {
@@ -91,7 +90,7 @@ export class ComponentElement extends PageStructureElement {
   }
 
   _removeJQueryElement(type) {
-    let jQueryElement = this.getJQueryElement(type);
+    const jQueryElement = this.getJQueryElement(type);
     if (jQueryElement) {
       jQueryElement.remove();
     }

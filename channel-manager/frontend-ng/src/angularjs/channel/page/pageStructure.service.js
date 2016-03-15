@@ -98,7 +98,7 @@ export class PageStructureService {
    */
   removeComponent(componentId) {
     let component = null;
-    let foundContainer = this.containers.find((container) => {
+    const foundContainer = this.containers.find((container) => {
       component = container.removeComponent(componentId);
       return component;
     });

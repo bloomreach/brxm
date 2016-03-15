@@ -15,8 +15,21 @@
  */
 
 export class HippoIframeCtrl {
-  constructor($rootScope, $scope, $element, linkProcessorService, hstCommentsProcessorService, CmsService, ChannelService,
-              PageStructureService, OverlaySyncService, ScalingService, $translate, $mdDialog, DragDropService) {
+  constructor(
+    $element,
+    $mdDialog,
+    $rootScope,
+    $scope,
+    $translate,
+    ChannelService,
+    CmsService,
+    DragDropService,
+    hstCommentsProcessorService,
+    linkProcessorService,
+    OverlaySyncService,
+    PageStructureService,
+    ScalingService,
+  ) {
     'ngInject';
 
     this.$rootScope = $rootScope;
@@ -34,13 +47,12 @@ export class HippoIframeCtrl {
     this.iframeJQueryElement.on('load', () => this.onLoad());
 
     OverlaySyncService.init(this.iframeJQueryElement, $element.find('.overlay'));
+    ScalingService.init($element);
+    DragDropService.init(this.iframeJQueryElement, $element.find('.channel-iframe-base'));
 
     CmsService.subscribe('delete-component', (componentId) => {
       this.deleteComponent(componentId);
     });
-
-    ScalingService.init($element);
-    DragDropService.init(this.iframeJQueryElement, $element.find('.channel-iframe-base'));
 
     $scope.$watch('iframe.editMode', () => this._enableDragDrop());
   }
@@ -58,21 +70,20 @@ export class HippoIframeCtrl {
   }
 
   deleteComponent(componentId) {
-    console.log('Delete component ' + componentId + ' from AngularJS');
-
-    this._confirmDelete()
-      .then(() => {
-        this.PageStructureService.removeComponent(componentId);
-      },
-      () => {
-        this.PageStructureService.showComponentProperties(this.selectedComponent);
-      });
+    this._confirmDelete().then(() => {
+      this.PageStructureService.removeComponent(componentId);
+    }, () => {
+      this.PageStructureService.showComponentProperties(this.selectedComponent);
+    });
   }
 
   _confirmDelete() {
-    var confirm = this.$mdDialog.confirm()
+    const confirm = this.$mdDialog
+      .confirm()
       .title(this.$translate.instant('CONFIRM_DELETE_COMPONENT_TITLE'))
-      .textContent(this.$translate.instant('CONFIRM_DELETE_COMPONENT_MESSAGE', { component: this.selectedComponent.getLabel() }))
+      .textContent(this.$translate.instant('CONFIRM_DELETE_COMPONENT_MESSAGE', {
+        component: this.selectedComponent.getLabel(),
+      }))
       .ok(this.$translate.instant('BUTTON_YES'))
       .cancel(this.$translate.instant('BUTTON_NO'));
 
@@ -99,8 +110,10 @@ export class HippoIframeCtrl {
     const iframeDom = this._getIframeDOM(this);
 
     this.PageStructureService.clearParsedElements();
-    this.hstCommentsProcessorService.run(iframeDom,
-      this.PageStructureService.registerParsedElement.bind(this.PageStructureService));
+    this.hstCommentsProcessorService.run(
+      iframeDom,
+      this.PageStructureService.registerParsedElement.bind(this.PageStructureService)
+    );
     this.PageStructureService.printParsedElements();
   }
 

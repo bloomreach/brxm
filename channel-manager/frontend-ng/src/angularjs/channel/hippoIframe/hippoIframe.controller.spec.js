@@ -22,57 +22,82 @@ describe('hippoIframeCtrl', function () {
   var PageStructureService;
   var $mdDialog;
   var hippoIframeCtrl;
-  var $element;
   var scope;
   var $q;
+  var ScalingService;
+  var DragDropService;
+  var OverlaySyncService;
 
   beforeEach(function () {
+    var el;
+    var $compile;
     module('hippo-cm');
 
-    inject(function ($controller, _$rootScope_, _$q_, _$mdDialog_, _PageStructureService_) {
-      scope = _$rootScope_.$new();
-      $q = _$q_;
-
+    inject(function (
+        $controller,
+        $rootScope,
+        _$compile_,
+        _$mdDialog_,
+        _$q_,
+        _DragDropService_,
+        _OverlaySyncService_,
+        _PageStructureService_,
+        _ScalingService_
+      ) {
+      $compile = _$compile_;
       $mdDialog = _$mdDialog_;
+      $q = _$q_;
+      DragDropService = _DragDropService_;
+      OverlaySyncService = _OverlaySyncService_;
       PageStructureService = _PageStructureService_;
-
-      spyOn(PageStructureService, 'removeComponent');
-      spyOn(PageStructureService, 'showComponentProperties');
-
-      console.log('initiating controller');
-      hippoIframeCtrl = $controller('hippoIframeCtrl', {
-        $scope: scope,
-      });
+      ScalingService = _ScalingService_;
+      scope = $rootScope.$new();
     });
-  });
 
-  it('initializes mock services', function () {
-    expect(PageStructureService.removeComponent).toBeDefined();
-    expect(PageStructureService.showComponentProperties).toBeDefined();
-    expect($mdDialog.show).toBeDefined();
-    expect($mdDialog.confirm).toBeDefined();
-    expect(hippoIframeCtrl).toBeDefined();
-  });
+    spyOn(ScalingService, 'init');
+    spyOn(DragDropService, 'init');
+    spyOn(OverlaySyncService, 'init');
 
-  it('shows component properties dialog after rejecting the delete operation', function () {
-    spyOn($mdDialog, 'show').and.returnValue($q.reject());
+    scope.testPath = '/';
+    scope.testEditMode = false;
 
-    hippoIframeCtrl.deleteComponent('1234');
+    el = angular.element('<hippo-iframe path="testPath" edit-mode="testEditMode"></hippo-iframe>');
+    $compile(el)(scope);
     scope.$digest();
 
-    expect($mdDialog.confirm).toHaveBeenCalled();
-    expect($mdDialog.show).toHaveBeenCalled();
-    expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith('1234');
+    hippoIframeCtrl = el.controller('hippo-iframe');
+    hippoIframeCtrl.selectedComponent = {
+      getLabel: function () {
+        return 'testLabel';
+      },
+    };
   });
 
-  it('shows the confirmation dialog and deletes selected component', function () {
-    spyOn($mdDialog, 'show').and.returnValue($q.when([]));
+  it('shows the confirmation dialog and deletes selected component on confirmation', function () {
+    spyOn(PageStructureService, 'removeComponent');
+    spyOn($mdDialog, 'show').and.returnValue($q.resolve());
+    spyOn($mdDialog, 'confirm').and.callThrough();
 
     hippoIframeCtrl.deleteComponent('1234');
+
     scope.$digest();
 
     expect($mdDialog.confirm).toHaveBeenCalled();
     expect($mdDialog.show).toHaveBeenCalled();
     expect(PageStructureService.removeComponent).toHaveBeenCalledWith('1234');
+  });
+
+  it('shows component properties dialog after rejecting the delete operation', function () {
+    spyOn(PageStructureService, 'showComponentProperties');
+    spyOn($mdDialog, 'show').and.returnValue($q.reject());
+    spyOn($mdDialog, 'confirm').and.callThrough();
+
+    hippoIframeCtrl.deleteComponent('1234');
+
+    scope.$digest();
+
+    expect($mdDialog.confirm).toHaveBeenCalled();
+    expect($mdDialog.show).toHaveBeenCalled();
+    expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith(hippoIframeCtrl.selectedComponent);
   });
 });
