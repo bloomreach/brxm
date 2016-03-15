@@ -32,9 +32,6 @@ module.exports = function karmaConfig(config) {
     `${cfg.bowerDir}/angular-mocks/angular-mocks.js`,
     `${cfg.bowerDir}/jquery/dist/jquery.js`,
     `${cfg.bowerDir}/velocity/velocity.js`,
-    `${cfg.npmDir}/babel-core/external-helpers.js`,
-    `${cfg.npmDir}/systemjs/dist/system-polyfills.js`,
-    `${cfg.npmDir}/systemjs/dist/system-register-only.js`,
   ];
 
   options.files = [
