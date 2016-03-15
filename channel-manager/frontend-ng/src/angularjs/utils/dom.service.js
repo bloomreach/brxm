@@ -26,7 +26,7 @@ export class DomService {
 
   getAppRootUrl() {
     const location = this.$document[0].location;
-    const appPath = location.pathname.substring(0, location.pathname.length - 'index.html'.length);
+    const appPath = location.pathname.substring(0, location.pathname.lastIndexOf('/') + 1);
     return `//${location.host}${appPath}`;
   }
 
