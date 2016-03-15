@@ -69,5 +69,4 @@ describe('ComponentRenderingService', function () {
 
     expect($log.warn).toHaveBeenCalled();
   });
-
 });

@@ -54,7 +54,7 @@ export class ChannelService {
     }
 
     if (this.channel.cmsPreviewPrefix) {
-      path += '/' + this.channel.cmsPreviewPrefix;
+      path += `/${this.channel.cmsPreviewPrefix}`;
     }
     return path;
   }

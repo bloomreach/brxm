@@ -28,7 +28,6 @@ describe('LinkProcessorService', function () {
       $document = _$document_;
       linkProcessorService = _linkProcessorService_;
     });
-
   });
 
   beforeEach(function () {
@@ -105,5 +104,4 @@ describe('LinkProcessorService', function () {
       expect(spyEvent).not.toHaveBeenPrevented();
     });
   });
-
 });

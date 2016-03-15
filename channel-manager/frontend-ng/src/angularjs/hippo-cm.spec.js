@@ -17,7 +17,6 @@
 'use strict';
 
 describe('The hippo-cm module', function () {
-
   'use strict';
 
   var configService;
@@ -77,5 +76,4 @@ describe('The hippo-cm module', function () {
 
     expect($translate.instant('HIPPO')).toEqual('Hippo');
   });
-
 });

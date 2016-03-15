@@ -18,7 +18,6 @@ import { HstConstants } from '../../../api/hst.constants';
 
 export class PageStructureElement {
   constructor(type, jQueryElement, metaData) {
-
     if (jQueryElement.length === 0) {
       const exception = 'No jQuery element representing this component could be found';
       throw exception; // ES-lint doesn't allow me to specify the string expression directly...

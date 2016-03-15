@@ -17,7 +17,6 @@
 'use strict';
 
 describe('The hippo-cm.channel module', function () {
-
   'use strict';
 
   var $state;
