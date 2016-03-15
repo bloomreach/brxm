@@ -18,6 +18,7 @@ package org.onehippo.forge.selection.frontend.plugin;
 
 import java.util.Locale;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -41,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
+import static org.hippoecm.repository.api.HippoNodeType.NT_PROTOTYPESET;
 
 /**
  * Radio group plugin.
@@ -239,12 +241,21 @@ public class RadioGroupPlugin extends AbstractChoicePlugin {
     private String getDocumentType() {
         Node currentNode = (Node) ((JcrPropertyValueModel) getDefaultModel()).getJcrPropertymodel().getItemModel().getParentModel().getObject();
         try {
-            while (!currentNode.isNodeType(NT_DOCUMENT)) {
+            while (!currentNode.isNodeType(NT_DOCUMENT) && !currentNode.isNodeType(NT_PROTOTYPESET)) {
                 currentNode = currentNode.getParent();
             }
-            return currentNode.getPrimaryNodeType().getName();
+            if (currentNode.isNodeType(NT_DOCUMENT)) {
+                return currentNode.getPrimaryNodeType().getName();
+            }
+            if (currentNode.isNodeType(NT_PROTOTYPESET)) {
+                final Node templateType = currentNode.getParent();
+                final Node namespace = templateType.getParent();
+                return namespace.getName() + ":" + templateType.getName();
+            }
+        } catch (ItemNotFoundException e) {
+            log.debug("Failed to determine containing document type of radio group", e);
         } catch (RepositoryException e) {
-            log.warn("Failed to find containing document of radio group", e);
+            log.warn("Failed to determing containing document type of radio group", e);
         }
         return "<unknown>";
     }
