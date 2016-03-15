@@ -849,12 +849,6 @@
             <sv:property sv:name="falseLabel" sv:type="String">
               <sv:value>False</sv:value>
             </sv:property>
-            <sv:property sv:name="source" sv:type="String">
-              <sv:value>/content/documents/valuelists/valuelist1</sv:value>
-            </sv:property>
-            <sv:property sv:name="translator.id" sv:type="String">
-              <sv:value>${cluster.id}.translator</sv:value>
-            </sv:property>
             <sv:property sv:name="trueLabel" sv:type="String">
               <sv:value>True</sv:value>
             </sv:property>
