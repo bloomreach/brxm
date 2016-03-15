@@ -99,10 +99,10 @@ export class OverlaySyncService {
 
     const rect = iframeJQueryElement[0].getBoundingClientRect();
 
-    overlayJQueryElement.css('top', rect.top + 'px');
-    overlayJQueryElement.css('left', rect.left + 'px');
-    overlayJQueryElement.css('height', rect.height + 'px');
-    overlayJQueryElement.css('width', rect.width + 'px');
+    overlayJQueryElement.css('top', `${rect.top}px`);
+    overlayJQueryElement.css('left', `${rect.left}px`);
+    overlayJQueryElement.css('height', `${rect.height}px`);
+    overlayJQueryElement.css('width', `${rect.width}px`);
   }
 
   _getIframeWindow() {

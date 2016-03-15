@@ -17,19 +17,19 @@
 const targetDir = 'target/classes/angular/hippo-cm/';
 const customConfig = {
   env: {
-    maven: true
+    maven: true,
   },
   distDir: targetDir,
   copyFiles: [
     {
       src: 'bower_components/dragula.js/dist/dragula.min.css',
-      dest: `${targetDir}styles`
+      dest: `${targetDir}styles`,
     },
     {
       src: 'bower_components/dragula.js/dist/dragula.min.js',
-      dest: `${targetDir}scripts`
-    }
-  ]
+      dest: `${targetDir}scripts`,
+    },
+  ],
 };
 
 module.exports = customConfig;

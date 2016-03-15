@@ -80,5 +80,4 @@ describe('DomService', function () {
   it('should return app root url with // protocol', function () {
     expect(DomService.getAppRootUrl()).toEqual('//localhost:8080/app/root/');
   });
-
 });

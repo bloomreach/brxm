@@ -191,5 +191,4 @@ describe('ChannelService', function () {
     CatalogServiceMock.getComponents.and.returnValue(mockCatalog);
     expect(ChannelService.getCatalog()).toEqual(mockCatalog);
   });
-
 });

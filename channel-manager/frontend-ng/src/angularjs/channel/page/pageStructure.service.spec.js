@@ -335,7 +335,6 @@ describe('PageStructureService', function () {
         testMetaData: 'foo',
       },
     });
-
   });
 
   it('prints parsed elements', function () {
@@ -364,5 +363,4 @@ describe('PageStructureService', function () {
 
     expect($log.debug.calls.count()).toEqual(4);
   });
-
 });
