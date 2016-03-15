@@ -34,21 +34,25 @@ import { PageStructureElement } from './pageStructureElement';
  */
 function extractDomRoot(commentDomElement, metaData, commentProcessor) {
   let nextSibling = commentDomElement.nextSibling;
-  let domRoot;
+  let componentDomRoot;
 
   while (nextSibling !== null) {
-    if (nextSibling.nodeType === 1 && !domRoot) {
-      domRoot = nextSibling; // use the first element of type 1 as component DOM root.
+    if (nextSibling.nodeType === 1 && !componentDomRoot) {
+      componentDomRoot = nextSibling; // use the first element of type 1 as component DOM root.
     }
     if (commentProcessor.isEndMarker(nextSibling, metaData.uuid)) {
-      if (!domRoot) {
+      const commentEndMarker = nextSibling;
+      if (!componentDomRoot) {
         // this component currently renders no DOM root element.
         // We put a mark on the component and register the comment DOM element instead.
         metaData.hasNoDom = true;
-        domRoot = commentDomElement;
+        componentDomRoot = commentDomElement;
       }
 
-      return domRoot;
+      return {
+        componentDomRoot,
+        commentEndMarker,
+      };
     }
     nextSibling = nextSibling.nextSibling;
   }
@@ -60,9 +64,12 @@ function extractDomRoot(commentDomElement, metaData, commentProcessor) {
 export class ComponentElement extends PageStructureElement {
   constructor(commentDomElement, metaData, container, commentProcessor) {
     let jQueryElement;
+    let commentEndMarker;
 
     if (PageStructureElement.isTransparentXType(container.metaData)) {
-      jQueryElement = $(extractDomRoot(commentDomElement, metaData, commentProcessor));
+      const domRoot = extractDomRoot(commentDomElement, metaData, commentProcessor);
+      jQueryElement = $(domRoot.componentDomRoot);
+      commentEndMarker = $(domRoot.commentEndMarker);
     } else {
       jQueryElement = $(commentDomElement).parent();
     }
@@ -70,6 +77,34 @@ export class ComponentElement extends PageStructureElement {
     super('component', jQueryElement, metaData);
 
     this.container = container;
+    this.commentStartMarker = $(commentDomElement);
+    this.commentEndMarker = commentEndMarker;
+  }
+
+  /**
+   * Remove both the component's rendering element and its HST meta-data comment element
+   */
+  removeFromDOM() {
+    this._removeJQueryElement('iframe');
+    this._removeCommentElements();
+  }
+
+  _removeJQueryElement(type) {
+    const jQueryElement = this.getJQueryElement(type);
+    if (jQueryElement) {
+      jQueryElement.remove();
+    }
+  }
+
+  _removeCommentElements() {
+    this._removeElement(this.commentStartMarker);
+    this._removeElement(this.commentEndMarker);
+  }
+
+  _removeElement(e) {
+    if (e) {
+      e.remove();
+    }
   }
 
   getContainer() {

@@ -20,20 +20,26 @@ describe('PageStructureService', function () {
   var PageStructureService;
   var PageMetaDataService;
   var ChannelService;
+  var HstService;
   var $document;
+  var $q;
   var $log;
   var $window;
+  var $rootScope;
 
   beforeEach(function () {
     module('hippo-cm.channel.page');
 
-    inject(function (_$log_, _$document_, _$window_, _PageStructureService_, _PageMetaDataService_, _ChannelService_) {
+    inject(function (_$q_, _$rootScope_, _$log_, _$document_, _$window_, _PageStructureService_, _PageMetaDataService_, _ChannelService_, _HstService_) {
+      $q = _$q_;
+      $rootScope = _$rootScope_;
       $log = _$log_;
       $document = _$document_;
       $window = _$window_;
       PageStructureService = _PageStructureService_;
       PageMetaDataService = _PageMetaDataService_;
       ChannelService = _ChannelService_;
+      HstService = _HstService_;
     });
   });
 
@@ -283,6 +289,78 @@ describe('PageStructureService', function () {
 
   it('returns null when getting an unknown component', function () {
     expect(PageStructureService.getComponent('no-such-component')).toBeNull();
+  });
+
+  it('removes a valid component and calls HST successfully', function () {
+    var container = $j('#container1', $document);
+    var component = $j('#componentA', $document);
+
+    PageStructureService.registerParsedElement(container[0].previousSibling, {
+      'HST-Type': 'CONTAINER_COMPONENT',
+      uuid: 'container-123',
+    });
+    PageStructureService.registerParsedElement(component[0].childNodes[0], {
+      'HST-Type': 'CONTAINER_ITEM_COMPONENT',
+      'HST-Label': 'Test Component',
+      uuid: 'component-1234',
+    });
+    spyOn(HstService, 'doGet').and.returnValue($q.when([]));
+
+    PageStructureService.removeComponent('component-1234').then(function (removedComponent) {
+      expect(removedComponent.getId()).toEqual('component-1234');
+    });
+
+    $rootScope.$digest();
+
+    expect(HstService.doGet).toHaveBeenCalledWith('container-123', 'delete', 'component-1234');
+  });
+
+  it('removes a valid component but fails to call HST', function () {
+    var handler = jasmine.createSpy('success');
+    var container = $j('#container1', $document);
+    var component = $j('#componentA', $document);
+
+    PageStructureService.registerParsedElement(container[0].previousSibling, {
+      'HST-Type': 'CONTAINER_COMPONENT',
+      uuid: 'container-123',
+    });
+    PageStructureService.registerParsedElement(component[0].childNodes[0], {
+      'HST-Type': 'CONTAINER_ITEM_COMPONENT',
+      'HST-Label': 'Test Component',
+      uuid: 'component-1234',
+    });
+
+    // mock the call to HST to be failed
+    spyOn(HstService, 'doGet').and.returnValue($q.reject());
+
+    PageStructureService.removeComponent('component-1234').then(handler);
+    $rootScope.$digest();
+
+    expect(HstService.doGet).toHaveBeenCalledWith('container-123', 'delete', 'component-1234');
+    expect(handler).not.toHaveBeenCalled();
+  });
+
+  it('removes an invalid component', function () {
+    var handler = jasmine.createSpy('success');
+    var container = $j('#container1', $document);
+    var component = $j('#componentA', $document);
+
+    PageStructureService.registerParsedElement(container[0].previousSibling, {
+      'HST-Type': 'CONTAINER_COMPONENT',
+      uuid: 'container-123',
+    });
+    PageStructureService.registerParsedElement(component[0].childNodes[0], {
+      'HST-Type': 'CONTAINER_ITEM_COMPONENT',
+      'HST-Label': 'Test Component',
+      uuid: 'component-1234',
+    });
+    spyOn(HstService, 'doGet').and.returnValue($q.when([]));
+
+    PageStructureService.removeComponent('component-123').then(handler);
+    $rootScope.$digest();
+
+    expect(handler).not.toHaveBeenCalled();
+    expect(HstService.doGet).not.toHaveBeenCalled();
   });
 
   it('returns a container by iframe element', function () {

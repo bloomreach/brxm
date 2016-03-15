@@ -103,6 +103,7 @@
             console.log('TODO: re-render saved component');
             // old code: this.fireEvent('channelChanged');
           },
+          deleteComponent: this._deleteComponent,
           deleteVariant: function() {
             console.log('TODO: delete variant');
             // old code: this.fireEvent('channelChanged');
@@ -128,6 +129,10 @@
           scope: this
         }
       });
+    },
+
+    _deleteComponent: function (componentId) {
+      this.hostToIFrame.publish('delete-component', componentId);
     },
 
     _showComponentProperties: function(selected) {
