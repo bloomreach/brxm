@@ -74,7 +74,7 @@ describe('hippoIframeCtrl', function () {
   });
 
   it('shows the confirmation dialog and deletes selected component on confirmation', function () {
-    spyOn(PageStructureService, 'removeComponent');
+    spyOn(PageStructureService, 'removeComponent').and.returnValue($q.resolve());
     spyOn($mdDialog, 'show').and.returnValue($q.resolve());
     spyOn($mdDialog, 'confirm').and.callThrough();
 
