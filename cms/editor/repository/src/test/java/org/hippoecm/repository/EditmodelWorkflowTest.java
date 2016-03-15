@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -242,11 +242,6 @@ public class EditmodelWorkflowTest extends RepositoryTestCase {
         Node root = session.getRootNode();
 
         Node typeNode = root.getNode("hippo:namespaces/editmodel/existing");
-        typeNode.addMixin("hippo:translated");
-
-        Node translation = typeNode.addNode("hippo:translation", "hippo:translation");
-        translation.setProperty("hippo:language", "");
-        translation.setProperty("hippo:message", "Existing");
         session.save();
 
         // check initial conditions
@@ -261,7 +256,6 @@ public class EditmodelWorkflowTest extends RepositoryTestCase {
         session.refresh(false);
 
         typeNode = root.getNode("hippo:namespaces/editmodel/copiedtype");
-        assertFalse(typeNode.isNodeType(HippoNodeType.NT_TRANSLATED));
 
         nodes = typeNode.getNode("hipposysedit:nodetype").getNodes("hipposysedit:nodetype");
         assertEquals(1, nodes.getSize());
