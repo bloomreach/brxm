@@ -24,12 +24,12 @@ describe('DomService', function () {
     module('hippo-cm.utils');
 
     module(function ($provide) {
-      $provide.value('$document', {
+      $provide.value('$document', [{
         location: {
           pathname: '/app/root/index.html',
           host: 'localhost:8080',
         },
-      });
+      }]);
     });
 
     inject(function (_DomService_) {
