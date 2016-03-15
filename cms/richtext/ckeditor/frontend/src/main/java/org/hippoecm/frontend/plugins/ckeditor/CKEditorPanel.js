@@ -151,11 +151,7 @@
         });
     };
 
-    if (Wicket.Browser.isIE()) {
-        var lessThan11  = !Wicket.Browser.isSafari() && typeof(document.all) !== "undefined" && typeof(window.opera) === "undefined";
-        if(lessThan11) {
-            return;
-        }
+    if (Wicket.Browser.isIELessThan11()) {
         CKEDITOR_READY.when(function() {
             /*
              Replace CKEditor's 'appendStyleText' method. IE < 11 chokes on the original because it calls createStyleSheet()
