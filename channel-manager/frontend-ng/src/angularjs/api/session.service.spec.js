@@ -69,5 +69,4 @@ describe('SessionService', function () {
     $rootScope.$apply();
     expect(sessionService.hasWriteAccess()).toEqual(true);
   });
-
 });

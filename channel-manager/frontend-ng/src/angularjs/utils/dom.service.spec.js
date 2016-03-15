@@ -18,7 +18,6 @@ describe('DomService', function () {
   'use strict';
 
   var DomService;
-  var $window;
   var fixturesPath = '/' + jasmine.getFixtures().fixturesPath;
 
   beforeEach(function () {
@@ -33,9 +32,8 @@ describe('DomService', function () {
       });
     });
 
-    inject(function (_DomService_, _$window_) {
+    inject(function (_DomService_) {
       DomService = _DomService_;
-      $window = _$window_;
     });
 
     jasmine.getFixtures().load('utils/dom.service.fixture.html');
@@ -82,5 +80,4 @@ describe('DomService', function () {
   it('should return app root url with // protocol', function () {
     expect(DomService.getAppRootUrl()).toEqual('//localhost:8080/app/root/');
   });
-
 });
