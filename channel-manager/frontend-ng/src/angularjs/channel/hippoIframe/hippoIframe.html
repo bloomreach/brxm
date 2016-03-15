@@ -31,8 +31,7 @@
                            layout="row"
                            structure-element="component"
                            ng-class="{ 'overlay-dragging': iframe.isDragging() }"
-                           ng-click="iframe.showComponentProperties(component)"
-                           ng-mousedown="iframe.startDrag($event, component)">
+                           ng-mousedown="iframe.dragOrClick($event, component)">
           </overlay-element>
         </div>
       </div>
