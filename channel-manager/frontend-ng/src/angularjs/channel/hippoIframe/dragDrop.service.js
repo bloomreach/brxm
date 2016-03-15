@@ -93,7 +93,7 @@ export class DragDropService {
     this._destroyDrake();
   }
 
-  startDrag($event, structureElement) {
+  dragOrClick($event, structureElement) {
     this.dragging = true;
     this._dispatchEventInIframe($event, structureElement);
   }

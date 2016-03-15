@@ -64,11 +64,6 @@ export class HippoIframeCtrl {
     });
   }
 
-  showComponentProperties(structureElement) {
-    this.selectedComponent = structureElement;
-    this.PageStructureService.showComponentProperties(this.selectedComponent);
-  }
-
   deleteComponent(componentId) {
     this._confirmDelete().then(() => {
       this.PageStructureService.removeComponent(componentId);
@@ -98,8 +93,9 @@ export class HippoIframeCtrl {
     }
   }
 
-  startDrag($event, structureElement) {
-    this.DragDropService.startDrag($event, structureElement);
+  dragOrClick($event, structureElement) {
+    this.selectedComponent = structureElement;
+    this.DragDropService.dragOrClick($event, structureElement);
   }
 
   isDragging() {
