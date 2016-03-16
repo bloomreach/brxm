@@ -65,5 +65,4 @@ describe('HstCommentsProcessorService', function () {
 
     expect(observer.callback).not.toHaveBeenCalled();
   });
-
 });

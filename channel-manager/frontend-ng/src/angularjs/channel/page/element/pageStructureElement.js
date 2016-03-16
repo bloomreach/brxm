@@ -49,7 +49,8 @@ export class PageStructureElement {
   }
 
   getLastModified() {
-    return this.metaData[HstConstants.LAST_MODIFIED] || 0;
+    const lastModified = this.metaData[HstConstants.LAST_MODIFIED];
+    return lastModified ? parseInt(lastModified, 10) : 0;
   }
 
   isLocked() {

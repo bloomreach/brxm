@@ -16,32 +16,34 @@
 
 export class DomService {
 
-  constructor($q) {
+  constructor($q, $rootScope, $document) {
     'ngInject';
 
     this.$q = $q;
+    this.$rootScope = $rootScope;
+    this.$document = $document;
   }
 
   getAppRootUrl() {
-    const appPath = document.location.pathname.substring(0, document.location.pathname.length - 'index.html'.length);
-    return `//${document.location.host}${appPath}`;
+    const location = this.$document[0].location;
+    const appPath = location.pathname.substring(0, location.pathname.lastIndexOf('/') + 1);
+    return `//${location.host}${appPath}`;
   }
 
-  addCss(window, href) {
-    const link = window.document.createElement('link');
-    link.type = 'text/css';
-    link.rel = 'stylesheet';
-    link.href = href;
-    window.document.head.appendChild(link);
+  addCss(window, url) {
+    return $.get(url, (response) => {
+      const link = $(`<style>${response}</style>`);
+      $(window.document).find('head').append(link);
+    });
   }
 
-  addScript(window, src) {
-    return this.$q(function (resolve, reject) {
+  addScript(window, url) {
+    return this.$q((resolve, reject) => {
       const script = window.document.createElement('script');
       script.type = 'text/javascript';
-      script.src = src;
-      script.addEventListener('load', resolve);
-      script.addEventListener('error', reject);
+      script.src = url;
+      script.addEventListener('load', () => this.$rootScope.$apply(resolve));
+      script.addEventListener('error', () => this.$rootScope.$apply(reject));
       window.document.body.appendChild(script);
     });
   }

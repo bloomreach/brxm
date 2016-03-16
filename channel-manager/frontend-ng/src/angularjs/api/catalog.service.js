@@ -26,7 +26,7 @@ export class CatalogService {
     return this.HstService.doGet(mountId, 'toolkit')
       .then((response) => {
         if (response && response.data) {
-          let components = response.data;
+          const components = response.data;
           components.sort((a, b) => a.label.localeCompare(b.label));
           this.components = components;
         }

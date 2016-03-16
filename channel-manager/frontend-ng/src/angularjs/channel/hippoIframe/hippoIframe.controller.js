@@ -15,13 +15,29 @@
  */
 
 export class HippoIframeCtrl {
-  constructor($rootScope, $scope, $element, linkProcessorService, hstCommentsProcessorService, ChannelService,
-              PageStructureService, OverlaySyncService, ScalingService, DragDropService) {
+  constructor(
+    $element,
+    $mdDialog,
+    $rootScope,
+    $scope,
+    $translate,
+    ChannelService,
+    CmsService,
+    DragDropService,
+    hstCommentsProcessorService,
+    linkProcessorService,
+    OverlaySyncService,
+    PageStructureService,
+    ScalingService,
+  ) {
     'ngInject';
 
     this.$rootScope = $rootScope;
+    this.$translate = $translate;
+    this.$mdDialog = $mdDialog;
     this.linkProcessorService = linkProcessorService;
     this.hstCommentsProcessorService = hstCommentsProcessorService;
+    this.CmsService = CmsService;
     this.ChannelService = ChannelService;
     this.PageStructureService = PageStructureService;
     this.OverlaySyncService = OverlaySyncService;
@@ -34,6 +50,10 @@ export class HippoIframeCtrl {
     ScalingService.init($element);
     DragDropService.init(this.iframeJQueryElement, $element.find('.channel-iframe-base'));
 
+    CmsService.subscribe('delete-component', (componentId) => {
+      this.deleteComponent(componentId);
+    });
+
     $scope.$watch('iframe.editMode', () => this._enableDragDrop());
   }
 
@@ -44,6 +64,29 @@ export class HippoIframeCtrl {
     });
   }
 
+  deleteComponent(componentId) {
+    this._confirmDelete().then(() => {
+      this.PageStructureService.removeComponent(componentId).then(() => {
+        this.OverlaySyncService.syncIframe();
+      });
+    }, () => {
+      this.PageStructureService.showComponentProperties(this.selectedComponent);
+    });
+  }
+
+  _confirmDelete() {
+    const confirm = this.$mdDialog
+      .confirm()
+      .title(this.$translate.instant('CONFIRM_DELETE_COMPONENT_TITLE'))
+      .textContent(this.$translate.instant('CONFIRM_DELETE_COMPONENT_MESSAGE', {
+        component: this.selectedComponent.getLabel(),
+      }))
+      .ok(this.$translate.instant('BUTTON_YES'))
+      .cancel(this.$translate.instant('BUTTON_NO'));
+
+    return this.$mdDialog.show(confirm);
+  }
+
   _enableDragDrop() {
     if (this.editMode) {
       this.DragDropService.enable(this.PageStructureService.containers);
@@ -52,8 +95,9 @@ export class HippoIframeCtrl {
     }
   }
 
-  startDrag($event, structureElement) {
-    this.DragDropService.startDrag($event, structureElement);
+  dragOrClick($event, structureElement) {
+    this.selectedComponent = structureElement;
+    this.DragDropService.dragOrClick($event, structureElement);
   }
 
   isDragging() {
@@ -61,23 +105,28 @@ export class HippoIframeCtrl {
   }
 
   _parseHstComments() {
-    const iframeDom = this.iframeJQueryElement.contents()[0];
+    const iframeDom = this._getIframeDOM(this);
 
     this.PageStructureService.clearParsedElements();
-    this.hstCommentsProcessorService.run(iframeDom,
-      this.PageStructureService.registerParsedElement.bind(this.PageStructureService));
+    this.hstCommentsProcessorService.run(
+      iframeDom,
+      this.PageStructureService.registerParsedElement.bind(this.PageStructureService)
+    );
     this.PageStructureService.printParsedElements();
   }
 
+  _getIframeDOM() {
+    return this.iframeJQueryElement.contents()[0];
+  }
+
   _parseLinks() {
-    const iframeDom = this.iframeJQueryElement.contents()[0];
-    const schemeAndHost = `${iframeDom.location.protocol}//${iframeDom.location.host}`;
-    const previewUrl = `${schemeAndHost}${this.ChannelService.getPreviewPath()}`;
-    this.linkProcessorService.run(iframeDom, previewUrl);
+    const iframeDom = this._getIframeDOM();
+    const internalLinkPrefix = `${iframeDom.location.protocol}//${iframeDom.location.host}${this.ChannelService.getUrl()}`;
+
+    this.linkProcessorService.run(iframeDom, internalLinkPrefix);
   }
 
   getContainers() {
     return this.editMode ? this.PageStructureService.containers : [];
   }
-
 }

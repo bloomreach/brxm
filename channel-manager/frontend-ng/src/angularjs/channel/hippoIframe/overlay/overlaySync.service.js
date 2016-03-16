@@ -23,7 +23,7 @@ export class OverlaySyncService {
     this.$window = $window;
 
     this.overlayElements = [];
-    this.observer = new MutationObserver(ThrottleService.throttle(() => this._syncIframe(), 100));
+    this.observer = new MutationObserver(ThrottleService.throttle(() => this.syncIframe(), 100));
   }
 
   init(iframeJQueryElement, overlayJQueryElement) {
@@ -46,7 +46,7 @@ export class OverlaySyncService {
   }
 
   _onLoad() {
-    this._syncIframe();
+    this.syncIframe();
 
     const iframeWindow = this._getIframeWindow();
     this.observer.observe(iframeWindow.document, {
@@ -56,7 +56,7 @@ export class OverlaySyncService {
       subtree: true,
     });
     $(iframeWindow).on('beforeunload', () => this._onUnLoad());
-    $(this.$window).on('resize.overlaysync', () => this._syncIframe());
+    $(this.$window).on('resize.overlaysync', () => this.syncIframe());
   }
 
   _onUnLoad() {
@@ -67,7 +67,7 @@ export class OverlaySyncService {
     });
   }
 
-  _syncIframe() {
+  syncIframe() {
     this._syncHeight();
     this._syncOverlayElements();
   }
@@ -99,10 +99,10 @@ export class OverlaySyncService {
 
     const rect = iframeJQueryElement[0].getBoundingClientRect();
 
-    overlayJQueryElement.css('top', rect.top + 'px');
-    overlayJQueryElement.css('left', rect.left + 'px');
-    overlayJQueryElement.css('height', rect.height + 'px');
-    overlayJQueryElement.css('width', rect.width + 'px');
+    overlayJQueryElement.css('top', `${rect.top}px`);
+    overlayJQueryElement.css('left', `${rect.left}px`);
+    overlayJQueryElement.css('height', `${rect.height}px`);
+    overlayJQueryElement.css('width', `${rect.width}px`);
   }
 
   _getIframeWindow() {

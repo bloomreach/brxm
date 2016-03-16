@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,4 @@
  * limitations under the License.
  */
 
-const targetDir = 'target/classes/angular/hippo-cm/';
-const customConfig = {
-  env: {
-    maven: true,
-  },
-  distDir: targetDir,
-  copyFiles: [
-    {
-      src: 'bower_components/dragula.js/dist/dragula.min.css',
-      dest: `${targetDir}styles`,
-    },
-    {
-      src: 'bower_components/dragula.js/dist/dragula.min.js',
-      dest: `${targetDir}scripts`,
-    },
-  ],
-};
-
-module.exports = customConfig;
+window.DomServiceTestScriptLoaded = true;

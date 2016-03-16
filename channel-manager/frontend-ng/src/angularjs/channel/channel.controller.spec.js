@@ -113,5 +113,4 @@ describe('ChannelCtrl', function () {
     ChannelCtrl.toggleEditMode();
     expect(ChannelService.createPreviewConfiguration).not.toHaveBeenCalled();
   });
-
 });

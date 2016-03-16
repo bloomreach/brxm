@@ -158,5 +158,4 @@ describe('ScalingService', function () {
     );
     expect(ScalingService.getScaleFactor()).toEqual(0.75);
   });
-
 });

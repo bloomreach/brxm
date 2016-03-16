@@ -19,11 +19,12 @@ import { ComponentElement } from './element/componentElement';
 
 export class PageStructureService {
 
-  constructor($log, HstConstants, hstCommentsProcessorService, HstService, ChannelService, CmsService, PageMetaDataService) {
+  constructor($log, $q, HstConstants, hstCommentsProcessorService, ChannelService, CmsService, PageMetaDataService, HstService) {
     'ngInject';
 
     // Injected
     this.$log = $log;
+    this.$q = $q;
     this.HST = HstConstants;
     this.HstService = HstService;
     this.ChannelService = ChannelService;
@@ -85,6 +86,38 @@ export class PageStructureService {
       return component;
     });
     return component;
+  }
+
+  /**
+   * Remove the component identified by given Id
+   * @param componentId
+   * @returns {*} a promise with removed successfully component
+   */
+  removeComponent(componentId) {
+    let component = null;
+    const foundContainer = this.containers.find((container) => {
+      component = container.removeComponent(componentId);
+      return component;
+    });
+
+    if (!foundContainer) {
+      return this.$q.reject();
+    }
+
+    // request back-end to remove component
+    return this._removeHstComponent(foundContainer.getId(), componentId)
+      .then(() => {
+        component.removeFromDOM();
+        return component;
+      });
+  }
+
+  _removeHstComponent(containerId, componentId) {
+    return this.HstService.doGet(containerId, 'delete', componentId);
+  }
+
+  getContainerByIframeElement(containerIFrameElement) {
+    return this.containers.find((container) => container.getJQueryElement('iframe').is(containerIFrameElement));
   }
 
   showComponentProperties(componentElement) {

@@ -42,7 +42,6 @@ export class ComponentRenderingService {
   }
 
   _fetchHtml(component, propertiesMap) {
-
     function toUrlEncodedFormData(json) {
       const keyValuePairs = [];
       for (const property in json) {

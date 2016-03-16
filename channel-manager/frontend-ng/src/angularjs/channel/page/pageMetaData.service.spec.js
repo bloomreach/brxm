@@ -67,5 +67,4 @@ describe('PageMetaDataService', function () {
     PageMetaDataService.clear();
     expect(PageMetaDataService.get()).toEqual({});
   });
-
 });

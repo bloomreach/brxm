@@ -27,7 +27,7 @@
         windowWidth = config.width;
 
       this.componentPropertiesPanel = new Hippo.ChannelManager.ChannelEditor.ComponentPropertiesPanel({
-        bubbleEvents: ['save', 'deleteVariant', 'propertiesChanged'],
+        bubbleEvents: ['save', 'deleteComponent', 'deleteVariant', 'propertiesChanged'],
         resources: config.resources,
         locale: config.locale,
         composerRestMountUrl: config.composerRestMountUrl,
@@ -64,8 +64,15 @@
         }
       });
 
-      buttons.push(this.saveButton);
-      buttons.push({
+      this.deleteButton = new Ext.Button({
+        xtype: 'button',
+        cls: 'btn btn-default qa-delete-button',
+        text: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-button-delete'],
+        scope: this.componentPropertiesPanel,
+        handler: this.componentPropertiesPanel.deleteComponent
+      });
+
+      this.closeButon = new Ext.Button({
         xtype: 'button',
         cls: 'btn btn-default qa-close-button',
         text: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-button-close'],
@@ -79,7 +86,13 @@
         layout: 'fit',
         width: windowWidth,
         items: this.componentPropertiesPanel,
-        buttons: buttons
+        buttonAlign: 'left',
+        buttons: [
+          this.deleteButton,
+          {xtype: 'tbfill'},
+          this.saveButton,
+          this.closeButon
+        ]
       }));
     },
 

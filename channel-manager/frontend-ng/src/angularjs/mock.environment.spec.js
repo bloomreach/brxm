@@ -97,5 +97,4 @@
 
   beforeEach(mockHost);
   beforeEach(mockFallbackTranslations);
-
 }());
