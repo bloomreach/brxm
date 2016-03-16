@@ -50,6 +50,7 @@ export class DragDropService {
     if (this.drake) {
       this.drake.destroy();
       this.drake = null;
+      this.dragging = false;
     }
   }
 
@@ -58,7 +59,7 @@ export class DragDropService {
       this.dragulaPromise = this._injectDragula(this.iframe);
     }
 
-    this.dragulaPromise.then(() => {
+    return this.dragulaPromise.then(() => {
       const iframeContainerElements = containers.map((container) => container.getJQueryElement('iframe')[0]);
 
       this.drake = this.iframe.dragula(iframeContainerElements, {
