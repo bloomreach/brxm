@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.hippoecm.hst.content.beans.manager.workflow;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jcr.Item;
 import javax.jcr.Node;
 
 import org.hippoecm.hst.AbstractBeanTestCase;
@@ -32,8 +31,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NAME;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
 
@@ -332,22 +334,22 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
             String expectedNodeName = "test-folder1";
 
             // create a document with type and name
-            String absoluteDocumentHandlePath = wpm.createAndReturn(TEST_AUTO_NEW_FOLDER_NODE_PATH, HIPPOSTD_FOLDER_NODE_TYPE, folderName, true);
+            String absoluteFolderPath = wpm.createAndReturn(TEST_AUTO_NEW_FOLDER_NODE_PATH, HIPPOSTD_FOLDER_NODE_TYPE, folderName, true);
 
+            System.out.println(absoluteFolderPath);
             // retrieves the document created just before
-            newFolder = (HippoFolderBean) wpm.getObject(absoluteDocumentHandlePath);
+            newFolder = (HippoFolderBean) wpm.getObject(absoluteFolderPath);
 
+            System.out.println(newFolder.getDisplayName());
             // test localized name
-            assert !newFolder.getDisplayName().equals(newFolder.getName());
-            assert newFolder.getDisplayName().equals(folderName);
-            assert expectedNodeName.equals(newFolder.getName());
+            assertFalse(newFolder.getDisplayName().equals(newFolder.getName()));
+            assertEquals(folderName, newFolder.getDisplayName());
+            assertEquals(expectedNodeName, newFolder.getName());
 
             // test jcr low level
-            Item item = session.getItem(absoluteDocumentHandlePath);
-            assert expectedNodeName.equals(item.getName());
-            assert item instanceof Node;
-            assert ((Node) item).hasNode("hippo:translation");
-            assert ((Node) item).getNode("hippo:translation").getProperty("hippo:message").getString().equals(folderName);
+            Node handle = session.getNode(absoluteFolderPath);
+            assertEquals("test-folder1", handle.getName());
+            assertEquals("Test Folder1", handle.getProperty(HIPPO_NAME).getString());
         } finally {
             if (newFolder != null) {
                 wpm.remove(newFolder);
@@ -374,10 +376,9 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
             assert folderName.equals(newFolder.getName());
 
             // the created node shouldn't have a translation child, the passed node name should be sufficient
-            Item item = session.getItem(TEST_AUTO_NEW_FOLDER_NODE_PATH + "/" + folderName);
-            assert folderName.equals(item.getName());
-            assert item instanceof Node;
-            assert !((Node) item).hasNode("hippo:translation");
+            Node folderNode = session.getNode(TEST_AUTO_NEW_FOLDER_NODE_PATH + "/" + folderName);
+            assertTrue(folderName.equals(folderNode.getName()));
+            assertFalse(folderNode.hasProperty(HIPPO_NAME));
         } finally {
             if (newFolder != null) {
                 wpm.remove(newFolder);
@@ -405,17 +406,17 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
 
             HippoFolderBean newTmpFolder = newFolder;
             // check the created folder names
-            assert "new-folder4".equals(newTmpFolder.getName());
-            assert "new folder4".equals(newTmpFolder.getDisplayName());
+            assertEquals("new-folder4", newTmpFolder.getName());
+            assertEquals("new folder4", newTmpFolder.getDisplayName());
             newTmpFolder = (HippoFolderBean) newTmpFolder.getParentBean();
-            assert "new-folder3".equals(newTmpFolder.getName());
-            assert "new FOLDER3".equals(newTmpFolder.getDisplayName());
+            assertEquals("new-folder3", newTmpFolder.getName());
+            assertEquals("new FOLDER3", newTmpFolder.getDisplayName());
             newTmpFolder = (HippoFolderBean) newTmpFolder.getParentBean();
-            assert "new-folder2".equals(newTmpFolder.getName());
-            assert "NEW Folder2".equals(newTmpFolder.getDisplayName());
+            assertEquals("new-folder2", newTmpFolder.getName());
+            assertEquals("NEW Folder2", newTmpFolder.getDisplayName());
             newTmpFolder = (HippoFolderBean) newTmpFolder.getParentBean();
-            assert "new-folder1".equals(newTmpFolder.getName());
-            assert "new Folder1".equals(newTmpFolder.getDisplayName());
+            assertEquals("new-folder1", newTmpFolder.getName());
+            assertEquals("new Folder1", newTmpFolder.getDisplayName());
         } finally {
             if (newFolder != null) {
                 wpm.remove(newFolder);
