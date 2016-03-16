@@ -46,7 +46,7 @@ export class PageStructureService {
         this.containers.push(new ContainerElement(commentDomElement, metaData, this.hstCommentsProcessorService));
         break;
 
-      case this.HST.TYPE_COMPONENT:
+      case this.HST.TYPE_COMPONENT: {
         if (this.containers.length === 0) {
           this.$log.warn('Unable to register component outside of a container context.');
           return;
@@ -55,13 +55,14 @@ export class PageStructureService {
         const container = this.containers[this.containers.length - 1];
         try {
           container.addComponent(new ComponentElement(commentDomElement, metaData,
-                                                      container, this.hstCommentsProcessorService));
+            container, this.hstCommentsProcessorService));
         } catch (exception) {
           this.$log.debug(exception, metaData);
         }
         break;
+      }
 
-      case this.HST.TYPE_PAGE:
+      case this.HST.TYPE_PAGE: {
         const registeredMetaData = angular.copy(metaData);
         delete registeredMetaData[this.HST.TYPE];
         this.pageMetaData.add(registeredMetaData);
@@ -73,6 +74,7 @@ export class PageStructureService {
           }
         }
         break;
+      }
 
       default:
         break;

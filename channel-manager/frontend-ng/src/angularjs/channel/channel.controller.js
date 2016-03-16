@@ -38,14 +38,14 @@ export class ChannelCtrl {
 
     this.addComponentDrake = window.dragula({
       ignoreInputTextSelection: false,
-      isContainer: function (el) {
+      isContainer(el) {
         return el.classList.contains('catalog-dd-container') || el.classList.contains('overlay-element-container');
       },
       copy: true,
-      moves: function (el) {
+      moves(el) {
         return el.classList.contains('catalog-dd-container-item');
       },
-      accepts: function (el, target) {
+      accepts(el, target) {
         return target.classList.contains('overlay-element-container');
       },
     });

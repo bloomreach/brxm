@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+/* eslint-disable prefer-const */
+
 import { HstConstants } from '../../../api/hst.constants';
 import { PageStructureElement } from './pageStructureElement';
 

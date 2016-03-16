@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+/* eslint-disable prefer-const */
+
 import { PageStructureElement } from './pageStructureElement';
 
 export class ComponentElement extends PageStructureElement {

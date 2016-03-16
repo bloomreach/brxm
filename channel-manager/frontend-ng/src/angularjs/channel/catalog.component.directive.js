@@ -22,7 +22,7 @@ export function CatalogComponentDirective(CatalogService) {
     scope: {
       catalogComponent: '=',
     },
-    link: function (scope, element) {
+    link(scope, element) {
       CatalogService.setCatalogElement(scope.catalogComponent, element);
     },
   };

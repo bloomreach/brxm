@@ -18,7 +18,6 @@ import { HstConstants } from '../../../api/hst.constants';
 
 export class PageStructureElement {
   constructor(type, metaData, startCommentDomElement, endCommentDomElement, boxDomElement) {
-
     this.type = type;
     this.metaData = metaData;
     this.jQueryElements = {};
