@@ -80,6 +80,7 @@
         <sv:value>frontend:plugincluster</sv:value>
       </sv:property>
 
+      <sv:property sv:multiple="true" sv:name="nodetypes" sv:type="String"/>
       <sv:property sv:name="frontend:services" sv:type="String">
         <sv:value>wicket.id</sv:value>
       </sv:property>
