@@ -119,7 +119,7 @@ export class PageStructureService {
   }
 
   getContainerByIframeElement(containerIFrameElement) {
-    return this.containers.find((container) => container.getJQueryElement('iframe').is(containerIFrameElement));
+    return this.containers.find((container) => container.getJQueryElement('iframeBoxElement').is(containerIFrameElement));
   }
 
   showComponentProperties(componentElement) {

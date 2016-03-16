@@ -92,7 +92,7 @@ export class ContainerElement extends PageStructureElement {
   }
 
   getComponentByIframeElement(iframeElement) {
-    return this.items.find((item) => item.getJQueryElement('iframe').is(iframeElement));
+    return this.items.find((item) => item.getJQueryElement('iframeBoxElement').is(iframeElement));
   }
 
   getHstRepresentation() {
