@@ -113,7 +113,10 @@
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>mix:referenceable</sv:value>
-            <sv:value>hippo:translated</sv:value>
+            <sv:value>hippo:named</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:name" sv:type="String">
+            <sv:value>Home Page</sv:value>
           </sv:property>
           <sv:node sv:name="homepage">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -172,17 +175,6 @@
               </sv:property>
             </sv:node>
           </sv:node>
-          <sv:node sv:name="hippo:translation">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:translation</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value/>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Home Page</sv:value>
-            </sv:property>
-          </sv:node>
         </sv:node>
         <sv:node sv:name="aboutfolder">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -214,7 +206,10 @@
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
               <sv:value>mix:referenceable</sv:value>
-              <sv:value>hippo:translated</sv:value>
+              <sv:value>hippo:named</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:name" sv:type="String">
+              <sv:value>About Us</sv:value>
             </sv:property>
             <sv:node sv:name="about-us">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -272,17 +267,6 @@
                   <sv:value>This is the content of the about us</sv:value>
                 </sv:property>
               </sv:node>
-            </sv:node>
-            <sv:node sv:name="hippo:translation">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:translation</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:language" sv:type="String">
-                <sv:value/>
-              </sv:property>
-              <sv:property sv:name="hippo:message" sv:type="String">
-                <sv:value>About Us</sv:value>
-              </sv:property>
             </sv:node>
           </sv:node>
         </sv:node>
@@ -752,7 +736,10 @@
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>mix:referenceable</sv:value>
-            <sv:value>hippo:translated</sv:value>
+            <sv:value>hippo:named</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:name" sv:type="String">
+            <sv:value>Home Page Sub project</sv:value>
           </sv:property>
           <sv:node sv:name="homepage">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -813,17 +800,6 @@
                 <sv:value>This is the content of the homepage</sv:value>
               </sv:property>
             </sv:node>
-          </sv:node>
-          <sv:node sv:name="hippo:translation">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:translation</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:language" sv:type="String">
-              <sv:value/>
-            </sv:property>
-            <sv:property sv:name="hippo:message" sv:type="String">
-              <sv:value>Home Page Sub project</sv:value>
-            </sv:property>
           </sv:node>
         </sv:node>
       </sv:node>

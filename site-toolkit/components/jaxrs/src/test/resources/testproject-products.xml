@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+    Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
     
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -33,10 +33,13 @@
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>mix:referenceable</sv:value>
-      <sv:value>hippo:translated</sv:value>
+      <sv:value>hippo:named</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>db72e3c9-3bab-40df-9d28-e466974af710</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>Alfa Romeo</sv:value>
     </sv:property>
     <sv:node sv:name="alfa-romeo">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -120,17 +123,6 @@
         </sv:property>
       </sv:node>
     </sv:node>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value/>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Alfa Romeo</sv:value>
-      </sv:property>
-    </sv:node>
   </sv:node>
   <sv:node sv:name="opel">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -138,10 +130,13 @@
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>mix:referenceable</sv:value>
-      <sv:value>hippo:translated</sv:value>
+      <sv:value>hippo:named</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>26b29234-9325-4e75-bf51-775cabe254f8</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>Opel</sv:value>
     </sv:property>
     <sv:node sv:name="opel">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -225,17 +220,6 @@
         </sv:property>
       </sv:node>
     </sv:node>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value/>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Opel</sv:value>
-      </sv:property>
-    </sv:node>
   </sv:node>
   <sv:node sv:name="nissan">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -243,7 +227,10 @@
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>mix:referenceable</sv:value>
-      <sv:value>hippo:translated</sv:value>
+      <sv:value>hippo:named</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>Nissan</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>7ab888be-308b-4075-b256-c68e117480bc</sv:value>
@@ -330,17 +317,6 @@
         </sv:property>
       </sv:node>
     </sv:node>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value/>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Nissan</sv:value>
-      </sv:property>
-    </sv:node>
   </sv:node>
   <sv:node sv:name="alfa-romeo2">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -348,10 +324,13 @@
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>mix:referenceable</sv:value>
-      <sv:value>hippo:translated</sv:value>
+      <sv:value>hippo:named</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>c8f1e54f-b2ed-480b-8bbb-87b148ed3585</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>Alfa Romeo2</sv:value>
     </sv:property>
     <sv:node sv:name="alfa-romeo2">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -435,17 +414,6 @@
           <sv:value>07464293-3c92-4ebe-8f01-89bd3e92a0bf</sv:value>
         </sv:property>
       </sv:node>
-    </sv:node>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value/>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Alfa Romeo2</sv:value>
-      </sv:property>
     </sv:node>
   </sv:node>
 </sv:node>
