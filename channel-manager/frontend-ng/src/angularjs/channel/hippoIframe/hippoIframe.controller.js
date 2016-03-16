@@ -66,7 +66,7 @@ export class HippoIframeCtrl {
 
   deleteComponent(componentId) {
     this._confirmDelete().then(() => {
-      this.PageStructureService.removeComponent(componentId).then(() => {
+      this.PageStructureService.removeComponentById(componentId).then(() => {
         this.OverlaySyncService.syncIframe();
       });
     }, () => {

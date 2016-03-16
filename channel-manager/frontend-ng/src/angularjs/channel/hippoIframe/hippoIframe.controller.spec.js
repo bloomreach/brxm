@@ -84,7 +84,7 @@ describe('hippoIframeCtrl', function () {
 
     expect($mdDialog.confirm).toHaveBeenCalled();
     expect($mdDialog.show).toHaveBeenCalled();
-    expect(PageStructureService.removeComponent).toHaveBeenCalledWith('1234');
+    expect(PageStructureService.removeComponentById).toHaveBeenCalledWith('1234');
   });
 
   it('shows component properties dialog after rejecting the delete operation', function () {

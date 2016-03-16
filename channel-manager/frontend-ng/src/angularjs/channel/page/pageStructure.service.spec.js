@@ -306,7 +306,7 @@ describe('PageStructureService', function () {
     });
     spyOn(HstService, 'doGet').and.returnValue($q.when([]));
 
-    PageStructureService.removeComponent('component-1234').then(function (removedComponent) {
+    PageStructureService.removeComponentById('component-1234').then(function (removedComponent) {
       expect(removedComponent.getId()).toEqual('component-1234');
     });
 
@@ -333,7 +333,7 @@ describe('PageStructureService', function () {
     // mock the call to HST to be failed
     spyOn(HstService, 'doGet').and.returnValue($q.reject());
 
-    PageStructureService.removeComponent('component-1234').then(handler);
+    PageStructureService.removeComponentById('component-1234').then(handler);
     $rootScope.$digest();
 
     expect(HstService.doGet).toHaveBeenCalledWith('container-123', 'delete', 'component-1234');
@@ -356,7 +356,7 @@ describe('PageStructureService', function () {
     });
     spyOn(HstService, 'doGet').and.returnValue($q.when([]));
 
-    PageStructureService.removeComponent('component-123').then(handler);
+    PageStructureService.removeComponentById('component-123').then(handler);
     $rootScope.$digest();
 
     expect(handler).not.toHaveBeenCalled();

@@ -99,23 +99,19 @@ export class PageStructureService {
    * @param componentId
    * @returns {*} a promise with removed successfully component
    */
-  removeComponent(componentId) {
-    let component = null;
-    const foundContainer = this.containers.find((container) => {
-      component = container.removeComponent(componentId);
-      return component;
-    });
+  removeComponentById(componentId) {
+    const component = this.getComponent(componentId);
 
-    if (!foundContainer) {
+    if (!component) {
       return this.$q.reject();
     }
 
     // request back-end to remove component
-    return this._removeHstComponent(foundContainer.getId(), componentId)
+    return this._removeHstComponent(component.getContainer().getId(), componentId)
       .then(() => {
         component.removeFromDOM();
-        return component;
-      });
+        component.detach();
+      }); // TODO handle error
   }
 
   _removeHstComponent(containerId, componentId) {

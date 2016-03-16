@@ -96,6 +96,30 @@ export class PageStructureElement {
     }
   }
 
+  replaceInIframe(htmlFragment) {
+    const start = this.getJQueryElement('iframeStartComment')[0];
+    const end = this.getJQueryElement('iframeEndComment')[0];
+    const insertAfter = start.previousSibling;
+    const insertBefore = end.nextSibling;
+    const parent = start.parentNode;
+
+    this.removeFromDOM();
+
+    if (insertBefore) {
+      $(insertBefore).before(htmlFragment);
+      this.setJQueryElement('iframeEndComment', $(insertBefore.previousSibling));
+    } else {
+      $(parent).append(htmlFragment);
+      this.setJQueryElement('iframeEndComment', $(parent.lastChild));
+    }
+
+    if (insertAfter) {
+      this.setJQueryElement('iframeStartComment', $(insertAfter.nextSibling));
+    } else {
+      this.setJQueryElement('iframeStartComment', $(parent.firstChild));
+    }
+  }
+
   static isTransparentXType(metaData) {
     const metaDataXType = metaData[HstConstants.XTYPE];
 

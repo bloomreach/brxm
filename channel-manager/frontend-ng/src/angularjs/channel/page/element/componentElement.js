@@ -32,6 +32,10 @@ export class ComponentElement extends PageStructureElement {
     this.container = container;
   }
 
+  detach() {
+    this.container.removeComponent(this);
+  }
+
   getContainer() {
     return this.container;
   }
