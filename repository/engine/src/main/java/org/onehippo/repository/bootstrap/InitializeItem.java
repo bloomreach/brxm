@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -170,8 +170,8 @@ public class InitializeItem {
         return null;
     }
 
-    public Long getSequence() throws RepositoryException {
-        return itemNode.getProperty(HIPPO_SEQUENCE).getLong();
+    public Double getSequence() throws RepositoryException {
+        return JcrUtils.getDoubleProperty(itemNode, HIPPO_SEQUENCE, -1.0);
     }
 
     public Node getItemNode() {
@@ -316,7 +316,7 @@ public class InitializeItem {
     }
 
     public String getNamespace() throws RepositoryException {
-        return trim(itemNode.getProperty(HIPPO_NAMESPACE).getString());
+        return trim(JcrUtils.getStringProperty(itemNode, HIPPO_NAMESPACE, null));
     }
 
     public String getContentDeletePath() throws RepositoryException {
@@ -328,15 +328,15 @@ public class InitializeItem {
     }
 
     public String getWebFileBundle() throws RepositoryException {
-        return trim(itemNode.getProperty(HIPPO_WEB_FILE_BUNDLE).getString());
+        return trim(JcrUtils.getStringProperty(itemNode, HIPPO_WEB_FILE_BUNDLE, null));
     }
 
     public String getResourceBundles() throws RepositoryException {
-        return trim(itemNode.getProperty(HIPPO_RESOURCEBUNDLES).getString());
+        return trim(JcrUtils.getStringProperty(itemNode, HIPPO_RESOURCEBUNDLES, null));
     }
 
     public URL getResourceBundlesURL() throws RepositoryException {
-        return getResourceURL(trim(itemNode.getProperty(HIPPO_RESOURCEBUNDLES).getString()));
+        return getResourceURL(trim(JcrUtils.getStringProperty(itemNode, HIPPO_RESOURCEBUNDLES, null)));
     }
 
     public Property getContentPropSetProperty() throws RepositoryException {
