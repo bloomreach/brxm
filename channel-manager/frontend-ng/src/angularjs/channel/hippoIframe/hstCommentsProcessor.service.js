@@ -35,6 +35,12 @@ export class HstCommentsProcessorService {
     }
   }
 
+  processFragment(jQueryNodeCollection, callback) {
+    for (let i = 0; i < jQueryNodeCollection.length; i++) {
+      this.processCommentsWithDomWalking(jQueryNodeCollection[i], callback);
+    }
+  }
+
   processCommentsWithXPath(document, callback) {
     const query = document.evaluate('//comment()', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
     for (let i = 0; i < query.snapshotLength; i++) {
