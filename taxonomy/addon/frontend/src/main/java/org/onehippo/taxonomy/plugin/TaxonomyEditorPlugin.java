@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -97,8 +97,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * TaxonomyEditorPlugin used when editing taxonomy documents.
- *
- * @version $Id$
  */
 public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
@@ -120,9 +118,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     private final boolean useUrlKeyEncoding;
 
     /**
-     * Constructor which adds all the UI components.
-     * The UI components include taxonomy tree, toolbar, and detail form container.
-     * The detail form container holds all the category detail fields such as name, description and synonyms.
+     * Constructor which adds all the UI components. The UI components include taxonomy tree, toolbar, and detail form
+     * container. The detail form container holds all the category detail fields such as name, description and
+     * synonyms.
      */
     public TaxonomyEditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -322,9 +320,8 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                 controls.add(removeControl);
 
                 if (editing) {
-                    TextFieldWidget input = new TextFieldWidget("synonym", item.getModel());
-                    FormComponent fc = (FormComponent) input.get("widget");
-                    fc.add(StringValidator.minimumLength(1));
+                    final TextFieldWidget input = new TextFieldWidget("synonym", item.getModel());
+                    input.getFormComponent().add(StringValidator.minimumLength(1));
                     item.add(input);
                 } else {
                     item.add(new Label("synonym", item.getModel()));
@@ -410,8 +407,8 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     }
 
     /**
-     * Factory method for wrapping a JCR node in a JcrTaxonomy object.  Override to customize
-     * the taxonomy repository structure.
+     * Factory method for wrapping a JCR node in a JcrTaxonomy object.  Override to customize the taxonomy repository
+     * structure.
      */
     protected JcrTaxonomy newTaxonomy(final IModel<Node> model, final boolean editing, final ITaxonomyService service) {
         return new JcrTaxonomy(model, editing, service);
@@ -439,8 +436,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     }
 
     /**
-     * Returns the current editable category instance
-     * which is being edited.
+     * Returns the current editable category instance which is being edited.
      */
     protected EditableCategory getCategory() {
         return taxonomy.getCategoryByKey(key);
@@ -492,7 +488,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
             }
         }
 
-        if(languageSelections.isEmpty()) {
+        if (languageSelections.isEmpty()) {
             LanguageSelection defaultLanguageSelection = new LanguageSelection(getLocale(), getLocale());
             languageSelections.add(defaultLanguageSelection);
         }
@@ -509,11 +505,11 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     }
 
     /**
-     * Returns the detail form container which holds all the category detail fields such as name, description and synonyms.
-     * <p/>
+     * Returns the detail form container which holds all the category detail fields such as name, description and
+     * synonyms.
+     * <p>
      * If you want to add custom UI components for your custom category fields, you might want to override this plugin
-     * and invoke this method in the constructor to add the custom UI components.
-     * </P>
+     * and invoke this method in the constructor to add the custom UI components. </p>
      */
     protected Form<?> getContainerForm() {
         return container;
@@ -679,7 +675,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
     protected void setMenuActionEnabled(final String actionId, boolean enabled) {
         @SuppressWarnings("unchecked")
-        final AjaxLink<Void> menuAction = (AjaxLink<Void>)toolbarHolder.get(actionId);
+        final AjaxLink<Void> menuAction = (AjaxLink<Void>) toolbarHolder.get(actionId);
 
         if (enabled) {
             menuAction.add(new AttributeModifier("class", Model.of(MENU_ACTION_STYLE_CLASS)));
@@ -806,6 +802,13 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
         @Override
         public void onClick(AjaxRequestTarget target) {
+            final TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
+            final CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
+
+            if (categoryNode == null || categoryNode.getCategory() == null) {
+                return;
+            }
+
             IDialogService dialogService = getDialogService();
             final List<String> keys = new ArrayList<>();
             final Model<String> classificationIdModel = new Model<>();
@@ -883,15 +886,19 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
         public RemoveButton() {
             super(ID);
-            add(HippoIcon.fromSprite("remove-category-icon", Icon.TIMES_CIRCLE));
+            add(HippoIcon.fromSprite("remove-category-icon", Icon.TIMES));
         }
 
         @Override
         public void onClick(AjaxRequestTarget target) {
-            IDialogService dialogService = getDialogService();
-
             final TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
             final CategoryNode categoryNode = taxonomyRoot.findCategoryNodeByKey(key);
+
+            if (categoryNode == null || categoryNode.getCategory() == null) {
+                return;
+            }
+
+            IDialogService dialogService = getDialogService();
 
             if (!categoryNode.isLeaf()) {
                 dialogService.show(
@@ -902,9 +909,11 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                             {
                                 setCancelVisible(false);
                             }
+
                             @Override
                             public void invokeWorkflow() throws Exception {
                             }
+
                             @Override
                             public IValueMap getProperties() {
                                 return DialogConstants.SMALL;
@@ -947,9 +956,11 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                                 {
                                     setCancelVisible(false);
                                 }
+
                                 @Override
                                 public void invokeWorkflow() throws Exception {
                                 }
+
                                 @Override
                                 public IValueMap getProperties() {
                                     return DialogConstants.LARGE;

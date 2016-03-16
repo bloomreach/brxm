@@ -33,9 +33,9 @@
   <inceptionYear>2009</inceptionYear>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/taxonomy/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/taxonomy/trunk/</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/taxonomy/trunk/</url>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-plugin-taxonomy.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-plugin-taxonomy.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-plugin-taxonomy</url>
   </scm>
 
   <properties>
@@ -253,6 +253,7 @@
             <inherited>false</inherited>
             <configuration>
               <excludes combine.children="append">
+                <exclude>README.md</exclude>
                 <!-- repository content XML -->
                 <exclude>addon/repository/src/main/resources/*.xml</exclude>
                 <exclude>demo/content/src/main/resources/**/*.xml</exclude>
