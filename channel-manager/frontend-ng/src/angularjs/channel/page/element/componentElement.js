@@ -32,22 +32,6 @@ export class ComponentElement extends PageStructureElement {
     this.container = container;
   }
 
-  /**
-   * Remove both the component's rendering element and its HST meta-data comment element
-   */
-  removeFromDOM() {
-    this._removeJQueryElement('iframeBoxElement');
-    this._removeJQueryElement('iframeStartComment');
-    this._removeJQueryElement('iframeEndComment');
-  }
-
-  _removeJQueryElement(type) {
-    const jQueryElement = this.getJQueryElement(type);
-    if (jQueryElement) {
-      jQueryElement.remove();
-    }
-  }
-
   getContainer() {
     return this.container;
   }

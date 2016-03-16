@@ -72,6 +72,30 @@ export class PageStructureElement {
     return this.metaData[HstConstants.RENDER_URL];
   }
 
+  /**
+   * Remove all children of the start comment's parent between the start and en comments (inclusive)
+   */
+  removeFromDOM() {
+    const start = this.getJQueryElement('iframeStartComment')[0];
+    const end = this.getJQueryElement('iframeEndComment')[0];
+    const parent = start.parentNode;
+    const children = parent.childNodes;
+    let doDelete = false;
+
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i];
+      if (child === start) {
+        doDelete = true;
+      }
+      if (doDelete) {
+        parent.removeChild(child);
+      }
+      if (child === end) {
+        break;
+      }
+    }
+  }
+
   static isTransparentXType(metaData) {
     const metaDataXType = metaData[HstConstants.XTYPE];
 
