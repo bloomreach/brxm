@@ -29,24 +29,24 @@
  * limitations under the License.
  */
 
-describe('PageMetaDataService', function () {
+describe('PageMetaDataService', () => {
   'use strict';
 
-  var PageMetaDataService;
+  let PageMetaDataService;
 
-  beforeEach(function () {
+  beforeEach(() => {
     module('hippo-cm.channel.page');
 
-    inject(function (_PageMetaDataService_) {
+    inject((_PageMetaDataService_) => {
       PageMetaDataService = _PageMetaDataService_;
     });
   });
 
-  it('has no meta-data initially', function () {
+  it('has no meta-data initially', () => {
     expect(PageMetaDataService.get()).toEqual({});
   });
 
-  it('adds data', function () {
+  it('adds data', () => {
     PageMetaDataService.add({
       foo: 1,
       bar: 2,
@@ -60,7 +60,7 @@ describe('PageMetaDataService', function () {
     });
   });
 
-  it('clears data', function () {
+  it('clears data', () => {
     PageMetaDataService.add({
       test: 1,
     });

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-describe('HstCommentsProcessorService', function () {
+describe('HstCommentsProcessorService', () => {
   'use strict';
 
-  var hstCommentsProcessorService;
-  function NOOP() {}
+  let hstCommentsProcessorService;
+  function NOOP() { }
 
-  beforeEach(function () {
+  beforeEach(() => {
     module('hippo-cm.channel.hippoIframe');
 
-    inject(function (_hstCommentsProcessorService_) {
+    inject((_hstCommentsProcessorService_) => {
       hstCommentsProcessorService = _hstCommentsProcessorService_;
     });
 
@@ -31,17 +31,17 @@ describe('HstCommentsProcessorService', function () {
   });
 
   // PhantomJS does not support XPath querying through document.evaluate (https://github.com/ariya/phantomjs/issues/10161)
-  it('should use DOM-walking when XPath querying is not available', function () {
+  it('should use DOM-walking when XPath querying is not available', () => {
     spyOn(hstCommentsProcessorService, 'processCommentsWithDomWalking');
     hstCommentsProcessorService.run($j('#jasmine-fixtures')[0], NOOP);
     expect(hstCommentsProcessorService.processCommentsWithDomWalking).toHaveBeenCalled();
   });
 
 
-  it('should process comments with DOM-walking', function () {
-    var fixture = $j('#jasmine-fixtures')[0];
-    var gatheredData = [];
-    hstCommentsProcessorService.processCommentsWithDomWalking(fixture, function (element, json) {
+  it('should process comments with DOM-walking', () => {
+    const fixture = $j('#jasmine-fixtures')[0];
+    const gatheredData = [];
+    hstCommentsProcessorService.processCommentsWithDomWalking(fixture, (element, json) => {
       gatheredData.push(json);
     });
 
@@ -52,14 +52,14 @@ describe('HstCommentsProcessorService', function () {
     ]);
   });
 
-  it('should gracefully handle an undefined element when DOM-walking', function () {
+  it('should gracefully handle an undefined element when DOM-walking', () => {
     expect(hstCommentsProcessorService.processCommentsWithDomWalking).not.toThrow();
   });
 
 
-  it('should not invoke callback when JSON data is invalid', function () {
-    var fixture = $j('#qa-invalid-json')[0];
-    var observer = { callback: NOOP };
+  it('should not invoke callback when JSON data is invalid', () => {
+    const fixture = $j('#qa-invalid-json')[0];
+    const observer = { callback: NOOP };
     spyOn(observer, 'callback');
     hstCommentsProcessorService.processCommentsWithDomWalking(fixture, observer.callback);
 

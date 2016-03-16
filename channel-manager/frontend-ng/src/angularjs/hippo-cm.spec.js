@@ -16,16 +16,16 @@
 
 'use strict';
 
-describe('The hippo-cm module', function () {
+describe('The hippo-cm module', () => {
   'use strict';
 
-  var configService;
-  var $httpBackend;
-  var $rootScope;
-  var $state;
-  var $translate;
+  let configService;
+  let $httpBackend;
+  let $rootScope;
+  let $state;
+  let $translate;
 
-  var MOCK_TRANSLATIONS = {
+  const MOCK_TRANSLATIONS = {
     en: {
       HIPPO: 'Hippo',
     },
@@ -34,14 +34,14 @@ describe('The hippo-cm module', function () {
     },
   };
 
-  beforeEach(function () {
-    module('hippo-cm', function ($stateProvider, $translateProvider) {
+  beforeEach(() => {
+    module('hippo-cm', ($stateProvider, $translateProvider) => {
       $stateProvider.state('hippo-cm.dummy-child-state', {});
       $translateProvider.translations('en', MOCK_TRANSLATIONS.en);
       $translateProvider.translations('nl', MOCK_TRANSLATIONS.nl);
     });
 
-    inject(function (ConfigService, _$httpBackend_, _$rootScope_, _$state_, _$translate_) {
+    inject((ConfigService, _$httpBackend_, _$rootScope_, _$state_, _$translate_) => {
       configService = ConfigService;
       $httpBackend = _$httpBackend_;
       $rootScope = _$rootScope_;
@@ -52,14 +52,14 @@ describe('The hippo-cm module', function () {
     $httpBackend.whenGET('i18n/hippo-cm.no-such-locale.json').respond(404);
   });
 
-  it('uses English translations by default', function () {
+  it('uses English translations by default', () => {
     $state.go('hippo-cm.dummy-child-state');
     $rootScope.$apply();
 
     expect($translate.instant('HIPPO')).toEqual('Hippo');
   });
 
-  it('uses the locale specified in the config service', function () {
+  it('uses the locale specified in the config service', () => {
     configService.locale = 'nl';
 
     $state.go('hippo-cm.dummy-child-state');
@@ -68,7 +68,7 @@ describe('The hippo-cm module', function () {
     expect($translate.instant('HIPPO')).toEqual('Nijlpaard');
   });
 
-  it('falls back to English translations for unknown locales', function () {
+  it('falls back to English translations for unknown locales', () => {
     configService.locale = 'no-such-locale';
 
     $state.go('hippo-cm.dummy-child-state');

@@ -14,34 +14,34 @@
  * limitations under the License.
  */
 
-describe('ComponentsService', function () {
+describe('ComponentsService', () => {
   'use strict';
 
-  var $q;
-  var $rootScope;
-  var HstServiceMock;
-  var CatalogService;
+  let $q;
+  let $rootScope;
+  let HstServiceMock;
+  let CatalogService;
 
-  beforeEach(function () {
+  beforeEach(() => {
     module('hippo-cm-api');
 
     HstServiceMock = jasmine.createSpyObj('HstService', [
       'doGet',
     ]);
 
-    module(function ($provide) {
+    module(($provide) => {
       $provide.value('HstService', HstServiceMock);
     });
 
-    inject(function (_$q_, _$rootScope_, _CatalogService_) {
+    inject((_$q_, _$rootScope_, _CatalogService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       CatalogService = _CatalogService_;
     });
   });
 
-  it('returns list of components in alphabetical order', function () {
-    var mockComponents = [
+  it('returns list of components in alphabetical order', () => {
+    const mockComponents = [
       {
         label: 'foo component',
       },
@@ -52,8 +52,7 @@ describe('ComponentsService', function () {
         label: 'foo2 component',
       },
     ];
-    var deferred = $q.defer();
-    var components;
+    const deferred = $q.defer();
 
     HstServiceMock.doGet.and.returnValue(deferred.promise);
 
@@ -63,9 +62,8 @@ describe('ComponentsService', function () {
     deferred.resolve({ data: mockComponents });
     $rootScope.$digest();
 
-    components = CatalogService.getComponents();
-    expect(components.map(function (c) {
-      return c.label;
-    })).toEqual(['bah component', 'foo component', 'foo2 component']);
+    const components = CatalogService.getComponents();
+    expect(components.map((c) => c.label))
+      .toEqual(['bah component', 'foo component', 'foo2 component']);
   });
 });

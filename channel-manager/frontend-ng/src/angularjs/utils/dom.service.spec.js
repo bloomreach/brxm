@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-describe('DomService', function () {
+describe('DomService', () => {
   'use strict';
 
-  var DomService;
-  var fixturesPath = '/' + jasmine.getFixtures().fixturesPath;
+  let DomService;
+  const fixturesPath = `/${jasmine.getFixtures().fixturesPath}`;
 
-  beforeEach(function () {
+  beforeEach(() => {
     module('hippo-cm.utils');
 
-    module(function ($provide) {
+    module(($provide) => {
       $provide.value('$document', [{
         location: {
           pathname: '/app/root/index.html',
@@ -32,7 +32,7 @@ describe('DomService', function () {
       }]);
     });
 
-    inject(function (_DomService_) {
+    inject((_DomService_) => {
       DomService = _DomService_;
     });
 
@@ -40,44 +40,44 @@ describe('DomService', function () {
   });
 
   function testInIframe(callback) {
-    var iframe = $j('#testIframe');
-    iframe.on('load', function () {
+    const iframe = $j('#testIframe');
+    iframe.on('load', () => {
       callback(iframe[0].contentWindow);
     });
-    iframe.attr('src', fixturesPath + '/utils/dom.service.iframe.fixture.html');
+    iframe.attr('src', `${fixturesPath}/utils/dom.service.iframe.fixture.html`);
   }
 
-  it('should add a css file to the head', function (done) {
-    testInIframe(function (iframeWindow) {
-      var cssFile = fixturesPath + '/utils/dom.service.fixture.css';
+  it('should add a css file to the head', (done) => {
+    testInIframe((iframeWindow) => {
+      const cssFile = `${fixturesPath}/utils/dom.service.fixture.css`;
       DomService.addCss(iframeWindow, cssFile)
-        .then(function () {
-          var red = $j(iframeWindow.document).find('#red');
+        .then(() => {
+          const red = $j(iframeWindow.document).find('#red');
           expect(red.css('color')).toEqual('rgb(255, 0, 0)');
           done();
         });
     });
   });
 
-  it('should add a script file to the body', function (done) {
-    testInIframe(function (iframeWindow) {
-      var script = fixturesPath + '/utils/dom.service.fixture.js';
+  it('should add a script file to the body', (done) => {
+    testInIframe((iframeWindow) => {
+      const script = `${fixturesPath}/utils/dom.service.fixture.js`;
       expect(iframeWindow.DomServiceTestScriptLoaded).not.toBeDefined();
       DomService.addScript(iframeWindow, script)
-        .then(function () {
+        .then(() => {
           expect(iframeWindow.DomServiceTestScriptLoaded).toEqual(true);
           done();
         });
     });
   });
 
-  it('should reject a promise when script url returns 404', function (done) {
-    testInIframe(function (iframeWindow) {
+  it('should reject a promise when script url returns 404', (done) => {
+    testInIframe((iframeWindow) => {
       DomService.addScript(iframeWindow, 'does-not-exist.js').catch(done);
     });
   });
 
-  it('should return app root url with // protocol', function () {
+  it('should return app root url with // protocol', () => {
     expect(DomService.getAppRootUrl()).toEqual('//localhost:8080/app/root/');
   });
 });
