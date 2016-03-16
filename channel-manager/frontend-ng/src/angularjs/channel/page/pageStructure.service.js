@@ -157,7 +157,7 @@ export class PageStructureService {
       this._addHstComponent(catalogComponent, oldContainer.getId()).then(() =>
         this._fetchContainerMarkup(oldContainer).then((response) => {
           const jQueryContainerElement = oldContainer.replaceDOM(response.data);
-          this._replaceContainer(oldContainer, this._createContainer(jQueryContainerElement.parent()));
+          this._replaceContainer(oldContainer, this._createContainer(jQueryContainerElement));
           this.OverlaySyncService.syncIframe();
         })
       );
@@ -193,10 +193,9 @@ export class PageStructureService {
    * @private
    */
   _createContainer(jQueryContainerElement) {
-    const containerDomElement = jQueryContainerElement[0];
     let container = null;
 
-    this.hstCommentsProcessorService.run(containerDomElement, function (commentDomElement, metaData) {
+    this.hstCommentsProcessorService.processFragment(jQueryContainerElement, function (commentDomElement, metaData) {
       switch (metaData[this.HST.TYPE]) {
         case this.HST.TYPE_CONTAINER:
           if (!container) {
