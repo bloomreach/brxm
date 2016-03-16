@@ -410,6 +410,7 @@
             &.updater-editor-visible {
               border: 1px solid $light-gray;
               visibility: visible;
+              line-height: normal;
             }
           }
         }

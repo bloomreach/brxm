@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,8 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.standards.perspective;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
@@ -54,6 +56,22 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
     private static final String EVENT_PERSPECTIVE_ACTIVATED = "perspective-activated";
     private static final String EVENT_PARAM_PERSPECTIVE_ID = "perspectiveId";
+    private static final String EVENT_PARAM_CMS = "CMS";
+
+    private static final ArrayList<String> cmsEventNamesList;
+    static {
+        cmsEventNamesList = new ArrayList<>();
+        cmsEventNamesList.add("dashboard");
+        cmsEventNamesList.add("channels");
+        cmsEventNamesList.add("content");
+        cmsEventNamesList.add("reports");
+        cmsEventNamesList.add("admin");
+        cmsEventNamesList.add("formdata");
+        cmsEventNamesList.add("audiences");
+        cmsEventNamesList.add("search");
+        cmsEventNamesList.add("login");
+        cmsEventNamesList.add("logout");
+    }
 
     private final String eventId;
     private final IModel<String> title;
@@ -185,7 +203,10 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
      * When overiding, make sure to call super.onActivated() in order to keep the usage statistics working.
      */
     protected void onActivated() {
-        publishEvent(EVENT_PERSPECTIVE_ACTIVATED);
+        if (StringUtils.isNotEmpty(eventId) && cmsEventNamesList.contains(eventId)) {
+            final String event = EVENT_PARAM_CMS + StringUtils.capitalize(eventId);
+            publishEvent(event);
+        }
     }
 
     /**
@@ -196,9 +217,8 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     }
 
     protected void publishEvent(final String name) {
-        if (eventsEnabled()) {
+        if (eventsEnabled() && StringUtils.isNotEmpty(name)) {
             final UsageEvent event = new UsageEvent(name);
-            event.setParameter(EVENT_PARAM_PERSPECTIVE_ID, eventId);
             event.publish();
         }
     }
@@ -245,11 +265,12 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
         @Override
         public void render(final Response response) {
-            final UsageEvent perspectiveActivated = new UsageEvent(EVENT_PERSPECTIVE_ACTIVATED);
-            perspectiveActivated.setParameter(EVENT_PARAM_PERSPECTIVE_ID, perspectiveId);
+            if(StringUtils.isNotEmpty(perspectiveId)) {
+                final UsageEvent perspectiveActivated = new UsageEvent(perspectiveId);
 
-            final String eventJs = perspectiveActivated.getJavaScript();
-            OnLoadHeaderItem.forScript(eventJs).render(response);
+                final String eventJs = perspectiveActivated.getJavaScript();
+                OnLoadHeaderItem.forScript(eventJs).render(response);
+            }
         }
     }
 

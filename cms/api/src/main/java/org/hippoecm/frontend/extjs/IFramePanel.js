@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,15 +68,15 @@
     },
 
     _onFrameLoad: function () {
-      var newLocation = this._getFrameLocation();
+      var frameWindow = this._getFrameWindow();
 
-      this.previousLocation = this.currentLocation;
-
-      if (this.currentLocation !== null) {
-        this._detachFrame();
+      if (frameWindow !== null) {
+        frameWindow.addEventListener('unload', this._detachFrame.bind(this));
       }
 
-      this.currentLocation = newLocation;
+      this.previousLocation = this.currentLocation;
+      this.currentLocation = this._getFrameLocation();
+
       this.fireEvent('locationchanged');
     },
 
@@ -125,13 +125,14 @@
 
     setLocation: function (url) {
       this.previousLocation = this.currentLocation;
-      this._detachFrame();
       this._getFrameDom().src = url;
     },
 
     _detachFrame: function () {
       this.currentLocation = null;
-      this.hostToIFrame.unsubscribeAll();
+      if (this.hostToIFrame) {
+        this.hostToIFrame.unsubscribeAll();
+      }
     },
 
     getLocation: function () {
@@ -157,7 +158,6 @@
     },
 
     reload: function () {
-      this._detachFrame();
       var frameDocument = this._getFrameDocument();
       if (frameDocument) {
         frameDocument.location.reload(true);

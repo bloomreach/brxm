@@ -193,7 +193,7 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
     private static SortedSet<Node> getSortedReferrers(final Collection<Node> nodes) throws RepositoryException {
         final TreeSet<Node> sorted = new TreeSet<>((o1, o2) -> {
             try {
-                return o1.getName().compareTo(o2.getName());
+                return o1.getPath().compareTo(o2.getPath());
             } catch (RepositoryException e) {
                 throw new RepositoryRuntimeException(e);
             }
