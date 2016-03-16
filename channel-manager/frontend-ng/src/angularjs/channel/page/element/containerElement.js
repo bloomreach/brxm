@@ -77,6 +77,27 @@ export class ContainerElement extends PageStructureElement {
   }
 
   /**
+   * Replace container DOM elements with the given markup
+   * @return the jQuery element refering to the inserted markup in the DOM document
+   */
+  replaceDOM(markup) {
+    const jQueryElement = $(markup);
+    const startElement = this.getStartComment()[0];
+    const endElement = this.getEndComment()[0];
+    let element = startElement;
+    const parent = startElement.parentNode;
+
+    // remove everything except the endElement
+    while (element && element !== endElement) {
+      const toBeRemoved = element;
+      element = element.nextSibling;
+      parent.removeChild(toBeRemoved);
+    }
+    this.getEndComment().replaceWith(jQueryElement);
+    return jQueryElement;
+  }
+
+  /**
    * Remove the component identified by given Id from its container
    * @param componentId
    * @returns {*} the removed component

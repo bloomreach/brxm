@@ -102,4 +102,27 @@ export class PageStructureElement {
     return metaDataXType !== undefined && metaDataXType.toUpperCase() === HstConstants.XTYPE_TRANSPARENT.toUpperCase();
   }
 
+  getStartComment() {
+    return this.getJQueryElement('iframeStartComment');
+  }
+
+  setStartComment(newJQueryStartComment) {
+    this.setJQueryElement('iframeStartComment', newJQueryStartComment);
+  }
+
+  getEndComment() {
+    return this.getJQueryElement('iframeEndComment');
+  }
+
+  setEndComment(newJQueryEndComment) {
+    this.setJQueryElement('iframeEndComment', newJQueryEndComment);
+  }
+
+  getBoxElement() {
+    return this.getJQueryElement('iframeBoxElement');
+  }
+
+  setBoxElement(newJQueryBoxElement) {
+    this.setJQueryElement('iframeBoxElement', newJQueryBoxElement);
+  }
 }

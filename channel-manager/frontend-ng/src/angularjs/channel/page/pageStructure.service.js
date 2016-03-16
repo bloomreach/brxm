@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
+/* eslint-disable prefer-arrow-callback */
+
 import { ContainerElement } from './element/containerElement';
 import { ComponentElement } from './element/componentElement';
 
 export class PageStructureService {
 
-  constructor($log, $q, HstConstants, hstCommentsProcessorService, ChannelService, CmsService, PageMetaDataService, HstService) {
+  constructor($log, $q, $http, HstConstants, hstCommentsProcessorService, OverlaySyncService, ChannelService, CmsService, PageMetaDataService, HstService) {
     'ngInject';
 
     // Injected
     this.$log = $log;
+    this.$http = $http;
     this.$q = $q;
     this.HST = HstConstants;
     this.HstService = HstService;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.hstCommentsProcessorService = hstCommentsProcessorService;
+    this.OverlaySyncService = OverlaySyncService;
     this.pageMetaData = PageMetaDataService;
 
     this.clearParsedElements();
@@ -147,26 +151,110 @@ export class PageStructureService {
   }
 
   addComponentToContainer(catalogComponent, overlayDomElementOfContainer) {
-    const container = this.containers.find((c) => c.getJQueryElement('overlay')[0] === overlayDomElementOfContainer);
+    const oldContainer = this.containers.find((c) => c.getJQueryElement('overlay')[0] === overlayDomElementOfContainer);
 
-    console.log('container droppped ', overlayDomElementOfContainer);
-    if (container) {
-      console.log(`Adding '${catalogComponent.label}' component to container '${container.getLabel()}'.`);
-      console.log(catalogComponent, container);
+    console.log('oldContainer droppped ', overlayDomElementOfContainer);
+    if (oldContainer) {
+      console.log(`Adding '${catalogComponent.label}' component to container '${oldContainer.getLabel()}'.`);
+      console.log(catalogComponent, oldContainer);
 
-      this._createHstComponent(catalogComponent.id, container.getId()).then(() => {
-        console.log('added component', catalogComponent);
-      });
-
-      // TODO: tell HST to add a new copy of this.newComponent to container,
-      // re-render the container and update the page structure.
-      // create a new component in the page structure, and focus on it.
+      this._addHstComponent(catalogComponent, oldContainer.getId()).then(() =>
+        this._fetchContainerMarkup(oldContainer).then((response) => {
+          const jQueryContainerElement = oldContainer.replaceDOM(response.data);
+          this._replaceContainer(oldContainer, this._createContainer(jQueryContainerElement.parent()));
+          this.OverlaySyncService.syncIframe();
+        })
+      );
     } else {
-      console.log('container not found');
+      console.log('oldContainer not found');
     }
   }
 
-  _createHstComponent(componentId, containerId) {
-    return this.HstService.doPost(containerId, 'create', componentId);
+  _replaceContainer(oldContainer, newContainer) {
+    const index = this.containers.indexOf(oldContainer);
+    if (index === -1) {
+      this.$log.warn('Cannot find container', oldContainer);
+      return;
+    }
+    this.containers[index] = newContainer;
+  }
+
+  _fetchContainerMarkup(container) {
+    return this.$http({
+      method: 'GET',
+      url: container.getRenderUrl(),
+      header: {
+        Accept: 'text/html, */* ',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+  }
+
+  /**
+   * Create a new container with meta-data from the given markup value
+   * @param markup
+   * @returns {*}
+   * @private
+   */
+  _createContainer(jQueryContainerElement) {
+    const containerDomElement = jQueryContainerElement[0];
+    let container = null;
+
+    this.hstCommentsProcessorService.run(containerDomElement, function (commentDomElement, metaData) {
+      switch (metaData[this.HST.TYPE]) {
+        case this.HST.TYPE_CONTAINER:
+          if (!container) {
+            container = new ContainerElement(commentDomElement, metaData, this.hstCommentsProcessorService);
+          } else {
+            this.$log.warn('More than one container in the DOM Element!');
+            return;
+          }
+          break;
+
+        case this.HST.TYPE_COMPONENT:
+          if (!container) {
+            this.$log.warn('Unable to register component outside of a container context.');
+            return;
+          }
+
+          try {
+            container.addComponent(new ComponentElement(commentDomElement, metaData,
+              container, this.hstCommentsProcessorService));
+          } catch (exception) {
+            this.$log.debug(exception, metaData);
+          }
+          break;
+
+        default:
+          break;
+      }
+    }.bind(this));
+
+    if (!container) {
+      this.$log.error('Failed to create a new container');
+    }
+
+    return container;
+  }
+
+  /**
+   * Add the component to the container at back-end
+   * @param componentId
+   * @param containerId
+   * @returns {*}
+   * @private
+   */
+  _addHstComponent(catalogComponent, containerId) {
+    const requestPayload = `data: {
+      parentId: ${containerId},
+      id: ${catalogComponent.id},
+      name: ${catalogComponent.name},
+      label: ${catalogComponent.label},
+      type: ${catalogComponent.type},
+      template: ${catalogComponent.template},
+      componentClassName: ${catalogComponent.componentClassName},
+      xtype: ${catalogComponent.xtype},
+    }`;
+    return this.HstService.doPost(requestPayload, containerId, 'create', catalogComponent.id);
   }
 }
