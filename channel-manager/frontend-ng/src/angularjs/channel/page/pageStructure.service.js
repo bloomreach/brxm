@@ -107,10 +107,11 @@ export class PageStructureService {
     }
 
     // request back-end to remove component
-    return this._removeHstComponent(component.getContainer().getId(), componentId)
+    const container = component.getContainer();
+    return this._removeHstComponent(container.getId(), componentId)
       .then(() => {
         component.removeFromDOM();
-        component.detach();
+        container.removeComponent(component);
       }); // TODO handle error
   }
 
@@ -144,6 +145,47 @@ export class PageStructureService {
         this.$log.debug(`  Component ${itemIndex}`, component);
       });
     });
+  }
+
+  replaceComponent(component, newMarkup) {
+    const jQueryNodeCollection = component.replaceDOM(newMarkup);
+    this._replaceComponent(component, this._createComponent(jQueryNodeCollection, component.getContainer()));
+    this.OverlaySyncService.syncIframe();
+  }
+
+  _createComponent(jQueryNodeCollection, container) {
+    let component = null;
+
+    this.hstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
+      switch (metaData[this.HST.TYPE]) {
+        case this.HST.TYPE_COMPONENT:
+          try {
+            component = new ComponentElement(commentDomElement, metaData, container, this.hstCommentsProcessorService);
+          } catch (exception) {
+            this.$log.debug(exception, metaData);
+          }
+          break;
+
+        default:
+          break;
+      }
+    });
+
+    if (!component) {
+      this.$log.error('Failed to create a new component');
+    }
+
+    return component;
+  }
+
+  _replaceComponent(oldComponent, newComponent) {
+    const container = oldComponent.getContainer();
+    const index = container.items.indexOf(oldComponent);
+    if (index === -1) {
+      this.$log.warn('Cannot find component', oldComponent);
+      return;
+    }
+    container.items[index] = newComponent;
   }
 
   addComponentToContainer(catalogComponent, overlayDomElementOfContainer) {

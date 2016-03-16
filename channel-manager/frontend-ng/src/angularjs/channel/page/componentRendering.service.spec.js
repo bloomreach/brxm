@@ -47,6 +47,7 @@ describe('ComponentRenderingService', function () {
     component.getRenderUrl.and.returnValue('/test-render-url');
     component.getJQueryElement.and.returnValue(iframeElement);
     spyOn(PageStructureService, 'getComponent').and.returnValue(component);
+    spyOn(PageStructureService, 'replaceComponent');
     $httpBackend.whenPOST('/test-render-url').respond('<div>component markup</div>');
 
     window.CMS_TO_APP.publish('render-component', '1234', { foo: 1, bar: 'a:b' });
@@ -57,8 +58,7 @@ describe('ComponentRenderingService', function () {
     });
     $httpBackend.flush();
 
-    expect(component.getJQueryElement).toHaveBeenCalledWith('iframeBoxElement');
-    expect(iframeElement.html()).toEqual('<div>component markup</div>');
+    expect(PageStructureService.replaceComponent).toHaveBeenCalledWith(component, '<div>component markup</div>');
   });
 
   it('logs a warning when the component to render cannot be found', function () {

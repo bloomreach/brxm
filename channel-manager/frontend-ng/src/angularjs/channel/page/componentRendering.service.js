@@ -33,8 +33,7 @@ export class ComponentRenderingService {
     const component = this.PageStructureService.getComponent(componentId);
     if (component) {
       this._fetchHtml(component, propertiesMap).then((response) => {
-        const iframeElement = component.getJQueryElement('iframeBoxElement');
-        iframeElement.html(response.data);
+        this.PageStructureService.replaceComponent(component, response.data);
       });
     } else {
       this.$log.warn(`Cannot render unknown component '${componentId}'`);

@@ -65,6 +65,7 @@ describe('ChannelCtrl', function () {
     ScalingService.setPushWidth.calls.reset();
     inject(function ($controller) {
       $controller('ChannelCtrl', {
+        $scope: $rootScope.$new(),
         ScalingService: ScalingService,
       });
       expect(ScalingService.setPushWidth).toHaveBeenCalledWith(0);

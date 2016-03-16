@@ -76,48 +76,33 @@ export class PageStructureElement {
    * Remove all children of the start comment's parent between the start and en comments (inclusive)
    */
   removeFromDOM() {
-    const start = this.getJQueryElement('iframeStartComment')[0];
-    const end = this.getJQueryElement('iframeEndComment')[0];
-    const parent = start.parentNode;
-    const children = parent.childNodes;
-    let doDelete = false;
-
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i];
-      if (child === start) {
-        doDelete = true;
-      }
-      if (doDelete) {
-        parent.removeChild(child);
-      }
-      if (child === end) {
-        break;
-      }
-    }
+    const startCommentNode = this._removeAllButCommentStart();
+    startCommentNode.parentNode.removeChild(startCommentNode);
   }
 
-  replaceInIframe(htmlFragment) {
-    const start = this.getJQueryElement('iframeStartComment')[0];
-    const end = this.getJQueryElement('iframeEndComment')[0];
-    const insertAfter = start.previousSibling;
-    const insertBefore = end.nextSibling;
-    const parent = start.parentNode;
+  /**
+   * Replace container DOM elements with the given markup
+   * @return the jQuery element refering to the inserted markup in the DOM document
+   */
+  replaceDOM(htmlFragment) {
+    const jQueryNodeCollection = $(htmlFragment);
+    this._removeAllButCommentStart();
 
-    this.removeFromDOM();
+    this.getStartComment().replaceWith(jQueryNodeCollection);
+    return jQueryNodeCollection;
+  }
 
-    if (insertBefore) {
-      $(insertBefore).before(htmlFragment);
-      this.setJQueryElement('iframeEndComment', $(insertBefore.previousSibling));
-    } else {
-      $(parent).append(htmlFragment);
-      this.setJQueryElement('iframeEndComment', $(parent.lastChild));
+  _removeAllButCommentStart() {
+    const startCommentNode = this.getStartComment()[0];
+    let node = this.getEndComment()[0];
+
+    while (node && node !== startCommentNode) {
+      const toBeRemoved = node;
+      node = node.previousSibling;
+      toBeRemoved.parentNode.removeChild(toBeRemoved);
     }
 
-    if (insertAfter) {
-      this.setJQueryElement('iframeStartComment', $(insertAfter.nextSibling));
-    } else {
-      this.setJQueryElement('iframeStartComment', $(parent.firstChild));
-    }
+    return startCommentNode;
   }
 
   static isTransparentXType(metaData) {
