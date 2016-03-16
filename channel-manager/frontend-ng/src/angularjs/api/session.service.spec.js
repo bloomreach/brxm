@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-describe('SessionService', function () {
+describe('SessionService', () => {
   'use strict';
 
-  var $rootScope;
-  var deferred;
-  var sessionService;
-  var channelMock = 'channelMock';
+  let $rootScope;
+  let deferred;
+  let sessionService;
+  const channelMock = 'channelMock';
 
-  beforeEach(function () {
+  beforeEach(() => {
     module('hippo-cm-api');
 
-    inject(function ($q, _$rootScope_, SessionService, HstService) {
+    inject(($q, _$rootScope_, SessionService, HstService) => {
       $rootScope = _$rootScope_;
       sessionService = SessionService;
       deferred = $q.defer();
@@ -33,16 +33,16 @@ describe('SessionService', function () {
     });
   });
 
-  it('should exist', function () {
+  it('should exist', () => {
     expect(sessionService).toBeDefined();
   });
 
-  it('should always be readonly before initialization', function () {
+  it('should always be readonly before initialization', () => {
     expect(sessionService.hasWriteAccess()).toEqual(false);
   });
 
-  it('should resolve a promise with the channel argument when initialization is successful', function () {
-    var promiseSpy = jasmine.createSpy('promiseSpy');
+  it('should resolve a promise with the channel argument when initialization is successful', () => {
+    const promiseSpy = jasmine.createSpy('promiseSpy');
     sessionService
       .initialize(channelMock)
       .then(promiseSpy);
@@ -52,8 +52,8 @@ describe('SessionService', function () {
     expect(promiseSpy).toHaveBeenCalledWith(channelMock);
   });
 
-  it('should reject a promise when initialization fails', function () {
-    var catchSpy = jasmine.createSpy('catchSpy');
+  it('should reject a promise when initialization fails', () => {
+    const catchSpy = jasmine.createSpy('catchSpy');
     sessionService
       .initialize(channelMock)
       .catch(catchSpy);
@@ -63,7 +63,7 @@ describe('SessionService', function () {
     expect(catchSpy).toHaveBeenCalled();
   });
 
-  it('should set canWrite after initializing', function () {
+  it('should set canWrite after initializing', () => {
     sessionService.initialize(channelMock);
     deferred.resolve(true);
     $rootScope.$apply();

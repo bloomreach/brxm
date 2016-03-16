@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-describe('ScalingService', function () {
+describe('ScalingService', () => {
   'use strict';
 
-  var ScalingService;
-  var iframeJQueryElement;
-  var baseJQueryElement;
-  var canvasJQueryElement;
-  var elementsToScale;
+  let ScalingService;
+  let iframeJQueryElement;
+  let baseJQueryElement;
+  let canvasJQueryElement;
+  let elementsToScale;
 
-  beforeEach(function () {
+  beforeEach(() => {
     module('hippo-cm.channel.hippoIframe');
 
-    inject(function (_ScalingService_) {
+    inject((_ScalingService_) => {
       ScalingService = _ScalingService_;
     });
 
@@ -37,17 +37,15 @@ describe('ScalingService', function () {
     canvasJQueryElement = $j('.channel-iframe-canvas');
     elementsToScale = jasmine.createSpyObj('elementsToScale', ['velocity']);
 
-    spyOn(iframeJQueryElement, 'find').and.callFake(function (selector) {
-      return selector === '.cm-scale' ? elementsToScale : $j('#test-hippo-iframe ' + selector);
-    });
+    spyOn(iframeJQueryElement, 'find').and.callFake((selector) => selector === '.cm-scale' ? elementsToScale : $j(`#test-hippo-iframe ${selector}`));
   });
 
-  afterEach(function () {
+  afterEach(() => {
     // prevent subsequent window.resize events by Karma from triggering the scaling service
     ScalingService.init(null);
   });
 
-  it('should initialize the scaling factor instantly to 1.0', function () {
+  it('should initialize the scaling factor instantly to 1.0', () => {
     ScalingService.init(iframeJQueryElement);
 
     expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
@@ -63,7 +61,7 @@ describe('ScalingService', function () {
     expect(ScalingService.getScaleFactor()).toEqual(1.0);
   });
 
-  it('should change the scaling factor animated when setting pushWidth', function () {
+  it('should change the scaling factor animated when setting pushWidth', () => {
     canvasJQueryElement.width(400);
 
     ScalingService.init(iframeJQueryElement);
@@ -82,7 +80,7 @@ describe('ScalingService', function () {
     expect(ScalingService.getScaleFactor()).toEqual(0.75);
   });
 
-  it('should reset the scaling factor animated to 1.0 when setting pushWidth to 0', function () {
+  it('should reset the scaling factor animated to 1.0 when setting pushWidth to 0', () => {
     canvasJQueryElement.width(400);
 
     ScalingService.init(iframeJQueryElement);
@@ -104,7 +102,7 @@ describe('ScalingService', function () {
     expect(ScalingService.getScaleFactor()).toEqual(1.0);
   });
 
-  it('should change the scaling factor instantly when the window is resized', function () {
+  it('should change the scaling factor instantly when the window is resized', () => {
     canvasJQueryElement.width(200);
     ScalingService.init(iframeJQueryElement);
     ScalingService.setPushWidth(100);
@@ -125,7 +123,7 @@ describe('ScalingService', function () {
     expect(ScalingService.getScaleFactor()).toEqual(0.5);
   });
 
-  it('should update the scroll position instantly while scaling', function () {
+  it('should update the scroll position instantly while scaling', () => {
     canvasJQueryElement.width(400);
 
     // make the canvas scroll within the base element

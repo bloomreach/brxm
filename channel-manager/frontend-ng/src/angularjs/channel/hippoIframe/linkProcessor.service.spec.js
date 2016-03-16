@@ -14,91 +14,89 @@
  * limitations under the License.
  */
 
-describe('LinkProcessorService', function () {
+describe('LinkProcessorService', () => {
   'use strict';
 
-  var linkProcessorService;
-  var $document;
-  var previewUrl = 'http://localhost:8080/site';
+  let linkProcessorService;
+  let $document;
+  const previewUrl = 'http://localhost:8080/site';
 
-  beforeEach(function () {
+  beforeEach(() => {
     module('hippo-cm.channel.hippoIframe');
 
-    inject(function (_$document_, _linkProcessorService_) {
+    inject((_$document_, _linkProcessorService_) => {
       $document = _$document_;
       linkProcessorService = _linkProcessorService_;
     });
   });
 
-  beforeEach(function () {
+  beforeEach(() => {
     jasmine.getFixtures().load('channel/hippoIframe/linkProcessor.service.fixture.html');
   });
 
   function expectTargetAttrToBeBlank(selector) {
-    $j(selector, $document).each(function () {
+    $j(selector, $document).each(function checkTarget() {
       expect(this).toHaveAttr('target', '_blank');
     });
   }
 
   function expectTargetAttrNotToBeBlank(selector) {
-    $j(selector, $document).each(function () {
+    $j(selector, $document).each(function checkTarget() {
       expect(this).not.toHaveAttr('target', '_blank');
     });
   }
 
-  describe('running with a valid internalLinkPrefix', function () {
-    it('should set attribute target to _blank for external links', function () {
+  describe('running with a valid internalLinkPrefix', () => {
+    it('should set attribute target to _blank for external links', () => {
       linkProcessorService.run($document, previewUrl);
       expectTargetAttrToBeBlank('.qa-external-link');
       expectTargetAttrNotToBeBlank('.qa-internal-link, .qa-local-link');
     });
   });
 
-  describe('running with an undefined internalLinkPrefix', function () {
-    it('should set attribute target to _blank for both internal and external links', function () {
+  describe('running with an undefined internalLinkPrefix', () => {
+    it('should set attribute target to _blank for both internal and external links', () => {
       linkProcessorService.run($document);
       expectTargetAttrToBeBlank('.qa-external-link, .qa-internal-link');
       expectTargetAttrNotToBeBlank('.qa-local-link');
     });
   });
 
-  describe('running with a null internalLinkPrefix', function () {
-    it('should set attribute target to _blank for both internal and external links', function () {
+  describe('running with a null internalLinkPrefix', () => {
+    it('should set attribute target to _blank for both internal and external links', () => {
       linkProcessorService.run($document, null);
       expectTargetAttrToBeBlank('.qa-external-link, .qa-internal-link');
       expectTargetAttrNotToBeBlank('.qa-local-link');
     });
   });
 
-  it('should show a confirm when clicking an external link', function () {
-    var nrOfExternalLinks = $j('.qa-external-link', $document).length;
-    var confirmSpy = spyOn(window, 'confirm').and.returnValue(true);
+  it('should show a confirm when clicking an external link', () => {
+    const nrOfExternalLinks = $j('.qa-external-link', $document).length;
+    const confirmSpy = spyOn(window, 'confirm').and.returnValue(true);
 
     linkProcessorService.run($document, previewUrl);
     $j('a', $document).click();
     expect(confirmSpy.calls.count()).toEqual(nrOfExternalLinks);
   });
 
-  it('should prevent opening an external link if confirm is cancelled', function () {
-    var spyEvent;
+  it('should prevent opening an external link if confirm is cancelled', () => {
     spyOn(window, 'confirm').and.returnValue(false);
 
     linkProcessorService.run($document, previewUrl);
-    $j('.qa-external-link', $document).each(function () {
-      spyEvent = window.spyOnEvent(this, 'click');
+    $j('.qa-external-link', $document).each(function checkClick() {
+      const spyEvent = window.spyOnEvent(this, 'click');
       $j(this).click();
       expect('click').toHaveBeenPreventedOn(this);
       expect(spyEvent).toHaveBeenPrevented();
     });
   });
 
-  it('should open an external link if confirm is ok', function () {
-    var spyEvent;
+  it('should open an external link if confirm is ok', () => {
     spyOn(window, 'confirm').and.returnValue(true);
 
     linkProcessorService.run($document, previewUrl);
-    $j('.qa-external-link', $document).each(function () {
-      spyEvent = window.spyOnEvent(this, 'click');
+    $j('.qa-external-link', $document).each(function checkClick() {
+      const spyEvent = window.spyOnEvent(this, 'click');
       $j(this).click();
       expect('click').not.toHaveBeenPreventedOn(this);
       expect(spyEvent).not.toHaveBeenPrevented();

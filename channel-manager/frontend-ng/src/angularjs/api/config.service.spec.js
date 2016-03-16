@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-describe('ConfigService', function () {
+describe('ConfigService', () => {
   'use strict';
 
-  var ConfigService;
+  let ConfigService;
 
-  beforeEach(function () {
+  beforeEach(() => {
     window.APP_CONFIG.locale = 'nl';
     window.APP_CONFIG.apiUrlPrefix = 'https://127.0.0.1:9080/web/one/two';
     window.APP_CONFIG.contextPaths = ['/one', '/two'];
 
     module('hippo-cm-api');
 
-    inject(function (_ConfigService_) {
+    inject((_ConfigService_) => {
       ConfigService = _ConfigService_;
     });
   });
 
-  it('allows custom configuration passed in by the CmsService', function () {
+  it('allows custom configuration passed in by the CmsService', () => {
     expect(ConfigService.locale).toEqual('nl');
     expect(ConfigService.apiUrlPrefix).toEqual('https://127.0.0.1:9080/web/one/two');
     expect(ConfigService.contextPath).toEqual('/one');

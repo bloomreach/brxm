@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-describe('ChannelCtrl', function () {
+describe('ChannelCtrl', () => {
   'use strict';
 
-  var ChannelService;
-  var ComponentsService;
-  var ScalingService;
-  var ChannelCtrl;
-  var $rootScope;
-  var $q;
+  let ChannelService;
+  let ComponentsService;
+  let ScalingService;
+  let ChannelCtrl;
+  let $rootScope;
+  let $q;
 
-  beforeEach(function () {
+  beforeEach(() => {
     module('hippo-cm');
 
-    inject(function ($controller, _$rootScope_, _$q_) {
-      var resolvedPromise = _$q_.when();
+    inject(($controller, _$rootScope_, _$q_) => {
+      const resolvedPromise = _$q_.when();
 
       $rootScope = _$rootScope_;
       $q = _$q_;
@@ -54,33 +54,33 @@ describe('ChannelCtrl', function () {
 
       ChannelCtrl = $controller('ChannelCtrl', {
         $scope: $rootScope.$new(),
-        ComponentsService: ComponentsService,
-        ChannelService: ChannelService,
-        ScalingService: ScalingService,
+        ComponentsService,
+        ChannelService,
+        ScalingService,
       });
     });
   });
 
-  it('resets the ScalingService pushWidth state during initialization', function () {
+  it('resets the ScalingService pushWidth state during initialization', () => {
     ScalingService.setPushWidth.calls.reset();
-    inject(function ($controller) {
+    inject(($controller) => {
       $controller('ChannelCtrl', {
         $scope: $rootScope.$new(),
-        ScalingService: ScalingService,
+        ScalingService,
       });
       expect(ScalingService.setPushWidth).toHaveBeenCalledWith(0);
     });
   });
 
-  it('gets the iframe URL from the channel service', function () {
+  it('gets the iframe URL from the channel service', () => {
     expect(ChannelCtrl.iframeUrl).toEqual('/test/url');
   });
 
-  it('is not in edit mode by default', function () {
+  it('is not in edit mode by default', () => {
     expect(ChannelCtrl.isEditMode).toEqual(false);
   });
 
-  it('enables and disables edit mode when toggling it', function () {
+  it('enables and disables edit mode when toggling it', () => {
     ChannelService.hasPreviewConfiguration.and.returnValue(true);
 
     ChannelCtrl.toggleEditMode();
@@ -89,8 +89,8 @@ describe('ChannelCtrl', function () {
     expect(ChannelCtrl.isEditMode).toEqual(false);
   });
 
-  it('creates preview configuration when it has not been created yet before enabling edit mode', function () {
-    var deferCreatePreview = $q.defer();
+  it('creates preview configuration when it has not been created yet before enabling edit mode', () => {
+    const deferCreatePreview = $q.defer();
 
     ChannelService.hasPreviewConfiguration.and.returnValue(false);
     ChannelService.createPreviewConfiguration.and.returnValue(deferCreatePreview.promise);
@@ -109,7 +109,7 @@ describe('ChannelCtrl', function () {
     expect(ChannelCtrl.isEditMode).toEqual(true);
   });
 
-  it('does not create preview configuration when it has already been created when enabling edit mode', function () {
+  it('does not create preview configuration when it has already been created when enabling edit mode', () => {
     ChannelService.hasPreviewConfiguration.and.returnValue(true);
     ChannelCtrl.toggleEditMode();
     expect(ChannelService.createPreviewConfiguration).not.toHaveBeenCalled();

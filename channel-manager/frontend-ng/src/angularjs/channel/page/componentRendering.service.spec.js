@@ -14,35 +14,35 @@
  * limitations under the License.
  */
 
-describe('ComponentRenderingService', function () {
+describe('ComponentRenderingService', () => {
   'use strict';
 
-  var PageStructureService;
-  var $httpBackend;
-  var $log;
+  let PageStructureService;
+  let $httpBackend;
+  let $log;
 
-  beforeEach(function () {
+  beforeEach(() => {
     module('hippo-cm.channel.page');
 
-    inject(function (_$httpBackend_, _$log_, _PageStructureService_) {
+    inject((_$httpBackend_, _$log_, _PageStructureService_) => {
       $httpBackend = _$httpBackend_;
       $log = _$log_;
       PageStructureService = _PageStructureService_;
     });
   });
 
-  beforeEach(function () {
+  beforeEach(() => {
     jasmine.getFixtures().load('channel/page/componentRendering.service.fixture.html');
   });
 
-  afterEach(function () {
+  afterEach(() => {
     $httpBackend.verifyNoOutstandingExpectation();
     $httpBackend.verifyNoOutstandingRequest();
   });
 
-  it('renders a component', function () {
-    var component = jasmine.createSpyObj('component', ['getRenderUrl', 'getJQueryElement']);
-    var iframeElement = $j('#component');
+  it('renders a component', () => {
+    const component = jasmine.createSpyObj('component', ['getRenderUrl', 'getJQueryElement']);
+    const iframeElement = $j('#component');
 
     component.getRenderUrl.and.returnValue('/test-render-url');
     component.getJQueryElement.and.returnValue(iframeElement);
@@ -61,7 +61,7 @@ describe('ComponentRenderingService', function () {
     expect(PageStructureService.replaceComponent).toHaveBeenCalledWith(component, '<div>component markup</div>');
   });
 
-  it('logs a warning when the component to render cannot be found', function () {
+  it('logs a warning when the component to render cannot be found', () => {
     spyOn(PageStructureService, 'getComponent').and.returnValue(null);
     spyOn($log, 'warn');
 

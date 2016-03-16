@@ -16,26 +16,26 @@
 
 'use strict';
 
-describe('The hippo-cm.channel module', function () {
+describe('The hippo-cm.channel module', () => {
   'use strict';
 
-  var $state;
-  var $rootScope;
-  var $q;
-  var ChannelService;
+  let $state;
+  let $rootScope;
+  let $q;
+  let ChannelService;
 
-  beforeEach(function () {
+  beforeEach(() => {
     spyOn(window.APP_TO_CMS, 'publish').and.callThrough();
     spyOn(window.CMS_TO_APP, 'subscribe').and.callThrough();
 
-    module('hippo-cm', function ($provide, ChannelServiceProvider) {
-      var channelService = ChannelServiceProvider.$get();
+    module('hippo-cm', ($provide, ChannelServiceProvider) => {
+      const channelService = ChannelServiceProvider.$get();
       $provide.value('$state', jasmine.createSpyObj('$state', ['go']));
       spyOn(channelService, 'load');
       $provide.value('ChannelService', channelService);
     });
 
-    inject(function (_$rootScope_, _$state_, _$q_, _ChannelService_) {
+    inject((_$rootScope_, _$state_, _$q_, _ChannelService_) => {
       $rootScope = _$rootScope_;
       $state = _$state_;
       $q = _$q_;
@@ -43,8 +43,8 @@ describe('The hippo-cm.channel module', function () {
     });
   });
 
-  it('loads the channel published by the host', function () {
-    var testChannel = { id: 'testChannelId' };
+  it('loads the channel published by the host', () => {
+    const testChannel = { id: 'testChannelId' };
 
     expect(window.CMS_TO_APP.subscribe).toHaveBeenCalledWith('load-channel', jasmine.any(Function));
 
@@ -62,7 +62,7 @@ describe('The hippo-cm.channel module', function () {
     });
   });
 
-  it('publishes a reload-channel event to the host', function () {
+  it('publishes a reload-channel event to the host', () => {
     expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('reload-channel');
   });
 });

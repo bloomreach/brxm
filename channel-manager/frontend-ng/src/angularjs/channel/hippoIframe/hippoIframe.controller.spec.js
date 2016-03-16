@@ -16,34 +16,23 @@
  *
  */
 
-describe('hippoIframeCtrl', function () {
+describe('hippoIframeCtrl', () => {
   'use strict';
 
-  var PageStructureService;
-  var $mdDialog;
-  var hippoIframeCtrl;
-  var scope;
-  var $q;
-  var ScalingService;
-  var DragDropService;
-  var OverlaySyncService;
+  let PageStructureService;
+  let $mdDialog;
+  let hippoIframeCtrl;
+  let scope;
+  let $q;
+  let ScalingService;
+  let DragDropService;
+  let OverlaySyncService;
 
-  beforeEach(function () {
-    var el;
-    var $compile;
+  beforeEach(() => {
+    let $compile;
     module('hippo-cm');
 
-    inject(function (
-        $controller,
-        $rootScope,
-        _$compile_,
-        _$mdDialog_,
-        _$q_,
-        _DragDropService_,
-        _OverlaySyncService_,
-        _PageStructureService_,
-        _ScalingService_
-      ) {
+    inject(($controller, $rootScope, _$compile_, _$mdDialog_, _$q_, _DragDropService_, _OverlaySyncService_, _PageStructureService_, _ScalingService_) => {
       $compile = _$compile_;
       $mdDialog = _$mdDialog_;
       $q = _$q_;
@@ -61,19 +50,17 @@ describe('hippoIframeCtrl', function () {
     scope.testPath = '/';
     scope.testEditMode = false;
 
-    el = angular.element('<hippo-iframe path="testPath" edit-mode="testEditMode"></hippo-iframe>');
+    const el = angular.element('<hippo-iframe path="testPath" edit-mode="testEditMode"></hippo-iframe>');
     $compile(el)(scope);
     scope.$digest();
 
     hippoIframeCtrl = el.controller('hippo-iframe');
     hippoIframeCtrl.selectedComponent = {
-      getLabel: function () {
-        return 'testLabel';
-      },
+      getLabel: () => 'testLabel',
     };
   });
 
-  it('shows the confirmation dialog and deletes selected component on confirmation', function () {
+  it('shows the confirmation dialog and deletes selected component on confirmation', () => {
     spyOn(PageStructureService, 'removeComponentById').and.returnValue($q.resolve());
     spyOn($mdDialog, 'show').and.returnValue($q.resolve());
     spyOn($mdDialog, 'confirm').and.callThrough();
@@ -87,7 +74,7 @@ describe('hippoIframeCtrl', function () {
     expect(PageStructureService.removeComponentById).toHaveBeenCalledWith('1234');
   });
 
-  it('shows component properties dialog after rejecting the delete operation', function () {
+  it('shows component properties dialog after rejecting the delete operation', () => {
     spyOn(PageStructureService, 'showComponentProperties');
     spyOn($mdDialog, 'show').and.returnValue($q.reject());
     spyOn($mdDialog, 'confirm').and.callThrough();

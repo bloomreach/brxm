@@ -38,13 +38,19 @@ export class DragDropService {
 
   _onLoad() {
     this.iframe = this.iframeJQueryElement[0].contentWindow;
-    $(this.iframe).on('beforeunload', () => this._destroyDrake());
+    $(this.iframe).one('beforeunload', () => this._destroyDragula());
+  }
+
+  _destroyDragula() {
+    this._destroyDrake();
+    this.dragulaPromise = null;
   }
 
   _destroyDrake() {
     if (this.drake) {
       this.drake.destroy();
       this.drake = null;
+      this.dragging = false;
     }
   }
 
@@ -53,7 +59,7 @@ export class DragDropService {
       this.dragulaPromise = this._injectDragula(this.iframe);
     }
 
-    this.dragulaPromise.then(() => {
+    return this.dragulaPromise.then(() => {
       const iframeContainerElements = containers.map((container) => container.getJQueryElement('iframeBoxElement')[0]);
 
       this.drake = this.iframe.dragula(iframeContainerElements, {
@@ -93,7 +99,7 @@ export class DragDropService {
     this._destroyDrake();
   }
 
-  dragOrClick($event, structureElement) {
+  startDragOrClick($event, structureElement) {
     this.dragging = true;
     this._dispatchEventInIframe($event, structureElement);
   }
