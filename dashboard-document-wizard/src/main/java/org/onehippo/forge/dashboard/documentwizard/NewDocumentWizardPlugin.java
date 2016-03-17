@@ -59,8 +59,8 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
@@ -303,7 +303,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             add(new IFormValidator() {
 
                 private static final String ERROR_SNS_NODE_EXISTS = "error-sns-node-exists";
-                private static final String ERROR_LOCALIZED_NAME_EXISTS = "error-localized-name-exists";
+                private static final String ERROR_DISPLAY_NAME_EXISTS = "error-display-name-exists";
                 private static final String ERROR_VALIDATION_NAMES = "error-validation-names";
 
                 @Override
@@ -323,10 +323,10 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                         }
 
                         String newNodeName = getNodeNameCodec().encode(nameField.getValue());
-                        String newLocalizedName = nameField.getValue();
+                        String newDisplayName = nameField.getValue();
 
-                        if (existedLocalizedName(folder, newLocalizedName)) {
-                            showError(form, ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
+                        if (existingDisplayName(folder, newDisplayName)) {
+                            showError(form, ERROR_DISPLAY_NAME_EXISTS, newDisplayName);
                         } else if (folder.hasNode(newNodeName)) {
                             showError(form, ERROR_SNS_NODE_EXISTS, newNodeName);
                         }
@@ -340,14 +340,13 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                     form.error(new StringResourceModel(messge, Dialog.this, null, arguments).getObject());
                 }
 
-                protected boolean existedLocalizedName(final Node parentNode, final String localizedName) throws RepositoryException {
+                protected boolean existingDisplayName(final Node parentNode, final String displayName) throws RepositoryException {
                     final NodeIterator children = parentNode.getNodes();
                     while (children.hasNext()) {
                         Node child = children.nextNode();
                         if (child.isNodeType(HippoStdNodeType.NT_FOLDER) || child.isNodeType(HippoNodeType.NT_HANDLE)) {
-                            NodeTranslator nodeTranslator = new NodeTranslator(new JcrNodeModel(child));
-                            String localizedChildName = nodeTranslator.getNodeName().getObject();
-                            if (StringUtils.equals(localizedChildName, localizedName)) {
+                            String childDisplayName = new NodeNameModel(new JcrNodeModel(child)).getObject();
+                            if (StringUtils.equals(childDisplayName, displayName)) {
                                 return true;
                             }
                         }
@@ -433,9 +432,10 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
 
                     // add the not-encoded document name as translation
                     if (!documentName.equals(encodedDocumentName)) {
+
                         DefaultWorkflow defaultWorkflow = (DefaultWorkflow)workflowMgr.getWorkflow("core", nodeModel.getNode());
                         if (defaultWorkflow != null) {
-                            defaultWorkflow.localizeName(documentName);
+                            defaultWorkflow.setDisplayName(documentName);
                         }
                     }
                 }

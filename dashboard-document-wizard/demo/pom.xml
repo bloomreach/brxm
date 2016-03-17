@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>11.0.0-SNAPSHOT</version>
+    <version>11.0.0-translations-psp1-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Plugin Dashboard Document Wizard Demo</name>
@@ -28,12 +28,6 @@
   <artifactId>hippo-plugin-dashboard-document-wizard-demo</artifactId>
   <version>2.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-
-  <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/demo/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/demo/trunk/</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/plugins/dashboard-document-wizard/demo/trunk/</url>
-  </scm>
 
   <properties>
     <jsp-api.version>2.2</jsp-api.version>
