@@ -35,7 +35,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public abstract class NodeRepresentation {
     
     private String name;
-    private String localizedName;
+    private String displayName;
     private String path;
     private String primaryNodeTypeName;
     private boolean leaf;
@@ -46,7 +46,7 @@ public abstract class NodeRepresentation {
     
     public NodeRepresentation represent(HippoBean hippoBean) throws RepositoryException {
 		this.name = hippoBean.getName();
-		this.localizedName = hippoBean.getLocalizedName();
+		this.displayName = hippoBean.getDisplayName();
 		
 		this.path = hippoBean.getPath();
         
@@ -64,13 +64,29 @@ public abstract class NodeRepresentation {
     public void setName(String name) {
         this.name = name;
     }
-    
-    public String getLocalizedName() {
-    	return localizedName;
+
+    public String getDisplayName() {
+        return displayName;
     }
-    
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    /**
+     * @deprecated use {@link #getDisplayName()} instead
+     */
+    @Deprecated
+    public String getLocalizedName() {
+    	return getDisplayName();
+    }
+
+    /**
+     * @deprecated use {@link #setDisplayName(String)} instead
+     */
+    @Deprecated
     public void setLocalizedName(String localizedName) {
-    	this.localizedName = localizedName;
+    	setDisplayName(localizedName);
     }
     
     @XmlElement(name="path")

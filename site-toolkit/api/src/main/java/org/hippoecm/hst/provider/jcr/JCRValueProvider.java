@@ -28,10 +28,17 @@ public interface JCRValueProvider extends ValueProvider{
      * @return the jcr node 
      */
     Node getJcrNode();
-    
+
+    /**
+     * @return the display name of the backing jcr node according to {@link HippoNode#getDisplayName()}
+     */
+    String getDisplayName();
+
     /**
      * @return the localized name of the backing jcr node according {@link HippoNode#getLocalizedName()}
+     * @deprecated use {@link #getDisplayName()} instead
      */
+    @Deprecated
     String getLocalizedName();
     
     /**

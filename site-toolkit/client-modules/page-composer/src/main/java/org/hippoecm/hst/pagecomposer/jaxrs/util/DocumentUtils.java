@@ -210,7 +210,7 @@ public class DocumentUtils {
             } else {
                 isDocument = false;
             }
-            String displayName = ((HippoNode) node).getLocalizedName();
+            String displayName = ((HippoNode) node).getDisplayName();
             return new DocumentRepresentation(absPath, displayName, isDocument, true);
         } catch (PathNotFoundException e) {
             return new DocumentRepresentation(absPath, StringUtils.substringAfterLast(absPath, "/"), false, false);

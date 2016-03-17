@@ -430,7 +430,7 @@ public class ChannelManagerImpl implements ChannelManager {
 
             final Node contentRootNode = session.getNode(contentRootPath);
             DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflow("core", contentRootNode);
-            defaultWorkflow.localizeName(channel.getName());
+            defaultWorkflow.setDisplayName(channel.getName());
 
             session.refresh(true);
 

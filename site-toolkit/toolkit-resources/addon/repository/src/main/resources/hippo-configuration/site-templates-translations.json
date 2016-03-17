@@ -1,0 +1,10 @@
+{
+  "hippo:templates" : {
+    "en" : {
+      "new-subsite" : "new subsite"
+    },
+    "nl" : {
+      "new-subsite" : "nieuwe subsite"
+    }
+  }
+}

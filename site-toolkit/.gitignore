@@ -12,6 +12,7 @@ target/
 /build.properties
 /client/bin/
 /commons/bin/
+/commons/log4j.log
 /components/restapi/log4j.log
 /integration/tests/bin/
 /integration/war/bin/
