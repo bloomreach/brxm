@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-export function run(ComponentRenderingService) {
+export function run(ExtJsHandlerService) {
   'ngInject';
 
-  ComponentRenderingService.initialize();
+  ExtJsHandlerService.initialize();
 }

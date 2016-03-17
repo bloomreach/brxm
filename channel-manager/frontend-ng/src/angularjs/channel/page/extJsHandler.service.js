@@ -14,30 +14,16 @@
  * limitations under the License.
  */
 
-export class ComponentRenderingService {
+export class ExtJsHandlerService {
 
-  constructor($http, $log, CmsService, PageStructureService, RenderingService) {
+  constructor(CmsService, PageStructureService) {
     'ngInject';
 
-    this.$http = $http;
-    this.$log = $log;
     this.CmsService = CmsService;
     this.PageStructureService = PageStructureService;
-    this.RenderingService = RenderingService;
   }
 
   initialize() {
-    this.CmsService.subscribe('render-component', this._renderComponent, this);
-  }
-
-  _renderComponent(componentId, propertiesMap) {
-    const component = this.PageStructureService.getComponentById(componentId);
-    if (component) {
-      this.RenderingService.fetchComponentMarkup(component, propertiesMap).then((response) => {
-        this.PageStructureService.updateComponent(component, response.data);
-      });
-    } else {
-      this.$log.warn(`Cannot render unknown component '${componentId}'`);
-    }
+    this.CmsService.subscribe('render-component', this.PageStructureService.renderComponent.bind(this.PageStructureService), this);
   }
 }

@@ -144,10 +144,21 @@ export class PageStructureService {
     });
   }
 
+  renderComponent(componentId, propertiesMap) {
+    const component = this.getComponentById(componentId);
+    if (component) {
+      this.RenderingService.fetchComponentMarkup(component, propertiesMap).then((response) => {
+        this._updateComponent(component, response.data);
+      });
+    } else {
+      this.$log.warn(`Cannot render unknown component '${componentId}'`);
+    }
+  }
+
   /**
    * Update the component with the new markup
    */
-  updateComponent(component, newMarkup) {
+  _updateComponent(component, newMarkup) {
     const jQueryNodeCollection = component.replaceDOM(newMarkup);
     this._replaceComponent(component, this._createComponent(jQueryNodeCollection, component.getContainer()));
     this.OverlaySyncService.syncIframe();

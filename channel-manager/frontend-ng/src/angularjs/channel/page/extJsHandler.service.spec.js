@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-import { RenderingService } from './rendering.service';
-import { ExtJsHandlerService } from './extJsHandler.service';
-import { PageMetaDataService } from './pageMetaData.service';
-import { PageStructureService } from './pageStructure.service';
-import { run } from './page.run';
+describe('ExtJsHandlerService', () => {
+  'use strict';
 
-export const channelPageModule = angular
-  .module('hippo-cm.channel.page', [])
-  .service('RenderingService', RenderingService)
-  .service('ExtJsHandlerService', ExtJsHandlerService)
-  .service('PageMetaDataService', PageMetaDataService)
-  .service('PageStructureService', PageStructureService)
-  .run(run);
+  let PageStructureService;
+
+  beforeEach(() => {
+    module('hippo-cm.channel.page');
+
+    inject((_PageStructureService_) => {
+      PageStructureService = _PageStructureService_;
+    });
+  });
+
+  it('handles the render event from ExtJS', () => {
+    spyOn(PageStructureService, 'renderComponent');
+    window.CMS_TO_APP.publish('render-component', '1234', { foo: 1, bar: 'a:b' });
+
+    expect(PageStructureService.renderComponent).toHaveBeenCalledWith('1234', { foo: 1, bar: 'a:b' });
+  });
+});
