@@ -25,7 +25,6 @@
 
   <inceptionYear>2013</inceptionYear>
 
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-resourcebundle-editor</artifactId>
   <name>Hippo Plugin Resourcebundle Editor</name>
   <version>3.0.0-SNAPSHOT</version>
@@ -37,7 +36,7 @@
   </scm>
 
   <properties>
-    <hippo.cms.version>4.0.0-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>4.0.0-translations-psp1-SNAPSHOT</hippo.cms.version>
   </properties>
 
   <repositories>
@@ -87,6 +86,7 @@
         <directory>${basedir}/src/main/resources</directory>
         <includes>
           <include>**/*.xml</include>
+          <include>**/*.json</include>
         </includes>
       </resource>
     </resources>
