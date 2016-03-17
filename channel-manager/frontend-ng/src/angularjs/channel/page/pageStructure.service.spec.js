@@ -306,9 +306,7 @@ describe('PageStructureService', () => {
     });
     spyOn(HstService, 'doGet').and.returnValue($q.when([]));
 
-    PageStructureService.removeComponentById('component-1234').then((removedComponent) => {
-      expect(removedComponent.getId()).toEqual('component-1234');
-    });
+    PageStructureService.removeComponentById('component-1234');
 
     $rootScope.$digest();
 
@@ -316,7 +314,6 @@ describe('PageStructureService', () => {
   });
 
   it('removes a valid component but fails to call HST', () => {
-    const handler = jasmine.createSpy('success');
     const container = $j('#container1', $document);
     const component = $j('#componentA', $document);
 
@@ -333,15 +330,13 @@ describe('PageStructureService', () => {
     // mock the call to HST to be failed
     spyOn(HstService, 'doGet').and.returnValue($q.reject());
 
-    PageStructureService.removeComponentById('component-1234').then(handler);
+    PageStructureService.removeComponentById('component-1234');
     $rootScope.$digest();
 
     expect(HstService.doGet).toHaveBeenCalledWith('container-123', 'delete', 'component-1234');
-    expect(handler).not.toHaveBeenCalled();
   });
 
   it('removes an invalid component', () => {
-    const handler = jasmine.createSpy('success');
     const container = $j('#container1', $document);
     const component = $j('#componentA', $document);
 
@@ -356,10 +351,9 @@ describe('PageStructureService', () => {
     });
     spyOn(HstService, 'doGet').and.returnValue($q.when([]));
 
-    PageStructureService.removeComponentById('component-123').then(handler);
+    PageStructureService.removeComponentById('component-123');
     $rootScope.$digest();
 
-    expect(handler).not.toHaveBeenCalled();
     expect(HstService.doGet).not.toHaveBeenCalled();
   });
 

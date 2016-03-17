@@ -102,15 +102,14 @@ export class PageStructureService {
   removeComponentById(componentId) {
     const component = this.getComponentById(componentId);
 
-    if (!component) {
-      return this.$q.reject();
-    }
-
-    // request back-end to remove component
-    const container = component.getContainer();
-    return this._removeHstComponent(container.getId(), componentId)
-      .then(() => this.reloadContainer(container));
+    if (component) {
+      const container = component.getContainer();
+      return this._removeHstComponent(container.getId(), componentId)
+        .then(() => this.reloadContainer(container));
       // TODO handle error
+    } else {
+      this.$log.debug(`Was asked to remove component with ID '${componentId}', but couldn't find it in the page structure.`);
+    }
   }
 
   _removeHstComponent(containerId, componentId) {
