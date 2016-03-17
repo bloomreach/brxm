@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-export function hippoIframe() {
-  'ngInject';
+import { channelPageModule } from '../../page/page';
+import { componentAdderDirective } from './componentAdder.directive';
+import { ComponentAdderCtrl } from './componentAdder.controller';
+import { ComponentAdderService } from './componentAdder.service';
 
-  return {
-    restrict: 'E',
-    scope: {},
-    bindToController: {
-      path: '=',
-      editMode: '=',
-    },
-    templateUrl: 'channel/hippoIframe/hippoIframe.html',
-    controller: 'hippoIframeCtrl',
-    controllerAs: 'iframe',
-  };
-}
+export const componentAdderModule = angular
+  .module('hippo-cm.channel.hippoIframe.componentAdder', [
+    channelPageModule.name,
+  ])
+  .directive('componentAdder', componentAdderDirective)
+  .controller('ComponentAdderCtrl', ComponentAdderCtrl)
+  .service('ComponentAdderService', ComponentAdderService);

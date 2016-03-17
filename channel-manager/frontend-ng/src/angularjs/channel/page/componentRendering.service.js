@@ -30,7 +30,7 @@ export class ComponentRenderingService {
   }
 
   _renderComponent(componentId, propertiesMap) {
-    const component = this.PageStructureService.getComponent(componentId);
+    const component = this.PageStructureService.getComponentById(componentId);
     if (component) {
       this._fetchHtml(component, propertiesMap).then((response) => {
         this.PageStructureService.replaceComponent(component, response.data);

@@ -85,13 +85,18 @@ export class PageStructureService {
     }
   }
 
-  getComponent(componentId) {
+  getComponentById(id) {
     let component = null;
     this.containers.some((container) => {
-      component = container.getComponent(componentId);
+      component = container.getComponent(id);
       return component;
     });
     return component;
+  }
+
+  getContainerByComponentId(id) {
+    const component = this.getComponentById(id);
+    return component ? component.getContainer() : null;
   }
 
   /**
@@ -191,21 +196,21 @@ export class PageStructureService {
   addComponentToContainer(catalogComponent, overlayDomElementOfContainer) {
     const oldContainer = this.containers.find((c) => c.getJQueryElement('overlay')[0] === overlayDomElementOfContainer);
 
-    console.log('oldContainer droppped ', overlayDomElementOfContainer);
     if (oldContainer) {
-      console.log(`Adding '${catalogComponent.label}' component to container '${oldContainer.getLabel()}'.`);
-      console.log(catalogComponent, oldContainer);
-
-      this._addHstComponent(catalogComponent, oldContainer.getId()).then(() =>
-        this._fetchContainerMarkup(oldContainer).then((response) => {
-          const jQueryContainerElement = oldContainer.replaceDOM(response.data);
-          this._replaceContainer(oldContainer, this._createContainer(jQueryContainerElement));
-          this.OverlaySyncService.syncIframe();
-        })
-      );
+      this._addHstComponent(catalogComponent, oldContainer.getId())
+        .then(() => this.reloadContainer(oldContainer));
+      // TODO: handle error
     } else {
       console.log('oldContainer not found');
     }
+  }
+
+  reloadContainer(container) {
+    this._fetchContainerMarkup(container).then((response) => {
+      const jQueryContainerElement = container.replaceDOM(response.data);
+      this._replaceContainer(container, this._createContainer(jQueryContainerElement));
+      this.OverlaySyncService.syncIframe(); // necessary? mutation observer should trigger this...
+    });
   }
 
   _replaceContainer(oldContainer, newContainer) {

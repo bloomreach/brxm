@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-export function hippoIframe() {
-  'ngInject';
+export class ComponentAdderService {
+  constructor() {
+    'ngInject';
+  }
 
-  return {
-    restrict: 'E',
-    scope: {},
-    bindToController: {
-      path: '=',
-      editMode: '=',
-    },
-    templateUrl: 'channel/hippoIframe/hippoIframe.html',
-    controller: 'hippoIframeCtrl',
-    controllerAs: 'iframe',
-  };
+  setContainerClass(className) {
+    this.containerClass = className;
+  }
+
+  isContainer(domElement) {
+    return domElement.classList.contains(this.containerClass);
+  }
+
+  setContainerItemClass(className) {
+    this.containerItemClass = className;
+  }
+
+  isContainerItem(domElement) {
+    return domElement.classList.contains(this.containerItemClass);
+  }
 }

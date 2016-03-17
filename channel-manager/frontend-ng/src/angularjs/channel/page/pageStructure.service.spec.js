@@ -281,14 +281,14 @@ describe('PageStructureService', () => {
       uuid: '1234',
     });
 
-    const pageComponent = PageStructureService.getComponent('1234');
+    const pageComponent = PageStructureService.getComponentById('1234');
     expect(pageComponent).not.toBeNull();
     expect(pageComponent.getId()).toEqual('1234');
     expect(pageComponent.getLabel()).toEqual('Test Component');
   });
 
   it('returns null when getting an unknown component', () => {
-    expect(PageStructureService.getComponent('no-such-component')).toBeNull();
+    expect(PageStructureService.getComponentById('no-such-component')).toBeNull();
   });
 
   it('removes a valid component and calls HST successfully', () => {

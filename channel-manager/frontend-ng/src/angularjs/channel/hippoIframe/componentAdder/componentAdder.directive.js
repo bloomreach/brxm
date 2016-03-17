@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-export function hippoIframe() {
+export function componentAdderDirective() {
   'ngInject';
 
   return {
-    restrict: 'E',
-    scope: {},
-    bindToController: {
-      path: '=',
-      editMode: '=',
-    },
-    templateUrl: 'channel/hippoIframe/hippoIframe.html',
-    controller: 'hippoIframeCtrl',
-    controllerAs: 'iframe',
+    restrict: 'A',
+    controller: 'ComponentAdderCtrl',
   };
 }

@@ -15,6 +15,7 @@
  */
 
 import { overlayModule } from './overlay/overlay';
+import { componentAdderModule } from './componentAdder/componentAdder';
 import { hippoIframe } from './hippoIframe.directive';
 import { HippoIframeCtrl } from './hippoIframe.controller';
 import { HstCommentsProcessorService } from './hstCommentsProcessor.service';
@@ -25,6 +26,7 @@ import { DragDropService } from './dragDrop.service';
 export const channelHippoIframeModule = angular
   .module('hippo-cm.channel.hippoIframe', [
     overlayModule.name,
+    componentAdderModule.name,
   ])
   .directive('hippoIframe', hippoIframe)
   .controller('hippoIframeCtrl', HippoIframeCtrl)
