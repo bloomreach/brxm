@@ -112,6 +112,7 @@
             this.hostToIFrame.publish('render-component', componentId, propertiesMap);
           },
           hide: function() {
+            this.hostToIFrame.publish('hide-component-properties');
             console.log('TODO: deselectComponents? Or leave the selection as-is?');
             // old code: this.pageContainer.deselectComponents();
           },

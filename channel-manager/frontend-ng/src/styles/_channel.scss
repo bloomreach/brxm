@@ -21,7 +21,7 @@
   width: 100%;
   z-index: 10;
 
-  &.disallowed {
+  &.masked {
     pointer-events: auto;
     cursor: not-allowed;
   }

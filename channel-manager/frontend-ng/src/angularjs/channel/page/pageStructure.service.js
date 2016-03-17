@@ -21,7 +21,8 @@ import { ComponentElement } from './element/componentElement';
 
 export class PageStructureService {
 
-  constructor($log, $q, HstConstants, hstCommentsProcessorService, RenderingService, OverlaySyncService, ChannelService, CmsService, PageMetaDataService, HstService) {
+  constructor($log, $q, HstConstants, hstCommentsProcessorService, RenderingService, OverlaySyncService,
+              ChannelService, CmsService, PageMetaDataService, HstService, MaskService) {
     'ngInject';
 
     // Injected
@@ -35,6 +36,7 @@ export class PageStructureService {
     this.RenderingService = RenderingService;
     this.OverlaySyncService = OverlaySyncService;
     this.pageMetaData = PageMetaDataService;
+    this.MaskService = MaskService;
 
     this.clearParsedElements();
   }
@@ -132,7 +134,7 @@ export class PageStructureService {
       },
       page: this.pageMetaData.get(),
     });
-    // TODO CHANNELMGR-494: activate the mask. When/where to deactivate it? An explicit signal from ExtJS would be nice.
+    this.MaskService.add();
   }
 
   printParsedElements() {

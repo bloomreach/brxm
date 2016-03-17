@@ -16,6 +16,7 @@
 
 import { channelPageModule } from './page/page';
 import { channelHippoIframeModule } from './hippoIframe/hippoIframe';
+import { channelMaskModule } from './mask/mask';
 import { config } from './channel.config';
 import { ChannelCtrl } from './channel.controller';
 import { run } from './channel.run';
@@ -26,6 +27,7 @@ export const channelModule = angular
     'hippo-cm-api',
     channelPageModule.name,
     channelHippoIframeModule.name,
+    channelMaskModule.name,
   ])
   .config(config)
   .controller('ChannelCtrl', ChannelCtrl)
