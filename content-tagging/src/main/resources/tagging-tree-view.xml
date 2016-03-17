@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
   <!--
-  Copyright 2007-2009 Hippo
+  Copyright 2007-2015 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -46,9 +46,6 @@
     </sv:property>
     <sv:property sv:name="title" sv:type="String">
       <sv:value>section-tagcloud</sv:value>
-    </sv:property>
-    <sv:property sv:name="translator.id" sv:type="String">
-      <sv:value>service.translator.config</sv:value>
     </sv:property>
     <sv:property sv:name="model.folder" sv:type="String">
       <sv:value>${model.folder}</sv:value>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2008-2014 Hippo
+    Copyright 2008-2015 Hippo
 
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -82,27 +82,6 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="tagging-cms-translations">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>20018</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>tagging-cms-translations.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-static/configTranslator/hippostd:translations</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>4.09.00</sv:value>
-    </sv:property>
-  </sv:node>
-
   <sv:node sv:name="tagging-tree-view">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -115,6 +94,12 @@
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:frontend/cms/cms-tree-views</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>6.0.0</sv:value>
     </sv:property>
   </sv:node>
 
@@ -130,6 +115,18 @@
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:frontend/cms/cms-folder-views</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="tagging-section-translations">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>14</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:resourcebundles" sv:type="String">
+      <sv:value>section-translations.json</sv:value>
     </sv:property>
   </sv:node>
 
