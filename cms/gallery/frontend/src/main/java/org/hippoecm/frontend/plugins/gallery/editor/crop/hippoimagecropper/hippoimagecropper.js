@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -190,6 +190,9 @@ if (!YAHOO.hippo.ImageCropper) {
                 var dim = args[0];
                 Dom.setStyle(me.leftCropArea, 'width', (dim.w - 10) + 'px');
                 Dom.setStyle(me.leftCropArea, 'height', (dim.h - 10) + 'px');
+                if (me.fitView) {
+                    me.scaleToFit(me.calculateRatio(me));
+                }
             },
 
             onMove: function(e) {

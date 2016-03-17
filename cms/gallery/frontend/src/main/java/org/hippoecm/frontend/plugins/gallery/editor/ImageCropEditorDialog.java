@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -157,14 +158,10 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
         final AjaxCheckBox fitViewCheckbox = new AjaxCheckBox("fit-view", fitViewModel) {
             private static final long serialVersionUID = 1L;
 
+
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                final String updateScript = imageCropBehavior.getUpdateScript();
-                /**
-                 *  NOTE: this calls widget {@code update()} method,
-                 *  which dispatches call js call to {@code render()} method
-                 */
-                target.appendJavaScript(updateScript);
+                executeJavascript(target, imageCropBehavior);
             }
 
         };
@@ -173,7 +170,21 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
         // add label
         final Label fitViewLabel = new Label("fit-view-label", new StringResourceModel("fit-view", this, null));
         fitViewLabel.setOutputMarkupId(true);
-        add(fitViewLabel);
+        final AjaxLink fitViewLink = new AjaxLink("fit-view-link") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                // toggle fitView flag
+                fitView = !fitView;
+                target.add(fitViewCheckbox);
+                fitViewCheckbox.modelChanged();
+                executeJavascript(target, imageCropBehavior);
+            }
+        };
+        fitViewLink.setOutputMarkupId(true);
+        add(fitViewLink);
+        fitViewLink.add(fitViewLabel);
 
 
         originalImage.add(imageCropBehavior);
@@ -196,6 +207,15 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
         } catch (RepositoryException e) {
             log.info("Cannot retrieve compression quality.", e);
         }
+    }
+
+    /**
+     * NOTE: this calls widget {@code update()} method,
+     * which dispatches call js call to {@code render()} method
+     */
+    private void executeJavascript(final AjaxRequestTarget target, final ImageCropBehavior imageCropBehavior) {
+        final String updateScript = imageCropBehavior.getUpdateScript();
+        target.appendJavaScript(updateScript);
     }
 
     /**
