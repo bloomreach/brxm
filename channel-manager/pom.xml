@@ -35,11 +35,11 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Addon Channel Manager</notice.project.name>
 
-    <hippo.repository.version>4.0.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>4.0.0-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>4.0.0-SNAPSHOT</hippo.hst.version>
+    <hippo.repository.version>4.0.0-translations-psp1-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>4.0.0-translations-psp1-SNAPSHOT</hippo.cms.version>
+    <hippo.hst.version>4.0.0-translations-psp1-SNAPSHOT</hippo.hst.version>
     <hippo.commons.version>3.0.0-SNAPSHOT</hippo.commons.version>
-    <hippo.addon-hst-configuration-editor.version>3.0.0-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
+    <hippo.addon-hst-configuration-editor.version>3.0.0-translations-psp1-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
     <hippo.frontend.plugins.version>3.0.0-SNAPSHOT</hippo.frontend.plugins.version>
     <hippo.frontend.theme.version>3.0.0-SNAPSHOT</hippo.frontend.theme.version>
 
