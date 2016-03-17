@@ -23,7 +23,7 @@ export function maskDirective(MaskService, CmsService) {
       MaskService.initialize(element);
 
       CmsService.subscribe('hide-component-properties', () => {
-        MaskService.removeMask();
+        MaskService.remove();
       });
     },
   };
