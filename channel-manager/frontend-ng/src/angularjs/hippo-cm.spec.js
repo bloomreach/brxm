@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-'use strict';
-
 describe('The hippo-cm module', () => {
   'use strict';
 
