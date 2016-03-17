@@ -1,0 +1,22 @@
+{"hippo:types": {
+  "selectiondemo:textdocument":   {
+    "nl":     {
+      "selectiondemo:booleanradiogroup=true": "Ja",
+      "selectiondemo:booleanradiogroup=false": "Nee"
+    },
+    "en":     {
+      "selectiondemo:booleanradiogroup=true": "Yes",
+      "selectiondemo:booleanradiogroup=false": "No"
+    }
+  },
+  "selectiondemo:multilingualdocument":   {
+    "nl":     {
+      "selectiondemo:booleanradiogroup=true": "Ja",
+      "selectiondemo:booleanradiogroup=false": "Nee"
+    },
+    "en":     {
+      "selectiondemo:booleanradiogroup=true": "Yes",
+      "selectiondemo:booleanradiogroup=false": "No"
+    }
+  }
+}}

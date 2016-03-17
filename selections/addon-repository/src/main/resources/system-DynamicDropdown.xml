@@ -23,65 +23,9 @@
         <sv:value>hipposysedit:templatetype</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:translated</sv:value>
         <sv:value>editor:editable</sv:value>
         <sv:value>mix:referenceable</sv:value>
     </sv:property>
-    <sv:node sv:name="hippo:translation">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:translation</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>nl</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Dynamische Dropdown</sv:value>
-        </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:translation">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:translation</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>en</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Dynamic Dropdown</sv:value>
-        </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:translation">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:translation</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>fr</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Liste déroulante dynamique</sv:value>
-        </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:translation">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:translation</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>it</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Dropdown Dinamica</sv:value>
-        </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:translation">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:translation</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>de</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Dynamisches Dropdown</sv:value>
-        </sv:property>
-    </sv:node>
     <sv:node sv:name="hipposysedit:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:handle</sv:value>

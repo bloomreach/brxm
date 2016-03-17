@@ -1,0 +1,88 @@
+{
+  "hippo:types" : {
+    "selection:BooleanRadioGroup" : {
+      "en" : {
+        "jcr:name" : "Boolean Radio Group"
+      },
+      "nl" : {
+        "jcr:name" : "Keuzerondjes ja/nee"
+      },
+      "de" : {
+        "jcr:name" : "Optionsgruppe ja/nein"
+      },
+      "fr" : {
+        "jcr:name" : "Groupe de boutons radio booléen"
+      }
+    },
+    "selection:DynamicDropdown" : {
+      "en" : {
+        "jcr:name" : "Dynamic Dropdown"
+      },
+      "nl" : {
+        "jcr:name" : "Dynamische Dropdown"
+      },
+      "de" : {
+        "jcr:name" : "Dynamisches Dropdown"
+      },
+      "fr" : {
+        "jcr:name" : "Liste déroulante dynamique"
+      }
+    },
+    "selection:listitem" : {
+      "en" : {
+        "jcr:name" : "Value list item"
+      },
+      "nl" : {
+        "jcr:name" : "Waardelijst item"
+      },
+      "de" : {
+        "jcr:name" : "List Element"
+      },
+      "fr" : {
+        "jcr:name" : "Item de la liste de valeurs"
+      }
+    },
+    "selection:RadioGroup" : {
+      "en" : {
+        "jcr:name" : "Radio group"
+      },
+      "nl" : {
+        "jcr:name" : "Keuzerondjes"
+      },
+      "de" : {
+        "jcr:name" : "Radio group"
+      },
+      "fr" : {
+        "jcr:name" : "Groupe de boutons radios"
+      }
+    },
+    "selection:StaticDropdown" : {
+      "en" : {
+        "jcr:name" : "Static Dropdown"
+      },
+      "nl" : {
+        "jcr:name" : "Statische Dropdown"
+      },
+      "de" : {
+        "jcr:name" : "Statisches Dropdown"
+      },
+      "fr" : {
+        "jcr:name" : "Liste déroulante statique"
+      }
+    },
+    "selection:valuelist" : {
+      "en" : {
+        "jcr:name" : "Value list"
+      },
+      "nl" : {
+        "jcr:name" : "Waardelijst"
+      },
+      "de" : {
+        "jcr:name" : "Werte Liste"
+      },
+      "fr" : {
+        "jcr:name" : "Liste de valeurs"
+      }
+    }
+  }
+}

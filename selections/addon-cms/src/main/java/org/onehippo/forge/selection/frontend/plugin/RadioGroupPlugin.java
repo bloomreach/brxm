@@ -16,22 +16,33 @@
 
 package org.onehippo.forge.selection.frontend.plugin;
 
+import java.util.Locale;
+
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.IModelReference;
+import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.onehippo.forge.selection.frontend.model.ListItem;
+import org.onehippo.forge.selection.frontend.utils.SelectionUtils;
 import org.onehippo.forge.selection.frontend.wicket.RadioGroupWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
+import static org.hippoecm.repository.api.HippoNodeType.NT_PROTOTYPESET;
 
 /**
  * Radio group plugin.
@@ -124,6 +135,10 @@ public class RadioGroupPlugin extends AbstractChoicePlugin {
                 }
             }
 
+            @Override
+            protected IModel<String> getLabelModel(final String defaultLabel, final String propertyValue) {
+                return RadioGroupPlugin.this.getLabelModel(defaultLabel, propertyValue);
+            }
         };
 
         container.add(radioGroup);
@@ -184,16 +199,16 @@ public class RadioGroupPlugin extends AbstractChoicePlugin {
         if (currentListItem != null) {
             currentLabel = currentListItem.getLabel();
         }
-        fragment.add(new Label("new", new StringResourceModel(currentLabel, this, null, currentLabel))
-                .add(new CssClassAppender(new Model("hippo-diff-added"))));
+        fragment.add(new Label("new", getSelectedLabelModel(currentLabel))
+                .add(new CssClassAppender(new Model<>("hippo-diff-added"))));
 
         ListItem baseListItem = getValueItem(base);
         String baseLabel = "";
         if (baseListItem != null) {
             baseLabel = baseListItem.getLabel();
         }
-        fragment.add(new Label("old", new StringResourceModel(baseLabel, this, null, baseLabel))
-                .add(new CssClassAppender(new Model("hippo-diff-removed"))));
+        fragment.add(new Label("old", getSelectedLabelModel(baseLabel))
+                .add(new CssClassAppender(new Model<>("hippo-diff-removed"))));
 
         add(fragment);
     }
@@ -206,12 +221,63 @@ public class RadioGroupPlugin extends AbstractChoicePlugin {
      */
     protected void addSelectedValueLabel(final MarkupContainer container) {
         ListItem selectedListItem = getSelectedValueItem();
-        String valueShown = "";
+        String defaultLabel = "";
         if (selectedListItem != null) {
-            valueShown = selectedListItem.getLabel();
+            defaultLabel = selectedListItem.getLabel();
         }
-        Label valueLabel = new Label("selectLabel", new StringResourceModel(valueShown, this, null, valueShown));
+        Label valueLabel = new Label("selectLabel", getSelectedLabelModel(defaultLabel));
         container.add(valueLabel);
     }
 
+    private IModel<String> getSelectedLabelModel(String defaultLabel) {
+        return getLabelModel(defaultLabel, getSelectedValue());
+    }
+    
+    private IModel<String> getLabelModel(final String defaultLabel, final String propertyValue) {
+        final Locale locale = SelectionUtils.getLocale(SelectionUtils.getNode(getModel()));
+        return new ResourceBundleModel("hippo:types." + getDocumentType(), getValueKey(propertyValue), defaultLabel, locale);
+    }
+
+    private String getDocumentType() {
+        Node currentNode = (Node) ((JcrPropertyValueModel) getDefaultModel()).getJcrPropertymodel().getItemModel().getParentModel().getObject();
+        try {
+            while (!currentNode.isNodeType(NT_DOCUMENT) && !currentNode.isNodeType(NT_PROTOTYPESET)) {
+                currentNode = currentNode.getParent();
+            }
+            if (currentNode.isNodeType(NT_DOCUMENT)) {
+                return currentNode.getPrimaryNodeType().getName();
+            }
+            if (currentNode.isNodeType(NT_PROTOTYPESET)) {
+                final Node templateType = currentNode.getParent();
+                final Node namespace = templateType.getParent();
+                return namespace.getName() + ":" + templateType.getName();
+            }
+        } catch (ItemNotFoundException e) {
+            log.debug("Failed to determine containing document type of radio group", e);
+        } catch (RepositoryException e) {
+            log.warn("Failed to determing containing document type of radio group", e);
+        }
+        return "<unknown>";
+    }
+    
+    private String getSelectedValue() {
+        JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getDefaultModel();
+        try {
+            return propertyValueModel.getValue().getString();
+        } catch (RepositoryException e) {
+            log.warn("Failed to read property value");
+        }
+        return "<unknown>";
+    }
+    
+    private String getValueKey(final String value) {
+        JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getDefaultModel();
+        JcrPropertyModel propertyModel = propertyValueModel.getJcrPropertymodel();
+        try {
+            return propertyModel.getProperty().getName() + "=" + value;
+        } catch (RepositoryException e) {
+            log.warn("Failed to determine property value translation key");
+        }
+        return "<unknown>";
+    }
 }

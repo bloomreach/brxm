@@ -46,7 +46,6 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.ITemplateEngine;
@@ -124,8 +123,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
         subscribe();
 
         // use caption for backwards compatibility; i18n should use field name
-        String captionKey = helper.getField() != null ? helper.getField().getName() : config.getString("caption");
-        add(new Label("name", new StringResourceModel(captionKey, this, null, config.getString("caption"))));
+        add(new Label("name", helper.getCaptionModel(this)));
 
         // required
         Label required = new Label("required", "*");
@@ -134,7 +132,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
         }
         add(required);
 
-        add(new FieldHint("hint-panel", config.getString("hint")));
+        add(new FieldHint("hint-panel", helper.getHintModel(this)));
 
         // configured provider
         final IValueListProvider selectedProvider = context.getService(config.getString(IValueListProvider.SERVICE),
