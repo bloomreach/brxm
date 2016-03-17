@@ -23,9 +23,9 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.ocm.JcrObject;
@@ -47,7 +47,7 @@ public class BrowseLinkTarget extends JcrObject {
     }
 
     public String getName() {
-        return new NodeTranslator(getNodeModel()).getNodeName().getObject();
+        return new NodeNameModel(getNodeModel()).getObject();
     }
 
     public String getDisplayPath() {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ class InitializeItemFactory {
         String contentResource = null;
         String contentRoot = null;
         String contextPath = null;
+        String resourceBundles = null;
         if (path.startsWith("/jcr:system/jcr:nodeTypes")) {
             // path = /jcr:system/jcr:nodeTypes/example_1_1:doctype
             // prefix = example
@@ -59,6 +60,11 @@ class InitializeItemFactory {
             nodeTypesResource = "namespaces/" + prefix + ".cnd";
             name = prefix + "-nodetypes";
             sequence = 30000.1;
+        }
+        else if (path.startsWith("/hippo:configuration/hippo:translations")) {
+            sequence = 30000.2;
+            name = namePrefix + "translations";
+            resourceBundles = "translations.json";
         }
         else {
             boolean isNode = eventType == Event.NODE_ADDED || eventType == Event.NODE_REMOVED;
@@ -87,7 +93,7 @@ class InitializeItemFactory {
             }
         }
         
-        return new InitializeItem(name, sequence, contentResource, contentRoot, contextPath, nodeTypesResource, null, exportDir, module);
+        return new InitializeItem(name, sequence, contentResource, contentRoot, contextPath, nodeTypesResource, null, resourceBundles, exportDir, module);
     }
     
     InitializeItem createInitializeItem(String namespace, String internalPrefix) {

@@ -21,9 +21,8 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public final class SameNameSiblingsUtil {
@@ -33,17 +32,16 @@ public final class SameNameSiblingsUtil {
     }
 
     /**
-     * Return true if <code>parentNode</code> contains a child having the same localized name with the specified
-     * <code>localizedName</code>
+     * Return true if <code>parentNode</code> contains a child having the same display name with the specified
+     * <code>displayName</code>
      */
-    public static boolean hasChildWithLocalizedName(final Node parentNode, final String localizedName) throws RepositoryException {
+    public static boolean hasChildWithDisplayName(final Node parentNode, final String displayName) throws RepositoryException {
         final NodeIterator children = parentNode.getNodes();
         while (children.hasNext()) {
             Node child = children.nextNode();
             if (child.isNodeType(HippoStdNodeType.NT_FOLDER) || child.isNodeType(HippoNodeType.NT_HANDLE)) {
-                NodeTranslator nodeTranslator = new NodeTranslator(new JcrNodeModel(child));
-                String localizedChildName = nodeTranslator.getNodeName().getObject();
-                if (StringUtils.equals(localizedChildName, localizedName)) {
+                String childName = ((HippoNode) child).getDisplayName();
+                if (StringUtils.equals(childName, displayName)) {
                     return true;
                 }
             }

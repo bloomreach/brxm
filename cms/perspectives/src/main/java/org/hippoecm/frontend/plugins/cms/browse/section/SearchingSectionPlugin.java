@@ -39,9 +39,10 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.OnEnterAjaxBehavior;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
+import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
@@ -146,7 +147,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         scopeLink.add(new Label("scope-label", new LoadableDetachableModel<String>() {
             @Override
             protected String load() {
-                return new NodeTranslator(scopeModel).getNodeName().getObject();
+                return new NodeNameModel(scopeModel).getObject();
             }
 
         }).setRenderBodyOnly(true));
@@ -324,7 +325,12 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
     public IModel<String> getTitle() {
         final String titleKey = getPluginConfig().getString("title", getPluginConfig().getName());
-        return Model.of(getString(titleKey));
+        return new ResourceBundleModel(getBundleName(), titleKey);
+    }
+
+    @Override
+    protected String getBundleName() {
+        return "hippo:cms.sections";
     }
 
     @Override

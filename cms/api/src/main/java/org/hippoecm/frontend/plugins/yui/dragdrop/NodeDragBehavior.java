@@ -18,8 +18,8 @@ package org.hippoecm.frontend.plugins.yui.dragdrop;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeNameModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,7 @@ public class NodeDragBehavior extends DragBehavior {
     }
 
     protected String getLabel() {
-        return new NodeTranslator(nodeModel).getNodeName().getObject();
+        return new NodeNameModel(nodeModel).getObject();
     }
 
     @Override

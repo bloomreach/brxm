@@ -232,8 +232,7 @@ public class Main extends PluginApplication {
 
         // replace current loaders with own list, starting with component-specific
         List<IStringResourceLoader> loaders = resourceSettings.getStringResourceLoaders();
-        loaders.add(0, new StringResourceProviderConsumer());
-        loaders.add(1, new ClassFromKeyStringResourceLoader());
+        loaders.add(new ClassFromKeyStringResourceLoader());
         loaders.add(new IStringResourceLoader() {
 
             @Override
@@ -364,9 +363,6 @@ public class Main extends PluginApplication {
                 return null;
             }
         }));
-
-
-        resourceSettings.setLocalizer(new StagedLocalizer());
 
         // caching resource stream locator implementation that allows the class argument to be null.
         final IResourceStreamLocator resourceStreamLocator = resourceSettings.getResourceStreamLocator();

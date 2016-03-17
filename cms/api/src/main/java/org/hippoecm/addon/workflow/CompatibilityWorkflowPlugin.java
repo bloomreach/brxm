@@ -20,7 +20,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
@@ -28,6 +27,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -45,7 +45,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugins.yui.datetime.YuiDateTimeField;
 import org.hippoecm.frontend.service.IRenderService;
-import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
@@ -128,7 +127,6 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
         public class WorkflowDialog extends AbstractDialog {
 
             private static final long serialVersionUID = 1L;
-            private ITranslateService translator;
 
             public WorkflowDialog() {
                 this((IModel) null);

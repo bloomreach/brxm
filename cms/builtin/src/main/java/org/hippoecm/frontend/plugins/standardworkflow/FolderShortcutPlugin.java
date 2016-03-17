@@ -501,7 +501,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                             WorkflowManager workflowMgr = UserSession.get()
                                     .getWorkflowManager();
                             DefaultWorkflow defaultWorkflow = (DefaultWorkflow) workflowMgr.getWorkflow("core", node);
-                            defaultWorkflow.localizeName(localName);
+                            defaultWorkflow.setDisplayName(localName);
                         }
                         jcrSession.refresh(true);
 

@@ -21,8 +21,8 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.model.event.IObservable;
 
 public class NameRenderer extends AbstractNodeRenderer {
@@ -31,16 +31,12 @@ public class NameRenderer extends AbstractNodeRenderer {
 
     @Override
     protected Component getViewer(String id, Node node) throws RepositoryException {
-        return new Label(id, new NodeTranslator(new JcrNodeModel(node)).getNodeName());
+        return new Label(id, new NodeNameModel(new JcrNodeModel(node)));
     }
 
     @Override
     public IObservable getObservable(IModel<Node> model) {
-        IModel<String> nameModel = new NodeTranslator(model).getNodeName();
-        if (nameModel instanceof IObservable) {
-            return (IObservable) nameModel;
-        }
-        return null;
+        return new NodeNameModel(model);
     }
     
 }

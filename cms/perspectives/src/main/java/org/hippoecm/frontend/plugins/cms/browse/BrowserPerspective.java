@@ -68,10 +68,6 @@ public class BrowserPerspective extends Perspective {
         context.registerTracker(new ServiceTracker<IExpandableCollapsable>(IExpandableCollapsable.class) {
             @Override
             protected void onServiceAdded(IExpandableCollapsable service, String name) {
-                // Sync listing expanded state (collapsed is default) in case #render is not called
-                if (listing == null && state.isExpanded()) {
-                    service.expand();
-                }
                 listing = service;
                 state.onListingChanged();
             }
@@ -131,9 +127,6 @@ public class BrowserPerspective extends Perspective {
                 state.onExpand();
             }
         });
-
-        // Explicitly start with the expanded view
-        wireframe.expandDefault();
     }
 
     @Override

@@ -54,24 +54,20 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
     private long nrValues;
     private IObserver propertyObserver;
 
-    // flag to check if the value orders have been changed when the property is ordered and multiple
-    private boolean hasChangedPropValueOrder;
-
     public PropertyFieldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        hasChangedPropValueOrder = false;
         nodeModel = (JcrNodeModel) getDefaultModel();
 
         // use caption for backwards compatibility; i18n should use field name
-        add(new Label("name", getCaptionModel()));
+        add(new Label("name", helper.getCaptionModel(this)));
 
         add(createNrItemsLabel());
 
         final Label required = new Label("required", "*");
         add(required);
 
-        add(new FieldHint("hint-panel", config.getString("hint")));
+        add(new FieldHint("hint-panel", helper.getHintModel(this)));
         add(createAddLink());
 
         final IFieldDescriptor field = getFieldHelper().getField();
@@ -131,14 +127,10 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
 
                 public void onEvent(Iterator<? extends IEvent<JcrPropertyModel>> events) {
                     //Only redraw if the number of properties or their order has changed.
-                    if (propertyModel.size() != nrValues ||
-                        (field.isOrdered() && hasChangedPropValueOrder)) {
+                    if (propertyModel.size() != nrValues || field.isOrdered()) {
                         nrValues = propertyModel.size();
                         resetValidation();
                         redraw();
-
-                        // reset flag after redraw
-                        hasChangedPropValueOrder = false;
                     }
                 }
 
@@ -218,7 +210,6 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
             @Override
             public void onClick(AjaxRequestTarget target) {
                 onRemoveItem(model, target);
-                hasChangedPropValueOrder = true;
             }
         };
         if (!canRemoveItem()) {
@@ -234,7 +225,6 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
             @Override
             public void onClick(AjaxRequestTarget target) {
                 onMoveItemUp(model, target);
-                hasChangedPropValueOrder = true;
             }
         };
         boolean isFirst = (model.getIndex() == 0);
@@ -254,7 +244,6 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
                 JcrPropertyValueModel nextModel = new JcrPropertyValueModel(model.getIndex() + 1, model
                         .getJcrPropertymodel());
                 onMoveItemUp(nextModel, target);
-                hasChangedPropValueOrder = true;
             }
         };
         boolean isLast = (model.getIndex() == provider.size() - 1);

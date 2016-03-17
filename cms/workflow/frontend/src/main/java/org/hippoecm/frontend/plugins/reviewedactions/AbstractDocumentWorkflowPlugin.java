@@ -25,11 +25,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -38,6 +36,7 @@ import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.CodecUtils;
+import org.hippoecm.frontend.util.DocumentUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.WorkflowException;
@@ -138,15 +137,13 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
 
     IModel<String> getDocumentName() {
         try {
-            return (new NodeTranslator(new JcrNodeModel(((WorkflowDescriptorModel) getDefaultModel()).getNode())))
-                    .getNodeName();
-        } catch (RepositoryException ex) {
-            try {
-                return Model.of(((WorkflowDescriptorModel) getDefaultModel()).getNode().getName());
-            } catch (RepositoryException e) {
-                return new StringResourceModel("unknown", this, null);
+            final IModel<String> result = DocumentUtils.getDocumentNameModel(((WorkflowDescriptorModel) getDefaultModel()).getNode());
+            if (result != null) {
+                return result;
             }
+        } catch (RepositoryException ignored) {
         }
+        return new StringResourceModel("unknown", this, null);
     }
 
     protected DocumentWorkflow getWorkflow() {

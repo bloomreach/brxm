@@ -36,12 +36,9 @@ public class MockNodeUtil {
     /**
      * Create a subfolder {@link HippoStdNodeType#NT_FOLDER} of <code>parentNode</code> with specified node name and localized name
      */
-    public static MockNode addFolder(final MockNode parentNode, final String nodeName, final String localizedName) throws RepositoryException {
+    public static MockNode addFolder(final MockNode parentNode, final String nodeName, final String displayName) throws RepositoryException {
         final MockNode node = parentNode.addNode(nodeName, HippoStdNodeType.NT_FOLDER);
-        node.addMixin(HippoNodeType.NT_TRANSLATED);
-        final Node translationNode = node.addNode(HippoNodeType.HIPPO_TRANSLATION, HippoNodeType.HIPPO_TRANSLATION);
-        translationNode.setProperty(HippoNodeType.HIPPO_MESSAGE, localizedName);
-        translationNode.setProperty(HippoNodeType.HIPPO_LANGUAGE, ""); // neutral language
+        node.setProperty(HippoNodeType.HIPPO_NAME, displayName);
         return node;
     }
 }

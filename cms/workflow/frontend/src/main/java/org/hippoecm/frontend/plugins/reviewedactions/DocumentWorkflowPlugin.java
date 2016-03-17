@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.io.Serializable;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -49,7 +48,6 @@ import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
@@ -72,7 +70,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         super(context, config);
 
         add(renameAction = new StdWorkflow("rename", new StringResourceModel("rename-label", this, null), context, getModel()) {
-            private RenameDocumentArguments renameDocumentArguments;
+           private RenameDocumentArguments renameDocumentArguments;
 
             @Override
             public String getSubMenu() {
@@ -100,9 +98,8 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     final HippoNode node = getModelNode();
                     locale = CodecUtils.getLocaleFromNodeAndAncestors(node);
                     renameDocumentArguments = new RenameDocumentArguments(
-                            getLocalizedNameForSession(node),
-                            node.getName(),
-                            node.getLocalizedNames()
+                            node.getDisplayName(),
+                            node.getName()
                     );
                 } catch (RepositoryException ex) {
                     renameDocumentArguments = new RenameDocumentArguments();
@@ -117,12 +114,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             private HippoNode getModelNode() throws RepositoryException {
                 return (HippoNode) getModel().getNode();
-            }
-
-            private String getLocalizedNameForSession(final HippoNode node) throws RepositoryException {
-                final Locale cmsLocale = UserSession.get().getLocale();
-                final Localized cmsLocalized = Localized.getInstance(cmsLocale);
-                return node.getLocalizedName(cmsLocalized);
             }
 
             @Override
@@ -150,8 +141,8 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 if (!((WorkflowDescriptorModel) getDefaultModel()).getNode().getName().equals(nodeName)) {
                     ((DocumentWorkflow) wf).rename(nodeName);
                 }
-                if (!getLocalizedNameForSession(node).equals(localName)) {
-                    defaultWorkflow.replaceAllLocalizedNames(localName);
+                if (!node.getDisplayName().equals(localName)) {
+                    defaultWorkflow.setDisplayName(localName);
                 }
                 return null;
             }
@@ -189,7 +180,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
                     final CopyNameHelper copyNameHelper = new CopyNameHelper(codec,
                             new StringResourceModel("copyof", DocumentWorkflowPlugin.this, null).getString());
-                    name = copyNameHelper.getCopyName(getModelNode().getLocalizedName(),
+                    name = copyNameHelper.getCopyName(getModelNode().getDisplayName(),
                             destination.getNodeModel().getNode());
                 } catch (RepositoryException ex) {
                     return new ExceptionDialog(ex);
@@ -230,7 +221,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
                 WorkflowManager manager = UserSession.get().getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", result.getNode(nodeName));
-                defaultWorkflow.localizeName(getLocalizeCodec().encode(name));
+                defaultWorkflow.setDisplayName(getLocalizeCodec().encode(name));
 
                 browseTo(resultModel);
                 return null;

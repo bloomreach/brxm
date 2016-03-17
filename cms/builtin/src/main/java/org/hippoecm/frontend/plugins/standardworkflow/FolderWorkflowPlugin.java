@@ -20,7 +20,6 @@ import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -42,14 +41,15 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
-import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
@@ -72,7 +72,6 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -87,6 +86,8 @@ import org.slf4j.LoggerFactory;
 
 public class FolderWorkflowPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
+
+    private static final String HIPPO_TEMPLATES_BUNDLE_NAME = "hippo:templates";
 
     private static Logger log = LoggerFactory.getLogger(FolderWorkflowPlugin.class);
 
@@ -118,24 +119,16 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                         try {
                             HippoNode node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
                             renameDocumentArguments.setUriName(node.getName());
-                            renameDocumentArguments.setTargetName(getLocalizedNameForSession(node));
+                            renameDocumentArguments.setTargetName(node.getDisplayName());
                             renameDocumentArguments.setNodeType(node.getPrimaryNodeType().getName());
-                            renameDocumentArguments.setLocalizedNames(node.getLocalizedNames());
-                        } catch (RepositoryException ex) {
+                       } catch (RepositoryException ex) {
                             log.error("Could not retrieve workflow document", ex);
                             renameDocumentArguments.setUriName(StringUtils.EMPTY);
                             renameDocumentArguments.setTargetName(StringUtils.EMPTY);
                             renameDocumentArguments.setNodeType(null);
-                            renameDocumentArguments.setLocalizedNames(null);
                         }
 
                         return newRenameDocumentDialog(renameDocumentArguments, this);
-                    }
-
-                    private String getLocalizedNameForSession(final HippoNode node) throws RepositoryException {
-                        final Locale cmsLocale = UserSession.get().getLocale();
-                        final Localized cmsLocalized = Localized.getInstance(cmsLocale);
-                        return node.getLocalizedName(cmsLocalized);
                     }
 
                     @Override
@@ -152,8 +145,8 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                         if (!((WorkflowDescriptorModel) getDefaultModel()).getNode().getName().equals(nodeName)) {
                             folderWorkflow.rename(node.getName() + (node.getIndex() > 1 ? "[" + node.getIndex() + "]" : ""), nodeName);
                         }
-                        if (!getLocalizedNameForSession(node).equals(localName)) {
-                            defaultWorkflow.replaceAllLocalizedNames(localName);
+                        if (!node.getDisplayName().equals(localName)) {
+                            defaultWorkflow.setDisplayName(localName);
                         }
                     }
                 });
@@ -200,8 +193,8 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                         }
 
                         if (folderNode != null) {
-                            final IModel folderName = new NodeTranslator(new JcrNodeModel(folderNode)).getNodeName();
                             try {
+                                final IModel<String> folderName = new NodeNameModel(new JcrNodeModel(folderNode));
                                 boolean deleteAllowed = true;
                                 for (NodeIterator iter = folderNode.getNodes(); iter.hasNext(); ) {
                                     Node child = iter.nextNode();
@@ -270,7 +263,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
                 for (final String category : prototypes.keySet()) {
                     IModel<String> categoryLabel = new StringResourceModel("add-category", this, null,
-                            new StringResourceModel(category, this, null));
+                            new ResourceBundleModel(HIPPO_TEMPLATES_BUNDLE_NAME, category));
 
                     final StdWorkflow<FolderWorkflow> stdWorkflow = new StdWorkflow<FolderWorkflow>("id", categoryLabel, getPluginContext(), model) {
 
@@ -356,7 +349,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                                 if (!nodeName.equals(localName)) {
                                     WorkflowManager workflowMgr = UserSession.get().getWorkflowManager();
                                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) workflowMgr.getWorkflow("core", nodeModel.getNode());
-                                    defaultWorkflow.localizeName(localName);
+                                    defaultWorkflow.setDisplayName(localName);
                                 }
                                 select(nodeModel);
                             } else {
@@ -431,7 +424,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
         AddDocumentDialog dialog = new AddDocumentDialog(
                 addDocumentModel,
-                new StringResourceModel(category, this, null),
+                new ResourceBundleModel(HIPPO_TEMPLATES_BUNDLE_NAME, category),
                 category,
                 prototypes,
                 translated && !isLanguageKnown(),

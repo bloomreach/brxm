@@ -26,7 +26,6 @@ import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.validator.plugins.EscapedCmsValidator;
 import org.hippoecm.frontend.editor.validator.plugins.RegExCmsValidator;
-import org.hippoecm.frontend.i18n.ConfigTraversingPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -37,7 +36,6 @@ import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,7 +43,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ValidationPluginTest extends PluginTest {
-
 
     final static String[] content = {
             "/test", "nt:unstructured",
@@ -57,32 +54,23 @@ public class ValidationPluginTest extends PluginTest {
                 "editor.id", "${cluster.id}.editor",
 
             "/config/test-app/validator", "frontend:plugincluster",
-                "translator.id", "${cluster.id}.translator",
 
-                "/config/test-app/validator/registry", "frontend:plugin",
-                    "plugin.class", ValidatorService.class.getName(),
-                    "field.validator.service.id", "field.validator.service",
+            "/config/test-app/validator/registry", "frontend:plugin",
+                "plugin.class", ValidatorService.class.getName(),
+                "field.validator.service.id", "field.validator.service",
 
-                "/config/test-app/validator/escaped", "frontend:plugin",
-                    "plugin.class", EscapedCmsValidator.class.getName(),
+            "/config/test-app/validator/escaped", "frontend:plugin",
+                "plugin.class", EscapedCmsValidator.class.getName(),
 
-                "/config/test-app/validator/email", "frontend:plugin",
-                    "plugin.class", RegExCmsValidator.class.getName(),
-                    "regex_pattern", "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$",
-
-                "/config/test-app/validator/translation", "frontend:plugin",
-                    "jcr:mixinTypes", "hippostd:translated",
-                    "plugin.class", ConfigTraversingPlugin.class.getName(),
-                    "/config/test-app/validator/translation/hippostd:translations", "hippostd:translations",
-                        "/config/test-app/validator/translation/hippostd:translations/escaped", "frontend:pluginconfig",
-                            "jcr:mixinTypes", "hippostd:translated",
+            "/config/test-app/validator/email", "frontend:plugin",
+                "plugin.class", RegExCmsValidator.class.getName(),
+                "regex_pattern", "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$",
 
     };
     IPluginConfig config;
     IPluginConfig validator;
     IPluginConfig registry;
     IPluginConfig escaped;
-    IPluginConfig translation;
     IPluginConfig regex;
     private ModelReference modelRef;
 
@@ -100,7 +88,6 @@ public class ValidationPluginTest extends PluginTest {
         validator = new JcrClusterConfig(new JcrNodeModel("/config/test-app/validator"));
         registry = new JcrClusterConfig(new JcrNodeModel("/config/test-app/validator/registry"));
         escaped = new JcrClusterConfig(new JcrNodeModel("/config/test-app/validator/escaped"));
-        translation = new JcrClusterConfig(new JcrNodeModel("/config/test-app/validator/translation"));
         regex = new JcrClusterConfig(new JcrNodeModel("/config/test-app/validator/email"));
     }
 
@@ -135,7 +122,6 @@ public class ValidationPluginTest extends PluginTest {
         start(validator);
         start(registry);
         start(escaped);
-        start(translation);
 
         Node content = root.getNode("test").addNode("content", "test:validator");
         content.setProperty("test:nonempty", "something");
@@ -162,7 +148,6 @@ public class ValidationPluginTest extends PluginTest {
         start(validator);
         start(registry);
         start(regex);
-        start(translation);
 
         Node content = root.getNode("test").addNode("content", "test:validator");
         content.setProperty("test:nonempty", "something");

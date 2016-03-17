@@ -18,7 +18,7 @@ package org.hippoecm.frontend.util;
 import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.model.NodeNameModel;
 
 public class MaxLengthNodeNameFormatter extends MaxLengthStringFormatter {
 
@@ -49,6 +49,6 @@ public class MaxLengthNodeNameFormatter extends MaxLengthStringFormatter {
     }
 
     protected String getName(IModel<Node> nodeModel) {
-        return new NodeTranslator(nodeModel).getNodeName().getObject();
+        return new NodeNameModel(nodeModel).getObject();
     }
 }

@@ -19,7 +19,6 @@ api/src/main/java/org/hippoecm/addon/workflow/TextDialog_de.properties -text
 api/src/main/java/org/hippoecm/addon/workflow/TextDialog_fr.properties -text
 api/src/main/java/org/hippoecm/addon/workflow/TextDialog_nl.properties -text
 api/src/main/java/org/hippoecm/frontend/Home.java -text
-api/src/main/java/org/hippoecm/frontend/IStringResourceProvider.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/PluginApplication.java -text
 api/src/main/java/org/hippoecm/frontend/PluginRequestTarget.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/RepositoryRuntimeException.java -text
@@ -89,13 +88,10 @@ api/src/main/java/org/hippoecm/frontend/extjs/ExtHippoThemeBehavior.java -text
 api/src/main/java/org/hippoecm/frontend/extjs/ExtWidget.java -text
 api/src/main/java/org/hippoecm/frontend/extjs/ExtWidgetRegistry.java -text
 api/src/main/java/org/hippoecm/frontend/extjs/ExtWidgetRegistry.js -text
-api/src/main/java/org/hippoecm/frontend/i18n/ConfigWrapper.java -text
-api/src/main/java/org/hippoecm/frontend/i18n/ITranslation.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/frontend/i18n/TranslationSelectionStrategy.java -text
-api/src/main/java/org/hippoecm/frontend/i18n/model/NodeTranslator.java -text
 api/src/main/java/org/hippoecm/frontend/i18n/types/SortedTypeChoiceRenderer.java -text
 api/src/main/java/org/hippoecm/frontend/i18n/types/TypeChoiceRenderer.java -text
 api/src/main/java/org/hippoecm/frontend/i18n/types/TypeTranslator.java -text
+api/src/main/java/org/hippoecm/frontend/l10n/ResourceBundleModel.java -text
 api/src/main/java/org/hippoecm/frontend/model/AbstractProvider.java -text
 api/src/main/java/org/hippoecm/frontend/model/ChildNodeProvider.java -text
 api/src/main/java/org/hippoecm/frontend/model/DetachMonitor.java svneol=native#text/plain
@@ -107,6 +103,7 @@ api/src/main/java/org/hippoecm/frontend/model/JcrHelper.java svneol=native#text/
 api/src/main/java/org/hippoecm/frontend/model/JcrQueryModel.java -text
 api/src/main/java/org/hippoecm/frontend/model/ModelReference.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/model/NodeModelWrapper.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/model/NodeNameModel.java -text
 api/src/main/java/org/hippoecm/frontend/model/PropertyValueProvider.java -text
 api/src/main/java/org/hippoecm/frontend/model/TraceMonitor.java -text
 api/src/main/java/org/hippoecm/frontend/model/event/EventCollection.java svneol=native#text/plain
@@ -478,7 +475,6 @@ api/src/main/java/org/hippoecm/frontend/service/IPopupService.java -text
 api/src/main/java/org/hippoecm/frontend/service/IRenderService.java -text
 api/src/main/java/org/hippoecm/frontend/service/IRestProxyService.java -text
 api/src/main/java/org/hippoecm/frontend/service/ITitleDecorator.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/frontend/service/ITranslateService.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/service/ServiceContext.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/service/ServiceTracker.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/service/preferences/IPreference.java -text svneol=unset#text/plain
@@ -515,6 +511,7 @@ api/src/main/java/org/hippoecm/frontend/types/TypeException.java svneol=native#t
 api/src/main/java/org/hippoecm/frontend/types/TypeHelper.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/types/TypeLocator.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/usagestatistics/UsageStatisticsSettings.java -text
+api/src/main/java/org/hippoecm/frontend/util/DocumentUtils.java -text
 api/src/main/java/org/hippoecm/frontend/util/MappingException.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/util/MaxLengthNodeNameFormatter.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/util/MaxLengthStringFormatter.java svneol=native#text/plain
@@ -1169,8 +1166,8 @@ automatic-export/repository/pom.xml -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/AutoExportModule.java -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/Configuration.java -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/Constants.java -text
-automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/DeltaXML.java -text
-automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/DeltaXMLInstruction.java -text
+automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/Delta.java -text
+automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/DeltaInstruction.java -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/EventComparator.java -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/EventPreProcessor.java -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/EventProcessor.java -text
@@ -1185,6 +1182,7 @@ automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/Initializ
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/InitializeItemRegistry.java -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/LocationMapper.java -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/Module.java -text
+automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/ResourceBundlesJSONSerializer.java -text
 automatic-export/repository/src/main/resources/autoexport-domain.xml -text
 automatic-export/repository/src/main/resources/automatic-export-plugin.xml -text
 automatic-export/repository/src/main/resources/hippo-configuration/hippo-modules/autoexport-module.xml -text
@@ -1204,6 +1202,7 @@ automatic-export/repository/src/test/java/org/onehippo/cms7/autoexport/Initializ
 automatic-export/repository/src/test/java/org/onehippo/cms7/autoexport/InitializeItemTest.java -text
 automatic-export/repository/src/test/java/org/onehippo/cms7/autoexport/LocationMapperTest.java -text
 automatic-export/repository/src/test/java/org/onehippo/cms7/autoexport/ModuleTest.java -text
+automatic-export/repository/src/test/java/org/onehippo/cms7/autoexport/ResourceBundleJSONSerializerTest.java -text
 automatic-export/repository/src/test/resources/META-INF/MANIFEST.MF -text
 automatic-export/repository/src/test/resources/autoexporttest/basicdelta/foo.xml -text
 automatic-export/repository/src/test/resources/autoexporttest/basicdelta/hippoecm-extension.xml -text
@@ -1223,6 +1222,8 @@ automatic-export/repository/src/test/resources/autoexporttest/nodetypes/hippoecm
 automatic-export/repository/src/test/resources/autoexporttest/nodetypes/namespaces/et.cnd -text
 automatic-export/repository/src/test/resources/autoexporttest/simple/hippoecm-extension.xml -text
 automatic-export/repository/src/test/resources/autoexporttest/simple/simple.xml -text
+automatic-export/repository/src/test/resources/autoexporttest/translations/hippoecm-extension.xml -text
+automatic-export/repository/src/test/resources/autoexporttest/translations/translations.json -text
 automatic-export/repository/src/test/resources/et.cnd -text
 automatic-export/repository/src/test/resources/exclude-uuid-paths.xml -text
 automatic-export/repository/src/test/resources/filter/expected1.xml -text
@@ -1236,6 +1237,7 @@ automatic-export/repository/src/test/resources/filter/expected8.xml -text
 automatic-export/repository/src/test/resources/filter/input.xml -text
 automatic-export/repository/src/test/resources/hippoecm-extension.xml -text
 automatic-export/repository/src/test/resources/initializeitemtest/delta.xml -text
+automatic-export/repository/src/test/resources/initializeitemtest/translations.json -text
 automatic-export/repository/src/test/resources/log4j-filters.txt -text
 automatic-export/repository/src/test/resources/log4j.dtd -text
 automatic-export/repository/src/test/resources/log4j.xml -text
@@ -1254,7 +1256,6 @@ brokenlinks/repository/src/main/java/org/onehippo/cms7/brokenlinks/LinkURIUtils.
 brokenlinks/repository/src/main/resources/brokenlinks-authorization.xml -text
 brokenlinks/repository/src/main/resources/brokenlinks-job.xml -text
 brokenlinks/repository/src/main/resources/brokenlinks-reports-plugin.xml svneol=native#text/plain
-brokenlinks/repository/src/main/resources/brokenlinks-reports-translators.xml svneol=native#text/plain
 brokenlinks/repository/src/main/resources/brokenlinks-reports.xml svneol=native#text/plain
 brokenlinks/repository/src/main/resources/brokenlinks-workflows.xml svneol=native#text/plain
 brokenlinks/repository/src/main/resources/brokenlinks.cnd -text
@@ -1338,8 +1339,10 @@ config/src/main/resources/domain-workflow-frontend.xml svneol=native#text/plain
 config/src/main/resources/folder-frontend-workflows-filters.xml svneol=native#text/plain
 config/src/main/resources/hippoecm-extension.xml -text svneol=unset#text/plain
 config/src/main/resources/hippostd-workflows-frontend.xml svneol=native#text/plain
+config/src/main/resources/section-translations.json -text
 config/src/main/resources/shortcuts-workflows-frontend.xml svneol=native#text/plain
 config/src/main/resources/threepane-workflows-frontend.xml svneol=native#text/plain
+config/src/main/resources/workflow-translations.json -text
 console/frontend/.bowerrc -text
 console/frontend/README.md -text
 console/frontend/bower.json -text
@@ -1791,38 +1794,29 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/rename-16.pn
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/where-used-16.png -text svneol=unset#unset
 editor/pom.xml -text
 editor/repository/pom.xml -text
-editor/repository/src/main/resources/cms-validators_de.xml -text
 editor/repository/src/main/resources/committype-workflows.xml -text
 editor/repository/src/main/resources/default-editor-factory.xml svneol=native#text/plain
 editor/repository/src/main/resources/default-workflows.xml svneol=native#text/plain
 editor/repository/src/main/resources/domain-templates-templateset.xml svneol=native#text/plain
 editor/repository/src/main/resources/editing-workflows.xml svneol=native#text/plain
+editor/repository/src/main/resources/editor-templates-translations.json -text
 editor/repository/src/main/resources/editor-workflows.xml -text
 editor/repository/src/main/resources/editor.cnd -text
 editor/repository/src/main/resources/embedded-workflows.xml -text
+editor/repository/src/main/resources/hippo-type-translations.json -text
 editor/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 editor/repository/src/main/resources/hippostd-editor-factory.xml svneol=native#text/plain
+editor/repository/src/main/resources/hippostd-type-translations.json -text
+editor/repository/src/main/resources/hipposysedit-type-translations.json -text
 editor/repository/src/main/resources/internal-workflows.xml svneol=native#text/plain
 editor/repository/src/main/resources/namespace-frontend.xml svneol=native#text/plain
 editor/repository/src/main/resources/namespace-hippo.xml svneol=native#text/plain
-editor/repository/src/main/resources/namespace-hippo_de.xml -text
-editor/repository/src/main/resources/namespace-hippo_it.xml -text
-editor/repository/src/main/resources/namespace-hippostd_de.xml -text
-editor/repository/src/main/resources/namespace-hippostd_it.xml -text
-editor/repository/src/main/resources/namespace-hipposysedit_de.xml -text
-editor/repository/src/main/resources/namespace-hipposysedit_it.xml -text
 editor/repository/src/main/resources/namespace-system.xml svneol=native#text/plain
-editor/repository/src/main/resources/namespace-system_de.xml -text
-editor/repository/src/main/resources/namespace-system_it.xml -text
-editor/repository/src/main/resources/new-namespace-hippostd-modify-patch2.xml svneol=native#text/plain
 editor/repository/src/main/resources/new-namespace.xml -text
-editor/repository/src/main/resources/new-namespace_de.xml -text
-editor/repository/src/main/resources/new-namespace_it.xml -text
 editor/repository/src/main/resources/new-type.xml -text
-editor/repository/src/main/resources/new-type_de.xml -text
-editor/repository/src/main/resources/new-type_it.xml -text
-editor/repository/src/main/resources/resource-required-translations.xml -text
 editor/repository/src/main/resources/resource-required.xml -text
+editor/repository/src/main/resources/system-type-translations.json -text
+editor/repository/src/main/resources/validator-translations.json -text
 editor/repository/src/test/java/org/hippoecm/repository/EditmodelWorkflowTest.java svneol=native#text/plain
 editor/repository/src/test/resources/RedefineNodetypeTest-1.cnd -text
 editor/repository/src/test/resources/RedefineNodetypeTest-2.cnd -text
@@ -1878,17 +1872,11 @@ engine/src/main/java/org/hippoecm/frontend/PageExpiredErrorPage_nl.properties -t
 engine/src/main/java/org/hippoecm/frontend/PluginPage.html -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/PluginPage.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/RepositoryRuntimeExceptionHandlingRequestCycleListener.java -text
-engine/src/main/java/org/hippoecm/frontend/StagedLocalizer.java -text
-engine/src/main/java/org/hippoecm/frontend/StringResourceProviderConsumer.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/behaviors/ContextMenuBehavior.java -text
 engine/src/main/java/org/hippoecm/frontend/behaviors/contextmenu.js -text
 engine/src/main/java/org/hippoecm/frontend/diagnosis/DiagnosticsDaemonModule.java -text
 engine/src/main/java/org/hippoecm/frontend/diagnosis/DiagnosticsRequestCycleListener.java -text
 engine/src/main/java/org/hippoecm/frontend/diagnosis/DiagnosticsService.java -text
-engine/src/main/java/org/hippoecm/frontend/i18n/AbstractTranslateService.java -text
-engine/src/main/java/org/hippoecm/frontend/i18n/ConfigTraversingPlugin.java -text
-engine/src/main/java/org/hippoecm/frontend/i18n/NodeWrapper.java -text
-engine/src/main/java/org/hippoecm/frontend/i18n/SearchingTranslatorPlugin.java -text
 engine/src/main/java/org/hippoecm/frontend/model/JcrSessionModel.java -text
 engine/src/main/java/org/hippoecm/frontend/model/TransientJcrSessionWrapper.java -text
 engine/src/main/java/org/hippoecm/frontend/observation/FacetRootsObserver.java -text
@@ -2087,10 +2075,9 @@ gallery/repository/src/main/resources/asset-processor.xml svneol=native#text/pla
 gallery/repository/src/main/resources/asset-validator.xml -text
 gallery/repository/src/main/resources/gallery-processor.xml svneol=native#text/plain
 gallery/repository/src/main/resources/gallery-workflows-frontend.xml svneol=native#text/plain
-gallery/repository/src/main/resources/gallerytemplate-files-i18n.xml -text svneol=unset#text/plain
-gallery/repository/src/main/resources/gallerytemplate-image-i18n.xml svneol=native#text/plain
-gallery/repository/src/main/resources/gallerytemplate-images-i18n.xml -text svneol=unset#text/plain
 gallery/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
+gallery/repository/src/main/resources/hippogallery-template-translations.json -text
+gallery/repository/src/main/resources/hippogallery-type-translations.json -text
 gallery/repository/src/main/resources/image-validator.xml -text
 google-analytics/frontend/pom.xml -text
 google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/editor/DocumentHitsPlugin.html -text
@@ -2163,6 +2150,10 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/Defau
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/UserGroupListPanel.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/UserGroupListPanel.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective_de.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective_fr.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective_nl.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/DocumentCollectionView.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/Navigator.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/SectionViewer.html svneol=native#text/plain
@@ -2445,7 +2436,11 @@ richtext/frontend/src/test/resources/richtexttest.cnd -text
 richtext/repository/src/main/resources/default-html-cleaner-service.xml -text
 richtext/repository/src/main/resources/filtering-html-cleaner-service.xml -text
 richtext/repository/src/main/resources/hippohtmlcleaner.cnd -text
+richtext/repository/src/main/resources/hippostd-html-type-translations.json -text
+richtext/repository/src/main/resources/system-html-type-translations.json -text
 scripts/src/main/resources/hippoecm-extension.xml -text
+scripts/src/main/resources/move-doctype-translations.xml -text
+scripts/src/main/resources/move-template-translations.xml -text
 scripts/src/main/resources/update-plugin-config.xml -text
 test/src/main/java/org/hippoecm/frontend/PluginSuite.java -text
 test/src/main/java/org/hippoecm/frontend/session/AccessiblePluginUserSession.java -text
@@ -2465,7 +2460,6 @@ test/src/test/java/org/hippoecm/frontend/config/PluginConfigTest.java -text
 test/src/test/java/org/hippoecm/frontend/dialog/AbstractDialogTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/editor/compare/NodeComparerTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/editor/compare/ValueComparerTest.java svneol=native#text/plain
-test/src/test/java/org/hippoecm/frontend/i18n/model/NodeTranslatorTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/model/JcrItemModelTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/model/JcrMultiPropertyValueModelTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/model/JcrPropertyModelTest.java svneol=native#text/plain
@@ -2717,8 +2711,6 @@ translation/frontend/src/main/java/org/onehippo/translate/TranslateWorkflowImpl_
 translation/repository/src/main/resources/cms.xml svneol=native#text/plain
 translation/repository/src/main/resources/translate-workflows.xml svneol=native#text/plain
 translation/repository/src/main/resources/translation-hide-translations-folder.xml svneol=native#text/plain
-translation/repository/src/main/resources/translation-locale-provider_de.xml -text
-translation/repository/src/main/resources/translation-locale-provider_it.xml -text
 translation/repository/src/main/resources/translation-treenode-icon-service.xml svneol=native#text/plain
 translation/test/src/main/java/org/hippoecm/frontend/translation/components/document/DocumentMismatchingPage.java svneol=native#text/plain
 translation/test/src/main/java/org/hippoecm/frontend/translation/components/document/DocumentRegularPage.java svneol=native#text/plain
@@ -2855,22 +2847,17 @@ workflow/frontend/src/test/resources/cmstest.cnd -text
 workflow/frontend/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
 workflow/frontend/src/test/resources/log4j-filters.txt -text
 workflow/frontend/src/test/resources/log4j.xml svneol=native#text/plain
-workflow/repository/src/main/resources/admin-workflowmenu.xml -text
 workflow/repository/src/main/resources/editing-reviewedactions-workflows.xml svneol=native#text/plain
 workflow/repository/src/main/resources/hippoecm-extension.xml -text
-workflow/repository/src/main/resources/hippostd-queries-translation.xml svneol=native#text/plain
-workflow/repository/src/main/resources/hippostd-queries-translation_de.xml -text
-workflow/repository/src/main/resources/hippostd-queries-translation_it.xml -text
-workflow/repository/src/main/resources/namespace-hippostd-addendum-hippostdpubwf_de.xml -text
-workflow/repository/src/main/resources/namespace-hippostd-addendum-hippostdpubwf_it.xml -text
-workflow/repository/src/main/resources/namespace-hippostdpubwf_de.xml -text
-workflow/repository/src/main/resources/namespace-hippostdpubwf_it.xml -text
+workflow/repository/src/main/resources/hippostd-publishablesummary-type-translations.json -text
+workflow/repository/src/main/resources/hippostd-templates-translations.json -text
+workflow/repository/src/main/resources/hippostdpubwf-type-translations.json -text
 workflow/repository/src/main/resources/reviewedactions-workflows.xml svneol=native#text/plain
 workflow/repository/src/main/resources/versioning-workflows.xml svneol=native#text/plain
+workflow/repository/src/main/resources/workflow-translations.json -text
 workflowmenu/pom.xml svneol=native#text/plain
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/MenuAction.html -text
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/MenuAction.java -text
-workflowmenu/src/main/java/org/hippoecm/addon/workflow/MenuButton_de.properties -text
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/MenuDescription.java svneol=native#text/plain
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/MenuDrop_de.properties -text
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/PluginController.java svneol=native#text/plain

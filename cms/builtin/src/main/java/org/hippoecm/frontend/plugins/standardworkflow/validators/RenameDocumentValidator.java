@@ -63,13 +63,13 @@ public class RenameDocumentValidator extends DocumentFormValidator {
             if (StringUtils.equals(newUrlName, originalUrl)) {
                 if (StringUtils.equals(newLocalizedName, originalName)) {
                     showError(ERROR_SAME_NAMES);
-                } else if (hasChildWithLocalizedName(parentNode, newLocalizedName)) {
+                } else if (hasChildWithDisplayName(parentNode, newLocalizedName)) {
                     showError(ERROR_LOCALIZED_NAME_EXISTS, newLocalizedName);
                 }
             } else {
                 final boolean hasNodeWithSameName = parentNode.hasNode(newUrlName);
                 final boolean hasOtherNodeWithSameLocalizedName = !StringUtils.equals(newLocalizedName, originalName) &&
-                        hasChildWithLocalizedName(parentNode, newLocalizedName);
+                        hasChildWithDisplayName(parentNode, newLocalizedName);
 
                 if (hasNodeWithSameName && hasOtherNodeWithSameLocalizedName) {
                     showError(ERROR_SNS_NAMES_EXIST, newUrlName, newLocalizedName);

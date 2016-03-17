@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -112,7 +112,8 @@ public class CodecUtils {
 
     /**
      * Return the value of property {@link HippoTranslationNodeType#LOCALE} for the first translated node found. If
-     * the provided node is of type <code>hippo:translated</code> and is a handle, start with the first child. 
+     * the provided node is a handle, start with the first child to check whether there is a {@code HippoTranslationNodeType.LOCALE}
+     * property
      * Traverse up the ancestor tree until a locale is found.
      * 
      * @param node Node to start traversal with
@@ -120,7 +121,7 @@ public class CodecUtils {
      */
     public static String getLocaleFromNodeAndAncestors(Node node) {
         try {
-            if (node.isNodeType(HippoNodeType.NT_TRANSLATED) && node.hasNode(node.getName())) {
+            if (node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
                 node = node.getNode(node.getName());
             }
 
@@ -139,7 +140,7 @@ public class CodecUtils {
 
     public static String getLocaleFromNode(Node node) {
         try {
-            if (node.isNodeType(HippoNodeType.NT_TRANSLATED) && node.hasNode(node.getName())) {
+            if (node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
                 node = node.getNode(node.getName());
             }
 

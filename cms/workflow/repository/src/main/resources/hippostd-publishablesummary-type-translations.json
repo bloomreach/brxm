@@ -1,0 +1,30 @@
+{
+  "hippo:types" : {
+    "hippostd:publishableSummary" : {
+      "en" : {
+        "hippostd:stateSummary=changed" : "A previous version is live",
+        "hippostd:stateSummary=live" : "Live",
+        "hippostd:stateSummary=new" : "Offline",
+        "hippostd:stateSummary=review" : "Under review"
+      },
+      "nl" : {
+        "hippostd:stateSummary=changed" : "Eerdere versie is gepubliceerd",
+        "hippostd:stateSummary=live" : "Gepubliceerd",
+        "hippostd:stateSummary=new" : "Niet gepubliceerd",
+        "hippostd:stateSummary=review" : "Wacht op goedkeuring"
+      },
+      "de" : {
+        "hippostd:stateSummary=changed" : "Frühere Version wurde veröffentlicht",
+        "hippostd:stateSummary=live" : "Veröffentlicht",
+        "hippostd:stateSummary=new" : "Nicht veröffentlicht",
+        "hippostd:stateSummary=review" : "Wartet auf Genehmigung"
+      },
+      "fr" : {
+        "hippostd:stateSummary=changed" : "Une ancienne version est publiée",
+        "hippostd:stateSummary=live" : "Publié",
+        "hippostd:stateSummary=new" : "Non publié",
+        "hippostd:stateSummary=review" : "En attente d'approbation"
+      }
+    }
+  }
+}

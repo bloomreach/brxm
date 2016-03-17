@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,12 +16,10 @@
 package org.hippoecm.frontend.translation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.request.resource.PackageResourceReference;
@@ -30,7 +28,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IconSize;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +45,7 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
     public static final String CONFIG_VARIANT = "variant";
     public static final String DEFAULT_COUNTRY = "us";
     public static final String UNKNOWN_COUNTRY = "error";
+    private static final String LOCALES_BUNDLE_NAME = "hippo:cms.locales";
 
     static final Logger log = LoggerFactory.getLogger(LocaleProviderPlugin.class);
 
@@ -120,8 +118,7 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
 
             final Locale locale = getLocale(config);
             final String name = getLocaleName(config);
-            final Map<String, String> translations = getTranslations(config);
-            locales.put(name, new TranslationLocale(locale, name, translations));
+            locales.put(name, new TranslationLocale(locale, name));
         }
         return locales;
     }
@@ -145,34 +142,17 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
         return name.substring(name.lastIndexOf('.') + 1);
     }
 
-    private static Map<String, String> getTranslations(final IPluginConfig config) {
-        final Set<IPluginConfig> translationConfigs = config.getPluginConfigSet();
-        final Map<String, String> translations = new HashMap<String, String>();
-        for (IPluginConfig translationConfig : translationConfigs) {
-            final String language = translationConfig.getString(HippoNodeType.HIPPO_LANGUAGE);
-            final String message = translationConfig.getString(HippoNodeType.HIPPO_MESSAGE);
-            translations.put(language, message);
-        }
-        return translations;
-    }
-
     private static class TranslationLocale extends HippoLocale {
 
         private static final long serialVersionUID = 1L;
-        private final Map<String, String> translations;
 
-        public TranslationLocale(final Locale locale, final String name, final Map<String, String> translations) {
+        public TranslationLocale(final Locale locale, final String name) {
             super(locale, name);
-            this.translations = translations;
         }
 
         @Override
         public String getDisplayName(Locale locale) {
-            String name = translations.get(locale.getLanguage());
-            if (name == null) {
-                return getLocale().getDisplayLanguage(locale);
-            }
-            return name;
+            return getLocale().getDisplayLanguage(locale);
         }
 
         @Override

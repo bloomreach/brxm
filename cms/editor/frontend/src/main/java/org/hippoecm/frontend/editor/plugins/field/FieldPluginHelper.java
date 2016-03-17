@@ -15,8 +15,13 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.model.IModelReference;
@@ -28,6 +33,9 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.l10n.LocalizationService;
+import org.onehippo.repository.l10n.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +48,7 @@ public class FieldPluginHelper implements IDetachable {
     private static final long serialVersionUID = 3671506410576836811L;
 
     private static final Logger log = LoggerFactory.getLogger(FieldPluginHelper.class);
+    private static final String HIPPO_TYPES = "hippo:types";
 
     private final IPluginContext context;
     private final IPluginConfig config;
@@ -135,6 +144,68 @@ public class FieldPluginHelper implements IDetachable {
     public JcrItemModel getFieldItemModel() {
         return new JcrItemModel(getNodeModel().getItemModel().getPath() + "/" + field.getPath(),
                 !field.getTypeDescriptor().isNode());
+    }
+
+    public IModel<String> getCaptionModel(final Component component) {
+        final IFieldDescriptor field = getField();
+        if (field == null) {
+            return new Model<>("undefined");
+        }
+        String captionKey = field.getPath();
+        final String translation = getStringFromBundle(captionKey);
+        if (translation != null) {
+            return Model.of(translation);
+        }
+        String caption = getPluginConfig().getString("caption");
+        captionKey = field.getName();
+        if (caption == null && !field.getName().isEmpty()) {
+            caption = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+        }
+        // this should be replaced by
+        // return caption
+        // after deprecation period of translator method
+        // (deprecation started with CMS-9552)
+        return new StringResourceModel(captionKey, component, null, caption);
+    }
+
+    public IModel<String> getHintModel(final Component component) {
+        final IFieldDescriptor field = getField();
+        if (field == null) {
+            return null;
+        }
+        final String key = field.getPath() + "#hint";
+        final String translation = getStringFromBundle(key);
+        if (translation != null) {
+            return Model.of(translation);
+        }
+        String hint = getPluginConfig().getString("hint");
+        if (StringUtils.isNotBlank(hint)) {
+            // this should be replaced by
+            // return hint
+            // after deprecation period of translator method
+            // (deprecation started with CMS-9552)
+            return new StringResourceModel(hint, component, null, hint);
+        }
+        return null;
+    }
+
+    private String getStringFromBundle(final String key) {
+        final String bundleName = getBundleName();
+        if (bundleName != null) {
+            final LocalizationService service = HippoServiceRegistry.getService(LocalizationService.class);
+            if (service != null) {
+                final ResourceBundle bundle = service.getResourceBundle(bundleName, Session.get().getLocale());
+                if (bundle != null && bundle.getString(key) != null) {
+                    return bundle.getString(key);
+                }
+            }
+        }
+        return null;
+    }
+
+    private String getBundleName() {
+        final String docType = getDocumentType().getName();
+        return HIPPO_TYPES + "." + docType;
     }
 
 }

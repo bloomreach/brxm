@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -53,9 +53,11 @@ class InitializeItemRegistry {
     List<InitializeItem> getDescendentInitializeItems(String path) {
         String prefixPath = path + "/";
         List<InitializeItem> result = new ArrayList<InitializeItem>();
-        for (Collection<InitializeItem> items : initializeItemsByContextPath.values()) {
+        for (Map.Entry<String, Collection<InitializeItem>> entry : initializeItemsByContextPath.entrySet()) {
+            final String contextPath = entry.getKey();
+            final Collection<InitializeItem> items = entry.getValue();
             for (InitializeItem item : items) {
-                if (item.getContextPath().startsWith(prefixPath)) {
+                if (contextPath.startsWith(prefixPath)) {
                     result.add(item);
                 }
             }
@@ -72,12 +74,13 @@ class InitializeItemRegistry {
         // check if item conforms to location hierarchy
         if (result != null && !result.isEmpty() && eventType == Event.NODE_ADDED) {
             // all initialize items have the same context path
-            String resultContextPath = result.iterator().next().getContextPath();
-            assert resultContextPath != null;
+            final InitializeItem item = result.iterator().next();
+            final String resultContextPath = item.getContextPath();
+
             // If the context node of the result is not the one that is required, return null:
             // a new instruction needs to be created.
             String requiredContextPath = LocationMapper.contextNodeForPath(path, true);
-            if (requiredContextPath != null && !requiredContextPath.equals(resultContextPath)) {
+            if (resultContextPath != null && requiredContextPath != null && !requiredContextPath.equals(resultContextPath)) {
                 // but we allow longer context paths if they already exist
                 if (requiredContextPath.length() > resultContextPath.length()) {
                     result = null;
@@ -137,13 +140,17 @@ class InitializeItemRegistry {
             initializeItemsByPrefix.put(ExportUtils.prefixFromName(item.getName()), item);
             added = true;
         }
+        if (item.getResourceBundles() != null) {
+            initializeItemsByContextPath.put("/hippo:configuration/hippo:translations", Arrays.asList(item));
+            added = true;
+        }
         return added;
     }
     
     boolean removeInitializeItem(InitializeItem item) {
         boolean removed = false;
         if (item.getContextPath() != null) {
-            Collection<InitializeItem> items = initializeItemsByContextPath.remove(item.getContextPath());
+            Collection<InitializeItem> items = initializeItemsByContextPath.get(item.getContextPath());
             if (items != null) {
                 removed = items.remove(item);
                 if (items.isEmpty()) {
@@ -156,6 +163,9 @@ class InitializeItemRegistry {
         }
         if (item.getNodeTypesResource() != null) {
             removed = initializeItemsByPrefix.remove(ExportUtils.prefixFromName(item.getName())) != null;
+        }
+        if (item.getResourceBundles() != null) {
+            removed = initializeItemsByContextPath.remove("/hippo:configuration/hippo:translations") != null;
         }
         return removed;
     }

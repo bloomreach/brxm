@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -21,145 +21,8 @@
     <sv:value>hipposysedit:templatetype</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>hippo:translated</sv:value>
     <sv:value>mix:referenceable</sv:value>
   </sv:property>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>nl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Niet gepubliceerd</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:property" sv:type="String">
-      <sv:value>hippostd:stateSummary</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:value" sv:type="String">
-      <sv:value>new</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>en</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Offline</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:property" sv:type="String">
-      <sv:value>hippostd:stateSummary</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:value" sv:type="String">
-      <sv:value>new</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>nl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Gepubliceerd</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:property" sv:type="String">
-      <sv:value>hippostd:stateSummary</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:value" sv:type="String">
-      <sv:value>live</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>en</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Live</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:property" sv:type="String">
-      <sv:value>hippostd:stateSummary</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:value" sv:type="String">
-      <sv:value>live</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>nl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Wacht op goedkeuring</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:property" sv:type="String">
-      <sv:value>hippostd:stateSummary</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:value" sv:type="String">
-      <sv:value>review</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>en</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Under review</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:property" sv:type="String">
-      <sv:value>hippostd:stateSummary</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:value" sv:type="String">
-      <sv:value>review</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>nl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Eerdere versie is gepubliceerd</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:property" sv:type="String">
-      <sv:value>hippostd:stateSummary</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:value" sv:type="String">
-      <sv:value>changed</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>en</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>A previous version is live</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:property" sv:type="String">
-      <sv:value>hippostd:stateSummary</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:value" sv:type="String">
-      <sv:value>changed</sv:value>
-    </sv:property>
-  </sv:node>
   <sv:node sv:name="hipposysedit:nodetype">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:handle</sv:value>

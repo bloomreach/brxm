@@ -15,32 +15,25 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.util.io.IClusterable;
-import org.hippoecm.repository.api.Localized;
 
 public class RenameDocumentArguments implements IClusterable {
     private String targetName;
     private String uriName;
     private String nodeType;
-    private Map<Localized, String> localizedNames;
 
     public RenameDocumentArguments() {
-        localizedNames = Collections.EMPTY_MAP;
     }
 
-    public RenameDocumentArguments(final String targetName, final String uriName, final Map<Localized, String> localizedNames) {
-        this(targetName, uriName, StringUtils.EMPTY, localizedNames);
+    public RenameDocumentArguments(final String targetName, final String uriName) {
+        this(targetName, uriName, StringUtils.EMPTY);
     }
 
-    public RenameDocumentArguments(final String targetName, final String uriName, final String nodeType, final Map<Localized, String> localizedNames) {
+    public RenameDocumentArguments(final String targetName, final String uriName, final String nodeType) {
         this.targetName = targetName;
         this.uriName = uriName;
         this.nodeType = nodeType;
-        this.localizedNames = localizedNames;
     }
 
     public String getTargetName() {
@@ -65,17 +58,6 @@ public class RenameDocumentArguments implements IClusterable {
 
     public void setNodeType(final String nodeType) {
         this.nodeType = nodeType;
-    }
-
-    public Map<Localized, String> getLocalizedNames() {
-        if (this.localizedNames == null) {
-            return Collections.emptyMap();
-        }
-        return this.localizedNames;
-    }
-
-    public void setLocalizedNames(Map<Localized, String> localizedNames) {
-        this.localizedNames = localizedNames;
     }
 
 }

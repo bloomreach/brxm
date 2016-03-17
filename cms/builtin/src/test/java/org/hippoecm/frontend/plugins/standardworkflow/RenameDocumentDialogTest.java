@@ -51,6 +51,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class RenameDocumentDialogTest {
+
     public static final String WICKET_PATH_OK_BUTTON = "dialog:content:form:buttons:0:button";
     public static final String URL_INPUT = "name-url:url";
     public static final String NAME_INPUT = "name-url:name";
@@ -74,26 +75,15 @@ public class RenameDocumentDialogTest {
     }
 
 
-    private FormTester createDialog(boolean workflowError){
+    private FormTester createDialog(boolean workflowError) throws Exception {
         final WorkflowDescriptorModel workflowDescriptorModel;
-        try {
-            workflowDescriptorModel = workflowError ? createErrorWorkflow() : createNormalWorkflow();
-        } catch (RepositoryException | IOException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-            return null;
-        }
+        workflowDescriptorModel = workflowError ? createErrorWorkflow() : createNormalWorkflow();
 
         // rename the 'news' folder
-        RenameDocumentArguments renameDocumentArguments = new RenameDocumentArguments("News", "news", HippoStdNodeType.NT_FOLDER, Collections.EMPTY_MAP);
+        RenameDocumentArguments renameDocumentArguments = new RenameDocumentArguments("News", "news", HippoStdNodeType.NT_FOLDER);
 
         final IWorkflowInvoker invoker = Mockito.mock(IWorkflowInvoker.class);
-
-        try {
-            Mockito.doNothing().when(invoker).invokeWorkflow();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Mockito.doNothing().when(invoker).invokeWorkflow();
 
         final StringCodec stringCodec = new StringCodecFactory.UriEncoding();
         IModel<StringCodec> stringCodecModel = new LoadableDetachableModel<StringCodec>(stringCodec) {
@@ -121,7 +111,7 @@ public class RenameDocumentDialogTest {
         final WorkflowDescriptorModel wfdm = mock(WorkflowDescriptorModel.class);
         final Node contentNode = createContentNode();
         assertNotNull(contentNode);
-        when(wfdm.getNode()).thenReturn(contentNode.getNode(HippoNodeType.HIPPO_TRANSLATION));
+        when(wfdm.getNode()).thenReturn(contentNode.getNodes().nextNode());
         return wfdm;
     }
 
@@ -142,7 +132,7 @@ public class RenameDocumentDialogTest {
     }
 
     @Test
-    public void dialogCreatedContainingExpectedInputValues(){
+    public void dialogCreatedContainingExpectedInputValues() throws Exception {
         final FormTester formTester = createDialog(false);
         FormComponent<String> nameComponent = (FormComponent<String>) formTester.getForm().get(NAME_INPUT);
         assertNotNull(nameComponent);
@@ -162,14 +152,14 @@ public class RenameDocumentDialogTest {
     }
 
     @Test
-    public void clickOKWithSameNames(){
+    public void clickOKWithSameNames() throws Exception {
         final FormTester formTester = createDialog(false);
         tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
         tester.assertErrorMessages("No name is changed. Please enter different names.");
     }
 
     @Test
-    public void renameFolderWithSameUriNameExistedLocalizedName(){
+    public void renameFolderWithSameUriNameExistedLocalizedName() throws Exception {
         final FormTester formTester = createDialog(false);
         formTester.setValue(URL_INPUT, "news");
         formTester.setValue(NAME_INPUT, "Common");
@@ -179,7 +169,7 @@ public class RenameDocumentDialogTest {
     }
 
     @Test
-    public void renameFolderWithSameUriNameNonExistentLocalizedName(){
+    public void renameFolderWithSameUriNameNonExistentLocalizedName() throws Exception {
         final FormTester formTester = createDialog(false);
         formTester.setValue(URL_INPUT, "news");
         formTester.setValue(NAME_INPUT, "Different News");
@@ -189,7 +179,7 @@ public class RenameDocumentDialogTest {
     }
 
     @Test
-    public void renameFolderWithExistedUriNameSameLocalizedName(){
+    public void renameFolderWithExistedUriNameSameLocalizedName() throws Exception {
         final FormTester formTester = createDialog(false);
         formTester.setValue(URL_INPUT, "common");
         formTester.setValue(NAME_INPUT, "News");
@@ -198,7 +188,7 @@ public class RenameDocumentDialogTest {
     }
 
     @Test
-    public void renameFolderWithExistedUriNameNonExistentLocalizedName(){
+    public void renameFolderWithExistedUriNameNonExistentLocalizedName() throws Exception {
         final FormTester formTester = createDialog(false);
         formTester.setValue(URL_INPUT, "common");
         formTester.setValue(NAME_INPUT, "Different News");
@@ -207,7 +197,7 @@ public class RenameDocumentDialogTest {
     }
 
     @Test
-    public void renameFolderWithExistedUriNameAndExistedLocalizedName(){
+    public void renameFolderWithExistedUriNameAndExistedLocalizedName() throws Exception {
         final FormTester formTester = createDialog(false);
         formTester.setValue(URL_INPUT, "common");
         formTester.setValue(NAME_INPUT, "Common");
@@ -216,7 +206,7 @@ public class RenameDocumentDialogTest {
     }
 
     @Test
-    public void renameFolderWithNonExistentUriNameSameLocalizedName(){
+    public void renameFolderWithNonExistentUriNameSameLocalizedName() throws Exception {
         final FormTester formTester = createDialog(false);
         formTester.setValue(URL_INPUT, "different-news");
         formTester.setValue(NAME_INPUT, "News");
@@ -226,7 +216,7 @@ public class RenameDocumentDialogTest {
     }
 
     @Test
-    public void renameFolderWithNonExistentUriNameNonExistentLocalizedName(){
+    public void renameFolderWithNonExistentUriNameNonExistentLocalizedName() throws Exception {
         final FormTester formTester = createDialog(false);
         formTester.setValue(URL_INPUT, "different-news");
         formTester.setValue(NAME_INPUT, "Different-News");
@@ -236,7 +226,7 @@ public class RenameDocumentDialogTest {
     }
 
     @Test
-    public void renameFolderWithNonExistentUriNameExistedLocalizedName(){
+    public void renameFolderWithNonExistentUriNameExistedLocalizedName() throws Exception {
         final FormTester formTester = createDialog(false);
         formTester.setValue(URL_INPUT, "different-news");
         formTester.setValue(NAME_INPUT, "Common");
@@ -246,7 +236,7 @@ public class RenameDocumentDialogTest {
     }
 
     @Test
-    public void renameFolderWithWorkflowException(){
+    public void renameFolderWithWorkflowException() throws Exception {
         final FormTester formTester = createDialog(true);
 
         formTester.setValue(URL_INPUT, "another-news");

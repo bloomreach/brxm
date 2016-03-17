@@ -18,9 +18,6 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:plugin</sv:value>
   </sv:property>
-  <sv:property sv:name="perspective.title" sv:type="String">
-    <sv:value>perspective-title</sv:value>
-  </sv:property>
   <sv:property sv:name="plugin.class" sv:type="String">
     <sv:value>org.onehippo.cms7.reports.ReportsPerspective</sv:value>
   </sv:property>
