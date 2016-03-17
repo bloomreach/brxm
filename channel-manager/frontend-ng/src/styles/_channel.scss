@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,14 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-@import 'variables';
+.mask {
+  height: 100%;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 10;
 
-@import '../../bower_components/angular-material/angular-material.scss';
-
-@import 'buttons';
-@import 'iframe';
-@import 'overlay';
-@import 'scale';
-@import 'lists';
-@import 'sidenav';
-@import 'channel';
+  &.disallowed {
+    pointer-events: auto;
+    cursor: not-allowed;
+  }
+}

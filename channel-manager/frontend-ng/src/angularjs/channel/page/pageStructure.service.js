@@ -101,7 +101,6 @@ export class PageStructureService {
   /**
    * Remove the component identified by given Id
    * @param componentId
-   * @returns {*} a promise with removed successfully component
    */
   removeComponentById(componentId) {
     const component = this.getComponentById(componentId);
@@ -133,6 +132,7 @@ export class PageStructureService {
       },
       page: this.pageMetaData.get(),
     });
+    // TODO CHANNELMGR-494: activate the mask. When/where to deactivate it? An explicit signal from ExtJS would be nice.
   }
 
   printParsedElements() {
