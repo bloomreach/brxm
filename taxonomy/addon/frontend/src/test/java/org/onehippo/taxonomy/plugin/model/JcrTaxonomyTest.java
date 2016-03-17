@@ -77,9 +77,9 @@ public class JcrTaxonomyTest extends AbstractTaxonomyTest {
     @Test
     public void testTaxonomyTranslation() throws Exception {
         Category branchItem = taxonomy.getCategoryByKey(BRANCH_KEY);
-        CategoryInfo translation = branchItem.getInfo("en");
-        assertEquals(BRANCH_NAME_EN, translation.getName());
-        assertArrayEquals(new String[] { BRANCH_SYNONYM }, translation.getSynonyms());
+        CategoryInfo info = branchItem.getInfo("en");
+        assertEquals(BRANCH_NAME_EN, info.getName());
+        assertArrayEquals(new String[] { BRANCH_SYNONYM }, info.getSynonyms());
     }
 
     @Test

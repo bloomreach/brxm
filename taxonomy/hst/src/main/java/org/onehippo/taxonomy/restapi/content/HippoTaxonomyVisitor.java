@@ -25,19 +25,18 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.hippoecm.hst.restapi.ResourceContext;
-import org.hippoecm.hst.restapi.scanning.PrimaryNodeTypeNodeVisitor;
 import org.hippoecm.hst.restapi.content.visitors.HippoPublicationWorkflowDocumentVisitor;
+import org.hippoecm.hst.restapi.scanning.PrimaryNodeTypeNodeVisitor;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.contenttype.ContentTypeChild;
 
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LANGUAGE;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MESSAGE;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_CATEGORYINFOS;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_DESCRIPTION;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_KEY;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_NAME;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_SYNONYMS;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TAXONOMY;
-import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TRANSLATION;
 
 @SuppressWarnings("unused")
 @PrimaryNodeTypeNodeVisitor
@@ -74,22 +73,24 @@ public class HippoTaxonomyVisitor extends HippoPublicationWorkflowDocumentVisito
             if (child.isNodeType(NODETYPE_HIPPOTAXONOMY_CATEGORY)) {
                 visitCategory(context, child, categories);
             }
-            else if (child.isNodeType(NODETYPE_HIPPOTAXONOMY_TRANSLATION)) {
-                final LinkedHashMap<String, Object> translation = new LinkedHashMap<>();
-                category.put(child.getProperty(HIPPO_LANGUAGE).getString(), translation);
-                translation.put("message", child.getProperty(HIPPO_MESSAGE).getString());
-                if (child.hasProperty(HIPPOTAXONOMY_DESCRIPTION)) {
-                    translation.put("description", child.getProperty(HIPPOTAXONOMY_DESCRIPTION).getString());
-                }
-                if (child.hasProperty(HIPPOTAXONOMY_SYNONYMS)) {
-                    final ArrayList<String> synonyms = new ArrayList<>();
-                    for (Value value : child.getProperty(HIPPOTAXONOMY_SYNONYMS).getValues()) {
-                        if (value.getString() != null) {
-                            synonyms.add(value.getString());
-                        }
+            else if (child.isNodeType(HIPPOTAXONOMY_CATEGORYINFOS)) {
+                for (Node infoNodes : new NodeIterable(child.getNodes())) {
+                    final LinkedHashMap<String, Object> localeProperties = new LinkedHashMap<>();
+                    category.put(infoNodes.getName(), localeProperties);
+                    localeProperties.put("name", infoNodes.getProperty(HIPPOTAXONOMY_NAME).getString());
+                    if (infoNodes.hasProperty(HIPPOTAXONOMY_DESCRIPTION)) {
+                        localeProperties.put("description", infoNodes.getProperty(HIPPOTAXONOMY_DESCRIPTION).getString());
                     }
-                    if (!synonyms.isEmpty()) {
-                        translation.put("synonyms", synonyms);
+                    if (infoNodes.hasProperty(HIPPOTAXONOMY_SYNONYMS)) {
+                        final ArrayList<String> synonyms = new ArrayList<>();
+                        for (Value value : infoNodes.getProperty(HIPPOTAXONOMY_SYNONYMS).getValues()) {
+                            if (value.getString() != null) {
+                                synonyms.add(value.getString());
+                            }
+                        }
+                        if (!synonyms.isEmpty()) {
+                            localeProperties.put("synonyms", synonyms);
+                        }
                     }
                 }
             }

@@ -7,7 +7,7 @@
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <hippotaxonomy='http://www.hippoecm.org/hippotaxonomy/nt/1.2'>
 
-// translation
+// deprecated: replaced by hippotaxonomy:categoryinfo
 [hippotaxonomy:translation] > hippo:translation
 - hippotaxonomy:synonyms (string) multiple
 - hippotaxonomy:description (string)
@@ -15,13 +15,24 @@
 - * (string)
 - * (string) multiple
 
-// FIXME: extend hippo:translated?
+// deprecated: replaced by hippotaxonomy:categoryinfos
 [hippotaxonomy:translated] mixin
 + hippotaxonomy:translation (hippotaxonomy:translation) multiple
+
+[hippotaxonomy:categoryinfo] > nt:base
+- hippotaxonomy:name (string)
+- hippotaxonomy:description (string)
+- hippotaxonomy:synonyms (string) multiple
+- * (string)
+- * (string) multiple
+
+[hippotaxonomy:categoryinfos] > nt:base
++ * (hippotaxonomy:categoryinfo)
 
 [hippotaxonomy:category] > nt:base orderable
 - hippotaxonomy:key (string) mandatory
 + * (hippotaxonomy:category) = hippotaxonomy:category
++ hippotaxonomy:categoryinfos (hippotaxonomy:categoryinfos)
 
 // the root of a taxonomy tree
 [hippotaxonomy:taxonomy] > hippo:document, hippostdpubwf:document orderable

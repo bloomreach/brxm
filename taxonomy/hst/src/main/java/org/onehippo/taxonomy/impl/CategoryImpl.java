@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.collections.Transformer;
@@ -33,12 +32,16 @@ import org.apache.commons.collections.map.LazyMap;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.CategoryInfo;
 import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_CATEGORYINFOS;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY;
 
 public class CategoryImpl extends AbstractJCRService implements Category {
 
@@ -65,44 +68,31 @@ public class CategoryImpl extends AbstractJCRService implements Category {
         this.relPath = path.substring(taxonomyImpl.getPath().length() + 1);
         try {
             this.key = this.getValueProvider().getString(TaxonomyNodeTypes.HIPPOTAXONOMY_KEY);
-
-            // populate translations
-            if (item.isNodeType(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TRANSLATED)) {
-                NodeIterator nodes = item.getNodes(TaxonomyNodeTypes.HIPPOTAXONOMY_TRANSLATION);
-                while (nodes.hasNext()) {
-                    Node childItem = nodes.nextNode();
-                    if (childItem != null) {
-                        try {
-                            CategoryInfo translation = new CategoryInfoImpl(childItem);
-                            translations.put(translation.getLanguage(), translation);
-                        } catch (ServiceException e) {
-                            log.warn("Skipping translation because '{}', {}", e.getMessage(), e);
-                        }
+            
+            if (item.hasNode(HIPPOTAXONOMY_CATEGORYINFOS)) {
+                for (Node infoNode : new NodeIterable(item.getNode(HIPPOTAXONOMY_CATEGORYINFOS).getNodes())) {
+                    try {
+                        CategoryInfo info = new CategoryInfoImpl(infoNode);
+                        translations.put(info.getLanguage(), info);
+                    } catch (ServiceException e) {
+                        log.warn("Skipping translation because '{}', {}", e.getMessage(), e);
                     }
                 }
             }
 
             // populate childs:
-            NodeIterator nodes = item.getNodes();
-            while (nodes.hasNext()) {
-                Node childItem = nodes.nextNode();
-                if (childItem != null) {
-                    if (childItem.isNodeType(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY)) {
-                        try {
-                            Category taxonomyItem = new CategoryImpl(childItem, this, taxonomyImpl);
-                            childCategories.add(taxonomyItem);
-                        } catch (ServiceException e) {
-                            log.warn("Skipping category because '{}', {}", e.getMessage(), e);
-                        }
-                    } else {
-                        // warn, except when it concerns a (valid) translation
-                        if (!childItem.isNodeType(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TRANSLATION)) {
-                            log.warn("Skipping child nodes that are not of type '{}' or '{}'.",
-                                    TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY, 
-                                    TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TRANSLATION
-                                    + " Primary node type is " + childItem.getPrimaryNodeType().getName() + ".");
-                        }
+            for (Node childItem : new NodeIterable(item.getNodes())) {
+                if (childItem.isNodeType(NODETYPE_HIPPOTAXONOMY_CATEGORY)) {
+                    try {
+                        Category taxonomyItem = new CategoryImpl(childItem, this, taxonomyImpl);
+                        childCategories.add(taxonomyItem);
+                    } catch (ServiceException e) {
+                        log.warn("Skipping category because '{}', {}", e.getMessage(), e);
                     }
+                } else {
+                    log.warn("Skipping child nodes that are not of type '{}'. Primary node type is '{}'.", 
+                            NODETYPE_HIPPOTAXONOMY_CATEGORY, childItem.getPrimaryNodeType().getName());
+                    
                 }
             }
         } catch (RepositoryException e) {

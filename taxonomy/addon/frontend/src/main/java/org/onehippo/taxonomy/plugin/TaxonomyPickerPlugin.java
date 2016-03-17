@@ -46,6 +46,7 @@ import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin;
+import org.hippoecm.frontend.editor.plugins.field.FieldPluginHelper;
 import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -178,7 +179,9 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
     public TaxonomyPickerPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(new Label("title", getCaptionModel()));
+        FieldPluginHelper helper = new FieldPluginHelper(context, config);
+
+        add(new Label("title", helper.getCaptionModel(this)));
 
         final Label requiredMarker = new Label("required", "*");
         final IFieldDescriptor fieldDescriptor = getTaxonomyFieldDescriptor();
@@ -187,7 +190,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         }
         add(requiredMarker);
 
-        add(new FieldHint("hint-panel", config.getString("hint")));
+        add(new FieldHint("hint-panel", helper.getHintModel(this)));
 
         dao = context.getService(config.getString(ClassificationDao.SERVICE_ID), ClassificationDao.class);
         if (dao == null) {
@@ -423,64 +426,4 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         return true;
     }
 
-    /**
-     * Returns a key consisting of the super's cluster (tab) based translator id, plus the document type.
-     * The document type is added to not get translations mixed up in the Wicket cache for fields of different document
-     * types with the same name (e.g. title).
-     *
-     * Inspired on org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin#getResourceProviderKey(),
-     * unfortunately this class does not extend from AbstractFieldPlugin.
-     */
-    @Override
-    public String getResourceProviderKey() {
-        String key = super.getResourceProviderKey();
-
-        final ITypeDescriptor docType = getDocumentTypeDescriptor();
-
-        if (docType != null) {
-            key = (key == null) ? "" : (key + ".");
-            key += docType.getName();
-            if (log.isDebugEnabled()) {
-                log.debug("For field {}/{}, enriched resource provider key with doc type, resulting in {}",
-                        new String[]{docType.getName(),
-                                (getTaxonomyFieldDescriptor() != null) ? getTaxonomyFieldDescriptor().getName() : "taxonomy",
-                                key});
-            }
-        }
-        return key;
-    }
-
-    /**
-     * Get the model for the caption, a.k.a. title.
-     *
-     * Inspired on org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin#getCaptionModel(),
-     * unfortunately this class does not extend from AbstractFieldPlugin.
-     */
-    protected IModel<String> getCaptionModel() {
-
-        final IFieldDescriptor field = getTaxonomyFieldDescriptor();
-        String caption = getPluginConfig().getString("caption");
-        // captionKey config first on behalf of multiple taxonomy pickers in one document
-        String captionKey = getPluginConfig().getString("captionKey");
-        if (captionKey == null) {
-            captionKey = field != null ? field.getName() : caption;
-        }
-
-        // warn when no field, nor caption(key)
-        if (captionKey == null) {
-            log.warn("Cannot set taxonomy field caption because both field reference and property 'caption' are missing." +
-                            " Document type is '{}'",
-                    getDocumentTypeDescriptor() == null ? "unknown" : getDocumentTypeDescriptor().getName());
-            return new Model<>("undefined");
-        }
-
-        // capitalized field name as default caption (not key!)
-        if (caption == null && field != null && field.getName().length() >= 1) {
-            caption = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
-        }
-
-        // implicitly from translator service (this class implements IStringResourceProvider)
-        log.debug("Getting taxonomy field caption from translator by captionKey '{}' and default caption '{}'", captionKey, caption);
-        return new StringResourceModel(captionKey, this, null, caption);
-    }
 }

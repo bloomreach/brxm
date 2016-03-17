@@ -28,8 +28,8 @@ import javax.jcr.Value;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.util.DocumentUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
@@ -117,7 +117,14 @@ public class JcrTaxonomy extends TaxonomyObject implements EditableTaxonomy {
 
     @Override
     public String getName() {
-        return new NodeTranslator(getNodeModel()).getNodeName().getObject();
+        try {
+            final IModel<String> nameModel = DocumentUtils.getDocumentNameModel(getNodeModel());
+            if (nameModel != null) {
+                return nameModel.getObject();
+            }
+        } catch (RepositoryException ignored) {
+        }
+        return null;
     }
 
     @Override

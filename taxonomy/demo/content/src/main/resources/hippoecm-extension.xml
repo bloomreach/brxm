@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
-  Copyright 2008-2013 Hippo
+  Copyright 2008-2016 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -13,8 +13,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
--->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hippo:initialize">
+--><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hippo:initialize">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
@@ -496,7 +495,7 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>33100.5</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:contentpropadd" sv:multiple="true" sv:type="String">
+    <sv:property sv:multiple="true" sv:name="hippo:contentpropadd" sv:type="String">
       <sv:value>editor</sv:value>
     </sv:property>
   </sv:node>
@@ -629,5 +628,15 @@
       <sv:value>/hippo:configuration/hippo:frontend/cms/cms-services</sv:value>
     </sv:property>
   </sv:node>
-
+  <sv:node sv:name="taxonomydemo-translations">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>30150.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:resourcebundles" sv:type="String">
+      <sv:value>translations.json</sv:value>
+    </sv:property>
+  </sv:node>
 </sv:node>

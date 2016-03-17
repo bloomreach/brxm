@@ -1,0 +1,16 @@
+{"hippo:types": {
+  "taxonomydemo:doubletaxonomy":   {
+    "en": {"taxonomydemo:extrataxonomy": "Secondary taxonomy"},
+    "nl": {"taxonomydemo:extrataxonomy": "Secundaire taxonomie"},
+    "fr": {"taxonomydemo:extrataxonomy": "Taxonomie secondaire"},
+    "de": {"taxonomydemo:extrataxonomy": "Sekundäre Taxonomie"}
+  },
+  "taxonomydemo:canontextpage":   {
+    "en": {"jcr:name": "Canonised Text page"},
+    "nl": {"jcr:name": "Gecanoniseerd Tekstpagina"}
+  },
+  "taxonomydemo:textpage":   {
+    "en": {"jcr:name": "Text page"},
+    "nl": {"jcr:name": "Tekstpagina"}
+  }
+}}

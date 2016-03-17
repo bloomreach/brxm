@@ -1,0 +1,18 @@
+{
+  "hippo:cms" : {
+    "sections" : {
+      "en" : {
+        "section-taxonomies" : "Taxonomies"
+      },
+      "nl" : {
+        "section-taxonomies" : "Taxonomieën"
+      },
+      "de" : {
+        "section-taxonomies" : "Taxonomien"
+      },
+      "fr" : {
+        "section-taxonomies" : "Taxonomies"
+      }
+    }
+  }
+}

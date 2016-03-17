@@ -24,16 +24,13 @@ import java.util.Map;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.LazyMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.CategoryInfo;
@@ -43,9 +40,14 @@ import org.onehippo.taxonomy.plugin.ITaxonomyService;
 import org.onehippo.taxonomy.plugin.api.EditableCategory;
 import org.onehippo.taxonomy.plugin.api.EditableCategoryInfo;
 import org.onehippo.taxonomy.plugin.api.EditableTaxonomy;
+import org.onehippo.taxonomy.plugin.api.KeyCodec;
 import org.onehippo.taxonomy.plugin.api.TaxonomyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_CATEGORYINFO;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_CATEGORYINFOS;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_NAME;
 
 /**
  * Category model object on top of a JCR node of type hippotaxonomy:category.
@@ -106,7 +108,12 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
 
     @Override
     public String getName() {
-        return new NodeTranslator(getNodeModel()).getNodeName().getObject();
+        try {
+            return KeyCodec.decode(getNode().getName());
+        } catch (RepositoryException e) {
+            log.error("Failed to read name from category node", e);
+        }
+        return "<unknown>";
     }
 
     @Override
@@ -192,31 +199,23 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
     public EditableCategoryInfo getInfo(final String language) {
         try {
             Node node = getNode();
-            if (JcrHelper.isNodeType(node, TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TRANSLATED)) {
-                NodeIterator translations = node.getNodes(TaxonomyNodeTypes.HIPPOTAXONOMY_TRANSLATION);
-                while (translations.hasNext()) {
-                    Node child = translations.nextNode();
-                    if (child != null) {
-                        try {
-                            String lang = child.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
-                            if (lang.equals(language)) {
-                                return new JcrCategoryInfo(new JcrNodeModel(child), editable);
-                            }
-                        } catch (PathNotFoundException pnfe) {
-                            log.warn("PathNotFoundException accessing {}", HippoNodeType.HIPPO_LANGUAGE, pnfe);
-                        }
-                    }
+            if (node.hasNode(HIPPOTAXONOMY_CATEGORYINFOS)) {
+                final Node infoNodes = node.getNode(HIPPOTAXONOMY_CATEGORYINFOS);
+                if (infoNodes.hasNode(language)) {
+                    final Node infoNode = infoNodes.getNode(language);
+                    return new JcrCategoryInfo(new JcrNodeModel(infoNode), editable);
                 }
             }
             if (editable) {
-                if (!JcrHelper.isNodeType(node, TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TRANSLATED)) {
-                    node.addMixin(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TRANSLATED);
+                final Node infoNodes;
+                if (!node.hasNode(HIPPOTAXONOMY_CATEGORYINFOS)) {
+                    infoNodes = node.addNode(HIPPOTAXONOMY_CATEGORYINFOS, HIPPOTAXONOMY_CATEGORYINFOS);
+                } else {
+                    infoNodes = node.getNode(HIPPOTAXONOMY_CATEGORYINFOS);
                 }
-                Node child = node.addNode(TaxonomyNodeTypes.HIPPOTAXONOMY_TRANSLATION,
-                        TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TRANSLATION);
-                child.setProperty(HippoNodeType.HIPPO_LANGUAGE, language);
-                child.setProperty(HippoNodeType.HIPPO_MESSAGE, NodeNameCodec.decode(node.getName()));
-                return new JcrCategoryInfo(new JcrNodeModel(child), true/*editable*/);
+                Node locale = infoNodes.addNode(language, HIPPOTAXONOMY_CATEGORYINFO);
+                locale.setProperty(HIPPOTAXONOMY_NAME, NodeNameCodec.decode(node.getName()));
+                return new JcrCategoryInfo(new JcrNodeModel(locale), true);
             } else {
                 return new EditableCategoryInfo() {
 

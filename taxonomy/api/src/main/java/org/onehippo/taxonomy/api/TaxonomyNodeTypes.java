@@ -22,17 +22,18 @@ public interface TaxonomyNodeTypes {
     static final String NODETYPE_HIPPOTAXONOMY_CATEGORY = "hippotaxonomy:category";
     static final String NODETYPE_HIPPOTAXONOMY_CLASSIFIABLE = "hippotaxonomy:classifiable";
     static final String NODETYPE_HIPPOTAXONOMY_CANONISED = "hippotaxonomy:canonised";
-    static final String NODETYPE_HIPPOTAXONOMY_TRANSLATED = "hippotaxonomy:translated";
-    static final String NODETYPE_HIPPOTAXONOMY_TRANSLATION = "hippotaxonomy:translation";
-
+    
+    static final String HIPPOTAXONOMY_CATEGORYINFOS = "hippotaxonomy:categoryinfos";
+    static final String HIPPOTAXONOMY_CATEGORYINFO = "hippotaxonomy:categoryinfo";
+    
     static final String HIPPOTAXONOMY_LOCALES = "hippotaxonomy:locales";
-
+    
+    static final String HIPPOTAXONOMY_NAME = "hippotaxonomy:name";
     static final String HIPPOTAXONOMY_DESCRIPTION = "hippotaxonomy:description";
     static final String HIPPOTAXONOMY_SYNONYMS = "hippotaxonomy:synonyms";
-    static final String HIPPOTAXONOMY_TRANSLATION = "hippotaxonomy:translation";
 
     static final String HIPPOTAXONOMY_KEY = "hippotaxonomy:key";
     static final String HIPPOTAXONOMY_KEYS = "hippotaxonomy:keys";
     static final String HIPPOTAXONOMY_CANONICALKEY = "hippotaxonomy:canonkey";
-
+    
 }
