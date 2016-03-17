@@ -48,4 +48,17 @@
       <sv:value>/hippo:configuration/hippo:frontend/cms/cms-tree-views/configuration/configurationBrowser/filters</sv:value>
     </sv:property>
   </sv:node>
+
+  <sv:node sv:name="seosupport-type-translations">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:resourcebundles" sv:type="String">
+      <sv:value>type-translations.json</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20001</sv:value>
+    </sv:property>
+  </sv:node>
+
 </sv:node>
