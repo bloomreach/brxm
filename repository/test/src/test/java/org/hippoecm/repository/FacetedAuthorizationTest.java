@@ -346,15 +346,11 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         final Node handle = testRoot.addNode("doc", "hippo:handle");
         handle.addMixin("mix:referenceable");
 
-        handle.addMixin("hippo:translated");
+        handle.addNode("hippo:request", "hippo:request");
+
+        handle.addNode("doc", "hippo:authtestdocument");
 
         Node doc = handle.addNode("doc", "hippo:authtestdocument");
-
-        Node translation = handle.addNode("hippo:translation", "hippo:translation");
-        translation.setProperty("hippo:language", "lang");
-        translation.setProperty("hippo:message", "ignored");
-
-        doc = handle.addNode("doc", "hippo:authtestdocument");
         doc.setProperty("authtest", "canread");
         String identifierSecondDoc = doc.getIdentifier();
         session.save();

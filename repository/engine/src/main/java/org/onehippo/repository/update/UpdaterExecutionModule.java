@@ -38,13 +38,13 @@ import javax.jcr.observation.EventListener;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.locking.HippoLockManager;
-import org.onehippo.repository.modules.DaemonModule;
+import org.onehippo.repository.modules.ConfigurableDaemonModule;
 import org.onehippo.repository.modules.ProvidesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ProvidesService(types = { NodeUpdaterService.class })
-public class UpdaterExecutionModule implements DaemonModule, EventListener {
+public class UpdaterExecutionModule implements ConfigurableDaemonModule, EventListener {
 
     private static final Logger log = LoggerFactory.getLogger(UpdaterExecutionModule.class);
 
@@ -131,6 +131,13 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
                 updaterExecutor.execute(task = new ExecuteUpdatersTask());
             }
         }
+    }
+
+    @Override
+    public void configure(final Node moduleConfig) throws RepositoryException {
+        UpdaterExecutorConfiguration updaterExecutorConfiguration = new UpdaterExecutorConfiguration(moduleConfig);
+        updaterExecutorConfiguration.start();
+        UpdaterExecutor.setConfiguration(updaterExecutorConfiguration);
     }
 
     private final class ExecuteUpdatersTask implements Runnable {

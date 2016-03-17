@@ -17,31 +17,27 @@ package org.hippoecm.repository.standardworkflow;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
-import org.hippoecm.repository.impl.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.hippoecm.repository.util.WorkflowUtils.getContainingFolder;
 
 public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, InternalWorkflow {
@@ -129,135 +125,25 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
         }
     }
 
-    public void localizeName(Localized localized, String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    @Override
+    public void setDisplayName(final String hippoName) throws WorkflowException, RepositoryException, RemoteException {
         Node node;
-        if (subject.isNodeType(HippoNodeType.NT_HANDLE)) {
+        if (subject.isNodeType(NT_HANDLE)) {
             node = subject;
         } else {
-            node = subject.getParent();
-            if (!node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                node = subject;
-            }
-        }
-        localizeName(node, localized, newName);
-    }
-
-    public void localizeName(Locale locale, String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        Node node, handle;
-        if (subject.isNodeType(HippoNodeType.NT_HANDLE)) {
-            handle = node = subject;
-        } else {
-            handle = subject.getParent();
-            if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                node = handle;
+            final Node parent = subject.getParent();
+            if (parent.isNodeType(NT_HANDLE)) {
+                node = parent;
             } else {
-                handle = null;
                 node = subject;
             }
         }
-        Localized localized;
-        if (handle != null) {
-            localized = ((NodeDecorator)subject).getLocalized(locale);
-        } else {
-            localized = Localized.getInstance(locale);
+        JcrUtils.ensureIsCheckedOut(node);
+        if (!node.isNodeType(HippoNodeType.NT_NAMED)) {
+            node.addMixin(HippoNodeType.NT_NAMED);
         }
-        localizeName(node, localized, newName);
-    }
-
-    public void localizeName(String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        Node node, handle;
-        if (subject.isNodeType(HippoNodeType.NT_HANDLE)) {
-            handle = node = subject;
-        } else {
-            handle = subject.getParent();
-            if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                node = handle;
-            } else {
-                handle = null;
-                node = subject;
-            }
-        }
-        Localized localized;
-        if (handle != null) {
-            localized = ((NodeDecorator)subject).getLocalized(null);
-            if (localized == null) {
-                localized = Localized.getInstance();
-            }
-        } else {
-            localized = Localized.getInstance();
-        }
-        localizeName(node, localized, newName);
-    }
-
-    @Override
-    public void replaceAllLocalizedNames(final String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        Node node, handle;
-        if (subject.isNodeType(HippoNodeType.NT_HANDLE)) {
-            handle = node = subject;
-        } else {
-            handle = subject.getParent();
-            if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                node = handle;
-            } else {
-                handle = null;
-                node = subject;
-            }
-        }
-        Localized localized;
-        if (handle != null) {
-            localized = ((NodeDecorator)subject).getLocalized(null);
-            if (localized == null) {
-                localized = Localized.getInstance();
-            }
-        } else {
-            localized = Localized.getInstance();
-        }
-        removeAllLocaleSpecificNames(node);
-        localizeName(node, localized, newName);
-    }
-
-    private void removeAllLocaleSpecificNames(final Node node) {
-        try {
-            final NodeIterator nodeIterator = node.getNodes(HippoNodeType.HIPPO_TRANSLATION);
-            while (nodeIterator.hasNext()) {
-                final Node translationNode = nodeIterator.nextNode();
-                final String language = translationNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
-                if (StringUtils.isNotBlank(language)) {
-                    log.debug("Removing translation node '{}' for locale '{}'", JcrUtils.getNodePathQuietly(translationNode), language);
-                    translationNode.remove();
-                }
-            }
-        } catch (RepositoryException e) {
-            log.info("Failed to remove locale-specific names of '{}'", JcrUtils.getNodePathQuietly(node));
-        }
-    }
-
-    private void localizeName(Node node, Localized localized, String newName) throws RepositoryException {
-        // find the existing localName
-        Node translationNode = null;
-        if (node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
-            for (NodeIterator iter = node.getNodes(HippoNodeType.HIPPO_TRANSLATION); iter.hasNext(); ) {
-                translationNode = iter.nextNode();
-                Localized translationLocalized = Localized.getInstance(translationNode);
-                if (localized.equals(translationLocalized)) {
-                    break;
-                } else {
-                    translationNode = null;
-                }
-            }
-        } else {
-            JcrUtils.ensureIsCheckedOut(node);
-            node.addMixin(HippoNodeType.NT_TRANSLATED);
-        }
-        if (translationNode == null) {
-            JcrUtils.ensureIsCheckedOut(node);
-            translationNode = node.addNode(HippoNodeType.HIPPO_TRANSLATION, HippoNodeType.NT_TRANSLATION);
-            localized.setTranslation(translationNode);
-        } else {
-            JcrUtils.ensureIsCheckedOut(node);
-        }
-        translationNode.setProperty(HippoNodeType.HIPPO_MESSAGE, newName);
-        translationNode.getSession().save();
+        node.setProperty(HippoNodeType.HIPPO_NAME, hippoName);
+        node.getSession().save();
     }
 
     public void copy(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {

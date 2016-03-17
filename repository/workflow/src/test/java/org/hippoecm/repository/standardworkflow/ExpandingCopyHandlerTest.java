@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -119,10 +119,8 @@ public class ExpandingCopyHandlerTest extends RepositoryTestCase {
     @Test
     public void testNodeIsNotRenamedIfDefinitionDisallowsIt() throws Exception {
         Node handle = session.getNode("/test").addNode("handle", "hippo:handle");
-        handle.addMixin("hippo:translated");
-        final Node translation = handle.addNode("hippo:translation", "hippo:translation");
-        translation.setProperty("hippo:language", "test");
-        translation.setProperty("hippo:message", "test");
+        // add a hippo:request noce
+        handle.addNode("hippo:request", "hippo:request");
         handle.addNode("document", "hippo:document");
 
         final Map<String, String[]> substitutes = new HashMap<String, String[]>() {{
@@ -130,12 +128,12 @@ public class ExpandingCopyHandlerTest extends RepositoryTestCase {
         }};
         ExpandingCopyHandler handler = new ExpandingCopyHandler(target, substitutes, session.getValueFactory());
         JcrUtils.copyTo(handle, handler);
-        // according to the substitution pattern hippo:translation node should have been renamed
+        // according to the substitution pattern hippo:request node should have been renamed
         // but this doesn't happen because it would violate the constraints on the handle node
-        assertTrue(session.nodeExists("/test/target/handle/hippo:translation"));
+        assertTrue(session.nodeExists("/test/target/handle/hippo:request"));
         // the document node at the same level does get renamed
         assertTrue(session.nodeExists("/test/target/handle/substitute"));
-        assertEquals("hippo:translation", session.getNode("/test/target/handle/hippo:translation").getPrimaryNodeType().getName());
+        assertEquals("hippo:request", session.getNode("/test/target/handle/hippo:request").getPrimaryNodeType().getName());
         assertEquals("hippo:document", session.getNode("/test/target/handle/substitute").getPrimaryNodeType().getName());
     }
 }

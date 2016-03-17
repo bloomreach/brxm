@@ -18,21 +18,16 @@ package org.hippoecm.repository.decorating.remote;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.List;
-import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
-import org.hippoecm.repository.api.Localized;
 
 public interface RemoteServicingNode extends RemoteNode, Remote, Serializable {
 
     RemoteNode getCanonicalNode() throws RepositoryException, RemoteException;
 
-    String getLocalizedName(Localized localized) throws RepositoryException, RemoteException;
-
-    Map<Localized, String> getLocalizedNames() throws RepositoryException, RemoteException;
+    String getHippoName() throws RepositoryException, RemoteException;
 
     boolean recomputeDerivedData() throws RepositoryException, RemoteException;
 }

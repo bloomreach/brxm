@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -36,11 +36,14 @@
       <sv:value>hippostd:folder</sv:value>
     </sv:property>
     <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:translated</sv:value>
+      <sv:value>hippo:named</sv:value>
       <sv:value>mix:versionable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>Documents</sv:value>
     </sv:property>
     <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
       <sv:value>preview</sv:value>
@@ -50,50 +53,6 @@
       <sv:value>new-folder</sv:value>
       <sv:value>new-translated-folder</sv:value>
     </sv:property>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>nl</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Documenten</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>en</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Documents</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>fr</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Documents</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>it</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Documenti</sv:value>
-      </sv:property>
-    </sv:node>
     <sv:node sv:name="articles">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippostd:folder</sv:value>
@@ -593,11 +552,14 @@
       <sv:value>hippogallery:stdImageGallery</sv:value>
     </sv:property>
     <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:translated</sv:value>
+      <sv:value>hippo:named</sv:value>
       <sv:value>mix:versionable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>4e557532-98ff-4673-a2a9-5cdbb2822eed</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>images</sv:value>
     </sv:property>
     <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
       <sv:value>preview</sv:value>
@@ -609,50 +571,6 @@
     <sv:property sv:multiple="true" sv:name="hippostd:gallerytype" sv:type="String">
       <sv:value>hippogallery:imageset</sv:value>
     </sv:property>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>nl</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Beeldbank</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>en</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Images</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>fr</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Images</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>it</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Immagini</sv:value>
-      </sv:property>
-    </sv:node>
     <sv:node sv:name="hippos">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippogallery:stdImageGallery</sv:value>
@@ -749,11 +667,14 @@
       <sv:value>hippogallery:stdAssetGallery</sv:value>
     </sv:property>
     <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:translated</sv:value>
+      <sv:value>hippo:named</sv:value>
       <sv:value>mix:versionable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>4e557532-bbbb-4673-a2a9-5cdbb2822eed</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>Assets</sv:value>
     </sv:property>
     <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
       <sv:value>preview</sv:value>
@@ -765,50 +686,6 @@
     <sv:property sv:multiple="true" sv:name="hippostd:gallerytype" sv:type="String">
       <sv:value>hippogallery:exampleAssetSet</sv:value>
     </sv:property>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>nl</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Bestanden</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>en</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Assets</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>fr</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Fichiers</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>it</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Files</sv:value>
-      </sv:property>
-    </sv:node>
     <sv:node sv:name="hippos">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippogallery:stdAssetGallery</sv:value>

@@ -15,14 +15,6 @@
  */
 package org.hippoecm.repository.impl;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
-
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.ItemExistsException;
@@ -32,7 +24,6 @@ import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -47,14 +38,10 @@ import javax.jcr.query.RowIterator;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 
-import org.apache.commons.lang.LocaleUtils;
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.hippoecm.repository.deriveddata.DerivedDataEngine;
-import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -292,111 +279,12 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
         }
     }
 
-    /**
-     * @inheritDoc
-     */
-    public String getLocalizedName() throws RepositoryException {
-        return getLocalizedName(null);
-    }
-    /**
-     * @inheritDoc
-     */
-    public String getLocalizedName(Localized localized) throws RepositoryException {
-        Node node = this;
-        if (!node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
-            if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                Node handle = node.getParent();
-                if (handle.isNodeType(HippoNodeType.NT_HANDLE) && handle.isNodeType(HippoNodeType.NT_TRANSLATED)) {
-                    node = handle;
-                } else {
-                    return getName();
-                }
-            } else {
-                return getName();
-            }
-        }
-        if(localized == null) {
-            localized = getLocalized(null);
-            if (localized == null) {
-                localized = Localized.getInstance();
-            }
-        }
-        Node bestCandidateNode = null;
-        Localized bestCandidate = null;
-        for (int i = 1; i < Integer.MAX_VALUE; i++) {
-            Node currentCandidateNode;
-            try {
-                currentCandidateNode = node.getNode(HippoNodeType.HIPPO_TRANSLATION + "[" + i + "]");
-            } catch (PathNotFoundException e) {
-                break;
-            }
-            Localized currentCandidate = Localized.getInstance(currentCandidateNode);
-            Localized resultCandidate = localized.matches(bestCandidate, currentCandidate);
-            if (resultCandidate == currentCandidate) {
-                bestCandidate = currentCandidate;
-                bestCandidateNode = currentCandidateNode;
-            }
-        }
-        if (bestCandidateNode != null) {
-            String localizedName = JcrUtils.getStringProperty(bestCandidateNode, HippoNodeType.HIPPO_MESSAGE, null);
-            if (localizedName != null) {
-                return localizedName;
-            }
+    @Override
+    public String getDisplayName() throws RepositoryException {
+        if (isNodeType(HippoNodeType.NT_NAMED)) {
+            return getProperty(HippoNodeType.HIPPO_NAME).getString();
         }
         return getName();
     }
 
-    @Override
-    public Map<Localized, String> getLocalizedNames() throws RepositoryException {
-        final Node node = getTranslatedNodeOrNull();
-        if (node == null) {
-            return Collections.emptyMap();
-        }
-        return getLocalizedNames(node);
-    }
-
-    private Node getTranslatedNodeOrNull() throws RepositoryException {
-        Node node = this;
-        if (!node.isNodeType(HippoNodeType.NT_TRANSLATED) && node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-            final Node handle = node.getParent();
-            if (handle.isNodeType(HippoNodeType.NT_HANDLE) && handle.isNodeType(HippoNodeType.NT_TRANSLATED)) {
-                node = handle;
-            }
-        }
-        return node;
-    }
-
-    private Map<Localized, String> getLocalizedNames(final Node node) throws RepositoryException {
-        final Map<Localized, String> localizedNames = new LinkedHashMap<Localized, String>();
-
-        final NodeIterator nodeIterator = node.getNodes(HippoNodeType.HIPPO_TRANSLATION);
-        while (nodeIterator.hasNext()) {
-            final Node translationNode = nodeIterator.nextNode();
-            final String language = translationNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
-
-            try {
-                final Localized localized = getLocalizedForLanguage(language);
-                final String message = translationNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
-                localizedNames.put(localized, message);
-            } catch (IllegalArgumentException e) {
-                log.info("Ignoring localized name for language '{}'", language, e);
-            }
-        }
-        return localizedNames;
-    }
-
-    private Localized getLocalizedForLanguage(final String language) throws IllegalArgumentException {
-        if (StringUtils.isBlank(language)) {
-            return Localized.getInstance();
-        }
-        final Locale locale = LocaleUtils.toLocale(language);
-        return Localized.getInstance(locale);
-    }
-
-    public Localized getLocalized(Locale locale) throws RepositoryException {
-        if (locale != null) {
-            return Localized.getInstance(locale);
-        }
-        return null;
-    }
 }

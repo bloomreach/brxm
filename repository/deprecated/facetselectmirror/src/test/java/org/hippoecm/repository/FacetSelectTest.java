@@ -141,10 +141,6 @@ public class FacetSelectTest extends RepositoryTestCase {
             "/test/docs", "hippo:testdocument",
             "jcr:mixinTypes", "mix:versionable",
             "/test/docs/doc", "hippo:handle",
-            "jcr:mixinTypes", "hippo:translated",
-            "/test/docs/doc/hippo:translation", "hippo:translation",
-            "hippo:language", "",
-            "hippo:message", "",
             "/test/docs/doc/hippo:request", "hipposys:request",
             "/test/docs/doc/doc", "hippo:testdocument",
             "jcr:mixinTypes", "mix:versionable",
@@ -219,92 +215,6 @@ public class FacetSelectTest extends RepositoryTestCase {
         assertEquals("doc",traverse(session, "/test/teste").getNodes().nextNode().getName());
         assertEquals("doc",traverse(session, "/test/test6/doc").getNodes().nextNode().getName());
         assertEquals("doc",traverse(session, "/test/testf").getNodes().nextNode().getName());
-    }
-    
-
-    @Test
-    public void testTranslationBelowHandlePresentAndNotFirst() throws Exception {
-        final String[] data = new String[] {
-            "/test", "nt:unstructured",
-            "/test/docs", "hippo:testdocument",
-            "jcr:mixinTypes", "mix:versionable",
-            "/test/docs/doc", "hippo:handle",
-            "jcr:mixinTypes", "hippo:translated",
-            "/test/docs/doc/hippo:translation", "hippo:translation",
-            "hippo:language", "",
-            "hippo:message", "Document",
-            "/test/docs/doc/hippo:request", "hipposys:request",
-            "/test/docs/doc/doc", "hippo:testdocument",
-            "jcr:mixinTypes", "mix:versionable",
-            "state", "published",
-            "/test/test1", "hippo:facetselect",
-            "hippo:docbase", "/test/docs",
-            "hippo:facets", "state",
-            "hippo:values", "published",
-            "hippo:modes", "single",
-            "/test/test2", "hippo:facetselect",
-            "hippo:docbase", "/test/docs",
-            "hippo:facets", "state",
-            "hippo:values", "unpublished",
-            "hippo:modes", "prefer-single",
-            "/test/test3", "hippo:facetselect",
-            "hippo:docbase", "/test/docs",
-            "hippo:facets", "state",
-            "hippo:values", "published",
-            "hippo:modes", "select",
-            "/test/test4", "hippo:facetselect",
-            "hippo:docbase", "/test/docs",
-            "hippo:facets", "state",
-            "hippo:values", "xxx",
-            "hippo:modes", "single",
-        };
-        build(data, session);
-        session.save();
-        session.refresh(false);
-        
-        // facetselect with mode = single. We expect one hippo:document below the handle, *and* the hippo:translation node
-        {
-            Node doc = traverse(session, "/test/test1/doc");
-            assertEquals("Document", ((HippoNode)doc).getLocalizedName());
-            NodeIterator it = doc.getNodes();
-            Node firstChild = it.nextNode();
-            assertEquals("doc",firstChild.getName());
-            assertEquals("Document", ((HippoNode)firstChild).getLocalizedName());
-            assertEquals("hippo:translation",it.nextNode().getName());
-        }
-        
-        // facetselect with mode = prefer-single. We expect one hippo:document below the handle, *and* the hippo:translation node
-        {
-            Node doc = traverse(session, "/test/test2/doc");
-            assertEquals("Document", ((HippoNode)doc).getLocalizedName());
-            NodeIterator it = doc.getNodes();
-            Node firstChild = it.nextNode();
-            assertEquals("doc",firstChild.getName());
-            assertEquals("Document", ((HippoNode)firstChild).getLocalizedName());
-            assertEquals("hippo:translation",it.nextNode().getName());
-        }
-        
-        // facetselect with mode = select. We expect one hippo:document below the handle, the hippo:request *and* the hippo:translation node
-        {
-            Node doc = traverse(session, "/test/test3/doc");
-            assertEquals("Document", ((HippoNode)doc).getLocalizedName());
-            NodeIterator it = doc.getNodes();
-            Node firstChild = it.nextNode();
-            assertEquals("doc",firstChild.getName());
-            assertEquals("Document", ((HippoNode)firstChild).getLocalizedName());
-            
-            // we do not know whether first the request comes and then the translation, or other way around:
-            assertTrue(doc.hasNode("hippo:request"));
-            assertTrue(doc.hasNode("hippo:translation"));
-        }
-        
-        // facetselect with mode = single. We expect no hippo:document (because facetselect state = xxx which no doc has) below the handle, hence, also, no hippo:translation node should be there
-        {
-            Node doc = traverse(session, "/test/test4/doc");
-            // localized name returns 'doc' and not Document because translation will be only there when at least one hippo:document below the handle
-            assertEquals("doc", ((HippoNode)doc).getLocalizedName());
-            assertTrue(doc.getNodes().getSize() == 0);
-        }
     }
 
     @Test

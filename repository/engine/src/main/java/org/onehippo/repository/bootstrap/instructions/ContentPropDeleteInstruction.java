@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,12 @@ public class ContentPropDeleteInstruction extends InitializeInstruction {
 
     public ContentPropDeleteInstruction(final InitializeItem item, final Session session) {
         super(item, session);
+    }
+
+    @Override
+    protected boolean isDownstream(final String[] reloadPaths) throws RepositoryException {
+        final String contentPropDeletePath = item.getContentPropDeletePath();
+        return contentPropDeletePath.startsWith(reloadPaths[0] + "/");
     }
 
     @Override

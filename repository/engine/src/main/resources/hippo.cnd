@@ -105,6 +105,7 @@
 
 // DATA TYPES: TRANSLATION
 
+// deprecated
 [hippo:translation]
 - hippo:language (string) mandatory
 - hippo:message (string) mandatory
@@ -112,6 +113,7 @@
 - hippo:value (string)
 - hippo:class (string)
 
+// deprecated
 [hippo:translated] mixin
 + hippo:translation (hippo:translation) multiple
 
@@ -144,6 +146,7 @@
 - hippo:timestamp (long) // deprecated, replaced by hippo:lastprocessedtime
 - hippo:lastprocessedtime (date)
 - hippo:webfilebundle (string)
+- hippo:resourcebundles (string)
 - hippo:changerecord (string)
 
 [hippo:initializefolder] > nt:base orderable
@@ -158,3 +161,6 @@
 
 // marker mixin to exclude the node from being indexed
 [hippo:skipindex] mixin
+
+[hippo:named] mixin
+- hippo:name (string) mandatory

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTRESOURCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTROOT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_INITIALIZEITEM;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class ContentFileInfoTest {
@@ -36,6 +37,7 @@ public class ContentFileInfoTest {
 
         ContentFileInfo contentFileInfo = ContentFileInfo.readInfo(item);
 
+        assertNotNull(contentFileInfo);
         assertEquals(1, contentFileInfo.contextPaths.size());
         assertEquals("/test/foo", contentFileInfo.contextPaths.get(0));
         assertNull(contentFileInfo.deltaDirective);
@@ -44,6 +46,7 @@ public class ContentFileInfoTest {
 
         contentFileInfo = ContentFileInfo.readInfo(item);
 
+        assertNotNull(contentFileInfo);
         assertEquals(2, contentFileInfo.contextPaths.size());
         assertEquals("/test/foo", contentFileInfo.contextPaths.get(0));
         assertEquals("/test/foo/bar", contentFileInfo.contextPaths.get(1));

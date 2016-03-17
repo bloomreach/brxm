@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -158,8 +158,16 @@ public interface HippoNodeType {
 
     public static final String NT_TEMPLATETYPE = "hipposysedit:templatetype";
 
+    /**
+     * @deprecated since REPO 4.0.0 (CMS 11.0)
+     */
+    @Deprecated
     public static final String NT_TRANSLATED = "hippo:translated";
 
+    /**
+     * @deprecated since REPO 4.0.0 (CMS 11.0)
+     */
+    @Deprecated
     public static final String NT_TRANSLATION = "hippo:translation";
 
     @Deprecated
@@ -187,6 +195,8 @@ public interface HippoNodeType {
     public static final String NT_SKIPINDEX = "hippo:skipindex";
 
     public static final String NT_LOCKABLE = "hippo:lockable";
+
+    public static final String NT_NAMED = "hippo:named";
 
     public static final String HIPPO_ACTIVE = "hipposys:active";
 
@@ -270,8 +280,10 @@ public interface HippoNodeType {
 
     public static final String HIPPO_JCRREMOVE = "hipposys:jcrremove";
 
+    @Deprecated
     public static final String HIPPO_KEY = "hippo:key";
 
+    @Deprecated
     public static final String HIPPO_LANGUAGE = "hippo:language";
 
     public static final String HIPPO_LASTLOGIN = "hipposys:lastlogin";
@@ -280,6 +292,10 @@ public interface HippoNodeType {
 
     public static final String HIPPO_MEMBERS = "hipposys:members";
 
+    /**
+     * @deprecated since REPO 4.0.0 (CMS 11.0)
+     */
+    @Deprecated
     public static final String HIPPO_MESSAGE = "hippo:message";
 
     public static final String HIPPO_MANDATORY = "hipposysedit:mandatory";
@@ -364,6 +380,10 @@ public interface HippoNodeType {
 
     public static final String HIPPO_TEMPLATE = "hipposysedit:template";
 
+    /**
+     * @deprecated since REPO 4.0.0 (CMS 11.0)
+     */
+    @Deprecated
     public static final String HIPPO_TRANSLATION = "hippo:translation";
 
     public static final String HIPPOSYS_TYPE = "hipposys:type";
@@ -394,6 +414,8 @@ public interface HippoNodeType {
     public static final String HIPPO_VALUES = "hippo:values";
 
     public static final String HIPPO_WEB_FILE_BUNDLE = "hippo:webfilebundle";
+
+    public static final String HIPPO_RESOURCEBUNDLES = "hippo:resourcebundles";
 
     public static final String HIPPO_CONTENTPROPSET = "hippo:contentpropset";
 
@@ -469,4 +491,8 @@ public interface HippoNodeType {
 
     public static final String HIPPO_LOCK = "hippo:lock";
 
+    public static final String NT_RESOURCEBUNDLES = "hipposys:resourcebundles";
+    public static final String NT_RESOURCEBUNDLE = "hipposys:resourcebundle";
+
+    public static final String HIPPO_NAME = "hippo:name";
 }

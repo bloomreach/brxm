@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,7 +38,6 @@ import javax.jcr.lock.LockManager;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
-import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.locking.HippoLock;
 import org.onehippo.repository.locking.HippoLockManager;
@@ -63,23 +62,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             "WHERE %s = 'pending' OR %s = 'reload' ORDER BY %s ASC",
             HIPPO_STATUS, HIPPO_STATUS, HIPPO_SEQUENCE);
 
-    private static final Comparator<Node> initializeItemComparator = new Comparator<Node>() {
-        @Override
-        public int compare(final Node n1, final Node n2) {
-            try {
-                final Double s1 = JcrUtils.getDoubleProperty(n1, HIPPO_SEQUENCE, -1.0);
-                final Double s2 = JcrUtils.getDoubleProperty(n2, HIPPO_SEQUENCE, -1.0);
-                final int result = s1.compareTo(s2);
-                if (result != 0) {
-                    return result;
-                }
-                return n1.getName().compareTo(n2.getName());
-            } catch (RepositoryException e) {
-                log.error("Error comparing initialize item nodes", e);
-            }
-            return 0;
-        }
-    };
+    private static final Comparator<InitializeItem> initializeItemComparator = new InitializeItemComparator();
 
     private HippoLock lock;
 
@@ -184,13 +167,16 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         return getItemNodesToBeExecuted(initializeItems);
     }
 
-    private List<PostStartupTask> doProcessInitializeItems(final Session session, final List<Node> initializeItems) {
+    private List<PostStartupTask> doProcessInitializeItems(final Session session, final List<Node> initializeItemNodes) {
+        final List<InitializeItem> initializeItems = new ArrayList<>(initializeItemNodes.size());
+        for (Node initializeItemNode : initializeItemNodes) {
+            initializeItems.add(new InitializeItem(initializeItemNode));
+        }
         Collections.sort(initializeItems, initializeItemComparator);
         final List<PostStartupTask> postStartupTasks = new ArrayList<>();
         try {
             session.refresh(false);
-            for (Node initializeItemNode : initializeItems) {
-                InitializeItem initializeItem = new InitializeItem(initializeItemNode);
+            for (final InitializeItem initializeItem : initializeItems) {
                 try {
                     postStartupTasks.addAll(initializeItem.process());
                 } catch (RepositoryException e) {

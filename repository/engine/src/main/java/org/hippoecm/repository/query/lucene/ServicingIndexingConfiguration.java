@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,21 +49,19 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration {
     Name getHippoDocumentName();
 
     /**
-     * @return QName of hippo:translation
+     * @return QName for hippo:named mixin
      */
-    Name getHippoTranslationName();
+    Name getHippoNamedName();
 
     /**
-     * @return QName of hippo:message
+     * @return QName fir hippo:name property
      */
-    Name getHippoMessageName();
-
-    String getTranslationMessageFieldName();
+    Name getHippoNameName();
 
     /**
-     * @return QName of hippo:translated
+     * @return the Lucene field name for {@link #getHippoNameName()}
      */
-    Name getHippoTranslatedName();
+    String getHippoNameFieldName();
 
     /**
      * @return QName of the hippo:paths property

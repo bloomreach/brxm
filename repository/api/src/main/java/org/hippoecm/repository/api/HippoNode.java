@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository.api;
 
-import java.util.Map;
-
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
@@ -30,42 +28,13 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 public interface HippoNode extends Node {
 
     /**
-     * Get a localized name of this node if available.  If this name is not
-     * available, the name of the node itself is returned.
-     * The local name of the node it NOT based upon the current locale, but
-     * on the path used to access this node.  If this node is itself in a
-     * particular locale setting (i.e. the document is in language X) then
-     * that context is used to provide the translated node name, otherwise
-     * a faceted context as indicated in the node path may be used.
+     * Obtain a display name for this node. If not available falls back on {@link #getName()}.
+     * If display name is available the result is the same as calling {@code getProperty("hippo:name").getString()}.
      *
-     * @return the localized node name
+     * @return the display name of this node if available, otherwise the JCR name of this node.
      * @throws RepositoryException
      */
-    public String getLocalizedName() throws RepositoryException;
-
-    /**
-     * Get a localized name of this node if available.  If this name is not
-     * available, the name of the node itself is returned.
-     * To determine which localized name to fetch the localized parameter is
-     * passed, but if this node is itself in a particular locale setting (i.e.
-     * the document is in language X) then that context is used to provide
-     * the translated node name.
-     *
-     * @param localized the locale or other determining specification (like
-     * country without a language specification or live/preview site).
-     * @return the localized node name
-     * @throws RepositoryException
-     */
-    public String getLocalizedName(Localized localized) throws RepositoryException;
-
-    /**
-     * Gets all localized names of this node, including the 'default' one
-     * (i.e. for {@link org.hippoecm.repository.api.Localized#getInstance()}) if available.
-     * @return all localized names of this node, or an empty list if this node does not have
-     * any localized names.
-     * @throws RepositoryException
-     */
-    public Map<Localized, String> getLocalizedNames() throws RepositoryException;
+    String getDisplayName() throws RepositoryException;
 
     /**
      * Get the most accurate and complete version available of the information

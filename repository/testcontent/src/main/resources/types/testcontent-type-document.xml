@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -19,53 +19,12 @@
     <sv:value>hipposysedit:templatetype</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>hippo:translated</sv:value>
+    <sv:value>hippo:named</sv:value>
     <sv:value>mix:referenceable</sv:value>
   </sv:property>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>nl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Basis Document</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>en</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Base Document</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>fr</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Document de base</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>it</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Documento Base</sv:value>
-    </sv:property>
-  </sv:node>
+  <sv:property sv:name="hippo:name" sv:type="String">
+    <sv:value>Base Document</sv:value>
+  </sv:property>
   <sv:node sv:name="hipposysedit:nodetype">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:handle</sv:value>

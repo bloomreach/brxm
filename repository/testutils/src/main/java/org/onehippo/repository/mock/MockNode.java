@@ -21,9 +21,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -47,7 +45,6 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.lock.Lock;
 import javax.jcr.nodetype.ConstraintViolationException;
@@ -57,13 +54,14 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
-import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.Localized;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NAME;
 
 /**
  * Mock version of a {@link Node}.
@@ -681,13 +679,8 @@ public class MockNode extends MockItem implements HippoNode {
     }
 
     @Override
-    public String getLocalizedName() throws RepositoryException {
-        return getName();
-    }
-
-    @Override
-    public Map<Localized, String> getLocalizedNames() throws RepositoryException {
-        return Collections.emptyMap();
+    public String getDisplayName() throws RepositoryException {
+        return JcrUtils.getStringProperty(this, HIPPO_NAME, getName());
     }
 
     @Override
@@ -883,11 +876,6 @@ public class MockNode extends MockItem implements HippoNode {
 
     @Override
     public String[] getAllowedLifecycleTransistions() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getLocalizedName(final Localized localized) throws RepositoryException {
         throw new UnsupportedOperationException();
     }
 

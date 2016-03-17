@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,8 +47,8 @@ import org.onehippo.repository.bootstrap.instructions.ContentResourceInstruction
 import org.onehippo.repository.bootstrap.instructions.NamespaceInstruction;
 import org.onehippo.repository.bootstrap.instructions.NodeTypesInstruction;
 import org.onehippo.repository.bootstrap.instructions.NodeTypesResourceInstruction;
+import org.onehippo.repository.bootstrap.instructions.ResourceBundlesInstruction;
 import org.onehippo.repository.bootstrap.instructions.WebFileBundleInstruction;
-import org.onehippo.repository.bootstrap.util.ContentFileInfo;
 
 import static org.apache.commons.lang.StringUtils.trim;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_DELTADIRECTIVE;
@@ -67,6 +67,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NAMESPACE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NODETYPES;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NODETYPESRESOURCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELOADONSTARTUP;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RESOURCEBUNDLES;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SEQUENCE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_STATUS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_TIMESTAMP;
@@ -96,7 +97,8 @@ public class InitializeItem {
             HIPPO_CONTENT,
             HIPPO_CONTENTPROPSET,
             HIPPO_CONTENTPROPADD,
-            HIPPO_WEB_FILE_BUNDLE
+            HIPPO_WEB_FILE_BUNDLE,
+            HIPPO_RESOURCEBUNDLES
     };
 
     private static final String[] INIT_ITEM_PROPERTIES = {
@@ -113,7 +115,8 @@ public class InitializeItem {
             HIPPO_CONTENTPROPADD,
             HIPPO_RELOADONSTARTUP,
             HIPPO_VERSION,
-            HIPPO_WEB_FILE_BUNDLE
+            HIPPO_WEB_FILE_BUNDLE,
+            HIPPO_RESOURCEBUNDLES
     };
 
     private Node itemNode;
@@ -165,6 +168,10 @@ public class InitializeItem {
             return tempItemNode.getName();
         }
         return null;
+    }
+
+    public Double getSequence() throws RepositoryException {
+        return JcrUtils.getDoubleProperty(itemNode, HIPPO_SEQUENCE, -1.0);
     }
 
     public Node getItemNode() {
@@ -244,7 +251,8 @@ public class InitializeItem {
         return null;
     }
 
-    private String[] getContextPaths() throws RepositoryException {
+    public String[] getContextPaths() throws RepositoryException {
+        // TODO: we can keep this info in-memory during initialization
         return JcrUtils.getMultipleStringProperty(itemNode, HIPPO_CONTEXTPATHS, null);
     }
 
@@ -308,7 +316,7 @@ public class InitializeItem {
     }
 
     public String getNamespace() throws RepositoryException {
-        return trim(itemNode.getProperty(HIPPO_NAMESPACE).getString());
+        return trim(JcrUtils.getStringProperty(itemNode, HIPPO_NAMESPACE, null));
     }
 
     public String getContentDeletePath() throws RepositoryException {
@@ -320,7 +328,15 @@ public class InitializeItem {
     }
 
     public String getWebFileBundle() throws RepositoryException {
-        return trim(itemNode.getProperty(HIPPO_WEB_FILE_BUNDLE).getString());
+        return trim(JcrUtils.getStringProperty(itemNode, HIPPO_WEB_FILE_BUNDLE, null));
+    }
+
+    public String getResourceBundles() throws RepositoryException {
+        return trim(JcrUtils.getStringProperty(itemNode, HIPPO_RESOURCEBUNDLES, null));
+    }
+
+    public URL getResourceBundlesURL() throws RepositoryException {
+        return getResourceURL(trim(JcrUtils.getStringProperty(itemNode, HIPPO_RESOURCEBUNDLES, null)));
     }
 
     public Property getContentPropSetProperty() throws RepositoryException {
@@ -435,15 +451,13 @@ public class InitializeItem {
             initProperty(tempItemNode, itemNode, propertyName);
         }
 
-        final ContentFileInfo info = itemNode.hasProperty(HIPPO_CONTENTRESOURCE) ? ContentFileInfo.readInfo(itemNode) : null;
-        if (info != null) {
-            itemNode.setProperty(HIPPO_CONTEXTPATHS, info.contextPaths.toArray(new String[info.contextPaths.size()]));
-            itemNode.setProperty(HIPPOSYS_DELTADIRECTIVE, info.deltaDirective);
-        }
-
         final String status = JcrUtils.getStringProperty(itemNode, HIPPO_STATUS, null);
         if (ITEM_STATUS_MISSING.equals(status)) {
             itemNode.getProperty(HIPPO_STATUS).remove();
+        }
+
+        for (InitializeInstruction instruction : getInstructions()) {
+            instruction.initializeItem();
         }
     }
 
@@ -533,6 +547,7 @@ public class InitializeItem {
             case HIPPO_CONTENTPROPSET : return new ContentPropSetInstruction(this, itemNode.getSession());
             case HIPPO_CONTENTPROPADD : return new ContentPropAddInstruction(this, itemNode.getSession());
             case HIPPO_WEB_FILE_BUNDLE : return new WebFileBundleInstruction(this, itemNode.getSession());
+            case HIPPO_RESOURCEBUNDLES : return new ResourceBundlesInstruction(this, itemNode.getSession());
         }
         throw new IllegalStateException("Unknown initialize instruction: " + property.getName());
     }
@@ -571,34 +586,17 @@ public class InitializeItem {
         if (itemNode.isSame(upstreamItem.getItemNode())) {
             return false;
         }
-        final String reloadPath = upstreamItem.getContextPath();
-        if (reloadPath == null) {
+        if (upstreamItem.getSequence() > getSequence()) {
             return false;
         }
-        final String contentResource = getContentResource();
-        if (contentResource != null) {
-            final String[] contextPaths = getContextPaths();
-            if (contextPaths != null) {
-                for (String contextPath : contextPaths) {
-                    if (contextPath.equals(reloadPath) || contextPath.startsWith(reloadPath + "/")) {
-                        return true;
-                    }
-                }
-            }
+        final String[] reloadPaths = upstreamItem.getContextPaths();
+        if (reloadPaths == null || reloadPaths.length == 0) {
+            return false;
         }
-        if (getContentPropAddProperty() != null || getContentPropSetProperty() != null) {
-            final String contentRoot = getContentRoot();
-            if (contentRoot.startsWith(reloadPath + "/")) {
+        for (InitializeInstruction instruction : getInstructions()) {
+            if (instruction.isDownstream(reloadPaths)) {
                 return true;
             }
-        }
-        final String contentDeletePath = getContentDeletePath();
-        if (contentDeletePath != null && (contentDeletePath.equals(reloadPath) || contentDeletePath.startsWith(reloadPath + "/"))) {
-            return true;
-        }
-        final String contentPropDeletePath = getContentPropDeletePath();
-        if (contentPropDeletePath != null && (contentPropDeletePath.equals(reloadPath) || contentPropDeletePath.startsWith(reloadPath + "/"))) {
-            return true;
         }
         return false;
     }

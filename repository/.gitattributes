@@ -78,11 +78,13 @@ config/src/main/resources/hippostd-logging.xml svneol=native#text/plain
 config/src/main/resources/hippostd-queries.xml -text
 config/src/main/resources/hippostd.cnd -text
 config/src/main/resources/hippotranslation.cnd -text
+config/src/main/resources/localization-module.xml -text
 config/src/main/resources/namespace-folder.xml -text svneol=unset#text/plain
 config/src/main/resources/role-author.xml -text svneol=unset#text/plain
 config/src/main/resources/role-editor.xml -text svneol=unset#text/plain
 config/src/main/resources/role-jcrread.xml -text svneol=unset#text/plain
 config/src/main/resources/scheduler-module.xml -text
+config/src/main/resources/translations-configuration.xml -text
 config/src/main/resources/updater-configuration.xml -text
 config/src/main/resources/updater-execution-module.xml -text
 connector/pom.xml -text
@@ -188,9 +190,12 @@ engine/src/main/java/org/onehippo/repository/bootstrap/instructions/ContentResou
 engine/src/main/java/org/onehippo/repository/bootstrap/instructions/NamespaceInstruction.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/instructions/NodeTypesInstruction.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/instructions/NodeTypesResourceInstruction.java -text
+engine/src/main/java/org/onehippo/repository/bootstrap/instructions/ResourceBundlesInstruction.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/instructions/WebFileBundleInstruction.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/util/BootstrapConstants.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/util/BootstrapUtils.java -text
+engine/src/main/java/org/onehippo/repository/bootstrap/util/BundleFileInfo.java -text
+engine/src/main/java/org/onehippo/repository/bootstrap/util/BundleInfo.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/util/PartialSystemViewFilter.java -text
 engine/src/main/java/org/onehippo/repository/bootstrap/util/PartialZipFile.java -text
 engine/src/main/java/org/onehippo/repository/modules/ModuleManager.java -text
@@ -200,8 +205,10 @@ engine/src/main/java/org/onehippo/repository/update/GroovyUpdaterClassLoader.jav
 engine/src/main/java/org/onehippo/repository/update/UpdaterExecutionModule.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterExecutionReport.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterExecutor.java -text
+engine/src/main/java/org/onehippo/repository/update/UpdaterExecutorConfiguration.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterInfo.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterRegistry.java -text
+engine/src/main/java/org/onehippo/repository/update/UpdaterTypeCheckingExtension.java -text
 engine/src/main/java/org/onehippo/repository/util/AnnotationUtils.java -text
 engine/src/main/java/org/onehippo/repository/xml/DereferencedSysViewSAXEventGenerator.java svneol=native#text/plain
 engine/src/main/java/org/onehippo/repository/xml/EnhancedPropInfo.java svneol=native#text/plain
@@ -240,6 +247,8 @@ engine/src/test/java/org/onehippo/repository/bootstrap/instructions/ContentDelet
 engine/src/test/java/org/onehippo/repository/bootstrap/instructions/ContentPropAddInstructionTest.java -text
 engine/src/test/java/org/onehippo/repository/bootstrap/instructions/ContentPropDeleteInstructionTest.java -text
 engine/src/test/java/org/onehippo/repository/bootstrap/instructions/ContentPropSetInstructionTest.java -text
+engine/src/test/java/org/onehippo/repository/bootstrap/instructions/ResourceBundlesInstructionTest.java -text
+engine/src/test/java/org/onehippo/repository/bootstrap/util/BundleFileInfoTest.java -text
 engine/src/test/java/org/onehippo/repository/bootstrap/util/PartialSystemViewFilterTest.java -text
 engine/src/test/java/org/onehippo/repository/modules/ModuleManagerTest.java -text
 engine/src/test/java/org/onehippo/repository/modules/ModuleRegistryTest.java -text
@@ -248,6 +257,7 @@ engine/src/test/java/org/onehippo/repository/util/AnnotationUtilsTest.java -text
 engine/src/test/java/org/onehippo/repository/xml/ExportImportPackageTest.java -text
 engine/src/test/java/org/onehippo/repository/xml/ExportImportTest.java -text
 engine/src/test/resources/bootstrap/path[!!-~]with[!!-~]spaces/SubZipFileTest.zip -text
+engine/src/test/resources/bootstrap/resourcebundle.json -text
 engine/src/test/resources/domain-defaultread.xml svneol=native#text/plain
 engine/src/test/resources/domain-defaultwrite.xml svneol=native#text/plain
 engine/src/test/resources/export/expected.xml -text
@@ -464,6 +474,7 @@ testutils/src/test/java/org/onehippo/repository/testutils/log4j/StringMatchFilte
 testutils/src/test/java/org/onehippo/repository/testutils/slf4j/LoggerRecordingWrapperTest.java -text
 testutils/src/test/resources/log4j-filters.txt -text
 upgrade/pom.xml svneol=native#text/plain
+upgrade/src/main/resources/hippo-translation-to-display-name-updater.xml -text
 utilities/pom.xml svneol=native#text/plain
 utilities/src/main/java/org/hippoecm/repository/util/MavenComparableVersion.java -text
 utilities/src/main/java/org/hippoecm/repository/util/RepoUtils.java -text

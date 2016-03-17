@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,8 @@ import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NAME;
+import static org.hippoecm.repository.api.HippoNodeType.NT_NAMED;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -42,7 +44,7 @@ public class FreeTextSearchTest extends RepositoryTestCase {
     public static final String COMPOUNDDOCUMENT_TITLE_PART = "bar";
     public static final String  HTML_CONTENT_PART = "lux";
     public static final String  BINARY_CONTENT_PART = "dog";
-    private static final String TRANSLATED_DOCUMENT_NAME = "xyzyx";
+    private static final String DOCUMENT_DISPLAYNAME = "xyzyx";
 
     private String[] defaultContent = new String[] {
             "/test", "nt:unstructured",
@@ -80,18 +82,15 @@ public class FreeTextSearchTest extends RepositoryTestCase {
         resource.setProperty("jcr:data", new ByteArrayInputStream(data.toByteArray()));
         resource.setProperty("jcr:lastModified", Calendar.getInstance());
 
-        // set translation node
+        // set display name
         Node handle = session.getNode("/test/Document1");
-        handle.addMixin("hippo:translated");
-        final Node translation = handle.addNode("hippo:translation", "hippo:translation");
-        translation.setProperty("hippo:language", "en");
-        translation.setProperty("hippo:message", TRANSLATED_DOCUMENT_NAME);
+        handle.addMixin(NT_NAMED);
+        handle.setProperty(HIPPO_NAME, DOCUMENT_DISPLAYNAME);
 
         session.save();
         flushIndex(session.getRepository());
     }
-    
- 
+
     @Test
     public void testSimpleFreeTextSearch() throws Exception {
 
@@ -140,7 +139,7 @@ public class FreeTextSearchTest extends RepositoryTestCase {
      */
     @Test
     public void testSecondLevelChildNodeFreeTextSearch() throws Exception {
-        
+
         createContent(defaultContent);
         
         String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+HTML_CONTENT_PART+"')] order by @jcr:score descending";
@@ -163,7 +162,7 @@ public class FreeTextSearchTest extends RepositoryTestCase {
      */
     @Test
     public void testSecondChildNodeBinaryFreeTextSearch() throws Exception {
-        
+
         createContent(defaultContent);
         String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+BINARY_CONTENT_PART+"')] order by @jcr:score descending";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
@@ -178,6 +177,7 @@ public class FreeTextSearchTest extends RepositoryTestCase {
     }
     
     /**
+     * This test is to prove we require the FieldNames.AGGREGATED_NODE_UUID logic in ServicingSearchIndex
      * When we search on the text property of a direct child node below the hippo:document, we should
      * not find the hippo:document anymore when the child node is removed. This test is to assure that, 
      * when a direct child node is removed, the hippo:document is reindexed in the repository. 
@@ -187,7 +187,7 @@ public class FreeTextSearchTest extends RepositoryTestCase {
      */
     @Test
     public void testDeleteFirstLevelChildNode() throws Exception {
-        
+
         createContent(defaultContent);
         
         String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+COMPOUNDDOCUMENT_TITLE_PART+"')] order by @jcr:score descending";
@@ -214,6 +214,7 @@ public class FreeTextSearchTest extends RepositoryTestCase {
     }
     
     /**
+     * This test is to prove we require the FieldNames.AGGREGATED_NODE_UUID logic in ServicingSearchIndex
      * When we search on the text property of some child node at some level below the hippo:document, we should
      * not find the hippo:document anymore when the child node is removed. This test is to assure that, 
      * when a deeper located child node is removed, the hippo:document must is in the repository. 
@@ -223,7 +224,7 @@ public class FreeTextSearchTest extends RepositoryTestCase {
      */
     @Test
     public void testDeleteSecondLevelChildNode() throws Exception {
-        
+
         createContent(defaultContent);
         
         String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+HTML_CONTENT_PART+"')] order by @jcr:score descending";
@@ -236,6 +237,7 @@ public class FreeTextSearchTest extends RepositoryTestCase {
         
         Node n = session.getNode("/test/Document1/Document1/compoundchild");
         n.getNode("hippo:testhtml").remove();
+
         n.getSession().save();
         
         flushIndex(session.getRepository());
@@ -270,7 +272,7 @@ public class FreeTextSearchTest extends RepositoryTestCase {
             assertTrue(doc.getName().equals("Document1"));
         }
     }
-    
+
     @Test
     public void testAddSecondLevelChildNode() throws Exception {
         String word = "addedhtmlnode";
@@ -281,7 +283,7 @@ public class FreeTextSearchTest extends RepositoryTestCase {
         };
 
         createContent(defaultContent, extraSecondLevelChildNodeContent);
-        
+
         String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+word+"')] order by @jcr:score descending";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         NodeIterator nodes = queryResult.getNodes();
@@ -289,6 +291,40 @@ public class FreeTextSearchTest extends RepositoryTestCase {
         while(nodes.hasNext()) {
             Node doc = nodes.nextNode();
             assertTrue(doc.getName().equals("Document1"));
+        }
+    }
+
+    /**
+     * This test is to prove {@code }org.hippoecm.repository.query.lucene.ServicingSearchIndex#augmentDocumentsToUpdate} is
+     * really required. Namely a newly added node won't trigger a document reindex through org.apache.jackrabbit.core.query.lucene.FieldNames.AGGREGATED_NODE_UUID
+     */
+    @Test
+    public void testAddSecondLevelChildNode_to_existing_document() throws Exception {
+        String word = "addedhtmlnode";
+        createContent(defaultContent);
+
+        session.save();
+        flushIndex(session.getRepository());
+        {
+            String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'" + word + "')] order by @jcr:score descending";
+            QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
+            NodeIterator nodes = queryResult.getNodes();
+            assertEquals(0L, nodes.getSize());
+        }
+        final Node html = session.getNode("/test/Document1/Document1/compoundchild").addNode("hippo:html2", "hippo:testhtml");
+        html.setProperty("hippo:testcontent", "The content property of testhtml node containing " + word);
+        session.save();
+        flushIndex(session.getRepository());
+
+        {
+            String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'" + word + "')] order by @jcr:score descending";
+            QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
+            NodeIterator nodes = queryResult.getNodes();
+            assertEquals(1L, nodes.getSize());
+            while (nodes.hasNext()) {
+                Node doc = nodes.nextNode();
+                assertTrue(doc.getName().equals("Document1"));
+            }
         }
     }
     
@@ -322,6 +358,7 @@ public class FreeTextSearchTest extends RepositoryTestCase {
         Node html = session.getNode("/test/Document1/Document1/compoundchild/hippo:testhtml");
         String word = "changedtesthtml";
         html.setProperty("hippo:testcontent", "The content property of testhtml node now containing " + word);
+
         n.getSession().save();
         
         flushIndex(session.getRepository());
@@ -337,14 +374,13 @@ public class FreeTextSearchTest extends RepositoryTestCase {
     }
 
     /**
-     * All hippo:message properties of hippo:translation nodes under a handle are included
-     * in the fulltext index of the document.
+     * hippo:name on handle must be indexed on document level
      */
     @Test
-    public void testSearchOnTranslatedDocumentName() throws Exception {
+    public void test_displayname_SearchOnDocumentName() throws Exception {
         createContent(defaultContent);
 
-        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+TRANSLATED_DOCUMENT_NAME+"')] order by @jcr:score descending";
+        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+ DOCUMENT_DISPLAYNAME +"')] order by @jcr:score descending";
         final QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         final NodeIterator nodes = queryResult.getNodes();
         assertEquals(1L, nodes.getSize());
@@ -352,20 +388,32 @@ public class FreeTextSearchTest extends RepositoryTestCase {
         assertEquals("/test/Document1/Document1", node.getPath());
     }
 
-    /**
-     * When the hippo:translation node under a hippo:handle is removed the document's index is updated
-     */
     @Test
-    public void testRemoveTranslationUpdatesDocumentIndex() throws Exception {
+    public void test_displayname_RemoveName_andAddName_UpdatesDocumentIndex() throws Exception {
         createContent(defaultContent);
-        session.getNode("/test/Document1/hippo:translation").remove();
+        final Node handle = session.getNode("/test/Document1");
+        handle.removeMixin(NT_NAMED);
         session.save();
         flushIndex(session.getRepository());
 
-        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+TRANSLATED_DOCUMENT_NAME+"')] order by @jcr:score descending";
-        final QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
-        final NodeIterator nodes = queryResult.getNodes();
-        assertEquals(0L, nodes.getSize());
+        {
+            String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'" + DOCUMENT_DISPLAYNAME + "')] order by @jcr:score descending";
+            final QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
+            final NodeIterator nodes = queryResult.getNodes();
+            assertEquals(0L, nodes.getSize());
+        }
+
+        // again adding the display name should result in the document being found by DOCUMENT_DISPLAYNAME
+        handle.addMixin(NT_NAMED);
+        handle.setProperty(HIPPO_NAME, DOCUMENT_DISPLAYNAME);
+        session.save();
+        flushIndex(session.getRepository());
+        {
+            String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+ DOCUMENT_DISPLAYNAME +"')] order by @jcr:score descending";
+            final QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
+            final NodeIterator nodes = queryResult.getNodes();
+            assertEquals(1L, nodes.getSize());
+        }
     }
 
     @Test

@@ -14,13 +14,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         sv:name="admin">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="admin">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:workflowcategory</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>hippo:translated</sv:value>
   </sv:property>
   <sv:node sv:name="handle">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
