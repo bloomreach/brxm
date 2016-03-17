@@ -38,6 +38,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
@@ -55,6 +56,8 @@ import org.slf4j.LoggerFactory;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 /**
  * @version "$Id$"
@@ -116,11 +119,11 @@ public class DocumentResource extends BaseResource {
             while (nodes.hasNext()) {
                 Node node = nodes.nextNode();
                 final Node parent = node.getParent();
-                if ("hippo:handle".equals(parent.getPrimaryNodeType().getName())) {
+                if (parent.isNodeType(NT_HANDLE)) {
                     node = parent;
                 }
                 final String path = node.getPath();
-                valueLists.add(new KeyValueRestful(((HippoNode) node).getLocalizedName(), path));
+                valueLists.add(new KeyValueRestful(((HippoNode) node).getDisplayName(), path));
             }
         } catch (RepositoryException e) {
             log.debug("Error fetching value lists", e);

@@ -1,0 +1,20 @@
+{
+  "hippo:templates" : {
+    "en" : {
+      "new-resource-bundle" : "new resource bundle",
+      "new-untranslated-folder" : "new untranslated folder"
+    },
+    "nl" : {
+      "new-resource-bundle" : "nieuwe resource bundle",
+      "new-untranslated-folder" : "nieuwe onvertaalde map"
+    },
+    "de" : {
+      "new-resource-bundle" : "Neues Resource-Bundle",
+      "new-untranslated-folder" : "Neuer nicht übersetzter Ordner"
+    },
+    "fr" : {
+      "new-resource-bundle" : "nouveau resource bundle",
+      "new-untranslated-folder" : "nouveau dossier non traduit"
+    }
+  }
+}

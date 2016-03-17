@@ -21,6 +21,7 @@
   <instructionSet>
     <cnd documentType="newsdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <xml action="copy" source="xml/namespaces/newsdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
+    <translations source="json/translations/newsdocument-translations.json"/>
   </instructionSet>
 
   <instructionSet group="jsp">
@@ -106,6 +107,7 @@
   <instructionSet>
     <xml action="copy" source="xml/folderoptions/new-news-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="xml/folderoptions/new-news-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <translations source="json/translations/newstemplates-translations.json"/>
    </instructionSet>
 
 </instructions>

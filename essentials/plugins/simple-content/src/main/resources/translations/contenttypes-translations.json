@@ -1,0 +1,34 @@
+{
+  "hippo:types": {
+    "{{namespace}}:contentdocument":   {
+      "en":     {
+        "{{namespace}}:content": "Content",
+        "jcr:name": "Simple Document",
+        "{{namespace}}:publicationdate": "Publication date",
+        "{{namespace}}:introduction": "Introduction",
+        "{{namespace}}:title": "Title"
+      },
+      "nl":     {
+        "{{namespace}}:content": "Inhoud",
+        "jcr:name": "Eenvoudig Document",
+        "{{namespace}}:publicationdate": "Publicatiedatum",
+        "{{namespace}}:introduction": "Introductie",
+        "{{namespace}}:title": "Titel"
+      },
+      "fr":     {
+        "{{namespace}}:content": "Contenu",
+        "jcr:name": "Document simple",
+        "{{namespace}}:publicationdate": "Date de publication",
+        "{{namespace}}:introduction": "Introduction",
+        "{{namespace}}:title": "Titre"
+      },
+      "de":     {
+        "{{namespace}}:content": "Inhalt",
+        "jcr:name": "Einfaches Dokument",
+        "{{namespace}}:publicationdate": "Publikationsdatum",
+        "{{namespace}}:introduction": "Einführung",
+        "{{namespace}}:title": "Titel"
+      }
+    }
+  }
+}
