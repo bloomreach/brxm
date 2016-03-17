@@ -97,4 +97,17 @@
       <sv:value>/hst:hst/hst:configurations/hst:default/hst:pages</sv:value>
     </sv:property>
   </sv:node>
+
+  <sv:node sv:name="robotstxt-type-translations">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20101</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:resourcebundles" sv:type="String">
+      <sv:value>type-translations.json</sv:value>
+    </sv:property>
+  </sv:node>
+
 </sv:node>
