@@ -47,6 +47,12 @@
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:namespaces/poll</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>3.0.0</sv:value>
+    </sv:property>
   </sv:node>
 
   <sv:node sv:name="types-compound-poll">
@@ -82,28 +88,6 @@
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:namespaces/poll</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>3.0.0</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <!-- poll translator service -->
-  <sv:node sv:name="poll-translator">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>20430</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>poll-translator.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-services</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
       <sv:value>true</sv:value>
@@ -214,6 +198,31 @@
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
       <sv:value>1.09.00</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="hippopoll-type-translations">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20401</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:resourcebundles" sv:type="String">
+      <sv:value>type-translations.json</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <!-- added in 11, obsolete in 12 -->
+  <sv:node sv:name="hippopoll-delete-translator">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>1000</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentdelete" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-services/pollTranslator</sv:value>
     </sv:property>
   </sv:node>
 
