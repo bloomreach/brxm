@@ -37,7 +37,7 @@ describe('RenderingService', () => {
     $httpBackend.verifyNoOutstandingRequest();
   });
 
-  it('fetch a component markup', () => {
+  it('fetches a component markup', () => {
     const component = jasmine.createSpyObj('component', ['getRenderUrl']);
 
     component.getRenderUrl.and.returnValue('/test-render-url');
@@ -52,7 +52,7 @@ describe('RenderingService', () => {
     $httpBackend.flush();
   });
 
-  it('fetch a container markup', () => {
+  it('fetches a container markup', () => {
     const container = jasmine.createSpyObj('container', ['getRenderUrl']);
 
     container.getRenderUrl.and.returnValue('/test-render-url');
@@ -61,8 +61,7 @@ describe('RenderingService', () => {
     RenderingService.fetchContainerMarkup(container);
 
     $httpBackend.expectGET('/test-render-url', {
-      Accept: 'text/html, */*',
-      'Content-Type': 'application/x-www-form-urlencoded',
+      Accept: 'application/json, text/plain, */*',
     });
     $httpBackend.flush();
   });

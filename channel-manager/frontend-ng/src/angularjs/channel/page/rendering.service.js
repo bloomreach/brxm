@@ -30,8 +30,7 @@ export class RenderingService {
       method: 'GET',
       url: container.getRenderUrl(),
       header: {
-        Accept: 'text/html, */* ',
-        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json, text/plain, */*',
       },
     });
   }

@@ -55,7 +55,7 @@ describe('DragDropService', () => {
     const result = new ContainerElement(iframeContainerComment[0], {
       uuid: `container${number}`,
       'HST-Type': 'HST.vBox',
-    });
+    }, hstCommentsProcessor);
     result.setJQueryElement('overlay', overlayContainer);
     return result;
   }
