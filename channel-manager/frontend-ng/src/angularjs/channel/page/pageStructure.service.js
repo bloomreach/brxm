@@ -21,18 +21,18 @@ import { ComponentElement } from './element/componentElement';
 
 export class PageStructureService {
 
-  constructor($log, $q, $http, HstConstants, hstCommentsProcessorService, OverlaySyncService, ChannelService, CmsService, PageMetaDataService, HstService) {
+  constructor($log, $q, HstConstants, hstCommentsProcessorService, RenderingService, OverlaySyncService, ChannelService, CmsService, PageMetaDataService, HstService) {
     'ngInject';
 
     // Injected
     this.$log = $log;
-    this.$http = $http;
     this.$q = $q;
     this.HST = HstConstants;
     this.HstService = HstService;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.hstCommentsProcessorService = hstCommentsProcessorService;
+    this.RenderingService = RenderingService;
     this.OverlaySyncService = OverlaySyncService;
     this.pageMetaData = PageMetaDataService;
 
@@ -94,6 +94,10 @@ export class PageStructureService {
     return component;
   }
 
+  hasContainer(container) {
+    return this.containers.indexOf(container) !== -1;
+  }
+
   /**
    * Remove the component identified by given Id
    * @param componentId
@@ -104,16 +108,12 @@ export class PageStructureService {
 
     if (component) {
       const container = component.getContainer();
-      return this._removeHstComponent(container.getId(), componentId)
-        .then(() => this.reloadContainer(container));
+      this.HstService.removeHstComponent(container.getId(), componentId)
+        .then(() => this._renderContainer(container));
       // TODO handle error
     } else {
       this.$log.debug(`Was asked to remove component with ID '${componentId}', but couldn't find it in the page structure.`);
     }
-  }
-
-  _removeHstComponent(containerId, componentId) {
-    return this.HstService.doGet(containerId, 'delete', componentId);
   }
 
   getContainerByIframeElement(containerIFrameElement) {
@@ -144,65 +144,46 @@ export class PageStructureService {
     });
   }
 
-  replaceComponent(component, newMarkup) {
+  /**
+   * Update the component with the new markup
+   */
+  updateComponent(component, newMarkup) {
     const jQueryNodeCollection = component.replaceDOM(newMarkup);
     this._replaceComponent(component, this._createComponent(jQueryNodeCollection, component.getContainer()));
     this.OverlaySyncService.syncIframe();
   }
 
-  _createComponent(jQueryNodeCollection, container) {
-    let component = null;
-
-    this.hstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
-      switch (metaData[this.HST.TYPE]) {
-        case this.HST.TYPE_COMPONENT:
-          try {
-            component = new ComponentElement(commentDomElement, metaData, container, this.hstCommentsProcessorService);
-          } catch (exception) {
-            this.$log.debug(exception, metaData);
-          }
-          break;
-
-        default:
-          break;
-      }
+  _renderContainer(container) {
+    this.RenderingService.fetchContainerMarkup(container).then((response) => {
+      this._updateContainer(container, response.data);
     });
+  }
 
-    if (!component) {
-      this.$log.error('Failed to create a new component');
-    }
-
-    return component;
+  _updateContainer(container, newMarkup) {
+    const jQueryContainerElement = container.replaceDOM(newMarkup);
+    this._replaceContainer(container, this._createContainer(jQueryContainerElement));
+    this.OverlaySyncService.syncIframe(); // necessary? mutation observer should trigger this...
   }
 
   _replaceComponent(oldComponent, newComponent) {
     const container = oldComponent.getContainer();
-    const index = container.items.indexOf(oldComponent);
-    if (index === -1) {
+    if (this.hasContainer(container) && container.hasComponent(oldComponent)) {
+      container.replaceComponent(oldComponent, newComponent);
+    } else {
       this.$log.warn('Cannot find component', oldComponent);
-      return;
     }
-    container.items[index] = newComponent;
   }
 
   addComponentToContainer(catalogComponent, overlayDomElementOfContainer) {
-    const oldContainer = this.containers.find((c) => c.getJQueryElement('overlay')[0] === overlayDomElementOfContainer);
+    const container = this.containers.find((c) => c.getJQueryElement('overlay')[0] === overlayDomElementOfContainer);
 
-    if (oldContainer) {
-      this._addHstComponent(catalogComponent, oldContainer.getId())
-        .then(() => this.reloadContainer(oldContainer));
+    if (container) {
+      this.HstService.addHstComponent(catalogComponent, container.getId())
+        .then(() => this._renderContainer(container));
       // TODO: handle error
     } else {
-      console.log('oldContainer not found');
+      console.log('container not found');
     }
-  }
-
-  reloadContainer(container) {
-    this._fetchContainerMarkup(container).then((response) => {
-      const jQueryContainerElement = container.replaceDOM(response.data);
-      this._replaceContainer(container, this._createContainer(jQueryContainerElement));
-      this.OverlaySyncService.syncIframe(); // necessary? mutation observer should trigger this...
-    });
   }
 
   _replaceContainer(oldContainer, newContainer) {
@@ -214,27 +195,16 @@ export class PageStructureService {
     this.containers[index] = newContainer;
   }
 
-  _fetchContainerMarkup(container) {
-    return this.$http({
-      method: 'GET',
-      url: container.getRenderUrl(),
-      header: {
-        Accept: 'text/html, */* ',
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-    });
-  }
-
   /**
    * Create a new container with meta-data from the given markup value
    * @param markup
    * @returns {*}
    * @private
    */
-  _createContainer(jQueryContainerElement) {
+  _createContainer(jQueryNodeCollection) {
     let container = null;
 
-    this.hstCommentsProcessorService.processFragment(jQueryContainerElement, function (commentDomElement, metaData) {
+    this.hstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
       switch (metaData[this.HST.TYPE]) {
         case this.HST.TYPE_CONTAINER:
           if (!container) {
@@ -262,7 +232,7 @@ export class PageStructureService {
         default:
           break;
       }
-    }.bind(this));
+    });
 
     if (!container) {
       this.$log.error('Failed to create a new container');
@@ -272,23 +242,30 @@ export class PageStructureService {
   }
 
   /**
-   * Add the component to the container at back-end
-   * @param componentId
-   * @param containerId
-   * @returns {*}
-   * @private
+   * Create a new component with meta-data from the given markup value
    */
-  _addHstComponent(catalogComponent, containerId) {
-    const requestPayload = `data: {
-      parentId: ${containerId},
-      id: ${catalogComponent.id},
-      name: ${catalogComponent.name},
-      label: ${catalogComponent.label},
-      type: ${catalogComponent.type},
-      template: ${catalogComponent.template},
-      componentClassName: ${catalogComponent.componentClassName},
-      xtype: ${catalogComponent.xtype},
-    }`;
-    return this.HstService.doPost(requestPayload, containerId, 'create', catalogComponent.id);
+  _createComponent(jQueryNodeCollection, container) {
+    let component = null;
+
+    this.hstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
+      switch (metaData[this.HST.TYPE]) {
+        case this.HST.TYPE_COMPONENT:
+          try {
+            component = new ComponentElement(commentDomElement, metaData, container, this.hstCommentsProcessorService);
+          } catch (exception) {
+            this.$log.debug(exception, metaData);
+          }
+          break;
+
+        default:
+          break;
+      }
+    });
+
+    if (!component) {
+      this.$log.error('Failed to create a new component');
+    }
+
+    return component;
   }
 }

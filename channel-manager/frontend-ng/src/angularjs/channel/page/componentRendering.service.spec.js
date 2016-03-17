@@ -18,16 +18,18 @@ describe('ComponentRenderingService', () => {
   'use strict';
 
   let PageStructureService;
-  let $httpBackend;
+  let RenderingService;
   let $log;
+  let $q;
 
   beforeEach(() => {
     module('hippo-cm.channel.page');
 
-    inject((_$httpBackend_, _$log_, _PageStructureService_) => {
-      $httpBackend = _$httpBackend_;
+    inject((_$httpBackend_, _$q_, _$log_, _PageStructureService_, _RenderingService_) => {
       $log = _$log_;
+      $q = _$q_;
       PageStructureService = _PageStructureService_;
+      RenderingService = _RenderingService_;
     });
   });
 
@@ -35,29 +37,18 @@ describe('ComponentRenderingService', () => {
     jasmine.getFixtures().load('channel/page/componentRendering.service.fixture.html');
   });
 
-  afterEach(() => {
-    $httpBackend.verifyNoOutstandingExpectation();
-    $httpBackend.verifyNoOutstandingRequest();
-  });
-
   it('renders a component', () => {
-    const component = jasmine.createSpyObj('component', ['getRenderUrl', 'getJQueryElement']);
+    const component = jasmine.createSpyObj('component', ['getJQueryElement']);
     const iframeElement = $j('#component');
 
-    component.getRenderUrl.and.returnValue('/test-render-url');
     component.getJQueryElement.and.returnValue(iframeElement);
     spyOn(PageStructureService, 'getComponent').and.returnValue(component);
-    spyOn(PageStructureService, 'replaceComponent');
-    $httpBackend.whenPOST('/test-render-url').respond('<div>component markup</div>');
+    spyOn(PageStructureService, 'updateComponent');
+    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when('{ data: <div>component markup</div> }'));
 
     window.CMS_TO_APP.publish('render-component', '1234', { foo: 1, bar: 'a:b' });
 
-    $httpBackend.expectPOST('/test-render-url', 'foo=1&bar=a%3Ab', {
-      Accept: 'text/html, */*',
-      'Content-Type': 'application/x-www-form-urlencoded',
-    });
-    $httpBackend.flush();
-
+    expect(RenderingService.fetchComponentMarkup).toHaveBeenCalledWith(component, { foo: 1, bar: 'a:b' });
     expect(PageStructureService.replaceComponent).toHaveBeenCalledWith(component, '<div>component markup</div>');
   });
 

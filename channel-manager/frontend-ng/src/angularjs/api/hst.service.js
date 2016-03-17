@@ -83,4 +83,29 @@ export class HstService {
     return apiUrl;
   }
 
+  /**
+   * Add a component to the specified container.
+   *
+   * @param catalogComponent
+   * @param containerId
+   * @returns {*} the request promise
+   */
+  addHstComponent(catalogComponent, containerId) {
+    const requestPayload = `data: {
+      parentId: ${containerId},
+      id: ${catalogComponent.id},
+      name: ${catalogComponent.name},
+      label: ${catalogComponent.label},
+      type: ${catalogComponent.type},
+      template: ${catalogComponent.template},
+      componentClassName: ${catalogComponent.componentClassName},
+      xtype: ${catalogComponent.xtype},
+      children: []
+    }`;
+    return this.doPost(requestPayload, containerId, 'create', catalogComponent.id);
+  }
+
+  removeHstComponent(containerId, componentId) {
+    return this.doGet(containerId, 'delete', componentId);
+  }
 }

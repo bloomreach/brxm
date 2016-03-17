@@ -16,13 +16,14 @@
 
 export class ComponentRenderingService {
 
-  constructor($http, $log, CmsService, PageStructureService) {
+  constructor($http, $log, CmsService, PageStructureService, RenderingService) {
     'ngInject';
 
     this.$http = $http;
     this.$log = $log;
     this.CmsService = CmsService;
     this.PageStructureService = PageStructureService;
+    this.RenderingService = RenderingService;
   }
 
   initialize() {
@@ -32,37 +33,11 @@ export class ComponentRenderingService {
   _renderComponent(componentId, propertiesMap) {
     const component = this.PageStructureService.getComponentById(componentId);
     if (component) {
-      this._fetchHtml(component, propertiesMap).then((response) => {
-        this.PageStructureService.replaceComponent(component, response.data);
+      this.RenderingService.fetchComponentMarkup(component, propertiesMap).then((response) => {
+        this.PageStructureService.updateComponent(component, response.data);
       });
     } else {
       this.$log.warn(`Cannot render unknown component '${componentId}'`);
     }
   }
-
-  _fetchHtml(component, propertiesMap) {
-    function toUrlEncodedFormData(json) {
-      const keyValuePairs = [];
-      for (const property in json) {
-        if (json.hasOwnProperty(property)) {
-          const key = encodeURIComponent(property);
-          const value = encodeURIComponent(json[property]);
-          keyValuePairs.push(`${key}=${value}`);
-        }
-      }
-      return keyValuePairs.join('&');
-    }
-
-    return this.$http({
-      method: 'POST',
-      url: component.getRenderUrl(),
-      headers: {
-        Accept: 'text/html, */*',
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      data: propertiesMap,
-      transformRequest: toUrlEncodedFormData,
-    });
-  }
-
 }

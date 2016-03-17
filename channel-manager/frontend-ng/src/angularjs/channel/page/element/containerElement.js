@@ -80,6 +80,17 @@ export class ContainerElement extends PageStructureElement {
     return this.items.find((item) => item.getJQueryElement('iframeBoxElement').is(iframeElement));
   }
 
+  replaceComponent(oldComponent, newComponent) {
+    const index = this.items.indexOf(oldComponent);
+    if (index !== -1) {
+      this.items[index] = newComponent;
+    }
+  }
+
+  hasComponent(component) {
+    return this.items.indexOf(component) !== -1;
+  }
+
   getHstRepresentation() {
     return {
       data: {

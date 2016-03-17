@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { RenderingService } from './rendering.service';
 import { ComponentRenderingService } from './componentRendering.service';
 import { PageMetaDataService } from './pageMetaData.service';
 import { PageStructureService } from './pageStructure.service';
@@ -21,6 +22,7 @@ import { run } from './page.run';
 
 export const channelPageModule = angular
   .module('hippo-cm.channel.page', [])
+  .service('RenderingService', RenderingService)
   .service('ComponentRenderingService', ComponentRenderingService)
   .service('PageMetaDataService', PageMetaDataService)
   .service('PageStructureService', PageStructureService)
