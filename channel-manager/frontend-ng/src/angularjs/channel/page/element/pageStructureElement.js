@@ -73,36 +73,21 @@ export class PageStructureElement {
   }
 
   /**
-   * Remove all children of the start comment's parent between the start and en comments (inclusive)
-   */
-  removeFromDOM() {
-    const startCommentNode = this._removeAllButCommentStart();
-    startCommentNode.parentNode.removeChild(startCommentNode);
-  }
-
-  /**
    * Replace container DOM elements with the given markup
    * @return the jQuery element refering to the inserted markup in the DOM document
    */
   replaceDOM(htmlFragment) {
-    const jQueryNodeCollection = $(htmlFragment);
-    this._removeAllButCommentStart();
-
-    this.getStartComment().replaceWith(jQueryNodeCollection);
-    return jQueryNodeCollection;
-  }
-
-  _removeAllButCommentStart() {
     const startCommentNode = this.getStartComment()[0];
     let node = this.getEndComment()[0];
-
     while (node && node !== startCommentNode) {
       const toBeRemoved = node;
       node = node.previousSibling;
       toBeRemoved.parentNode.removeChild(toBeRemoved);
     }
 
-    return startCommentNode;
+    const jQueryNodeCollection = $(htmlFragment);
+    this.getStartComment().replaceWith(jQueryNodeCollection);
+    return jQueryNodeCollection;
   }
 
   static isTransparentXType(metaData) {

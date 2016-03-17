@@ -94,18 +94,13 @@ export class PageStructureService {
     return component;
   }
 
-  getContainerByComponentId(id) {
-    const component = this.getComponentById(id);
-    return component ? component.getContainer() : null;
-  }
-
   /**
    * Remove the component identified by given Id
    * @param componentId
    * @returns {*} a promise with removed successfully component
    */
   removeComponentById(componentId) {
-    const component = this.getComponent(componentId);
+    const component = this.getComponentById(componentId);
 
     if (!component) {
       return this.$q.reject();
@@ -114,10 +109,8 @@ export class PageStructureService {
     // request back-end to remove component
     const container = component.getContainer();
     return this._removeHstComponent(container.getId(), componentId)
-      .then(() => {
-        component.removeFromDOM();
-        container.removeComponent(component);
-      }); // TODO handle error
+      .then(() => this.reloadContainer(container));
+      // TODO handle error
   }
 
   _removeHstComponent(containerId, componentId) {
