@@ -19,13 +19,16 @@
       <sv:value>hippo:handle</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+      <sv:value>hippo:named</sv:value>
       <sv:value>mix:referenceable</sv:value>
-      <sv:value>hippo:translated</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>fc853208-64d7-4b42-9b4e-e1315c93284b</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:discriminator" sv:type="String" sv:multiple="true"/>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>Hippopotamus_-_04.jpg</sv:value>
+    </sv:property>
     <sv:node sv:name="hippopotamus_-_04.jpg">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippogallery:imageset</sv:value>
@@ -87,30 +90,22 @@
         </sv:property>
       </sv:node>
     </sv:node>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value/>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Hippopotamus_-_04.jpg</sv:value>
-      </sv:property>
-    </sv:node>
   </sv:node>
   <sv:node sv:name="hippo_family.jpg">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:handle</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+      <sv:value>hippo:named</sv:value>
       <sv:value>mix:referenceable</sv:value>
-      <sv:value>hippo:translated</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>773ba574-23a9-4d5f-bcd9-bd00e6c91888</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:discriminator" sv:type="String" sv:multiple="true"/>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>Hippo_family.JPG</sv:value>
+    </sv:property>
     <sv:node sv:name="hippo_family.jpg">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippogallery:imageset</sv:value>
@@ -171,17 +166,6 @@
           <sv:value>image/jpeg</sv:value>
         </sv:property>
       </sv:node>
-    </sv:node>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value/>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Hippo_family.JPG</sv:value>
-      </sv:property>
     </sv:node>
   </sv:node>
 </sv:node>

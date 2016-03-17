@@ -1,0 +1,7 @@
+{"hippo:types": {
+  "contentblocksdemo:providercompounddocument": {"en": {"jcr:name": "Document with provider"}},
+  "contentblocksdemo:contentblocksdocument": {"en": {"jcr:name": "Document with list config"}},
+  "contentblocksdemo:imageblock": {"en": {"jcr:name": "Image Block"}},
+  "contentblocksdemo:textblock": {"en": {"jcr:name": "Text Block"}},
+  "contentblocksdemo:videoblock": {"en": {"jcr:name": "Video Block"}}
+}}
