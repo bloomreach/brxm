@@ -36,7 +36,7 @@
   </scm>
 
   <properties>
-    <hippo.cms.version>4.0.0-translations-psp1-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>4.0.0-SNAPSHOT</hippo.cms.version>
   </properties>
 
   <repositories>
