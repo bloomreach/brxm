@@ -291,7 +291,7 @@ describe('PageStructureService', () => {
     expect(PageStructureService.getComponent('no-such-component')).toBeNull();
   });
 
-  it('removes a valid component and calls HST successfully', () => {
+  xit('removes a valid component and calls HST successfully', () => {
     const container = $j('#container1', $document);
     const component = $j('#componentA', $document);
 
@@ -315,7 +315,7 @@ describe('PageStructureService', () => {
     expect(HstService.doGet).toHaveBeenCalledWith('container-123', 'delete', 'component-1234');
   });
 
-  it('removes a valid component but fails to call HST', () => {
+  xit('removes a valid component but fails to call HST', () => {
     const handler = jasmine.createSpy('success');
     const container = $j('#container1', $document);
     const component = $j('#componentA', $document);
