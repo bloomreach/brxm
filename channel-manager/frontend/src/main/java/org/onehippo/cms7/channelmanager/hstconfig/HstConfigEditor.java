@@ -25,9 +25,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.service.IRenderService;
-import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.AbstractRenderService;
 import org.hippoecm.hst.plugins.frontend.HstEditorPerspective;
@@ -119,17 +117,14 @@ public class HstConfigEditor extends ExtPanel {
         config.put("cluster.name", "hst-editor-navigator");
         config.put(EXTENSION_EDITOR, channelId + ".editor");
         config.put(EXTENSION_NAVIGATOR, navigator);
-        config.put(Perspective.TITLE, channelId);
         config.put("lockInheritedConfig", lockInheritedConfig);
         config.put("plugin.class", HstEditorPerspective.class.getName());
-        config.put(ITranslateService.TRANSLATOR_ID, TRANSLATOR_SERVICE_ID);
         config.put(AbstractRenderService.EXTENSIONS_ID, new String[]{EXTENSION_NAVIGATOR, EXTENSION_EDITOR});
         config.put(AbstractRenderService.WICKET_ID, HstConfigEditor.class.getName() + ".hst-editor");
 
         IPluginConfig clusterOptions = new JavaPluginConfig();
         clusterOptions.put(AbstractRenderService.MODEL_ID, model);
         clusterOptions.put(AbstractRenderService.WICKET_ID, navigator);
-        clusterOptions.put(ITranslateService.TRANSLATOR_ID, TRANSLATOR_SERVICE_ID);
         config.put("cluster.options", clusterOptions);
 
         IPluginConfig yuiConfig = new JavaPluginConfig();
