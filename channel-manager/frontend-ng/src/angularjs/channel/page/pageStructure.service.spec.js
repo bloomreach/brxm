@@ -300,65 +300,52 @@ describe('PageStructureService', () => {
   });
 
   it('removes a valid component but fails to call HST', () => {
-    const container = $j('#container1', $document);
-    const component = $j('#componentA', $document);
+    const container1 = $j('#container11', $document)[0];
+    const componentA = $j('#componentAA', $document)[0];
+    const comment1 = previousComment(container1);
+    const commentA = childComment(componentA);
 
-    PageStructureService.registerParsedElement(container[0].previousSibling, {
-      'HST-Type': 'CONTAINER_COMPONENT',
-      uuid: 'container-123',
-    });
-    PageStructureService.registerParsedElement(component[0].childNodes[0], {
-      'HST-Type': 'CONTAINER_ITEM_COMPONENT',
-      'HST-Label': 'Test Component',
-      uuid: 'component-1234',
-    });
+    PageStructureService.registerParsedElement(comment1, jsonify(comment1));
+    PageStructureService.registerParsedElement(commentA, jsonify(commentA));
 
     // mock the call to HST to be failed
-    spyOn(HstService, 'doGet').and.returnValue($q.reject());
+    spyOn(HstService, 'removeHstComponent').and.returnValue($q.reject());
 
-    PageStructureService.removeComponentById('component-1234');
+    PageStructureService.removeComponentById('aaaa');
     $rootScope.$digest();
 
-    expect(HstService.doGet).toHaveBeenCalledWith('container-123', 'delete', 'component-1234');
+    expect(HstService.removeHstComponent).toHaveBeenCalledWith('1111', 'aaaa');
   });
 
   it('removes an invalid component', () => {
-    const container = $j('#container1', $document);
-    const component = $j('#componentA', $document);
+    const container1 = $j('#container11', $document)[0];
+    const componentA = $j('#componentAA', $document)[0];
+    const comment1 = previousComment(container1);
+    const commentA = childComment(componentA);
 
-    PageStructureService.registerParsedElement(container[0].previousSibling, {
-      'HST-Type': 'CONTAINER_COMPONENT',
-      uuid: 'container-123',
-    });
-    PageStructureService.registerParsedElement(component[0].childNodes[0], {
-      'HST-Type': 'CONTAINER_ITEM_COMPONENT',
-      'HST-Label': 'Test Component',
-      uuid: 'component-1234',
-    });
-    spyOn(HstService, 'doGet').and.returnValue($q.when([]));
+    PageStructureService.registerParsedElement(comment1, jsonify(comment1));
+    PageStructureService.registerParsedElement(commentA, jsonify(commentA));
 
-    PageStructureService.removeComponentById('component-123');
+    spyOn(HstService, 'removeHstComponent').and.returnValue($q.when([]));
+
+    PageStructureService.removeComponentById('unknown-component');
     $rootScope.$digest();
 
-    expect(HstService.doGet).not.toHaveBeenCalled();
+    expect(HstService.removeHstComponent).not.toHaveBeenCalled();
   });
 
   it('returns a container by iframe element', () => {
-    const container1 = $j('#container1', $document);
-    const container2 = $j('#container2', $document);
+    const container1 = $j('#container11', $document)[0];
+    const container2 = $j('#container22', $document)[0];
+    const comment1 = previousComment(container1);
+    const comment2 = childComment(container2);
 
-    PageStructureService.registerParsedElement(container1[0].previousSibling, {
-      'HST-Type': 'CONTAINER_COMPONENT',
-      uuid: 'container-1',
-    });
-    PageStructureService.registerParsedElement(container2[0].previousSibling, {
-      'HST-Type': 'CONTAINER_COMPONENT',
-      uuid: 'container-2',
-    });
+    PageStructureService.registerParsedElement(comment1, jsonify(comment1));
+    PageStructureService.registerParsedElement(comment2, jsonify(comment2));
 
-    const container = PageStructureService.getContainerByIframeElement(container2[0]);
+    const container = PageStructureService.getContainerByIframeElement(container2);
     expect(container).not.toBeNull();
-    expect(container.getId()).toEqual('container-2');
+    expect(container.getId()).toEqual('2222');
   });
 
   it('triggers an event to show the component properties dialog', () => {
