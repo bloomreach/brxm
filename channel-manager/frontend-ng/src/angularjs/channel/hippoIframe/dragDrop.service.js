@@ -65,11 +65,12 @@ export class DragDropService {
       this.drake = this.iframe.dragula(iframeContainerElements, {
         ignoreInputTextSelection: false,
       });
-      this.drake.on('dragend', () => this._stopDrag());
+      this.drake.on('dragend', (el) => this._stopDrag(el));
       this.drake.on('drop', this._onDrop.bind(this));
 
       this._onComponentClick(containers, (component) => {
         this.dragging = false;
+        component.getJQueryElement('iframe').removeClass('qa-dragula-component');
         this.PageStructureService.showComponentProperties(component);
       });
     });
@@ -108,7 +109,8 @@ export class DragDropService {
     return this.dragging;
   }
 
-  _stopDrag() {
+  _stopDrag(element) {
+    $(element).removeClass('qa-dragula-component');
     this.dragging = false;
     this.$rootScope.$digest();
   }
@@ -143,6 +145,7 @@ export class DragDropService {
     });
     const iframeElement = structureElement.getJQueryElement('iframe');
     iframeElement[0].dispatchEvent(iframeEvent);
+    iframeElement.addClass('qa-dragula-component');
   }
 
   _shiftCoordinates($event) {
