@@ -294,6 +294,7 @@ repository/src/main/resources/cms-pickers-documents-only.xml -text
 repository/src/main/resources/cms-services-surf.xml -text
 repository/src/main/resources/document-url-service.xml -text
 repository/src/main/resources/hippoecm-extension.xml eol=lf
+repository/src/main/resources/socialsharing-translations.json -text
 repository/src/main/resources/socialsharing-workflowmenu.xml -text
 repository/src/main/resources/workflow-channelactions.xml -text
 test/pom.xml -text
