@@ -76,21 +76,6 @@ export class ContainerElement extends PageStructureElement {
     return this.items.find((item) => item.getId() === componentId);
   }
 
-  /**
-   * Remove the component identified by given Id from its container
-   * @param componentId
-   * @returns {*} the removed component
-   */
-  removeComponent(componentId) {
-    const component = this.getComponent(componentId);
-    if (component) {
-      this.items.splice(this.items.indexOf(component), 1);
-      return component;
-    }
-
-    return null;
-  }
-
   getComponentByIframeElement(iframeElement) {
     return this.items.find((item) => item.getJQueryElement('iframe').is(iframeElement));
   }
