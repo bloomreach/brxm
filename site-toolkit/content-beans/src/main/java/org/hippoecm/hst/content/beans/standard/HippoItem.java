@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HippoItem implements HippoBean {
- 
+
     private static Logger log = LoggerFactory.getLogger(HippoItem.class);
 
     protected transient Node node;
@@ -47,6 +47,7 @@ public class HippoItem implements HippoBean {
     protected String path;
     protected String name;
     protected String localizedName;
+    protected String displayName;
     protected JCRValueProvider valueProvider;
     protected transient ObjectConverter objectConverter;
     protected boolean detached = false;
@@ -82,7 +83,7 @@ public class HippoItem implements HippoBean {
     public String getIdentifier() {
         return getCanonicalUUID();
     }
-    
+
     public void setIdentifier(String identifier) {
         this.canonicalUUID = identifier;
     }
@@ -103,16 +104,31 @@ public class HippoItem implements HippoBean {
     }
 
     @IndexField(ignoreInCompound = true)
-    public String getLocalizedName() {
-        if (localizedName != null) {
-            return localizedName;
+    @Override
+    public String getDisplayName() {
+        if (displayName == null && valueProvider != null) {
+            displayName = valueProvider.getDisplayName();
         }
-        if (valueProvider != null) {
-            localizedName = valueProvider.getLocalizedName();
-        }
-        return localizedName;
+        return displayName;
     }
 
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    /**
+     * @deprecated use {@link #getDisplayName()} instead. Deprecated since 4.0.0
+     */
+    @Deprecated
+    @IndexField(ignoreInCompound = true)
+    public String getLocalizedName() {
+        return getDisplayName();
+    }
+
+    /**
+     * @deprecated use {@link #setDisplayName(String)} instead. Deprecated since 4.0.0
+     */
+    @Deprecated
     public void setLocalizedName(String localizedName) {
         this.localizedName = localizedName;
     }
@@ -137,7 +153,7 @@ public class HippoItem implements HippoBean {
         if (comparePath != null) {
             return comparePath;
         }
-        HippoNode node = (HippoNode) getNode();
+        HippoNode node = (HippoNode)getNode();
         if (node == null) {
             throw new IllegalStateException("Cannot get comparePath if jcr node is null");
         }
@@ -155,7 +171,7 @@ public class HippoItem implements HippoBean {
         }
         return comparePath;
     }
-    
+
     public void setComparePath(String comparePath) {
         this.comparePath = comparePath;
     }
@@ -178,7 +194,8 @@ public class HippoItem implements HippoBean {
     }
 
     /**
-     * values in the map can be of type String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
+     * values in the map can be of type String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or
+     * Calendar, Calendar[]
      * <br/>
      * {@inheritDoc}
      */
@@ -194,22 +211,22 @@ public class HippoItem implements HippoBean {
 
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String name) {
-        return (T) getProperties().get(name);
+        return (T)getProperties().get(name);
     }
 
 
     @Override
     public <T> T getProperty(String name, T defaultValue) {
-        
+
         @SuppressWarnings("unchecked")
-        T val = (T) getProperties().get(name);
-        if(val == null) {
+        T val = (T)getProperties().get(name);
+        if (val == null) {
             return defaultValue;
         }
         return val;
     }
 
-    
+
     /**
      * @see {@link #getProperties()}
      * @see org.hippoecm.hst.content.beans.standard.HippoBean#getProperty()
@@ -226,7 +243,7 @@ public class HippoItem implements HippoBean {
                 log.debug("Cannot get bean for relpath {} for current bean {}.", relPath, this.getPath());
                 return null;
             }
-            return (T) o;
+            return (T)o;
         } catch (ObjectBeanManagerException e) {
             log.info("Cannot get Object at relPath '{}' for '{}'", relPath, this.getPath());
         }
@@ -246,7 +263,7 @@ public class HippoItem implements HippoBean {
                         beanMappingClass.getName(), o.getClass().getName());
                 return null;
             }
-            return (T) o;
+            return (T)o;
         } catch (ObjectBeanManagerException e) {
             log.info("Cannot get Object at relPath '{}' for '{}'", relPath, this.getPath());
         }
@@ -264,17 +281,17 @@ public class HippoItem implements HippoBean {
                 if (child == null) {
                     continue;
                 }
-               try {
+                try {
                     Object bean = this.objectConverter.getObject(child);
                     if (bean != null) {
                         if (beanMappingClass != null) {
-                            if(beanMappingClass.isAssignableFrom(bean.getClass())) {
-                                childBeans.add((T) bean); 
+                            if (beanMappingClass.isAssignableFrom(bean.getClass())) {
+                                childBeans.add((T)bean);
                             } else {
                                 log.debug("Skipping bean of type '{}' because not of beanMappingClass '{}'", bean.getClass().getName(), beanMappingClass.getName());
                             }
                         } else {
-                            childBeans.add((T) bean); 
+                            childBeans.add((T)bean);
                         }
                     }
                 } catch (ObjectBeanManagerException e) {
@@ -289,12 +306,11 @@ public class HippoItem implements HippoBean {
     }
 
 
-    
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public <T> List<T> getChildBeansByName(String childNodeName) {
         return getChildBeansByName(childNodeName, (Class)null);
     }
-    
+
     @SuppressWarnings("unchecked")
     public <T extends HippoBean> List<T> getChildBeansByName(String childNodeName, Class<T> beanMappingClass) {
         List<T> childBeans = new ArrayList<T>();
@@ -310,13 +326,13 @@ public class HippoItem implements HippoBean {
                     Object bean = this.objectConverter.getObject(child);
                     if (bean != null) {
                         if (beanMappingClass != null) {
-                            if(beanMappingClass.isAssignableFrom(bean.getClass())) {
-                                childBeans.add((T) bean);
+                            if (beanMappingClass.isAssignableFrom(bean.getClass())) {
+                                childBeans.add((T)bean);
                             } else {
                                 log.debug("Skipping bean of type '{}' because not of beanMappingClass '{}'", bean.getClass().getName(), beanMappingClass.getName());
                             }
                         } else {
-                            childBeans.add((T) bean);
+                            childBeans.add((T)bean);
                         }
                     }
                 } catch (ObjectBeanManagerException e) {
@@ -330,7 +346,6 @@ public class HippoItem implements HippoBean {
         return childBeans;
     }
 
-    
 
     @SuppressWarnings("unchecked")
     public <T> List<T> getChildBeans(String jcrPrimaryNodeType) {
@@ -338,7 +353,7 @@ public class HippoItem implements HippoBean {
         Class annotatedClass = this.objectConverter.getAnnotatedClassFor(jcrPrimaryNodeType);
         if (annotatedClass == null) {
             log.info("Cannot get ChildBeans for jcrPrimaryNodeType '{}' because there is no annotated class for this node type. Return null",
-                      jcrPrimaryNodeType);
+                    jcrPrimaryNodeType);
             return new ArrayList<T>();
         }
         if (this.node == null) {
@@ -367,7 +382,7 @@ public class HippoItem implements HippoBean {
                     }
                 } catch (ObjectBeanManagerException e) {
                     log.info("Skipping bean: {}", e);
-                } 
+                }
 
             }
         } catch (RepositoryException e) {
@@ -378,7 +393,7 @@ public class HippoItem implements HippoBean {
 
         return childBeans;
     }
-  
+
     @SuppressWarnings("unchecked")
     public <T extends HippoBean> T getLinkedBean(String relPath, Class<T> beanMappingClass) {
         HippoMirrorBean mirror = getBean(relPath, HippoMirrorBean.class);
@@ -394,7 +409,7 @@ public class HippoItem implements HippoBean {
                     bean.getClass().getName());
             return null;
         }
-        return (T) bean;
+        return (T)bean;
     }
 
     @SuppressWarnings("unchecked")
@@ -402,23 +417,23 @@ public class HippoItem implements HippoBean {
         List<T> childBeans = new ArrayList<T>();
         String relFromNodePath = null;
         String nodeName = relPath;
-        if(relPath.contains("/")) {
+        if (relPath.contains("/")) {
             relFromNodePath = relPath.substring(0, relPath.lastIndexOf("/"));
-            nodeName = relPath.substring(relPath.lastIndexOf("/")+1);
+            nodeName = relPath.substring(relPath.lastIndexOf("/") + 1);
         }
         Node relNode = node;
-        if(relFromNodePath != null) {
+        if (relFromNodePath != null) {
             try {
                 relNode = relNode.getNode(relFromNodePath);
             } catch (PathNotFoundException e) {
                 log.debug("did not find relPath '{}' at '{}'. Return empty list", relPath, this.getPath());
                 return childBeans;
             } catch (RepositoryException e) {
-                log.warn("RepositoryException" , e);
+                log.warn("RepositoryException", e);
                 return childBeans;
             }
         }
-        
+
         try {
             NodeIterator nodes = relNode.getNodes(nodeName);
             while (nodes.hasNext()) {
@@ -429,25 +444,25 @@ public class HippoItem implements HippoBean {
                 Object bean;
                 try {
                     bean = this.objectConverter.getObject(child);
-                    if(bean instanceof HippoMirrorBean) {
+                    if (bean instanceof HippoMirrorBean) {
                         HippoBean linked = ((HippoMirrorBean)bean).getReferencedBean();
                         if (linked != null && beanMappingClass.isAssignableFrom(linked.getClass())) {
-                            childBeans.add((T) linked);
+                            childBeans.add((T)linked);
                         }
                     }
                 } catch (ObjectBeanManagerException e) {
-                    if(log.isDebugEnabled()) {
+                    if (log.isDebugEnabled()) {
                         log.info("Could not map jcr node to bean: '{}'", e);
                     } else {
                         log.info("Could not map jcr node to bean: '{}'", e.getMessage());
                     }
                 }
-                
+
             }
         } catch (PathNotFoundException e) {
             log.debug("did not find relPath '{}' at '{}'. Return empty list", relPath, this.getPath());
         } catch (RepositoryException e) {
-            log.warn("RepositoryException" , e);
+            log.warn("RepositoryException", e);
         }
         return childBeans;
     }
@@ -468,8 +483,8 @@ public class HippoItem implements HippoBean {
                         beanMappingClass.getName(), bean.getClass().getName());
                 return null;
             }
-            return (T) bean;
-        } catch (ObjectBeanManagerException|RepositoryException e) {
+            return (T)bean;
+        } catch (ObjectBeanManagerException | RepositoryException e) {
             log.debug("Could not get bean for uuid '{}'", uuid, e);
         }
         return null;
@@ -491,11 +506,11 @@ public class HippoItem implements HippoBean {
                 return null;
             }
             if (o instanceof HippoBean) {
-                return (HippoBean) o;
+                return (HippoBean)o;
             } else {
                 log.info("Bean is not an instance of HippoBean but '{}'. Return null : ", o.getClass().getName());
             }
-        } catch (ObjectBeanManagerException|RepositoryException e) {
+        } catch (ObjectBeanManagerException | RepositoryException e) {
             log.warn("Failed to get parent object for '{}'", this.getPath());
         }
         return null;
@@ -503,9 +518,9 @@ public class HippoItem implements HippoBean {
 
     @Override
     public <T extends HippoBean> T getCanonicalBean() {
-        if(this.getNode() == null) {
+        if (this.getNode() == null) {
             log.info("Cannot get canonical bean for detached bean. Return just the current bean instance");
-            return (T) this;
+            return (T)this;
         }
         try {
             HippoNode hn = (HippoNode)this.getNode();
@@ -514,14 +529,14 @@ public class HippoItem implements HippoBean {
                 return (T)this;
             }
             Node canonical = hn.getCanonicalNode();
-            if(canonical == null) {
+            if (canonical == null) {
                 log.debug("Cannot get canonical for a node that is virtual only: '{}'. Return null", this.getPath());
                 return null;
             }
             Object o = this.objectConverter.getObject(canonical);
             if (o instanceof HippoBean) {
-                log.debug("Getting canonical bean succeeded: translated from '{}' --> '{}'", this.getPath(), ((HippoBean) o).getPath());
-                return (T) o;
+                log.debug("Getting canonical bean succeeded: translated from '{}' --> '{}'", this.getPath(), ((HippoBean)o).getPath());
+                return (T)o;
             } else {
                 log.info("Bean is not an instance of HippoBean. Return null : ", o);
             }
@@ -538,8 +553,8 @@ public class HippoItem implements HippoBean {
             log.info("Cannot compare the HippoBeans as one as a path that is null. Return false.");
             return false;
         }
-        if (compare.getPath().startsWith(this.getPath()+"/")) {
-           return true;
+        if (compare.getPath().startsWith(this.getPath() + "/")) {
+            return true;
         }
         return false;
     }
@@ -588,16 +603,16 @@ public class HippoItem implements HippoBean {
 
     @SuppressWarnings("unchecked")
     public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslations() {
-        if(!availableTranslationsInitialized) {
+        if (!availableTranslationsInitialized) {
             availableTranslationsInitialized = true;
             availableTranslations = new AvailableTranslations<T>(getNode(), getObjectConverter());
         }
         return availableTranslations;
     }
-    
-    
+
+
     public boolean equalCompare(Object compare) {
-        return (Boolean) new ComparatorMap().get(compare);
+        return (Boolean)new ComparatorMap().get(compare);
     }
 
     public Map<Object, Object> getEqualComparator() {
@@ -609,7 +624,7 @@ public class HippoItem implements HippoBean {
             if (!(compare instanceof HippoItem)) {
                 return false;
             }
-            HippoItem compareItem = (HippoItem) compare;
+            HippoItem compareItem = (HippoItem)compare;
             try {
                 return compareItem.getComparePath().equals(HippoItem.this.getComparePath());
             } catch (IllegalStateException e) {
@@ -622,8 +637,8 @@ public class HippoItem implements HippoBean {
     }
 
     /**
-     *  The standard HippoItem has a natural ordering based on node name.
-     *  if you need ordering on a different basis, override this method
+     * The standard HippoItem has a natural ordering based on node name.
+     * if you need ordering on a different basis, override this method
      */
 
     public int compareTo(HippoBean hippoBean) {
@@ -637,14 +652,14 @@ public class HippoItem implements HippoBean {
             throw new IllegalStateException("Cannot compare when getName is null");
         }
         int val = this.getName().compareTo(hippoBean.getName());
-        if(val != 0) {
+        if (val != 0) {
             return val;
         }
 
         if (this.getPath() == null && hippoBean.getPath() == null) {
             return 0;
         }
-        
+
         // return the compareTo of the backing path : this to be in sync with the equals
         if (this.getPath() == null) {
             return 1;
@@ -667,14 +682,14 @@ public class HippoItem implements HippoBean {
         if (this.getPath() == null) {
             return false;
         }
-        if(obj instanceof HippoBean) {
+        if (obj instanceof HippoBean) {
             return this.getPath().equals(((HippoBean)obj).getPath());
         }
         return false;
     }
 
     /**
-     * Detach the jcr Node. Already loaded properties and variables are still available. 
+     * Detach the jcr Node. Already loaded properties and variables are still available.
      */
     public void detach() {
         this.valueProvider.detach();
@@ -684,10 +699,11 @@ public class HippoItem implements HippoBean {
 
     /**
      * Try to attach the jcr Node again with this session.
+     *
      * @param session
      */
     public void attach(Session session) {
-        if(getPath() == null) {
+        if (getPath() == null) {
             log.error("Unable to attach HippoBean again since getPath() is null");
             return;
         }
@@ -695,7 +711,7 @@ public class HippoItem implements HippoBean {
             if (session.itemExists(getPath())) {
                 Item item = session.getItem(getPath());
                 if (item instanceof Node) {
-                    this.valueProvider = new JCRValueProviderImpl((Node) item);
+                    this.valueProvider = new JCRValueProviderImpl((Node)item);
                 } else {
                     log.info("Cannot attach an item that is not a jcr property: '{}'", getPath());
                 }

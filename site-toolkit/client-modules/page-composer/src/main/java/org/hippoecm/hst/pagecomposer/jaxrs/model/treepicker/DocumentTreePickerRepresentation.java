@@ -163,7 +163,7 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
         setPickerType(PickerType.DOCUMENTS.getName());
         setId(node.getIdentifier());
         setNodeName(node.getName());
-        setDisplayName(((HippoNode)node).getLocalizedName());
+        setDisplayName(((HippoNode)node).getDisplayName());
         setNodePath(node.getPath());
 
         if (getNodePath().equals(selectedPath)) {

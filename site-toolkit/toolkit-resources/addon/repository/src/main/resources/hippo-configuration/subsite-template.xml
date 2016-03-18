@@ -18,9 +18,7 @@
     <sv:value>hippostd:templatequery</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>hippo:translated</sv:value>
     <sv:value>hipposys:implementation</sv:value>
-    <sv:value>hippostd:translated</sv:value>
   </sv:property>
   <sv:property sv:name="hippostd:modify" sv:type="String">
     <sv:value>./_name</sv:value>
@@ -40,34 +38,6 @@
   <sv:node sv:name="hippostd:templates">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templates</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>en</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>new subsite</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:class" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>nl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>nieuwe subsite</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:class" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>

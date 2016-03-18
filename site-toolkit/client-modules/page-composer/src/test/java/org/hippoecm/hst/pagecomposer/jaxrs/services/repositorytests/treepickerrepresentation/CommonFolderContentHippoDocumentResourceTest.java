@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.treepickerr
 import javax.jcr.Node;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NAME;
+import static org.hippoecm.repository.api.HippoNodeType.NT_NAMED;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 public class CommonFolderContentHippoDocumentResourceTest extends AbstractTestTreePickerRepresentation {
@@ -73,23 +73,19 @@ public class CommonFolderContentHippoDocumentResourceTest extends AbstractTestTr
 
 
     @Test
-    public void assert_translation_node_is_skipped_but_used_in_displayName() throws Exception {
+    public void assert_translation_is_used_in_displayName() throws Exception {
         try {
             final Node commonFolder = session.getNodeByIdentifier(getCommonFolderConfigIdentifier());
-            commonFolder.addMixin(HippoNodeType.NT_TRANSLATED);
-            final Node translation = commonFolder.addNode("hippo:translation", HippoNodeType.NT_TRANSLATION);
-            translation.setProperty(HippoNodeType.HIPPO_LANGUAGE, "en");
-            translation.setProperty(HippoNodeType.HIPPO_MESSAGE, "Common Folder");
+            commonFolder.addMixin(NT_NAMED);
+            commonFolder.setProperty(HIPPO_NAME, "Common Folder");
             session.save();
             Thread.sleep(100);
             AbstractTreePickerRepresentation representation = createRootContentRepresentation("", getCommonFolderConfigIdentifier());
             assertEquals("Common Folder", representation.getDisplayName());
-            // translation node does not result in extra child representation
             assertEquals(2, representation.getItems().size());
         } finally {
             final Node commonFolder = session.getNodeByIdentifier(getCommonFolderConfigIdentifier());
-            commonFolder.removeMixin(HippoNodeType.NT_TRANSLATED);
-            commonFolder.getNode("hippo:translation").remove();
+            commonFolder.removeMixin(NT_NAMED);
             session.save();
         }
     }

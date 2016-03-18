@@ -41,7 +41,7 @@ public class HippoHandleVisitor extends AbstractNodeVisitor {
         response.put("name", nodeName);
 
         if (node instanceof HippoNode) {
-            response.put("displayName", ((HippoNode)node).getLocalizedName());
+            response.put("displayName", ((HippoNode)node).getDisplayName());
         }
 
         final Node variant = node.getNode(nodeName);
