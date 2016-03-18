@@ -14,50 +14,30 @@
   limitations under the License.
   -->
 
-<!-- placeholder comment -->
-<div id="container1"></div>
-<!-- placeholder comment -->
-<div id="container2"></div>
-<div id="container-transparent">
-  <!-- placeholder comment -->
-</div>
-<div id="componentA">
-  <!-- placeholder comment -->
-</div>
-<div id="componentB">
-  <!-- placeholder comment -->
-</div>
-<!-- placeholder comment -->
-<div id="component-transparent"></div>
-<!-- { "HST-End": "true", "uuid": "test-uuid" } -->
-<div id="component-transparent-empty"></div>
-<!-- placeholder comment -->
-<!-- { "HST-End": "true", "uuid": "test-uuid" } -->
-
-<!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "container 1", "HST-XType": "HST.vBox", "uuid": "1111" } -->
-<div id="container11">
-  <div id="componentAA">
+<!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox" } -->
+<div id="container-vbox">
+  <div id="componentA">
     <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
-    <p>Some markup in component A</p>
+    <p id="test">Some markup in component A</p>
     <!-- { "HST-End": "true", "uuid": "aaaa" } -->
   </div>
-  <div id="componentBB">
+  <div id="componentB">
     <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component B", "uuid": "bbbb" } -->
     <p>Some markup in component B</p>
     <!-- { "HST-End": "true", "uuid": "bbbb" } -->
   </div>
 </div>
-<!-- { "HST-End": "true", "uuid": "1111" } -->
+<!-- { "HST-End": "true", "uuid": "container-vbox" } -->
 
-<div id="container22">
-  <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "container 2", "HST-XType": "HST.Transparent", "uuid": "2222" } -->
-  <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component C", "uuid": "cccc" } -->
-  <!-- Component C is empty -->
-  <!-- { "HST-End": "true", "uuid": "cccc" } -->
-  <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component D", "uuid": "dddd" } -->
-  <div id="componentDD">
+<div id="container-no-markup">
+  <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "NoMarkup container", "HST-XType": "HST.Transparent", "uuid": "container-no-markup" } -->
+  <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "Empty component in NoMarkup container", "uuid": "empty-component-no-markup" } -->
+  <!-- Component is empty -->
+  <!-- { "HST-End": "true", "uuid": "empty-component-no-markup" } -->
+  <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "Component in NoMarkup container", "uuid": "component-no-markup" } -->
+  <div id="component-no-markup">
     <p>Some markup in component D</p>
   </div>
-  <!-- { "HST-End": "true", "uuid": "dddd" } -->
-  <!-- { "HST-End": "true", "uuid": "2222" } -->
+  <!-- { "HST-End": "true", "uuid": "component-no-markup" } -->
+  <!-- { "HST-End": "true", "uuid": "container-no-markup" } -->
 </div>

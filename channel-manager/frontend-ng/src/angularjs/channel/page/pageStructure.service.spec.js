@@ -64,8 +64,6 @@ describe('PageStructureService', () => {
     expect($log.warn).toHaveBeenCalled();
   });
 
-  const jsonify = (element) => JSON.parse(element.data);
-
   const childComment = (element) => {
     var children = element.childNodes;
     for (let i = 0; i < children.length; i++) {
@@ -100,42 +98,71 @@ describe('PageStructureService', () => {
     return null;
   };
 
-  it('registers containers in the correct order', () => {
-    const container1 = $j('#container11', $document)[0];
-    const container2 = $j('#container22', $document)[0];
-    const comment1 = previousComment(container1);
-    const comment2 = childComment(container2);
+  const registerParsedElement = (commentElement) => {
+    PageStructureService.registerParsedElement(commentElement, JSON.parse(commentElement.data));
+  };
 
-    PageStructureService.registerParsedElement(comment1, jsonify(comment1));
-    PageStructureService.registerParsedElement(comment2, jsonify(comment2));
+  const registerVBoxContainer = () => {
+    const container = $j('#container-vbox', $document)[0];
+
+    registerParsedElement(previousComment(container));
+
+    return container;
+  };
+
+  const registerVBoxComponent = (id) => {
+    const component = $j(`#${id}`, $document)[0];
+
+    registerParsedElement(childComment(component));
+
+    return component;
+  };
+
+  const registerNoMarkupContainer = () => {
+    const container = $j('#container-no-markup', $document)[0];
+
+    registerParsedElement(childComment(container));
+
+    return container;
+  };
+
+  const registerNoMarkupComponent = () => {
+    const component = $j('#component-no-markup', $document)[0];
+
+    registerParsedElement(previousComment(component));
+
+    return component;
+  };
+
+  const registerEmptyNoMarkupComponent = () => {
+    registerParsedElement(nextComment(childComment($j('#container-no-markup', $document)[0])));
+  };
+
+  it('registers containers in the correct order', () => {
+    const container1 = registerVBoxContainer();
+    const container2 = registerNoMarkupContainer();
 
     expect(PageStructureService.containers.length).toEqual(2);
 
     expect(PageStructureService.containers[0].type).toEqual('container');
     expect(PageStructureService.containers[0].isEmpty()).toEqual(true);
     expect(PageStructureService.containers[0].getComponents()).toEqual([]);
-    expect(PageStructureService.containers[0].getJQueryElement('iframeBoxElement')[0]).toEqual(container1);
-    expect(PageStructureService.containers[0].getLabel()).toEqual('container 1');
+    expect(PageStructureService.containers[0].getBoxElement()[0]).toEqual(container1);
+    expect(PageStructureService.containers[0].getLabel()).toEqual('vBox container');
 
     expect(PageStructureService.containers[1].type).toEqual('container');
     expect(PageStructureService.containers[1].isEmpty()).toEqual(true);
     expect(PageStructureService.containers[1].getComponents()).toEqual([]);
-    expect(PageStructureService.containers[1].getJQueryElement('iframeBoxElement')[0]).toEqual(container2);
-    expect(PageStructureService.containers[1].getLabel()).toEqual('container 2');
+    expect(PageStructureService.containers[1].getBoxElement()[0]).toEqual(container2);
+    expect(PageStructureService.containers[1].getLabel()).toEqual('NoMarkup container');
   });
 
   it('adds components to the most recently registered container', () => {
-    const container1 = $j('#container11', $document)[0];
-    const componentA = $j('#componentAA', $document)[0];
-    const componentB = $j('#componentBB', $document)[0];
-    const comment1 = previousComment(container1);
-    const commentA = childComment(componentA);
-    const commentB = childComment(componentB);
+    registerVBoxContainer();
+    registerVBoxContainer();
 
-    PageStructureService.registerParsedElement(comment1, jsonify(comment1));
-    PageStructureService.registerParsedElement(comment1, jsonify(comment1));
-    PageStructureService.registerParsedElement(commentA, jsonify(commentA));
-    PageStructureService.registerParsedElement(commentB, jsonify(commentB));
+    const componentA = registerVBoxComponent('componentA');
+    const componentB = registerVBoxComponent('componentB');
 
     expect(PageStructureService.containers.length).toEqual(2);
     expect(PageStructureService.containers[0].isEmpty()).toEqual(true);
@@ -143,21 +170,18 @@ describe('PageStructureService', () => {
     expect(PageStructureService.containers[1].getComponents().length).toEqual(2);
 
     expect(PageStructureService.containers[1].getComponents()[0].type).toEqual('component');
-    expect(PageStructureService.containers[1].getComponents()[0].getJQueryElement('iframeBoxElement')[0]).toBe(componentA);
+    expect(PageStructureService.containers[1].getComponents()[0].getBoxElement()[0]).toBe(componentA);
     expect(PageStructureService.containers[1].getComponents()[0].getLabel()).toEqual('component A');
     expect(PageStructureService.containers[1].getComponents()[0].container).toEqual(PageStructureService.containers[1]);
 
     expect(PageStructureService.containers[1].getComponents()[1].type).toEqual('component');
-    expect(PageStructureService.containers[1].getComponents()[1].getJQueryElement('iframeBoxElement')[0]).toBe(componentB);
+    expect(PageStructureService.containers[1].getComponents()[1].getBoxElement()[0]).toBe(componentB);
     expect(PageStructureService.containers[1].getComponents()[1].getLabel()).toEqual('component B');
     expect(PageStructureService.containers[1].getComponents()[1].container).toEqual(PageStructureService.containers[1]);
   });
 
   it('clears the page structure', () => {
-    const container = $j('#container11', $document)[0];
-    const comment = previousComment(container);
-
-    PageStructureService.registerParsedElement(comment, jsonify(comment));
+    registerVBoxContainer();
 
     expect(PageStructureService.containers.length).toEqual(1);
 
@@ -167,54 +191,41 @@ describe('PageStructureService', () => {
   });
 
   it('registers additional elements', () => {
-    const container1 = $j('#container11', $document)[0];
-    const container2 = $j('#container22', $document);
-    const comment1 = previousComment(container1);
+    registerVBoxContainer();
 
-    PageStructureService.registerParsedElement(comment1, jsonify(comment1));
-    PageStructureService.containers[0].setJQueryElement('test', container2);
+    const testElement = $j('#test', $document);
+    PageStructureService.containers[0].setJQueryElement('test', testElement);
 
-    expect(PageStructureService.containers[0].getJQueryElement('test')).toEqual(container2);
+    expect(PageStructureService.containers[0].getJQueryElement('test')).toEqual(testElement);
   });
 
   it('finds the DOM element of a transparent container as parent of the comment', () => {
-    const container = $j('#container22', $document)[0];
-    const comment = childComment(container);
-
-    PageStructureService.registerParsedElement(comment, jsonify(comment));
+    const container = registerNoMarkupContainer();
 
     expect(PageStructureService.containers.length).toEqual(1);
-    expect(PageStructureService.containers[0].getJQueryElement('iframeBoxElement')[0]).toBe(container);
+    expect(PageStructureService.containers[0].getBoxElement()[0]).toBe(container);
   });
 
   it('finds the DOM element of a component of a transparent container as next sibling of the comment', () => {
-    const container2 = $j('#container22', $document)[0];
-    const componentD = $j('#componentDD', $document)[0];
-    const comment2 = childComment(container2);
-    const commentD = previousComment(componentD);
+    registerNoMarkupContainer();
 
-    PageStructureService.registerParsedElement(comment2, jsonify(comment2));
-    PageStructureService.registerParsedElement(commentD, jsonify(commentD));
+    const component = registerNoMarkupComponent();
 
     expect(PageStructureService.containers.length).toEqual(1);
     expect(PageStructureService.containers[0].isEmpty()).toEqual(false);
     expect(PageStructureService.containers[0].getComponents().length).toEqual(1);
-    expect(PageStructureService.containers[0].getComponents()[0].getJQueryElement('iframeBoxElement')[0]).toBe(componentD);
+    expect(PageStructureService.containers[0].getComponents()[0].getBoxElement()[0]).toBe(component);
     expect(PageStructureService.containers[0].getComponents()[0].hasNoIFrameDomElement()).not.toEqual(true);
   });
 
   it('registers no iframe box element in case of a transparent, empty component', () => {
-    const container2 = $j('#container22', $document)[0];
-    const comment2 = childComment(container2);
-    const commentC = nextComment(comment2);
-
-    PageStructureService.registerParsedElement(comment2, jsonify(comment2));
-    PageStructureService.registerParsedElement(commentC, jsonify(commentC));
+    registerNoMarkupContainer();
+    registerEmptyNoMarkupComponent();
 
     expect(PageStructureService.containers.length).toEqual(1);
     expect(PageStructureService.containers[0].isEmpty()).toEqual(false);
     expect(PageStructureService.containers[0].getComponents().length).toEqual(1);
-    expect(PageStructureService.containers[0].getComponents()[0].getJQueryElement('iframeBoxElement').length).toEqual(0);
+    expect(PageStructureService.containers[0].getComponents()[0].getBoxElement().length).toEqual(0);
   });
 
   it('parses the page meta-data and adds it to the PageMetaDataService', () => {
@@ -261,16 +272,12 @@ describe('PageStructureService', () => {
   });
 
   it('returns a known component', () => {
-    const container1 = $j('#container11', $document)[0];
-    const componentA = $j('#componentAA', $document)[0];
-    const comment1 = previousComment(container1);
-    const commentA = childComment(componentA);
-
-    PageStructureService.registerParsedElement(comment1, jsonify(comment1));
-    PageStructureService.registerParsedElement(comment1, jsonify(comment1));
-    PageStructureService.registerParsedElement(commentA, jsonify(commentA));
+    registerVBoxContainer();
+    registerVBoxContainer();
+    registerVBoxComponent('componentA');
 
     const pageComponent = PageStructureService.getComponentById('aaaa');
+
     expect(pageComponent).not.toBeNull();
     expect(pageComponent.getId()).toEqual('aaaa');
     expect(pageComponent.getLabel()).toEqual('component A');
@@ -281,13 +288,8 @@ describe('PageStructureService', () => {
   });
 
   it('removes a valid component and calls HST successfully', () => {
-    const container1 = $j('#container11', $document)[0];
-    const componentA = $j('#componentAA', $document)[0];
-    const comment1 = previousComment(container1);
-    const commentA = childComment(componentA);
-
-    PageStructureService.registerParsedElement(comment1, jsonify(comment1));
-    PageStructureService.registerParsedElement(commentA, jsonify(commentA));
+    registerVBoxContainer();
+    registerVBoxComponent('componentA');
 
     spyOn(HstService, 'removeHstComponent').and.returnValue($q.when([]));
     spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(''));
@@ -296,17 +298,12 @@ describe('PageStructureService', () => {
 
     $rootScope.$digest();
 
-    expect(HstService.removeHstComponent).toHaveBeenCalledWith('1111', 'aaaa');
+    expect(HstService.removeHstComponent).toHaveBeenCalledWith('container-vbox', 'aaaa');
   });
 
   it('removes a valid component but fails to call HST', () => {
-    const container1 = $j('#container11', $document)[0];
-    const componentA = $j('#componentAA', $document)[0];
-    const comment1 = previousComment(container1);
-    const commentA = childComment(componentA);
-
-    PageStructureService.registerParsedElement(comment1, jsonify(comment1));
-    PageStructureService.registerParsedElement(commentA, jsonify(commentA));
+    registerVBoxContainer();
+    registerVBoxComponent('componentA');
 
     // mock the call to HST to be failed
     spyOn(HstService, 'removeHstComponent').and.returnValue($q.reject());
@@ -314,17 +311,12 @@ describe('PageStructureService', () => {
     PageStructureService.removeComponentById('aaaa');
     $rootScope.$digest();
 
-    expect(HstService.removeHstComponent).toHaveBeenCalledWith('1111', 'aaaa');
+    expect(HstService.removeHstComponent).toHaveBeenCalledWith('container-vbox', 'aaaa');
   });
 
   it('removes an invalid component', () => {
-    const container1 = $j('#container11', $document)[0];
-    const componentA = $j('#componentAA', $document)[0];
-    const comment1 = previousComment(container1);
-    const commentA = childComment(componentA);
-
-    PageStructureService.registerParsedElement(comment1, jsonify(comment1));
-    PageStructureService.registerParsedElement(commentA, jsonify(commentA));
+    registerVBoxContainer();
+    registerVBoxComponent('componentA');
 
     spyOn(HstService, 'removeHstComponent').and.returnValue($q.when([]));
 
@@ -335,17 +327,13 @@ describe('PageStructureService', () => {
   });
 
   it('returns a container by iframe element', () => {
-    const container1 = $j('#container11', $document)[0];
-    const container2 = $j('#container22', $document)[0];
-    const comment1 = previousComment(container1);
-    const comment2 = childComment(container2);
+    registerVBoxContainer();
+    const containerElement = registerNoMarkupContainer();
 
-    PageStructureService.registerParsedElement(comment1, jsonify(comment1));
-    PageStructureService.registerParsedElement(comment2, jsonify(comment2));
+    const container = PageStructureService.getContainerByIframeElement(containerElement);
 
-    const container = PageStructureService.getContainerByIframeElement(container2);
     expect(container).not.toBeNull();
-    expect(container.getId()).toEqual('2222');
+    expect(container.getId()).toEqual('container-no-markup');
   });
 
   it('triggers an event to show the component properties dialog', () => {
@@ -382,29 +370,14 @@ describe('PageStructureService', () => {
   });
 
   it('prints parsed elements', () => {
-    const container = $j('#container1', $document);
-    const componentA = $j('#componentA', $document);
-    const componentB = $j('#componentB', $document);
-
-    PageStructureService.registerParsedElement(container[0].previousSibling, {
-      'HST-Type': 'CONTAINER_COMPONENT',
-    });
-    PageStructureService.registerParsedElement(componentA[0].childNodes[0], {
-      'HST-Type': 'CONTAINER_ITEM_COMPONENT',
-      'HST-Label': 'component A',
-    });
-    PageStructureService.registerParsedElement(container[0].previousSibling, {
-      'HST-Type': 'CONTAINER_COMPONENT',
-    });
-    PageStructureService.registerParsedElement(componentB[0].childNodes[0], {
-      'HST-Type': 'CONTAINER_ITEM_COMPONENT',
-      'HST-Label': 'component B',
-    });
+    registerVBoxContainer();
+    registerVBoxComponent('componentA');
+    registerVBoxComponent('componentB');
 
     spyOn($log, 'debug');
 
     PageStructureService.printParsedElements();
 
-    expect($log.debug.calls.count()).toEqual(4);
+    expect($log.debug.calls.count()).toEqual(3);
   });
 });
