@@ -65,7 +65,7 @@ describe('PageStructureService', () => {
   });
 
   const childComment = (element) => {
-    var children = element.childNodes;
+    const children = element.childNodes;
     for (let i = 0; i < children.length; i++) {
       const child = children[i];
       if (child.nodeType === 8) {
