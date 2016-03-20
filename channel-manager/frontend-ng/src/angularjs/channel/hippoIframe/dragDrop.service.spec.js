@@ -130,7 +130,7 @@ describe('DragDropService', () => {
         clientX: 100,
         clientY: 200,
       };
-      const iframeComponentElement1 = component1.getJQueryElement('iframe')[0];
+      const iframeComponentElement1 = component1.getBoxElement()[0];
 
       iframe.offset({
         left: 10,
@@ -160,7 +160,7 @@ describe('DragDropService', () => {
         clientX: 150,
         clientY: 150,
       };
-      const iframeComponentElement1 = component1.getJQueryElement('iframe')[0];
+      const iframeComponentElement1 = component1.getBoxElement()[0];
 
       base.offset({
         left: 10,
@@ -207,7 +207,7 @@ describe('DragDropService', () => {
 
   it('shows the component properties when a component receives a mouseup event', (done) => {
     loadIframeFixture(() => {
-      const iframeComponent1 = component1.getJQueryElement('iframe');
+      const iframeComponent1 = component1.getBoxElement();
 
       spyOn(PageStructureService, 'showComponentProperties');
 
