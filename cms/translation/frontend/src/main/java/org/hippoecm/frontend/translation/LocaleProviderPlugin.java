@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -43,6 +44,7 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
     public static final String CONFIG_LANGUAGE = "language";
     public static final String CONFIG_COUNTRY = "country";
     public static final String CONFIG_VARIANT = "variant";
+    public static final String CONFIG_CAPTION = "caption";
     public static final String DEFAULT_COUNTRY = "us";
     public static final String UNKNOWN_COUNTRY = "error";
     private static final String LOCALES_BUNDLE_NAME = "hippo:cms.locales";
@@ -88,7 +90,7 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
         if (locales == null) {
             locales = loadLocales();
         }
-        return new ArrayList<HippoLocale>(locales.values());
+        return new ArrayList<>(locales.values());
     }
 
     public HippoLocale getLocale(String name) {
@@ -118,7 +120,8 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
 
             final Locale locale = getLocale(config);
             final String name = getLocaleName(config);
-            locales.put(name, new TranslationLocale(locale, name));
+            final String caption = getCaption(config);
+            locales.put(name, new TranslationLocale(locale, name, caption));
         }
         return locales;
     }
@@ -141,17 +144,27 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
         final String name = config.getName();
         return name.substring(name.lastIndexOf('.') + 1);
     }
+    
+    private static String getCaption(final IPluginConfig config) {
+        return config.getString(CONFIG_CAPTION);
+    }
 
     private static class TranslationLocale extends HippoLocale {
 
         private static final long serialVersionUID = 1L;
 
-        public TranslationLocale(final Locale locale, final String name) {
+        private final String caption;
+        
+        public TranslationLocale(final Locale locale, final String name, final String caption) {
             super(locale, name);
+            this.caption = caption;
         }
 
         @Override
         public String getDisplayName(Locale locale) {
+            if (!StringUtils.isEmpty(caption)) {
+                return caption;
+            }
             return getLocale().getDisplayLanguage(locale);
         }
 
