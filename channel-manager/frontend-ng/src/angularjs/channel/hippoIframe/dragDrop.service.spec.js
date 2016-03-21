@@ -14,33 +14,30 @@
  * limitations under the License.
  */
 
-import { ContainerElement } from '../page/element/containerElement';
-import { ComponentElement } from '../page/element/componentElement';
-
 describe('DragDropService', () => {
   'use strict';
 
   let DragDropService;
-  let hstCommentsProcessor;
   let ScalingService;
   let PageStructureService;
+  let HstService;
 
   let iframe;
   let base;
 
   let container1;
-  let container2;
   let component1;
-  // let component2;
+  let component2;
+  let container2;
 
   beforeEach(() => {
     module('hippo-cm.channel.hippoIframe');
 
-    inject((_DragDropService_, _hstCommentsProcessorService_, _ScalingService_, _PageStructureService_) => {
+    inject((_DragDropService_, _ScalingService_, _PageStructureService_, _HstService_) => {
       DragDropService = _DragDropService_;
-      hstCommentsProcessor = _hstCommentsProcessorService_;
       ScalingService = _ScalingService_;
       PageStructureService = _PageStructureService_;
+      HstService = _HstService_;
     });
 
     jasmine.getFixtures().load('channel/hippoIframe/dragDrop.service.fixture.html');
@@ -50,27 +47,26 @@ describe('DragDropService', () => {
   });
 
   function createContainer(number) {
-    const iframeContainerComment = iframe.contents().find(`#iframeContainerComment${number}`);
-    const overlayContainer = $j(`#overlayContainer${number}`);
-    const result = new ContainerElement(iframeContainerComment[0], {
+    const iframeContainerComment = iframe.contents().find(`#iframeContainerComment${number}`)[0];
+    PageStructureService.registerParsedElement(iframeContainerComment, {
       uuid: `container${number}`,
-      'HST-Type': 'HST.vBox',
-    }, hstCommentsProcessor);
-    result.setJQueryElement('overlay', overlayContainer);
-    return result;
+      'HST-Type': 'CONTAINER_COMPONENT',
+    });
+    return PageStructureService.containers[PageStructureService.containers.length - 1];
   }
 
-  function createComponent(number, container) {
-    const iframeComponentComment = iframe.contents().find(`#iframeComponentComment${number}`);
-    const overlayComponent = $j(`#overlayComponent${number}`);
-    const metaData = {
+  function createComponent(number) {
+    const iframeComponentComment = iframe.contents().find(`#iframeComponentComment${number}`)[0];
+    PageStructureService.registerParsedElement(iframeComponentComment, {
       uuid: `component${number}`,
+      'HST-Type': 'CONTAINER_ITEM_COMPONENT',
       'HST-Label': `Component ${number}`,
-    };
-    const result = new ComponentElement(iframeComponentComment[0], metaData, container, hstCommentsProcessor);
-    result.setJQueryElement('overlay', overlayComponent);
-    container.addComponent(result);
-    return result;
+    });
+    return PageStructureService.getComponent(`component${number}`);
+  }
+
+  function componentIds(container) {
+    return container.getComponents().map((component) => component.getId());
   }
 
   function loadIframeFixture(callback) {
@@ -82,7 +78,7 @@ describe('DragDropService', () => {
       container1 = '';
       container1 = createContainer(1);
       component1 = createComponent(1, container1);
-      createComponent(2, container1);
+      component2 = createComponent(2, container1);
 
       // make ESLint happy; it claims that "'container2' is never reassigned, use 'const' instead" :(
       container2 = '';
@@ -223,5 +219,61 @@ describe('DragDropService', () => {
     DragDropService.dragging = true;
     DragDropService._stopDrag();
     expect(DragDropService.isDragging()).toEqual(false);
+  });
+
+  it('can move the first component to the second position in the container', (done) => {
+    loadIframeFixture(() => {
+      const componentElement1 = component1.getJQueryElement('iframe');
+      const containerElement1 = container1.getJQueryElement('iframe');
+
+      spyOn(HstService, 'doPost');
+      expect(componentIds(container1)).toEqual(['component1', 'component2']);
+
+      DragDropService._onDrop(componentElement1, containerElement1, containerElement1, undefined);
+
+      expect(HstService.doPost).toHaveBeenCalledWith(container1.getHstRepresentation(), 'container1', 'update');
+      expect(componentIds(container1)).toEqual(['component2', 'component1']);
+
+      done();
+    });
+  });
+
+  it('can move the second component to the first position in the container', (done) => {
+    loadIframeFixture(() => {
+      const componentElement1 = component2.getJQueryElement('iframe');
+      const componentElement2 = component2.getJQueryElement('iframe');
+      const containerElement = container1.getJQueryElement('iframe');
+
+      spyOn(HstService, 'doPost');
+      expect(componentIds(container1)).toEqual(['component1', 'component2']);
+
+      DragDropService._onDrop(componentElement2, containerElement, containerElement, componentElement1);
+
+      expect(HstService.doPost).toHaveBeenCalledWith(container1.getHstRepresentation(), 'container1', 'update');
+      expect(componentIds(container1)).toEqual(['component2', 'component1']);
+
+      done();
+    });
+  });
+
+  it('can move a component to another container', (done) => {
+    loadIframeFixture(() => {
+      const componentElement1 = component1.getJQueryElement('iframe');
+      const containerElement1 = container1.getJQueryElement('iframe');
+      const containerElement2 = container2.getJQueryElement('iframe');
+
+      spyOn(HstService, 'doPost');
+      expect(componentIds(container1)).toEqual(['component1', 'component2']);
+      expect(componentIds(container2)).toEqual([]);
+
+      DragDropService._onDrop(componentElement1, containerElement2, containerElement1, undefined);
+
+      expect(HstService.doPost).toHaveBeenCalledWith(container1.getHstRepresentation(), 'container1', 'update');
+      expect(HstService.doPost).toHaveBeenCalledWith(container2.getHstRepresentation(), 'container2', 'update');
+      expect(componentIds(container1)).toEqual(['component2']);
+      expect(componentIds(container2)).toEqual(['component1']);
+
+      done();
+    });
   });
 });
