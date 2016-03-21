@@ -70,7 +70,7 @@ export class DragDropService {
 
       this._onComponentClick(containers, (component) => {
         this.dragging = false;
-        component.getJQueryElement('iframe').removeClass('qa-dragula-component');
+        component.getBoxElement().removeClass('qa-dragula-component');
         this.PageStructureService.showComponentProperties(component);
       });
     });

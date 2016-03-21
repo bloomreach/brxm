@@ -24,6 +24,6 @@ export class ExtJsHandlerService {
   }
 
   initialize() {
-    this.CmsService.subscribe('render-component', this.PageStructureService.renderComponent.bind(this.PageStructureService), this);
+    this.CmsService.subscribe('render-component', (componentId, propertiesMap) => this.PageStructureService.renderComponent(componentId, propertiesMap));
   }
 }

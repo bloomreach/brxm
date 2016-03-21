@@ -62,7 +62,7 @@ describe('DragDropService', () => {
       'HST-Type': 'CONTAINER_ITEM_COMPONENT',
       'HST-Label': `Component ${number}`,
     });
-    return PageStructureService.getComponent(`component${number}`);
+    return PageStructureService.getComponentById(`component${number}`);
   }
 
   function componentIds(container) {
@@ -223,8 +223,8 @@ describe('DragDropService', () => {
 
   it('can move the first component to the second position in the container', (done) => {
     loadIframeFixture(() => {
-      const componentElement1 = component1.getJQueryElement('iframe');
-      const containerElement1 = container1.getJQueryElement('iframe');
+      const componentElement1 = component1.getBoxElement();
+      const containerElement1 = container1.getBoxElement();
 
       spyOn(HstService, 'doPost');
       expect(componentIds(container1)).toEqual(['component1', 'component2']);
@@ -240,9 +240,9 @@ describe('DragDropService', () => {
 
   it('can move the second component to the first position in the container', (done) => {
     loadIframeFixture(() => {
-      const componentElement1 = component2.getJQueryElement('iframe');
-      const componentElement2 = component2.getJQueryElement('iframe');
-      const containerElement = container1.getJQueryElement('iframe');
+      const componentElement1 = component2.getBoxElement();
+      const componentElement2 = component2.getBoxElement();
+      const containerElement = container1.getBoxElement();
 
       spyOn(HstService, 'doPost');
       expect(componentIds(container1)).toEqual(['component1', 'component2']);
@@ -258,9 +258,9 @@ describe('DragDropService', () => {
 
   it('can move a component to another container', (done) => {
     loadIframeFixture(() => {
-      const componentElement1 = component1.getJQueryElement('iframe');
-      const containerElement1 = container1.getJQueryElement('iframe');
-      const containerElement2 = container2.getJQueryElement('iframe');
+      const componentElement1 = component1.getBoxElement();
+      const containerElement1 = container1.getBoxElement();
+      const containerElement2 = container2.getBoxElement();
 
       spyOn(HstService, 'doPost');
       expect(componentIds(container1)).toEqual(['component1', 'component2']);
