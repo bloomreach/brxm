@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.content.service;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +44,9 @@ import org.slf4j.LoggerFactory;
 public class DefaultHippoTranslationBeanServiceImpl implements HippoTranslationBeanService {
 
     private static Logger log = LoggerFactory.getLogger(DefaultHippoTranslationBeanServiceImpl.class);
+
+    public DefaultHippoTranslationBeanServiceImpl() {
+    }
 
     @Override
     public <T extends HippoBean> Map<String, T> getTranslationBeans(Session session, String translationId,
@@ -87,7 +90,7 @@ public class DefaultHippoTranslationBeanServiceImpl implements HippoTranslationB
             throw new IllegalArgumentException("Blank translation ID.");
         }
 
-        List<Node> translationNodes = new LinkedList<>();
+        List<Node> translationNodes = new ArrayList<>();
 
         String xpath = "//element(*," + HippoTranslationNodeType.NT_TRANSLATED + ")[" + HippoTranslationNodeType.ID
                 + " = '" + translationId + "']";
