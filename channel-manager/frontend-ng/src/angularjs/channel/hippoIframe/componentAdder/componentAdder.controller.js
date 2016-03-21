@@ -64,7 +64,8 @@ export class ComponentAdderCtrl {
           $(target).removeClass('has-shadow');
           $(el).detach(); // delete the (hidden) dropped DOM element.
 
-          PageStructureService.addComponentToContainer(this.newComponent, target);
+          PageStructureService.addComponentToContainer(this.newComponent, target)
+            .then((component) => PageStructureService.showComponentProperties(component));
         });
       }
     });

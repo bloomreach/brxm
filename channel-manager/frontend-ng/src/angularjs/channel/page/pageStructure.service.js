@@ -192,15 +192,15 @@ export class PageStructureService {
     const container = this._findContainerByOverlayElement(overlayDomElementOfContainer);
 
     if (container) {
-      this.HstService.addHstComponent(catalogComponent, container.getId())
-        .then(() => {
+      return this.HstService.addHstComponent(catalogComponent, container.getId())
+        .then((newComponentJson) => {
           this.ChannelService.recordOwnChange();
-          this._renderContainer(container);
+          return this._renderContainer(container).then(() => this.getComponentById(newComponentJson.id));
         });
       // TODO: handle error
-    } else {
-      console.log('container not found');
     }
+    console.log('container not found');
+    return this.$q.reject('container not found');
   }
 
   _findContainerByOverlayElement(overlayElement) {
