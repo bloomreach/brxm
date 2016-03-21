@@ -94,8 +94,8 @@ export class OverlaySyncService {
   }
 
   _syncElement(structureElement) {
-    const overlayJQueryElement = structureElement.getJQueryElement('overlay');
-    const iframeJQueryElement = structureElement.getJQueryElement('iframeBoxElement');
+    const overlayJQueryElement = structureElement.getOverlayElement();
+    const iframeJQueryElement = structureElement.getBoxElement();
 
     const rect = iframeJQueryElement[0].getBoundingClientRect();
 

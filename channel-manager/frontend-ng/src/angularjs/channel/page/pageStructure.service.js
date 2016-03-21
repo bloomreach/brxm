@@ -118,7 +118,7 @@ export class PageStructureService {
   }
 
   getContainerByIframeElement(containerIFrameElement) {
-    return this.containers.find((container) => container.getJQueryElement('iframeBoxElement').is(containerIFrameElement));
+    return this.containers.find((container) => container.getBoxElement().is(containerIFrameElement));
   }
 
   showComponentProperties(componentElement) {
@@ -188,7 +188,7 @@ export class PageStructureService {
   }
 
   addComponentToContainer(catalogComponent, overlayDomElementOfContainer) {
-    const container = this.containers.find((c) => c.getJQueryElement('overlay')[0] === overlayDomElementOfContainer);
+    const container = this.containers.find((c) => c.getOverlayElement()[0] === overlayDomElementOfContainer);
 
     if (container) {
       this.HstService.addHstComponent(catalogComponent, container.getId())

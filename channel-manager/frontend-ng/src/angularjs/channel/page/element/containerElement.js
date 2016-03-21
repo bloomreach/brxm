@@ -77,7 +77,7 @@ export class ContainerElement extends PageStructureElement {
   }
 
   getComponentByIframeElement(iframeElement) {
-    return this.items.find((item) => item.getJQueryElement('iframeBoxElement').is(iframeElement));
+    return this.items.find((item) => item.getBoxElement().is(iframeElement));
   }
 
   replaceComponent(oldComponent, newComponent) {

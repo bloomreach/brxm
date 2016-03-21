@@ -60,7 +60,7 @@ export class DragDropService {
     }
 
     return this.dragulaPromise.then(() => {
-      const iframeContainerElements = containers.map((container) => container.getJQueryElement('iframeBoxElement')[0]);
+      const iframeContainerElements = containers.map((container) => container.getBoxElement()[0]);
 
       this.drake = this.iframe.dragula(iframeContainerElements, {
         ignoreInputTextSelection: false,
@@ -90,7 +90,7 @@ export class DragDropService {
       container.getComponents().forEach((component) => {
         // Dragula will prevent mouseup events when dragging has not been started,
         // so there's only a mouseup event when the component is clicked.
-        component.getJQueryElement('iframeBoxElement').on('mouseup', () => callback(component));
+        component.getBoxElement().on('mouseup', () => callback(component));
       });
     });
   }
@@ -141,7 +141,7 @@ export class DragDropService {
       clientX,
       clientY,
     });
-    const iframeElement = structureElement.getJQueryElement('iframeBoxElement');
+    const iframeElement = structureElement.getBoxElement();
     iframeElement[0].dispatchEvent(iframeEvent);
   }
 

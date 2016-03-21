@@ -32,7 +32,7 @@ export class OverlayElementCtrl {
   }
 
   _prepareIframeElement($scope) {
-    let boxJQueryElement = this.structureElement.getJQueryElement('iframeBoxElement');
+    let boxJQueryElement = this.structureElement.getBoxElement();
     let insertedTemporaryBox;
 
     if (boxJQueryElement.length === 0) {
@@ -57,7 +57,7 @@ export class OverlayElementCtrl {
   }
 
   _createAndInsertTemporaryBox() {
-    const startCommentJQueryElement = this.structureElement.getJQueryElement('iframeStartComment');
+    const startCommentJQueryElement = this.structureElement.getStartComment();
     const div = document.createElement('div');
 
     if (startCommentJQueryElement[0].nextSibling !== null) {

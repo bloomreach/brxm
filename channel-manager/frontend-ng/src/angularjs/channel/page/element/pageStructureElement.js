@@ -22,9 +22,9 @@ export class PageStructureElement {
     this.metaData = metaData;
     this.jQueryElements = {};
 
-    this.setJQueryElement('iframeStartComment', $(startCommentDomElement));
-    this.setJQueryElement('iframeEndComment', $(endCommentDomElement));
-    this.setJQueryElement('iframeBoxElement', $(boxDomElement));
+    this.setStartComment($(startCommentDomElement));
+    this.setEndComment($(endCommentDomElement));
+    this.setBoxElement($(boxDomElement));
   }
 
   setJQueryElement(elementType, element) {
@@ -118,5 +118,13 @@ export class PageStructureElement {
 
   setBoxElement(newJQueryBoxElement) {
     this.setJQueryElement('iframeBoxElement', newJQueryBoxElement);
+  }
+
+  getOverlayElement() {
+    return this.getJQueryElement('overlay');
+  }
+
+  setOverlayElement(newJQueryOverlayElement) {
+    this.setJQueryElement('overlay', newJQueryOverlayElement);
   }
 }
