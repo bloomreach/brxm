@@ -110,7 +110,10 @@ export class PageStructureService {
     if (component) {
       const container = component.getContainer();
       this.HstService.removeHstComponent(container.getId(), componentId)
-        .then(() => this._renderContainer(container));
+        .then(() => {
+          this.ChannelService.recordOwnChange();
+          this._renderContainer(container);
+        });
       // TODO handle error
     } else {
       this.$log.debug(`Was asked to remove component with ID '${componentId}', but couldn't find it in the page structure.`);
@@ -192,7 +195,10 @@ export class PageStructureService {
 
     if (container) {
       this.HstService.addHstComponent(catalogComponent, container.getId())
-        .then(() => this._renderContainer(container));
+        .then(() => {
+          this.ChannelService.recordOwnChange();
+          this._renderContainer(container);
+        });
       // TODO: handle error
     } else {
       console.log('container not found');

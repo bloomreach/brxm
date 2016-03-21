@@ -16,7 +16,7 @@
 
 export class DragDropService {
 
-  constructor($rootScope, $q, DomService, HstService, PageStructureService, ScalingService) {
+  constructor($rootScope, $q, DomService, HstService, PageStructureService, ScalingService, ChannelService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
@@ -25,6 +25,7 @@ export class DragDropService {
     this.HstService = HstService;
     this.PageStructureService = PageStructureService;
     this.ScalingService = ScalingService;
+    this.ChannelService = ChannelService;
 
     this.dragging = false;
   }
@@ -129,6 +130,8 @@ export class DragDropService {
     if (sourceContainer.getId() !== targetContainer.getId()) {
       this._updateContainer(targetContainer);
     }
+
+    this.ChannelService.recordOwnChange();
   }
 
   _updateContainer(container) {

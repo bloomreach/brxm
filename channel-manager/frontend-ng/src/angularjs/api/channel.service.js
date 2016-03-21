@@ -103,7 +103,35 @@ export class ChannelService {
     return this.CatalogService.getComponents();
   }
 
+  recordOwnChange() {
+    const user = this.ConfigService.cmsUser;
+
+    if (this.channel.changedBySet.indexOf(user) === -1) {
+      this.channel.changedBySet.push(user);
+    }
+  }
+
+  publishOwnChanges() {
+    return this.HstService.doPost(null, this._getMountId(), 'publish')
+      .then((response) => {
+        this._resetOwnChange();
+        return response;
+      });
+  }
+
+  discardOwnChanges() {
+    return this.HstService.doPost(null, this._getMountId(), 'discard')
+      .then((response) => {
+        this._resetOwnChange();
+        return response;
+      });
+  }
+
   _getMountId() {
     return this.channel.mountId;
+  }
+
+  _resetOwnChange() {
+    this.channel.changedBySet.splice(this.channel.changedBySet.indexOf(this.ConfigService.cmsUser), 1);
   }
 }

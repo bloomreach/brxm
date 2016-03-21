@@ -44,6 +44,8 @@ describe('PageStructureService', () => {
       HstService = _HstService_;
       RenderingService = _RenderingService_;
     });
+
+    spyOn(ChannelService, 'recordOwnChange');
   });
 
   beforeEach(() => {
@@ -299,6 +301,7 @@ describe('PageStructureService', () => {
     $rootScope.$digest();
 
     expect(HstService.removeHstComponent).toHaveBeenCalledWith('container-vbox', 'aaaa');
+    expect(ChannelService.recordOwnChange).toHaveBeenCalled();
   });
 
   it('removes a valid component but fails to call HST', () => {

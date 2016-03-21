@@ -18,15 +18,18 @@ const SIDENAVS = ['components'];
 
 export class ChannelCtrl {
 
-  constructor($log, $scope, $mdSidenav, ChannelService, ScalingService, SessionService, ComponentAdderService) {
+  constructor($log, $scope, $translate, $mdDialog, $mdSidenav, ChannelService, ScalingService, SessionService, ComponentAdderService, ConfigService) {
     'ngInject';
 
     this.$log = $log;
     this.$scope = $scope;
+    this.$translate = $translate;
+    this.$mdDialog = $mdDialog;
     this.$mdSidenav = $mdSidenav;
     this.ChannelService = ChannelService;
     this.ScalingService = ScalingService;
     this.SessionService = SessionService;
+    this.ConfigService = ConfigService;
 
     this.iframeUrl = ChannelService.getUrl();
     this.isEditMode = false;
@@ -65,6 +68,9 @@ export class ChannelCtrl {
     this.isCreatingPreview = true;
     this.ChannelService.createPreviewConfiguration()
       .then(() => {
+//        this._reloadPage(); // reload page to keep UUIDs in sync with preview config
+        // TODO: this is first stab at reloading a page. I guess we need a better way.
+        // reloading the page here works in the app, but once we tell Ext which component to render, ext doesn't seem to "get it" yet.
         this.isEditMode = true;
       })
       // TODO: handle error response
@@ -87,7 +93,44 @@ export class ChannelCtrl {
     return this.ChannelService.getCatalog();
   }
 
+  hasChanges() {
+    return this.ChannelService.getChannel().changedBySet.indexOf(this.ConfigService.cmsUser) !== -1;
+  }
+
+  publish() {
+    this.ChannelService.publishOwnChanges();
+    // TODO: what if this fails?
+  }
+
+  discard() {
+    this._confirmDiscard().then(() => {
+      this.ChannelService.discardOwnChanges().then(() => this._reloadPage());
+      // TODO: what if this fails?
+    });
+  }
+
   _isSidenavOpen(name) {
     return this.$mdSidenav(name).isOpen();
+  }
+
+  _confirmDiscard() {
+    const confirm = this.$mdDialog
+      .confirm()
+      .title(this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_TITLE'))
+      .textContent(this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_MESSAGE'))
+      .ok(this.$translate.instant('BUTTON_YES'))
+      .cancel(this.$translate.instant('BUTTON_NO'));
+
+    return this.$mdDialog.show(confirm);
+  }
+
+  _reloadPage() {
+    // TODO: this should probably go into the hippoIframe.
+    const iframe = $('iframe');
+    if (iframe.length > 0) {
+      const currentPage = iframe[0].contentWindow.location.pathname;
+
+      iframe.attr('src', currentPage);
+    }
   }
 }

@@ -1,11 +1,16 @@
 {
   "TOOLBAR_BUTTON_COMPONENTS": "Componenten",
+  "TOOLBAR_BUTTON_CHANGES": "Wijzigingen",
+  "TOOLBAR_MENU_CHANGES_PUBLISH": "Publiceer",
+  "TOOLBAR_MENU_CHANGES_DISCARD": "Maak ongedaan",
   "TOOLBAR_SWITCH_VIEWER_MODE": "Viewer modus",
   "TOOLBAR_SWITCH_VIEWER_MODE_EDIT": "Bewerk",
   "TOOLBAR_SWITCH_VIEWER_MODE_VIEW": "Bekijk",
   "CONFIRM_OPEN_EXTERNAL_LINK": "Deze externe link zal in een nieuwe tab worden geopened.\nWilt u doorgaan?",
   "CONFIRM_DELETE_COMPONENT_TITLE": "Bevestig het verwijderen",
   "CONFIRM_DELETE_COMPONENT_MESSAGE": "Weet u zeker dat u {0} wilt verwijderen?",
+  "CONFIRM_DISCARD_OWN_CHANGES_TITLE": "Bevestig ongedaan maken",
+  "CONFIRM_DISCARD_OWN_CHANGES_MESSAGE": "Weet u zeker dat u al uw ongepubliceerde veranderingen in deze channel ongedaan wilt maken?",
   "BUTTON_YES": "Ja",
   "BUTTON_NO": "Nee"
 }

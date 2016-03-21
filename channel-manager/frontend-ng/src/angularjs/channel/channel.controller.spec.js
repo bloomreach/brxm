@@ -22,23 +22,30 @@ describe('ChannelCtrl', () => {
   let ChannelService;
   let ComponentsService;
   let ScalingService;
+  let ConfigService;
   let ChannelCtrl;
   let $rootScope;
   let $q;
+  let $mdDialog;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$q_) => {
+    inject(($controller, _$rootScope_, _$q_, _$mdDialog_, _ConfigService_) => {
       const resolvedPromise = _$q_.when();
 
       $rootScope = _$rootScope_;
       $q = _$q_;
+      $mdDialog = _$mdDialog_;
+      ConfigService = _ConfigService_;
 
       ChannelService = jasmine.createSpyObj('ChannelService', [
         'getUrl',
         'hasPreviewConfiguration',
         'createPreviewConfiguration',
+        'getChannel',
+        'publishOwnChanges',
+        'discardOwnChanges',
       ]);
       ChannelService.getUrl.and.returnValue('/test/url');
       ChannelService.createPreviewConfiguration.and.returnValue(resolvedPromise);
@@ -115,5 +122,50 @@ describe('ChannelCtrl', () => {
     ChannelService.hasPreviewConfiguration.and.returnValue(true);
     ChannelCtrl.toggleEditMode();
     expect(ChannelService.createPreviewConfiguration).not.toHaveBeenCalled();
+  });
+
+  it('detects that the current user has pending changes', () => {
+    ConfigService.cmsUser = 'testUser';
+    ChannelService.getChannel.and.returnValue({ changedBySet: ['tobi', 'testUser', 'obiwan'] });
+
+    expect(ChannelCtrl.hasChanges()).toBe(true);
+  });
+
+  it('detects that the current user has no pending changes', () => {
+    ConfigService.cmsUser = 'testUser';
+    ChannelService.getChannel.and.returnValue({ changedBySet: ['tobi', 'obiwan'] });
+
+    expect(ChannelCtrl.hasChanges()).toBe(false);
+  });
+
+  it('publishes changes', () => {
+    ChannelCtrl.publish();
+
+    expect(ChannelService.publishOwnChanges).toHaveBeenCalled();
+  });
+
+  it('discards changes', () => {
+    ChannelService.discardOwnChanges.and.returnValue($q.resolve());
+    spyOn($mdDialog, 'show').and.returnValue($q.resolve());
+    spyOn($mdDialog, 'confirm').and.callThrough();
+
+    ChannelCtrl.discard();
+    $rootScope.$digest();
+
+    expect($mdDialog.confirm).toHaveBeenCalled();
+    expect($mdDialog.show).toHaveBeenCalled();
+    expect(ChannelService.discardOwnChanges).toHaveBeenCalled();
+  });
+
+  it('does not discard changes if not confirmed', () => {
+    spyOn($mdDialog, 'show').and.returnValue($q.reject());
+    spyOn($mdDialog, 'confirm').and.callThrough();
+
+    ChannelCtrl.discard();
+    $rootScope.$digest();
+
+    expect($mdDialog.confirm).toHaveBeenCalled();
+    expect($mdDialog.show).toHaveBeenCalled();
+    expect(ChannelService.discardOwnChanges).not.toHaveBeenCalled();
   });
 });

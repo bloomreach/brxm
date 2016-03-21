@@ -21,6 +21,7 @@ describe('DragDropService', () => {
   let ScalingService;
   let PageStructureService;
   let HstService;
+  let ChannelService;
 
   let iframe;
   let base;
@@ -33,13 +34,15 @@ describe('DragDropService', () => {
   beforeEach(() => {
     module('hippo-cm.channel.hippoIframe');
 
-    inject((_DragDropService_, _ScalingService_, _PageStructureService_, _HstService_) => {
+    inject((_DragDropService_, _ScalingService_, _PageStructureService_, _HstService_, _ChannelService_) => {
       DragDropService = _DragDropService_;
       ScalingService = _ScalingService_;
       PageStructureService = _PageStructureService_;
       HstService = _HstService_;
+      ChannelService = _ChannelService_;
     });
 
+    spyOn(ChannelService, 'recordOwnChange');
     jasmine.getFixtures().load('channel/hippoIframe/dragDrop.service.fixture.html');
 
     iframe = $j('#testIframe');

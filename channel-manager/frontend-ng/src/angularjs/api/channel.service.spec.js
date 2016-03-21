@@ -32,6 +32,7 @@ describe('ChannelService', () => {
     channelMock = {
       contextPath: '/testContextPath',
       hostname: 'test.host.name',
+      mountId: 'mountId',
     };
 
     SessionServiceMock = {
@@ -46,8 +47,9 @@ describe('ChannelService', () => {
     ConfigServiceMock = jasmine.createSpyObj('ConfigService', ['setContextPath']);
     ConfigServiceMock.apiUrlPrefix = '/testApiUrlPrefix';
     ConfigServiceMock.rootUuid = 'testRootUuid';
+    ConfigServiceMock.cmsUser = 'testUser';
 
-    HstServiceMock = jasmine.createSpyObj('HstService', ['setContextPath', 'getChannel']);
+    HstServiceMock = jasmine.createSpyObj('HstService', ['setContextPath', 'getChannel', 'doPost']);
 
     module(($provide) => {
       $provide.value('SessionService', SessionServiceMock);
@@ -184,5 +186,61 @@ describe('ChannelService', () => {
     ];
     CatalogServiceMock.getComponents.and.returnValue(mockCatalog);
     expect(ChannelService.getCatalog()).toEqual(mockCatalog);
+  });
+
+  it('should publish own changes', () => {
+    channelMock.changedBySet = ['testUser'];
+    ChannelService.load(channelMock);
+    $rootScope.$digest();
+
+    const deferred = $q.defer();
+    HstServiceMock.doPost.and.returnValue(deferred.promise);
+    ChannelService.publishOwnChanges().then((response) => {
+      expect(response).toBe('pass-through');
+    });
+
+    deferred.resolve('pass-through');
+    $rootScope.$digest();
+
+    expect(HstServiceMock.doPost).toHaveBeenCalledWith(null, 'mountId', 'publish');
+    expect(channelMock.changedBySet).toEqual([]);
+  });
+
+  it('should discard own changes', () => {
+    channelMock.changedBySet = ['testUser'];
+    ChannelService.load(channelMock);
+    $rootScope.$digest();
+
+    const deferred = $q.defer();
+    HstServiceMock.doPost.and.returnValue(deferred.promise);
+    ChannelService.discardOwnChanges().then((response) => {
+      expect(response).toBe('pass-through');
+    });
+
+    deferred.resolve('pass-through');
+    $rootScope.$digest();
+
+    expect(HstServiceMock.doPost).toHaveBeenCalledWith(null, 'mountId', 'discard');
+    expect(channelMock.changedBySet).toEqual([]);
+  });
+
+  it('records own changes', () => {
+    channelMock.changedBySet = ['tobi', 'obiwan'];
+    ChannelService.load(channelMock);
+    $rootScope.$digest();
+
+    ChannelService.recordOwnChange();
+
+    expect(channelMock.changedBySet).toEqual(['tobi', 'obiwan', 'testUser']);
+  });
+
+  it('recognizes changes already pending', () => {
+    channelMock.changedBySet = ['tobi', 'testUser', 'obiwan'];
+    ChannelService.load(channelMock);
+    $rootScope.$digest();
+
+    ChannelService.recordOwnChange();
+
+    expect(channelMock.changedBySet).toEqual(['tobi', 'testUser', 'obiwan']);
   });
 });
