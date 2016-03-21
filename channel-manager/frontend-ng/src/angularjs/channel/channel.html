@@ -24,22 +24,19 @@
     <span flex></span>
     <md-menu ng-if="channelCtrl.hasChanges()">
       <md-button aria-label="{{ 'TOOLBAR_BUTTON_CHANGES' | translate }}"
-                 class="qa-changes"
                  ng-click="$mdOpenMenu($event)">
         <md-icon class="material-icons">change_history</md-icon>
         {{ 'TOOLBAR_BUTTON_CHANGES' | translate }}
       </md-button>
-      <md-menu-content width="4">
+      <md-menu-content width="4" class="qa-changes-menu">
         <md-menu-item>
           <md-button aria-label="{{ 'TOOLBAR_MENU_CHANGES_PUBLISH' | translate }}"
-                     class="qa-publish"
                      ng-click="channelCtrl.publish()">
             {{ 'TOOLBAR_MENU_CHANGES_PUBLISH' | translate }}
           </md-button>
         </md-menu-item>
         <md-menu-item>
           <md-button aria-label="{{ 'TOOLBAR_MENU_CHANGES_DISCARD' | translate }}"
-                     class="qa-discard"
                      ng-click="channelCtrl.discard()">
             {{ 'TOOLBAR_MENU_CHANGES_DISCARD' | translate }}
           </md-button>
