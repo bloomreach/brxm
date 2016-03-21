@@ -46,7 +46,7 @@ describe('RenderingService', () => {
     RenderingService.fetchComponentMarkup(component, { foo: 1, bar: 'a:b' });
 
     $httpBackend.expectPOST('/test-render-url', 'foo=1&bar=a%3Ab', {
-      Accept: 'text/html, */*',
+      Accept: 'text/html',
       'Content-Type': 'application/x-www-form-urlencoded',
     });
     $httpBackend.flush();
@@ -60,9 +60,7 @@ describe('RenderingService', () => {
 
     RenderingService.fetchContainerMarkup(container);
 
-    $httpBackend.expectGET('/test-render-url', {
-      Accept: 'application/json, text/plain, */*',
-    });
+    $httpBackend.expectGET('/test-render-url');
     $httpBackend.flush();
   });
 });

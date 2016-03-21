@@ -91,18 +91,7 @@ export class HstService {
    * @returns {*} the request promise
    */
   addHstComponent(catalogComponent, containerId) {
-    const requestPayload = `data: {
-      parentId: ${containerId},
-      id: ${catalogComponent.id},
-      name: ${catalogComponent.name},
-      label: ${catalogComponent.label},
-      type: ${catalogComponent.type},
-      template: ${catalogComponent.template},
-      componentClassName: ${catalogComponent.componentClassName},
-      xtype: ${catalogComponent.xtype},
-      children: []
-    }`;
-    return this.doPost(requestPayload, containerId, 'create', catalogComponent.id);
+    return this.doPost(null, containerId, 'create', catalogComponent.id);
   }
 
   removeHstComponent(containerId, componentId) {

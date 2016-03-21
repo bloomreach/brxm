@@ -77,16 +77,20 @@ export class PageStructureElement {
    * @return the jQuery element refering to the inserted markup in the DOM document
    */
   replaceDOM(htmlFragment) {
-    const startCommentNode = this.getStartComment()[0];
-    let node = this.getEndComment()[0];
-    while (node && node !== startCommentNode) {
+    const endCommentNode = this.getEndComment()[0];
+    let node = this.getStartComment()[0];
+    while (node && node !== endCommentNode) {
       const toBeRemoved = node;
-      node = node.previousSibling;
+      node = node.nextSibling;
       toBeRemoved.parentNode.removeChild(toBeRemoved);
     }
 
+    if (!node) {
+      throw new Error('Inconsistent PageStructureElement: startComment and endComment elements should be sibling');
+    }
+
     const jQueryNodeCollection = $(htmlFragment);
-    this.getStartComment().replaceWith(jQueryNodeCollection);
+    this.getEndComment().replaceWith(jQueryNodeCollection);
     return jQueryNodeCollection;
   }
 

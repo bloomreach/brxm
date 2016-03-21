@@ -170,15 +170,13 @@ export class PageStructureService {
   }
 
   _renderContainer(container) {
-    this.RenderingService.fetchContainerMarkup(container).then((response) => {
-      this._updateContainer(container, response.data);
-    });
+    return this.RenderingService.fetchContainerMarkup(container)
+      .then((markup) => this._updateContainer(container, markup));
   }
 
   _updateContainer(container, newMarkup) {
-    const jQueryContainerElement = container.replaceDOM(newMarkup);
-    this._replaceContainer(container, this._createContainer(jQueryContainerElement));
-    this.OverlaySyncService.syncIframe(); // necessary? mutation observer should trigger this...
+    // consider following three actions to be an atomic operation
+    this._replaceContainer(container, this._createContainer(container.replaceDOM(newMarkup)));
   }
 
   _replaceComponent(oldComponent, newComponent) {
@@ -191,7 +189,7 @@ export class PageStructureService {
   }
 
   addComponentToContainer(catalogComponent, overlayDomElementOfContainer) {
-    const container = this.containers.find((c) => c.getOverlayElement()[0] === overlayDomElementOfContainer);
+    const container = this._findContainerByOverlayElement(overlayDomElementOfContainer);
 
     if (container) {
       this.HstService.addHstComponent(catalogComponent, container.getId())
@@ -205,13 +203,21 @@ export class PageStructureService {
     }
   }
 
+  _findContainerByOverlayElement(overlayElement) {
+    return this.containers.find((container) => container.getOverlayElement()[0] === overlayElement);
+  }
+
   _replaceContainer(oldContainer, newContainer) {
     const index = this.containers.indexOf(oldContainer);
     if (index === -1) {
       this.$log.warn('Cannot find container', oldContainer);
       return;
     }
-    this.containers[index] = newContainer;
+    if (newContainer) {
+      this.containers[index] = newContainer;
+    } else {
+      this.containers.splice(index, 1);
+    }
   }
 
   /**
@@ -224,32 +230,36 @@ export class PageStructureService {
     let container = null;
 
     this.hstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
-      switch (metaData[this.HST.TYPE]) {
-        case this.HST.TYPE_CONTAINER:
-          if (!container) {
-            container = new ContainerElement(commentDomElement, metaData, this.hstCommentsProcessorService);
-          } else {
-            this.$log.warn('More than one container in the DOM Element!');
-            return;
-          }
-          break;
+      try {
+        switch (metaData[this.HST.TYPE]) {
+          case this.HST.TYPE_CONTAINER:
+            if (!container) {
+              container = new ContainerElement(commentDomElement, metaData, this.hstCommentsProcessorService);
+            } else {
+              this.$log.warn('More than one container in the DOM Element!');
+              return;
+            }
+            break;
 
-        case this.HST.TYPE_COMPONENT:
-          if (!container) {
-            this.$log.warn('Unable to register component outside of a container context.');
-            return;
-          }
+          case this.HST.TYPE_COMPONENT:
+            if (!container) {
+              this.$log.warn('Unable to register component outside of a container context.');
+              return;
+            }
 
-          try {
-            container.addComponent(new ComponentElement(commentDomElement, metaData,
-              container, this.hstCommentsProcessorService));
-          } catch (exception) {
-            this.$log.debug(exception, metaData);
-          }
-          break;
+            try {
+              container.addComponent(new ComponentElement(commentDomElement, metaData,
+                container, this.hstCommentsProcessorService));
+            } catch (exception) {
+              this.$log.debug(exception, metaData);
+            }
+            break;
 
-        default:
-          break;
+          default:
+            break;
+        }
+      } catch (exception) {
+        this.$log.debug(exception, metaData);
       }
     });
 

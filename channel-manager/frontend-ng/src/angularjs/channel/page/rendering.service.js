@@ -30,9 +30,9 @@ export class RenderingService {
       method: 'GET',
       url: container.getRenderUrl(),
       header: {
-        Accept: 'application/json, text/plain, */*',
+        Accept: 'text/html',
       },
-    });
+    }).then((response) => response.data);
   }
 
   fetchComponentMarkup(component, propertiesMap) {
@@ -52,7 +52,7 @@ export class RenderingService {
       method: 'POST',
       url: component.getRenderUrl(),
       headers: {
-        Accept: 'text/html, */*',
+        Accept: 'text/html',
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       data: propertiesMap,
