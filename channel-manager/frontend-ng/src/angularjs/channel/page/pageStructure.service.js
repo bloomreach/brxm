@@ -35,7 +35,7 @@ export class PageStructureService {
     this.hstCommentsProcessorService = hstCommentsProcessorService;
     this.RenderingService = RenderingService;
     this.OverlaySyncService = OverlaySyncService;
-    this.pageMetaData = PageMetaDataService;
+    this.PageMetaDataService = PageMetaDataService;
     this.MaskService = MaskService;
 
     this.clearParsedElements();
@@ -43,7 +43,7 @@ export class PageStructureService {
 
   clearParsedElements() {
     this.containers = [];
-    this.pageMetaData.clear();
+    this.PageMetaDataService.clear();
   }
 
   registerParsedElement(commentDomElement, metaData) {
@@ -69,16 +69,8 @@ export class PageStructureService {
       }
 
       case this.HST.TYPE_PAGE: {
-        const registeredMetaData = angular.copy(metaData);
-        delete registeredMetaData[this.HST.TYPE];
-        this.pageMetaData.add(registeredMetaData);
-
-        if (metaData.hasOwnProperty(this.HST.CHANNEL_ID)) {
-          const channelId = metaData[this.HST.CHANNEL_ID];
-          if (channelId !== this.ChannelService.getId()) {
-            this.ChannelService.switchToChannel(channelId);
-          }
-        }
+        delete metaData[this.HST.TYPE];
+        this.PageMetaDataService.set(metaData);
         break;
       }
 
@@ -135,7 +127,7 @@ export class PageStructureService {
         isDisabled: componentElement.container.isDisabled(),
         isInherited: componentElement.container.isInherited(),
       },
-      page: this.pageMetaData.get(),
+      page: this.PageMetaDataService.get(),
     });
     this.MaskService.add();
   }

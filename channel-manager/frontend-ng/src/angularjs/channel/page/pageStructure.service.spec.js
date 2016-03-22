@@ -231,28 +231,16 @@ describe('PageStructureService', () => {
   });
 
   it('parses the page meta-data and adds it to the PageMetaDataService', () => {
-    spyOn(PageMetaDataService, 'add');
+    spyOn(PageMetaDataService, 'set');
 
     PageStructureService.registerParsedElement(null, {
       'HST-Type': 'PAGE-META-DATA',
       'HST-Mount-Id': 'testMountId',
     });
 
-    expect(PageMetaDataService.add).toHaveBeenCalledWith({
+    expect(PageMetaDataService.set).toHaveBeenCalledWith({
       'HST-Mount-Id': 'testMountId',
     });
-  });
-
-  it('switches channels when the channel id in the page meta-data differs from the current channel id', () => {
-    spyOn(ChannelService, 'getId').and.returnValue('testChannelId');
-    spyOn(ChannelService, 'switchToChannel');
-
-    PageStructureService.registerParsedElement(null, {
-      'HST-Type': 'PAGE-META-DATA',
-      'HST-Channel-Id': 'anotherChannelId',
-    });
-
-    expect(ChannelService.switchToChannel).toHaveBeenCalledWith('anotherChannelId');
   });
 
   it('switches channels when the channel id in the page meta-data is the same as the current channel id', () => {

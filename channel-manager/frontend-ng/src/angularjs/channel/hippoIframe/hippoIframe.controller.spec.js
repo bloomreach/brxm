@@ -24,15 +24,21 @@ describe('hippoIframeCtrl', () => {
   let hippoIframeCtrl;
   let scope;
   let $q;
+  let $rootScope;
   let ScalingService;
   let DragDropService;
   let OverlaySyncService;
+  let hstCommentsProcessorService;
+  let PageMetaDataService;
+  let ChannelService;
 
   beforeEach(() => {
     let $compile;
     module('hippo-cm');
 
-    inject(($controller, $rootScope, _$compile_, _$mdDialog_, _$q_, _DragDropService_, _OverlaySyncService_, _PageStructureService_, _ScalingService_) => {
+    inject(($controller, _$rootScope_, _$compile_, _$mdDialog_, _$q_, _DragDropService_, _OverlaySyncService_,
+            _PageStructureService_, _ScalingService_, _hstCommentsProcessorService_, _PageMetaDataService_, _ChannelService_) => {
+      $rootScope = _$rootScope_;
       $compile = _$compile_;
       $mdDialog = _$mdDialog_;
       $q = _$q_;
@@ -40,6 +46,9 @@ describe('hippoIframeCtrl', () => {
       OverlaySyncService = _OverlaySyncService_;
       PageStructureService = _PageStructureService_;
       ScalingService = _ScalingService_;
+      hstCommentsProcessorService = _hstCommentsProcessorService_;
+      PageMetaDataService = _PageMetaDataService_;
+      ChannelService = _ChannelService_;
       scope = $rootScope.$new();
     });
 
@@ -86,5 +95,33 @@ describe('hippoIframeCtrl', () => {
     expect($mdDialog.confirm).toHaveBeenCalled();
     expect($mdDialog.show).toHaveBeenCalled();
     expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith(hippoIframeCtrl.selectedComponent);
+  });
+
+  it('switches channels when the channel id in the page meta-data differs from the current channel id', () => {
+    const deferred = $q.defer();
+
+    spyOn(PageStructureService, 'clearParsedElements');
+    spyOn(PageStructureService, 'printParsedElements')
+    spyOn(hstCommentsProcessorService, 'run');
+    spyOn(PageMetaDataService, 'getChannelId').and.returnValue('channelX');
+    spyOn(ChannelService, 'getId').and.returnValue('channelY');
+    spyOn(ChannelService, 'switchToChannel').and.returnValue(deferred.promise);
+    spyOn(hippoIframeCtrl, '_parseLinks');
+    spyOn(hippoIframeCtrl, '_updateDragDrop');
+
+    hippoIframeCtrl.onLoad();
+
+    expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
+    expect(PageStructureService.printParsedElements).toHaveBeenCalled();
+    expect(hstCommentsProcessorService.run).toHaveBeenCalled();
+    expect(hippoIframeCtrl._updateDragDrop).toHaveBeenCalled();
+    expect(PageMetaDataService.getChannelId).toHaveBeenCalled();
+    expect(ChannelService.getId).toHaveBeenCalled();
+    expect(hippoIframeCtrl._parseLinks).not.toHaveBeenCalled();
+
+    deferred.resolve();
+    $rootScope.$digest();
+
+    expect(hippoIframeCtrl._parseLinks).toHaveBeenCalled();
   });
 });

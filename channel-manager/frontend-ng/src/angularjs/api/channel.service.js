@@ -84,7 +84,7 @@ export class ChannelService {
   }
 
   switchToChannel(id) {
-    this.HstService.getChannel(id)
+    return this.HstService.getChannel(id)
       .then((channel) => {
         this._setChannel(channel);
         this.CmsService.publish('switch-channel', channel.id); // update breadcrumb.

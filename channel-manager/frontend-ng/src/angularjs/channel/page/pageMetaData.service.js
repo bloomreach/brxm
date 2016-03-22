@@ -34,7 +34,7 @@ export class PageMetaDataService {
   constructor(HstConstants) {
     'ngInject';
 
-    this.HstConstants = HstConstants;
+    this.HST = HstConstants;
     this.clear();
   }
 
@@ -42,12 +42,15 @@ export class PageMetaDataService {
     this.data = {};
   }
 
-  add(data) {
-    Object.assign(this.data, data);
+  set(data) {
+    this.data = data;
   }
 
   get() {
     return this.data;
   }
 
+  getChannelId() {
+    return this.data[this.HST.CHANNEL_ID];
+  }
 }

@@ -16,6 +16,7 @@
 
 export class HippoIframeCtrl {
   constructor(
+    $q,
     $element,
     $mdDialog,
     $rootScope,
@@ -28,10 +29,12 @@ export class HippoIframeCtrl {
     linkProcessorService,
     OverlaySyncService,
     PageStructureService,
+    PageMetaDataService,
     ScalingService,
   ) {
     'ngInject';
 
+    this.$q = $q;
     this.$rootScope = $rootScope;
     this.$translate = $translate;
     this.$mdDialog = $mdDialog;
@@ -40,6 +43,7 @@ export class HippoIframeCtrl {
     this.CmsService = CmsService;
     this.ChannelService = ChannelService;
     this.PageStructureService = PageStructureService;
+    this.PageMetaDataService = PageMetaDataService;
     this.OverlaySyncService = OverlaySyncService;
     this.DragDropService = DragDropService;
 
@@ -60,8 +64,11 @@ export class HippoIframeCtrl {
   onLoad() {
     this.$rootScope.$apply(() => {
       this._parseHstComments();
-      this._parseLinks();
       this._updateDragDrop();
+      this._updateChannelIfSwitched().then(() => {
+        this._parseLinks();
+      });
+      // TODO: handle error.
     });
   }
 
@@ -112,6 +119,15 @@ export class HippoIframeCtrl {
       this.PageStructureService.registerParsedElement.bind(this.PageStructureService)
     );
     this.PageStructureService.printParsedElements();
+  }
+
+  _updateChannelIfSwitched() {
+    const channelId = this.PageMetaDataService.getChannelId();
+    if (channelId !== this.ChannelService.getId()) {
+      return this.ChannelService.switchToChannel(channelId);
+    }
+
+    return this.$q.resolve();
   }
 
   _getIframeDOM() {

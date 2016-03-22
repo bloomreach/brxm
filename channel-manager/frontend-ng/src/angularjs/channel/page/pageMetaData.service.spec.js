@@ -46,25 +46,35 @@ describe('PageMetaDataService', () => {
     expect(PageMetaDataService.get()).toEqual({});
   });
 
-  it('adds data', () => {
-    PageMetaDataService.add({
+  it('sets data', () => {
+    PageMetaDataService.set({
       foo: 1,
       bar: 2,
     });
-    PageMetaDataService.add({
+    expect(PageMetaDataService.get()).toEqual({
+      foo: 1,
+      bar: 2,
+    });
+    PageMetaDataService.set({
       foo: 3,
     });
     expect(PageMetaDataService.get()).toEqual({
       foo: 3,
-      bar: 2,
     });
   });
 
   it('clears data', () => {
-    PageMetaDataService.add({
+    PageMetaDataService.set({
       test: 1,
     });
     PageMetaDataService.clear();
     expect(PageMetaDataService.get()).toEqual({});
+  });
+
+  it('provides the channel ID of the current page', () => {
+    PageMetaDataService.set({
+      'HST-Channel-Id': 'channelX',
+    });
+    expect(PageMetaDataService.getChannelId()).toBe('channelX');
   });
 });
