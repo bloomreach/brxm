@@ -6,9 +6,9 @@
     <#list menu.siteMenuItems as item>
         <#if !item.hstLink?? && !item.externalLink??>
             <#if item.selected || item.expanded>
-              <li class="active"><span>${item.name?html}</span></li>
+              <li class="active"><div style="padding: 10px 15px;">${item.name?html}</div></li>
             <#else>
-              <li><span>${item.name?html}</span></li>
+              <li><div style="padding: 10px 15px;">${item.name?html}</div></li>
             </#if>
         <#else>
             <#if item.hstLink??>

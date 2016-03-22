@@ -3863,25 +3863,21 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   position: relative;
   display: block;
 }
-.nav > li > a, span {
+.nav > li > a {
   position: relative;
   display: block;
   padding: 10px 15px;
 }
 .nav > li > a:hover,
-.nav > li > a:focus,
-.nav > li > span:hover,
-.nav > li > span:focus{
+.nav > li > a:focus {
   text-decoration: none;
   background-color: #eee;
 }
-.nav > li.disabled > a, span {
+.nav > li.disabled > a {
   color: #777;
 }
 .nav > li.disabled > a:hover,
-.nav > li.disabled > a:focus,
-.nav > li.disabled > span:hover,
-.nav > li.disabled > span:focus {
+.nav > li.disabled > a:focus {
   color: #777;
   text-decoration: none;
   cursor: not-allowed;
@@ -3974,7 +3970,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav-pills > li {
   float: left;
 }
-.nav-pills > li > a, span  {
+.nav-pills > li > a {
   border-radius: 4px;
 }
 .nav-pills > li + li {
@@ -4839,9 +4835,6 @@ a.badge:focus {
   margin-right: 5px;
 }
 .nav-pills > li > a > .badge {
-  margin-left: 3px;
-}
-.nav-pills > li > span > .badge {
   margin-left: 3px;
 }
 .jumbotron {
@@ -5952,7 +5945,7 @@ button.close {
   border: 1px solid rgba(0, 0, 0, .2);
   border-radius: 6px;
   -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
-          box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
 }
 .popover.top {
   margin-top: -10px;

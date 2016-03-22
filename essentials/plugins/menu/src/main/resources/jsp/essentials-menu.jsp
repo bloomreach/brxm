@@ -8,10 +8,10 @@
         <c:when test="${empty item.hstLink && empty item.externalLink}">
           <c:choose>
             <c:when test="${item.selected or item.expanded}">
-              <li class="active"><span><c:out value="${item.name}"/></span></li>
+              <li class="active"><div style="padding: 10px 15px;"><c:out value="${item.name}"/></div></li>
             </c:when>
             <c:otherwise>
-              <li><span><c:out value="${item.name}"/></span></li>
+              <li><div style="padding: 10px 15px;"><c:out value="${item.name}"/></div></li>
             </c:otherwise>
           </c:choose>
         </c:when>
