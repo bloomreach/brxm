@@ -18,12 +18,12 @@ import { channelManagerApi } from './api/api.js';
 import { channelModule } from './channel/channel.js';
 import { config } from './hippo-cms.config.js';
 
-angular
+export const hippoCmModule = angular
   .module('hippo-cm', [
     'ngMaterial',
     'pascalprecht.translate',
     'ui.router',
-    'templates',
+    'hippo-cm-templates',
     channelManagerApi.name,
     channelModule.name,
   ])
