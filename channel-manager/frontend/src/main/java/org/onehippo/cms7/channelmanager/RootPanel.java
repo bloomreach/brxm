@@ -178,7 +178,6 @@ public class RootPanel extends ExtPanel {
                 selectActiveItem(target);
                 redraw = false;
             }
-            target.appendJavaScript("Ext.getCmp('rootPanel').showBreadcrumb();");
         }
     }
 
