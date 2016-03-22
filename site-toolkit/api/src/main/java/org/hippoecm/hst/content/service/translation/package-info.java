@@ -15,6 +15,6 @@
  */
 
 /**
- * The org.hippoecm.hst.content.service package defines the content related services.
+ * The org.hippoecm.hst.content.service.translation package defines the Hippo Translation related services.
  */
-package org.hippoecm.hst.content.service;
+package org.hippoecm.hst.content.service.translation;

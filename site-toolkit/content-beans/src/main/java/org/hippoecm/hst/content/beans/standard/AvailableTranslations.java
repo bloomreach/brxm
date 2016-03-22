@@ -23,7 +23,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.service.HippoTranslationBeanService;
+import org.hippoecm.hst.content.service.translation.HippoTranslationBeanService;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.slf4j.Logger;

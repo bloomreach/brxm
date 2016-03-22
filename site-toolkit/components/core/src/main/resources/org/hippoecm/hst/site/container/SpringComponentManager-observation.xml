@@ -397,6 +397,33 @@
           </property>
         </bean>
 
+        <!-- Changes in the hippotranslation:translated documents to update hippo translation cache. -->
+        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+          <property name="nodeAddedEnabled" value="true"/>
+          <property name="nodeRemovedEnabled" value="true"/>
+          <property name="propertyAddedEnabled" value="false"/>
+          <property name="propertyChangedEnabled" value="false"/>
+          <property name="propertyRemovedEnabled" value="false"/>
+          <property name="absolutePath" value="/content"/>
+          <property name="deep" value="true"/>
+          <property name="uuids">
+            <null/>
+          </property>
+          <property name="nodeTypeNames">
+            <list>
+              <value>hippostd:folder</value>
+            </list>
+          </property>
+          <property name="noLocal" value="false"/>
+          <property name="eventListener">
+            <bean parent="baseEventListener" class="org.hippoecm.hst.content.service.translation.CachingHippoTranslationEventListener">
+              <constructor-arg ref="javax.jcr.Repository" />
+              <constructor-arg ref="javax.jcr.Credentials.hstconfigreader" />
+              <constructor-arg ref="org.hippoecm.hst.content.service.translation.HippoTranslationContentRegistry" />
+            </bean>
+          </property>
+        </bean>
+
       </list>
     </property> 
   </bean>

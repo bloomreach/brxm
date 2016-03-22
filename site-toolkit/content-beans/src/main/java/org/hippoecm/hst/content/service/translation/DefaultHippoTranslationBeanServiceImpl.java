@@ -13,19 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.content.service;
+package org.hippoecm.hst.content.service.translation;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -90,31 +86,7 @@ public class DefaultHippoTranslationBeanServiceImpl implements HippoTranslationB
             throw new IllegalArgumentException("Blank translation ID.");
         }
 
-        List<Node> translationNodes = new ArrayList<>();
-
-        String xpath = "//element(*," + HippoTranslationNodeType.NT_TRANSLATED + ")[" + HippoTranslationNodeType.ID
-                + " = '" + translationId + "']";
-
-        @SuppressWarnings("deprecation")
-        Query query = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH);
-        final QueryResult result = query.execute();
-
-        Node translationNode;
-        for (NodeIterator nodeIt = result.getNodes(); nodeIt.hasNext();) {
-            translationNode = nodeIt.nextNode();
-
-            if (translationNode != null) {
-                if (!translationNode.hasProperty(HippoTranslationNodeType.LOCALE)) {
-                    log.debug("Skipping node '{}' because does not contain property '{}'", translationNode.getPath(),
-                            HippoTranslationNodeType.LOCALE);
-                    continue;
-                }
-
-                translationNodes.add(translationNode);
-            }
-        }
-
-        return translationNodes;
+        return HippoTranslatedContentUtils.findTranslationNodes(session, translationId);
     }
 
 }

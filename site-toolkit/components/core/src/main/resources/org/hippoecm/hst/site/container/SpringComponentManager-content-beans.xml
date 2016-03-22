@@ -32,8 +32,19 @@
     <property name="defaultContentRewriterClassName" value="${default.hst.contentrewriter.class}" />
   </bean>
 
+  <!--
   <bean id="org.hippoecm.hst.content.service.HippoTranslationBeanService"
         class="org.hippoecm.hst.content.service.DefaultHippoTranslationBeanServiceImpl">
+  </bean>
+  -->
+
+  <bean id="org.hippoecm.hst.content.service.translation.HippoTranslationContentRegistry"
+        class="org.hippoecm.hst.content.service.translation.DefaultHippoTranslationContentRegistry">
+  </bean>
+
+  <bean id="org.hippoecm.hst.content.service.HippoTranslationBeanService"
+        class="org.hippoecm.hst.content.service.translation.CachingHippoTranslationBeanServiceImpl">
+    <constructor-arg ref="org.hippoecm.hst.content.service.translation.HippoTranslationContentRegistry" />
   </bean>
 
 </beans>

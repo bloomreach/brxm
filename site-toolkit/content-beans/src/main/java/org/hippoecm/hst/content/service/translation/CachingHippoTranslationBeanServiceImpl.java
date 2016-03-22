@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.content.service;
+package org.hippoecm.hst.content.service.translation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.cache.CacheElement;
-import org.hippoecm.hst.cache.HstCache;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,10 +38,11 @@ public class CachingHippoTranslationBeanServiceImpl extends DefaultHippoTranslat
 
     private static Logger log = LoggerFactory.getLogger(CachingHippoTranslationBeanServiceImpl.class);
 
-    private final HstCache handleIdsOfTranslationIdCache;
+    private final HippoTranslationContentRegistry hippoTranslationContentRegistry;
 
-    public CachingHippoTranslationBeanServiceImpl(final HstCache handleIdsOfTranslationIdCache) {
-        this.handleIdsOfTranslationIdCache = handleIdsOfTranslationIdCache;
+    public CachingHippoTranslationBeanServiceImpl(
+            final HippoTranslationContentRegistry hippoTranslationContentRegistry) {
+        this.hippoTranslationContentRegistry = hippoTranslationContentRegistry;
     }
 
     @Override
@@ -52,17 +54,16 @@ public class CachingHippoTranslationBeanServiceImpl extends DefaultHippoTranslat
 
         List<Node> translationNodes = null;
 
-        CacheElement cacheElem = handleIdsOfTranslationIdCache.get(translationId);
+        Set<String> documentHandleIds = hippoTranslationContentRegistry
+                .getDocumentHandleIdsByTranslationId(translationId);
 
-        if (cacheElem != null) {
-            List<String> handleNodeIds = (List<String>) cacheElem.getContent();
-
-            if (handleNodeIds != null) {
+        if (documentHandleIds != null) {
+            if (documentHandleIds != null) {
                 translationNodes = new ArrayList<>();
                 Node handleNode;
 
-                for (String handleNodeId : handleNodeIds) {
-                    handleNode = session.getNodeByIdentifier(handleNodeId);
+                for (String documentHandleId : documentHandleIds) {
+                    handleNode = session.getNodeByIdentifier(documentHandleId);
 
                     if (handleNode.hasNode(handleNode.getName())) {
                         translationNodes.add(handleNode.getNode(handleNode.getName()));
@@ -70,17 +71,20 @@ public class CachingHippoTranslationBeanServiceImpl extends DefaultHippoTranslat
                 }
             }
         } else {
-            translationNodes = super.getTranslationNodes(session, translationId);
+            translationNodes = HippoTranslatedContentUtils.findTranslationNodes(session, translationId);
 
-            List<String> handleNodeIds = new ArrayList<String>();
+            documentHandleIds = new HashSet<>();
             Node handleNode;
+
             for (Node translationNode : translationNodes) {
                 handleNode = translationNode.getParent();
-                handleNodeIds.add(handleNode.getIdentifier());
+
+                if (handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    documentHandleIds.add(handleNode.getIdentifier());
+                }
             }
 
-            cacheElem = handleIdsOfTranslationIdCache.createElement(translationId, handleNodeIds);
-            handleIdsOfTranslationIdCache.put(cacheElem);
+            hippoTranslationContentRegistry.putDocumentHandleIdsForTranslationId(translationId, documentHandleIds);
         }
 
         return translationNodes == null ? Collections.emptyList() : translationNodes;
