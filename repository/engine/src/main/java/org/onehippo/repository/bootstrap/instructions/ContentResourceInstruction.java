@@ -144,12 +144,13 @@ public class ContentResourceInstruction extends InitializeInstruction {
                         processedPaths.add(upstreamItemContextPath);
                         in = contentURL.openStream();
                         final String upstreamItemContentRoot = upstreamItem.getContentRoot();
+                        String currentContentRoot = contentRoot;
                         if (upstreamItemContentRoot.length() > contentRoot.length()) {
-                            String contextRelPath = StringUtils.substringAfter(upstreamItemContextPath, contentRoot + "/");
-                            contentRoot = upstreamItemContentRoot;
+                            final String contextRelPath = StringUtils.substringAfter(upstreamItemContextPath, contentRoot + "/");
+                            currentContentRoot = upstreamItemContentRoot;
                             in = getPartialContentInputStream(in, contextRelPath);
                         }
-                        initializeNodecontent(session, contentRoot, in, contentURL, pckg);
+                        initializeNodecontent(session, currentContentRoot, in, contentURL, pckg);
                         IOUtils.closeQuietly(in);
                     }
                 } else {
