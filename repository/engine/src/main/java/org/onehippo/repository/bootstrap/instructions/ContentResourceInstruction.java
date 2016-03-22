@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,7 +110,7 @@ public class ContentResourceInstruction extends InitializeInstruction {
         }
         boolean pckg = contentResource.endsWith(".zip") || contentResource.endsWith(".jar");
 
-        String contentRoot = item.getContentRoot();
+        final String contentRoot = item.getContentRoot();
         if (contentRoot.equals(INIT_FOLDER_PATH) || contentRoot.startsWith(INIT_FOLDER_PATH + "/")) {
             throw new RepositoryException(String.format("Bootstrapping content to %s is not supported", INIT_FOLDER_PATH));
         }
@@ -144,12 +144,13 @@ public class ContentResourceInstruction extends InitializeInstruction {
                         processedPaths.add(upstreamItemContextPath);
                         in = contentURL.openStream();
                         final String upstreamItemContentRoot = upstreamItem.getContentRoot();
+                        String currentContentRoot = contentRoot;
                         if (upstreamItemContentRoot.length() > contentRoot.length()) {
-                            String contextRelPath = StringUtils.substringAfter(upstreamItemContextPath, contentRoot + "/");
-                            contentRoot = upstreamItemContentRoot;
+                            final String contextRelPath = StringUtils.substringAfter(upstreamItemContextPath, contentRoot + "/");
+                            currentContentRoot = upstreamItemContentRoot;
                             in = getPartialContentInputStream(in, contextRelPath);
                         }
-                        initializeNodecontent(session, contentRoot, in, contentURL, pckg);
+                        initializeNodecontent(session, currentContentRoot, in, contentURL, pckg);
                         IOUtils.closeQuietly(in);
                     }
                 } else {
