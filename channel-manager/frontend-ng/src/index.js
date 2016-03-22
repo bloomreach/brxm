@@ -14,17 +14,4 @@
  * limitations under the License.
  */
 
-import { channelManagerApi } from './api/api.js';
-import { channelModule } from './channel/channel.js';
-import { config } from './hippo-cms.config.js';
-
-angular
-  .module('hippo-cm', [
-    'ngMaterial',
-    'pascalprecht.translate',
-    'ui.router',
-    'templates',
-    channelManagerApi.name,
-    channelModule.name,
-  ])
-  .config(config);
+import './angularjs/hippo-cm.js';
