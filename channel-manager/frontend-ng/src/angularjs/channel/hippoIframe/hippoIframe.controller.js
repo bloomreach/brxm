@@ -54,13 +54,14 @@ export class HippoIframeCtrl {
       this.deleteComponent(componentId);
     });
 
-    $scope.$watch('iframe.editMode', () => this._enableDragDrop());
+    $scope.$watch('iframe.editMode', () => this._updateDragDrop());
   }
 
   onLoad() {
     this.$rootScope.$apply(() => {
       this._parseHstComments();
       this._parseLinks();
+      this._updateDragDrop();
     });
   }
 
@@ -85,7 +86,7 @@ export class HippoIframeCtrl {
     return this.$mdDialog.show(confirm);
   }
 
-  _enableDragDrop() {
+  _updateDragDrop() {
     if (this.editMode) {
       this.DragDropService.enable(this.PageStructureService.containers);
     } else {
