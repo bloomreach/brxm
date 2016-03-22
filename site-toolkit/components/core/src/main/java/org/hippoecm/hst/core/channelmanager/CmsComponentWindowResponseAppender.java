@@ -70,52 +70,54 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             if (isComposerMode(request)) {
                 populateComponentMetaData(request, response, window);
             }
-        } else {
-            if (isTopHstResponse(rootWindow, rootRenderingWindow, window)) {
-                final HstRequestContext requestContext = request.getRequestContext();
-                final Mount mount = requestContext.getResolvedMount().getMount();
-                final Map<String, String> pageMetaData = new HashMap<>();
+        } else if (isTopHstResponse(rootWindow, rootRenderingWindow, window)) {
+            populatePageMetaData(request, response, session, compConfig);
+        }
+    }
 
-                pageMetaData.put(ChannelManagerConstants.HST_MOUNT_ID, mount.getIdentifier());
-                pageMetaData.put(ChannelManagerConstants.HST_SITE_ID, mount.getHstSite().getCanonicalIdentifier());
-                pageMetaData.put(ChannelManagerConstants.HST_PAGE_ID, compConfig.getCanonicalIdentifier());
+    private void populatePageMetaData(final HstRequest request, final HstResponse response, final HttpSession session, final HstComponentConfiguration compConfig) {
+        final HstRequestContext requestContext = request.getRequestContext();
+        final Mount mount = requestContext.getResolvedMount().getMount();
+        final Map<String, String> pageMetaData = new HashMap<>();
 
-                final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
-                if (resolvedSiteMapItem != null) {
-                    final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
-                    pageMetaData.put(ChannelManagerConstants.HST_SITEMAPITEM_ID, ((CanonicalInfo) hstSiteMapItem).getCanonicalIdentifier());
-                    final HstSiteMap siteMap = hstSiteMapItem.getHstSiteMap();
-                    if (siteMap instanceof CanonicalInfo) {
-                        final CanonicalInfo canonicalInfo = (CanonicalInfo) siteMap;
-                        pageMetaData.put(ChannelManagerConstants.HST_SITEMAP_ID, canonicalInfo.getCanonicalIdentifier());
-                        if (canonicalInfo.getCanonicalPath().contains(WORKSPACE_PATH_ELEMENT) &&
-                                canonicalInfo.getCanonicalPath().startsWith(mount.getHstSite().getConfigurationPath())) {
-                            // sitemap item is part of workspace && of current site configuration (thus not inherited)
-                            pageMetaData.put(ChannelManagerConstants.HST_PAGE_EDITABLE, "true");
-                        } else {
-                            pageMetaData.put(ChannelManagerConstants.HST_PAGE_EDITABLE, "false");
-                        }
-                    } else {
-                        log.warn("Expected sitemap of subtype {}. Cannot set sitemap id.", CanonicalInfo.class.getName());
-                    }
+        pageMetaData.put(ChannelManagerConstants.HST_MOUNT_ID, mount.getIdentifier());
+        pageMetaData.put(ChannelManagerConstants.HST_SITE_ID, mount.getHstSite().getCanonicalIdentifier());
+        pageMetaData.put(ChannelManagerConstants.HST_PAGE_ID, compConfig.getCanonicalIdentifier());
+
+        final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+        if (resolvedSiteMapItem != null) {
+            final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
+            pageMetaData.put(ChannelManagerConstants.HST_SITEMAPITEM_ID, ((CanonicalInfo) hstSiteMapItem).getCanonicalIdentifier());
+            final HstSiteMap siteMap = hstSiteMapItem.getHstSiteMap();
+            if (siteMap instanceof CanonicalInfo) {
+                final CanonicalInfo canonicalInfo = (CanonicalInfo) siteMap;
+                pageMetaData.put(ChannelManagerConstants.HST_SITEMAP_ID, canonicalInfo.getCanonicalIdentifier());
+                if (canonicalInfo.getCanonicalPath().contains(WORKSPACE_PATH_ELEMENT) &&
+                        canonicalInfo.getCanonicalPath().startsWith(mount.getHstSite().getConfigurationPath())) {
+                    // sitemap item is part of workspace && of current site configuration (thus not inherited)
+                    pageMetaData.put(ChannelManagerConstants.HST_PAGE_EDITABLE, "true");
+                } else {
+                    pageMetaData.put(ChannelManagerConstants.HST_PAGE_EDITABLE, "false");
                 }
-
-                Object variant = session.getAttribute(ContainerConstants.RENDER_VARIANT);
-                if (variant == null) {
-                    variant = ContainerConstants.DEFAULT_PARAMETER_PREFIX;
-                }
-                pageMetaData.put(ChannelManagerConstants.HST_RENDER_VARIANT, variant.toString());
-                pageMetaData.put(ChannelManagerConstants.HST_SITE_HAS_PREVIEW_CONFIG, String.valueOf(mount.getHstSite().hasPreviewConfiguration()));
-
-                for (Map.Entry<String, String> entry : pageMetaData.entrySet()) {
-                    response.addHeader(entry.getKey(), entry.getValue());
-                }
-                pageMetaData.put(ChannelManagerConstants.HST_TYPE, ChannelManagerConstants.HST_TYPE_PAGE_META_DATA);
-                pageMetaData.put(ChannelManagerConstants.HST_PATH_INFO, requestContext.getBaseURL().getPathInfo());
-                pageMetaData.put(ChannelManagerConstants.HST_CHANNEL_ID, mount.getChannel().getId());
-                response.addEpilogue(createCommentWithAttr(pageMetaData, response));
+            } else {
+                log.warn("Expected sitemap of subtype {}. Cannot set sitemap id.", CanonicalInfo.class.getName());
             }
         }
+
+        Object variant = session.getAttribute(ContainerConstants.RENDER_VARIANT);
+        if (variant == null) {
+            variant = ContainerConstants.DEFAULT_PARAMETER_PREFIX;
+        }
+        pageMetaData.put(ChannelManagerConstants.HST_RENDER_VARIANT, variant.toString());
+        pageMetaData.put(ChannelManagerConstants.HST_SITE_HAS_PREVIEW_CONFIG, String.valueOf(mount.getHstSite().hasPreviewConfiguration()));
+
+        for (Map.Entry<String, String> entry : pageMetaData.entrySet()) {
+            response.addHeader(entry.getKey(), entry.getValue());
+        }
+        pageMetaData.put(ChannelManagerConstants.HST_TYPE, ChannelManagerConstants.HST_TYPE_PAGE_META_DATA);
+        pageMetaData.put(ChannelManagerConstants.HST_PATH_INFO, requestContext.getBaseURL().getPathInfo());
+        pageMetaData.put(ChannelManagerConstants.HST_CHANNEL_ID, mount.getChannel().getId());
+        response.addEpilogue(createCommentWithAttr(pageMetaData, response));
     }
 
     private void populateComponentMetaData(final HstRequest request, final HstResponse response,
