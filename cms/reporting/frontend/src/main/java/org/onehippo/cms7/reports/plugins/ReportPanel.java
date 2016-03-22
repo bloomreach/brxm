@@ -135,15 +135,11 @@ public class ReportPanel extends ExtPanel {
         }
         return DEFAULT_TITLE_SIZE;
     }
-
-    protected final ResourceBundleModel getResourceBundleModel(final String key, Locale locale) {
-        return new ResourceBundleModel("hippo:reports." + reportName, key, locale);
-    }
-
+    
     protected final String getTranslation(String key, String defaultValue) {
         String translation = null;
         if (StringUtils.isNotEmpty(reportName)) {
-            translation = ReportUtil.getTranslation(reportName, key);
+            translation = ReportUtil.getTranslation(reportName, key, defaultValue);
         }
         if (StringUtils.isEmpty(translation)) {
             ReportUtil.getTranslation(this, key, defaultValue);
