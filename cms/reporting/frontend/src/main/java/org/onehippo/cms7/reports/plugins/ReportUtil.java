@@ -32,8 +32,8 @@ public final class ReportUtil {
         // prevent instantiation
     }
 
-    public static String getTranslation(final String reportName, final String key) {
-        return new ResourceBundleModel("hippo:reports."+ reportName, key).getObject();
+    public static String getTranslation(final String reportName, final String key, final String defaultValue) {
+        return new ResourceBundleModel("hippo:reports."+ reportName, key, defaultValue).getObject();
     }
 
     /**
