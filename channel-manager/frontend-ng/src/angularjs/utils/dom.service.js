@@ -48,4 +48,48 @@ export class DomService {
     });
   }
 
+  copyComputedStyleExcept(fromElement, toElement, excludedProperties) {
+    const stripRegexps = this._createStripRegexps(excludedProperties);
+    this._doCopyComputedStyleExcept(fromElement, toElement, stripRegexps);
+  }
+
+  _createStripRegexps(excludedProperties) {
+    const stripRegexes = [];
+    if (excludedProperties) {
+      excludedProperties.forEach((prop) => {
+        const regex = new RegExp(` ${prop}:[^;]*;`);
+        stripRegexes.push(regex);
+      });
+    }
+    return stripRegexes;
+  }
+
+  _doCopyComputedStyleExcept(fromElement, toElement, stripRegexes) {
+    const fromWindow = fromElement.ownerDocument.defaultView;
+    const fromComputedStyle = fromWindow.getComputedStyle(fromElement, null);
+
+    let toCssText = fromComputedStyle.cssText;
+
+    stripRegexes.forEach((regex) => {
+      toCssText = toCssText.replace(regex, '');
+    });
+
+    toElement.style.cssText = toCssText;
+  }
+
+  copyComputedStyleOfDescendantsExcept(fromElement, toElement, excludedProperties) {
+    const stripRegexps = this._createStripRegexps(excludedProperties);
+    this._doCopyComputedStyleOfDescendantsExcept(fromElement, toElement, stripRegexps);
+  }
+
+  _doCopyComputedStyleOfDescendantsExcept(fromRootElement, toRootElement, stripRegexps) {
+    const fromChildren = $(fromRootElement).children();
+    const toChildren = $(toRootElement).children();
+
+    fromChildren.each((index, fromChild) => {
+      const toChild = toChildren[index];
+      this._doCopyComputedStyleExcept(fromChild, toChild, stripRegexps);
+      this._doCopyComputedStyleOfDescendantsExcept(fromChild, toChild, stripRegexps);
+    });
+  }
 }

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+const COMPONENT_QA_CLASS = 'qa-dragula-component';
+
 export class DragDropService {
 
   constructor($rootScope, $q, DomService, HstService, PageStructureService, ScalingService, ChannelService) {
@@ -27,7 +29,7 @@ export class DragDropService {
     this.ScalingService = ScalingService;
     this.ChannelService = ChannelService;
 
-    this.dragging = false;
+    this.draggingOrClicking = false;
   }
 
   init(iframeJQueryElement, baseJQueryElement) {
@@ -51,7 +53,7 @@ export class DragDropService {
     if (this.drake) {
       this.drake.destroy();
       this.drake = null;
-      this.dragging = false;
+      this.draggingOrClicking = false;
     }
   }
 
@@ -65,13 +67,15 @@ export class DragDropService {
 
       this.drake = this.iframe.dragula(iframeContainerElements, {
         ignoreInputTextSelection: false,
+        mirrorContainer: this.baseJQueryElement[0],
       });
-      this.drake.on('dragend', (el) => this._stopDrag(el));
-      this.drake.on('drop', this._onDrop.bind(this));
+      this.drake.on('drag', () => this._onStartDrag());
+      this.drake.on('cloned', (clone, original) => this._onMirrorCreated(clone, original));
+      this.drake.on('dragend', (el) => this._onStopDrag(el));
+      this.drake.on('drop', (el, target, source, sibling) => this._onDrop(el, target, source, sibling));
 
       this._onComponentClick(containers, (component) => {
-        this.dragging = false;
-        component.getBoxElement().removeClass('qa-dragula-component');
+        this._onStopDrag(component.getBoxElement());
         this.PageStructureService.showComponentProperties(component);
       });
     });
@@ -102,18 +106,38 @@ export class DragDropService {
   }
 
   startDragOrClick($event, structureElement) {
-    this.dragging = true;
+    this.draggingOrClicking = true;
     this._dispatchEventInIframe($event, structureElement);
   }
 
-  isDragging() {
-    return this.dragging;
+  isDraggingOrClicking() {
+    return this.draggingOrClicking;
   }
 
-  _stopDrag(element) {
-    $(element).removeClass('qa-dragula-component');
-    this.dragging = false;
-    this.$rootScope.$digest();
+  isDragging() {
+    return this.drake && this.drake.dragging;
+  }
+
+  _onStartDrag() {
+    // make Angular evaluate isDragging() again
+    this._digestIfNeeded();
+  }
+
+  _onMirrorCreated(mirrorElement, originalElement) {
+    this.DomService.copyComputedStyleExcept(originalElement, mirrorElement, ['border-[a-z]*', 'box-shadow', 'margin-[a-z]*', 'overflow', 'opacity', 'pointer-events', 'position', '[a-z\\\-]*user-select']);
+    this.DomService.copyComputedStyleOfDescendantsExcept(originalElement, mirrorElement, ['opacity', 'pointer-events', '[a-z\\\-]*user-select']);
+  }
+
+  _onStopDrag(element) {
+    this.draggingOrClicking = false;
+    this._digestIfNeeded();
+    $(element).removeClass(COMPONENT_QA_CLASS);
+  }
+
+  _digestIfNeeded() {
+    if (!this.$rootScope.$$phase) {
+      this.$rootScope.$digest();
+    }
   }
 
   _onDrop(movedElement, targetContainerElement, sourceContainerElement, targetNextComponentElement) {
@@ -148,7 +172,7 @@ export class DragDropService {
     });
     const iframeElement = structureElement.getBoxElement();
     iframeElement[0].dispatchEvent(iframeEvent);
-    iframeElement.addClass('qa-dragula-component');
+    iframeElement.addClass(COMPONENT_QA_CLASS);
   }
 
   _shiftCoordinates($event) {

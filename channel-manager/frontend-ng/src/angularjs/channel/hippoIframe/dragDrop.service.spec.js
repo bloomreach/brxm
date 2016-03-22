@@ -100,14 +100,14 @@ describe('DragDropService', () => {
   }
 
   it('is not dragging initially', () => {
-    expect(DragDropService.isDragging()).toEqual(false);
+    expect(DragDropService.isDragging()).toBeFalsy();
   });
 
   it('injects dragula.js into the iframe', (done) => {
     loadIframeFixture((iframeWindow) => {
       expect(typeof iframeWindow.dragula).toEqual('function');
       expect(DragDropService.drake).toBeDefined();
-      expect(DragDropService.isDragging()).toEqual(false);
+      expect(DragDropService.isDragging()).toBeFalsy();
       done();
     });
   });
@@ -117,7 +117,7 @@ describe('DragDropService', () => {
       expect(DragDropService.drake).not.toBeNull();
       $(iframeWindow).trigger('beforeunload');
       expect(DragDropService.drake).toBeNull();
-      expect(DragDropService.isDragging()).toEqual(false);
+      expect(DragDropService.isDragging()).toBeFalsy();
       done();
     });
   });
@@ -140,7 +140,8 @@ describe('DragDropService', () => {
 
       DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
 
-      expect(DragDropService.isDragging()).toEqual(true);
+      expect(DragDropService.isDraggingOrClicking()).toBeTruthy();
+      expect(DragDropService.isDragging()).toBeFalsy();
 
       const dispatchedEvent = iframeComponentElement1.dispatchEvent.calls.argsFor(0)[0];
       expect(dispatchedEvent.type).toEqual('mousedown');
@@ -186,7 +187,7 @@ describe('DragDropService', () => {
     });
   });
 
-  it('stops dragging when disabled', (done) => {
+  it('stops dragging or clicking when disabled', (done) => {
     loadIframeFixture(() => {
       const mockedMouseDownEvent = {
         type: 'mousedown',
@@ -195,10 +196,12 @@ describe('DragDropService', () => {
       };
 
       DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
-      expect(DragDropService.isDragging()).toEqual(true);
+      expect(DragDropService.isDraggingOrClicking()).toBeTruthy();
+      expect(DragDropService.isDragging()).toBeFalsy();
 
       DragDropService.disable();
-      expect(DragDropService.isDragging()).toEqual(false);
+      expect(DragDropService.isDraggingOrClicking()).toBeFalsy();
+      expect(DragDropService.isDragging()).toBeFalsy();
 
       done();
     });
@@ -220,8 +223,8 @@ describe('DragDropService', () => {
 
   it('stops dragging', () => {
     DragDropService.dragging = true;
-    DragDropService._stopDrag();
-    expect(DragDropService.isDragging()).toEqual(false);
+    DragDropService._onStopDrag();
+    expect(DragDropService.isDragging()).toBeFalsy();
   });
 
   it('can move the first component to the second position in the container', (done) => {
