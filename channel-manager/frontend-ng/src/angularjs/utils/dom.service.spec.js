@@ -104,8 +104,9 @@ describe('DomService', () => {
     const source = $j('#copyComputedStyleSource');
     const target = $j('#copyComputedStyleTarget');
 
+    // don't copy the 'position' property, so the target should use the default value 'static'
     expect(source.css('position')).toEqual('fixed');
-    DomService.copyComputedStyleExcept(source[0], target[0], ['color']);
+    DomService.copyComputedStyleExcept(source[0], target[0], ['position']);
     expect(target.css('position')).toEqual('static');
   });
 

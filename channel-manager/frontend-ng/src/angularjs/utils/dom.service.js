@@ -49,47 +49,62 @@ export class DomService {
   }
 
   copyComputedStyleExcept(fromElement, toElement, excludedProperties) {
-    const stripRegexps = this._createStripRegexps(excludedProperties);
-    this._doCopyComputedStyleExcept(fromElement, toElement, stripRegexps);
+    const excludeRegExp = this._createExcludeRegexp(excludedProperties);
+    this._doCopyComputedStyleExcept(fromElement, toElement, excludeRegExp);
   }
 
-  _createStripRegexps(excludedProperties) {
-    const stripRegexes = [];
-    if (excludedProperties) {
-      excludedProperties.forEach((prop) => {
-        const regex = new RegExp(` ${prop}:[^;]*;`);
-        stripRegexes.push(regex);
-      });
+  _createExcludeRegexp(excludedProperties) {
+    if (!excludedProperties) {
+      return null;
     }
-    return stripRegexes;
+    let excludeRegexText = '';
+    excludedProperties.forEach((prop) => {
+      if (excludeRegexText.length > 0) {
+        excludeRegexText += '|';
+      }
+      excludeRegexText += prop;
+    });
+    return new RegExp(excludeRegexText);
   }
 
-  _doCopyComputedStyleExcept(fromElement, toElement, stripRegexes) {
+  _doCopyComputedStyleExcept(fromElement, toElement, excludeRegExp) {
     const fromWindow = fromElement.ownerDocument.defaultView;
     const fromComputedStyle = fromWindow.getComputedStyle(fromElement, null);
+    const toWindow = toElement.ownerDocument.defaultView;
+    const toComputedStyle = toWindow.getComputedStyle(toElement, null);
 
-    let toCssText = fromComputedStyle.cssText;
+    let cssTextDiff = '';
 
-    stripRegexes.forEach((regex) => {
-      toCssText = toCssText.replace(regex, '');
-    });
+    for (let i = 0; i < fromComputedStyle.length; i++) {
+      const cssPropertyName = fromComputedStyle.item(i);
 
-    toElement.style.cssText = toCssText;
+      if (!excludeRegExp || !excludeRegExp.test(cssPropertyName)) {
+        const fromValue = fromComputedStyle.getPropertyValue(cssPropertyName);
+        const toValue = toComputedStyle.getPropertyValue(cssPropertyName);
+        if (fromValue !== toValue) {
+          cssTextDiff += `${cssPropertyName}:${fromValue};`;
+        }
+      }
+    }
+
+    if (cssTextDiff.length > 0) {
+      toElement.style.cssText = cssTextDiff;
+    }
   }
 
   copyComputedStyleOfDescendantsExcept(fromElement, toElement, excludedProperties) {
-    const stripRegexps = this._createStripRegexps(excludedProperties);
-    this._doCopyComputedStyleOfDescendantsExcept(fromElement, toElement, stripRegexps);
+    const excludeRegExp = this._createExcludeRegexp(excludedProperties);
+    this._doCopyComputedStyleOfDescendantsExcept(fromElement, toElement, excludeRegExp);
   }
 
-  _doCopyComputedStyleOfDescendantsExcept(fromRootElement, toRootElement, stripRegexps) {
+  _doCopyComputedStyleOfDescendantsExcept(fromRootElement, toRootElement, excludeRegExp) {
     const fromChildren = $(fromRootElement).children();
     const toChildren = $(toRootElement).children();
 
     fromChildren.each((index, fromChild) => {
       const toChild = toChildren[index];
-      this._doCopyComputedStyleExcept(fromChild, toChild, stripRegexps);
-      this._doCopyComputedStyleOfDescendantsExcept(fromChild, toChild, stripRegexps);
+      this._doCopyComputedStyleExcept(fromChild, toChild, excludeRegExp);
+      this._doCopyComputedStyleOfDescendantsExcept(fromChild, toChild, excludeRegExp);
     });
   }
 }
