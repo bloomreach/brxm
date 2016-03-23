@@ -491,9 +491,9 @@
           "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-4.0.0.tgz"
         },
         "which": {
-          "version": "1.2.2",
+          "version": "1.2.4",
           "from": "which@>=1.2.0 <2.0.0",
-          "resolved": "https://registry.npmjs.org/which/-/which-1.2.2.tgz"
+          "resolved": "https://registry.npmjs.org/which/-/which-1.2.4.tgz"
         }
       }
     },
@@ -1543,9 +1543,9 @@
           "resolved": "https://registry.npmjs.org/supports-color/-/supports-color-3.1.2.tgz"
         },
         "which": {
-          "version": "1.2.2",
+          "version": "1.2.4",
           "from": "which@>=1.1.1 <2.0.0",
-          "resolved": "https://registry.npmjs.org/which/-/which-1.2.2.tgz"
+          "resolved": "https://registry.npmjs.org/which/-/which-1.2.4.tgz"
         },
         "wordwrap": {
           "version": "1.0.0",
