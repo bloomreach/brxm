@@ -32,19 +32,36 @@
     <property name="defaultContentRewriterClassName" value="${default.hst.contentrewriter.class}" />
   </bean>
 
-  <!--
-  <bean id="org.hippoecm.hst.content.service.HippoTranslationBeanService"
-        class="org.hippoecm.hst.content.service.DefaultHippoTranslationBeanServiceImpl">
+  <bean id="org.hippoecm.hst.content.service.translation.HippoTranslationBeanService"
+        class="org.hippoecm.hst.site.container.MultiTargetDelegatingBeanFactoryBean">
+    <constructor-arg>
+      <list>
+        <value>org.hippoecm.hst.content.service.translation.HippoTranslationBeanService_default</value>
+        <value>org.hippoecm.hst.content.service.translation.HippoTranslationBeanService_caching</value>
+      </list>
+    </constructor-arg>
   </bean>
-  -->
 
-  <bean id="org.hippoecm.hst.content.service.translation.HippoTranslationContentRegistry"
-        class="org.hippoecm.hst.content.service.translation.DefaultHippoTranslationContentRegistry">
+  <!-- Default HippoTranslationBeanService. -->
+  <bean id="org.hippoecm.hst.content.service.translation.HippoTranslationBeanService_default"
+        class="org.hippoecm.hst.content.service.translation.DefaultHippoTranslationBeanServiceImpl">
+    <meta key="org.hippoecm.hst.site.container.SpringComponentManager.registerCondition"
+          value="!config.getBoolean('hippo.translation.ids.caching')" /> 
   </bean>
 
-  <bean id="org.hippoecm.hst.content.service.HippoTranslationBeanService"
+  <!-- Caching HippoTranslationBeanService. -->
+  <bean id="org.hippoecm.hst.content.service.translation.HippoTranslationBeanService_caching"
         class="org.hippoecm.hst.content.service.translation.CachingHippoTranslationBeanServiceImpl">
+    <meta key="org.hippoecm.hst.site.container.SpringComponentManager.registerCondition"
+          value="config.getBoolean('hippo.translation.ids.caching')" /> 
     <constructor-arg ref="org.hippoecm.hst.content.service.translation.HippoTranslationContentRegistry" />
+  </bean>
+
+  <!-- Translation ID vs Document Handle IDs Caching Registry. -->
+  <bean id="org.hippoecm.hst.content.service.translation.HippoTranslationContentRegistry"
+        class="org.hippoecm.hst.content.service.translation.SimpleHippoTranslationContentRegistry">
+    <meta key="org.hippoecm.hst.site.container.SpringComponentManager.registerCondition"
+          value="config.getBoolean('hippo.translation.ids.caching')" /> 
   </bean>
 
 </beans>

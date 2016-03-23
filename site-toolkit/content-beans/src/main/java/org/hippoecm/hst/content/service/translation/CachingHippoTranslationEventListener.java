@@ -31,6 +31,7 @@ import javax.jcr.observation.EventIterator;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.jcr.EventListenersContainerListener;
 import org.hippoecm.hst.core.jcr.GenericEventListener;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.slf4j.Logger;
@@ -45,17 +46,21 @@ public class CachingHippoTranslationEventListener extends GenericEventListener
 
     private final Credentials credentials;
 
-    private final HippoTranslationContentRegistry hippoTranslationContentRegistry;
+    private HippoTranslationContentRegistry hippoTranslationContentRegistry;
 
-    public CachingHippoTranslationEventListener(final Repository repository, final Credentials credentials,
-            final HippoTranslationContentRegistry hippoTranslationContentRegistry) {
+    public CachingHippoTranslationEventListener(final Repository repository, final Credentials credentials) {
         this.repository = repository;
         this.credentials = credentials;
-        this.hippoTranslationContentRegistry = hippoTranslationContentRegistry;
     }
 
     @Override
     public void onEvent(EventIterator events) {
+        hippoTranslationContentRegistry = HstServices.getComponentManager().getComponent(HippoTranslationContentRegistry.class.getName());
+
+        if (hippoTranslationContentRegistry == null) {
+            return;
+        }
+
         Event event;
 
         while (events.hasNext()) {
@@ -82,7 +87,7 @@ public class CachingHippoTranslationEventListener extends GenericEventListener
 
     @Override
     public void onEventListenersContainerStarted() {
-        // do nothing
+        // do nothing for now
     }
 
     @Override

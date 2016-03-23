@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.StringUtils;
 
-public class DefaultHippoTranslationContentRegistry implements HippoTranslationContentRegistry {
+public class SimpleHippoTranslationContentRegistry implements HippoTranslationContentRegistry {
 
     private Object lock = new Object();
 
