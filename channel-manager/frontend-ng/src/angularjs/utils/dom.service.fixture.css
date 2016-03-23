@@ -17,3 +17,9 @@
 #red {
   color: red;
 }
+
+#copyComputedStyleSource {
+  color: blue;
+  background-position: right;
+  position: fixed;
+}
