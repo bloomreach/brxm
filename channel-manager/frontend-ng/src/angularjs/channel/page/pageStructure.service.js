@@ -117,6 +117,11 @@ export class PageStructureService {
   }
 
   showComponentProperties(componentElement) {
+    if (!componentElement) {
+      this.$log.warn('Problem opening the component properties dialog: no component provided.');
+      return;
+    }
+
     this.CmsService.publish('show-component-properties', {
       component: {
         id: componentElement.getId(),
@@ -184,15 +189,15 @@ export class PageStructureService {
     const container = this._findContainerByOverlayElement(overlayDomElementOfContainer);
 
     if (container) {
-      this.HstService.addHstComponent(catalogComponent, container.getId())
-        .then(() => {
+      return this.HstService.addHstComponent(catalogComponent, container.getId())
+        .then((newComponentJson) => {
           this.ChannelService.recordOwnChange();
-          this._renderContainer(container);
+          return this._renderContainer(container).then(() => this.getComponentById(newComponentJson.id));
         });
       // TODO: handle error
-    } else {
-      console.log('container not found');
     }
+    console.log('container not found');
+    return this.$q.reject('container not found');
   }
 
   _findContainerByOverlayElement(overlayElement) {

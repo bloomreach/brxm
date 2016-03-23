@@ -88,10 +88,12 @@ export class HstService {
    *
    * @param catalogComponent
    * @param containerId
-   * @returns {*} the request promise
+   * @returns {*} a promise. If creation is successful, it contains a JSON object describing new component.
+   * Otherwise, it contains the error response.
    */
   addHstComponent(catalogComponent, containerId) {
-    return this.doPost(null, containerId, 'create', catalogComponent.id);
+    return this.doPost(null, containerId, 'create', catalogComponent.id)
+      .then((response) => response.data);
   }
 
   removeHstComponent(containerId, componentId) {

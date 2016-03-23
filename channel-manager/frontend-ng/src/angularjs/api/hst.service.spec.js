@@ -17,6 +17,7 @@
 describe('HstService', () => {
   'use strict';
 
+  let $q;
   let $httpBackend;
   let hstService;
   let ConfigServiceMock;
@@ -42,7 +43,8 @@ describe('HstService', () => {
       $provide.value('ConfigService', ConfigServiceMock);
     });
 
-    inject((_$httpBackend_, _HstService_) => {
+    inject((_$q_, _$httpBackend_, _HstService_) => {
+      $q = _$q_;
       $httpBackend = _$httpBackend_;
       hstService = _HstService_;
     });
@@ -206,5 +208,23 @@ describe('HstService', () => {
 
     $httpBackend.flush();
     expect(catchSpy).toHaveBeenCalled();
+  });
+
+  it('adds a new component from catalog toolkit', () => {
+    spyOn(hstService, 'doPost').and.returnValue($q.when({ data: 'success' }));
+
+    hstService.addHstComponent({ id: '123456' }, 'container1').then((data) => {
+      expect(data).toBe('success');
+    });
+
+    expect(hstService.doPost).toHaveBeenCalledWith(null, 'container1', 'create', '123456');
+  });
+
+  it('removes an exist component from a container', () => {
+    spyOn(hstService, 'doGet');
+
+    hstService.removeHstComponent('container-1', 'component-foo');
+
+    expect(hstService.doGet).toHaveBeenCalledWith('container-1', 'delete', 'component-foo');
   });
 });
