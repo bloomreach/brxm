@@ -74,10 +74,7 @@ export class DragDropService {
       this.drake.on('dragend', (el) => this._onStopDrag(el));
       this.drake.on('drop', (el, target, source, sibling) => this._onDrop(el, target, source, sibling));
 
-      this._onComponentClick(containers, (component) => {
-        this._onStopDrag(component.getBoxElement());
-        this.PageStructureService.showComponentProperties(component);
-      });
+      this._handleComponentClick(containers);
     });
   }
 
@@ -91,15 +88,26 @@ export class DragDropService {
     return this.DomService.addScript(iframe, dragulaJs);
   }
 
-  _onComponentClick(containers, callback) {
+  _handleComponentClick(containers) {
     containers.forEach((container) => {
       container.getComponents().forEach((component) => {
         component.getBoxElement().on('mouseup', () => {
           if (!this.drake.dragging) {
-            callback(component);
+            this._onStopDrag(component.getBoxElement());
+            this.PageStructureService.showComponentProperties(component);
           }
         });
       });
+    });
+  }
+
+  replaceContainer(oldContainer, newContainer) {
+    return this.dragulaPromise.then(() => {
+      const oldIndex = this.drake.containers.indexOf(oldContainer.getBoxElement()[0]);
+      if (oldIndex >= 0 && newContainer) {
+        this.drake.containers[oldIndex] = newContainer.getBoxElement()[0];
+        this._handleComponentClick([newContainer]);
+      }
     });
   }
 

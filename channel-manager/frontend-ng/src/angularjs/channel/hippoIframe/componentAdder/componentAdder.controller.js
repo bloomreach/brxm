@@ -15,7 +15,7 @@
  */
 
 export class ComponentAdderCtrl {
-  constructor($scope, $element, ComponentAdderService, PageStructureService, CatalogService) {
+  constructor($scope, $log, $element, ComponentAdderService, PageStructureService, CatalogService, DragDropService) {
     'ngInject';
 
     const drake = window.dragula({
@@ -33,7 +33,7 @@ export class ComponentAdderCtrl {
     });
     drake.on('cloned', (clone, original) => {
       $scope.$apply(() => {
-        this.newComponent = CatalogService.getComponentByDomElement(original); // remember the to-be-added component
+        this.selectedCatalogItem = CatalogService.getComponentByDomElement(original);
         $element.addClass('add-mode');
       });
     });
@@ -64,8 +64,16 @@ export class ComponentAdderCtrl {
           $(target).removeClass('has-shadow');
           $(el).detach(); // delete the (hidden) dropped DOM element.
 
-          PageStructureService.addComponentToContainer(this.newComponent, target)
-            .then((component) => PageStructureService.showComponentProperties(component));
+          const container = PageStructureService.getContainerByOverlayElement(target);
+          if (container) {
+            PageStructureService.addComponentToContainer(this.selectedCatalogItem, container)
+              .then((newComponent) => {
+                DragDropService.replaceContainer(container, newComponent.getContainer());
+                PageStructureService.showComponentProperties(newComponent);
+              });
+          } else {
+            $log.debug(`Cannot add catalog item ${this.selectedCatalogItem.id} because container cannot be found for overlay element`, target);
+          }
         });
       }
     });

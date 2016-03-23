@@ -95,21 +95,24 @@ export class PageStructureService {
   /**
    * Remove the component identified by given Id
    * @param componentId
+   * @return a promise with the object { oldContainer, newContainer }
    */
   removeComponentById(componentId) {
     const component = this.getComponentById(componentId);
 
     if (component) {
-      const container = component.getContainer();
-      this.HstService.removeHstComponent(container.getId(), componentId)
+      const oldContainer = component.getContainer();
+      return this.HstService.removeHstComponent(oldContainer.getId(), componentId)
         .then(() => {
           this.ChannelService.recordOwnChange();
-          this._renderContainer(container);
+          return this._renderContainer(oldContainer).then((newContainer) => { // eslint-disable-line arrow-body-style
+            return { oldContainer, newContainer };
+          });
         });
       // TODO handle error
-    } else {
-      this.$log.debug(`Was asked to remove component with ID '${componentId}', but couldn't find it in the page structure.`);
     }
+    this.$log.debug(`Could not remove component with ID '${componentId}' because it does not exist in the page structure.`);
+    return this.$q.reject();
   }
 
   getContainerByIframeElement(containerIFrameElement) {
@@ -166,6 +169,12 @@ export class PageStructureService {
     this.OverlaySyncService.syncIframe();
   }
 
+  /**
+   * Lets the back-end re-render a container.
+   * @param container
+   * @returns {*} a promise with the new container object
+   * @private
+   */
   _renderContainer(container) {
     return this.RenderingService.fetchContainerMarkup(container)
       .then((markup) => this._updateContainer(container, markup));
@@ -173,7 +182,7 @@ export class PageStructureService {
 
   _updateContainer(container, newMarkup) {
     // consider following three actions to be an atomic operation
-    this._replaceContainer(container, this._createContainer(container.replaceDOM(newMarkup)));
+    return this._replaceContainer(container, this._createContainer(container.replaceDOM(newMarkup)));
   }
 
   _replaceComponent(oldComponent, newComponent) {
@@ -185,22 +194,16 @@ export class PageStructureService {
     }
   }
 
-  addComponentToContainer(catalogComponent, overlayDomElementOfContainer) {
-    const container = this._findContainerByOverlayElement(overlayDomElementOfContainer);
-
-    if (container) {
-      return this.HstService.addHstComponent(catalogComponent, container.getId())
-        .then((newComponentJson) => {
-          this.ChannelService.recordOwnChange();
-          return this._renderContainer(container).then(() => this.getComponentById(newComponentJson.id));
-        });
-      // TODO: handle error
-    }
-    console.log('container not found');
-    return this.$q.reject('container not found');
+  addComponentToContainer(catalogComponent, container) {
+    return this.HstService.addHstComponent(catalogComponent, container.getId())
+      .then((newComponentJson) => {
+        this.ChannelService.recordOwnChange();
+        return this._renderContainer(container).then(() => this.getComponentById(newComponentJson.id));
+      });
+    // TODO: handle error
   }
 
-  _findContainerByOverlayElement(overlayElement) {
+  getContainerByOverlayElement(overlayElement) {
     return this.containers.find((container) => container.getOverlayElement()[0] === overlayElement);
   }
 
@@ -208,13 +211,14 @@ export class PageStructureService {
     const index = this.containers.indexOf(oldContainer);
     if (index === -1) {
       this.$log.warn('Cannot find container', oldContainer);
-      return;
+      return null;
     }
     if (newContainer) {
       this.containers[index] = newContainer;
     } else {
       this.containers.splice(index, 1);
     }
+    return newContainer;
   }
 
   /**
