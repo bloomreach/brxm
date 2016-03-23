@@ -159,17 +159,28 @@ export class DragDropService {
     sourceContainer.removeComponent(movedComponent);
     targetContainer.addComponentBefore(movedComponent, targetNextComponent);
 
-    this._updateContainer(sourceContainer);
-
+    const changedContainers = [sourceContainer];
     if (sourceContainer.getId() !== targetContainer.getId()) {
-      this._updateContainer(targetContainer);
+      changedContainers.push(targetContainer);
     }
 
-    this.ChannelService.recordOwnChange();
+    const updates = [];
+    changedContainers.forEach((container) => updates.push(this._updateContainer(container)));
+
+    this.$q.all(updates)
+      .then(() => this.ChannelService.recordOwnChange())
+      .finally(() => {
+        changedContainers.forEach((container) => this._renderContainer(container));
+      });
   }
 
   _updateContainer(container) {
-    this.HstService.doPost(container.getHstRepresentation(), container.getId(), 'update');
+    return this.HstService.doPost(container.getHstRepresentation(), container.getId(), 'update');
+  }
+
+  _renderContainer(container) {
+    this.PageStructureService.renderContainer(container)
+      .then((newContainer) => this.replaceContainer(container, newContainer));
   }
 
   _dispatchEventInIframe($event, structureElement) {

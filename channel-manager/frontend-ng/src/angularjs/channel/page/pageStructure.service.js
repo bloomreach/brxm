@@ -105,7 +105,7 @@ export class PageStructureService {
       return this.HstService.removeHstComponent(oldContainer.getId(), componentId)
         .then(() => {
           this.ChannelService.recordOwnChange();
-          return this._renderContainer(oldContainer).then((newContainer) => { // eslint-disable-line arrow-body-style
+          return this.renderContainer(oldContainer).then((newContainer) => { // eslint-disable-line arrow-body-style
             return { oldContainer, newContainer };
           });
         });
@@ -175,7 +175,7 @@ export class PageStructureService {
    * @returns {*} a promise with the new container object
    * @private
    */
-  _renderContainer(container) {
+  renderContainer(container) {
     return this.RenderingService.fetchContainerMarkup(container)
       .then((markup) => this._updateContainer(container, markup));
   }
