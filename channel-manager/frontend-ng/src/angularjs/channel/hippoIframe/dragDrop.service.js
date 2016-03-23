@@ -94,9 +94,11 @@ export class DragDropService {
   _onComponentClick(containers, callback) {
     containers.forEach((container) => {
       container.getComponents().forEach((component) => {
-        // Dragula will prevent mouseup events when dragging has not been started,
-        // so there's only a mouseup event when the component is clicked.
-        component.getBoxElement().on('mouseup', () => callback(component));
+        component.getBoxElement().on('mouseup', () => {
+          if (!this.drake.dragging) {
+            callback(component);
+          }
+        });
       });
     });
   }
