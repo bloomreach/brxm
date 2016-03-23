@@ -70,7 +70,7 @@ export class PageStructureService {
 
       case this.HST.TYPE_PAGE: {
         delete metaData[this.HST.TYPE];
-        this.PageMetaDataService.set(metaData);
+        this.PageMetaDataService.add(metaData);
         break;
       }
 

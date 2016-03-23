@@ -231,14 +231,14 @@ describe('PageStructureService', () => {
   });
 
   it('parses the page meta-data and adds it to the PageMetaDataService', () => {
-    spyOn(PageMetaDataService, 'set');
+    spyOn(PageMetaDataService, 'add');
 
     PageStructureService.registerParsedElement(null, {
       'HST-Type': 'PAGE-META-DATA',
       'HST-Mount-Id': 'testMountId',
     });
 
-    expect(PageMetaDataService.set).toHaveBeenCalledWith({
+    expect(PageMetaDataService.add).toHaveBeenCalledWith({
       'HST-Mount-Id': 'testMountId',
     });
   });

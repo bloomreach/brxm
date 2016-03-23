@@ -42,8 +42,9 @@ export class PageMetaDataService {
     this.data = {};
   }
 
-  set(data) {
-    this.data = data;
+  // There can be multiple contributions to the page meta-data. Therefore, we "accumulate" the data here.
+  add(data) {
+    Object.assign(this.data, data);
   }
 
   get() {

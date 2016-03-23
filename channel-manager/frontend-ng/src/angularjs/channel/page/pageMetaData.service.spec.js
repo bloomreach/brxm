@@ -46,25 +46,22 @@ describe('PageMetaDataService', () => {
     expect(PageMetaDataService.get()).toEqual({});
   });
 
-  it('sets data', () => {
-    PageMetaDataService.set({
+  it('adds data', () => {
+    PageMetaDataService.add({
       foo: 1,
       bar: 2,
     });
-    expect(PageMetaDataService.get()).toEqual({
-      foo: 1,
-      bar: 2,
-    });
-    PageMetaDataService.set({
+    PageMetaDataService.add({
       foo: 3,
     });
     expect(PageMetaDataService.get()).toEqual({
       foo: 3,
+      bar: 2,
     });
   });
 
   it('clears data', () => {
-    PageMetaDataService.set({
+    PageMetaDataService.add({
       test: 1,
     });
     PageMetaDataService.clear();
@@ -72,7 +69,7 @@ describe('PageMetaDataService', () => {
   });
 
   it('provides the channel ID of the current page', () => {
-    PageMetaDataService.set({
+    PageMetaDataService.add({
       'HST-Channel-Id': 'channelX',
     });
     expect(PageMetaDataService.getChannelId()).toBe('channelX');
