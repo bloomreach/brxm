@@ -198,7 +198,7 @@ export class PageStructureService {
     return this.HstService.addHstComponent(catalogComponent, container.getId())
       .then((newComponentJson) => {
         this.ChannelService.recordOwnChange();
-        return this._renderContainer(container).then(() => this.getComponentById(newComponentJson.id));
+        return this.renderContainer(container).then(() => this.getComponentById(newComponentJson.id));
       });
     // TODO: handle error
   }
