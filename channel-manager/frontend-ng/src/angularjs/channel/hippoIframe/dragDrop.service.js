@@ -68,12 +68,7 @@ export class DragDropService {
       });
       this.drake.on('dragend', (el) => this._stopDrag(el));
       this.drake.on('drop', this._onDrop.bind(this));
-
-      this._onComponentClick(containers, (component) => {
-        this.dragging = false;
-        component.getBoxElement().removeClass('qa-dragula-component');
-        this.PageStructureService.showComponentProperties(component);
-      });
+      this._handleComponentClick(containers);
     });
   }
 
@@ -87,13 +82,27 @@ export class DragDropService {
     return this.DomService.addScript(iframe, dragulaJs);
   }
 
-  _onComponentClick(containers, callback) {
+  _handleComponentClick(containers) {
     containers.forEach((container) => {
       container.getComponents().forEach((component) => {
         // Dragula will prevent mouseup events when dragging has not been started,
         // so there's only a mouseup event when the component is clicked.
-        component.getBoxElement().on('mouseup', () => callback(component));
+        component.getBoxElement().on('mouseup', () => {
+          this.dragging = false;
+          component.getBoxElement().removeClass('qa-dragula-component');
+          this.PageStructureService.showComponentProperties(component);
+        });
       });
+    });
+  }
+
+  replaceContainer(oldContainer, newContainer) {
+    return this.dragulaPromise.then(() => {
+      const oldIndex = this.drake.containers.indexOf(oldContainer.getBoxElement()[0]);
+      if (oldIndex >= 0 && newContainer) {
+        this.drake.containers[oldIndex] = newContainer.getBoxElement()[0];
+        this._handleComponentClick([newContainer]);
+      }
     });
   }
 

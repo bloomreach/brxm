@@ -73,11 +73,11 @@ export class HippoIframeCtrl {
   }
 
   deleteComponent(componentId) {
-    this._confirmDelete().then(() => {
-      this.PageStructureService.removeComponentById(componentId);
-    }, () => {
-      this.PageStructureService.showComponentProperties(this.selectedComponent);
-    });
+    this._confirmDelete()
+      .then(() => this.PageStructureService.removeComponentById(componentId)
+        .then(({ oldContainer, newContainer }) => this.DragDropService.replaceContainer(oldContainer, newContainer))
+      )
+      .catch(() => this.PageStructureService.showComponentProperties(this.selectedComponent));
   }
 
   _confirmDelete() {

@@ -15,7 +15,7 @@
  */
 
 export class ComponentAdderCtrl {
-  constructor($scope, $element, ComponentAdderService, PageStructureService, CatalogService) {
+  constructor($scope, $element, ComponentAdderService, PageStructureService, CatalogService, DragDropService) {
     'ngInject';
 
     const drake = window.dragula({
@@ -64,7 +64,9 @@ export class ComponentAdderCtrl {
           $(target).removeClass('has-shadow');
           $(el).detach(); // delete the (hidden) dropped DOM element.
 
-          PageStructureService.addComponentToContainer(this.newComponent, target);
+          PageStructureService.addComponentToContainer(this.newComponent, target).then(
+            ({ oldContainer, newContainer }) => DragDropService.replaceContainer(oldContainer, newContainer)
+          );
         });
       }
     });

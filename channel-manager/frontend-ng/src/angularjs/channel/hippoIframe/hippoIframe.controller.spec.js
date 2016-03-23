@@ -70,7 +70,8 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('shows the confirmation dialog and deletes selected component on confirmation', () => {
-    spyOn(PageStructureService, 'removeComponentById').and.returnValue($q.resolve());
+    spyOn(DragDropService, 'replaceContainer');
+    spyOn(PageStructureService, 'removeComponentById').and.returnValue($q.when({ oldContainer: 'old', newContainer: 'new' }));
     spyOn($mdDialog, 'show').and.returnValue($q.resolve());
     spyOn($mdDialog, 'confirm').and.callThrough();
 
@@ -81,6 +82,7 @@ describe('hippoIframeCtrl', () => {
     expect($mdDialog.confirm).toHaveBeenCalled();
     expect($mdDialog.show).toHaveBeenCalled();
     expect(PageStructureService.removeComponentById).toHaveBeenCalledWith('1234');
+    expect(DragDropService.replaceContainer).toHaveBeenCalledWith('old', 'new');
   });
 
   it('shows component properties dialog after rejecting the delete operation', () => {
