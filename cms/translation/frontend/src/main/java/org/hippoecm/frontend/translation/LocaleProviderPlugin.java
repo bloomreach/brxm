@@ -47,7 +47,6 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
     public static final String CONFIG_CAPTION = "caption";
     public static final String DEFAULT_COUNTRY = "us";
     public static final String UNKNOWN_COUNTRY = "error";
-    private static final String LOCALES_BUNDLE_NAME = "hippo:cms.locales";
 
     static final Logger log = LoggerFactory.getLogger(LocaleProviderPlugin.class);
 
