@@ -30,7 +30,7 @@ export class HippoIframeCtrl {
     OverlaySyncService,
     PageStructureService,
     PageMetaDataService,
-    ScalingService,
+    ScalingService
   ) {
     'ngInject';
 
