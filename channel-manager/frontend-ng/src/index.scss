@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-@import 'variables';
+@import 'styles/variables';
 
-@import '../../bower_components/angular-material/angular-material.scss';
+@import '../bower_components/angular-material/angular-material.scss';
 
-@import 'buttons';
-@import 'iframe';
-@import 'overlay';
-@import 'scale';
-@import 'lists';
-@import 'sidenav';
-@import 'channel';
+@import 'styles/buttons';
+@import 'styles/iframe';
+@import 'styles/overlay';
+@import 'styles/scale';
+@import 'styles/lists';
+@import 'styles/sidenav';
+@import 'styles/channel';
