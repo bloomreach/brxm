@@ -103,7 +103,7 @@ describe('hippoIframeCtrl', () => {
     const deferred = $q.defer();
 
     spyOn(PageStructureService, 'clearParsedElements');
-    spyOn(PageStructureService, 'printParsedElements')
+    spyOn(PageStructureService, 'printParsedElements');
     spyOn(hstCommentsProcessorService, 'run');
     spyOn(PageMetaDataService, 'getChannelId').and.returnValue('channelX');
     spyOn(ChannelService, 'getId').and.returnValue('channelY');
