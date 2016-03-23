@@ -25,6 +25,7 @@ import { DragDropService } from './dragDrop.service';
 
 export const channelHippoIframeModule = angular
   .module('hippo-cm.channel.hippoIframe', [
+    'ng.deviceDetector',
     overlayModule.name,
     componentAdderModule.name,
   ])
