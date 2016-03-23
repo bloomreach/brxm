@@ -93,7 +93,7 @@ export class HstService {
    */
   addHstComponent(catalogComponent, containerId) {
     return this.doPost(null, containerId, 'create', catalogComponent.id)
-      .then((request) => request.data);
+      .then((response) => response.data);
   }
 
   removeHstComponent(containerId, componentId) {

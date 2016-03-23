@@ -125,6 +125,11 @@ export class PageStructureService {
   }
 
   showComponentProperties(componentElement) {
+    if (!componentElement) {
+      this.$log.warn('Problem opening the component properties dialog: no component provided.');
+      return;
+    }
+
     this.CmsService.publish('show-component-properties', {
       component: {
         id: componentElement.getId(),

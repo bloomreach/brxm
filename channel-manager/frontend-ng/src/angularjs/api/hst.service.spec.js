@@ -213,7 +213,9 @@ describe('HstService', () => {
   it('adds a new component from catalog toolkit', () => {
     spyOn(hstService, 'doPost').and.returnValue($q.when({ data: 'success' }));
 
-    hstService.addHstComponent({ id: '123456' }, 'container1');
+    hstService.addHstComponent({ id: '123456' }, 'container1').then((data) => {
+      expect(data).toBe('success');
+    });
 
     expect(hstService.doPost).toHaveBeenCalledWith(null, 'container1', 'create', '123456');
   });
