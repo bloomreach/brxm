@@ -18,12 +18,6 @@ const EVENT_NAMESPACE = '.scroll-events';
 const DURATION_MIN = 500;
 const DURATION_MAX = 1500;
 
-function calculateDuration(distance) {
-  distance = Math.abs(distance);
-  const duration = distance * 2;
-  return Math.min(Math.max(DURATION_MIN, duration), DURATION_MAX);
-}
-
 export class ScrollService {
 
   constructor(deviceDetector, BROWSERS) {
@@ -71,25 +65,18 @@ export class ScrollService {
     const containerTop = containerOffset.top;
     const containerBottom = containerTop + containerHeight;
 
-    let offset = false;
+    let offset = 0;
     if (mouseY < containerTop) {
-      // scroll up
-      offset = 0 - containerScrollTop;
+      // scroll up to top position
+      offset = -containerScrollTop;
     } else if (mouseY >= containerBottom) {
-      // scroll down
-      const height = this.el.outerHeight() - containerHeight;
-      offset = height - containerScrollTop;
+      // scroll down to the bottom position
+      const contentHeight = this.el.outerHeight();
+      offset = (contentHeight - containerHeight) - containerScrollTop;
     }
 
     if (offset) {
-      this.el
-        .velocity('stop')
-        .velocity('scroll', {
-          container: this.container,
-          duration: calculateDuration(offset),
-          easing: this.easing,
-          offset,
-        });
+      this._scroll(offset);
     }
   }
 
@@ -97,5 +84,23 @@ export class ScrollService {
     if (this.el) {
       this.el.velocity('stop');
     }
+  }
+
+  _scroll(offset) {
+    this.el
+      .velocity('stop')
+      .velocity('scroll', {
+        container: this.container,
+        duration: this._calculateDuration(offset),
+        easing: this.easing,
+        offset,
+      });
+  }
+
+
+  _calculateDuration(distance) {
+    distance = Math.abs(distance);
+    const duration = distance * 2;
+    return Math.min(Math.max(DURATION_MIN, duration), DURATION_MAX);
   }
 }

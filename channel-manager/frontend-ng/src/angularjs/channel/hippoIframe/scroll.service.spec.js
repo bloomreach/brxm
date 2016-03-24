@@ -104,41 +104,41 @@ describe('ScrollService', () => {
     });
 
     it('should not scroll up when at the top and mouse leaves on top', () => {
+      spyOn(ScrollService, '_scroll');
+
       ScrollService.enable();
       ScrollService.startScrolling(null, 10);
-      expect(velocitySpy).not.toHaveBeenCalled();
+
+      expect(ScrollService._scroll).not.toHaveBeenCalled();
     });
 
     it('should scroll down when at the top and mouse leaves at the bottom', () => {
+      spyOn(ScrollService, '_scroll');
+
       ScrollService.enable();
       ScrollService.startScrolling(null, 260);
-      expect(velocitySpy).toHaveBeenCalledWith('stop');
-      expect(velocitySpy).toHaveBeenCalledWith('scroll', {
-        container: baseJQueryElement,
-        duration: 500,
-        easing: 'ease-in-out',
-        offset: 200,
-      });
+
+      expect(ScrollService._scroll).toHaveBeenCalledWith(200);
     });
 
     it('should not scroll down when at the bottom and mouse leaves at the bottom', () => {
+      spyOn(ScrollService, '_scroll');
+
       ScrollService.enable();
       baseJQueryElement.scrollTop(200);
       ScrollService.startScrolling(null, 260);
-      expect(velocitySpy).not.toHaveBeenCalled();
+
+      expect(ScrollService._scroll).not.toHaveBeenCalled();
     });
 
     it('should not scroll down when at the bottom and mouse leaves at the bottom', () => {
+      spyOn(ScrollService, '_scroll');
+
       ScrollService.enable();
       baseJQueryElement.scrollTop(200);
       ScrollService.startScrolling(null, 10);
-      expect(velocitySpy).toHaveBeenCalledWith('stop');
-      expect(velocitySpy).toHaveBeenCalledWith('scroll', {
-        container: baseJQueryElement,
-        duration: 500,
-        easing: 'ease-in-out',
-        offset: -200,
-      });
+
+      expect(ScrollService._scroll).toHaveBeenCalledWith(-200);
     });
   });
 });
