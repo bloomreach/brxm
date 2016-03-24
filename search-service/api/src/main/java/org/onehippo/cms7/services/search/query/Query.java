@@ -19,12 +19,27 @@ public interface Query {
 
     public Query EMPTY = new EmptyQuery();
 
+    /**
+     * Instructs the search service to return the de-duplicated set of parent nodes of the search results. This is
+     * very convenient to obtain a set of all handles that have at least one variant that matches the queries
+     * constraints. Note that properties selected using {@link TypedQuery#select(java.lang.String)} and properties
+     * used for sorting using {@link #orderBy(java.lang.String)} must be at the parent's level.
+     *
+     * @return this query object
+     */
     Query returnParentNode();
 
     Query offsetBy(int offset);
 
     Query limitTo(int limit);
 
+    /**
+     * Instructs the search service to sort the result using the given property. See also the note at
+     * {@link #returnParentNode()} when used in combination with that setting.
+     *
+     * @param property name of property to sort on
+     * @return this query object
+     */
     OrderClause orderBy(String property);
 }
 
