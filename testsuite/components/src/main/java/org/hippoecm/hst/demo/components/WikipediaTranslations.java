@@ -15,11 +15,20 @@
  */
 package org.hippoecm.hst.demo.components;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.beans.query.HstQuery;
+import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.demo.beans.WikiBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,8 +40,28 @@ public class WikipediaTranslations extends BaseHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
 
-        HippoBean scope = request.getRequestContext().getContentBean();
+        final HstRequestContext requestContext = RequestContextProvider.get();
 
+        HippoBean scope = requestContext.getContentBean();
+
+        try {
+            HstQuery hstQuery = requestContext.getQueryManager().createQuery(scope, WikiBean.class, true);
+            hstQuery.setLimit(500);
+            HstQueryResult queryResult = hstQuery.execute();
+            List<WikiBean> result = new LinkedList<>();
+
+            for (HippoBeanIterator bit = queryResult.getHippoBeans(); bit.hasNext(); ) {
+                WikiBean wikiBean = (WikiBean) bit.nextHippoBean();
+
+                if (wikiBean != null) {
+                    result.add(wikiBean);
+                }
+            }
+
+            request.setAttribute("result", result);
+        } catch (Exception e) {
+            log.warn("Failed to query WikiBeans.", e);
+        }
     }
 
 }
