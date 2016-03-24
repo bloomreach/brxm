@@ -78,7 +78,6 @@ export class ChannelCtrl {
       }, () => {
         this.FeedbackService.showError('ERROR_CREATE_PREVIEW');
       })
-      // TODO: handle error response
       .finally(() => {
         this.isCreatingPreview = false;
       });
