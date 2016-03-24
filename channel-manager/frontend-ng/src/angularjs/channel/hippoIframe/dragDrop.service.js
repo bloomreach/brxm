@@ -18,7 +18,7 @@ const COMPONENT_QA_CLASS = 'qa-dragula-component';
 
 export class DragDropService {
 
-  constructor($rootScope, $q, DomService, HstService, PageStructureService, ScalingService, ChannelService) {
+  constructor($rootScope, $q, DomService, HstService, PageStructureService, ScalingService, ChannelService, ScrollService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
@@ -28,6 +28,7 @@ export class DragDropService {
     this.PageStructureService = PageStructureService;
     this.ScalingService = ScalingService;
     this.ChannelService = ChannelService;
+    this.ScrollService = ScrollService;
 
     this.draggingOrClicking = false;
   }
@@ -36,6 +37,7 @@ export class DragDropService {
     this.iframeJQueryElement = iframeJQueryElement;
     this.baseJQueryElement = baseJQueryElement;
 
+    this.ScrollService.init(iframeJQueryElement, baseJQueryElement);
     this.iframeJQueryElement.on('load', () => this._onLoad());
   }
 
@@ -75,7 +77,13 @@ export class DragDropService {
       this.drake.on('drop', (el, target, source, sibling) => this._onDrop(el, target, source, sibling));
 
       this._handleComponentClick(containers);
+      this.ScrollService.enable(() => this.draggingOrClicking);
     });
+  }
+
+  disable() {
+    this.ScrollService.disable();
+    this._destroyDrake();
   }
 
   _injectDragula(iframe) {
@@ -109,10 +117,6 @@ export class DragDropService {
         this._handleComponentClick([newContainer]);
       }
     });
-  }
-
-  disable() {
-    this._destroyDrake();
   }
 
   startDragOrClick($event, structureElement) {

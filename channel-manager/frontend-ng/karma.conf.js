@@ -33,6 +33,8 @@ module.exports = function karmaConfig(config) {
     `${cfg.bowerDir}/jquery/dist/jquery.js`,
     `${cfg.bowerDir}/velocity/velocity.js`,
     `${cfg.bowerDir}/dragula.js/dist/dragula.js`,
+    `${cfg.bowerDir}/re-tree/re-tree.js`,
+    `${cfg.bowerDir}/ng-device-detector/ng-device-detector.js`,
   ];
 
   options.files = [

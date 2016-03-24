@@ -21,10 +21,12 @@ import { HippoIframeCtrl } from './hippoIframe.controller';
 import { HstCommentsProcessorService } from './hstCommentsProcessor.service';
 import { LinkProcessorService } from './linkProcessor.service';
 import { ScalingService } from './scaling.service';
+import { ScrollService } from './scroll.service';
 import { DragDropService } from './dragDrop.service';
 
 export const channelHippoIframeModule = angular
   .module('hippo-cm.channel.hippoIframe', [
+    'ng.deviceDetector',
     overlayModule.name,
     componentAdderModule.name,
   ])
@@ -33,4 +35,5 @@ export const channelHippoIframeModule = angular
   .service('hstCommentsProcessorService', HstCommentsProcessorService)
   .service('linkProcessorService', LinkProcessorService)
   .service('ScalingService', ScalingService)
+  .service('ScrollService', ScrollService)
   .service('DragDropService', DragDropService);
