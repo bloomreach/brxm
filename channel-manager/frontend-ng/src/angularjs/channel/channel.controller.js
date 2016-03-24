@@ -109,12 +109,18 @@ export class ChannelCtrl {
   publish() {
     this.ChannelService.publishOwnChanges();
     // TODO: what if this fails?
+    // show a toast that all went well, or that the publication failed.
+    // More information may be exposed by logging an error(?) in the console,
+    // based on the actual error details from the back-end.
   }
 
   discard() {
     this._confirmDiscard().then(() => {
       this.ChannelService.discardOwnChanges().then(() => this._reloadPage());
       // TODO: what if this fails?
+      // show a toast that discarding the changed failed.
+      // More information may be exposed by logging an error(?) in the console,
+      // based on the actual error details from the back-end.
     });
   }
 

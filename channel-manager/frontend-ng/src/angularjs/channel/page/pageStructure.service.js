@@ -110,6 +110,7 @@ export class PageStructureService {
           });
         });
       // TODO handle error
+      // show toast error message stating that the component could not be deleted.
     }
     this.$log.debug(`Could not remove component with ID '${componentId}' because it does not exist in the page structure.`);
     return this.$q.reject();
@@ -155,6 +156,9 @@ export class PageStructureService {
       this.RenderingService.fetchComponentMarkup(component, propertiesMap).then((response) => {
         this._updateComponent(component, response.data);
       });
+      // TODO handle error
+      // show error message that component rendering failed.
+      // can we use the toast for this? the component properties dialog is open at this moment...
     } else {
       this.$log.warn(`Cannot render unknown component '${componentId}'`);
     }
@@ -178,6 +182,8 @@ export class PageStructureService {
   renderContainer(container) {
     return this.RenderingService.fetchContainerMarkup(container)
       .then((markup) => this._updateContainer(container, markup));
+    // TODO: handle error
+    // try reloading the entire page?
   }
 
   _updateContainer(container, newMarkup) {
@@ -201,6 +207,7 @@ export class PageStructureService {
         return this.renderContainer(container).then(() => this.getComponentById(newComponentJson.id));
       });
     // TODO: handle error
+    // show error message that adding a component failed.
   }
 
   getContainerByOverlayElement(overlayElement) {

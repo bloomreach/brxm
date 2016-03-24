@@ -69,6 +69,8 @@ export class HippoIframeCtrl {
         this._parseLinks();
       });
       // TODO: handle error.
+      // show dialog explaining that for this channel, the CM can currently not be used,
+      // and return to the channel overview upon confirming?
     });
   }
 

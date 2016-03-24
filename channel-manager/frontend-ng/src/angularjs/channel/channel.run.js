@@ -23,6 +23,8 @@ export function run($state, CmsService, ChannelService) {
 
   CmsService.subscribe('load-channel', (channel) => {
     ChannelService.load(channel).then(showChannel); // TODO: handle error.
+    // If this goes wrong, the CM won't work. display a dialog explaining so,
+    // and on confirmation, switch back to the channel overview.
   });
 
   // Handle reloading of iframe by BrowserSync during development

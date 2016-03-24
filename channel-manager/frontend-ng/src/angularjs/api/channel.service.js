@@ -88,7 +88,7 @@ export class ChannelService {
       .then((channel) => {
         this._setChannel(channel);
         this.CmsService.publish('switch-channel', channel.id); // update breadcrumb.
-      });// TODO add error handling
+      });
   }
 
   hasPreviewConfiguration() {

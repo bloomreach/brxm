@@ -71,6 +71,7 @@ export class ComponentAdderCtrl {
                 DragDropService.replaceContainer(container, newComponent.getContainer());
                 PageStructureService.showComponentProperties(newComponent);
               });
+            // error is handled inside PageStructureService.
           } else {
             $log.debug(`Cannot add catalog item ${this.selectedCatalogItem.id} because container cannot be found for overlay element`, target);
           }
