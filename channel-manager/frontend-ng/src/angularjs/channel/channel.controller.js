@@ -18,7 +18,7 @@ const SIDENAVS = ['components'];
 
 export class ChannelCtrl {
 
-  constructor($log, $scope, $translate, $mdDialog, $mdSidenav, ChannelService, ScalingService, SessionService, ComponentAdderService, ConfigService) {
+  constructor($log, $scope, $translate, $mdDialog, $mdSidenav, ChannelService, ScalingService, SessionService, ComponentAdderService, ConfigService, FeedbackService) {
     'ngInject';
 
     this.$log = $log;
@@ -30,6 +30,7 @@ export class ChannelCtrl {
     this.ScalingService = ScalingService;
     this.SessionService = SessionService;
     this.ConfigService = ConfigService;
+    this.FeedbackService = FeedbackService;
 
     this.iframeUrl = ChannelService.getUrl();
     this.isEditMode = false;
@@ -40,6 +41,8 @@ export class ChannelCtrl {
 
     ComponentAdderService.setContainerClass('catalog-dd-container');
     ComponentAdderService.setContainerItemClass('catalog-dd-container-item');
+
+    FeedbackService.setParentElement($('hippo-iframe'));
   }
 
   toggleEditMode() {
@@ -72,6 +75,8 @@ export class ChannelCtrl {
         // TODO: this is first stab at reloading a page. I guess we need a better way.
         // reloading the page here works in the app, but once we tell Ext which component to render, ext doesn't seem to "get it" yet.
         this.isEditMode = true;
+      }, () => {
+        this.FeedbackService.showError('ERROR_CREATE_PREVIEW');
       })
       // TODO: handle error response
       .finally(() => {

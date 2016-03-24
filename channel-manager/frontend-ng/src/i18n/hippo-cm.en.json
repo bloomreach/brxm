@@ -12,5 +12,6 @@
   "CONFIRM_DISCARD_OWN_CHANGES_TITLE": "Confirm discard changes",
   "CONFIRM_DISCARD_OWN_CHANGES_MESSAGE": "Are you sure you want to discard all your unpublished changes to this channel?",
   "BUTTON_YES": "Yes",
-  "BUTTON_NO": "No"
+  "BUTTON_NO": "No",
+  "ERROR_CREATE_PREVIEW": "Failed to enter Edit mode."
 }

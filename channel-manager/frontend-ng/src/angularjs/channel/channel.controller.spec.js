@@ -23,6 +23,7 @@ describe('ChannelCtrl', () => {
   let ComponentsService;
   let ScalingService;
   let ConfigService;
+  let FeedbackService;
   let ChannelCtrl;
   let $rootScope;
   let $q;
@@ -31,13 +32,14 @@ describe('ChannelCtrl', () => {
   beforeEach(() => {
     module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$q_, _$mdDialog_, _ConfigService_) => {
+    inject(($controller, _$rootScope_, _$q_, _$mdDialog_, _ConfigService_, _FeedbackService_) => {
       const resolvedPromise = _$q_.when();
 
       $rootScope = _$rootScope_;
       $q = _$q_;
       $mdDialog = _$mdDialog_;
       ConfigService = _ConfigService_;
+      FeedbackService = _FeedbackService_;
 
       ChannelService = jasmine.createSpyObj('ChannelService', [
         'getUrl',
@@ -116,6 +118,28 @@ describe('ChannelCtrl', () => {
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
     expect(ChannelCtrl.isEditMode).toEqual(true);
+  });
+
+  it('shows an error when the creation of the preview configuration fails', () => {
+    spyOn(FeedbackService, 'showError');
+    const deferCreatePreview = $q.defer();
+
+    ChannelService.hasPreviewConfiguration.and.returnValue(false);
+    ChannelService.createPreviewConfiguration.and.returnValue(deferCreatePreview.promise);
+
+    expect(ChannelCtrl.isCreatingPreview).toEqual(false);
+    ChannelCtrl.toggleEditMode();
+
+    expect(ChannelService.createPreviewConfiguration).toHaveBeenCalled();
+    expect(ChannelCtrl.isCreatingPreview).toEqual(true);
+    expect(ChannelCtrl.isEditMode).toEqual(false);
+
+    deferCreatePreview.reject();
+    $rootScope.$digest();
+
+    expect(ChannelCtrl.isCreatingPreview).toEqual(false);
+    expect(ChannelCtrl.isEditMode).toEqual(false);
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CREATE_PREVIEW');
   });
 
   it('does not create preview configuration when it has already been created when enabling edit mode', () => {

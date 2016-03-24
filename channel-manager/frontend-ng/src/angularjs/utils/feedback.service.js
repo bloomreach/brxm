@@ -14,12 +14,28 @@
  * limitations under the License.
  */
 
-import { DomService } from './dom.service';
-import { ThrottleService } from './throttle.service';
-import { FeedbackService } from './feedback.service';
+const HIDE_DELAY_IN_MS = 3000;
 
-export const utilsModule = angular
-  .module('hippo-cm.utils', [])
-  .service('DomService', DomService)
-  .service('ThrottleService', ThrottleService)
-  .service('FeedbackService', FeedbackService);
+export class FeedbackService {
+  constructor($translate, $mdToast) {
+    'ngInject';
+
+    this.$translate = $translate;
+    this.$mdToast = $mdToast;
+  }
+
+  setParentElement(parentJQueryElement) {
+    this.parentJQueryElement = parentJQueryElement;
+  }
+
+  showError(errorKey) {
+    this.$mdToast.show(
+      this.$mdToast.simple()
+        .textContent(this.$translate.instant(errorKey))
+        .position('top right')
+        .hideDelay(HIDE_DELAY_IN_MS)
+        .parent(this.parentJQueryElement)
+    );
+  }
+}
+
