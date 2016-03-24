@@ -1,21 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
-
-    Copyright (C) 2010 Hippo B.V.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
-<sv:node sv:name="hst:sitemenus" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:sitemenus">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:sitemenus</sv:value>
   </sv:property>
@@ -35,23 +18,22 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemenuitem</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>accueil</sv:value>
-      </sv:property>
       <sv:property sv:name="hst:mountalias" sv:type="String">
         <sv:value>fr_site</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>accueil</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="French Home by id">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemenuitem</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <!-- The french sitemap home item contains hst:refId = homeId hence home should also work -->
-        <sv:value>homeId</sv:value>
-      </sv:property>
       <sv:property sv:name="hst:mountalias" sv:type="String">
         <sv:value>fr_site</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>homeId</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="About">
@@ -168,17 +150,16 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemenuitem</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>faceted</sv:value>
-      </sv:property>
       <sv:property sv:name="hst:depth" sv:type="Long">
         <sv:value>1</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>faceted</sv:value>
       </sv:property>
       <sv:property sv:name="hst:repobased" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
     </sv:node>
-
     <sv:node sv:name="Solr Search">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemenuitem</sv:value>
@@ -195,7 +176,6 @@
         <sv:value>solrfaceting</sv:value>
       </sv:property>
     </sv:node>
-
     <sv:node sv:name="Solr Indexer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemenuitem</sv:value>
@@ -204,8 +184,6 @@
         <sv:value>solrindexer</sv:value>
       </sv:property>
     </sv:node>
-
-
     <sv:node sv:name="GoGreen Solr Indexer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemenuitem</sv:value>
@@ -214,7 +192,6 @@
         <sv:value>gogreen-rest-product-indexer</sv:value>
       </sv:property>
     </sv:node>
-
     <sv:node sv:name="Wikipedia">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemenuitem</sv:value>
@@ -228,6 +205,14 @@
         </sv:property>
         <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
           <sv:value>wikipedia/archive</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="Translations">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:sitemenuitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+          <sv:value>wikipedia/translations</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
@@ -288,5 +273,4 @@
       </sv:property>
     </sv:node>
   </sv:node>
-
 </sv:node>
