@@ -48,6 +48,7 @@ describe('ChannelCtrl', () => {
         'getChannel',
         'publishOwnChanges',
         'discardOwnChanges',
+        'getCatalog',
       ]);
       ChannelService.getUrl.and.returnValue('/test/url');
       ChannelService.createPreviewConfiguration.and.returnValue(resolvedPromise);
@@ -191,5 +192,19 @@ describe('ChannelCtrl', () => {
     expect($mdDialog.confirm).toHaveBeenCalled();
     expect($mdDialog.show).toHaveBeenCalled();
     expect(ChannelService.discardOwnChanges).not.toHaveBeenCalled();
+  });
+
+  it('shows the components sidenav button only in edit mode and if there are catalog components', () => {
+    expect(ChannelCtrl.isEditMode).toBe(false);
+    expect(ChannelCtrl.showComponentsButton()).toBe(false);
+
+    ChannelService.hasPreviewConfiguration.and.returnValue(true);
+    ChannelCtrl.toggleEditMode();
+
+    ChannelService.getCatalog.and.returnValue([ 'dummy' ]);
+    expect(ChannelCtrl.showComponentsButton()).toBe(true);
+
+    ChannelService.getCatalog.and.returnValue([]);
+    expect(ChannelCtrl.showComponentsButton()).toBe(false);
   });
 });

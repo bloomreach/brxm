@@ -18,7 +18,7 @@
   <div class="md-toolbar-tools">
     <md-button aria-label="{{ 'TOOLBAR_BUTTON_COMPONENTS' | translate }}"
                ng-click="channelCtrl.toggleSidenav('components')"
-               ng-if="channelCtrl.isEditMode">
+               ng-if="channelCtrl.showComponentsButton()">
       {{ 'TOOLBAR_BUTTON_COMPONENTS' | translate }}
     </md-button>
     <span flex></span>

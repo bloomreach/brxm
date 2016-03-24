@@ -84,6 +84,11 @@ export class ChannelCtrl {
       });
   }
 
+  showComponentsButton() {
+    const catalog = this.ChannelService.getCatalog();
+    return this.isEditMode && catalog.length > 0;
+  }
+
   toggleSidenav(name) {
     SIDENAVS.forEach((sidenav) => {
       if (sidenav !== name && this._isSidenavOpen(sidenav)) {

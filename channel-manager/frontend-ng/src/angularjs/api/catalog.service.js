@@ -30,7 +30,9 @@ export class CatalogService {
           components.sort((a, b) => a.label.localeCompare(b.label));
           this.components = components;
         }
-        // TODO: handle error?
+      }, () => {
+        // ignore error, but hide components button if channel has no components.
+        this.components = [];
       });
   }
 
