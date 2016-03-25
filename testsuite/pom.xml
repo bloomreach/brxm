@@ -236,6 +236,7 @@
               </configuration>
               <container>
                 <systemProperties>
+                  <repo.config>file:${project.basedir}/conf/repository.xml</repo.config>
                   <log4j.configuration>file:${project.basedir}/conf/log4j.xml</log4j.configuration>
                   <rebel.log4j-plugin>true</rebel.log4j-plugin>
                   <solr.data.dir>${solr.data.dir}</solr.data.dir>
