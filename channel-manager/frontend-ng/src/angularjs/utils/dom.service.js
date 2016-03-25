@@ -57,14 +57,7 @@ export class DomService {
     if (!excludedProperties) {
       return null;
     }
-    let excludeRegexText = '';
-    excludedProperties.forEach((prop) => {
-      if (excludeRegexText.length > 0) {
-        excludeRegexText += '|';
-      }
-      excludeRegexText += prop;
-    });
-    return new RegExp(excludeRegexText);
+    return new RegExp(excludedProperties.join('|'));
   }
 
   _doCopyComputedStyleExcept(fromElement, toElement, excludeRegExp) {
@@ -72,6 +65,7 @@ export class DomService {
     const fromComputedStyle = fromWindow.getComputedStyle(fromElement, null);
     const toWindow = toElement.ownerDocument.defaultView;
     const toComputedStyle = toWindow.getComputedStyle(toElement, null);
+    const toStyle = toElement.style;
 
     let cssTextDiff = '';
 
@@ -81,8 +75,14 @@ export class DomService {
       if (!excludeRegExp || !excludeRegExp.test(cssPropertyName)) {
         const fromValue = fromComputedStyle.getPropertyValue(cssPropertyName);
         const toValue = toComputedStyle.getPropertyValue(cssPropertyName);
+
         if (fromValue !== toValue) {
           cssTextDiff += `${cssPropertyName}:${fromValue};`;
+        }
+      } else {
+        const toStyleValue = toStyle.getPropertyValue(cssPropertyName);
+        if (toStyleValue !== '') {
+          cssTextDiff += `${cssPropertyName}:${toStyleValue};`;
         }
       }
     }

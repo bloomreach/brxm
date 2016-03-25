@@ -99,6 +99,20 @@ describe('DomService', () => {
     expectEqualComputedStyle(source, target);
   });
 
+  it('merges the existing style attribute of the target with the copied computed style of the source element', () => {
+    window.loadStyleFixtures('utils/dom.service.fixture.css');
+    const source = $j('#copyComputedStyleSource');
+    const target = $j('#copyComputedStyleTarget');
+
+    expect(source.css('width')).not.toEqual('42px');
+    target[0].style.width = '42px';
+
+    DomService.copyComputedStyleExcept(source[0], target[0], ['width']);
+
+    expect(target.css('color')).toEqual(source.css('color'));
+    expect(target.css('width')).toEqual('42px');
+  });
+
   it('can copy the computed style of an element except excluded properties', () => {
     window.loadStyleFixtures('utils/dom.service.fixture.css');
     const source = $j('#copyComputedStyleSource');
