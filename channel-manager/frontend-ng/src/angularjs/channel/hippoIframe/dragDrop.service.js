@@ -160,6 +160,7 @@ export class DragDropService {
     const targetContainer = this.PageStructureService.getContainerByIframeElement(targetContainerElement);
     const targetNextComponent = targetContainer.getComponentByIframeElement(targetNextComponentElement);
 
+    // first update the page structure so the component is already 'moved' in the client-side state
     sourceContainer.removeComponent(movedComponent);
     targetContainer.addComponentBefore(movedComponent, targetNextComponent);
 
@@ -168,11 +169,14 @@ export class DragDropService {
       changedContainers.push(targetContainer);
     }
 
-    const updates = [];
-    changedContainers.forEach((container) => updates.push(this._updateContainer(container)));
+    // next, push the updated container representation(s) to the backend
+    const backendCallPromises = [];
+    changedContainers.forEach((container) => backendCallPromises.push(this._updateContainer(container)));
 
-    this.$q.all(updates)
+    // last, re-render the changed container(s) so their meta-data is updated and we're sure they look right
+    this.$q.all(backendCallPromises)
       .then(() => this.ChannelService.recordOwnChange())
+      // TODO: handle errors (e.g. one of the containers is already locked)
       .finally(() => {
         changedContainers.forEach((container) => this._renderContainer(container));
       });
