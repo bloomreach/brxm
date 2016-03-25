@@ -21,16 +21,10 @@ export class ConfigService {
 
     this.locale = 'en';
     this.rootUuid = 'cafebabe-cafe-babe-cafe-babecafebabe';
-    this.contextPath = '/site';
+    this.contextPaths = ['/site'];
 
     Object.assign(this, CmsService.getConfig());
 
-    if (this.contextPaths && this.contextPaths.length > 0) {
-      this.contextPath = this.contextPaths[0];
-    }
-  }
-
-  setContextPath(contextPath) {
-    this.contextPath = contextPath;
+    this.contextPath = this.contextPaths[0];
   }
 }

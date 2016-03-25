@@ -19,7 +19,7 @@ describe('LinkProcessorService', () => {
 
   let linkProcessorService;
   let $document;
-  const previewUrl = 'http://localhost:8080/site';
+  const previewUrl = ['http://localhost:8080/site'];
 
   beforeEach(() => {
     module('hippo-cm.channel.hippoIframe');
@@ -49,6 +49,14 @@ describe('LinkProcessorService', () => {
   describe('running with a valid internalLinkPrefix', () => {
     it('should set attribute target to _blank for external links', () => {
       linkProcessorService.run($document, previewUrl);
+      expectTargetAttrToBeBlank('.qa-external-link');
+      expectTargetAttrNotToBeBlank('.qa-internal-link, .qa-local-link');
+    });
+  });
+
+  describe('running with two valid internalLinkPrefixes', () => {
+    it('should set attribute target to _blank for external links', () => {
+      linkProcessorService.run($document, ['http://localhost:8080/intranet', previewUrl[0]]);
       expectTargetAttrToBeBlank('.qa-external-link');
       expectTargetAttrNotToBeBlank('.qa-internal-link, .qa-local-link');
     });

@@ -44,12 +44,14 @@ describe('ChannelService', () => {
       'getComponents',
     ]);
 
-    ConfigServiceMock = jasmine.createSpyObj('ConfigService', ['setContextPath']);
-    ConfigServiceMock.apiUrlPrefix = '/testApiUrlPrefix';
-    ConfigServiceMock.rootUuid = 'testRootUuid';
-    ConfigServiceMock.cmsUser = 'testUser';
+    ConfigServiceMock = {
+      apiUrlPrefix: '/testApiUrlPrefix',
+      rootUuid: 'testRootUuid',
+      cmsUser: 'testUser',
+      contextPaths: ['/testContextPath1', '/'],
+    };
 
-    HstServiceMock = jasmine.createSpyObj('HstService', ['setContextPath', 'getChannel', 'doPost']);
+    HstServiceMock = jasmine.createSpyObj('HstService', ['getChannel', 'doPost']);
 
     module(($provide) => {
       $provide.value('SessionService', SessionServiceMock);
@@ -126,29 +128,20 @@ describe('ChannelService', () => {
     expect(ChannelService.getUrl('/optional/path')).toEqual('/contextPath/cmsPreviewPrefix/mountPath/optional/path');
   });
 
+  it('should compile a list of internal link prefixes', () => {
+    ChannelService.load({ cmsPreviewPrefix: 'cmsPreviewPrefix' });
+    $rootScope.$digest();
+    expect(ChannelService.makeInternalLinkPrefixList('start')).toEqual(['start/testContextPath1/cmsPreviewPrefix', 'start/cmsPreviewPrefix'])
+
+    ChannelService.load({ cmsPreviewPrefix: '' });
+    $rootScope.$digest();
+    expect(ChannelService.makeInternalLinkPrefixList('start')).toEqual(['start/testContextPath1', 'start'])
+  });
+
   it('should return the mountId of the current channel', () => {
     ChannelService.load({ id: 'test-id' });
     $rootScope.$digest();
     expect(ChannelService.getId()).toEqual('test-id');
-  });
-
-  it('should update the ConfigService\'s context path when the channel reference is updated', () => {
-    const channelA = {
-      id: 'channelA',
-      contextPath: '/a',
-    };
-    const channelB = {
-      id: 'channelB',
-      contextPath: '/b',
-    };
-
-    ChannelService.load(channelA);
-    $rootScope.$digest();
-    expect(ConfigServiceMock.setContextPath).toHaveBeenCalledWith(channelA.contextPath);
-
-    ChannelService.load(channelB);
-    $rootScope.$digest();
-    expect(ConfigServiceMock.setContextPath).toHaveBeenCalledWith(channelB.contextPath);
   });
 
   it('should switch to a new channel', () => {

@@ -29,7 +29,7 @@ export class LinkProcessorService {
     this.$translate = $translate;
   }
 
-  run(document, internalLinkPrefix) {
+  run(document, internalLinkPrefixes) {
     angular.element(document).find('a').each((index, el) => {
       const link = angular.element(el);
       let url = link.prop('href');
@@ -40,7 +40,7 @@ export class LinkProcessorService {
       }
 
       // intercept all clicks on external links: open them in a new tab if confirmed by the user
-      if (url && !startsWith(url, internalLinkPrefix)) {
+      if (url && !(internalLinkPrefixes instanceof Array && internalLinkPrefixes.some((prefix) => startsWith(url, prefix)))) {
         link.attr('target', '_blank');
         link.click((event) => {
           if (!confirm(this.$translate.instant('CONFIRM_OPEN_EXTERNAL_LINK'))) {

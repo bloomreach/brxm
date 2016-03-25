@@ -30,7 +30,6 @@ export class ChannelService {
 
   _setChannel(channel) {
     this.channel = channel;
-    this.ConfigService.setContextPath(channel.contextPath);
     this.CatalogService.load(this._getMountId());
   }
 
@@ -45,6 +44,22 @@ export class ChannelService {
         this._setChannel(channel);
         return channel;
       });
+  }
+
+  makeInternalLinkPrefixList(internalLinkHostURL) {
+    const prefixes = [];
+    this.ConfigService.contextPaths.forEach((path) => {
+      let prefix = internalLinkHostURL;
+      if (path !== '/') {
+        prefix += path;
+      }
+
+      if (this.channel.cmsPreviewPrefix) {
+        prefix += `/${this.channel.cmsPreviewPrefix}`;
+      }
+      prefixes.push(prefix);
+    });
+    return prefixes;
   }
 
   getPreviewPath() {
