@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,9 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -72,6 +75,7 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
 
     private static final int MAX_PREVIEW_WIDTH = 200;
     private static final int MAX_PREVIEW_HEIGHT = 300;
+    private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private String region;
@@ -80,6 +84,7 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
     private Dimension configuredDimension;
     private Dimension thumbnailDimension;
     private float compressionQuality;
+    private boolean fitView;
 
     public ImageCropEditorDialog(IModel<Node> jcrImageNodeModel, GalleryProcessor galleryProcessor) {
         super(jcrImageNodeModel);
@@ -87,7 +92,7 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
         this.galleryProcessor = galleryProcessor;
         Node thumbnailImageNode = jcrImageNodeModel.getObject();
 
-         HiddenField<String> regionField = new HiddenField<>("region", new PropertyModel<String>(this, "region"));
+        HiddenField<String> regionField = new HiddenField<>("region", new PropertyModel<>(this, "region"));
         regionField.setOutputMarkupId(true);
         add(regionField);
 
@@ -95,8 +100,8 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
         try {
             Node originalImageNode = thumbnailImageNode.getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
             originalImageDimension = new Dimension(
-                    (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
-                    (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong()
+                    (int)originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
+                    (int)originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong()
             );
 
             JcrNodeModel originalNodeModel = new JcrNodeModel(originalImageNode);
@@ -139,15 +144,50 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
         Label thumbnailSize = new Label("thumbnail-size", new StringResourceModel("thumbnail-size", this, null));
         thumbnailSize.setOutputMarkupId(true);
         add(thumbnailSize);
-
-        ImageCropSettings cropSettings = new ImageCropSettings(regionField.getMarkupId(),
+        //
+        final ImageCropSettings cropSettings = new ImageCropSettings(regionField.getMarkupId(),
                 imagePreviewContainer.getMarkupId(),
                 originalImageDimension,
                 configuredDimension,
                 thumbnailDimension,
                 isUpscalingEnabled,
+                fitView,
                 thumbnailSize.getMarkupId(true));
-        originalImage.add(new ImageCropBehavior(cropSettings));
+        final ImageCropBehavior imageCropBehavior = new ImageCropBehavior(cropSettings);
+        final IModel<Boolean> fitViewModel = new PropertyModel<>(this, "fitView");
+        final AjaxCheckBox fitViewCheckbox = new AjaxCheckBox("fit-view", fitViewModel) {
+            private static final long serialVersionUID = 1L;
+
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                executeJavascript(target, imageCropBehavior);
+            }
+
+        };
+        fitViewCheckbox.setOutputMarkupId(true);
+        add(fitViewCheckbox);
+        // add label
+        final Label fitViewLabel = new Label("fit-view-label", new StringResourceModel("fit-view", this, null));
+        fitViewLabel.setOutputMarkupId(true);
+        final AjaxLink fitViewLink = new AjaxLink("fit-view-link") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                // toggle fitView flag
+                fitView = !fitView;
+                target.add(fitViewCheckbox);
+                fitViewCheckbox.modelChanged();
+                executeJavascript(target, imageCropBehavior);
+            }
+        };
+        fitViewLink.setOutputMarkupId(true);
+        add(fitViewLink);
+        fitViewLink.add(fitViewLabel);
+
+
+        originalImage.add(imageCropBehavior);
         originalImage.setOutputMarkupId(true);
 
         add(originalImage);
@@ -157,12 +197,12 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
         add(imagePreviewContainer);
 
         add(new Label("preview-description", cropSettings.isPreviewVisible() ?
-                        new StringResourceModel("preview-description-enabled", this, null) :
-                        new StringResourceModel("preview-description-disabled", this, null))
+                new StringResourceModel("preview-description-enabled", this, null) :
+                new StringResourceModel("preview-description-disabled", this, null))
         );
 
         compressionQuality = 1.0f;
-        try{
+        try {
             compressionQuality = galleryProcessor.getScalingParametersMap().get(thumbnailImageNode.getName()).getCompressionQuality();
         } catch (RepositoryException e) {
             log.info("Cannot retrieve compression quality.", e);
@@ -170,9 +210,19 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
     }
 
     /**
+     * NOTE: this calls widget {@code update()} method,
+     * which dispatches call js call to {@code render()} method
+     */
+    private void executeJavascript(final AjaxRequestTarget target, final ImageCropBehavior imageCropBehavior) {
+        final String updateScript = imageCropBehavior.getUpdateScript();
+        target.appendJavaScript(updateScript);
+    }
+
+    /**
      * Determine the scaling factor of the preview image, so that it fits within the max boundaries of
      * the preview container (e.g. {@code #MAX_PREVIEW_WIDTH} by {@code #MAX_PREVIEW_HEIGHT}).
-     * @param previewWidth width of preview image
+     *
+     * @param previewWidth  width of preview image
      * @param previewHeight height of preview image
      * @return the scaling factor of the preview image
      */
@@ -246,7 +296,7 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
                 highQuality = false;
             }
             BufferedImage thumbnail = ImageUtils.scaleImage(original, left, top, width, height,
-                    (int) dimension.getWidth(), (int) dimension.getHeight(), hints, highQuality);
+                    (int)dimension.getWidth(), (int)dimension.getHeight(), hints, highQuality);
             ByteArrayOutputStream bytes = ImageUtils.writeImage(writer, thumbnail, compressionQuality);
 
             //CMS7-8544 Keep the scaling of the image when cropping, to avoid a resulting image with bigger size than the original
@@ -285,23 +335,23 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
     }
 
     /**
-     * If height or width in the thumbnailDimension is equal to 0 it is a special case. 
+     * If height or width in the thumbnailDimension is equal to 0 it is a special case.
      * The value 0 represents a value that according to the dimension of the original image.
-     *
+     * <p>
      * With this function a new dimension is created according to the original dimension
      *
-     * @param originalDimension dimension of the original image
+     * @param originalDimension  dimension of the original image
      * @param thumbnailDimension dimension of the thumbnail image
      * @return scaled dimension based on width or height value
      */
     private Dimension handleZeroValueInDimension(Dimension originalDimension, Dimension thumbnailDimension) {
         Dimension normalized = new Dimension(thumbnailDimension);
-        if(thumbnailDimension.height == 0) {
-            int height = (int) ((thumbnailDimension.getWidth() / originalDimension.getWidth()) * originalDimension.getHeight());
+        if (thumbnailDimension.height == 0) {
+            int height = (int)((thumbnailDimension.getWidth() / originalDimension.getWidth()) * originalDimension.getHeight());
             normalized.setSize(thumbnailDimension.width, height);
         }
-        if(thumbnailDimension.width == 0) {
-            int width = (int) ((thumbnailDimension.getHeight() / originalDimension.getHeight()) * originalDimension.getWidth());
+        if (thumbnailDimension.width == 0) {
+            int width = (int)((thumbnailDimension.getHeight() / originalDimension.getHeight()) * originalDimension.getWidth());
             normalized.setSize(width, thumbnailDimension.height);
         }
         return normalized;

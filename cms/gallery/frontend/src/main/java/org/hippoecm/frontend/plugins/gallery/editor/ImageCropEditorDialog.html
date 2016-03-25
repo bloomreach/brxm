@@ -1,5 +1,5 @@
 <!--
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,7 +29,9 @@
         <img wicket:id="imagepreview"/>
       </div>
       <span wicket:id="thumbnail-size" class="thumbnail-size"/>
-    </div>
+      <div class="fit-view">
+        <input type="checkbox" wicket:id="fit-view"><a wicket:id="fit-view-link"><label wicket:id="fit-view-label">[label]</label></a></div>
+      </div>
   </wicket:extend>
 
 </html>
