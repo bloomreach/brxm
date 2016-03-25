@@ -77,14 +77,10 @@ describe('DragDropService', () => {
     iframe.one('load', () => {
       const iframeWindow = iframe[0].contentWindow;
 
-      // make ESLint happy; it claims that "'container1' is never reassigned, use 'const' instead" :(
-      container1 = '';
       container1 = createContainer(1);
       component1 = createComponent(1, container1);
       component2 = createComponent(2, container1);
 
-      // make ESLint happy; it claims that "'container2' is never reassigned, use 'const' instead" :(
-      container2 = '';
       container2 = createContainer(2);
 
       DragDropService.enable([container1, container2]).then(() => {
