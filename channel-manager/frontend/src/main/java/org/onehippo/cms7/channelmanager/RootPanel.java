@@ -178,6 +178,8 @@ public class RootPanel extends ExtPanel {
                 selectActiveItem(target);
                 redraw = false;
             }
+            // show the channel manager breadcrumb when the channel manager perspective is active on the first page load
+            target.appendJavaScript("Ext.getCmp('rootPanel').showBreadcrumb();");
         }
     }
 
