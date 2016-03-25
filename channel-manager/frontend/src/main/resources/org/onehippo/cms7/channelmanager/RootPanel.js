@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -85,8 +85,8 @@
         this.toolbar.render(hippoFooter, 0);
 
         // only show the channel manager breadcrumb when channel manager is active
-        Hippo.Events.subscribe('perspective-activated', this._showBreadcrumbForChannels, this);
-        Hippo.Events.subscribe('perspective-deactivated', this._hideBreadcrumbForChannels, this);
+        Hippo.Events.subscribe('CMSChannels', this.showBreadcrumb, this);
+        Hippo.Events.subscribe('CMSChannels-deactivated', this.hideBreadcrumb, this);
       }, this, {single: true});
 
       // get all child components
@@ -186,18 +186,6 @@
       this.hideBreadcrumbTask.cancel();
       this.toolbar.getEl().addClass('hippo-breadcrumb-active');
       this.showBreadcrumbTask.delay(0);
-    },
-
-    _hideBreadcrumbForChannels: function(eventParameters) {
-      if (eventParameters && eventParameters.perspectiveId === this.perspectiveId) {
-        this.hideBreadcrumb();
-      }
-    },
-
-    _showBreadcrumbForChannels: function(eventParameters) {
-      if (eventParameters && eventParameters.perspectiveId === this.perspectiveId) {
-        this.showBreadcrumb();
-      }
     },
 
     selectCard: function (itemId) {
