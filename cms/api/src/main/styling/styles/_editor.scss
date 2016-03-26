@@ -349,8 +349,7 @@
   padding: 16px 8px 16px 8px;
 }
 
-.hippo-diff-removed,
-.hippo-diff-removed .hippo-editor-field {
+.hippo-diff-removed {
   background-color: $danger-light !important;
   text-decoration: line-through;
 
@@ -359,8 +358,7 @@
   }
 }
 
-.hippo-diff-added,
-.hippo-diff-added .hippo-editor-field {
+.hippo-diff-added {
   background-color: $success-light !important;
 
   img {
