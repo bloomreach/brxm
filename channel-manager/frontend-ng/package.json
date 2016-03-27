@@ -6,6 +6,6 @@
     "gulp": "gulp"
   },
   "devDependencies": {
-    "hippo-build": "git://github.com/onehippo/hippo-build.git#v0.0.37"
+    "hippo-build": "git://github.com/onehippo/hippo-build.git#v0.0.38"
   }
 }

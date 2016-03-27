@@ -38,16 +38,13 @@ module.exports = function karmaConfig(config) {
   ];
 
   options.files = [
-    cfg.src.templates,
-    cfg.src.scripts,
     `${cfg.srcDir}/angularjs/mock.environment.spec.js`,
-    cfg.src.unitTests,
     cfg.src.fixtures,
     {
       pattern: `${cfg.bowerDir}/dragula.js/dist/dragula.min.+(css|js)`,
       included: false,
     },
-  ];
+  ].concat(options.files);
 
   options.proxies['/styles/dragula.min.css'] = `/base/${cfg.bowerDir}/dragula.js/dist/dragula.min.css`;
   options.proxies['/scripts/dragula.min.js'] = `/base/${cfg.bowerDir}/dragula.js/dist/dragula.min.js`;

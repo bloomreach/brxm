@@ -201,7 +201,7 @@ describe('ChannelCtrl', () => {
     ChannelService.hasPreviewConfiguration.and.returnValue(true);
     ChannelCtrl.toggleEditMode();
 
-    ChannelService.getCatalog.and.returnValue([ 'dummy' ]);
+    ChannelService.getCatalog.and.returnValue(['dummy']);
     expect(ChannelCtrl.showComponentsButton()).toBe(true);
 
     ChannelService.getCatalog.and.returnValue([]);

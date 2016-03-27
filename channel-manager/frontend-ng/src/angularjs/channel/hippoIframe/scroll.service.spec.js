@@ -19,7 +19,6 @@ describe('ScrollService', () => {
 
   let ScrollService;
   let baseJQueryElement;
-  let iframeJQueryElement;
   let velocitySpy;
 
   beforeEach(() => {
@@ -28,7 +27,7 @@ describe('ScrollService', () => {
     jasmine.getFixtures().load('channel/hippoIframe/scroll.service.fixture.html');
 
     baseJQueryElement = $j('.channel-iframe-base');
-    iframeJQueryElement = $j('.channel-iframe-element');
+    const iframeJQueryElement = $j('.channel-iframe-element');
     iframeJQueryElement.velocity = () => {};
     velocitySpy = spyOn(iframeJQueryElement, 'velocity').and.returnValue(iframeJQueryElement);
 
