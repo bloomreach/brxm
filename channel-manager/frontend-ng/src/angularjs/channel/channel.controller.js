@@ -41,8 +41,6 @@ export class ChannelCtrl {
 
     ComponentAdderService.setContainerClass('catalog-dd-container');
     ComponentAdderService.setContainerItemClass('catalog-dd-container-item');
-
-    FeedbackService.setParentElement($('hippo-iframe'));
   }
 
   toggleEditMode() {

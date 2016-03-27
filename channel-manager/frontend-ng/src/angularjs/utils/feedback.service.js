@@ -24,17 +24,13 @@ export class FeedbackService {
     this.$mdToast = $mdToast;
   }
 
-  setParentElement(parentJQueryElement) {
-    this.parentJQueryElement = parentJQueryElement;
-  }
-
-  showError(errorKey) {
+  showError(errorKey, parentJQueryElement = $('hippo-iframe')) {
     this.$mdToast.show(
       this.$mdToast.simple()
         .textContent(this.$translate.instant(errorKey))
         .position('top right')
         .hideDelay(HIDE_DELAY_IN_MS)
-        .parent(this.parentJQueryElement)
+        .parent(parentJQueryElement)
     );
   }
 }
