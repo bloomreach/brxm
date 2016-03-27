@@ -140,10 +140,8 @@ export class ChannelCtrl {
   _reloadPage() {
     // TODO: this should probably go into the hippoIframe.
     const iframe = $('iframe');
-    if (iframe.length > 0) {
-      const currentPage = iframe[0].contentWindow.location.pathname;
-
-      iframe.attr('src', currentPage);
+    if (iframe[0]) {
+      iframe[0].contentWindow.location.reload();
     }
   }
 }
