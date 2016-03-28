@@ -111,6 +111,11 @@ overlay-element {
 }
 
 .add-mode {
+  // make dragging go smooth by capturing mouse-move events in the entire overlay
+  &.overlay {
+    pointer-events: auto;
+  }
+
   // in add mode, hide all component overlays...
   .overlay-element-component {
     display: none;
@@ -119,7 +124,6 @@ overlay-element {
   // ...and show all container overlays
   .overlay-element-container {
     display: block;
-    pointer-events: auto;
 
     & .overlay-label {
       display: inline-block;
