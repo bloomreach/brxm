@@ -31,13 +31,15 @@ describe('hippoIframeCtrl', () => {
   let hstCommentsProcessorService;
   let PageMetaDataService;
   let ChannelService;
+  let HippoIframeService;
 
   beforeEach(() => {
     let $compile;
     module('hippo-cm');
 
     inject(($controller, _$rootScope_, _$compile_, _$mdDialog_, _$q_, _DragDropService_, _OverlaySyncService_,
-            _PageStructureService_, _ScalingService_, _hstCommentsProcessorService_, _PageMetaDataService_, _ChannelService_) => {
+            _PageStructureService_, _ScalingService_, _hstCommentsProcessorService_, _PageMetaDataService_,
+            _ChannelService_, _HippoIframeService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $mdDialog = _$mdDialog_;
@@ -49,6 +51,7 @@ describe('hippoIframeCtrl', () => {
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       PageMetaDataService = _PageMetaDataService_;
       ChannelService = _ChannelService_;
+      HippoIframeService = _HippoIframeService_;
       scope = $rootScope.$new();
     });
 
@@ -110,6 +113,7 @@ describe('hippoIframeCtrl', () => {
     spyOn(ChannelService, 'switchToChannel').and.returnValue(deferred.promise);
     spyOn(hippoIframeCtrl, '_parseLinks');
     spyOn(hippoIframeCtrl, '_updateDragDrop');
+    spyOn(HippoIframeService, 'signalPageLoadCompleted');
 
     hippoIframeCtrl.onLoad();
 
@@ -120,10 +124,12 @@ describe('hippoIframeCtrl', () => {
     expect(PageMetaDataService.getChannelId).toHaveBeenCalled();
     expect(ChannelService.getId).toHaveBeenCalled();
     expect(hippoIframeCtrl._parseLinks).not.toHaveBeenCalled();
+    expect(HippoIframeService.signalPageLoadCompleted).not.toHaveBeenCalled();
 
     deferred.resolve();
     $rootScope.$digest();
 
     expect(hippoIframeCtrl._parseLinks).toHaveBeenCalled();
+    expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
   });
 });

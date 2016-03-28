@@ -30,7 +30,8 @@ export class HippoIframeCtrl {
     OverlaySyncService,
     PageStructureService,
     PageMetaDataService,
-    ScalingService
+    ScalingService,
+    HippoIframeService
   ) {
     'ngInject';
 
@@ -46,9 +47,12 @@ export class HippoIframeCtrl {
     this.PageMetaDataService = PageMetaDataService;
     this.OverlaySyncService = OverlaySyncService;
     this.DragDropService = DragDropService;
+    this.HippoIframeService = HippoIframeService;
 
     this.iframeJQueryElement = $element.find('iframe');
     this.iframeJQueryElement.on('load', () => this.onLoad());
+
+    HippoIframeService.initialize(this.iframeJQueryElement);
 
     OverlaySyncService.init(this.iframeJQueryElement, $element.find('.overlay'));
     ScalingService.init($element);
@@ -67,6 +71,7 @@ export class HippoIframeCtrl {
       this._updateDragDrop();
       this._updateChannelIfSwitched().then(() => {
         this._parseLinks();
+        this.HippoIframeService.signalPageLoadCompleted();
       });
       // TODO: handle error.
       // show dialog explaining that for this channel, the CM can currently not be used,

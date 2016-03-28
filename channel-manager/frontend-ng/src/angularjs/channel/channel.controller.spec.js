@@ -25,6 +25,7 @@ describe('ChannelCtrl', () => {
   let ConfigService;
   let FeedbackService;
   let ChannelCtrl;
+  let HippoIframeService;
   let $rootScope;
   let $q;
   let $mdDialog;
@@ -64,11 +65,16 @@ describe('ChannelCtrl', () => {
         'setPushWidth',
       ]);
 
+      HippoIframeService = jasmine.createSpyObj('HippoIframeService', [
+        'reload',
+      ]);
+
       ChannelCtrl = $controller('ChannelCtrl', {
         $scope: $rootScope.$new(),
         ComponentsService,
         ChannelService,
         ScalingService,
+        HippoIframeService,
       });
     });
   });
@@ -103,9 +109,11 @@ describe('ChannelCtrl', () => {
 
   it('creates preview configuration when it has not been created yet before enabling edit mode', () => {
     const deferCreatePreview = $q.defer();
+    const deferReload = $q.defer();
 
     ChannelService.hasPreviewConfiguration.and.returnValue(false);
     ChannelService.createPreviewConfiguration.and.returnValue(deferCreatePreview.promise);
+    HippoIframeService.reload.and.returnValue(deferReload.promise);
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
     ChannelCtrl.toggleEditMode();
@@ -113,8 +121,16 @@ describe('ChannelCtrl', () => {
     expect(ChannelService.createPreviewConfiguration).toHaveBeenCalled();
     expect(ChannelCtrl.isCreatingPreview).toEqual(true);
     expect(ChannelCtrl.isEditMode).toEqual(false);
+    expect(HippoIframeService.reload).not.toHaveBeenCalled();
 
-    deferCreatePreview.resolve();
+    deferCreatePreview.resolve(); // preview creation completed successfully, reload page
+    $rootScope.$digest();
+
+    expect(ChannelCtrl.isCreatingPreview).toEqual(true);
+    expect(ChannelCtrl.isEditMode).toEqual(false);
+    expect(HippoIframeService.reload).toHaveBeenCalled();
+
+    deferReload.resolve(); // reload completed successfully, enter edit mode
     $rootScope.$digest();
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
