@@ -17,6 +17,7 @@
 export class HippoIframeCtrl {
   constructor(
     $q,
+    $log,
     $element,
     $mdDialog,
     $rootScope,
@@ -36,6 +37,7 @@ export class HippoIframeCtrl {
     'ngInject';
 
     this.$q = $q;
+    this.$log = $log;
     this.$rootScope = $rootScope;
     this.$translate = $translate;
     this.$mdDialog = $mdDialog;
@@ -80,19 +82,24 @@ export class HippoIframeCtrl {
   }
 
   deleteComponent(componentId) {
-    this._confirmDelete()
+    const selectedComponent = this.PageStructureService.getComponentById(componentId);
+    if (!selectedComponent) {
+      this.$log.warn(`Cannot delete unknown component with id:'${componentId}'`);
+      return;
+    }
+    this._confirmDelete(selectedComponent)
       .then(() => this.PageStructureService.removeComponentById(componentId)
         .then(({ oldContainer, newContainer }) => this.DragDropService.replaceContainer(oldContainer, newContainer))
       )
-      .catch(() => this.PageStructureService.showComponentProperties(this.selectedComponent));
+      .catch(() => this.PageStructureService.showComponentProperties(selectedComponent));
   }
 
-  _confirmDelete() {
+  _confirmDelete(selectedComponent) {
     const confirm = this.$mdDialog
       .confirm()
       .title(this.$translate.instant('CONFIRM_DELETE_COMPONENT_TITLE'))
       .textContent(this.$translate.instant('CONFIRM_DELETE_COMPONENT_MESSAGE', {
-        component: this.selectedComponent.getLabel(),
+        component: selectedComponent.getLabel(),
       }))
       .ok(this.$translate.instant('BUTTON_YES'))
       .cancel(this.$translate.instant('BUTTON_NO'));
@@ -109,7 +116,6 @@ export class HippoIframeCtrl {
   }
 
   startDragOrClick($event, structureElement) {
-    this.selectedComponent = structureElement;
     this.DragDropService.startDragOrClick($event, structureElement);
   }
 
