@@ -272,10 +272,7 @@ public class FacetedNavigationConcurrencyTest extends RepositoryTestCase {
         
     }
 
-    private void modifyOrAddCar(Node testNode, int i) throws PathNotFoundException, RepositoryException,
-            ItemExistsException, NoSuchNodeTypeException, LockException, VersionException,
-            ConstraintViolationException, ValueFormatException, AccessDeniedException, ReferentialIntegrityException,
-            InvalidItemStateException {
+    private void modifyOrAddCar(Node testNode, int i) throws RepositoryException {
         Node cars = testNode.getNode("documents").getNode("cars");
            if(i % 5 == 0) {
                // add a car
@@ -429,7 +426,7 @@ public class FacetedNavigationConcurrencyTest extends RepositoryTestCase {
                     Node n = it.nextNode();
                 }
                 
-            } catch (RepositoryException e) {
+            } catch (Exception e) {
                 errorCount++;
             } finally {
                if(searchSession != null) {
@@ -456,7 +453,7 @@ public class FacetedNavigationConcurrencyTest extends RepositoryTestCase {
                 traversalSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
                 Node facetedNode = traversalSession.getRootNode().getNode(facetedNodePath);
                 traverse(facetedNode, "", traverseDepth);
-            } catch (RepositoryException e) {
+            } catch (Exception e) {
                 errorCount++;
             } finally {
                if(traversalSession != null) {
