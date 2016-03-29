@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,11 +22,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+
+import com.google.common.collect.ImmutableSet;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.core.id.PropertyId;
@@ -72,6 +75,24 @@ public class ServicingNodeIndexer extends NodeIndexer {
     protected ServicingIndexingConfiguration servicingIndexingConfig;
     private boolean supportSimilarityOnStrings = true;
     private boolean supportSimilarityOnBinaries;
+
+    private static Set<String> UNSUPPORTED_BINARY_TYPES = ImmutableSet.of(
+            "application/x-archive",
+            "application/x-bzip",
+            "application/x-bzip2",
+            "application/x-cpio",
+            "application/x-gtar",
+            "application/x-gzip",
+            "application/x-tar",
+            "application/zip",
+            "image/bmp",
+            "image/gif",
+            "image/jpeg",
+            "image/png",
+            "image/vnd.wap.wbmp",
+            "image/x-icon",
+            "image/x-psd",
+            "image/x-xcf");
 
     public ServicingNodeIndexer(NodeState node, QueryHandlerContext context, NamespaceMappings mappings, Parser parser) {
         super(node, context.getItemStateManager(), mappings, context.getExecutor(), parser);
@@ -552,6 +573,15 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
     public void setSupportSimilarityOnBinaries(final boolean supportSimilarityOnBinaries) {
         this.supportSimilarityOnBinaries = supportSimilarityOnBinaries;
+    }
+
+
+    @Override
+    protected boolean isSupportedMediaType(final String type) {
+        if (UNSUPPORTED_BINARY_TYPES.contains(type.toLowerCase())) {
+            return false;
+        }
+        return super.isSupportedMediaType(type);
     }
 
     private class BinaryValue {
