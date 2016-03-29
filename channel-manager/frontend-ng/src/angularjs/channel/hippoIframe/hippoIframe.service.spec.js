@@ -17,7 +17,6 @@
 describe('hippoIframeCtrl', () => {
   'use strict';
 
-  let $q;
   let $log;
   let $rootScope;
   let iframe;
@@ -26,8 +25,7 @@ describe('hippoIframeCtrl', () => {
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$q_, _$log_, _$rootScope_, _HippoIframeService_) => {
-      $q = _$q_;
+    inject((_$log_, _$rootScope_, _HippoIframeService_) => {
       $log = _$log_;
       $rootScope = _$rootScope_;
       HippoIframeService = _HippoIframeService_;
@@ -109,5 +107,5 @@ describe('hippoIframeCtrl', () => {
     HippoIframeService.signalPageLoadCompleted();
 
     expect($log.warn).not.toHaveBeenCalled();
-  })
+  });
 });
