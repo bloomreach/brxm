@@ -18,6 +18,7 @@ import { overlayModule } from './overlay/overlay';
 import { componentAdderModule } from './componentAdder/componentAdder';
 import { hippoIframe } from './hippoIframe.directive';
 import { HippoIframeCtrl } from './hippoIframe.controller';
+import { HippoIframeService } from './hippoIframe.service';
 import { HstCommentsProcessorService } from './hstCommentsProcessor.service';
 import { LinkProcessorService } from './linkProcessor.service';
 import { ScalingService } from './scaling.service';
@@ -32,6 +33,7 @@ export const channelHippoIframeModule = angular
   ])
   .directive('hippoIframe', hippoIframe)
   .controller('hippoIframeCtrl', HippoIframeCtrl)
+  .service('HippoIframeService', HippoIframeService)
   .service('hstCommentsProcessorService', HstCommentsProcessorService)
   .service('linkProcessorService', LinkProcessorService)
   .service('ScalingService', ScalingService)

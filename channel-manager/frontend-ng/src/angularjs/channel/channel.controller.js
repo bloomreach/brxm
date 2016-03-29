@@ -18,7 +18,7 @@ const SIDENAVS = ['components'];
 
 export class ChannelCtrl {
 
-  constructor($log, $scope, $translate, $mdDialog, $mdSidenav, ChannelService, ScalingService, SessionService, ComponentAdderService, ConfigService, FeedbackService) {
+  constructor($log, $scope, $translate, $mdDialog, $mdSidenav, ChannelService, ScalingService, SessionService, ComponentAdderService, ConfigService, HippoIframeService, FeedbackService) {
     'ngInject';
 
     this.$log = $log;
@@ -30,6 +30,7 @@ export class ChannelCtrl {
     this.ScalingService = ScalingService;
     this.SessionService = SessionService;
     this.ConfigService = ConfigService;
+    this.HippoIframeService = HippoIframeService;
     this.FeedbackService = FeedbackService;
 
     this.iframeUrl = ChannelService.getUrl();
@@ -69,15 +70,15 @@ export class ChannelCtrl {
     this.isCreatingPreview = true;
     this.ChannelService.createPreviewConfiguration()
       .then(() => {
-//        this._reloadPage(); // reload page to keep UUIDs in sync with preview config
-        // TODO: this is first stab at reloading a page. I guess we need a better way.
-        // reloading the page here works in the app, but once we tell Ext which component to render, ext doesn't seem to "get it" yet.
-        this.isEditMode = true;
+        this.HippoIframeService.reload().then(() => {
+          this.isEditMode = true;
+        })
+        .finally(() => {
+          this.isCreatingPreview = false;
+        });
       }, () => {
-        this.FeedbackService.showError('ERROR_CREATE_PREVIEW');
-      })
-      .finally(() => {
         this.isCreatingPreview = false;
+        this.FeedbackService.showError('ERROR_CREATE_PREVIEW');
       });
   }
 
@@ -114,7 +115,7 @@ export class ChannelCtrl {
 
   discard() {
     this._confirmDiscard().then(() => {
-      this.ChannelService.discardOwnChanges().then(() => this._reloadPage());
+      this.ChannelService.discardOwnChanges().then(() => this.HippoIframeService.reload());
       // TODO: what if this fails?
       // show a toast that discarding the changed failed.
       // More information may be exposed by logging an error(?) in the console,
@@ -135,13 +136,5 @@ export class ChannelCtrl {
       .cancel(this.$translate.instant('BUTTON_NO'));
 
     return this.$mdDialog.show(confirm);
-  }
-
-  _reloadPage() {
-    // TODO: this should probably go into the hippoIframe.
-    const iframe = $('iframe');
-    if (iframe[0]) {
-      iframe[0].contentWindow.location.reload();
-    }
   }
 }
