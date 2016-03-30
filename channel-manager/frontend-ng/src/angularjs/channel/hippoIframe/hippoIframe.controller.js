@@ -108,9 +108,9 @@ export class HippoIframeCtrl {
     }
   }
 
-  startDragOrClick($event, structureElement) {
-    this.selectedComponent = structureElement;
-    this.DragDropService.startDragOrClick($event, structureElement);
+  startDragOrClick($event, component) {
+    this.selectedComponent = component;
+    this.DragDropService.startDragOrClick($event, component);
   }
 
   isDraggingOrClicking() {

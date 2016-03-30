@@ -107,4 +107,26 @@ export class DomService {
       this._doCopyComputedStyleOfDescendantsExcept(fromChild, toChild, excludeRegExp);
     });
   }
+
+  createMouseDownEvent(view, clientX, clientY) {
+    // IE11 needs type 'MSPointerDown' instead of 'mousedown'
+    const type = window.navigator.msPointerEnabled ? 'MSPointerDown' : 'mousedown';
+    const canBubble = true;
+    const cancelable = false;
+    const detail = 0;
+    const screenX = 0;
+    const screenY = 0;
+    const ctrlKey = false;
+    const altKey = false;
+    const shiftKey = false;
+    const metaKey = false;
+    const button = 0;
+    const relatedTarget = null;
+
+    // IE11 does not support new MouseEvent(), so use the deprecated initMouseEvent() method instead
+    const mouseEvent = view.document.createEvent('MouseEvent');
+    mouseEvent.initMouseEvent(type, canBubble, cancelable, view, detail, screenX, screenY, clientX, clientY,
+      ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget);
+    return mouseEvent;
+  }
 }

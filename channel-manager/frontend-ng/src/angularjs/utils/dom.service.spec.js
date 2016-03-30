@@ -146,5 +146,24 @@ describe('DomService', () => {
     DomService.copyComputedStyleOfDescendantsExcept(source[0], target[0], ['color']);
     expect(targetUl.css('color')).toEqual('rgb(0, 0, 0)');
   });
+
+  it('can create a mousedown event', () => {
+    const mouseDownEvent = DomService.createMouseDownEvent(window, 100, 200);
+    expect(mouseDownEvent.type).toEqual('mousedown');
+    expect(mouseDownEvent.bubbles).toEqual(true);
+    expect(mouseDownEvent.clientX).toEqual(100);
+    expect(mouseDownEvent.clientY).toEqual(200);
+    expect(mouseDownEvent.view).toEqual(window);
+  });
+
+  it('can create a mousedown event in IE11', () => {
+    window.navigator.msPointerEnabled = true;
+    const mouseDownEvent = DomService.createMouseDownEvent(window, 100, 200);
+    expect(mouseDownEvent.type).toEqual('MSPointerDown');
+    expect(mouseDownEvent.bubbles).toEqual(true);
+    expect(mouseDownEvent.clientX).toEqual(100);
+    expect(mouseDownEvent.clientY).toEqual(200);
+    expect(mouseDownEvent.view).toEqual(window);
+  });
 });
 
