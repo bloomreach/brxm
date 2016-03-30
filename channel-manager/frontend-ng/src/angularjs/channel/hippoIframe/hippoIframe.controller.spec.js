@@ -67,13 +67,12 @@ describe('hippoIframeCtrl', () => {
     scope.$digest();
 
     hippoIframeCtrl = el.controller('hippo-iframe');
-    hippoIframeCtrl.selectedComponent = {
-      getLabel: () => 'testLabel',
-    };
   });
 
   it('shows the confirmation dialog and deletes selected component on confirmation', () => {
+    const mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
     spyOn(DragDropService, 'replaceContainer');
+    spyOn(PageStructureService, 'getComponentById').and.returnValue(mockComponent);
     spyOn(PageStructureService, 'removeComponentById').and.returnValue($q.when({ oldContainer: 'old', newContainer: 'new' }));
     spyOn($mdDialog, 'show').and.returnValue($q.resolve());
     spyOn($mdDialog, 'confirm').and.callThrough();
@@ -82,6 +81,7 @@ describe('hippoIframeCtrl', () => {
 
     scope.$digest();
 
+    expect(mockComponent.getLabel).toHaveBeenCalled();
     expect($mdDialog.confirm).toHaveBeenCalled();
     expect($mdDialog.show).toHaveBeenCalled();
     expect(PageStructureService.removeComponentById).toHaveBeenCalledWith('1234');
@@ -89,6 +89,8 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('shows component properties dialog after rejecting the delete operation', () => {
+    const mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
+    spyOn(PageStructureService, 'getComponentById').and.returnValue(mockComponent);
     spyOn(PageStructureService, 'showComponentProperties');
     spyOn($mdDialog, 'show').and.returnValue($q.reject());
     spyOn($mdDialog, 'confirm').and.callThrough();
@@ -97,9 +99,10 @@ describe('hippoIframeCtrl', () => {
 
     scope.$digest();
 
+    expect(mockComponent.getLabel).toHaveBeenCalled();
     expect($mdDialog.confirm).toHaveBeenCalled();
     expect($mdDialog.show).toHaveBeenCalled();
-    expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith(hippoIframeCtrl.selectedComponent);
+    expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith(mockComponent);
   });
 
   it('switches channels when the channel id in the page meta-data differs from the current channel id', () => {
