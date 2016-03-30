@@ -43,7 +43,7 @@
         }
       }.bind(this));
 
-      this.iframeToHost.subscribe('channel-changed', this._onChannelChanged, this);
+      this.iframeToHost.subscribe('channel-changed', this._reloadChannels, this);
       this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
     },
@@ -54,10 +54,20 @@
       }.bind(this));
     },
 
-    _onChannelChanged: function() {
-      this.channelStoreFuture.when(function (config) {
-        config.store.reload();
-      });
+    _reloadChannels: function() {
+      return new Hippo.Future(function(success) {
+        this.channelStoreFuture.when(function (config) {
+          config.store.on('load', success, this, { single: true });
+          config.store.reload();
+        });
+      }.bind(this));
+    },
+
+    _onComponentChanged: function() {
+      this._reloadChannels().when(function (channelStore) {
+        this.selectedChannel = channelStore.getById(this.selectedChannel.id);
+        this.hostToIFrame.publish('channel-changed', this.selectedChannel.json);
+      }.bind(this));
     },
 
     _setChannel: function(channelId) {
@@ -106,22 +116,14 @@
         variantsUuid: this.variantsUuid,
         mountId: this.selectedChannel.mountId,
         listeners: {
-          save: function() {
-            console.log('TODO: re-render saved component');
-            // old code: this.fireEvent('channelChanged');
-          },
+          save: this._onComponentChanged,
+          deleteVariant: this._onComponentChanged,
           deleteComponent: this._deleteComponent,
-          deleteVariant: function() {
-            console.log('TODO: delete variant');
-            // old code: this.fireEvent('channelChanged');
-          },
           propertiesChanged: function(componentId, propertiesMap) {
             this.hostToIFrame.publish('render-component', componentId, propertiesMap);
           },
           hide: function() {
             this.hostToIFrame.publish('hide-component-properties');
-            console.log('TODO: deselectComponents? Or leave the selection as-is?');
-            // old code: this.pageContainer.deselectComponents();
           },
           // Enable mouse events in the iframe while the component properties window is dragged. When the
           // mouse pointer is moved quickly it can end up outside the window above the iframe. The iframe

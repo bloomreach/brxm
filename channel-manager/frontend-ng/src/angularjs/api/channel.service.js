@@ -15,9 +15,10 @@
  */
 
 export class ChannelService {
-  constructor($http, SessionService, CatalogService, HstService, ConfigService, CmsService) {
+  constructor($rootScope, $http, SessionService, CatalogService, HstService, ConfigService, CmsService) {
     'ngInject';
 
+    this.$rootScope = $rootScope;
     this.$http = $http;
     this.SessionService = SessionService;
     this.CatalogService = CatalogService;
@@ -26,6 +27,14 @@ export class ChannelService {
     this.CmsService = CmsService;
 
     this.channel = {};
+
+    this.CmsService.subscribe('channel-changed', this._onChannelChanged, this);
+  }
+
+  _onChannelChanged(channel) {
+    this.$rootScope.$apply(() => {
+      this.channel = channel;
+    });
   }
 
   _setChannel(channel) {
