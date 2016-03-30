@@ -78,7 +78,8 @@
         text: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-button-close'],
         scope: this,
         handler: function () {
-          this.componentPropertiesPanel.fireEvent('close');
+          this.componentPropertiesPanel.clearComponent();
+          this.hide();
         }
       });
 

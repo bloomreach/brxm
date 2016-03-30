@@ -108,6 +108,11 @@
       this.fireEvent('onLoad');
     },
 
+    clearComponent: function () {
+      this._renderInitialComponentState();
+      this.componentId = null;
+    },
+
     _setNewComponent: function (component, container, page) {
       if (this.componentVariants !== null) {
         this.componentVariants.un('invalidated', this.updateUI, this);
@@ -181,7 +186,6 @@
 
     onHide: function () {
       this._stopValidationMonitoring();
-      this._renderInitialComponentState();
     },
 
     _startValidationMonitoring: function () {
@@ -524,12 +528,8 @@
       }.bind(this));
     },
 
-    /**
-     * Fire the 'deleteComponent' event to delete current component
-     */
     deleteComponent: function () {
       this.fireEvent('deleteComponent', this.componentId);
-      this.fireEvent('close', this.componentId);
     }
   });
 
