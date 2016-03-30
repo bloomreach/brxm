@@ -72,7 +72,7 @@
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>npm</executable>
-              <commandlineArgs>run gulp testSingleRun -- --fail-on-gulp-error</commandlineArgs>
+              <commandlineArgs>run gulp test -- --fail-on-gulp-error</commandlineArgs>
               <skip>${skipTests}</skip>
             </configuration>
           </execution>

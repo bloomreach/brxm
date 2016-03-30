@@ -133,6 +133,7 @@
     },
 
     _deleteComponent: function (componentId) {
+      this.componentPropertiesWindow.hide();
       this.hostToIFrame.publish('delete-component', componentId);
     },
 

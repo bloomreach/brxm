@@ -100,12 +100,17 @@
      * @param page object with all page meta-data.
      */
     setComponent: function (component, container, page) {
-      if (this.componentId !== component.id) {
+      if (!this.hasComponent) {
         this._setNewComponent(component, container, page);
       } else {
         this._startValidationMonitoring();
       }
       this.fireEvent('onLoad');
+    },
+
+    clearComponent: function () {
+      this._renderInitialComponentState();
+      this.hasComponent = false;
     },
 
     _setNewComponent: function (component, container, page) {
@@ -118,6 +123,7 @@
       this.pageRequestVariants = page['HST-Page-Request-Variants'] || {};
       this.lastModified = component.lastModified;
       this.container = container;
+      this.hasComponent = true;
 
       this.componentVariants = new Hippo.ChannelManager.ChannelEditor.ComponentVariants({
         componentId: component.id,
@@ -181,7 +187,6 @@
 
     onHide: function () {
       this._stopValidationMonitoring();
-      this._renderInitialComponentState();
     },
 
     _startValidationMonitoring: function () {
@@ -524,12 +529,8 @@
       }.bind(this));
     },
 
-    /**
-     * Fire the 'deleteComponent' event to delete current component
-     */
     deleteComponent: function () {
       this.fireEvent('deleteComponent', this.componentId);
-      this.fireEvent('close', this.componentId);
     }
   });
 
