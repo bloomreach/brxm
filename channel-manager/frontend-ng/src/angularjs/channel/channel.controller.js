@@ -37,11 +37,39 @@ export class ChannelCtrl {
     this.isEditMode = false;
     this.isCreatingPreview = false;
 
+    this.viewPorts = [
+      {
+        name: 'desktop',
+        icon: 'computer',
+        width: 0,
+      },
+      {
+        name: 'tablet',
+        icon: 'tablet',
+        width: 720,
+      },
+      {
+        name: 'phone',
+        icon: 'smartphone',
+        width: 320,
+      },
+    ];
+
+    this.selectViewPort(this.viewPorts[0]);
+
     // reset service state to avoid weird scaling when controller is reloaded due to state change
     ScalingService.setPushWidth(0);
 
     ComponentAdderService.setContainerClass('catalog-dd-container');
     ComponentAdderService.setContainerItemClass('catalog-dd-container-item');
+  }
+
+  selectViewPort(viewPort) {
+    this.selectedViewPort = viewPort;
+  }
+
+  isViewPortSected(viewPort) {
+    return this.selectedViewPort === viewPort;
   }
 
   toggleEditMode() {

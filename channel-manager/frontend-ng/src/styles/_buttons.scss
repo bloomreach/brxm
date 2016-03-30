@@ -16,3 +16,18 @@
   font-size: 15px;
   text-transform: none;
 }
+
+.md-toolbar-tools md-tabs {
+  md-tabs-canvas,
+  md-pagination-wrapper {
+    height: 64px; // same as toolbar height
+  }
+
+  .md-tab {
+    padding: 20px 24px; // center-align vertically
+
+    &.md-active md-icon {
+      color: rgb(255, 64, 129); // accent color
+    }
+  }
+}
