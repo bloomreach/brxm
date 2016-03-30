@@ -124,6 +124,8 @@ export class ChannelService {
     if (this.channel.changedBySet.indexOf(user) === -1) {
       this.channel.changedBySet.push(user);
     }
+
+    this.CmsService.publish('channel-changed');
   }
 
   publishOwnChanges() {
@@ -148,5 +150,6 @@ export class ChannelService {
 
   _resetOwnChange() {
     this.channel.changedBySet.splice(this.channel.changedBySet.indexOf(this.ConfigService.cmsUser), 1);
+    this.CmsService.publish('channel-changed');
   }
 }

@@ -43,6 +43,7 @@
         }
       }.bind(this));
 
+      this.iframeToHost.subscribe('channel-changed', this._onChannelChanged, this);
       this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
     },
@@ -51,6 +52,12 @@
       this._setChannel(channelId).when(function(channelRecord) {
         this.hostToIFrame.publish('load-channel', channelRecord.json);
       }.bind(this));
+    },
+
+    _onChannelChanged: function() {
+      this.channelStoreFuture.when(function (config) {
+        config.store.reload();
+      });
     },
 
     _setChannel: function(channelId) {
