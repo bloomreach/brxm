@@ -59,6 +59,7 @@
       this.componentId = config.componentId;
       this.lastModified = config.lastModified;
       this.isReadOnly = config.isReadOnly;
+      this.hasComponent = false;
 
       Hippo.ChannelManager.ChannelEditor.ComponentPropertiesForm.superclass.constructor.call(this, Ext.apply(config, {
         cls: 'componentPropertiesForm qa-properties-form',

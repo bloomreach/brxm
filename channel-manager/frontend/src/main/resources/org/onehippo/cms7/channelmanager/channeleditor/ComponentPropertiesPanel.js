@@ -100,7 +100,7 @@
      * @param page object with all page meta-data.
      */
     setComponent: function (component, container, page) {
-      if (this.componentId !== component.id) {
+      if (!this.hasComponent) {
         this._setNewComponent(component, container, page);
       } else {
         this._startValidationMonitoring();
@@ -110,7 +110,7 @@
 
     clearComponent: function () {
       this._renderInitialComponentState();
-      this.componentId = null;
+      this.hasComponent = false;
     },
 
     _setNewComponent: function (component, container, page) {
@@ -123,6 +123,7 @@
       this.pageRequestVariants = page['HST-Page-Request-Variants'] || {};
       this.lastModified = component.lastModified;
       this.container = container;
+      this.hasComponent = true;
 
       this.componentVariants = new Hippo.ChannelManager.ChannelEditor.ComponentVariants({
         componentId: component.id,
