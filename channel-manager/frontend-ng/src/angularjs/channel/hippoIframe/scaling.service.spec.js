@@ -45,9 +45,10 @@ describe('ScalingService', () => {
     ScalingService.init(null);
   });
 
-  it('should initialize the scaling factor instantly to 1.0', () => {
+  it('should initialize using the default values', () => {
     ScalingService.init(iframeJQueryElement);
 
+    expect(iframeJQueryElement.css('margin-left')).toBe('0px');
     expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
     expect(elementsToScale.css).toHaveBeenCalled();
     expect(ScalingService.getScaleFactor()).toEqual(1.0);
