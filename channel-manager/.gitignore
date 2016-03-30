@@ -3,6 +3,7 @@
 .settings
 .idea/
 .project/
+.eslintrc
 target/
 node_modules/
 bower_components/
