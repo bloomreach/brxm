@@ -33,19 +33,19 @@ export class ScalingService {
 
     angular.element($window).bind('resize', () => {
       if (this.hippoIframeJQueryElement) {
-        $rootScope.$apply(() => this._updateScaling());
+        $rootScope.$apply(() => this._updateScaling(false));
       }
     });
   }
 
   init(hippoIframeJQueryElement) {
     this.hippoIframeJQueryElement = hippoIframeJQueryElement;
-    this._updateScaling();
+    this._updateScaling(false);
   }
 
   setPushWidth(pushWidth) {
     this.pushWidth = pushWidth;
-    this._updateScaling();
+    this._updateScaling(true);
   }
 
   setViewPortWidth(viewPortWidth) {
@@ -66,47 +66,89 @@ export class ScalingService {
     const maxWidthCSS = this.viewPortWidth === 0 ? 'none' : `${this.viewPortWidth}px`;
     elementsToScale.css('max-width', maxWidthCSS);
 
+    this._updateScaling(false);
     this.OverlaySyncService.syncIframe();
   }
 
-  _updateScaling() {
+  /**
+   * Update the iframe shift, if necessary
+   *
+   * The iframe should be shifted right (by controlling the left-margin) if the sidenav is open,
+   * and if the viewport width is less than the available canvas
+   *
+   * @param animate  flag indicating whether any shift-change should be automated or immediate.
+   * @returns {*[]}  canvasWidth is the maximum width available to the iframe
+   *                 viewPortWidth indicates how many pixels wide the iframe content should be rendered.
+   */
+  _updateIframeShift(animate) {
+    const currentShift = parseInt(this.hippoIframeJQueryElement.css('margin-left'), 10);
+    const canvasWidth = this.hippoIframeJQueryElement.find('.channel-iframe-canvas').width() + currentShift;
+    const viewPortWidth = this.viewPortWidth === 0 ? canvasWidth : this.viewPortWidth;
+    const canvasBorderWidth = canvasWidth - viewPortWidth;
+    const targetShift = Math.min(canvasBorderWidth, this.pushWidth);
+
+    if (targetShift !== currentShift) {
+      if (animate) {
+        this.hippoIframeJQueryElement.velocity('finish');
+        this.hippoIframeJQueryElement.velocity({
+          'margin-left': targetShift,
+        }, {
+          duration: this.scaleDuration,
+          easing: this.scaleEasing,
+        });
+      } else {
+        this.hippoIframeJQueryElement.css('margin-left', targetShift);
+      }
+    }
+
+    return [canvasWidth, viewPortWidth];
+  }
+
+  _updateScaling(animate) {
     if (!this.hippoIframeJQueryElement) {
       return;
     }
 
-    const iframeBaseJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-base');
-    const elementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
-    const canvasWidth = this.hippoIframeJQueryElement.find('.channel-iframe-canvas').width();
+    const [canvasWidth, viewPortWidth] = this._updateIframeShift(animate);
     const visibleCanvasWidth = canvasWidth - this.pushWidth;
-
     const oldScale = this.scaleFactor;
-    const newScale = visibleCanvasWidth / canvasWidth;
+    const newScale = (visibleCanvasWidth < viewPortWidth) ? visibleCanvasWidth / viewPortWidth : 1;
 
     const startScaling = oldScale === 1.0 && newScale !== 1.0;
     const stopScaling = oldScale !== 1.0 && newScale === 1.0;
     const animationDuration = (startScaling || stopScaling) ? this.scaleDuration : 0;
 
+    const elementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
     elementsToScale.velocity('finish');
 
     if (startScaling || stopScaling) {
+      const iframeBaseJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-base');
       const currentOffset = iframeBaseJQueryElement.scrollTop();
       const targetOffset = startScaling ? newScale * currentOffset : currentOffset / oldScale;
 
-      elementsToScale.velocity('scroll', {
-        container: iframeBaseJQueryElement,
-        offset: targetOffset - currentOffset,
-        duration: animationDuration,
-        easing: this.scaleEasing,
-        queue: false,
-      });
+      if (animate) {
+        elementsToScale.velocity('scroll', {
+          container: iframeBaseJQueryElement,
+          offset: targetOffset - currentOffset,
+          duration: animationDuration,
+          easing: this.scaleEasing,
+          queue: false,
+        });
+      } else {
+        elementsToScale.scrollTop(targetOffset);
+      }
     }
 
-    elementsToScale.velocity({
-      scale: newScale,
-    }, {
-      duration: animationDuration,
-      easing: this.scaleEasing,
-    });
+    if (animate) {
+      elementsToScale.velocity({
+        scale: newScale,
+      }, {
+        duration: animationDuration,
+        easing: this.scaleEasing,
+      });
+    } else {
+      elementsToScale.css('transform', `scale(${newScale})`);
+    }
 
     this.scaleFactor = newScale;
   }

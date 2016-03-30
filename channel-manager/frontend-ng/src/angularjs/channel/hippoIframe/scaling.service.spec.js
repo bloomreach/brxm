@@ -35,7 +35,7 @@ describe('ScalingService', () => {
     iframeJQueryElement = $j('#test-hippo-iframe');
     baseJQueryElement = $j('.channel-iframe-base');
     canvasJQueryElement = $j('.channel-iframe-canvas');
-    elementsToScale = jasmine.createSpyObj('elementsToScale', ['velocity']);
+    elementsToScale = jasmine.createSpyObj('elementsToScale', ['velocity', 'css', 'scrollTop']);
 
     spyOn(iframeJQueryElement, 'find').and.callFake((selector) => selector === '.cm-scale' ? elementsToScale : $j(`#test-hippo-iframe ${selector}`));
   });
@@ -49,15 +49,7 @@ describe('ScalingService', () => {
     ScalingService.init(iframeJQueryElement);
 
     expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
-    expect(elementsToScale.velocity).toHaveBeenCalledWith(
-      {
-        scale: 1.0,
-      },
-      {
-        duration: 0,
-        easing: ScalingService.scaleEasing,
-      }
-    );
+    expect(elementsToScale.css).toHaveBeenCalled();
     expect(ScalingService.getScaleFactor()).toEqual(1.0);
   });
 
@@ -111,15 +103,7 @@ describe('ScalingService', () => {
     $j(window).resize();
 
     expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
-    expect(elementsToScale.velocity).toHaveBeenCalledWith(
-      {
-        scale: 0.5,
-      },
-      {
-        duration: 0,
-        easing: ScalingService.scaleEasing,
-      }
-    );
+    expect(elementsToScale.css).toHaveBeenCalled();
     expect(ScalingService.getScaleFactor()).toEqual(0.5);
   });
 

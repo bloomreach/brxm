@@ -63,6 +63,7 @@ describe('ChannelCtrl', () => {
       ScalingService = jasmine.createSpyObj('ScalingService', [
         'init',
         'setPushWidth',
+        'setViewPortWidth',
       ]);
 
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', [
@@ -81,12 +82,14 @@ describe('ChannelCtrl', () => {
 
   it('resets the ScalingService pushWidth state during initialization', () => {
     ScalingService.setPushWidth.calls.reset();
+    ScalingService.setViewPortWidth.calls.reset();
     inject(($controller) => {
       $controller('ChannelCtrl', {
         $scope: $rootScope.$new(),
         ScalingService,
       });
       expect(ScalingService.setPushWidth).toHaveBeenCalledWith(0);
+      expect(ScalingService.setViewPortWidth).toHaveBeenCalledWith(0);
     });
   });
 
