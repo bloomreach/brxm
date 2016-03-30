@@ -19,12 +19,14 @@ const ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS = 400;
 
 export class ScalingService {
 
-  constructor($rootScope, $window) {
+  constructor($rootScope, $window, OverlaySyncService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
+    this.OverlaySyncService = OverlaySyncService;
 
     this.pushWidth = 0; // all sidenavs are initially closed
+    this.viewPortWidth = 0; // unconstrained
     this.scaleFactor = 1.0;
     this.scaleDuration = ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS;
     this.scaleEasing = ANGULAR_MATERIAL_SIDENAV_EASING;
@@ -46,8 +48,25 @@ export class ScalingService {
     this._updateScaling();
   }
 
+  setViewPortWidth(viewPortWidth) {
+    this.viewPortWidth = viewPortWidth;
+    this._updateViewPortWidth();
+  }
+
   getScaleFactor() {
     return this.scaleFactor;
+  }
+
+  _updateViewPortWidth() {
+    if (!this.hippoIframeJQueryElement) {
+      return;
+    }
+
+    const elementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
+    const maxWidthCSS = this.viewPortWidth === 0 ? 'none' : `${this.viewPortWidth}px`;
+    elementsToScale.css('max-width', maxWidthCSS);
+
+    this.OverlaySyncService.syncIframe();
   }
 
   _updateScaling() {
