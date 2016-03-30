@@ -121,7 +121,6 @@ describe('DragDropService', () => {
   it('forwards a shifted mouse event to the iframe when it starts dragging in a non-scaled iframe', (done) => {
     loadIframeFixture(() => {
       const mockedMouseDownEvent = {
-        type: 'mousedown',
         clientX: 100,
         clientY: 200,
       };
@@ -152,7 +151,6 @@ describe('DragDropService', () => {
   it('forwards a shifted mouse event to the iframe when it starts dragging in a scaled iframe', (done) => {
     loadIframeFixture(() => {
       const mockedMouseDownEvent = {
-        type: 'mousedown',
         clientX: 150,
         clientY: 150,
       };
@@ -186,7 +184,6 @@ describe('DragDropService', () => {
   it('stops dragging or clicking when disabled', (done) => {
     loadIframeFixture(() => {
       const mockedMouseDownEvent = {
-        type: 'mousedown',
         clientX: 100,
         clientY: 200,
       };
@@ -203,17 +200,23 @@ describe('DragDropService', () => {
     });
   });
 
-  it('shows the component properties when a component receives a mouseup event', (done) => {
+  it('shows a component\'s properties when a component receives a mouseup event', (done) => {
     loadIframeFixture(() => {
-      const iframeComponent1 = component1.getBoxElement();
+      const mockedMouseDownEvent = {
+        clientX: 100,
+        clientY: 200,
+      };
+
+      DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
 
       spyOn(PageStructureService, 'showComponentProperties');
 
-      iframeComponent1.on('mouseup', () => {
+      const componentElement1 = component1.getBoxElement();
+      componentElement1.on('mouseup', () => {
         expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith(component1);
         done();
       });
-      iframeComponent1.trigger('mouseup');
+      componentElement1.trigger('mouseup');
     });
   });
 

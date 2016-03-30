@@ -15,6 +15,7 @@
  */
 
 const COMPONENT_QA_CLASS = 'qa-dragula-component';
+const MOUSEUP_EVENT_NAME = 'mouseup.dragDropService';
 
 export class DragDropService {
 
@@ -76,7 +77,6 @@ export class DragDropService {
       this.drake.on('dragend', (el) => this._onStopDrag(el));
       this.drake.on('drop', (el, target, source, sibling) => this._onDrop(el, target, source, sibling));
 
-      this._handleComponentClick(containers);
       this.ScrollService.enable(() => this.draggingOrClicking);
     });
   }
@@ -96,32 +96,29 @@ export class DragDropService {
     return this.DomService.addScript(iframe, dragulaJs);
   }
 
-  _handleComponentClick(containers) {
-    containers.forEach((container) => {
-      container.getComponents().forEach((component) => {
-        component.getBoxElement().on('mouseup', () => {
-          if (!this.drake.dragging) {
-            this._onStopDrag(component.getBoxElement());
-            this.PageStructureService.showComponentProperties(component);
-          }
-        });
-      });
-    });
-  }
-
   replaceContainer(oldContainer, newContainer) {
     return this.dragulaPromise.then(() => {
       const oldIndex = this.drake.containers.indexOf(oldContainer.getBoxElement()[0]);
       if (oldIndex >= 0 && newContainer) {
         this.drake.containers[oldIndex] = newContainer.getBoxElement()[0];
-        this._handleComponentClick([newContainer]);
       }
     });
   }
 
-  startDragOrClick($event, structureElement) {
+  startDragOrClick($event, component) {
     this.draggingOrClicking = true;
-    this._dispatchEventInIframe($event, structureElement);
+    this._dispatchMouseDownInIframe($event, component);
+
+    const componentBoxElement = component.getBoxElement();
+    componentBoxElement.on(MOUSEUP_EVENT_NAME, () => this._onComponentClick(component));
+    componentBoxElement.addClass(COMPONENT_QA_CLASS);
+  }
+
+  _onComponentClick(component) {
+    if (!this.isDragging()) {
+      this._onStopDrag(component.getBoxElement());
+      this.PageStructureService.showComponentProperties(component);
+    }
   }
 
   isDraggingOrClicking() {
@@ -144,8 +141,10 @@ export class DragDropService {
 
   _onStopDrag(element) {
     this.draggingOrClicking = false;
+    $(element)
+      .off(MOUSEUP_EVENT_NAME)
+      .removeClass(COMPONENT_QA_CLASS);
     this._digestIfNeeded();
-    $(element).removeClass(COMPONENT_QA_CLASS);
   }
 
   _digestIfNeeded() {
@@ -191,17 +190,11 @@ export class DragDropService {
       .then((newContainer) => this.replaceContainer(container, newContainer));
   }
 
-  _dispatchEventInIframe($event, structureElement) {
+  _dispatchMouseDownInIframe($event, component) {
     const [clientX, clientY] = this.ScalingService.getScaleFactor() === 1.0 ? this._shiftCoordinates($event) : this._shiftAndDescaleCoordinates($event);
-    const iframeEvent = new MouseEvent($event.type, {
-      view: this.iframe,
-      bubbles: true,
-      clientX,
-      clientY,
-    });
-    const iframeElement = structureElement.getBoxElement();
-    iframeElement[0].dispatchEvent(iframeEvent);
-    iframeElement.addClass(COMPONENT_QA_CLASS);
+    const iframeMouseDownEvent = this.DomService.createMouseDownEvent(this.iframe, clientX, clientY);
+    const iframeElement = component.getBoxElement();
+    iframeElement[0].dispatchEvent(iframeMouseDownEvent);
   }
 
   _shiftCoordinates($event) {
