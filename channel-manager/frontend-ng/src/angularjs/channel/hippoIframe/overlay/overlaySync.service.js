@@ -55,7 +55,7 @@ export class OverlaySyncService {
       characterData: true,
       subtree: true,
     });
-    $(iframeWindow).on('beforeunload', () => this._onUnLoad());
+    $(iframeWindow).on('unload', () => this._onUnLoad());
     $(this.$window).on('resize.overlaysync', () => this.syncIframe());
   }
 
