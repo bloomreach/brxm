@@ -111,7 +111,7 @@ describe('DragDropService', () => {
   it('destroys dragula on iframe unload', (done) => {
     loadIframeFixture((iframeWindow) => {
       expect(DragDropService.drake).not.toBeNull();
-      $(iframeWindow).trigger('beforeunload');
+      $(iframeWindow).trigger('unload');
       expect(DragDropService.drake).toBeNull();
       expect(DragDropService.isDragging()).toBeFalsy();
       done();
