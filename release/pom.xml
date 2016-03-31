@@ -72,6 +72,9 @@
     <hippo.plugin.sitemap.version>3.0.0-SNAPSHOT</hippo.plugin.sitemap.version>
     <hippo.plugin.taxonomy.version>3.0.0-SNAPSHOT</hippo.plugin.taxonomy.version>
 
+    <hippo.maven.plugin.l10n>1.0-SNAPSHOT</hippo.maven.plugin.l10n>
+    <!-- supported locales placeholder to be overridden by end projects -->
+    <supported.locales/>
   </properties>
 
   <repositories>
@@ -868,6 +871,27 @@
               <configuration>
                 <resourceBundles combine.self="override">
                 </resourceBundles>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>com.onehippo.maven.plugin</groupId>
+          <artifactId>hippo-l10n-maven-plugin</artifactId>
+          <version>${hippo.maven.plugin.l10n}</version>
+          <configuration>
+            <artifactPrefixes>
+              <artifactPrefix>org.onehippo.cms7:hippo-cms-</artifactPrefix>
+              <artifactPrefix>com.onehippo.cms7:hippo-addon-eforms-</artifactPrefix>
+            </artifactPrefixes>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>injectLocales</goal>
+              </goals>
+              <configuration>
+                <locales>${supported.locales}</locales>
               </configuration>
             </execution>
           </executions>
