@@ -88,8 +88,8 @@ export class ScalingService {
     const targetShift = Math.min(canvasBorderWidth, this.pushWidth);
 
     if (targetShift !== currentShift) {
+      this.hippoIframeJQueryElement.velocity('finish');
       if (animate) {
-        this.hippoIframeJQueryElement.velocity('finish');
         this.hippoIframeJQueryElement.velocity({
           'margin-left': targetShift,
         }, {
@@ -104,6 +104,17 @@ export class ScalingService {
     return [canvasWidth, viewPortWidth];
   }
 
+  /**
+   * Update the scale factor, if necessary
+   *
+   * We compute the new scale factor and compare it to the old one. In case of a change, we zoom the "elementsToScale",
+   * i.e. the iframe and the overlay, in or out. In case the scale factor changes due to opening/closing the sidenav,
+   * which is animated by material, we also animate the zooming and do an attempt to keep the scroll position of the
+   * iframe unchanged. Other changes (window resize, viewport width change) are not animated and we don't worry much
+   * about the scroll position.
+   *
+   * @param animate  flag indicating that any change should be animated.
+   */
   _updateScaling(animate) {
     if (!this.hippoIframeJQueryElement) {
       return;
@@ -114,40 +125,36 @@ export class ScalingService {
     const oldScale = this.scaleFactor;
     const newScale = (visibleCanvasWidth < viewPortWidth) ? visibleCanvasWidth / viewPortWidth : 1;
 
-    const startScaling = oldScale === 1.0 && newScale !== 1.0;
-    const stopScaling = oldScale !== 1.0 && newScale === 1.0;
-    const animationDuration = (startScaling || stopScaling) ? this.scaleDuration : 0;
-
-    const elementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
-    elementsToScale.velocity('finish');
-
-    if (startScaling || stopScaling) {
-      const iframeBaseJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-base');
-      const currentOffset = iframeBaseJQueryElement.scrollTop();
-      const targetOffset = startScaling ? newScale * currentOffset : currentOffset / oldScale;
+    if (newScale !== oldScale) {
+      const elementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
+      elementsToScale.velocity('finish');
 
       if (animate) {
-        elementsToScale.velocity('scroll', {
-          container: iframeBaseJQueryElement,
-          offset: targetOffset - currentOffset,
-          duration: animationDuration,
+        const iframeBaseJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-base');
+        const currentOffset = iframeBaseJQueryElement.scrollTop();
+        const targetOffset = oldScale === 1.0 ? newScale * currentOffset : currentOffset / oldScale;
+
+        if (targetOffset !== currentOffset) {
+          // keep scroll-position constant during animation
+          elementsToScale.velocity('scroll', {
+            container: iframeBaseJQueryElement,
+            offset: targetOffset - currentOffset,
+            duration: this.scaleDuration,
+            easing: this.scaleEasing,
+            queue: false,
+          });
+        }
+
+        // zoom in/out to new scale factor
+        elementsToScale.velocity({
+          scale: newScale,
+        }, {
+          duration: this.scaleDuration,
           easing: this.scaleEasing,
-          queue: false,
         });
       } else {
-        elementsToScale.scrollTop(targetOffset);
+        elementsToScale.css('transform', `scale(${newScale})`);
       }
-    }
-
-    if (animate) {
-      elementsToScale.velocity({
-        scale: newScale,
-      }, {
-        duration: animationDuration,
-        easing: this.scaleEasing,
-      });
-    } else {
-      elementsToScale.css('transform', `scale(${newScale})`);
     }
 
     this.scaleFactor = newScale;
