@@ -51,7 +51,7 @@ export class ChannelService {
       .initialize(channel)
       .then(() => {
         this._setChannel(channel);
-        return channel;
+        return channel.id;
       });
   }
 

@@ -32,6 +32,7 @@ describe('ChannelService', () => {
       contextPath: '/testContextPath',
       hostname: 'test.host.name',
       mountId: 'mountId',
+      id: 'channelId',
     };
 
     SessionServiceMock = {
@@ -86,7 +87,7 @@ describe('ChannelService', () => {
     const promiseSpy = jasmine.createSpy('promiseSpy');
     ChannelService.load(channelMock).then(promiseSpy);
     $rootScope.$digest();
-    expect(promiseSpy).toHaveBeenCalledWith(channelMock);
+    expect(promiseSpy).toHaveBeenCalledWith(channelMock.id);
   });
 
   it('should ignore the contextPath if it is /', () => {

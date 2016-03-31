@@ -46,7 +46,7 @@ describe('The hippo-cm.channel module', () => {
 
     expect(window.CMS_TO_APP.subscribe).toHaveBeenCalledWith('load-channel', jasmine.any(Function));
 
-    ChannelService.load.and.returnValue($q.resolve(testChannel));
+    ChannelService.load.and.returnValue($q.resolve(testChannel.id));
 
     window.CMS_TO_APP.publish('load-channel', testChannel);
     expect(ChannelService.load).toHaveBeenCalledWith(testChannel);
