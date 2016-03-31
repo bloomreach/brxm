@@ -44,7 +44,7 @@ export class DragDropService {
 
   _onLoad() {
     this.iframe = this.iframeJQueryElement[0].contentWindow;
-    $(this.iframe).one('beforeunload', () => this._destroyDragula());
+    $(this.iframe).one('unload', () => this._destroyDragula());
   }
 
   _destroyDragula() {
