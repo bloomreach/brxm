@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-project</artifactId>
+    <version>28-SNAPSHOT</version>
+    <relativePath />
+  </parent>
+
+  <name>Hippo Community Translations</name>
+  <artifactId>hippo-community-translations</artifactId>
+  <version>0</version>
+  <packaging>pom</packaging>
+
+  <scm>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-cms-translations.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-cms-translations.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-cms-translations</url>
+  </scm>
+
+  <modules>
+    <module>hippo-cms/4.0.x</module>
+  </modules>
+
+</project>
