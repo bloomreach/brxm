@@ -22,12 +22,12 @@
       {{ 'TOOLBAR_BUTTON_COMPONENTS' | translate }}
     </md-button>
     <span flex></span>
-    <md-tabs flex md-no-pagination>
+    <md-tabs flex md-no-pagination class="qa-viewport">
       <md-tab ng-repeat="viewPort in channelCtrl.viewPorts"
               md-on-select="channelCtrl.selectViewPort(viewPort)"
               md-active="channelCtrl.isViewPortSelected(viewPort)">
         <md-tab-label>
-          <md-icon class="material-icons">{{viewPort.icon}}</md-icon>
+          <md-icon title="{{ viewPort.titleKey | translate }}" class="material-icons qa-viewport-{{viewPort.name}}">{{viewPort.icon}}</md-icon>
         </md-tab-label>
       </md-tab>
     </md-tabs>

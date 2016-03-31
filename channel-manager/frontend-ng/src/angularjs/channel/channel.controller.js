@@ -42,16 +42,19 @@ export class ChannelCtrl {
         name: 'desktop',
         icon: 'computer',
         width: 0,
+        titleKey: 'VIEWPORT_WIDTH_DESKTOP',
       },
       {
         name: 'tablet',
         icon: 'tablet',
         width: 720,
+        titleKey: 'VIEWPORT_WIDTH_TABLET',
       },
       {
         name: 'phone',
         icon: 'smartphone',
         width: 320,
+        titleKey: 'VIEWPORT_WIDTH_PHONE',
       },
     ];
 
