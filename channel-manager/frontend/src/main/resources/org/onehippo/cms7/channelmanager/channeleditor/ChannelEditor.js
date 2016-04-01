@@ -43,7 +43,7 @@
         }
       }.bind(this));
 
-      this.iframeToHost.subscribe('channel-changed', this._reloadChannels, this);
+      this.iframeToHost.subscribe('channel-changed-in-angular', this._reloadChannels, this);
       this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
     },
@@ -66,7 +66,7 @@
     _onComponentChanged: function() {
       this._reloadChannels().when(function (channelStore) {
         this.selectedChannel = channelStore.getById(this.selectedChannel.id);
-        this.hostToIFrame.publish('channel-changed', this.selectedChannel.json);
+        this.hostToIFrame.publish('channel-changed-in-extjs', this.selectedChannel.json);
       }.bind(this));
     },
 

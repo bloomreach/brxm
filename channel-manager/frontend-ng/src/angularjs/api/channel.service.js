@@ -28,7 +28,7 @@ export class ChannelService {
 
     this.channel = {};
 
-    this.CmsService.subscribe('channel-changed', this._onChannelChanged, this);
+    this.CmsService.subscribe('channel-changed-in-extjs', this._onChannelChanged, this);
   }
 
   _onChannelChanged(channel) {
@@ -134,7 +134,7 @@ export class ChannelService {
       this.channel.changedBySet.push(user);
     }
 
-    this.CmsService.publish('channel-changed');
+    this.CmsService.publish('channel-changed-in-angular');
   }
 
   publishOwnChanges() {
@@ -159,6 +159,6 @@ export class ChannelService {
 
   _resetOwnChange() {
     this.channel.changedBySet.splice(this.channel.changedBySet.indexOf(this.ConfigService.cmsUser), 1);
-    this.CmsService.publish('channel-changed');
+    this.CmsService.publish('channel-changed-in-angular');
   }
 }
