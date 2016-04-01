@@ -891,7 +891,7 @@
                 <goal>injectLocales</goal>
               </goals>
               <configuration>
-                <locales>${supported.locales}</locales>
+                <locales>${hippo.cms.included.locales}</locales>
               </configuration>
             </execution>
           </executions>
