@@ -15,10 +15,16 @@
  */
 
 function startsWith(str, prefix) {
-  if (str === undefined || str === null || prefix === undefined || prefix === null) {
+  return str !== undefined && str !== null
+      && prefix !== undefined && prefix !== null
+      && prefix === str.slice(0, prefix.length);
+}
+
+function isInternalLink(link, internalLinks) {
+  if (!angular.isArray(internalLinks)) {
     return false;
   }
-  return prefix === str.slice(0, prefix.length);
+  return internalLinks.some((internalLink) => startsWith(link, internalLink));
 }
 
 export class LinkProcessorService {
@@ -40,7 +46,7 @@ export class LinkProcessorService {
       }
 
       // intercept all clicks on external links: open them in a new tab if confirmed by the user
-      if (url && !(internalLinkPrefixes instanceof Array && internalLinkPrefixes.some((prefix) => startsWith(url, prefix)))) {
+      if (url && !isInternalLink(url, internalLinkPrefixes)) {
         link.attr('target', '_blank');
         link.click((event) => {
           if (!confirm(this.$translate.instant('CONFIRM_OPEN_EXTERNAL_LINK'))) {

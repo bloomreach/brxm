@@ -46,24 +46,8 @@ export class ChannelService {
       });
   }
 
-  makeInternalLinkPrefixList(internalLinkHostURL) {
-    const prefixes = [];
-    this.ConfigService.contextPaths.forEach((path) => {
-      let prefix = internalLinkHostURL;
-      if (path !== '/') {
-        prefix += path;
-      }
-
-      if (this.channel.cmsPreviewPrefix) {
-        prefix += `/${this.channel.cmsPreviewPrefix}`;
-      }
-      prefixes.push(prefix);
-    });
-    return prefixes;
-  }
-
-  getPreviewPath() {
-    let path = this.channel.contextPath;
+  getPreviewPath(contextPath) {
+    let path = contextPath;
     if (path === '/') {
       path = '';
     }
@@ -74,8 +58,12 @@ export class ChannelService {
     return path;
   }
 
+  getPreviewPaths() {
+    return this.ConfigService.contextPaths.map((path) => this.getPreviewPath(path));
+  }
+
   getUrl(path) {
-    let url = this.getPreviewPath();
+    let url = this.getPreviewPath(this.channel.contextPath);
 
     if (this.channel.mountPath) {
       url += this.channel.mountPath;
