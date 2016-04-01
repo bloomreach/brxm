@@ -22,15 +22,13 @@
       {{ 'TOOLBAR_BUTTON_COMPONENTS' | translate }}
     </md-button>
     <span flex></span>
-    <md-tabs flex md-no-pagination class="qa-viewport">
-      <md-tab ng-repeat="viewPort in channelCtrl.viewPorts"
-              md-on-select="channelCtrl.selectViewPort(viewPort)"
-              md-active="channelCtrl.isViewPortSelected(viewPort)">
-        <md-tab-label>
-          <md-icon title="{{ viewPort.titleKey | translate }}" class="material-icons qa-viewport-{{viewPort.name}}">{{viewPort.icon}}</md-icon>
-        </md-tab-label>
-      </md-tab>
-    </md-tabs>
+    <md-button ng-repeat="viewPort in channelCtrl.viewPorts"
+               ng-click="channelCtrl.selectViewPort(viewPort)"
+               ng-class="{ 'md-accent': channelCtrl.isViewPortSelected(viewPort) }"
+               aria-label="{{ viewPort.titleKey | translate }}"
+               class="md-icon-button qa-viewport-{{viewPort.name}}">
+      <md-icon title="{{ viewPort.titleKey | translate }}" class="material-icons">{{viewPort.icon}}</md-icon>
+    </md-button>
     <span flex></span>
     <md-menu ng-if="channelCtrl.hasChanges()">
       <md-button aria-label="{{ 'TOOLBAR_BUTTON_CHANGES' | translate }}"

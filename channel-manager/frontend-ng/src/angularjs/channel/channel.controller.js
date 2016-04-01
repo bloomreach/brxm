@@ -72,7 +72,7 @@ export class ChannelCtrl {
     this.ScalingService.setViewPortWidth(viewPort.width);
   }
 
-  isViewPortSected(viewPort) {
+  isViewPortSelected(viewPort) {
     return this.selectedViewPort === viewPort;
   }
 
