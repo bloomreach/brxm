@@ -20,9 +20,10 @@ const DURATION_MAX = 1500;
 
 export class ScrollService {
 
-  constructor(deviceDetector, BROWSERS) {
+  constructor(ScalingService, deviceDetector, BROWSERS) {
     'ngInject';
 
+    this.ScalingService = ScalingService;
     const browsersWithNativeSupport = [BROWSERS.CHROME, BROWSERS.MS_EDGE, BROWSERS.OPERA];
     this._hasNativeSupport = browsersWithNativeSupport.indexOf(deviceDetector.browser) > -1;
   }
@@ -71,7 +72,7 @@ export class ScrollService {
       offset = -containerScrollTop;
     } else if (mouseY >= containerBottom) {
       // scroll down to the bottom position
-      const contentHeight = this.el.outerHeight();
+      const contentHeight = this.el.outerHeight() * this.ScalingService.getScaleFactor();
       offset = (contentHeight - containerHeight) - containerScrollTop;
     }
 
