@@ -73,8 +73,8 @@
     <hippo.plugin.taxonomy.version>3.0.0-SNAPSHOT</hippo.plugin.taxonomy.version>
 
     <hippo.maven.plugin.l10n>1.0-SNAPSHOT</hippo.maven.plugin.l10n>
-    <!-- supported locales placeholder to be overridden by end projects -->
-    <supported.locales/>
+    <!-- included locales placeholder to be overridden by end projects -->
+    <hippo.cms.included.locales/>
   </properties>
 
   <repositories>
