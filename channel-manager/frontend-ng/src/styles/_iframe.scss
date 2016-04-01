@@ -14,7 +14,7 @@
 
 .channel-iframe-base {
   position: relative;
-  background-color: #888888;
+  background-color: $canvas-bgcolor;
 
   iframe {
     border: 0;
