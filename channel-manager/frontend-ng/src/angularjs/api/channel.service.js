@@ -15,9 +15,10 @@
  */
 
 export class ChannelService {
-  constructor($http, SessionService, CatalogService, HstService, ConfigService, CmsService) {
+  constructor($rootScope, $http, SessionService, CatalogService, HstService, ConfigService, CmsService) {
     'ngInject';
 
+    this.$rootScope = $rootScope;
     this.$http = $http;
     this.SessionService = SessionService;
     this.CatalogService = CatalogService;
@@ -26,6 +27,14 @@ export class ChannelService {
     this.CmsService = CmsService;
 
     this.channel = {};
+
+    this.CmsService.subscribe('channel-changed-in-extjs', this._onChannelChanged, this);
+  }
+
+  _onChannelChanged(channel) {
+    this.$rootScope.$apply(() => {
+      this.channel = channel;
+    });
   }
 
   _setChannel(channel) {
@@ -112,6 +121,8 @@ export class ChannelService {
     if (this.channel.changedBySet.indexOf(user) === -1) {
       this.channel.changedBySet.push(user);
     }
+
+    this.CmsService.publish('channel-changed-in-angular');
   }
 
   publishOwnChanges() {
@@ -136,5 +147,6 @@ export class ChannelService {
 
   _resetOwnChange() {
     this.channel.changedBySet.splice(this.channel.changedBySet.indexOf(this.ConfigService.cmsUser), 1);
+    this.CmsService.publish('channel-changed-in-angular');
   }
 }

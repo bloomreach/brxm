@@ -64,6 +64,8 @@ describe('ChannelService', () => {
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
     });
+
+    spyOn(window.APP_TO_CMS, 'publish');
   });
 
   it('should not save a reference to the channel when load fails', () => {
@@ -210,6 +212,7 @@ describe('ChannelService', () => {
     $rootScope.$digest();
 
     expect(HstServiceMock.doPost).toHaveBeenCalledWith(null, 'mountId', 'publish');
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('channel-changed-in-angular');
     expect(channelMock.changedBySet).toEqual([]);
   });
 
@@ -229,6 +232,7 @@ describe('ChannelService', () => {
 
     expect(HstServiceMock.doPost).toHaveBeenCalledWith(null, 'mountId', 'discard');
     expect(channelMock.changedBySet).toEqual([]);
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('channel-changed-in-angular');
   });
 
   it('records own changes', () => {
@@ -239,6 +243,7 @@ describe('ChannelService', () => {
     ChannelService.recordOwnChange();
 
     expect(channelMock.changedBySet).toEqual(['tobi', 'obiwan', 'testUser']);
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('channel-changed-in-angular');
   });
 
   it('recognizes changes already pending', () => {
@@ -249,5 +254,18 @@ describe('ChannelService', () => {
     ChannelService.recordOwnChange();
 
     expect(channelMock.changedBySet).toEqual(['tobi', 'testUser', 'obiwan']);
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('channel-changed-in-angular');
+  });
+
+  it('incorporates changes made in ExtJs', () => {
+    channelMock.changedBySet = ['testUser'];
+    ChannelService.load(channelMock);
+    $rootScope.$digest();
+
+    window.CMS_TO_APP.publish('channel-changed-in-extjs', {
+      changedBySet: ['anotherUser'],
+    });
+
+    expect(ChannelService.channel.changedBySet).toEqual(['anotherUser']);
   });
 });

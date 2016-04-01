@@ -138,7 +138,7 @@ export class ChannelCtrl {
   }
 
   publish() {
-    this.ChannelService.publishOwnChanges();
+    this.ChannelService.publishOwnChanges().then(() => this.HippoIframeService.reload());
     // TODO: what if this fails?
     // show a toast that all went well, or that the publication failed.
     // More information may be exposed by logging an error(?) in the console,

@@ -183,9 +183,13 @@ describe('ChannelCtrl', () => {
   });
 
   it('publishes changes', () => {
+    ChannelService.publishOwnChanges.and.returnValue($q.resolve());
+
     ChannelCtrl.publish();
+    $rootScope.$digest();
 
     expect(ChannelService.publishOwnChanges).toHaveBeenCalled();
+    expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
   it('discards changes', () => {
@@ -199,6 +203,7 @@ describe('ChannelCtrl', () => {
     expect($mdDialog.confirm).toHaveBeenCalled();
     expect($mdDialog.show).toHaveBeenCalled();
     expect(ChannelService.discardOwnChanges).toHaveBeenCalled();
+    expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
   it('does not discard changes if not confirmed', () => {
