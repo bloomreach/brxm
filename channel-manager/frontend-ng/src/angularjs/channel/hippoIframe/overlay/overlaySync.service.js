@@ -82,7 +82,7 @@ export class OverlaySyncService {
         // Prevent weird twitching at certain widths
         $(doc.documentElement).css('overflow', 'hidden');
 
-        const height = $(doc).height();
+        const height = doc.body.clientHeight;
         this.iframeJQueryElement.height(height);
         this.overlayJQueryElement.height(height);
       }

@@ -21,6 +21,7 @@ describe('ScalingService', () => {
   let iframeJQueryElement;
   let baseJQueryElement;
   let canvasJQueryElement;
+  let scrollJQueryElement;
   let elementsToScale;
 
   beforeEach(() => {
@@ -34,10 +35,19 @@ describe('ScalingService', () => {
 
     baseJQueryElement = $j('.channel-iframe-base');
     canvasJQueryElement = $j('.channel-iframe-canvas');
+    scrollJQueryElement = jasmine.createSpyObj('scrollJQueryElement', ['css']);
     elementsToScale = jasmine.createSpyObj('elementsToScale', ['velocity', 'css', 'scrollTop']);
 
     iframeJQueryElement = jasmine.createSpyObj('iframeJQueryElement', ['find', 'css', 'velocity']);
-    iframeJQueryElement.find.and.callFake((selector) => selector === '.cm-scale' ? elementsToScale : $j(`#test-hippo-iframe ${selector}`));
+    iframeJQueryElement.find.and.callFake((selector) => {
+      if (selector === '.cm-scale') {
+        return elementsToScale;
+      }
+      if (selector === '.channel-iframe-scroll') {
+        return scrollJQueryElement;
+      }
+      return $j(`#test-hippo-iframe ${selector}`);
+    });
     iframeJQueryElement.css.and.callFake(() => '0');
   });
 
@@ -160,7 +170,7 @@ describe('ScalingService', () => {
     ScalingService.init(iframeJQueryElement);
     ScalingService.setViewPortWidth(0);
 
-    expect(elementsToScale.css.calls.mostRecent().args).toEqual(['max-width', 'none']);
+    expect(scrollJQueryElement.css.calls.mostRecent().args).toEqual(['max-width', 'none']);
     expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left']);
     expect(elementsToScale.velocity).not.toHaveBeenCalled();
     expect(iframeJQueryElement.velocity).not.toHaveBeenCalled();
@@ -172,7 +182,7 @@ describe('ScalingService', () => {
     ScalingService.init(iframeJQueryElement);
     ScalingService.setViewPortWidth(720);
 
-    expect(elementsToScale.css.calls.mostRecent().args).toEqual(['max-width', '720px']);
+    expect(scrollJQueryElement.css.calls.mostRecent().args).toEqual(['max-width', '720px']);
     expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left']);
     expect(elementsToScale.velocity).not.toHaveBeenCalled();
     expect(iframeJQueryElement.velocity).not.toHaveBeenCalled();
@@ -184,7 +194,7 @@ describe('ScalingService', () => {
     ScalingService.init(iframeJQueryElement);
     ScalingService.setViewPortWidth(800);
 
-    expect(elementsToScale.css).toHaveBeenCalledWith('max-width', '800px');
+    expect(scrollJQueryElement.css.calls.mostRecent().args).toEqual(['max-width', '800px']);
     expect(elementsToScale.css.calls.mostRecent().args).toEqual(['transform', 'scale(0.5)']);
     expect(elementsToScale.velocity.calls.mostRecent().args).toEqual(['finish']);
     expect(iframeJQueryElement.velocity.calls.mostRecent().args).toEqual(['finish']);
@@ -243,7 +253,7 @@ describe('ScalingService', () => {
     canvasJQueryElement.width(720); // current canvas width
 
     ScalingService.setViewPortWidth(360);
-    expect(elementsToScale.css).toHaveBeenCalledWith('max-width', '360px');
+    expect(scrollJQueryElement.css.calls.mostRecent().args).toEqual(['max-width', '360px']);
 
     // validate shifting
     expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left', 260]);

@@ -62,9 +62,9 @@ export class ScalingService {
       return;
     }
 
-    const elementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
+    const scroll = this.hippoIframeJQueryElement.find('.channel-iframe-scroll');
     const maxWidthCSS = this.viewPortWidth === 0 ? 'none' : `${this.viewPortWidth}px`;
-    elementsToScale.css('max-width', maxWidthCSS);
+    scroll.css('max-width', maxWidthCSS);
 
     this._updateScaling(false);
     this.OverlaySyncService.syncIframe();
