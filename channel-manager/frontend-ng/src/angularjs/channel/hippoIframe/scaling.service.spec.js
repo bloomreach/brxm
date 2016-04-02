@@ -21,6 +21,7 @@ describe('ScalingService', () => {
   let iframeJQueryElement;
   let baseJQueryElement;
   let canvasJQueryElement;
+  let scrollJQueryElement;
   let elementsToScale;
 
   beforeEach(() => {
@@ -32,12 +33,22 @@ describe('ScalingService', () => {
 
     jasmine.getFixtures().load('channel/hippoIframe/scaling.service.fixture.html');
 
-    iframeJQueryElement = $j('#test-hippo-iframe');
     baseJQueryElement = $j('.channel-iframe-base');
     canvasJQueryElement = $j('.channel-iframe-canvas');
-    elementsToScale = jasmine.createSpyObj('elementsToScale', ['velocity']);
+    scrollJQueryElement = jasmine.createSpyObj('scrollJQueryElement', ['css']);
+    elementsToScale = jasmine.createSpyObj('elementsToScale', ['velocity', 'css', 'scrollTop']);
 
-    spyOn(iframeJQueryElement, 'find').and.callFake((selector) => selector === '.cm-scale' ? elementsToScale : $j(`#test-hippo-iframe ${selector}`));
+    iframeJQueryElement = jasmine.createSpyObj('iframeJQueryElement', ['find', 'css', 'velocity']);
+    iframeJQueryElement.find.and.callFake((selector) => {
+      if (selector === '.cm-scale') {
+        return elementsToScale;
+      }
+      if (selector === '.channel-iframe-scroll') {
+        return scrollJQueryElement;
+      }
+      return $j(`#test-hippo-iframe ${selector}`);
+    });
+    iframeJQueryElement.css.and.callFake(() => '0');
   });
 
   afterEach(() => {
@@ -45,19 +56,11 @@ describe('ScalingService', () => {
     ScalingService.init(null);
   });
 
-  it('should initialize the scaling factor instantly to 1.0', () => {
+  it('should initialize using the default values', () => {
     ScalingService.init(iframeJQueryElement);
 
-    expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
-    expect(elementsToScale.velocity).toHaveBeenCalledWith(
-      {
-        scale: 1.0,
-      },
-      {
-        duration: 0,
-        easing: ScalingService.scaleEasing,
-      }
-    );
+    expect(elementsToScale.velocity).not.toHaveBeenCalled();
+    expect(elementsToScale.css).not.toHaveBeenCalled();
     expect(ScalingService.getScaleFactor()).toEqual(1.0);
   });
 
@@ -67,6 +70,7 @@ describe('ScalingService', () => {
     ScalingService.init(iframeJQueryElement);
     ScalingService.setPushWidth(100);
 
+    expect(iframeJQueryElement.velocity).not.toHaveBeenCalled();
     expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
     expect(elementsToScale.velocity).toHaveBeenCalledWith(
       {
@@ -77,6 +81,7 @@ describe('ScalingService', () => {
         easing: ScalingService.scaleEasing,
       }
     );
+    expect(elementsToScale.css).not.toHaveBeenCalled();
     expect(ScalingService.getScaleFactor()).toEqual(0.75);
   });
 
@@ -89,6 +94,7 @@ describe('ScalingService', () => {
 
     ScalingService.setPushWidth(0);
 
+    expect(iframeJQueryElement.velocity).not.toHaveBeenCalled();
     expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
     expect(elementsToScale.velocity).toHaveBeenCalledWith(
       {
@@ -99,6 +105,7 @@ describe('ScalingService', () => {
         easing: ScalingService.scaleEasing,
       }
     );
+    expect(elementsToScale.css).not.toHaveBeenCalled();
     expect(ScalingService.getScaleFactor()).toEqual(1.0);
   });
 
@@ -107,19 +114,12 @@ describe('ScalingService', () => {
     ScalingService.init(iframeJQueryElement);
     ScalingService.setPushWidth(100);
     elementsToScale.velocity.calls.reset();
+    ScalingService.scaleFactor = 0.75; // fake different scaling factor so the effect of the window resize is testable
 
     $j(window).resize();
 
     expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
-    expect(elementsToScale.velocity).toHaveBeenCalledWith(
-      {
-        scale: 0.5,
-      },
-      {
-        duration: 0,
-        easing: ScalingService.scaleEasing,
-      }
-    );
+    expect(elementsToScale.css).toHaveBeenCalledWith('transform', 'scale(0.5)');
     expect(ScalingService.getScaleFactor()).toEqual(0.5);
   });
 
@@ -155,5 +155,112 @@ describe('ScalingService', () => {
       }
     );
     expect(ScalingService.getScaleFactor()).toEqual(0.75);
+  });
+
+  it('should do nothing when the viewport width of an uninitialized service is changed', () => {
+    ScalingService.setViewPortWidth(720);
+
+    expect(iframeJQueryElement.css).not.toHaveBeenCalled();
+    expect(elementsToScale.css).not.toHaveBeenCalled();
+    expect(ScalingService.getScaleFactor()).toEqual(1.0);
+  });
+
+  it('should keep the scale factor unchanged when not constraining the viewport width', () => {
+    canvasJQueryElement.width(800);
+    ScalingService.init(iframeJQueryElement);
+    ScalingService.setViewPortWidth(0);
+
+    expect(scrollJQueryElement.css.calls.mostRecent().args).toEqual(['max-width', 'none']);
+    expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left']);
+    expect(elementsToScale.velocity).not.toHaveBeenCalled();
+    expect(iframeJQueryElement.velocity).not.toHaveBeenCalled();
+    expect(ScalingService.getScaleFactor()).toEqual(1.0);
+  });
+
+  it('should keep the scale factor unchanged when constraining the viewport width smaller than the canvas', () => {
+    canvasJQueryElement.width(800);
+    ScalingService.init(iframeJQueryElement);
+    ScalingService.setViewPortWidth(720);
+
+    expect(scrollJQueryElement.css.calls.mostRecent().args).toEqual(['max-width', '720px']);
+    expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left']);
+    expect(elementsToScale.velocity).not.toHaveBeenCalled();
+    expect(iframeJQueryElement.velocity).not.toHaveBeenCalled();
+    expect(ScalingService.getScaleFactor()).toEqual(1.0);
+  });
+
+  it('should start scaling when constraining the viewport width larger than the canvas', () => {
+    canvasJQueryElement.width(400);
+    ScalingService.init(iframeJQueryElement);
+    ScalingService.setViewPortWidth(800);
+
+    expect(scrollJQueryElement.css.calls.mostRecent().args).toEqual(['max-width', '800px']);
+    expect(elementsToScale.css.calls.mostRecent().args).toEqual(['transform', 'scale(0.5)']);
+    expect(elementsToScale.velocity.calls.mostRecent().args).toEqual(['finish']);
+    expect(iframeJQueryElement.velocity.calls.mostRecent().args).toEqual(['finish']);
+    expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left', -400]);
+    expect(ScalingService.getScaleFactor()).toEqual(0.5);
+  });
+
+  it('should start shifting and scaling when pushing the visible canvas width below the viewport width', () => {
+    canvasJQueryElement.width(800);
+    ScalingService.init(iframeJQueryElement);
+    ScalingService.setViewPortWidth(720);
+
+    // reset all relevant spies
+    elementsToScale.css.calls.reset();
+    elementsToScale.velocity.calls.reset();
+    iframeJQueryElement.css.calls.reset();
+    iframeJQueryElement.velocity.calls.reset();
+
+    ScalingService.setPushWidth(260);
+
+    // validate shifting
+    expect(iframeJQueryElement.velocity).toHaveBeenCalledWith('finish');
+    expect(iframeJQueryElement.velocity.calls.mostRecent().args).toEqual([{
+      'margin-left': 80,
+    }, {
+      duration: ScalingService.scaleDuration,
+      easing: ScalingService.scaleEasing,
+    }]);
+    expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left']);
+
+    // validate scaling
+    expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
+    expect(elementsToScale.velocity.calls.mostRecent().args).toEqual([{
+      scale: 0.75,
+    }, {
+      duration: ScalingService.scaleDuration,
+      easing: ScalingService.scaleEasing,
+    }]);
+    expect(elementsToScale.css).not.toHaveBeenCalled();
+    expect(ScalingService.getScaleFactor()).toBe(0.75);
+  });
+
+  it('should stop scaling the pushed iframe when the viewport width drops below the visible canvas width', () => {
+    canvasJQueryElement.width(800);
+    ScalingService.init(iframeJQueryElement);
+    ScalingService.setViewPortWidth(720);
+    ScalingService.setPushWidth(260);
+
+    // reset all relevant spies
+    elementsToScale.css.calls.reset();
+    elementsToScale.velocity.calls.reset();
+    iframeJQueryElement.css.calls.reset();
+    iframeJQueryElement.velocity.calls.reset();
+
+    iframeJQueryElement.css.and.returnValue(80); // current shift
+    canvasJQueryElement.width(720); // current canvas width
+
+    ScalingService.setViewPortWidth(360);
+    expect(scrollJQueryElement.css.calls.mostRecent().args).toEqual(['max-width', '360px']);
+
+    // validate shifting
+    expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left', 260]);
+
+    // validate scaling
+    expect(elementsToScale.velocity.calls.mostRecent().args).toEqual(['finish']);
+    expect(elementsToScale.css.calls.mostRecent().args).toEqual(['transform', 'scale(1)']);
+    expect(ScalingService.getScaleFactor()).toBe(1);
   });
 });

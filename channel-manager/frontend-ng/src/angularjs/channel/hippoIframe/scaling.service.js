@@ -19,75 +19,143 @@ const ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS = 400;
 
 export class ScalingService {
 
-  constructor($rootScope, $window) {
+  constructor($rootScope, $window, OverlaySyncService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
+    this.OverlaySyncService = OverlaySyncService;
 
     this.pushWidth = 0; // all sidenavs are initially closed
+    this.viewPortWidth = 0; // unconstrained
     this.scaleFactor = 1.0;
     this.scaleDuration = ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS;
     this.scaleEasing = ANGULAR_MATERIAL_SIDENAV_EASING;
 
     angular.element($window).bind('resize', () => {
       if (this.hippoIframeJQueryElement) {
-        $rootScope.$apply(() => this._updateScaling());
+        $rootScope.$apply(() => this._updateScaling(false));
       }
     });
   }
 
   init(hippoIframeJQueryElement) {
     this.hippoIframeJQueryElement = hippoIframeJQueryElement;
-    this._updateScaling();
+    this._updateScaling(false);
   }
 
   setPushWidth(pushWidth) {
     this.pushWidth = pushWidth;
-    this._updateScaling();
+    this._updateScaling(true);
+  }
+
+  setViewPortWidth(viewPortWidth) {
+    this.viewPortWidth = viewPortWidth;
+    this._updateViewPortWidth();
   }
 
   getScaleFactor() {
     return this.scaleFactor;
   }
 
-  _updateScaling() {
+  _updateViewPortWidth() {
     if (!this.hippoIframeJQueryElement) {
       return;
     }
 
-    const iframeBaseJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-base');
-    const elementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
-    const canvasWidth = this.hippoIframeJQueryElement.find('.channel-iframe-canvas').width();
-    const visibleCanvasWidth = canvasWidth - this.pushWidth;
+    const scroll = this.hippoIframeJQueryElement.find('.channel-iframe-scroll');
+    const maxWidthCSS = this.viewPortWidth === 0 ? 'none' : `${this.viewPortWidth}px`;
+    scroll.css('max-width', maxWidthCSS);
 
-    const oldScale = this.scaleFactor;
-    const newScale = visibleCanvasWidth / canvasWidth;
+    this._updateScaling(false);
+    this.OverlaySyncService.syncIframe();
+  }
 
-    const startScaling = oldScale === 1.0 && newScale !== 1.0;
-    const stopScaling = oldScale !== 1.0 && newScale === 1.0;
-    const animationDuration = (startScaling || stopScaling) ? this.scaleDuration : 0;
+  /**
+   * Update the iframe shift, if necessary
+   *
+   * The iframe should be shifted right (by controlling the left-margin) if the sidenav is open,
+   * and if the viewport width is less than the available canvas
+   *
+   * @param animate  flag indicating whether any shift-change should be automated or immediate.
+   * @returns {*[]}  canvasWidth is the maximum width available to the iframe
+   *                 viewPortWidth indicates how many pixels wide the iframe content should be rendered.
+   */
+  _updateIframeShift(animate) {
+    const currentShift = parseInt(this.hippoIframeJQueryElement.css('margin-left'), 10);
+    const canvasWidth = this.hippoIframeJQueryElement.find('.channel-iframe-canvas').width() + currentShift;
+    const viewPortWidth = this.viewPortWidth === 0 ? canvasWidth : this.viewPortWidth;
+    const canvasBorderWidth = canvasWidth - viewPortWidth;
+    const targetShift = Math.min(canvasBorderWidth, this.pushWidth);
 
-    elementsToScale.velocity('finish');
-
-    if (startScaling || stopScaling) {
-      const currentOffset = iframeBaseJQueryElement.scrollTop();
-      const targetOffset = startScaling ? newScale * currentOffset : currentOffset / oldScale;
-
-      elementsToScale.velocity('scroll', {
-        container: iframeBaseJQueryElement,
-        offset: targetOffset - currentOffset,
-        duration: animationDuration,
-        easing: this.scaleEasing,
-        queue: false,
-      });
+    if (targetShift !== currentShift) {
+      this.hippoIframeJQueryElement.velocity('finish');
+      if (animate) {
+        this.hippoIframeJQueryElement.velocity({
+          'margin-left': targetShift,
+        }, {
+          duration: this.scaleDuration,
+          easing: this.scaleEasing,
+        });
+      } else {
+        this.hippoIframeJQueryElement.css('margin-left', targetShift);
+      }
     }
 
-    elementsToScale.velocity({
-      scale: newScale,
-    }, {
-      duration: animationDuration,
-      easing: this.scaleEasing,
-    });
+    return [canvasWidth, viewPortWidth];
+  }
+
+  /**
+   * Update the scale factor, if necessary
+   *
+   * We compute the new scale factor and compare it to the old one. In case of a change, we zoom the "elementsToScale",
+   * i.e. the iframe and the overlay, in or out. In case the scale factor changes due to opening/closing the sidenav,
+   * which is animated by material, we also animate the zooming and do an attempt to keep the scroll position of the
+   * iframe unchanged. Other changes (window resize, viewport width change) are not animated and we don't worry much
+   * about the scroll position.
+   *
+   * @param animate  flag indicating that any change should be animated.
+   */
+  _updateScaling(animate) {
+    if (!this.hippoIframeJQueryElement) {
+      return;
+    }
+
+    const [canvasWidth, viewPortWidth] = this._updateIframeShift(animate);
+    const visibleCanvasWidth = canvasWidth - this.pushWidth;
+    const oldScale = this.scaleFactor;
+    const newScale = (visibleCanvasWidth < viewPortWidth) ? visibleCanvasWidth / viewPortWidth : 1;
+
+    if (newScale !== oldScale) {
+      const elementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
+      elementsToScale.velocity('finish');
+
+      if (animate) {
+        const iframeBaseJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-base');
+        const currentOffset = iframeBaseJQueryElement.scrollTop();
+        const targetOffset = oldScale === 1.0 ? newScale * currentOffset : currentOffset / oldScale;
+
+        if (targetOffset !== currentOffset) {
+          // keep scroll-position constant during animation
+          elementsToScale.velocity('scroll', {
+            container: iframeBaseJQueryElement,
+            offset: targetOffset - currentOffset,
+            duration: this.scaleDuration,
+            easing: this.scaleEasing,
+            queue: false,
+          });
+        }
+
+        // zoom in/out to new scale factor
+        elementsToScale.velocity({
+          scale: newScale,
+        }, {
+          duration: this.scaleDuration,
+          easing: this.scaleEasing,
+        });
+      } else {
+        elementsToScale.css('transform', `scale(${newScale})`);
+      }
+    }
 
     this.scaleFactor = newScale;
   }
