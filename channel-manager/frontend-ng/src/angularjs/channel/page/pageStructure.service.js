@@ -154,7 +154,7 @@ export class PageStructureService {
     const component = this.getComponentById(componentId);
     if (component) {
       this.RenderingService.fetchComponentMarkup(component, propertiesMap).then((response) => {
-        this._updateComponent(component, response.data);
+        this._updateComponent(componentId, response.data);
       });
       // TODO handle error
       // show error message that component rendering failed.
@@ -167,7 +167,8 @@ export class PageStructureService {
   /**
    * Update the component with the new markup
    */
-  _updateComponent(component, newMarkup) {
+  _updateComponent(componentId, newMarkup) {
+    const component = this.getComponentById(componentId);
     const jQueryNodeCollection = component.replaceDOM(newMarkup);
     this._replaceComponent(component, this._createComponent(jQueryNodeCollection, component.getContainer()));
     this.OverlaySyncService.syncIframe();
