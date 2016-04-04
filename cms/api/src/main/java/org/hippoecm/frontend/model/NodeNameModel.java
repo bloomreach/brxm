@@ -28,6 +28,7 @@ import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,9 +56,14 @@ public class NodeNameModel extends LoadableDetachableModel<String> implements IO
     @Override
     protected String load() {
         if (nodeModel != null) {
-            final HippoNode node = (HippoNode) nodeModel.getObject();
+            HippoNode node = (HippoNode) nodeModel.getObject();
             if (node != null) {
                 try {
+                    if (!node.isNodeType(HippoNodeType.NT_NAMED) &&
+                            node.isNodeType(HippoNodeType.NT_DOCUMENT) &&
+                            node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                        node = (HippoNode)node.getParent();
+                    }
                     return node.getDisplayName();
                 } catch (RepositoryException e) {
                     log.error("Failed to load display name of node {}", getNodePathQuietly(node), e);
