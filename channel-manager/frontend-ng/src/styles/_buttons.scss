@@ -16,3 +16,18 @@
   font-size: 15px;
   text-transform: none;
 }
+
+.md-toolbar-tools .button-group {
+  margin-left: 16px;
+
+  .md-button {
+    margin-left: 0;
+    margin-right: 4px;
+    min-width: 0;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+

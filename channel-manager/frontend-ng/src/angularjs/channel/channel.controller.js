@@ -76,13 +76,21 @@ export class ChannelCtrl {
     return this.selectedViewPort === viewPort;
   }
 
-  toggleEditMode() {
+  enterEditMode() {
     if (!this.isEditMode && !this.ChannelService.hasPreviewConfiguration()) {
       this._createPreviewConfiguration();
     } else {
-      this.isEditMode = !this.isEditMode;
+      this.isEditMode = true;
     }
+  }
+
+  leaveEditMode() {
+    this.isEditMode = false;
     this._closeSidenavs();
+  }
+
+  isEditModeActive() {
+    return this.isEditMode;
   }
 
   isEditable() {
@@ -91,7 +99,7 @@ export class ChannelCtrl {
 
   _closeSidenavs() {
     SIDENAVS.forEach((sidenav) => {
-      if (this._isSidenavOpen(sidenav)) {
+      if (this.isSidenavOpen(sidenav)) {
         this.$mdSidenav(sidenav).close();
       }
     });
@@ -121,12 +129,16 @@ export class ChannelCtrl {
 
   toggleSidenav(name) {
     SIDENAVS.forEach((sidenav) => {
-      if (sidenav !== name && this._isSidenavOpen(sidenav)) {
+      if (sidenav !== name && this.isSidenavOpen(sidenav)) {
         this.$mdSidenav(sidenav).close();
       }
     });
     this.$mdSidenav(name).toggle();
-    this.ScalingService.setPushWidth(this._isSidenavOpen(name) ? $('.md-sidenav-left').width() : 0);
+    this.ScalingService.setPushWidth(this.isSidenavOpen(name) ? $('.md-sidenav-left').width() : 0);
+  }
+
+  isSidenavOpen(name) {
+    return this.$mdSidenav(name).isOpen();
   }
 
   getCatalog() {
@@ -153,10 +165,6 @@ export class ChannelCtrl {
       // More information may be exposed by logging an error(?) in the console,
       // based on the actual error details from the back-end.
     });
-  }
-
-  _isSidenavOpen(name) {
-    return this.$mdSidenav(name).isOpen();
   }
 
   _confirmDiscard() {
