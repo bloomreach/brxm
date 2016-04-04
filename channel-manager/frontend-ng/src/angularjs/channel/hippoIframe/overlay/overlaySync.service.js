@@ -23,7 +23,9 @@ export class OverlaySyncService {
     this.$window = $window;
 
     this.overlayElements = [];
-    this.observer = new MutationObserver(ThrottleService.throttle(() => this.syncIframe(), 100));
+    this.observer = new MutationObserver(() => {
+      ThrottleService.throttle(() => this.syncIframe(), 100);
+    });
   }
 
   init(iframeJQueryElement, overlayJQueryElement) {
