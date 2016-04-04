@@ -37,11 +37,17 @@ module.exports = function karmaConfig(config) {
     `${cfg.bowerDir}/ng-device-detector/ng-device-detector.js`,
   ];
 
+  options.systemjs.config.map = cfg.systemjsOptions.map;
+
   options.files = [
     `${cfg.srcDir}/angularjs/mock.environment.spec.js`,
     cfg.src.fixtures,
     {
       pattern: `${cfg.bowerDir}/dragula.js/dist/dragula.min.+(css|js)`,
+      included: false,
+    },
+    {
+      pattern: `${cfg.npmDir}/+(dom-autoscroller|pointer-point|more-events)/index.js`,
       included: false,
     },
   ].concat(options.files);

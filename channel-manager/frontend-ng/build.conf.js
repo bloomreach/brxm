@@ -30,6 +30,15 @@ const customConfig = {
       dest: `${targetDir}scripts`,
     },
   ],
+  systemjsOptions: {
+    transpiler: 'babel',
+    defaultJSExtensions: true,
+    map: {
+      'dom-autoscroller': 'node_modules/dom-autoscroller/index.js',
+      'pointer-point': 'node_modules/pointer-point/index.js',
+      'more-events': 'node_modules/more-events/index.js',
+    },
+  },
 };
 
 module.exports = customConfig;
