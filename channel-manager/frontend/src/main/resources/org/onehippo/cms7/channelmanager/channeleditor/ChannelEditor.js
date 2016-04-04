@@ -46,6 +46,7 @@
       this.iframeToHost.subscribe('channel-changed-in-angular', this._reloadChannels, this);
       this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
+      this.iframeToHost.subscribe('component-removed', this._onComponentRemoved, this);
     },
 
     loadChannel: function(channelId) {
@@ -152,6 +153,10 @@
         selected.container,
         selected.page
       );
+    },
+
+    _onComponentRemoved: function() {
+      this.componentPropertiesWindow.onComponentRemoved();
     },
 
     initComponent: function() {
