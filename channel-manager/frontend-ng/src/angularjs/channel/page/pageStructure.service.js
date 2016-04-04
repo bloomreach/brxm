@@ -104,8 +104,7 @@ export class PageStructureService {
       const oldContainer = component.getContainer();
       return this.HstService.removeHstComponent(oldContainer.getId(), componentId)
         .then(() => {
-          this.ChannelService.recordOwnChange();
-          this._onAfterRemoveComponent(component);
+          this._onAfterRemoveComponent();
           return this.renderContainer(oldContainer).then((newContainer) => { // eslint-disable-line arrow-body-style
             return { oldContainer, newContainer };
           });
@@ -117,12 +116,9 @@ export class PageStructureService {
     return this.$q.reject();
   }
 
-  /**
-   * Event is fired after the component is removed from the DOM Iframe
-   * @param component
-   */
-  _onAfterRemoveComponent(component) {
-    this.CmsService.publish('component-removed', component.getId());
+  _onAfterRemoveComponent() {
+    this.ChannelService.recordOwnChange();
+    this.CmsService.publish('component-removed');
   }
 
   getContainerByIframeElement(containerIFrameElement) {
