@@ -105,6 +105,7 @@ export class PageStructureService {
       return this.HstService.removeHstComponent(oldContainer.getId(), componentId)
         .then(() => {
           this.ChannelService.recordOwnChange();
+          this._onAfterRemoveComponent(component);
           return this.renderContainer(oldContainer).then((newContainer) => { // eslint-disable-line arrow-body-style
             return { oldContainer, newContainer };
           });
@@ -114,6 +115,14 @@ export class PageStructureService {
     }
     this.$log.debug(`Could not remove component with ID '${componentId}' because it does not exist in the page structure.`);
     return this.$q.reject();
+  }
+
+  /**
+   * Event is fired after the component is removed from the DOM Iframe
+   * @param component
+   */
+  _onAfterRemoveComponent(component) {
+    this.CmsService.publish('component-removed', component.getId());
   }
 
   getContainerByIframeElement(containerIFrameElement) {

@@ -156,7 +156,12 @@
       this.setTitle(component.label);
       this.componentPropertiesPanel.setComponent(component, container, page);
       this.show();
-    }
+    },
+
+    onComponentRemoved() {
+      // clear recorded changes because the component has been removed.
+      this.componentPropertiesPanel.clearComponent();
+    },
 
   });
 
