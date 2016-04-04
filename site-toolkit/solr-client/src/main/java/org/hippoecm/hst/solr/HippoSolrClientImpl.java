@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.solr.content.beans.BindingException;
 import org.hippoecm.hst.solr.content.beans.ContentBeanBinder;
 import org.hippoecm.hst.solr.content.beans.query.HippoQuery;
@@ -92,12 +93,14 @@ public class HippoSolrClientImpl implements HippoSolrClient {
                 return;
             }
             HippoBean bean = (HippoBean) identifiableContentBean;
-            if (RequestContextProvider.get() == null) {
+            final HstRequestContext requestContext = RequestContextProvider.get();
+            if (requestContext == null) {
                 log.warn("Cannot bind '{}' to its backing jcr node because there is no hst request context. Return unbinded bean", bean.getClass().getName(), bean.getIdentifier());
             }
             try {
-                Node node = RequestContextProvider.get().getSession().getNodeByIdentifier(bean.getIdentifier());
+                Node node = requestContext.getSession().getNodeByIdentifier(bean.getIdentifier());
                 bean.setNode(node);
+                bean.setObjectConverter(requestContext.getContentBeansTool().getObjectConverter());
             } catch (ItemNotFoundException e) {
                 log.warn("Cannot bind '{}' to its backing jcr node because the uuid '{}' does not exist (anymore). Return unbinded bean", bean.getClass().getName(), bean.getIdentifier());
             } catch (RepositoryException e) {
