@@ -94,11 +94,11 @@ describe('ScrollService', () => {
       expect(startScroll).not.toHaveBeenCalled();
     });
 
-    it('should stop velocity and remove event listeners when disabled', () => {
+    it('should stop velocity autoscroll queue and remove event listeners when disabled', () => {
       const baseEventSpy = spyOn(baseJQueryElement, 'off').and.callThrough();
       ScrollService.disable();
 
-      expect(velocitySpy).toHaveBeenCalledWith('stop');
+      expect(velocitySpy).toHaveBeenCalledWith('stop', 'autoscroll');
       expect(baseEventSpy).toHaveBeenCalled();
     });
 
