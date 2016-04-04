@@ -14,19 +14,7 @@
  * limitations under the License.
  */
 
-export function run($state, CmsService, ChannelService) {
+export function run(ChannelService) {
   'ngInject';
-
-  function showChannel(channelId) {
-    $state.go('hippo-cm.channel', { channelId }, { reload: true });
-  }
-
-  CmsService.subscribe('load-channel', (channel) => {
-    ChannelService.load(channel).then(showChannel); // TODO: handle error.
-    // If this goes wrong, the CM won't work. display a toast explaining so
-    // and switch back to the channel overview.
-  });
-
-  // Handle reloading of iframe by BrowserSync during development
-  CmsService.publish('reload-channel');
+  ChannelService.initialize();
 }

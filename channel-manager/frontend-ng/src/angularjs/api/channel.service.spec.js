@@ -22,8 +22,10 @@ describe('ChannelService', () => {
   let ChannelService;
   let CatalogServiceMock;
   let SessionServiceMock;
-  let HstServiceMock;
+  let HstService;
   let channelMock;
+  let CmsService;
+  let $state;
 
   beforeEach(() => {
     module('hippo-cm');
@@ -51,22 +53,56 @@ describe('ChannelService', () => {
       contextPaths: ['/testContextPath1', '/'],
     };
 
-    HstServiceMock = jasmine.createSpyObj('HstService', ['getChannel', 'doPost']);
-
     module(($provide) => {
       $provide.value('SessionService', SessionServiceMock);
       $provide.value('ConfigService', ConfigServiceMock);
-      $provide.value('HstService', HstServiceMock);
       $provide.value('CatalogService', CatalogServiceMock);
     });
 
-    inject((_$q_, _$rootScope_, _ChannelService_) => {
+    inject((_$q_, _$state_, _$rootScope_, _ChannelService_, _CmsService_, _HstService_) => {
       $q = _$q_;
+      $state = _$state_;
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
+      CmsService = _CmsService_;
+      HstService = _HstService_;
     });
 
+    spyOn(HstService, 'doPost');
+    spyOn(HstService, 'getChannel');
     spyOn(window.APP_TO_CMS, 'publish');
+  });
+
+  it('should initialize the channel', () => {
+    const testChannel = {
+      id: 'testChannelId',
+    };
+
+    spyOn(CmsService, 'subscribe');
+    HstService.getChannel.and.returnValue($q.resolve(testChannel));
+    spyOn(ChannelService, 'load').and.callThrough();
+    spyOn($state, 'go');
+
+    ChannelService.initialize();
+    expect(CmsService.subscribe).toHaveBeenCalledWith('load-channel', jasmine.any(Function));
+
+    window.CMS_TO_APP.publish('load-channel', testChannel);
+
+    expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id);
+    $rootScope.$apply();
+
+    expect(ChannelService.load).toHaveBeenCalledWith(testChannel);
+    $rootScope.$apply();
+
+    expect($state.go).toHaveBeenCalledWith(
+      'hippo-cm.channel',
+      {
+        channelId: testChannel.id,
+      },
+      {
+        reload: true,
+      }
+    );
   });
 
   it('should not save a reference to the channel when load fails', () => {
@@ -173,7 +209,7 @@ describe('ChannelService', () => {
     ChannelService.load(channelA);
     $rootScope.$digest();
 
-    HstServiceMock.getChannel.and.callFake(() => $q.resolve(channelB));
+    HstService.getChannel.and.callFake(() => $q.resolve(channelB));
     ChannelService.switchToChannel(channelB.id);
     $rootScope.$digest();
 
@@ -204,7 +240,7 @@ describe('ChannelService', () => {
     $rootScope.$digest();
 
     const deferred = $q.defer();
-    HstServiceMock.doPost.and.returnValue(deferred.promise);
+    HstService.doPost.and.returnValue(deferred.promise);
     ChannelService.publishOwnChanges().then((response) => {
       expect(response).toBe('pass-through');
     });
@@ -212,7 +248,7 @@ describe('ChannelService', () => {
     deferred.resolve('pass-through');
     $rootScope.$digest();
 
-    expect(HstServiceMock.doPost).toHaveBeenCalledWith(null, 'mountId', 'publish');
+    expect(HstService.doPost).toHaveBeenCalledWith(null, 'mountId', 'publish');
     expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('channel-changed-in-angular');
     expect(channelMock.changedBySet).toEqual([]);
   });
@@ -223,7 +259,7 @@ describe('ChannelService', () => {
     $rootScope.$digest();
 
     const deferred = $q.defer();
-    HstServiceMock.doPost.and.returnValue(deferred.promise);
+    HstService.doPost.and.returnValue(deferred.promise);
     ChannelService.discardOwnChanges().then((response) => {
       expect(response).toBe('pass-through');
     });
@@ -231,7 +267,7 @@ describe('ChannelService', () => {
     deferred.resolve('pass-through');
     $rootScope.$digest();
 
-    expect(HstServiceMock.doPost).toHaveBeenCalledWith(null, 'mountId', 'discard');
+    expect(HstService.doPost).toHaveBeenCalledWith(null, 'mountId', 'discard');
     expect(channelMock.changedBySet).toEqual([]);
     expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('channel-changed-in-angular');
   });
