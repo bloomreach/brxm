@@ -64,6 +64,8 @@ describe('ChannelService', () => {
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
     });
+
+    spyOn(window.APP_TO_CMS, 'publish');
   });
 
   it('should not save a reference to the channel when load fails', () => {
@@ -88,31 +90,31 @@ describe('ChannelService', () => {
   });
 
   it('should ignore the contextPath if it is /', () => {
-    ChannelService.load({ contextPath: '/' });
+    const contextPath = '/';
+    const cmsPreviewPrefix = 'cmsPreviewPrefix';
+
+    ChannelService.load({ contextPath });
     $rootScope.$digest();
-    expect(ChannelService.getPreviewPath()).toEqual('');
+    expect(ChannelService.getPreviewPath(contextPath)).toEqual('');
     expect(ChannelService.getUrl()).toEqual('');
 
-    ChannelService.load({
-      contextPath: '/',
-      cmsPreviewPrefix: 'cmsPreviewPrefix',
-    });
+    ChannelService.load({ contextPath, cmsPreviewPrefix });
     $rootScope.$digest();
-    expect(ChannelService.getPreviewPath()).toEqual('/cmsPreviewPrefix');
+    expect(ChannelService.getPreviewPath(contextPath)).toEqual('/cmsPreviewPrefix');
     expect(ChannelService.getUrl()).toEqual('/cmsPreviewPrefix');
   });
 
   it('should return a preview path that starts with the contextPath', () => {
-    ChannelService.load({ contextPath: '/contextPath' });
-    $rootScope.$digest();
-    expect(ChannelService.getPreviewPath()).toEqual('/contextPath');
+    const contextPath = '/contextPath';
+    const cmsPreviewPrefix = 'cmsPreviewPrefix';
 
-    ChannelService.load({
-      contextPath: '/contextPath',
-      cmsPreviewPrefix: 'cmsPreviewPrefix',
-    });
+    ChannelService.load({ contextPath });
     $rootScope.$digest();
-    expect(ChannelService.getPreviewPath()).toEqual('/contextPath/cmsPreviewPrefix');
+    expect(ChannelService.getPreviewPath(contextPath)).toEqual('/contextPath');
+
+    ChannelService.load({ contextPath, cmsPreviewPrefix });
+    $rootScope.$digest();
+    expect(ChannelService.getPreviewPath(contextPath)).toEqual('/contextPath/cmsPreviewPrefix');
   });
 
   it('should return a url that ends with a slash if it equals the contextPath', () => {
@@ -141,14 +143,14 @@ describe('ChannelService', () => {
     expect(ChannelService.getUrl('/optional/path')).toEqual('/contextPath/cmsPreviewPrefix/mountPath/optional/path');
   });
 
-  it('should compile a list of internal link prefixes', () => {
+  it('should compile a list of preview paths', () => {
     ChannelService.load({ cmsPreviewPrefix: 'cmsPreviewPrefix' });
     $rootScope.$digest();
-    expect(ChannelService.makeInternalLinkPrefixList('start')).toEqual(['start/testContextPath1/cmsPreviewPrefix', 'start/cmsPreviewPrefix']);
+    expect(ChannelService.getPreviewPaths()).toEqual(['/testContextPath1/cmsPreviewPrefix', '/cmsPreviewPrefix']);
 
     ChannelService.load({ cmsPreviewPrefix: '' });
     $rootScope.$digest();
-    expect(ChannelService.makeInternalLinkPrefixList('start')).toEqual(['start/testContextPath1', 'start']);
+    expect(ChannelService.getPreviewPaths()).toEqual(['/testContextPath1', '']);
   });
 
   it('should return the mountId of the current channel', () => {
@@ -210,6 +212,7 @@ describe('ChannelService', () => {
     $rootScope.$digest();
 
     expect(HstServiceMock.doPost).toHaveBeenCalledWith(null, 'mountId', 'publish');
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('channel-changed-in-angular');
     expect(channelMock.changedBySet).toEqual([]);
   });
 
@@ -229,6 +232,7 @@ describe('ChannelService', () => {
 
     expect(HstServiceMock.doPost).toHaveBeenCalledWith(null, 'mountId', 'discard');
     expect(channelMock.changedBySet).toEqual([]);
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('channel-changed-in-angular');
   });
 
   it('records own changes', () => {
@@ -239,6 +243,7 @@ describe('ChannelService', () => {
     ChannelService.recordOwnChange();
 
     expect(channelMock.changedBySet).toEqual(['tobi', 'obiwan', 'testUser']);
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('channel-changed-in-angular');
   });
 
   it('recognizes changes already pending', () => {
@@ -249,5 +254,18 @@ describe('ChannelService', () => {
     ChannelService.recordOwnChange();
 
     expect(channelMock.changedBySet).toEqual(['tobi', 'testUser', 'obiwan']);
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('channel-changed-in-angular');
+  });
+
+  it('incorporates changes made in ExtJs', () => {
+    channelMock.changedBySet = ['testUser'];
+    ChannelService.load(channelMock);
+    $rootScope.$digest();
+
+    window.CMS_TO_APP.publish('channel-changed-in-extjs', {
+      changedBySet: ['anotherUser'],
+    });
+
+    expect(ChannelService.channel.changedBySet).toEqual(['anotherUser']);
   });
 });

@@ -22,6 +22,14 @@
       {{ 'TOOLBAR_BUTTON_COMPONENTS' | translate }}
     </md-button>
     <span flex></span>
+    <md-button ng-repeat="viewPort in channelCtrl.viewPorts"
+               ng-click="channelCtrl.selectViewPort(viewPort)"
+               ng-class="{ 'md-accent': channelCtrl.isViewPortSelected(viewPort) }"
+               aria-label="{{ viewPort.titleKey | translate }}"
+               class="md-icon-button qa-viewport-{{viewPort.name}}">
+      <md-icon title="{{ viewPort.titleKey | translate }}" class="material-icons">{{viewPort.icon}}</md-icon>
+    </md-button>
+    <span flex></span>
     <md-menu ng-if="channelCtrl.hasChanges()">
       <md-button aria-label="{{ 'TOOLBAR_BUTTON_CHANGES' | translate }}"
                  ng-click="$mdOpenMenu($event)">

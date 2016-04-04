@@ -13,5 +13,8 @@
   "CONFIRM_DISCARD_OWN_CHANGES_MESSAGE": "Are you sure you want to discard all your unpublished changes to this channel?",
   "BUTTON_YES": "Yes",
   "BUTTON_NO": "No",
-  "ERROR_CREATE_PREVIEW": "Failed to enter Edit mode."
+  "ERROR_CREATE_PREVIEW": "Failed to enter Edit mode.",
+  "VIEWPORT_WIDTH_DESKTOP": "desktop",
+  "VIEWPORT_WIDTH_PHONE": "phone (320px)",
+  "VIEWPORT_WIDTH_TABLET": "tablet (720px)"
 }

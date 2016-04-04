@@ -63,6 +63,7 @@ describe('ChannelCtrl', () => {
       ScalingService = jasmine.createSpyObj('ScalingService', [
         'init',
         'setPushWidth',
+        'setViewPortWidth',
       ]);
 
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', [
@@ -81,12 +82,14 @@ describe('ChannelCtrl', () => {
 
   it('resets the ScalingService pushWidth state during initialization', () => {
     ScalingService.setPushWidth.calls.reset();
+    ScalingService.setViewPortWidth.calls.reset();
     inject(($controller) => {
       $controller('ChannelCtrl', {
         $scope: $rootScope.$new(),
         ScalingService,
       });
       expect(ScalingService.setPushWidth).toHaveBeenCalledWith(0);
+      expect(ScalingService.setViewPortWidth).toHaveBeenCalledWith(0);
     });
   });
 
@@ -180,9 +183,13 @@ describe('ChannelCtrl', () => {
   });
 
   it('publishes changes', () => {
+    ChannelService.publishOwnChanges.and.returnValue($q.resolve());
+
     ChannelCtrl.publish();
+    $rootScope.$digest();
 
     expect(ChannelService.publishOwnChanges).toHaveBeenCalled();
+    expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
   it('discards changes', () => {
@@ -196,6 +203,7 @@ describe('ChannelCtrl', () => {
     expect($mdDialog.confirm).toHaveBeenCalled();
     expect($mdDialog.show).toHaveBeenCalled();
     expect(ChannelService.discardOwnChanges).toHaveBeenCalled();
+    expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
   it('does not discard changes if not confirmed', () => {

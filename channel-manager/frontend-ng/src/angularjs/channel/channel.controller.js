@@ -37,11 +37,43 @@ export class ChannelCtrl {
     this.isEditMode = false;
     this.isCreatingPreview = false;
 
+    this.viewPorts = [
+      {
+        name: 'desktop',
+        icon: 'computer',
+        width: 0,
+        titleKey: 'VIEWPORT_WIDTH_DESKTOP',
+      },
+      {
+        name: 'tablet',
+        icon: 'tablet',
+        width: 720,
+        titleKey: 'VIEWPORT_WIDTH_TABLET',
+      },
+      {
+        name: 'phone',
+        icon: 'smartphone',
+        width: 320,
+        titleKey: 'VIEWPORT_WIDTH_PHONE',
+      },
+    ];
+
+    this.selectViewPort(this.viewPorts[0]);
+
     // reset service state to avoid weird scaling when controller is reloaded due to state change
     ScalingService.setPushWidth(0);
 
     ComponentAdderService.setContainerClass('catalog-dd-container');
     ComponentAdderService.setContainerItemClass('catalog-dd-container-item');
+  }
+
+  selectViewPort(viewPort) {
+    this.selectedViewPort = viewPort;
+    this.ScalingService.setViewPortWidth(viewPort.width);
+  }
+
+  isViewPortSelected(viewPort) {
+    return this.selectedViewPort === viewPort;
   }
 
   toggleEditMode() {
@@ -106,7 +138,7 @@ export class ChannelCtrl {
   }
 
   publish() {
-    this.ChannelService.publishOwnChanges();
+    this.ChannelService.publishOwnChanges().then(() => this.HippoIframeService.reload());
     // TODO: what if this fails?
     // show a toast that all went well, or that the publication failed.
     // More information may be exposed by logging an error(?) in the console,
