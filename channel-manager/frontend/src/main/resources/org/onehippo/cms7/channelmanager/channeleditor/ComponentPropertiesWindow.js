@@ -158,10 +158,10 @@
       this.show();
     },
 
-    onComponentRemoved() {
+    onComponentRemoved: function () {
       // clear recorded changes because the component has been removed.
       this.componentPropertiesPanel.clearComponent();
-    },
+    }
 
   });
 
