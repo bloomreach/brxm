@@ -73,8 +73,8 @@
 
     _setChannel: function(channelId) {
       return new Hippo.Future(function (success, failure) {
-        this.channelStoreFuture.when(function (config) {
-          var channelRecord = config.store.getById(channelId);
+        this._reloadChannels().when(function (channelStore) {
+          var channelRecord = channelStore.getById(channelId);
           if (channelRecord) {
             this._initialize(channelRecord.json);
             success(channelRecord);
