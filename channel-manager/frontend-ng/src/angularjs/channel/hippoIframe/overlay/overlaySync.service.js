@@ -23,9 +23,7 @@ export class OverlaySyncService {
     this.$window = $window;
 
     this.overlayElements = [];
-    this.observer = new MutationObserver(() => {
-      ThrottleService.throttle(() => this.syncIframe(), 100);
-    });
+    this.observer = new MutationObserver(ThrottleService.throttle(() => this.syncIframe(), 100));
   }
 
   init(iframeJQueryElement, overlayJQueryElement) {
@@ -81,8 +79,14 @@ export class OverlaySyncService {
       if (doc) {
         // Reset the height, as the document height will always be at least the iframe height
         this.iframeJQueryElement.height('');
-        // Prevent weird twitching at certain widths
-        $(doc.documentElement).css('overflow', 'hidden');
+
+        // Remove scrollbars from the site as they are controlled by the application
+        // Changing a style attribute on Firefox always invokes a MutationObserver callback, even if the value has not
+        // changed. So only set it if it has not been set before, otherwise we'll end up in a loop.
+        const docEl = $(doc.documentElement);
+        if (docEl.css('overflow') !== 'hidden') {
+          docEl.css('overflow', 'hidden');
+        }
 
         const height = doc.body.clientHeight;
         this.iframeJQueryElement.height(height);
