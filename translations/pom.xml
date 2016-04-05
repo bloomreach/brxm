@@ -14,10 +14,6 @@
   <version>0</version>
   <packaging>pom</packaging>
   
-  <properties>
-    <artifactIdPrefix/>
-  </properties>
-
   <scm>
     <connection>scm:git:https://code.onehippo.org/cms-community/hippo-cms-translations.git</connection>
     <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-cms-translations.git</developerConnection>
@@ -40,6 +36,86 @@
     <module>seo-support/3.0.x</module>
     <module>taxonomy/3.0.x</module>
   </modules>
+  
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <executions>
+            <execution>
+              <!-- disable default jar build -->
+              <id>default-jar</id>
+              <phase>none</phase>
+            </execution>
+            <execution>
+              <!-- nl locale classifier build -->
+              <id>nl_jar</id>
+              <phase>package</phase>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+              <configuration>
+                <classifier>nl</classifier>
+                <classesDirectory>${project.build.outputDirectory}/nl</classesDirectory>
+              </configuration>
+            </execution>
+            <execution>
+              <!-- fr locale classifier build -->
+              <id>fr_jar</id>
+              <phase>package</phase>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+              <configuration>
+                <classifier>fr</classifier>
+                <classesDirectory>${project.build.outputDirectory}/fr</classesDirectory>
+              </configuration>
+            </execution>
+            <execution>
+              <!-- fr locale classifier build -->
+              <id>de_jar</id>
+              <phase>package</phase>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+              <configuration>
+                <classifier>fr</classifier>
+                <classesDirectory>${project.build.outputDirectory}/de</classesDirectory>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <resources>
+      <resource>
+        <directory>resources/extensions</directory>
+      </resource>
+      <resource>
+        <directory>resources</directory>
+        <targetPath>nl</targetPath>
+        <includes>
+          <include>**/*_nl.*</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>resources</directory>
+        <targetPath>fr</targetPath>
+        <includes>
+          <include>**/*_fr.*</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>resources</directory>
+        <targetPath>de</targetPath>
+        <includes>
+          <include>**/*_de.*</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
 
   <profiles>
     <profile>
