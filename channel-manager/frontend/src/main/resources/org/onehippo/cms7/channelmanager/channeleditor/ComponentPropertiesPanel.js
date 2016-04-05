@@ -108,8 +108,11 @@
       this.fireEvent('onLoad');
     },
 
-    clearComponent: function () {
-      this._renderInitialComponentState();
+    clearComponent: function (componentRemoved) {
+      if (!componentRemoved) {
+        // only re-render the initial state if the component is not removed
+        this._renderInitialComponentState();
+      }
       this.hasComponent = false;
     },
 
