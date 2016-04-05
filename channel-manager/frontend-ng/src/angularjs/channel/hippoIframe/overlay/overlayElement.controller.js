@@ -42,7 +42,7 @@ export class OverlayElementCtrl {
     }
 
     // Set a minimal height of the element to ensure visibility / clickability.
-    const originalMinHeight = boxJQueryElement[0].style.minHeight || 'auto';
+    const originalMinHeight = boxJQueryElement[0].style.minHeight || 'unset';
     this._setMinHeightSafely(boxJQueryElement[0], MIN_HEIGHT);
 
     $scope.$on('$destroy', () => {
