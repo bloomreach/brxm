@@ -120,6 +120,7 @@ describe('DomService', () => {
 
     // don't copy the 'position' property, so the target should use the default value 'static'
     expect(source.css('position')).toEqual('fixed');
+    expect(target.css('position')).toEqual('static');
     DomService.copyComputedStyleExcept(source[0], target[0], ['position']);
     expect(target.css('position')).toEqual('static');
   });
@@ -138,13 +139,10 @@ describe('DomService', () => {
     const source = $j('#copyComputedStyleSource');
     const target = $j('#copyComputedStyleTarget');
 
-    const sourceUl = source.find('ul');
-    const targetUl = target.find('ul');
-
-    // 'color' is excluded so the default value (black) should be inherited
-    expect(sourceUl.css('color')).toEqual('rgb(0, 0, 255)');
+    // 'color' is excluded from copying so the default value (black) should be inherited by the target
+    expect(source.find('ul').css('color')).toEqual('rgb(0, 0, 255)');
     DomService.copyComputedStyleOfDescendantsExcept(source[0], target[0], ['color']);
-    expect(targetUl.css('color')).toEqual('rgb(0, 0, 0)');
+    expect(target.find('ul').css('color')).toEqual('rgb(0, 0, 0)');
   });
 
   it('can create a mousedown event', () => {
