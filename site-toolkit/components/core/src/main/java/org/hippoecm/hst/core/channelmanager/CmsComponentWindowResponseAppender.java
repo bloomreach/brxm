@@ -136,11 +136,6 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
         response.addEpilogue(createCommentWithAttr(epilogueAttributes, response));
     }
 
-    private boolean isContainerOrContainerItem(final HstComponentConfiguration compConfig) {
-        return CONTAINER_ITEM_COMPONENT.equals(compConfig.getComponentType())
-                || CONTAINER_COMPONENT.equals(compConfig.getComponentType());
-    }
-
     final void populateAttributes(HstComponentWindow window, HstRequest request,
                                   Map<String, String> preambleAttributes, Map<String, String> epilogueAttributes) {
         for (ComponentWindowAttributeContributor attributeContributor : attributeContributors) {
