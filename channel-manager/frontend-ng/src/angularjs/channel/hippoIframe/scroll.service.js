@@ -82,19 +82,20 @@ export class ScrollService {
 
   stopScrolling() {
     if (this.el) {
-      this.el.velocity('stop');
+      this.el.velocity('stop', 'autoscroll');
     }
   }
 
   _scroll(offset) {
     this.el
-      .velocity('stop')
+      .velocity('stop', 'autoscroll')
       .velocity('scroll', {
         container: this.container,
         duration: this._calculateDuration(offset),
         easing: this.easing,
         offset,
-      });
+        queue: 'autoscroll',
+      }).dequeue('autoscroll');
   }
 
 

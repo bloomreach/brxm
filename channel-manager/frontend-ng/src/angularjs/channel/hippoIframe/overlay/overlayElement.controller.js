@@ -42,8 +42,8 @@ export class OverlayElementCtrl {
     }
 
     // Set a minimal height of the element to ensure visibility / clickability.
-    const minHeight = boxJQueryElement[0].style.minHeight || 'auto';
-    boxJQueryElement[0].style.minHeight = MIN_HEIGHT;
+    const originalMinHeight = boxJQueryElement[0].style.minHeight || 'auto';
+    this._setMinHeightSafely(boxJQueryElement[0], MIN_HEIGHT);
 
     $scope.$on('$destroy', () => {
       this.OverlaySyncService.unregisterElement(this.structureElement);
@@ -51,9 +51,18 @@ export class OverlayElementCtrl {
         boxJQueryElement.detach();
         this.structureElement.setJQueryElement('iframe', undefined); // reset
       } else {
-        boxJQueryElement[0].style.minHeight = minHeight;
+        this._setMinHeightSafely(boxJQueryElement[0], originalMinHeight);
       }
     });
+  }
+
+  _setMinHeightSafely(element, minHeight) {
+    try {
+      element.style.minHeight = minHeight;
+    } catch (ignoredError) {
+      // IE11 throws an error when accessing a property of an element that's no longer part of the DOM
+      // (e.g. part of a previous iframe document). Ignore these errors silently.
+    }
   }
 
   _createAndInsertTemporaryBox() {

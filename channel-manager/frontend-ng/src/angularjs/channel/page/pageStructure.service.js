@@ -104,7 +104,7 @@ export class PageStructureService {
       const oldContainer = component.getContainer();
       return this.HstService.removeHstComponent(oldContainer.getId(), componentId)
         .then(() => {
-          this.ChannelService.recordOwnChange();
+          this._onAfterRemoveComponent();
           return this.renderContainer(oldContainer).then((newContainer) => { // eslint-disable-line arrow-body-style
             return { oldContainer, newContainer };
           });
@@ -114,6 +114,11 @@ export class PageStructureService {
     }
     this.$log.debug(`Could not remove component with ID '${componentId}' because it does not exist in the page structure.`);
     return this.$q.reject();
+  }
+
+  _onAfterRemoveComponent() {
+    this.ChannelService.recordOwnChange();
+    this.CmsService.publish('component-removed');
   }
 
   getContainerByIframeElement(containerIFrameElement) {
@@ -154,7 +159,7 @@ export class PageStructureService {
     const component = this.getComponentById(componentId);
     if (component) {
       this.RenderingService.fetchComponentMarkup(component, propertiesMap).then((response) => {
-        this._updateComponent(component, response.data);
+        this._updateComponent(componentId, response.data);
       });
       // TODO handle error
       // show error message that component rendering failed.
@@ -167,7 +172,8 @@ export class PageStructureService {
   /**
    * Update the component with the new markup
    */
-  _updateComponent(component, newMarkup) {
+  _updateComponent(componentId, newMarkup) {
+    const component = this.getComponentById(componentId);
     const jQueryNodeCollection = component.replaceDOM(newMarkup);
     this._replaceComponent(component, this._createComponent(jQueryNodeCollection, component.getContainer()));
     this.OverlaySyncService.syncIframe();
