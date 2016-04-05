@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-community-translations</artifactId>
+    <version>0</version>
+    <relativePath>../..</relativePath>
+  </parent>
+  
+  <name>Hippo Plugin Poll Translations 3.0.x</name>
+  <artifactId>hippo-plugin-poll-l10n</artifactId>
+  <version>3.0.0-SNAPSHOT</version>
+  
+  <properties>
+    <hippo.plugin.poll.version>3.0.0-SNAPSHOT</hippo.plugin.poll.version>
+  </properties>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-plugin-poll-addon-cms</artifactId>
+      <version>${hippo.plugin.poll.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-plugin-poll-addon-repository</artifactId>
+      <version>${hippo.plugin.poll.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+
+</project>

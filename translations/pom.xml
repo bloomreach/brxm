@@ -13,6 +13,10 @@
   <artifactId>hippo-community-translations</artifactId>
   <version>0</version>
   <packaging>pom</packaging>
+  
+  <properties>
+    <artifactIdPrefix/>
+  </properties>
 
   <scm>
     <connection>scm:git:https://code.onehippo.org/cms-community/hippo-cms-translations.git</connection>
@@ -22,6 +26,19 @@
 
   <modules>
     <module>hippo-cms/4.0.x</module>
+    <module>channel-manager/4.0.x</module>
+    <module>hst-config-editor/3.0.x</module>
+    <module>content-blocks/3.0.x</module>
+    <module>content-tagging/6.0.x</module>
+    <module>dashboard-document-wizard/3.0.x</module>
+    <module>gallerypicker/3.0.x</module>
+    <module>poll/3.0.x</module>
+    <module>relateddocs/4.0.x</module>
+    <module>resourcebundle-editor/3.0.x</module>
+    <module>robotstxt/3.0.x</module>
+    <module>selections/4.0.x</module>
+    <module>seo-support/3.0.x</module>
+    <module>taxonomy/3.0.x</module>
   </modules>
 
   <profiles>

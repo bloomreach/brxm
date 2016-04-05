@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-community-translations</artifactId>
+    <version>0</version>
+    <relativePath>../..</relativePath>
+  </parent>
+  
+  <name>Hippo Addon Channel Manager Translations 4.0.x</name>
+  <artifactId>hippo-addon-channel-manager-l10n</artifactId>
+  <version>4.0.0-SNAPSHOT</version>
+  
+  <properties>
+    <hippo.addon-channel-manager.version>4.0.0-SNAPSHOT</hippo.addon-channel-manager.version>
+  </properties>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-channel-manager-frontend</artifactId>
+      <version>${hippo.addon-channel-manager.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-channel-manager-repository</artifactId>
+      <version>${hippo.addon-channel-manager.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+
+</project>
