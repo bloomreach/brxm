@@ -887,6 +887,16 @@
             </artifactPrefixes>
             <locales>${hippo.cms.included.locales}</locales>
           </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>includeLocales</goal>
+              </goals>
+              <configuration>
+                <locales>${hippo.cms.included.locales}</locales>
+              </configuration>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
       <!-- end of 'nullify' inherited configuration -->
