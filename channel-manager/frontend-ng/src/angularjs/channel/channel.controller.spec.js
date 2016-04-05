@@ -176,7 +176,7 @@ describe('ChannelCtrl', () => {
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
     expect(ChannelCtrl.isEditModeActive()).toEqual(false);
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CREATE_PREVIEW');
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ENTER_EDIT');
   });
 
   it('does not create preview configuration when it has already been created when enabling edit mode', () => {

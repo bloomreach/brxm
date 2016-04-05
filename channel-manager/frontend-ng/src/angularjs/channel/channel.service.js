@@ -15,11 +15,13 @@
  */
 
 export class ChannelService {
-  constructor($rootScope, $http, SessionService, CatalogService, HstService, ConfigService, CmsService) {
+  constructor($rootScope, $http, $state, SessionService, CatalogService, HstService, ConfigService, CmsService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
     this.$http = $http;
+    this.$state = $state;
+
     this.SessionService = SessionService;
     this.CatalogService = CatalogService;
     this.HstService = HstService;
@@ -37,6 +39,22 @@ export class ChannelService {
     });
   }
 
+  initialize() {
+    this.CmsService.subscribe('load-channel', (channel) => {
+      this.HstService.getChannel(channel.id).then((updatedChannel) => {
+        this._load(updatedChannel).then((channelId) => {
+          this.$state.go('hippo-cm.channel', { channelId }, { reload: true });
+        });
+      });
+      // TODO: handle error.
+      // If this goes wrong, the CM won't work. display a toast explaining so
+      // and switch back to the channel overview.
+    });
+
+    // Handle reloading of iframe by BrowserSync during development
+    this.CmsService.publish('reload-channel');
+  }
+
   _setChannel(channel) {
     this.channel = channel;
     this.CatalogService.load(this._getMountId());
@@ -46,12 +64,12 @@ export class ChannelService {
     return this.channel;
   }
 
-  load(channel) {
+  _load(channel) {
     return this.SessionService
       .initialize(channel)
       .then(() => {
         this._setChannel(channel);
-        return channel;
+        return channel.id;
       });
   }
 

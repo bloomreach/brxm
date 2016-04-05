@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { ChannelService } from './channel.service';
 import { CatalogService } from './catalog.service';
 import { CmsService } from './cms.service';
 import { ConfigService } from './config.service';
@@ -24,7 +23,6 @@ import { HstConstants } from './hst.constants';
 
 export const channelManagerApi = angular
   .module('hippo-cm-api', [])
-  .service('ChannelService', ChannelService)
   .service('CatalogService', CatalogService)
   .service('CmsService', CmsService)
   .service('ConfigService', ConfigService)

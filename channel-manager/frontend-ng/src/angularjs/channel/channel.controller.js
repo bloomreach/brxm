@@ -108,18 +108,17 @@ export class ChannelCtrl {
 
   _createPreviewConfiguration() {
     this.isCreatingPreview = true;
-    this.ChannelService.createPreviewConfiguration()
-      .then(() => {
-        this.HippoIframeService.reload().then(() => {
-          this.isEditMode = true;
-        })
-        .finally(() => {
-          this.isCreatingPreview = false;
-        });
-      }, () => {
+    this.ChannelService.createPreviewConfiguration().then(() => {
+      this.HippoIframeService.reload().then(() => {
+        this.isEditMode = true;
+      })
+      .finally(() => {
         this.isCreatingPreview = false;
-        this.FeedbackService.showError('ERROR_CREATE_PREVIEW');
       });
+    }).catch(() => {
+      this.isCreatingPreview = false;
+      this.FeedbackService.showError('ERROR_ENTER_EDIT');
+    });
   }
 
   showComponentsButton() {
