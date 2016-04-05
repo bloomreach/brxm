@@ -72,13 +72,13 @@ export class DomService {
         if (fromValue.length > 0) {
           const toValue = toComputedStyle.getPropertyValue(cssPropertyName);
           if (fromValue !== toValue) {
-            cssDiff.push(`${cssPropertyName}:${fromValue};`);
+            cssDiff.push(`${cssPropertyName}:${fromValue}`);
           }
         }
       } else {
         const toStyleValue = toElement.style.getPropertyValue(cssPropertyName);
         if (toStyleValue.length > 0) {
-          cssDiff.push(`${cssPropertyName}:${toStyleValue};`);
+          cssDiff.push(`${cssPropertyName}:${toStyleValue}`);
         }
       }
     }
