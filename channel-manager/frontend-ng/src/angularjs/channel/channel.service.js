@@ -42,7 +42,7 @@ export class ChannelService {
   initialize() {
     this.CmsService.subscribe('load-channel', (channel) => {
       this.HstService.getChannel(channel.id).then((updatedChannel) => {
-        this.load(updatedChannel).then((channelId) => {
+        this._load(updatedChannel).then((channelId) => {
           this.$state.go('hippo-cm.channel', { channelId }, { reload: true });
         });
       });
@@ -64,7 +64,7 @@ export class ChannelService {
     return this.channel;
   }
 
-  load(channel) {
+  _load(channel) {
     return this.SessionService
       .initialize(channel)
       .then(() => {
