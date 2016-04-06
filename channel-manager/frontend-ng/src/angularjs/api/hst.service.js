@@ -54,12 +54,16 @@ export class HstService {
     return this._callHst('GET', uuid, pathElements);
   }
 
+  doGetWithParams(uuid, params, ...pathElements) {
+    return this._callHst('GET', uuid, pathElements, undefined, params);
+  }
+
   doPost(data, uuid, ...pathElements) {
     return this._callHst('POST', uuid, pathElements, data);
   }
 
-  _callHst(method, uuid, pathElements, data) {
-    const url = this._createApiUrl(uuid, pathElements);
+  _callHst(method, uuid, pathElements, data, params) {
+    const url = this._createApiUrl(uuid, pathElements, params);
     const headers = {
       'CMS-User': this.config.cmsUser,
       FORCE_CLIENT_HOST: 'true',
@@ -71,7 +75,7 @@ export class HstService {
     });
   }
 
-  _createApiUrl(uuid, pathElements) {
+  _createApiUrl(uuid, pathElements, params) {
     let apiUrl = concatPaths(this.config.contextPath, this.config.apiUrlPrefix);
     apiUrl = concatPaths(apiUrl, uuid);
     apiUrl += './';
@@ -80,7 +84,21 @@ export class HstService {
       apiUrl = concatPaths(apiUrl, pathElement);
     });
 
+    if (params) {
+      apiUrl += `?${this._serializeParams(params)}`;
+    }
+
     return apiUrl;
+  }
+
+  _serializeParams(params) {
+    const str = [];
+    for (const param in params) {
+      if (params.hasOwnProperty(param)) {
+        str.push(`${encodeURIComponent(param)}=${encodeURIComponent(params[param])}`);
+      }
+    }
+    return str.join('&');
   }
 
   /**

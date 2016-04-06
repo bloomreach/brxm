@@ -1,6 +1,8 @@
 {
   "TOOLBAR_BUTTON_COMPONENTS": "Componenten",
   "TOOLBAR_BUTTON_CHANGES": "Wijzigingen",
+  "TOOLBAR_VIEW_AS_INFIX": " de ",
+  "TOOLBAR_VIEW_AS_LABEL": "Toon als",
   "TOOLBAR_MENU_CHANGES_PUBLISH": "Publiceer",
   "TOOLBAR_MENU_CHANGES_DISCARD": "Maak ongedaan",
   "TOOLBAR_SWITCH_VIEWER_MODE": "Viewer modus",

@@ -69,4 +69,44 @@ describe('SessionService', () => {
     $rootScope.$apply();
     expect(sessionService.hasWriteAccess()).toEqual(true);
   });
+
+  it('should call all registered callbacks upon successful initialization', () => {
+    const cb1 = jasmine.createSpy('cb1');
+    const cb2 = jasmine.createSpy('cb2');
+
+    sessionService.registerInitCallback('cb1', cb1);
+    sessionService.registerInitCallback('cb2', cb2);
+
+    expect(cb1).not.toHaveBeenCalled();
+    expect(cb2).not.toHaveBeenCalled();
+
+    sessionService.initialize(channelMock);
+
+    expect(cb1).not.toHaveBeenCalled();
+    expect(cb2).not.toHaveBeenCalled();
+
+    deferred.resolve(true);
+    $rootScope.$digest();
+
+    expect(cb1).toHaveBeenCalled();
+    expect(cb2).toHaveBeenCalled();
+  });
+
+  it('should no longer call an unregistered callback', () => {
+    const cb1 = jasmine.createSpy('cb1');
+    const cb2 = jasmine.createSpy('cb2');
+
+    sessionService.registerInitCallback('cb1', cb1);
+    sessionService.registerInitCallback('cb2', cb2);
+
+    sessionService.unregisterInitCallback('cb1');
+    sessionService.unregisterInitCallback('cb3'); // should be ignored
+
+    sessionService.initialize(channelMock);
+    deferred.resolve(true);
+    $rootScope.$digest();
+
+    expect(cb1).not.toHaveBeenCalled();
+    expect(cb2).toHaveBeenCalled();
+  });
 });
