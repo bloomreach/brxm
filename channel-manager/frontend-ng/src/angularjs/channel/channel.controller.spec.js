@@ -21,6 +21,7 @@ describe('ChannelCtrl', () => {
 
   let ChannelService;
   let ComponentsService;
+  let DialogService;
   let ScalingService;
   let ConfigService;
   let FeedbackService;
@@ -29,18 +30,17 @@ describe('ChannelCtrl', () => {
   let HippoIframeService;
   let $rootScope;
   let $q;
-  let $mdDialog;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$q_, _$mdDialog_, _ConfigService_, _FeedbackService_, _SessionService_) => {
+    inject(($controller, _$rootScope_, _$q_, _ConfigService_, _DialogService_, _FeedbackService_, _SessionService_) => {
       const resolvedPromise = _$q_.when();
 
       $rootScope = _$rootScope_;
       $q = _$q_;
-      $mdDialog = _$mdDialog_;
       ConfigService = _ConfigService_;
+      DialogService = _DialogService_;
       FeedbackService = _FeedbackService_;
       SessionService = _SessionService_;
 
@@ -211,27 +211,27 @@ describe('ChannelCtrl', () => {
 
   it('discards changes', () => {
     ChannelService.discardOwnChanges.and.returnValue($q.resolve());
-    spyOn($mdDialog, 'show').and.returnValue($q.resolve());
-    spyOn($mdDialog, 'confirm').and.callThrough();
+    spyOn(DialogService, 'show').and.returnValue($q.resolve());
+    spyOn(DialogService, 'confirm').and.callThrough();
 
     ChannelCtrl.discard();
     $rootScope.$digest();
 
-    expect($mdDialog.confirm).toHaveBeenCalled();
-    expect($mdDialog.show).toHaveBeenCalled();
+    expect(DialogService.confirm).toHaveBeenCalled();
+    expect(DialogService.show).toHaveBeenCalled();
     expect(ChannelService.discardOwnChanges).toHaveBeenCalled();
     expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
   it('does not discard changes if not confirmed', () => {
-    spyOn($mdDialog, 'show').and.returnValue($q.reject());
-    spyOn($mdDialog, 'confirm').and.callThrough();
+    spyOn(DialogService, 'show').and.returnValue($q.reject());
+    spyOn(DialogService, 'confirm').and.callThrough();
 
     ChannelCtrl.discard();
     $rootScope.$digest();
 
-    expect($mdDialog.confirm).toHaveBeenCalled();
-    expect($mdDialog.show).toHaveBeenCalled();
+    expect(DialogService.confirm).toHaveBeenCalled();
+    expect(DialogService.show).toHaveBeenCalled();
     expect(ChannelService.discardOwnChanges).not.toHaveBeenCalled();
   });
 

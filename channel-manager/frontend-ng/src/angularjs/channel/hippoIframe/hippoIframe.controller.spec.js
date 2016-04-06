@@ -20,7 +20,6 @@ describe('hippoIframeCtrl', () => {
   'use strict';
 
   let PageStructureService;
-  let $mdDialog;
   let hippoIframeCtrl;
   let scope;
   let $q;
@@ -32,17 +31,17 @@ describe('hippoIframeCtrl', () => {
   let PageMetaDataService;
   let ChannelService;
   let HippoIframeService;
+  let DialogService;
 
   beforeEach(() => {
     let $compile;
     module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$compile_, _$mdDialog_, _$q_, _DragDropService_, _OverlaySyncService_,
+    inject(($controller, _$rootScope_, _$compile_, _$q_, _DragDropService_, _OverlaySyncService_,
             _PageStructureService_, _ScalingService_, _hstCommentsProcessorService_, _PageMetaDataService_,
-            _ChannelService_, _HippoIframeService_) => {
+            _ChannelService_, _HippoIframeService_, _DialogService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
-      $mdDialog = _$mdDialog_;
       $q = _$q_;
       DragDropService = _DragDropService_;
       OverlaySyncService = _OverlaySyncService_;
@@ -52,6 +51,7 @@ describe('hippoIframeCtrl', () => {
       PageMetaDataService = _PageMetaDataService_;
       ChannelService = _ChannelService_;
       HippoIframeService = _HippoIframeService_;
+      DialogService = _DialogService_;
       scope = $rootScope.$new();
     });
 
@@ -74,16 +74,16 @@ describe('hippoIframeCtrl', () => {
     spyOn(DragDropService, 'replaceContainer');
     spyOn(PageStructureService, 'getComponentById').and.returnValue(mockComponent);
     spyOn(PageStructureService, 'removeComponentById').and.returnValue($q.when({ oldContainer: 'old', newContainer: 'new' }));
-    spyOn($mdDialog, 'show').and.returnValue($q.resolve());
-    spyOn($mdDialog, 'confirm').and.callThrough();
+    spyOn(DialogService, 'show').and.returnValue($q.resolve());
+    spyOn(DialogService, 'confirm').and.callThrough();
 
     hippoIframeCtrl.deleteComponent('1234');
 
     scope.$digest();
 
     expect(mockComponent.getLabel).toHaveBeenCalled();
-    expect($mdDialog.confirm).toHaveBeenCalled();
-    expect($mdDialog.show).toHaveBeenCalled();
+    expect(DialogService.confirm).toHaveBeenCalled();
+    expect(DialogService.show).toHaveBeenCalled();
     expect(PageStructureService.removeComponentById).toHaveBeenCalledWith('1234');
     expect(DragDropService.replaceContainer).toHaveBeenCalledWith('old', 'new');
   });
@@ -92,16 +92,16 @@ describe('hippoIframeCtrl', () => {
     const mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
     spyOn(PageStructureService, 'getComponentById').and.returnValue(mockComponent);
     spyOn(PageStructureService, 'showComponentProperties');
-    spyOn($mdDialog, 'show').and.returnValue($q.reject());
-    spyOn($mdDialog, 'confirm').and.callThrough();
+    spyOn(DialogService, 'show').and.returnValue($q.reject());
+    spyOn(DialogService, 'confirm').and.callThrough();
 
     hippoIframeCtrl.deleteComponent('1234');
 
     scope.$digest();
 
     expect(mockComponent.getLabel).toHaveBeenCalled();
-    expect($mdDialog.confirm).toHaveBeenCalled();
-    expect($mdDialog.show).toHaveBeenCalled();
+    expect(DialogService.confirm).toHaveBeenCalled();
+    expect(DialogService.show).toHaveBeenCalled();
     expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith(mockComponent);
   });
 
