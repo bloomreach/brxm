@@ -58,7 +58,7 @@ export class CmsService {
 
   subscribe(topic, callback, scope) {
     const hostToIFrame = this.getParentIFramePanel().hostToIFrame;
-    return hostToIFrame.subscribe(topic, callback, scope);
+    return scope ? hostToIFrame.subscribe(topic, callback, scope) : hostToIFrame.subscribe(topic, callback);
   }
 
   unsubscribe(topic, callback, scope) {
