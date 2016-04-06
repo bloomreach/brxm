@@ -31,6 +31,7 @@ describe('hippoIframeCtrl', () => {
   let hstCommentsProcessorService;
   let PageMetaDataService;
   let ChannelService;
+  let CmsService;
   let HippoIframeService;
 
   beforeEach(() => {
@@ -39,7 +40,7 @@ describe('hippoIframeCtrl', () => {
 
     inject(($controller, _$rootScope_, _$compile_, _$mdDialog_, _$q_, _DragDropService_, _OverlaySyncService_,
             _PageStructureService_, _ScalingService_, _hstCommentsProcessorService_, _PageMetaDataService_,
-            _ChannelService_, _HippoIframeService_) => {
+            _ChannelService_, _CmsService_, _HippoIframeService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $mdDialog = _$mdDialog_;
@@ -51,6 +52,7 @@ describe('hippoIframeCtrl', () => {
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       PageMetaDataService = _PageMetaDataService_;
       ChannelService = _ChannelService_;
+      CmsService = _CmsService_;
       HippoIframeService = _HippoIframeService_;
       scope = $rootScope.$new();
     });
@@ -67,6 +69,12 @@ describe('hippoIframeCtrl', () => {
     scope.$digest();
 
     hippoIframeCtrl = el.controller('hippo-iframe');
+  });
+
+  it('unsubscribes "delete-component" event when the scope is destroyed', () => {
+    spyOn(CmsService, 'unsubscribe');
+    scope.$destroy();
+    expect(CmsService.unsubscribe).toHaveBeenCalledWith('delete-component', jasmine.any(Function));
   });
 
   it('shows the confirmation dialog and deletes selected component on confirmation', () => {

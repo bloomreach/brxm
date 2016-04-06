@@ -62,10 +62,7 @@ export class HippoIframeCtrl {
 
     const deleteComponentHandler = (componentId) => this.deleteComponent(componentId);
     CmsService.subscribe('delete-component', deleteComponentHandler);
-    // unsubscribe the event when the controller is destroyed
-    $scope.$on('$destroy', () => {
-      CmsService.unsubscribe('delete-component', deleteComponentHandler);
-    });
+    $scope.$on('$destroy', () => CmsService.unsubscribe('delete-component', deleteComponentHandler));
 
     $scope.$watch('iframe.editMode', () => this._updateDragDrop());
   }
