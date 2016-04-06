@@ -60,8 +60,11 @@ export class HippoIframeCtrl {
     ScalingService.init($element);
     DragDropService.init(this.iframeJQueryElement, $element.find('.channel-iframe-base'));
 
-    CmsService.subscribe('delete-component', (componentId) => {
-      this.deleteComponent(componentId);
+    const deleteComponentHandler = (componentId) => this.deleteComponent(componentId);
+    CmsService.subscribe('delete-component', deleteComponentHandler);
+    // unsubscribe the event when the controller is destroyed
+    $scope.$on('$destroy', () => {
+      CmsService.unsubscribe('delete-component', deleteComponentHandler);
     });
 
     $scope.$watch('iframe.editMode', () => this._updateDragDrop());
