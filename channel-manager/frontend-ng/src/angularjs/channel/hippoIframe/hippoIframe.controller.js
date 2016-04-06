@@ -96,7 +96,9 @@ export class HippoIframeCtrl {
 
   _confirmDelete(selectedComponent) {
     const confirm = this.$mdDialog
-      .confirm()
+      .confirm({
+        onRemoving: () => this.CmsService.publish('remove-mask'),
+      })
       .title(this.$translate.instant('CONFIRM_DELETE_COMPONENT_TITLE'))
       .textContent(this.$translate.instant('CONFIRM_DELETE_COMPONENT_MESSAGE', {
         component: selectedComponent.getLabel(),
@@ -104,6 +106,7 @@ export class HippoIframeCtrl {
       .ok(this.$translate.instant('BUTTON_YES'))
       .cancel(this.$translate.instant('BUTTON_NO'));
 
+    this.CmsService.publish('show-mask');
     return this.$mdDialog.show(confirm);
   }
 

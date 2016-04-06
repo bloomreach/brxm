@@ -565,3 +565,50 @@
 #x-form-el-contentRoot .x-form-text {
   width: 425px !important;
 }
+
+/*
+ * The channel editor masks the surrounding CMS elements when the Angular app shows a modal. The added mask divs are
+ * styled and animated the same way as the mask created by Angular Material so all masks together look like a whole.
+ */
+@keyframes showMask {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.48;
+  }
+}
+
+@keyframes hideMask {
+  0% {
+    opacity: 0.48;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.channel-editor-mask {
+  background-color: #212121;
+  opacity: .48;
+  animation: showMask 450ms;
+  position: absolute;
+}
+
+.channel-editor-mask-removing {
+  animation: hideMask 400ms;
+}
+
+.channel-editor-mask-left {
+  top: 0;
+  left: 0;
+  bottom: 40px;
+  width: 64px;
+}
+
+.channel-editor-mask-bottom {
+  height: 40px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}

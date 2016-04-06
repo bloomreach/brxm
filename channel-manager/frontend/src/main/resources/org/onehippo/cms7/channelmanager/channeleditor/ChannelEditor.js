@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-(function() {
+(function($) {
   "use strict";
 
   Ext.namespace('Hippo.ChannelManager.ChannelEditor');
@@ -47,6 +47,8 @@
       this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
       this.iframeToHost.subscribe('component-removed', this._onComponentRemoved, this);
+      this.iframeToHost.subscribe('show-mask', this._maskSurroundings, this);
+      this.iframeToHost.subscribe('remove-mask', this._unmaskSurroundings, this);
     },
 
     loadChannel: function(channelId) {
@@ -159,6 +161,22 @@
       this.componentPropertiesWindow.onComponentRemoved();
     },
 
+    _maskSurroundings: function() {
+      $(document.body).append(
+        '<div class="channel-editor-mask channel-editor-mask-left"></div>' +
+        '<div class="channel-editor-mask channel-editor-mask-bottom"></div>'
+      );
+    },
+
+    _unmaskSurroundings: function() {
+      $(document.body).children('.channel-editor-mask')
+        .addClass('channel-editor-mask-removing')
+        .delay(400)
+        .queue(function() {
+          $(this).remove();
+        });
+    },
+
     initComponent: function() {
       Hippo.ChannelManager.ChannelEditor.ChannelEditor.superclass.initComponent.call(this);
 
@@ -173,4 +191,4 @@
     }
   });
 
-}());
+}(jQuery));
