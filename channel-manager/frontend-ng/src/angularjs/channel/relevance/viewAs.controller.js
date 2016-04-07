@@ -15,12 +15,14 @@
  */
 
 export class ViewAsCtrl {
-  constructor($scope, $translate, ConfigService, SessionService, HstService) {
+  constructor($scope, $translate, ConfigService, SessionService, HstService, HippoIframeService, FeedbackService) {
     'ngInject';
 
     this.$translate = $translate;
     this.ConfigService = ConfigService;
     this.HstService = HstService;
+    this.HippoIframeService = HippoIframeService;
+    this.FeedbackService = FeedbackService;
 
     this.globalVariants = [];
 
@@ -30,6 +32,9 @@ export class ViewAsCtrl {
     // to a successful SessionService.initialize call, which happens upon channel switching.
     SessionService.registerInitCallback('reloadGlobalVariants', () => this._retrieveGlobalVariants());
     $scope.$on('$destroy', () => SessionService.unregisterInitCallback('reloadGlobalVariants'));
+
+    // Could have used ng-change on md-select, but watching nicely gives me the old value as well.
+    $scope.$watch('viewAs.selectedVariant', (newValue, oldValue) => this._setVariant(newValue, oldValue));
   }
 
   _retrieveGlobalVariants() {
@@ -42,8 +47,9 @@ export class ViewAsCtrl {
           this.globalVariants = response.data;
           this._updateSelectedVariant();
         }
+      }, () => {
+        this.FeedbackService.showError('ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE');
       });
-      // TODO: show a toast upon error?
     }
   }
 
@@ -57,6 +63,19 @@ export class ViewAsCtrl {
     // fallback to "Default" which is sorted first by the backend.
     if (!this.selectedVariant) {
       this.selectedVariant = this.globalVariants[0];
+    }
+  }
+
+  _setVariant(newVariant, oldVariant) {
+    if (oldVariant && newVariant && newVariant.id !== oldVariant.id) {
+      // TODO: disable other actions while busy reloading?
+      this.HstService.doPost(null, this.ConfigService.rootUuid, 'setvariant', newVariant.id).then(() => {
+        this.HippoIframeService.reload();
+      }, () => {
+        this.FeedbackService.showError('ERROR_RELEVANCE_VARIANT_SELECTION_FAILED', {
+          variant: this.makeDisplayName(newVariant),
+        });
+      });
     }
   }
 

@@ -16,6 +16,8 @@
   "BUTTON_YES": "Ja",
   "BUTTON_NO": "Nee",
   "ERROR_ENTER_EDIT": "Naar Bewerk modus schakelen heeft gefaald.",
+  "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "Het ophalen van de globale varianten ('Toon als') heeft gefaald.",
+  "ERROR_RELEVANCE_VARIANT_SELECTION_FAILED": "Het activeren van de globale variant '{{variant}}' heeft gefaald.",
   "VIEWPORT_WIDTH_DESKTOP": "desktop",
   "VIEWPORT_WIDTH_PHONE": "smartphone (320px)",
   "VIEWPORT_WIDTH_TABLET": "tablet (720px)"

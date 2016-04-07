@@ -25,31 +25,41 @@ describe('ChannelCtrl', () => {
   let $rootScope;
   let SessionService;
   let HstService;
+  let HippoIframeService;
+  let FeedbackService;
+  const MockConfigService = {
+    variantsUuid: 'testVariantsUuid',
+    locale: 'testLocale',
+  };
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$q_, _$controller_, _$rootScope_, _SessionService_, _HstService_) => {
+    inject((_$q_, _$controller_, _$rootScope_, _SessionService_, _HstService_, _HippoIframeService_, _FeedbackService_) => {
       $q = _$q_;
       $controller = _$controller_;
       $rootScope = _$rootScope_;
       SessionService = _SessionService_;
       HstService = _HstService_;
+      HippoIframeService = _HippoIframeService_;
+      FeedbackService = _FeedbackService_;
 
       spyOn(HstService, 'doGetWithParams');
+      spyOn(HstService, 'doPost');
       spyOn(SessionService, 'registerInitCallback');
       spyOn(SessionService, 'unregisterInitCallback');
+      spyOn(HippoIframeService, 'reload');
+      spyOn(FeedbackService, 'showError');
     });
   });
 
   it('doesn\'t attempt to retrieve the global variants if the corresponding uuid is not present', () => {
-    const MockConfigService = {};
     const scope = $rootScope.$new();
     spyOn(scope, '$on');
 
     ViewAsCtrl = $controller('ViewAsCtrl', {
       $scope: scope,
-      ConfigService: MockConfigService,
+      ConfigService: {},
       HstService,
       SessionService,
     });
@@ -64,13 +74,46 @@ describe('ChannelCtrl', () => {
     expect(SessionService.unregisterInitCallback).toHaveBeenCalledWith('reloadGlobalVariants');
   });
 
+  it('sets the global variant if the selection changes', () => {
+    const scope = $rootScope.$new();
+    spyOn(scope, '$watch');
+
+    ViewAsCtrl = $controller('ViewAsCtrl', {
+      $scope: scope,
+      ConfigService: { rootUuid: 'rootUuid' },
+      HstService,
+      HippoIframeService,
+      FeedbackService,
+    });
+
+    expect(scope.$watch.calls.mostRecent().args[0]).toBe('viewAs.selectedVariant');
+    const variantChangedCallback = scope.$watch.calls.mostRecent().args[1];
+
+    // ignore the initial call
+    variantChangedCallback({ id: 'id' }, undefined);
+    expect(HstService.doPost).not.toHaveBeenCalled();
+
+    // do nothing when keeping the same id
+    variantChangedCallback({ id: 'id' }, { id: 'id' });
+    expect(HstService.doPost).not.toHaveBeenCalled();
+
+    // talk to backend when ID changes
+    HstService.doPost.and.returnValue($q.when());
+    variantChangedCallback({ id: 'id2' }, { id: 'id1' });
+    expect(HstService.doPost.calls.mostRecent().args).toEqual([null, 'rootUuid', 'setvariant', 'id2']);
+    expect(HippoIframeService.reload).not.toHaveBeenCalled();
+    $rootScope.$digest();
+    expect(HippoIframeService.reload).toHaveBeenCalled();
+
+    // flash a toast if the backend returns an error
+    HstService.doPost.and.returnValue($q.reject());
+    variantChangedCallback({ id: 'id2', name: 'name2' }, { id: 'id1' });
+    $rootScope.$digest();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_RELEVANCE_VARIANT_SELECTION_FAILED', { variant: 'name2' });
+  });
+
   it('has no global variants if retrieving them fails', () => {
-    const deferred = $q.defer();
-    const MockConfigService = {
-      variantsUuid: 'testVariantsUuid',
-      locale: 'testLocale',
-    };
-    HstService.doGetWithParams.and.returnValue(deferred.promise);
+    HstService.doGetWithParams.and.returnValue($q.reject());
 
     ViewAsCtrl = $controller('ViewAsCtrl', {
       $scope: $rootScope.$new(),
@@ -80,18 +123,14 @@ describe('ChannelCtrl', () => {
 
     expect(HstService.doGetWithParams).toHaveBeenCalledWith('testVariantsUuid', { locale: 'testLocale' }, 'globalvariants');
 
-    deferred.reject();
     $rootScope.$digest();
 
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE');
     expect(ViewAsCtrl.globalVariants).toEqual([]);
     expect(ViewAsCtrl.selectedVariant).toBeUndefined();
   });
 
   it('selects the first variant by default', () => {
-    const MockConfigService = {
-      variantsUuid: 'testVariantsUuid',
-      locale: 'testLocale',
-    };
     const globalVariants = [
       { id: 'id1', name: 'name1' },
       { id: 'id2', name: 'name2', group: 'group2' },
@@ -110,10 +149,6 @@ describe('ChannelCtrl', () => {
   });
 
   it('preserves the selection by ID', () => {
-    const MockConfigService = {
-      variantsUuid: 'testVariantsUuid',
-      locale: 'testLocale',
-    };
     const globalVariants1 = [
       { id: 'id1', name: 'name1' },
       { id: 'id2', name: 'name2', group: 'group2' },

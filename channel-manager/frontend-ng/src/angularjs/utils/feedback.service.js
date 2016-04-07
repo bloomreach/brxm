@@ -24,10 +24,10 @@ export class FeedbackService {
     this.$mdToast = $mdToast;
   }
 
-  showError(errorKey, parentJQueryElement = $('hippo-iframe')) {
+  showError(errorKey, params, parentJQueryElement = $('hippo-iframe')) {
     this.$mdToast.show(
       this.$mdToast.simple()
-        .textContent(this.$translate.instant(errorKey))
+        .textContent(this.$translate.instant(errorKey, params))
         .position('top right')
         .hideDelay(HIDE_DELAY_IN_MS)
         .parent(parentJQueryElement)
