@@ -1,0 +1,10 @@
+{
+  "dummybundles" : {
+    "en" : {
+      "key" : "value"
+    },
+    "nl" : {
+      "key" : "waarde"
+    }
+  }
+}
