@@ -74,7 +74,7 @@
     _setChannel: function(channelId) {
       return new Hippo.Future(function (success, failure) {
         this._reloadChannels().when(function (channelStore) {
-          var channelRecord = channelStore.getById(channelId);
+          var channelRecord = this._getChannelRecord(channelStore, channelId);
           if (channelRecord) {
             this._initialize(channelRecord.json);
             success(channelRecord);
@@ -83,6 +83,15 @@
           }
         }.bind(this));
       }.bind(this));
+    },
+
+    _getChannelRecord: function(channelStore, channelId) {
+      var channelRecord = channelStore.getById(channelId);
+      if (!channelRecord && channelId.endsWith('-preview')) {
+        // try to use the live channel instead.
+        channelRecord = channelStore.getById(channelId.replace(/-preview$/, ''));
+      }
+      return channelRecord;
     },
 
     _initialize: function(channel) {
