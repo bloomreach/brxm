@@ -23,7 +23,7 @@
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   
-  <name>Hippo Translations Test Dummy</name>
+  <name>Hippo CMS Translations Tooling Test Dummy</name>
   <artifactId>hippo-translations-test-dummy</artifactId>
   <packaging>jar</packaging>
   

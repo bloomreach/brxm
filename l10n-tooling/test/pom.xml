@@ -23,7 +23,7 @@
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   
-  <name>Hippo Translations Tests</name>
+  <name>Hippo CMS Translations Tooling Tests</name>
   <artifactId>hippo-translations-tests</artifactId>
   <packaging>pom</packaging>
 

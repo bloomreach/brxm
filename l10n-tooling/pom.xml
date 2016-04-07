@@ -24,7 +24,7 @@
     <relativePath/>
   </parent>
 
-  <name>Hippo CMS Translations Tooling</name>
+  <name>Hippo CMS Translations Tooling Parent</name>
   <groupId>org.onehippo.cms.translations</groupId>
   <artifactId>hippo-translations-tooling-parent</artifactId>
   <version>1.0.0-SNAPSHOT</version>
