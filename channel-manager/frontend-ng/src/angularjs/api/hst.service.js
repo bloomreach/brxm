@@ -92,12 +92,8 @@ export class HstService {
   }
 
   _serializeParams(params) {
-    const str = [];
-    for (const param in params) {
-      if (params.hasOwnProperty(param)) {
-        str.push(`${encodeURIComponent(param)}=${encodeURIComponent(params[param])}`);
-      }
-    }
+    const str = Object.keys(params)
+      .map((param) => `${encodeURIComponent(param)}=${encodeURIComponent(params[param])}`);
     return str.join('&');
   }
 

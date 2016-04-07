@@ -47,10 +47,6 @@ export class SessionService {
   }
 
   _serveInitCallbacks() {
-    for (const id in this._initCallbacks) {
-      if (this._initCallbacks.hasOwnProperty(id)) {
-        this._initCallbacks[id]();
-      }
-    }
+    Object.keys(this._initCallbacks).forEach((id) => this._initCallbacks[id]());
   }
 }

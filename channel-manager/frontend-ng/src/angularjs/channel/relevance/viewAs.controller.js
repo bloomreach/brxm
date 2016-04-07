@@ -51,13 +51,7 @@ export class ViewAsCtrl {
     const oldSelectedVariantId = this.selectedVariant && this.selectedVariant.id;
 
     if (oldSelectedVariantId) {
-      delete this.selectedVariant;
-      this.globalVariants.some((variant) => {
-        if (variant.id === oldSelectedVariantId) {
-          this.selectedVariant = variant;
-        }
-        return !!this.selectedVariant;
-      });
+      this.selectedVariant = this.globalVariants.find((variant) => (variant.id === oldSelectedVariantId));
     }
 
     // fallback to "Default" which is sorted first by the backend.
