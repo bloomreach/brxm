@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -171,9 +170,9 @@ public class RootResource extends AbstractConfigResource {
     }
 
     @POST
-    @Path("/setvariant/")
+    @Path("/setvariant/{variantId}/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response setVariant(@Context HttpServletRequest servletRequest, @FormParam("variant") String variant) {
+    public Response setVariant(@Context HttpServletRequest servletRequest, @PathParam("variantId") String variant) {
         servletRequest.getSession().setAttribute(ContainerConstants.RENDER_VARIANT, variant);
         log.info("Variant '{}' set", variant);
         return ok("Variant set");
