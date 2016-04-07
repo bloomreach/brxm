@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { ComponentElement } from '../../page/element/componentElement';
+
 const MIN_HEIGHT = '40px';
 
 export class OverlayElementCtrl {
@@ -77,5 +79,13 @@ export class OverlayElementCtrl {
     }
 
     return $(div);
+  }
+
+  hasExperiment() {
+    return (this.structureElement instanceof ComponentElement) && !!this.structureElement.getExperimentId();
+  }
+
+  getExperimentStateIcon() {
+    return (this.structureElement instanceof ComponentElement) && this.structureElement.getExperimentStateIcon();
   }
 }

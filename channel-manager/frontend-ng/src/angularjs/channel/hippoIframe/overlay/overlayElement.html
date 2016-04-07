@@ -15,3 +15,4 @@
   -->
 
 <span class="overlay-label">{{ overlayElement.getLabel() }}</span>
+<img class="overlay-experiment" ng-if="overlayElement.hasExperiment()" ng-src="{{ overlayElement.getExperimentStateIcon() }}">
