@@ -18,15 +18,15 @@ const SIDENAVS = ['components'];
 
 export class ChannelCtrl {
 
-  constructor($log, $scope, $translate, $mdDialog, $mdSidenav, ChannelService, ScalingService, SessionService, ComponentAdderService, ConfigService, HippoIframeService, FeedbackService) {
+  constructor($log, $scope, $translate, $mdSidenav, ChannelService, DialogService, ScalingService, SessionService, ComponentAdderService, ConfigService, HippoIframeService, FeedbackService) {
     'ngInject';
 
     this.$log = $log;
     this.$scope = $scope;
     this.$translate = $translate;
-    this.$mdDialog = $mdDialog;
     this.$mdSidenav = $mdSidenav;
     this.ChannelService = ChannelService;
+    this.DialogService = DialogService;
     this.ScalingService = ScalingService;
     this.SessionService = SessionService;
     this.ConfigService = ConfigService;
@@ -167,13 +167,12 @@ export class ChannelCtrl {
   }
 
   _confirmDiscard() {
-    const confirm = this.$mdDialog
-      .confirm()
+    const confirm = this.DialogService.confirm()
       .title(this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_TITLE'))
       .textContent(this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_MESSAGE'))
       .ok(this.$translate.instant('BUTTON_YES'))
       .cancel(this.$translate.instant('BUTTON_NO'));
 
-    return this.$mdDialog.show(confirm);
+    return this.DialogService.show(confirm);
   }
 }

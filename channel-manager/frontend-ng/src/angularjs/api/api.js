@@ -17,6 +17,7 @@
 import { CatalogService } from './catalog.service';
 import { CmsService } from './cms.service';
 import { ConfigService } from './config.service';
+import { DialogService } from './dialog.service';
 import { HstService } from './hst.service';
 import { SessionService } from './session.service';
 import { HstConstants } from './hst.constants';
@@ -26,6 +27,7 @@ export const channelManagerApi = angular
   .service('CatalogService', CatalogService)
   .service('CmsService', CmsService)
   .service('ConfigService', ConfigService)
+  .service('DialogService', DialogService)
   .service('HstService', HstService)
   .service('SessionService', SessionService)
   .constant('HstConstants', HstConstants);
