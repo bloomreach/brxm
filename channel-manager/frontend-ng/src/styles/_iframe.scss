@@ -27,6 +27,7 @@
 
 .channel-iframe-scroll {
   position: relative;
+  overflow-x: scroll;
   background-color: $scroll-bgcolor;
   box-shadow: 0px 0px 20px $black-shadow;
 }

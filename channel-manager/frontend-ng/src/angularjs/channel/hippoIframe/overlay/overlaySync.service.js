@@ -68,23 +68,28 @@ export class OverlaySyncService {
   }
 
   syncIframe() {
-    this._syncHeight();
+    this._syncDimensions();
     this._syncOverlayElements();
   }
 
-  _syncHeight() {
+  _syncDimensions() {
     if (this.iframeJQueryElement && this.overlayJQueryElement) {
       const doc = this._getIframeWindow().document;
 
       if (doc) {
         // Reset the height, as the document height will always be at least the iframe height
         this.iframeJQueryElement.height('');
+        this.iframeJQueryElement.width('');
         // Prevent weird twitching at certain widths
         $(doc.documentElement).css('overflow', 'hidden');
 
         const height = doc.body.clientHeight;
+        const width = $(doc).width();
+
         this.iframeJQueryElement.height(height);
+        this.iframeJQueryElement.width(width);
         this.overlayJQueryElement.height(height);
+        this.overlayJQueryElement.width(width);
       }
     }
   }
