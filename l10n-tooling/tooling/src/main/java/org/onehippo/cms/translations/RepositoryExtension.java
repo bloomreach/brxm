@@ -114,7 +114,7 @@ public class RepositoryExtension {
     }
 
     public static RepositoryExtension create() throws IOException {
-        try (final InputStream in = RepositoryExtension.class.getResourceAsStream("empty-extension.xml")) {
+        try (final InputStream in = RepositoryExtension.class.getResourceAsStream("hippoecm-extension.xml")) {
             return load(in);
         }
     }

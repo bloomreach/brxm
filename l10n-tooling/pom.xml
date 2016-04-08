@@ -113,7 +113,7 @@
             <configuration>
               <excludes combine.children="append">
                 <!-- Apache licensed  -->
-                <exclude>impl/src/main/java/com/onehippo/cms7/bccm/MavenComparableVersion.java</exclude>
+                
               </excludes>
             </configuration>
           </plugin>

@@ -19,9 +19,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.Test;
-import org.onehippo.cms.translations.BundleType;
-import org.onehippo.cms.translations.ResourceBundle;
-import org.onehippo.cms.translations.WicketResourceBundleLoader;
 
 import static org.junit.Assert.assertEquals;
 
@@ -32,7 +29,7 @@ public class WicketResourceBundleLoaderTest {
         final Collection<ResourceBundle> resourceBundles = new WicketResourceBundleLoader(Arrays.asList("en")).loadBundles();
         assertEquals(1, resourceBundles.size());
         ResourceBundle bundle = resourceBundles.iterator().next();
-        assertEquals("com/onehippo/cms7/localizer/test/DummyWicketPlugin.properties", bundle.getName());
+        assertEquals("org/onehippo/cms/translations/test/DummyWicketPlugin.properties", bundle.getName());
         assertEquals(BundleType.WICKET, bundle.getType());
         assertEquals(1, bundle.getEntries().size());
         assertEquals("en", bundle.getLocale());

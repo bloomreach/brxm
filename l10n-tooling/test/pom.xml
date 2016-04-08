@@ -24,7 +24,7 @@
   </parent>
   
   <name>Hippo CMS Translations Tooling Tests</name>
-  <artifactId>hippo-translations-tests</artifactId>
+  <artifactId>hippo-translations-tooling-tests</artifactId>
   <packaging>pom</packaging>
 
   <modules>

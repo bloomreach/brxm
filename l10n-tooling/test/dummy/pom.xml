@@ -19,7 +19,7 @@
 
   <parent>
     <groupId>org.onehippo.cms.translations</groupId>
-    <artifactId>hippo-translations-tests</artifactId>
+    <artifactId>hippo-translations-tooling-tests</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   
