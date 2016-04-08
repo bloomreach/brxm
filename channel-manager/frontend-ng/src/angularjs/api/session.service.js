@@ -21,6 +21,7 @@ export class SessionService {
     this.HstService = HstService;
 
     this._canWrite = false;
+    this._initCallbacks = {};
   }
 
   initialize(channel) {
@@ -28,11 +29,24 @@ export class SessionService {
       .initializeSession(channel.hostname, channel.mountId)
       .then((canWrite) => {
         this._canWrite = canWrite;
+        this._serveInitCallbacks();
         return channel;
       });
   }
 
   hasWriteAccess() {
     return this._canWrite;
+  }
+
+  registerInitCallback(id, callback) {
+    this._initCallbacks[id] = callback;
+  }
+
+  unregisterInitCallback(id) {
+    delete this._initCallbacks[id];
+  }
+
+  _serveInitCallbacks() {
+    Object.keys(this._initCallbacks).forEach((id) => this._initCallbacks[id]());
   }
 }

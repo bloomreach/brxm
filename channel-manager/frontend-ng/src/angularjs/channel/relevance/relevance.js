@@ -14,24 +14,12 @@
  * limitations under the License.
  */
 
-const HIDE_DELAY_IN_MS = 3000;
+import { ViewAsDirective } from './viewAs.directive';
+import { ViewAsCtrl } from './viewAs.controller';
 
-export class FeedbackService {
-  constructor($translate, $mdToast) {
-    'ngInject';
-
-    this.$translate = $translate;
-    this.$mdToast = $mdToast;
-  }
-
-  showError(errorKey, params, parentJQueryElement = $('hippo-iframe')) {
-    this.$mdToast.show(
-      this.$mdToast.simple()
-        .textContent(this.$translate.instant(errorKey, params))
-        .position('top right')
-        .hideDelay(HIDE_DELAY_IN_MS)
-        .parent(parentJQueryElement)
-    );
-  }
-}
-
+export const channelRelevanceModule = angular
+  .module('hippo-cm.channel.relevance', [
+    'hippo-cm-api',
+  ])
+  .controller('ViewAsCtrl', ViewAsCtrl)
+  .directive('relevanceViewAs', ViewAsDirective);
