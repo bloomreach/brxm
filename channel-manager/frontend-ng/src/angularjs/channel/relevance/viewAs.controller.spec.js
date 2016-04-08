@@ -63,8 +63,6 @@ describe('ChannelCtrl', () => {
     ViewAsCtrl = $controller('ViewAsCtrl', {
       $scope: scope,
       ConfigService: {},
-      HstService,
-      SessionService,
     });
 
     expect(HstService.doGetWithParams).not.toHaveBeenCalled();
@@ -84,9 +82,6 @@ describe('ChannelCtrl', () => {
     ViewAsCtrl = $controller('ViewAsCtrl', {
       $scope: scope,
       ConfigService: { rootUuid: 'rootUuid' },
-      HstService,
-      HippoIframeService,
-      FeedbackService,
     });
 
     expect(scope.$watch.calls.mostRecent().args[0]).toBe('viewAs.selectedVariant');
@@ -121,7 +116,6 @@ describe('ChannelCtrl', () => {
     ViewAsCtrl = $controller('ViewAsCtrl', {
       $scope: $rootScope.$new(),
       ConfigService: MockConfigService,
-      HstService,
     });
 
     expect(HstService.doGetWithParams).toHaveBeenCalledWith('testVariantsUuid', { locale: 'testLocale' }, 'globalvariants');
@@ -144,7 +138,6 @@ describe('ChannelCtrl', () => {
     ViewAsCtrl = $controller('ViewAsCtrl', {
       $scope: $rootScope.$new(),
       ConfigService: MockConfigService,
-      HstService,
     });
     $rootScope.$digest();
 
@@ -162,7 +155,6 @@ describe('ChannelCtrl', () => {
     ViewAsCtrl = $controller('ViewAsCtrl', {
       $scope: $rootScope.$new(),
       ConfigService: MockConfigService,
-      HstService,
     });
     $rootScope.$digest();
 
@@ -188,8 +180,6 @@ describe('ChannelCtrl', () => {
     ViewAsCtrl = $controller('ViewAsCtrl', {
       $scope: $rootScope.$new(),
       ConfigService: MockConfigService,
-      HstService,
-      SessionService,
     });
     $rootScope.$digest();
 
