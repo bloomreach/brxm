@@ -26,6 +26,7 @@ describe('ChannelCtrl', () => {
   let SessionService;
   let HstService;
   let HippoIframeService;
+  let PageMetaDataService;
   let FeedbackService;
   const MockConfigService = {
     variantsUuid: 'testVariantsUuid',
@@ -35,13 +36,15 @@ describe('ChannelCtrl', () => {
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$q_, _$controller_, _$rootScope_, _SessionService_, _HstService_, _HippoIframeService_, _FeedbackService_) => {
+    inject((_$q_, _$controller_, _$rootScope_, _SessionService_, _HstService_, _HippoIframeService_,
+            _PageMetaDataService_, _FeedbackService_) => {
       $q = _$q_;
       $controller = _$controller_;
       $rootScope = _$rootScope_;
       SessionService = _SessionService_;
       HstService = _HstService_;
       HippoIframeService = _HippoIframeService_;
+      PageMetaDataService = _PageMetaDataService_;
       FeedbackService = _FeedbackService_;
 
       spyOn(HstService, 'doGetWithParams');
@@ -130,7 +133,26 @@ describe('ChannelCtrl', () => {
     expect(ViewAsCtrl.selectedVariant).toBeUndefined();
   });
 
-  it('selects the first variant by default', () => {
+  it('selects the rendered variant when there is no selected variant yet', () => {
+    const globalVariants = [
+      { id: 'id1', name: 'name1' },
+      { id: 'id2', name: 'name2', group: 'group2' },
+    ];
+    HstService.doGetWithParams.and.returnValue($q.when({ data: globalVariants }));
+    spyOn(PageMetaDataService, 'getRenderVariant').and.returnValue('id2');
+
+    ViewAsCtrl = $controller('ViewAsCtrl', {
+      $scope: $rootScope.$new(),
+      ConfigService: MockConfigService,
+      HstService,
+    });
+    $rootScope.$digest();
+
+    expect(ViewAsCtrl.globalVariants).toBe(globalVariants);
+    expect(ViewAsCtrl.selectedVariant).toBe(globalVariants[1]);
+  });
+
+  it('selects the first variant as a fallback', () => {
     const globalVariants = [
       { id: 'id1', name: 'name1' },
       { id: 'id2', name: 'name2', group: 'group2' },

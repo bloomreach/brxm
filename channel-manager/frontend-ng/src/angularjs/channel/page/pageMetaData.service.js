@@ -39,4 +39,9 @@ export class PageMetaDataService {
   getChannelId() {
     return this.data[this.HST.CHANNEL_ID];
   }
+
+  getRenderVariant() {
+    return this.data[this.HST.RENDER_VARIANT];
+  }
+
 }

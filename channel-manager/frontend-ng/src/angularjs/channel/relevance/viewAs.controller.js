@@ -15,13 +15,14 @@
  */
 
 export class ViewAsCtrl {
-  constructor($scope, $translate, ConfigService, SessionService, HstService, HippoIframeService, FeedbackService) {
+  constructor($scope, $translate, ConfigService, SessionService, HstService, HippoIframeService, PageMetaDataService, FeedbackService) {
     'ngInject';
 
     this.$translate = $translate;
     this.ConfigService = ConfigService;
     this.HstService = HstService;
     this.HippoIframeService = HippoIframeService;
+    this.PageMetaDataService = PageMetaDataService;
     this.FeedbackService = FeedbackService;
 
     this.globalVariants = [];
@@ -54,7 +55,7 @@ export class ViewAsCtrl {
   }
 
   _updateSelectedVariant() {
-    const oldSelectedVariantId = this.selectedVariant && this.selectedVariant.id;
+    const oldSelectedVariantId = (this.selectedVariant && this.selectedVariant.id) || this.PageMetaDataService.getRenderVariant();
 
     if (oldSelectedVariantId) {
       this.selectedVariant = this.globalVariants.find((variant) => (variant.id === oldSelectedVariantId));
