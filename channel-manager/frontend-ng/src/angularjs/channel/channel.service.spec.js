@@ -323,4 +323,34 @@ describe('ChannelService', () => {
 
     expect(ChannelService.channel.changedBySet).toEqual(['anotherUser']);
   });
+
+  it('should update the channel\'s preview config flag after successfully creating the preview config', () => {
+    channelMock.previewHstConfigExists = false;
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+
+    expect(ChannelService.hasPreviewConfiguration()).toBe(false);
+
+    HstService.doPost.calls.reset();
+    HstService.doPost.and.returnValue($q.when());
+
+    ChannelService.createPreviewConfiguration();
+    expect(HstService.doPost).toHaveBeenCalledWith(null, 'mountId', 'edit');
+
+    $rootScope.$digest();
+    expect(ChannelService.hasPreviewConfiguration()).toBe(true);
+  });
+
+  it('should not update the channel\'s preview config flag if creating a preview config failed', () => {
+    channelMock.previewHstConfigExists = false;
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+
+    HstService.doPost.and.returnValue($q.reject());
+
+    ChannelService.createPreviewConfiguration();
+    $rootScope.$digest();
+
+    expect(ChannelService.hasPreviewConfiguration()).toBe(false);
+  });
 });

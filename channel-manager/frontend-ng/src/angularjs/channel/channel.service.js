@@ -122,11 +122,14 @@ export class ChannelService {
   }
 
   hasPreviewConfiguration() {
-    return this.channel.previewHstConfigExists === 'true';
+    return this.channel.previewHstConfigExists === true;
   }
 
   createPreviewConfiguration() {
-    return this.HstService.doPost(null, this._getMountId(), 'edit');
+    return this.HstService.doPost(null, this._getMountId(), 'edit')
+      .then(() => {
+        this.channel.previewHstConfigExists = true;
+      });
   }
 
   getCatalog() {
