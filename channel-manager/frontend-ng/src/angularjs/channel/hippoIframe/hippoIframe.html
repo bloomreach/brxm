@@ -18,7 +18,7 @@
   <div class="channel-iframe-canvas" flex layout="row" layout-align="center">
 
     <div class="channel-iframe-scroll" flex="grow" layout="row">
-      <iframe flex class="qa-view cm-scale" ng-src="{{ iframe.path }}"></iframe>
+      <iframe flex="noshrink" class="qa-view cm-scale" ng-src="{{ iframe.path }}"></iframe>
 
       <div class="overlay qa-overlay cm-scale" component-adder>
         <div ng-repeat="container in iframe.getContainers()" class="qa-container">

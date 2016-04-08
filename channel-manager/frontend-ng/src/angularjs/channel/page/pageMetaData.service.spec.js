@@ -59,4 +59,11 @@ describe('PageMetaDataService', () => {
     });
     expect(PageMetaDataService.getChannelId()).toBe('channelX');
   });
+
+  it('provides the render variant of the current page', () => {
+    PageMetaDataService.add({
+      'HST-Render-Variant': 'variantX',
+    });
+    expect(PageMetaDataService.getRenderVariant()).toBe('variantX');
+  });
 });

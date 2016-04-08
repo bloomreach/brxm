@@ -68,23 +68,30 @@ export class OverlaySyncService {
   }
 
   syncIframe() {
-    this._syncHeight();
+    this._syncDimensions();
     this._syncOverlayElements();
   }
 
-  _syncHeight() {
+  _syncDimensions() {
     if (this.iframeJQueryElement && this.overlayJQueryElement) {
       const doc = this._getIframeWindow().document;
 
       if (doc) {
         // Reset the height, as the document height will always be at least the iframe height
         this.iframeJQueryElement.height('');
-        // Prevent weird twitching at certain widths
+
+        // Avoid scroll bars inside the iframe, we want to scroll the "scroll",
+        // moving the iframe and the overlay in sync.
         $(doc.documentElement).css('overflow', 'hidden');
 
         const height = doc.body.clientHeight;
         this.iframeJQueryElement.height(height);
         this.overlayJQueryElement.height(height);
+
+        this.iframeJQueryElement.width('');
+        const width = $(doc).width();
+        this.iframeJQueryElement.width(width);
+        this.overlayJQueryElement.width(width);
       }
     }
   }

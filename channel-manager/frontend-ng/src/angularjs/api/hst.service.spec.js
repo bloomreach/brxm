@@ -85,6 +85,20 @@ describe('HstService', () => {
     $httpBackend.flush();
   });
 
+  it('can do a GET call with query parameters', () => {
+    const params = {
+      param1: 'value1',
+      'param/2': 'value/2',
+    };
+    $httpBackend.expectGET(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three?param1=value1&param%2F2=value%2F2`, {
+      'CMS-User': 'testUser',
+      FORCE_CLIENT_HOST: 'true',
+      Accept: 'application/json, text/plain, */*',
+    }).respond(200);
+    hstService.doGetWithParams('some-uuid', params, 'one', 'two', 'three').catch(fail);
+    $httpBackend.flush();
+  });
+
   it('returns a rejected promise when a GET call fails', () => {
     $httpBackend.expectGET(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`).respond(500);
     hstService.doGet('some-uuid', 'one', 'two', 'three').then(fail);

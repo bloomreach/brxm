@@ -14,34 +14,14 @@
  * limitations under the License.
  */
 
-export class PageMetaDataService {
+export function ViewAsDirective() {
+  'ngInject';
 
-  constructor(HstConstants) {
-    'ngInject';
-
-    this.HST = HstConstants;
-    this.clear();
-  }
-
-  clear() {
-    this.data = {};
-  }
-
-  // There can be multiple contributions to the page meta-data. Therefore, we "accumulate" the data here.
-  add(data) {
-    Object.assign(this.data, data);
-  }
-
-  get() {
-    return this.data;
-  }
-
-  getChannelId() {
-    return this.data[this.HST.CHANNEL_ID];
-  }
-
-  getRenderVariant() {
-    return this.data[this.HST.RENDER_VARIANT];
-  }
-
+  return {
+    restrict: 'E',
+    scope: {},
+    templateUrl: 'channel/relevance/viewAs.html',
+    controller: 'ViewAsCtrl',
+    controllerAs: 'viewAs',
+  };
 }

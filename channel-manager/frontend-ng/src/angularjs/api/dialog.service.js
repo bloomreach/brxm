@@ -14,34 +14,26 @@
  * limitations under the License.
  */
 
-export class PageMetaDataService {
+export class DialogService {
 
-  constructor(HstConstants) {
+  constructor($mdDialog, CmsService) {
     'ngInject';
 
-    this.HST = HstConstants;
-    this.clear();
+    this.$mdDialog = $mdDialog;
+    this.CmsService = CmsService;
   }
 
-  clear() {
-    this.data = {};
+  confirm() {
+    return this.$mdDialog.confirm({
+      onRemoving: () => {
+        this.CmsService.publish('remove-mask');
+      },
+    });
   }
 
-  // There can be multiple contributions to the page meta-data. Therefore, we "accumulate" the data here.
-  add(data) {
-    Object.assign(this.data, data);
-  }
-
-  get() {
-    return this.data;
-  }
-
-  getChannelId() {
-    return this.data[this.HST.CHANNEL_ID];
-  }
-
-  getRenderVariant() {
-    return this.data[this.HST.RENDER_VARIANT];
+  show(dialog) {
+    this.CmsService.publish('show-mask');
+    return this.$mdDialog.show(dialog);
   }
 
 }

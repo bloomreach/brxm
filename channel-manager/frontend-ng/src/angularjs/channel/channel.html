@@ -23,6 +23,7 @@
                ng-if="channelCtrl.showComponentsButton()">
       <md-icon title="{{ 'TOOLBAR_BUTTON_COMPONENTS' | translate }}" class="material-icons">library_add</md-icon>
     </md-button>
+    <relevance-view-as></relevance-view-as>
     <span flex></span>
     <md-button ng-repeat="viewPort in channelCtrl.viewPorts"
                ng-click="channelCtrl.selectViewPort(viewPort)"
