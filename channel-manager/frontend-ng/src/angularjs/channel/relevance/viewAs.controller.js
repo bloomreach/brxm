@@ -42,14 +42,14 @@ export class ViewAsCtrl {
       const params = {
         locale: this.ConfigService.locale,
       };
-      this.HstService.doGetWithParams(this.ConfigService.variantsUuid, params, 'globalvariants').then((response) => {
-        if (response && response.data) {
-          this.globalVariants = response.data;
-          this._updateSelectedVariant();
-        }
-      }, () => {
-        this.FeedbackService.showError('ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE');
-      });
+      this.HstService.doGetWithParams(this.ConfigService.variantsUuid, params, 'globalvariants')
+        .then((response) => {
+          if (response && response.data) {
+            this.globalVariants = response.data;
+            this._updateSelectedVariant();
+          }
+        })
+        .catch(() => this.FeedbackService.showError('ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE'));
     }
   }
 
