@@ -70,13 +70,11 @@ export class ViewAsCtrl {
   _setVariant(newVariant, oldVariant) {
     if (oldVariant && newVariant && newVariant.id !== oldVariant.id) {
       // TODO: disable other actions while busy reloading?
-      this.HstService.doPost(null, this.ConfigService.rootUuid, 'setvariant', newVariant.id).then(() => {
-        this.HippoIframeService.reload();
-      }, () => {
-        this.FeedbackService.showError('ERROR_RELEVANCE_VARIANT_SELECTION_FAILED', {
+      this.HstService.doPost(null, this.ConfigService.rootUuid, 'setvariant', newVariant.id)
+        .then(() => this.HippoIframeService.reload())
+        .catch(() => this.FeedbackService.showError('ERROR_RELEVANCE_VARIANT_SELECTION_FAILED', {
           variant: this.makeDisplayName(newVariant),
-        });
-      });
+        }));
     }
   }
 
