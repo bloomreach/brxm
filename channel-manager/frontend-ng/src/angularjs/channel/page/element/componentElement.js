@@ -17,7 +17,6 @@
 /* eslint-disable prefer-const */
 
 import { PageStructureElement } from './pageStructureElement';
-import { TargetingConstants } from '../../relevance/targeting.constants';
 
 export class ComponentElement extends PageStructureElement {
   constructor(startCommentDomElement, metaData, container, commentProcessor) {
@@ -38,25 +37,5 @@ export class ComponentElement extends PageStructureElement {
 
   setContainer(container) {
     this.container = container;
-  }
-
-  getExperimentId() {
-    return this.metaData[TargetingConstants.EXPERIMENT_ID];
-  }
-
-  getExperimentState() {
-    return this.metaData[TargetingConstants.EXPERIMENT_STATE];
-  }
-
-  getExperimentStateIcon() {
-    const iconPathPrefix = 'images';
-
-    const IconPaths = {
-      CREATED: 'orange-flask.png',
-      RUNNING: 'blue-flask.png',
-      COMPLETED: 'green-flask.png',
-    };
-
-    return `${iconPathPrefix}/${IconPaths[this.getExperimentState()]}`;
   }
 }
