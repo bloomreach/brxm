@@ -14,11 +14,48 @@
   <version>0</version>
   <packaging>pom</packaging>
   
+  <properties>
+    <hippo.translations-tooling.version>1.0.0-SNAPSHOT</hippo.translations-tooling.version>
+    <export.locale/>
+    <export.format>Default</export.format>
+    <import.locale/>
+    <import.format>Default</import.format>
+    <import.file/>
+  </properties>
+  
   <scm>
     <connection>scm:git:https://code.onehippo.org/cms-community/hippo-cms-translations.git</connection>
     <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-cms-translations.git</developerConnection>
     <url>https://code.onehippo.org/cms-community/hippo-cms-translations</url>
   </scm>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.onehippo.cms.translations</groupId>
+      <artifactId>hippo-translations-tooling</artifactId>
+      <version>${hippo.translations-tooling.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
 
   <modules>
     <module>hippo-cms/4.0.x</module>
@@ -36,7 +73,7 @@
     <module>seo-support/3.0.x</module>
     <module>taxonomy/3.0.x</module>
   </modules>
-  
+
   <build>
     <pluginManagement>
       <plugins>
@@ -74,14 +111,14 @@
               </configuration>
             </execution>
             <execution>
-              <!-- fr locale classifier build -->
+              <!-- de locale classifier build -->
               <id>de_jar</id>
               <phase>package</phase>
               <goals>
                 <goal>jar</goal>
               </goals>
               <configuration>
-                <classifier>fr</classifier>
+                <classifier>de</classifier>
                 <classesDirectory>${project.build.outputDirectory}/de</classesDirectory>
               </configuration>
             </execution>
@@ -89,6 +126,25 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.commonjava.maven.plugins</groupId>
+        <artifactId>directory-maven-plugin</artifactId>
+        <version>0.1</version>
+        <executions>
+          <execution>
+            <id>directories</id>
+            <goals>
+              <goal>highest-basedir</goal>
+            </goals>
+            <phase>initialize</phase>
+            <configuration>
+              <property>main.basedir</property>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
     <resources>
       <resource>
         <directory>resources/extensions</directory>
@@ -134,7 +190,13 @@
                   <goal>java</goal>
                 </goals>
                 <configuration>
-                  <mainClass>com.onehippo.cms.translations.Extractor</mainClass>
+                  <mainClass>org.onehippo.cms.translations.Extractor</mainClass>
+                  <systemProperties>
+                    <systemProperty>
+                      <key>log4j.configuration</key>
+                      <value>file://${main.basedir}/config/log4j.xml</value>
+                    </systemProperty>
+                  </systemProperties>
                   <arguments>
                     <argument>${project.basedir}/resources</argument>
                     <argument>en,fr,nl,de</argument>
@@ -145,33 +207,148 @@
           </plugin>
         </plugins>
       </build>
-      <dependencies>
-        <dependency>
-          <groupId>org.onehippo.cms.translations</groupId>
-          <artifactId>hippo-translations-tooling</artifactId>
-          <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-          <scope>runtime</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-          <scope>runtime</scope>
-        </dependency>
-        <dependency>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-          <scope>runtime</scope>
-        </dependency>
-        <dependency>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-          <scope>runtime</scope>
-        </dependency>
-      </dependencies>
+    </profile>
+    <profile>
+      <id>initialize</id>
+      <build>
+        <defaultGoal>process-resources</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>initialize-registry</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <configuration>
+                  <mainClass>org.onehippo.cms.translations.Registrar</mainClass>
+                  <systemProperties>
+                    <systemProperty>
+                      <key>log4j.configuration</key>
+                      <value>file://${main.basedir}/config/log4j.xml</value>
+                    </systemProperty>
+                  </systemProperties>
+                  <arguments>
+                    <argument>initialize</argument>
+                    <argument>${project.basedir}/resources</argument>
+                    <argument>fr,nl,de</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>update</id>
+      <build>
+        <defaultGoal>process-resources</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>register-changes</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <configuration>
+                  <mainClass>org.onehippo.cms.translations.Registrar</mainClass>
+                  <systemProperties>
+                    <systemProperty>
+                      <key>log4j.configuration</key>
+                      <value>file://${main.basedir}/config/log4j.xml</value>
+                    </systemProperty>
+                  </systemProperties>
+                  <arguments>
+                    <argument>update</argument>
+                    <argument>${project.basedir}/resources</argument>
+                    <argument>fr,nl,de</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>export</id>
+      <build>
+        <defaultGoal>process-resources</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>export-changes</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <configuration>
+                  <mainClass>org.onehippo.cms.translations.Exporter</mainClass>
+                  <systemProperties>
+                    <systemProperty>
+                      <key>log4j.configuration</key>
+                      <value>file://${main.basedir}/config/log4j.xml</value>
+                    </systemProperty>
+                  </systemProperties>
+                  <arguments>
+                    <argument>${project.basedir}</argument>
+                    <argument>${export.format}</argument>
+                    <argument>${export.locale}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>import</id>
+      <build>
+        <defaultGoal>process-resources</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>import-changes</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <configuration>
+                  <mainClass>org.onehippo.cms.translations.Importer</mainClass>
+                  <systemProperties>
+                    <systemProperty>
+                      <key>log4j.configuration</key>
+                      <value>file://${main.basedir}/config/log4j.xml</value>
+                    </systemProperty>
+                  </systemProperties>
+                  <arguments>
+                    <argument>${project.basedir}</argument>
+                    <argument>${import.format}</argument>
+                    <argument>${import.locale}</argument>
+                    <argument>${import.file}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
+
 </project>
