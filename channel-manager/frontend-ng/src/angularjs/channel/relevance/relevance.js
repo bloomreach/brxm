@@ -16,10 +16,14 @@
 
 import { ViewAsDirective } from './viewAs.directive';
 import { ViewAsCtrl } from './viewAs.controller';
+import { ExperimentLabelDirective } from './experimentLabel.directive';
+import { ExperimentLabelCtrl } from './experimentLabel.controller';
 
 export const channelRelevanceModule = angular
   .module('hippo-cm.channel.relevance', [
     'hippo-cm-api',
   ])
   .controller('ViewAsCtrl', ViewAsCtrl)
-  .directive('relevanceViewAs', ViewAsDirective);
+  .directive('relevanceViewAs', ViewAsDirective)
+  .controller('ExperimentLabelCtrl', ExperimentLabelCtrl)
+  .directive('experimentLabel', ExperimentLabelDirective);

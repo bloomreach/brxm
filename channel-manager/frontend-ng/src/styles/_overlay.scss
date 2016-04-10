@@ -53,11 +53,20 @@ overlay-element {
   border: 1px solid $half-white;
   color: $white;
   font-size: 12px;
+  height: 26px;
   left: 0;
-  padding: 6px;
   position: absolute;
   top: 0;
   display: none;
+
+  .overlay-label-text {
+    padding: 0 6px;
+    display: none;
+  }
+}
+
+.overlay-label-icon {
+  color: $white;
 }
 
 .overlay-element-container {
@@ -74,7 +83,11 @@ overlay-element {
     display: block;
 
     > .overlay-label {
-      display: inline-block;
+      display: flex;
+
+      .overlay-label-text {
+        display: inline;
+      }
     }
   }
 }
@@ -86,25 +99,26 @@ overlay-element {
 
   > .overlay-label {
     background: $blue;
-    display: none;
-  }
-
-  > .overlay-experiment {
-    float: right;
-    margin-top: 2px;
-    margin-right: 2px;
   }
 
   &:hover {
     box-shadow: inset 0 0 0 1px $half-white, inset 0 0 160px 1px $blue-shadow;
 
     > .overlay-label {
-      display: inline-block;
+      display: flex; // show label unconditionally...
+
+      .overlay-label-text {
+        display: inline; // ...including text.
+      }
     }
   }
 
   &-visible {
     display: block;
+
+    > .overlay-label.has-icon {
+      display: flex; // if the label has an icon, it should always be shown.
+    }
   }
 }
 
@@ -132,7 +146,11 @@ overlay-element {
     display: block;
 
     & .overlay-label {
-      display: inline-block;
+      display: flex;
+
+      .overlay-label-text {
+        display: inline;
+      }
     }
 
     // highlight the container when dragging the component over it
