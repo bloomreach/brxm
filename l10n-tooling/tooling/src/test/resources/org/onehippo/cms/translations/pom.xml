@@ -18,7 +18,7 @@
   <modelVersion>4.0.0</modelVersion>
   
   <name>Hippo Translations Exporter Test POM</name>
-  <groupId>com.onehippo.cms7</groupId>
+  <groupId>com.onehippo.cms</groupId>
   <artifactId>hippo-translations-exporter-test</artifactId>
   <version>1.0</version>
 

@@ -29,7 +29,7 @@ class WicketResourceBundleSerializer extends ResourceBundleSerializer {
     }
 
     @Override
-    void serializeBundle(final ResourceBundle bundle) throws IOException {
+    public void serializeBundle(final ResourceBundle bundle) throws IOException {
         File bundleFile = getOrCreateFile(bundle.getFileName());
         Properties properties = new Properties();
         for (Map.Entry<String, String> entry : bundle.getEntries().entrySet()) {
@@ -41,7 +41,7 @@ class WicketResourceBundleSerializer extends ResourceBundleSerializer {
     }
 
     @Override
-    ResourceBundle deserializeBundle(final String fileName, final String name, final String locale) throws IOException {
+    public ResourceBundle deserializeBundle(final String fileName, final String name, final String locale) throws IOException {
         Properties properties = new Properties();
         File file = new File(getBaseDir(), fileName);
         try (FileReader reader = new FileReader(file)) {

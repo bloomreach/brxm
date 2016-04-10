@@ -74,7 +74,7 @@ public class RepositoryExtension {
     
     public void addResourceBundlesItem(ResourceBundle bundle) throws IOException {
         final String template = IOUtils.toString(getClass().getResourceAsStream("resourcebundles-item-template.xml"));
-        final String item = template.replace("${itemName}", getItemName(bundle)).replace("${fileName}", getLocalizedFileName(bundle));
+        final String item = template.replace("${itemName}", getItemName(bundle)).replace("${fileName}", bundle.getFileName());
         final Document itemDoc = parse(IOUtils.toInputStream(item));
         final Node itemElt = document.importNode(itemDoc.getDocumentElement(), true);
         document.getDocumentElement().appendChild(itemElt);
@@ -86,7 +86,7 @@ public class RepositoryExtension {
     }
 
     private String getItemName(final ResourceBundle bundle) {
-        return bundle.getArtifactInfo().getArtifactId() + "-" + StringUtils.substringBefore(bundle.getFileName(), ".json") + "-" + bundle.getLocale();
+        return bundle.getArtifactInfo().getArtifactId() + "-" + StringUtils.substringBefore(bundle.getFileName(), ".json");
     }
 
     public static RepositoryExtension load(final File file) throws IOException {
@@ -108,11 +108,7 @@ public class RepositoryExtension {
             throw new IOException(e);
         }
     }
-
-    private String getLocalizedFileName(final ResourceBundle bundle) {
-        return StringUtils.substringBefore(bundle.getFileName(), ".json") + "_" + bundle.getLocale() + ".json";
-    }
-
+    
     public static RepositoryExtension create() throws IOException {
         try (final InputStream in = RepositoryExtension.class.getResourceAsStream("hippoecm-extension.xml")) {
             return load(in);

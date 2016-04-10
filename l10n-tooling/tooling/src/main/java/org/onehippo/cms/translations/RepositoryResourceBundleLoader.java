@@ -103,7 +103,7 @@ class RepositoryResourceBundleLoader extends ResourceBundleLoader {
     /**
      * Collects all hippo:resourcebundle entries from a hippoecm-extension.xml file
      */
-    private static class ExtensionParser extends DefaultHandler {
+    static class ExtensionParser extends DefaultHandler {
 
         private final Collection<String> resourceBundles = new ArrayList<>();
         private boolean resourceBundlesProperty = false;
@@ -134,7 +134,7 @@ class RepositoryResourceBundleLoader extends ResourceBundleLoader {
             }
         }
 
-        private void parse(final InputStream in) throws IOException {
+        Collection<String> parse(final InputStream in) throws IOException {
             try {
                 SAXParserFactory factory = SAXParserFactory.newInstance();
                 factory.setNamespaceAware(true);
@@ -148,6 +148,7 @@ class RepositoryResourceBundleLoader extends ResourceBundleLoader {
             } catch (SAXException e) {
                 throw new IOException("SAX parsing error", e);
             }
+            return resourceBundles;
         }
 
     }

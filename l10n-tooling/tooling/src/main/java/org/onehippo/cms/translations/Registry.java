@@ -122,8 +122,12 @@ public class Registry {
                         + "_" + locale + ".json";
             }
             case WICKET: {
-                return StringUtils.substringBefore(registryFileName, "." + SUFFIX)
-                        + "_" + locale + ".properties";
+                final String baseName = StringUtils.substringBefore(registryFileName, "." + SUFFIX);
+                if (locale.equals("en")) {
+                    return baseName + ".properties";
+                } else {
+                    return baseName + "_" + locale + ".properties";
+                }
             }
         }
         throw new IllegalStateException("Unknown bundle type: " + bundleType);
@@ -148,6 +152,11 @@ public class Registry {
         final ResourceBundleSerializer serializer = ResourceBundleSerializer.create(registryDir, bundleType);
         final String bundleFileName = mapRegistryFileToResourceBundleFile(registryFile.getId(), bundleType, locale);
         return serializer.deserializeBundle(bundleFileName, bundleName, locale);
+    }
+    
+    public void saveResourceBundle(final ResourceBundle resourceBundle) throws IOException {
+        final ResourceBundleSerializer serializer = ResourceBundleSerializer.create(registryDir, resourceBundle.getType());
+        serializer.serializeBundle(resourceBundle);
     }
     
 }

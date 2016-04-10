@@ -17,26 +17,37 @@ package org.onehippo.cms.translations;
 
 import org.apache.commons.lang.StringUtils;
 
+import static org.onehippo.cms.translations.BundleType.REPOSITORY;
+
 public final class TranslationsUtils {
     
     private TranslationsUtils() {}
     
     public static String getLocalizedBundleFileName(String sourceBundleFileName, BundleType bundleType, String locale) {
-        if (locale.equals("en")) {
-            return sourceBundleFileName;
-        }
         switch (bundleType) {
             case REPOSITORY: {
                 return StringUtils.substringBefore(sourceBundleFileName, ".json") + "_" + locale + ".json";
             }
             case WICKET: {
-                return StringUtils.substringBefore(sourceBundleFileName, ".properties") + "_" + locale + ".json";
+                return sourceBundleFileName;
             }
             case ANGULAR: {
-                return StringUtils.substringBeforeLast(sourceBundleFileName, "/") + locale + ".json";
+                return StringUtils.substringBeforeLast(sourceBundleFileName, "/") + "/" + locale + ".json";
             }
         }
         throw new IllegalArgumentException("Unknown bundle type: " + bundleType);
+    }
+    
+    public static String registryKey(final ResourceBundle resourceBundle, final String bundleKey) {
+        return registryKeyPrefix(resourceBundle) + bundleKey;
+    }
+    
+    public static String registryKeyPrefix(final ResourceBundle resourceBundle) {
+        if (resourceBundle.getType() == REPOSITORY) {
+            return resourceBundle.getName() + "/";
+        }
+        return "";
+        
     }
     
 }

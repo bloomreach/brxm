@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms.translations;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -22,19 +23,24 @@ import java.util.Properties;
 public abstract class ResourceBundle {
 
     private final String name;
-    private final String fileName;
+    private String fileName;
     private final ArtifactInfo artifactInfo;
     private final String locale;
-    private final Properties properties;
+    private final Map<String, String> entries;
 
     public ResourceBundle(final String name, final String fileName, final ArtifactInfo artifactInfo, final String locale, final Properties properties) {
         this.name = name;
         this.fileName = fileName;
         this.artifactInfo = artifactInfo;
         this.locale = locale;
-        this.properties = properties;
+        entries = new HashMap<>();
+        if (properties != null) {
+            for (String key : properties.stringPropertyNames()) {
+                entries.put(key, properties.getProperty(key));
+            }
+        }
     }
-
+    
     public String getId() {
         return artifactInfo.getGroupId() + "/" + artifactInfo.getArtifactId() + "/" + artifactInfo.getVersion() + "/" + fileName;
     }
@@ -49,6 +55,10 @@ public abstract class ResourceBundle {
         return fileName;
     }
     
+    public void setFileName(final String fileName) {
+        this.fileName = fileName;
+    }
+    
     public ArtifactInfo getArtifactInfo() {
         return artifactInfo;
     }
@@ -58,11 +68,7 @@ public abstract class ResourceBundle {
     }
     
     public Map<String, String> getEntries() {
-        final Map<String, String> result = new HashMap<>();
-        for (String key : properties.stringPropertyNames()) {
-            result.put(key, properties.getProperty(key));
-        }
-        return result;
+        return entries;
     }
 
 }

@@ -16,8 +16,14 @@
 package org.onehippo.cms.translations;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.lang.StringUtils;
 
 import static org.onehippo.cms.translations.KeyData.KeyStatus.ADDED;
 import static org.onehippo.cms.translations.KeyData.KeyStatus.UPDATED;
@@ -26,9 +32,11 @@ import static org.onehippo.cms.translations.KeyData.LocaleStatus.UNRESOLVED;
 public class Exporter {
     
     private final File baseDir;
+    private final String format;
     
-    Exporter(final File baseDir) {
+    Exporter(final File baseDir, final String format) {
         this.baseDir = baseDir;
+        this.format = format;
     }
     
     File export(final String locale) throws Exception {
@@ -47,18 +55,27 @@ public class Exporter {
                 }
             }
         }
-        for (Translation translation : pending) {
-            final String referenceValue = translation.getReferenceValue();
-            System.out.println(translation.getKey() + ": " + referenceValue + ": " + translation.getTranslation());
+        final File csv = new File(baseDir, "export_" + locale + ".csv");
+        try (final FileWriter writer = new FileWriter(csv)) {
+            final String englishHeader = Locale.ENGLISH.getDisplayName(new Locale(locale));
+            final String translationLanguageHeader = new Locale(locale).getDisplayName(new Locale(locale));
+            final CSVFormat csvFormat = CSVFormat.valueOf(format).withHeader("Key", englishHeader, translationLanguageHeader);
+            final CSVPrinter printer = new CSVPrinter(writer, csvFormat);
+            for (final Translation translation : pending) {
+                printer.printRecord(translation.getFQKey(), translation.getReferenceValue(), translation.getTranslation());
+            }
         }
-
-        return null;
+        return csv;
     }
     
     public static void main(String[] args) throws Exception {
         final String baseDir = args[0];
-        final String locale = args[1];
-        new Exporter(new File(baseDir)).export(locale);
+        final String format = args[1];
+        final String locale = args[2];
+        if (StringUtils.isBlank(locale)) {
+            throw new IllegalArgumentException("Missing locale argument");
+        }
+        new Exporter(new File(baseDir), format).export(locale);
     }
     
 }

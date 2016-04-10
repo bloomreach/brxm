@@ -57,7 +57,7 @@ public class RepositoryResourceBundleSerializerTest {
         set2.put("key1", "key 1 set 2");
         set2.put("key2", "key 2 set 2");
 
-        final File test = temporaryFolder.newFile("test");
+        final File test = new File(temporaryFolder.getRoot(), "test");
         ResourceBundleSerializer serializer = new RepositoryResourceBundleSerializer(temporaryFolder.getRoot());
 
         serializer.serializeBundle(new RepositoryResourceBundle("one", test.getName(), new ArtifactInfo("test-artifact"), "en", set1));

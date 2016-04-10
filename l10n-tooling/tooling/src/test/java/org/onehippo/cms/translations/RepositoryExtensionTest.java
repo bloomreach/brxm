@@ -16,10 +16,15 @@
 package org.onehippo.cms.translations;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.util.Collection;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.onehippo.cms.translations.RepositoryResourceBundleLoader.ExtensionParser;
+
+import static org.junit.Assert.assertEquals;
 
 public class RepositoryExtensionTest {
 
@@ -27,7 +32,7 @@ public class RepositoryExtensionTest {
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();
     
     public ResourceBundle createResourceBundle() {
-        return new AngularResourceBundle("foo.bar", "foobar.json", new ArtifactInfo("test-artifact"), "nl", null);
+        return new AngularResourceBundle("", "foobar_nl.json", new ArtifactInfo("test-artifact"), "nl", null);
     }
     
     @Test
@@ -35,7 +40,8 @@ public class RepositoryExtensionTest {
         final RepositoryExtension extension = RepositoryExtension.create();
         final File file = temporaryFolder.newFile("extension.xml");
         extension.save(file);
-//        System.out.println(FileUtils.readFileToString(file));
+        final Collection<String> bundles = new ExtensionParser().parse(new FileInputStream(file));
+        assertEquals(0, bundles.size());
     }
     
     @Test
@@ -52,7 +58,8 @@ public class RepositoryExtensionTest {
         extension.addResourceBundlesItem(createResourceBundle());
         final File file = temporaryFolder.newFile("extension.xml");
         extension.save(file);
-//        System.out.println(FileUtils.readFileToString(file));
+        final Collection<String> bundles = new ExtensionParser().parse(new FileInputStream(file));
+        assertEquals(1, bundles.size());
     }
     
     @Test
@@ -62,10 +69,13 @@ public class RepositoryExtensionTest {
         extension.addResourceBundlesItem(resourceBundle);
         final File file = temporaryFolder.newFile("extension.xml");
         extension.save(file);
+        Collection<String> bundles = new ExtensionParser().parse(new FileInputStream(file));
+        assertEquals(1, bundles.size());
         extension = RepositoryExtension.load(file);
         extension.removeResourceBundlesItem(resourceBundle);
         extension.save(file);
-//        System.out.println(FileUtils.readFileToString(file));
+        bundles = new ExtensionParser().parse(new FileInputStream(file));
+        assertEquals(0, bundles.size());
     }
 
 }

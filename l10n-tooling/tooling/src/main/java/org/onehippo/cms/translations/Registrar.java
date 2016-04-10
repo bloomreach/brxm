@@ -30,7 +30,13 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cms.translations.KeyData.KeyStatus.ADDED;
+import static org.onehippo.cms.translations.KeyData.KeyStatus.CLEAN;
+import static org.onehippo.cms.translations.KeyData.KeyStatus.UPDATED;
+import static org.onehippo.cms.translations.KeyData.LocaleStatus.UNRESOLVED;
 import static org.onehippo.cms.translations.ResourceBundleLoader.getResourceBundleLoaders;
+import static org.onehippo.cms.translations.TranslationsUtils.registryKey;
+import static org.onehippo.cms.translations.TranslationsUtils.registryKeyPrefix;
 
 public class Registrar {
 
@@ -58,10 +64,11 @@ public class Registrar {
         for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(Collections.singletonList("en"))) {
             for (ResourceBundle sourceBundle : bundleLoader.loadBundles()) {
                 RegistryFile registryFile = registry.loadRegistryFile(sourceBundle);
+                registryFile.setBundleType(sourceBundle.getType());
 
                 for (String sourceKey : sourceBundle.getEntries().keySet()) {
-                    KeyData keyData = new KeyData(KeyData.KeyStatus.CLEAN);
-                    registryFile.putKeyData(generateRegistryKey(sourceBundle, sourceKey), keyData);
+                    KeyData keyData = new KeyData(CLEAN);
+                    registryFile.putKeyData(registryKey(sourceBundle, sourceKey), keyData);
                 }
 
                 registryFile.save();
@@ -72,7 +79,7 @@ public class Registrar {
         for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(locales)) {
             for (ResourceBundle sourceBundle : bundleLoader.loadBundles()) {
                 final RegistryFile registryFile = registry.loadRegistryFile(sourceBundle);
-                final String registryKeyPrefix = generateRegistryKeyPrefix(sourceBundle);
+                final String registryKeyPrefix = registryKeyPrefix(sourceBundle);
 
                 final Set<String> expectedKeys = registryFile.getKeys().stream()
                         .filter(str -> str.startsWith(registryKeyPrefix)).collect(Collectors.toSet());
@@ -80,7 +87,7 @@ public class Registrar {
                 // collect the source keys mapped to their registry key format
                 final Set<String> collectedKeys = new HashSet<>();
                 for (String sourceKey : sourceBundle.getEntries().keySet()) {
-                    final String registryKey = generateRegistryKey(sourceBundle, sourceKey);
+                    final String registryKey = registryKey(sourceBundle, sourceKey);
                     collectedKeys.add(registryKey);
                     if (!expectedKeys.contains(registryKey)) {
                         log.warn("Resource bundle file '{}' contains key '{}' which does not have an English reference translation",
@@ -152,27 +159,7 @@ public class Registrar {
             return null;
         }
     }
-
-    private String generateRegistryKeyPrefix(final ResourceBundle sourceBundle) {
-        switch (sourceBundle.getType()) {
-            case ANGULAR:
-                return "";
-
-            case REPOSITORY:
-                return sourceBundle.getName() + "/";
-
-            case WICKET:
-                return "";
-
-            default:
-                throw new IllegalStateException("Unknown bundle type: " + sourceBundle.getType());
-        }
-    }
-
-    private String generateRegistryKey(final ResourceBundle sourceBundle, final String sourceKey) {
-        return generateRegistryKeyPrefix(sourceBundle) + sourceKey;
-    }
-
+    
     private Set<String> getRegistryKeysForFile(RegistryFile registryFile) {
         Set<String> keySet = registryKeysByFileName.get(registryFile.getId());
         if (keySet == null) {
@@ -189,14 +176,17 @@ public class Registrar {
         final Set<String> registryKeys = getRegistryKeysForFile(registryFile);
 
         for (String sourceKey : sourceBundle.getEntries().keySet()) {
-            final String registryKey = generateRegistryKey(sourceBundle, sourceKey);
+            final String registryKey = registryKey(sourceBundle, sourceKey);
 
             if (registryFile.getKeyData(registryKey) != null) {
-                log.warn("Found unexpected reference data for key {} in file {} while registering new resource bundle, resetting to ADDED",
+                log.warn("Found unexpected reference data for key {} in file {} while registering new resource bundle, resetting to status ADDED",
                         registryKey, registryFile.getId());
             }
 
-            final KeyData keyData = new KeyData(KeyData.KeyStatus.ADDED);
+            final KeyData keyData = new KeyData(ADDED);
+            for (String locale : locales) {
+                keyData.setLocaleStatus(locale, UNRESOLVED);
+            }
             registryFile.putKeyData(registryKey, keyData);
 
             registryKeys.add(registryKey);
@@ -213,23 +203,25 @@ public class Registrar {
         for (String sourceKey : sourceBundle.getEntries().keySet()) {
             final String sourceTranslation = sourceBundle.getEntries().get(sourceKey);
             final String referenceTranslation = referenceBundle.getEntries().get(sourceKey);
-            final String registryKey = generateRegistryKey(sourceBundle, sourceKey);
+            final String registryKey = registryKey(sourceBundle, sourceKey);
 
             KeyData keyData = registryFile.getKeyData(registryKey);
-
+            
             if (keyData == null) {
-                if (referenceTranslation == null) {
-                    keyData = new KeyData(KeyData.KeyStatus.ADDED);
-                    registryFile.putKeyData(registryKey, keyData);
-                } else {
-                    log.warn("Can not find registry data for key {} in file {} while registering updated keys, resetting to ADDED",
+                if (referenceTranslation != null) {
+                    log.warn("Can not find registry data for key {} in file {} while registering updated keys, resetting to status ADDED",
                             registryKey, registryFile.getId());
-                    keyData = new KeyData(KeyData.KeyStatus.ADDED);
-                    registryFile.putKeyData(registryKey, keyData);
                 }
+                keyData = new KeyData(ADDED);
+                registryFile.putKeyData(registryKey, keyData);
             } else {
                 if (!referenceTranslation.equals(sourceTranslation)) {
-                    keyData.setStatus(KeyData.KeyStatus.UPDATED);
+                    keyData.setStatus(UPDATED);
+                }
+            }
+            if (keyData.getStatus() != CLEAN) {
+                for (String locale : locales) {
+                    keyData.setLocaleStatus(locale, UNRESOLVED);
                 }
             }
 
@@ -240,18 +232,30 @@ public class Registrar {
     }
 
     private void saveReference(final ResourceBundle sourceBundle) throws IOException {
-        ResourceBundleSerializer serializer = ResourceBundleSerializer.create(registryDir, sourceBundle.getType());
-        serializer.serializeBundle(sourceBundle);
+        final String bundleFileName = TranslationsUtils.getLocalizedBundleFileName(
+                sourceBundle.getFileName(), sourceBundle.getType(), sourceBundle.getLocale());
+        sourceBundle.setFileName(bundleFileName);
+        registry.saveResourceBundle(sourceBundle);
     }
 
     public static void main(String[] args) throws Exception {
-        File registryDir = new File(args[0]);
+        final String command = args[0];
+        File registryDir = new File(args[1]);
         if (!registryDir.exists()) {
             throw new IllegalStateException("Directory does no exist: " + registryDir.getPath());
         }
-        final Collection<String> locales = Arrays.asList(args[1].split(","));
+        final Collection<String> locales = Arrays.asList(args[2].split(","));
         final Registrar registrar = new Registrar(registryDir, locales);
-        registrar.initializeRegistry();
+        switch (command) {
+            case "initialize":
+                registrar.initializeRegistry();
+                break;
+            case "update":
+                registrar.updateRegistry();
+                break;
+            default:
+                throw new IllegalArgumentException("Unrecognized command: " + command);
+        }
     }
 
 }

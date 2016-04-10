@@ -18,11 +18,11 @@ package org.onehippo.cms.translations;
 import java.io.File;
 import java.io.IOException;
 
-abstract class ResourceBundleSerializer {
+public abstract class ResourceBundleSerializer {
     
     private final File baseDir;
     
-    ResourceBundleSerializer(File baseDir) {
+    protected ResourceBundleSerializer(File baseDir) {
         this.baseDir = baseDir;
     }
 
@@ -39,11 +39,11 @@ abstract class ResourceBundleSerializer {
         return baseDir;
     }
 
-    abstract void serializeBundle(ResourceBundle bundle) throws IOException;
+    public abstract void serializeBundle(ResourceBundle bundle) throws IOException;
 
-    abstract ResourceBundle deserializeBundle(String fileName, String name, String locale) throws IOException;
+    public abstract ResourceBundle deserializeBundle(String fileName, String name, String locale) throws IOException;
     
-    final File getOrCreateFile(String relFilePath) {
+    protected final File getOrCreateFile(String relFilePath) {
         File file = null;
         File currentDir = baseDir;
         final String[] elements = relFilePath.split("/");

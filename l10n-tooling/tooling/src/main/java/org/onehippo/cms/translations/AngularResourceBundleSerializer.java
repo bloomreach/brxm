@@ -31,7 +31,7 @@ class AngularResourceBundleSerializer extends ResourceBundleSerializer {
     }
 
     @Override
-    void serializeBundle(final ResourceBundle bundle) throws IOException {
+    public void serializeBundle(final ResourceBundle bundle) throws IOException {
         final JSONObject o = new JSONObject();
         o.putAll(bundle.getEntries());
         final File file = getOrCreateFile(bundle.getFileName());
@@ -41,7 +41,7 @@ class AngularResourceBundleSerializer extends ResourceBundleSerializer {
     }
 
     @Override
-    ResourceBundle deserializeBundle(final String fileName, final String name, final String locale) throws IOException {
+    public ResourceBundle deserializeBundle(final String fileName, final String name, final String locale) throws IOException {
         final String jsonString = FileUtils.readFileToString(new File(getBaseDir(), fileName));
         final JSONObject jsonObject = JSONObject.fromObject(jsonString);
         final Properties properties = new Properties();

@@ -54,6 +54,10 @@ public class Translation {
         return key;
     }
     
+    public String getFQKey() {
+        return module.getId() + "#" + getRegistryFile().getId() + "#" + key;
+    }
+    
     private String getBundleKey() {
         final int offset = key.lastIndexOf('/');
         if (offset != -1) {

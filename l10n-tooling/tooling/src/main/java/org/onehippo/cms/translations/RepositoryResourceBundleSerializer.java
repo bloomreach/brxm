@@ -26,13 +26,13 @@ import net.sf.json.JSONObject;
 
 class RepositoryResourceBundleSerializer extends ResourceBundleSerializer {
     
-    RepositoryResourceBundleSerializer(final File baseDir) {
+    protected RepositoryResourceBundleSerializer(final File baseDir) {
         super(baseDir);
     }
 
     @Override
-    void serializeBundle(final ResourceBundle bundle) throws IOException {
-        final File bundlesFile = getOrCreateFile(getLocalizedFileName(bundle.getFileName(), bundle.getLocale()));
+    public void serializeBundle(final ResourceBundle bundle) throws IOException {
+        final File bundlesFile = getOrCreateFile(bundle.getFileName());
         final JSONObject o;
         if (bundlesFile.exists()) {
             final String json = FileUtils.readFileToString(bundlesFile);
@@ -68,8 +68,8 @@ class RepositoryResourceBundleSerializer extends ResourceBundleSerializer {
     }
 
     @Override
-    ResourceBundle deserializeBundle(final String fileName, final String name, final String locale) throws IOException {
-        File file = new File(getBaseDir(), getLocalizedFileName(fileName, locale));
+    public ResourceBundle deserializeBundle(final String fileName, final String name, final String locale) throws IOException {
+        File file = new File(getBaseDir(), fileName);
         if (!file.exists()) {
             return null;
         }
@@ -102,11 +102,7 @@ class RepositoryResourceBundleSerializer extends ResourceBundleSerializer {
 
         return new RepositoryResourceBundle(name, fileName, null, locale, properties);
     }
-
-    private String getLocalizedFileName(final String fileName, final String locale) {
-        return StringUtils.substringBefore(fileName, ".json") + "_" + locale + ".json";
-    }
-
+    
     private File getExtensionFile(final ResourceBundle bundle) {
         return getOrCreateFile("extensions/" + bundle.getLocale() + "/hippoecm-extension.xml");
     }

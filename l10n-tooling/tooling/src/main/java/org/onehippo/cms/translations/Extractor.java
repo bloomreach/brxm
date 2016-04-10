@@ -23,10 +23,12 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cms.translations.ResourceBundleLoader.getResourceBundleLoaders;
+
 public class Extractor {
 
-    private static Logger log = LoggerFactory.getLogger(Extractor.class);
-
+    private static final Logger log = LoggerFactory.getLogger(Extractor.class);
+    
     private final File baseDir;
     private final Collection<String> locales;
     
@@ -36,11 +38,15 @@ public class Extractor {
     }
     
     public void extract() throws IOException {
-        for (ResourceBundleLoader loader : ResourceBundleLoader.getResourceBundleLoaders(locales)) {
-            for (ResourceBundle resourceBundle : loader.loadBundles()) {
+        for (ResourceBundleLoader loader : getResourceBundleLoaders(locales)) {
+            for (ResourceBundle sourceBundle : loader.loadBundles()) {
+                final String bundleFileName = TranslationsUtils.getLocalizedBundleFileName(
+                        sourceBundle.getFileName(), sourceBundle.getType(), sourceBundle.getLocale());
+                sourceBundle.setFileName(bundleFileName);
                 final ResourceBundleSerializer resourceBundleSerializer = 
-                        ResourceBundleSerializer.create(baseDir, resourceBundle.getType());
-                resourceBundleSerializer.serializeBundle(resourceBundle);
+                        ResourceBundleSerializer.create(baseDir, sourceBundle.getType());
+                log.info("Serializing bundle {}", bundleFileName);
+                resourceBundleSerializer.serializeBundle(sourceBundle);
             }
         }
     }

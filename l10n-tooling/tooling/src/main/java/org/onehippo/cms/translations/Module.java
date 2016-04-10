@@ -26,26 +26,19 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class Module {
     
     private final File pom;
-    private final String groupId;
     private final String artifactId;
     private final String version;
     private Registry registry;
     
     public Module(File pom) throws IOException {
         this.pom = pom;
-        MavenXpp3Reader reader = new MavenXpp3Reader();
-        try {
-            final Model model = reader.read(new FileReader(pom));
-            groupId = model.getGroupId();
-            artifactId = model.getArtifactId();
-            version = model.getVersion();
-        } catch (XmlPullParserException e) {
-            throw new IOException(e);
-        }
+        final File directory = pom.getParentFile();
+        version = directory.getName();
+        artifactId = directory.getParentFile().getName();
     }
     
     public String getId() {
-        return groupId + ":" + artifactId + ":" + version;
+        return artifactId + ":" + version;
     }
     
     public Registry getRegistry() {
@@ -60,7 +53,7 @@ public class Module {
     }
     
     private File getResources() {
-        return new File(pom.getParent(), "resources");
+        return new File(pom.getParentFile(), "resources");
     }
 
 

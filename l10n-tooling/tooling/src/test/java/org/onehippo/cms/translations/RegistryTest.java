@@ -25,6 +25,8 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import static org.junit.Assert.assertEquals;
+import static org.onehippo.cms.translations.KeyData.KeyStatus.UPDATED;
+import static org.onehippo.cms.translations.KeyData.LocaleStatus.UNRESOLVED;
 
 public class RegistryTest {
 
@@ -79,7 +81,7 @@ public class RegistryTest {
         Properties properties = new Properties();
         properties.setProperty("key", "foo");
 
-        ResourceBundle repositoryBundle = new RepositoryResourceBundle("dummybundles", "dummy-repository-translations.json", new ArtifactInfo(""), "en", properties);
+        ResourceBundle repositoryBundle = new RepositoryResourceBundle("dummybundles", "dummy-repository-translations_en.json", new ArtifactInfo(""), "en", properties);
         RepositoryResourceBundleSerializer repositoryResourceBundleSerializer = new RepositoryResourceBundleSerializer(temporaryFolder.getRoot());
         repositoryResourceBundleSerializer.serializeBundle(repositoryBundle);
 
@@ -90,10 +92,13 @@ public class RegistryTest {
         assertEquals(1, getChangeCount(registrar.getRegistry()));
 
         // validate the reference was correctly updated
-        final String bundleFileName = TranslationsUtils.getLocalizedBundleFileName(repositoryBundle.getFileName(), BundleType.REPOSITORY, repositoryBundle.getLocale());
-        repositoryBundle = repositoryResourceBundleSerializer.deserializeBundle(bundleFileName, repositoryBundle.getName(), repositoryBundle.getLocale());
+        repositoryBundle = repositoryResourceBundleSerializer.deserializeBundle(repositoryBundle.getFileName(), repositoryBundle.getName(), repositoryBundle.getLocale());
         RegistryFile registryFile = registrar.getRegistry().loadRegistryFile(repositoryBundle);
-        Assert.assertEquals(KeyData.KeyStatus.UPDATED, registryFile.getKeyData("dummybundles/key").getStatus());
+        final KeyData keyData = registryFile.getKeyData("dummybundles/key");
+        assertEquals(UPDATED, keyData.getStatus());
+        assertEquals(2, keyData.getLocales().size());
+        assertEquals(UNRESOLVED, keyData.getLocaleStatus("de"));
+        assertEquals(UNRESOLVED, keyData.getLocaleStatus("fr"));
         assertEquals("value", repositoryBundle.getEntries().get("key"));
     }
 
@@ -131,12 +136,12 @@ public class RegistryTest {
 
         // validate the register was correctly updated
         registryFile = registrar.getRegistry().loadRegistryFile(fileName1);
-        Assert.assertEquals(KeyData.KeyStatus.CLEAN, registryFile.getKeyData("key").getStatus());
-        Assert.assertEquals(KeyData.KeyStatus.DELETED, registryFile.getKeyData("key2").getStatus());
+        assertEquals(KeyData.KeyStatus.CLEAN, registryFile.getKeyData("key").getStatus());
+        assertEquals(KeyData.KeyStatus.DELETED, registryFile.getKeyData("key2").getStatus());
 
         registryFile = registrar.getRegistry().loadRegistryFile(fileName2);
-        Assert.assertEquals(KeyData.KeyStatus.DELETED, registryFile.getKeyData("key").getStatus());
-        Assert.assertEquals(KeyData.KeyStatus.DELETED, registryFile.getKeyData("key2").getStatus());
+        assertEquals(KeyData.KeyStatus.DELETED, registryFile.getKeyData("key").getStatus());
+        assertEquals(KeyData.KeyStatus.DELETED, registryFile.getKeyData("key2").getStatus());
     }
 
     @Test

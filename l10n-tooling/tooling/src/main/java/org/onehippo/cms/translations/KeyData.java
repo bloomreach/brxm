@@ -15,7 +15,12 @@
  */
 package org.onehippo.cms.translations;
 
+import java.util.HashMap;
 import java.util.Map;
+
+import static org.onehippo.cms.translations.KeyData.KeyStatus.CLEAN;
+import static org.onehippo.cms.translations.KeyData.LocaleStatus.RESOLVED;
+
 
 public class KeyData {
 
@@ -32,11 +37,10 @@ public class KeyData {
     }
 
     private KeyStatus status;
-    // and other metadata ...
     private Map<String, LocaleStatus> locales;
     
     public KeyData() {
-        status = KeyStatus.CLEAN;
+        status = CLEAN;
     }
     
     public KeyData(KeyStatus status) {
@@ -50,15 +54,31 @@ public class KeyData {
     public void setStatus(final KeyStatus status) {
         this.status = status;
     }
+    
+    public Map<String, LocaleStatus> getLocales() {
+        return locales;
+    }
+    
+    public void setLocales(Map<String, LocaleStatus> locales) {
+        this.locales = locales;
+    }
 
     public LocaleStatus getLocaleStatus(final String locale) {
         if (locales != null && locales.containsKey(locale)) {
             return locales.get(locale);
         }
-        return LocaleStatus.UNRESOLVED;
+        return RESOLVED;
     }
 
     public void setLocaleStatus(final String locale, LocaleStatus localeStatus) {
-        locales.put(locale, localeStatus);
+        if (localeStatus == RESOLVED && locales.size() == 1 && locales.containsKey(locale)) {
+            locales = null;
+            status = CLEAN;
+        } else {
+            if (locales == null) {
+                locales = new HashMap<>();
+            }
+            locales.put(locale, localeStatus);
+        }
     } 
 }
