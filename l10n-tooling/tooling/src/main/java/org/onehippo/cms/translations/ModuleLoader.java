@@ -29,7 +29,7 @@ public class ModuleLoader {
         this.baseDir =  baseDir;
     }
     
-    public Collection<Module> loadModules() throws IOException {
+    public Collection<Module> loadModules() {
         final Collection<Module> modules = new ArrayList<>();
         for (File pom : collectPoms(baseDir, new ArrayList<>())) {
             final Module module = new Module(pom);
@@ -53,7 +53,7 @@ public class ModuleLoader {
         for (File file : baseDir.listFiles(filter)) {
             if (file.isDirectory()) {
                 collectPoms(file, poms);
-            } else if (file.getName().equals("pom.xml")) {
+            } else if (file.getName().equals("pom.xml") && !file.getParentFile().equals(this.baseDir)) {
                 poms.add(file);
             }
         }

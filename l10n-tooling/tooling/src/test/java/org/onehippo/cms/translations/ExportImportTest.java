@@ -48,11 +48,12 @@ public class ExportImportTest {
 
     @Before
     public void setupTestModule() throws IOException {
-        resources = temporaryFolder.newFolder("resources");
+        temporaryFolder.newFolder("module");
+        resources = temporaryFolder.newFolder("module/resources");
         new Extractor(resources, Arrays.asList("en", "nl")).extract();
         registrar = new Registrar(resources, Collections.singletonList("nl"));
         registrar.initializeRegistry();
-        final File pom = temporaryFolder.newFile("pom.xml");
+        final File pom = temporaryFolder.newFile("module/pom.xml");
         FileUtils.copyInputStreamToFile(getClass().getResourceAsStream("pom.xml"), pom);
         changeBundle();
         registrar.updateRegistry();

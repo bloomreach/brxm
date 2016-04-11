@@ -16,29 +16,21 @@
 package org.onehippo.cms.translations;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 public class Module {
     
     private final File pom;
-    private final String artifactId;
-    private final String version;
+    private final String moduleName;
     private Registry registry;
     
-    public Module(File pom) throws IOException {
+    public Module(File pom) {
         this.pom = pom;
         final File directory = pom.getParentFile();
-        version = directory.getName();
-        artifactId = directory.getParentFile().getName();
+        moduleName = directory.getName();
     }
     
-    public String getId() {
-        return artifactId + ":" + version;
+    public String getName() {
+        return moduleName;
     }
     
     public Registry getRegistry() {
@@ -55,6 +47,5 @@ public class Module {
     private File getResources() {
         return new File(pom.getParentFile(), "resources");
     }
-
-
+    
 }

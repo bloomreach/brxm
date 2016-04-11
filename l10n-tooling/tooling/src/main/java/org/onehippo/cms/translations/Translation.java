@@ -55,7 +55,7 @@ public class Translation {
     }
     
     public String getFQKey() {
-        return module.getId() + "#" + getRegistryFile().getId() + "#" + key;
+        return module.getName() + "#" + getRegistryFile().getId() + "#" + key;
     }
     
     private String getBundleKey() {

@@ -45,7 +45,7 @@ public class Importer {
     void _import(final String fileName, final String locale) throws IOException {
         final Map<String, Module> modules = new HashMap<>();
         for (Module module : new ModuleLoader(baseDir).loadModules()) {
-            modules.put(module.getId(), module);
+            modules.put(module.getName(), module);
         }
         final File csv = new File(baseDir, fileName);
         try (final BufferedReader reader = new BufferedReader(new FileReader(csv))) {
