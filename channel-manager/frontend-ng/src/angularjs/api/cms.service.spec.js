@@ -21,8 +21,8 @@ describe('CmsService', () => {
   let CmsService;
 
   beforeEach(() => {
-    spyOn(window.APP_TO_CMS, 'publish');
-    spyOn(window.CMS_TO_APP, 'subscribe');
+    spyOn(window.APP_TO_CMS, 'publish').and.callThrough();
+    spyOn(window.CMS_TO_APP, 'subscribe').and.callThrough();
 
     module('hippo-cm-api');
 
@@ -41,6 +41,20 @@ describe('CmsService', () => {
     it('subscribes to events from the CMS', () => {
       CmsService.subscribe('test', 'callback', 'scope');
       expect($window.CMS_TO_APP.subscribe).toHaveBeenCalledWith('test', 'callback', 'scope');
+    });
+
+    it('unsubscribes from events from the CMS', () => {
+      const mock = jasmine.createSpyObj('mock', ['test']);
+
+      CmsService.subscribe('test', mock.test, mock);
+
+      $window.CMS_TO_APP.publish('test');
+      expect(mock.test).toHaveBeenCalled();
+
+      mock.test.calls.reset();
+      CmsService.unsubscribe('test', mock.test, mock);
+      $window.CMS_TO_APP.publish('test');
+      expect(mock.test).not.toHaveBeenCalled();
     });
 
     it('returns the app configuration specified by the CMS', () => {

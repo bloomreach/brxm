@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
 
     private static final CssResourceReference CHANNEL_MANAGER_PERSPECTIVE_CSS = new CssResourceReference(ChannelManagerPerspective.class, "ChannelManagerPerspective.css");
     private static final String EVENT_ID = "channels";
-    public static final String EVENT_PERSPECTIVE_DEACTIVATED = "perspective-deactivated";
+    public static final String EVENT_CMSCHANNELS_DEACTIVATED = "CMSChannels-deactivated";
 
     private final RootPanel rootPanel;
     private final boolean siteIsUp;
@@ -87,7 +87,7 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     @Override
     protected void onDeactivated() {
         super.onDeactivated();
-        publishEvent(EVENT_PERSPECTIVE_DEACTIVATED);
+        publishEvent(EVENT_CMSCHANNELS_DEACTIVATED);
     }
 
     @Override

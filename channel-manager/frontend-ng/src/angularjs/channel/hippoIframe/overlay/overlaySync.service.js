@@ -68,11 +68,11 @@ export class OverlaySyncService {
   }
 
   syncIframe() {
-    this._syncHeight();
+    this._syncDimensions();
     this._syncOverlayElements();
   }
 
-  _syncHeight() {
+  _syncDimensions() {
     if (this.iframeJQueryElement && this.overlayJQueryElement) {
       const doc = this._getIframeWindow().document;
 
@@ -91,6 +91,11 @@ export class OverlaySyncService {
         const height = doc.body.clientHeight;
         this.iframeJQueryElement.height(height);
         this.overlayJQueryElement.height(height);
+
+        this.iframeJQueryElement.width('');
+        const width = $(doc).width();
+        this.iframeJQueryElement.width(width);
+        this.overlayJQueryElement.width(width);
       }
     }
   }

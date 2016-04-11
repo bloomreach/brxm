@@ -26,6 +26,21 @@ function createMessageBus() {
     });
   }
 
+  function removeCallback(list, callback, scope) {
+    if (list === undefined) {
+      return false;
+    }
+    const scopeParameter = scope || window;
+    for (let i = 0; i < list.length; i++) {
+      const entry = list[i];
+      if (entry.callback === callback && entry.scope === scopeParameter) {
+        list.splice(i, 1);
+        return true;
+      }
+    }
+    return false;
+  }
+
   function call(entries, args) {
     if (entries === undefined) {
       return true;
@@ -53,6 +68,10 @@ function createMessageBus() {
       }
 
       addCallback(subscriptions[topic], callback, scope);
+    },
+
+    unsubscribe(topic, callback, scope) {
+      return removeCallback(subscriptions[topic], callback, scope);
     },
   };
 }

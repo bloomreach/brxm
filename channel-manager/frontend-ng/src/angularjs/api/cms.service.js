@@ -56,9 +56,14 @@ export class CmsService {
     return iframeToHost.publish.apply(iframeToHost, args);
   }
 
-  subscribe(...args) {
+  subscribe(topic, callback, scope) {
     const hostToIFrame = this.getParentIFramePanel().hostToIFrame;
-    return hostToIFrame.subscribe.apply(hostToIFrame, args);
+    return scope ? hostToIFrame.subscribe(topic, callback, scope) : hostToIFrame.subscribe(topic, callback);
+  }
+
+  unsubscribe(topic, callback, scope) {
+    const hostToIFrame = this.getParentIFramePanel().hostToIFrame;
+    return hostToIFrame.unsubscribe(topic, callback, scope);
   }
 
   getConfig() {

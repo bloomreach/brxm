@@ -17,8 +17,10 @@
 import { channelPageModule } from './page/page';
 import { channelHippoIframeModule } from './hippoIframe/hippoIframe';
 import { channelMaskModule } from './mask/mask';
+import { channelRelevanceModule } from './relevance/relevance';
 import { config } from './channel.config';
 import { ChannelCtrl } from './channel.controller';
+import { ChannelService } from './channel.service';
 import { run } from './channel.run';
 import { CatalogComponentDirective } from './catalog.component.directive';
 
@@ -28,8 +30,10 @@ export const channelModule = angular
     channelPageModule.name,
     channelHippoIframeModule.name,
     channelMaskModule.name,
+    channelRelevanceModule.name,
   ])
   .config(config)
   .controller('ChannelCtrl', ChannelCtrl)
+  .service('ChannelService', ChannelService)
   .directive('catalogComponent', CatalogComponentDirective)
   .run(run);

@@ -19,12 +19,12 @@ export class HippoIframeCtrl {
     $q,
     $log,
     $element,
-    $mdDialog,
     $rootScope,
     $scope,
     $translate,
     ChannelService,
     CmsService,
+    DialogService,
     DragDropService,
     hstCommentsProcessorService,
     linkProcessorService,
@@ -40,11 +40,11 @@ export class HippoIframeCtrl {
     this.$log = $log;
     this.$rootScope = $rootScope;
     this.$translate = $translate;
-    this.$mdDialog = $mdDialog;
     this.linkProcessorService = linkProcessorService;
     this.hstCommentsProcessorService = hstCommentsProcessorService;
     this.CmsService = CmsService;
     this.ChannelService = ChannelService;
+    this.DialogService = DialogService;
     this.PageStructureService = PageStructureService;
     this.PageMetaDataService = PageMetaDataService;
     this.OverlaySyncService = OverlaySyncService;
@@ -60,9 +60,9 @@ export class HippoIframeCtrl {
     ScalingService.init($element);
     DragDropService.init(this.iframeJQueryElement, $element.find('.channel-iframe-base'));
 
-    CmsService.subscribe('delete-component', (componentId) => {
-      this.deleteComponent(componentId);
-    });
+    const deleteComponentHandler = (componentId) => this.deleteComponent(componentId);
+    CmsService.subscribe('delete-component', deleteComponentHandler);
+    $scope.$on('$destroy', () => CmsService.unsubscribe('delete-component', deleteComponentHandler));
 
     $scope.$watch('iframe.editMode', () => this._updateDragDrop());
   }
@@ -95,8 +95,7 @@ export class HippoIframeCtrl {
   }
 
   _confirmDelete(selectedComponent) {
-    const confirm = this.$mdDialog
-      .confirm()
+    const confirm = this.DialogService.confirm()
       .title(this.$translate.instant('CONFIRM_DELETE_COMPONENT_TITLE'))
       .textContent(this.$translate.instant('CONFIRM_DELETE_COMPONENT_MESSAGE', {
         component: selectedComponent.getLabel(),
@@ -104,7 +103,7 @@ export class HippoIframeCtrl {
       .ok(this.$translate.instant('BUTTON_YES'))
       .cancel(this.$translate.instant('BUTTON_NO'));
 
-    return this.$mdDialog.show(confirm);
+    return this.DialogService.show(confirm);
   }
 
   _updateDragDrop() {

@@ -16,22 +16,26 @@
 
 <md-toolbar class="qa-toolbar">
   <div class="md-toolbar-tools">
-    <md-button aria-label="{{ 'TOOLBAR_BUTTON_COMPONENTS' | translate }}"
+    <md-button class="md-icon-button qa-button-components"
+               aria-label="{{ 'TOOLBAR_BUTTON_COMPONENTS' | translate }}"
                ng-click="channelCtrl.toggleSidenav('components')"
+               ng-class="{ 'md-accent': channelCtrl.isSidenavOpen('components') }"
                ng-if="channelCtrl.showComponentsButton()">
-      {{ 'TOOLBAR_BUTTON_COMPONENTS' | translate }}
+      <md-icon title="{{ 'TOOLBAR_BUTTON_COMPONENTS' | translate }}" class="material-icons">library_add</md-icon>
     </md-button>
+    <relevance-view-as></relevance-view-as>
     <span flex></span>
     <md-button ng-repeat="viewPort in channelCtrl.viewPorts"
                ng-click="channelCtrl.selectViewPort(viewPort)"
                ng-class="{ 'md-accent': channelCtrl.isViewPortSelected(viewPort) }"
                aria-label="{{ viewPort.titleKey | translate }}"
-               class="md-icon-button qa-viewport-{{viewPort.name}}">
+               class="md-icon-button qa-button-viewport-{{viewPort.name}}">
       <md-icon title="{{ viewPort.titleKey | translate }}" class="material-icons">{{viewPort.icon}}</md-icon>
     </md-button>
     <span flex></span>
     <md-menu ng-if="channelCtrl.hasChanges()">
       <md-button aria-label="{{ 'TOOLBAR_BUTTON_CHANGES' | translate }}"
+                 class="qa-button-changes"
                  ng-click="$mdOpenMenu($event)">
         <md-icon class="material-icons">change_history</md-icon>
         {{ 'TOOLBAR_BUTTON_CHANGES' | translate }}
@@ -52,12 +56,22 @@
       </md-menu-content>
     </md-menu>
 
-    <md-button ng-if="channelCtrl.isEditable()"
-               ng-disabled="channelCtrl.isCreatingPreview"
-               ng-click="channelCtrl.toggleEditMode()">
-      <md-icon class="material-icons">{{ channelCtrl.isEditMode ? 'remove_red_eye' : 'mode_edit' }}</md-icon>
-      {{ channelCtrl.isEditMode ? 'TOOLBAR_SWITCH_VIEWER_MODE_VIEW' : 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
-    </md-button>
+    <span class="button-group">
+      <md-button class="qa-button-edit"
+                 ng-class="{ 'md-accent md-raised': channelCtrl.isEditModeActive() }"
+                 ng-if="channelCtrl.isEditable()"
+                 ng-disabled="channelCtrl.isCreatingPreview"
+                 ng-click="channelCtrl.enterEditMode()">
+        {{ 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
+      </md-button>
+      <md-button class="qa-button-view"
+                 ng-class="{ 'md-accent md-raised': !channelCtrl.isEditModeActive() }"
+                 ng-if="channelCtrl.isEditable()"
+                 ng-disabled="channelCtrl.isCreatingPreview"
+                 ng-click="channelCtrl.leaveEditMode()">
+        {{ 'TOOLBAR_SWITCH_VIEWER_MODE_VIEW' | translate }}
+      </md-button>
+    </span>
   </div>
 </md-toolbar>
 

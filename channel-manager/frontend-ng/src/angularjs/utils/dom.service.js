@@ -61,50 +61,53 @@ export class DomService {
   }
 
   _doCopyComputedStyleExcept(fromElement, toElement, excludeRegExp) {
-    const fromWindow = fromElement.ownerDocument.defaultView;
-    const fromComputedStyle = fromWindow.getComputedStyle(fromElement, null);
-    const toWindow = toElement.ownerDocument.defaultView;
-    const toComputedStyle = toWindow.getComputedStyle(toElement, null);
-    const toStyle = toElement.style;
+    const fromComputedStyle = fromElement.ownerDocument.defaultView.getComputedStyle(fromElement, null);
+    const toComputedStyle = toElement.ownerDocument.defaultView.getComputedStyle(toElement, null);
+    const cssDiff = [];
 
-    let cssTextDiff = '';
-
-    for (let i = 0; i < fromComputedStyle.length; i++) {
+    for (let i = 0, fromLength = fromComputedStyle.length; i < fromLength; i++) {
       const cssPropertyName = fromComputedStyle.item(i);
-
       if (!excludeRegExp || !excludeRegExp.test(cssPropertyName)) {
         const fromValue = fromComputedStyle.getPropertyValue(cssPropertyName);
-        const toValue = toComputedStyle.getPropertyValue(cssPropertyName);
-
-        if (fromValue !== toValue) {
-          cssTextDiff += `${cssPropertyName}:${fromValue};`;
+        if (fromValue.length > 0) {
+          const toValue = toComputedStyle.getPropertyValue(cssPropertyName);
+          if (fromValue !== toValue) {
+            cssDiff.push(`${cssPropertyName}:${fromValue}`);
+          }
         }
       } else {
-        const toStyleValue = toStyle.getPropertyValue(cssPropertyName);
-        if (toStyleValue !== '') {
-          cssTextDiff += `${cssPropertyName}:${toStyleValue};`;
+        const toStyleValue = toElement.style.getPropertyValue(cssPropertyName);
+        if (toStyleValue.length > 0) {
+          cssDiff.push(`${cssPropertyName}:${toStyleValue}`);
         }
       }
     }
 
-    if (cssTextDiff.length > 0) {
-      toElement.style.cssText = cssTextDiff;
+    if (cssDiff.length > 0) {
+      toElement.style.cssText = cssDiff.join(';');
     }
   }
 
   copyComputedStyleOfDescendantsExcept(fromElement, toElement, excludedProperties) {
     const excludeRegExp = this._createExcludeRegexp(excludedProperties);
-    this._doCopyComputedStyleOfDescendantsExcept(fromElement, toElement, excludeRegExp);
+
+    const fromChildren = $(fromElement).children();
+    const toChildren = $(toElement).children();
+
+    // detach the elements that will get styles added to prevent DOM reflows; this speeds up IE11 4x
+    toChildren.detach();
+    this._doCopyComputedStylesExcept(fromChildren, toChildren, excludeRegExp);
+    toChildren.appendTo(toElement);
   }
 
-  _doCopyComputedStyleOfDescendantsExcept(fromRootElement, toRootElement, excludeRegExp) {
-    const fromChildren = $(fromRootElement).children();
-    const toChildren = $(toRootElement).children();
+  _doCopyComputedStylesExcept(fromElements, toElements, excludeRegExp) {
+    fromElements.each((index, fromElement) => {
+      const toElement = toElements[index];
+      this._doCopyComputedStyleExcept(fromElement, toElement, excludeRegExp);
 
-    fromChildren.each((index, fromChild) => {
-      const toChild = toChildren[index];
-      this._doCopyComputedStyleExcept(fromChild, toChild, excludeRegExp);
-      this._doCopyComputedStyleOfDescendantsExcept(fromChild, toChild, excludeRegExp);
+      const fromChildren = $(fromElement).children();
+      const toChildren = $(toElement).children();
+      this._doCopyComputedStylesExcept(fromChildren, toChildren, excludeRegExp);
     });
   }
 

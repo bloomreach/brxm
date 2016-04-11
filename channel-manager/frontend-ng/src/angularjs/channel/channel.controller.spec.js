@@ -21,26 +21,28 @@ describe('ChannelCtrl', () => {
 
   let ChannelService;
   let ComponentsService;
+  let DialogService;
   let ScalingService;
   let ConfigService;
   let FeedbackService;
+  let SessionService;
   let ChannelCtrl;
   let HippoIframeService;
   let $rootScope;
   let $q;
-  let $mdDialog;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$q_, _$mdDialog_, _ConfigService_, _FeedbackService_) => {
+    inject(($controller, _$rootScope_, _$q_, _ConfigService_, _DialogService_, _FeedbackService_, _SessionService_) => {
       const resolvedPromise = _$q_.when();
 
       $rootScope = _$rootScope_;
       $q = _$q_;
-      $mdDialog = _$mdDialog_;
       ConfigService = _ConfigService_;
+      DialogService = _DialogService_;
       FeedbackService = _FeedbackService_;
+      SessionService = _SessionService_;
 
       ChannelService = jasmine.createSpyObj('ChannelService', [
         'getUrl',
@@ -90,6 +92,7 @@ describe('ChannelCtrl', () => {
       });
       expect(ScalingService.setPushWidth).toHaveBeenCalledWith(0);
       expect(ScalingService.setViewPortWidth).toHaveBeenCalledWith(0);
+      expect(ChannelCtrl.isViewPortSelected(ChannelCtrl.viewPorts[0])).toBe(true);
     });
   });
 
@@ -97,17 +100,31 @@ describe('ChannelCtrl', () => {
     expect(ChannelCtrl.iframeUrl).toEqual('/test/url');
   });
 
+  it('checks with the session service is the current user has write access', () => {
+    spyOn(SessionService, 'hasWriteAccess');
+
+    SessionService.hasWriteAccess.and.returnValue(true);
+    expect(ChannelCtrl.isEditable()).toBe(true);
+    SessionService.hasWriteAccess.and.returnValue(false);
+    expect(ChannelCtrl.isEditable()).toBe(false);
+  });
+
+  it('gets the component catalog from the channelk service', () => {
+    ChannelService.getCatalog.and.returnValue('dummy');
+    expect(ChannelCtrl.getCatalog()).toBe('dummy');
+  });
+
   it('is not in edit mode by default', () => {
-    expect(ChannelCtrl.isEditMode).toEqual(false);
+    expect(ChannelCtrl.isEditModeActive()).toEqual(false);
   });
 
   it('enables and disables edit mode when toggling it', () => {
     ChannelService.hasPreviewConfiguration.and.returnValue(true);
 
-    ChannelCtrl.toggleEditMode();
-    expect(ChannelCtrl.isEditMode).toEqual(true);
-    ChannelCtrl.toggleEditMode();
-    expect(ChannelCtrl.isEditMode).toEqual(false);
+    ChannelCtrl.enterEditMode();
+    expect(ChannelCtrl.isEditModeActive()).toEqual(true);
+    ChannelCtrl.leaveEditMode();
+    expect(ChannelCtrl.isEditModeActive()).toEqual(false);
   });
 
   it('creates preview configuration when it has not been created yet before enabling edit mode', () => {
@@ -119,25 +136,25 @@ describe('ChannelCtrl', () => {
     HippoIframeService.reload.and.returnValue(deferReload.promise);
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    ChannelCtrl.toggleEditMode();
+    ChannelCtrl.enterEditMode();
 
     expect(ChannelService.createPreviewConfiguration).toHaveBeenCalled();
     expect(ChannelCtrl.isCreatingPreview).toEqual(true);
-    expect(ChannelCtrl.isEditMode).toEqual(false);
+    expect(ChannelCtrl.isEditModeActive()).toEqual(false);
     expect(HippoIframeService.reload).not.toHaveBeenCalled();
 
     deferCreatePreview.resolve(); // preview creation completed successfully, reload page
     $rootScope.$digest();
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(true);
-    expect(ChannelCtrl.isEditMode).toEqual(false);
+    expect(ChannelCtrl.isEditModeActive()).toEqual(false);
     expect(HippoIframeService.reload).toHaveBeenCalled();
 
     deferReload.resolve(); // reload completed successfully, enter edit mode
     $rootScope.$digest();
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    expect(ChannelCtrl.isEditMode).toEqual(true);
+    expect(ChannelCtrl.isEditModeActive()).toEqual(true);
   });
 
   it('shows an error when the creation of the preview configuration fails', () => {
@@ -148,23 +165,23 @@ describe('ChannelCtrl', () => {
     ChannelService.createPreviewConfiguration.and.returnValue(deferCreatePreview.promise);
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    ChannelCtrl.toggleEditMode();
+    ChannelCtrl.enterEditMode();
 
     expect(ChannelService.createPreviewConfiguration).toHaveBeenCalled();
     expect(ChannelCtrl.isCreatingPreview).toEqual(true);
-    expect(ChannelCtrl.isEditMode).toEqual(false);
+    expect(ChannelCtrl.isEditModeActive()).toEqual(false);
 
     deferCreatePreview.reject();
     $rootScope.$digest();
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    expect(ChannelCtrl.isEditMode).toEqual(false);
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CREATE_PREVIEW');
+    expect(ChannelCtrl.isEditModeActive()).toEqual(false);
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ENTER_EDIT');
   });
 
   it('does not create preview configuration when it has already been created when enabling edit mode', () => {
     ChannelService.hasPreviewConfiguration.and.returnValue(true);
-    ChannelCtrl.toggleEditMode();
+    ChannelCtrl.enterEditMode();
     expect(ChannelService.createPreviewConfiguration).not.toHaveBeenCalled();
   });
 
@@ -194,36 +211,36 @@ describe('ChannelCtrl', () => {
 
   it('discards changes', () => {
     ChannelService.discardOwnChanges.and.returnValue($q.resolve());
-    spyOn($mdDialog, 'show').and.returnValue($q.resolve());
-    spyOn($mdDialog, 'confirm').and.callThrough();
+    spyOn(DialogService, 'show').and.returnValue($q.resolve());
+    spyOn(DialogService, 'confirm').and.callThrough();
 
     ChannelCtrl.discard();
     $rootScope.$digest();
 
-    expect($mdDialog.confirm).toHaveBeenCalled();
-    expect($mdDialog.show).toHaveBeenCalled();
+    expect(DialogService.confirm).toHaveBeenCalled();
+    expect(DialogService.show).toHaveBeenCalled();
     expect(ChannelService.discardOwnChanges).toHaveBeenCalled();
     expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
   it('does not discard changes if not confirmed', () => {
-    spyOn($mdDialog, 'show').and.returnValue($q.reject());
-    spyOn($mdDialog, 'confirm').and.callThrough();
+    spyOn(DialogService, 'show').and.returnValue($q.reject());
+    spyOn(DialogService, 'confirm').and.callThrough();
 
     ChannelCtrl.discard();
     $rootScope.$digest();
 
-    expect($mdDialog.confirm).toHaveBeenCalled();
-    expect($mdDialog.show).toHaveBeenCalled();
+    expect(DialogService.confirm).toHaveBeenCalled();
+    expect(DialogService.show).toHaveBeenCalled();
     expect(ChannelService.discardOwnChanges).not.toHaveBeenCalled();
   });
 
   it('shows the components sidenav button only in edit mode and if there are catalog components', () => {
-    expect(ChannelCtrl.isEditMode).toBe(false);
+    expect(ChannelCtrl.isEditModeActive()).toBe(false);
     expect(ChannelCtrl.showComponentsButton()).toBe(false);
 
     ChannelService.hasPreviewConfiguration.and.returnValue(true);
-    ChannelCtrl.toggleEditMode();
+    ChannelCtrl.enterEditMode();
 
     ChannelService.getCatalog.and.returnValue(['dummy']);
     expect(ChannelCtrl.showComponentsButton()).toBe(true);

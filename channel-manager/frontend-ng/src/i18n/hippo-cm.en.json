@@ -1,6 +1,8 @@
 {
   "TOOLBAR_BUTTON_COMPONENTS": "Components",
   "TOOLBAR_BUTTON_CHANGES": "Changes",
+  "TOOLBAR_VIEW_AS_INFIX": ", the ",
+  "TOOLBAR_VIEW_AS_LABEL": "View as",
   "TOOLBAR_MENU_CHANGES_PUBLISH": "Publish",
   "TOOLBAR_MENU_CHANGES_DISCARD": "Discard",
   "TOOLBAR_SWITCH_VIEWER_MODE": "Viewer mode",
@@ -13,7 +15,9 @@
   "CONFIRM_DISCARD_OWN_CHANGES_MESSAGE": "Are you sure you want to discard all your unpublished changes to this channel?",
   "BUTTON_YES": "Yes",
   "BUTTON_NO": "No",
-  "ERROR_CREATE_PREVIEW": "Failed to enter Edit mode.",
+  "ERROR_ENTER_EDIT": "Failed to enter Edit mode.",
+  "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "Failed to retrieve the list of global variants.",
+  "ERROR_RELEVANCE_VARIANT_SELECTION_FAILED": "Failed to activate global variant '{{variant}}'.",
   "VIEWPORT_WIDTH_DESKTOP": "desktop",
   "VIEWPORT_WIDTH_PHONE": "phone (320px)",
   "VIEWPORT_WIDTH_TABLET": "tablet (720px)"

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -175,6 +175,7 @@ public class RootPanel extends ExtPanel {
                 selectActiveItem(target);
                 redraw = false;
             }
+            // show the channel manager breadcrumb when the channel manager perspective is active on the first page load
             target.appendJavaScript("Ext.getCmp('rootPanel').showBreadcrumb();");
         }
     }

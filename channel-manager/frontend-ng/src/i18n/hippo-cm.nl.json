@@ -1,6 +1,8 @@
 {
   "TOOLBAR_BUTTON_COMPONENTS": "Componenten",
   "TOOLBAR_BUTTON_CHANGES": "Wijzigingen",
+  "TOOLBAR_VIEW_AS_INFIX": " de ",
+  "TOOLBAR_VIEW_AS_LABEL": "Toon als",
   "TOOLBAR_MENU_CHANGES_PUBLISH": "Publiceer",
   "TOOLBAR_MENU_CHANGES_DISCARD": "Maak ongedaan",
   "TOOLBAR_SWITCH_VIEWER_MODE": "Viewer modus",
@@ -13,7 +15,9 @@
   "CONFIRM_DISCARD_OWN_CHANGES_MESSAGE": "Weet u zeker dat u al uw ongepubliceerde veranderingen in deze channel ongedaan wilt maken?",
   "BUTTON_YES": "Ja",
   "BUTTON_NO": "Nee",
-  "ERROR_CREATE_PREVIEW": "Naar Bewerk modus schakelen heeft gefaald.",
+  "ERROR_ENTER_EDIT": "Naar Bewerk modus schakelen heeft gefaald.",
+  "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "Het ophalen van de globale varianten ('Toon als') heeft gefaald.",
+  "ERROR_RELEVANCE_VARIANT_SELECTION_FAILED": "Het activeren van de globale variant '{{variant}}' heeft gefaald.",
   "VIEWPORT_WIDTH_DESKTOP": "desktop",
   "VIEWPORT_WIDTH_PHONE": "smartphone (320px)",
   "VIEWPORT_WIDTH_TABLET": "tablet (720px)"

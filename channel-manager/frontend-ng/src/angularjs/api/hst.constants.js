@@ -30,6 +30,7 @@ export const HstConstants = {
   LOCKED_BY_CURRENT_USER: 'HST-LockedBy-Current-User',
   MOUNT_ID: 'HST-Mount-Id',
   RENDER_URL: 'url',
+  RENDER_VARIANT: 'HST-Render-Variant',
   XTYPE: 'HST-XType',
   XTYPE_TRANSPARENT: 'HST.Transparent',
   END_MARKER: 'HST-End',

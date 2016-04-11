@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import autoScrollerFactory from 'dom-autoscroller';
+
 export class ComponentAdderCtrl {
   constructor($scope, $log, $element, ComponentAdderService, PageStructureService, CatalogService, DragDropService) {
     'ngInject';
@@ -79,6 +81,18 @@ export class ComponentAdderCtrl {
       }
     });
 
-    $scope.$on('$destroy', () => drake.destroy());
+    const autoScroll = autoScrollerFactory($('.channel-iframe-base'), {
+      margin: 20,
+      pixels: 15,
+      scrollWhenOutside: true,
+      autoScroll: function autoScroll() {
+        return this.down && drake.dragging;
+      },
+    });
+
+    $scope.$on('$destroy', () => {
+      drake.destroy();
+      autoScroll.destroy();
+    });
   }
 }

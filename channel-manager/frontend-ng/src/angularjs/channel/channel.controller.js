@@ -18,15 +18,15 @@ const SIDENAVS = ['components'];
 
 export class ChannelCtrl {
 
-  constructor($log, $scope, $translate, $mdDialog, $mdSidenav, ChannelService, ScalingService, SessionService, ComponentAdderService, ConfigService, HippoIframeService, FeedbackService) {
+  constructor($log, $scope, $translate, $mdSidenav, ChannelService, DialogService, ScalingService, SessionService, ComponentAdderService, ConfigService, HippoIframeService, FeedbackService) {
     'ngInject';
 
     this.$log = $log;
     this.$scope = $scope;
     this.$translate = $translate;
-    this.$mdDialog = $mdDialog;
     this.$mdSidenav = $mdSidenav;
     this.ChannelService = ChannelService;
+    this.DialogService = DialogService;
     this.ScalingService = ScalingService;
     this.SessionService = SessionService;
     this.ConfigService = ConfigService;
@@ -76,13 +76,21 @@ export class ChannelCtrl {
     return this.selectedViewPort === viewPort;
   }
 
-  toggleEditMode() {
+  enterEditMode() {
     if (!this.isEditMode && !this.ChannelService.hasPreviewConfiguration()) {
       this._createPreviewConfiguration();
     } else {
-      this.isEditMode = !this.isEditMode;
+      this.isEditMode = true;
     }
+  }
+
+  leaveEditMode() {
+    this.isEditMode = false;
     this._closeSidenavs();
+  }
+
+  isEditModeActive() {
+    return this.isEditMode;
   }
 
   isEditable() {
@@ -91,7 +99,7 @@ export class ChannelCtrl {
 
   _closeSidenavs() {
     SIDENAVS.forEach((sidenav) => {
-      if (this._isSidenavOpen(sidenav)) {
+      if (this.isSidenavOpen(sidenav)) {
         this.$mdSidenav(sidenav).close();
       }
     });
@@ -100,18 +108,17 @@ export class ChannelCtrl {
 
   _createPreviewConfiguration() {
     this.isCreatingPreview = true;
-    this.ChannelService.createPreviewConfiguration()
-      .then(() => {
-        this.HippoIframeService.reload().then(() => {
-          this.isEditMode = true;
-        })
-        .finally(() => {
-          this.isCreatingPreview = false;
-        });
-      }, () => {
+    this.ChannelService.createPreviewConfiguration().then(() => {
+      this.HippoIframeService.reload().then(() => {
+        this.isEditMode = true;
+      })
+      .finally(() => {
         this.isCreatingPreview = false;
-        this.FeedbackService.showError('ERROR_CREATE_PREVIEW');
       });
+    }).catch(() => {
+      this.isCreatingPreview = false;
+      this.FeedbackService.showError('ERROR_ENTER_EDIT');
+    });
   }
 
   showComponentsButton() {
@@ -121,12 +128,16 @@ export class ChannelCtrl {
 
   toggleSidenav(name) {
     SIDENAVS.forEach((sidenav) => {
-      if (sidenav !== name && this._isSidenavOpen(sidenav)) {
+      if (sidenav !== name && this.isSidenavOpen(sidenav)) {
         this.$mdSidenav(sidenav).close();
       }
     });
     this.$mdSidenav(name).toggle();
-    this.ScalingService.setPushWidth(this._isSidenavOpen(name) ? $('.md-sidenav-left').width() : 0);
+    this.ScalingService.setPushWidth(this.isSidenavOpen(name) ? $('.md-sidenav-left').width() : 0);
+  }
+
+  isSidenavOpen(name) {
+    return this.$mdSidenav(name).isOpen();
   }
 
   getCatalog() {
@@ -155,18 +166,13 @@ export class ChannelCtrl {
     });
   }
 
-  _isSidenavOpen(name) {
-    return this.$mdSidenav(name).isOpen();
-  }
-
   _confirmDiscard() {
-    const confirm = this.$mdDialog
-      .confirm()
+    const confirm = this.DialogService.confirm()
       .title(this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_TITLE'))
       .textContent(this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_MESSAGE'))
       .ok(this.$translate.instant('BUTTON_YES'))
       .cancel(this.$translate.instant('BUTTON_NO'));
 
-    return this.$mdDialog.show(confirm);
+    return this.DialogService.show(confirm);
   }
 }

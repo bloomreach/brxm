@@ -14,34 +14,12 @@
  * limitations under the License.
  */
 
-export class PageMetaDataService {
+import { ViewAsDirective } from './viewAs.directive';
+import { ViewAsCtrl } from './viewAs.controller';
 
-  constructor(HstConstants) {
-    'ngInject';
-
-    this.HST = HstConstants;
-    this.clear();
-  }
-
-  clear() {
-    this.data = {};
-  }
-
-  // There can be multiple contributions to the page meta-data. Therefore, we "accumulate" the data here.
-  add(data) {
-    Object.assign(this.data, data);
-  }
-
-  get() {
-    return this.data;
-  }
-
-  getChannelId() {
-    return this.data[this.HST.CHANNEL_ID];
-  }
-
-  getRenderVariant() {
-    return this.data[this.HST.RENDER_VARIANT];
-  }
-
-}
+export const channelRelevanceModule = angular
+  .module('hippo-cm.channel.relevance', [
+    'hippo-cm-api',
+  ])
+  .controller('ViewAsCtrl', ViewAsCtrl)
+  .directive('relevanceViewAs', ViewAsDirective);
