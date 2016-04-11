@@ -70,7 +70,7 @@ export class DragDropService {
 
       this.drake = this.iframe.dragula(iframeContainerElements, {
         ignoreInputTextSelection: false,
-        mirrorContainer: this.iframeJQueryElement.parent()[0],
+        mirrorContainer: $('.channel-dragula-mirror')[0],
       });
       this.drake.on('drag', () => this._onStartDrag());
       this.drake.on('cloned', (clone, original) => this._onMirrorCreated(clone, original));
