@@ -5,34 +5,22 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-community-translations</artifactId>
-    <version>0</version>
-    <relativePath>../..</relativePath>
+    <version>11.0.0-SNAPSHOT</version>
   </parent>
   
-  <name>Hippo Plugin Poll Translations 3.0.x</name>
-  <artifactId>hippo-plugin-poll-l10n</artifactId>
+  <name>Hippo Plugin Dashboard Document Wizard Translations</name>
+  <artifactId>hippo-plugin-dashboard-document-wizard-l10n</artifactId>
   <version>3.0.0-SNAPSHOT</version>
   
   <properties>
-    <hippo.plugin.poll.version>3.0.0-SNAPSHOT</hippo.plugin.poll.version>
+    <hippo.plugin.dashboard-document-wizard.version>3.0.0-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
   </properties>
   
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-plugin-poll-addon-cms</artifactId>
-      <version>${hippo.plugin.poll.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-plugin-poll-addon-repository</artifactId>
-      <version>${hippo.plugin.poll.version}</version>
+      <artifactId>hippo-plugin-dashboard-document-wizard</artifactId>
+      <version>${hippo.plugin.dashboard-document-wizard.version}</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>

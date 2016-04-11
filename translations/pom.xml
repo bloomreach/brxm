@@ -11,7 +11,6 @@
 
   <name>Hippo Community Translations</name>
   <artifactId>hippo-community-translations</artifactId>
-  <version>0</version>
   <packaging>pom</packaging>
   
   <properties>
@@ -58,20 +57,20 @@
   </dependencies>
 
   <modules>
-    <module>hippo-cms/4.0.x</module>
-    <module>channel-manager/4.0.x</module>
-    <module>hst-config-editor/3.0.x</module>
-    <module>content-blocks/3.0.x</module>
-    <module>content-tagging/6.0.x</module>
-    <module>dashboard-document-wizard/3.0.x</module>
-    <module>gallerypicker/3.0.x</module>
-    <module>poll/3.0.x</module>
-    <module>relateddocs/4.0.x</module>
-    <module>resourcebundle-editor/3.0.x</module>
-    <module>robotstxt/3.0.x</module>
-    <module>selections/4.0.x</module>
-    <module>seo-support/3.0.x</module>
-    <module>taxonomy/3.0.x</module>
+    <module>hippo-cms</module>
+    <module>channel-manager</module>
+    <module>hst-config-editor</module>
+    <module>content-blocks</module>
+    <module>content-tagging</module>
+    <module>dashboard-document-wizard</module>
+    <module>gallerypicker</module>
+    <module>poll</module>
+    <module>relateddocs</module>
+    <module>resourcebundle-editor</module>
+    <module>robotstxt</module>
+    <module>selections</module>
+    <module>seo-support</module>
+    <module>taxonomy</module>
   </modules>
 
   <build>
