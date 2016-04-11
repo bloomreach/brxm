@@ -28,6 +28,7 @@ export function ExperimentLabelDirective() {
       // override component label
       if (attrs.experimentState) {
         element.find('.overlay-label-text').text(attrs.experimentState);
+        element.addClass('has-icon');
       }
     },
   };

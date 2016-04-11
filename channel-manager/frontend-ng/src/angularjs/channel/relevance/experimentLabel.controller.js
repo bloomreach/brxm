@@ -26,7 +26,6 @@ export class ExperimentLabelCtrl {
 
     if (this.hasExperiment()) {
       $attrs.experimentState = this._getExperimentState();
-      $element.addClass('has-icon');
     }
   }
 

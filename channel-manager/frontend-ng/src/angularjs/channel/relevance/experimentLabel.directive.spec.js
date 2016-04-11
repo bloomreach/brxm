@@ -66,6 +66,7 @@ describe('ExperimentLabelDirective', () => {
     compileDirective();
 
     expect($element.find('.overlay-label-text').text()).toBe('label text');
+    expect($element.hasClass('has-icon')).toBe(false);
     expect($translate.instant).not.toHaveBeenCalled();
   });
 
@@ -74,6 +75,7 @@ describe('ExperimentLabelDirective', () => {
     compileDirective();
 
     expect($element.find('.overlay-label-text').text()).toBe('label text');
+    expect($element.hasClass('has-icon')).toBe(false);
     expect($translate.instant).not.toHaveBeenCalled();
   });
 
@@ -81,9 +83,10 @@ describe('ExperimentLabelDirective', () => {
     $translate.instant.and.returnValue('experiment-label');
     compileDirective();
 
+    expect($element.hasClass('has-icon')).toBe(true);
     const iconEl = $element.find('md-icon');
     expect(iconEl).toBeDefined();
-    expect(iconEl.hasClass('overlay-label-icon')).toBeDefined();
+    expect(iconEl.hasClass('overlay-label-icon')).toBe(true);
     expect(iconEl.text()).toBe('toys');
 
     expect($element.find('.overlay-label-text').text()).toBe('experiment-label');
