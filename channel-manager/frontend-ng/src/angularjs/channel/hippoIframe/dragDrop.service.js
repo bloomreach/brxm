@@ -16,6 +16,7 @@
 
 const COMPONENT_QA_CLASS = 'qa-dragula-component';
 const MOUSEUP_EVENT_NAME = 'mouseup.dragDropService';
+const MIRROR_WRAPPER_SELECTOR = '.channel-dragula-mirror';
 
 export class DragDropService {
 
@@ -70,7 +71,7 @@ export class DragDropService {
 
       this.drake = this.iframe.dragula(iframeContainerElements, {
         ignoreInputTextSelection: false,
-        mirrorContainer: this.baseJQueryElement[0],
+        mirrorContainer: $(MIRROR_WRAPPER_SELECTOR)[0],
       });
       this.drake.on('drag', () => this._onStartDrag());
       this.drake.on('cloned', (clone, original) => this._onMirrorCreated(clone, original));
@@ -137,6 +138,9 @@ export class DragDropService {
   _onMirrorCreated(mirrorElement, originalElement) {
     this.DomService.copyComputedStyleExcept(originalElement, mirrorElement, ['border-[a-z]*', 'box-shadow', 'height', 'margin-[a-z]*', 'overflow', 'opacity', 'pointer-events', 'position', '[a-z\\\-]*user-select', 'width']);
     this.DomService.copyComputedStyleOfDescendantsExcept(originalElement, mirrorElement, ['opacity', 'pointer-events', '[a-z\\\-]*user-select']);
+
+    const iframeOffset = this.iframeJQueryElement.offset();
+    $(MIRROR_WRAPPER_SELECTOR).offset(iframeOffset);
   }
 
   _onStopDrag(element) {
