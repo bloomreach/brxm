@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *

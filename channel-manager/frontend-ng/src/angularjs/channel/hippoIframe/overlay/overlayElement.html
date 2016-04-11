@@ -14,4 +14,8 @@
   limitations under the License.
   -->
 
-<span class="overlay-label">{{ overlayElement.getLabel() }}</span>
+<span class="overlay-label"
+      layout="row" layout-align="start center"
+      experiment-label>
+  <span class="overlay-label-text">{{ overlayElement.getLabel() }}</span>
+</span>

@@ -20,9 +20,13 @@ export class OverlayElementCtrl {
   constructor($scope, $element, OverlaySyncService) {
     'ngInject';
 
+    this.$scope = $scope;
     this.OverlaySyncService = OverlaySyncService;
     this.structureElement.setJQueryElement('overlay', $element);
     this._prepareIframeElement($scope);
+
+    // the share data-model between controllers
+    $scope.structureElement = this.structureElement;
 
     OverlaySyncService.registerElement(this.structureElement);
   }

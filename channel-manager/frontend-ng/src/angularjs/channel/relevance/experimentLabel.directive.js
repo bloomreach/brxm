@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-import { ViewAsDirective } from './viewAs.directive';
-import { ViewAsCtrl } from './viewAs.controller';
-import { ExperimentLabelDirective } from './experimentLabel.directive';
-import { ExperimentLabelCtrl } from './experimentLabel.controller';
+export function ExperimentLabelDirective() {
+  'ngInject';
 
-export const channelRelevanceModule = angular
-  .module('hippo-cm.channel.relevance', [
-    'hippo-cm-api',
-  ])
-  .controller('ViewAsCtrl', ViewAsCtrl)
-  .directive('relevanceViewAs', ViewAsDirective)
-  .controller('ExperimentLabelCtrl', ExperimentLabelCtrl)
-  .directive('experimentLabel', ExperimentLabelDirective);
+  return {
+    restrict: 'A',
+    scope: false,
+    transclude: true,
+    template: '<md-icon ng-if="experimentLabel.hasExperiment()" class="overlay-label-icon">toys</md-icon><ng-transclude/>',
+    controller: 'ExperimentLabelCtrl',
+    controllerAs: 'experimentLabel',
+    link(scope, element, attrs) {
+      // override component label
+      if (attrs.experimentState) {
+        element.find('.overlay-label-text').text(attrs.experimentState);
+        element.addClass('has-icon');
+      }
+    },
+  };
+}

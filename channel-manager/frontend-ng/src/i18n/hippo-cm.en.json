@@ -18,6 +18,9 @@
   "ERROR_ENTER_EDIT": "Failed to enter Edit mode.",
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "Failed to retrieve the list of global variants.",
   "ERROR_RELEVANCE_VARIANT_SELECTION_FAILED": "Failed to activate global variant '{{variant}}'.",
+  "EXPERIMENT_LABEL_COMPLETED": "Experiment completed",
+  "EXPERIMENT_LABEL_RUNNING": "Experiment running",
+  "EXPERIMENT_LABEL_STARTED": "Experiment started",
   "VIEWPORT_WIDTH_DESKTOP": "desktop",
   "VIEWPORT_WIDTH_PHONE": "phone (320px)",
   "VIEWPORT_WIDTH_TABLET": "tablet (720px)"

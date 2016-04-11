@@ -16,7 +16,7 @@
 
 /* eslint-disable prefer-const */
 
-describe('ChannelCtrl', () => {
+describe('ViewAsCtrl', () => {
   'use strict';
 
   let ViewAsCtrl;
