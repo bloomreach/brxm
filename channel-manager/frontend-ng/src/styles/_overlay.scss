@@ -102,7 +102,7 @@ overlay-element {
   }
 }
 
-.channel-iframe-base > .gu-mirror {
+.channel-iframe-scroll > .gu-mirror {
   @include overlay-border('!important');
   @include overlay-border-component('!important');
   overflow: hidden !important;
