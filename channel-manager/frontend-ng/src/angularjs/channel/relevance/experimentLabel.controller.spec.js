@@ -23,6 +23,7 @@ describe('ExperimentLabelCtrl', () => {
   let $compile;
   let $translate;
   let $element;
+  let $scope;
   let mockStructureElement;
 
   beforeEach(() => {
@@ -47,45 +48,45 @@ describe('ExperimentLabelCtrl', () => {
   });
 
   function createController() {
-    const $scope = $rootScope.$new();
+    $scope = $rootScope.$new();
+    $scope.overlayElement = {
+      structureElement: mockStructureElement,
+      text: 'label',
+      icon: '',
+    };
     $scope.structureElement = mockStructureElement;
 
-    $element = angular.element('<div experiment-label="structureElement"></div>');
+    $element = angular.element('<div experiment-label></div>');
     $compile($element)($scope);
     $scope.$digest();
-//    spyOn($element, 'addClass');
 
     return $element.controller('experiment-label');
   }
 
   it('displays the label in case of a container component', () => {
     mockStructureElement.type = 'container';
-    const ExperimentLabelCtrl = createController();
+    createController();
 
-    expect(ExperimentLabelCtrl.text).toBe('label');
-//    expect($element.addClass).not.toHaveBeenCalled();
+    expect($scope.overlayElement.text).toBe('label');
+    expect($scope.overlayElement.icon).toBe('');
     expect($translate.instant).not.toHaveBeenCalled();
   });
 
   it('displays the label in case of a component without experiment', () => {
     delete mockStructureElement.metaData['Targeting-experiment-id'];
-    const ExperimentLabelCtrl = createController();
+    createController();
 
-    expect(ExperimentLabelCtrl.text).toBe('label');
-//    expect($element.addClass).not.toHaveBeenCalled();
+    expect($scope.overlayElement.text).toBe('label');
+    expect($scope.overlayElement.icon).toBe('');
     expect($translate.instant).not.toHaveBeenCalled();
-
-    expect(ExperimentLabelCtrl.hasExperiment()).toBe(false);
   });
 
   it('displays the experiment label and icon if the component has an experiment', () => {
     $translate.instant.and.returnValue('experiment-label');
-    const ExperimentLabelCtrl = createController();
+    createController();
 
-    expect(ExperimentLabelCtrl.text).toBe('experiment-label');
-//    expect($element.addClass).toHaveBeenCalledWith('has-icon');
+    expect($scope.overlayElement.text).toBe('experiment-label');
+    expect($scope.overlayElement.icon).not.toBe('');
     expect($translate.instant).toHaveBeenCalledWith('EXPERIMENT_LABEL_STARTED');
-
-    expect(ExperimentLabelCtrl.hasExperiment()).toBe(true);
   });
 });

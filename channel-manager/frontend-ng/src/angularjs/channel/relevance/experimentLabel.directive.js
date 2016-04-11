@@ -35,12 +35,8 @@ export function ExperimentLabelDirective() {
 
   return {
     restrict: 'A',
-    scope: {},
-    bindToController: {
-      structureElement: '=experimentLabel',
-    },
+    scope: false,
     controller: 'ExperimentLabelCtrl',
     controllerAs: 'experimentLabel',
-    templateUrl: 'channel/relevance/experimentLabel.html',
   };
 }

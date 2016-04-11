@@ -24,11 +24,10 @@ export class OverlayElementCtrl {
     this.structureElement.setJQueryElement('overlay', $element);
     this._prepareIframeElement($scope);
 
-    OverlaySyncService.registerElement(this.structureElement);
-  }
+    this.text = this.structureElement.getLabel();
+    this.icon = ''; // none, hidden by default
 
-  getLabel() {
-    return this.structureElement.getLabel();
+    OverlaySyncService.registerElement(this.structureElement);
   }
 
   _prepareIframeElement($scope) {

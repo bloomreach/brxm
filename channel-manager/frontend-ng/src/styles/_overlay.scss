@@ -63,10 +63,11 @@ overlay-element {
     padding: 0 6px;
     display: none;
   }
-}
 
-.overlay-label-icon {
-  color: $white;
+  .overlay-label-icon {
+    color: $white;
+    display: none;
+  }
 }
 
 .overlay-element-container {
@@ -118,6 +119,10 @@ overlay-element {
 
     > .overlay-label.has-icon {
       display: flex; // if the label has an icon, it should always be shown.
+
+      .overlay-label-icon {
+        display: inline;
+      }
     }
   }
 }
