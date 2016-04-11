@@ -28,6 +28,10 @@
     &:last-child {
       margin-right: 0;
     }
+
+    &.md-raised {
+      cursor: default;
+    }
   }
 }
 
