@@ -18,17 +18,28 @@ const EXPERIMENT_ID = 'Targeting-experiment-id';
 const EXPERIMENT_STATE = 'Targeting-experiment-state';
 
 export class ExperimentLabelCtrl {
-  constructor($scope, $translate, $element) {
+  constructor($scope, $translate, $element, $attrs) {
     'ngInject';
 
-    const overlayElement = $scope.overlayElement;
+    this.$translate = $translate;
+    this.structureElement = $scope.structureElement;
 
-    if (overlayElement.structureElement.type === 'component'
-        && overlayElement.structureElement.metaData[EXPERIMENT_ID]) {
-      const state = overlayElement.structureElement.metaData[EXPERIMENT_STATE];
-      overlayElement.icon = 'toys';
-      overlayElement.text = $translate.instant(`EXPERIMENT_LABEL_${state}`);
+    if (this.hasExperiment()) {
+      $attrs.experimentState = this._getExperimentState();
       $element.addClass('has-icon');
     }
+  }
+
+  _isComponent() {
+    return this.structureElement.type === 'component';
+  }
+
+  hasExperiment() {
+    return this._isComponent() && !!this.structureElement.metaData[EXPERIMENT_ID];
+  }
+
+  _getExperimentState() {
+    const state = this.structureElement.metaData[EXPERIMENT_STATE];
+    return this.$translate.instant(`EXPERIMENT_LABEL_${state}`);
   }
 }

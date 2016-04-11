@@ -16,7 +16,7 @@
 
 /* eslint-disable prefer-const */
 
-describe('ExperimentLabelCtrl', () => {
+describe('ExperimentLabelDirective', () => {
   'use strict';
 
   let $rootScope;
@@ -47,46 +47,46 @@ describe('ExperimentLabelCtrl', () => {
     };
   });
 
-  function createController() {
+  function compileDirective() {
     $scope = $rootScope.$new();
     $scope.overlayElement = {
       structureElement: mockStructureElement,
       text: 'label',
-      icon: '',
     };
     $scope.structureElement = mockStructureElement;
 
-    $element = angular.element('<div experiment-label></div>');
+    $element = angular.element('<div experiment-label><span class="overlay-label-text">label text</span></div>');
+
     $compile($element)($scope);
     $scope.$digest();
-
-    return $element.controller('experiment-label');
   }
 
   it('displays the label in case of a container component', () => {
     mockStructureElement.type = 'container';
-    createController();
+    compileDirective();
 
-    expect($scope.overlayElement.text).toBe('label');
-    expect($scope.overlayElement.icon).toBe('');
+    expect($element.find('.overlay-label-text').text()).toBe('label text');
     expect($translate.instant).not.toHaveBeenCalled();
   });
 
   it('displays the label in case of a component without experiment', () => {
     delete mockStructureElement.metaData['Targeting-experiment-id'];
-    createController();
+    compileDirective();
 
-    expect($scope.overlayElement.text).toBe('label');
-    expect($scope.overlayElement.icon).toBe('');
+    expect($element.find('.overlay-label-text').text()).toBe('label text');
     expect($translate.instant).not.toHaveBeenCalled();
   });
 
   it('displays the experiment label and icon if the component has an experiment', () => {
     $translate.instant.and.returnValue('experiment-label');
-    createController();
+    compileDirective();
 
-    expect($scope.overlayElement.text).toBe('experiment-label');
-    expect($scope.overlayElement.icon).not.toBe('');
+    const iconEl = $element.find('md-icon');
+    expect(iconEl).toBeDefined();
+    expect(iconEl.hasClass('overlay-label-icon')).toBeDefined();
+    expect(iconEl.text()).toBe('toys');
+
+    expect($element.find('.overlay-label-text').text()).toBe('experiment-label');
     expect($translate.instant).toHaveBeenCalledWith('EXPERIMENT_LABEL_STARTED');
   });
 });
