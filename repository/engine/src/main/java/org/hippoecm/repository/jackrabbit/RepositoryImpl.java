@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.repository.jackrabbit;
 
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.util.List;
 
 import javax.jcr.AccessDeniedException;
@@ -23,8 +24,12 @@ import javax.jcr.NamespaceException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.management.JMException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.security.auth.Subject;
 
+import org.apache.jackrabbit.api.stats.RepositoryStatistics;
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.SearchManager;
 import org.apache.jackrabbit.core.cluster.ClusterNode;
@@ -46,6 +51,7 @@ import org.apache.jackrabbit.core.state.ISMLocking;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.hippoecm.repository.FacetedNavigationEngine;
+import org.hippoecm.repository.jmx.RepositoryStat;
 import org.hippoecm.repository.query.lucene.HippoQueryHandler;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
 import org.onehippo.repository.InternalHippoRepository;
@@ -54,6 +60,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl implements InternalHippoRepository {
+
+    public static final String REPOSITORY_STATS_JMX_NAME = "org.hippoecm.repository:type=Repository,name=statistics";
 
     private static Logger log = LoggerFactory.getLogger(RepositoryImpl.class);
     
@@ -66,6 +74,13 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl im
     protected RepositoryImpl(RepositoryConfig repConfig) throws RepositoryException {
         super(repConfig);
         searchIndexConsistencyCheck();
+        registerJmxRepositoryStatistics();
+    }
+
+    @Override
+    protected synchronized void doShutdown() {
+        unregisterJmxRepositoryStatistics();
+        super.doShutdown();
     }
 
     private void searchIndexConsistencyCheck() throws RepositoryException {
@@ -94,6 +109,26 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl im
             }
         } catch (IOException e) {
             log.error("Search index consistency check failed", e);
+        }
+    }
+
+    private void registerJmxRepositoryStatistics() {
+        final RepositoryStatistics repositoryStatistics = context.getRepositoryStatistics();
+        final RepositoryStat repositoryStat = new RepositoryStat(repositoryStatistics);
+        try {
+            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+            mBeanServer.registerMBean(repositoryStat, ObjectName.getInstance(REPOSITORY_STATS_JMX_NAME));
+        } catch (JMException e) {
+            log.error("Unable to register RepositoryStat", e);
+        }
+    }
+
+    private void unregisterJmxRepositoryStatistics() {
+        try {
+            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+            mBeanServer.unregisterMBean(ObjectName.getInstance(REPOSITORY_STATS_JMX_NAME));
+        } catch (JMException e) {
+            log.error("Unable to register RepositoryStat", e);
         }
     }
 
