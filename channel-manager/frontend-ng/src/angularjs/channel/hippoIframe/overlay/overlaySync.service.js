@@ -80,9 +80,13 @@ export class OverlaySyncService {
         // Reset the height, as the document height will always be at least the iframe height
         this.iframeJQueryElement.height('');
 
-        // Avoid scroll bars inside the iframe, we want to scroll the "scroll",
-        // moving the iframe and the overlay in sync.
-        $(doc.documentElement).css('overflow', 'hidden');
+        // Avoid scrollbars from the site as they are controlled by the application.
+        // Changing a style attribute on Firefox will always invoke a MutationObserver callback, even if the value has
+        // not changed. To prevent ending up in a loop, only set it when the value is not already 'hidden'.
+        const docEl = $(doc.documentElement);
+        if (docEl.css('overflow') !== 'hidden') {
+          docEl.css('overflow', 'hidden');
+        }
 
         const height = doc.body.clientHeight;
         this.iframeJQueryElement.height(height);
