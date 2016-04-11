@@ -16,7 +16,8 @@
 
 <div ng-if="viewAs.globalVariants.length" layout="row" layout-align="start center" class="select-in-toolbar">
   <label flex="none">{{ 'TOOLBAR_VIEW_AS_LABEL' | translate }}:</label>
-  <md-select ng-model="viewAs.selectedVariant"
+  <md-select flex
+             ng-model="viewAs.selectedVariant"
              ng-model-options="{trackBy: '$value.id'}"
              aria-label="{{ 'TOOLBAR_VIEW_AS_LABEL' | translate }}">
     <md-option ng-repeat="variant in viewAs.globalVariants" ng-value="{{variant}}">

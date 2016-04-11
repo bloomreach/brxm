@@ -49,10 +49,18 @@
     border-width: 0;
   }
 
+  .md-text {
+    display: inline-block;
+    height: 20px;
+  }
+
+  .md-select-icon:after {
+    width: 10px;
+  }
+
   label {
     font-size: 15px;
     margin-right: 4px;
-    padding-top: 4px;
   }
 }
 
