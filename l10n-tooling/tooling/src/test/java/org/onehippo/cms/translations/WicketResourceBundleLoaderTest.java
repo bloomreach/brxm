@@ -31,7 +31,7 @@ public class WicketResourceBundleLoaderTest {
         ResourceBundle bundle = resourceBundles.iterator().next();
         assertEquals("org/onehippo/cms/translations/test/DummyWicketPlugin.properties", bundle.getName());
         assertEquals(BundleType.WICKET, bundle.getType());
-        assertEquals(1, bundle.getEntries().size());
+        assertEquals(3, bundle.getEntries().size());
         assertEquals("en", bundle.getLocale());
     }
 

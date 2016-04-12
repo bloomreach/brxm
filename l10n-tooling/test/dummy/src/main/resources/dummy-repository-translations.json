@@ -5,6 +5,9 @@
     },
     "nl" : {
       "key" : "waarde"
+    },
+    "fr" : {
+      "key" : "valeur"
     }
   }
 }

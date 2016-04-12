@@ -21,9 +21,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.Test;
-import org.onehippo.cms.translations.ArtifactInfo;
-import org.onehippo.cms.translations.ResourceBundle;
-import org.onehippo.cms.translations.ResourceBundleLoader;
 
 import static org.junit.Assert.assertEquals;
 
@@ -42,7 +39,7 @@ public class ResourceBundleLoaderTest {
         ArtifactInfo dummyInfo = infos.iterator().next();
         assertEquals("hippo-translations-test-dummy", dummyInfo.getArtifactId());
         assertEquals("org.onehippo.cms.translations", dummyInfo.getGroupId());
-        assertEquals(7, dummyInfo.getEntries().size());
+        assertEquals(8, dummyInfo.getEntries().size());
     }
 
 }

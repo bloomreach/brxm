@@ -71,11 +71,17 @@ public class ExportImportTest {
         final File export = new Exporter(temporaryFolder.getRoot(), "Default").export("nl");
         final CSVParser parser = new CSVParser(new FileReader(export), CSVFormat.DEFAULT);
         final List<CSVRecord> records = parser.getRecords();
-        assertEquals(2, records.size());
-        final CSVRecord record = records.get(1);
+        assertEquals(3, records.size());
+
+        CSVRecord record = records.get(1);
         assertEquals(3, record.size());
         assertEquals("value", record.get(1));
         assertEquals("waarde", record.get(2));
+
+        record = records.get(2);
+        assertEquals(3, record.size());
+        assertEquals("missing in fr and nl", record.get(1));
+        assertEquals("", record.get(2));
     }
 
     @Test

@@ -17,15 +17,16 @@ package org.onehippo.cms.translations;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Properties;
 
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import static org.junit.Assert.assertEquals;
 import static org.onehippo.cms.translations.KeyData.KeyStatus.UPDATED;
+import static org.onehippo.cms.translations.KeyData.LocaleStatus.RESOLVED;
 import static org.onehippo.cms.translations.KeyData.LocaleStatus.UNRESOLVED;
 
 public class RegistryTest {
@@ -33,13 +34,23 @@ public class RegistryTest {
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    private int getChangeCount(Registry registry) throws IOException {
+    private Collection<String> extractorLocales = Arrays.asList("en", "nl", "fr");
+    private Collection<String> registrarLocales = Arrays.asList("nl", "fr");
+
+    private int getPendingTranslationCount(Registry registry) throws IOException {
         int count = 0;
         for (RegistryFile file : registry.listRegistryFiles()) {
             file.load();
             for (String key : file.getKeys()) {
-                if (file.getKeyData(key).getStatus() != KeyData.KeyStatus.CLEAN) {
-                    count++;
+                KeyData keyData = file.getKeyData(key);
+                for (String locale : registrarLocales) {
+                    if (keyData.getLocaleStatus(locale) != RESOLVED) {
+                        count++;
+                        System.out.println(
+                                "fileId: " + file.getId()
+                                + " key: " + key
+                                + " locale: " + locale);
+                    }
                 }
             }
         }
@@ -48,36 +59,62 @@ public class RegistryTest {
     }
 
     @Test
-    public void running_registrar_before_extract_results_in_3_changes() throws IOException {
-        Registrar registrar = new Registrar(temporaryFolder.getRoot(), Arrays.asList("de", "fr"));
+    public void running_initialize_before_extract_results_in_10_changes() throws IOException {
+        Registrar registrar = new Registrar(temporaryFolder.getRoot(), registrarLocales);
         registrar.initializeRegistry();
         registrar.updateRegistry();
 
-        assertEquals(3, getChangeCount(registrar.getRegistry()));
+        assertEquals(10, getPendingTranslationCount(registrar.getRegistry()));
+
+        RegistryFile registryFile = registrar.getRegistry().loadRegistryFile("angular/dummy/i18n/registry.json");
+        assertEquals(UNRESOLVED, registryFile.getKeyData("key").getLocaleStatus("nl"));
+        assertEquals(UNRESOLVED, registryFile.getKeyData("key").getLocaleStatus("fr"));
+
+        registryFile = registrar.getRegistry().loadRegistryFile("dummy-repository-translations.registry.json");
+        assertEquals(UNRESOLVED, registryFile.getKeyData("dummybundles/key").getLocaleStatus("nl"));
+        assertEquals(UNRESOLVED, registryFile.getKeyData("dummybundles/key").getLocaleStatus("fr"));
+
+        registryFile = registrar.getRegistry().loadRegistryFile("org/onehippo/cms/translations/test/DummyWicketPlugin.registry.json");
+        assertEquals(UNRESOLVED, registryFile.getKeyData("key").getLocaleStatus("nl"));
+        assertEquals(UNRESOLVED, registryFile.getKeyData("key").getLocaleStatus("fr"));
+        assertEquals(UNRESOLVED, registryFile.getKeyData("key_en_nl").getLocaleStatus("nl"));
+        assertEquals(UNRESOLVED, registryFile.getKeyData("key_en_nl").getLocaleStatus("fr"));
+        assertEquals(UNRESOLVED, registryFile.getKeyData("key_en_only").getLocaleStatus("nl"));
+        assertEquals(UNRESOLVED, registryFile.getKeyData("key_en_only").getLocaleStatus("fr"));
     }
 
     @Test
-    public void running_registrar_after_extract_results_in_0_changes() throws IOException {
-        Extractor extractor = new Extractor(temporaryFolder.getRoot(), Arrays.asList("en", "de", "fr"));
+    public void running_initialize_after_extract_results_in_4_changes() throws IOException {
+        Extractor extractor = new Extractor(temporaryFolder.getRoot(), extractorLocales);
         extractor.extract();
 
-        Registrar registrar = new Registrar(temporaryFolder.getRoot(), Arrays.asList("de", "fr"));
+        Registrar registrar = new Registrar(temporaryFolder.getRoot(), registrarLocales);
         registrar.initializeRegistry();
         registrar.updateRegistry();
 
-        assertEquals(0, getChangeCount(registrar.getRegistry()));
+        assertEquals(4, getPendingTranslationCount(registrar.getRegistry()));
+
+        RegistryFile registryFile = registrar.getRegistry().loadRegistryFile("angular/dummy/i18n/registry.json");
+        assertEquals(UNRESOLVED, registryFile.getKeyData("key").getLocaleStatus("fr"));
+
+        registryFile = registrar.getRegistry().loadRegistryFile("org/onehippo/cms/translations/test/DummyWicketPlugin.registry.json");
+        assertEquals(UNRESOLVED, registryFile.getKeyData("key_en_nl").getLocaleStatus("fr"));
+        assertEquals(UNRESOLVED, registryFile.getKeyData("key_en_only").getLocaleStatus("nl"));
+        assertEquals(UNRESOLVED, registryFile.getKeyData("key_en_only").getLocaleStatus("fr"));
     }
 
     @Test
     public void test_update_is_registered() throws IOException {
         // extract translations, reference sets and initialize register
-        Extractor extractor = new Extractor(temporaryFolder.getRoot(), Arrays.asList("en", "de", "fr"));
+        Extractor extractor = new Extractor(temporaryFolder.getRoot(), extractorLocales);
         extractor.extract();
 
-        Registrar registrar = new Registrar(temporaryFolder.getRoot(), Arrays.asList("de", "fr"));
+        Registrar registrar = new Registrar(temporaryFolder.getRoot(), registrarLocales);
         registrar.initializeRegistry();
 
-        // modify a saved reference set
+        int initialChanges = getPendingTranslationCount(registrar.getRegistry());
+
+        // to fake an update in the reference language, modify a saved reference set
         Properties properties = new Properties();
         properties.setProperty("key", "foo");
 
@@ -88,8 +125,8 @@ public class RegistryTest {
         // update the register
         registrar.updateRegistry();
 
-        // validate overall changes
-        assertEquals(1, getChangeCount(registrar.getRegistry()));
+        // validate the number of additional changes
+        assertEquals(2, getPendingTranslationCount(registrar.getRegistry()) - initialChanges);
 
         // validate the reference was correctly updated
         repositoryBundle = repositoryResourceBundleSerializer.deserializeBundle(repositoryBundle.getFileName(), repositoryBundle.getName(), repositoryBundle.getLocale());
@@ -97,7 +134,7 @@ public class RegistryTest {
         final KeyData keyData = registryFile.getKeyData("dummybundles/key");
         assertEquals(UPDATED, keyData.getStatus());
         assertEquals(2, keyData.getLocales().size());
-        assertEquals(UNRESOLVED, keyData.getLocaleStatus("de"));
+        assertEquals(UNRESOLVED, keyData.getLocaleStatus("nl"));
         assertEquals(UNRESOLVED, keyData.getLocaleStatus("fr"));
         assertEquals("value", repositoryBundle.getEntries().get("key"));
     }
@@ -105,10 +142,10 @@ public class RegistryTest {
     @Test
     public void test_deleted_keys_are_registered() throws IOException {
         // extract translations, reference sets and initialize register
-        Extractor extractor = new Extractor(temporaryFolder.getRoot(), Arrays.asList("en", "de", "fr"));
+        Extractor extractor = new Extractor(temporaryFolder.getRoot(), extractorLocales);
         extractor.extract();
 
-        Registrar registrar = new Registrar(temporaryFolder.getRoot(), Arrays.asList("de", "fr"));
+        Registrar registrar = new Registrar(temporaryFolder.getRoot(), registrarLocales);
         registrar.initializeRegistry();
 
         // add some dummy keys to the existing "dummy" resource bundle and introduce a new "new" resource bundle
@@ -132,7 +169,7 @@ public class RegistryTest {
         registrar.updateRegistry();
 
         // validate overall changes
-        assertEquals(3, getChangeCount(registrar.getRegistry()));
+        assertEquals(3, getPendingTranslationCount(registrar.getRegistry()));
 
         // validate the register was correctly updated
         registryFile = registrar.getRegistry().loadRegistryFile(fileName1);

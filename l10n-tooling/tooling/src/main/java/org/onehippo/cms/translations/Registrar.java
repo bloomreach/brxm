@@ -25,18 +25,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cms.translations.KeyData.KeyStatus.ADDED;
-import static org.onehippo.cms.translations.KeyData.KeyStatus.CLEAN;
 import static org.onehippo.cms.translations.KeyData.KeyStatus.UPDATED;
+import static org.onehippo.cms.translations.KeyData.LocaleStatus.RESOLVED;
 import static org.onehippo.cms.translations.KeyData.LocaleStatus.UNRESOLVED;
 import static org.onehippo.cms.translations.ResourceBundleLoader.getResourceBundleLoaders;
 import static org.onehippo.cms.translations.TranslationsUtils.registryKey;
-import static org.onehippo.cms.translations.TranslationsUtils.registryKeyPrefix;
 
 public class Registrar {
 
@@ -46,7 +44,7 @@ public class Registrar {
     private final Collection<String> locales;
     private final Registry registry;
 
-    // Maps a file name in the register to the set of registry keys that were collected during updateRegistry()
+    // Maps a file name in the registry to the set of registry keys that were collected during updateRegistry()
     private final Map<String, Set<String>> registryKeysByFileName = new HashMap<>();
 
     public Registrar(final File registryDir, final Collection<String> locales) {
@@ -60,14 +58,17 @@ public class Registrar {
     }
 
     public void initializeRegistry() throws IOException {
-        // iterate over all English source bundles and register the keys as clean
+        // iterate over all English source bundles and register all translations as UNRESOLVED
         for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(Collections.singletonList("en"))) {
             for (ResourceBundle sourceBundle : bundleLoader.loadBundles()) {
                 RegistryFile registryFile = registry.loadRegistryFile(sourceBundle);
                 registryFile.setBundleType(sourceBundle.getType());
 
                 for (String sourceKey : sourceBundle.getEntries().keySet()) {
-                    KeyData keyData = new KeyData(CLEAN);
+                    KeyData keyData = new KeyData(UPDATED);
+                    for (String locale : locales) {
+                        keyData.setLocaleStatus(locale, UNRESOLVED);
+                    }
                     registryFile.putKeyData(registryKey(sourceBundle, sourceKey), keyData);
                 }
 
@@ -79,27 +80,15 @@ public class Registrar {
         for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(locales)) {
             for (ResourceBundle sourceBundle : bundleLoader.loadBundles()) {
                 final RegistryFile registryFile = registry.loadRegistryFile(sourceBundle);
-                final String registryKeyPrefix = registryKeyPrefix(sourceBundle);
 
-                final Set<String> expectedKeys = registryFile.getKeys().stream()
-                        .filter(str -> str.startsWith(registryKeyPrefix)).collect(Collectors.toSet());
-
-                // collect the source keys mapped to their registry key format
-                final Set<String> collectedKeys = new HashSet<>();
                 for (String sourceKey : sourceBundle.getEntries().keySet()) {
-                    final String registryKey = registryKey(sourceBundle, sourceKey);
-                    collectedKeys.add(registryKey);
-                    if (!expectedKeys.contains(registryKey)) {
+                    final KeyData keyData = registryFile.getKeyData(registryKey(sourceBundle, sourceKey));
+
+                    if (keyData == null) {
                         log.warn("Resource bundle file '{}' contains key '{}' which does not have an English reference translation",
                                 sourceBundle.getFileName(), sourceKey);
-                    }
-                }
-
-                // register if there are any keys that do not have a translation yet
-                for (String expectedKey : expectedKeys) {
-                    if (!collectedKeys.contains(expectedKey)) {
-                        log.info("Translation missing for key '{}' in file '{}' for locale '{}'",
-                                expectedKey, sourceBundle.getFileName(), sourceBundle.getLocale());
+                    } else {
+                        keyData.setLocaleStatus(sourceBundle.getLocale(), RESOLVED);
                     }
                 }
 
@@ -107,6 +96,39 @@ public class Registrar {
             }
         }
     }
+
+
+/*
+                final RegistryFile registryFile = registry.loadRegistryFile(sourceBundle);
+                final String registryKeyPrefix = registryKeyPrefix(sourceBundle);
+
+                final Set<String> referenceKeys = registryFile.getKeys().stream()
+                        .filter(str -> str.startsWith(registryKeyPrefix)).collect(Collectors.toSet());
+
+                // collect the source keys mapped to their registry key format
+                // emit warning in case there is no English reference translation
+                final Set<String> collectedKeys = new HashSet<>();
+                for (String sourceKey : sourceBundle.getEntries().keySet()) {
+                    final String registryKey = registryKey(sourceBundle, sourceKey);
+                    collectedKeys.add(registryKey);
+                    if (!referenceKeys.contains(registryKey)) {
+                        log.warn("Resource bundle file '{}' contains key '{}' which does not have an English reference translation",
+                                sourceBundle.getFileName(), sourceKey);
+                    }
+                }
+
+                // loop over all reference keys and register locales that do not have a translation yet
+                for (String expectedKey : referenceKeys) {
+                    if (!collectedKeys.contains(expectedKey)) {
+                        log.info("Translation missing for key '{}' in file '{}' for locale '{}'",
+                                expectedKey, sourceBundle.getFileName(), sourceBundle.getLocale());
+
+                        KeyData keyData = registryFile.getKeyData(expectedKey);
+                        keyData.setStatus(UPDATED);
+                        keyData.setLocaleStatus(sourceBundle.getLocale(), UNRESOLVED);
+                    }
+                }
+*/
 
     public void updateRegistry() throws IOException {
         /* iterate over all source bundles:
@@ -213,15 +235,16 @@ public class Registrar {
                             registryKey, registryFile.getId());
                 }
                 keyData = new KeyData(ADDED);
+                for (String locale : locales) {
+                    keyData.setLocaleStatus(locale, UNRESOLVED);
+                }
                 registryFile.putKeyData(registryKey, keyData);
             } else {
                 if (!referenceTranslation.equals(sourceTranslation)) {
                     keyData.setStatus(UPDATED);
-                }
-            }
-            if (keyData.getStatus() != CLEAN) {
-                for (String locale : locales) {
-                    keyData.setLocaleStatus(locale, UNRESOLVED);
+                    for (String locale : locales) {
+                        keyData.setLocaleStatus(locale, UNRESOLVED);
+                    }
                 }
             }
 
