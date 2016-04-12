@@ -97,39 +97,6 @@ public class Registrar {
         }
     }
 
-
-/*
-                final RegistryFile registryFile = registry.loadRegistryFile(sourceBundle);
-                final String registryKeyPrefix = registryKeyPrefix(sourceBundle);
-
-                final Set<String> referenceKeys = registryFile.getKeys().stream()
-                        .filter(str -> str.startsWith(registryKeyPrefix)).collect(Collectors.toSet());
-
-                // collect the source keys mapped to their registry key format
-                // emit warning in case there is no English reference translation
-                final Set<String> collectedKeys = new HashSet<>();
-                for (String sourceKey : sourceBundle.getEntries().keySet()) {
-                    final String registryKey = registryKey(sourceBundle, sourceKey);
-                    collectedKeys.add(registryKey);
-                    if (!referenceKeys.contains(registryKey)) {
-                        log.warn("Resource bundle file '{}' contains key '{}' which does not have an English reference translation",
-                                sourceBundle.getFileName(), sourceKey);
-                    }
-                }
-
-                // loop over all reference keys and register locales that do not have a translation yet
-                for (String expectedKey : referenceKeys) {
-                    if (!collectedKeys.contains(expectedKey)) {
-                        log.info("Translation missing for key '{}' in file '{}' for locale '{}'",
-                                expectedKey, sourceBundle.getFileName(), sourceBundle.getLocale());
-
-                        KeyData keyData = registryFile.getKeyData(expectedKey);
-                        keyData.setStatus(UPDATED);
-                        keyData.setLocaleStatus(sourceBundle.getLocale(), UNRESOLVED);
-                    }
-                }
-*/
-
     public void updateRegistry() throws IOException {
         /* iterate over all source bundles:
          *  - register keys that are new in the source and not yet in the register
