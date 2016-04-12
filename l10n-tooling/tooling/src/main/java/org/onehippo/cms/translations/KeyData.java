@@ -71,14 +71,25 @@ public class KeyData {
     }
 
     public void setLocaleStatus(final String locale, LocaleStatus localeStatus) {
-        if (localeStatus == RESOLVED && locales.size() == 1 && locales.containsKey(locale)) {
-            locales = null;
-            status = CLEAN;
-        } else {
-            if (locales == null) {
+        // Don't maintain status for locales that are RESOLVED
+        if (locales == null) {
+            if (localeStatus != RESOLVED) {
                 locales = new HashMap<>();
+                locales.put(locale, localeStatus);
             }
-            locales.put(locale, localeStatus);
+        } else {
+            if (localeStatus == RESOLVED) {
+                if (locales.containsKey(locale)) {
+                    locales.remove(locale);
+                    if (locales.size() == 0) {
+                        locales = null;
+                        status = CLEAN;
+                    }
+                }
+            } else {
+                locales.put(locale, localeStatus);
+            }
         }
-    } 
+    }
+
 }
