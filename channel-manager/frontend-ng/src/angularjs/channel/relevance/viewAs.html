@@ -24,4 +24,9 @@
       {{viewAs.makeDisplayName(variant)}}
     </md-option>
   </md-select>
+  <md-button class="alter-ego-btn"
+             ng-if="viewAs.selectedVariant.id === 'hippo-alter-ego'"
+             title="{{ EDIT_ALTER_EGO | translate }}">
+    <md-icon>edit</md-icon>
+  </md-button>
 </div>

@@ -54,13 +54,18 @@
     height: 20px;
   }
 
-  .md-select-icon:after {
-    width: 10px;
+  .md-select-icon {
+    width: 14px;
   }
 
   label {
     font-size: 15px;
     margin-right: 4px;
   }
+}
+
+.md-button.alter-ego-btn {
+  min-width: 0;
+  margin-left: 0;
 }
 
