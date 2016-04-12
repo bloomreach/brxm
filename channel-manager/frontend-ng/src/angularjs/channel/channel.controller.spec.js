@@ -25,6 +25,7 @@ describe('ChannelCtrl', () => {
   let ScalingService;
   let ConfigService;
   let FeedbackService;
+  let PageMetaDataService;
   let SessionService;
   let ChannelCtrl;
   let HippoIframeService;
@@ -62,6 +63,10 @@ describe('ChannelCtrl', () => {
       ]);
       ComponentsService.getComponents.and.returnValue(resolvedPromise);
 
+      PageMetaDataService = jasmine.createSpyObj('PageMetaDataService', [
+        'getRenderVariant',
+      ]);
+
       ScalingService = jasmine.createSpyObj('ScalingService', [
         'init',
         'setPushWidth',
@@ -76,6 +81,7 @@ describe('ChannelCtrl', () => {
         $scope: $rootScope.$new(),
         ComponentsService,
         ChannelService,
+        PageMetaDataService,
         ScalingService,
         HippoIframeService,
       });
@@ -109,9 +115,14 @@ describe('ChannelCtrl', () => {
     expect(ChannelCtrl.isEditable()).toBe(false);
   });
 
-  it('gets the component catalog from the channelk service', () => {
+  it('gets the component catalog from the channel service', () => {
     ChannelService.getCatalog.and.returnValue('dummy');
     expect(ChannelCtrl.getCatalog()).toBe('dummy');
+  });
+
+  it('gets the render variant from the page meta-data service', () => {
+    PageMetaDataService.getRenderVariant.and.returnValue('variant1');
+    expect(ChannelCtrl.getRenderVariant()).toBe('variant1');
   });
 
   it('is not in edit mode by default', () => {

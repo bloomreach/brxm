@@ -18,7 +18,7 @@ const SIDENAVS = ['components'];
 
 export class ChannelCtrl {
 
-  constructor($log, $scope, $translate, $mdSidenav, ChannelService, DialogService, ScalingService, SessionService, ComponentAdderService, ConfigService, HippoIframeService, FeedbackService) {
+  constructor($log, $scope, $translate, $mdSidenav, ChannelService, DialogService, PageMetaDataService, ScalingService, SessionService, ComponentAdderService, ConfigService, HippoIframeService, FeedbackService) {
     'ngInject';
 
     this.$log = $log;
@@ -27,6 +27,7 @@ export class ChannelCtrl {
     this.$mdSidenav = $mdSidenav;
     this.ChannelService = ChannelService;
     this.DialogService = DialogService;
+    this.PageMetaDataService = PageMetaDataService;
     this.ScalingService = ScalingService;
     this.SessionService = SessionService;
     this.ConfigService = ConfigService;
@@ -142,6 +143,10 @@ export class ChannelCtrl {
 
   getCatalog() {
     return this.ChannelService.getCatalog();
+  }
+
+  getRenderVariant() {
+    return this.PageMetaDataService.getRenderVariant();
   }
 
   hasChanges() {

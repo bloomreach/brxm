@@ -34,6 +34,8 @@ export class ViewAsCtrl {
     SessionService.registerInitCallback('reloadGlobalVariants', () => this._retrieveGlobalVariants());
     $scope.$on('$destroy', () => SessionService.unregisterInitCallback('reloadGlobalVariants'));
 
+    $scope.$watch('viewAs.renderVariant', () => this._updateSelectedVariant());
+
     // Could have used ng-change on md-select, but watching nicely gives me the old value as well.
     $scope.$watch('viewAs.selectedVariant', (newValue, oldValue) => this._setVariant(newValue, oldValue));
   }
@@ -55,14 +57,12 @@ export class ViewAsCtrl {
   }
 
   _updateSelectedVariant() {
-    const oldSelectedVariantId = (this.selectedVariant && this.selectedVariant.id) || this.PageMetaDataService.getRenderVariant();
+    const newVariant = this.globalVariants.find((variant) => (variant.id === this.renderVariant));
 
-    if (oldSelectedVariantId) {
-      this.selectedVariant = this.globalVariants.find((variant) => (variant.id === oldSelectedVariantId));
-    }
-
-    // fallback to "Default" which is sorted first by the backend.
-    if (!this.selectedVariant) {
+    if (newVariant) {
+      this.selectedVariant = newVariant;
+    } else if (this.renderVariant) {
+      // old render variant no longer exists as a global one; fall back to the first available global one
       this.selectedVariant = this.globalVariants[0];
     }
   }

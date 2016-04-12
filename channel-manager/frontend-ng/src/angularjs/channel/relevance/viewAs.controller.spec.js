@@ -16,7 +16,7 @@
 
 /* eslint-disable prefer-const */
 
-describe('ViewAsCtrl', () => {
+describe('ChannelCtrl', () => {
   'use strict';
 
   let ViewAsCtrl;
@@ -26,7 +26,6 @@ describe('ViewAsCtrl', () => {
   let SessionService;
   let HstService;
   let HippoIframeService;
-  let PageMetaDataService;
   let FeedbackService;
   const MockConfigService = {
     variantsUuid: 'testVariantsUuid',
@@ -37,14 +36,13 @@ describe('ViewAsCtrl', () => {
     module('hippo-cm');
 
     inject((_$q_, _$controller_, _$rootScope_, _SessionService_, _HstService_, _HippoIframeService_,
-            _PageMetaDataService_, _FeedbackService_) => {
+            _FeedbackService_) => {
       $q = _$q_;
       $controller = _$controller_;
       $rootScope = _$rootScope_;
       SessionService = _SessionService_;
       HstService = _HstService_;
       HippoIframeService = _HippoIframeService_;
-      PageMetaDataService = _PageMetaDataService_;
       FeedbackService = _FeedbackService_;
 
       spyOn(HstService, 'doGetWithParams');
@@ -127,25 +125,43 @@ describe('ViewAsCtrl', () => {
     expect(ViewAsCtrl.selectedVariant).toBeUndefined();
   });
 
-  it('selects the rendered variant when there is no selected variant yet', () => {
+  it('selects the rendered variant', () => {
     const globalVariants = [
       { id: 'id1', name: 'name1' },
       { id: 'id2', name: 'name2', group: 'group2' },
     ];
     HstService.doGetWithParams.and.returnValue($q.when({ data: globalVariants }));
-    spyOn(PageMetaDataService, 'getRenderVariant').and.returnValue('id2');
 
     ViewAsCtrl = $controller('ViewAsCtrl', {
       $scope: $rootScope.$new(),
       ConfigService: MockConfigService,
     });
+    ViewAsCtrl.renderVariant = 'id2';
     $rootScope.$digest();
 
     expect(ViewAsCtrl.globalVariants).toBe(globalVariants);
     expect(ViewAsCtrl.selectedVariant).toBe(globalVariants[1]);
   });
 
-  it('selects the first variant as a fallback', () => {
+  it('selects the first variant as a fallback when the render variant set but no longer available', () => {
+    const globalVariants = [
+      { id: 'id1', name: 'name1' },
+      { id: 'id2', name: 'name2', group: 'group2' },
+    ];
+    HstService.doGetWithParams.and.returnValue($q.when({ data: globalVariants }));
+
+    ViewAsCtrl = $controller('ViewAsCtrl', {
+      $scope: $rootScope.$new(),
+      ConfigService: MockConfigService,
+    });
+    ViewAsCtrl.renderVariant = 'id3';
+    $rootScope.$digest();
+
+    expect(ViewAsCtrl.globalVariants).toBe(globalVariants);
+    expect(ViewAsCtrl.selectedVariant).toBe(globalVariants[0]);
+  });
+
+  it('does not fall back to the first variant when the render variant has not been set yet', () => {
     const globalVariants = [
       { id: 'id1', name: 'name1' },
       { id: 'id2', name: 'name2', group: 'group2' },
@@ -159,7 +175,7 @@ describe('ViewAsCtrl', () => {
     $rootScope.$digest();
 
     expect(ViewAsCtrl.globalVariants).toBe(globalVariants);
-    expect(ViewAsCtrl.selectedVariant).toBe(globalVariants[0]);
+    expect(ViewAsCtrl.selectedVariant).not.toBeDefined();
   });
 
   it('preserves the selection by ID', () => {
@@ -181,6 +197,7 @@ describe('ViewAsCtrl', () => {
       $scope: $rootScope.$new(),
       ConfigService: MockConfigService,
     });
+    ViewAsCtrl.renderVariant = 'id1';
     $rootScope.$digest();
 
     const reloadGlobalVariantsCallback = SessionService.registerInitCallback.calls.mostRecent().args[1];

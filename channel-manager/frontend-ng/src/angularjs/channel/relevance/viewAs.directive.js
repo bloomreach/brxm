@@ -19,6 +19,9 @@ export function ViewAsDirective() {
 
   return {
     restrict: 'E',
+    bindToController: {
+      renderVariant: '=',
+    },
     scope: {},
     templateUrl: 'channel/relevance/viewAs.html',
     controller: 'ViewAsCtrl',
