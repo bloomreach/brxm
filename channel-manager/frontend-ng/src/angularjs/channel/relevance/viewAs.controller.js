@@ -57,13 +57,9 @@ export class ViewAsCtrl {
   }
 
   _updateSelectedVariant() {
-    const newVariant = this.globalVariants.find((variant) => (variant.id === this.renderVariant));
-
-    if (newVariant) {
-      this.selectedVariant = newVariant;
-    } else if (this.renderVariant) {
-      // old render variant no longer exists as a global one; fall back to the first available global one
-      this.selectedVariant = this.globalVariants[0];
+    if (this.renderVariant && this.globalVariants.length > 0) {
+      const newVariant = this.globalVariants.find((variant) => (variant.id === this.renderVariant));
+      this.selectedVariant = newVariant || this.globalVariants[0];
     }
   }
 
