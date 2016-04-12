@@ -18,9 +18,9 @@
   "ERROR_ENTER_EDIT": "Naar Bewerk modus schakelen heeft gefaald.",
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "Het ophalen van de globale varianten ('Toon als') heeft gefaald.",
   "ERROR_RELEVANCE_VARIANT_SELECTION_FAILED": "Het activeren van de globale variant '{{variant}}' heeft gefaald.",
-  "EXPERIMENT_LABEL_COMPLETED": "Experiment afgelopen",
-  "EXPERIMENT_LABEL_RUNNING": "Experiment loopt",
-  "EXPERIMENT_LABEL_CREATED": "Experiment gemaakt",
+  "EXPERIMENT_LABEL_COMPLETED": "Experiment beëindigd",
+  "EXPERIMENT_LABEL_RUNNING": "Experiment bezig",
+  "EXPERIMENT_LABEL_CREATED": "Experiment aangemaakt",
   "VIEWPORT_WIDTH_DESKTOP": "desktop",
   "VIEWPORT_WIDTH_PHONE": "smartphone (320px)",
   "VIEWPORT_WIDTH_TABLET": "tablet (720px)"
