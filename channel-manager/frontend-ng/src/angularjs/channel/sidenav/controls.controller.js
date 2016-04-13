@@ -15,22 +15,11 @@
  */
 
 export class ChannelSidenavControlsCtrl {
-  constructor($scope, ChannelSidenavService, ChannelService) {
+  constructor(ChannelSidenavService, ChannelService) {
     'ngInject';
 
     this.ChannelSidenavService = ChannelSidenavService;
     this.ChannelService = ChannelService;
-
-    $scope.$watch('controls.editMode', (newValue, oldValue) => {
-      if (oldValue !== undefined && !newValue) {
-        ChannelSidenavService.close();
-      }
-    });
-  }
-
-  showSidenavButton() {
-    const catalog = this.ChannelService.getCatalog();
-    return this.editMode && catalog.length > 0;
   }
 
   toggleSidenav() {

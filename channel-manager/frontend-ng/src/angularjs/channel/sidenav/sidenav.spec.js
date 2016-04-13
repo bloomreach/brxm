@@ -21,6 +21,10 @@ describe('ChannelSidenav', () => {
   let $compile;
   let ChannelSidenavService;
   let ChannelService;
+  let parentScope;
+  const catalogComponents = [
+    { label: 'dummy' },
+  ];
 
   beforeEach(() => {
     module('hippo-cm');
@@ -34,30 +38,46 @@ describe('ChannelSidenav', () => {
 
     spyOn(ChannelService, 'getCatalog').and.returnValue([]);
     spyOn(ChannelSidenavService, 'initialize');
+    spyOn(ChannelSidenavService, 'close');
   });
 
-  function instantiateController() {
-    const scope = $rootScope.$new();
-    const el = angular.element('<channel-sidenav></channel-sidenav>');
-    $compile(el)(scope);
+  function instantiateController(editMode) {
+    parentScope = $rootScope.$new();
+    parentScope.editMode = editMode;
+    const el = angular.element('<channel-sidenav edit-mode="editMode"></channel-sidenav>');
+    $compile(el)(parentScope);
     $rootScope.$digest();
     return el.controller('channel-sidenav');
   }
 
   it('initializes the channel sidenav service upon instantiation', () => {
-    instantiateController();
+    instantiateController(false);
 
     expect(ChannelSidenavService.initialize).toHaveBeenCalled();
+    expect(ChannelSidenavService.close).toHaveBeenCalled();
   });
 
   it('retrieves the catalog from the channel service', () => {
-    const catalogComponents = [
-      { label: 'dummy' },
-    ];
     ChannelService.getCatalog.and.returnValue(catalogComponents);
     const ChannelSidenavCtrl = instantiateController();
 
     expect(ChannelSidenavCtrl.getCatalog()).toBe(catalogComponents);
+  });
+
+  it('only shows the components tab in edit mode, and if there are catalog items', () => {
+    const ChannelSidenavCtrl = instantiateController(false);
+    expect(ChannelSidenavCtrl.showComponentsTab()).toBe(false);
+
+    parentScope.editMode = true;
+    $rootScope.$digest();
+    expect(ChannelSidenavCtrl.showComponentsTab()).toBe(false);
+
+    ChannelService.getCatalog.and.returnValue(catalogComponents);
+    expect(ChannelSidenavCtrl.showComponentsTab()).toBe(true);
+
+    parentScope.editMode = false;
+    $rootScope.$digest();
+    expect(ChannelSidenavCtrl.showComponentsTab()).toBe(false);
   });
 });
 

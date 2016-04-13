@@ -23,7 +23,6 @@ describe('ChannelSidenavControls', () => {
   let $compile;
   let ChannelSidenavService;
   let ChannelService;
-  let parentScope;
 
   beforeEach(() => {
     module('hippo-cm');
@@ -36,55 +35,20 @@ describe('ChannelSidenavControls', () => {
     });
 
     spyOn(ChannelService, 'getCatalog').and.returnValue([]);
-    spyOn(ChannelSidenavService, 'close');
     spyOn(ChannelSidenavService, 'toggle');
     spyOn(ChannelSidenavService, 'isOpen');
   });
 
-  function instantiateController(editMode) {
-    parentScope = $rootScope.$new();
-    parentScope.editMode = editMode;
+  function instantiateController() {
+    const scope = $rootScope.$new();
     const el = angular.element('<channel-sidenav-controls edit-mode="editMode"></channel-sidenav-controls>');
-    $compile(el)(parentScope);
+    $compile(el)(scope);
     $rootScope.$digest();
     return el.controller('channel-sidenav-controls');
   }
 
-  it('immediately closes the sidenav when instantiated in view mode', () => {
-    instantiateController(false);
-
-    expect(ChannelSidenavService.close).toHaveBeenCalled();
-  });
-
-  it('closes the sidenav when switching to view mode', () => {
-    instantiateController(true);
-
-    expect(ChannelSidenavService.close).not.toHaveBeenCalled();
-
-    parentScope.editMode = false;
-    $rootScope.$digest();
-
-    expect(ChannelSidenavService.close).toHaveBeenCalled();
-  });
-
-  it('only shows the sidenav button in edit mode, and if there are catalog items', () => {
-    const ControlsCtrl = instantiateController(false);
-    expect(ControlsCtrl.showSidenavButton()).toBe(false);
-
-    parentScope.editMode = true;
-    $rootScope.$digest();
-    expect(ControlsCtrl.showSidenavButton()).toBe(false);
-
-    ChannelService.getCatalog.and.returnValue(['dummy']);
-    expect(ControlsCtrl.showSidenavButton()).toBe(true);
-
-    parentScope.editMode = false;
-    $rootScope.$digest();
-    expect(ControlsCtrl.showSidenavButton()).toBe(false);
-  });
-
   it('forwards the toggle call to the sidenav service', () => {
-    const ControlsCtrl = instantiateController(false);
+    const ControlsCtrl = instantiateController();
     expect(ChannelSidenavService.toggle).not.toHaveBeenCalled();
 
     ControlsCtrl.toggleSidenav();
@@ -92,15 +56,15 @@ describe('ChannelSidenavControls', () => {
   });
 
   it('forwards the is open call to the sidenav service', () => {
-    const ControlsCtrl = instantiateController(false);
-    expect(ChannelSidenavService.isOpen).not.toHaveBeenCalled();
-
-    ControlsCtrl.isSidenavOpen();
-    expect(ChannelSidenavService.isOpen).toHaveBeenCalled();
+    const ControlsCtrl = instantiateController();
+    ChannelSidenavService.isOpen.and.returnValue(false);
+    expect(ControlsCtrl.isSidenavOpen()).toBe(false);
+    ChannelSidenavService.isOpen.and.returnValue(true);
+    expect(ControlsCtrl.isSidenavOpen()).toBe(true);
   });
 
   it('displays an icon depending on whether the sidenav is open or closed', () => {
-    const ControlsCtrl = instantiateController(false);
+    const ControlsCtrl = instantiateController();
     ChannelSidenavService.isOpen.and.returnValue(false);
     expect(ControlsCtrl.getSidenavIcon()).toBe('last_page');
     ChannelSidenavService.isOpen.and.returnValue(true);

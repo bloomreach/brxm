@@ -15,13 +15,24 @@
  */
 
 export class ChannelSidenavCtrl {
-  constructor($element, ChannelSidenavService, ChannelService) {
+  constructor($scope, $element, ChannelSidenavService, ChannelService) {
     'ngInject';
 
     this.ChannelService = ChannelService;
     this.ChannelSidenavService = ChannelSidenavService;
 
     ChannelSidenavService.initialize($element.find('md-sidenav'));
+
+    $scope.$watch('sidenav.editMode', () => {
+      if (!this.editMode) {
+        ChannelSidenavService.close();
+      }
+    });
+  }
+
+  showComponentsTab() {
+    const catalog = this.getCatalog();
+    return this.editMode && catalog.length > 0;
   }
 
   getCatalog() {

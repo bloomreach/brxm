@@ -19,6 +19,9 @@ export function channelSidenavDirective() {
 
   return {
     restrict: 'E',
+    bindToController: {
+      editMode: '=',
+    },
     templateUrl: 'channel/sidenav/sidenav.html',
     controller: 'ChannelSidenavCtrl',
     controllerAs: 'sidenav',

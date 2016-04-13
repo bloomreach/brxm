@@ -16,7 +16,26 @@
 
 <md-sidenav class="md-sidenav-left" md-component-id="channel-sidenav">
   <md-tabs md-dynamic-height>
-    <md-tab label="{{ 'SIDENAV_TAB_COMPONENTS' | translate }}">
+    <md-tab label="{{ 'SIDENAV_TAB_SITEMAP' | translate }}">
+      <md-list md-no-ink class="qa-sitemap">
+        <!--Demo content-->
+        <md-list-item class="md-2-line">
+          <div class="md-list-item-text">
+            <h4>/path1</h4>
+            <p>Page 1</p>
+          </div>
+          <md-divider></md-divider>
+        </md-list-item>
+        <md-list-item class="md-2-line">
+          <div class="md-list-item-text">
+            <h4>/path2</h4>
+            <p>Page 2</p>
+          </div>
+        </md-list-item>
+      </md-list>
+    </md-tab>
+    <md-tab label="{{ 'SIDENAV_TAB_COMPONENTS' | translate }}"
+            ng-if="sidenav.showComponentsTab()">
       <md-list md-no-ink class="qa-catalog">
         <md-list-item class="md-1-line catalog-dd-container"
                       ng-repeat="component in sidenav.getCatalog()">
