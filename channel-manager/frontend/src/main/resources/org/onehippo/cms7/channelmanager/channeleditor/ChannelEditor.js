@@ -66,7 +66,10 @@
       }.bind(this));
     },
 
-    _onComponentChanged: function() {
+    /**
+     * Notify angularJs app that the channel has been changed
+     */
+    _notifyChannelChanged: function() {
       this._reloadChannels().when(function (channelStore) {
         this.selectedChannel = channelStore.getById(this.selectedChannel.id);
         this.hostToIFrame.publish('channel-changed-in-extjs', this.selectedChannel.json);
@@ -128,12 +131,13 @@
         variantsUuid: this.variantsUuid,
         mountId: this.selectedChannel.mountId,
         listeners: {
-          save: this._onComponentChanged,
-          deleteVariant: this._onComponentChanged,
+          save: this._notifyChannelChanged,
+          deleteVariant: this._notifyChannelChanged,
           deleteComponent: this._deleteComponent,
           propertiesChanged: function(componentId, propertiesMap) {
             this.hostToIFrame.publish('render-component', componentId, propertiesMap);
           },
+          channelChanged: this._notifyChannelChanged,
           hide: function() {
             this.hostToIFrame.publish('hide-component-properties');
           },
