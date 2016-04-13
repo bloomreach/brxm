@@ -16,13 +16,12 @@
 
 export class ChannelCtrl {
 
-  constructor($log, $scope, $translate, $mdSidenav, ChannelService, DialogService, PageMetaDataService, ScalingService, SessionService, ComponentAdderService, ConfigService, HippoIframeService, FeedbackService) {
+  constructor($log, $scope, $translate, ChannelService, DialogService, PageMetaDataService, ScalingService, SessionService, ComponentAdderService, ConfigService, HippoIframeService, FeedbackService) {
     'ngInject';
 
     this.$log = $log;
     this.$scope = $scope;
     this.$translate = $translate;
-    this.$mdSidenav = $mdSidenav;
     this.ChannelService = ChannelService;
     this.DialogService = DialogService;
     this.PageMetaDataService = PageMetaDataService;
@@ -85,10 +84,6 @@ export class ChannelCtrl {
 
   leaveEditMode() {
     this.isEditMode = false;
-    if (this.isSidenavOpen()) {
-      this.$mdSidenav('sidenav').close();
-      this.ScalingService.setPushWidth(0);
-    }
   }
 
   isEditModeActive() {
@@ -112,28 +107,6 @@ export class ChannelCtrl {
       this.isCreatingPreview = false;
       this.FeedbackService.showError('ERROR_ENTER_EDIT');
     });
-  }
-
-  showSidenavButton() {
-    const catalog = this.ChannelService.getCatalog();
-    return this.isEditMode && catalog.length > 0;
-  }
-
-  toggleSidenav() {
-    this.$mdSidenav('sidenav').toggle();
-    this.ScalingService.setPushWidth(this.isSidenavOpen() ? $('.md-sidenav-left').width() : 0);
-  }
-
-  getSidenavIcon() {
-    return this.isSidenavOpen() ? 'first_page' : 'last_page';
-  }
-
-  isSidenavOpen() {
-    return this.$mdSidenav('sidenav').isOpen();
-  }
-
-  getCatalog() {
-    return this.ChannelService.getCatalog();
   }
 
   getRenderVariant() {

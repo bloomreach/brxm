@@ -115,11 +115,6 @@ describe('ChannelCtrl', () => {
     expect(ChannelCtrl.isEditable()).toBe(false);
   });
 
-  it('gets the component catalog from the channel service', () => {
-    ChannelService.getCatalog.and.returnValue('dummy');
-    expect(ChannelCtrl.getCatalog()).toBe('dummy');
-  });
-
   it('gets the render variant from the page meta-data service', () => {
     PageMetaDataService.getRenderVariant.and.returnValue('variant1');
     expect(ChannelCtrl.getRenderVariant()).toBe('variant1');
@@ -244,19 +239,5 @@ describe('ChannelCtrl', () => {
     expect(DialogService.confirm).toHaveBeenCalled();
     expect(DialogService.show).toHaveBeenCalled();
     expect(ChannelService.discardOwnChanges).not.toHaveBeenCalled();
-  });
-
-  it('shows the components sidenav button only in edit mode and if there are catalog components', () => {
-    expect(ChannelCtrl.isEditModeActive()).toBe(false);
-    expect(ChannelCtrl.showSidenavButton()).toBe(false);
-
-    ChannelService.hasPreviewConfiguration.and.returnValue(true);
-    ChannelCtrl.enterEditMode();
-
-    ChannelService.getCatalog.and.returnValue(['dummy']);
-    expect(ChannelCtrl.showSidenavButton()).toBe(true);
-
-    ChannelService.getCatalog.and.returnValue([]);
-    expect(ChannelCtrl.showSidenavButton()).toBe(false);
   });
 });
