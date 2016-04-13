@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-const SIDENAVS = ['components'];
-
 export class ChannelCtrl {
 
   constructor($log, $scope, $translate, $mdSidenav, ChannelService, DialogService, PageMetaDataService, ScalingService, SessionService, ComponentAdderService, ConfigService, HippoIframeService, FeedbackService) {
@@ -87,7 +85,10 @@ export class ChannelCtrl {
 
   leaveEditMode() {
     this.isEditMode = false;
-    this._closeSidenavs();
+    if (this.isSidenavOpen()) {
+      this.$mdSidenav('sidenav').close();
+      this.ScalingService.setPushWidth(0);
+    }
   }
 
   isEditModeActive() {
@@ -96,15 +97,6 @@ export class ChannelCtrl {
 
   isEditable() {
     return this.SessionService.hasWriteAccess();
-  }
-
-  _closeSidenavs() {
-    SIDENAVS.forEach((sidenav) => {
-      if (this.isSidenavOpen(sidenav)) {
-        this.$mdSidenav(sidenav).close();
-      }
-    });
-    this.ScalingService.setPushWidth(0);
   }
 
   _createPreviewConfiguration() {
@@ -122,23 +114,22 @@ export class ChannelCtrl {
     });
   }
 
-  showComponentsButton() {
+  showSidenavButton() {
     const catalog = this.ChannelService.getCatalog();
     return this.isEditMode && catalog.length > 0;
   }
 
-  toggleSidenav(name) {
-    SIDENAVS.forEach((sidenav) => {
-      if (sidenav !== name && this.isSidenavOpen(sidenav)) {
-        this.$mdSidenav(sidenav).close();
-      }
-    });
-    this.$mdSidenav(name).toggle();
-    this.ScalingService.setPushWidth(this.isSidenavOpen(name) ? $('.md-sidenav-left').width() : 0);
+  toggleSidenav() {
+    this.$mdSidenav('sidenav').toggle();
+    this.ScalingService.setPushWidth(this.isSidenavOpen() ? $('.md-sidenav-left').width() : 0);
   }
 
-  isSidenavOpen(name) {
-    return this.$mdSidenav(name).isOpen();
+  getSidenavIcon() {
+    return this.isSidenavOpen() ? 'first_page' : 'last_page';
+  }
+
+  isSidenavOpen() {
+    return this.$mdSidenav('sidenav').isOpen();
   }
 
   getCatalog() {

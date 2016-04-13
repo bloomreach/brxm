@@ -248,15 +248,15 @@ describe('ChannelCtrl', () => {
 
   it('shows the components sidenav button only in edit mode and if there are catalog components', () => {
     expect(ChannelCtrl.isEditModeActive()).toBe(false);
-    expect(ChannelCtrl.showComponentsButton()).toBe(false);
+    expect(ChannelCtrl.showSidenavButton()).toBe(false);
 
     ChannelService.hasPreviewConfiguration.and.returnValue(true);
     ChannelCtrl.enterEditMode();
 
     ChannelService.getCatalog.and.returnValue(['dummy']);
-    expect(ChannelCtrl.showComponentsButton()).toBe(true);
+    expect(ChannelCtrl.showSidenavButton()).toBe(true);
 
     ChannelService.getCatalog.and.returnValue([]);
-    expect(ChannelCtrl.showComponentsButton()).toBe(false);
+    expect(ChannelCtrl.showSidenavButton()).toBe(false);
   });
 });

@@ -1,6 +1,7 @@
 {
-  "TOOLBAR_BUTTON_COMPONENTS": "Componenten",
+  "SIDENAV_TAB_COMPONENTS": "Componenten",
   "TOOLBAR_BUTTON_CHANGES": "Wijzigingen",
+  "TOOLBAR_BUTTON_SIDENAV": "Sidenav",
   "TOOLBAR_VIEW_AS_INFIX": " de ",
   "TOOLBAR_VIEW_AS_LABEL": "Toon als",
   "TOOLBAR_MENU_CHANGES_PUBLISH": "Publiceer",
