@@ -26,7 +26,9 @@
     isReadOnly: false,
 
     constructor: function (config) {
-      Hippo.ChannelManager.ChannelEditor.ComponentPropertiesEditor.superclass.constructor.call(this, config);
+      Hippo.ChannelManager.ChannelEditor.ComponentPropertiesEditor.superclass.constructor.call(this, Ext.apply(config, {
+        bubbleEvents: ['enableDeleteComponentButton']
+      }));
       this.componentId = config.componentId;
       this.variant = config.variant;
       this.componentPropertiesForm = config.componentPropertiesForm;
