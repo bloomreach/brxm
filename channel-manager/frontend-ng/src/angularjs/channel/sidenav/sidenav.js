@@ -19,6 +19,7 @@ import { ChannelSidenavControlsCtrl } from './controls.controller';
 import { channelSidenavControlsDirective } from './controls.directive';
 import { ChannelSidenavCtrl } from './sidenav.controller';
 import { channelSidenavDirective } from './sidenav.directive';
+import { ChannelSiteMapService } from './siteMap.service';
 
 export const channelSidenavModule = angular
   .module('hippo-cm.channel.sidenav', [])
@@ -26,4 +27,5 @@ export const channelSidenavModule = angular
   .controller('ChannelSidenavControlsCtrl', ChannelSidenavControlsCtrl)
   .directive('channelSidenavControls', channelSidenavControlsDirective)
   .controller('ChannelSidenavCtrl', ChannelSidenavCtrl)
-  .directive('channelSidenav', channelSidenavDirective);
+  .directive('channelSidenav', channelSidenavDirective)
+  .service('ChannelSiteMapService', ChannelSiteMapService);

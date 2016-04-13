@@ -241,4 +241,29 @@ describe('HstService', () => {
 
     expect(hstService.doGet).toHaveBeenCalledWith('container-1', 'delete', 'component-foo');
   });
+
+  it('extracts the sitemap from the returned pages response', () => {
+    const promiseSpy = jasmine.createSpy('promiseSpy');
+    const siteMap = ['dummy'];
+    const siteMapId = 'testSiteMapId';
+    const url = `${contextPath}${apiUrlPrefix}/${siteMapId}./pages`;
+    $httpBackend.expectGET(url).respond(200, { data: { pages: siteMap } });
+
+    hstService.getSiteMap('testSiteMapId').then(promiseSpy);
+    $httpBackend.flush();
+
+    expect(promiseSpy).toHaveBeenCalledWith(siteMap);
+  });
+
+  it('rejects the promise when retrieving the sitemap fails', () => {
+    const catchSpy = jasmine.createSpy('catchSpy');
+    const siteMapId = 'testSiteMapId';
+    const url = `${contextPath}${apiUrlPrefix}/${siteMapId}./pages`;
+    $httpBackend.expectGET(url).respond(500);
+
+    hstService.getSiteMap('testSiteMapId').catch(catchSpy);
+    $httpBackend.flush();
+
+    expect(catchSpy).toHaveBeenCalled();
+  });
 });

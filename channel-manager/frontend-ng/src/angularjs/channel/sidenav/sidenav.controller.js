@@ -15,11 +15,12 @@
  */
 
 export class ChannelSidenavCtrl {
-  constructor($scope, $element, ChannelSidenavService, ChannelService) {
+  constructor($scope, $element, ChannelSidenavService, ChannelService, ChannelSiteMapService) {
     'ngInject';
 
     this.ChannelService = ChannelService;
     this.ChannelSidenavService = ChannelSidenavService;
+    this.ChannelSiteMapService = ChannelSiteMapService;
 
     ChannelSidenavService.initialize($element.find('md-sidenav'));
 
@@ -37,5 +38,9 @@ export class ChannelSidenavCtrl {
 
   getCatalog() {
     return this.ChannelService.getCatalog();
+  }
+
+  getSiteMap() {
+    return this.ChannelSiteMapService.get();
   }
 }

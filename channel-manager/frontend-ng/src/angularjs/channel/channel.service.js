@@ -15,7 +15,7 @@
  */
 
 export class ChannelService {
-  constructor($rootScope, $http, $state, SessionService, CatalogService, HstService, ConfigService, CmsService) {
+  constructor($rootScope, $http, $state, SessionService, CatalogService, HstService, ConfigService, CmsService, ChannelSiteMapService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
@@ -27,6 +27,7 @@ export class ChannelService {
     this.HstService = HstService;
     this.ConfigService = ConfigService;
     this.CmsService = CmsService;
+    this.ChannelSiteMapService = ChannelSiteMapService;
 
     this.channel = {};
 
@@ -58,6 +59,7 @@ export class ChannelService {
   _setChannel(channel) {
     this.channel = channel;
     this.CatalogService.load(this._getMountId());
+    this.ChannelSiteMapService.load(channel.siteMapId);
   }
 
   getChannel() {

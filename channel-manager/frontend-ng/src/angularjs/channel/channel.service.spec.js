@@ -20,6 +20,7 @@ describe('ChannelService', () => {
   let $q;
   let $rootScope;
   let ChannelService;
+  let ChannelSiteMapService;
   let CatalogServiceMock;
   let SessionServiceMock;
   let HstService;
@@ -35,6 +36,7 @@ describe('ChannelService', () => {
       hostname: 'test.host.name',
       mountId: 'mountId',
       id: 'channelId',
+      siteMapId: 'siteMapId',
     };
 
     SessionServiceMock = {
@@ -59,23 +61,26 @@ describe('ChannelService', () => {
       $provide.value('CatalogService', CatalogServiceMock);
     });
 
-    inject((_$q_, _$state_, _$rootScope_, _ChannelService_, _CmsService_, _HstService_) => {
+    inject((_$q_, _$state_, _$rootScope_, _ChannelService_, _CmsService_, _HstService_, _ChannelSiteMapService_) => {
       $q = _$q_;
       $state = _$state_;
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
       HstService = _HstService_;
+      ChannelSiteMapService = _ChannelSiteMapService_;
     });
 
     spyOn(HstService, 'doPost');
     spyOn(HstService, 'getChannel');
+    spyOn(ChannelSiteMapService, 'load');
     spyOn(window.APP_TO_CMS, 'publish');
   });
 
   it('should initialize the channel', () => {
     const testChannel = {
       id: 'testChannelId',
+      siteMapId: 'testSiteMapId',
     };
 
     spyOn(CmsService, 'subscribe');
@@ -124,7 +129,7 @@ describe('ChannelService', () => {
   });
 
   it('should not save a reference to the channel when load fails', () => {
-    spyOn(SessionServiceMock, 'initialize').and.callFake(() => $q.reject());
+    spyOn(SessionServiceMock, 'initialize').and.returnValue($q.reject());
     ChannelService._load(channelMock);
     $rootScope.$digest();
     expect(ChannelService.getChannel()).not.toEqual(channelMock);
@@ -135,6 +140,7 @@ describe('ChannelService', () => {
     expect(ChannelService.getChannel()).not.toEqual(channelMock);
     $rootScope.$digest();
     expect(ChannelService.getChannel()).toEqual(channelMock);
+    expect(ChannelSiteMapService.load).toHaveBeenCalledWith('siteMapId');
   });
 
   it('should resolve a promise with the channel when load succeeds', () => {

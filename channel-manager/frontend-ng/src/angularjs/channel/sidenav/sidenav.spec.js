@@ -20,6 +20,7 @@ describe('ChannelSidenav', () => {
   let $rootScope;
   let $compile;
   let ChannelSidenavService;
+  let ChannelSiteMapService;
   let ChannelService;
   let parentScope;
   const catalogComponents = [
@@ -29,16 +30,18 @@ describe('ChannelSidenav', () => {
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _ChannelSidenavService_, _ChannelService_) => {
+    inject((_$rootScope_, _$compile_, _ChannelSidenavService_, _ChannelService_, _ChannelSiteMapService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       ChannelSidenavService = _ChannelSidenavService_;
       ChannelService = _ChannelService_;
+      ChannelSiteMapService = _ChannelSiteMapService_;
     });
 
     spyOn(ChannelService, 'getCatalog').and.returnValue([]);
     spyOn(ChannelSidenavService, 'initialize');
     spyOn(ChannelSidenavService, 'close');
+    spyOn(ChannelSiteMapService, 'get');
   });
 
   function instantiateController(editMode) {
@@ -78,6 +81,14 @@ describe('ChannelSidenav', () => {
     parentScope.editMode = false;
     $rootScope.$digest();
     expect(ChannelSidenavCtrl.showComponentsTab()).toBe(false);
+  });
+
+  it('retrieves the sitemap items from the channel siteMap service', () => {
+    const siteMapItems = ['dummy'];
+    const ChannelSidenavCtrl = instantiateController(false);
+    ChannelSiteMapService.get.and.returnValue(siteMapItems);
+
+    expect(ChannelSidenavCtrl.getSiteMap()).toBe(siteMapItems);
   });
 });
 

@@ -1,6 +1,7 @@
 {
   "SIDENAV_TAB_COMPONENTS": "Components",
   "SIDENAV_TAB_SITEMAP": "Sitemap",
+  "SIDENAV_TAB_SITEMAP_EMPTY": "The sitemap of this channel is empty.",
   "TOOLBAR_BUTTON_CHANGES": "Changes",
   "TOOLBAR_BUTTON_SIDENAV": "Sidenav",
   "TOOLBAR_VIEW_AS_INFIX": ", the ",
@@ -20,6 +21,7 @@
   "ERROR_ENTER_EDIT": "Failed to enter Edit mode.",
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "Failed to retrieve the list of global variants.",
   "ERROR_RELEVANCE_VARIANT_SELECTION_FAILED": "Failed to activate global variant '{{variant}}'.",
+  "ERROR_SITEMAP_RETRIEVAL_FAILED": "Failed to retrive the sitemap for the current channel.",
   "EXPERIMENT_LABEL_COMPLETED": "Experiment completed",
   "EXPERIMENT_LABEL_RUNNING": "Experiment running",
   "EXPERIMENT_LABEL_CREATED": "Experiment created",

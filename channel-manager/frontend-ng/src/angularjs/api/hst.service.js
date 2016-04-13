@@ -50,6 +50,11 @@ export class HstService {
     return this.doGet(this.config.rootUuid, 'channels', id);
   }
 
+  getSiteMap(id) {
+    return this.doGet(id, 'pages')
+      .then((response) => response.data.pages);
+  }
+
   doGet(uuid, ...pathElements) {
     return this._callHst('GET', uuid, pathElements);
   }
