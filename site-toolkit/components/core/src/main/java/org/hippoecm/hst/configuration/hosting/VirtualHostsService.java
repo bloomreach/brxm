@@ -44,6 +44,7 @@ import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.ChannelPropertyMapper;
 import org.hippoecm.hst.configuration.channel.ChannelUtils;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
@@ -1057,6 +1058,10 @@ public class VirtualHostsService implements MutableVirtualHosts {
         channel.setMountId(mount.getIdentifier());
         channel.setMountPath(mountPath);
 
+        if (mount.getHstSite() != null && mount.getHstSite().getSiteMap() instanceof CanonicalInfo) {
+            channel.setSiteMapId(((CanonicalInfo)mount.getHstSite().getSiteMap()).getCanonicalIdentifier());
+        }
+
         VirtualHost virtualHost = mount.getVirtualHost();
         channel.setCmsPreviewPrefix(virtualHost.getVirtualHosts().getCmsPreviewPrefix());
         channel.setContextPath(mount.getContextPath());
@@ -1106,6 +1111,9 @@ public class VirtualHostsService implements MutableVirtualHosts {
                         channelsRoot + channel.getName()+"-preview");
             }
             populatePreviewChannel(previewChannel, channel);
+            if (previewHstSite.getSiteMap() instanceof CanonicalInfo) {
+                previewChannel.setSiteMapId(((CanonicalInfo)previewHstSite.getSiteMap()).getCanonicalIdentifier());
+            }
             HstNode channelRootConfigNode = hstNodeLoadingCache.getNode(previewHstSite.getConfigurationPath());
             previewChannel.setChangedBySet(new ChannelLazyLoadingChangedBySet(channelRootConfigNode, previewHstSite, previewChannel, hstNodeLoadingCache));
             mount.setChannel(channel, previewChannel);

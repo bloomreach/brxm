@@ -47,6 +47,7 @@ public class Channel implements Serializable {
     private Map<String, Object> properties = new HashMap<>();
     private String channelInfoClassName;
     private String mountId;
+    private String siteMapId;
     private String locale;
     private boolean previewHstConfigExists;
 
@@ -98,6 +99,7 @@ public class Channel implements Serializable {
         setProperties(mapClone);
         channelInfoClassName = channel.channelInfoClassName;
         mountId = channel.mountId;
+        siteMapId = channel.siteMapId;
         locale = channel.locale;
         previewHstConfigExists = channel.previewHstConfigExists;
         // not a deep clone: Not a problem! Note even the same instance is used, this is because
@@ -243,6 +245,14 @@ public class Channel implements Serializable {
         return this.mountId;
     }
 
+    public void setSiteMapId(final String sitemapId) {
+        this.siteMapId = sitemapId;
+    }
+
+    public String getSiteMapId() {
+        return this.siteMapId;
+    }
+
     public String getLocale() {
         return locale;
     }
@@ -373,6 +383,7 @@ public class Channel implements Serializable {
         result = 31 * result + (properties != null ? properties.hashCode() : 0);
         result = 31 * result + (channelInfoClassName != null ? channelInfoClassName.hashCode() : 0);
         result = 31 * result + (mountId != null ? mountId.hashCode() : 0);
+        result = 31 * result + (siteMapId != null ? siteMapId.hashCode() : 0);
         result = 31 * result + (locale != null ? locale.hashCode() : 0);
         result = 31 * result + (changedBySet != null ? changedBySet.hashCode() : 0);
         result = 31 * result + (defaultDevice != null ? defaultDevice.hashCode() : 0);
