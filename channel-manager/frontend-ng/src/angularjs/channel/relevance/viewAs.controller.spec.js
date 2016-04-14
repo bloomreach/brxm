@@ -20,6 +20,7 @@ describe('ViewAsCtrl', () => {
   'use strict';
 
   let ViewAsCtrl;
+  let $element;
   let $q;
   let $controller;
   let $rootScope;
@@ -45,6 +46,8 @@ describe('ViewAsCtrl', () => {
       HippoIframeService = _HippoIframeService_;
       FeedbackService = _FeedbackService_;
 
+      $element = angular.element('<div></div>');
+
       spyOn(HstService, 'doGetWithParams');
       spyOn(HstService, 'doPost');
       spyOn(SessionService, 'registerInitCallback');
@@ -61,6 +64,7 @@ describe('ViewAsCtrl', () => {
     ViewAsCtrl = $controller('ViewAsCtrl', {
       $scope: scope,
       ConfigService: {},
+      $element,
     });
 
     expect(HstService.doGetWithParams).not.toHaveBeenCalled();
@@ -80,6 +84,7 @@ describe('ViewAsCtrl', () => {
     ViewAsCtrl = $controller('ViewAsCtrl', {
       $scope: scope,
       ConfigService: { rootUuid: 'rootUuid' },
+      $element,
     });
 
     expect(scope.$watch.calls.mostRecent().args[0]).toBe('viewAs.selectedVariant');
@@ -114,6 +119,7 @@ describe('ViewAsCtrl', () => {
     ViewAsCtrl = $controller('ViewAsCtrl', {
       $scope: $rootScope.$new(),
       ConfigService: MockConfigService,
+      $element,
     });
 
     expect(HstService.doGetWithParams).toHaveBeenCalledWith('testVariantsUuid', { locale: 'testLocale' }, 'globalvariants');
@@ -135,6 +141,7 @@ describe('ViewAsCtrl', () => {
     ViewAsCtrl = $controller('ViewAsCtrl', {
       $scope: $rootScope.$new(),
       ConfigService: MockConfigService,
+      $element,
     });
     ViewAsCtrl.renderVariant = 'id2';
     $rootScope.$digest();
@@ -153,6 +160,7 @@ describe('ViewAsCtrl', () => {
     ViewAsCtrl = $controller('ViewAsCtrl', {
       $scope: $rootScope.$new(),
       ConfigService: MockConfigService,
+      $element,
     });
     ViewAsCtrl.renderVariant = 'id3';
     $rootScope.$digest();
@@ -171,6 +179,7 @@ describe('ViewAsCtrl', () => {
     ViewAsCtrl = $controller('ViewAsCtrl', {
       $scope: $rootScope.$new(),
       ConfigService: MockConfigService,
+      $element,
     });
     $rootScope.$digest();
 
@@ -196,6 +205,7 @@ describe('ViewAsCtrl', () => {
     ViewAsCtrl = $controller('ViewAsCtrl', {
       $scope: $rootScope.$new(),
       ConfigService: MockConfigService,
+      $element,
     });
     ViewAsCtrl.renderVariant = 'id1';
     $rootScope.$digest();
@@ -224,9 +234,38 @@ describe('ViewAsCtrl', () => {
 
     ViewAsCtrl = $controller('ViewAsCtrl', {
       $scope: $rootScope.$new(),
+      $element,
     });
 
     expect(ViewAsCtrl.makeDisplayName(variant1)).toBe('name-only');
     expect(ViewAsCtrl.makeDisplayName(variant2)).toBe('nameTOOLBAR_VIEW_AS_INFIXgroup');
+  });
+
+  it('edits the alter ego by publishing an edit-alter-ego event', () => {
+    const mockToolbar = angular.element('<div style="height: 42px"></div>');
+    const mockElement = angular.element('<div></div>');
+    mockElement.appendTo(mockToolbar);
+
+    spyOn(window.APP_TO_CMS, 'publish').and.callThrough();
+
+    ViewAsCtrl = $controller('ViewAsCtrl', {
+      $scope: $rootScope.$new(),
+      $element: mockElement,
+    });
+    ViewAsCtrl.editAlterEgo();
+
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('edit-alter-ego', 42);
+  });
+
+
+  it('reloads the iframe when the alter ego changed', () => {
+    ViewAsCtrl = $controller('ViewAsCtrl', {
+      $scope: $rootScope.$new(),
+      $element,
+    });
+
+    window.CMS_TO_APP.publish('alter-ego-changed');
+
+    expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 });

@@ -49,6 +49,7 @@
       this.iframeToHost.subscribe('component-removed', this._onComponentRemoved, this);
       this.iframeToHost.subscribe('show-mask', this._maskSurroundings, this);
       this.iframeToHost.subscribe('remove-mask', this._unmaskSurroundings, this);
+      this.iframeToHost.subscribe('edit-alter-ego', this._showAlterEgoEditor, this);
     },
 
     loadChannel: function(channelId) {
@@ -188,6 +189,23 @@
         .queue(function() {
           $(this).remove();
         });
+    },
+
+    _showAlterEgoEditor: function(mainToolbarHeight) {
+      var alterEgoWindowConfig = Hippo.ExtWidgets.getConfig('Hippo.Targeting.AlterEgoWindow'),
+        alterEgoWindow = Ext.create(alterEgoWindowConfig);
+
+      // center the alter ego window below the main Angular Material toolbar
+      alterEgoWindow.on('afterrender', function () {
+        var centeredXY = alterEgoWindow.getEl().getAlignToXY(alterEgoWindow.container, 'c-c');
+        alterEgoWindow.setPagePosition(centeredXY[0], mainToolbarHeight);
+      }, this);
+
+      alterEgoWindow.on('alterEgoChanged', function () {
+        this.hostToIFrame.publish('alter-ego-changed');
+      }, this);
+
+      alterEgoWindow.show();
     },
 
     initComponent: function() {
