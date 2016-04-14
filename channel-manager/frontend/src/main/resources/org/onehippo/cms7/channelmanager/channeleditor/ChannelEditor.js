@@ -76,6 +76,17 @@
       }.bind(this));
     },
 
+    /**
+     * Notify angularJs app to render the component
+     *
+     * @param componentId
+     * @param propertiesMap
+     * @private
+     */
+    _notifyComponentRendering: function(componentId, propertiesMap) {
+      this.hostToIFrame.publish('render-component', componentId, propertiesMap);
+    },
+
     _setChannel: function(channelId) {
       return new Hippo.Future(function (success, failure) {
         this._reloadChannels().when(function (channelStore) {
@@ -134,10 +145,11 @@
           save: this._notifyChannelChanged,
           deleteVariant: this._notifyChannelChanged,
           deleteComponent: this._deleteComponent,
-          propertiesChanged: function(componentId, propertiesMap) {
-            this.hostToIFrame.publish('render-component', componentId, propertiesMap);
+          propertiesChanged: this._notifyComponentRendering,
+          renderComponent: function (componentId) {
+            this._notifyComponentRendering(componentId, {});
+            this._notifyChannelChanged();
           },
-          channelChanged: this._notifyChannelChanged,
           hide: function() {
             this.hostToIFrame.publish('hide-component-properties');
           },

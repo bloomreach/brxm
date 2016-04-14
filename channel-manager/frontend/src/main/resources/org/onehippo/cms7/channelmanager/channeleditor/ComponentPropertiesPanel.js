@@ -291,6 +291,10 @@
       this.fireEvent('propertiesChanged', this.componentId, {});
     },
 
+    renderComponent: function () {
+      this.fireEvent('renderComponent', this.componentId);
+    },
+
     /**
      * Event called after all dirty forms are saved
      * @param savedVariantIds  list of dirty variants that have been saved
@@ -323,7 +327,6 @@
 
     _createComponentPropertiesEditor: function (variant, variants, componentPropertiesForm) {
       var editor = Hippo.ExtWidgets.create('Hippo.ChannelManager.ChannelEditor.ComponentPropertiesEditor', {
-        bubbleEvents: ['channelChanged'],
         cls: 'component-properties-editor',
         componentId: this.componentId,
         variant: variant,
@@ -529,7 +532,7 @@
         dirtyEditors.forEach(function(editor) {
           afterSavePromises.push(editor.onAfterSave());
         });
-        return $.when.apply($, afterSavePromises);
+        return $.when.apply($, afterSavePromises).then(this.renderComponent.bind(this));
       }.bind(this));
     },
 
