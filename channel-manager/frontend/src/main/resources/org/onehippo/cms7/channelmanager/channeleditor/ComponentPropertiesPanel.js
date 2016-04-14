@@ -68,7 +68,7 @@
     initComponent: function () {
       Hippo.ChannelManager.ChannelEditor.ComponentPropertiesPanel.superclass.initComponent.apply(this, arguments);
 
-      this.addEvents('visibleHeightChanged', 'onLoad');
+      this.addEvents('visibleHeightChanged', 'onLoad', 'renderComponent');
 
       this.on('beforetabchange', function (panel, newTab, currentTab) {
         var proceed;
