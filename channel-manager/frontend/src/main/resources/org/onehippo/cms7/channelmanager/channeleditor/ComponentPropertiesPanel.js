@@ -323,6 +323,7 @@
 
     _createComponentPropertiesEditor: function (variant, variants, componentPropertiesForm) {
       var editor = Hippo.ExtWidgets.create('Hippo.ChannelManager.ChannelEditor.ComponentPropertiesEditor', {
+        bubbleEvents: ['channelChanged'],
         cls: 'component-properties-editor',
         componentId: this.componentId,
         variant: variant,
