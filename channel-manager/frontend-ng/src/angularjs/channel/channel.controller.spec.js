@@ -46,7 +46,6 @@ describe('ChannelCtrl', () => {
       SessionService = _SessionService_;
 
       ChannelService = jasmine.createSpyObj('ChannelService', [
-        'getUrl',
         'hasPreviewConfiguration',
         'createPreviewConfiguration',
         'getChannel',
@@ -54,7 +53,6 @@ describe('ChannelCtrl', () => {
         'discardOwnChanges',
         'getCatalog',
       ]);
-      ChannelService.getUrl.and.returnValue('/test/url');
       ChannelService.createPreviewConfiguration.and.returnValue(resolvedPromise);
 
       ComponentsService = jasmine.createSpyObj('ComponentsService', [
@@ -100,10 +98,6 @@ describe('ChannelCtrl', () => {
       expect(ScalingService.setViewPortWidth).toHaveBeenCalledWith(0);
       expect(ChannelCtrl.isViewPortSelected(ChannelCtrl.viewPorts[0])).toBe(true);
     });
-  });
-
-  it('gets the iframe URL from the channel service', () => {
-    expect(ChannelCtrl.iframeUrl).toEqual('/test/url');
   });
 
   it('checks with the session service is the current user has write access', () => {

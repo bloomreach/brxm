@@ -14,22 +14,27 @@
  * limitations under the License.
  */
 
-describe('hippoIframeCtrl', () => {
+describe('HippoIframeService', () => {
   'use strict';
 
   let $log;
   let $rootScope;
   let iframe;
   let HippoIframeService;
+  let ChannelService;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$log_, _$rootScope_, _HippoIframeService_) => {
+    inject((_$log_, _$rootScope_, _HippoIframeService_, _ChannelService_) => {
       $log = _$log_;
       $rootScope = _$rootScope_;
       HippoIframeService = _HippoIframeService_;
+      ChannelService = _ChannelService_;
     });
+
+    spyOn(ChannelService, 'makePath').and.returnValue('/test/url');
+    spyOn(ChannelService, 'extractRenderPathInfo');
 
     jasmine.getFixtures().load('channel/hippoIframe/hippoIframe.service.fixture.html');
 
@@ -47,6 +52,12 @@ describe('hippoIframeCtrl', () => {
     });
     iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/hippoIframe.service.iframe.fixture.html`);
   }
+
+  it('initializes the path using the channel service', () => {
+    // initialize call done in beforeEach
+    expect(ChannelService.makePath).toHaveBeenCalledWith('');
+    expect(HippoIframeService.getSrc()).toBe('/test/url');
+  });
 
   it('logs a warning when a reload is requested before the iframe has been initialized', (done) => {
     spyOn($log, 'warn');
@@ -107,5 +118,17 @@ describe('hippoIframeCtrl', () => {
     HippoIframeService.signalPageLoadCompleted();
 
     expect($log.warn).not.toHaveBeenCalled();
+  });
+
+  it('retrieves the current renderPathInfo', () => {
+    ChannelService.extractRenderPathInfo.and.returnValue('dummy');
+    expect(HippoIframeService.getCurrentRenderPathInfo()).toBe('dummy');
+  });
+
+  it('loads the requested renderPathInfo', () => {
+    ChannelService.makePath.and.returnValue('fullPath');
+    HippoIframeService.load('dummy');
+    expect(ChannelService.makePath).toHaveBeenCalledWith('dummy');
+    expect(HippoIframeService.getSrc()).toBe('fullPath');
   });
 });

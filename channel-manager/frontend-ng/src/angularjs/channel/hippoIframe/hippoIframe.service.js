@@ -16,15 +16,30 @@
 
 export class HippoIframeService {
 
-  constructor($q, $log) {
+  constructor($q, $log, ChannelService) {
     'ngInject';
 
     this.$q = $q;
     this.$log = $log;
+    this.ChannelService = ChannelService;
   }
 
   initialize(iframeJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
+    this.actualPath = this.ChannelService.makePath(''); // go to homepage
+    this.src = this.actualPath;
+  }
+
+  getSrc() {
+    return this.src;
+  }
+
+  getCurrentRenderPathInfo() {
+    return this.ChannelService.extractRenderPathInfo(this.actualPath);
+  }
+
+  load(renderPathInfo) {
+    this.src = this.ChannelService.makePath(renderPathInfo);
   }
 
   reload() {
@@ -46,6 +61,8 @@ export class HippoIframeService {
 
   // called by the hippoIframe controller when the processing of the loaded page is completed.
   signalPageLoadCompleted() {
+    this.actualPath = this.iframeJQueryElement[0].contentWindow.location.pathname;
+
     const deferred = this._deferredReload;
     if (deferred) {
       // delete the "state" before resolving the promise.

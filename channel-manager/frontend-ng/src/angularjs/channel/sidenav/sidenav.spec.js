@@ -22,6 +22,7 @@ describe('ChannelSidenav', () => {
   let ChannelSidenavService;
   let ChannelSiteMapService;
   let ChannelService;
+  let HippoIframeService;
   let parentScope;
   const catalogComponents = [
     { label: 'dummy' },
@@ -30,18 +31,21 @@ describe('ChannelSidenav', () => {
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _ChannelSidenavService_, _ChannelService_, _ChannelSiteMapService_) => {
+    inject((_$rootScope_, _$compile_, _ChannelSidenavService_, _ChannelService_, _ChannelSiteMapService_, _HippoIframeService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       ChannelSidenavService = _ChannelSidenavService_;
       ChannelService = _ChannelService_;
       ChannelSiteMapService = _ChannelSiteMapService_;
+      HippoIframeService = _HippoIframeService_;
     });
 
     spyOn(ChannelService, 'getCatalog').and.returnValue([]);
     spyOn(ChannelSidenavService, 'initialize');
     spyOn(ChannelSidenavService, 'close');
     spyOn(ChannelSiteMapService, 'get');
+    spyOn(HippoIframeService, 'load');
+    spyOn(HippoIframeService, 'getCurrentRenderPathInfo');
   });
 
   function instantiateController(editMode) {
@@ -89,6 +93,29 @@ describe('ChannelSidenav', () => {
     ChannelSiteMapService.get.and.returnValue(siteMapItems);
 
     expect(ChannelSidenavCtrl.getSiteMap()).toBe(siteMapItems);
+  });
+
+  it('asks the HippoIframeService to load the requested siteMap item', () => {
+    const siteMapItem = {
+      renderPathInfo: 'dummy',
+    };
+    const ChannelSidenavCtrl = instantiateController(false);
+
+    ChannelSidenavCtrl.showPage(siteMapItem);
+
+    expect(HippoIframeService.load).toHaveBeenCalledWith('dummy');
+  });
+
+  it('compares the siteMap item\'s renderPathInfo to the current one', () => {
+    HippoIframeService.getCurrentRenderPathInfo.and.returnValue('/current/path');
+    const siteMapItem = {
+      renderPathInfo: '/current/path',
+    };
+    const ChannelSidenavCtrl = instantiateController(false);
+    expect(ChannelSidenavCtrl.isActiveSiteMapItem(siteMapItem)).toBe(true);
+
+    siteMapItem.renderPathInfo = '/other/path';
+    expect(ChannelSidenavCtrl.isActiveSiteMapItem(siteMapItem)).toBe(false);
   });
 });
 

@@ -61,10 +61,9 @@ describe('hippoIframeCtrl', () => {
     spyOn(DragDropService, 'init');
     spyOn(OverlaySyncService, 'init');
 
-    scope.testPath = '/';
     scope.testEditMode = false;
 
-    const el = angular.element('<hippo-iframe path="testPath" edit-mode="testEditMode"></hippo-iframe>');
+    const el = angular.element('<hippo-iframe edit-mode="testEditMode"></hippo-iframe>');
     $compile(el)(scope);
     scope.$digest();
 

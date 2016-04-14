@@ -31,7 +31,6 @@ export class ChannelCtrl {
     this.HippoIframeService = HippoIframeService;
     this.FeedbackService = FeedbackService;
 
-    this.iframeUrl = ChannelService.getUrl();
     this.isEditMode = false;
     this.isCreatingPreview = false;
 
