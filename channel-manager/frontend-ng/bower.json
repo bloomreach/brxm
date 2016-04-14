@@ -10,7 +10,7 @@
     "angular-translate-loader-static-files": "2.8.1",
     "angular-ui-router": "0.2.15",
     "dragula.js": "3.6.8",
-    "es6-shim": "0.34.0",
+    "es6-shim": "0.35.0",
     "jquery": "2.2.0",
     "velocity": "1.2.3",
     "ng-device-detector": "3.0.1"
