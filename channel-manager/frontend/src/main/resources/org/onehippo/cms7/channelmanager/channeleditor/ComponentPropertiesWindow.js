@@ -46,7 +46,7 @@
               currentTab.removeClass('qa-tab-active');
             }
           },
-          enableDeleteComponentButton: this._enableDeleteComponentButton,
+          enableDeleteComponent: this._enableDeleteComponentButton,
           scope: this
         }
       });
