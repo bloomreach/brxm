@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -382,11 +382,8 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                         Node handle;
                         handle = currentSubFolder.addNode(docName, "hippo:handle");
                         handle.addMixin("mix:referenceable");
-                        handle.addMixin("hippo:translated");
-
-                        Node translation = handle.addNode("hippo:translation", "hippo:translation");
-                        translation.setProperty("hippo:message", docTitle);
-                        translation.setProperty("hippo:language", "");
+                        handle.addMixin("hippo:named");
+                        handle.setProperty("hippo:name", docTitle);
 
                         doc = handle.addNode(docName, "demosite:wikidocument");
                         doc.addMixin("mix:referenceable");
