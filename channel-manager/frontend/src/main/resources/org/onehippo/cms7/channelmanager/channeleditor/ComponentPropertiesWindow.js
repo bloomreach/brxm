@@ -46,6 +46,7 @@
               currentTab.removeClass('qa-tab-active');
             }
           },
+          enableDeleteComponent: this._enableDeleteComponentButton,
           scope: this
         }
       });
@@ -64,7 +65,7 @@
         }
       });
 
-      this.deleteButton = new Ext.Button({
+      this.deleteComponentButton = new Ext.Button({
         xtype: 'button',
         cls: 'btn btn-default qa-delete-button',
         text: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-button-delete'],
@@ -89,7 +90,7 @@
         items: this.componentPropertiesPanel,
         buttonAlign: 'left',
         buttons: [
-          this.deleteButton,
+          this.deleteComponentButton,
           {xtype: 'tbfill'},
           this.saveButton,
           this.closeButon
@@ -161,8 +162,22 @@
     onComponentRemoved: function () {
       // clear recorded changes because the component has been removed.
       this.componentPropertiesPanel.clearComponent(true);
-    }
+    },
 
+    _enableDeleteComponentButton: function (enabled) {
+      if (!this.deleteComponentButton) {
+        return;
+      }
+      if (enabled) {
+        if (this.deleteComponentButton.disabled) {
+          this.deleteComponentButton.enable();
+        }
+      } else {
+        if (!this.deleteComponentButton.disabled) {
+          this.deleteComponentButton.disable();
+        }
+      }
+    }
   });
 
 }());
