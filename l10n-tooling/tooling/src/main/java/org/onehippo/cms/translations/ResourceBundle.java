@@ -15,60 +15,159 @@
  */
 package org.onehippo.cms.translations;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.onehippo.cms.translations.TranslationsUtils.getLocaleFromBundleFileName;
 
 public abstract class ResourceBundle {
+    
+    private static final Logger log = LoggerFactory.getLogger(ResourceBundle.class);
 
-    private final String name;
-    private String fileName;
-    private final ArtifactInfo artifactInfo;
-    private final String locale;
-    private final Map<String, String> entries;
-
-    public ResourceBundle(final String name, final String fileName, final ArtifactInfo artifactInfo, final String locale, final Properties properties) {
+    protected final String name;
+    protected final String fileName;
+    protected File file;
+    protected final String locale;
+    protected final Map<String, String> entries;
+    protected String moduleName;
+    
+    ResourceBundle(final String name, final String fileName, final File file) {
         this.name = name;
         this.fileName = fileName;
-        this.artifactInfo = artifactInfo;
+        this.file = file;
+        this.locale = getLocaleFromBundleFileName(fileName, getType());
+        this.entries = new HashMap<>();
+    }
+    
+    ResourceBundle(final String name, final String fileName, final String locale, final Map<String, String> entries) {
+        this.name = name;
+        this.fileName = fileName;
         this.locale = locale;
-        entries = new HashMap<>();
-        if (properties != null) {
-            for (String key : properties.stringPropertyNames()) {
-                entries.put(key, properties.getProperty(key));
-            }
-        }
+        this.entries = entries;
+        this.file = null;
     }
     
     public String getId() {
-        return artifactInfo.getGroupId() + "/" + artifactInfo.getArtifactId() + "/" + artifactInfo.getVersion() + "/" + fileName;
+        return fileName;
     }
     
     public String getName() {
         return name;
     }
 
-    public abstract BundleType getType();
-
     public String getFileName() {
         return fileName;
     }
     
-    public void setFileName(final String fileName) {
-        this.fileName = fileName;
+    public abstract BundleType getType();
+    
+    public String getModuleName() {
+        return moduleName;
     }
     
-    public ArtifactInfo getArtifactInfo() {
-        return artifactInfo;
+    public void setModuleName(final String moduleName) {
+        this.moduleName = moduleName;
     }
-
+    
     public String getLocale() {
         return locale;
     }
     
     public Map<String, String> getEntries() {
         return entries;
+    }
+    
+    public boolean isEmpty() {
+        return entries.isEmpty();
+    }
+    
+    public boolean exists() {
+        return file.exists();
+    }
+    
+    public void load() throws IOException {
+        log.debug("Loading bundle from file {}", fileName);
+        if (file == null) {
+            throw new IOException("No bundle file to load");
+        }
+        if (file.exists()) {
+            entries.clear();
+            getSerializer().deserialize();
+        }
+    }
+    
+    public void save() throws IOException {
+        log.debug("Saving bundle to file {}", fileName);
+        if (file == null) {
+            throw new IOException("No bundle file to save");
+        }
+        if (entries == null || entries.isEmpty()) {
+            throw new IOException("No entries to save");
+        }
+        getSerializer().serialize();
+    }
+    
+    public void delete() throws IOException {
+        file.delete();
+    }
+    
+    protected abstract Serializer getSerializer();
+    
+    public static ResourceBundle createInstance(final String name, final String fileName, final File file, final BundleType bundleType) {
+        switch (bundleType) {
+            case ANGULAR: {
+                return new AngularResourceBundle(name, fileName, file);
+            }
+            case WICKET: {
+                return new WicketResourceBundle(name, fileName, file);
+            }
+            case REPOSITORY: {
+                return new RepositoryResourceBundle(name, fileName, file);
+            }
+        }
+        throw new IllegalArgumentException("No such bundle type: " + bundleType);
+    }
+    
+    public static Iterable<ResourceBundle> createAllInstances(final String fileName, final File file, final BundleType bundleType) throws IOException {
+        switch (bundleType) {
+            case ANGULAR: {
+                return Collections.singletonList(new AngularResourceBundle(null, fileName, file));
+            }
+            case WICKET: {
+                return Collections.singleton(new WicketResourceBundle(null, fileName, file));
+            }
+            case REPOSITORY: {
+                return RepositoryResourceBundle.createAllInstances(fileName, file);
+            }
+        }
+        throw new IllegalArgumentException("No such bundle type: " + bundleType);
+        
+    }
+    
+    protected abstract class Serializer {
+        
+        protected abstract void serialize() throws IOException;
+        
+        protected abstract void deserialize() throws IOException;
+        
+        protected void createFileIfNotExists(final File file) throws IOException {
+            if (!file.exists()) {
+                final File directory = file.getParentFile();
+                if (!directory.exists()) {
+                    if (!directory.mkdirs()) {
+                        throw new IOException("Failed to create directory for bundle file " + fileName);
+                    }
+                }
+            }
+        }
     }
 
 }

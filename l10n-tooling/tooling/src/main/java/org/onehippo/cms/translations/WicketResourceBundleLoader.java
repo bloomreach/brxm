@@ -42,7 +42,7 @@ class WicketResourceBundleLoader extends ResourceBundleLoader {
                 if (entries.contains(baseName + ".class") && locales.contains(locale)) {
                     final Properties properties = new Properties();
                     properties.load(getClass().getClassLoader().getResourceAsStream(entry));
-                    bundles.add(new WicketResourceBundle(entry, entry, artifactInfo, locale, properties));
+                    bundles.add(new WicketResourceBundle(entry, entry, locale, TranslationsUtils.propertiesToMap(properties)));
                 }
             }
         }

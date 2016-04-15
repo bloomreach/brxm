@@ -63,13 +63,13 @@ public class Importer {
                     log.error("No such module: {}", fqKey.moduleId);
                     continue;
                 }
-                final RegistryFile registryFile = module.getRegistry().loadRegistryFile(fqKey.registryFile);
-                final ResourceBundle resourceBundle = module.getRegistry().loadResourceBundle(fqKey.bundleName, locale, registryFile);
+                final RegistryInfo registryInfo = module.getRegistry().getRegistryInfo(fqKey.registryFile);
+                final ResourceBundle resourceBundle = module.getRegistry().getResourceBundle(fqKey.bundleName, locale, registryInfo);
                 resourceBundle.getEntries().put(fqKey.key, translation);
                 log.info("Saving resource bundle: " + resourceBundle.getFileName());
-                module.getRegistry().saveResourceBundle(resourceBundle);
-                registryFile.getKeyData(fqKey.key).setLocaleStatus(locale, KeyData.LocaleStatus.RESOLVED);
-                registryFile.save();        
+                resourceBundle.save();
+                registryInfo.getKeyData(fqKey.key).setLocaleStatus(locale, KeyData.LocaleStatus.RESOLVED);
+                registryInfo.save();        
             }
         }
     }

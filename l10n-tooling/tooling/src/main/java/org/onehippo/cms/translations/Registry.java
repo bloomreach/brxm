@@ -22,24 +22,29 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.cms.translations.TranslationsUtils.mapRegistryFileToResourceBundleFile;
+import static org.onehippo.cms.translations.TranslationsUtils.mapResourceBundleToRegistryFile;
 
 public class Registry {
 
     private static final Logger log = LoggerFactory.getLogger(Registry.class);
-    private static final String SUFFIX = "registry.json";
 
     private final File registryDir;
 
     public Registry(File registryDir) {
         this.registryDir = registryDir;
-        log.info("Opening registry in '{}'", registryDir.getPath());
+        log.debug("Opening registry in '{}'", registryDir.getPath());
     }
-
-    public Iterable<RegistryFile> listRegistryFiles() {
-        return new Iterable<RegistryFile>() {
+    
+    public File getRegistryFile(final String relPath) {
+        return new File(registryDir, relPath);
+    }
+    
+    public Iterable<RegistryInfo> getRegistryInfos() {
+        return new Iterable<RegistryInfo>() {
 
             private Collection<File> files = loadFiles(registryDir, new ArrayList<>());
 
@@ -48,7 +53,7 @@ public class Registry {
                     if (file.isDirectory()) {
                         loadFiles(file, files);
                     } else {
-                        if (file.getName().endsWith(SUFFIX)) {
+                        if (file.getName().endsWith(TranslationsUtils.REGISTRY_FILE_SUFFIX)) {
                             files.add(file);
                         }
                     }
@@ -57,10 +62,10 @@ public class Registry {
             }
 
             @Override
-            public Iterator<RegistryFile> iterator() {
-                return new Iterator<RegistryFile>() {
+            public Iterator<RegistryInfo> iterator() {
+                return new Iterator<RegistryInfo>() {
                     private final Iterator<File> iter = files.iterator();
-                    private RegistryFile next;
+                    private RegistryInfo next;
                     @Override
                     public boolean hasNext() {
                         if (next == null) {
@@ -70,20 +75,26 @@ public class Registry {
                     }
 
                     @Override
-                    public RegistryFile next() {
+                    public RegistryInfo next() {
                         if (!hasNext()) {
                             throw new NoSuchElementException();
                         }
-                        RegistryFile current = next;
+                        final RegistryInfo current = next;
                         next = null;
                         return current;
                     }
 
                     private void fetchNext() {
                         while (next == null && iter.hasNext()) {
-                            final File file = iter.next();
-                            final String id = file.getAbsolutePath().substring(registryDir.getAbsolutePath().length()+1);
-                            this.next = new RegistryFile(id, file);
+                            try {
+                                final File file = iter.next();
+                                final String infoFileName = file.getAbsolutePath().substring(registryDir.getAbsolutePath().length()+1);
+                                this.next = new RegistryInfo(infoFileName, file);
+                                this.next.load();
+                            } catch (IOException e) {
+                                log.error("Failed to load registry info");
+                                next = null;
+                            }
                         }
                     }
                 };
@@ -91,72 +102,83 @@ public class Registry {
         };
     }
 
-    String mapResourceBundleToRegistryFile(final ResourceBundle resourceBundle) {
-        switch (resourceBundle.getType()) {
-            case ANGULAR:
-                return StringUtils.substringBeforeLast(resourceBundle.getFileName(), "/")
-                        + "/" + SUFFIX;
-            case REPOSITORY: {
-                String baseName = StringUtils.substringBefore(resourceBundle.getFileName(), ".json");
-                baseName = StringUtils.substringBeforeLast(baseName, "_");
-                return baseName + "." + SUFFIX;
-            }
-            case WICKET: {
-                String baseName = StringUtils.substringBefore(resourceBundle.getFileName(), ".properties");
-                baseName = StringUtils.substringBeforeLast(baseName, "_");
-                return baseName + "." + SUFFIX;
-            }
-        }
-        throw new IllegalStateException("Unknown bundle type: " + resourceBundle.getType());
-    }
-    
-    String mapRegistryFileToResourceBundleFile(String registryFileName, BundleType bundleType, String locale) {
-        switch (bundleType) {
-            case ANGULAR: {
-                return StringUtils.substringBefore(registryFileName, SUFFIX) 
-                        + locale + ".json";
-                
-            }
-            case REPOSITORY: {
-                return StringUtils.substringBefore(registryFileName, "." + SUFFIX) 
-                        + "_" + locale + ".json";
-            }
-            case WICKET: {
-                final String baseName = StringUtils.substringBefore(registryFileName, "." + SUFFIX);
-                if (locale.equals("en")) {
-                    return baseName + ".properties";
-                } else {
-                    return baseName + "_" + locale + ".properties";
-                }
-            }
-        }
-        throw new IllegalStateException("Unknown bundle type: " + bundleType);
-    }
-    
-    public RegistryFile loadRegistryFile(final ResourceBundle resourceBundle) throws IOException {
-        return loadRegistryFile(mapResourceBundleToRegistryFile(resourceBundle));
-
+    public RegistryInfo getRegistryInfoForBundle(final ResourceBundle resourceBundle) throws IOException {
+        return getRegistryInfo(mapResourceBundleToRegistryFile(resourceBundle));
     }
 
-    public RegistryFile loadRegistryFile(final String fileName) throws IOException {
-        final RegistryFile registryFile = new RegistryFile(fileName, new File(registryDir, fileName));
-        registryFile.load();
-        return registryFile;
+    public RegistryInfo getRegistryInfo(final String infoFileName) throws IOException {
+        final RegistryInfo registryInfo = new RegistryInfo(infoFileName, new File(registryDir, infoFileName));
+        registryInfo.load();
+        return registryInfo;
     }
     
-    public ResourceBundle loadResourceBundle(final String bundleName, final String locale, final RegistryFile registryFile) throws IOException {
-        final BundleType bundleType = registryFile.getBundleType();
-        if (bundleType == null) {
-            log.error("Cannot load bundle for registry file {}: unknown bundle type");
-        }
-        final ResourceBundleSerializer serializer = ResourceBundleSerializer.create(registryDir, bundleType);
-        final String bundleFileName = mapRegistryFileToResourceBundleFile(registryFile.getId(), bundleType, locale);
-        return serializer.deserializeBundle(bundleFileName, bundleName, locale);
+    public Iterable<ResourceBundle> getReferenceBundles() {
+        return new Iterable<ResourceBundle>() {
+            
+            @Override
+            public Iterator<ResourceBundle> iterator() {
+                return new Iterator<ResourceBundle>() {
+                    private final Iterator<RegistryInfo> registryInfos = getRegistryInfos().iterator();
+                    private Iterator<ResourceBundle> nextBundles;
+                    private ResourceBundle next;
+                    
+                    @Override
+                    public boolean hasNext() {
+                        if (next == null) {
+                            fetchNext();
+                        }
+                        return next != null;
+                    }
+
+                    @Override
+                    public ResourceBundle next() {
+                        if (!hasNext()) {
+                            throw new NoSuchElementException();
+                        }
+                        final ResourceBundle current = next;
+                        next = null;
+                        return current;
+                    }
+                    
+                    private void fetchNext() {
+                        while ((nextBundles == null || !nextBundles.hasNext()) && registryInfos.hasNext()) {
+                            final RegistryInfo nextInfo = registryInfos.next();
+                            try {
+                                nextBundles = getAllResourceBundles("en", nextInfo).iterator();
+                            } catch (IOException e) {
+                                log.error("Failed to fetch reference resource bundle of info {}", nextInfo.getFileName());
+                            }
+                        }
+                        if (nextBundles != null && nextBundles.hasNext()) {
+                            next = nextBundles.next();
+                            try {
+                                next.load();
+                            } catch (IOException e) {
+                                log.error("Failed to load bundle: {}", next.getFileName());
+                                fetchNext();
+                            }
+                        }
+                    }
+                };
+            }
+        };
     }
     
-    public void saveResourceBundle(final ResourceBundle resourceBundle) throws IOException {
-        final ResourceBundleSerializer serializer = ResourceBundleSerializer.create(registryDir, resourceBundle.getType());
-        serializer.serializeBundle(resourceBundle);
+    public ResourceBundle getResourceBundle(final String bundleName, final String bundleFileName, final BundleType bundleType) throws IOException {
+        final ResourceBundle resourceBundle = ResourceBundle.createInstance(bundleName, bundleFileName, new File(registryDir, bundleFileName), bundleType);
+        resourceBundle.load();
+        return resourceBundle;
     }
     
+    public ResourceBundle getResourceBundle(final String bundleName, final String locale, final RegistryInfo registryInfo) throws IOException {
+        final BundleType bundleType = registryInfo.getBundleType();
+        final String bundleFileName = mapRegistryFileToResourceBundleFile(registryInfo.getFileName(), bundleType, locale);
+        return getResourceBundle(bundleName, bundleFileName, bundleType);
+    }
+    
+    private Iterable<ResourceBundle> getAllResourceBundles(final String locale, final RegistryInfo registryInfo) throws IOException {
+        final BundleType bundleType = registryInfo.getBundleType();
+        final String bundleFileName = mapRegistryFileToResourceBundleFile(registryInfo.getFileName(), bundleType, locale);
+        return ResourceBundle.createAllInstances(bundleFileName, new File(registryDir, bundleFileName), registryInfo.getBundleType());
+    }
 }

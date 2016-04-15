@@ -24,7 +24,7 @@ import org.junit.rules.TemporaryFolder;
 
 import static org.junit.Assert.assertEquals;
 
-public class RegistryFileTest {
+public class RegistryInfoTest {
 
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -32,12 +32,12 @@ public class RegistryFileTest {
     @Test
     public void testSaveAndLoad() throws IOException {
         final File file = temporaryFolder.newFile("registry.json");
-        RegistryFile registryFile = new RegistryFile("registry.json", file);
-        registryFile.setBundleType(BundleType.ANGULAR);
-        registryFile.getOrCreateKeyData("key").setStatus(KeyData.KeyStatus.ADDED);
-        registryFile.save();
-        registryFile.load();
-        assertEquals(BundleType.ANGULAR, registryFile.getBundleType());
+        RegistryInfo registryInfo = new RegistryInfo("registry.json", file);
+        registryInfo.setBundleType(BundleType.ANGULAR);
+        registryInfo.getOrCreateKeyData("key").setStatus(KeyData.KeyStatus.ADDED);
+        registryInfo.save();
+        registryInfo.load();
+        assertEquals(BundleType.ANGULAR, registryInfo.getBundleType());
     }
 
 }

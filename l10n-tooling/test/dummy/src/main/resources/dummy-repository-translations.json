@@ -1,5 +1,5 @@
 {
-  "dummybundles" : {
+  "bundle" : {
     "en" : {
       "key" : "value"
     },

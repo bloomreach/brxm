@@ -32,7 +32,7 @@ public class RepositoryResourceBundleLoaderTest {
         final Collection<ResourceBundle> bundles = new RepositoryResourceBundleLoader(Arrays.asList("en")).loadBundles();
         assertEquals(1, bundles.size());
         ResourceBundle bundle = bundles.iterator().next();
-        assertEquals("dummybundles", bundle.getName());
+        assertEquals("bundle", bundle.getName());
         assertEquals(1, bundle.getEntries().size());
         Map.Entry<String, String> entry = bundle.getEntries().entrySet().iterator().next();
         assertEquals("key", entry.getKey());

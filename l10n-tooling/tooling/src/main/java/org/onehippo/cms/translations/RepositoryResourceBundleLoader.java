@@ -20,7 +20,9 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Stack;
 import java.util.zip.ZipEntry;
@@ -71,7 +73,7 @@ class RepositoryResourceBundleLoader extends ResourceBundleLoader {
                             // ... the resource bundle representations need to contain enough information
                             // to assemble a new hippo:resourcebundle file for a different language later
                             // ... this information is encoded in the key
-                            collectResourceBundles(jsonObject, resourceBundlesFile, new Path(), artifactInfo, bundles);
+                            collectResourceBundles(jsonObject, resourceBundlesFile, locales, new Path(), bundles);
                         }
                     } else {
                         log.warn("Extension file contains invalid resourcebundle: '{}' not found in jar", resourceBundlesFile);
@@ -83,20 +85,20 @@ class RepositoryResourceBundleLoader extends ResourceBundleLoader {
         }
     }
 
-    private void collectResourceBundles(final JSONObject jsonObject, final String fileName, final Path path, final ArtifactInfo artifactInfo, final Collection<ResourceBundle> bundles) {
-        final Properties properties = new Properties();
+    static void collectResourceBundles(final JSONObject jsonObject, final String fileName, final Collection<String> locales, final Path path, final Collection<ResourceBundle> bundles) {
+        final Map<String, String> entries = new HashMap<>();
         for (Object key : jsonObject.keySet()) {
             Object value = jsonObject.get(key);
             if (value instanceof JSONObject) {
                 path.push(key.toString());
-                collectResourceBundles((JSONObject) value, fileName, path, artifactInfo, bundles);
+                collectResourceBundles((JSONObject) value, fileName, locales, path, bundles);
                 path.pop();
             } else if (value instanceof String) {
-                properties.setProperty(key.toString(), value.toString());
+                entries.put(key.toString(), value.toString());
             }
         }
-        if (!properties.isEmpty() && locales.contains(path.toLocale())) {
-            bundles.add(new RepositoryResourceBundle(path.toBundleName(), fileName, artifactInfo, path.toLocale(), properties));
+        if (!entries.isEmpty() && locales.contains(path.toLocale())) {
+            bundles.add(new RepositoryResourceBundle(path.toBundleName(), fileName, path.toLocale(), entries));
         }
     }
     
@@ -156,11 +158,11 @@ class RepositoryResourceBundleLoader extends ResourceBundleLoader {
     /**
      * Utility for keeping track of the path inside a repository resource bundle import file.
      */
-    private static class Path {
+    static class Path {
 
         private final Stack<String> elements = new Stack<>();
 
-        private Path() {
+        Path() {
         }
 
         private void push(String element) {

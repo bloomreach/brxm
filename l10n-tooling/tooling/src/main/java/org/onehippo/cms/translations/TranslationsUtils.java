@@ -15,24 +15,34 @@
  */
 package org.onehippo.cms.translations;
 
-import org.apache.commons.lang.StringUtils;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 
+import org.apache.commons.lang.LocaleUtils;
+
+import static org.apache.commons.lang.StringUtils.substringAfterLast;
+import static org.apache.commons.lang.StringUtils.substringBefore;
+import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 import static org.onehippo.cms.translations.BundleType.REPOSITORY;
 
 public final class TranslationsUtils {
-    
+
+    static final String REGISTRY_FILE_SUFFIX = "registry.json";
+
     private TranslationsUtils() {}
     
-    public static String getLocalizedBundleFileName(String sourceBundleFileName, BundleType bundleType, String locale) {
+    public static String mapSourceBundleFileToTargetBundleFile(String sourceBundleFileName, BundleType bundleType, String locale) {
         switch (bundleType) {
             case REPOSITORY: {
-                return StringUtils.substringBefore(sourceBundleFileName, ".json") + "_" + locale + ".json";
+                return substringBefore(sourceBundleFileName, ".json") + "_" + locale + ".json";
             }
             case WICKET: {
                 return sourceBundleFileName;
             }
             case ANGULAR: {
-                return StringUtils.substringBeforeLast(sourceBundleFileName, "/") + "/" + locale + ".json";
+                return sourceBundleFileName;
             }
         }
         throw new IllegalArgumentException("Unknown bundle type: " + bundleType);
@@ -49,5 +59,87 @@ public final class TranslationsUtils {
         return "";
         
     }
+
+    public static String mapRegistryFileToResourceBundleFile(final RegistryInfo registryInfo, final String locale) {
+        return mapRegistryFileToResourceBundleFile(registryInfo.getFileName(), registryInfo.getBundleType(), locale);
+    }
     
+    public static String mapRegistryFileToResourceBundleFile(String registryFileName, BundleType bundleType, String locale) {
+        switch (bundleType) {
+            case ANGULAR: {
+                return substringBefore(registryFileName, REGISTRY_FILE_SUFFIX) + locale + ".json";
+                
+            }
+            case REPOSITORY: {
+                return substringBefore(registryFileName, "." + REGISTRY_FILE_SUFFIX) + "_" + locale + ".json";
+            }
+            case WICKET: {
+                final String baseName = substringBefore(registryFileName, "." + REGISTRY_FILE_SUFFIX);
+                if (locale.equals("en")) {
+                    return baseName + ".properties";
+                } else {
+                    return baseName + "_" + locale + ".properties";
+                }
+            }
+        }
+        throw new IllegalArgumentException("Unknown bundle type: " + bundleType);
+    }
+
+    public static String mapResourceBundleToRegistryFile(final BundleType bundleType, final String bundleFileName) {
+        switch (bundleType) {
+            case ANGULAR:
+                return substringBeforeLast(bundleFileName, "/")
+                        + "/" + REGISTRY_FILE_SUFFIX;
+            case REPOSITORY: {
+                String baseName = substringBefore(bundleFileName, ".json");
+                baseName = substringBeforeLast(baseName, "_");
+                return baseName + "." + REGISTRY_FILE_SUFFIX;
+            }
+            case WICKET: {
+                String baseName = substringBefore(bundleFileName, ".properties");
+                baseName = substringBeforeLast(baseName, "_");
+                return baseName + "." + REGISTRY_FILE_SUFFIX;
+            }
+        }
+        throw new IllegalArgumentException("Unknown bundle type: " + bundleType);
+    }
+
+    public static String mapResourceBundleToRegistryFile(final ResourceBundle resourceBundle) {
+        return mapResourceBundleToRegistryFile(resourceBundle.getType(), resourceBundle.getFileName());
+    }
+    
+    public static String getLocaleFromBundleFileName(final String bundleFileName, final BundleType bundleType) {
+        switch (bundleType) {
+            case ANGULAR: {
+                return substringBefore(substringAfterLast(bundleFileName, "/"), ".json");
+            }
+            case REPOSITORY: {
+                final String locale = substringBefore(substringAfterLast(bundleFileName, "_"), ".json");
+                try {
+                    LocaleUtils.toLocale(locale);
+                    return locale;
+                } catch (IllegalArgumentException e) {
+                    return "en";
+                }
+            }
+            case WICKET: {
+                final String locale = substringBefore(substringAfterLast(bundleFileName, "_"), ".properties");
+                try {
+                    LocaleUtils.toLocale(locale);
+                    return locale;
+                } catch (IllegalArgumentException e) {
+                    return "en";
+                }
+            }
+        }
+        throw new IllegalArgumentException("Unknown bundle type: " + bundleType);
+    }
+    
+    public static Map<String, String> propertiesToMap(final Properties properties) {
+        final Map<String, String> map = new HashMap<>();
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            map.put(entry.getKey().toString(), entry.getValue().toString());
+        }
+        return map;
+    }
 }

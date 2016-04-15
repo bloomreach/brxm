@@ -25,18 +25,18 @@ public class Translation {
     private static final Logger log = LoggerFactory.getLogger(Translation.class);
     
     private final Module module;
-    private final RegistryFile registryFile;
+    private final RegistryInfo registryInfo;
     private final String key;
     private final String locale;
     private final String translation;
     
-    public Translation(final Module module, final RegistryFile registryFile, final String key, final String locale) {
-        this(module, registryFile, key, locale, null);
+    public Translation(final Module module, final RegistryInfo registryInfo, final String key, final String locale) {
+        this(module, registryInfo, key, locale, null);
     }
 
-    public Translation(final Module module, final RegistryFile registryFile, final String key, final String locale, final String translation) {
+    public Translation(final Module module, final RegistryInfo registryInfo, final String key, final String locale, final String translation) {
         this.module = module;
-        this.registryFile = registryFile;
+        this.registryInfo = registryInfo;
         this.key = key;
         this.locale = locale;
         this.translation = translation;
@@ -46,8 +46,8 @@ public class Translation {
         return module;
     }
     
-    public RegistryFile getRegistryFile() {
-        return registryFile;
+    public RegistryInfo getRegistryInfo() {
+        return registryInfo;
     }
     
     public String getKey() {
@@ -55,7 +55,7 @@ public class Translation {
     }
     
     public String getFQKey() {
-        return module.getName() + "#" + getRegistryFile().getId() + "#" + key;
+        return module.getName() + "#" + getRegistryInfo().getFileName() + "#" + key;
     }
     
     private String getBundleKey() {
@@ -87,12 +87,12 @@ public class Translation {
     
     private String getBundleValue(final String locale) {
         try {
-            final ResourceBundle resourceBundle = module.getRegistry().loadResourceBundle(getBundleName(), locale, registryFile);
+            final ResourceBundle resourceBundle = module.getRegistry().getResourceBundle(getBundleName(), locale, registryInfo);
             if (resourceBundle != null) {
                 return resourceBundle.getEntries().get(getBundleKey());
             }
         } catch (IOException e) {
-            log.error("Failed to load bundle corresponding to registry file {} in locale {}", registryFile.getId(), locale, e);
+            log.error("Failed to load bundle corresponding to registry file {} in locale {}", registryInfo.getFileName(), locale, e);
         }
         return null;
 

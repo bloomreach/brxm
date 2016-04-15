@@ -29,12 +29,12 @@
       <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
     </layout>
   </appender>
-  <category additivity="false" name="org.onehippo.cms.translations.Registrar">
+  <category additivity="false" name="org.onehippo.cms.translations">
     <level value="info"/>
     <appender-ref ref="console"/>
   </category>
   <root>
-    <level value="warn"/>
+    <level value="debug"/>
     <appender-ref ref="root"/>
   </root>
 </log4j:configuration>

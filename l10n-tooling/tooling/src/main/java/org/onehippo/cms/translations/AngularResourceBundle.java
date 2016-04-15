@@ -15,17 +15,55 @@
  */
 package org.onehippo.cms.translations;
 
-import java.util.Properties;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Map;
+
+import org.apache.commons.io.FileUtils;
+
+import net.sf.json.JSONObject;
 
 public class AngularResourceBundle extends ResourceBundle {
 
-    public AngularResourceBundle(final String name, final String fileName, final ArtifactInfo artifactInfo, final String locale, final Properties properties) {
-        super(name, fileName, artifactInfo, locale, properties);
+    AngularResourceBundle(final String name, final String fileName, final File file) {
+        super(name, fileName, file);
+    }
+
+    AngularResourceBundle(final String name, final String fileName, final String locale, final Map<String, String> entries) {
+        super(name, fileName, locale, entries);
     }
 
     @Override
     public BundleType getType() {
         return BundleType.ANGULAR;
+    }
+
+    @Override
+    protected Serializer getSerializer() {
+        return new AngularBundleSerializer();
+    }
+    
+    private class AngularBundleSerializer extends Serializer {
+
+        @Override
+        protected void serialize() throws IOException {
+            createFileIfNotExists(file);
+            final JSONObject o = new JSONObject();
+            o.putAll(getEntries());
+            try (FileWriter writer = new FileWriter(file)) {
+                o.write(writer);
+            }
+        }
+
+        @Override
+        protected void deserialize() throws IOException {
+            final String jsonString = FileUtils.readFileToString(file);
+            final JSONObject jsonObject = JSONObject.fromObject(jsonString);
+            for (Object key : jsonObject.keySet()) {
+                entries.put(key.toString(), jsonObject.get(key).toString());
+            }
+        }
     }
 
 }

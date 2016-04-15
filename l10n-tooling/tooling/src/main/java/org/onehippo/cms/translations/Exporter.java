@@ -43,13 +43,13 @@ public class Exporter {
         final Collection<Translation> pending = new ArrayList<>();
         for (Module module : new ModuleLoader(baseDir).loadModules()) {
             final Registry registry = module.getRegistry();
-            for (final RegistryFile registryFile : registry.listRegistryFiles()) {
-                registryFile.load();
-                for (final String key : registryFile.getKeys()) {
-                    final KeyData data = registryFile.getKeyData(key);
+            for (final RegistryInfo registryInfo : registry.getRegistryInfos()) {
+                registryInfo.load();
+                for (final String key : registryInfo.getKeys()) {
+                    final KeyData data = registryInfo.getKeyData(key);
                     if (data.getStatus() == ADDED || data.getStatus() == UPDATED) {
                         if (data.getLocaleStatus(locale) == UNRESOLVED) {
-                            pending.add(new Translation(module, registryFile, key, locale));
+                            pending.add(new Translation(module, registryInfo, key, locale));
                         }
                     }
                 }

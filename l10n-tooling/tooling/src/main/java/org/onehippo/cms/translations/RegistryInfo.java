@@ -30,17 +30,17 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class RegistryFile {
+public final class RegistryInfo {
     
-    private static final Logger log = LoggerFactory.getLogger(RegistryFile.class);
+    private static final Logger log = LoggerFactory.getLogger(RegistryInfo.class);
 
     private final File file;
-    private final String id;
+    private final String fileName;
     
     private RegistryData data = new RegistryData();
 
-    public RegistryFile(final String id, final File file) {
-        this.id = id;
+    public RegistryInfo(final String fileName, final File file) {
+        this.fileName = fileName;
         this.file = file;
     }
 
@@ -49,26 +49,30 @@ public final class RegistryFile {
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         return mapper;
     }
+    
+    public boolean exists() {
+        return file.exists();
+    }
 
     public void load() throws IOException {
         if (!file.exists()) {
             return;
         }
-        log.info("Loading registry file: " + id);
+        log.debug("Loading registry info file: {}", fileName);
         try (final InputStream in = new FileInputStream(file)) {
             data = getObjectMapper().readValue(in, new TypeReference<RegistryData>(){});
         }
     }
 
     public void save() throws IOException {
-        log.info("Saving registry file: " + id);
+        log.debug("Saving registry info file: {}", fileName);
         try (final FileOutputStream out = FileUtils.openOutputStream(file)) {
             getObjectMapper().writeValue(out, data);
         }
     }
     
-    public String getId() {
-        return id;
+    public String getFileName() {
+        return fileName;
     }
 
     public BundleType getBundleType() {
@@ -100,4 +104,11 @@ public final class RegistryFile {
         return data.getKeyData().keySet();
     }
     
+    public void removeKeyData(final String key) {
+        data.getKeyData().remove(key);
+    }
+
+    public void delete() {
+        file.delete();
+    }
 }

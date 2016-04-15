@@ -30,7 +30,19 @@
     </layout>
   </appender>
   <category additivity="false" name="org.onehippo.cms.translations">
-    <level value="debug"/>
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.onehippo.cms.translations.Registrar">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.onehippo.cms.translations.RegistryInfo">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.onehippo.cms.translations.Extractor">
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
   <root>

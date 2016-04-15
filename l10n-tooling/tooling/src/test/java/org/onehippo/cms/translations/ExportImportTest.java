@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -34,6 +33,7 @@ import org.junit.rules.TemporaryFolder;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.onehippo.cms.translations.BundleType.ANGULAR;
 import static org.onehippo.cms.translations.KeyData.KeyStatus.CLEAN;
 import static org.onehippo.cms.translations.KeyData.KeyStatus.UPDATED;
 import static org.onehippo.cms.translations.KeyData.LocaleStatus.RESOLVED;
@@ -50,21 +50,19 @@ public class ExportImportTest {
     public void setupTestModule() throws IOException {
         temporaryFolder.newFolder("module");
         resources = temporaryFolder.newFolder("module/resources");
-        new Extractor(resources, Arrays.asList("en", "nl")).extract();
+        new Extractor(resources, "module", Arrays.asList("en", "nl")).extract();
         registrar = new Registrar(resources, Collections.singletonList("nl"));
-        registrar.initializeRegistry();
+        registrar.initialize();
         final File pom = temporaryFolder.newFile("module/pom.xml");
         FileUtils.copyInputStreamToFile(getClass().getResourceAsStream("pom.xml"), pom);
         changeBundle();
-        registrar.updateRegistry();
+        registrar.update();
     }
 
     private void changeBundle() throws IOException {
-        Properties properties = new Properties();
-        properties.setProperty("key", "foo");
-
-        ResourceBundle angularBundle = new AngularResourceBundle("", "angular/dummy/i18n/en.json", null, "en", properties);
-        ResourceBundleSerializer.create(resources, angularBundle.getType()).serializeBundle(angularBundle);
+        final ResourceBundle resourceBundle = registrar.getRegistry().getResourceBundle(null, "angular/dummy/i18n/en.json", ANGULAR);
+        resourceBundle.getEntries().put("key", "value2");
+        resourceBundle.save();
     }
 
     @Test
@@ -87,8 +85,8 @@ public class ExportImportTest {
 
     @Test
     public void testImporter() throws Exception {
-        final RegistryFile registryFile = registrar.getRegistry().loadRegistryFile("angular/dummy/i18n/registry.json");
-        KeyData keyData = registryFile.getKeyData("key");
+        final RegistryInfo registryInfo = registrar.getRegistry().getRegistryInfo("angular/dummy/i18n/registry.json");
+        KeyData keyData = registryInfo.getKeyData("key");
         assertNotNull(keyData);
         assertEquals(UPDATED, keyData.getStatus());
         assertEquals(UNRESOLVED, keyData.getLocaleStatus("nl"));
@@ -96,8 +94,8 @@ public class ExportImportTest {
         final File _import = temporaryFolder.newFile("import.csv");
         FileUtils.copyFile(export, _import);
         new Importer(temporaryFolder.getRoot(), "Default")._import("import.csv", "nl");
-        registryFile.load();
-        keyData = registryFile.getKeyData("key");
+        registryInfo.load();
+        keyData = registryInfo.getKeyData("key");
         assertNotNull(keyData);
         assertEquals(CLEAN, keyData.getStatus());
         assertEquals(RESOLVED, keyData.getLocaleStatus("nl"));

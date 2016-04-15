@@ -84,9 +84,13 @@ public class RepositoryExtension {
     public boolean containsResourceBundle(ResourceBundle bundle) {
         return items.contains(getItemName(bundle));
     }
+    
+    public boolean isEmpty() {
+        return items.isEmpty();
+    }
 
     private String getItemName(final ResourceBundle bundle) {
-        return bundle.getArtifactInfo().getArtifactId() + "-" + StringUtils.substringBefore(bundle.getFileName(), ".json");
+        return bundle.getModuleName() + "-" + StringUtils.substringBefore(bundle.getFileName(), ".json");
     }
 
     public static RepositoryExtension load(final File file) throws IOException {

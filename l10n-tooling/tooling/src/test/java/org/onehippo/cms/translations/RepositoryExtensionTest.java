@@ -32,7 +32,7 @@ public class RepositoryExtensionTest {
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();
     
     public ResourceBundle createResourceBundle() {
-        return new AngularResourceBundle("", "foobar_nl.json", new ArtifactInfo("test-artifact"), "nl", null);
+        return new AngularResourceBundle("", "foobar_nl.json", "nl", null);
     }
     
     @Test

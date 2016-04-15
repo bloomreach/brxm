@@ -45,7 +45,7 @@ public class Scanner {
                     wordCount += value.split("\\s").length;
                 }
                 log.info(resourceBundle.getId());
-                files.add(resourceBundle.getArtifactInfo().getGroupId() + "/" + resourceBundle.getArtifactInfo().getArtifactId() + "/" + resourceBundle.getFileName());
+                files.add(resourceBundle.getModuleName() + "/" + resourceBundle.getFileName());
             }
         }
         log.info("{} files, {} resource bundles, {} keys, {} words", files.size(), bundleCount, keyCount, wordCount);

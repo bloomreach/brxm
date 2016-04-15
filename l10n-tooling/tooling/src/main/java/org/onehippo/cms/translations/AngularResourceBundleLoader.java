@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -39,15 +41,15 @@ class AngularResourceBundleLoader extends ResourceBundleLoader {
     protected void collectResourceBundles(final ArtifactInfo artifactInfo, final Collection<ResourceBundle> bundles) throws IOException {
         for (String entry : artifactInfo.getEntries()) {
             if (pattern.matcher(entry).matches()) {
-                final Properties properties = new Properties();
+                final Map<String, String> entries = new HashMap<>(); 
                 final JSONObject jsonObject = JSONObject.fromObject(loadJsonResource(entry));
-                for (Object o : jsonObject.keySet()) {
-                    properties.put(o, jsonObject.get(o));
+                for (Object key : jsonObject.keySet()) {
+                    entries.put(key.toString(), jsonObject.get(key).toString());
                 }
                 final String fileName = StringUtils.substringAfterLast(entry, "/");
                 final String locale = StringUtils.substringBefore(fileName, ".json");
                 if (locales.contains(locale)) {
-                    bundles.add(new AngularResourceBundle(entry, entry, artifactInfo, locale, properties));
+                    bundles.add(new AngularResourceBundle(entry, entry, locale, entries));
                 }
             }
         }

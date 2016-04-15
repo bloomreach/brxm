@@ -68,17 +68,11 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-channel-manager-frontend</artifactId>
-      <version>${hippo.addon-channel-manager.version}</version>
+      <groupId>org.onehippo.cms.translations</groupId>
+      <artifactId>hippo-translations-test-dummy</artifactId>
+      <version>${project.version}</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-channel-manager-repository</artifactId>
-      <version>${hippo.addon-channel-manager.version}</version>
-    </dependency>
-
+    
   </dependencies>
 
   <profiles>
@@ -138,10 +132,7 @@
                       <value>file://${project.basedir}/config/log4j.xml</value>
                     </systemProperty>
                   </systemProperties>
-                  <arguments>
-                    <argument>${project.basedir}/resources</argument>
-                    <argument>en,fr,nl,de</argument>
-                  </arguments>
+                  <commandlineArgs>--baseDir ${project.basedir} --locales en,nl,fr,de</commandlineArgs>
                 </configuration>
               </execution>
             </executions>
