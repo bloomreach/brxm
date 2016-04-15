@@ -15,6 +15,7 @@
  */
 
 import { channelPageModule } from './page/page';
+import { channelPageActionsModule } from './page/actions/actions';
 import { channelHippoIframeModule } from './hippoIframe/hippoIframe';
 import { channelMaskModule } from './mask/mask';
 import { channelRelevanceModule } from './relevance/relevance';
@@ -28,6 +29,7 @@ export const channelModule = angular
   .module('hippo-cm.channel', [
     'hippo-cm-api',
     channelPageModule.name,
+    channelPageActionsModule.name,
     channelHippoIframeModule.name,
     channelMaskModule.name,
     channelRelevanceModule.name,
