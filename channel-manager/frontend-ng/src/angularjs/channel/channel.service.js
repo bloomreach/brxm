@@ -15,33 +15,37 @@
  */
 
 export class ChannelService {
-  constructor($log, $rootScope, $http, $state, SessionService, CatalogService, HstService, ConfigService, CmsService, SiteMapService) {
+  constructor(
+      $log,
+      $rootScope,
+      $http,
+      $state,
+      SessionService,
+      CatalogService,
+      HstService,
+      ConfigService,
+      CmsService,
+      SiteMapService
+    ) {
     'ngInject';
 
     this.$log = $log;
     this.$rootScope = $rootScope;
     this.$http = $http;
     this.$state = $state;
-
     this.SessionService = SessionService;
     this.CatalogService = CatalogService;
     this.HstService = HstService;
     this.ConfigService = ConfigService;
     this.CmsService = CmsService;
     this.SiteMapService = SiteMapService;
-
-    this.channel = {};
-
-    this.CmsService.subscribe('channel-changed-in-extjs', this._onChannelChanged, this);
-  }
-
-  _onChannelChanged(channel) {
-    this.$rootScope.$apply(() => {
-      this.channel = channel;
-    });
   }
 
   initialize() {
+    this.channel = {};
+
+    this.CmsService.subscribe('channel-changed-in-extjs', this._onChannelChanged, this);
+
     this.CmsService.subscribe('load-channel', (channel) => {
       this.HstService.getChannel(channel.id).then((updatedChannel) => {
         this._load(updatedChannel).then((channelId) => {
@@ -56,6 +60,13 @@ export class ChannelService {
     // Handle reloading of iframe by BrowserSync during development
     this.CmsService.publish('reload-channel');
   }
+
+  _onChannelChanged(channel) {
+    this.$rootScope.$apply(() => {
+      this.channel = channel;
+    });
+  }
+
 
   _setChannel(channel) {
     this.channel = channel;
