@@ -47,7 +47,7 @@ public class RepositoryResourceBundle extends ResourceBundle {
 
     @Override
     public String getId() {
-        return getFileName() + "/" + getName() + "/" + getLocale();
+        return getFileName() + "/" + getName() + "/";
     }
 
     @Override

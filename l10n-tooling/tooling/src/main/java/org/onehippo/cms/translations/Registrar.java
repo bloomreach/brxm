@@ -24,10 +24,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.onehippo.cms.translations.KeyData.KeyStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.cli.Option.UNLIMITED_VALUES;
 import static org.onehippo.cms.translations.KeyData.KeyStatus.ADDED;
 import static org.onehippo.cms.translations.KeyData.KeyStatus.CLEAN;
 import static org.onehippo.cms.translations.KeyData.KeyStatus.UPDATED;
@@ -108,7 +114,7 @@ class Registrar {
                 ResourceBundle referenceBundle = loadReferenceBundle(sourceBundle);
                 listener.startBundle(sourceBundle, referenceBundle);
                 if (!referenceBundle.exists()) {
-                    referenceBundle = listener.bundleAdded();
+                    listener.bundleAdded();
                 } else {
                     for (Map.Entry<String, String> entry : sourceBundle.getEntries().entrySet()) {
                         final String key = entry.getKey();
@@ -154,13 +160,30 @@ class Registrar {
     }
     
     public static void main(String[] args) throws Exception {
-        final String command = args[0];
-        File registryDir = new File(args[1]);
+        
+        final Options options = new Options();
+        final Option basedirOption = new Option("d", "basedir", true, "the project base directory");
+        basedirOption.setRequired(true);
+        options.addOption(basedirOption);
+        final Option localesOption = new Option("l", "locales", true, "comma-separated list of locales to extract");
+        localesOption.setRequired(true);
+        localesOption.setValueSeparator(',');
+        localesOption.setArgs(UNLIMITED_VALUES);
+        options.addOption(localesOption);
+        final Option commandOption = new Option("c", "command", true, "command to execute: one of initialize, update, or report");
+        commandOption.setRequired(true);
+        options.addOption(commandOption);
+        
+        final CommandLineParser parser = new DefaultParser();
+        final CommandLine commandLine = parser.parse(options, args);
+        final File baseDir = new File(commandLine.getOptionValue("basedir")).getCanonicalFile();
+        final String[] locales = commandLine.getOptionValues("locales");
+        final String command = commandLine.getOptionValue("command");
+        final File registryDir = new File(baseDir, "resources");
         if (!registryDir.exists()) {
-            throw new IllegalStateException("Directory does no exist: " + registryDir.getPath());
+            throw new IllegalArgumentException("Registry directory does not exist: " + registryDir.getCanonicalPath());
         }
-        final Collection<String> locales = Arrays.asList(args[2].split(","));
-        final Registrar registrar = new Registrar(registryDir, locales);
+        final Registrar registrar = new Registrar(registryDir, Arrays.asList(locales));
         switch (command) {
             case "initialize":
                 registrar.initialize();
@@ -209,7 +232,7 @@ class Registrar {
             currentReferenceBundle = referenceBundle;
         }
 
-        abstract ResourceBundle bundleAdded() throws IOException;
+        abstract void bundleAdded() throws IOException;
 
         abstract void keyAdded(String key) throws IOException;
 
@@ -230,6 +253,7 @@ class Registrar {
     private static class ReportUpdateListener extends UpdateListener {
         
         private JunitReportWriter writer = new JunitReportWriter();
+        private boolean added;
 
         private ReportUpdateListener(final Registry registry) {
             super(registry);
@@ -242,9 +266,9 @@ class Registrar {
         }
 
         @Override
-        public ResourceBundle bundleAdded() {
+        public void bundleAdded() {
             writer.failure("Bundle added");
-            return null;
+            added = true;
         }
         
         @Override
@@ -259,22 +283,12 @@ class Registrar {
         
         @Override
         public void keyUpdated(final String key) throws IOException {
-            final KeyStatus keyStatus = getKeyStatus(key);
-            if (keyStatus == CLEAN) {
-                writer.failure("Key updated: " + key);
-            } else {
-                writer.error("Expected key status CLEAN, but found " + keyStatus);
-            }
+            writer.failure("Key updated: " + key);
         }
         
         @Override
         public void keyDeleted(final String key) throws IOException {
-            final KeyStatus keyStatus = getKeyStatus(key);
-            if (keyStatus == CLEAN) {
-                writer.failure("Key removed: " + key);
-            } else {
-                writer.error("Expected key status CLEAN, but found " + keyStatus);
-            }
+            writer.failure("Key removed: " + key);
         }
 
         @Override
@@ -282,7 +296,15 @@ class Registrar {
             writer.startTestCase(resourceBundle.getId());
             writer.failure("Bundle removed");
         }
-        
+
+        @Override
+        void endBundle() throws IOException {
+            if (!added && !getRegistryInfo().exists()) {
+                writer.error("Missing registry info: " + getRegistryInfo().getFileName());
+            }
+            super.endBundle();
+        }
+
         private void writeReport() throws IOException {
             writer.write(new File("target/TEST-update.xml"));
         }
@@ -299,7 +321,7 @@ class Registrar {
         }
 
         @Override
-        public ResourceBundle bundleAdded() throws IOException {
+        public void bundleAdded() throws IOException {
             final RegistryInfo registryInfo = getRegistryInfo();
             registryInfo.setBundleType(currentSourceBundle.getType());
             final ResourceBundle referenceBundle = getCurrentReferenceBundle();
@@ -315,7 +337,6 @@ class Registrar {
                 referenceBundle.getEntries().put(key, entry.getValue());
             }
             updated = true;
-            return referenceBundle;
         }
         
         @Override

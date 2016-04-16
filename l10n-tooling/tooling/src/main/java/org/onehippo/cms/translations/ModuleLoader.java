@@ -53,7 +53,7 @@ public class ModuleLoader {
         for (File file : baseDir.listFiles(filter)) {
             if (file.isDirectory()) {
                 collectPoms(file, poms);
-            } else if (file.getName().equals("pom.xml") && !file.getParentFile().equals(this.baseDir)) {
+            } else if (file.getName().equals("pom.xml")) {
                 poms.add(file);
             }
         }

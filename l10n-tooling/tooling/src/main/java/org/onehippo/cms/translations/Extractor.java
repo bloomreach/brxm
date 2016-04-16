@@ -68,15 +68,17 @@ public class Extractor {
     }
     
     public static void main(String[] args) throws Exception {
-        Options options = new Options();
+        
+        final Options options = new Options();
         final Option basedirOption = new Option("d", "baseDir", true, "the project base directory");
         basedirOption.setRequired(true);
         options.addOption(basedirOption);
-        final Option localesOption = new Option("l", "locales", true, "comma separated list of locales to extract");
+        final Option localesOption = new Option("l", "locales", true, "comma-separated list of locales to extract");
         localesOption.setRequired(true);
         localesOption.setValueSeparator(',');
         localesOption.setArgs(UNLIMITED_VALUES);
         options.addOption(localesOption);
+        
         final CommandLineParser parser = new DefaultParser();
         final CommandLine commandLine = parser.parse(options, args);
         final File baseDir = new File(commandLine.getOptionValue("d")).getCanonicalFile();
@@ -86,6 +88,7 @@ public class Extractor {
         if (!registryDir.exists()) {
             registryDir.mkdirs();
         }
+        
         new Extractor(registryDir, moduleName, Arrays.asList(locales)).extract();
     }
     

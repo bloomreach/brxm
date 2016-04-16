@@ -21,6 +21,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang.StringUtils;
@@ -69,13 +74,24 @@ public class Exporter {
     }
     
     public static void main(String[] args) throws Exception {
-        final String baseDir = args[0];
-        final String format = args[1];
-        final String locale = args[2];
-        if (StringUtils.isBlank(locale)) {
-            throw new IllegalArgumentException("Missing locale argument");
-        }
-        new Exporter(new File(baseDir), format).export(locale);
+        
+        final Options options = new Options();
+        final Option basedirOption = new Option("d", "basedir", true, "the project base directory");
+        basedirOption.setRequired(true);
+        options.addOption(basedirOption);
+        final Option localeOption = new Option("l", "locale", true, "the locale to export");
+        localeOption.setRequired(true);
+        options.addOption(localeOption);
+        final Option formatOption = new Option("f", "format", true, "the csv format");
+        options.addOption(formatOption);
+
+        final CommandLineParser parser = new DefaultParser();
+        final CommandLine commandLine = parser.parse(options, args);
+        final File baseDir = new File(commandLine.getOptionValue("basedir")).getCanonicalFile();
+        final String locale = commandLine.getOptionValue("locale");
+        final String format = commandLine.getOptionValue("format", "Default");
+        
+        new Exporter(baseDir, format).export(locale);
     }
     
 }
