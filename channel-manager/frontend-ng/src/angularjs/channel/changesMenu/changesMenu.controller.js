@@ -15,4 +15,44 @@
  */
 
 export class ChangesMenuCtrl {
+  constructor(
+      $translate,
+      ChannelService,
+      DialogService,
+      HippoIframeService,
+    ) {
+    'ngInject';
+    this.$translate = $translate;
+    this.ChannelService = ChannelService;
+    this.DialogService = DialogService;
+    this.HippoIframeService = HippoIframeService;
+  }
+
+  publish() {
+    this.ChannelService.publishOwnChanges().then(() => this.HippoIframeService.reload());
+    // TODO: what if this fails?
+    // show a toast that all went well, or that the publication failed.
+    // More information may be exposed by logging an error(?) in the console,
+    // based on the actual error details from the back-end.
+  }
+
+  discard() {
+    this._confirmDiscard().then(() => {
+      this.ChannelService.discardOwnChanges().then(() => this.HippoIframeService.reload());
+      // TODO: what if this fails?
+      // show a toast that discarding the changed failed.
+      // More information may be exposed by logging an error(?) in the console,
+      // based on the actual error details from the back-end.
+    });
+  }
+
+  _confirmDiscard() {
+    const confirm = this.DialogService.confirm()
+      .title(this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_TITLE'))
+      .textContent(this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_MESSAGE'))
+      .ok(this.$translate.instant('BUTTON_YES'))
+      .cancel(this.$translate.instant('BUTTON_NO'));
+
+    return this.DialogService.show(confirm);
+  }
 }

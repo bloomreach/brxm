@@ -35,7 +35,7 @@
 
       <span flex></span>
 
-      <changes-menu></changes-menu>
+      <changes-menu ng-if="channelCtrl.hasChanges()"></changes-menu>
 
       <span class="button-group">
         <md-button class="qa-button-edit"

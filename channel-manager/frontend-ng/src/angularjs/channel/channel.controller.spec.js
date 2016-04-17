@@ -21,7 +21,6 @@ describe('ChannelCtrl', () => {
 
   let ChannelService;
   let ComponentsService;
-  let DialogService;
   let ScalingService;
   let ConfigService;
   let FeedbackService;
@@ -43,7 +42,6 @@ describe('ChannelCtrl', () => {
       $rootScope = _$rootScope_;
       $q = _$q_;
       ConfigService = _ConfigService_;
-      DialogService = _DialogService_;
       FeedbackService = _FeedbackService_;
       SessionService = _SessionService_;
       SiteMapService = _SiteMapService_;
@@ -203,42 +201,17 @@ describe('ChannelCtrl', () => {
     expect(ChannelCtrl.hasChanges()).toBe(false);
   });
 
-  it('publishes changes', () => {
-    ChannelService.publishOwnChanges.and.returnValue($q.resolve());
+  it('shows the components sidenav button only in edit mode and if there are catalog components', () => {
+    expect(ChannelCtrl.isEditModeActive()).toBe(false);
+    expect(ChannelCtrl.showComponentsButton()).toBe(false);
 
-    ChannelCtrl.publish();
-    $rootScope.$digest();
+    ChannelService.hasPreviewConfiguration.and.returnValue(true);
+    ChannelCtrl.enterEditMode();
 
-    expect(ChannelService.publishOwnChanges).toHaveBeenCalled();
-    expect(HippoIframeService.reload).toHaveBeenCalled();
-  });
+    ChannelService.getCatalog.and.returnValue(['dummy']);
+    expect(ChannelCtrl.showComponentsButton()).toBe(true);
 
-  it('discards changes', () => {
-    ChannelService.discardOwnChanges.and.returnValue($q.resolve());
-    ChannelService.getSiteMapId.and.returnValue('siteMapId');
-    spyOn(DialogService, 'show').and.returnValue($q.resolve());
-    spyOn(DialogService, 'confirm').and.callThrough();
-    spyOn(SiteMapService, 'load');
-
-    ChannelCtrl.discard();
-    $rootScope.$digest();
-
-    expect(DialogService.confirm).toHaveBeenCalled();
-    expect(DialogService.show).toHaveBeenCalled();
-    expect(ChannelService.discardOwnChanges).toHaveBeenCalled();
-    expect(HippoIframeService.reload).toHaveBeenCalled();
-    expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
-  });
-
-  it('does not discard changes if not confirmed', () => {
-    spyOn(DialogService, 'show').and.returnValue($q.reject());
-    spyOn(DialogService, 'confirm').and.callThrough();
-
-    ChannelCtrl.discard();
-    $rootScope.$digest();
-
-    expect(DialogService.confirm).toHaveBeenCalled();
-    expect(DialogService.show).toHaveBeenCalled();
-    expect(ChannelService.discardOwnChanges).not.toHaveBeenCalled();
+    ChannelService.getCatalog.and.returnValue([]);
+    expect(ChannelCtrl.showComponentsButton()).toBe(false);
   });
 });
