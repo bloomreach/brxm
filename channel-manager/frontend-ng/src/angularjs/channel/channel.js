@@ -25,10 +25,12 @@ import { ChannelCtrl } from './channel.controller';
 import { ChannelService } from './channel.service';
 import { run } from './channel.run';
 import { CatalogComponentDirective } from './catalog.component.directive';
+import { changesMenuModule } from './changesMenu/changesMenu';
 
 export const channelModule = angular
   .module('hippo-cm.channel', [
     'hippo-cm-api',
+    changesMenuModule.name,
     channelPageModule.name,
     channelPageActionsModule.name,
     channelSidenavModule.name,
