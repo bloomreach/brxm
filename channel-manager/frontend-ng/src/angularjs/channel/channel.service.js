@@ -67,7 +67,6 @@ export class ChannelService {
     });
   }
 
-
   _setChannel(channel) {
     this.channel = channel;
     this.channelPrefix = this._makeChannelPrefix(); // precompute to be more efficient

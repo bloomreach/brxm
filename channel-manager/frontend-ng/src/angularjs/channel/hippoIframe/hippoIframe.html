@@ -16,7 +16,6 @@
 
 <md-content flex layout="row" class="channel-iframe-base">
   <div class="channel-iframe-canvas" flex layout="row" layout-align="center">
-
     <div class="channel-iframe-scroll" flex="grow" layout="row">
       <iframe flex="noshrink" class="qa-view cm-scale" ng-src="{{ iframe.getSrc() }}"></iframe>
 
@@ -27,6 +26,7 @@
                            ng-class="{ 'overlay-element-container-visible': container.isEmpty() || iframe.isDragging(), 'overlay-permeable': iframe.isDraggingOrClicking() }"
                            structure-element="container">
           </overlay-element>
+
           <div ng-repeat="component in container.getComponents()" class="qa-component">
             <overlay-element class="overlay-element-component"
                              layout="row"
