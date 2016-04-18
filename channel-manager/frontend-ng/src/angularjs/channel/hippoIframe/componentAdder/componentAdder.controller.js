@@ -67,7 +67,7 @@ export class ComponentAdderCtrl {
           $(el).detach(); // delete the (hidden) dropped DOM element.
 
           const container = PageStructureService.getContainerByOverlayElement(target);
-          if (container) {
+          if (container && !container.isLocked()) {
             PageStructureService.addComponentToContainer(this.selectedCatalogItem, container)
               .then((newComponent) => {
                 DragDropService.replaceContainer(container, newComponent.getContainer());
@@ -75,7 +75,7 @@ export class ComponentAdderCtrl {
               });
             // error is handled inside PageStructureService.
           } else {
-            $log.debug(`Cannot add catalog item ${this.selectedCatalogItem.id} because container cannot be found for overlay element`, target);
+            $log.debug(`Cannot add catalog item ${this.selectedCatalogItem.id} because container cannot be found for the overlay element or has been locked by a different user`, target);
           }
         });
       }
