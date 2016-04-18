@@ -1,0 +1,49 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "exception,type=javax.jcr.RepositoryException" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "invalid-query" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=javax.jcr.ItemExistsException" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "parameters-invalid-json" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "throttle-must-be-positive" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "batchsize-must-be-positive" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "path-is-empty" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "query-is-empty" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "path-not-exist" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "path-not-wellformed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "name-is-empty" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

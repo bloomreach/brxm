@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "nslisting-ns" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "nslisting-name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "nslisting-type" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

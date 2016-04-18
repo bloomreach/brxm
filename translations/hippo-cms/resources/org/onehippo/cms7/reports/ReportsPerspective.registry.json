@@ -1,0 +1,25 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "panel-plugin-panel-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "perspective-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "last-refresh-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "reports-panel-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "refresh-link-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

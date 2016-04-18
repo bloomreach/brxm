@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "layoutstep.selection.empty" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

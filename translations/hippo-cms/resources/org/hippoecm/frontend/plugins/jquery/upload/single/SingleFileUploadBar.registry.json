@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "choose-file-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "select-file-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

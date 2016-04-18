@@ -1,0 +1,9 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:workflows/socialsharing" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

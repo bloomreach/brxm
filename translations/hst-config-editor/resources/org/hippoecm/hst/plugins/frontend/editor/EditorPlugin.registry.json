@@ -1,0 +1,37 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "locked.by.you" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED"
+      }
+    },
+    "locked.by" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED"
+      }
+    },
+    "add.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "locked.at" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED"
+      }
+    },
+    "readonly.reason" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED"
+      }
+    }
+  }
+}

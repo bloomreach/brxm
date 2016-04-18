@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "download.link" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "mimetype.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "filesize.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

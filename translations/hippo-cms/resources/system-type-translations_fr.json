@@ -1,0 +1,9 @@
+{"hippo:types": {
+  "hipposys:String": {"fr": {"jcr:name": "Texte court"}},
+  "hipposys:Text": {"fr": {"jcr:name": "Texte court"}},
+  "hipposys:Label": {"fr": {"jcr:name": "Étiquette"}},
+  "hipposys:Boolean": {"fr": {"jcr:name": "Booléen"}},
+  "hipposys:Date": {"fr": {"jcr:name": "Date"}},
+  "hipposys:Long": {"fr": {"jcr:name": "Nombre entier"}},
+  "hipposys:Double": {"fr": {"jcr:name": "Nombre décimal"}}
+}}

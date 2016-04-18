@@ -1,0 +1,33 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "namespace.url.empty" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED"
+      }
+    },
+    "namespace.name.empty" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED"
+      }
+    },
+    "namespace.url.invalid" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED"
+      }
+    },
+    "namespace.name.invalid" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED"
+      }
+    }
+  }
+}

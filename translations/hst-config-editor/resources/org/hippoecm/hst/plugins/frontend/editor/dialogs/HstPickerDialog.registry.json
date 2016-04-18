@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "link-picker" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

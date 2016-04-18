@@ -1,0 +1,21 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "url-name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "edit" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "folder-name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "add-translation" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

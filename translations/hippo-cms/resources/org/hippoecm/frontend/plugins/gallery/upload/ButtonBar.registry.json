@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "cancel-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "finish-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "back-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

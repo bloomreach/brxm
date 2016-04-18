@@ -1,0 +1,21 @@
+{"hippo:types": {
+  "hippostd:folder": {"de": {"jcr:name": "Ordner"}},
+  "hippostd:directory": {"de": {"jcr:name": "ungeordneter Ordner"}},
+  "hippostd:publishable": {"de":   {
+    "hippostd:state=unpublished": "Nicht veröffentlicht",
+    "jcr:name": "Veröffentlichbar",
+    "hippostd:state=published": "Veröffentlicht",
+    "hippostd:state=draft": "Entwurf"
+  }},
+  "hippostd:taggable": {"de": {"jcr:name": "Tags erlaubt"}},
+  "hippostd:date": {"de":   {
+    "hippostd:dayofweek=1": "Montag",
+    "hippostd:dayofweek=2": "Dienstag",
+    "hippostd:dayofweek=5": "Freitag",
+    "hippostd:dayofweek=6": "Samstag",
+    "hippostd:dayofweek=3": "Mittwoch",
+    "hippostd:dayofweek=4": "Donnerstag",
+    "jcr:name": "Zusammengesetzte Datum",
+    "hippostd:dayofweek=7": "Sonntag"
+  }}
+}}

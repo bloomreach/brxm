@@ -1,0 +1,21 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:types.hippostd:publishableSummary/hippostd:stateSummary=changed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostd:publishableSummary/hippostd:stateSummary=review" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostd:publishableSummary/hippostd:stateSummary=new" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostd:publishableSummary/hippostd:stateSummary=live" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

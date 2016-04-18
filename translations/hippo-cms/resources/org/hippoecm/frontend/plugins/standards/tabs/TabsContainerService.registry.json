@@ -1,0 +1,21 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "close-all" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "close-unmodified" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "close-others" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "close" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

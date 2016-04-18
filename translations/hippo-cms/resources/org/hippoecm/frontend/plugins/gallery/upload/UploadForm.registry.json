@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "upload-failed-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "workflow-error-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "no-file-uploaded-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

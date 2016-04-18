@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "sorter.up" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "sorter.down" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

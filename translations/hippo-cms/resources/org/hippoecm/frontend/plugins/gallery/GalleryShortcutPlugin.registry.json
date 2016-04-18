@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "add-image-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "add-file-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "new-document-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "channel-properties-save" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "channel-properties-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "locked-by" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

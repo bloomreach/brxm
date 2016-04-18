@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "dialog.message" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

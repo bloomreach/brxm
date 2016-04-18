@@ -1,0 +1,21 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "todo" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "perspective-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "version-prefix" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "history" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

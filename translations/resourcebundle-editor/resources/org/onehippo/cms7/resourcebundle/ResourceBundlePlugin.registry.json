@@ -1,0 +1,161 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "validation.resource.key.duplicate" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog.resource.edit.title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "plugin.display.valueset.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "plugin.display.index.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "plugin.display.keys.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog.resource.view.title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog.valueset.add.title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog.resource.key.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "plugin.resource.action.view" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "plugin.display.enabled.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "plugin.display.index.label.title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "validation.valueset.name.duplicate" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog.valueset.rename.title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "validation.valueset.name.empty" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "plugin.valueset.action.rename" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog.valueset.add.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "plugin.display.enabled.label.title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog.resource.delete.title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "plugin.valueset.action.add" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog.resource.delete.warning" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "plugin.valueset.action.delete" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "plugin.resource.action.copy" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "plugin.display.valueset.default" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog.resource.desc.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "plugin.resource.action.enable" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog.valueset.rename.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "validation.resource.key.empty" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog.resource.edit.key.hint" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "plugin.display.action.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog.valueset.delete.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "plugin.resource.action.delete" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "plugin.resource.action.edit" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog.resource.add.title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "plugin.display.dropdown.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "plugin.resource.action.add" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog.resource.copy.title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog.valueset.delete.title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "validation.valueset.name.reserved" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog.resource.value.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

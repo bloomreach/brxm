@@ -1,0 +1,21 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "new" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "live" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "unknown" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "changed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

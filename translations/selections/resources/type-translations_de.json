@@ -1,0 +1,8 @@
+{"hippo:types": {
+  "selection:BooleanRadioGroup": {"de": {"jcr:name": "Optionsgruppe ja/nein"}},
+  "selection:DynamicDropdown": {"de": {"jcr:name": "Dynamisches Dropdown"}},
+  "selection:listitem": {"de": {"jcr:name": "List Element"}},
+  "selection:RadioGroup": {"de": {"jcr:name": "Radio group"}},
+  "selection:StaticDropdown": {"de": {"jcr:name": "Statisches Dropdown"}},
+  "selection:valuelist": {"de": {"jcr:name": "Werte Liste"}}
+}}

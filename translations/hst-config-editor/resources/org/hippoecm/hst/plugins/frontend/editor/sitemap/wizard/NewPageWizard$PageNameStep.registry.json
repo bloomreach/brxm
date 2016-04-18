@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "pagename.title" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "fr" : "UNRESOLVED"
+      }
+    },
+    "page.wizard.step1.name" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "fr" : "UNRESOLVED"
+      }
+    }
+  }
+}

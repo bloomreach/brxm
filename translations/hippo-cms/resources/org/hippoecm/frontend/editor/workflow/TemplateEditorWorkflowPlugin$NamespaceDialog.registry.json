@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "prefix" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "url" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

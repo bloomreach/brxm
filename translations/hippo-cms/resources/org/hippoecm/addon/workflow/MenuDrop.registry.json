@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "empty-menu" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

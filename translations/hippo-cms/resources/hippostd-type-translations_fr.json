@@ -1,0 +1,21 @@
+{"hippo:types": {
+  "hippostd:folder": {"fr": {"jcr:name": "dossier"}},
+  "hippostd:directory": {"fr": {"jcr:name": "dossier non ordonné"}},
+  "hippostd:publishable": {"fr":   {
+    "hippostd:state=unpublished": "Non publié",
+    "jcr:name": "Publiable",
+    "hippostd:state=published": "Publié",
+    "hippostd:state=draft": "Brouillon"
+  }},
+  "hippostd:taggable": {"fr": {"jcr:name": "Tags autorisés"}},
+  "hippostd:date": {"fr":   {
+    "hippostd:dayofweek=1": "lundi",
+    "hippostd:dayofweek=2": "mardi",
+    "hippostd:dayofweek=5": "vendredi",
+    "hippostd:dayofweek=6": "samedi",
+    "hippostd:dayofweek=3": "mercredi",
+    "hippostd:dayofweek=4": "jeudi",
+    "jcr:name": "Date composée",
+    "hippostd:dayofweek=7": "dimanche"
+  }}
+}}

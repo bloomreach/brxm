@@ -1,0 +1,9 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:cms.sections/section-taxonomies" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

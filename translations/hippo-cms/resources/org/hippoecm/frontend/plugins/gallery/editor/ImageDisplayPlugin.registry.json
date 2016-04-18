@@ -1,0 +1,33 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "download.link" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "height.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "width.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "mimetype.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "image.not.shown" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "filesize.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "pixels.suffix" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{"hippo:types": {
+  "robotstxt:robotstxt": {"nl":   {
+    "robotstxt:sitemap#hint": "Eén of meer volledige URL's die verwijzen naar een XML sitemap",
+    "robotstxt:sitemap": "Sitemap",
+    "jcr:name": "Robots.txt configuratie",
+    "robotstxt:section": "Sectie"
+  }},
+  "robotstxt:section": {"nl":   {
+    "robotstxt:useragent": "User-agent",
+    "robotstxt:disallow": "Niet toestaan",
+    "jcr:name": "Sectie"
+  }}
+}}

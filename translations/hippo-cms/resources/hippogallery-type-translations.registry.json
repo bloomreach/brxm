@@ -1,0 +1,29 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:types.hippogallery:exampleAssetSet/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippogallery:exampleImageSet/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippogallery:image/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippogallery:imageset/hippogallery:thumbnail" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippogallery:imageset/hippogallery:original" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippogallery:imageset/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

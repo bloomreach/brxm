@@ -1,0 +1,21 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "file.validation.extension.disallowed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "file.validation.size" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "file.validation.mime.invalid" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "file.validation.extension.unknown" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

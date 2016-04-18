@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "Required" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "copy-model" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "name-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

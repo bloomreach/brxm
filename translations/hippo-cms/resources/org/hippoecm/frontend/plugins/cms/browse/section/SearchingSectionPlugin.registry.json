@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "placeholder" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "all-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "add" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "add-image-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "upload-successful-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "upload-failed-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "add-image" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "no-file-uploaded-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "upload-failed-named-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "add-file-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "add-asset" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:types.seosupport:seo/seosupport:seotitle#hint" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED"
+      }
+    },
+    "hippo:types.seosupport:seo/seosupport:seotitle" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED"
+      }
+    },
+    "hippo:types.seosupport:seo/jcr:name" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED"
+      }
+    },
+    "hippo:types.seosupport:seo/seosupport:seodescription" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED"
+      }
+    },
+    "hippo:types.seosupport:seo/seosupport:seodescription#hint" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED"
+      }
+    }
+  }
+}

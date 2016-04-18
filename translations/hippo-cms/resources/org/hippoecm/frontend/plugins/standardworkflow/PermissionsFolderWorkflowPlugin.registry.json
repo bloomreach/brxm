@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "add-category" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "query-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

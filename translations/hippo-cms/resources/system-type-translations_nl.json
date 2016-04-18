@@ -1,0 +1,9 @@
+{"hippo:types": {
+  "hipposys:String": {"nl": {"jcr:name": "Korte tekst"}},
+  "hipposys:Text": {"nl": {"jcr:name": "Tekst"}},
+  "hipposys:Label": {"nl": {"jcr:name": "Label"}},
+  "hipposys:Boolean": {"nl": {"jcr:name": "Boolean"}},
+  "hipposys:Date": {"nl": {"jcr:name": "Datum"}},
+  "hipposys:Long": {"nl": {"jcr:name": "Geheel getal"}},
+  "hipposys:Double": {"nl": {"jcr:name": "Getal met decimalen"}}
+}}

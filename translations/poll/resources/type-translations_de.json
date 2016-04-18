@@ -1,0 +1,17 @@
+{"hippo:types": {
+  "poll:option": {"de":   {
+    "poll:value": "Wert",
+    "jcr:name": "Option",
+    "poll:label": "Label"
+  }},
+  "poll:poll": {"de":   {
+    "poll:introduction": "Einleitung (optional)",
+    "poll:options": "Optionen",
+    "jcr:name": "Umfrage-Kompositum",
+    "poll:text": "Text"
+  }},
+  "poll:polldocument": {"de":   {
+    "jcr:name": "Umfrage",
+    "poll:poll": "Umfrage"
+  }}
+}}

@@ -1,0 +1,21 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:types.hippostdpubwf:document/hippostd:state=published" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostdpubwf:document/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostdpubwf:document/hippostd:state=unpublished" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostdpubwf:document/hippostd:state=draft" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

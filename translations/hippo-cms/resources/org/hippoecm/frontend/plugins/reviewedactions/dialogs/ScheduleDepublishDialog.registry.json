@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "schedule-depublish-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

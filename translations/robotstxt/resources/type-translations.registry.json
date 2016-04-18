@@ -1,0 +1,33 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:types.robotstxt:robotstxt/robotstxt:sitemap" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.robotstxt:robotstxt/robotstxt:sitemap#hint" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.robotstxt:robotstxt/robotstxt:section" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.robotstxt:robotstxt/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.robotstxt:section/robotstxt:useragent" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.robotstxt:section/robotstxt:disallow" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.robotstxt:section/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

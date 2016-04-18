@@ -1,0 +1,25 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "org.apache.wicket.mfu.delete" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "org.apache.wicket.mfu.caption.selected" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "org.apache.wicket.mfu.caption.limited" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "org.apache.wicket.mfu.caption.one" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "org.apache.wicket.mfu.caption.selected.multiple" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

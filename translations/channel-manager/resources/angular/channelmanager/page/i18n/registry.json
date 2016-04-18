@@ -1,0 +1,133 @@
+{
+  "bundleType" : "ANGULAR",
+  "keyData" : {
+    "TECHNICAL_ERROR" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PAGE_SETTINGS_DESCRIPTION" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ASSIGN_NEW_TEMPLATE_REMOVED_WARNING" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_DELETE_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PRIMARY_DOCUMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_REMOVE_PRIMARY_DOCUMENT_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "URL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "COPY_PAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_DELETE_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "URL_ILLEGAL_CHARACTERS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "INVALID_MOVE_TO_SELF_OR_DESCENDANT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_REMOVE_PRIMARY_DOCUMENT_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLTIP_NOT_EDITABLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "DELETE_PAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NO_TEMPLATE_FOUND_FOR" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PAGE_LOCKED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ASSIGN_NEW_TEMPLATE_REPOSITION_WARNING" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SAVE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NONE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "COPY_PAGE_URL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLTIP_IS_HOMEPAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ITEM_ALREADY_LOCKED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "URL_REQUIRED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PAGE_TITLE_REQUIRED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "COPY_PAGE_CHANNEL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ASSIGN_NEW_TEMPLATE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ITEM_CANNOT_BE_CLONED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SELECT_TEMPLATE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CANCEL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "REMOVE_PRIMARY_DOCUMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PAGE_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "COPY_PAGE_DESCRIPTION" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

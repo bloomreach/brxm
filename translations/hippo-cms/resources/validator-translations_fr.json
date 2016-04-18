@@ -1,0 +1,5 @@
+{"hippo:cms": {"validators": {"fr": {
+  "escaped": "Un caractère invalide est présent",
+  "non-empty": "Une chaîne de caractère est vide",
+  "email": "Le champ ne correspond pas à une adresse e-mail"
+}}}}

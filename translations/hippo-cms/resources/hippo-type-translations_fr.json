@@ -1,0 +1,6 @@
+{"hippo:types": {
+  "hippo:query": {"fr": {"jcr:name": "Recherche"}},
+  "hippo:resource": {"fr": {"jcr:name": "Fichier"}},
+  "hippo:facetselect": {"fr": {"jcr:name": "Lien composé"}},
+  "hippo:mirror": {"fr": {"jcr:name": "Lien"}}
+}}

@@ -1,0 +1,23 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "add.label" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED"
+      }
+    },
+    "title" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED"
+      }
+    },
+    "remove.label" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED"
+      }
+    }
+  }
+}

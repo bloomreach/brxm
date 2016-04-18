@@ -1,0 +1,24 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:cms.validators/escaped" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/email" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/resource-required" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED"
+      }
+    },
+    "hippo:cms.validators/non-empty" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

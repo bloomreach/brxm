@@ -1,0 +1,5 @@
+{"hippo:types": {
+  "hippotaxonomy:taxonomy": {"nl": {"jcr:name": "Taxonomie"}},
+  "hippotaxonomy:canonised": {"nl": {"jcr:name": "Gekanoniseerd"}},
+  "hippotaxonomy:classifiable": {"nl": {"jcr:name": "Klassificeerbaar"}}
+}}

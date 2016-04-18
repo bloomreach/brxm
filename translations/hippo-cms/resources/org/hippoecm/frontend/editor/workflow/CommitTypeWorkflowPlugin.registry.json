@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "commit" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

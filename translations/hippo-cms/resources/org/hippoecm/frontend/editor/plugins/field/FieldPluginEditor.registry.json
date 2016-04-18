@@ -1,0 +1,25 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "css" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hint" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "caption" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "field-properties" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "add-css" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

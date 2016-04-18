@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "optionsvalue-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "name-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "count-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

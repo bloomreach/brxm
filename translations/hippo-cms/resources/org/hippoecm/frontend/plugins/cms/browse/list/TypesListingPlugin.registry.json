@@ -1,0 +1,41 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "type-compound" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "typeslisting-name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "type-unknown" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "typeslisting-state" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "type-primitive" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "typeslisting-item" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "type-mixin" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "type-document" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "typeslisting-type" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "yesterday" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "afternoon" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "one-minute" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "logout" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hour" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "half-hour" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "five-minutes" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "evening" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "login" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ten-minutes" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "on" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "morning" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "move-category-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "cannot-remove-nonleaf-category-message" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "synonyms" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "description" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "language" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "add-category-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "remove-category-confirm-message" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "cannot-remove-category-message" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "remove-category-confirm-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "cannot-remove-category-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "add-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "cannot-move-category-to-itself" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "remove-category-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "moveup-category-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "movedown-category-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "key" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

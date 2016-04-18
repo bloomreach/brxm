@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "too-many-editors-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "too-many-editors" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

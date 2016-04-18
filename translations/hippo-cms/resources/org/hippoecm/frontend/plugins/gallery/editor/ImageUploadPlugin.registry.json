@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "file" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "upload" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "unrecognized" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

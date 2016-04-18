@@ -1,0 +1,11 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "dialog.title" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "fr" : "UNRESOLVED"
+      }
+    }
+  }
+}

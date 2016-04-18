@@ -1,0 +1,6 @@
+{"hippo:types": {
+  "hippo:query": {"nl": {"jcr:name": "Zoekopdracht"}},
+  "hippo:resource": {"nl": {"jcr:name": "Bestand"}},
+  "hippo:facetselect": {"nl": {"jcr:name": "Facet verwijzing"}},
+  "hippo:mirror": {"nl": {"jcr:name": "Verwijzing"}}
+}}

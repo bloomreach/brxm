@@ -1,0 +1,25 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "title" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED"
+      }
+    },
+    "close" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "info" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED"
+      }
+    }
+  }
+}

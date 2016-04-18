@@ -1,0 +1,21 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=Cannot move document when document with same name exists" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=missing required name to copy document" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=Cannot move document to same folder" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=Cannot copy document when document with same name exists" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{"hippo:types": {
+  "hippostd:folder": {"nl": {"jcr:name": "map"}},
+  "hippostd:directory": {"nl": {"jcr:name": "ongeordende map"}},
+  "hippostd:publishable": {"nl":   {
+    "hippostd:state=unpublished": "Niet gepubliceerd",
+    "jcr:name": "Publiceerbaar",
+    "hippostd:state=published": "Gepubliceerd",
+    "hippostd:state=draft": "Klad"
+  }},
+  "hippostd:taggable": {"nl": {"jcr:name": "Tags toestaan"}},
+  "hippostd:date": {"nl":   {
+    "hippostd:dayofweek=1": "maandag",
+    "hippostd:dayofweek=2": "dinsdag",
+    "hippostd:dayofweek=5": "vrijdag",
+    "hippostd:dayofweek=6": "zaterdag",
+    "hippostd:dayofweek=3": "woensdag",
+    "hippostd:dayofweek=4": "donderdag",
+    "jcr:name": "Samengestelde Datum",
+    "hippostd:dayofweek=7": "zondag"
+  }}
+}}

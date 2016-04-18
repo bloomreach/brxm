@@ -1,0 +1,17 @@
+{"hippo:types": {
+  "poll:option": {"nl":   {
+    "poll:value": "Waarde",
+    "jcr:name": "Optie",
+    "poll:label": "Label"
+  }},
+  "poll:poll": {"nl":   {
+    "poll:introduction": "Introductie (optioneel)",
+    "poll:options": "Opties",
+    "jcr:name": "Stelling samengesteld veld",
+    "poll:text": "Tekst"
+  }},
+  "poll:polldocument": {"nl":   {
+    "jcr:name": "Stelling",
+    "poll:poll": "Stelling"
+  }}
+}}

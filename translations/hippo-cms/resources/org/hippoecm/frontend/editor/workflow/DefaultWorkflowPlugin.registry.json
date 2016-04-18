@@ -1,0 +1,81 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "delete-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "rename-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "move-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "delete-message" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "edit" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "copy-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "move-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "copyof" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "delete" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "copy-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "rename-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "unknown" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "move-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "delete-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "rename-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "where-used-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "copy-name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=No name for destination given" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "copy-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

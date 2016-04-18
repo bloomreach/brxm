@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "perspective-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "folders-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

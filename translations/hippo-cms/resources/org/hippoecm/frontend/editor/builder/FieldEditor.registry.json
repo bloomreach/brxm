@@ -1,0 +1,29 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "ordered" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "path" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "multiple" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "error-path-cannot-be-blank" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "optional" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "mandatory" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "cancel" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "finish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ok" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

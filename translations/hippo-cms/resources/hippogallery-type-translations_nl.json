@@ -1,0 +1,10 @@
+{"hippo:types": {
+  "hippogallery:exampleAssetSet": {"nl": {"jcr:name": "Bestand"}},
+  "hippogallery:exampleImageSet": {"nl": {"jcr:name": "Afbeelding"}},
+  "hippogallery:image": {"nl": {"jcr:name": "Afbeelding"}},
+  "hippogallery:imageset": {"nl":   {
+    "hippogallery:thumbnail": "Thumbnail",
+    "hippogallery:original": "Originele",
+    "jcr:name": "Afbeelding"
+  }}
+}}

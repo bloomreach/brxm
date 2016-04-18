@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "session-expired" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "delete-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "delete-item" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

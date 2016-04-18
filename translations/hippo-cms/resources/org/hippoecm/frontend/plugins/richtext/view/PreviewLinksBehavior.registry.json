@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "brokenlink-alert" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

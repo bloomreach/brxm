@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "logout.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

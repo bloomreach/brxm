@@ -1,0 +1,21 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "url-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "name-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "url-reset" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "url-edit" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

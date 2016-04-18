@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "action.add.channel" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "type" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "region" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

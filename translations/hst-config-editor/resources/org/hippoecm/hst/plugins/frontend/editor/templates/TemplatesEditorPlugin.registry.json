@@ -1,0 +1,19 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "add.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "intro" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "nl" : "UNRESOLVED"
+      }
+    },
+    "title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "new-folder" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "new-translated-folder" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "language" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "document-type" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "new-document-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "new-document" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

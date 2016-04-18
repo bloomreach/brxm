@@ -1,0 +1,6 @@
+{"hippo:types": {"hippostdpubwf:document": {"de": {
+  "hippostd:state=unpublished": "Nicht veröffentlicht",
+  "jcr:name": "Veröffentlichbar",
+  "hippostd:state=published": "Veröffentlicht",
+  "hippostd:state=draft": "Entwurf"
+}}}}

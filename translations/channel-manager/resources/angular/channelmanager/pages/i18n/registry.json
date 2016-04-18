@@ -1,0 +1,85 @@
+{
+  "bundleType" : "ANGULAR",
+  "keyData" : {
+    "TECHNICAL_ERROR" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ITEM_NOT_CORRECT_LOCATION" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PAGE_TEMPLATE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "URL_REQUIRED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CHOOSE_A_TEMPLATE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CREATE_NEW_PAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ADD_NEW_PAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "URL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "LANDING_PAGES" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ITEM_NAME_NOT_UNIQUE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ILLEGAL_CHARACTERS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ITEM_EXISTS_OUTSIDE_WORKSPACE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CANCEL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ADD_NEW_PAGE_DISABLED_TOOLTIP" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "INVALID_NAME" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PAGE_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CREATE_PAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TITLE_REQUIRED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NO_RESULTS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SELECT_OPTION" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

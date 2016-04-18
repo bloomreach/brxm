@@ -1,0 +1,6 @@
+{"hippo:types": {"hippostdpubwf:document": {"nl": {
+  "hippostd:state=unpublished": "Niet gepubliceerd",
+  "jcr:name": "Publiceerbaar",
+  "hippostd:state=published": "Gepubliceerd",
+  "hippostd:state=draft": "Klad"
+}}}}

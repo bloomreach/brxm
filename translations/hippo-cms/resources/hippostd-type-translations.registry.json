@@ -1,0 +1,65 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:types.hippostd:folder/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostd:directory/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostd:publishable/hippostd:state=unpublished" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostd:publishable/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostd:publishable/hippostd:state=published" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostd:publishable/hippostd:state=draft" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostd:taggable/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostd:date/hippostd:dayofweek=1" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostd:date/hippostd:dayofweek=2" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostd:date/hippostd:dayofweek=5" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostd:date/hippostd:dayofweek=6" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostd:date/hippostd:dayofweek=3" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostd:date/hippostd:dayofweek=4" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostd:date/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippostd:date/hippostd:dayofweek=7" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "node-unique-validator.error" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog.intro" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "nl" : "UNRESOLVED"
+      }
+    },
+    "name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog.title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "nrItemsLabel" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "add-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

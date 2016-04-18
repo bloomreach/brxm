@@ -1,0 +1,22 @@
+{
+  "TECHNICAL_ERROR": "Er is een technische fout opgetreden",
+  "ITEM_NOT_CORRECT_LOCATION": "Er is een interne fout opgetreden: er zijn pagina's van de verkeerde sitemap opgevraagd.",
+  "PAGE_TEMPLATE": "Pagina template",
+  "URL_REQUIRED": "URL is een verplicht veld",
+  "CHOOSE_A_TEMPLATE": "Kies een template",
+  "CREATE_NEW_PAGE": "Maak nieuwe pagina aan",
+  "ADD_NEW_PAGE": "Voeg nieuwe pagina toe",
+  "URL": "URL",
+  "LANDING_PAGES": "Landings pagina's",
+  "ITEM_NAME_NOT_UNIQUE": "Deze URL wordt al gebruikt",
+  "ILLEGAL_CHARACTERS": "Deze karakters zijn niet toegestaan: {{ illegalCharacters }}",
+  "ITEM_EXISTS_OUTSIDE_WORKSPACE": "Er bestaat reeds een pagina met deze URL.",
+  "CANCEL": "Annuleer",
+  "ADD_NEW_PAGE_DISABLED_TOOLTIP": "Om een pagina toe te voegen,\nklik eerst op 'Wijzig'",
+  "INVALID_NAME": "De URL is niet geldig",
+  "PAGE_TITLE": "Paginatitel",
+  "CREATE_PAGE": "Maak pagina aan",
+  "TITLE_REQUIRED": "Titel is een verplicht veld",
+  "NO_RESULTS": "Geen templates gevonden voor",
+  "SELECT_OPTION": "Gelieve een template te selecteren"
+}

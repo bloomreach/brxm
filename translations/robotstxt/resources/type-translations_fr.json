@@ -1,0 +1,13 @@
+{"hippo:types": {
+  "robotstxt:robotstxt": {"fr":   {
+    "robotstxt:sitemap#hint": "Une ou plusieurs URL entièrement qualifiées indiquant un sitemap XML",
+    "robotstxt:sitemap": "Sitemap",
+    "jcr:name": "Configuration robots.txt",
+    "robotstxt:section": "Section"
+  }},
+  "robotstxt:section": {"fr":   {
+    "robotstxt:useragent": "User-agent",
+    "robotstxt:disallow": "Interdire",
+    "jcr:name": "Section"
+  }}
+}}

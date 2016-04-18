@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "mixins" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

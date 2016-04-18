@@ -1,0 +1,29 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "parameters.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "parameters.parameter.name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "parameters.legend" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "parameters.add.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "parameters.parameter.delete" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "parameters.parameter.value" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

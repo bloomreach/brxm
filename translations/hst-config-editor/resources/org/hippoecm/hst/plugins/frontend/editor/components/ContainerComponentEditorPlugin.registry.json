@@ -1,0 +1,53 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "componentClassName.label" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "nl" : "UNRESOLVED"
+      }
+    },
+    "xtype.label" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "nl" : "UNRESOLVED"
+      }
+    },
+    "add.label" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "nl" : "UNRESOLVED"
+      }
+    },
+    "intro" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "nl" : "UNRESOLVED"
+      }
+    },
+    "component.legend.details" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "nl" : "UNRESOLVED"
+      }
+    },
+    "title" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "nl" : "UNRESOLVED"
+      }
+    },
+    "xtype.changed" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "nl" : "UNRESOLVED"
+      }
+    },
+    "remove.label" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "nl" : "UNRESOLVED"
+      }
+    }
+  }
+}

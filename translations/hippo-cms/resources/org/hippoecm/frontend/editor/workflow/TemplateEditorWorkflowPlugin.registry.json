@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "create-namespace" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

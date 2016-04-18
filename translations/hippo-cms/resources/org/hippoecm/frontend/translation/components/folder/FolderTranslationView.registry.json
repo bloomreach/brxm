@@ -1,0 +1,41 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "link-translations" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "folder-translation" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "select-folder" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "folder-details" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "translations" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "linked-folder" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "language" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "translation-folders" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "unlink-translations" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

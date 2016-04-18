@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "select.Required" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

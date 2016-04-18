@@ -1,0 +1,22 @@
+{
+  "TECHNICAL_ERROR": "A technical error has occurred",
+  "ITEM_NOT_CORRECT_LOCATION": "An internal error has occurred: pages of the wrong sitemap have been requested.",
+  "PAGE_TEMPLATE": "Page template",
+  "URL_REQUIRED": "URL is a required field",
+  "CHOOSE_A_TEMPLATE": "Choose a template",
+  "CREATE_NEW_PAGE": "Create new page",
+  "ADD_NEW_PAGE": "Add new page",
+  "URL": "URL",
+  "LANDING_PAGES": "Landing pages",
+  "ITEM_NAME_NOT_UNIQUE": "This URL is already in use",
+  "ILLEGAL_CHARACTERS": "These characters are not allowed: {{ illegalCharacters }}",
+  "ITEM_EXISTS_OUTSIDE_WORKSPACE": "A page with this URL already exists.",
+  "CANCEL": "Cancel",
+  "ADD_NEW_PAGE_DISABLED_TOOLTIP": "To add a page, first click\non 'Edit'",
+  "INVALID_NAME": "The URL is not valid",
+  "PAGE_TITLE": "Page title",
+  "CREATE_PAGE": "Create page",
+  "TITLE_REQUIRED": "Title is a required field",
+  "NO_RESULTS": "No templates found for",
+  "SELECT_OPTION": "Please select a template"
+}

@@ -1,0 +1,6 @@
+{"hippo:types": {"hippostd:publishableSummary": {"nl": {
+  "hippostd:stateSummary=review": "Wacht op goedkeuring",
+  "hippostd:stateSummary=changed": "Eerdere versie is gepubliceerd",
+  "hippostd:stateSummary=new": "Niet gepubliceerd",
+  "hippostd:stateSummary=live": "Gepubliceerd"
+}}}}

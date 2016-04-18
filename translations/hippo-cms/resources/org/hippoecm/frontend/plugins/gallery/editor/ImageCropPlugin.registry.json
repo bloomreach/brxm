@@ -1,0 +1,25 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "crop-button-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "crop-button-tip-inactive-error" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "crop-button-tip-inactive-width" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "crop-button-tip-inactive-height" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "crop-button-tip" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}
