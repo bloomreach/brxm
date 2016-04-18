@@ -14,14 +14,28 @@
  * limitations under the License.
  */
 
-import { DomService } from './dom.service';
-import { ThrottleService } from './throttle.service';
-import { FeedbackService } from './feedback.service';
-import { startWithSlashFilter } from './startWithSlash.filter';
+export class ChannelSiteMapService {
+  constructor(HstService, FeedbackService) {
+    'ngInject';
 
-export const utilsModule = angular
-  .module('hippo-cm.utils', [])
-  .service('DomService', DomService)
-  .service('ThrottleService', ThrottleService)
-  .service('FeedbackService', FeedbackService)
-  .filter('startWithSlash', startWithSlashFilter);
+    this.HstService = HstService;
+    this.FeedbackService = FeedbackService;
+
+    this.siteMap = [];
+  }
+
+  get() {
+    return this.siteMap;
+  }
+
+  load(siteMapId) {
+    return this.HstService.getSiteMap(siteMapId)
+      .then((siteMap) => {
+        this.siteMap = siteMap;
+      })
+      .catch(() => {
+        this.siteMap = [];
+        this.FeedbackService.showError('ERROR_SITEMAP_RETRIEVAL_FAILED');
+      });
+  }
+}

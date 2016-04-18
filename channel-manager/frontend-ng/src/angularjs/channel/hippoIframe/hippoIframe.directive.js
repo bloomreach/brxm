@@ -21,7 +21,6 @@ export function hippoIframe() {
     restrict: 'E',
     scope: {},
     bindToController: {
-      path: '=',
       editMode: '=',
     },
     templateUrl: 'channel/hippoIframe/hippoIframe.html',

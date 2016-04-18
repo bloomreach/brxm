@@ -161,4 +161,8 @@ export class HippoIframeCtrl {
   getContainers() {
     return this.editMode ? this.PageStructureService.containers : [];
   }
+
+  getSrc() {
+    return this.HippoIframeService.getSrc();
+  }
 }

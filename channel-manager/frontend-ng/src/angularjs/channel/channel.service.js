@@ -15,9 +15,10 @@
  */
 
 export class ChannelService {
-  constructor($rootScope, $http, $state, SessionService, CatalogService, HstService, ConfigService, CmsService) {
+  constructor($log, $rootScope, $http, $state, SessionService, CatalogService, HstService, ConfigService, CmsService, ChannelSiteMapService) {
     'ngInject';
 
+    this.$log = $log;
     this.$rootScope = $rootScope;
     this.$http = $http;
     this.$state = $state;
@@ -27,6 +28,7 @@ export class ChannelService {
     this.HstService = HstService;
     this.ConfigService = ConfigService;
     this.CmsService = CmsService;
+    this.ChannelSiteMapService = ChannelSiteMapService;
 
     this.channel = {};
 
@@ -57,7 +59,9 @@ export class ChannelService {
 
   _setChannel(channel) {
     this.channel = channel;
+    this.channelPrefix = this._makeChannelPrefix(); // precompute to be more efficient
     this.CatalogService.load(this._getMountId());
+    this.ChannelSiteMapService.load(channel.siteMapId);
   }
 
   getChannel() {
@@ -73,7 +77,7 @@ export class ChannelService {
       });
   }
 
-  getPreviewPath(contextPath) {
+  makeContextPrefix(contextPath) {
     let path = contextPath;
     if (path === '/') {
       path = '';
@@ -86,27 +90,49 @@ export class ChannelService {
   }
 
   getPreviewPaths() {
-    return this.ConfigService.contextPaths.map((path) => this.getPreviewPath(path));
+    return this.ConfigService.contextPaths.map((path) => this.makeContextPrefix(path));
   }
 
-  getUrl(path) {
-    let url = this.getPreviewPath(this.channel.contextPath);
+  _makeChannelPrefix() {
+    let prefix = this.makeContextPrefix(this.channel.contextPath);
 
     if (this.channel.mountPath) {
-      url += this.channel.mountPath;
+      prefix += this.channel.mountPath;
     }
 
-    if (path) {
-      url += path;
+    return prefix;
+  }
+
+  makePath(renderPathInfo) {
+    let path = this.channelPrefix;
+
+    if (renderPathInfo) {
+      path += renderPathInfo;
     }
 
-    if (url === this.channel.contextPath) {
+    if (path === this.channel.contextPath) {
       // The best practice for proxy pass rules is to match on <context path>/ to delegate to the site webapp.
       // The iframe url should therefore end with '/'.
-      url += '/';
+      path += '/';
     }
 
-    return url;
+    return path;
+  }
+
+  extractRenderPathInfo(path) {
+    if (!path.startsWith(this.channelPrefix)) {
+      this.$log.warn(`Current path '${path}' does not match current channel's path prefix '${this.channelPrefix}'.`);
+      return path;
+    }
+
+    let renderPathInfo = path.slice(this.channelPrefix.length);
+
+    // remove trailing slash if any, HST's siteMapItem.renderPathInfo never has a trailing slash.
+    if (renderPathInfo.endsWith('/')) {
+      renderPathInfo = renderPathInfo.slice(0, renderPathInfo.length - 1);
+    }
+
+    return renderPathInfo;
   }
 
   getId() {
