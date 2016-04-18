@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-export function channelSidenavControlsDirective() {
-  'ngInject';
+export class ChannelSidenavToggleCtrl {
+  constructor(ChannelSidenavService, ChannelService) {
+    'ngInject';
 
-  return {
-    restrict: 'E',
-    templateUrl: 'channel/sidenav/controls.html',
-    controller: 'ChannelSidenavControlsCtrl',
-    controllerAs: 'controls',
-  };
+    this.ChannelSidenavService = ChannelSidenavService;
+    this.ChannelService = ChannelService;
+  }
+
+  toggleSidenav() {
+    this.ChannelSidenavService.toggle();
+  }
+
+  getSidenavIcon() {
+    return this.ChannelSidenavService.isOpen() ? 'first_page' : 'last_page';
+  }
+
+  isSidenavOpen() {
+    return this.ChannelSidenavService.isOpen();
+  }
 }
+

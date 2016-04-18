@@ -16,7 +16,7 @@
 
 /* eslint-disable prefer-const */
 
-describe('ChannelSidenavControls', () => {
+describe('ChannelSidenavToggle', () => {
   'use strict';
 
   let $rootScope;
@@ -41,33 +41,33 @@ describe('ChannelSidenavControls', () => {
 
   function instantiateController() {
     const scope = $rootScope.$new();
-    const el = angular.element('<channel-sidenav-controls edit-mode="editMode"></channel-sidenav-controls>');
+    const el = angular.element('<channel-sidenav-toggle edit-mode="editMode"></channel-sidenav-toggle>');
     $compile(el)(scope);
     $rootScope.$digest();
-    return el.controller('channel-sidenav-controls');
+    return el.controller('channel-sidenav-toggle');
   }
 
   it('forwards the toggle call to the sidenav service', () => {
-    const ControlsCtrl = instantiateController();
+    const ToggleCtrl = instantiateController();
     expect(ChannelSidenavService.toggle).not.toHaveBeenCalled();
 
-    ControlsCtrl.toggleSidenav();
+    ToggleCtrl.toggleSidenav();
     expect(ChannelSidenavService.toggle).toHaveBeenCalled();
   });
 
   it('forwards the is open call to the sidenav service', () => {
-    const ControlsCtrl = instantiateController();
+    const ToggleCtrl = instantiateController();
     ChannelSidenavService.isOpen.and.returnValue(false);
-    expect(ControlsCtrl.isSidenavOpen()).toBe(false);
+    expect(ToggleCtrl.isSidenavOpen()).toBe(false);
     ChannelSidenavService.isOpen.and.returnValue(true);
-    expect(ControlsCtrl.isSidenavOpen()).toBe(true);
+    expect(ToggleCtrl.isSidenavOpen()).toBe(true);
   });
 
   it('displays an icon depending on whether the sidenav is open or closed', () => {
-    const ControlsCtrl = instantiateController();
+    const ToggleCtrl = instantiateController();
     ChannelSidenavService.isOpen.and.returnValue(false);
-    expect(ControlsCtrl.getSidenavIcon()).toBe('last_page');
+    expect(ToggleCtrl.getSidenavIcon()).toBe('last_page');
     ChannelSidenavService.isOpen.and.returnValue(true);
-    expect(ControlsCtrl.getSidenavIcon()).toBe('first_page');
+    expect(ToggleCtrl.getSidenavIcon()).toBe('first_page');
   });
 });
