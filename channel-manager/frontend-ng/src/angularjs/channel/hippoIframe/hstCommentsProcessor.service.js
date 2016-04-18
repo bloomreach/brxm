@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+// TODO: Make this normal class properties
 let log;
 let HST;
 

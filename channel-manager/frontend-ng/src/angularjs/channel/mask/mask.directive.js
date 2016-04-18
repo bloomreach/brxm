@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// TODO: Remove directive and use ng-class in channel.html
+
 export function maskDirective(MaskService, CmsService) {
   'ngInject';
 

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// TODO: Rename this to ExtApiService
+
 export class CmsService {
 
   constructor($window, $log) {
