@@ -1,4 +1,13 @@
 {
-  "bundleType" : null,
-  "keyData" : { }
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "addInputValue" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "nummItems" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
 }
