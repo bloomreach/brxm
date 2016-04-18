@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-import { DomService } from './dom.service';
-import { ThrottleService } from './throttle.service';
-import { FeedbackService } from './feedback.service';
-import { startWithSlashFilter } from './startWithSlash.filter';
+export function startWithSlashFilter() {
+  'ngInject';
 
-export const utilsModule = angular
-  .module('hippo-cm.utils', [])
-  .service('DomService', DomService)
-  .service('ThrottleService', ThrottleService)
-  .service('FeedbackService', FeedbackService)
-  .filter('startWithSlash', startWithSlashFilter);
+  return (value) => {
+    if (value === '' || value.charAt(0) !== '/') {
+      return `/${value}`;
+    }
+    return value;
+  };
+}

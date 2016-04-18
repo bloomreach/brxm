@@ -12,6 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.md-sidenav-left {
-  border-right: 1px solid rgba(0,0,0,0.12);
+.md-button.md-icon-button.md-icon-button-sidenav {
+  margin-left: 0;
+}
+
+.channel-sidenav {
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.list-item-active {
+  background-color: $list-item-active-bgcolor;
 }

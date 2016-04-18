@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-import { DomService } from './dom.service';
-import { ThrottleService } from './throttle.service';
-import { FeedbackService } from './feedback.service';
-import { startWithSlashFilter } from './startWithSlash.filter';
+export function channelSidenavToggleDirective() {
+  'ngInject';
 
-export const utilsModule = angular
-  .module('hippo-cm.utils', [])
-  .service('DomService', DomService)
-  .service('ThrottleService', ThrottleService)
-  .service('FeedbackService', FeedbackService)
-  .filter('startWithSlash', startWithSlashFilter);
+  return {
+    restrict: 'E',
+    templateUrl: 'channel/sidenav/toggle.html',
+    controller: 'ChannelSidenavToggleCtrl',
+    controllerAs: 'toggle',
+  };
+}

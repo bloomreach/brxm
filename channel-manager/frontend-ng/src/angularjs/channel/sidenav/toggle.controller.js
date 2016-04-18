@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-import { DomService } from './dom.service';
-import { ThrottleService } from './throttle.service';
-import { FeedbackService } from './feedback.service';
-import { startWithSlashFilter } from './startWithSlash.filter';
+export class ChannelSidenavToggleCtrl {
+  constructor(ChannelSidenavService, ChannelService) {
+    'ngInject';
 
-export const utilsModule = angular
-  .module('hippo-cm.utils', [])
-  .service('DomService', DomService)
-  .service('ThrottleService', ThrottleService)
-  .service('FeedbackService', FeedbackService)
-  .filter('startWithSlash', startWithSlashFilter);
+    this.ChannelSidenavService = ChannelSidenavService;
+    this.ChannelService = ChannelService;
+  }
+
+  toggleSidenav() {
+    this.ChannelSidenavService.toggle();
+  }
+
+  getIcon() {
+    return this.ChannelSidenavService.isOpen() ? 'first_page' : 'last_page';
+  }
+
+  isSidenavOpen() {
+    return this.ChannelSidenavService.isOpen();
+  }
+}
+

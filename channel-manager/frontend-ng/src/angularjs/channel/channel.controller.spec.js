@@ -46,7 +46,6 @@ describe('ChannelCtrl', () => {
       SessionService = _SessionService_;
 
       ChannelService = jasmine.createSpyObj('ChannelService', [
-        'getUrl',
         'hasPreviewConfiguration',
         'createPreviewConfiguration',
         'getChannel',
@@ -54,7 +53,6 @@ describe('ChannelCtrl', () => {
         'discardOwnChanges',
         'getCatalog',
       ]);
-      ChannelService.getUrl.and.returnValue('/test/url');
       ChannelService.createPreviewConfiguration.and.returnValue(resolvedPromise);
 
       ComponentsService = jasmine.createSpyObj('ComponentsService', [
@@ -102,10 +100,6 @@ describe('ChannelCtrl', () => {
     });
   });
 
-  it('gets the iframe URL from the channel service', () => {
-    expect(ChannelCtrl.iframeUrl).toEqual('/test/url');
-  });
-
   it('checks with the session service is the current user has write access', () => {
     spyOn(SessionService, 'hasWriteAccess');
 
@@ -113,11 +107,6 @@ describe('ChannelCtrl', () => {
     expect(ChannelCtrl.isEditable()).toBe(true);
     SessionService.hasWriteAccess.and.returnValue(false);
     expect(ChannelCtrl.isEditable()).toBe(false);
-  });
-
-  it('gets the component catalog from the channel service', () => {
-    ChannelService.getCatalog.and.returnValue('dummy');
-    expect(ChannelCtrl.getCatalog()).toBe('dummy');
   });
 
   it('gets the render variant from the page meta-data service', () => {
@@ -244,19 +233,5 @@ describe('ChannelCtrl', () => {
     expect(DialogService.confirm).toHaveBeenCalled();
     expect(DialogService.show).toHaveBeenCalled();
     expect(ChannelService.discardOwnChanges).not.toHaveBeenCalled();
-  });
-
-  it('shows the components sidenav button only in edit mode and if there are catalog components', () => {
-    expect(ChannelCtrl.isEditModeActive()).toBe(false);
-    expect(ChannelCtrl.showComponentsButton()).toBe(false);
-
-    ChannelService.hasPreviewConfiguration.and.returnValue(true);
-    ChannelCtrl.enterEditMode();
-
-    ChannelService.getCatalog.and.returnValue(['dummy']);
-    expect(ChannelCtrl.showComponentsButton()).toBe(true);
-
-    ChannelService.getCatalog.and.returnValue([]);
-    expect(ChannelCtrl.showComponentsButton()).toBe(false);
   });
 });

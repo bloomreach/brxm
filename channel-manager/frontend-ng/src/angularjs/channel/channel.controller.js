@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-const SIDENAVS = ['components'];
-
 export class ChannelCtrl {
 
-  constructor($log, $scope, $translate, $mdSidenav, ChannelService, DialogService, PageMetaDataService, ScalingService, SessionService, ComponentAdderService, ConfigService, HippoIframeService, FeedbackService) {
+  constructor($log, $scope, $translate, ChannelService, DialogService, PageMetaDataService, ScalingService, SessionService, ComponentAdderService, ConfigService, HippoIframeService, FeedbackService) {
     'ngInject';
 
     this.$log = $log;
     this.$scope = $scope;
     this.$translate = $translate;
-    this.$mdSidenav = $mdSidenav;
     this.ChannelService = ChannelService;
     this.DialogService = DialogService;
     this.PageMetaDataService = PageMetaDataService;
@@ -34,7 +31,6 @@ export class ChannelCtrl {
     this.HippoIframeService = HippoIframeService;
     this.FeedbackService = FeedbackService;
 
-    this.iframeUrl = ChannelService.getUrl();
     this.isEditMode = false;
     this.isCreatingPreview = false;
 
@@ -87,7 +83,6 @@ export class ChannelCtrl {
 
   leaveEditMode() {
     this.isEditMode = false;
-    this._closeSidenavs();
   }
 
   isEditModeActive() {
@@ -96,15 +91,6 @@ export class ChannelCtrl {
 
   isEditable() {
     return this.SessionService.hasWriteAccess();
-  }
-
-  _closeSidenavs() {
-    SIDENAVS.forEach((sidenav) => {
-      if (this.isSidenavOpen(sidenav)) {
-        this.$mdSidenav(sidenav).close();
-      }
-    });
-    this.ScalingService.setPushWidth(0);
   }
 
   _createPreviewConfiguration() {
@@ -120,29 +106,6 @@ export class ChannelCtrl {
       this.isCreatingPreview = false;
       this.FeedbackService.showError('ERROR_ENTER_EDIT');
     });
-  }
-
-  showComponentsButton() {
-    const catalog = this.ChannelService.getCatalog();
-    return this.isEditMode && catalog.length > 0;
-  }
-
-  toggleSidenav(name) {
-    SIDENAVS.forEach((sidenav) => {
-      if (sidenav !== name && this.isSidenavOpen(sidenav)) {
-        this.$mdSidenav(sidenav).close();
-      }
-    });
-    this.$mdSidenav(name).toggle();
-    this.ScalingService.setPushWidth(this.isSidenavOpen(name) ? $('.md-sidenav-left').width() : 0);
-  }
-
-  isSidenavOpen(name) {
-    return this.$mdSidenav(name).isOpen();
-  }
-
-  getCatalog() {
-    return this.ChannelService.getCatalog();
   }
 
   getRenderVariant() {
