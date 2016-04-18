@@ -50,7 +50,7 @@ public class ExportImportTest {
         temporaryFolder.newFolder("module");
         resources = temporaryFolder.newFolder("module/resources");
         new Extractor(resources, "module", Arrays.asList("en", "nl")).extract();
-        registrar = new Registrar(resources, Collections.singletonList("nl"));
+        registrar = new Registrar(resources, "module", Collections.singletonList("nl"));
         registrar.initialize();
         final File pom = temporaryFolder.newFile("module/pom.xml");
         FileUtils.copyInputStreamToFile(getClass().getResourceAsStream("pom.xml"), pom);

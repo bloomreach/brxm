@@ -65,9 +65,14 @@ public final class RegistryInfo {
     }
 
     public void save() throws IOException {
-        log.debug("Saving registry info file: {}", fileName);
-        try (final FileOutputStream out = FileUtils.openOutputStream(file)) {
-            getObjectMapper().writeValue(out, data);
+        if (data.getKeyData().isEmpty()) {
+            log.debug("Deleting registry info file: {}", fileName);
+            delete();
+        } else {
+            log.debug("Saving registry info file: {}", fileName);
+            try (final FileOutputStream out = FileUtils.openOutputStream(file)) {
+                getObjectMapper().writeValue(out, data);
+            }
         }
     }
     

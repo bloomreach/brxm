@@ -112,7 +112,9 @@ public abstract class ResourceBundle {
     }
     
     public void delete() throws IOException {
-        file.delete();
+        if (file.exists()) {
+            file.delete();
+        }
     }
     
     protected abstract Serializer getSerializer();
@@ -147,7 +149,7 @@ public abstract class ResourceBundle {
         throw new IllegalArgumentException("No such bundle type: " + bundleType);
         
     }
-    
+
     protected abstract class Serializer {
         
         protected abstract void serialize() throws IOException;

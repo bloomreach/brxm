@@ -43,7 +43,7 @@ public class RegistrarTest {
     public void setUp() throws IOException {
         new Extractor(temporaryFolder.getRoot(), "module", extractorLocales).extract();
 
-        registrar = new Registrar(temporaryFolder.getRoot(), registrarLocales);
+        registrar = new Registrar(temporaryFolder.getRoot(), "module", registrarLocales);
         registrar.initialize();
 
         registry = registrar.getRegistry();

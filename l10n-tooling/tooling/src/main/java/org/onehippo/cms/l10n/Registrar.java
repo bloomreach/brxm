@@ -49,11 +49,13 @@ class Registrar {
     private final File registryDir;
     private final Collection<String> locales;
     private final Registry registry;
+    private final String moduleName;
     
-    Registrar(final File registryDir, final Collection<String> locales) {
+    Registrar(final File registryDir, final String moduleName, final Collection<String> locales) {
         this.registryDir = registryDir;
         this.locales = locales;
         registry = new Registry(registryDir);
+        this.moduleName = moduleName;
     }
 
     Registry getRegistry() {
@@ -159,6 +161,7 @@ class Registrar {
                 sourceBundle.getFileName(), sourceBundle.getType(), sourceBundle.getLocale());
         ResourceBundle referenceBundle = ResourceBundle.createInstance(sourceBundle.getName(), bundleFileName, 
                 new File(registryDir, bundleFileName), sourceBundle.getType());
+        referenceBundle.setModuleName(moduleName);
         referenceBundle.load();
         return referenceBundle;
     }
@@ -184,11 +187,12 @@ class Registrar {
         final Collection<String> locales = Arrays.asList(commandLine.getOptionValues("locales"));
         TranslationsUtils.checkLocales(locales);
         final String command = commandLine.getOptionValue("command");
+        final String moduleName = baseDir.getName();
         final File registryDir = new File(baseDir, "resources");
         if (!registryDir.exists()) {
             throw new IllegalArgumentException("Registry directory does not exist: " + registryDir.getCanonicalPath());
         }
-        final Registrar registrar = new Registrar(registryDir, locales);
+        final Registrar registrar = new Registrar(registryDir, moduleName, locales);
         switch (command) {
             case "initialize":
                 registrar.initialize();
@@ -315,21 +319,20 @@ class Registrar {
         }
     }
     
-    private static class UpdateRegistryUpdateListener extends UpdateListener {
+    private class UpdateRegistryUpdateListener extends UpdateListener {
         
-        private boolean updated = false;
         private final Collection<String> locales;
+        private final Map<String, ResourceBundle> bundles = new HashMap<>();
 
         private UpdateRegistryUpdateListener(final Registry registry, final Collection<String> locales) {
             super(registry);
             this.locales = locales;
         }
-
+        
         @Override
         public void bundleAdded() throws IOException {
             final RegistryInfo registryInfo = getRegistryInfo();
             registryInfo.setBundleType(currentSourceBundle.getType());
-            final ResourceBundle referenceBundle = getCurrentReferenceBundle();
             log.debug("Adding bundle {}", currentSourceBundle.getFileName());
             for (Map.Entry<String, String> entry : currentSourceBundle.getEntries().entrySet()) {
                 final String key = entry.getKey();
@@ -339,9 +342,8 @@ class Registrar {
                     keyData.setLocaleStatus(locale, UNRESOLVED);
                 }
                 registryInfo.putKeyData(registryKey, keyData);
-                referenceBundle.getEntries().put(key, entry.getValue());
+                getCurrentReferenceBundle().getEntries().put(key, entry.getValue());
             }
-            updated = true;
         }
         
         @Override
@@ -352,31 +354,31 @@ class Registrar {
             } else {
                 keyData = new KeyData(ADDED);
             }
-            log.debug("Setting status ADDED for key {} in registry file {}", key, getRegistryInfo().getFileName());
+            final RegistryInfo registryInfo = getRegistryInfo();
+            log.debug("Setting status ADDED for key {} in registry file {}", key, registryInfo.getFileName());
             keyData.setStatus(ADDED);
             for (String locale : locales) {
                 keyData.setLocaleStatus(locale, UNRESOLVED);
             }
-            getRegistryInfo().putKeyData(registryKey(currentSourceBundle, key), keyData);
+            registryInfo.putKeyData(registryKey(currentSourceBundle, key), keyData);
             getCurrentReferenceBundle().getEntries().put(key, currentSourceBundle.getEntries().get(key));
-            updated = true;
         }
 
         @Override
         public void keyUpdated(final String key) throws IOException {
             KeyData keyData = getKeyData(key);
+            final RegistryInfo registryInfo = getRegistryInfo();
             if (keyData == null) {
                 log.warn("Key updated but not yet registered. Bundle: {}, Key: {}", currentSourceBundle.getId(), key);
                 keyData = new KeyData(UPDATED);
-                getRegistryInfo().putKeyData(registryKey(currentSourceBundle, key), keyData);
+                registryInfo.putKeyData(registryKey(currentSourceBundle, key), keyData);
             }
-            log.debug("Setting status UPDATED for key {} in registry file {}", key, getRegistryInfo().getFileName());
+            log.debug("Setting status UPDATED for key {} in registry file {}", key, registryInfo.getFileName());
             keyData.setStatus(UPDATED);
             for (String locale : locales) {
                 keyData.setLocaleStatus(locale, UNRESOLVED);
             }
             getCurrentReferenceBundle().getEntries().put(key, currentSourceBundle.getEntries().get(key));
-            updated = true;
         }
 
         @Override
@@ -385,57 +387,71 @@ class Registrar {
             if (keyData == null) {
                 log.warn("Key deleted but not registered. Bundle: {}, Key: {}", currentSourceBundle.getId(), key);
             }
+            final RegistryInfo registryInfo = getRegistryInfo();
             for (String locale : locales) {
-                final ResourceBundle resourceBundle = registry.getResourceBundle(currentSourceBundle.getName(), locale, getRegistryInfo());
-                if (resourceBundle != null) {
-                    log.debug("Deleting key {} from bundle {}", key, resourceBundle.getFileName());
-                    resourceBundle.getEntries().remove(key);
-                }
+                final ResourceBundle resourceBundle = getResourceBundle(currentSourceBundle.getName(), locale, getRegistryInfo());
+                log.debug("Deleting key {} from bundle {}", key, resourceBundle.getFileName());
+                resourceBundle.getEntries().remove(key);
             }
-            getRegistryInfo().removeKeyData(key);
+            registryInfo.removeKeyData(key);
             getCurrentReferenceBundle().getEntries().remove(key);
-            updated = true;
         }
 
         @Override
         public void bundleDeleted(final ResourceBundle referenceBundle) throws IOException {
             final RegistryInfo registryInfo = registry.getRegistryInfoForBundle(referenceBundle);
+            bundles.put(referenceBundle.getLocale(), referenceBundle);
             for (String locale : locales) {
                 final ResourceBundle resourceBundle = registry.getResourceBundle(referenceBundle.getName(), locale, registryInfo);
-                log.debug("Deleting bundle {}", resourceBundle.getFileName());
+                log.debug("Deleting bundle {}", resourceBundle.getId());
                 resourceBundle.delete();
             }
             for (Map.Entry<String, String> entry : referenceBundle.getEntries().entrySet()) {
                 registryInfo.removeKeyData(registryKey(referenceBundle, entry.getKey()));
             }
-            log.debug("Deleting bundle {}", referenceBundle.getFileName());
+            log.debug("Deleting bundle {}", referenceBundle.getId());
             referenceBundle.delete();
             if (registryInfo.getKeys().isEmpty()) {
-                log.debug("Deleting registry info file {}", registryInfo.getFileName());
                 registryInfo.delete();
+            } else {
+                registryInfo.save();
             }
         }
-        
+
         @Override
         void endBundle() throws IOException {
-            if (updated) {
-                final ResourceBundle currentReferenceBundle = getCurrentReferenceBundle();
-                if (!currentReferenceBundle.isEmpty()) {
-                    currentReferenceBundle.save();
-                } else if (currentReferenceBundle.exists()) {
-                    log.debug("Deleting empty bundle: {}", currentReferenceBundle.getFileName());
-                    currentReferenceBundle.delete();
+            if (!bundles.isEmpty()) {
+                for (Map.Entry<String, ResourceBundle> entry : bundles.entrySet()) {
+                    final ResourceBundle resourceBundle = entry.getValue();
+                    if (resourceBundle.isEmpty()) {
+                        resourceBundle.delete();
+                    } else {
+                        resourceBundle.save();
+                    }
                 }
-                getRegistryInfo().save();
+                final RegistryInfo registryInfo = getRegistryInfo();
+                if (registryInfo.getKeys().isEmpty()) {
+                    registryInfo.delete();
+                } else {
+                    registryInfo.save();
+                }
+                bundles.clear();
             }
             super.endBundle();
         }
+
+        private ResourceBundle getResourceBundle(final String name, final String locale, final RegistryInfo registryInfo) throws IOException {
+            ResourceBundle resourceBundle = bundles.get(locale);
+            if (resourceBundle == null) {
+                resourceBundle = registry.getResourceBundle(name, locale, registryInfo);
+                resourceBundle.setModuleName(moduleName);
+                bundles.put(locale, resourceBundle);
+            }
+            return resourceBundle;
+        }
         
         private ResourceBundle getCurrentReferenceBundle() throws IOException {
-            if (currentReferenceBundle == null) {
-                currentReferenceBundle = registry.getResourceBundle(currentSourceBundle.getName(), currentSourceBundle.getLocale(), getRegistryInfo());
-            }
-            return currentReferenceBundle;
+            return getResourceBundle(currentSourceBundle.getName(), currentSourceBundle.getLocale(), getRegistryInfo());
         }
     }
 }

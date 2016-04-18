@@ -37,6 +37,14 @@
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
+  <category additivity="false" name="org.onehippo.cms.l10n.RepositoryResourceBundle">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.onehippo.cms.l10n.ResourceBundle">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
   <category additivity="false" name="org.onehippo.cms.l10n.RegistryInfo">
     <level value="warn"/>
     <appender-ref ref="console"/>

@@ -125,6 +125,7 @@ public class RepositoryResourceBundle extends ResourceBundle {
                 current.put(locale, new JSONObject());
             }
             current = (JSONObject) current.get(locale);
+            current.clear();
             current.putAll(entries);
             FileUtils.write(file, o.toString(2));
             final File extensionFile = getExtensionFile();
@@ -192,9 +193,11 @@ public class RepositoryResourceBundle extends ResourceBundle {
             stack.pop();
             for (int i = bundles.length-1; i > -1 && current.isEmpty(); i--) {
                 current = stack.pop();
+                log.debug("Deleting bundle {}", bundles[i]);
                 current.remove(bundles[i]);
             }
             if (o.isEmpty()) {
+                log.debug("Deleting file {}", fileName);
                 file.delete();
                 final File extensionFile = getExtensionFile();
                 if (extensionFile.exists()) {

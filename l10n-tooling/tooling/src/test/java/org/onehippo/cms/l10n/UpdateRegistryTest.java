@@ -35,11 +35,6 @@ import static org.onehippo.cms.l10n.KeyData.LocaleStatus.UNRESOLVED;
 public class UpdateRegistryTest extends RegistrarTest {
     
     @Test
-    public void testNothing() throws IOException {
-        registrar.update();
-    }
-    
-    @Test
     public void changedKeysAreUpdatedInRegistryAndReferenceBundle() throws IOException {
         final String angularBundleFileName = "angular/dummy/i18n/en.json";
         final AngularResourceBundle angularResourceBundle;
