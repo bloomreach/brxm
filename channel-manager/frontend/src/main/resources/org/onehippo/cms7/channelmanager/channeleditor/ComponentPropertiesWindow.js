@@ -156,6 +156,7 @@
     showComponent: function (component, container, page) {
       this.setTitle(component.label);
       this.componentPropertiesPanel.setComponent(component, container, page);
+      this._enableDeleteComponentButton(!container.isDisabled);
       this.show();
     },
 
@@ -168,15 +169,7 @@
       if (!this.deleteComponentButton) {
         return;
       }
-      if (enabled) {
-        if (this.deleteComponentButton.disabled) {
-          this.deleteComponentButton.enable();
-        }
-      } else {
-        if (!this.deleteComponentButton.disabled) {
-          this.deleteComponentButton.disable();
-        }
-      }
+      this.deleteComponentButton.setDisabled(!enabled);
     }
   });
 
