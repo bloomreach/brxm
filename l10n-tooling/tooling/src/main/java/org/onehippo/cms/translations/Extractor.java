@@ -58,10 +58,10 @@ public class Extractor {
                 for (Map.Entry<String, String> entry : sourceBundle.getEntries().entrySet()) {
                     targetBundle.getEntries().put(entry.getKey(), entry.getValue());
                 }
-                if (!targetBundle.getEntries().isEmpty()) {
+                if (!targetBundle.isEmpty()) {
                     targetBundle.save();
                 } else {
-                    log.warn("Not saving empty bundle: " + targetBundle.getId());
+                    log.warn("Not saving empty bundle: {}", targetBundle.getId());
                 }
             }
         }
@@ -70,7 +70,7 @@ public class Extractor {
     public static void main(String[] args) throws Exception {
         
         final Options options = new Options();
-        final Option basedirOption = new Option("d", "baseDir", true, "the project base directory");
+        final Option basedirOption = new Option("d", "basedir", true, "the project base directory");
         basedirOption.setRequired(true);
         options.addOption(basedirOption);
         final Option localesOption = new Option("l", "locales", true, "comma-separated list of locales to extract");
@@ -82,14 +82,15 @@ public class Extractor {
         final CommandLineParser parser = new DefaultParser();
         final CommandLine commandLine = parser.parse(options, args);
         final File baseDir = new File(commandLine.getOptionValue("d")).getCanonicalFile();
-        final String[] locales = commandLine.getOptionValues("l");
+        final Collection<String> locales = Arrays.asList(commandLine.getOptionValues("l"));
+        TranslationsUtils.checkLocales(locales);
         final String moduleName = baseDir.getName();
         final File registryDir = new File(baseDir, "resources");
         if (!registryDir.exists()) {
             registryDir.mkdirs();
         }
         
-        new Extractor(registryDir, moduleName, Arrays.asList(locales)).extract();
+        new Extractor(registryDir, moduleName, locales).extract();
     }
     
 }

@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms.translations;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -141,5 +142,14 @@ public final class TranslationsUtils {
             map.put(entry.getKey().toString(), entry.getValue().toString());
         }
         return map;
+    }
+    
+    public static void checkLocales(final Collection<String> locales) throws IllegalArgumentException {
+        if (locales.isEmpty()) {
+            throw new IllegalArgumentException("No locales specified");
+        }
+        for (String locale : locales) {
+            LocaleUtils.toLocale(locale);
+        }
     }
 }
