@@ -15,7 +15,7 @@
   <packaging>pom</packaging>
   
   <properties>
-    <hippo.translations-tooling.version>1.0.0-SNAPSHOT</hippo.translations-tooling.version>
+    <hippo.l10n-tooling.version>1.0.0-SNAPSHOT</hippo.l10n-tooling.version>
     <registry.locales>nl,de,fr</registry.locales>
     <export.locale/>
     <export.format>Default</export.format>
@@ -32,9 +32,9 @@
   
   <dependencies>
     <dependency>
-      <groupId>org.onehippo.cms.translations</groupId>
-      <artifactId>hippo-translations-tooling</artifactId>
-      <version>${hippo.translations-tooling.version}</version>
+      <groupId>org.onehippo.cms.l10n</groupId>
+      <artifactId>hippo-cms-l10n-tooling</artifactId>
+      <version>${hippo.l10n-tooling.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -191,7 +191,7 @@
                   <goal>java</goal>
                 </goals>
                 <configuration>
-                  <mainClass>org.onehippo.cms.translations.Extractor</mainClass>
+                  <mainClass>org.onehippo.cms.l10n.Extractor</mainClass>
                   <systemProperties>
                     <systemProperty>
                       <key>log4j.configuration</key>
@@ -222,7 +222,7 @@
                   <goal>java</goal>
                 </goals>
                 <configuration>
-                  <mainClass>org.onehippo.cms.translations.Registrar</mainClass>
+                  <mainClass>org.onehippo.cms.l10n.Registrar</mainClass>
                   <systemProperties>
                     <systemProperty>
                       <key>log4j.configuration</key>
@@ -253,7 +253,7 @@
                   <goal>java</goal>
                 </goals>
                 <configuration>
-                  <mainClass>org.onehippo.cms.translations.Registrar</mainClass>
+                  <mainClass>org.onehippo.cms.l10n.Registrar</mainClass>
                   <systemProperties>
                     <systemProperty>
                       <key>log4j.configuration</key>
@@ -284,7 +284,7 @@
                   <goal>java</goal>
                 </goals>
                 <configuration>
-                  <mainClass>org.onehippo.cms.translations.Registrar</mainClass>
+                  <mainClass>org.onehippo.cms.l10n.Registrar</mainClass>
                   <systemProperties>
                     <systemProperty>
                       <key>log4j.configuration</key>
@@ -315,7 +315,7 @@
                   <goal>java</goal>
                 </goals>
                 <configuration>
-                  <mainClass>org.onehippo.cms.translations.Exporter</mainClass>
+                  <mainClass>org.onehippo.cms.l10n.Exporter</mainClass>
                   <systemProperties>
                     <systemProperty>
                       <key>log4j.configuration</key>
@@ -346,7 +346,7 @@
                   <goal>java</goal>
                 </goals>
                 <configuration>
-                  <mainClass>org.onehippo.cms.translations.Importer</mainClass>
+                  <mainClass>org.onehippo.cms.l10n.Importer</mainClass>
                   <systemProperties>
                     <systemProperty>
                       <key>log4j.configuration</key>
