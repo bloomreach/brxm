@@ -35,12 +35,10 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.cli.Option.UNLIMITED_VALUES;
 import static org.onehippo.cms.translations.KeyData.KeyStatus.ADDED;
-import static org.onehippo.cms.translations.KeyData.KeyStatus.CLEAN;
 import static org.onehippo.cms.translations.KeyData.KeyStatus.UPDATED;
 import static org.onehippo.cms.translations.KeyData.LocaleStatus.RESOLVED;
 import static org.onehippo.cms.translations.KeyData.LocaleStatus.UNRESOLVED;
 import static org.onehippo.cms.translations.ResourceBundleLoader.getResourceBundleLoaders;
-import static org.onehippo.cms.translations.TranslationsUtils.mapRegistryFileToResourceBundleFile;
 import static org.onehippo.cms.translations.TranslationsUtils.mapSourceBundleFileToTargetBundleFile;
 import static org.onehippo.cms.translations.TranslationsUtils.registryKey;
 
@@ -63,12 +61,11 @@ class Registrar {
     }
 
     void initialize() throws IOException {
-        // iterate over all English source bundles and register all translations as UNRESOLVED
+        // iterate over all english source bundles and register all translations as UNRESOLVED
         for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(Collections.singletonList("en"))) {
             for (ResourceBundle sourceBundle : bundleLoader.loadBundles()) {
                 RegistryInfo registryInfo = registry.getRegistryInfoForBundle(sourceBundle);
                 registryInfo.setBundleType(sourceBundle.getType());
-
                 for (String sourceKey : sourceBundle.getEntries().keySet()) {
                     KeyData keyData = new KeyData(UPDATED);
                     for (String locale : locales) {
@@ -81,23 +78,31 @@ class Registrar {
             }
         }
 
-        // iterate over all non-English source bundles and process the keys in there
+        // iterate over all non-english source bundles and process the keys in there
         for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(locales)) {
             for (ResourceBundle sourceBundle : bundleLoader.loadBundles()) {
                 final RegistryInfo registryInfo = registry.getRegistryInfoForBundle(sourceBundle);
-
+                ResourceBundle targetBundle = null;
                 for (String sourceKey : sourceBundle.getEntries().keySet()) {
                     final KeyData keyData = registryInfo.getKeyData(registryKey(sourceBundle, sourceKey));
-
                     if (keyData == null) {
-                        log.warn("Resource bundle file '{}' contains key '{}' which does not have an English reference translation",
-                                sourceBundle.getFileName(), sourceKey);
+                        log.warn("Resource bundle '{}' contains unused key '{}': removing", sourceBundle.getId(), sourceKey);
+                        if (targetBundle == null) {
+                            targetBundle = loadReferenceBundle(sourceBundle);
+                        }
+                        targetBundle.getEntries().remove(sourceKey);
                     } else {
                         keyData.setLocaleStatus(sourceBundle.getLocale(), RESOLVED);
                     }
                 }
-
                 registryInfo.save();
+                if (targetBundle != null) {
+                    if (!targetBundle.isEmpty()) {
+                        targetBundle.save();
+                    } else {
+                        targetBundle.delete();
+                    }
+                }
             }
         }
     }
@@ -177,13 +182,14 @@ class Registrar {
         final CommandLineParser parser = new DefaultParser();
         final CommandLine commandLine = parser.parse(options, args);
         final File baseDir = new File(commandLine.getOptionValue("basedir")).getCanonicalFile();
-        final String[] locales = commandLine.getOptionValues("locales");
+        final Collection<String> locales = Arrays.asList(commandLine.getOptionValues("locales"));
+        TranslationsUtils.checkLocales(locales);
         final String command = commandLine.getOptionValue("command");
         final File registryDir = new File(baseDir, "resources");
         if (!registryDir.exists()) {
             throw new IllegalArgumentException("Registry directory does not exist: " + registryDir.getCanonicalPath());
         }
-        final Registrar registrar = new Registrar(registryDir, Arrays.asList(locales));
+        final Registrar registrar = new Registrar(registryDir, locales);
         switch (command) {
             case "initialize":
                 registrar.initialize();
@@ -417,7 +423,8 @@ class Registrar {
                 final ResourceBundle currentReferenceBundle = getCurrentReferenceBundle();
                 if (!currentReferenceBundle.isEmpty()) {
                     currentReferenceBundle.save();
-                } else {
+                } else if (currentReferenceBundle.exists()) {
+                    log.debug("Deleting empty bundle: {}", currentReferenceBundle.getFileName());
                     currentReferenceBundle.delete();
                 }
                 getRegistryInfo().save();
