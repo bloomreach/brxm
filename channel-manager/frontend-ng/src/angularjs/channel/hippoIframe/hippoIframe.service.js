@@ -26,8 +26,18 @@ export class HippoIframeService {
 
   initialize(iframeJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
-    this.actualPath = this.ChannelService.makePath(''); // go to homepage
-    this.src = this.actualPath;
+
+    // start at the home page
+    this.renderPathInfo = '';
+    this.load(this.renderPathInfo);
+  }
+
+  load(renderPathInfo) {
+    this.src = this.ChannelService.makePath(renderPathInfo);
+  }
+
+  _extractRenderPathInfo(path) {
+    this.renderPathInfo = this.ChannelService.extractRenderPathInfo(path);
   }
 
   getSrc() {
@@ -35,11 +45,7 @@ export class HippoIframeService {
   }
 
   getCurrentRenderPathInfo() {
-    return this.ChannelService.extractRenderPathInfo(this.actualPath);
-  }
-
-  load(renderPathInfo) {
-    this.src = this.ChannelService.makePath(renderPathInfo);
+    return this.renderPathInfo;
   }
 
   reload() {
@@ -61,7 +67,7 @@ export class HippoIframeService {
 
   // called by the hippoIframe controller when the processing of the loaded page is completed.
   signalPageLoadCompleted() {
-    this.actualPath = this.iframeJQueryElement[0].contentWindow.location.pathname;
+    this._extractRenderPathInfo(this.iframeJQueryElement[0].contentWindow.location.pathname);
 
     const deferred = this._deferredReload;
     if (deferred) {

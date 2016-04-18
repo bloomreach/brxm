@@ -120,15 +120,16 @@ describe('HippoIframeService', () => {
     expect($log.warn).not.toHaveBeenCalled();
   });
 
-  it('retrieves the current renderPathInfo', () => {
-    ChannelService.extractRenderPathInfo.and.returnValue('dummy');
-    expect(HippoIframeService.getCurrentRenderPathInfo()).toBe('dummy');
-  });
-
   it('loads the requested renderPathInfo', () => {
     ChannelService.makePath.and.returnValue('fullPath');
     HippoIframeService.load('dummy');
     expect(ChannelService.makePath).toHaveBeenCalledWith('dummy');
     expect(HippoIframeService.getSrc()).toBe('fullPath');
+  });
+
+  it('extracts the current renderPathInfo when the page has been loaded', () => {
+    ChannelService.extractRenderPathInfo.and.returnValue('dummy');
+    HippoIframeService.signalPageLoadCompleted();
+    expect(HippoIframeService.getCurrentRenderPathInfo()).toBe('dummy');
   });
 });
