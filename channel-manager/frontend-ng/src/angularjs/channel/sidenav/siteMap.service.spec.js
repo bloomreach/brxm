@@ -55,9 +55,22 @@ describe('ChannelSiteMapService', () => {
     expect(FeedbackService.showError).not.toHaveBeenCalled();
   });
 
-  it('flashes a toast upon failure to retrieve the sitemap', () => {
+  it('flashes a toast when the sitemap cannot be retrieved', () => {
     HstService.getSiteMap.and.returnValue($q.reject());
     ChannelSiteMapService.load('siteMapId');
+    $rootScope.$digest();
+
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_SITEMAP_RETRIEVAL_FAILED');
+    expect(ChannelSiteMapService.get()).toEqual([]);
+  });
+
+  it('clears the existing sitemap when the sitemap cannot be retrieved', () => {
+    HstService.getSiteMap.and.returnValue($q.when(['dummy']));
+    ChannelSiteMapService.load('siteMapId');
+    $rootScope.$digest();
+
+    HstService.getSiteMap.and.returnValue($q.reject());
+    ChannelSiteMapService.load('siteMapId2');
     $rootScope.$digest();
 
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_SITEMAP_RETRIEVAL_FAILED');

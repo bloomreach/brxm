@@ -21,19 +21,20 @@ export class ChannelSiteMapService {
     this.HstService = HstService;
     this.FeedbackService = FeedbackService;
 
-    this._siteMap = [];
+    this.siteMap = [];
   }
 
   get() {
-    return this._siteMap;
+    return this.siteMap;
   }
 
   load(siteMapId) {
     return this.HstService.getSiteMap(siteMapId)
       .then((siteMap) => {
-        this._siteMap = siteMap;
+        this.siteMap = siteMap;
       })
       .catch(() => {
+        this.siteMap = [];
         this.FeedbackService.showError('ERROR_SITEMAP_RETRIEVAL_FAILED');
       });
   }
