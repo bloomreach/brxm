@@ -156,6 +156,7 @@
     showComponent: function (component, container, page) {
       this.setTitle(component.label);
       this.componentPropertiesPanel.setComponent(component, container, page);
+      this.deleteComponentButton.setDisabled(container.isDisabled);
       this.show();
     },
 
