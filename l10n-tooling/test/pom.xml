@@ -18,13 +18,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.cms.translations</groupId>
-    <artifactId>hippo-translations-tooling-parent</artifactId>
+    <groupId>org.onehippo.cms.l10n</groupId>
+    <artifactId>hippo-cms-l10n-tooling-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   
-  <name>Hippo CMS Translations Tooling Tests</name>
-  <artifactId>hippo-translations-tooling-tests</artifactId>
+  <name>Hippo CMS L10N Tooling Tests</name>
+  <artifactId>hippo-cms-l10n-tooling-tests</artifactId>
   <packaging>pom</packaging>
 
   <modules>

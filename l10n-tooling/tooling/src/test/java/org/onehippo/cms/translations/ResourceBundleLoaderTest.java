@@ -37,8 +37,8 @@ public class ResourceBundleLoaderTest {
         }.loadBundles();
         assertEquals(1, infos.size());
         ArtifactInfo dummyInfo = infos.iterator().next();
-        assertEquals("hippo-translations-test-dummy", dummyInfo.getArtifactId());
-        assertEquals("org.onehippo.cms.translations", dummyInfo.getGroupId());
+        assertEquals("hippo-cms-l10n-tooling-test-dummy", dummyInfo.getArtifactId());
+        assertEquals("org.onehippo.cms.l10n", dummyInfo.getGroupId());
         assertEquals(8, dummyInfo.getEntries().size());
     }
 

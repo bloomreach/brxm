@@ -34,11 +34,11 @@
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.onehippo.cms.translations.Registrar">
-    <level value="warn"/>
+    <level value="debug"/>
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.onehippo.cms.translations.RegistryInfo">
-    <level value="warn"/>
+    <level value="debug"/>
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.onehippo.cms.translations.Extractor">

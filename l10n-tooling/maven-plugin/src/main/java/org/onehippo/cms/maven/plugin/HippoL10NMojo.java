@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.onehippo.cms.maven.plugin;
+package org.onehippo.cms.maven.plugin;
 
 
 import java.util.ArrayList;
@@ -121,10 +121,10 @@ public class HippoL10NMojo extends AbstractMojo {
         if (isIncludedScope(artifact)) {
             String resolvedArtifactPrefix = null;
             for (String artifactPrefix : artifactPrefixes) {
-                if (artifactName.startsWith(artifactPrefix)) {
+                if (artifactName.equals(artifactPrefix) || artifactName.startsWith(artifactPrefix+"-")) {
                     resolvedArtifactPrefix = artifactPrefix;
                     for (String locale : localeArray) {
-                        final String localeArtifactId = artifactPrefix.substring(artifactPrefix.indexOf(":") + 1) + "l10n";
+                        final String localeArtifactId = artifactPrefix.substring(artifactPrefix.indexOf(":") + 1) + "-l10n";
                         final Artifact localeArtifact = repositorySystem.createArtifactWithClassifier(artifact.getGroupId(), localeArtifactId, artifact.getBaseVersion(), "jar", locale);
                         try {
                             if (canResolveArtifact(localeArtifact, repositorySystem, remoteRepositories, localRepository)) {
@@ -188,8 +188,8 @@ public class HippoL10NMojo extends AbstractMojo {
         if (StringUtils.isBlank(artifactPrefix)) {
             throw new IllegalArgumentException("Skipping artifactPrefix because empty");
         }
-        if (artifactPrefix.indexOf(":") == -1 || !artifactPrefix.endsWith("-")) {
-            throw new IllegalArgumentException("Skipping artifactPrefix because not of pattern '<groupId>:artifactpart-'");
+        if (!artifactPrefix.contains(":")) {
+            throw new IllegalArgumentException("Skipping artifactPrefix because not of pattern '<groupId>:<artifactId>'");
         }
     }
 

@@ -51,9 +51,7 @@ public class AngularResourceBundle extends ResourceBundle {
             createFileIfNotExists(file);
             final JSONObject o = new JSONObject();
             o.putAll(getEntries());
-            try (FileWriter writer = new FileWriter(file)) {
-                o.write(writer);
-            }
+            FileUtils.write(file, o.toString(2));
         }
 
         @Override

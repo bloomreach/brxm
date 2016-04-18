@@ -132,7 +132,7 @@ class Registrar {
                     }
                     for (Map.Entry<String, String> entry : new HashMap<>(referenceBundle.getEntries()).entrySet()) {
                         final String key = entry.getKey();
-                        if (sourceBundle.getEntries().containsKey(key)) {
+                        if (!sourceBundle.getEntries().containsKey(key)) {
                             listener.keyDeleted(key);
                         }
                     }

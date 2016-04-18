@@ -25,8 +25,8 @@
   </parent>
 
   <name>Hippo CMS Translations Tooling Parent</name>
-  <groupId>org.onehippo.cms.translations</groupId>
-  <artifactId>hippo-translations-tooling-parent</artifactId>
+  <groupId>org.onehippo.cms.l10n</groupId>
+  <artifactId>hippo-cms-l10n-tooling-parent</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
@@ -104,7 +104,7 @@
     <module>tooling</module>
     <module>test</module>
     <module>demo</module>
-    <module>hippo-l10n-maven-plugin</module>
+    <module>maven-plugin</module>
   </modules>
 
   <profiles>
