@@ -20,14 +20,15 @@ export class ComponentAdderCtrl {
   constructor($scope, $log, $element, ComponentAdderService, PageStructureService, CatalogService, DragDropService) {
     'ngInject';
 
+    const self = this;
     const drake = window.dragula({
       ignoreInputTextSelection: false,
       isContainer(el) {
-        return el.classList.contains('overlay-element-container') || ComponentAdderService.isContainer(el);
+        return self._isOverlayContainer(el) || ComponentAdderService.isCatalogContainer(el);
       },
       copy: true,
       moves(el) {
-        return ComponentAdderService.isContainerItem(el);
+        return ComponentAdderService.isCatalogContainerItem(el);
       },
       accepts(el, target) {
         return target.classList.contains('overlay-element-container');
@@ -94,5 +95,9 @@ export class ComponentAdderCtrl {
       drake.destroy();
       autoScroll.destroy();
     });
+  }
+
+  _isOverlayContainer(el) {
+    return el.classList.contains('overlay-element-container');
   }
 }
