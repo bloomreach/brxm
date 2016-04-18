@@ -21,17 +21,18 @@ export class ComponentAdderCtrl {
     'ngInject';
 
     const self = this;
+    this.PageStructureService = PageStructureService;
     const drake = window.dragula({
       ignoreInputTextSelection: false,
       isContainer(el) {
-        return self._isOverlayContainer(el) || ComponentAdderService.isCatalogContainer(el);
+        return self._isOverlayContainerEnabled(el) || ComponentAdderService.isCatalogContainer(el);
       },
       copy: true,
       moves(el) {
         return ComponentAdderService.isCatalogContainerItem(el);
       },
       accepts(el, target) {
-        return target.classList.contains('overlay-element-container');
+        return self._isOverlayContainerEnabled(target);
       },
     });
     drake.on('cloned', (clone, original) => {
@@ -68,7 +69,7 @@ export class ComponentAdderCtrl {
           $(el).detach(); // delete the (hidden) dropped DOM element.
 
           const container = PageStructureService.getContainerByOverlayElement(target);
-          if (container && !container.isLocked()) {
+          if (container) {
             PageStructureService.addComponentToContainer(this.selectedCatalogItem, container)
               .then((newComponent) => {
                 DragDropService.replaceContainer(container, newComponent.getContainer());
@@ -99,5 +100,14 @@ export class ComponentAdderCtrl {
 
   _isOverlayContainer(el) {
     return el.classList.contains('overlay-element-container');
+  }
+
+  _isOverlayContainerEnabled(el) {
+    if (!this._isOverlayContainer(el)) {
+      return false;
+    }
+
+    const container = this.PageStructureService.getContainerByOverlayElement(el);
+    return !container.isDisabled();
   }
 }
