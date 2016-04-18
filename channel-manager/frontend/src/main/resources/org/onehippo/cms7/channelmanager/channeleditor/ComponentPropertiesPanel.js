@@ -307,11 +307,11 @@
 
     _onPropertiesDeleted: function (deletedVariantId) {
       // set the active tab be the first one (i.e. the hippo-default variant)
-      this._reloadCleanupAndFireEvent([deletedVariantId], 'hippo-default', 'deleteVariant');
+      this._reloadCleanupAndFireEvent([deletedVariantId], 'hippo-default', 'variantDeleted');
     },
 
     _onVariantsDeleted: function (deletedVariantIds, newActiveVariantId) {
-      this._reloadCleanupAndFireEvent(deletedVariantIds, newActiveVariantId, 'deleteVariant');
+      this._reloadCleanupAndFireEvent(deletedVariantIds, newActiveVariantId, 'variantDeleted');
     },
 
     _reloadCleanupAndFireEvent: function (changedVariantIds, activeVariantId, event) {

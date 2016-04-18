@@ -138,7 +138,7 @@
         mountId: this.selectedChannel.mountId,
         listeners: {
           save: this._syncChannel,
-          deleteVariant: this._syncChannel,
+          variantDeleted: this._syncChannel,
           deleteComponent: this._deleteComponent,
           propertiesChanged: this._renderComponent,
           componentChanged: this._onComponentChanged,
