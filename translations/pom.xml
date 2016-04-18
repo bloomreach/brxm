@@ -16,6 +16,7 @@
   
   <properties>
     <hippo.translations-tooling.version>1.0.0-SNAPSHOT</hippo.translations-tooling.version>
+    <registry.locales>nl,de,fr</registry.locales>
     <export.locale/>
     <export.format>Default</export.format>
     <import.locale/>
@@ -177,7 +178,7 @@
     <profile>
       <id>extract</id>
       <build>
-        <defaultGoal>process-resources</defaultGoal>
+        <defaultGoal>initialize</defaultGoal>
         <plugins>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
@@ -185,7 +186,7 @@
             <executions>
               <execution>
                 <id>extract-languages</id>
-                <phase>generate-resources</phase>
+                <phase>initialize</phase>
                 <goals>
                   <goal>java</goal>
                 </goals>
@@ -197,10 +198,7 @@
                       <value>file://${main.basedir}/config/log4j.xml</value>
                     </systemProperty>
                   </systemProperties>
-                  <arguments>
-                    <argument>${project.basedir}/resources</argument>
-                    <argument>en,fr,nl,de</argument>
-                  </arguments>
+                  <commandlineArgs>--basedir ${project.basedir} --locales en,nl,fr,de</commandlineArgs>
                 </configuration>
               </execution>
             </executions>
@@ -211,7 +209,7 @@
     <profile>
       <id>initialize</id>
       <build>
-        <defaultGoal>process-resources</defaultGoal>
+        <defaultGoal>initialize</defaultGoal>
         <plugins>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
@@ -219,7 +217,7 @@
             <executions>
               <execution>
                 <id>initialize-registry</id>
-                <phase>generate-resources</phase>
+                <phase>initialize</phase>
                 <goals>
                   <goal>java</goal>
                 </goals>
@@ -231,11 +229,7 @@
                       <value>file://${main.basedir}/config/log4j.xml</value>
                     </systemProperty>
                   </systemProperties>
-                  <arguments>
-                    <argument>initialize</argument>
-                    <argument>${project.basedir}/resources</argument>
-                    <argument>fr,nl,de</argument>
-                  </arguments>
+                  <commandlineArgs>--basedir ${project.basedir} --locales ${registry.locales} --command initialize</commandlineArgs>
                 </configuration>
               </execution>
             </executions>
@@ -246,7 +240,7 @@
     <profile>
       <id>update</id>
       <build>
-        <defaultGoal>process-resources</defaultGoal>
+        <defaultGoal>initialize</defaultGoal>
         <plugins>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
@@ -254,7 +248,7 @@
             <executions>
               <execution>
                 <id>register-changes</id>
-                <phase>generate-resources</phase>
+                <phase>initialize</phase>
                 <goals>
                   <goal>java</goal>
                 </goals>
@@ -266,11 +260,38 @@
                       <value>file://${main.basedir}/config/log4j.xml</value>
                     </systemProperty>
                   </systemProperties>
-                  <arguments>
-                    <argument>update</argument>
-                    <argument>${project.basedir}/resources</argument>
-                    <argument>fr,nl,de</argument>
-                  </arguments>
+                  <commandlineArgs>--basedir ${project.basedir} --locales ${registry.locales} --command update</commandlineArgs>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>report</id>
+      <build>
+        <defaultGoal>initialize</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>report-changes</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <configuration>
+                  <mainClass>org.onehippo.cms.translations.Registrar</mainClass>
+                  <systemProperties>
+                    <systemProperty>
+                      <key>log4j.configuration</key>
+                      <value>file://${main.basedir}/config/log4j.xml</value>
+                    </systemProperty>
+                  </systemProperties>
+                  <commandlineArgs>--basedir ${project.basedir} --locales ${registry.locales} --command report</commandlineArgs>
                 </configuration>
               </execution>
             </executions>
@@ -281,7 +302,7 @@
     <profile>
       <id>export</id>
       <build>
-        <defaultGoal>process-resources</defaultGoal>
+        <defaultGoal>initialize</defaultGoal>
         <plugins>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
@@ -289,7 +310,7 @@
             <executions>
               <execution>
                 <id>export-changes</id>
-                <phase>generate-resources</phase>
+                <phase>initialize</phase>
                 <goals>
                   <goal>java</goal>
                 </goals>
@@ -301,11 +322,7 @@
                       <value>file://${main.basedir}/config/log4j.xml</value>
                     </systemProperty>
                   </systemProperties>
-                  <arguments>
-                    <argument>${project.basedir}</argument>
-                    <argument>${export.format}</argument>
-                    <argument>${export.locale}</argument>
-                  </arguments>
+                  <commandlineArgs>--basedir ${project.basedir} --locale ${export.locale} --format ${export.format}</commandlineArgs>
                 </configuration>
               </execution>
             </executions>
@@ -316,7 +333,7 @@
     <profile>
       <id>import</id>
       <build>
-        <defaultGoal>process-resources</defaultGoal>
+        <defaultGoal>initialize</defaultGoal>
         <plugins>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
@@ -324,7 +341,7 @@
             <executions>
               <execution>
                 <id>import-changes</id>
-                <phase>generate-resources</phase>
+                <phase>initialize</phase>
                 <goals>
                   <goal>java</goal>
                 </goals>
@@ -336,12 +353,7 @@
                       <value>file://${main.basedir}/config/log4j.xml</value>
                     </systemProperty>
                   </systemProperties>
-                  <arguments>
-                    <argument>${project.basedir}</argument>
-                    <argument>${import.format}</argument>
-                    <argument>${import.locale}</argument>
-                    <argument>${import.file}</argument>
-                  </arguments>
+                  <commandlineArgs>--basedir ${project.basedir} --locale ${import.locale} --format ${import.format} --file ${import.file}</commandlineArgs>
                 </configuration>
               </execution>
             </executions>

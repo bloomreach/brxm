@@ -30,7 +30,7 @@
     </layout>
   </appender>
   <category additivity="false" name="org.onehippo.cms.translations">
-    <level value="info"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
   <root>
