@@ -66,8 +66,8 @@ describe('ChannelSidenavToggle', () => {
   it('displays an icon depending on whether the sidenav is open or closed', () => {
     const ToggleCtrl = instantiateController();
     ChannelSidenavService.isOpen.and.returnValue(false);
-    expect(ToggleCtrl.getSidenavIcon()).toBe('last_page');
+    expect(ToggleCtrl.getIcon()).toBe('last_page');
     ChannelSidenavService.isOpen.and.returnValue(true);
-    expect(ToggleCtrl.getSidenavIcon()).toBe('first_page');
+    expect(ToggleCtrl.getIcon()).toBe('first_page');
   });
 });
