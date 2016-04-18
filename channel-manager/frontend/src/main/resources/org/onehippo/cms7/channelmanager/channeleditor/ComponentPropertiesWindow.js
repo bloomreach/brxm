@@ -27,7 +27,7 @@
         windowWidth = config.width;
 
       this.componentPropertiesPanel = new Hippo.ChannelManager.ChannelEditor.ComponentPropertiesPanel({
-        bubbleEvents: ['save', 'deleteComponent', 'deleteVariant', 'propertiesChanged', 'channelChanged'],
+        bubbleEvents: ['save', 'deleteComponent', 'variantDeleted', 'propertiesChanged', 'componentChanged'],
         resources: config.resources,
         locale: config.locale,
         composerRestMountUrl: config.composerRestMountUrl,
@@ -101,7 +101,7 @@
     initComponent: function () {
       Hippo.ChannelManager.ChannelEditor.ComponentPropertiesWindow.superclass.initComponent.apply(this, arguments);
 
-      this.addEvents('save', 'close', 'deleteVariant', 'propertiesChanged', 'channelChanged');
+      this.addEvents('save', 'close', 'variantDeleted', 'propertiesChanged');
 
       this.on('hide', this.componentPropertiesPanel.onHide, this.componentPropertiesPanel);
     },

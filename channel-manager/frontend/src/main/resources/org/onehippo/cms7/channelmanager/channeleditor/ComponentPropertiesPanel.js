@@ -68,7 +68,7 @@
     initComponent: function () {
       Hippo.ChannelManager.ChannelEditor.ComponentPropertiesPanel.superclass.initComponent.apply(this, arguments);
 
-      this.addEvents('visibleHeightChanged', 'onLoad');
+      this.addEvents('visibleHeightChanged', 'onLoad', 'componentChanged');
 
       this.on('beforetabchange', function (panel, newTab, currentTab) {
         var proceed;
@@ -291,6 +291,10 @@
       this.fireEvent('propertiesChanged', this.componentId, {});
     },
 
+    notifyComponentChanged: function () {
+      this.fireEvent('componentChanged', this.componentId);
+    },
+
     /**
      * Event called after all dirty forms are saved
      * @param savedVariantIds  list of dirty variants that have been saved
@@ -303,11 +307,11 @@
 
     _onPropertiesDeleted: function (deletedVariantId) {
       // set the active tab be the first one (i.e. the hippo-default variant)
-      this._reloadCleanupAndFireEvent([deletedVariantId], 'hippo-default', 'deleteVariant');
+      this._reloadCleanupAndFireEvent([deletedVariantId], 'hippo-default', 'variantDeleted');
     },
 
     _onVariantsDeleted: function (deletedVariantIds, newActiveVariantId) {
-      this._reloadCleanupAndFireEvent(deletedVariantIds, newActiveVariantId, 'deleteVariant');
+      this._reloadCleanupAndFireEvent(deletedVariantIds, newActiveVariantId, 'variantDeleted');
     },
 
     _reloadCleanupAndFireEvent: function (changedVariantIds, activeVariantId, event) {
@@ -323,7 +327,6 @@
 
     _createComponentPropertiesEditor: function (variant, variants, componentPropertiesForm) {
       var editor = Hippo.ExtWidgets.create('Hippo.ChannelManager.ChannelEditor.ComponentPropertiesEditor', {
-        bubbleEvents: ['channelChanged'],
         cls: 'component-properties-editor',
         componentId: this.componentId,
         variant: variant,
@@ -529,7 +532,7 @@
         dirtyEditors.forEach(function(editor) {
           afterSavePromises.push(editor.onAfterSave());
         });
-        return $.when.apply($, afterSavePromises);
+        return $.when.apply($, afterSavePromises).then(this.notifyComponentChanged.bind(this));
       }.bind(this));
     },
 
