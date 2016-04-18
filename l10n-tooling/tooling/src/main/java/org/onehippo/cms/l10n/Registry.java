@@ -25,9 +25,6 @@ import java.util.NoSuchElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.cms.l10n.TranslationsUtils.mapRegistryFileToResourceBundleFile;
-import static org.onehippo.cms.l10n.TranslationsUtils.mapResourceBundleToRegistryFile;
-
 public class Registry {
 
     private static final Logger log = LoggerFactory.getLogger(Registry.class);
