@@ -27,7 +27,7 @@
         windowWidth = config.width;
 
       this.componentPropertiesPanel = new Hippo.ChannelManager.ChannelEditor.ComponentPropertiesPanel({
-        bubbleEvents: ['save', 'deleteComponent', 'deleteVariant', 'propertiesChanged', 'renderComponent'],
+        bubbleEvents: ['save', 'deleteComponent', 'deleteVariant', 'propertiesChanged', 'componentChanged'],
         resources: config.resources,
         locale: config.locale,
         composerRestMountUrl: config.composerRestMountUrl,

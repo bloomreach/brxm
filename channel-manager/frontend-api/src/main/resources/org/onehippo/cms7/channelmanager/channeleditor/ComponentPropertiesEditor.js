@@ -27,7 +27,7 @@
 
     constructor: function (config) {
       Hippo.ChannelManager.ChannelEditor.ComponentPropertiesEditor.superclass.constructor.call(this, Ext.apply(config, {
-        bubbleEvents: ['enableDeleteComponent', 'renderComponent']
+        bubbleEvents: ['enableDeleteComponent', 'componentChanged']
       }));
       this.componentId = config.componentId;
       this.variant = config.variant;
@@ -35,7 +35,7 @@
       this.isReadOnly = config.isReadOnly;
       this.componentMessageBus = config.componentMessageBus;
 
-      this.addEvents('enableDeleteComponent', 'renderComponent', 'variantsDeleted', 'visibleHeightChanged');
+      this.addEvents('enableDeleteComponent', 'componentChanged', 'variantsDeleted', 'visibleHeightChanged');
     },
 
     load: function () {
@@ -89,8 +89,8 @@
       this.fireEvent('enableDeleteComponent', enabled);
     },
 
-    renderComponent() {
-      this.fireEvent('renderComponent', this.componentId);
+    notifyComponentChanged: function () {
+      this.fireEvent('componentChanged', this.componentId);
     }
 
   });

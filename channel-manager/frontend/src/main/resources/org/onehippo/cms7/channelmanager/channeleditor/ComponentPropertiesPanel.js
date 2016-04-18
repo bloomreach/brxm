@@ -68,7 +68,7 @@
     initComponent: function () {
       Hippo.ChannelManager.ChannelEditor.ComponentPropertiesPanel.superclass.initComponent.apply(this, arguments);
 
-      this.addEvents('visibleHeightChanged', 'onLoad', 'renderComponent');
+      this.addEvents('visibleHeightChanged', 'onLoad', 'componentChanged');
 
       this.on('beforetabchange', function (panel, newTab, currentTab) {
         var proceed;
@@ -291,8 +291,8 @@
       this.fireEvent('propertiesChanged', this.componentId, {});
     },
 
-    renderComponent: function () {
-      this.fireEvent('renderComponent', this.componentId);
+    notifyComponentChanged: function () {
+      this.fireEvent('componentChanged', this.componentId);
     },
 
     /**
@@ -532,7 +532,7 @@
         dirtyEditors.forEach(function(editor) {
           afterSavePromises.push(editor.onAfterSave());
         });
-        return $.when.apply($, afterSavePromises).then(this.renderComponent.bind(this));
+        return $.when.apply($, afterSavePromises).then(this.notifyComponentChanged.bind(this));
       }.bind(this));
     },
 

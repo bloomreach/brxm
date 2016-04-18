@@ -66,25 +66,20 @@
       }.bind(this));
     },
 
-    /**
-     * Notify angularJs app that the channel has been changed
-     */
-    _notifyChannelChanged: function() {
+    _syncChannel: function() {
       this._reloadChannels().when(function (channelStore) {
         this.selectedChannel = channelStore.getById(this.selectedChannel.id);
         this.hostToIFrame.publish('channel-changed-in-extjs', this.selectedChannel.json);
       }.bind(this));
     },
 
-    /**
-     * Notify angularJs app to render the component
-     *
-     * @param componentId
-     * @param propertiesMap
-     * @private
-     */
-    _notifyComponentRendering: function(componentId, propertiesMap) {
+    _renderComponent: function(componentId, propertiesMap) {
       this.hostToIFrame.publish('render-component', componentId, propertiesMap);
+    },
+
+    _onComponentChanged: function (componentId) {
+      this._renderComponent(componentId, {});
+      this._syncChannel();
     },
 
     _setChannel: function(channelId) {
@@ -142,27 +137,13 @@
         variantsUuid: this.variantsUuid,
         mountId: this.selectedChannel.mountId,
         listeners: {
-          save: this._notifyChannelChanged,
-          deleteVariant: this._notifyChannelChanged,
+          save: this._syncChannel,
+          deleteVariant: this._syncChannel,
           deleteComponent: this._deleteComponent,
-          propertiesChanged: this._notifyComponentRendering,
-          renderComponent: function (componentId) {
-            this._notifyComponentRendering(componentId, {});
-            this._notifyChannelChanged();
-          },
+          propertiesChanged: this._renderComponent,
+          componentChanged: this._onComponentChanged,
           hide: function() {
             this.hostToIFrame.publish('hide-component-properties');
-          },
-          // Enable mouse events in the iframe while the component properties window is dragged. When the
-          // mouse pointer is moved quickly it can end up outside the window above the iframe. The iframe
-          // should then send mouse events back to the host to update the position of the dragged window.
-          startdrag: function () {
-            console.log('TODO: handle start drag?');
-            // old code: pageEditorIFrame.hostToIFrame.publish('enablemouseevents');
-          },
-          enddrag: function () {
-            console.log('TODO: handle end drag?');
-            // old code: pageEditorIFrame.hostToIFrame.publish('disablemouseevents');
           },
           scope: this
         }
