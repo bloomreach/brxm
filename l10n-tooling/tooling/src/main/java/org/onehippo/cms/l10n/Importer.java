@@ -35,6 +35,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cms.l10n.TranslationsUtils.registryKey;
+
 public class Importer {
     
     private static final Logger log = LoggerFactory.getLogger(Importer.class);
@@ -73,8 +75,10 @@ public class Importer {
                 resourceBundle.getEntries().put(fqKey.key, translation);
                 log.info("Saving resource bundle: " + resourceBundle.getFileName());
                 resourceBundle.save();
-                registryInfo.getKeyData(fqKey.key).setLocaleStatus(locale, KeyData.LocaleStatus.RESOLVED);
-                registryInfo.save();        
+
+                KeyData keyData = registryInfo.getKeyData(registryKey(resourceBundle, fqKey.key));
+                keyData.setLocaleStatus(locale, KeyData.LocaleStatus.RESOLVED);
+                registryInfo.save();
             }
         }
     }
@@ -107,7 +111,7 @@ public class Importer {
         final Option basedirOption = new Option("d", "basedir", true, "the project base directory");
         basedirOption.setRequired(true);
         options.addOption(basedirOption);
-        final Option localeOption = new Option("l", "locale", true, "the locale to export");
+        final Option localeOption = new Option("l", "locale", true, "the locale to import");
         localeOption.setRequired(true);
         options.addOption(localeOption);
         final Option formatOption = new Option("f", "format", true, "the csv format");

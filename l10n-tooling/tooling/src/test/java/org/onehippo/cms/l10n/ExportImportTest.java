@@ -59,7 +59,11 @@ public class ExportImportTest {
     }
 
     private void changeBundle() throws IOException {
-        final ResourceBundle resourceBundle = registrar.getRegistry().getResourceBundle(null, "angular/dummy/i18n/en.json", BundleType.ANGULAR);
+        ResourceBundle resourceBundle = registrar.getRegistry().getResourceBundle(null, "angular/dummy/i18n/en.json", BundleType.ANGULAR);
+        resourceBundle.getEntries().put("key", "value2");
+        resourceBundle.save();
+
+        resourceBundle = registrar.getRegistry().getResourceBundle("bundle", "dummy-repository-translations_en.json", BundleType.REPOSITORY);
         resourceBundle.getEntries().put("key", "value2");
         resourceBundle.save();
     }
@@ -69,14 +73,24 @@ public class ExportImportTest {
         final File export = new Exporter(temporaryFolder.getRoot(), "Default").export("nl");
         final CSVParser parser = new CSVParser(new FileReader(export), CSVFormat.DEFAULT);
         final List<CSVRecord> records = parser.getRecords();
-        assertEquals(3, records.size());
+        assertEquals(4, records.size());
 
+        // first record in the export set is the header
+
+        // this record is due to the change in the resource bundle angular/dummy/i18n/en.json
         CSVRecord record = records.get(1);
         assertEquals(3, record.size());
         assertEquals("value", record.get(1));
         assertEquals("waarde", record.get(2));
 
+        // this record is due to the change in the resource bundle dummy-repository-translations_en.json
         record = records.get(2);
+        assertEquals(3, record.size());
+        assertEquals("value", record.get(1));
+        assertEquals("waarde", record.get(2));
+
+        // this record is due to the fact that the translation is missing in the source files
+        record = records.get(3);
         assertEquals(3, record.size());
         assertEquals("missing in fr and nl", record.get(1));
         assertEquals("", record.get(2));
@@ -84,17 +98,31 @@ public class ExportImportTest {
 
     @Test
     public void testImporter() throws Exception {
-        final RegistryInfo registryInfo = registrar.getRegistry().getRegistryInfo("angular/dummy/i18n/registry.json");
-        KeyData keyData = registryInfo.getKeyData("key");
+        final RegistryInfo angularRegistryInfo = registrar.getRegistry().getRegistryInfo("angular/dummy/i18n/registry.json");
+        KeyData keyData = angularRegistryInfo.getKeyData("key");
         assertNotNull(keyData);
         assertEquals(UPDATED, keyData.getStatus());
         assertEquals(UNRESOLVED, keyData.getLocaleStatus("nl"));
+
+        final RegistryInfo repositoryRegistryInfo = registrar.getRegistry().getRegistryInfo("dummy-repository-translations.registry.json");
+        keyData = repositoryRegistryInfo.getKeyData("bundle/key");
+        assertNotNull(keyData);
+        assertEquals(UPDATED, keyData.getStatus());
+        assertEquals(UNRESOLVED, keyData.getLocaleStatus("nl"));
+
         final File export = new Exporter(temporaryFolder.getRoot(), "Default").export("nl");
         final File _import = temporaryFolder.newFile("import.csv");
         FileUtils.copyFile(export, _import);
         new Importer(temporaryFolder.getRoot(), "Default")._import("import.csv", "nl");
-        registryInfo.load();
-        keyData = registryInfo.getKeyData("key");
+
+        angularRegistryInfo.load();
+        keyData = angularRegistryInfo.getKeyData("key");
+        assertNotNull(keyData);
+        assertEquals(CLEAN, keyData.getStatus());
+        assertEquals(RESOLVED, keyData.getLocaleStatus("nl"));
+
+        repositoryRegistryInfo.load();
+        keyData = repositoryRegistryInfo.getKeyData("bundle/key");
         assertNotNull(keyData);
         assertEquals(CLEAN, keyData.getStatus());
         assertEquals(RESOLVED, keyData.getLocaleStatus("nl"));
