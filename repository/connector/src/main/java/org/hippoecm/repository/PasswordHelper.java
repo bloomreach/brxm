@@ -15,13 +15,10 @@
  */
 package org.hippoecm.repository;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -34,19 +31,19 @@ import org.apache.jackrabbit.util.Base64;
  * Password helper utility class for generating and checking password hashes.
  * </p>
  * <p>
- * For the client side the method {@link #getHash(String)} can be used to
+ * For the client side the method {@link #getHash(char[])} can be used to
  * generate a valid password hash for storing in the password field of a
  * user in the repository.
  * </p>
  * <p>
- * For the server side the method {@link #checkHash(String,String)} can be
+ * For the server side the method {@link #checkHash(char[], String)} can be
  * used to verify the (user supplied) password against the hash stored in
  * the repository.
  * </p>
  * <p>
  * The following option can be adjusted:
  * <ul>
- *   <li> The hashing alogrithm (default SHA-1)
+ *   <li> The hashing algorithm (default SHA-256)
  *   <li> The salt size (default 8)
  *   <li>
  * </ul>
@@ -54,14 +51,11 @@ import org.apache.jackrabbit.util.Base64;
  */
 public class PasswordHelper {
 
-    /**
-     * SVN ID
-     */
 
     /**
-     * Alogrithm to use for random number generation
+     * Algorithm to use for random number generation
      */
-    private static final String randomAlogrithm = "SHA1PRNG";
+    private static final String randomAlgorithm = "SHA1PRNG";
 
     /**
      * The number of digest iterations is fixed
@@ -72,6 +66,7 @@ public class PasswordHelper {
      * Use fixed encoding before digesting
      */
     private static final String FIXED_ENCODING = "UTF-8";
+    private static final String SEPARATOR = "$";
 
     /**
      * This (default) size of the salt
@@ -79,9 +74,9 @@ public class PasswordHelper {
     private static int saltSize = 8;
 
     /**
-     * The (default) hashing alogrithm
+     * The (default) hashing algorithm
      */
-    private static String hashingAlogrithm = "SHA-1";
+    private static String hashingAlgorithm = "SHA-256";
 
     /**
      * Prevent instances of this class
@@ -123,7 +118,7 @@ public class PasswordHelper {
      */
     synchronized public static byte[] getSalt() throws NoSuchAlgorithmException, UnsupportedEncodingException {
         byte[] salt = new byte[saltSize];
-        SecureRandom random = SecureRandom.getInstance(randomAlogrithm);
+        SecureRandom random = SecureRandom.getInstance(randomAlgorithm);
         random.setSeed(System.nanoTime());
         random.nextBytes(salt);
         return salt;
@@ -131,23 +126,22 @@ public class PasswordHelper {
 
     /**
      * Generate the digest string from the plain text
-     * @param alogrithm
+     * @param algorithm
      * @param plainText
      * @param salt
      * @return String the base64 digest string
      * @throws NoSuchAlgorithmException
      * @throws IOException
      */
-    public static String getDigest(String alogrithm, char[] plainText, byte[] salt) throws NoSuchAlgorithmException,
+    public static String getDigest(String algorithm, char[] plainText, byte[] salt) throws NoSuchAlgorithmException,
             IOException {
 
         // the null encryption :(
-        if (alogrithm == null || alogrithm.length() == 0 || alogrithm.endsWith("plain")) {
+        if (algorithm == null || algorithm.length() == 0 || algorithm.endsWith("plain")) {
             return new String(plainText);
         }
 
-        MessageDigest md = MessageDigest.getInstance(alogrithm);
-        byte[] digest = null;
+        MessageDigest md = MessageDigest.getInstance(algorithm);
         md.reset();
 
         // salting
@@ -155,7 +149,7 @@ public class PasswordHelper {
             md.update(salt);
         }
 
-        digest = md.digest(new String(plainText).getBytes(FIXED_ENCODING));
+        byte[] digest = md.digest(new String(plainText).getBytes(FIXED_ENCODING));
 
         // iterating
         for (int i = 0; i < DIGEST_ITERATIONS; i++) {
@@ -169,10 +163,9 @@ public class PasswordHelper {
      * Get the password hash. The hash is either in the form of:
      * <ul>
      * <li>plaintext</li>
-     * <li>$alogrithm$salt$digest</li>
+     * <li>$algorithm$salt$digest</li>
      * </ul>
      * @param plainText usually the password
-     * @param salt
      * @return
      * @throws NoSuchAlgorithmException
      * @throws IOException
@@ -180,16 +173,16 @@ public class PasswordHelper {
     public static String getHash(char[] plainText) throws NoSuchAlgorithmException, IOException {
 
         // the null encryption :(
-        if (hashingAlogrithm == null || hashingAlogrithm.length() == 0 || hashingAlogrithm.endsWith("plain")) {
+        if (hashingAlgorithm == null || hashingAlgorithm.length() == 0 || hashingAlgorithm.endsWith("plain")) {
             return new String(plainText);
         }
         byte[] salt = getSalt();
-        return buildHashString(hashingAlogrithm, plainText, salt);
+        return buildHashString(hashingAlgorithm, plainText, salt);
     }
 
     /**
      * Helper function to build the hash sting in the correct format
-     * @param alogrithm
+     * @param algorithm
      * @param plainText
      * @param salt
      * @return String
@@ -198,7 +191,7 @@ public class PasswordHelper {
      */
     public static String buildHashString(String algorithm, char[] plainText, byte[] salt)
             throws NoSuchAlgorithmException, IOException {
-        return "$" + algorithm + "$" + byteToBase64(salt) + "$" + getDigest(algorithm, plainText, salt);
+        return SEPARATOR + algorithm + SEPARATOR + byteToBase64(salt) + SEPARATOR + getDigest(algorithm, plainText, salt);
     }
 
     /**
@@ -213,7 +206,7 @@ public class PasswordHelper {
             UnsupportedEncodingException {
 
         // no hash or empty hash doesn't match anything
-        if (hash == null || "".equals(hash)) {
+        if (hash == null || hash.isEmpty()) {
             return false;
         }
 
@@ -222,7 +215,7 @@ public class PasswordHelper {
             throw new IllegalArgumentException("Empty passwords are not allowed");
         }
 
-        StringTokenizer st = new StringTokenizer(hash, "$");
+        StringTokenizer st = new StringTokenizer(hash, SEPARATOR);
         int tokens = st.countTokens();
 
         // invalid encrypted string
@@ -232,24 +225,16 @@ public class PasswordHelper {
 
         // plain text hash
         if (tokens == 1) {
-            if (hash.equals(new String(password))) {
-                return true;
-            } else {
-                return false;
-            }
+            return hash.equals(new String(password));
         }
 
         // check encrypted hash
         if (st.countTokens() == 3) {
-            String alogrithm = st.nextToken();
+            String algorithm = st.nextToken();
             String salt = st.nextToken();
             try {
-                String newHash = buildHashString(alogrithm, password, base64ToByte(salt));
-                if (hash.equals(newHash)) {
-                    return true;
-                } else {
-                    return false;
-                }
+                String newHash = buildHashString(algorithm, password, base64ToByte(salt));
+                return hash.equals(newHash);
             } catch (IOException e) {
                 return false;
             }
@@ -259,19 +244,32 @@ public class PasswordHelper {
     }
 
     /**
-     * Get HashingAlogrithm
+     * Get HashingAlgorithm
      * @return String
+     * @deprecated use #org.hippoecm.repository.PasswordHelper#getHashingAlgorithm()
      */
+    @Deprecated
     public static String getHashingAlogrithm() {
-        return hashingAlogrithm;
+        return hashingAlgorithm;
     }
 
     /**
-     * Set the hashing alogrithm for generating new hashes
-     * @param hashingAlogrithm
+     * Set the hashing algorithm for generating new hashes
+     * @param hashingAlgorithm
+     * @deprecated use #org.hippoecm.repository.PasswordHelper#setHashingAlgorithm(java.lang.String)
      */
-    public static void setHashingAlogrithm(String hashingAlogrithm) {
-        PasswordHelper.hashingAlogrithm = hashingAlogrithm;
+    @Deprecated
+    public static void setHashingAlogrithm(String hashingAlgorithm) {
+        PasswordHelper.hashingAlgorithm = hashingAlgorithm;
+    }
+
+
+    public static String getHashingAlgorithm() {
+        return hashingAlgorithm;
+    }
+
+    public static void setHashingAlgorithm(final String hashingAlgorithm) {
+        PasswordHelper.hashingAlgorithm = hashingAlgorithm;
     }
 
     /**
