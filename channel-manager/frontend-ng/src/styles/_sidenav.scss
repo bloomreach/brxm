@@ -15,3 +15,7 @@
 .md-sidenav-left {
   border-right: 1px solid rgba(0,0,0,0.12);
 }
+
+.list-item-active {
+  background-color: $list-item-active-bgcolor;
+}
