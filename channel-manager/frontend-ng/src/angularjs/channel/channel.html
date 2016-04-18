@@ -18,6 +18,7 @@
   <md-toolbar class="qa-toolbar">
     <div class="md-toolbar-tools">
       <channel-sidenav-toggle></channel-sidenav-toggle>
+      <page-actions ng-if="channelCtrl.isEditMode"></page-actions>
       <relevance-view-as render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
       <span flex></span>
       <md-button ng-repeat="viewPort in channelCtrl.viewPorts"
