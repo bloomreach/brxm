@@ -15,10 +15,12 @@
  */
 
 export class ViewAsCtrl {
-  constructor($scope, $translate, ConfigService, SessionService, HstService, HippoIframeService, PageMetaDataService, FeedbackService) {
+  constructor($scope, $element, $translate, CmsService, ConfigService, SessionService, HstService, HippoIframeService, PageMetaDataService, FeedbackService) {
     'ngInject';
 
+    this.$element = $element;
     this.$translate = $translate;
+    this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.HstService = HstService;
     this.HippoIframeService = HippoIframeService;
@@ -38,6 +40,8 @@ export class ViewAsCtrl {
 
     // Could have used ng-change on md-select, but watching nicely gives me the old value as well.
     $scope.$watch('viewAs.selectedVariant', (newValue, oldValue) => this._setVariant(newValue, oldValue));
+
+    CmsService.subscribe('alter-ego-changed', () => HippoIframeService.reload());
   }
 
   _retrieveGlobalVariants() {
@@ -80,5 +84,10 @@ export class ViewAsCtrl {
     }
 
     return variant.name;
+  }
+
+  editAlterEgo() {
+    const mainToolbarHeight = this.$element.parent().height();
+    this.CmsService.publish('edit-alter-ego', mainToolbarHeight);
   }
 }
