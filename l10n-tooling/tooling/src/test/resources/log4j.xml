@@ -29,19 +29,19 @@
       <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
     </layout>
   </appender>
-  <category additivity="false" name="org.onehippo.cms.translations">
+  <category additivity="false" name="org.onehippo.cms.l10n">
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
-  <category additivity="false" name="org.onehippo.cms.translations.Registrar">
-    <level value="debug"/>
+  <category additivity="false" name="org.onehippo.cms.l10n.Registrar">
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
-  <category additivity="false" name="org.onehippo.cms.translations.RegistryInfo">
-    <level value="debug"/>
+  <category additivity="false" name="org.onehippo.cms.l10n.RegistryInfo">
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
-  <category additivity="false" name="org.onehippo.cms.translations.Extractor">
+  <category additivity="false" name="org.onehippo.cms.l10n.Extractor">
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
