@@ -684,7 +684,7 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="hippo-cms-workflow-translations">
+  <sv:node sv:name="hippo-cms-builtin-workflow-translations">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -692,7 +692,7 @@
       <sv:value>13</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:resourcebundles" sv:type="String">
-      <sv:value>workflow-translations.json</sv:value>
+      <sv:value>builtin-workflow-translations.json</sv:value>
     </sv:property>
   </sv:node>
 
