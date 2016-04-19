@@ -72,7 +72,7 @@
     <hippo.plugin.sitemap.version>3.0.0-SNAPSHOT</hippo.plugin.sitemap.version>
     <hippo.plugin.taxonomy.version>3.0.0-SNAPSHOT</hippo.plugin.taxonomy.version>
 
-    <hippo.maven.plugin.l10n>1.0-SNAPSHOT</hippo.maven.plugin.l10n>
+    <hippo.maven.plugin.l10n>1.0.0-SNAPSHOT</hippo.maven.plugin.l10n>
     <!-- included locales placeholder to be overridden by end projects -->
     <hippo.cms.included.locales/>
   </properties>
@@ -876,14 +876,25 @@
           </executions>
         </plugin>
         <plugin>
-          <groupId>com.onehippo.maven.plugin</groupId>
-          <artifactId>hippo-l10n-maven-plugin</artifactId>
+          <groupId>org.onehippo.cms.l10n</groupId>
+          <artifactId>hippo-cms-l10n-maven-plugin</artifactId>
           <version>${hippo.maven.plugin.l10n}</version>
           <extensions>true</extensions>
           <configuration>
             <artifactPrefixes>
-              <artifactPrefix>org.onehippo.cms7:hippo-cms-</artifactPrefix>
-              <artifactPrefix>com.onehippo.cms7:hippo-addon-eforms-</artifactPrefix>
+              <artifactPrefix>org.onehippo.cms7:hippo-addon-channel-manager</artifactPrefix>
+              <artifactPrefix>org.onehippo.cms7:hippo-plugin-content-blocks</artifactPrefix>
+              <artifactPrefix>org.onehippo.cms7:hippo-plugin-content-tagging</artifactPrefix>
+              <artifactPrefix>org.onehippo.cms7:hippo-plugin-dashboard-document-wizard</artifactPrefix>
+              <artifactPrefix>org.onehippo.cms7:hippo-plugin-gallerypicker</artifactPrefix>
+              <artifactPrefix>org.onehippo.cms7:hippo-cms</artifactPrefix>
+              <artifactPrefix>org.onehippo.cms7:hippo-addon-hst-configuration-editor</artifactPrefix>
+              <artifactPrefix>org.onehippo.cms7:hippo-plugin-poll</artifactPrefix>
+              <artifactPrefix>org.onehippo.cms7:hippo-plugin-relateddocs</artifactPrefix>
+              <artifactPrefix>org.onehippo.cms7:hippo-plugin-resourcebundle-editor</artifactPrefix>
+              <artifactPrefix>org.onehippo.cms7:hippo-plugin-robotstxt</artifactPrefix>
+              <artifactPrefix>org.onehippo.cms7:hippo-plugin-selections</artifactPrefix>
+              <artifactPrefix>org.onehippo.cms7:hippo-plugin-taxonomy</artifactPrefix>
             </artifactPrefixes>
             <locales>${hippo.cms.included.locales}</locales>
           </configuration>
