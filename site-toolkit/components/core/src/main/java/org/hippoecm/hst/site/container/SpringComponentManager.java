@@ -257,19 +257,19 @@ public class SpringComponentManager implements ComponentManager {
                 if (fallbackRootApplicationContextLookup && servletContext != null) {
                     WebApplicationContext rootWebAppContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
                     if (rootWebAppContext != null) {
-                        log.info("The requested bean '{}' doesn't exist in HST spring core component manager. Trying " +
+                        log.debug("The requested bean '{}' doesn't exist in HST spring core component manager. Trying " +
                                 "fallback to the root application context", name);
                         try {
                             return (T) rootWebAppContext.getBean(name);
                         } catch (Exception e2) {
-                            log.warn("The requested bean '{}' doesn't exist in HST spring component manager nor in " +
+                            log.debug("The requested bean '{}' doesn't exist in HST spring component manager nor in " +
                                     "the fallback root application context.", name);
                         }
                     } else {
-                        log.warn("The requested bean '{}' doesn't exist.", name);
+                        log.debug("The requested bean '{}' doesn't exist.", name);
                     }
                 } else {
-                    log.warn("The requested bean '{}' doesn't exist.", name);
+                    log.debug("The requested bean '{}' doesn't exist.", name);
                 }
             }
         } else {
@@ -294,7 +294,7 @@ public class SpringComponentManager implements ComponentManager {
             try {
                 bean = (T) moduleInstance.getComponent(name);
             } catch (Exception e) {
-                log.warn("The requested bean doesn't exist: '{}' in the addon module context, '{}'.",
+                log.debug("The requested bean doesn't exist: '{}' in the addon module context, '{}'.",
                          name, ArrayUtils.toString(addonModuleNames));
             }
         }
@@ -316,19 +316,19 @@ public class SpringComponentManager implements ComponentManager {
                 if (fallbackRootApplicationContextLookup && servletContext != null) {
                     WebApplicationContext rootWebAppContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
                     if (rootWebAppContext != null) {
-                        log.info("The requested bean by type '{}' doesn't exist in HST spring core component manager. Trying " +
+                        log.debug("The requested bean by type '{}' doesn't exist in HST spring core component manager. Trying " +
                                 "fallback to the root application context", requiredType);
                         try {
                             return rootWebAppContext.getBean(requiredType);
                         } catch (Exception e2) {
-                            log.warn("The requested bean by type '{}' doesn't exist in HST spring component manager nor in " +
+                            log.debug("The requested bean by type '{}' doesn't exist in HST spring component manager nor in " +
                                     "the fallback root application context.", requiredType);
                         }
                     } else {
-                        log.warn("The requested bean '{}' doesn't exist by the required type: '{}'", requiredType);
+                        log.debug("The requested bean '{}' doesn't exist by the required type: '{}'", requiredType);
                     }
                 } else {
-                    log.warn("The requested bean '{}' doesn't exist by the required type: '{}'", requiredType);
+                    log.debug("The requested bean '{}' doesn't exist by the required type: '{}'", requiredType);
                 }
             }
         } else {
@@ -353,7 +353,7 @@ public class SpringComponentManager implements ComponentManager {
             try {
                 bean = moduleInstance.getComponent(requiredType);
             } catch (Exception e) {
-                log.warn("The requested bean doesn't exist by the required type: '{}' in the addon module context, '{}'.",
+                log.debug("The requested bean doesn't exist by the required type: '{}' in the addon module context, '{}'.",
                         requiredType, ArrayUtils.toString(addonModuleNames));
             }
         }
@@ -376,7 +376,7 @@ public class SpringComponentManager implements ComponentManager {
             try {
                 beansMap = applicationContext.getBeansOfType(requiredType);
             } catch (Exception e) {
-                log.warn("The required typed bean doesn't exist: '{}'", requiredType);
+                log.debug("The required typed bean doesn't exist: '{}'", requiredType);
             }
         } else {
             if (addonModuleInstancesMap == null || addonModuleInstancesMap.isEmpty()) {
@@ -400,7 +400,7 @@ public class SpringComponentManager implements ComponentManager {
             try {
                 beansMap = moduleInstance.getComponentsOfType(requiredType);
             } catch (Exception e) {
-                log.warn("The required typed bean doesn't exist: '{}' in the addon module context, '{}'.", 
+                log.debug("The required typed bean doesn't exist: '{}' in the addon module context, '{}'.", 
                         requiredType, ArrayUtils.toString(addonModuleNames));
             }
         }

@@ -28,16 +28,23 @@ import org.hippoecm.hst.site.request.ComponentConfigurationImpl;
 /**
  * HstComponentFactoryImpl
  */
-public class HstComponentFactoryImpl implements HstComponentFactory {
-    
+public class HstComponentFactoryImpl implements HstComponentFactory, ComponentManagerAware {
+
     protected HstComponentRegistry componentRegistry;
     protected Class<?> defaultHstComponentClass = GenericHstComponent.class;
     protected String defaultHstComponentClassName = GenericHstComponent.class.getName();
-    
+
+    private ComponentManager componentManager;
+
     public HstComponentFactoryImpl(HstComponentRegistry componentRegistry) {
         this.componentRegistry = componentRegistry;
     }
-    
+
+    @Override
+    public void setComponentManager(ComponentManager componentManager) {
+        this.componentManager = componentManager;
+    }
+
     public String getDefaultHstComponentClassName() {
         return defaultHstComponentClassName;
     }
@@ -54,25 +61,32 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
     public HstComponent getComponentInstance(HstContainerConfig requestContainerConfig, HstComponentConfiguration compConfig, Mount mount) throws HstComponentException {
         String componentId = getComponentId(compConfig, mount);
         HstComponent component = this.componentRegistry.getComponent(requestContainerConfig, componentId);
-        
+
         if (component == null) {
             boolean initialized = false;
             String componentClassName = StringUtils.trim(compConfig.getComponentClassName());
-             try {
 
+            try {
                 Class<?> compClass = null;
-                
-                if (!StringUtils.isEmpty(componentClassName)) {
-                    compClass = Class.forName(componentClassName);
+
+                if (StringUtils.isNotEmpty(componentClassName)) {
+                    // first try to retrieve component bean from the componentManager by classname.
+                    component = (HstComponent) componentManager.getComponent(componentClassName);
+
+                    // if component not found from componentManager, instantiate it from classname.
+                    if (component == null) {
+                        compClass = Class.forName(componentClassName);
+                        component = (HstComponent) compClass.newInstance();
+                    }
                 } else {
                     compClass = defaultHstComponentClass;
                     componentClassName = defaultHstComponentClassName;
+                    component = (HstComponent) compClass.newInstance();
                 }
-                
-                component = (HstComponent) compClass.newInstance();
+
                 ComponentConfiguration compConfigImpl = new ComponentConfigurationImpl(compConfig);
                 component.init(requestContainerConfig.getServletContext(), compConfigImpl);
-                
+
                 initialized = true;
             } catch (ClassNotFoundException e) {
                 throw new HstComponentException("Cannot find the class of " + compConfig.getCanonicalStoredLocation() + ": " + componentClassName);
@@ -119,4 +133,5 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
         componentIdBuilder.append("compId:").append(compConfig.getId()).append('\uFFFF').append(compConfig.hashCode());
         return componentIdBuilder.toString();
     }
+
 }
