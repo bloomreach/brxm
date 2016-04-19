@@ -17,11 +17,13 @@
 describe('DragDropService', () => {
   'use strict';
 
+  let $q;
   let DragDropService;
   let ScalingService;
   let PageStructureService;
   let HstService;
   let ChannelService;
+  let FeedbackService;
 
   let iframe;
   let base;
@@ -34,12 +36,20 @@ describe('DragDropService', () => {
   beforeEach(() => {
     module('hippo-cm.channel.hippoIframe');
 
-    inject((_DragDropService_, _ScalingService_, _PageStructureService_, _HstService_, _ChannelService_) => {
+    inject((_$q_,
+            _DragDropService_,
+            _ScalingService_,
+            _PageStructureService_,
+            _HstService_,
+            _ChannelService_,
+            _FeedbackService_) => {
+      $q = _$q_;
       DragDropService = _DragDropService_;
       ScalingService = _ScalingService_;
       PageStructureService = _PageStructureService_;
       HstService = _HstService_;
       ChannelService = _ChannelService_;
+      FeedbackService = _FeedbackService_;
     });
 
     spyOn(ChannelService, 'recordOwnChange');
@@ -311,6 +321,102 @@ describe('DragDropService', () => {
     spyOn(container1, 'isDisabled').and.returnValue(true);
     loadIframeFixture(() => {
       expect(DragDropService.drake.containers).toEqual([container2.getBoxElement()]);
+    });
+  });
+
+  it('shows an error when a component is moved within a container that just got locked by another user', (done) => {
+    loadIframeFixture(() => {
+      spyOn(HstService, 'doPost').and.returnValue($q.reject());
+      spyOn(FeedbackService, 'showError');
+
+      // re-render container1 with a different DOM element so we can verify the element got changed
+      const rerenderedContainer1 = createContainer(3);
+      spyOn(PageStructureService, 'renderContainer').and.returnValue($q.resolve(rerenderedContainer1));
+
+      const componentElement1 = component1.getBoxElement();
+      const containerElement1 = container1.getBoxElement();
+      DragDropService._onDrop(componentElement1, containerElement1, containerElement1, undefined);
+
+      // wait until the current $digest is done before expecting results
+      setTimeout(() => {
+        expect(HstService.doPost).toHaveBeenCalledWith(container1.getHstRepresentation(), 'container1', 'update');
+        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
+          component: 'Component 1',
+        });
+        expect(DragDropService.drake.containers).toEqual([
+          rerenderedContainer1.getBoxElement(),
+          container2.getBoxElement(),
+        ]);
+        done();
+      }, 0);
+    });
+  });
+
+  it('shows an error when a component is moved out of a container that just got locked by another user', (done) => {
+    loadIframeFixture(() => {
+      spyOn(HstService, 'doPost').and.returnValues($q.reject(), $q.resolve());
+      spyOn(FeedbackService, 'showError');
+
+      // re-render container1 and container2 with a different DOM elements so we can verify the elements got changed
+      const rerenderedContainer1 = createContainer(3);
+      const rerenderedContainer2 = createContainer(4);
+      spyOn(PageStructureService, 'renderContainer').and.returnValues(
+        $q.resolve(rerenderedContainer1),
+        $q.resolve(rerenderedContainer2)
+      );
+
+      const componentElement1 = component1.getBoxElement();
+      const containerElement1 = container1.getBoxElement();
+      const containerElement2 = container2.getBoxElement();
+      DragDropService._onDrop(componentElement1, containerElement2, containerElement1, undefined);
+
+      // wait until the current $digest is done before expecting results
+      setTimeout(() => {
+        expect(HstService.doPost).toHaveBeenCalledWith(container1.getHstRepresentation(), 'container1', 'update');
+        expect(HstService.doPost).toHaveBeenCalledWith(container2.getHstRepresentation(), 'container2', 'update');
+        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
+          component: 'Component 1',
+        });
+        expect(DragDropService.drake.containers).toEqual([
+          rerenderedContainer1.getBoxElement(),
+          rerenderedContainer2.getBoxElement(),
+        ]);
+        done();
+      }, 0);
+    });
+  });
+
+  it('shows an error when a component is moved into a container that just got locked by another user', (done) => {
+    loadIframeFixture(() => {
+      spyOn(HstService, 'doPost').and.returnValues($q.resolve(), $q.reject());
+      spyOn(FeedbackService, 'showError');
+
+      // re-render container1 and container2 with a different DOM elements so we can verify the elements got changed
+      const rerenderedContainer1 = createContainer(3);
+      const rerenderedContainer2 = createContainer(4);
+      spyOn(PageStructureService, 'renderContainer').and.returnValues(
+        $q.resolve(rerenderedContainer1),
+        $q.resolve(rerenderedContainer2)
+      );
+
+      const componentElement1 = component1.getBoxElement();
+      const containerElement1 = container1.getBoxElement();
+      const containerElement2 = container2.getBoxElement();
+      DragDropService._onDrop(componentElement1, containerElement2, containerElement1, undefined);
+
+      // wait until the current $digest is done before expecting results
+      setTimeout(() => {
+        expect(HstService.doPost).toHaveBeenCalledWith(container1.getHstRepresentation(), 'container1', 'update');
+        expect(HstService.doPost).toHaveBeenCalledWith(container2.getHstRepresentation(), 'container2', 'update');
+        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
+          component: 'Component 1',
+        });
+        expect(DragDropService.drake.containers).toEqual([
+          rerenderedContainer1.getBoxElement(),
+          rerenderedContainer2.getBoxElement(),
+        ]);
+        done();
+      }, 0);
     });
   });
 });

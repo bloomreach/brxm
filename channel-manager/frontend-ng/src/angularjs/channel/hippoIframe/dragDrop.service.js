@@ -21,7 +21,8 @@ const MIRROR_WRAPPER_SELECTOR = '.channel-dragula-mirror';
 
 export class DragDropService {
 
-  constructor($rootScope, $q, DomService, HstService, PageStructureService, ScalingService, ChannelService, ScrollService) {
+  constructor($rootScope, $q, DomService, HstService, PageStructureService, ScalingService, ChannelService,
+              ScrollService, FeedbackService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
@@ -32,6 +33,7 @@ export class DragDropService {
     this.ScalingService = ScalingService;
     this.ChannelService = ChannelService;
     this.ScrollService = ScrollService;
+    this.FeedbackService = FeedbackService;
 
     this.draggingOrClicking = false;
   }
@@ -190,7 +192,9 @@ export class DragDropService {
     // last, re-render the changed container(s) so their meta-data is updated and we're sure they look right
     this.$q.all(backendCallPromises)
       .then(() => this.ChannelService.recordOwnChange())
-      // TODO: handle errors (e.g. one of the containers is already locked)
+      .catch(() => this.FeedbackService.showError('ERROR_MOVE_COMPONENT_FAILED', {
+        component: movedComponent.getLabel(),
+      }))
       .finally(() => {
         changedContainers.forEach((container) => this._renderContainer(container));
       });

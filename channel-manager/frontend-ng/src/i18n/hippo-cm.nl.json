@@ -25,6 +25,7 @@
   "BUTTON_YES": "Ja",
   "BUTTON_NO": "Nee",
   "ERROR_ENTER_EDIT": "Naar Bewerk modus schakelen is mislukt.",
+  "ERROR_MOVE_COMPONENT_FAILED": "Het verplaatsen van component '{{componentLabel}}' is mislukt.",
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "Het ophalen van de globale varianten ('Toon als') is mislukt.",
   "ERROR_RELEVANCE_VARIANT_SELECTION_FAILED": "Het activeren van de globale variant '{{variant}}' is mislukt.",
   "ERROR_SITEMAP_RETRIEVAL_FAILED": "Het ophalen van de sitemap voor dit channel is mislukt.",
