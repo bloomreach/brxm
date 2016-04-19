@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -45,6 +45,11 @@
   <bean id="pagesHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper" parent="abstractHelper"/>
 
   <bean id="templateHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.TemplateHelper" parent="abstractHelper"/>
+
+  <bean id="containerComponentService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentServiceImpl">
+    <constructor-arg ref="pageComposerContextService"/>
+    <constructor-arg ref="containerHelper"/>
+  </bean>
 
   <bean id="siteMapHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper" parent="abstractHelper">
     <property name="pagesHelper" ref="pagesHelper"/>
@@ -92,6 +97,7 @@
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource"  parent="abstractConfigResource">
+              <property name="containerComponentService" ref="containerComponentService"/>
               <property name="containerHelper" ref="containerHelper"/>
             </bean>
           </constructor-arg>

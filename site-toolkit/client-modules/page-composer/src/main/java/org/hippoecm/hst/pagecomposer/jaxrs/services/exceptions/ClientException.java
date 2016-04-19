@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,15 @@ import java.util.Map;
 
 public class ClientException extends RuntimeException {
 
-    private final ClientError error;
-    private final Map<?, ?> parameterMap;
+    private final ErrorStatus errorStatus;
 
     public ClientException(String message, ClientError error, Map<?, ?> parameterMap) {
+        this(message, ErrorStatus.from(error, parameterMap));
+    }
+
+    public ClientException(String message, ErrorStatus errorStatus) {
         super(message);
-        this.error = error;
-        this.parameterMap = parameterMap;
+        this.errorStatus = errorStatus;
     }
 
     public ClientException(String message, ClientError error) {
@@ -35,10 +37,14 @@ public class ClientException extends RuntimeException {
     }
 
     public ClientError getError() {
-        return error;
+        return errorStatus.getError();
     }
 
     public Map<?, ?> getParameterMap() {
-        return parameterMap;
+        return errorStatus.getParameterMap();
+    }
+
+    public ErrorStatus getErrorStatus() {
+        return errorStatus;
     }
 }
