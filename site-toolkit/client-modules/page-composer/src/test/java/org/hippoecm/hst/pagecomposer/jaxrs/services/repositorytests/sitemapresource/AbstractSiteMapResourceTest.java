@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,8 @@ import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentServiceImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
@@ -266,9 +268,14 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
 
     protected ContainerComponentResource createContainerResource() {
         final ContainerComponentResource containerComponentResource = new ContainerComponentResource();
-        containerComponentResource.setPageComposerContextService(mountResource.getPageComposerContextService());
-        ContainerHelper helper = new ContainerHelper();
-        helper.setPageComposerContextService(mountResource.getPageComposerContextService());
+        final PageComposerContextService pageComposerContextService = mountResource.getPageComposerContextService();
+
+        final ContainerHelper helper = new ContainerHelper();
+        helper.setPageComposerContextService(pageComposerContextService);
+
+        final ContainerComponentService containerComponentService = new ContainerComponentServiceImpl(pageComposerContextService, helper);
+        containerComponentResource.setContainerComponentService(containerComponentService);
+        containerComponentResource.setPageComposerContextService(pageComposerContextService);
         containerComponentResource.setContainerHelper(helper);
         return containerComponentResource;
     }

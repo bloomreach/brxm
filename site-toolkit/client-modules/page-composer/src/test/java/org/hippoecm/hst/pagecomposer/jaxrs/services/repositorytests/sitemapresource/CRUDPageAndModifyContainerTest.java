@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,11 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ErrorStatus;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -84,9 +85,9 @@ public class CRUDPageAndModifyContainerTest extends AbstractSiteMapResourceTest 
 
         final Response response = containerResource.createContainerItem(catalogItem.getIdentifier(),
                 versionStamp);
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
-                Response.Status.OK.getStatusCode(), response.getStatus());
-        ContainerItemRepresentation containerItemRepresentation = (ContainerItemRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+
+        ContainerItemRepresentation containerItemRepresentation = (ContainerItemRepresentation)response.getEntity();
         assertEquals(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName + "/main/container1/catalog-item",
                 containerItemRepresentation.getPath());
 
@@ -140,7 +141,7 @@ public class CRUDPageAndModifyContainerTest extends AbstractSiteMapResourceTest 
 
         final Response response = containerResource.createContainerItem(catalogItem.getIdentifier(),
                 incorrectVersionStamp);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
     }
 
     @Test
@@ -171,8 +172,8 @@ public class CRUDPageAndModifyContainerTest extends AbstractSiteMapResourceTest 
         final Response response = containerResource.createContainerItem(catalogItem.getIdentifier(),
                 incorrectVersionStamp);
 
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        assertTrue(((ExtResponseRepresentation) response.getEntity()).getMessage().contains("has been modified"));
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals(ClientError.ITEM_CHANGED, ((ErrorStatus)response.getEntity()).getError());
     }
 
     @Test
@@ -202,9 +203,9 @@ public class CRUDPageAndModifyContainerTest extends AbstractSiteMapResourceTest 
         // add a container item
         final ContainerComponentResource containerResource = createContainerResource();
         final Response response = containerResource.createContainerItem(catalogItem.getIdentifier(), 0);
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
-                Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        assertTrue(((ExtResponseRepresentation) response.getEntity()).getMessage().contains("cannot be locked"));
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals(ClientError.ITEM_ALREADY_LOCKED, ((ErrorStatus)response.getEntity()).getError());
 
         bob.logout();
     }
