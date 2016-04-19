@@ -46,13 +46,18 @@ class Registrar {
 
     private static final Logger log = LoggerFactory.getLogger(Registrar.class);
 
+    private final File baseDir;
     private final File registryDir;
     private final Collection<String> locales;
     private final Registry registry;
     private final String moduleName;
     
-    Registrar(final File registryDir, final String moduleName, final Collection<String> locales) {
-        this.registryDir = registryDir;
+    Registrar(final File baseDir, final String moduleName, final Collection<String> locales) throws IOException {
+        this.baseDir = baseDir;
+        this.registryDir = new File(baseDir, "resources");
+        if (!registryDir.exists()) {
+            throw new IllegalArgumentException("Registry directory does not exist: " + registryDir.getCanonicalPath());
+        }
         this.locales = locales;
         registry = new Registry(registryDir);
         this.moduleName = moduleName;
@@ -188,11 +193,7 @@ class Registrar {
         TranslationsUtils.checkLocales(locales);
         final String command = commandLine.getOptionValue("command");
         final String moduleName = baseDir.getName();
-        final File registryDir = new File(baseDir, "resources");
-        if (!registryDir.exists()) {
-            throw new IllegalArgumentException("Registry directory does not exist: " + registryDir.getCanonicalPath());
-        }
-        final Registrar registrar = new Registrar(registryDir, moduleName, locales);
+        final Registrar registrar = new Registrar(baseDir, moduleName, locales);
         switch (command) {
             case "initialize":
                 registrar.initialize();
@@ -259,7 +260,7 @@ class Registrar {
         
     }
     
-    private static class ReportUpdateListener extends UpdateListener {
+    private class ReportUpdateListener extends UpdateListener {
         
         private JunitReportWriter writer = new JunitReportWriter();
         private boolean added;
@@ -315,7 +316,7 @@ class Registrar {
         }
 
         private void writeReport() throws IOException {
-            writer.write(new File("target/TEST-update.xml"));
+            writer.write(new File(baseDir, "target/TEST-update.xml"));
         }
     }
     
