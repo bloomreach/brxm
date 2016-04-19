@@ -86,7 +86,9 @@ export class HstService {
     apiUrl += './';
 
     pathElements.forEach((pathElement) => {
-      apiUrl = concatPaths(apiUrl, pathElement);
+      if (pathElement) {
+        apiUrl = concatPaths(apiUrl, pathElement);
+      }
     });
 
     if (params) {

@@ -24,7 +24,7 @@
     <md-menu-item ng-repeat="action in pageActions.actions">
       <md-button class="qa-pages-action-{{ action.id }}"
                  aria-label="{{ action.label }}"
-                 ng-click="action.trigger()"
+                 ng-click="pageActions.trigger(action)"
                  ng-disabled="!action.isEnabled">
         {{ action.label }}
       </md-button>

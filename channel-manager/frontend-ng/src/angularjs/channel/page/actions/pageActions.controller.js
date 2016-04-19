@@ -24,9 +24,14 @@ export class PageActionsCtrl {
       this.actions.push({
         id,
         label: $translate.instant(`TOOLBAR_MENU_PAGES_${id.toUpperCase()}`),
-        isEnabled: false,
-        trigger: () => {},
+        isEnabled: id === 'add',
       });
     });
+  }
+
+  trigger(action) {
+    if (action.id === 'add') {
+      this.onActionSelected({ subpage: `page-${action.id}` });
+    }
   }
 }

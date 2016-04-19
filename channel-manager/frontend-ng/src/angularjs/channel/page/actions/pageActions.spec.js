@@ -20,6 +20,7 @@ describe('PageActions', () => {
   let $rootScope;
   let $compile;
   let $translate;
+  let $scope;
 
   beforeEach(() => {
     module('hippo-cm');
@@ -40,8 +41,9 @@ describe('PageActions', () => {
   });
 
   function compileDirectiveAndGetController() {
-    const $scope = $rootScope.$new();
-    const $element = angular.element('<page-actions></page-actions>');
+    $scope = $rootScope.$new();
+    $scope.onActionSelected = jasmine.createSpy('onActionSelected');
+    const $element = angular.element('<page-actions on-action-selected="onActionSelected(subpage)"></page-actions>');
     $compile($element)($scope);
     $scope.$digest();
 
@@ -59,5 +61,15 @@ describe('PageActions', () => {
     expect(PageActionsCtrl.actions[2].id).toBe('delete');
     expect(PageActionsCtrl.actions[3].id).toBe('move');
     expect(PageActionsCtrl.actions[4].id).toBe('copy');
+  });
+
+  it('calls the passed in callback when selecting an action', () => {
+    const PageActionsCtrl = compileDirectiveAndGetController();
+
+    PageActionsCtrl.trigger(PageActionsCtrl.actions[0]);
+    expect($scope.onActionSelected).not.toHaveBeenCalled();
+
+    PageActionsCtrl.trigger(PageActionsCtrl.actions[1]);
+    expect($scope.onActionSelected).toHaveBeenCalledWith('page-add');
   });
 });

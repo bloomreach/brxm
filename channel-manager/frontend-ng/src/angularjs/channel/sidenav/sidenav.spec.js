@@ -20,7 +20,7 @@ describe('ChannelSidenav', () => {
   let $rootScope;
   let $compile;
   let ChannelSidenavService;
-  let ChannelSiteMapService;
+  let SiteMapService;
   let ChannelService;
   let HippoIframeService;
   let parentScope;
@@ -31,19 +31,19 @@ describe('ChannelSidenav', () => {
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _ChannelSidenavService_, _ChannelService_, _ChannelSiteMapService_, _HippoIframeService_) => {
+    inject((_$rootScope_, _$compile_, _ChannelSidenavService_, _ChannelService_, _SiteMapService_, _HippoIframeService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       ChannelSidenavService = _ChannelSidenavService_;
       ChannelService = _ChannelService_;
-      ChannelSiteMapService = _ChannelSiteMapService_;
+      SiteMapService = _SiteMapService_;
       HippoIframeService = _HippoIframeService_;
     });
 
     spyOn(ChannelService, 'getCatalog').and.returnValue([]);
     spyOn(ChannelSidenavService, 'initialize');
     spyOn(ChannelSidenavService, 'close');
-    spyOn(ChannelSiteMapService, 'get');
+    spyOn(SiteMapService, 'get');
     spyOn(HippoIframeService, 'load');
     spyOn(HippoIframeService, 'getCurrentRenderPathInfo');
   });
@@ -90,7 +90,7 @@ describe('ChannelSidenav', () => {
   it('retrieves the sitemap items from the channel siteMap service', () => {
     const siteMapItems = ['dummy'];
     const ChannelSidenavCtrl = instantiateController(false);
-    ChannelSiteMapService.get.and.returnValue(siteMapItems);
+    SiteMapService.get.and.returnValue(siteMapItems);
 
     expect(ChannelSidenavCtrl.getSiteMap()).toBe(siteMapItems);
   });

@@ -18,10 +18,12 @@ import { DomService } from './dom.service';
 import { ThrottleService } from './throttle.service';
 import { FeedbackService } from './feedback.service';
 import { startWithSlashFilter } from './startWithSlash.filter';
+import { illegalCharactersDirective } from './directive/illegalCharacters.directive';
 
 export const utilsModule = angular
   .module('hippo-cm.utils', [])
   .service('DomService', DomService)
   .service('ThrottleService', ThrottleService)
   .service('FeedbackService', FeedbackService)
-  .filter('startWithSlash', startWithSlashFilter);
+  .filter('startWithSlash', startWithSlashFilter)
+  .directive('illegalCharacters', illegalCharactersDirective);

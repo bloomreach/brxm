@@ -15,7 +15,7 @@
  */
 
 export class ChannelService {
-  constructor($log, $rootScope, $http, $state, SessionService, CatalogService, HstService, ConfigService, CmsService, ChannelSiteMapService) {
+  constructor($log, $rootScope, $http, $state, SessionService, CatalogService, HstService, ConfigService, CmsService, SiteMapService) {
     'ngInject';
 
     this.$log = $log;
@@ -28,7 +28,7 @@ export class ChannelService {
     this.HstService = HstService;
     this.ConfigService = ConfigService;
     this.CmsService = CmsService;
-    this.ChannelSiteMapService = ChannelSiteMapService;
+    this.SiteMapService = SiteMapService;
 
     this.channel = {};
 
@@ -61,7 +61,7 @@ export class ChannelService {
     this.channel = channel;
     this.channelPrefix = this._makeChannelPrefix(); // precompute to be more efficient
     this.CatalogService.load(this._getMountId());
-    this.ChannelSiteMapService.load(channel.siteMapId);
+    this.SiteMapService.load(channel.siteMapId);
   }
 
   getChannel() {
@@ -186,6 +186,15 @@ export class ChannelService {
         this._resetOwnChange();
         return response;
       });
+  }
+
+  getSiteMapId() {
+    return this.channel.siteMapId;
+  }
+
+  getNewPageModel() {
+    return this.HstService.doGet(this._getMountId(), 'newpagemodel')
+      .then((response) => response.data);
   }
 
   _getMountId() {

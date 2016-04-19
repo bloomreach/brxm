@@ -16,64 +16,92 @@
 
 /* eslint-disable prefer-const */
 
-describe('ChannelSiteMapService', () => {
+describe('SiteMapService', () => {
   'use strict';
 
   let $q;
   let $rootScope;
-  let ChannelSiteMapService;
+  let SiteMapService;
   let HstService;
   let FeedbackService;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$q_, _$rootScope_, _ChannelSiteMapService_, _HstService_, _FeedbackService_) => {
+    inject((_$q_, _$rootScope_, _SiteMapService_, _HstService_, _FeedbackService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
-      ChannelSiteMapService = _ChannelSiteMapService_;
+      SiteMapService = _SiteMapService_;
       HstService = _HstService_;
       FeedbackService = _FeedbackService_;
     });
 
+    spyOn(HstService, 'doPost');
     spyOn(HstService, 'getSiteMap');
     spyOn(FeedbackService, 'showError');
   });
 
   it('initializes an empty sitemap', () => {
-    expect(ChannelSiteMapService.get()).toEqual([]);
+    expect(SiteMapService.get()).toEqual([]);
   });
 
   it('retrieves the sitemap from the HST service', () => {
     const siteMap = ['dummy'];
     HstService.getSiteMap.and.returnValue($q.when(siteMap));
-    ChannelSiteMapService.load('siteMapId');
+    SiteMapService.load('siteMapId');
     $rootScope.$digest();
 
     expect(HstService.getSiteMap).toHaveBeenCalledWith('siteMapId');
-    expect(ChannelSiteMapService.get()).toBe(siteMap);
+    expect(SiteMapService.get()).toBe(siteMap);
     expect(FeedbackService.showError).not.toHaveBeenCalled();
   });
 
   it('flashes a toast when the sitemap cannot be retrieved', () => {
     HstService.getSiteMap.and.returnValue($q.reject());
-    ChannelSiteMapService.load('siteMapId');
+    SiteMapService.load('siteMapId');
     $rootScope.$digest();
 
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_SITEMAP_RETRIEVAL_FAILED');
-    expect(ChannelSiteMapService.get()).toEqual([]);
+    expect(SiteMapService.get()).toEqual([]);
   });
 
   it('clears the existing sitemap when the sitemap cannot be retrieved', () => {
     HstService.getSiteMap.and.returnValue($q.when(['dummy']));
-    ChannelSiteMapService.load('siteMapId');
+    SiteMapService.load('siteMapId');
     $rootScope.$digest();
 
     HstService.getSiteMap.and.returnValue($q.reject());
-    ChannelSiteMapService.load('siteMapId2');
+    SiteMapService.load('siteMapId2');
     $rootScope.$digest();
 
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_SITEMAP_RETRIEVAL_FAILED');
-    expect(ChannelSiteMapService.get()).toEqual([]);
+    expect(SiteMapService.get()).toEqual([]);
+  });
+
+  it('delegates the creation of a new page to the HST service', (done) => {
+    HstService.doPost.and.returnValue($q.when({ data: 'test' }));
+    SiteMapService.create('siteMapId', 'parentSiteMapItemId', {})
+      .then((result) => {
+        expect(result).toBe('test');
+        done();
+      })
+      .catch(() => {
+        fail();
+      });
+    expect(HstService.doPost).toHaveBeenCalledWith({}, 'siteMapId', 'create', 'parentSiteMapItemId');
+    $rootScope.$digest();
+  });
+
+  it('relays a failure to create a new page', (done) => {
+    HstService.doPost.and.returnValue($q.reject());
+    SiteMapService.create('siteMapId', undefined, {})
+      .then(() => {
+        fail();
+      })
+      .catch(() => {
+        done();
+      });
+    expect(HstService.doPost).toHaveBeenCalledWith({}, 'siteMapId', 'create', undefined);
+    $rootScope.$digest();
   });
 });

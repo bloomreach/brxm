@@ -21,7 +21,7 @@ describe('ChannelService', () => {
   let $log;
   let $rootScope;
   let ChannelService;
-  let ChannelSiteMapService;
+  let SiteMapService;
   let CatalogServiceMock;
   let SessionServiceMock;
   let HstService;
@@ -62,7 +62,7 @@ describe('ChannelService', () => {
       $provide.value('CatalogService', CatalogServiceMock);
     });
 
-    inject((_$q_, _$log_, _$state_, _$rootScope_, _ChannelService_, _CmsService_, _HstService_, _ChannelSiteMapService_) => {
+    inject((_$q_, _$log_, _$state_, _$rootScope_, _ChannelService_, _CmsService_, _HstService_, _SiteMapService_) => {
       $q = _$q_;
       $log = _$log_;
       $state = _$state_;
@@ -70,12 +70,13 @@ describe('ChannelService', () => {
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
       HstService = _HstService_;
-      ChannelSiteMapService = _ChannelSiteMapService_;
+      SiteMapService = _SiteMapService_;
     });
 
     spyOn(HstService, 'doPost');
+    spyOn(HstService, 'doGet');
     spyOn(HstService, 'getChannel');
-    spyOn(ChannelSiteMapService, 'load');
+    spyOn(SiteMapService, 'load');
     spyOn(window.APP_TO_CMS, 'publish');
   });
 
@@ -142,7 +143,7 @@ describe('ChannelService', () => {
     expect(ChannelService.getChannel()).not.toEqual(channelMock);
     $rootScope.$digest();
     expect(ChannelService.getChannel()).toEqual(channelMock);
-    expect(ChannelSiteMapService.load).toHaveBeenCalledWith('siteMapId');
+    expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
   });
 
   it('should resolve a promise with the channel when load succeeds', () => {
@@ -392,5 +393,39 @@ describe('ChannelService', () => {
     expect(ChannelService.extractRenderPathInfo(nonMatchingPrefix))
       .toBe(nonMatchingPrefix);
     expect($log.warn).toHaveBeenCalled();
+  });
+
+  it('should return the channel\'s siteMap ID', () => {
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+    expect(ChannelService.getSiteMapId()).toBe('siteMapId');
+  });
+
+  it('should retrieve the new page model from the HST service', (done) => {
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+    HstService.doGet.and.returnValue($q.when({ data: 'test' }));
+
+    ChannelService.getNewPageModel().then((result) => {
+      expect(result).toBe('test');
+      done();
+    });
+    expect(HstService.doGet).toHaveBeenCalledWith(channelMock.mountId, 'newpagemodel');
+    $rootScope.$digest();
+  });
+
+  it('should relay failure to retrieve the new page model from the HST service', (done) => {
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+    HstService.doGet.and.returnValue($q.reject());
+
+    ChannelService.getNewPageModel()
+      .then(() => {
+        fail();
+      })
+      .catch(() => {
+        done();
+      });
+    $rootScope.$digest();
   });
 });

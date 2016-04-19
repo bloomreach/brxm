@@ -15,12 +15,12 @@
  */
 
 export class ChannelSidenavCtrl {
-  constructor($scope, $element, ChannelSidenavService, ChannelService, ChannelSiteMapService, HippoIframeService) {
+  constructor($scope, $element, ChannelSidenavService, ChannelService, SiteMapService, HippoIframeService) {
     'ngInject';
 
     this.ChannelService = ChannelService;
     this.ChannelSidenavService = ChannelSidenavService;
-    this.ChannelSiteMapService = ChannelSiteMapService;
+    this.SiteMapService = SiteMapService;
     this.HippoIframeService = HippoIframeService;
 
     ChannelSidenavService.initialize($element.find('md-sidenav'));
@@ -42,7 +42,7 @@ export class ChannelSidenavCtrl {
   }
 
   getSiteMap() {
-    return this.ChannelSiteMapService.get();
+    return this.SiteMapService.get();
   }
 
   showPage(siteMapItem) {

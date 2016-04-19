@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class ChannelSiteMapService {
+export class SiteMapService {
   constructor(HstService, FeedbackService) {
     'ngInject';
 
@@ -37,5 +37,10 @@ export class ChannelSiteMapService {
         this.siteMap = [];
         this.FeedbackService.showError('ERROR_SITEMAP_RETRIEVAL_FAILED');
       });
+  }
+
+  create(siteMapId, parentSiteMapItemId, page) {
+    return this.HstService.doPost(page, siteMapId, 'create', parentSiteMapItemId)
+      .then((response) => response.data);
   }
 }

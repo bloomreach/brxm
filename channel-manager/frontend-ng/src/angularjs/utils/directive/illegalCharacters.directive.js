@@ -14,16 +14,33 @@
  * limitations under the License.
  */
 
-export function pageActionsDirective() {
+export function illegalCharactersDirective() {
   'ngInject';
 
   return {
-    restrict: 'E',
-    bindToController: {
-      onActionSelected: '&',
+    restrict: 'A',
+    require: 'ngModel',
+    scope: {
+      illegalCharacters: '@',
     },
-    templateUrl: 'channel/page/actions/pageActions.html',
-    controller: 'PageActionsCtrl',
-    controllerAs: 'pageActions',
+    link: (scope, elem, attrs, ngModel) => {
+      const validator = (value) => {
+        let isValid = true;
+        value = value || '';
+
+        angular.forEach(scope.illegalCharacters, (character) => {
+          if (value.indexOf(character) >= 0) {
+            isValid = false;
+          }
+        });
+
+        ngModel.$setValidity('illegalCharacters', isValid);
+
+        return value;
+      };
+
+      ngModel.$parsers.unshift(validator);
+      ngModel.$formatters.push(validator);
+    },
   };
 }

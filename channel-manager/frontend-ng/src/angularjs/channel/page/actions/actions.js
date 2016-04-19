@@ -16,8 +16,12 @@
 
 import { pageActionsDirective } from './pageActions.directive';
 import { PageActionsCtrl } from './pageActions.controller';
+import { pageAddDirective } from './add/add.directive';
+import { PageAddCtrl } from './add/add.controller';
 
 export const channelPageActionsModule = angular
-  .module('hippo-cm.channel.page.actions', [])
+  .module('hippo-cm.channel.page.actions', ['ngMessages'])
   .controller('PageActionsCtrl', PageActionsCtrl)
-  .directive('pageActions', pageActionsDirective);
+  .directive('pageActions', pageActionsDirective)
+  .controller('PageAddCtrl', PageAddCtrl)
+  .directive('pageAdd', pageAddDirective);

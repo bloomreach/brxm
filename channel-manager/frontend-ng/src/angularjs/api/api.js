@@ -20,6 +20,7 @@ import { ConfigService } from './config.service';
 import { DialogService } from './dialog.service';
 import { HstService } from './hst.service';
 import { SessionService } from './session.service';
+import { SiteMapService } from './siteMap.service';
 import { HstConstants } from './hst.constants';
 
 export const channelManagerApi = angular
@@ -30,4 +31,5 @@ export const channelManagerApi = angular
   .service('DialogService', DialogService)
   .service('HstService', HstService)
   .service('SessionService', SessionService)
+  .service('SiteMapService', SiteMapService)
   .constant('HstConstants', HstConstants);

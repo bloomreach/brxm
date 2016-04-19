@@ -18,7 +18,7 @@
   <md-toolbar class="qa-toolbar">
     <div class="md-toolbar-tools">
       <channel-sidenav-toggle></channel-sidenav-toggle>
-      <page-actions ng-if="channelCtrl.isEditMode"></page-actions>
+      <page-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
       <relevance-view-as render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
       <span flex></span>
       <md-button ng-repeat="viewPort in channelCtrl.viewPorts"
@@ -82,5 +82,10 @@
 
   </md-content>
 </div>
+
+<page-add layout="column" flex
+          ng-if="channelCtrl.currentSubpage == 'page-add'"
+          on-done="channelCtrl.hideSubpage()">
+</page-add>
 
 <div class="mask qa-mask" mask></div>
