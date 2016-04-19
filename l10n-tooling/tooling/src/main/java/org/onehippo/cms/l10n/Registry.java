@@ -46,12 +46,15 @@ public class Registry {
             private Collection<File> files = loadFiles(registryDir, new ArrayList<>());
 
             private Collection<File> loadFiles(File directory, Collection<File> files) {
-                for (File file : directory.listFiles()) {
-                    if (file.isDirectory()) {
-                        loadFiles(file, files);
-                    } else {
-                        if (file.getName().endsWith(TranslationsUtils.REGISTRY_FILE_SUFFIX)) {
-                            files.add(file);
+                final File[] listFiles = directory.listFiles();
+                if (listFiles != null) {
+                    for (File file : listFiles) {
+                        if (file.isDirectory()) {
+                            loadFiles(file, files);
+                        } else {
+                            if (file.getName().endsWith(TranslationsUtils.REGISTRY_FILE_SUFFIX)) {
+                                files.add(file);
+                            }
                         }
                     }
                 }
