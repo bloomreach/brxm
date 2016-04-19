@@ -27,7 +27,23 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.demo.util.DateRangeQueryConstraints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+/**
+ * This HstComponent is annotated with {@link Component}.
+ * <P>
+ * Note: HstComponent bean must always be {@link ConfigurableBeanFactory.SCOPE_PROTOTYPE} like this example.
+ * Otherwise, thread-safety issue can occur due to a singleton bean instance of HstComponent.
+ * Also, the bean name (set by {@link Service} annotation) must be the FQCN of this component class
+ * because the component class is scanned for component parameters in many other locations in HST Container.
+ * </P>
+ */
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Service("org.hippoecm.hst.demo.components.Search")
 public class Search extends AbstractSearchComponent {
 
     public static final Logger log = LoggerFactory.getLogger(Search.class);
