@@ -14,10 +14,5 @@
  * limitations under the License.
  */
 
-import { changesMenuDirective } from './changesMenu.directive';
-import { ChangesMenuCtrl } from './changesMenu.controller';
-
-export const changesMenuModule = angular
-  .module('hippo-cm.changesMenu', [])
-  .controller('ChangesMenuCtrl', ChangesMenuCtrl)
-  .directive('changesMenu', changesMenuDirective);
+export class ChangeManagementCtrl {
+}

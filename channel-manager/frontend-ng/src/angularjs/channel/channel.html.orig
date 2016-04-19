@@ -70,17 +70,21 @@
   </md-content>
 </div>
 
-<<<<<<< 8342f54adf8b8ae7f3674cb73b787c2fb33ca69a
+<<<<<<< ba6a915ba90e04d7b9f168ab092f1e334dd891bc
 <page-add layout="column" flex
           ng-if="channelCtrl.currentSubpage == 'page-add'"
           on-done="channelCtrl.hideSubpage()">
 </page-add>
-=======
+
 <cm-manage-changes ng-if="channelCtrl.isSubpageOpen()">
   <md-button class="md-raised" ng-click="channelCtrl.hideSubpage()">
     Back
   </md-button>
 </cm-manage-changes>
->>>>>>> CHANNELMGR-582 setup change handler to switch to panel
+=======
+<change-management ng-if="channelCtrl.isSubpageOpen()"
+    on-done="channelCtrl.hideSubpage()">
+</change-management>
+>>>>>>> CHANNELMGR-582 Create change management component basics
 
 <div class="mask qa-mask" mask></div>

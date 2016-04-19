@@ -75,10 +75,8 @@
           on-done="channelCtrl.hideSubpage()">
 </page-add>
 
-<cm-manage-changes ng-if="channelCtrl.isSubpageOpen()">
-  <md-button class="md-raised" ng-click="channelCtrl.hideSubpage()">
-    Back
-  </md-button>
-</cm-manage-changes>
+<change-management ng-if="channelCtrl.isSubpageOpen()"
+    on-done="channelCtrl.hideSubpage()">
+</change-management>
 
 <div class="mask qa-mask" mask></div>

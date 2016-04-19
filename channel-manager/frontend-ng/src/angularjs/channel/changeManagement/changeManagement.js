@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { changesMenuDirective } from './changesMenu.directive';
-import { ChangesMenuCtrl } from './changesMenu.controller';
+import { changeManagementDirective } from './changeManagement.directive';
+import { ChangeManagementCtrl } from './changeManagement.controller';
 
-export const changesMenuModule = angular
-  .module('hippo-cm.changesMenu', [])
-  .controller('ChangesMenuCtrl', ChangesMenuCtrl)
-  .directive('changesMenu', changesMenuDirective);
+export const changeManagementModule = angular
+  .module('hippo-cm.changeManagement', [])
+  .controller('ChangeManagementCtrl', ChangeManagementCtrl)
+  .directive('changeManagement', changeManagementDirective);
