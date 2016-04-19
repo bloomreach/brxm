@@ -50,7 +50,13 @@ public class MagicMimeTypeFileItem implements FileItem {
             if (MediaTypeRegistry.getDefaultRegistry().isInstanceOf(extensionBasedMediaType, MediaType.TEXT_PLAIN)) {
                 return extensionBasedMediaType;
             }
-            return tika.detect(in, fileName);
+
+            String resolvedMediaType = tika.detect(in, fileName);
+            if (MediaTypeRegistry.getDefaultRegistry().isInstanceOf(resolvedMediaType, MediaType.APPLICATION_ZIP)) {
+                return extensionBasedMediaType;
+            }
+
+            return resolvedMediaType;
         } catch (IOException e) {
             log.warn("Tika failed to detect mime-type, falling back on browser provided mime-type", e);
         }
