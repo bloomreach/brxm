@@ -3,23 +3,25 @@
   "BUTTON_YES": "Yes",
   "CONFIRM_DELETE_COMPONENT_MESSAGE": "Are you sure you want to remove the component '{{component}}' from this template?",
   "CONFIRM_DELETE_COMPONENT_TITLE": "Confirm remove",
-  "CONFIRM_DELETE_PAGE_TITLE": "Confirm delete",
-  "CONFIRM_DELETE_PAGE_MESSAGE": "Are you sure you want to delete this page?",
   "CONFIRM_DISCARD_OWN_CHANGES_MESSAGE": "Are you sure you want to discard all your unpublished changes to this channel?",
   "CONFIRM_DISCARD_OWN_CHANGES_TITLE": "Confirm discard changes",
   "CONFIRM_OPEN_EXTERNAL_LINK": "This external link will be opened in a new tab.\nDo you want to continue?",
+<<<<<<< 8342f54adf8b8ae7f3674cb73b787c2fb33ca69a
   "ERROR_ADD_COMPONENT": "Cannot add '{{component}}'.",
-  "ERROR_DELETE_PAGE": "Failed to delete page.",
+=======
+>>>>>>> CHANNELMGR-582 setup change handler to switch to panel
   "ERROR_ENTER_EDIT": "Failed to enter Edit mode.",
   "ERROR_MOVE_COMPONENT_FAILED": "Failed to move component '{{component}}'",
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "Failed to retrieve the list of global variants.",
   "ERROR_RELEVANCE_VARIANT_SELECTION_FAILED": "Failed to activate global variant '{{variant}}'.",
-  "ERROR_SITEMAP_ITEM_RETRIEVAL_FAILED": "Failed to retrieve meta data for the current page.",
   "ERROR_SITEMAP_RETRIEVAL_FAILED": "Failed to retrieve the sitemap for the current channel.",
   "EXPERIMENT_LABEL_COMPLETED": "Experiment completed",
   "EXPERIMENT_LABEL_CREATED": "Experiment created",
   "EXPERIMENT_LABEL_RUNNING": "Experiment running",
+<<<<<<< 8342f54adf8b8ae7f3674cb73b787c2fb33ca69a
   "ITEM_ALREADY_LOCKED": "Cannot add '{{component}}': the container is locked by '{{lockedBy}}'.",
+=======
+>>>>>>> CHANNELMGR-582 setup change handler to switch to panel
   "SIDENAV_TAB_COMPONENTS": "Components",
   "SIDENAV_TAB_SITEMAP": "Sitemap",
   "SUBPAGE_PAGE_ADD_BUTTON_CREATE": "Create",
@@ -33,12 +35,15 @@
   "SUBPAGE_PAGE_ADD_VALIDATION_ILLEGAL_CHARACTERS": "'/', ' ' and ':'",
   "TOOLBAR_BUTTON_BACK": "Back",
   "TOOLBAR_BUTTON_CHANGES": "Changes",
-  "TOOLBAR_BUTTON_PAGE": "Page",
+  "TOOLBAR_BUTTON_PAGES": "Pages",
   "TOOLBAR_BUTTON_SIDENAV": "Sidenav",
   "TOOLBAR_EDIT_ALTER_EGO_TOOLTIP": "Edit Alter Ego",
   "TOOLBAR_MENU_CHANGES_DISCARD": "Discard",
   "TOOLBAR_MENU_CHANGES_PUBLISH": "Publish",
+<<<<<<< 8342f54adf8b8ae7f3674cb73b787c2fb33ca69a
+=======
   "TOOLBAR_MENU_MANAGE_CHANGES": "Manage changes",
+>>>>>>> CHANNELMGR-582 setup change handler to switch to panel
   "TOOLBAR_MENU_PAGES_ADD": "Add",
   "TOOLBAR_MENU_PAGES_COPY": "Copy",
   "TOOLBAR_MENU_PAGES_DELETE": "Delete",
@@ -49,8 +54,11 @@
   "TOOLBAR_SWITCH_VIEWER_MODE_VIEW": "View",
   "TOOLBAR_VIEW_AS_INFIX": ", the ",
   "TOOLBAR_VIEW_AS_LABEL": "View as",
+<<<<<<< 8342f54adf8b8ae7f3674cb73b787c2fb33ca69a
   "VALIDATION_ILLEGAL_CHARACTERS": "One or more invalid characters ({{characters}}) have been entered",
   "VALIDATION_REQUIRED": "This is required",
+=======
+>>>>>>> CHANNELMGR-582 setup change handler to switch to panel
   "VIEWPORT_WIDTH_DESKTOP": "desktop",
   "VIEWPORT_WIDTH_PHONE": "phone (320px)",
   "VIEWPORT_WIDTH_TABLET": "tablet (720px)"

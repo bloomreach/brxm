@@ -19,5 +19,8 @@ export function changesMenuDirective() {
     restrict: 'E',
     templateUrl: 'channel/changesMenu/changesMenu.html',
     controller: 'ChangesMenuCtrl as changes',
+    bindToController: {
+      onManageChanges: '&',
+    },
   };
 }

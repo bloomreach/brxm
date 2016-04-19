@@ -70,15 +70,17 @@
   </md-content>
 </div>
 
+<<<<<<< 8342f54adf8b8ae7f3674cb73b787c2fb33ca69a
 <page-add layout="column" flex
           ng-if="channelCtrl.currentSubpage == 'page-add'"
           on-done="channelCtrl.hideSubpage()">
 </page-add>
-
+=======
 <cm-manage-changes ng-if="channelCtrl.isSubpageOpen()">
   <md-button class="md-raised" ng-click="channelCtrl.hideSubpage()">
     Back
   </md-button>
 </cm-manage-changes>
+>>>>>>> CHANNELMGR-582 setup change handler to switch to panel
 
 <div class="mask qa-mask" mask></div>
