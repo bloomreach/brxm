@@ -54,6 +54,7 @@ describe('DragDropService', () => {
     PageStructureService.registerParsedElement(iframeContainerComment, {
       uuid: `container${number}`,
       'HST-Type': 'CONTAINER_COMPONENT',
+      'HST-XType': 'HST.Transparent',
     });
     return PageStructureService.containers[PageStructureService.containers.length - 1];
   }
@@ -245,7 +246,7 @@ describe('DragDropService', () => {
 
   it('can move the second component to the first position in the container', (done) => {
     loadIframeFixture(() => {
-      const componentElement1 = component2.getBoxElement();
+      const componentElement1 = component1.getBoxElement();
       const componentElement2 = component2.getBoxElement();
       const containerElement = container1.getBoxElement();
 
