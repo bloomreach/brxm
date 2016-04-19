@@ -96,6 +96,11 @@ describe('DragDropService', () => {
     iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/dragDrop.service.iframe.fixture.html`);
   }
 
+  function boundEventHandlerCount(jqueryElement, event) {
+    const eventHandlers = $._data(jqueryElement[0], 'events');
+    return eventHandlers && eventHandlers.hasOwnProperty(event) ? eventHandlers[event].length : 0;
+  }
+
   it('is not dragging initially', () => {
     expect(DragDropService.isDragging()).toBeFalsy();
   });
@@ -221,10 +226,29 @@ describe('DragDropService', () => {
     });
   });
 
-  it('stops dragging', () => {
-    DragDropService.dragging = true;
-    DragDropService._onStopDrag();
-    expect(DragDropService.isDragging()).toBeFalsy();
+  it('cancels the click simulation for showing a component\'s properties when the mouse cursor leaves a disabled component', (done) => {
+    spyOn(container1, 'isDisabled').and.returnValue(true);
+    loadIframeFixture(() => {
+      const mockedMouseDownEvent = {
+        clientX: 100,
+        clientY: 200,
+      };
+      const componentElement1 = component1.getBoxElement();
+      DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
+
+      expect(DragDropService.isDraggingOrClicking()).toEqual(true);
+      expect(boundEventHandlerCount(componentElement1, 'mouseup')).toEqual(1);
+      expect(boundEventHandlerCount(componentElement1, 'mouseout')).toEqual(1);
+
+      componentElement1.one('mouseout.test', () => {
+        expect(DragDropService.isDraggingOrClicking()).toEqual(false);
+        expect(boundEventHandlerCount(componentElement1, 'mouseup')).toEqual(0);
+        expect(boundEventHandlerCount(componentElement1, 'mouseout')).toEqual(0);
+        done();
+      });
+
+      componentElement1.trigger('mouseout');
+    });
   });
 
   it('can move the first component to the second position in the container', (done) => {

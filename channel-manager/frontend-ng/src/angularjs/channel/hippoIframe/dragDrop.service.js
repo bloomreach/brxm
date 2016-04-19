@@ -16,6 +16,7 @@
 
 const COMPONENT_QA_CLASS = 'qa-dragula-component';
 const MOUSEUP_EVENT_NAME = 'mouseup.dragDropService';
+const MOUSEOUT_EVENT_NAME = 'mouseout.dragDropService';
 const MIRROR_WRAPPER_SELECTOR = '.channel-dragula-mirror';
 
 export class DragDropService {
@@ -77,7 +78,7 @@ export class DragDropService {
       });
       this.drake.on('drag', () => this._onStartDrag());
       this.drake.on('cloned', (clone, original) => this._onMirrorCreated(clone, original));
-      this.drake.on('dragend', (el) => this._onStopDrag(el));
+      this.drake.on('dragend', (el) => this._onStopDragOrClick(el));
       this.drake.on('drop', (el, target, source, sibling) => this._onDrop(el, target, source, sibling));
 
       this.ScrollService.enable(() => this.draggingOrClicking);
@@ -114,13 +115,20 @@ export class DragDropService {
 
     const componentBoxElement = component.getBoxElement();
     componentBoxElement.on(MOUSEUP_EVENT_NAME, () => this._onComponentClick(component));
+    componentBoxElement.on(MOUSEOUT_EVENT_NAME, () => this._onComponentLeave(component));
     componentBoxElement.addClass(COMPONENT_QA_CLASS);
   }
 
   _onComponentClick(component) {
     if (!this.isDragging()) {
-      this._onStopDrag(component.getBoxElement());
+      this._onStopDragOrClick(component.getBoxElement());
       this.PageStructureService.showComponentProperties(component);
+    }
+  }
+
+  _onComponentLeave(component) {
+    if (!this.isDragging()) {
+      this._onStopDragOrClick(component.getBoxElement());
     }
   }
 
@@ -145,10 +153,11 @@ export class DragDropService {
     $(MIRROR_WRAPPER_SELECTOR).offset(iframeOffset);
   }
 
-  _onStopDrag(element) {
+  _onStopDragOrClick(element) {
     this.draggingOrClicking = false;
     $(element)
       .off(MOUSEUP_EVENT_NAME)
+      .off(MOUSEOUT_EVENT_NAME)
       .removeClass(COMPONENT_QA_CLASS);
     this._digestIfNeeded();
   }
