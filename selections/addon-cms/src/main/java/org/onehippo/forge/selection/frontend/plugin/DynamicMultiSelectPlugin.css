@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,22 @@
  * limitations under the License.
 */
 select.multiselect-select {
-    width: 99%;
-}
-select.multiselect-viewlist li {
-    padding: 6px;
+  width: 99%;
 }
 
-div.multiselect-unselect-link {
-    width: 99%;
-    text-align: right; 
+select.multiselect-viewlist li {
+  padding: 6px;
 }
-div.multiselect-unselect-link a {
-    color: #333333;
+
+div.multiselect-selection-link {
+  text-align: right;
+  padding-right: 1%;
+}
+
+div.multiselect-selection-link:not(:last-child) {
+  margin-bottom: 2px;
+}
+
+div.multiselect-selection-link a {
+  color: #333333;
 }

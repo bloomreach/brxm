@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -146,12 +146,9 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
             final Fragment modeFragment = new Fragment("mode", "view", this);
             modeFragment.add(new ListView("viewitems", Collections.EMPTY_LIST, null));
             add(modeFragment);
-            final Fragment unselectFragment = new Fragment("unselectlink", "edit-unselectlink", this);
-            final AjaxLink unselectLink = new UnselectLink("unselect-link", null, null);
-            unselectFragment.add(unselectLink);
-            unselectFragment.setVisibilityAllowed(false);
-            add(unselectFragment);
+            addListSelectionFragments(false/*visible*/, null, null);
             return;
+
         }
 
         final JcrMultiPropertyValueModel<String> model = new JcrMultiPropertyValueModel<>(getPropertyModel().getItemModel());
@@ -166,7 +163,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
             }
 
             log.warn("The configuration node name '{}' is deprecated. Rename it to '{}'. options={}",
-                    new String[] {CONFIG_VALUELIST_OPTIONS, CONFIG_CLUSTER_OPTIONS, options.toString()});
+                    new String[]{CONFIG_VALUELIST_OPTIONS, CONFIG_CLUSTER_OPTIONS, options.toString()});
         }
 
         final Locale locale = SelectionUtils.getLocale(SelectionUtils.getNode(model));
@@ -267,32 +264,25 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
     }
 
     protected Fragment populateViewMode(final JcrMultiPropertyValueModel<String> model, final ValueList valueList) {
-        final Fragment modeFragment;// show view list
-        modeFragment = new Fragment("mode", "view", this);
+        final Fragment modeFragment = new Fragment("mode", "view", this);// show view list
         modeFragment.add(new ListView("viewitems", model.getObject(), valueList));
+        addListSelectionFragments(false/*visible*/, null, model);
 
-        // hide dummy fragment
-        final Fragment unselectFragment = new Fragment("unselectlink", "edit-unselectlink", this);
-        final AjaxLink unselectLink = new UnselectLink("unselect-link", null, null);
-        unselectFragment.add(unselectLink);
-        unselectFragment.setVisibilityAllowed(false);
-        add(unselectFragment);
         return modeFragment;
     }
 
     protected Fragment populateCompareMode(final IPluginContext context, final IPluginConfig config,
                                            final JcrMultiPropertyValueModel<String> model, final ValueList valueList) {
-        final Fragment modeFragment;
-        modeFragment = new Fragment("mode", "view", this);
+        final Fragment modeFragment = new Fragment("mode", "view", this);
 
         IModelReference compareToRef = context.getService(config.getString("model.compareTo"),
                 IModelReference.class);
         if (compareToRef != null) {
-            JcrNodeModel baseNodeModel = (JcrNodeModel) compareToRef.getModel();
+            JcrNodeModel baseNodeModel = (JcrNodeModel)compareToRef.getModel();
             if (baseNodeModel != null && baseNodeModel.getNode() != null) {
                 IFieldDescriptor field = helper.getField();
                 JcrMultiPropertyValueModel<String> baseModel = new JcrMultiPropertyValueModel<>(new JcrItemModel(
-                        baseNodeModel.getItemModel().getPath() + "/" + field.getPath(), true));
+                        baseNodeModel.getItemModel().getPath() + '/' + field.getPath()));
 
                 List<String> baseOptions = baseModel.getObject();
                 List<String> currentOptions = model.getObject();
@@ -309,18 +299,13 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
         }
 
         // hide dummy fragment
-        final Fragment unselectFragment = new Fragment("unselectlink", "edit-unselectlink", this);
-        final AjaxLink unselectLink = new UnselectLink("unselect-link", null, null);
-        unselectFragment.add(unselectLink);
-        unselectFragment.setVisibilityAllowed(false);
-        add(unselectFragment);
+        addListSelectionFragments(false, null, model);
         return modeFragment;
     }
 
     protected Fragment populateEditMode(final IPluginConfig config, final JcrMultiPropertyValueModel<String> model,
                                         final ValueList valueList, final IModel choicesModel) {
-        final Fragment modeFragment;
-        modeFragment = new Fragment("mode", "edit", this);
+        final Fragment modeFragment = new Fragment("mode", "edit", this);
 
         Fragment typeFragment;
         final String type = config.getString(CONFIG_TYPE);
@@ -337,8 +322,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
 
     protected Fragment addList(final IPluginConfig config, final JcrMultiPropertyValueModel<String> model,
                                final ValueList valueList, final IModel choicesModel) {
-        final Fragment typeFragment;
-        typeFragment = new Fragment("type", "edit-select", this);
+        final Fragment typeFragment = new Fragment("type", "edit-select", this);
 
         ListMultipleChoice multiselect = new ListMultipleChoice("multiselect", model, choicesModel,
                 new ValueListItemRenderer(valueList));
@@ -358,24 +342,29 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
         try {
             multiselect.setMaxRows(Integer.valueOf(maxRows));
         } catch (NumberFormatException nfe) {
-            log.warn("The configured value '" + maxRows + "' for " + CONFIG_SELECT_MAX_ROWS
-                    + " is not a valid number. Defaulting to 8.");
+            log.warn("The configured value '{}' for " + CONFIG_SELECT_MAX_ROWS + " is not a valid number. Defaulting to 8.", maxRows);
             multiselect.setMaxRows(8);
         }
 
         typeFragment.add(multiselect);
-
-        final Fragment unselectFragment = new Fragment("unselectlink", "edit-unselectlink", this);
-        final AjaxLink unselectLink = new UnselectLink("unselect-link", multiselect, model);
-        unselectFragment.add(unselectLink);
-        add(unselectFragment);
+        addListSelectionFragments(true/*visible*/, multiselect, model);
         return typeFragment;
     }
 
+    protected void addListSelectionFragments(boolean visible, ListMultipleChoice multiselect, JcrMultiPropertyValueModel<String> model) {
+        final Fragment fragment = new Fragment("selectlinks", "edit-selectlinks", this);
+
+        fragment.add(new SelectLink("select-link", multiselect, model));
+        fragment.add(new UnselectLink("unselect-link", multiselect, model));
+        fragment.setVisibilityAllowed(visible);
+
+        add(fragment);
+    }
+
+
     protected Fragment addPalette(final IPluginConfig config, final JcrMultiPropertyValueModel<String> model,
                                   final ValueList valueList, final IModel choicesModel) {
-        final Fragment typeFragment;
-        typeFragment = new Fragment("type", "edit-palette", this);
+        final Fragment typeFragment = new Fragment("type", "edit-palette", this);
 
         // set (configured) max rows
         int rows = 10;
@@ -383,13 +372,13 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
         try {
             rows = Integer.valueOf(maxRows);
         } catch (NumberFormatException nfe) {
-            log.warn("The configured value '" + maxRows + "' for " + CONFIG_PALETTE_MAX_ROWS
-                    + " is not a valid number. Defaulting to 10.");
+            log.warn("The configured value '{}' for " + CONFIG_PALETTE_MAX_ROWS + " is not a valid number. Defaulting to 10.", maxRows);
         }
 
         // set (configured) allow order value
         final boolean allowOrder = config.getBoolean(CONFIG_PALETTE_ALLOW_ORDER);
 
+        @SuppressWarnings("unchecked")
         final Palette palette = new Palette("palette", model, choicesModel,
                 new ValueListItemRenderer(valueList), rows, allowOrder) {
 
@@ -420,19 +409,15 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
 
         typeFragment.add(palette);
 
-        // hide unselect fragment
-        final Fragment unselectFragment = new Fragment("unselectlink", "edit-unselectlink", this);
-        final AjaxLink unselectLink = new UnselectLink("unselect-link", null, null);
-        unselectFragment.add(unselectLink);
-        unselectFragment.setVisibilityAllowed(false);
-        add(unselectFragment);
+        // hide fragments for list view
+        addListSelectionFragments(false/*visible*/, null, model);
+
         return typeFragment;
     }
 
     protected Fragment addCheckboxes(final JcrMultiPropertyValueModel<String> model, final ValueList valueList,
                                      final IModel choicesModel) {
-        final Fragment typeFragment;
-        typeFragment = new Fragment("type", "edit-checkboxes", this);
+        final Fragment typeFragment = new Fragment("type", "edit-checkboxes", this);
 
         CheckBoxMultipleChoice checkboxes = new CheckBoxMultipleChoice("checkboxes", model, choicesModel,
                 new ValueListItemRenderer(valueList));
@@ -449,12 +434,9 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
 
         typeFragment.add(checkboxes);
 
-        // hide unselect fragment
-        final Fragment unselectFragment = new Fragment("unselectlink", "edit-unselectlink", this);
-        final AjaxLink unselectLink = new UnselectLink("unselect-link", null, null);
-        unselectFragment.add(unselectLink);
-        unselectFragment.setVisibilityAllowed(false);
-        add(unselectFragment);
+        // hide fragments for list view
+        addListSelectionFragments(false/*visible*/, null, model);
+
         return typeFragment;
     }
 
@@ -577,8 +559,6 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
      */
     protected class UnselectLink extends AjaxLink {
 
-        private static final long serialVersionUID = -2703760847654039423L;
-
         private ListMultipleChoice multiselect;
         private IModel model;
 
@@ -593,6 +573,31 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
 
             // clear model
             this.model.setObject(null);
+
+            // make the multiselect update to remove selected items
+            target.add(this.multiselect);
+        }
+    }
+
+    /**
+     * Link select all values from a select list.
+     */
+    protected class SelectLink extends AjaxLink {
+
+        private ListMultipleChoice multiselect;
+        private IModel model;
+
+        SelectLink(String id, ListMultipleChoice multiselect, IModel model) {
+            super(id);
+            this.multiselect = multiselect;
+            this.model = model;
+        }
+
+        @Override
+        public void onClick(AjaxRequestTarget target) {
+
+            // select all options
+            this.model.setObject(multiselect.getChoices());
 
             // make the multiselect update to remove selected items
             target.add(this.multiselect);
