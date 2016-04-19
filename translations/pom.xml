@@ -29,34 +29,20 @@
     <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-cms-translations.git</developerConnection>
     <url>https://code.onehippo.org/cms-community/hippo-cms-translations</url>
   </scm>
-  
-  <dependencies>
-    <dependency>
-      <groupId>org.onehippo.cms.l10n</groupId>
-      <artifactId>hippo-cms-l10n-tooling</artifactId>
-      <version>${hippo.l10n-tooling.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-  </dependencies>
+
+  <repositories>
+    <repository>
+      <id>hippo</id>
+      <name>Hippo Maven 2</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
+  </repositories>
 
   <modules>
     <module>hippo-cms</module>
@@ -74,7 +60,7 @@
     <module>seo-support</module>
     <module>taxonomy</module>
   </modules>
-
+  
   <build>
     <pluginManagement>
       <plugins>
@@ -124,6 +110,27 @@
               </configuration>
             </execution>
           </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <configuration>
+            <includePluginDependencies>true</includePluginDependencies>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.onehippo.cms.l10n</groupId>
+              <artifactId>hippo-cms-l10n-tooling</artifactId>
+              <version>${hippo.l10n-tooling.version}</version>
+              <scope>runtime</scope>
+            </dependency>
+            <dependency>
+              <groupId>commons-logging</groupId>
+              <artifactId>commons-logging</artifactId>
+              <version>${commons-logging.version}</version>
+              <scope>runtime</scope>
+            </dependency>
+          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
