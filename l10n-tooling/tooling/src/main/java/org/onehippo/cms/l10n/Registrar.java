@@ -55,9 +55,6 @@ class Registrar {
     Registrar(final File baseDir, final String moduleName, final Collection<String> locales) throws IOException {
         this.baseDir = baseDir;
         this.registryDir = new File(baseDir, "resources");
-        if (!registryDir.exists()) {
-            throw new IllegalArgumentException("Registry directory does not exist: " + registryDir.getCanonicalPath());
-        }
         this.locales = locales;
         registry = new Registry(registryDir);
         this.moduleName = moduleName;
