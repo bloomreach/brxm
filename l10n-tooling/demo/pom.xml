@@ -28,7 +28,6 @@
   <packaging>pom</packaging>
 
   <properties>
-    <hippo.addon-channel-manager.version>4.0.0-SNAPSHOT</hippo.addon-channel-manager.version>
     <registry.locales>fr,nl,de</registry.locales>
     <export.locale/>
     <export.format>Default</export.format>
@@ -76,6 +75,19 @@
     </dependency>
     
   </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <configuration>
+            <skip>true</skip>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 
   <profiles>
     <profile>

@@ -316,7 +316,12 @@ class Registrar {
         }
 
         private void writeReport() throws IOException {
-            writer.write(new File(baseDir, "target/TEST-update.xml"));
+            final File file = new File(baseDir, "target/TEST-update.xml");
+            final File target = file.getParentFile();
+            if (!target.exists()) {
+                target.mkdir();
+            }
+            writer.write(file);
         }
     }
     

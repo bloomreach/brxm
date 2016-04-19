@@ -39,6 +39,12 @@
     <junit.version>4.8</junit.version>
   </properties>
 
+  <scm>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-cms-l10n-tooling.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-cms-l10n-tooling.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-cms-l10n-tooling</url>
+  </scm>
+
   <repositories>
     <repository>
       <id>hippo</id>
