@@ -67,7 +67,9 @@ export class DragDropService {
     }
 
     return this.dragulaPromise.then(() => {
-      const iframeContainerElements = containers.map((container) => container.getBoxElement()[0]);
+      const iframeContainerElements = containers
+        .filter((container) => !container.isDisabled())
+        .map((container) => container.getBoxElement()[0]);
 
       this.drake = this.iframe.dragula(iframeContainerElements, {
         ignoreInputTextSelection: false,

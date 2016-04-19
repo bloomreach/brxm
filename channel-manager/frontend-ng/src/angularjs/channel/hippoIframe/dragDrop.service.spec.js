@@ -281,4 +281,11 @@ describe('DragDropService', () => {
       done();
     });
   });
+
+  it('does not register a disabled container', () => {
+    spyOn(container1, 'isDisabled').and.returnValue(true);
+    loadIframeFixture(() => {
+      expect(DragDropService.drake.containers).toEqual([container2.getBoxElement()]);
+    });
+  });
 });
