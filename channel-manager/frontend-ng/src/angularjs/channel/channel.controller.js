@@ -16,7 +16,8 @@
 
 export class ChannelCtrl {
 
-  constructor($log, $scope, $translate, ChannelService, DialogService, PageMetaDataService, ScalingService, SessionService, ComponentAdderService, ConfigService, HippoIframeService, FeedbackService) {
+  constructor($log, $scope, $translate, ChannelService, DialogService, PageMetaDataService, ScalingService,
+              SessionService, ComponentAdderService, ConfigService, HippoIframeService, FeedbackService, SiteMapService) {
     'ngInject';
 
     this.$log = $log;
@@ -30,6 +31,7 @@ export class ChannelCtrl {
     this.ConfigService = ConfigService;
     this.HippoIframeService = HippoIframeService;
     this.FeedbackService = FeedbackService;
+    this.SiteMapService = SiteMapService;
 
     this.isEditMode = false;
     this.isCreatingPreview = false;
@@ -126,7 +128,11 @@ export class ChannelCtrl {
 
   discard() {
     this._confirmDiscard().then(() => {
-      this.ChannelService.discardOwnChanges().then(() => this.HippoIframeService.reload());
+      this.ChannelService.discardOwnChanges()
+        .then(() => {
+          this.HippoIframeService.reload();
+          this.SiteMapService.load(this.ChannelService.getSiteMapId());
+        });
       // TODO: what if this fails?
       // show a toast that discarding the changed failed.
       // More information may be exposed by logging an error(?) in the console,
