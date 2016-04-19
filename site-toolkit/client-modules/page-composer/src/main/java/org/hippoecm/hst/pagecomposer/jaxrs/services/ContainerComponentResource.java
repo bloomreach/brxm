@@ -67,7 +67,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
     }
 
     @POST
-    @Path("/create/{itemUUID}")
+    @Path("/{itemUUID}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createContainerItem(final @PathParam("itemUUID") String itemUUID,
