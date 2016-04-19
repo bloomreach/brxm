@@ -78,22 +78,34 @@ public class ExportImportTest {
         // first record in the export set is the header
 
         // this record is due to the change in the resource bundle angular/dummy/i18n/en.json
-        CSVRecord record = records.get(1);
+        CSVRecord record = getRecord(records, "module#angular/dummy/i18n/registry.json#key");
+        assertNotNull(record);
         assertEquals(3, record.size());
         assertEquals("value", record.get(1));
         assertEquals("waarde", record.get(2));
 
         // this record is due to the change in the resource bundle dummy-repository-translations_en.json
-        record = records.get(2);
+        record = getRecord(records, "module#dummy-repository-translations.registry.json#bundle/key");
+        assertNotNull(record);
         assertEquals(3, record.size());
         assertEquals("value", record.get(1));
         assertEquals("waarde", record.get(2));
 
         // this record is due to the fact that the translation is missing in the source files
-        record = records.get(3);
+        record = getRecord(records, "module#org/onehippo/cms/l10n/test/DummyWicketPlugin.registry.json#key_en_only");
+        assertNotNull(record);
         assertEquals(3, record.size());
         assertEquals("missing in fr and nl", record.get(1));
         assertEquals("", record.get(2));
+    }
+
+    private CSVRecord getRecord(final List<CSVRecord> records, final String key) {
+        for (CSVRecord record : records) {
+            if (record.get(0).equals(key)) {
+                return record;
+            }
+        }
+        return null;
     }
 
     @Test
