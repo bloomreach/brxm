@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms.l10n;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,12 +37,14 @@ public class RegistrarTest {
     protected Collection<String> extractorLocales = Arrays.asList("en", "nl", "fr");
     protected Collection<String> registrarLocales = Arrays.asList("nl", "fr");
 
+    protected File resources;
     protected Registrar registrar;
     protected Registry registry;
 
     @Before
     public void setUp() throws IOException {
-        new Extractor(temporaryFolder.getRoot(), "module", extractorLocales).extract();
+        resources = temporaryFolder.newFolder("resources");
+        new Extractor(resources, "module", extractorLocales).extract();
 
         registrar = new Registrar(temporaryFolder.getRoot(), "module", registrarLocales);
         registrar.initialize();

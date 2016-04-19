@@ -44,7 +44,7 @@ public class UpdateRegistryTest extends RegistrarTest {
         setup: {
             initialPendingTranslationCount = getPendingTranslationCount(registry);
             angularResourceBundle = new AngularResourceBundle(null, angularBundleFileName, 
-                    new File(temporaryFolder.getRoot(), angularBundleFileName));
+                    new File(resources, angularBundleFileName));
             angularResourceBundle.load();
             angularResourceBundle.getEntries().put("key", "changedValue");
             angularResourceBundle.save();
@@ -77,7 +77,7 @@ public class UpdateRegistryTest extends RegistrarTest {
         // change the reference bundle to fake and incoming addition
         setup: {
             initialPendingTranslationCount = getPendingTranslationCount(registry);
-            wicketResourceBundle = new WicketResourceBundle(null, wicketBundleFileName, new File(temporaryFolder.getRoot(), wicketBundleFileName));
+            wicketResourceBundle = new WicketResourceBundle(null, wicketBundleFileName, new File(resources, wicketBundleFileName));
             wicketResourceBundle.load();
             wicketResourceBundle.getEntries().remove("key");
             wicketResourceBundle.save();
@@ -165,10 +165,10 @@ public class UpdateRegistryTest extends RegistrarTest {
             registryInfo.putKeyData("key", new KeyData(CLEAN));
             registryInfo.save();
             WicketResourceBundle resourceBundle = new WicketResourceBundle(null, bundleFileName, 
-                    new File(temporaryFolder.getRoot(), bundleFileName));
+                    new File(resources, bundleFileName));
             resourceBundle.getEntries().put("key", "value");
             resourceBundle.save();
-            resourceBundle = new WicketResourceBundle(null, bundleFileNameNL, new File(temporaryFolder.getRoot(), bundleFileNameNL));
+            resourceBundle = new WicketResourceBundle(null, bundleFileNameNL, new File(resources, bundleFileNameNL));
             resourceBundle.getEntries().put("key", "waarde");
             resourceBundle.save();
         }
