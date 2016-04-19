@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.demo.DemoConstants;
 import org.hippoecm.hst.demo.util.DateRangeQueryConstraints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,7 @@ import org.springframework.stereotype.Service;
  */
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-@Service("org.hippoecm.hst.demo.components.Search")
+@Service(DemoConstants.COMPONENT_BASE_PACKAGE + ".Search")
 public class Search extends AbstractSearchComponent {
 
     public static final Logger log = LoggerFactory.getLogger(Search.class);
