@@ -101,8 +101,6 @@ public class Exporter {
         final String format = commandLine.getOptionValue("format", "Default");
         final boolean all = commandLine.getOptionValue("all", "false").equals("true");
 
-        System.out.println("exporting all: " + all + " " + commandLine.getOptionValue("all"));
-
         new Exporter(baseDir, format).export(locale, all);
     }
     
