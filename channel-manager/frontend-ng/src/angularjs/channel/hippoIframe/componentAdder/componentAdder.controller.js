@@ -20,20 +20,14 @@ export class ComponentAdderCtrl {
   constructor($scope, $log, $element, ComponentAdderService, PageStructureService, CatalogService, DragDropService) {
     'ngInject';
 
-    const self = this;
     this.PageStructureService = PageStructureService;
+
     const drake = window.dragula({
       ignoreInputTextSelection: false,
-      isContainer(el) {
-        return self._isOverlayContainerEnabled(el) || ComponentAdderService.isCatalogContainer(el);
-      },
+      isContainer: (el) => this._isEnabledOverlayContainer(el) || ComponentAdderService.isCatalogContainer(el),
       copy: true,
-      moves(el) {
-        return ComponentAdderService.isCatalogContainerItem(el);
-      },
-      accepts(el, target) {
-        return self._isOverlayContainerEnabled(target);
-      },
+      moves: (el) => ComponentAdderService.isCatalogContainerItem(el),
+      accepts: (el, target) => !this._isEnabledOverlayContainer(target),
     });
     drake.on('cloned', (clone, original) => {
       $scope.$apply(() => {
@@ -98,16 +92,8 @@ export class ComponentAdderCtrl {
     });
   }
 
-  _isOverlayContainer(el) {
-    return el.classList.contains('overlay-element-container');
-  }
-
-  _isOverlayContainerEnabled(el) {
-    if (!this._isOverlayContainer(el)) {
-      return false;
-    }
-
+  _isEnabledOverlayContainer(el) {
     const container = this.PageStructureService.getContainerByOverlayElement(el);
-    return !container.isDisabled();
+    return container && !container.isDisabled();
   }
 }

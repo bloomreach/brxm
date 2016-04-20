@@ -217,16 +217,9 @@ export class PageStructureService {
           return this.renderContainer(container).then(() => this.getComponentById(newComponentJson.id));
         },
         (errorResponse) => {
-          let errorKey = errorResponse.error;
+          const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED' ? 'ITEM_ALREADY_LOCKED' : 'ERROR_ADD_COMPONENT';
           const params = errorResponse.parameterMap;
           params.component = catalogComponent.name;
-          switch (errorResponse.error) {
-            case 'ITEM_ALREADY_LOCKED':
-              errorKey = errorResponse.error;
-              break;
-            default:
-              errorKey = 'ERROR_ADD_COMPONENT';
-          }
           this.FeedbackService.showError(errorKey, params);
           return this.HippoIframeService.reload().then(() => this.$q.reject());
         });
