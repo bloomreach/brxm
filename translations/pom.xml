@@ -19,6 +19,7 @@
     <registry.locales>nl,de,fr</registry.locales>
     <export.locale/>
     <export.format>Default</export.format>
+    <export.all>false</export.all>
     <import.locale/>
     <import.format>Default</import.format>
     <import.file/>
@@ -95,7 +96,7 @@
     <module>seo-support</module>
     <module>taxonomy</module>
   </modules>
-  
+
   <build>
     <pluginManagement>
       <plugins>
@@ -434,7 +435,7 @@
                       <value>file://${main.basedir}/config/log4j.xml</value>
                     </systemProperty>
                   </systemProperties>
-                  <commandlineArgs>--basedir ${project.basedir} --locale ${export.locale} --format ${export.format}</commandlineArgs>
+                  <commandlineArgs>--basedir ${project.basedir} --locale ${export.locale} --format ${export.format} --all ${export.all}</commandlineArgs>
                 </configuration>
               </execution>
             </executions>
