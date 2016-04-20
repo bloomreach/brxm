@@ -12,7 +12,7 @@
   <sv:property sv:name="hippo:resourcebundles" sv:type="String">
     <sv:value>section-translations_nl.json</sv:value>
   </sv:property>
-</sv:node><sv:node sv:name="hippo-cms-workflow-translations_nl">
+</sv:node><sv:node sv:name="hippo-cms-builtin-workflow-translations_nl">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:initializeitem</sv:value>
   </sv:property>
@@ -20,7 +20,7 @@
     <sv:value>1000.0</sv:value>
   </sv:property>
   <sv:property sv:name="hippo:resourcebundles" sv:type="String">
-    <sv:value>workflow-translations_nl.json</sv:value>
+    <sv:value>builtin-workflow-translations_nl.json</sv:value>
   </sv:property>
 </sv:node><sv:node sv:name="hippo-cms-hippogallery-type-translations_nl">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -71,6 +71,16 @@
   </sv:property>
   <sv:property sv:name="hippo:resourcebundles" sv:type="String">
     <sv:value>hippostdpubwf-type-translations_nl.json</sv:value>
+  </sv:property>
+</sv:node><sv:node sv:name="hippo-cms-workflow-translations_nl">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippo:initializeitem</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippo:sequence" sv:type="Double">
+    <sv:value>1000.0</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippo:resourcebundles" sv:type="String">
+    <sv:value>workflow-translations_nl.json</sv:value>
   </sv:property>
 </sv:node><sv:node sv:name="hippo-cms-hippo-type-translations_nl">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -151,15 +161,5 @@
   </sv:property>
   <sv:property sv:name="hippo:resourcebundles" sv:type="String">
     <sv:value>system-html-type-translations_nl.json</sv:value>
-  </sv:property>
-</sv:node><sv:node sv:name="hippo-cms-builtin-workflow-translations_nl">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippo:initializeitem</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippo:sequence" sv:type="Double">
-    <sv:value>1000.0</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippo:resourcebundles" sv:type="String">
-    <sv:value>builtin-workflow-translations_nl.json</sv:value>
   </sv:property>
 </sv:node></sv:node>

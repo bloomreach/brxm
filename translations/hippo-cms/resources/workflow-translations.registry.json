@@ -1,11 +1,7 @@
 {
   "bundleType" : "REPOSITORY",
   "keyData" : {
-    "hippo:workflows/committype" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "hippo:workflows/admin" : {
+    "hippo:workflows/publication" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -13,15 +9,11 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "hippo:workflows/miscellaneous" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "hippo:workflows/document" : {
       "status" : "CLEAN",
       "locales" : null
     },
-    "hippo:workflows/publication" : {
+    "hippo:workflows/miscellaneous" : {
       "status" : "CLEAN",
       "locales" : null
     }
