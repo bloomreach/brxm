@@ -64,6 +64,36 @@ class Registrar {
         return registry;
     }
 
+    void addLocale() throws IOException {
+        if (locales.size() > 1) {
+            log.error("Cannot add more than 1 locale at the same time.");
+            return;
+        }
+
+        for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(Collections.singletonList("en"))) {
+            for (ResourceBundle sourceBundle : bundleLoader.loadBundles()) {
+                RegistryInfo registryInfo = registry.getRegistryInfoForBundle(sourceBundle);
+                registryInfo.setBundleType(sourceBundle.getType());
+                for (String sourceKey : sourceBundle.getEntries().keySet()) {
+                    KeyData keyData = registryInfo.getKeyData(registryKey(sourceBundle, sourceKey));
+                    if (keyData == null) {
+                        String error = "Could not find registry data for key '" + registryKey(sourceBundle, sourceKey)
+                                + "' for file '" + registryInfo.getFileName() + "'. Please update register before adding a locale.";
+                        log.error(error);
+                        throw new IllegalStateException(error);
+                    } else {
+                        keyData.setStatus(UPDATED);
+                        for (String locale : locales) {
+                            keyData.setLocaleStatus(locale, UNRESOLVED);
+                        }
+                    }
+                }
+
+                registryInfo.save();
+            }
+        }
+    }
+
     void initialize() throws IOException {
         // iterate over all english source bundles and register all translations as UNRESOLVED
         for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(Collections.singletonList("en"))) {
@@ -179,7 +209,7 @@ class Registrar {
         localesOption.setValueSeparator(',');
         localesOption.setArgs(UNLIMITED_VALUES);
         options.addOption(localesOption);
-        final Option commandOption = new Option("c", "command", true, "command to execute: one of initialize, update, or report");
+        final Option commandOption = new Option("c", "command", true, "command to execute: one of initialize, update, report or add-locale");
         commandOption.setRequired(true);
         options.addOption(commandOption);
         
@@ -200,6 +230,9 @@ class Registrar {
                 break;
             case "report":
                 registrar.report();
+                break;
+            case "add-locale":
+                registrar.addLocale();
                 break;
             default:
                 throw new IllegalArgumentException("Unrecognized command: " + command);
