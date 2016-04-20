@@ -19,6 +19,8 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions;
 import java.util.Collections;
 import java.util.Map;
 
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
+
 public class ClientException extends RuntimeException {
 
     private final ErrorStatus errorStatus;
@@ -27,7 +29,7 @@ public class ClientException extends RuntimeException {
         this(message, ErrorStatus.from(error, parameterMap));
     }
 
-    public ClientException(String message, ErrorStatus errorStatus) {
+    protected ClientException(String message, ErrorStatus errorStatus) {
         super(message);
         this.errorStatus = errorStatus;
     }
