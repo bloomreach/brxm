@@ -72,13 +72,18 @@ public class Importer {
                 }
                 final RegistryInfo registryInfo = module.getRegistry().getRegistryInfo(fqKey.registryFile);
                 final ResourceBundle resourceBundle = module.getRegistry().getResourceBundle(fqKey.bundleName, locale, registryInfo);
-                resourceBundle.getEntries().put(fqKey.key, translation);
-                log.info("Saving resource bundle: " + resourceBundle.getFileName());
-                resourceBundle.save();
+                final KeyData keyData = registryInfo.getKeyData(registryKey(resourceBundle, fqKey.key));
+                if (keyData == null) {
+                    log.warn("Could not find registry entry for key {} in registry file {}, please verify if it was moved/deleted",
+                            registryKey(resourceBundle, fqKey.key), registryInfo.getFileName());
+                } else {
+                    resourceBundle.getEntries().put(fqKey.key, translation);
+                    log.info("Saving resource bundle: " + resourceBundle.getFileName());
+                    resourceBundle.save();
 
-                KeyData keyData = registryInfo.getKeyData(registryKey(resourceBundle, fqKey.key));
-                keyData.setLocaleStatus(locale, KeyData.LocaleStatus.RESOLVED);
-                registryInfo.save();
+                    keyData.setLocaleStatus(locale, KeyData.LocaleStatus.RESOLVED);
+                    registryInfo.save();
+                }
             }
         }
     }
