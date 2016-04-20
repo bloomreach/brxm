@@ -64,6 +64,7 @@ public class Importer {
                     throw new IllegalArgumentException("Unexpected record size: " + record.size() + " at record " + record.getRecordNumber());
                 }
                 final FQKey fqKey = new FQKey(record.get(0));
+                final String reference = record.get(1);
                 final String translation = record.get(2);
                 final Module module = modules.get(fqKey.moduleId);
                 if (module == null) {
@@ -77,12 +78,17 @@ public class Importer {
                     log.warn("Could not find registry entry for key {} in registry file {}, please verify if it was moved/deleted",
                             registryKey(resourceBundle, fqKey.key), registryInfo.getFileName());
                 } else {
-                    resourceBundle.getEntries().put(fqKey.key, translation);
-                    log.info("Saving resource bundle: " + resourceBundle.getFileName());
-                    resourceBundle.save();
-
-                    keyData.setLocaleStatus(locale, KeyData.LocaleStatus.RESOLVED);
-                    registryInfo.save();
+                    final ResourceBundle referenceBundle = module.getRegistry().getResourceBundle(fqKey.bundleName, "en", registryInfo);
+                    final Map<String, String> referenceEntries = referenceBundle.getEntries();
+                    if (!referenceEntries.containsKey(fqKey.key) || !referenceEntries.get(fqKey.key).equals(reference)) {
+                        log.warn("Reference value of key {} does not match: import file contains {}, current value is {}", 
+                                fqKey.key, reference, referenceEntries.get(fqKey.key));
+                    } else {
+                        resourceBundle.getEntries().put(fqKey.key, translation);
+                        resourceBundle.save();
+                        keyData.setLocaleStatus(locale, KeyData.LocaleStatus.RESOLVED);
+                        registryInfo.save();
+                    }
                 }
             }
         }

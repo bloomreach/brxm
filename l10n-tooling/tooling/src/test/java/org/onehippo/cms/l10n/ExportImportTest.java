@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -49,8 +50,8 @@ public class ExportImportTest {
     public void setupTestModule() throws IOException {
         final File module = temporaryFolder.newFolder("module");
         resources = temporaryFolder.newFolder("module/resources");
-        new Extractor(resources, "module", Arrays.asList("en", "nl")).extract();
-        registrar = new Registrar(module, "module", Collections.singletonList("nl"));
+        new Extractor(resources, "module", Arrays.asList("en", "nl", "fr")).extract();
+        registrar = new Registrar(module, "module", Arrays.asList("nl", "fr"));
         registrar.initialize();
         final File pom = temporaryFolder.newFile("module/pom.xml");
         FileUtils.copyInputStreamToFile(getClass().getResourceAsStream("pom.xml"), pom);
@@ -60,11 +61,11 @@ public class ExportImportTest {
 
     private void changeBundle() throws IOException {
         ResourceBundle resourceBundle = registrar.getRegistry().getResourceBundle(null, "angular/dummy/i18n/en.json", BundleType.ANGULAR);
-        resourceBundle.getEntries().put("key", "value2");
+        resourceBundle.getEntries().put("key", String.valueOf(System.currentTimeMillis()));
         resourceBundle.save();
 
         resourceBundle = registrar.getRegistry().getResourceBundle("bundle", "dummy-repository-translations_en.json", BundleType.REPOSITORY);
-        resourceBundle.getEntries().put("key", "value2");
+        resourceBundle.getEntries().put("key", String.valueOf(System.currentTimeMillis()));
         resourceBundle.save();
     }
 
@@ -111,33 +112,62 @@ public class ExportImportTest {
     @Test
     public void testImporter() throws Exception {
         final RegistryInfo angularRegistryInfo = registrar.getRegistry().getRegistryInfo("angular/dummy/i18n/registry.json");
+        final RegistryInfo repositoryRegistryInfo = registrar.getRegistry().getRegistryInfo("dummy-repository-translations.registry.json");
+        
+        verifyInitialStatus : {
+            KeyData keyData = angularRegistryInfo.getKeyData("key");
+            assertNotNull(keyData);
+            assertEquals(UPDATED, keyData.getStatus());
+            assertEquals(UNRESOLVED, keyData.getLocaleStatus("nl"));
+            assertEquals(UNRESOLVED, keyData.getLocaleStatus("fr"));
+            
+            keyData = repositoryRegistryInfo.getKeyData("bundle/key");
+            assertNotNull(keyData);
+            assertEquals(UPDATED, keyData.getStatus());
+            assertEquals(UNRESOLVED, keyData.getLocaleStatus("nl"));
+            assertEquals(UNRESOLVED, keyData.getLocaleStatus("fr"));
+        }
+
+        importDutch: {
+            File export = new Exporter(temporaryFolder.getRoot(), "Default").export("nl");
+            File _import = temporaryFolder.newFile("import.csv");
+            FileUtils.copyFile(export, _import);
+            new Importer(temporaryFolder.getRoot(), "Default")._import("import.csv", "nl");
+        }
+
+        assertDutchIsResolved: {
+            assertDutchIsResolvedAndFrenchIsUnresolved(angularRegistryInfo, repositoryRegistryInfo);
+        }
+        
+        importFrench: {
+            File export = new Exporter(temporaryFolder.getRoot(), "Default").export("fr");
+            File _import = temporaryFolder.newFile("import.csv");
+            FileUtils.copyFile(export, _import);
+            // change the reference bundles in the mean time
+            changeBundle();
+            new Importer(temporaryFolder.getRoot(), "Default")._import("import.csv", "fr");
+        }
+
+        assertFrenchIsUnresolved: {
+            assertDutchIsResolvedAndFrenchIsUnresolved(angularRegistryInfo, repositoryRegistryInfo);
+        }
+        
+    }
+
+    private void assertDutchIsResolvedAndFrenchIsUnresolved(final RegistryInfo angularRegistryInfo, final RegistryInfo repositoryRegistryInfo) throws IOException {
+        angularRegistryInfo.load();
         KeyData keyData = angularRegistryInfo.getKeyData("key");
         assertNotNull(keyData);
         assertEquals(UPDATED, keyData.getStatus());
-        assertEquals(UNRESOLVED, keyData.getLocaleStatus("nl"));
-
-        final RegistryInfo repositoryRegistryInfo = registrar.getRegistry().getRegistryInfo("dummy-repository-translations.registry.json");
-        keyData = repositoryRegistryInfo.getKeyData("bundle/key");
-        assertNotNull(keyData);
-        assertEquals(UPDATED, keyData.getStatus());
-        assertEquals(UNRESOLVED, keyData.getLocaleStatus("nl"));
-
-        final File export = new Exporter(temporaryFolder.getRoot(), "Default").export("nl");
-        final File _import = temporaryFolder.newFile("import.csv");
-        FileUtils.copyFile(export, _import);
-        new Importer(temporaryFolder.getRoot(), "Default")._import("import.csv", "nl");
-
-        angularRegistryInfo.load();
-        keyData = angularRegistryInfo.getKeyData("key");
-        assertNotNull(keyData);
-        assertEquals(CLEAN, keyData.getStatus());
         assertEquals(RESOLVED, keyData.getLocaleStatus("nl"));
+        assertEquals(UNRESOLVED, keyData.getLocaleStatus("fr"));
 
         repositoryRegistryInfo.load();
         keyData = repositoryRegistryInfo.getKeyData("bundle/key");
         assertNotNull(keyData);
-        assertEquals(CLEAN, keyData.getStatus());
+        assertEquals(UPDATED, keyData.getStatus());
         assertEquals(RESOLVED, keyData.getLocaleStatus("nl"));
+        assertEquals(UNRESOLVED, keyData.getLocaleStatus("fr"));
     }
 
 }
