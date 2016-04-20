@@ -1052,13 +1052,14 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
         final HstSite previewHstSite = mount.getPreviewHstSite();
         channel.setPreviewHstConfigExists(previewHstSite.hasPreviewConfiguration());
+        channel.setWorkSpaceExists(hasWorkspace(mount));
 
         String mountPath = mount.getMountPath();
         channel.setLocale(mount.getLocale());
         channel.setMountId(mount.getIdentifier());
         channel.setMountPath(mountPath);
 
-        if (mount.getHstSite() != null && mount.getHstSite().getSiteMap() instanceof CanonicalInfo) {
+        if (mount.getHstSite().getSiteMap() instanceof CanonicalInfo) {
             channel.setSiteMapId(((CanonicalInfo)mount.getHstSite().getSiteMap()).getCanonicalIdentifier());
         }
 
@@ -1122,10 +1123,20 @@ public class VirtualHostsService implements MutableVirtualHosts {
         log.info("Attaching channel {} to mount took {} ms ",channel, (System.currentTimeMillis() - start));
     }
 
+    private boolean hasWorkspace(final Mount mount) {
+        final String workspacePath = mount.getHstSite().getConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
+        try (HstNodeLoadingCache.LazyCloseableSession session = hstNodeLoadingCache.createLazyCloseableSession()) {
+            return session.getSession().nodeExists(workspacePath);
+        } catch (Exception e) {
+            throw new ModelLoadingException("Failed to check if mount has a HST workspace: ", e);
+        }
+    }
+
     private void populatePreviewChannel(final Channel preview, final Channel channel) {
         preview.setContentRoot(channel.getContentRoot());
         preview.setHstConfigPath(channel.getHstConfigPath() + "-preview");
         preview.setPreviewHstConfigExists(channel.isPreviewHstConfigExists());
+        preview.setWorkSpaceExists(channel.isWorkspaceExists());
         preview.setLocale(channel.getLocale());
         preview.setHstMountPoint(channel.getHstMountPoint());
         preview.setMountId(channel.getMountId());

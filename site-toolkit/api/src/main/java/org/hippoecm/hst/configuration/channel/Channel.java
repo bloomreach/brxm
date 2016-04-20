@@ -50,6 +50,7 @@ public class Channel implements Serializable {
     private String siteMapId;
     private String locale;
     private boolean previewHstConfigExists;
+    private boolean workspaceExists;
 
     // the set of users that have changes for the channel: Can be the channel node itself or some
     // hst configuration belonging to the channel
@@ -102,6 +103,7 @@ public class Channel implements Serializable {
         siteMapId = channel.siteMapId;
         locale = channel.locale;
         previewHstConfigExists = channel.previewHstConfigExists;
+        workspaceExists = channel.workspaceExists;
         // not a deep clone: Not a problem! Note even the same instance is used, this is because
         // channel.changedBySet can be a ChannelLazyLoadingChangedBySet
         changedBySet = channel.changedBySet;
@@ -283,6 +285,14 @@ public class Channel implements Serializable {
 
     public void setPreviewHstConfigExists(final boolean previewHstConfigExists) {
         this.previewHstConfigExists = previewHstConfigExists;
+    }
+
+    public boolean isWorkspaceExists() {
+        return workspaceExists;
+    }
+
+    public void setWorkSpaceExists(final boolean workspaceExists) {
+        this.workspaceExists = workspaceExists;
     }
 
     /**
