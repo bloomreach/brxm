@@ -34,16 +34,20 @@ import static org.onehippo.cms.l10n.KeyData.KeyStatus.UPDATED;
 import static org.onehippo.cms.l10n.KeyData.LocaleStatus.UNRESOLVED;
 
 public class Exporter {
-    
+
     private final File baseDir;
     private final String format;
-    
+
     Exporter(final File baseDir, final String format) {
         this.baseDir = baseDir;
         this.format = format;
     }
-    
+
     File export(final String locale) throws Exception {
+        return export(locale, false);
+    }
+
+    File export(final String locale, final boolean full) throws Exception {
         final Collection<Translation> pending = new ArrayList<>();
         for (Module module : new ModuleLoader(baseDir).loadModules()) {
             final Registry registry = module.getRegistry();
@@ -51,9 +55,13 @@ public class Exporter {
                 registryInfo.load();
                 for (final String key : registryInfo.getKeys()) {
                     final KeyData data = registryInfo.getKeyData(key);
-                    if (data.getStatus() == ADDED || data.getStatus() == UPDATED) {
-                        if (data.getLocaleStatus(locale) == UNRESOLVED) {
-                            pending.add(new Translation(module, registryInfo, key, locale));
+                    if (full) {
+                        pending.add(new Translation(module, registryInfo, key, locale));
+                    } else {
+                        if (data.getStatus() == ADDED || data.getStatus() == UPDATED) {
+                            if (data.getLocaleStatus(locale) == UNRESOLVED) {
+                                pending.add(new Translation(module, registryInfo, key, locale));
+                            }
                         }
                     }
                 }
@@ -71,9 +79,9 @@ public class Exporter {
         }
         return csv;
     }
-    
+
     public static void main(String[] args) throws Exception {
-        
+
         final Options options = new Options();
         final Option basedirOption = new Option("d", "basedir", true, "the project base directory");
         basedirOption.setRequired(true);
@@ -83,14 +91,19 @@ public class Exporter {
         options.addOption(localeOption);
         final Option formatOption = new Option("f", "format", true, "the csv format");
         options.addOption(formatOption);
+        final Option allOption = new Option("a", "all", true, "export all or only missing");
+        options.addOption(allOption);
 
         final CommandLineParser parser = new DefaultParser();
         final CommandLine commandLine = parser.parse(options, args);
         final File baseDir = new File(commandLine.getOptionValue("basedir")).getCanonicalFile();
         final String locale = commandLine.getOptionValue("locale");
         final String format = commandLine.getOptionValue("format", "Default");
-        
-        new Exporter(baseDir, format).export(locale);
+        final boolean all = commandLine.getOptionValue("all", "false").equals("true");
+
+        System.out.println("exporting all: " + all + " " + commandLine.getOptionValue("all"));
+
+        new Exporter(baseDir, format).export(locale, all);
     }
     
 }
