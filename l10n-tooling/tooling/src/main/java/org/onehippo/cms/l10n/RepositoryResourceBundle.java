@@ -89,12 +89,25 @@ public class RepositoryResourceBundle extends ResourceBundle {
         getSerializer().delete();
     }
 
-    static Iterable<ResourceBundle> createAllInstances(final String fileName, final File file) throws IOException {
+    @Override
+    public void move(final File destFile) throws IOException {
+        final File extensionFile = getExtensionFile();
+        if (!extensionFile.exists()) {
+            throw new IOException("Extension file not found: " + getExtensionFileName());
+        }
+        final RepositoryExtension extension = RepositoryExtension.load(extensionFile);
+        extension.removeResourceBundlesItem(this);
+        super.move(destFile);
+        extension.addResourceBundlesItem(this);
+        extension.save(extensionFile);
+    }
+
+    static Iterable<ResourceBundle> createAllInstances(final String fileName, final File file, final String locale) throws IOException {
         final Collection<ResourceBundle> bundles = new ArrayList<>();
         try (FileInputStream in = new FileInputStream(file)) {
             final String json = IOUtils.toString(in);
             final JSONObject jsonObject = JSONObject.fromObject(json);
-            RepositoryResourceBundleLoader.collectResourceBundles(jsonObject, fileName, Collections.singletonList("en"), new RepositoryResourceBundleLoader.Path(), bundles);
+            RepositoryResourceBundleLoader.collectResourceBundles(jsonObject, fileName, Collections.singletonList(locale), new RepositoryResourceBundleLoader.Path(), bundles);
         }
         for (ResourceBundle bundle : bundles) {
             ((RepositoryResourceBundle) bundle).file = file;

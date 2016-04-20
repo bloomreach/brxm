@@ -21,15 +21,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.codehaus.plexus.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.commons.lang.StringUtils.substringBefore;
 
 public abstract class ResourceBundle {
     
     private static final Logger log = LoggerFactory.getLogger(ResourceBundle.class);
 
     protected final String name;
-    protected final String fileName;
+    protected String fileName;
     protected File file;
     protected final String locale;
     protected final Map<String, String> entries;
@@ -116,7 +119,19 @@ public abstract class ResourceBundle {
             file.delete();
         }
     }
+
+    public void move(final File destFile) throws IOException {
+        final File baseDir = getBaseDir();
+        FileUtils.copyFile(file, destFile);
+        delete();
+        file = destFile;
+        fileName = file.getCanonicalPath().substring(baseDir.getCanonicalPath().length()+1);
+    }
     
+    private File getBaseDir() throws IOException {
+        return new File(substringBefore(file.getCanonicalPath(), fileName));
+    }
+
     protected abstract Serializer getSerializer();
     
     public static ResourceBundle createInstance(final String name, final String fileName, final File file, final BundleType bundleType) {
@@ -134,7 +149,10 @@ public abstract class ResourceBundle {
         throw new IllegalArgumentException("No such bundle type: " + bundleType);
     }
     
-    public static Iterable<ResourceBundle> createAllInstances(final String fileName, final File file, final BundleType bundleType) throws IOException {
+    public static Iterable<ResourceBundle> createAllInstances(final String fileName, final File file, final BundleType bundleType, final String locale) throws IOException {
+        if (!file.exists()) {
+            return Collections.emptyList();
+        }
         switch (bundleType) {
             case ANGULAR: {
                 return Collections.singletonList(new AngularResourceBundle(null, fileName, file));
@@ -143,13 +161,13 @@ public abstract class ResourceBundle {
                 return Collections.singleton(new WicketResourceBundle(null, fileName, file));
             }
             case REPOSITORY: {
-                return RepositoryResourceBundle.createAllInstances(fileName, file);
+                return RepositoryResourceBundle.createAllInstances(fileName, file, locale);
             }
         }
         throw new IllegalArgumentException("No such bundle type: " + bundleType);
         
     }
-
+    
     protected abstract class Serializer {
         
         protected abstract void serialize() throws IOException;

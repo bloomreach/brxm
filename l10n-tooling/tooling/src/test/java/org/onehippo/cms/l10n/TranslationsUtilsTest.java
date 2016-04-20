@@ -21,33 +21,34 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.onehippo.cms.l10n.TranslationsUtils.mapRegistryFileToResourceBundleFile;
-import static org.onehippo.cms.l10n.TranslationsUtils.mapResourceBundleToRegistryFile;
+import static org.onehippo.cms.l10n.TranslationsUtils.mapResourceBundleToRegistryInfoFile;
+import static org.onehippo.cms.l10n.TranslationsUtils.mapSourceBundleFileToTargetBundleFile;
 
 public class TranslationsUtilsTest {
 
     @Test
     public void testSourceBundleFileToTargetBundleFileMapping() {
-        String bundleFileName = TranslationsUtils.mapSourceBundleFileToTargetBundleFile("dummy-repository-translations.json", BundleType.REPOSITORY, "nl");
+        String bundleFileName = mapSourceBundleFileToTargetBundleFile("dummy-repository-translations.json", BundleType.REPOSITORY, "nl");
         assertEquals("dummy-repository-translations_nl.json", bundleFileName);
     }
     
     @Test
     public void testResourceBundleToRegistryFileMapping() {
-        String registryFile = TranslationsUtils.mapResourceBundleToRegistryFile(BundleType.ANGULAR, "angular/project/app/i18n/en.json");
+        String registryFile = mapResourceBundleToRegistryInfoFile(BundleType.ANGULAR, "angular/project/app/i18n/en.json");
         assertEquals("angular/project/app/i18n/registry.json", registryFile);
-        registryFile = TranslationsUtils.mapResourceBundleToRegistryFile(BundleType.WICKET, "org/example/TestPlugin.properties");
+        registryFile = mapResourceBundleToRegistryInfoFile(BundleType.WICKET, "org/example/TestPlugin.properties");
         assertEquals("org/example/TestPlugin.registry.json", registryFile);
-        registryFile = TranslationsUtils.mapResourceBundleToRegistryFile(BundleType.REPOSITORY, "example-translations_en.json");
+        registryFile = mapResourceBundleToRegistryInfoFile(BundleType.REPOSITORY, "example-translations_en.json");
         assertEquals("example-translations.registry.json", registryFile);
     }
 
     @Test
     public void testRegistryFileToResourceBundleFilesMapping() throws IOException {
-        String bundleFileName = TranslationsUtils.mapRegistryFileToResourceBundleFile("angular/dummy/i18n/registry.json", BundleType.ANGULAR, "nl");
+        String bundleFileName = mapRegistryFileToResourceBundleFile("angular/dummy/i18n/registry.json", BundleType.ANGULAR, "nl");
         assertEquals("angular/dummy/i18n/nl.json", bundleFileName);
-        bundleFileName = TranslationsUtils.mapRegistryFileToResourceBundleFile("com/onehippo/cms7/localizer/test/DummyWicketPlugin.registry.json", BundleType.WICKET, "nl");
+        bundleFileName = mapRegistryFileToResourceBundleFile("com/onehippo/cms7/localizer/test/DummyWicketPlugin.registry.json", BundleType.WICKET, "nl");
         assertEquals("com/onehippo/cms7/localizer/test/DummyWicketPlugin_nl.properties", bundleFileName);
-        bundleFileName = TranslationsUtils.mapRegistryFileToResourceBundleFile("dummy-repository-translations.registry.json", BundleType.REPOSITORY, "nl");
+        bundleFileName = mapRegistryFileToResourceBundleFile("dummy-repository-translations.registry.json", BundleType.REPOSITORY, "nl");
         assertEquals("dummy-repository-translations_nl.json", bundleFileName);
     }
     

@@ -19,12 +19,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.LocaleUtils;
 
 import static org.apache.commons.lang.StringUtils.substringAfterLast;
 import static org.apache.commons.lang.StringUtils.substringBefore;
 import static org.apache.commons.lang.StringUtils.substringBeforeLast;
+import static org.onehippo.cms.l10n.BundleType.ANGULAR;
+import static org.onehippo.cms.l10n.BundleType.REPOSITORY;
+import static org.onehippo.cms.l10n.BundleType.WICKET;
 
 public final class TranslationsUtils {
 
@@ -56,7 +60,6 @@ public final class TranslationsUtils {
             return resourceBundle.getName() + "/";
         }
         return "";
-        
     }
 
     public static String mapRegistryFileToResourceBundleFile(final RegistryInfo registryInfo, final String locale) {
@@ -83,8 +86,8 @@ public final class TranslationsUtils {
         }
         throw new IllegalArgumentException("Unknown bundle type: " + bundleType);
     }
-
-    public static String mapResourceBundleToRegistryFile(final BundleType bundleType, final String bundleFileName) {
+    
+    public static String mapResourceBundleToRegistryInfoFile(final BundleType bundleType, final String bundleFileName) {
         switch (bundleType) {
             case ANGULAR:
                 return substringBeforeLast(bundleFileName, "/")
@@ -103,10 +106,24 @@ public final class TranslationsUtils {
         throw new IllegalArgumentException("Unknown bundle type: " + bundleType);
     }
 
-    public static String mapResourceBundleToRegistryFile(final ResourceBundle resourceBundle) {
-        return mapResourceBundleToRegistryFile(resourceBundle.getType(), resourceBundle.getFileName());
+    public static String mapResourceBundleToRegistryInfoFile(final ResourceBundle resourceBundle) {
+        return mapResourceBundleToRegistryInfoFile(resourceBundle.getType(), resourceBundle.getFileName());
     }
-    
+
+    public static String mapResourceBundleToRegistryInfoFile(final String resourceBundleFile) {
+        BundleType bundleType;
+        if (resourceBundleFile.endsWith("/en.json")) {
+            bundleType = ANGULAR;
+        } else if (resourceBundleFile.endsWith(".json")) {
+            bundleType = REPOSITORY;
+        } else if (resourceBundleFile.endsWith(".properties")) {
+            bundleType = WICKET;
+        } else {
+            throw new IllegalArgumentException("Failed determine bundle type from bundle file name: " + resourceBundleFile);
+        }
+        return mapResourceBundleToRegistryInfoFile(bundleType, resourceBundleFile);
+    }
+
     public static String getLocaleFromBundleFileName(final String bundleFileName, final BundleType bundleType) {
         switch (bundleType) {
             case ANGULAR: {

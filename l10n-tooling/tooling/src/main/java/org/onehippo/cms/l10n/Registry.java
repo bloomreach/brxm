@@ -103,7 +103,7 @@ public class Registry {
     }
 
     public RegistryInfo getRegistryInfoForBundle(final ResourceBundle resourceBundle) throws IOException {
-        return getRegistryInfo(TranslationsUtils.mapResourceBundleToRegistryFile(resourceBundle));
+        return getRegistryInfo(TranslationsUtils.mapResourceBundleToRegistryInfoFile(resourceBundle));
     }
 
     public RegistryInfo getRegistryInfo(final String infoFileName) throws IOException {
@@ -176,9 +176,10 @@ public class Registry {
         return getResourceBundle(bundleName, bundleFileName, bundleType);
     }
     
-    private Iterable<ResourceBundle> getAllResourceBundles(final String locale, final RegistryInfo registryInfo) throws IOException {
+    public Iterable<ResourceBundle> getAllResourceBundles(final String locale, final RegistryInfo registryInfo) throws IOException {
         final BundleType bundleType = registryInfo.getBundleType();
         final String bundleFileName = TranslationsUtils.mapRegistryFileToResourceBundleFile(registryInfo.getFileName(), bundleType, locale);
-        return ResourceBundle.createAllInstances(bundleFileName, new File(registryDir, bundleFileName), registryInfo.getBundleType());
+        return ResourceBundle.createAllInstances(bundleFileName, new File(registryDir, bundleFileName), registryInfo.getBundleType(), locale);
     }
+    
 }

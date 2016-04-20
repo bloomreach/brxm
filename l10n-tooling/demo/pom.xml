@@ -34,6 +34,12 @@
     <import.locale/>
     <import.format>Default</import.format>
     <import.file/>
+    <move.from/>
+    <move.to/>
+    <move.bundle/>
+    <move.srcKey/>
+    <move.destKey/>
+    <move.bundleName/>
   </properties>
 
   <dependencies>
@@ -170,7 +176,7 @@
                   <goal>java</goal>
                 </goals>
                 <configuration>
-                  <mainClass>org.onehippo.cms.translations.Registrar</mainClass>
+                  <mainClass>org.onehippo.cms.l10n.Registrar</mainClass>
                   <systemProperties>
                     <systemProperty>
                       <key>log4j.configuration</key>
@@ -201,7 +207,7 @@
                   <goal>java</goal>
                 </goals>
                 <configuration>
-                  <mainClass>org.onehippo.cms.translations.Registrar</mainClass>
+                  <mainClass>org.onehippo.cms.l10n.Registrar</mainClass>
                   <systemProperties>
                     <systemProperty>
                       <key>log4j.configuration</key>
@@ -232,7 +238,7 @@
                   <goal>java</goal>
                 </goals>
                 <configuration>
-                  <mainClass>org.onehippo.cms.translations.Registrar</mainClass>
+                  <mainClass>org.onehippo.cms.l10n.Registrar</mainClass>
                   <systemProperties>
                     <systemProperty>
                       <key>log4j.configuration</key>
@@ -302,6 +308,68 @@
                     </systemProperty>
                   </systemProperties>
                   <commandlineArgs>--basedir ${project.basedir} --locale ${import.locale} --format ${import.format} --file ${import.file}</commandlineArgs>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>moveBundle</id>
+      <build>
+        <defaultGoal>initialize</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>move</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <configuration>
+                  <mainClass>org.onehippo.cms.l10n.Mover</mainClass>
+                  <systemProperties>
+                    <systemProperty>
+                      <key>log4j.configuration</key>
+                      <value>file://${project.basedir}/config/log4j.xml</value>
+                    </systemProperty>
+                  </systemProperties>
+                  <commandlineArgs>--basedir ${project.basedir} --locales ${registry.locales} --srcPath ${move.from} --destPath ${move.to} --command moveBundle</commandlineArgs>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>moveKey</id>
+      <build>
+        <defaultGoal>initialize</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>move</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <configuration>
+                  <mainClass>org.onehippo.cms.l10n.Mover</mainClass>
+                  <systemProperties>
+                    <systemProperty>
+                      <key>log4j.configuration</key>
+                      <value>file://${project.basedir}/config/log4j.xml</value>
+                    </systemProperty>
+                  </systemProperties>
+                  <commandlineArgs>--basedir ${project.basedir} --locales ${registry.locales} --srcPath ${move.bundle} --srcKey ${move.srcKey} --destKey ${move.destKey} --command moveKey</commandlineArgs>
                 </configuration>
               </execution>
             </executions>
