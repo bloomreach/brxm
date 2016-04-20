@@ -31,7 +31,7 @@
   "ERROR_RELEVANCE_VARIANT_SELECTION_FAILED": "Failed to activate global variant '{{variant}}'.",
   "ERROR_SITEMAP_RETRIEVAL_FAILED": "Failed to retrieve the sitemap for the current channel.",
   "EXPERIMENT_LABEL_COMPLETED": "Experiment completed",
-  "EXPERIMENT_LABEL_RUNNING": "Experiment runninhig",
+  "EXPERIMENT_LABEL_RUNNING": "Experiment running",
   "EXPERIMENT_LABEL_CREATED": "Experiment created",
   "ITEM_ALREADY_LOCKED": "Cannot add '{{component}}': the container is locked by '{{lockedBy}}'.",
   "VIEWPORT_WIDTH_DESKTOP": "desktop",
