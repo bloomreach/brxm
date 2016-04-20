@@ -17,6 +17,7 @@
   <properties>
     <hippo.l10n-tooling.version>1.0.0-SNAPSHOT</hippo.l10n-tooling.version>
     <registry.locales>nl,de,fr</registry.locales>
+    <registry.add.locale></registry.add.locale>
     <export.locale/>
     <export.format>Default</export.format>
     <export.all>false</export.all>
@@ -383,6 +384,59 @@
                     </systemProperty>
                   </systemProperties>
                   <commandlineArgs>--basedir ${project.basedir} --locales ${registry.locales} --command report</commandlineArgs>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>org.onehippo.cms.l10n</groupId>
+          <artifactId>hippo-cms-l10n-tooling</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>addLocale</id>
+      <build>
+        <defaultGoal>initialize</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>add-locale</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <configuration>
+                  <mainClass>org.onehippo.cms.l10n.Registrar</mainClass>
+                  <systemProperties>
+                    <systemProperty>
+                      <key>log4j.configuration</key>
+                      <value>file://${main.basedir}/config/log4j.xml</value>
+                    </systemProperty>
+                  </systemProperties>
+                  <commandlineArgs>--basedir ${project.basedir} --locales ${registry.add.locale} --command add-locale</commandlineArgs>
                 </configuration>
               </execution>
             </executions>
