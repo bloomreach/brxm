@@ -16,8 +16,8 @@
 package org.onehippo.cms.l10n;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
@@ -51,17 +51,16 @@ public class WicketResourceBundle extends ResourceBundle {
             for (Map.Entry<String, String> entry : entries.entrySet()) {
                 properties.setProperty(entry.getKey(), entry.getValue());
             }
-            try (FileWriter writer = new FileWriter(file)) {
-                properties.store(writer, null);
+            try (FileOutputStream stream = new FileOutputStream(file)) {
+                properties.store(stream, null);
             }
-
         }
 
         @Override
         public void deserialize() throws IOException {
             Properties properties = new Properties();
-            try (FileReader reader = new FileReader(file)) {
-                properties.load(reader);
+            try (FileInputStream stream = new FileInputStream(file)) {
+                properties.load(stream);
             }
             for (Map.Entry<Object, Object> entry : properties.entrySet()) {
                 entries.put(entry.getKey().toString(), entry.getValue().toString());
