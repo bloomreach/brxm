@@ -143,4 +143,16 @@ export class ChannelCtrl {
 
     return this.DialogService.show(confirm);
   }
+
+  isSubpageOpen() {
+    return !!this.currentSubpage;
+  }
+
+  showSubpage(subpage) {
+    this.currentSubpage = subpage;
+  }
+
+  hideSubpage() {
+    delete this.currentSubpage;
+  }
 }

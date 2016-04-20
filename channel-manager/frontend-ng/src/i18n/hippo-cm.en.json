@@ -25,6 +25,7 @@
   "BUTTON_YES": "Yes",
   "BUTTON_NO": "No",
   "ERROR_ENTER_EDIT": "Failed to enter Edit mode.",
+  "ERROR_MOVE_COMPONENT_FAILED": "Failed to move component '{{component}}'",
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "Failed to retrieve the list of global variants.",
   "ERROR_RELEVANCE_VARIANT_SELECTION_FAILED": "Failed to activate global variant '{{variant}}'.",
   "ERROR_SITEMAP_RETRIEVAL_FAILED": "Failed to retrieve the sitemap for the current channel.",
