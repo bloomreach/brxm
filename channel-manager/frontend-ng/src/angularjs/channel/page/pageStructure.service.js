@@ -22,7 +22,7 @@ import { ComponentElement } from './element/componentElement';
 export class PageStructureService {
 
   constructor($log, $q, HstConstants, hstCommentsProcessorService, RenderingService, OverlaySyncService,
-              ChannelService, CmsService, PageMetaDataService, HstService, MaskService) {
+              ChannelService, CmsService, PageMetaDataService, HstService, MaskService, HippoIframeService, FeedbackService) {
     'ngInject';
 
     // Injected
@@ -37,6 +37,8 @@ export class PageStructureService {
     this.OverlaySyncService = OverlaySyncService;
     this.PageMetaDataService = PageMetaDataService;
     this.MaskService = MaskService;
+    this.HippoIframeService = HippoIframeService;
+    this.FeedbackService = FeedbackService;
 
     this.clearParsedElements();
   }
@@ -208,12 +210,26 @@ export class PageStructureService {
 
   addComponentToContainer(catalogComponent, container) {
     return this.HstService.addHstComponent(catalogComponent, container.getId())
-      .then((newComponentJson) => {
-        this.ChannelService.recordOwnChange();
-        return this.renderContainer(container).then(() => this.getComponentById(newComponentJson.id));
-      });
-    // TODO: handle error
-    // show error message that adding a component failed.
+      .then(
+        (newComponentJson) => {
+          this.ChannelService.recordOwnChange();
+          // TODO: handle error when rendering container failed
+          return this.renderContainer(container).then(() => this.getComponentById(newComponentJson.id));
+        },
+        (errorResponse) => {
+          let errorKey = errorResponse.error;
+          const params = errorResponse.parameterMap;
+          params.component = catalogComponent.name;
+          switch (errorResponse.error) {
+            case 'ITEM_ALREADY_LOCKED':
+              errorKey = errorResponse.error;
+              break;
+            default:
+              errorKey = 'ERROR_ADD_COMPONENT';
+          }
+          this.FeedbackService.showError(errorKey, params);
+          return this.HippoIframeService.reload().then(() => this.$q.reject());
+        });
   }
 
   getContainerByOverlayElement(overlayElement) {

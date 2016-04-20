@@ -24,6 +24,7 @@
   "CONFIRM_DISCARD_OWN_CHANGES_MESSAGE": "Weet u zeker dat u al uw ongepubliceerde veranderingen in dit channel ongedaan wilt maken?",
   "BUTTON_YES": "Ja",
   "BUTTON_NO": "Nee",
+  "ERROR_ADD_COMPONENT": "Kan niet '{{component}}' toevoegen.",
   "ERROR_ENTER_EDIT": "Naar Bewerk modus schakelen is mislukt.",
   "ERROR_MOVE_COMPONENT_FAILED": "Het verplaatsen van component '{{component}}' is mislukt.",
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "Het ophalen van de globale varianten ('Toon als') is mislukt.",
@@ -32,6 +33,7 @@
   "EXPERIMENT_LABEL_COMPLETED": "Experiment beëindigd",
   "EXPERIMENT_LABEL_RUNNING": "Experiment bezig",
   "EXPERIMENT_LABEL_CREATED": "Experiment aangemaakt",
+  "ITEM_ALREADY_LOCKED": "Kan niet '{{component}}' toevoegen. De container heeft door {{lockedBy}} geblokkeerd.",
   "VIEWPORT_WIDTH_DESKTOP": "desktop",
   "VIEWPORT_WIDTH_PHONE": "smartphone (320px)",
   "VIEWPORT_WIDTH_TABLET": "tablet (720px)"
