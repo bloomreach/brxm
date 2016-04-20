@@ -20,18 +20,14 @@ export class ComponentAdderCtrl {
   constructor($scope, $log, $element, ComponentAdderService, PageStructureService, CatalogService, DragDropService) {
     'ngInject';
 
+    this.PageStructureService = PageStructureService;
+
     const drake = window.dragula({
       ignoreInputTextSelection: false,
-      isContainer(el) {
-        return el.classList.contains('overlay-element-container') || ComponentAdderService.isContainer(el);
-      },
+      isContainer: (el) => this._isEnabledOverlayContainer(el) || ComponentAdderService.isCatalogContainer(el),
       copy: true,
-      moves(el) {
-        return ComponentAdderService.isContainerItem(el);
-      },
-      accepts(el, target) {
-        return target.classList.contains('overlay-element-container');
-      },
+      moves: (el) => ComponentAdderService.isCatalogContainerItem(el),
+      accepts: (el, target) => !this._isEnabledOverlayContainer(target),
     });
     drake.on('cloned', (clone, original) => {
       $scope.$apply(() => {
@@ -75,7 +71,7 @@ export class ComponentAdderCtrl {
               });
             // error is handled inside PageStructureService.
           } else {
-            $log.debug(`Cannot add catalog item ${this.selectedCatalogItem.id} because container cannot be found for overlay element`, target);
+            $log.debug(`Cannot add catalog item ${this.selectedCatalogItem.id} because container cannot be found for the overlay element or has been locked by a different user`, target);
           }
         });
       }
@@ -94,5 +90,10 @@ export class ComponentAdderCtrl {
       drake.destroy();
       autoScroll.destroy();
     });
+  }
+
+  _isEnabledOverlayContainer(el) {
+    const container = this.PageStructureService.getContainerByOverlayElement(el);
+    return container && !container.isDisabled();
   }
 }

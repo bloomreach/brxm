@@ -22,6 +22,8 @@ describe('PageStructureService', () => {
   let ChannelService;
   let HstService;
   let RenderingService;
+  let HippoIframeService;
+  let FeedbackService;
   let $document;
   let $q;
   let $log;
@@ -32,7 +34,7 @@ describe('PageStructureService', () => {
     module('hippo-cm.channel.page');
 
     inject((_$q_, _$rootScope_, _$log_, _$document_, _$window_, _PageStructureService_, _PageMetaDataService_,
-            _ChannelService_, _HstService_, _RenderingService_) => {
+            _ChannelService_, _HstService_, _RenderingService_, _HippoIframeService_, _FeedbackService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $log = _$log_;
@@ -43,6 +45,8 @@ describe('PageStructureService', () => {
       ChannelService = _ChannelService_;
       HstService = _HstService_;
       RenderingService = _RenderingService_;
+      HippoIframeService = _HippoIframeService_;
+      FeedbackService = _FeedbackService_;
     });
 
     spyOn(ChannelService, 'recordOwnChange');
@@ -358,6 +362,63 @@ describe('PageStructureService', () => {
         testMetaData: 'foo',
       },
     });
+  });
+
+  it('shows the default error message when failed to add a new component from catalog', () => {
+    const catalogComponent = {
+      id: 'foo-bah',
+      name: 'Foo Bah Component',
+    };
+    const mockContainer = jasmine.createSpyObj(['getId']);
+    mockContainer.getId.and.returnValue('container-1');
+
+    spyOn(FeedbackService, 'showError');
+    spyOn(HippoIframeService, 'reload').and.returnValue($q.when());
+    const deferred = $q.defer();
+    spyOn(HstService, 'addHstComponent').and.returnValue(deferred.promise);
+
+    PageStructureService.addComponentToContainer(catalogComponent, mockContainer);
+    deferred.reject({
+      error: 'cafebabe-error-key',
+      parameterMap: {},
+    });
+    $rootScope.$digest();
+
+    expect(HstService.addHstComponent).toHaveBeenCalledWith(catalogComponent, 'container-1');
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT', { component: 'Foo Bah Component' });
+    expect(HippoIframeService.reload).toHaveBeenCalled();
+  });
+
+  it('shows the locked error message when adding a new component and the container was locked by another user', () => {
+    const catalogComponent = {
+      id: 'foo-bah',
+      name: 'Foo Bah Component',
+    };
+    const mockContainer = jasmine.createSpyObj(['getId']);
+    mockContainer.getId.and.returnValue('container-1');
+
+    spyOn(HippoIframeService, 'reload').and.returnValue($q.when());
+    spyOn(FeedbackService, 'showError');
+    const deferred = $q.defer();
+    spyOn(HstService, 'addHstComponent').and.returnValue(deferred.promise);
+
+    PageStructureService.addComponentToContainer(catalogComponent, mockContainer);
+    deferred.reject({
+      error: 'ITEM_ALREADY_LOCKED',
+      parameterMap: {
+        lockedBy: 'another-user',
+        lockedOn: 1234,
+      },
+    });
+    $rootScope.$digest();
+
+    expect(HstService.addHstComponent).toHaveBeenCalledWith(catalogComponent, 'container-1');
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ITEM_ALREADY_LOCKED', {
+      lockedBy: 'another-user',
+      lockedOn: 1234,
+      component: 'Foo Bah Component',
+    });
+    expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
   it('prints parsed elements', () => {

@@ -60,8 +60,8 @@ export class ChannelCtrl {
     // reset service state to avoid weird scaling when controller is reloaded due to state change
     ScalingService.setPushWidth(0);
 
-    ComponentAdderService.setContainerClass('catalog-dd-container');
-    ComponentAdderService.setContainerItemClass('catalog-dd-container-item');
+    ComponentAdderService.setCatalogContainerClass('catalog-dd-container');
+    ComponentAdderService.setCatalogContainerItemClass('catalog-dd-container-item');
   }
 
   selectViewPort(viewPort) {
