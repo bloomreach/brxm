@@ -16,6 +16,8 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions;
 
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
+
 public class ItemNotFoundException extends ClientException {
     public ItemNotFoundException(final String message) {
         super(message, ErrorStatus.from(ClientError.ITEM_NOT_FOUND));

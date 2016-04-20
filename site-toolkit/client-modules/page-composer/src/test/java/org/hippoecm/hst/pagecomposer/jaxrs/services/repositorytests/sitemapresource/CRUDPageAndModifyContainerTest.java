@@ -27,7 +27,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ErrorStatus;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

@@ -16,6 +16,8 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions;
 
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
+
 public class InvalidNodeTypeException extends ClientException {
     public InvalidNodeTypeException(final String message, final String itemUUID) {
         super(message, ErrorStatus.from(ClientError.INVALID_NODE_TYPE, "UUID", itemUUID));

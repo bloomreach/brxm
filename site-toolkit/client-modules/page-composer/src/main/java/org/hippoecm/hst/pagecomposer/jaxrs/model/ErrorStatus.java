@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions;
+package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 
 public class ErrorStatus {
     @JsonProperty
