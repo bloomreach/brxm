@@ -32,6 +32,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.core.container.ContainerException;
@@ -39,10 +40,11 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PostRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService.ContainerItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
-import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +54,12 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINER
 public class ContainerComponentResource extends AbstractConfigResource {
     private static Logger log = LoggerFactory.getLogger(ContainerComponentResource.class);
 
+    private ContainerComponentService containerComponentService;
+
+    public void setContainerComponentService(ContainerComponentService containerComponentService) {
+        this.containerComponentService = containerComponentService;
+    }
+
     private ContainerHelper containerHelper;
 
     public void setContainerHelper(final ContainerHelper containerHelper) {
@@ -59,70 +67,46 @@ public class ContainerComponentResource extends AbstractConfigResource {
     }
 
     @POST
-    @Path("/create/{itemUUID}")
+    @Path("/{itemUUID}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createContainerItem(final @PathParam("itemUUID") String itemUUID,
                                         final @QueryParam("lastModifiedTimestamp") long versionStamp) throws ContainerException {
-
-        if (itemUUID == null) {
-            throw new ContainerException("There must be a uuid of the containeritem to copy from ");
+        if (StringUtils.isEmpty(itemUUID)) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("There must be a uuid of the containeritem to copy from")
+                    .build();
         }
         try {
             UUID.fromString(itemUUID);
         } catch (IllegalArgumentException e) {
-            throw new ContainerException("There must be a valid uuid of the containeritem to copy from");
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("There must be a valid uuid of the containeritem to copy from")
+                    .build();
         }
 
-        HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
+        final Response.Status httpStatusCode;
+        final ErrorStatus errorStatus;
         try {
-            Session session = requestContext.getSession();
-            Node containerItem;
-            try {
-                containerItem = session.getNodeByIdentifier(itemUUID);
-            } catch (ItemNotFoundException e) {
-                log.warn("ItemNotFoundException: unknown uuid '{}'. Cannot create item", itemUUID);
-                return error("ItemNotFoundException: unknown uuid '"+itemUUID+"'. Cannot create item");
-            }
-            if (!containerItem.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
-                log.warn("The container component where the item should be created in is not of the correct type. Cannot create item '{}'", itemUUID);
-                return error("The container component where the item should be created in is not of the correct type. Cannot create item '"+itemUUID+"'");
-            }
+            final Session session = getPageComposerContextService().getRequestContext().getSession();
+            final ContainerItem newContainerItem = containerComponentService.createContainerItem(session, itemUUID, versionStamp);
 
-            Node containerNode = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
-            if (containerNode == null) {
-                log.warn("Exception during creating new container item : Could not find container node to add item to.");
-                return error("Exception during creating new container item : Could not find container node to add item to.");
-            }
+            final Node newNode = newContainerItem.getContainerItem();
+            final ContainerItemRepresentation containerItemRepresentation = new ContainerItemRepresentation().represent(newNode, newContainerItem.getTimeStamp());
 
-            try {
-                // the acquireLock also checks all ancestors whether they are not locked by someone else
-                containerHelper.acquireLock(containerNode, versionStamp);
-            } catch (ClientException e) {
-                log.info("Exception while trying to lock '" + containerNode.getPath() + "': ", e);
-                return error(e.getMessage());
-            }
-
-            // now we have the containerItem that contains 'how' to create the new containerItem and we have the
-            // containerNode. Find a correct newName and create a new node.
-            String newItemNodeName = findNewName(containerItem.getName(), containerNode);
-
-            JcrUtils.copy(session, containerItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
-            Node newItem = containerNode.getNode(newItemNodeName);
-            HstConfigurationUtils.persistChanges(session);
-            final long newVersionStamp;
-            if (containerNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED)) {
-                newVersionStamp = containerNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED).getDate().getTimeInMillis();
-            } else {
-                newVersionStamp = 0;
-            }
-            ContainerItemRepresentation item = new ContainerItemRepresentation().represent(newItem, newVersionStamp);
-            log.info("Successfully created item '{}' with path '{}'" , newItem.getName(), newItem.getPath());
-            return ok("Successfully created item " + newItem.getName() + " with path " + newItem.getPath(), item);
+            log.info("Successfully created containerItemRepresentation '{}' with path '{}'" , newNode.getName(), newNode.getPath());
+            return Response.status(Response.Status.CREATED)
+                    .entity(containerItemRepresentation)
+                    .build();
+        } catch (ClientException e) {
+            errorStatus = e.getErrorStatus();
+            httpStatusCode = Response.Status.BAD_REQUEST;
         } catch (RepositoryException e) {
             log.warn("Exception during creating new container item: {}", e);
-            return error("Exception during creating new container item : " + e.getMessage());
+            errorStatus = ErrorStatus.unknown(e.getMessage());
+            httpStatusCode = Response.Status.INTERNAL_SERVER_ERROR;
         }
+        return createErrorResponse(httpStatusCode, errorStatus);
     }
 
 
@@ -268,4 +252,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
         }
     }
 
+    private Response createErrorResponse(final Response.Status httpStatusCode, final ErrorStatus errorStatus) {
+        return Response.status(httpStatusCode).entity(errorStatus).build();
+    }
 }

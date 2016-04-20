@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
@@ -37,7 +36,6 @@ import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import junit.framework.Assert;
-import static junit.framework.Assert.assertNull;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_XTYPE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_COMPONENT;
@@ -113,10 +111,10 @@ public class ReApplyPrototypesTest  extends AbstractSiteMapResourceTest {
             // override the config identifier to now set the container from the prototype as REQUEST_CONFIG_NODE_IDENTIFIER
             ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, container.getCanonicalIdentifier());
             final long versionStamp = 0;
-            final Response addedItem = containerResource.createContainerItem(testContext.catalogItem.getIdentifier(),
+            final Response addedItemResponse = containerResource.createContainerItem(testContext.catalogItem.getIdentifier(),
                     versionStamp);
-            assertEquals(Response.Status.OK.getStatusCode(), addedItem.getStatus());
-            ContainerItemRepresentation cir = (ContainerItemRepresentation)((ExtResponseRepresentation) addedItem.getEntity()).getData();
+            assertEquals(Response.Status.CREATED.getStatusCode(), addedItemResponse.getStatus());
+            ContainerItemRepresentation cir = (ContainerItemRepresentation) addedItemResponse.getEntity();
             assertTrue(
                     cir.getPath().startsWith("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/foo-prototype-page/" + relContainerPath));
             testContext.addedPageContainerItems.add(cir);
