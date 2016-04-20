@@ -21,14 +21,16 @@ describe('PageActions', () => {
   let $compile;
   let $translate;
   let $scope;
+  let ChannelService;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _$translate_) => {
+    inject((_$rootScope_, _$compile_, _$translate_, _ChannelService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $translate = _$translate_;
+      ChannelService = _ChannelService_;
     });
 
     spyOn($translate, 'instant').and.callFake((key) => {
@@ -38,6 +40,9 @@ describe('PageActions', () => {
 
       return key;
     });
+
+    spyOn(ChannelService, 'hasPrototypes');
+    spyOn(ChannelService, 'hasWorkspace');
   });
 
   function compileDirectiveAndGetController() {
@@ -71,5 +76,26 @@ describe('PageActions', () => {
 
     PageActionsCtrl.trigger(PageActionsCtrl.actions[1]);
     expect($scope.onActionSelected).toHaveBeenCalledWith('page-add');
+  });
+
+  it('enables the add action if the current channel has both a workspace and prototypes', () => {
+    const PageActionsCtrl = compileDirectiveAndGetController();
+    const addAction = PageActionsCtrl.actions.find((action) => action.id === 'add');
+
+    ChannelService.hasWorkspace.and.returnValue(false);
+    ChannelService.hasPrototypes.and.returnValue(false);
+    expect(addAction.isEnabled()).toBe(false);
+
+    ChannelService.hasWorkspace.and.returnValue(false);
+    ChannelService.hasPrototypes.and.returnValue(true);
+    expect(addAction.isEnabled()).toBe(false);
+
+    ChannelService.hasWorkspace.and.returnValue(true);
+    ChannelService.hasPrototypes.and.returnValue(false);
+    expect(addAction.isEnabled()).toBe(false);
+
+    ChannelService.hasWorkspace.and.returnValue(true);
+    ChannelService.hasPrototypes.and.returnValue(true);
+    expect(addAction.isEnabled()).toBe(true);
   });
 });

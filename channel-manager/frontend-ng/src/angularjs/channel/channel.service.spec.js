@@ -38,6 +38,7 @@ describe('ChannelService', () => {
       mountId: 'mountId',
       id: 'channelId',
       siteMapId: 'siteMapId',
+      workspaceExists: true,
     };
 
     SessionServiceMock = {
@@ -74,7 +75,7 @@ describe('ChannelService', () => {
     });
 
     spyOn(HstService, 'doPost');
-    spyOn(HstService, 'doGet');
+    spyOn(HstService, 'doGet').and.returnValue($q.when({ data: {} }));
     spyOn(HstService, 'getChannel');
     spyOn(SiteMapService, 'load');
     spyOn(window.APP_TO_CMS, 'publish');
@@ -139,11 +140,16 @@ describe('ChannelService', () => {
   });
 
   it('should save a reference to the channel when load succeeds', () => {
+    HstService.doGet.and.returnValue($q.when({ data: { prototypes: ['test'] } }));
     ChannelService._load(channelMock);
     expect(ChannelService.getChannel()).not.toEqual(channelMock);
     $rootScope.$digest();
     expect(ChannelService.getChannel()).toEqual(channelMock);
     expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
+    expect(HstService.doGet).toHaveBeenCalledWith(channelMock.mountId, 'newpagemodel');
+    $rootScope.$digest();
+    expect(ChannelService.hasPrototypes()).toBe(true);
+    expect(ChannelService.hasWorkspace()).toBe(true);
   });
 
   it('should resolve a promise with the channel when load succeeds', () => {

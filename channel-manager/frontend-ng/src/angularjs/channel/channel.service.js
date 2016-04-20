@@ -62,6 +62,7 @@ export class ChannelService {
     this.channelPrefix = this._makeChannelPrefix(); // precompute to be more efficient
     this.CatalogService.load(this._getMountId());
     this.SiteMapService.load(channel.siteMapId);
+    this._augmentChannelWithPrototypeInfo();
   }
 
   getChannel() {
@@ -190,6 +191,21 @@ export class ChannelService {
 
   getSiteMapId() {
     return this.channel.siteMapId;
+  }
+
+  _augmentChannelWithPrototypeInfo() {
+    this.getNewPageModel()
+      .then((data) => {
+        this.channel.hasPrototypes = data.prototypes && data.prototypes.length > 0;
+      });
+  }
+
+  hasPrototypes() {
+    return this.channel.hasPrototypes;
+  }
+
+  hasWorkspace() {
+    return this.channel.workspaceExists;
   }
 
   getNewPageModel() {

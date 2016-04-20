@@ -15,7 +15,7 @@
  */
 
 export class PageActionsCtrl {
-  constructor($translate) {
+  constructor($translate, ChannelService) {
     'ngInject';
 
     this.actions = [];
@@ -24,9 +24,12 @@ export class PageActionsCtrl {
       this.actions.push({
         id,
         label: $translate.instant(`TOOLBAR_MENU_PAGES_${id.toUpperCase()}`),
-        isEnabled: id === 'add',
+        isEnabled: false,
       });
     });
+
+    this.actions.find((action) => action.id === 'add').isEnabled
+      = () => ChannelService.hasWorkspace() && ChannelService.hasPrototypes();
   }
 
   trigger(action) {
