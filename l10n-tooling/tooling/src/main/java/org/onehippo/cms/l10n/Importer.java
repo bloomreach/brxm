@@ -73,6 +73,8 @@ public class Importer {
                 }
                 final RegistryInfo registryInfo = module.getRegistry().getRegistryInfo(fqKey.registryFile);
                 final ResourceBundle resourceBundle = module.getRegistry().getResourceBundle(fqKey.bundleName, locale, registryInfo);
+                resourceBundle.setModuleName(fqKey.moduleId);
+
                 final KeyData keyData = registryInfo.getKeyData(registryKey(resourceBundle, fqKey.key));
                 if (keyData == null) {
                     log.warn("Could not find registry entry for key {} in registry file {}, please verify if it was moved/deleted",
