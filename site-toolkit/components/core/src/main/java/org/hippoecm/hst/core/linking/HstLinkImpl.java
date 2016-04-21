@@ -200,6 +200,8 @@ public class HstLinkImpl implements HstLink {
         if (Type.UNKNOWN == type) {
             if (RequestContextProvider.get() == null) {
                 type = Type.CONTAINER_RESOURCE;
+            } else if (!mount.isMapped()) {
+                type = Type.MOUNT_RESOURCE;
             } else {
                 final HstSiteMapItem hstSiteMapItem = resolveSiteMapItem(RequestContextProvider.get());
                 if (hstSiteMapItem == null || hstSiteMapItem.isContainerResource()) {
@@ -455,9 +457,9 @@ public class HstLinkImpl implements HstLink {
                 }
             }
 
-            if (mount.containsMultipleSchemes()
+            if (mount.isMapped() && (mount.containsMultipleSchemes()
                     || requestMount.containsMultipleSchemes()
-                    || (requestMount.getVirtualHost().isCustomHttpsSupported() && farthestRequestScheme.equals("https"))) {
+                    || (requestMount.getVirtualHost().isCustomHttpsSupported() && farthestRequestScheme.equals("https")))) {
                 // in case (requestMount.getVirtualHost().isCustomHttpsSupported() && farthestRequestScheme.equals("https"))
                 // is true: currently link is over https. This might be the result of custom https support. Hence, create
                 // http link in case the mount/sitemap item indicates http
