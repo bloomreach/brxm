@@ -16,11 +16,13 @@
 
 const COMPONENT_QA_CLASS = 'qa-dragula-component';
 const MOUSEUP_EVENT_NAME = 'mouseup.dragDropService';
+const MOUSEOUT_EVENT_NAME = 'mouseout.dragDropService';
 const MIRROR_WRAPPER_SELECTOR = '.channel-dragula-mirror';
 
 export class DragDropService {
 
-  constructor($rootScope, $q, DomService, HstService, PageStructureService, ScalingService, ChannelService, ScrollService) {
+  constructor($rootScope, $q, DomService, HstService, PageStructureService, ScalingService, ChannelService,
+              ScrollService, FeedbackService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
@@ -31,6 +33,7 @@ export class DragDropService {
     this.ScalingService = ScalingService;
     this.ChannelService = ChannelService;
     this.ScrollService = ScrollService;
+    this.FeedbackService = FeedbackService;
 
     this.draggingOrClicking = false;
   }
@@ -67,7 +70,9 @@ export class DragDropService {
     }
 
     return this.dragulaPromise.then(() => {
-      const iframeContainerElements = containers.map((container) => container.getBoxElement()[0]);
+      const iframeContainerElements = containers
+        .filter((container) => !container.isDisabled())
+        .map((container) => container.getBoxElement()[0]);
 
       this.drake = this.iframe.dragula(iframeContainerElements, {
         ignoreInputTextSelection: false,
@@ -75,7 +80,7 @@ export class DragDropService {
       });
       this.drake.on('drag', () => this._onStartDrag());
       this.drake.on('cloned', (clone, original) => this._onMirrorCreated(clone, original));
-      this.drake.on('dragend', (el) => this._onStopDrag(el));
+      this.drake.on('dragend', (el) => this._onStopDragOrClick(el));
       this.drake.on('drop', (el, target, source, sibling) => this._onDrop(el, target, source, sibling));
 
       this.ScrollService.enable(() => this.draggingOrClicking);
@@ -112,13 +117,20 @@ export class DragDropService {
 
     const componentBoxElement = component.getBoxElement();
     componentBoxElement.on(MOUSEUP_EVENT_NAME, () => this._onComponentClick(component));
+    componentBoxElement.on(MOUSEOUT_EVENT_NAME, () => this._onComponentLeave(component));
     componentBoxElement.addClass(COMPONENT_QA_CLASS);
   }
 
   _onComponentClick(component) {
     if (!this.isDragging()) {
-      this._onStopDrag(component.getBoxElement());
+      this._onStopDragOrClick(component.getBoxElement());
       this.PageStructureService.showComponentProperties(component);
+    }
+  }
+
+  _onComponentLeave(component) {
+    if (!this.isDragging()) {
+      this._onStopDragOrClick(component.getBoxElement());
     }
   }
 
@@ -143,10 +155,11 @@ export class DragDropService {
     $(MIRROR_WRAPPER_SELECTOR).offset(iframeOffset);
   }
 
-  _onStopDrag(element) {
+  _onStopDragOrClick(element) {
     this.draggingOrClicking = false;
     $(element)
       .off(MOUSEUP_EVENT_NAME)
+      .off(MOUSEOUT_EVENT_NAME)
       .removeClass(COMPONENT_QA_CLASS);
     this._digestIfNeeded();
   }
@@ -179,7 +192,9 @@ export class DragDropService {
     // last, re-render the changed container(s) so their meta-data is updated and we're sure they look right
     this.$q.all(backendCallPromises)
       .then(() => this.ChannelService.recordOwnChange())
-      // TODO: handle errors (e.g. one of the containers is already locked)
+      .catch(() => this.FeedbackService.showError('ERROR_MOVE_COMPONENT_FAILED', {
+        component: movedComponent.getLabel(),
+      }))
       .finally(() => {
         changedContainers.forEach((container) => this._renderContainer(container));
       });

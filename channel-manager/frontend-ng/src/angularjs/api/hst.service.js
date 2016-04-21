@@ -113,8 +113,7 @@ export class HstService {
    * Otherwise, it contains the error response.
    */
   addHstComponent(catalogComponent, containerId) {
-    return this.doPost(null, containerId, 'create', catalogComponent.id)
-      .then((response) => response.data);
+    return this.doPost(null, containerId, catalogComponent.id);
   }
 
   removeHstComponent(containerId, componentId) {

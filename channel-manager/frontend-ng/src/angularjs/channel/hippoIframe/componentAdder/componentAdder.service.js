@@ -19,19 +19,19 @@ export class ComponentAdderService {
     'ngInject';
   }
 
-  setContainerClass(className) {
-    this.containerClass = className;
+  setCatalogContainerClass(className) {
+    this.catalogContainerClass = className;
   }
 
-  isContainer(domElement) {
-    return domElement.classList.contains(this.containerClass);
+  isCatalogContainer(domElement) {
+    return domElement.classList.contains(this.catalogContainerClass);
   }
 
-  setContainerItemClass(className) {
-    this.containerItemClass = className;
+  setCatalogContainerItemClass(className) {
+    this.catalogContainerItemClass = className;
   }
 
-  isContainerItem(domElement) {
-    return domElement.classList.contains(this.containerItemClass);
+  isCatalogContainerItem(domElement) {
+    return domElement.classList.contains(this.catalogContainerItemClass);
   }
 }

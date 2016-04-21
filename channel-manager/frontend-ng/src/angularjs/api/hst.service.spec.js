@@ -229,13 +229,13 @@ describe('HstService', () => {
   });
 
   it('adds a new component from catalog toolkit', () => {
-    spyOn(hstService, 'doPost').and.returnValue($q.when({ data: 'success' }));
+    spyOn(hstService, 'doPost').and.returnValue($q.when({ id: 'cafebabe' }));
 
-    hstService.addHstComponent({ id: '123456' }, 'container1').then((data) => {
-      expect(data).toBe('success');
+    hstService.addHstComponent({ id: '123456' }, 'container1').then((response) => {
+      expect(response).toEqual({ id: 'cafebabe' });
     });
 
-    expect(hstService.doPost).toHaveBeenCalledWith(null, 'container1', 'create', '123456');
+    expect(hstService.doPost).toHaveBeenCalledWith(null, 'container1', '123456');
   });
 
   it('removes an exist component from a container', () => {
