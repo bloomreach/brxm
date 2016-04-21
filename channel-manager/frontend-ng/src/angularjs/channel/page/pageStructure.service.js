@@ -226,7 +226,10 @@ export class PageStructureService {
   }
 
   getContainerByOverlayElement(overlayElement) {
-    return this.containers.find((container) => container.getOverlayElement()[0] === overlayElement);
+    return this.containers.find((container) => {
+      const containerOverlay = container.getOverlayElement();
+      return containerOverlay && (containerOverlay[0] === overlayElement);
+    });
   }
 
   _replaceContainer(oldContainer, newContainer) {

@@ -27,7 +27,7 @@ export class ComponentAdderCtrl {
       isContainer: (el) => this._isEnabledOverlayContainer(el) || ComponentAdderService.isCatalogContainer(el),
       copy: true,
       moves: (el) => ComponentAdderService.isCatalogContainerItem(el),
-      accepts: (el, target) => !this._isEnabledOverlayContainer(target),
+      accepts: (el, target) => this._isEnabledOverlayContainer(target),
     });
     drake.on('cloned', (clone, original) => {
       $scope.$apply(() => {
