@@ -33,7 +33,6 @@
     <maven.shared.dependency.tree.version>3.0</maven.shared.dependency.tree.version>
     <commons-lang.version>2.6</commons-lang.version>
     <maven.plugin-annotations.version>3.4</maven.plugin-annotations.version>
-    <maven.plugin-plugin.version>3.4</maven.plugin-plugin.version>
   </properties>
 
   <dependencies>
@@ -79,11 +78,19 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>${maven.plugin-plugin.version}</version>
           <configuration>
             <!-- See MNG-5346 -->
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           </configuration>
+          <executions>
+            <execution>
+              <id>mojo-descriptor</id>
+              <phase>process-classes</phase>
+              <goals>
+                <goal>descriptor</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
