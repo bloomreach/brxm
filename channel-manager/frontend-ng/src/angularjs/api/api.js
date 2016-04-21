@@ -21,6 +21,7 @@ import { DialogService } from './dialog.service';
 import { HstService } from './hst.service';
 import { SessionService } from './session.service';
 import { SiteMapService } from './siteMap.service';
+import { SiteMapItemService } from './siteMapItem.service';
 import { HstConstants } from './hst.constants';
 
 export const channelManagerApi = angular
@@ -32,4 +33,5 @@ export const channelManagerApi = angular
   .service('HstService', HstService)
   .service('SessionService', SessionService)
   .service('SiteMapService', SiteMapService)
+  .service('SiteMapItemService', SiteMapItemService)
   .constant('HstConstants', HstConstants);

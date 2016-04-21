@@ -15,26 +15,70 @@
  */
 
 export class PageActionsCtrl {
-  constructor($translate, ChannelService) {
+  constructor($translate, FeedbackService, ChannelService, SiteMapService, SiteMapItemService, DialogService, HippoIframeService) {
     'ngInject';
+
+    this.$translate = $translate;
+    this.FeedbackService = FeedbackService;
+    this.ChannelService = ChannelService;
+    this.SiteMapService = SiteMapService;
+    this.SiteMapItemService = SiteMapItemService;
+    this.DialogService = DialogService;
+    this.HippoIframeService = HippoIframeService;
 
     this.actions = [];
 
-    ['edit', 'add', 'delete', 'move', 'copy'].forEach((id) => {
-      this.actions.push({
-        id,
-        label: $translate.instant(`TOOLBAR_MENU_PAGES_${id.toUpperCase()}`),
-        isEnabled: false,
+    ['edit', 'add', 'delete', 'move', 'copy']
+      .forEach((id) => {
+        this.actions.push({
+          id,
+          label: $translate.instant(`TOOLBAR_MENU_PAGES_${id.toUpperCase()}`),
+          isEnabled: () => false,
+        });
       });
-    });
 
-    this.actions.find((action) => action.id === 'add').isEnabled
-      = () => ChannelService.hasWorkspace() && ChannelService.hasPrototypes();
+    this._findAction('add').isEnabled = () => ChannelService.hasWorkspace() && ChannelService.hasPrototypes();
+    this._findAction('delete').isEnabled = () => SiteMapItemService.isEditable();
+  }
+
+  _findAction(id) {
+    return this.actions.find((action) => action.id === id);
   }
 
   trigger(action) {
     if (action.id === 'add') {
       this.onActionSelected({ subpage: `page-${action.id}` });
     }
+    if (action.id === 'delete') {
+      this._deletePage();
+    }
+  }
+
+  _deletePage() {
+    this._confirmDelete()
+      .then(() => {
+        this.SiteMapItemService.deleteItem()
+          .then(() => {
+            const siteMapId = this.ChannelService.getSiteMapId();
+
+            this.HippoIframeService.load('');    // load homepage
+            this.SiteMapService.load(siteMapId); // reload sitemap (sidenav)
+            this.SiteMapItemService.clear();     // wipe meta-data of current page
+          })
+          .catch(() => {
+            this.FeedbackService.showError('ERROR_DELETE_PAGE');
+          });
+      });
+      // do nothing on cancel
+  }
+
+  _confirmDelete() {
+    const confirm = this.DialogService.confirm()
+      .title(this.$translate.instant('CONFIRM_DELETE_PAGE_TITLE'))
+      .textContent(this.$translate.instant('CONFIRM_DELETE_PAGE_MESSAGE'))
+      .ok(this.$translate.instant('BUTTON_YES'))
+      .cancel(this.$translate.instant('BUTTON_NO'));
+
+    return this.DialogService.show(confirm);
   }
 }

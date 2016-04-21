@@ -16,12 +16,14 @@
 
 export class HippoIframeService {
 
-  constructor($q, $log, ChannelService) {
+  constructor($q, $log, ChannelService, SiteMapItemService, PageMetaDataService) {
     'ngInject';
 
     this.$q = $q;
     this.$log = $log;
     this.ChannelService = ChannelService;
+    this.SiteMapItemService = SiteMapItemService;
+    this.PageMetaDataService = PageMetaDataService;
   }
 
   initialize(iframeJQueryElement) {
@@ -68,6 +70,7 @@ export class HippoIframeService {
   // called by the hippoIframe controller when the processing of the loaded page is completed.
   signalPageLoadCompleted() {
     this._extractRenderPathInfo(this.iframeJQueryElement[0].contentWindow.location.pathname);
+    this.SiteMapItemService.loadAndCache(this.ChannelService.getSiteMapId(), this.PageMetaDataService.getSiteMapItemId());
 
     const deferred = this._deferredReload;
     if (deferred) {

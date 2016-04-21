@@ -22,19 +22,26 @@ describe('HippoIframeService', () => {
   let iframe;
   let HippoIframeService;
   let ChannelService;
+  let PageMetaDataService;
+  let SiteMapItemService;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$log_, _$rootScope_, _HippoIframeService_, _ChannelService_) => {
+    inject((_$log_, _$rootScope_, _HippoIframeService_, _ChannelService_, _PageMetaDataService_, _SiteMapItemService_) => {
       $log = _$log_;
       $rootScope = _$rootScope_;
       HippoIframeService = _HippoIframeService_;
       ChannelService = _ChannelService_;
+      PageMetaDataService = _PageMetaDataService_;
+      SiteMapItemService = _SiteMapItemService_;
     });
 
     spyOn(ChannelService, 'makePath').and.returnValue('/test/url');
     spyOn(ChannelService, 'extractRenderPathInfo');
+    spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
+    spyOn(PageMetaDataService, 'getSiteMapItemId').and.returnValue('siteMapItemId');
+    spyOn(SiteMapItemService, 'loadAndCache');
 
     jasmine.getFixtures().load('channel/hippoIframe/hippoIframe.service.fixture.html');
 
@@ -131,5 +138,6 @@ describe('HippoIframeService', () => {
     ChannelService.extractRenderPathInfo.and.returnValue('dummy');
     HippoIframeService.signalPageLoadCompleted();
     expect(HippoIframeService.getCurrentRenderPathInfo()).toBe('dummy');
+    expect(SiteMapItemService.loadAndCache).toHaveBeenCalledWith('siteMapId', 'siteMapItemId');
   });
 });

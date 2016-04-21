@@ -17,20 +17,38 @@
 describe('PageActions', () => {
   'use strict';
 
+  let $q;
   let $rootScope;
   let $compile;
   let $translate;
   let $scope;
+  let FeedbackService;
   let ChannelService;
+  let SiteMapService;
+  let SiteMapItemService;
+  let DialogService;
+  let HippoIframeService;
+  const confirmDialog = jasmine.createSpyObj('confirmDialog', ['title', 'textContent', 'ok', 'cancel']);
+  confirmDialog.title.and.returnValue(confirmDialog);
+  confirmDialog.textContent.and.returnValue(confirmDialog);
+  confirmDialog.ok.and.returnValue(confirmDialog);
+  confirmDialog.cancel.and.returnValue(confirmDialog);
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _$translate_, _ChannelService_) => {
+    inject((_$q_, _$rootScope_, _$compile_, _$translate_, _FeedbackService_, _ChannelService_, _SiteMapService_,
+            _SiteMapItemService_, _DialogService_, _HippoIframeService_) => {
+      $q = _$q_;
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $translate = _$translate_;
+      FeedbackService = _FeedbackService_;
       ChannelService = _ChannelService_;
+      SiteMapService = _SiteMapService_;
+      SiteMapItemService = _SiteMapItemService_;
+      DialogService = _DialogService_;
+      HippoIframeService = _HippoIframeService_;
     });
 
     spyOn($translate, 'instant').and.callFake((key) => {
@@ -41,8 +59,17 @@ describe('PageActions', () => {
       return key;
     });
 
+    spyOn(FeedbackService, 'showError');
     spyOn(ChannelService, 'hasPrototypes');
     spyOn(ChannelService, 'hasWorkspace');
+    spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
+    spyOn(SiteMapService, 'load');
+    spyOn(SiteMapItemService, 'isEditable').and.returnValue(false);
+    spyOn(SiteMapItemService, 'deleteItem');
+    spyOn(SiteMapItemService, 'clear');
+    spyOn(DialogService, 'confirm').and.returnValue(confirmDialog);
+    spyOn(DialogService, 'show');
+    spyOn(HippoIframeService, 'load');
   });
 
   function compileDirectiveAndGetController() {
@@ -55,13 +82,13 @@ describe('PageActions', () => {
     return $element.controller('page-actions');
   }
 
-  it('displays a menu with 5 disabled actions', () => {
+  it('displays a menu with 5 actions', () => {
     const PageActionsCtrl = compileDirectiveAndGetController();
 
     expect(PageActionsCtrl.actions.length).toBe(5);
     expect(PageActionsCtrl.actions[0].id).toBe('edit');
     expect(PageActionsCtrl.actions[0].label).toBe('EDIT');
-    expect(PageActionsCtrl.actions[0].isEnabled).toBe(false);
+    expect(PageActionsCtrl.actions[0].isEnabled()).toBe(false);
     expect(PageActionsCtrl.actions[1].id).toBe('add');
     expect(PageActionsCtrl.actions[2].id).toBe('delete');
     expect(PageActionsCtrl.actions[3].id).toBe('move');
@@ -97,5 +124,60 @@ describe('PageActions', () => {
     ChannelService.hasWorkspace.and.returnValue(true);
     ChannelService.hasPrototypes.and.returnValue(true);
     expect(addAction.isEnabled()).toBe(true);
+  });
+
+  it('enables the delete action if the current page is editable', () => {
+    const PageActionsCtrl = compileDirectiveAndGetController();
+    const deleteAction = PageActionsCtrl.actions.find((action) => action.id === 'delete');
+
+    SiteMapItemService.isEditable.and.returnValue(false);
+    expect(deleteAction.isEnabled()).toBe(false);
+
+    SiteMapItemService.isEditable.and.returnValue(true);
+    expect(deleteAction.isEnabled()).toBe(true);
+  });
+
+  it('does nothing when not confirming the deletion of a page', () => {
+    const PageActionsCtrl = compileDirectiveAndGetController();
+    const deleteAction = PageActionsCtrl.actions.find((action) => action.id === 'delete');
+
+    DialogService.show.and.returnValue($q.reject());
+    PageActionsCtrl.trigger(deleteAction);
+    expect(DialogService.confirm).toHaveBeenCalled();
+    expect(confirmDialog.title).toHaveBeenCalled();
+    expect(confirmDialog.textContent).toHaveBeenCalled();
+    expect(confirmDialog.ok).toHaveBeenCalled();
+    expect(confirmDialog.cancel).toHaveBeenCalled();
+    expect(DialogService.show).toHaveBeenCalledWith(confirmDialog);
+    $rootScope.$digest();
+    expect(SiteMapItemService.deleteItem).not.toHaveBeenCalled();
+  });
+
+  it('flashes a toast when failing to delete the current page', () => {
+    const PageActionsCtrl = compileDirectiveAndGetController();
+    const deleteAction = PageActionsCtrl.actions.find((action) => action.id === 'delete');
+
+    DialogService.show.and.returnValue($q.when());
+    SiteMapItemService.deleteItem.and.returnValue($q.reject());
+    PageActionsCtrl.trigger(deleteAction);
+    $rootScope.$digest();
+    expect(SiteMapItemService.deleteItem).toHaveBeenCalled();
+    $rootScope.$digest();
+    expect(HippoIframeService.load).not.toHaveBeenCalled();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DELETE_PAGE');
+  });
+
+  it('navigates to the channel\'s homepage after successfully deleting the current page', () => {
+    const PageActionsCtrl = compileDirectiveAndGetController();
+    const deleteAction = PageActionsCtrl.actions.find((action) => action.id === 'delete');
+
+    DialogService.show.and.returnValue($q.when());
+    SiteMapItemService.deleteItem.and.returnValue($q.when());
+    PageActionsCtrl.trigger(deleteAction);
+    $rootScope.$digest(); // process confirm action
+    $rootScope.$digest(); // necessary?
+    expect(HippoIframeService.load).toHaveBeenCalledWith('');
+    expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
+    expect(SiteMapItemService.clear).toHaveBeenCalled();
   });
 });
