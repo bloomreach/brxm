@@ -201,7 +201,7 @@ export class DragDropService {
   }
 
   _updateContainer(container) {
-    return this.HstService.doPost(container.getHstRepresentation(), container.getId(), 'update');
+    return this.HstService.updateHstComponent(container.getId(), container.getHstRepresentation());
   }
 
   _renderContainer(container) {

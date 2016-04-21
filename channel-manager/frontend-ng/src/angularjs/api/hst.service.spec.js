@@ -235,11 +235,19 @@ describe('HstService', () => {
   });
 
   it('removes an exist component from a container', () => {
-    spyOn(hstService, 'doGet');
+    const url = `${contextPath}${apiUrlPrefix}/container-1./component-foo`;
+    $httpBackend.expectDELETE(url).respond(200);
 
     hstService.removeHstComponent('container-1', 'component-foo');
+    $httpBackend.flush();
+  });
 
-    expect(hstService.doGet).toHaveBeenCalledWith('container-1', 'delete', 'component-foo');
+  it('updates component orders of a container', () => {
+    const url = `${contextPath}${apiUrlPrefix}/container-1./`;
+    $httpBackend.expectPUT(url, { foo: 'foo-value', baa: 'baah' }).respond(200);
+
+    hstService.updateHstComponent('container-1', { foo: 'foo-value', baa: 'baah' });
+    $httpBackend.flush();
   });
 
   it('extracts the sitemap from the returned pages response', () => {

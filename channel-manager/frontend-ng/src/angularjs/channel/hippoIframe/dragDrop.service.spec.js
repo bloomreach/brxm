@@ -266,12 +266,12 @@ describe('DragDropService', () => {
       const componentElement1 = component1.getBoxElement();
       const containerElement1 = container1.getBoxElement();
 
-      spyOn(HstService, 'doPost');
+      spyOn(HstService, 'updateHstComponent');
       expect(componentIds(container1)).toEqual(['component1', 'component2']);
 
       DragDropService._onDrop(componentElement1, containerElement1, containerElement1, undefined);
 
-      expect(HstService.doPost).toHaveBeenCalledWith(container1.getHstRepresentation(), 'container1', 'update');
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container1', container1.getHstRepresentation());
       expect(componentIds(container1)).toEqual(['component2', 'component1']);
 
       done();
@@ -284,12 +284,12 @@ describe('DragDropService', () => {
       const componentElement2 = component2.getBoxElement();
       const containerElement = container1.getBoxElement();
 
-      spyOn(HstService, 'doPost');
+      spyOn(HstService, 'updateHstComponent');
       expect(componentIds(container1)).toEqual(['component1', 'component2']);
 
       DragDropService._onDrop(componentElement2, containerElement, containerElement, componentElement1);
 
-      expect(HstService.doPost).toHaveBeenCalledWith(container1.getHstRepresentation(), 'container1', 'update');
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container1', container1.getHstRepresentation());
       expect(componentIds(container1)).toEqual(['component2', 'component1']);
 
       done();
@@ -302,14 +302,14 @@ describe('DragDropService', () => {
       const containerElement1 = container1.getBoxElement();
       const containerElement2 = container2.getBoxElement();
 
-      spyOn(HstService, 'doPost');
+      spyOn(HstService, 'updateHstComponent');
       expect(componentIds(container1)).toEqual(['component1', 'component2']);
       expect(componentIds(container2)).toEqual([]);
 
       DragDropService._onDrop(componentElement1, containerElement2, containerElement1, undefined);
 
-      expect(HstService.doPost).toHaveBeenCalledWith(container1.getHstRepresentation(), 'container1', 'update');
-      expect(HstService.doPost).toHaveBeenCalledWith(container2.getHstRepresentation(), 'container2', 'update');
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container1', container1.getHstRepresentation());
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container2', container2.getHstRepresentation());
       expect(componentIds(container1)).toEqual(['component2']);
       expect(componentIds(container2)).toEqual(['component1']);
 
@@ -326,7 +326,7 @@ describe('DragDropService', () => {
 
   it('shows an error when a component is moved within a container that just got locked by another user', (done) => {
     loadIframeFixture(() => {
-      spyOn(HstService, 'doPost').and.returnValue($q.reject());
+      spyOn(HstService, 'updateHstComponent').and.returnValue($q.reject());
       spyOn(FeedbackService, 'showError');
 
       // re-render container1 with a different DOM element so we can verify the element got changed
@@ -339,7 +339,7 @@ describe('DragDropService', () => {
 
       // wait until the current $digest is done before expecting results
       setTimeout(() => {
-        expect(HstService.doPost).toHaveBeenCalledWith(container1.getHstRepresentation(), 'container1', 'update');
+        expect(HstService.updateHstComponent).toHaveBeenCalledWith('container1', container1.getHstRepresentation());
         expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
           component: 'Component 1',
         });
@@ -354,7 +354,7 @@ describe('DragDropService', () => {
 
   it('shows an error when a component is moved out of a container that just got locked by another user', (done) => {
     loadIframeFixture(() => {
-      spyOn(HstService, 'doPost').and.returnValues($q.reject(), $q.resolve());
+      spyOn(HstService, 'updateHstComponent').and.returnValues($q.reject(), $q.resolve());
       spyOn(FeedbackService, 'showError');
 
       // re-render container1 and container2 with a different DOM elements so we can verify the elements got changed
@@ -372,8 +372,8 @@ describe('DragDropService', () => {
 
       // wait until the current $digest is done before expecting results
       setTimeout(() => {
-        expect(HstService.doPost).toHaveBeenCalledWith(container1.getHstRepresentation(), 'container1', 'update');
-        expect(HstService.doPost).toHaveBeenCalledWith(container2.getHstRepresentation(), 'container2', 'update');
+        expect(HstService.updateHstComponent).toHaveBeenCalledWith('container1', container1.getHstRepresentation());
+        expect(HstService.updateHstComponent).toHaveBeenCalledWith('container2', container2.getHstRepresentation());
         expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
           component: 'Component 1',
         });
@@ -388,7 +388,7 @@ describe('DragDropService', () => {
 
   it('shows an error when a component is moved into a container that just got locked by another user', (done) => {
     loadIframeFixture(() => {
-      spyOn(HstService, 'doPost').and.returnValues($q.resolve(), $q.reject());
+      spyOn(HstService, 'updateHstComponent').and.returnValues($q.resolve(), $q.reject());
       spyOn(FeedbackService, 'showError');
 
       // re-render container1 and container2 with a different DOM elements so we can verify the elements got changed
@@ -406,8 +406,8 @@ describe('DragDropService', () => {
 
       // wait until the current $digest is done before expecting results
       setTimeout(() => {
-        expect(HstService.doPost).toHaveBeenCalledWith(container1.getHstRepresentation(), 'container1', 'update');
-        expect(HstService.doPost).toHaveBeenCalledWith(container2.getHstRepresentation(), 'container2', 'update');
+        expect(HstService.updateHstComponent).toHaveBeenCalledWith('container1', container1.getHstRepresentation());
+        expect(HstService.updateHstComponent).toHaveBeenCalledWith('container2', container2.getHstRepresentation());
         expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
           component: 'Component 1',
         });
