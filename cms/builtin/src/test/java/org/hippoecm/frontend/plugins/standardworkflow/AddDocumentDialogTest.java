@@ -60,7 +60,7 @@ public class AddDocumentDialogTest {
     public static final String URL_INPUT = "name-url:url";
     public static final String NAME_INPUT = "name-url:name";
 
-    HippoTester tester;
+    private HippoTester tester;
     private PluginPage home;
     private PluginContext context;
     private MockNode root;
@@ -78,27 +78,17 @@ public class AddDocumentDialogTest {
         context = home.getPluginManager().start(config);
     }
 
-    private FormTester createDialog(boolean workflowError){
+    private FormTester createDialog(boolean workflowError) throws Exception {
         final WorkflowDescriptorModel workflowDescriptorModel;
-        try {
-            workflowDescriptorModel = workflowError ? createErrorWorkflow() : createNormalWorkflow();
-        } catch (RepositoryException | IOException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-            return null;
-        }
+        workflowDescriptorModel = workflowError ? createErrorWorkflow() : createNormalWorkflow();
 
-        AddDocumentArguments addDocumentModel = new AddDocumentArguments();
+        final AddDocumentArguments addDocumentArguments = new AddDocumentArguments();
         final IWorkflowInvoker invoker = mock(IWorkflowInvoker.class);
 
-        try {
-            Mockito.doNothing().when(invoker).invokeWorkflow();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Mockito.doNothing().when(invoker).invokeWorkflow();
 
         final StringCodec stringCodec = mock(StringCodec.class);
-        final ILocaleProvider localProvider = mock(ILocaleProvider.class);
+        final ILocaleProvider localeProvider = mock(ILocaleProvider.class);
 
         IModel<StringCodec> stringCodecModel = new LoadableDetachableModel<StringCodec>(stringCodec) {
             @Override
@@ -107,16 +97,15 @@ public class AddDocumentDialogTest {
             }
         };
 
-        boolean translated = false;
         final AddDocumentDialog dialog = new AddDocumentDialog(
-                addDocumentModel,
+                addDocumentArguments,
                 Model.of("Add document dialog title"),
                 "category test",
                 new HashSet<>(Arrays.asList(new String[]{"cat1"})),
-                translated,
+                false,
                 invoker,
                 stringCodecModel,
-                localProvider,
+                localeProvider,
                 workflowDescriptorModel
         );
 
@@ -156,7 +145,7 @@ public class AddDocumentDialogTest {
     }
 
     @Test
-    public void dialogCreatedWithInitialStates(){
+    public void dialogCreatedWithInitialStates() throws Exception {
         final FormTester formTester = createDialog(false);
         FormComponent<String> nameComponent = (FormComponent<String>) formTester.getForm().get(NAME_INPUT);
         assertNotNull(nameComponent);
@@ -175,7 +164,7 @@ public class AddDocumentDialogTest {
 
 
     @Test
-    public void clickOKWithEmptyInputs(){
+    public void clickOKWithEmptyInputs() throws Exception {
         final FormTester formTester = createDialog(false);
 
         tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
@@ -183,7 +172,7 @@ public class AddDocumentDialogTest {
     }
 
     @Test
-    public void addFolderWithNewNames(){
+    public void addFolderWithNewNames() throws Exception {
         final FormTester formTester = createDialog(false);
         tester.clickLink(WICKET_PATH_ENABLE_URIINPUT_LINK);
         formTester.setValue(URL_INPUT, "archives");
@@ -194,7 +183,7 @@ public class AddDocumentDialogTest {
     }
 
     @Test
-    public void addFolderWithExistedUriName(){
+    public void addFolderWithExistedUriName() throws Exception {
         final FormTester formTester = createDialog(false);
 
         // disable the translation from Name to uriName
@@ -208,7 +197,7 @@ public class AddDocumentDialogTest {
     }
 
     @Test
-    public void addFolderWithExistedLocalizedName(){
+    public void addFolderWithExistingLocalizedName() throws Exception {
         final FormTester formTester = createDialog(false);
 
         // disable the translation from Name to uriName
@@ -222,7 +211,7 @@ public class AddDocumentDialogTest {
     }
 
     @Test
-    public void addFolderWithExistedUriNameAndLocalizedName(){
+    public void addFolderWithExistedUriNameAndLocalizedName() throws Exception {
         final FormTester formTester = createDialog(false);
 
         // disable the translation from Name to uriName
@@ -236,7 +225,7 @@ public class AddDocumentDialogTest {
     }
 
     @Test
-    public void addFolderWithWorkflowException(){
+    public void addFolderWithWorkflowException() throws Exception {
         final FormTester formTester = createDialog(true);
 
         // disable the translation from Name to uriName

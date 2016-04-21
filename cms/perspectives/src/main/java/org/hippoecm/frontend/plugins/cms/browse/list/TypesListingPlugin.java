@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,6 +52,7 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.Tabl
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeIconAndStateRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeIconAttributeModifier;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
 import org.hippoecm.frontend.skin.DocumentListColumn;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -146,6 +147,7 @@ public final class TypesListingPlugin extends ExpandCollapseListingPlugin<Node> 
             }
             return super.newObserver(item, model);
         }
+        
     }
 
     private class TypeObserver implements IObserver<JcrNodeModel>, IDetachable {
@@ -205,6 +207,7 @@ public final class TypesListingPlugin extends ExpandCollapseListingPlugin<Node> 
             final ListColumn<Node> column = new ListColumn<>(nameHeader, "name");
             column.setCssClass(DocumentListColumn.NAME.getCssClass());
             column.setComparator(NameComparator.getInstance());
+            column.setRenderer(TypeRenderer.getInstance());
             return column;
         }
 

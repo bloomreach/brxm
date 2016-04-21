@@ -360,8 +360,8 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 }
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", translatedDocument);
                 if (name != null && !url.equals(name)) {
-                    String localized = getLocalizeCodec().encode(name);
-                    defaultWorkflow.localizeName(localized);
+                    String displayName = getLocalizeCodec().encode(name);
+                    defaultWorkflow.setDisplayName(displayName);
                 }
             } finally {
                 IBrowseService<JcrNodeModel> browser = getBrowserService();
@@ -409,7 +409,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 throw new WorkflowSNSException("A folder or document with name '" + targetUrlName + "' already exists", targetUrlName);
             }
             // check for duplicated localized name
-            if (SameNameSiblingsUtil.hasChildWithLocalizedName(deepestTranslatedTargetNode, targetLocalizedName)) {
+            if (SameNameSiblingsUtil.hasChildWithDisplayName(deepestTranslatedTargetNode, targetLocalizedName)) {
                 throw new WorkflowSNSException("A folder or document with localized name '" + targetLocalizedName + "' already exists", targetLocalizedName);
             }
             // No SNS issue!
@@ -441,7 +441,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 url = docNode.getName();
                 name = url;
                 if (docNode instanceof HippoNode) {
-                    name = ((HippoNode) docNode).getLocalizedName();
+                    name = ((HippoNode) docNode).getDisplayName();
                 }
                 folders = new LinkedList<>();
                 Node handle = docNode.getParent();
@@ -581,7 +581,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 Document translationDoc = tw.addTranslation(language, urlfr);
                 if (namefr != null && !urlfr.equals(namefr)) {
                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", translationDoc);
-                    defaultWorkflow.localizeName(namefr);
+                    defaultWorkflow.setDisplayName(namefr);
                 }
                 return true;
             } catch (RepositoryException e) {

@@ -48,9 +48,6 @@
   <sv:property sv:name="title.size" sv:type="String">
     <sv:value>large</sv:value>
   </sv:property>
-  <sv:property sv:name="translator.id" sv:type="String">
-    <sv:value>service.reports.brokenlinks.translator</sv:value>
-  </sv:property>
   <sv:property sv:name="wicket.id" sv:type="String">
     <sv:value>service.reports.brokenlinks</sv:value>
   </sv:property>

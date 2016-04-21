@@ -19,8 +19,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -131,7 +131,12 @@ public class BrowsingSectionPlugin extends RenderPlugin<DocumentCollection> impl
     }
 
     public IModel<String> getTitle() {
-        return new StringResourceModel(getPluginConfig().getString("title", getPluginConfig().getName()), this, null);
+        return new ResourceBundleModel(getBundleName(), getPluginConfig().getString("title", getPluginConfig().getName()));
+    }
+
+    @Override
+    protected String getBundleName() {
+        return "hippo:cms.sections";
     }
 
     @Override

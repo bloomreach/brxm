@@ -44,8 +44,8 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
@@ -88,7 +88,7 @@ class ReorderDialog extends AbstractWorkflowDialog {
             try {
                 name = nodeModel.getNode().getName();
                 index = nodeModel.getNode().getIndex();
-                displayName = new NodeTranslator(nodeModel).getNodeName();
+                displayName = new NodeNameModel(nodeModel);
                 cellModifier = attributeModifier.getCellAttributeModifier(nodeModel.getNode());
             } catch (RepositoryException e) {
                 log.error(e.getMessage(), e);

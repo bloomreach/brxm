@@ -37,14 +37,15 @@ public abstract class DocumentFormValidator implements IFormValidator {
     }
 
     /**
-     * Return true if <code>parentNode</code> contains a child having the same localized name with the specified
+     * Return true if <code>parentNode</code> contains a child having the same display name with the specified
      * <code>localizedName</code>
      */
-    protected boolean hasChildWithLocalizedName(final Node parentNode, final String localizedName) throws RepositoryException {
-        return SameNameSiblingsUtil.hasChildWithLocalizedName(parentNode, localizedName);
+    protected boolean hasChildWithDisplayName(final Node parentNode, final String displayName) throws RepositoryException {
+        return SameNameSiblingsUtil.hasChildWithDisplayName(parentNode, displayName);
     }
 
     protected void showError(final String key, Object... parameters) {
         form.error(new ClassResourceModel(key, DocumentFormValidator.class, parameters).getObject());
     }
+
 }

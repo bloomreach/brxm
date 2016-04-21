@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.onehippo.cms7.autoexport;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,7 +27,6 @@ import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -57,6 +58,7 @@ class Extension {
     private String id;
     private String encoding = DEFAULT_ENCODING;
     private volatile boolean changed = false;
+    private final List<InitializeItem> initializeItems = new ArrayList<>();
 
     Extension(Module module, InitializeItemRegistry registry) throws Exception {
         this.module = module;
@@ -92,11 +94,7 @@ class Extension {
                 Result output = new StreamResult(file);
                 Source input = new DOMSource(domDocument);
                 transformer.transform(input, output);
-            } catch (IOException e) {
-                log.error("Exporting " + file.getName() + " failed.", e);
-            } catch (TransformerConfigurationException e) {
-                log.error("Exporting " + file.getName() + " failed.", e);
-            } catch (TransformerException e) {
+            } catch (IOException | TransformerException e) {
                 log.error("Exporting " + file.getName() + " failed.", e);
             }
             changed = false;
@@ -114,13 +112,15 @@ class Extension {
         id = root.getAttribute(QID);
         final NodeList nodes = root.getElementsByTagName(QNODE);
         for (int i = 0; i < nodes.getLength(); i++) {
-            registry.addInitializeItem(parseInitializeItemFromDomElement((Element) nodes.item(i)));
+            final InitializeItem initializeItem = parseInitializeItemFromDomElement((Element) nodes.item(i));
+            initializeItems.add(initializeItem);
+            registry.addInitializeItem(initializeItem);
         }
     }
 
     private InitializeItem parseInitializeItemFromDomElement(final Element node) {
         Double sequence = null;
-        String contentResource = null, contentRoot = null, nodeTypesResource = null, namespace = null;
+        String contentResource = null, contentRoot = null, nodeTypesResource = null, namespace = null, resourceBundles = null;
         final String nodeName = node.getAttribute(QNAME);
         final NodeList properties = node.getElementsByTagName(QPROPERTY);
         for (int i = 0; i < properties.getLength(); i++) {
@@ -142,17 +142,22 @@ class Extension {
             else if (propertyName.equals("hippo:nodetypesresource")) {
                 nodeTypesResource = value.getTextContent();
             }
+            else if (propertyName.equals("hippo:resourcebundles")) {
+                resourceBundles = value.getTextContent();
+            }
         }
-        return new InitializeItem(nodeName, sequence, contentResource, contentRoot, null, nodeTypesResource, namespace, module.getExportDir(), module);
+        return new InitializeItem(nodeName, sequence, contentResource, contentRoot, null, nodeTypesResource, namespace, resourceBundles, module.getExportDir(), module);
     }
 
     void initializeItemAdded(InitializeItem item) {
         domDocument.getDocumentElement().appendChild(createInitializeItemDomElement(item));
+        initializeItems.add(item);
         changed = true;
     }
 
     void initializeItemRemoved(InitializeItem item) {
         Element element = getInitializeItemDomElement(item.getName());
+        initializeItems.remove(item);
         if (element != null) {
             domDocument.getDocumentElement().removeChild(element);
             changed = true;
@@ -200,6 +205,11 @@ class Extension {
             node.appendChild(property);
         }
 
+        if (item.getResourceBundles() != null) {
+            property = createPropertyElement("hippo:resourcebundles", "String", item.getResourceBundles());
+            node.appendChild(property);
+        }
+
         return node;
     }
 
@@ -215,4 +225,7 @@ class Extension {
         return property;
     }
 
+    List<InitializeItem> getInitializeItems() {
+        return initializeItems;
+    }
 }

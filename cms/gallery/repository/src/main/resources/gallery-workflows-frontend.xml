@@ -38,9 +38,6 @@
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.gallery.GalleryWorkflowPlugin</sv:value>
       </sv:property>
-      <sv:property sv:name="translator.id" sv:type="String">
-        <sv:value>service.translator.search</sv:value>
-      </sv:property>
       <sv:property sv:name="validator.id" sv:type="String">
         <sv:value>service.gallery.image.validation</sv:value>
       </sv:property>
@@ -68,9 +65,6 @@
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.gallery.GalleryWorkflowPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="translator.id" sv:type="String">
-        <sv:value>service.translator.search</sv:value>
       </sv:property>
       <sv:property sv:name="gallery.processor.id" sv:type="String">
         <sv:value>asset.gallery.processor</sv:value>

@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,6 +38,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.editor.IFormService;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -126,34 +128,8 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
     }
 
     @Override
-    public String getString(Map<String, String> criteria) {
-        String key = criteria.get(HippoNodeType.HIPPO_KEY);
-        if (key != null) {
-            String language = getLocale().getLanguage();
-            for (String category : categories) {
-                if (key.equals(category)) {
-                    String path = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.WORKFLOWS_PATH + "/" + category;
-                    try {
-                        Session session = getSession().getJcrSession();
-                        if (session.itemExists(path)) {
-                            Node node = (Node) session.getItem(path);
-                            if (node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
-                                NodeIterator translations = node.getNodes(HippoNodeType.HIPPO_TRANSLATION);
-                                while (translations.hasNext()) {
-                                    Node translation = translations.nextNode();
-                                    if (translation.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString().equals(language)) {
-                                        return translation.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
-                                    }
-                                }
-                            }
-                        }
-                    } catch (RepositoryException ex) {
-                        log.error(ex.toString());
-                    }
-                }
-            }
-        }
-        return super.getString(criteria);
+    protected String getBundleName() {
+        return "hippo:workflows";
     }
 
     @Override

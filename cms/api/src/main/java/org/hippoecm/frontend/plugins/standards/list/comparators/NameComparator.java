@@ -18,8 +18,8 @@ package org.hippoecm.frontend.plugins.standards.list.comparators;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeNameModel;
 
 public class NameComparator extends NodeComparator {
 
@@ -34,8 +34,8 @@ public class NameComparator extends NodeComparator {
 
     @Override
     public int compare(JcrNodeModel o1, JcrNodeModel o2) {
-        String name1 = new NodeTranslator(o1).getNodeName().getObject();
-        String name2 = new NodeTranslator(o2).getNodeName().getObject();
+        String name1 = new NodeNameModel(o1).getObject();
+        String name2 = new NodeNameModel(o2).getObject();
 
         int nameCompare = String.CASE_INSENSITIVE_ORDER.compare(name1, name2);
         if (nameCompare == 0) {

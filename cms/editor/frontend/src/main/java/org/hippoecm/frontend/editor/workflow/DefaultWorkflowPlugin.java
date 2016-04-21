@@ -20,7 +20,6 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -32,16 +31,15 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
-import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.DestinationDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.editor.workflow.dialog.DeleteDialog;
 import org.hippoecm.frontend.editor.workflow.dialog.WhereUsedDialog;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -56,11 +54,10 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.util.CodecUtils;
+import org.hippoecm.frontend.util.DocumentUtils;
 import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -144,11 +141,10 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 try {
-                    final HippoNode node = (HippoNode) getModel().getNode();
+                    final Node node = getModel().getNode();
                     renameDocumentArguments = new RenameDocumentArguments(
-                            getLocalizedNameForSession(node),
-                            node.getName(),
-                            node.getLocalizedNames());
+                            getDisplayName().getObject(),
+                            node.getName());
                 } catch (RepositoryException ex) {
                     renameDocumentArguments = new RenameDocumentArguments();
                 }
@@ -180,8 +176,8 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 if (!node.getName().equals(nodeName)) {
                     ((DefaultWorkflow) wf).rename(nodeName);
                 }
-                if (!getLocalizedNameForSession(node).equals(localName)) {
-                    defaultWorkflow.replaceAllLocalizedNames(localName);
+                if (!getDisplayName().getObject().equals(localName)) {
+                    defaultWorkflow.setDisplayName(localName);
                 }
                 return null;
             }
@@ -206,8 +202,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 destination = new NodeModelWrapper<Node>(getFolder()) {
                 };
                 try {
-                    HippoNode node = (HippoNode) getModel().getNode();
-                    String nodeName = node.getLocalizedName().toLowerCase();
+                    String nodeName = getDisplayName().getObject().toLowerCase();
 
                     if (isExtension(nodeName, KNOWN_IMAGE_EXTENSIONS)) {
                         createNewNodeNameForImage(nodeName);
@@ -300,10 +295,10 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 HippoNode node = (HippoNode) copyModel.getNode().getNode(nodeName);
 
                 String localName = getLocalizeCodec().encode(name);
-                if (!node.getLocalizedName().equals(localName)) {
+                if (!getDisplayName().getObject().equals(localName)) {
                     WorkflowManager manager = UserSession.get().getWorkflowManager();
                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                    defaultWorkflow.localizeName(localName);
+                    defaultWorkflow.setDisplayName(localName);
                 }
                 browseTo(copyModel);
                 return null;
@@ -357,7 +352,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 String nodeName;
                 if (codec != null) {
                     // we are moving between locales so re-encode the display name
-                    nodeName = codec.encode(getDisplayOrNodeName(src));
+                    nodeName = codec.encode(getDisplayName().getObject());
                 } else {
                     // use original node name
                     nodeName = src.getName();
@@ -368,23 +363,6 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 return null;
             }
 
-            private String getDisplayOrNodeName(final Node node) throws RepositoryException {
-                Node handle = node;
-                if (!node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    Node parent = node.getParent();
-                    if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        handle = parent;
-                    }
-                }
-
-                if (handle.isNodeType(HippoNodeType.NT_TRANSLATED) && handle.hasNode(HippoNodeType.NT_TRANSLATION)) {
-                    // use the first translation node message
-                    Node translationNode = handle.getNode(HippoNodeType.NT_TRANSLATION);
-                    return translationNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
-                } else {
-                    return node.getName();
-                }
-            }
         });
 
         add(deleteAction = new StdWorkflow("delete", Model.of(getString("delete-label")), context, getModel()) {
@@ -401,7 +379,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
-                final IModel<String> docName = getDocumentName();
+                final IModel<String> docName = getDisplayName();
                 final IModel<String> message = new StringResourceModel("delete-message", DefaultWorkflowPlugin.this, null, docName);
                 final IModel<String> title = new StringResourceModel("delete-title", DefaultWorkflowPlugin.this, null, docName);
                 return new DeleteDialog(title, getModel(), message, this, getEditorManager());
@@ -461,12 +439,6 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         return (WorkflowDescriptorModel) getDefaultModel();
     }
 
-    private static String getLocalizedNameForSession(final HippoNode node) throws RepositoryException {
-        final Locale cmsLocale = UserSession.get().getLocale();
-        final Localized cmsLocalized = Localized.getInstance(cmsLocale);
-        return node.getLocalizedName(cmsLocalized);
-    }
-
     private JcrNodeModel getFolder() {
         JcrNodeModel folderModel = new JcrNodeModel("/");
         try {
@@ -505,16 +477,15 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         }
     }
 
-    IModel<String> getDocumentName() {
+    private IModel<String> getDisplayName() {
         try {
-            return (new NodeTranslator(new JcrNodeModel(getModel().getNode()))).getNodeName();
-        } catch (RepositoryException ex) {
-            try {
-                return new Model<>(getModel().getNode().getName());
-            } catch (RepositoryException e) {
-                return Model.of(getString("unknown"));
+            final IModel<String> model = DocumentUtils.getDocumentNameModel(getModel().getNode());
+            if (model != null) {
+                return model;
             }
+        } catch (RepositoryException ignored) {
         }
+        return Model.of(getString("unknown"));
     }
 
     IEditorManager getEditorManager() {

@@ -57,12 +57,6 @@ public class RenameDocumentDialog extends WorkflowDialog<RenameDocumentArguments
         setAjaxChannel(activeAjaxChannel);
         nameUriContainer.setAjaxChannel(activeAjaxChannel);
 
-        final Locale cmsLocale = UserSession.get().getLocale();
-        final RenameMessage message = new RenameMessage(cmsLocale, renameDocumentArguments.getLocalizedNames());
-        if (message.shouldShow()) {
-            warn(message.forFolder());
-        }
-
         add(new RenameDocumentValidator(this, nameUriContainer, workflowDescriptorModel));
     }
 

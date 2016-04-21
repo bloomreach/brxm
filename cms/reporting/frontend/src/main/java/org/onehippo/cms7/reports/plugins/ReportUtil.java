@@ -18,6 +18,7 @@ package org.onehippo.cms7.reports.plugins;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.session.UserSession;
 
 /**
@@ -29,6 +30,10 @@ public final class ReportUtil {
 
     private ReportUtil() {
         // prevent instantiation
+    }
+
+    public static String getTranslation(final String reportName, final String key, final String defaultValue) {
+        return new ResourceBundleModel("hippo:reports."+ reportName, key, defaultValue).getObject();
     }
 
     /**

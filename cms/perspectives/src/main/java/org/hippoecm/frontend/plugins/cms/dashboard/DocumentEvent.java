@@ -28,8 +28,8 @@ import javax.jcr.version.VersionHistory;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.util.JcrUtils;
 
@@ -128,17 +128,17 @@ public class DocumentEvent {
         final String argument = getArgument(0);
         final String method = getMethod();
         if ("delete".equals(method) && argument != null) {
-            return new Model<String>(argument);
+            return new Model<>(argument);
         } else if ("add".equals(method)) {
-            return new NodeTranslator(new JcrNodeModel(targetVariant)).getNodeName();
+            return new NodeNameModel(new JcrNodeModel(targetVariant));
         } else if ("addTranslation".equals(method)) {
-            return new NodeTranslator(new JcrNodeModel(sourceVariant)).getNodeName();
+            return new NodeNameModel(new JcrNodeModel(sourceVariant));
         } else if ("rename".equals(getMethod()) && argument != null) {
-            return new Model<String>(argument);
+            return new Model<>(argument);
         } else {
             String path = getDocumentPath();
             if (path != null) {
-                return new NodeTranslator(new JcrNodeModel(path)).getNodeName();
+                return new NodeNameModel(new JcrNodeModel(path));
             } else {
                 return null;
             }

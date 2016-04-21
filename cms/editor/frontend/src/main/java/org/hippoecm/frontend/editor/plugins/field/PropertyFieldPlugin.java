@@ -64,14 +64,14 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         nodeModel = (JcrNodeModel) getDefaultModel();
 
         // use caption for backwards compatibility; i18n should use field name
-        add(new Label("name", getCaptionModel()));
+        add(new Label("name", helper.getCaptionModel(this)));
 
         add(createNrItemsLabel());
 
         final Label required = new Label("required", "*");
         add(required);
 
-        add(new FieldHint("hint-panel", config.getString("hint")));
+        add(new FieldHint("hint-panel", helper.getHintModel(this)));
         add(createAddLink());
 
         final IFieldDescriptor field = getFieldHelper().getField();

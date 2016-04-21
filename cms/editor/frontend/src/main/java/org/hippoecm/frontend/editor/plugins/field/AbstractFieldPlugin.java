@@ -71,6 +71,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     private static final String MAX_ITEMS = "maxitems";
 
     private static final int DEFAULT_MAX_ITEMS = 0;
+    private static final String HIPPO_TYPES = "hippo:types";
 
     private final int maxItems;
     private IPluginConfig parameters;
@@ -106,7 +107,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     // view and edit modes
     protected AbstractProvider<P, C> provider;
-    private FieldPluginHelper helper;
+    protected FieldPluginHelper helper;
     private TemplateController<P, C> templateController;
     private boolean managedValidation = false;
     private Map<Object, ValidationFilter> listeners = new HashMap<>();
@@ -187,7 +188,8 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
                 };
                 if (validationModel != null && validationModel.getObject() != null) {
-                    filter.setValid(isFieldValid(validationModel.getObject()));
+                    IValidationResult validationResult = validationModel.getObject();
+                    filter.setValid(isFieldValid(validationResult));
                 }
 
                 managedValidation = true;
@@ -421,7 +423,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     }
 
     @Override
-    protected final void onAddRenderService(final org.apache.wicket.markup.repeater.Item<IRenderService> item,
+    protected void onAddRenderService(final org.apache.wicket.markup.repeater.Item<IRenderService> item,
                                             IRenderService renderer) {
         super.onAddRenderService(item, renderer);
 
@@ -497,19 +499,6 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     protected FieldPluginHelper getFieldHelper() {
         return helper;
-    }
-
-    protected IModel<String> getCaptionModel() {
-        final IFieldDescriptor field = getFieldHelper().getField();
-        String caption = getPluginConfig().getString("caption");
-        final String captionKey = field != null ? field.getName() : caption;
-        if (captionKey == null) {
-            return new Model<>("undefined");
-        }
-        if (caption == null && field != null && field.getName().length() >= 1) {
-            caption = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
-        }
-        return new StringResourceModel(captionKey, this, null, caption);
     }
 
     protected ITemplateEngine getTemplateEngine() {
@@ -589,23 +578,4 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         return provider.size();
     }
 
-    /**
-     * Returns a key consisting of the super's cluster (tab) based translator id, plus the document type.
-     * The document type is added to not get translations mixed up in the Wicket cache for fields of different document
-     * types with the same name (e.g. title).
-     */
-    @Override
-    public String getResourceProviderKey() {
-        String key = super.getResourceProviderKey();
-        if (helper.getDocumentType() != null) {
-            key = (key == null) ? "" : (key + ".");
-            key += helper.getDocumentType().getName();
-            if (log.isDebugEnabled()) {
-                log.debug("For field {}/{}, enriched resource provider key with doc type, resulting in {}",
-                        new String[]{helper.getDocumentType().getName(),
-                                (helper.getField() != null) ? helper.getField().getName() : "[unknown]", key});
-            }
-        }
-        return key;
-    }
 }

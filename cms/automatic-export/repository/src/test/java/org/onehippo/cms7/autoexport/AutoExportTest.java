@@ -55,6 +55,8 @@ import static org.custommonkey.xmlunit.DifferenceConstants.COMMENT_VALUE_ID;
 import static org.custommonkey.xmlunit.DifferenceConstants.TEXT_VALUE_ID;
 import static org.hippoecm.repository.api.HippoNodeType.CONFIGURATION_PATH;
 import static org.hippoecm.repository.api.HippoNodeType.INITIALIZE_PATH;
+import static org.hippoecm.repository.api.HippoNodeType.NT_RESOURCEBUNDLE;
+import static org.hippoecm.repository.api.HippoNodeType.NT_RESOURCEBUNDLES;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.onehippo.cms7.autoexport.Constants.CONFIG_ENABLED_PROPERTY_NAME;
@@ -67,7 +69,7 @@ import static org.onehippo.cms7.autoexport.Constants.CONFIG_NODE_PATH;
 public class AutoExportTest extends RepositoryTestCase {
 
     private static final Logger log = LoggerFactory.getLogger("org.onehippo.cms7.autoexport.test");
-    private static final long TEN_SECONDS = 10*1000;
+    private static final long TEN_SECONDS = 15*1000;
     
     private String testHome;
     private String projectBase;
@@ -302,6 +304,27 @@ public class AutoExportTest extends RepositoryTestCase {
     }
 
     @Test
+    public void testTranslations() throws Exception {
+        disableExport();
+        // create start configuration
+        Node translations = session.getNode("/hippo:configuration/hippo:translations");
+        final Node foo = translations.addNode("foo", NT_RESOURCEBUNDLES);
+        final Node en = foo.addNode("en", NT_RESOURCEBUNDLE);
+        en.setProperty("bar", "test");
+        en.setProperty("quz", "quux");
+        final Node nl = foo.addNode("nl", NT_RESOURCEBUNDLE);
+        nl.setProperty("bar", "test");
+        session.save();
+        Thread.sleep(1000);
+        enableExport();
+        // change the configuration
+        en.setProperty("bar", "baz");
+        session.save();
+        waitForAutoExport();
+        checkExportedFiles("translations");
+    }
+
+    @Test
     public void testExcludeUuidPaths() throws Exception {
         String[] content = {
                 "/et:foo", "et:node",
@@ -335,7 +358,7 @@ public class AutoExportTest extends RepositoryTestCase {
             for (File child : file.listFiles()) {
                 createReadersForExportedFiles(basedir, child, readers);
             }
-        } else if (file.getName().endsWith(".xml") || file.getName().endsWith(".cnd")) {
+        } else if (file.getName().endsWith(".xml") || file.getName().endsWith(".cnd") || file.getName().endsWith(".json")) {
             Reader reader = new FileReader(file);
             String path = file.getPath().substring(basedir.getPath().length()+1);
             readers.put(path, reader);
@@ -346,29 +369,19 @@ public class AutoExportTest extends RepositoryTestCase {
         Assert.assertEquals(expected.size(), changes.size());
         for (String file : expected.keySet()) {
             log.debug("Comparing file " + file);
-            Reader change = changes.get(file);
-            assertNotNull(change);
+            assertNotNull(changes.get(file));
             if (file.endsWith(".xml")) {
                 // compare the xml
-                Diff d = new Diff(expected.get(file), change);
+                Diff d = new Diff(expected.get(file), changes.get(file));
                 d.overrideDifferenceListener(new IgnoreTextDifferenceListener());
                 d.overrideElementQualifier(new MyElementQualifier());
                 assertTrue("File " + file + " has unexpected contents, diff:\n" + d.toString(), d.similar());
-            } else if (file.endsWith(".cnd")) {
-                Reader er = expected.get(file);
-                try {
-                    int changeChar, expectedChar = 0, index = 0;
-                    do {
-                        changeChar = change.read();
-                        expectedChar = er.read();
-                        Assert.assertEquals("File " + file + " contains unexpected character at index " + index, expectedChar, changeChar);
-                    } while (changeChar != -1 && expectedChar != -1);
-                } catch (IOException e) {
-                    log.error("Error comparing cnd files", e);
-                } finally {
-                    IOUtils.closeQuietly(change);
-                    IOUtils.closeQuietly(er);
-                }
+            } else {
+                String exported = IOUtils.toString(changes.get(file));
+                String expectation = IOUtils.toString(expected.get(file));
+//                System.out.println("exported = " + exported);
+//                System.out.println("expected = " + expectation);
+                Assert.assertEquals(expectation, exported);
             }
         }
     }

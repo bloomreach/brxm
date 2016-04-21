@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.tree;
 
+import javax.jcr.Node;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.Component;
@@ -31,7 +32,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.io.IClusterable;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.LabelTreeNode;
@@ -58,13 +59,10 @@ public abstract class CmsJcrTree extends ContextMenuTree {
             return getTitleName(treeNode);
         }
 
-        private NodeTranslator newTranslator(TreeNode treeNode) {
-            return new NodeTranslator(((IJcrTreeNode) treeNode).getNodeModel());
-        }
-
         public String getTitleName(TreeNode treeNode) {
             if (treeNode instanceof IJcrTreeNode) {
-                return newTranslator(treeNode).getNodeName().getObject();
+                final IModel<Node> nodeModel = ((IJcrTreeNode) treeNode).getNodeModel();
+                return new NodeNameModel(nodeModel).getObject();
             } else if (treeNode instanceof LabelTreeNode) {
                 return ((LabelTreeNode) treeNode).getLabel();
             }

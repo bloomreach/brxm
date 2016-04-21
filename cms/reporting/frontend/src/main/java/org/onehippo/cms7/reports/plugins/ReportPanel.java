@@ -16,7 +16,7 @@
 package org.onehippo.cms7.reports.plugins;
 
 import java.util.Arrays;
-import java.util.Map;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -24,10 +24,9 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.hippoecm.frontend.IStringResourceProvider;
+import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.ITranslateService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -39,7 +38,7 @@ import org.wicketstuff.js.ext.util.ExtClass;
  * Base class of all reports on the reporting dashboard.
  */
 @ExtClass("Hippo.Reports.Portlet")
-public class ReportPanel extends ExtPanel implements IStringResourceProvider {
+public class ReportPanel extends ExtPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -71,11 +70,13 @@ public class ReportPanel extends ExtPanel implements IStringResourceProvider {
 
     protected final IPluginContext context;
     protected final IPluginConfig config;
+    protected final String reportName;
 
     public ReportPanel(final IPluginContext context, final IPluginConfig config) {
         super();
         this.context = context;
         this.config = config;
+        this.reportName = StringUtils.substringAfterLast(config.getName(), ".");
     }
 
     @Override
@@ -134,26 +135,16 @@ public class ReportPanel extends ExtPanel implements IStringResourceProvider {
         }
         return DEFAULT_TITLE_SIZE;
     }
-
-    public String getResourceProviderKey() {
-        return config.getString(ITranslateService.TRANSLATOR_ID);
-    }
-
-    @Override
-    public String getString(Map<String, String> criteria) {
-        String[] translators = config.getStringArray(ITranslateService.TRANSLATOR_ID);
-        if (translators != null) {
-            for (String translatorId : translators) {
-                ITranslateService translator = context.getService(translatorId, ITranslateService.class);
-                if (translator != null) {
-                    String translation = translator.translate(criteria);
-                    if (translation != null) {
-                        return translation;
-                    }
-                }
-            }
+    
+    protected final String getTranslation(String key, String defaultValue) {
+        String translation = null;
+        if (StringUtils.isNotEmpty(reportName)) {
+            translation = ReportUtil.getTranslation(reportName, key, defaultValue);
         }
-        return null;
+        if (StringUtils.isEmpty(translation)) {
+            ReportUtil.getTranslation(this, key, defaultValue);
+        }
+        return translation;
     }
 
 }

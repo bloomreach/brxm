@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -150,19 +150,5 @@
             }, DOM_MIN_TIMEOUT_MS);
         });
     };
-
-    if (Wicket.Browser.isIELessThan11()) {
-        CKEDITOR_READY.when(function() {
-            /*
-             Replace CKEditor's 'appendStyleText' method. IE < 11 chokes on the original because it calls createStyleSheet()
-             with an empty string as argument. That throws an Error when the page is served by an HTTP server.
-             */
-            CKEDITOR.dom.document.prototype.appendStyleText = function(cssStyleText) {
-                var styleSheet = this.$.createStyleSheet();
-                styleSheet.cssText = cssStyleText;
-                return styleSheet;
-            };
-        });
-    }
 
 }(jQuery));

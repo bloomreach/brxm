@@ -97,7 +97,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 try {
-                    name = ((HippoNode) getModel().getNode()).getLocalizedName();
+                    name = ((HippoNode) getModel().getNode()).getDisplayName();
                 } catch(RepositoryException ex) {
                     name = "";
                 }
@@ -126,7 +126,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 try {
-                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalizedName();
+                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getDisplayName();
                 } catch(RepositoryException ex) {
                     name = "";
                 }

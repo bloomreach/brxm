@@ -256,7 +256,7 @@ public class BrokenLinksListColumns implements IClusterable {
         public String getValue(final Node node) throws RepositoryException {
             if (node instanceof HippoNode) {
                 HippoNode hippoNode = (HippoNode) node;
-                return hippoNode.getLocalizedName();
+                return hippoNode.getDisplayName();
             } else {
                 return NodeNameCodec.decode(node.getName());
             }

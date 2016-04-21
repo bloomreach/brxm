@@ -28,8 +28,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.JcrUtils;
 
@@ -49,7 +49,7 @@ public abstract class NodeBreadcrumbWidget extends BreadcrumbWidget<Node> {
 
     @Override
     protected IModel<String> getName(final IModel<Node> model) {
-        final String name = new NodeTranslator(model).getNodeName().getObject();
+        final String name = new NodeNameModel(model).getObject();
         if (StringUtils.isEmpty(name)) {
             String path = JcrUtils.getNodePathQuietly(model.getObject());
             if ("/".equals(path)) {

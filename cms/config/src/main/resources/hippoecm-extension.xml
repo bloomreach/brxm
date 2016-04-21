@@ -238,7 +238,7 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.27.00</sv:value>
+      <sv:value>4.0.0</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="cms-static-change-admin-topnavbar">
@@ -323,7 +323,7 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.27.00</sv:value>
+      <sv:value>4.0.0</sv:value>
     </sv:property>
   </sv:node>
 
@@ -521,6 +521,12 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>2003.0</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>4.0.0</sv:value>
+    </sv:property>
   </sv:node>
 
   <sv:node sv:name="cms-tree-views-nodetypes-patch">
@@ -663,6 +669,30 @@
     </sv:property>
     <sv:property sv:name="hippo:contentdelete" sv:type="String">
       <sv:value>/hippo:configuration/hippo:frontend/cms/cms-dev</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="hippo-cms-section-translations">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>14</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:resourcebundles" sv:type="String">
+      <sv:value>section-translations.json</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="hippo-cms-builtin-workflow-translations">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>13</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:resourcebundles" sv:type="String">
+      <sv:value>builtin-workflow-translations.json</sv:value>
     </sv:property>
   </sv:node>
 

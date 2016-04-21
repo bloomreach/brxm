@@ -1,0 +1,30 @@
+{
+  "hippo:cms" : {
+    "sections" : {
+      "en" : {
+        "section-documents" : "Documents",
+        "section-images" : "Images",
+        "section-files" : "Assets",
+        "section-configuration" : "Document Types"
+      },
+      "nl" : {
+        "section-documents" : "Documenten",
+        "section-images" : "Beeldbank",
+        "section-files" : "Bestanden",
+        "section-configuration" : "Document Types"
+      },
+      "de" : {
+        "section-documents" : "Dokumente",
+        "section-images" : "Bilder",
+        "section-files" : "Dateien",
+        "section-configuration" : "Documenttypen"
+      },
+      "fr" : {
+        "section-documents" : "Documents",
+        "section-images" : "Images",
+        "section-files" : "Fichiers",
+        "section-configuration" : "Types de documents"
+      }
+    }
+  }
+}

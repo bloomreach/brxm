@@ -1,0 +1,32 @@
+{
+  "hippo:templates" : {
+    "en" : {
+      "new-document" : "new document",
+      "simple" : "simple",
+      "new-folder" : "new folder",
+      "new-collection" : "new folder",
+      "new-translated-folder" : "new translated folder"
+    },
+    "nl" : {
+      "new-document" : "nieuw document",
+      "simple" : "simpel",
+      "new-folder" : "nieuwe map",
+      "new-collection" : "nieuwe map",
+      "new-translated-folder" : "nieuwe vertaalde map"
+    },
+    "de" : {
+      "new-document" : "Neues Dokument",
+      "simple" : "simple",
+      "new-folder" : "Neuer Ordner",
+      "new-collection" : "Neuer Ordner",
+      "new-translated-folder" : "Neuer übersetzter Ordner"
+    },
+    "fr" : {
+      "new-document" : "nouveau document",
+      "simple" : "simple",
+      "new-folder" : "nouveau dossier",
+      "new-collection" : "nouveau dossier",
+      "new-translated-folder" : "un nouveau dossier traduit"
+    }
+  }
+}

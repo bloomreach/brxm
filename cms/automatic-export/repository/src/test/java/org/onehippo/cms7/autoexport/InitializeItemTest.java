@@ -44,83 +44,113 @@ public class InitializeItemTest {
             TEST_HOME = basedir.getPath() + "/src/test/resources/initializeitemtest";
         }
     }
-    
+
     @Test
-    public void testParseDeltaXMLContentResource() {
+    public void testParseContentResourceDelta() {
         InitializeItem item = new InitializeItem("test", 0.0, "delta.xml", "/", null, null, null, new File(TEST_HOME), null);
         assertEquals("/test", item.getContextPath());
-        assertTrue(item.isDeltaXML());
-        DeltaXMLInstruction instruction = item.getDeltaXML().getRootInstruction();
+        assertTrue(item.isDelta());
+        DeltaInstruction instruction = item.getDelta().getRootInstruction();
         assertNotNull(instruction);
         assertTrue(instruction.isCombineDirective());
         assertEquals("/test", instruction.getContextPath());
-        
-        List<DeltaXMLInstruction> nodeInstructions = new ArrayList<>(instruction.getNodeInstructions());
+
+        List<DeltaInstruction> nodeInstructions = new ArrayList<>(instruction.getNodeInstructions());
         assertNotNull(nodeInstructions);
         assertEquals(2, nodeInstructions.size());
 
-        Collections.sort(nodeInstructions, new Comparator<DeltaXMLInstruction>() {
+        Collections.sort(nodeInstructions, new Comparator<DeltaInstruction>() {
             @Override
-            public int compare(final DeltaXMLInstruction o1, final DeltaXMLInstruction o2) {
+            public int compare(final DeltaInstruction o1, final DeltaInstruction o2) {
                 return o1.getContextPath().compareTo(o2.getContextPath());
             }
         });
-        DeltaXMLInstruction child1 = nodeInstructions.get(0);
+        DeltaInstruction child1 = nodeInstructions.get(0);
         assertEquals("/test/bar", child1.getContextPath());
         assertTrue(child1.isCombineDirective());
         assertNull(child1.getNodeInstructions());
         assertNotNull(child1.getPropertyInstructions());
         assertEquals(1, child1.getPropertyInstructions().size());
-        DeltaXMLInstruction child2 = nodeInstructions.get(1);
+        DeltaInstruction child2 = nodeInstructions.get(1);
         assertEquals("/test/foo", child2.getContextPath());
         assertTrue(child2.isNoneDirective());
         assertNull(child2.getNodeInstructions());
         assertNull(child2.getPropertyInstructions());
-        
-        List<DeltaXMLInstruction> propertyInstructions = new ArrayList<>(instruction.getPropertyInstructions());
+
+        List<DeltaInstruction> propertyInstructions = new ArrayList<>(instruction.getPropertyInstructions());
         assertNotNull(propertyInstructions);
         assertEquals(2, propertyInstructions.size());
 
-        Collections.sort(propertyInstructions, new Comparator<DeltaXMLInstruction>() {
+        Collections.sort(propertyInstructions, new Comparator<DeltaInstruction>() {
             @Override
-            public int compare(final DeltaXMLInstruction o1, final DeltaXMLInstruction o2) {
+            public int compare(final DeltaInstruction o1, final DeltaInstruction o2) {
                 return o1.getName().compareTo(o2.getName());
             }
         });
-        
-        DeltaXMLInstruction child3 = propertyInstructions.get(0);
+
+        DeltaInstruction child3 = propertyInstructions.get(0);
         assertTrue(child3.isOverrideDirective());
         assertTrue(!child3.isNodeInstruction());
         assertNull(child3.getNodeInstructions());
         assertNull(child3.getPropertyInstructions());
         assertEquals("bar", child3.getName());
 
-        DeltaXMLInstruction child4 = propertyInstructions.get(1);
+        DeltaInstruction child4 = propertyInstructions.get(1);
         assertTrue(child4.isNoneDirective());
         assertTrue(!child4.isNodeInstruction());
         assertEquals("foo", child4.getName());
+
     }
-    
+
+    @Test
+    public void testParseResourceBundlesDelta() {
+        InitializeItem item = new InitializeItem("test", 0.0, null, null, null, null, null, "translations.json", new File(TEST_HOME), null);
+        assertTrue(item.isDelta());
+        DeltaInstruction instruction = item.getDelta().getRootInstruction();
+        assertNotNull(instruction);
+        assertTrue(instruction.isCombineDirective());
+        assertEquals("/hippo:configuration/hippo:translations", instruction.getContextPath());
+
+        Collection<DeltaInstruction> nodeInstructions = instruction.getNodeInstructions();
+        assertNotNull(nodeInstructions);
+        assertEquals(1, nodeInstructions.size());
+
+        DeltaInstruction fooInstruction = nodeInstructions.iterator().next();
+        assertEquals("foo", fooInstruction.getName());
+        assertTrue(fooInstruction.isCombineDirective());
+        nodeInstructions = fooInstruction.getNodeInstructions();
+        assertNotNull(nodeInstructions);
+        assertEquals(1, nodeInstructions.size());
+
+        final DeltaInstruction enInstruction = nodeInstructions.iterator().next();
+        assertEquals("en", enInstruction.getName());
+        assertTrue(enInstruction.isCombineDirective());
+        final Collection<DeltaInstruction> propertyInstructions = enInstruction.getPropertyInstructions();
+        assertEquals(1, propertyInstructions.size());
+        final DeltaInstruction propertyInstruction = propertyInstructions.iterator().next();
+        assertEquals("bar", propertyInstruction.getName());
+    }
+
     @Test
     public void testHandleEvent() throws Exception {
         InitializeItem item = new InitializeItem("test", 0.0, "delta.xml", "/", null, null, null, new File(TEST_HOME), null);
         
         item.handleEvent(new ExportEvent(Event.PROPERTY_ADDED, "/test/baz"));
         assertTrue(item.processEvents());
-        Collection<DeltaXMLInstruction> propertyInstructions = item.getDeltaXML().getRootInstruction().getPropertyInstructions();
+        Collection<DeltaInstruction> propertyInstructions = item.getDelta().getRootInstruction().getPropertyInstructions();
         assertEquals(3, propertyInstructions.size());
-        DeltaXMLInstruction instruction = item.getDeltaXML().getRootInstruction().getInstruction("baz", false);
+        DeltaInstruction instruction = item.getDelta().getRootInstruction().getInstruction("baz", false);
         assertEquals("/test/baz", instruction.getContextPath());
         assertEquals("baz", instruction.getName());
         assertTrue(instruction.isNoneDirective());
         
         item.handleEvent(new ExportEvent(Event.PROPERTY_ADDED, "/test/foo/bar"));
         assertTrue(item.processEvents());
-        assertEquals(2, item.getDeltaXML().getRootInstruction().getNodeInstructions().size());
+        assertEquals(2, item.getDelta().getRootInstruction().getNodeInstructions().size());
         
         item.handleEvent(new ExportEvent(Event.PROPERTY_ADDED, "/test/bar/quz"));
         assertTrue(item.processEvents());
-        instruction = item.getDeltaXML().getRootInstruction().getInstruction("bar", true).getInstruction("quz", false);
+        instruction = item.getDelta().getRootInstruction().getInstruction("bar", true).getInstruction("quz", false);
         assertNotNull(instruction);
         assertEquals("/test/bar/quz", instruction.getContextPath());
         assertEquals("quz", instruction.getName());
@@ -129,13 +159,13 @@ public class InitializeItemTest {
         
         item.handleEvent(new ExportEvent(Event.PROPERTY_REMOVED, "/test/foo"));
         assertTrue(item.processEvents());
-        assertEquals(2, item.getDeltaXML().getRootInstruction().getPropertyInstructions().size());
-        assertNull(item.getDeltaXML().getRootInstruction().getInstruction("foo", false));
+        assertEquals(2, item.getDelta().getRootInstruction().getPropertyInstructions().size());
+        assertNull(item.getDelta().getRootInstruction().getInstruction("foo", false));
         
         item.handleEvent(new ExportEvent(Event.PROPERTY_REMOVED, "/test/bar/baz"));
         item.handleEvent(new ExportEvent(Event.PROPERTY_REMOVED, "/test/bar/quz"));
         assertTrue(item.processEvents());
-        assertEquals(1, item.getDeltaXML().getRootInstruction().getNodeInstructions().size());
+        assertEquals(1, item.getDelta().getRootInstruction().getNodeInstructions().size());
 
     }
 
