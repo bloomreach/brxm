@@ -31,7 +31,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
@@ -112,7 +111,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
                                         final @QueryParam("lastModifiedTimestamp") long versionStamp) {
         final ContainerAction<Response> deleteContainerItem = () -> {
             containerComponentService.deleteContainerItem(getSession(), itemUUID, versionStamp);
-            return Response.status(Response.Status.OK).entity(ArrayUtils.EMPTY_STRING_ARRAY).build();
+            return Response.status(Response.Status.OK).build();
         };
 
         return handleAction(deleteContainerItem);
