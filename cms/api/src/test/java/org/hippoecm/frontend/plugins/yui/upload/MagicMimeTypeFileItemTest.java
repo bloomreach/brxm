@@ -1,15 +1,11 @@
 package org.hippoecm.frontend.plugins.yui.upload;
 
-import org.apache.tika.mime.MediaType;
-import org.apache.wicket.util.file.FileCleaner;
-import org.apache.wicket.util.upload.DiskFileItem;
 import org.apache.wicket.util.upload.FileItem;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class MagicMimeTypeFileItemTest {
 
