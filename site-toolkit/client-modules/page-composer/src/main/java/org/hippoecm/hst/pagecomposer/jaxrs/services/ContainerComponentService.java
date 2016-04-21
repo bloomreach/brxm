@@ -20,6 +20,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 
 public interface ContainerComponentService {
@@ -29,4 +30,24 @@ public interface ContainerComponentService {
     }
 
     ContainerItem createContainerItem(Session session, String itemUUID, long versionStamp) throws ClientException, RepositoryException;
+
+    /**
+     * Update order of items inside the container.
+     *
+     * @param session
+     * @param container
+     * @throws ClientException
+     * @throws RepositoryException
+     */
+    void updateContainer(final Session session, final ContainerRepresentation container) throws ClientException, RepositoryException;
+
+    /**
+     * Delete a container item identified by the given <code>itemUUID</code>.
+     * @param session
+     * @param itemUUID
+     * @param versionStamp
+     * @throws ClientException
+     * @throws RepositoryException
+     */
+    void deleteContainerItem(Session session, String itemUUID, long versionStamp) throws ClientException, RepositoryException;
 }

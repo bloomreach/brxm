@@ -98,7 +98,6 @@
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource"  parent="abstractConfigResource">
               <property name="containerComponentService" ref="containerComponentService"/>
-              <property name="containerHelper" ref="containerHelper"/>
             </bean>
           </constructor-arg>
         </bean>
