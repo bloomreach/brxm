@@ -93,7 +93,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
 
 
     @PUT
-    @Path("/update/")
+    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateContainer(final ContainerRepresentation container) {
