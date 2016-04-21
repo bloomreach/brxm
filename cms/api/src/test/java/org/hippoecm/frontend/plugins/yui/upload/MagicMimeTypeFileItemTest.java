@@ -46,7 +46,7 @@ public class MagicMimeTypeFileItemTest {
 
     private MagicMimeTypeFileItem setUpMagic(String fileName, String mediaType) {
         InputStream stream = getClass().getResourceAsStream(fileName);
-        TestFileItem testFileItem = new TestFileItem(mediaType, stream, TEST_ODS);
+        TestFileItem testFileItem = new TestFileItem(mediaType, stream, fileName);
         return new MagicMimeTypeFileItem(testFileItem);
     }
 
