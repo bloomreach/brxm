@@ -144,7 +144,6 @@ public class MountResourceTest extends AbstractMountResourceTest {
         final ContainerComponentService containerComponentService = new ContainerComponentServiceImpl(pageComposerContextService, helper);
         containerComponentResource.setContainerComponentService(containerComponentService);
         containerComponentResource.setPageComposerContextService(pageComposerContextService);
-        containerComponentResource.setContainerHelper(helper);
         return containerComponentResource;
     }
 
