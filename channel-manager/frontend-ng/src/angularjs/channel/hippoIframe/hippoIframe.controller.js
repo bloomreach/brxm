@@ -134,7 +134,6 @@ export class HippoIframeCtrl {
       iframeDom,
       this.PageStructureService.registerParsedElement.bind(this.PageStructureService)
     );
-    this.PageStructureService.printParsedElements();
   }
 
   _updateChannelIfSwitched() {
