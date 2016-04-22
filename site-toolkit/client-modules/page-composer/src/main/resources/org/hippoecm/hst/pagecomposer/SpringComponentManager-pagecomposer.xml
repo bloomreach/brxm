@@ -51,6 +51,12 @@
     <constructor-arg ref="containerHelper"/>
   </bean>
 
+  <bean id="containerItemComponentService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentServiceImpl">
+    <constructor-arg ref="pageComposerContextService"/>
+    <constructor-arg ref="containerItemHelper"/>
+    <constructor-arg ref="pageComposerPropertyPresentationFactories"/>
+  </bean>
+
   <bean id="siteMapHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper" parent="abstractHelper">
     <property name="pagesHelper" ref="pagesHelper"/>
     <property name="templateHelper" ref="templateHelper"/>
@@ -66,8 +72,7 @@
 
   <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource" id="containerItemComponentResource"
         parent="abstractConfigResource">
-    <property name="containerItemHelper" ref="containerItemHelper"/>
-    <property name="propertyPresentationFactories" ref="pageComposerPropertyPresentationFactories"/>
+    <property name="containerItemComponentService" ref="containerItemComponentService"/>
   </bean>
 
   <!--

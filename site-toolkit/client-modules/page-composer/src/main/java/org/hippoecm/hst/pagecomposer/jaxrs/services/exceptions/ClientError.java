@@ -82,6 +82,11 @@ public enum ClientError {
 
     INVALID_NAME,
 
+    /**
+     * Client requests to create a new item with the given Id that has existed before
+     */
+    ITEM_EXISTED,
+
     UNKNOWN
 
 }
