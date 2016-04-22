@@ -68,6 +68,17 @@ describe('SiteMapItemService', () => {
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_SITEMAP_ITEM_RETRIEVAL_FAILED');
   });
 
+  it('doesn\'t load the sitemap item when it\'s already cached', () => {
+    const siteMapItem = { id: 'siteMapItemId2' };
+    HstService.doGet.and.returnValue($q.when({ data: siteMapItem }));
+    SiteMapItemService.loadAndCache('siteMapId', 'siteMapItemId');
+    $rootScope.$digest();
+
+    HstService.doGet.calls.reset();
+    SiteMapItemService.loadAndCache('siteMapId', 'siteMapItemId2');
+    expect(HstService.doGet).not.toHaveBeenCalled();
+  });
+
   it('derives if the current page is locked by another user', () => {
     expect(SiteMapItemService.isLocked()).toBe(false);
 

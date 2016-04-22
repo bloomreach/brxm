@@ -28,6 +28,7 @@ describe('PageActions', () => {
   let SiteMapItemService;
   let DialogService;
   let HippoIframeService;
+  let PageMetaDataService;
   const confirmDialog = jasmine.createSpyObj('confirmDialog', ['title', 'textContent', 'ok', 'cancel']);
   confirmDialog.title.and.returnValue(confirmDialog);
   confirmDialog.textContent.and.returnValue(confirmDialog);
@@ -38,7 +39,7 @@ describe('PageActions', () => {
     module('hippo-cm');
 
     inject((_$q_, _$rootScope_, _$compile_, _$translate_, _FeedbackService_, _ChannelService_, _SiteMapService_,
-            _SiteMapItemService_, _DialogService_, _HippoIframeService_) => {
+            _SiteMapItemService_, _DialogService_, _HippoIframeService_, _PageMetaDataService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $compile = _$compile_;
@@ -49,6 +50,7 @@ describe('PageActions', () => {
       SiteMapItemService = _SiteMapItemService_;
       DialogService = _DialogService_;
       HippoIframeService = _HippoIframeService_;
+      PageMetaDataService = _PageMetaDataService_;
     });
 
     spyOn($translate, 'instant').and.callFake((key) => {
@@ -62,14 +64,17 @@ describe('PageActions', () => {
     spyOn(FeedbackService, 'showError');
     spyOn(ChannelService, 'hasPrototypes');
     spyOn(ChannelService, 'hasWorkspace');
+    spyOn(ChannelService, 'recordOwnChange');
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
     spyOn(SiteMapService, 'load');
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(false);
     spyOn(SiteMapItemService, 'deleteItem');
     spyOn(SiteMapItemService, 'clear');
+    spyOn(SiteMapItemService, 'loadAndCache');
     spyOn(DialogService, 'confirm').and.returnValue(confirmDialog);
     spyOn(DialogService, 'show');
     spyOn(HippoIframeService, 'load');
+    spyOn(PageMetaDataService, 'getSiteMapItemId').and.returnValue('siteMapItemId');
   });
 
   function compileDirectiveAndGetController() {
@@ -179,5 +184,13 @@ describe('PageActions', () => {
     expect(HippoIframeService.load).toHaveBeenCalledWith('');
     expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
     expect(SiteMapItemService.clear).toHaveBeenCalled();
+    expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+  });
+
+  it('loads the meta data of the current page when opening the page menu', () => {
+    const PageActionsCtrl = compileDirectiveAndGetController();
+
+    PageActionsCtrl.onOpenMenu();
+    expect(SiteMapItemService.loadAndCache).toHaveBeenCalledWith('siteMapId', 'siteMapItemId');
   });
 });

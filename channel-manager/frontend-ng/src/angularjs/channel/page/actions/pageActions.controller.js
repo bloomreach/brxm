@@ -15,7 +15,8 @@
  */
 
 export class PageActionsCtrl {
-  constructor($translate, FeedbackService, ChannelService, SiteMapService, SiteMapItemService, DialogService, HippoIframeService) {
+  constructor($translate, FeedbackService, ChannelService, SiteMapService, SiteMapItemService, DialogService,
+              HippoIframeService, PageMetaDataService) {
     'ngInject';
 
     this.$translate = $translate;
@@ -25,6 +26,7 @@ export class PageActionsCtrl {
     this.SiteMapItemService = SiteMapItemService;
     this.DialogService = DialogService;
     this.HippoIframeService = HippoIframeService;
+    this.PageMetaDataService = PageMetaDataService;
 
     this.actions = [];
 
@@ -45,6 +47,10 @@ export class PageActionsCtrl {
     return this.actions.find((action) => action.id === id);
   }
 
+  onOpenMenu() {
+    this.SiteMapItemService.loadAndCache(this.ChannelService.getSiteMapId(), this.PageMetaDataService.getSiteMapItemId());
+  }
+
   trigger(action) {
     if (action.id === 'add') {
       this.onActionSelected({ subpage: `page-${action.id}` });
@@ -61,9 +67,10 @@ export class PageActionsCtrl {
           .then(() => {
             const siteMapId = this.ChannelService.getSiteMapId();
 
-            this.HippoIframeService.load('');    // load homepage
-            this.SiteMapService.load(siteMapId); // reload sitemap (sidenav)
-            this.SiteMapItemService.clear();     // wipe meta-data of current page
+            this.HippoIframeService.load('');      // load homepage
+            this.SiteMapService.load(siteMapId);   // reload sitemap (sidenav)
+            this.SiteMapItemService.clear();       // wipe meta-data of current page
+            this.ChannelService.recordOwnChange(); // mark the channel changed
           })
           .catch(() => {
             this.FeedbackService.showError('ERROR_DELETE_PAGE');

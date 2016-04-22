@@ -25,11 +25,15 @@ export class SiteMapItemService {
   }
 
   loadAndCache(siteMapId, itemId) {
-    this.siteMapId = siteMapId;
+    if (this.hasItem() && this.siteMapId === siteMapId && this.item.id === itemId) {
+      return; // no need to load again, item is already cached.
+    }
+
     this.clear();
     this._load(siteMapId, itemId)
       .then((item) => {
         this.item = item;
+        this.siteMapId = siteMapId;
       })
       .catch(() => {
         this.FeedbackService.showError('ERROR_SITEMAP_ITEM_RETRIEVAL_FAILED');
