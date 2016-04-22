@@ -22,6 +22,7 @@ export class DomService {
     this.$q = $q;
     this.$rootScope = $rootScope;
     this.$document = $document;
+    this._scrollBarWidth = false;
   }
 
   getAppRootUrl() {
@@ -131,5 +132,20 @@ export class DomService {
     mouseEvent.initMouseEvent(type, canBubble, cancelable, view, detail, screenX, screenY, clientX, clientY,
       ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget);
     return mouseEvent;
+  }
+
+  getScrollBarWidth() {
+    if (!this._scrollBarWidth) {
+      const outerWidth = 100;
+      const $outer = $('<div>').css({
+        visibility: 'hidden',
+        width: outerWidth,
+        overflow: 'scroll',
+      }).appendTo('body');
+      const widthWithScroll = $('<div>').css('width', '100%').appendTo($outer).outerWidth();
+      $outer.remove();
+      this._scrollBarWidth = outerWidth - widthWithScroll;
+    }
+    return this._scrollBarWidth;
   }
 }
