@@ -24,6 +24,7 @@ export class OverlayElementCtrl {
     this.OverlaySyncService = OverlaySyncService;
     this.structureElement.setJQueryElement('overlay', $element);
     this._prepareIframeElement($scope);
+    $element.attr('qa-label', this.getLabel());
 
     // the share data-model between controllers
     $scope.structureElement = this.structureElement;
