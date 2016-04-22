@@ -16,21 +16,26 @@
 
 export class OverlaySyncService {
 
-  constructor($rootScope, $window, ThrottleService) {
+  constructor($rootScope, $window, ThrottleService, DomService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
     this.$window = $window;
+    this.DomService = DomService;
 
     this.overlayElements = [];
     this.observer = new MutationObserver(ThrottleService.throttle(() => this.syncIframe(), 100));
+    this.viewPortWidth = 0;
   }
 
-  init(iframeJQueryElement, overlayJQueryElement) {
-    this.iframeJQueryElement = iframeJQueryElement;
-    this.overlayJQueryElement = overlayJQueryElement;
+  init($base, $sheet, $scrollX, $iframe, $overlay) {
+    this.$base = $base;
+    this.$sheet = $sheet;
+    this.$scrollX = $scrollX;
+    this.$iframe = $iframe;
+    this.$overlay = $overlay;
 
-    this.iframeJQueryElement.on('load', () => this._onLoad());
+    this.$iframe.on('load', () => this._onLoad());
   }
 
   registerElement(structureElement) {
@@ -72,14 +77,19 @@ export class OverlaySyncService {
     this._syncOverlayElements();
   }
 
+  setViewPortWidth(viewPortWidth) {
+    this.viewPortWidth = viewPortWidth;
+  }
+
+  getViewPortWidth() {
+    return this.viewPortWidth;
+  }
+
   _syncDimensions() {
-    if (this.iframeJQueryElement && this.overlayJQueryElement) {
+    if (this.$iframe && this.$overlay) {
       const doc = this._getIframeWindow().document;
 
       if (doc) {
-        // Reset the height, as the document height will always be at least the iframe height
-        this.iframeJQueryElement.height('');
-
         // Avoid scrollbars from the site as they are controlled by the application.
         // Changing a style attribute on Firefox will always invoke a MutationObserver callback, even if the value has
         // not changed. To prevent ending up in a loop, only set it when the value is not already 'hidden'.
@@ -88,16 +98,66 @@ export class OverlaySyncService {
           docEl.css('overflow', 'hidden');
         }
 
-        const height = doc.body.clientHeight;
-        this.iframeJQueryElement.height(height);
-        this.overlayJQueryElement.height(height);
+        // resetting the height will also reset the scroll position so save (and restore) it
+        const currentScrollTop = this.$base.scrollTop();
 
-        this.iframeJQueryElement.width('');
-        const width = $(doc).width();
-        this.iframeJQueryElement.width(width);
-        this.overlayJQueryElement.width(width);
+        // Reset the height
+        this.$iframe.height('');
+        this.$scrollX.height('');
+
+        // if set to true, the scrollbar height is added to the iframe height,
+        const horizontalScrollBar = this._syncWidth(doc);
+        this._syncHeight(doc, horizontalScrollBar);
+
+        // restore scrolltop
+        this.$base.scrollTop(currentScrollTop);
       }
     }
+  }
+
+  /**
+   * Sync the width of the iframe and overlay. The width can be constrained by the viewPortWidth. If it detects that
+   * the site in the iframe is wider than the sheet, it returns true.
+   *
+   * @param doc The document object
+   * @returns {boolean} true when displaying a horizontal scrollbar
+   * @private
+   */
+  _syncWidth(doc) {
+    // reset min-width on iframe
+    this.$iframe.css('min-width', '0');
+
+    if (this.viewPortWidth === 0) {
+      // Desktop mode - no width constraints
+      this.$sheet.css('max-width', 'none');
+      this.$iframe.width('');
+      this.$overlay.width('');
+    } else {
+      // viewport is constrained
+      const width = `${this.viewPortWidth}px`;
+      this.$sheet.css('max-width', width);
+      this.$iframe.width(width);
+
+      const docWidth = $(doc).width();
+      if (docWidth <= this.viewPortWidth) {
+        this.$overlay.width(width);
+      } else {
+        // site has min-width bigger than viewport
+        this.$iframe.width(docWidth);
+        this.$iframe.css('min-width', `${docWidth}px`);
+        this.$overlay.width(docWidth);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  _syncHeight(doc, horizontalScrollBar) {
+    const height = $(doc.body).height() + (horizontalScrollBar ? this.DomService.getScrollBarWidth() : 0);
+    this.$iframe.height(height);
+    this.$overlay.height(height);
+    // setting the absolute height on scrollX ensures that the scroll-position can be maintained when scaling
+    this.$scrollX.height(height);
   }
 
   _syncOverlayElements() {
@@ -117,6 +177,7 @@ export class OverlaySyncService {
   }
 
   _getIframeWindow() {
-    return this.iframeJQueryElement[0].contentWindow;
+    return this.$iframe[0].contentWindow;
   }
+
 }

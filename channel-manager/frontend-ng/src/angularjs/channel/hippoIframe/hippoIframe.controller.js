@@ -56,9 +56,14 @@ export class HippoIframeCtrl {
 
     HippoIframeService.initialize(this.iframeJQueryElement);
 
-    OverlaySyncService.init(this.iframeJQueryElement, $element.find('.overlay'));
+    const $base = $element.find('.channel-iframe-base');
+    const $sheet = $element.find('.channel-iframe-sheet');
+    const $scrollX = $element.find('.channel-iframe-scroll-x');
+    const $overlay = $element.find('.overlay');
+
+    OverlaySyncService.init($base, $sheet, $scrollX, this.iframeJQueryElement, $overlay);
     ScalingService.init($element);
-    DragDropService.init(this.iframeJQueryElement, $element.find('.channel-iframe-base'));
+    DragDropService.init(this.iframeJQueryElement, $base);
 
     const deleteComponentHandler = (componentId) => this.deleteComponent(componentId);
     CmsService.subscribe('delete-component', deleteComponentHandler);
