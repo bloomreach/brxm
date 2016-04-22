@@ -68,19 +68,16 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
     }
 
     @Override
-    public ContainerItem createContainerItem(final Session session, final String itemUUID, final long versionStamp) throws RepositoryException, ClientException {
+    public ContainerItem createContainerItem(final Session session, final String catalogItemUUID, final long versionStamp)
+            throws RepositoryException, ClientException {
         try {
-            final Node containerItem = getContainerItem(session, itemUUID);
-            final Node containerNode = getContainer();
+            final Node catalogItem = getContainerItem(session, catalogItemUUID);
+            final Node containerNode = lockAndGetContainer(versionStamp);
 
-            lockContainer(containerNode, versionStamp);
-
-            // now we have the containerItem that contains 'how' to create the new containerItem and we have the
+            // now we have the catalogItem that contains 'how' to create the new containerItem and we have the
             // containerNode. Find a correct newName and create a new node.
-            final String newItemNodeName = findNewName(containerItem.getName(), containerNode);
-
-            JcrUtils.copy(session, containerItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
-            final Node newItem = containerNode.getNode(newItemNodeName);
+            final String newItemNodeName = findNewName(catalogItem.getName(), containerNode);
+            final Node newItem = JcrUtils.copy(session, catalogItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
 
             HstConfigurationUtils.persistChanges(session);
 
@@ -95,12 +92,10 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
     @Override
     public void updateContainer(final Session session, final ContainerRepresentation container) throws ClientException, RepositoryException {
         try {
-            final Node containerNode = pageComposerContextService.getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
-            lockContainer(containerNode, container.getLastModifiedTimestamp());
+            final Node containerNode = lockAndGetContainer(container.getLastModifiedTimestamp());
 
             updateContainerOrder(session, container, containerNode);
             HstConfigurationUtils.persistChanges(session);
-            log.info("Item order for container[{}] has been updated.", container.getId());
         } catch (RepositoryException e) {
             log.warn("Exception during updating container item: {}", e);
             throw e;
@@ -111,15 +106,9 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
     public void deleteContainerItem(final Session session, final String itemUUID, final long versionStamp) throws ClientException, RepositoryException {
         try {
             final Node containerItem = getContainerItem(session, itemUUID);
-            final Node containerNode = containerItem.getParent();
-            if (!containerNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT)) {
-                log.warn("The item to be deleted is not a child of a container component. Cannot delete item '{}'", itemUUID);
-                throw new InvalidNodeTypeException("The item to be deleted is not a child of a container component. ", itemUUID);
-            }
 
-            lockContainer(containerNode, versionStamp);
+            lockAndGetContainer(versionStamp);
             containerItem.remove();
-
             HstConfigurationUtils.persistChanges(session);
         } catch (RepositoryException e) {
             log.warn("Failed to delete node with id '" + itemUUID + "':", e);
@@ -170,21 +159,18 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
         return versionStamp;
     }
 
-    private void lockContainer(final Node containerNode, final long versionStamp) throws ClientException, RepositoryException {
+    private Node lockAndGetContainer(final long versionStamp) throws ClientException, RepositoryException {
+        final Node containerNode = pageComposerContextService.getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
+        if (containerNode == null) {
+            log.warn("Exception during creating new container item : Could not find container node to add item to.");
+            throw new ItemNotFoundException("Could not find container node to add item to");
+        }
         try {
             // the acquireLock also checks all ancestors whether they are not locked by someone else
             containerHelper.acquireLock(containerNode, versionStamp);
         } catch (ClientException e) {
             log.info("Exception while trying to lock '" + containerNode.getPath() + "': ", e);
             throw e;
-        }
-    }
-
-    private Node getContainer() throws ClientException, RepositoryException {
-        final Node containerNode = pageComposerContextService.getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
-        if (containerNode == null) {
-            log.warn("Exception during creating new container item : Could not find container node to add item to.");
-            throw new ItemNotFoundException("Could not find container node to add item to");
         }
         return containerNode;
     }
