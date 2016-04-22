@@ -239,11 +239,25 @@ describe('HstService', () => {
   });
 
   it('removes an exist component from a container', () => {
-    spyOn(hstService, 'doGet');
+    const promiseSpy = jasmine.createSpy('promiseSpy');
+    const url = `${contextPath}${apiUrlPrefix}/container-1./component-foo`;
+    $httpBackend.expectDELETE(url).respond(200);
 
-    hstService.removeHstComponent('container-1', 'component-foo');
+    hstService.removeHstComponent('container-1', 'component-foo').then(promiseSpy);
+    $httpBackend.flush();
 
-    expect(hstService.doGet).toHaveBeenCalledWith('container-1', 'delete', 'component-foo');
+    expect(promiseSpy).toHaveBeenCalled();
+  });
+
+  it('updates component orders of a container', () => {
+    const promiseSpy = jasmine.createSpy('promiseSpy');
+    const url = `${contextPath}${apiUrlPrefix}/container-1./`;
+    $httpBackend.expectPUT(url, { foo: 'foo-value', baa: 'baah' }).respond(200);
+
+    hstService.updateHstComponent('container-1', { foo: 'foo-value', baa: 'baah' }).then(promiseSpy);
+    $httpBackend.flush();
+
+    expect(promiseSpy).toHaveBeenCalled();
   });
 
   it('extracts the sitemap from the returned pages response', () => {

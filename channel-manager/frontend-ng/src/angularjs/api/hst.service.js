@@ -117,6 +117,10 @@ export class HstService {
   }
 
   removeHstComponent(containerId, componentId) {
-    return this.doGet(containerId, 'delete', componentId);
+    return this._callHst('DELETE', containerId, [componentId]);
+  }
+
+  updateHstComponent(containerId, containerRepresentation) {
+    return this._callHst('PUT', containerId, [], containerRepresentation);
   }
 }

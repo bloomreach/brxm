@@ -93,11 +93,9 @@ export class ContainerElement extends PageStructureElement {
 
   getHstRepresentation() {
     return {
-      data: {
-        id: this.getId(),
-        lastModifiedTimestamp: this.getLastModified(),
-        children: this.items.map((item) => item.getId()),
-      },
+      id: this.getId(),
+      lastModifiedTimestamp: this.getLastModified(),
+      children: this.items.map((item) => item.getId()),
     };
   }
 }
