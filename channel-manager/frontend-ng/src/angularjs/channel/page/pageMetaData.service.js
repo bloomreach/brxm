@@ -44,4 +44,7 @@ export class PageMetaDataService {
     return this.data[this.HST.RENDER_VARIANT];
   }
 
+  getSiteMapItemId() {
+    return this.data[this.HST.SITEMAPITEM_ID];
+  }
 }

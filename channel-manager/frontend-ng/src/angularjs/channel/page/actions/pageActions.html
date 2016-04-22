@@ -15,17 +15,17 @@
   -->
 
 <md-menu>
-  <md-button aria-label="{{ 'TOOLBAR_BUTTON_PAGES' | translate }}"
+  <md-button aria-label="{{ 'TOOLBAR_BUTTON_PAGE' | translate }}"
              class="qa-button-pages"
-             ng-click="$mdOpenMenu($event)">
-    {{ 'TOOLBAR_BUTTON_PAGES' | translate }}
+             ng-click="pageActions.onOpenMenu(); $mdOpenMenu($event)">
+    {{ 'TOOLBAR_BUTTON_PAGE' | translate }}
   </md-button>
   <md-menu-content width="4" class="qa-pages-menu">
     <md-menu-item ng-repeat="action in pageActions.actions">
       <md-button class="qa-pages-action-{{ action.id }}"
                  aria-label="{{ action.label }}"
                  ng-click="pageActions.trigger(action)"
-                 ng-disabled="!action.isEnabled">
+                 ng-disabled="!action.isEnabled()">
         {{ action.label }}
       </md-button>
     </md-menu-item>

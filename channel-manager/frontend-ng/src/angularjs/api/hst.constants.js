@@ -31,6 +31,7 @@ export const HstConstants = {
   MOUNT_ID: 'HST-Mount-Id',
   RENDER_URL: 'url',
   RENDER_VARIANT: 'HST-Render-Variant',
+  SITEMAPITEM_ID: 'HST-SitemapItem-Id',
   XTYPE: 'HST-XType',
   XTYPE_TRANSPARENT: 'HST.Transparent',
   END_MARKER: 'HST-End',
