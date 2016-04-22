@@ -16,13 +16,13 @@
 
 <md-menu>
   <md-button aria-label="{{ 'TOOLBAR_BUTTON_PAGE' | translate }}"
-             class="qa-button-pages"
+             class="qa-button-page"
              ng-click="pageActions.onOpenMenu(); $mdOpenMenu($event)">
     {{ 'TOOLBAR_BUTTON_PAGE' | translate }}
   </md-button>
-  <md-menu-content width="4" class="qa-pages-menu">
+  <md-menu-content width="4" class="qa-page-menu">
     <md-menu-item ng-repeat="action in pageActions.actions">
-      <md-button class="qa-pages-action-{{ action.id }}"
+      <md-button class="qa-page-action-{{ action.id }}"
                  aria-label="{{ action.label }}"
                  ng-click="pageActions.trigger(action)"
                  ng-disabled="!action.isEnabled()">
