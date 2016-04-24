@@ -26,7 +26,8 @@ public class AngularResourceBundleLoaderTest {
 
     @Test
     public void testLoadBundles() throws Exception {
-        final Collection<ResourceBundle> bundles = new AngularResourceBundleLoader(Arrays.asList("en")).loadBundles();
+        final Collection<ResourceBundle> bundles = new AngularResourceBundleLoader(
+                Arrays.asList("en"), getClass().getClassLoader()).loadBundles();
         assertEquals(1, bundles.size());
         ResourceBundle bundle = bundles.iterator().next();
         assertEquals("angular/dummy/i18n/en.json", bundle.getName());

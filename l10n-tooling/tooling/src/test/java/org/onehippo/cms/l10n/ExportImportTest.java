@@ -50,8 +50,9 @@ public class ExportImportTest {
     public void setupTestModule() throws IOException {
         final File module = temporaryFolder.newFolder("module");
         resources = temporaryFolder.newFolder("module/resources");
-        new Extractor(resources, "module", Arrays.asList("en", "nl", "fr")).extract();
-        registrar = new Registrar(module, "module", Arrays.asList("nl", "fr"));
+        final ClassLoader classLoader = getClass().getClassLoader();
+        new Extractor(resources, "module", Arrays.asList("en", "nl", "fr"), classLoader).extract();
+        registrar = new Registrar(module, "module", Arrays.asList("nl", "fr"), classLoader);
         registrar.initialize();
         final File pom = temporaryFolder.newFile("module/pom.xml");
         FileUtils.copyInputStreamToFile(getClass().getResourceAsStream("pom.xml"), pom);

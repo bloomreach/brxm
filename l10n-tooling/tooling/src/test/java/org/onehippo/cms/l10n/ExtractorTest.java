@@ -32,7 +32,8 @@ public class ExtractorTest {
 
     @Test
     public void testExtractor() throws IOException {
-        new Extractor(temporaryFolder.getRoot(), "module-name", Arrays.asList("en", "nl", "fr")).extract();
+        new Extractor(temporaryFolder.getRoot(), "module-name", Arrays.asList("en", "nl", "fr"), 
+                getClass().getClassLoader()).extract();
         assertFileExists("angular/dummy/i18n/en.json");
         assertFileExists("angular/dummy/i18n/nl.json");
         assertFileExists("org/onehippo/cms/l10n/test/DummyWicketPlugin.properties");

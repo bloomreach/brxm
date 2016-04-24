@@ -17,6 +17,7 @@ package org.onehippo.cms.l10n;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
@@ -43,11 +44,11 @@ public class Exporter {
         this.format = format;
     }
 
-    File export(final String locale) throws Exception {
+    File export(final String locale) throws IOException {
         return export(locale, false);
     }
 
-    File export(final String locale, final boolean full) throws Exception {
+    File export(final String locale, final boolean full) throws IOException {
         final Collection<Translation> pending = new ArrayList<>();
         for (Module module : new ModuleLoader(baseDir).loadModules()) {
             final Registry registry = module.getRegistry();

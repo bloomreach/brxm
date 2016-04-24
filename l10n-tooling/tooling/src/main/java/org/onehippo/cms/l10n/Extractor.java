@@ -40,15 +40,17 @@ public class Extractor {
     private final File registryDir;
     private final Collection<String> locales;
     private final String moduleName;
+    private final ClassLoader classLoader;
     
-    public Extractor(final File registryDir, final String moduleName, final Collection<String> locales) {
+    public Extractor(final File registryDir, final String moduleName, final Collection<String> locales, final ClassLoader classLoader) {
         this.registryDir = registryDir;
         this.locales = locales;
         this.moduleName = moduleName;
+        this.classLoader = classLoader;
     }
     
     public void extract() throws IOException {
-        for (ResourceBundleLoader loader : getResourceBundleLoaders(locales)) {
+        for (ResourceBundleLoader loader : getResourceBundleLoaders(locales, classLoader)) {
             for (ResourceBundle sourceBundle : loader.loadBundles()) {
                 final String bundleFileName = mapSourceBundleFileToTargetBundleFile(
                         sourceBundle.getFileName(), sourceBundle.getType(), sourceBundle.getLocale());
@@ -66,31 +68,5 @@ public class Extractor {
             }
         }
     }
-    
-    public static void main(String[] args) throws Exception {
-        
-        final Options options = new Options();
-        final Option basedirOption = new Option("d", "basedir", true, "the project base directory");
-        basedirOption.setRequired(true);
-        options.addOption(basedirOption);
-        final Option localesOption = new Option("l", "locales", true, "comma-separated list of locales to extract");
-        localesOption.setRequired(true);
-        localesOption.setValueSeparator(',');
-        localesOption.setArgs(UNLIMITED_VALUES);
-        options.addOption(localesOption);
-        
-        final CommandLineParser parser = new DefaultParser();
-        final CommandLine commandLine = parser.parse(options, args);
-        final File baseDir = new File(commandLine.getOptionValue("d")).getCanonicalFile();
-        final Collection<String> locales = Arrays.asList(commandLine.getOptionValues("l"));
-        TranslationsUtils.checkLocales(locales);
-        final String moduleName = baseDir.getName();
-        final File registryDir = new File(baseDir, "resources");
-        if (!registryDir.exists()) {
-            registryDir.mkdirs();
-        }
-        
-        new Extractor(registryDir, moduleName, locales).extract();
-    }
-    
+
 }

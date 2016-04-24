@@ -43,7 +43,7 @@ class ArtifactInfo {
                 final String entryName = entry.getName();
                 if (entryName.startsWith("META-INF")) {
                     if (entryName.endsWith("pom.properties")) {
-                        pomProperties.load(getClass().getClassLoader().getResourceAsStream(entryName));
+                        pomProperties.load(in);
                     }
                 } else if (!entry.isDirectory()) {
                     entries.add(entryName);

@@ -25,6 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -42,9 +43,10 @@ public class MoverTest {
 
     @Before
     public void setUp() throws IOException {
+        final ClassLoader classLoader = getClass().getClassLoader();
         final File resources = temporaryFolder.newFolder("resources");
-        new Extractor(resources, "module", extractorLocales).extract();
-        registrar = new Registrar(temporaryFolder.getRoot(), "module", registrarLocales);
+        new Extractor(resources, "module", extractorLocales, classLoader).extract();
+        registrar = new Registrar(temporaryFolder.getRoot(), "module", registrarLocales, classLoader);
         registrar.initialize();
         registry = registrar.getRegistry();
     }
@@ -58,7 +60,8 @@ public class MoverTest {
         assertNotNull(registryInfo.getKeyData("bundle/movedKey"));
         for (final String locale : extractorLocales) {
             final ResourceBundle resourceBundle = registry.getResourceBundle("bundle", locale, registryInfo);
-            System.out.println(resourceBundle.getEntries());
+            assertEquals(1, resourceBundle.getEntries().size());
+            assertTrue(resourceBundle.getEntries().containsKey("movedKey"));
         }
     }
     

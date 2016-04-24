@@ -23,8 +23,8 @@ import static org.apache.commons.lang.StringUtils.substringBefore;
 
 class WicketResourceBundleLoader extends ResourceBundleLoader {
 
-    WicketResourceBundleLoader(final Collection<String> locales) {
-        super(locales);
+    WicketResourceBundleLoader(final Collection<String> locales, final ClassLoader classLoader) {
+        super(locales, classLoader);
     }
 
     @Override
@@ -41,7 +41,7 @@ class WicketResourceBundleLoader extends ResourceBundleLoader {
                 }
                 if (entries.contains(baseName + ".class") && locales.contains(locale)) {
                     final Properties properties = new Properties();
-                    properties.load(getClass().getClassLoader().getResourceAsStream(entry));
+                    properties.load(classLoader.getResourceAsStream(entry));
                     bundles.add(new WicketResourceBundle(entry, entry, locale, TranslationsUtils.propertiesToMap(properties)));
                 }
             }

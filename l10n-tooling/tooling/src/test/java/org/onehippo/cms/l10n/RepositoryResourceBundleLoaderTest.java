@@ -27,7 +27,8 @@ public class RepositoryResourceBundleLoaderTest {
 
     @Test
     public void testLoadBundles() throws Exception {
-        final Collection<ResourceBundle> bundles = new RepositoryResourceBundleLoader(Arrays.asList("en")).loadBundles();
+        final Collection<ResourceBundle> bundles = new RepositoryResourceBundleLoader(
+                Arrays.asList("en"), getClass().getClassLoader()).loadBundles();
         assertEquals(1, bundles.size());
         ResourceBundle bundle = bundles.iterator().next();
         assertEquals("bundle", bundle.getName());

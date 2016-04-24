@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms.maven.plugin;
+package org.onehippo.cms.l10n;
 
 
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ import org.apache.maven.shared.dependency.graph.DependencyNode;
 
 @SuppressWarnings("unused")
 @Mojo(name = "includeLocales", defaultPhase = LifecyclePhase.PREPARE_PACKAGE, threadSafe = false)
-public class HippoL10NMojo extends AbstractMojo {
+public class IncludeLocalesMojo extends AbstractMojo {
 
     @SuppressWarnings("unused")
     @Component

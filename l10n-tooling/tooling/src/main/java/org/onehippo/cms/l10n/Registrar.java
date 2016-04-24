@@ -51,26 +51,23 @@ class Registrar {
     private final Collection<String> locales;
     private final Registry registry;
     private final String moduleName;
+    private final ClassLoader classLoader;
     
-    Registrar(final File baseDir, final String moduleName, final Collection<String> locales) throws IOException {
+    Registrar(final File baseDir, final String moduleName, final Collection<String> locales, final ClassLoader classLoader) throws IOException {
         this.baseDir = baseDir;
         this.registryDir = new File(baseDir, "resources");
         this.locales = locales;
         registry = new Registry(registryDir);
         this.moduleName = moduleName;
+        this.classLoader = classLoader;
     }
 
     Registry getRegistry() {
         return registry;
     }
 
-    void addLocale() throws IOException {
-        if (locales.size() > 1) {
-            log.error("Cannot add more than 1 locale at the same time.");
-            return;
-        }
-
-        for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(Collections.singletonList("en"))) {
+    void addLocale(final String locale) throws IOException {
+        for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(Collections.singletonList("en"), classLoader)) {
             for (ResourceBundle sourceBundle : bundleLoader.loadBundles()) {
                 RegistryInfo registryInfo = registry.getRegistryInfoForBundle(sourceBundle);
                 registryInfo.setBundleType(sourceBundle.getType());
@@ -83,12 +80,9 @@ class Registrar {
                         throw new IllegalStateException(error);
                     } else {
                         keyData.setStatus(UPDATED);
-                        for (String locale : locales) {
-                            keyData.setLocaleStatus(locale, UNRESOLVED);
-                        }
+                        keyData.setLocaleStatus(locale, UNRESOLVED);
                     }
                 }
-
                 registryInfo.save();
             }
         }
@@ -96,7 +90,7 @@ class Registrar {
 
     void initialize() throws IOException {
         // iterate over all english source bundles and register all translations as UNRESOLVED
-        for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(Collections.singletonList("en"))) {
+        for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(Collections.singletonList("en"), classLoader)) {
             for (ResourceBundle sourceBundle : bundleLoader.loadBundles()) {
                 RegistryInfo registryInfo = registry.getRegistryInfoForBundle(sourceBundle);
                 registryInfo.setBundleType(sourceBundle.getType());
@@ -113,7 +107,7 @@ class Registrar {
         }
 
         // iterate over all non-english source bundles and process the keys in there
-        for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(locales)) {
+        for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(locales, classLoader)) {
             for (ResourceBundle sourceBundle : bundleLoader.loadBundles()) {
                 final RegistryInfo registryInfo = registry.getRegistryInfoForBundle(sourceBundle);
                 ResourceBundle targetBundle = null;
@@ -146,9 +140,15 @@ class Registrar {
         scan(listener);
     }
     
+    void report() throws IOException {
+        final ReportUpdateListener listener = new ReportUpdateListener(registry);
+        scan(listener);
+        listener.writeReport();
+    }
+
     void scan(final UpdateListener listener) throws IOException {
         final Collection<String> bundles = new ArrayList<>();
-        for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(Collections.singletonList("en"))) {
+        for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(Collections.singletonList("en"), classLoader)) {
             for (ResourceBundle sourceBundle : bundleLoader.loadBundles()) {
                 ResourceBundle referenceBundle = loadReferenceBundle(sourceBundle);
                 listener.startBundle(sourceBundle, referenceBundle);
@@ -181,13 +181,7 @@ class Registrar {
             }
         }
     }
-    
-    private void report() throws IOException {
-        final ReportUpdateListener listener = new ReportUpdateListener(registry);
-        scan(listener);
-        listener.writeReport();
-    }
-    
+
     private ResourceBundle loadReferenceBundle(ResourceBundle sourceBundle) throws IOException {
         final String bundleFileName = mapSourceBundleFileToTargetBundleFile(
                 sourceBundle.getFileName(), sourceBundle.getType(), sourceBundle.getLocale());
@@ -198,47 +192,6 @@ class Registrar {
         return referenceBundle;
     }
     
-    public static void main(String[] args) throws Exception {
-        
-        final Options options = new Options();
-        final Option basedirOption = new Option("d", "basedir", true, "the project base directory");
-        basedirOption.setRequired(true);
-        options.addOption(basedirOption);
-        final Option localesOption = new Option("l", "locales", true, "comma-separated list of locales to extract");
-        localesOption.setRequired(true);
-        localesOption.setValueSeparator(',');
-        localesOption.setArgs(UNLIMITED_VALUES);
-        options.addOption(localesOption);
-        final Option commandOption = new Option("c", "command", true, "command to execute: one of initialize, update, report or add-locale");
-        commandOption.setRequired(true);
-        options.addOption(commandOption);
-        
-        final CommandLineParser parser = new DefaultParser();
-        final CommandLine commandLine = parser.parse(options, args);
-        final File baseDir = new File(commandLine.getOptionValue("basedir")).getCanonicalFile();
-        final Collection<String> locales = Arrays.asList(commandLine.getOptionValues("locales"));
-        TranslationsUtils.checkLocales(locales);
-        final String command = commandLine.getOptionValue("command");
-        final String moduleName = baseDir.getName();
-        final Registrar registrar = new Registrar(baseDir, moduleName, locales);
-        switch (command) {
-            case "initialize":
-                registrar.initialize();
-                break;
-            case "update":
-                registrar.update();
-                break;
-            case "report":
-                registrar.report();
-                break;
-            case "add-locale":
-                registrar.addLocale();
-                break;
-            default:
-                throw new IllegalArgumentException("Unrecognized command: " + command);
-        }
-    }
-
     private static abstract class UpdateListener {
         
         protected final Registry registry;

@@ -29,7 +29,7 @@ public class ResourceBundleLoaderTest {
     @Test
     public void testGetHippoArtifactsOnClasspath() throws Exception {
         final Collection<ArtifactInfo> infos = new ArrayList<>();
-        new ResourceBundleLoader(Arrays.asList("en")) {
+        new ResourceBundleLoader(Arrays.asList("en"), getClass().getClassLoader()) {
             @Override
             protected void collectResourceBundles(final ArtifactInfo artifactInfo, final Collection<ResourceBundle> bundles) throws IOException {
                 infos.add(artifactInfo);

@@ -27,9 +27,11 @@ import java.util.List;
 public abstract class ResourceBundleLoader {
     
     final Collection<String> locales;
+    final ClassLoader classLoader;
 
-    ResourceBundleLoader(final Collection<String> locales) {
+    ResourceBundleLoader(final Collection<String> locales, final ClassLoader classLoader) {
         this.locales = locales;
+        this.classLoader = classLoader;
     }
 
     public final Collection<ResourceBundle> loadBundles() throws IOException {
@@ -42,14 +44,13 @@ public abstract class ResourceBundleLoader {
 
     protected abstract void collectResourceBundles(final ArtifactInfo artifactInfo, final Collection<ResourceBundle> bundles) throws IOException;
 
-    public static Collection<ResourceBundleLoader> getResourceBundleLoaders(final Collection<String> locales) {
-        return Arrays.asList(new AngularResourceBundleLoader(locales),
-                new WicketResourceBundleLoader(locales), new RepositoryResourceBundleLoader(locales));
+    public static Collection<ResourceBundleLoader> getResourceBundleLoaders(final Collection<String> locales, final ClassLoader classLoader) {
+        return Arrays.asList(new AngularResourceBundleLoader(locales, classLoader),
+                new WicketResourceBundleLoader(locales, classLoader), new RepositoryResourceBundleLoader(locales, classLoader));
     }
 
-    private static List<ArtifactInfo> getHippoArtifactsOnClasspath() throws IOException {
+    private List<ArtifactInfo> getHippoArtifactsOnClasspath() throws IOException {
         final List<ArtifactInfo> hippoJars = new LinkedList<>();
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final Enumeration<URL> resources = classLoader.getResources("META-INF/MANIFEST.MF");
         while (resources.hasMoreElements()) {
             final URL manifestURL = resources.nextElement();

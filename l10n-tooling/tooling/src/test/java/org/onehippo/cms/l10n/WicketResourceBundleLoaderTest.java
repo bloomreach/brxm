@@ -26,7 +26,8 @@ public class WicketResourceBundleLoaderTest {
 
     @Test
     public void testLoadBundles() throws Exception {
-        final Collection<ResourceBundle> resourceBundles = new WicketResourceBundleLoader(Arrays.asList("en")).loadBundles();
+        final Collection<ResourceBundle> resourceBundles = new WicketResourceBundleLoader(
+                Arrays.asList("en"), getClass().getClassLoader()).loadBundles();
         assertEquals(1, resourceBundles.size());
         ResourceBundle bundle = resourceBundles.iterator().next();
         assertEquals("org/onehippo/cms/l10n/test/DummyWicketPlugin.properties", bundle.getName());

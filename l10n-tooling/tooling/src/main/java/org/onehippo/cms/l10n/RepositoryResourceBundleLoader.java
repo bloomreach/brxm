@@ -46,10 +46,10 @@ class RepositoryResourceBundleLoader extends ResourceBundleLoader {
 
     private static final Logger log = LoggerFactory.getLogger(RepositoryResourceBundleLoader.class);
 
-    RepositoryResourceBundleLoader(final Collection<String> locales) {
-        super(locales);
+    RepositoryResourceBundleLoader(final Collection<String> locales, final ClassLoader classLoader) {
+        super(locales, classLoader);
     }
-
+    
     @Override
     protected void collectResourceBundles(final ArtifactInfo artifactInfo, final Collection<ResourceBundle> bundles) throws IOException {
         try {

@@ -32,8 +32,8 @@ class AngularResourceBundleLoader extends ResourceBundleLoader {
 
     private static final Pattern pattern = Pattern.compile("angular/.*/i18n/.*.json");
 
-    AngularResourceBundleLoader(final Collection<String> locales) {
-        super(locales);
+    AngularResourceBundleLoader(final Collection<String> locales, final ClassLoader classLoader) {
+        super(locales, classLoader);
     }
 
     @Override
@@ -56,7 +56,7 @@ class AngularResourceBundleLoader extends ResourceBundleLoader {
     }
 
     private String loadJsonResource(String resource) throws IOException {
-        try (StringWriter writer = new StringWriter(); InputStream in = getClass().getClassLoader().getResourceAsStream(resource)) {
+        try (StringWriter writer = new StringWriter(); InputStream in = classLoader.getResourceAsStream(resource)) {
             IOUtils.copy(in, writer);
             return writer.toString();
         }

@@ -24,20 +24,24 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cms.l10n.ResourceBundleLoader.getResourceBundleLoaders;
+
 public class Scanner {
     
     private static Logger log = LoggerFactory.getLogger(Scanner.class);
     
     private final Collection<String> locales;
+    private final ClassLoader classLoader;
 
-    public Scanner(final Collection<String> locales) {
+    public Scanner(final Collection<String> locales, final ClassLoader classLoader) {
         this.locales = locales;
+        this.classLoader = classLoader;
     }
     
     private void scan() throws IOException {
         int bundleCount = 0, keyCount = 0, wordCount = 0;
         final Set<String> files = new HashSet<>();
-        for (ResourceBundleLoader loader : getResourceBundleLoaders()) {
+        for (ResourceBundleLoader loader : getResourceBundleLoaders(locales, classLoader)) {
             for (ResourceBundle resourceBundle : loader.loadBundles()) {
                 bundleCount++;
                 keyCount += resourceBundle.getEntries().size();
@@ -49,16 +53,6 @@ public class Scanner {
             }
         }
         log.info("{} files, {} resource bundles, {} keys, {} words", files.size(), bundleCount, keyCount, wordCount);
-    }
-
-    private ResourceBundleLoader[] getResourceBundleLoaders() {
-        return new ResourceBundleLoader[] { new AngularResourceBundleLoader(locales),
-                new WicketResourceBundleLoader(locales), new RepositoryResourceBundleLoader(locales) };
-    }
-    
-    public static void main(String[] args) throws Exception {
-        final Collection<String> locales = Arrays.asList(args[0].split(","));
-        new Scanner(locales).scan();
     }
     
 }
