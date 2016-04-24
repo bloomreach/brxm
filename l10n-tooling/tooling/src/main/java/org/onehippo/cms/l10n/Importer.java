@@ -23,11 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -117,29 +112,6 @@ public class Importer {
                 this.key = key;
             }
         }
-    }
-    
-    public static void main(String[] args) throws Exception {
-        final Options options = new Options();
-        final Option basedirOption = new Option("d", "basedir", true, "the project base directory");
-        basedirOption.setRequired(true);
-        options.addOption(basedirOption);
-        final Option localeOption = new Option("l", "locale", true, "the locale to import");
-        localeOption.setRequired(true);
-        options.addOption(localeOption);
-        final Option formatOption = new Option("f", "format", true, "the csv format");
-        options.addOption(formatOption);
-        final Option fileOption = Option.builder().longOpt("file").desc("name of file to import, relative to basedir")
-                .hasArg(true).required(true).build();
-        options.addOption(fileOption);
-        final CommandLineParser parser = new DefaultParser();
-        final CommandLine commandLine = parser.parse(options, args);
-        final File baseDir = new File(commandLine.getOptionValue("basedir")).getCanonicalFile();
-        final String locale = commandLine.getOptionValue("locale");
-        final String format = commandLine.getOptionValue("format", "Default");
-        final String file = commandLine.getOptionValue("file");
-
-        new Importer(baseDir, format)._import(file, locale);
     }
     
 }

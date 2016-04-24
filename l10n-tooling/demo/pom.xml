@@ -30,7 +30,7 @@
   <properties>
     <locales>fr,nl,de</locales>
     <locale/>
-    <csvFormat>Default</csvFormat>
+    <format>Default</format>
     <full>false</full>
     <file/>
     <srcBundle/>
@@ -68,7 +68,7 @@
         <configuration>
           <locales>${locales}</locales>
           <locale>${locale}</locale>
-          <format>${csvFormat}</format>
+          <format>${format}</format>
           <full>${full}</full>
           <file>${file}</file>
           <srcBundle>${srcBundle}</srcBundle>

@@ -40,7 +40,7 @@ import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 
 @SuppressWarnings("unused")
-@Mojo(name = "includeLocales", defaultPhase = LifecyclePhase.PREPARE_PACKAGE, threadSafe = false)
+@Mojo(name = "include-locales", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class IncludeLocalesMojo extends AbstractMojo {
 
     @SuppressWarnings("unused")

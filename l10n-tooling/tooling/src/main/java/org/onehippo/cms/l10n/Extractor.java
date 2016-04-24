@@ -17,19 +17,12 @@ package org.onehippo.cms.l10n;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.commons.cli.Option.UNLIMITED_VALUES;
 import static org.onehippo.cms.l10n.ResourceBundleLoader.getResourceBundleLoaders;
 import static org.onehippo.cms.l10n.TranslationsUtils.mapSourceBundleFileToTargetBundleFile;
 

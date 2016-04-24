@@ -22,11 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
@@ -79,30 +74,6 @@ public class Exporter {
             }
         }
         return csv;
-    }
-
-    public static void main(String[] args) throws Exception {
-
-        final Options options = new Options();
-        final Option basedirOption = new Option("d", "basedir", true, "the project base directory");
-        basedirOption.setRequired(true);
-        options.addOption(basedirOption);
-        final Option localeOption = new Option("l", "locale", true, "the locale to export");
-        localeOption.setRequired(true);
-        options.addOption(localeOption);
-        final Option formatOption = new Option("f", "format", true, "the csv format");
-        options.addOption(formatOption);
-        final Option allOption = new Option("a", "all", true, "export all or only missing");
-        options.addOption(allOption);
-
-        final CommandLineParser parser = new DefaultParser();
-        final CommandLine commandLine = parser.parse(options, args);
-        final File baseDir = new File(commandLine.getOptionValue("basedir")).getCanonicalFile();
-        final String locale = commandLine.getOptionValue("locale");
-        final String format = commandLine.getOptionValue("format", "Default");
-        final boolean all = commandLine.getOptionValue("all", "false").equals("true");
-
-        new Exporter(baseDir, format).export(locale, all);
     }
     
 }
