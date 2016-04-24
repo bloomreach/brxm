@@ -18,14 +18,9 @@ package org.onehippo.cms.l10n;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.SAXTransformerFactory;
@@ -34,23 +29,27 @@ import javax.xml.transform.stream.StreamResult;
 
 public class JunitReportWriter {
     
-    private final TestSuite suite = new TestSuite("Translations Update");
-    
+    final Report report;
+
+    public JunitReportWriter(final String moduleName) {
+        report = new Report(moduleName);
+    }
+
     public void startTestCase(final String name) {
-        suite.addTestCase(name);
+        report.addTestCase(name);
     }
     
     public void failure(final String message) {
-        suite.failure(message);
+        report.failure(message);
     }
     
     public void error(final String message) {
-        suite.error(message);
+        report.error(message);
     }
 
     public void write(File file) throws IOException {
         try (FileWriter writer = new FileWriter(file)) {
-            JAXBContext context = JAXBContext.newInstance(TestSuite.class);
+            JAXBContext context = JAXBContext.newInstance(Report.class);
             TransformerHandler handler = ((SAXTransformerFactory)SAXTransformerFactory.newInstance()).newTransformerHandler();
             Transformer transformer = handler.getTransformer();
             transformer.setOutputProperty("method", "xml");
@@ -58,97 +57,9 @@ public class JunitReportWriter {
             transformer.setOutputProperty("indent", "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", Integer.toString(2));
             handler.setResult(new StreamResult(writer));
-            context.createMarshaller().marshal(suite, handler);
+            context.createMarshaller().marshal(report, handler);
         } catch (JAXBException | TransformerConfigurationException var9) {
             throw new IOException("Failed to serialize the report.", var9);
-        }
-    }
-
-    
-    @XmlRootElement(name = "testsuite")
-    public static class TestSuite {
-        @XmlAttribute
-        public String name;
-        @XmlAttribute(name = "failures")
-        public int failureCount;
-        @XmlAttribute(name = "errors")
-        public int errorCount;
-        @XmlElement(name = "testcase")
-        public Collection<TestCase> testCases = new ArrayList<>();
-        private TestCase currentTestCase;
-        
-        public TestSuite() {}
-        
-        private TestSuite(final String name) {
-            this.name = name;
-        }
-        
-        private void addTestCase(final String name) {
-            currentTestCase = new TestCase(name);
-            testCases.add(currentTestCase);
-        }
-
-        private void failure(final String message) {
-            currentTestCase.addFailure(message);
-            failureCount++;
-        }
-
-        private void error(final String message) {
-            currentTestCase.addError(message);
-            errorCount++;
-        }
-
-    }
-    
-    public static class TestCase {
-        @XmlAttribute
-        public String name;
-        @XmlAttribute(name = "failures")
-        public int failureCount;
-        @XmlAttribute(name = "errors")
-        public int errorCount;
-        @XmlElement(name = "failure")
-        public Collection<Failure> failures = new ArrayList<>();
-        @XmlElement(name = "error")
-        public Collection<Error> errors = new ArrayList<>();
-        
-        public TestCase() {}
-        
-        private TestCase(final String name) {
-            this.name = name;
-        }
-        
-        private void addFailure(final String message) {
-            failures.add(new Failure(message));
-            failureCount++;
-        }
-        
-        private void addError(final String message) {
-            errors.add(new Error(message));
-            errorCount++;
-        }
-        
-    }
-    
-    public static class Failure {
-        @XmlAttribute
-        public String message;
-
-        public Failure() {}
-        
-        private Failure(final String message) {
-            this.message = message;
-        }
-    }
-
-    public static class Error {
-        @XmlAttribute
-        public String message;
-
-        public Error() {}
-        
-        private Error(final String message) {
-            this.message = message;
         }
     }
     

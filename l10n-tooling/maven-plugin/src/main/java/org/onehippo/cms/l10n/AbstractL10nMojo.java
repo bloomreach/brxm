@@ -35,11 +35,8 @@ public abstract class AbstractL10nMojo extends AbstractMojo {
     private String format;
     
     @Component
-    private MavenProject project;
-
-    @Parameter(defaultValue = "${reactorProjects}", required = true, readonly = true)
-    private List<MavenProject> reactorProjects;
-
+    protected MavenProject project;
+    
     protected final String getModuleName() throws IOException {
         return getBaseDir().getName();
     }
@@ -87,18 +84,13 @@ public abstract class AbstractL10nMojo extends AbstractMojo {
         return format;
     }
     
-    protected final boolean isLastProject() {
-        final MavenProject lastProject = reactorProjects.get(reactorProjects.size() - 1);
-        return lastProject.equals(project);
-    }
-    
     protected final ClassLoader getResourcesClassLoader() throws MalformedURLException {
         return new URLClassLoader(getHippoArtifactFiles());
     }
     
-    private final URL[] getHippoArtifactFiles() throws MalformedURLException {
+    private URL[] getHippoArtifactFiles() throws MalformedURLException {
         final Collection<URL> artifactFiles = new ArrayList<>();
-        for (Artifact artifact : project.getArtifacts()) {
+        for (Artifact artifact : project.getDependencyArtifacts()) {
             if (isHippoArtifact(artifact)) {
                 artifactFiles.add(artifact.getFile().toURI().toURL());
             }

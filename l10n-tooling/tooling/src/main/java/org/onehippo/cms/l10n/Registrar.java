@@ -18,22 +18,15 @@ package org.onehippo.cms.l10n;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
 import org.onehippo.cms.l10n.KeyData.KeyStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.commons.cli.Option.UNLIMITED_VALUES;
 import static org.onehippo.cms.l10n.KeyData.KeyStatus.ADDED;
 import static org.onehippo.cms.l10n.KeyData.KeyStatus.UPDATED;
 import static org.onehippo.cms.l10n.KeyData.LocaleStatus.RESOLVED;
@@ -140,10 +133,11 @@ class Registrar {
         scan(listener);
     }
     
-    void report() throws IOException {
+    Report report() throws IOException {
         final ReportUpdateListener listener = new ReportUpdateListener(registry);
         scan(listener);
         listener.writeReport();
+        return listener.writer.report;
     }
 
     void scan(final UpdateListener listener) throws IOException {
@@ -245,7 +239,7 @@ class Registrar {
     
     private class ReportUpdateListener extends UpdateListener {
         
-        private JunitReportWriter writer = new JunitReportWriter();
+        private JunitReportWriter writer = new JunitReportWriter(moduleName);
         private boolean added;
 
         private ReportUpdateListener(final Registry registry) {
@@ -268,7 +262,7 @@ class Registrar {
         public void keyAdded(final String key) throws IOException {
             final KeyData keyData = getKeyData(key);
             if (keyData == null) {
-                writer.failure("Key added: " + key);
+                writer.failure("Key '" + key + "' added");
             } else {
                 writer.error("Expected no key data, but found " + keyData.getStatus());
             }
@@ -276,12 +270,12 @@ class Registrar {
         
         @Override
         public void keyUpdated(final String key) throws IOException {
-            writer.failure("Key updated: " + key);
+            writer.failure("Key '" + key + "' updated");
         }
         
         @Override
         public void keyDeleted(final String key) throws IOException {
-            writer.failure("Key removed: " + key);
+            writer.failure("Key '" + key + "' removed" + key);
         }
 
         @Override
