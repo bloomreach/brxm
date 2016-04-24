@@ -24,7 +24,7 @@
                       md-autofocus="sidenav.isActiveSiteMapItem(item)"
                       ng-click="sidenav.showPage(item)">
           <div class="md-list-item-text">
-            <h4>{{ item.pathInfo | startWithSlash }}</h4>
+            <h4 class="qa-pathinfo">{{ item.pathInfo | startWithSlash }}</h4>
             <p class="qa-name">{{ item.pageTitle || item.name }}</p>
           </div>
           <md-divider ng-if="!$last"></md-divider>
