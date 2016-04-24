@@ -21,23 +21,11 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-selections-addon-cms</artifactId>
       <version>${hippo.plugin.selections.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-selections-addon-repository</artifactId>
       <version>${hippo.plugin.selections.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
   </dependencies>
   

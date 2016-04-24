@@ -21,23 +21,11 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-taxonomy-addon-frontend</artifactId>
       <version>${hippo.plugin.taxonomy.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-taxonomy-addon-repository</artifactId>
       <version>${hippo.plugin.taxonomy.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
   </dependencies>
   
