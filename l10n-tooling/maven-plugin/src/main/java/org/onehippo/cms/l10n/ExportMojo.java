@@ -25,7 +25,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 
-@Mojo(name = "export-cvs", defaultPhase = LifecyclePhase.VALIDATE, requiresDependencyResolution = RUNTIME)
+@Mojo(name = "export-csv", defaultPhase = LifecyclePhase.VALIDATE, requiresDependencyResolution = RUNTIME)
 public class ExportMojo extends AbstractL10nMojo {
 
     @Parameter(defaultValue = "false")
