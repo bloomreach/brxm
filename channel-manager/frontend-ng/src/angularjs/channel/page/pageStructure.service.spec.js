@@ -413,7 +413,7 @@ describe('PageStructureService', () => {
     $rootScope.$digest();
 
     expect(HstService.addHstComponent).toHaveBeenCalledWith(catalogComponent, 'container-1');
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ITEM_ALREADY_LOCKED', {
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED', {
       lockedBy: 'another-user',
       lockedOn: 1234,
       component: 'Foo Bah Component',
