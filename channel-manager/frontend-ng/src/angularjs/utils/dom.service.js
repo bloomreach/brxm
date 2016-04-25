@@ -22,7 +22,7 @@ export class DomService {
     this.$q = $q;
     this.$rootScope = $rootScope;
     this.$document = $document;
-    this._scrollBarWidth = false;
+    this._scrollBarWidth = 0;
   }
 
   getAppRootUrl() {
