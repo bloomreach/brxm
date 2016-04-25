@@ -26,18 +26,18 @@
             <overlay-element class="overlay-element-container"
                              layout="row"
                              ng-class="{ 'overlay-element-container-visible': container.isEmpty() || iframe.isDragging(), 'overlay-permeable': iframe.isDraggingOrClicking() }"
-                           structure-element="container">
-          </overlay-element>
-          <div ng-repeat="component in container.getComponents()" class="qa-component">
-            <overlay-element class="overlay-element-component"
-                             layout="row"
-                             structure-element="component"
-                             ng-class="{ 'overlay-element-component-visible': !iframe.isDragging(), 'overlay-permeable': iframe.isDraggingOrClicking() }"
-                             ng-mousedown="iframe.startDragOrClick($event, component)">
+                             structure-element="container">
             </overlay-element>
+            <div ng-repeat="component in container.getComponents()" class="qa-component">
+              <overlay-element class="overlay-element-component"
+                               layout="row"
+                               structure-element="component"
+                               ng-class="{ 'overlay-element-component-visible': !iframe.isDragging(), 'overlay-permeable': iframe.isDraggingOrClicking() }"
+                               ng-mousedown="iframe.startDragOrClick($event, component)">
+              </overlay-element>
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </div>
     <div class="channel-dragula-mirror cm-scale"></div>
