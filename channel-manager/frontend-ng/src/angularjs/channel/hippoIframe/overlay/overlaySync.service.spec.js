@@ -112,11 +112,8 @@ describe('OverlaySyncService', () => {
     spyOn(OverlaySyncService, 'syncIframe');
     loadIframeFixture(iframeWindow => {
       OverlaySyncService.syncIframe.calls.reset();
+      OverlaySyncService.syncIframe.and.callFake(done);
       $(iframeWindow.document.body).css('color', 'green');
-      setTimeout(() => {
-        expect(OverlaySyncService.syncIframe).toHaveBeenCalled();
-        done();
-      }, 200);
     });
   });
 
@@ -168,9 +165,7 @@ describe('OverlaySyncService', () => {
     loadIframeFixture(() => {
       OverlaySyncService.setViewPortWidth(720);
       OverlaySyncService.syncIframe();
-      expect($sheet).toHaveCss({
-        'max-width': '720px',
-      });
+      expect($sheet.width()).toEqual(720);
       expect($iframe.width()).toEqual(720);
       expect($overlay.width()).toEqual(720);
       done();
@@ -188,9 +183,6 @@ describe('OverlaySyncService', () => {
       OverlaySyncService.syncIframe();
 
       expect($iframe.width()).toEqual(1200);
-      expect($iframe).toHaveCss({
-        'min-width': '1200px',
-      });
       expect($overlay.width()).toEqual(1200);
 
       expect($iframe.height()).toEqual(615);
@@ -211,32 +203,24 @@ describe('OverlaySyncService', () => {
     expect(OverlaySyncService.overlayElements).not.toContain(element);
   });
 
-  it('should sync a registered overlay element', () => {
-    const overlayEl = jasmine.createSpyObj('overlayEl', ['css']);
-    const boxEl = jasmine.createSpyObj('boxEl', ['getBoundingClientRect']);
-    const rect = {
-      top: 2,
-      left: 4,
-      height: 6,
-      width: 8,
-    };
-    boxEl.getBoundingClientRect.and.returnValue(rect);
+  it('should sync a registered overlay element', (done) => {
+    loadIframeFixture(() => {
+      const overlayEl = $('<div style="position: absolute"></div>');
+      $overlay.append(overlayEl);
+      const boxEl = $iframe.contents().find('.container');
 
-    const element = jasmine.createSpyObj('element', ['getOverlayElement', 'getBoxElement']);
-    element.getOverlayElement.and.returnValue(overlayEl);
-    element.getBoxElement.and.returnValue([boxEl]);
+      const element = jasmine.createSpyObj('element', ['getOverlayElement', 'getBoxElement']);
+      element.getOverlayElement.and.returnValue(overlayEl);
+      element.getBoxElement.and.returnValue(boxEl);
 
-    OverlaySyncService.registerElement(element);
+      OverlaySyncService.registerElement(element);
 
-    expect(OverlaySyncService.overlayElements).toContain(element);
-    expect(overlayEl.css).toHaveBeenCalledWith('top', '2px');
-    expect(overlayEl.css).toHaveBeenCalledWith('left', '4px');
-    expect(overlayEl.css).toHaveBeenCalledWith('height', '6px');
-    expect(overlayEl.css).toHaveBeenCalledWith('width', '8px');
-  });
+      expect(OverlaySyncService.overlayElements).toContain(element);
+      expect(overlayEl.width()).toEqual(200);
+      expect(overlayEl.height()).toEqual(400);
+      expect(overlayEl.offset()).toEqual({ top: 2, left: 4 });
 
-  afterEach(() => {
-    // clean up
-    OverlaySyncService.observer.disconnect();
+      done();
+    });
   });
 });
