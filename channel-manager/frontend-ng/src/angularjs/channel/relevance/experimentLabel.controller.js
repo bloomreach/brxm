@@ -34,7 +34,11 @@ export class ExperimentLabelCtrl {
   }
 
   hasExperiment() {
-    return this._isComponent() && !!this.structureElement.metaData[EXPERIMENT_ID];
+    return this._isComponent() && !!this.getExperimentId();
+  }
+
+  getExperimentId() {
+    return this.structureElement.metaData[EXPERIMENT_ID];
   }
 
   _getExperimentState() {

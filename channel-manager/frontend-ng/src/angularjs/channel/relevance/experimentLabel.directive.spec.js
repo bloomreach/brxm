@@ -88,6 +88,7 @@ describe('ExperimentLabelDirective', () => {
     expect(iconEl).toBeDefined();
     expect(iconEl.hasClass('overlay-label-icon')).toBe(true);
     expect(iconEl.text()).toBe('toys');
+    expect(iconEl.attr('qa-experiment-id')).toBe('1234');
 
     expect($element.find('.overlay-label-text').text()).toBe('experiment-label');
     expect($translate.instant).toHaveBeenCalledWith('EXPERIMENT_LABEL_STARTED');

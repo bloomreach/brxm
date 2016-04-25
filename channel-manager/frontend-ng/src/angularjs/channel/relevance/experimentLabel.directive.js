@@ -21,7 +21,8 @@ export function ExperimentLabelDirective() {
     restrict: 'A',
     scope: false,
     transclude: true,
-    template: '<md-icon ng-if="experimentLabel.hasExperiment()" class="overlay-label-icon">toys</md-icon><ng-transclude/>',
+    template: '<md-icon ng-if="experimentLabel.hasExperiment()" class="overlay-label-icon"' +
+                'qa-experiment-id="{{experimentLabel.getExperimentId()}}">toys</md-icon><ng-transclude/>',
     controller: 'ExperimentLabelCtrl',
     controllerAs: 'experimentLabel',
     link(scope, element, attrs) {
