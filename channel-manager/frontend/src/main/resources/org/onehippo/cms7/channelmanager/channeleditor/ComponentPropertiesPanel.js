@@ -273,7 +273,7 @@
           componentId: this.componentId,
           lastModified: this.lastModified,
           isReadOnly: this.container.isDisabled,
-          bubbleEvents: ['variantDirty', 'variantPristine', 'clientvalidation'],
+          bubbleEvents: ['variantDirty', 'variantPristine', 'clientvalidation', 'componentLocked'],
           listeners: {
             propertiesChanged: this._onPropertiesChanged,
             propertiesDeleted: this._onPropertiesDeleted,

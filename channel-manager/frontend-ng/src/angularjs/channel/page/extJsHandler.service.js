@@ -25,5 +25,7 @@ export class ExtJsHandlerService {
 
   initialize() {
     this.CmsService.subscribe('render-component', (componentId, propertiesMap) => this.PageStructureService.renderComponent(componentId, propertiesMap));
+
+    this.CmsService.subscribe('reload-channel', (errorResponse) => this.PageStructureService.reloadChannel(errorResponse));
   }
 }

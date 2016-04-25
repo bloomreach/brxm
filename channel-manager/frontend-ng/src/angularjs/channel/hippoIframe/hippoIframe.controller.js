@@ -96,9 +96,15 @@ export class HippoIframeCtrl {
     }
     this._confirmDelete(selectedComponent)
       .then(() => this.PageStructureService.removeComponentById(componentId)
-        .then(({ oldContainer, newContainer }) => this.DragDropService.replaceContainer(oldContainer, newContainer))
-      )
-      .catch(() => this.PageStructureService.showComponentProperties(selectedComponent));
+        .then(
+          ({ oldContainer, newContainer }) => this.DragDropService.replaceContainer(oldContainer, newContainer),
+          () => {
+            // inform extjs to reload channel if deletion is failed
+            this.CmsService.publish('recreate-component-properties');
+          }
+        ),
+        () => this.PageStructureService.showComponentProperties(selectedComponent)
+      );
   }
 
   _confirmDelete(selectedComponent) {
