@@ -21,6 +21,7 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-dashboard-document-wizard</artifactId>
       <version>${hippo.plugin.dashboard-document-wizard.version}</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

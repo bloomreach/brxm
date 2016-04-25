@@ -21,6 +21,7 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-content-blocks</artifactId>
       <version>${hippo.plugin.content-blocks.version}</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

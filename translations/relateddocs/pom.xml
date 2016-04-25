@@ -21,6 +21,7 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-relateddocs</artifactId>
       <version>${hippo.plugin.relateddocs.version}</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
