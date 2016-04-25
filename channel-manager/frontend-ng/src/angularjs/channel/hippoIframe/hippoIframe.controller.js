@@ -99,8 +99,8 @@ export class HippoIframeCtrl {
         .then(
           ({ oldContainer, newContainer }) => this.DragDropService.replaceContainer(oldContainer, newContainer),
           () => {
-            // inform extjs to reload channel if deletion is failed
-            this.CmsService.publish('recreate-component-properties');
+            // inform extjs to reset the component properties dialog if deletion is failed
+            this.CmsService.publish('reset-component-properties');
           }
         ),
         () => this.PageStructureService.showComponentProperties(selectedComponent)

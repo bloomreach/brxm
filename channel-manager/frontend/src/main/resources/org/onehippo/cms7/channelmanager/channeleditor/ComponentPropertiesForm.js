@@ -634,16 +634,14 @@
       }
     },
 
-    _onUpdateVariantFailure: function (result) {
-      if (result.status === 400) {
-        var jsonData = Ext.util.JSON.decode(result.responseText);
+    _onUpdateVariantFailure: function (response) {
+      if (response.status === 400) {
+        var jsonData = Ext.util.JSON.decode(response.responseText);
         if (jsonData && jsonData.data.error === 'ITEM_ALREADY_LOCKED') {
-          console.log('the variant is locked by another user', jsonData.data);
           this.fireEvent('componentLocked', jsonData.data);
           return;
         }
       }
-      console.log('unknow error:', result);
       this.fireEvent('componentLocked', {
         error: 'UNKNOWN'
       });

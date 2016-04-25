@@ -336,7 +336,6 @@ export class PageStructureService {
 
   reloadChannel(errorResponse) {
     const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED' ? 'ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED' : 'ERROR_UPDATE_COMPONENT';
-    const params = errorResponse.parameterMap;
-    this._showFeedbackAndReload(errorKey, params);
+    this._showFeedbackAndReload(errorKey, errorResponse.parameterMap);
   }
 }

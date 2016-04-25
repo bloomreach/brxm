@@ -47,7 +47,7 @@
       this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
       this.iframeToHost.subscribe('component-removed', this._onComponentRemoved, this);
-      this.iframeToHost.subscribe('recreate-component-properties', this._reCreateComponentPropertiesWindow, this);
+      this.iframeToHost.subscribe('reset-component-properties', this._resetComponentPropertiesWindow, this);
       this.iframeToHost.subscribe('show-mask', this._maskSurroundings, this);
       this.iframeToHost.subscribe('remove-mask', this._unmaskSurroundings, this);
       this.iframeToHost.subscribe('edit-alter-ego', this._showAlterEgoEditor, this);
@@ -85,11 +85,11 @@
     },
 
     _onComponentLocked: function(data) {
-      this._reCreateComponentPropertiesWindow();
+      this._resetComponentPropertiesWindow();
       this.hostToIFrame.publish('reload-channel', data);
     },
     
-    _reCreateComponentPropertiesWindow() {
+    _resetComponentPropertiesWindow() {
       if (this.componentPropertiesWindow) {
         this.componentPropertiesWindow.destroy();
       }
@@ -122,7 +122,7 @@
     _initialize: function(channel) {
       this.selectedChannel = channel;
 
-      this._reCreateComponentPropertiesWindow();
+      this._resetComponentPropertiesWindow();
 
       // update breadcrumb
       this.setTitle(channel.name);
