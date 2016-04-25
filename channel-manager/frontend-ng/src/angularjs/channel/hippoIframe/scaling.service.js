@@ -49,25 +49,13 @@ export class ScalingService {
   }
 
   setViewPortWidth(viewPortWidth) {
-    this.viewPortWidth = viewPortWidth;
-    this._updateViewPortWidth();
+    this.OverlaySyncService.setViewPortWidth(viewPortWidth);
+    this._updateScaling(false);
+    this.OverlaySyncService.syncIframe();
   }
 
   getScaleFactor() {
     return this.scaleFactor;
-  }
-
-  _updateViewPortWidth() {
-    if (!this.hippoIframeJQueryElement) {
-      return;
-    }
-
-    const scroll = this.hippoIframeJQueryElement.find('.channel-iframe-scroll');
-    const maxWidthCSS = this.viewPortWidth === 0 ? 'none' : `${this.viewPortWidth}px`;
-    scroll.css('max-width', maxWidthCSS);
-
-    this._updateScaling(false);
-    this.OverlaySyncService.syncIframe();
   }
 
   /**
@@ -83,7 +71,7 @@ export class ScalingService {
   _updateIframeShift(animate) {
     const currentShift = parseInt(this.hippoIframeJQueryElement.css('margin-left'), 10);
     const canvasWidth = this.hippoIframeJQueryElement.find('.channel-iframe-canvas').width() + currentShift;
-    const viewPortWidth = this.viewPortWidth === 0 ? canvasWidth : this.viewPortWidth;
+    const viewPortWidth = this.OverlaySyncService.getViewPortWidth() === 0 ? canvasWidth : this.OverlaySyncService.getViewPortWidth();
     const canvasBorderWidth = canvasWidth - viewPortWidth;
     const targetShift = Math.min(canvasBorderWidth, this.pushWidth);
 
@@ -145,12 +133,23 @@ export class ScalingService {
           });
         }
 
+        const iframeScrollXJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-scroll-x');
+        const widthBeforeScaling = iframeScrollXJQueryElement.width();
+
         // zoom in/out to new scale factor
         elementsToScale.velocity({
           scale: newScale,
         }, {
           duration: this.scaleDuration,
           easing: this.scaleEasing,
+          complete: () => {
+            // when scaling causes a scrollbar to appear/disappear, we have to tweak it
+            if (newScale !== 1 && widthBeforeScaling !== iframeScrollXJQueryElement.width()) {
+              this._updateScaling(animate);
+            } else {
+              this.OverlaySyncService.syncIframe();
+            }
+          },
         });
       } else {
         elementsToScale.css('transform', `scale(${newScale})`);

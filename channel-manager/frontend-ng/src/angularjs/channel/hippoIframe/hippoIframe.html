@@ -14,31 +14,32 @@
   limitations under the License.
   -->
 
-<md-content flex layout="row" class="channel-iframe-base">
-  <div class="channel-iframe-canvas" flex layout="row" layout-align="center">
-
-    <div class="channel-iframe-scroll" flex="grow" layout="row">
-      <iframe flex="noshrink" class="qa-view cm-scale" ng-src="{{ iframe.getSrc() }}"></iframe>
-
-      <div class="overlay qa-overlay cm-scale" component-adder>
-        <div ng-repeat="container in iframe.getContainers()" class="qa-container">
-          <overlay-element class="overlay-element-container"
-                           layout="row"
-                           ng-class="{ 'overlay-element-container-visible': container.isEmpty() || iframe.isDragging(), 'overlay-permeable': iframe.isDraggingOrClicking() }"
-                           structure-element="container">
-          </overlay-element>
-          <div ng-repeat="component in container.getComponents()" class="qa-component">
-            <overlay-element class="overlay-element-component"
+<md-content class="channel-iframe-base" flex layout="row">
+  <div class="channel-iframe-canvas" flex layout="row">
+    <div class="channel-iframe-sheet" flex="grow" layout="row">
+      <div class="channel-iframe-scroll-x cm-scale" flex layout="row">
+        <iframe class="qa-view"
+                flex="noshrink"
+                ng-src="{{ iframe.getSrc() }}"></iframe>
+        <div class="overlay qa-overlay" component-adder>
+          <div ng-repeat="container in iframe.getContainers()" class="qa-container">
+            <overlay-element class="overlay-element-container"
                              layout="row"
-                             structure-element="component"
-                             ng-class="{ 'overlay-element-component-visible': !iframe.isDragging(), 'overlay-permeable': iframe.isDraggingOrClicking() }"
-                             ng-mousedown="iframe.startDragOrClick($event, component)">
+                             ng-class="{ 'overlay-element-container-visible': container.isEmpty() || iframe.isDragging(), 'overlay-permeable': iframe.isDraggingOrClicking() }"
+                             structure-element="container">
             </overlay-element>
+            <div ng-repeat="component in container.getComponents()" class="qa-component">
+              <overlay-element class="overlay-element-component"
+                               layout="row"
+                               structure-element="component"
+                               ng-class="{ 'overlay-element-component-visible': !iframe.isDragging(), 'overlay-permeable': iframe.isDraggingOrClicking() }"
+                               ng-mousedown="iframe.startDragOrClick($event, component)">
+              </overlay-element>
+            </div>
           </div>
         </div>
       </div>
     </div>
-
     <div class="channel-dragula-mirror cm-scale"></div>
   </div>
 </md-content>

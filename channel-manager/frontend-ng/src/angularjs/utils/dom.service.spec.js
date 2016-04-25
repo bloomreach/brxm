@@ -163,5 +163,10 @@ describe('DomService', () => {
     expect(mouseDownEvent.clientY).toEqual(200);
     expect(mouseDownEvent.view).toEqual(window);
   });
+
+  it('can calculate the scroll bar width', () => {
+    const width = DomService.getScrollBarWidth();
+    expect(width).toBeGreaterThan(0);
+  });
 });
 

@@ -21,7 +21,6 @@ describe('ScalingService', () => {
   let iframeJQueryElement;
   let baseJQueryElement;
   let canvasJQueryElement;
-  let scrollJQueryElement;
   let elementsToScale;
 
   beforeEach(() => {
@@ -35,16 +34,12 @@ describe('ScalingService', () => {
 
     baseJQueryElement = $j('.channel-iframe-base');
     canvasJQueryElement = $j('.channel-iframe-canvas');
-    scrollJQueryElement = jasmine.createSpyObj('scrollJQueryElement', ['css']);
     elementsToScale = jasmine.createSpyObj('elementsToScale', ['velocity', 'css', 'scrollTop']);
 
     iframeJQueryElement = jasmine.createSpyObj('iframeJQueryElement', ['find', 'css', 'velocity']);
     iframeJQueryElement.find.and.callFake((selector) => {
       if (selector === '.cm-scale') {
         return elementsToScale;
-      }
-      if (selector === '.channel-iframe-scroll') {
-        return scrollJQueryElement;
       }
       return $j(`#test-hippo-iframe ${selector}`);
     });
@@ -76,10 +71,10 @@ describe('ScalingService', () => {
       {
         scale: 0.75,
       },
-      {
+      jasmine.objectContaining({
         duration: ScalingService.scaleDuration,
         easing: ScalingService.scaleEasing,
-      }
+      })
     );
     expect(elementsToScale.css).not.toHaveBeenCalled();
     expect(ScalingService.getScaleFactor()).toEqual(0.75);
@@ -100,10 +95,10 @@ describe('ScalingService', () => {
       {
         scale: 1.0,
       },
-      {
+      jasmine.objectContaining({
         duration: ScalingService.scaleDuration,
         easing: ScalingService.scaleEasing,
-      }
+      })
     );
     expect(elementsToScale.css).not.toHaveBeenCalled();
     expect(ScalingService.getScaleFactor()).toEqual(1.0);
@@ -149,10 +144,10 @@ describe('ScalingService', () => {
       {
         scale: 0.75,
       },
-      {
+      jasmine.objectContaining({
         duration: ScalingService.scaleDuration,
         easing: ScalingService.scaleEasing,
-      }
+      })
     );
     expect(ScalingService.getScaleFactor()).toEqual(0.75);
   });
@@ -170,7 +165,6 @@ describe('ScalingService', () => {
     ScalingService.init(iframeJQueryElement);
     ScalingService.setViewPortWidth(0);
 
-    expect(scrollJQueryElement.css.calls.mostRecent().args).toEqual(['max-width', 'none']);
     expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left']);
     expect(elementsToScale.velocity).not.toHaveBeenCalled();
     expect(iframeJQueryElement.velocity).not.toHaveBeenCalled();
@@ -182,7 +176,6 @@ describe('ScalingService', () => {
     ScalingService.init(iframeJQueryElement);
     ScalingService.setViewPortWidth(720);
 
-    expect(scrollJQueryElement.css.calls.mostRecent().args).toEqual(['max-width', '720px']);
     expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left']);
     expect(elementsToScale.velocity).not.toHaveBeenCalled();
     expect(iframeJQueryElement.velocity).not.toHaveBeenCalled();
@@ -194,7 +187,6 @@ describe('ScalingService', () => {
     ScalingService.init(iframeJQueryElement);
     ScalingService.setViewPortWidth(800);
 
-    expect(scrollJQueryElement.css.calls.mostRecent().args).toEqual(['max-width', '800px']);
     expect(elementsToScale.css.calls.mostRecent().args).toEqual(['transform', 'scale(0.5)']);
     expect(elementsToScale.velocity.calls.mostRecent().args).toEqual(['finish']);
     expect(iframeJQueryElement.velocity.calls.mostRecent().args).toEqual(['finish']);
@@ -227,12 +219,15 @@ describe('ScalingService', () => {
 
     // validate scaling
     expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
-    expect(elementsToScale.velocity.calls.mostRecent().args).toEqual([{
-      scale: 0.75,
-    }, {
-      duration: ScalingService.scaleDuration,
-      easing: ScalingService.scaleEasing,
-    }]);
+    expect(elementsToScale.velocity.calls.mostRecent().args).toEqual([
+      {
+        scale: 0.75,
+      },
+      jasmine.objectContaining({
+        duration: ScalingService.scaleDuration,
+        easing: ScalingService.scaleEasing,
+      }),
+    ]);
     expect(elementsToScale.css).not.toHaveBeenCalled();
     expect(ScalingService.getScaleFactor()).toBe(0.75);
   });
@@ -253,7 +248,6 @@ describe('ScalingService', () => {
     canvasJQueryElement.width(720); // current canvas width
 
     ScalingService.setViewPortWidth(360);
-    expect(scrollJQueryElement.css.calls.mostRecent().args).toEqual(['max-width', '360px']);
 
     // validate shifting
     expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left', 260]);

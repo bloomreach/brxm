@@ -17,7 +17,6 @@
 
   iframe {
     border: 0;
-    box-shadow: 0 0 20px $black-shadow;
   }
 }
 
@@ -25,9 +24,15 @@
   user-select: none;
 }
 
-.channel-iframe-scroll {
-  position: relative;
-  overflow-x: auto;
-  background-color: $scroll-bgcolor;
+.channel-iframe-sheet {
+  background-color: $sheet-bgcolor;
+  margin-left: auto;
+  margin-right: auto;
   box-shadow: 0 0 20px $black-shadow;
+}
+
+.channel-iframe-scroll-x {
+  position: relative;
+  overflow-x: visible;
+  overflow-y: hidden;
 }
