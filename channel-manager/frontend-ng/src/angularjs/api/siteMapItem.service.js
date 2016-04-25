@@ -25,10 +25,6 @@ export class SiteMapItemService {
   }
 
   loadAndCache(siteMapId, itemId) {
-    if (this.hasItem() && this.siteMapId === siteMapId && this.item.id === itemId) {
-      return; // no need to load again, item is already cached.
-    }
-
     this.clear();
     this._load(siteMapId, itemId)
       .then((item) => {
