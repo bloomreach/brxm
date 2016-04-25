@@ -248,7 +248,6 @@ describe('ScalingService', () => {
     canvasJQueryElement.width(720); // current canvas width
 
     ScalingService.setViewPortWidth(360);
-    // expect(sheetJQueryElement.css.calls.mostRecent().args).toEqual(['max-width', '360px']);
 
     // validate shifting
     expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left', 260]);
