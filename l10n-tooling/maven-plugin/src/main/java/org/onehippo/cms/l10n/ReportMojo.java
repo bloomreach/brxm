@@ -51,24 +51,9 @@ public class ReportMojo extends AbstractRegistrarMojo {
         if (isLastProject()) {
             if (project.isExecutionRoot()) {
                 writeReport(currentReport);
-                if (currentReport.errorCount > 0) {
-                    throw new MojoExecutionException("Errors in l10n report");
-                }
-                if (currentReport.failureCount > 0) {
-                    throw new MojoFailureException("Failures in l10n report");
-                }
             } else {
-                boolean errors = false, failures = false;
                 for (Report report : getReports()) {
-                    errors |= report.errorCount > 0;
-                    failures |= report.failureCount > 0;
                     writeReport(report);
-                }
-                if (errors) {
-                    throw new MojoExecutionException("Errors in l10n reports");
-                }
-                if (failures) {
-                    throw new MojoFailureException("Failures in l10n reports");
                 }
             }
         }
