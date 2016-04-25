@@ -29,7 +29,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -145,7 +144,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response moveAndUpdateVariant(final @PathParam("variantId") String variantId,
                                          final @HeaderParam("Move-To") String  newVariantId,
-                                         final @QueryParam("lastModifiedTimestamp") long versionStamp,
+                                         final @HeaderParam("lastModifiedTimestamp") long versionStamp,
                                          final MultivaluedMap<String, String> params) {
         try {
             if (StringUtils.isEmpty(newVariantId)) {
@@ -178,7 +177,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Path("/{variantId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response createVariant(final @PathParam("variantId") String variantId,
-                                  final @QueryParam("lastModifiedTimestamp") long versionStamp) {
+                                  final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
 
         try {
             this.containerItemComponentService.createVariant(variantId, versionStamp);
@@ -195,7 +194,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Path("/{variantId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteVariant(final @PathParam("variantId") String variantId,
-                                  final @QueryParam("lastModifiedTimestamp") long versionStamp) {
+                                  final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
         try {
             this.containerItemComponentService.deleteVariant(variantId, versionStamp);
             return ok("Variant '" + variantId + "' deleted successfully");

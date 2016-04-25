@@ -160,7 +160,7 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
         try {
             final Node containerItem = getCurrentContainerItem();
             final HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
-            deleteVariant(componentParameters, oldVariantId);
+            componentParameters.removePrefix(oldVariantId);
             setParameters(componentParameters, newVariantId, params);
 
             componentParameters.save(versionStamp);

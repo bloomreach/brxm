@@ -178,9 +178,10 @@ public class ContainerItemComponentResourceTest extends CXFTest {
 
         given()
             .contentType(JSON)
+            .header("lastModifiedTimestamp", 1234)
             .body(params)
         .when()
-            .put(MOCK_REST_PATH + "foo-variant?lastModifiedTimestamp=1234")
+            .put(MOCK_REST_PATH + "foo-variant")
         .then()
             .statusCode(200)
             .body("message", equalTo("Parameters for 'foo-variant' saved successfully."));
@@ -200,9 +201,10 @@ public class ContainerItemComponentResourceTest extends CXFTest {
         given()
             .contentType(JSON)
             .header("Move-To", "bah-variant")
+            .header("lastModifiedTimestamp", 1234)
             .body(params)
         .when()
-            .put(MOCK_REST_PATH + "foo-variant?lastModifiedTimestamp=1234")
+            .put(MOCK_REST_PATH + "foo-variant")
         .then()
             .statusCode(200)
             .body("message", equalTo("Parameters renamed from 'foo-variant' to 'bah-variant' and saved successfully."));
@@ -223,9 +225,10 @@ public class ContainerItemComponentResourceTest extends CXFTest {
         given()
             .contentType(JSON)
             .header("Move-To", "bah-variant")
+            .header("lastModifiedTimestamp", 1234)
             .body(params)
         .when()
-            .put(MOCK_REST_PATH + "foo-variant?lastModifiedTimestamp=1234")
+            .put(MOCK_REST_PATH + "foo-variant")
         .then()
             .statusCode(400)
             .body("message", equalTo("Unable to set the parameters of component"),
@@ -248,9 +251,10 @@ public class ContainerItemComponentResourceTest extends CXFTest {
         given()
             .contentType(JSON)
             .header("Move-To", "bah-variant")
+            .header("lastModifiedTimestamp", 1234)
             .body(params)
         .when()
-            .put(MOCK_REST_PATH + "foo-variant?lastModifiedTimestamp=1234")
+            .put(MOCK_REST_PATH + "foo-variant")
         .then()
             .statusCode(500)
             .body("message", equalTo("Unable to set the parameters of component"),
@@ -265,8 +269,10 @@ public class ContainerItemComponentResourceTest extends CXFTest {
         containerItemComponentService.createVariant("foo-variant", 1234);
         EasyMock.replay(containerItemComponentService);
 
-        when()
-            .post(MOCK_REST_PATH + "foo-variant?lastModifiedTimestamp=1234")
+        given()
+            .header("lastModifiedTimestamp", 1234)
+        .when()
+            .post(MOCK_REST_PATH + "foo-variant")
         .then()
             .statusCode(201)
             .body("message", equalTo("Variant 'foo-variant' created successfully"));
@@ -280,8 +286,10 @@ public class ContainerItemComponentResourceTest extends CXFTest {
         EasyMock.expectLastCall().andThrow(new ClientException("bad request", ClientError.ITEM_EXISTED));
         EasyMock.replay(containerItemComponentService);
 
-        when()
-            .post(MOCK_REST_PATH + "foo-variant?lastModifiedTimestamp=1234")
+        given()
+            .header("lastModifiedTimestamp", 1234)
+        .when()
+            .post(MOCK_REST_PATH + "foo-variant")
         .then()
             .statusCode(400)
             .body("message", equalTo("Could not create variant 'foo-variant'"),
@@ -296,8 +304,10 @@ public class ContainerItemComponentResourceTest extends CXFTest {
         EasyMock.expectLastCall().andThrow(new ClientException("bad request", ClientError.ITEM_ALREADY_LOCKED));
         EasyMock.replay(containerItemComponentService);
 
-        when()
-            .post(MOCK_REST_PATH + "foo-variant?lastModifiedTimestamp=1234")
+        given()
+            .header("lastModifiedTimestamp", 1234)
+        .when()
+            .post(MOCK_REST_PATH + "foo-variant")
         .then()
             .statusCode(400)
             .body("message", equalTo("Could not create variant 'foo-variant'"),
@@ -313,8 +323,10 @@ public class ContainerItemComponentResourceTest extends CXFTest {
         EasyMock.expectLastCall().andThrow(new ServerErrorException("something wrong at server", mockException));
         EasyMock.replay(containerItemComponentService, mockException);
 
-        when()
-            .post(MOCK_REST_PATH + "foo-variant?lastModifiedTimestamp=1234")
+        given()
+            .header("lastModifiedTimestamp", 1234)
+        .when()
+            .post(MOCK_REST_PATH + "foo-variant")
         .then()
             .statusCode(500)
             .body("message", equalTo("Could not create variant 'foo-variant'"),
@@ -329,8 +341,10 @@ public class ContainerItemComponentResourceTest extends CXFTest {
         containerItemComponentService.deleteVariant("foo-variant", 1234);
         EasyMock.replay(containerItemComponentService);
 
-        when()
-            .delete(MOCK_REST_PATH + "foo-variant?lastModifiedTimestamp=1234")
+        given()
+            .header("lastModifiedTimestamp", 1234)
+        .when()
+            .delete(MOCK_REST_PATH + "foo-variant")
         .then()
             .statusCode(200)
             .body("message", equalTo("Variant 'foo-variant' deleted successfully"));
@@ -345,8 +359,10 @@ public class ContainerItemComponentResourceTest extends CXFTest {
 
         EasyMock.replay(containerItemComponentService);
 
-        when()
-            .delete(MOCK_REST_PATH + "foo-variant?lastModifiedTimestamp=1234")
+        given()
+            .header("lastModifiedTimestamp", 1234)
+        .when()
+            .delete(MOCK_REST_PATH + "foo-variant")
         .then()
             .statusCode(400)
             .body("message", equalTo("Could not delete variant 'foo-variant'"),
@@ -362,8 +378,10 @@ public class ContainerItemComponentResourceTest extends CXFTest {
         EasyMock.expectLastCall().andThrow(new RepositoryException("something wrong at server", mockException));
         EasyMock.replay(containerItemComponentService, mockException);
 
-        when()
-            .delete(MOCK_REST_PATH + "foo-variant?lastModifiedTimestamp=1234")
+        given()
+            .header("lastModifiedTimestamp", 1234)
+        .when()
+            .delete(MOCK_REST_PATH + "foo-variant")
         .then()
             .statusCode(500)
             .body("message", equalTo("Could not delete variant 'foo-variant'"),
