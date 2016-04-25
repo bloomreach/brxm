@@ -77,7 +77,7 @@ public class ReportMojo extends AbstractRegistrarMojo {
     private Collection<Report> getReports() throws MojoExecutionException {
         final Collection<Report> reports = new ArrayList<>();
         for (MavenProject project : reactorProjects) {
-            final File reportFile = new File(project.getBasedir(), "target/TEST-update.xml");
+            final File reportFile = new File(project.getBasedir(), Registrar.REPORT_FILE);
             if (reportFile.exists()) {
                 try {
                     JAXBContext context = JAXBContext.newInstance(Report.class);

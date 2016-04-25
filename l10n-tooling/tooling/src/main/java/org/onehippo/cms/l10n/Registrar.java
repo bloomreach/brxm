@@ -38,6 +38,7 @@ import static org.onehippo.cms.l10n.TranslationsUtils.registryKey;
 class Registrar {
 
     private static final Logger log = LoggerFactory.getLogger(Registrar.class);
+    public static final String REPORT_FILE = "target/TEST-l10n-changes.xml";
 
     private final File baseDir;
     private final File registryDir;
@@ -293,7 +294,7 @@ class Registrar {
         }
 
         private void writeReport() throws IOException {
-            final File file = new File(baseDir, "target/TEST-update.xml");
+            final File file = new File(baseDir, REPORT_FILE);
             final File target = file.getParentFile();
             if (!target.exists()) {
                 target.mkdir();
