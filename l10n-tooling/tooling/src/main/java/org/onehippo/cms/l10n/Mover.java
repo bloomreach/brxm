@@ -27,6 +27,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.substringBefore;
 import static org.onehippo.cms.l10n.TranslationsUtils.mapRegistryFileToResourceBundleFile;
 import static org.onehippo.cms.l10n.TranslationsUtils.mapResourceBundleToRegistryInfoFile;
@@ -99,18 +100,26 @@ public class Mover {
         }
         final String srcRegistryKey = srcKey;
         final String destRegistryKey = destKey;
-        final String bundleName = substringBefore(srcKey, "/");
+        final String bundleName = srcKey.indexOf('/') != -1 ? substringBefore(srcKey, "/") : EMPTY;
         srcKey = srcKey.indexOf('/') == -1 ? srcKey : srcKey.substring(srcKey.indexOf('/')+1);
         destKey = destKey.indexOf('/') == -1 ? destKey : destKey.substring(destKey.indexOf('/')+1);
         final KeyData keyData = registryInfo.getKeyData(srcRegistryKey);
         if (keyData == null) {
             throw new IOException("Key not found: " + srcRegistryKey);
         }
+        final ResourceBundle referenceBundle = registry.getResourceBundle(bundleName, "en", registryInfo);
+        if (!referenceBundle.exists()) {
+            throw new IOException("Resource bundle does not exist: " + referenceBundle.getId());
+        }
+        if (referenceBundle.getEntries().containsKey(destKey)) {
+            throw new IOException("Destination key already exists: " + destKey);
+        }
         final Collection<String> locales = new HashSet<>(this.locales);
         locales.add("en");
         final Collection<ResourceBundle> bundles = new ArrayList<>();
         for (final String locale : locales) {
             final ResourceBundle resourceBundle = registry.getResourceBundle(bundleName, locale, registryInfo);
+            resourceBundle.setModuleName(moduleName);
             if (!resourceBundle.exists()) {
                 log.info("Bundle not found: {}", resourceBundle.getId());
             } else {

@@ -88,6 +88,10 @@ public class RepositoryExtension {
     public boolean isEmpty() {
         return items.isEmpty();
     }
+    
+    public int getSize() {
+        return items.size();
+    }
 
     private String getItemName(final ResourceBundle bundle) {
         return bundle.getModuleName() + "-" + StringUtils.substringBefore(bundle.getFileName(), ".json");

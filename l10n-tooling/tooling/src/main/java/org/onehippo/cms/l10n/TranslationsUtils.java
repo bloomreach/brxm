@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.LocaleUtils;
 
@@ -94,11 +93,24 @@ public final class TranslationsUtils {
                         + "/" + REGISTRY_FILE_SUFFIX;
             case REPOSITORY: {
                 String baseName = substringBefore(bundleFileName, ".json");
-                baseName = substringBeforeLast(baseName, "_");
+                String locale = substringAfterLast(baseName, "_");
+                try {
+                    // check if postfixed with locale string
+                    LocaleUtils.toLocale(locale);
+                    baseName = substringBeforeLast(baseName, "_");
+                } catch (IllegalArgumentException ignored) {
+                }
                 return baseName + "." + REGISTRY_FILE_SUFFIX;
             }
             case WICKET: {
                 String baseName = substringBefore(bundleFileName, ".properties");
+                String locale = substringAfterLast(baseName, "_");
+                try {
+                    // check if postfixed with locale string
+                    LocaleUtils.toLocale(locale);
+                    baseName = substringBeforeLast(baseName, "_");
+                } catch (IllegalArgumentException ignored) {
+                }
                 baseName = substringBeforeLast(baseName, "_");
                 return baseName + "." + REGISTRY_FILE_SUFFIX;
             }
