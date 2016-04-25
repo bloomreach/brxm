@@ -94,10 +94,10 @@ export class PageStructureElement {
     return jQueryNodeCollection;
   }
 
-  static isTransparentXType(metaData) {
+  static isXTypeNoMarkup(metaData) {
     const metaDataXType = metaData[HstConstants.XTYPE];
 
-    return metaDataXType !== undefined && metaDataXType.toUpperCase() === HstConstants.XTYPE_TRANSPARENT.toUpperCase();
+    return metaDataXType !== undefined && metaDataXType.toUpperCase() === HstConstants.XTYPE_NOMARKUP.toUpperCase();
   }
 
   getStartComment() {
