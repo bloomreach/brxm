@@ -275,7 +275,7 @@ class Registrar {
         
         @Override
         public void keyDeleted(final String key) throws IOException {
-            writer.failure("Key '" + key + "' removed" + key);
+            writer.failure("Key '" + key + "' removed");
         }
 
         @Override
