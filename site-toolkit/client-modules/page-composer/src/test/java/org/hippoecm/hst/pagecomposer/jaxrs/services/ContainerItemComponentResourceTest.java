@@ -150,21 +150,7 @@ public class ContainerItemComponentResourceTest extends CXFTest {
             .get(MOCK_REST_PATH + "foo-variant/en")
         .then()
             .statusCode(200)
-            .body("data.properties", hasItem(hasEntry("name", "Foo Variant")));
-    }
-
-    @Test
-    public void get_a_variant_with_client_side_error() throws RepositoryException, ServerErrorException {
-        EasyMock.expect(containerItemComponentService.getVariant("foo-variant", "en"))
-                .andThrow(new UnknownClientException("bad request"));
-
-        EasyMock.replay(containerItemComponentService);
-
-        when()
-            .get(MOCK_REST_PATH + "foo-variant/en")
-        .then()
-            .body("data.error", equalTo(ClientError.UNKNOWN.toString()),
-                    "data.parameterMap.errorReason", equalTo("bad request"));
+            .body("properties", hasItem(hasEntry("name", "Foo Variant")));
     }
 
     @Test
@@ -177,8 +163,7 @@ public class ContainerItemComponentResourceTest extends CXFTest {
         when()
             .get(MOCK_REST_PATH + "foo-variant/en")
         .then()
-            .body("data.error", equalTo(ClientError.UNKNOWN.toString()),
-                    "data.parameterMap.errorReason", equalTo("foo error"));
+            .statusCode(204);
     }
 
 

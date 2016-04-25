@@ -121,18 +121,14 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @GET
     @Path("/{variant}/{locale}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getVariant(final @PathParam("variant") String variant,
+    public ContainerItemComponentRepresentation getVariant(final @PathParam("variant") String variant,
                                final @PathParam("locale") String localeString) {
         try {
-            ContainerItemComponentRepresentation cicr = this.containerItemComponentService.getVariant(variant, localeString);
-            return ok("Retrieved variant parameters successfully", cicr);
-        } catch (ClientException e){
+            return this.containerItemComponentService.getVariant(variant, localeString);
+        } catch (Exception e) {
             log.warn("Failed to retrieve parameters.", e);
-            return errorClient("Failed to retrieve variant parameters", e.getErrorStatus());
-        } catch (ServerErrorException | RepositoryException e) {
-            log.warn("Failed to retrieve parameters.", e);
-            return error("Failed to retrieve parameters.", ErrorStatus.unknown(e.getMessage()));
         }
+        return null;
     }
 
     /**
