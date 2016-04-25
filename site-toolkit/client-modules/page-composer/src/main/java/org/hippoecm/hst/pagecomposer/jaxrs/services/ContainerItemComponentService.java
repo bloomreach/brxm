@@ -32,7 +32,7 @@ public interface ContainerItemComponentService {
 
     ContainerItemComponentRepresentation getVariant(final String variantId, final String locale) throws ClientException, RepositoryException, ServerErrorException;
 
-    Set<String> retainVariants(final Set<String> variants, final long versionStamp) throws ClientException, RepositoryException, ServerErrorException;
+    Set<String> retainVariants(final Set<String> variants, final long versionStamp) throws RepositoryException;
 
     void createVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException, ServerErrorException;
 

@@ -30,10 +30,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
@@ -100,12 +102,12 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             final HashSet<String> retainedVariants = new HashSet<>(Arrays.asList(variants));
             final Set<String> removedVariants = this.containerItemComponentService.retainVariants(retainedVariants, versionStamp);
             return ok("Removed variants:", removedVariants);
-        } catch (ClientException e){
-            log.warn("Failed to retrieve parameters.", e);
-            return errorClient("Failed to retrieve variant parameters", e.getErrorStatus());
-        } catch (RepositoryException | ServerErrorException e) {
+        } catch (RepositoryException e) {
             log.error("Unable to cleanup the variants of the component", e);
             return error("Unable to cleanup the variants of the component", ErrorStatus.unknown(e.getMessage()));
+        } catch (IllegalStateException e) {
+            log.error("Unable to cleanup the variants of the component", e);
+            throw new WebApplicationException(e);
         }
     }
 
@@ -134,49 +136,29 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     }
 
     /**
-     * Saves parameters for the given variant.
-     *
-     * @param variantId the variant to store parameters for
-     * @param params  the parameters to store
-     * @return whether saving the parameters went successfully or not.
-     */
-    @PUT
-    @Path("/{variantId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response updateVariant(final @PathParam("variantId") String variantId,
-                                  final @QueryParam("lastModifiedTimestamp") long versionStamp,
-                                  final MultivaluedMap<String, String> params) {
-
-        try {
-            this.containerItemComponentService.updateVariant(variantId, versionStamp, params);
-            return ok("Parameters for '" + variantId + "' saved successfully.");
-        } catch (ClientException e) {
-            return error("Unable to set the parameters of component", e.getErrorStatus());
-        } catch(RepositoryException e) {
-            return error("Unable to set the parameters of component", ErrorStatus.unknown(e.getMessage()));
-        }
-    }
-
-    /**
      * Saves parameters for the given new variant, and also removes the old variant. This effectively renames the old
      * variant to the new one.
      *
-     * @param oldVariantId the old variant to remove
+     * @param variantId the old variant to remove
      * @param newVariantId the new variant to store parameters for
      * @param params     the parameters to store
      * @return whether saving the parameters went successfully or not.
      */
     @PUT
-    @Path("/{oldVariantId}")
+    @Path("/{variantId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response moveAndUpdateVariant(final @PathParam("oldVariantId") String oldVariantId,
+    public Response moveAndUpdateVariant(final @PathParam("variantId") String variantId,
                                          final @HeaderParam("Move-To") String  newVariantId,
                                          final @QueryParam("lastModifiedTimestamp") long versionStamp,
                                          final MultivaluedMap<String, String> params) {
-
         try {
-            this.containerItemComponentService.moveAndUpdateVariant(oldVariantId, newVariantId, versionStamp, params);
-            return ok("Parameters renamed from '" + oldVariantId + "' to '" + newVariantId + "' and saved successfully.");
+            if (StringUtils.isEmpty(newVariantId)) {
+                this.containerItemComponentService.updateVariant(variantId, versionStamp, params);
+                return ok("Parameters for '" + variantId + "' saved successfully.");
+            } else {
+                this.containerItemComponentService.moveAndUpdateVariant(variantId, newVariantId, versionStamp, params);
+                return ok("Parameters renamed from '" + variantId + "' to '" + newVariantId + "' and saved successfully.");
+            }
         } catch (ClientException e) {
             return errorClient("Unable to set the parameters of component", e.getErrorStatus());
         } catch (RepositoryException e) {
@@ -192,24 +174,24 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
      * exists, we return a 409 conflict {@link AbstractConfigResource#conflict(String)}. If created, we return {@link
      * AbstractConfigResource#created(String)} </p>
      *
-     * @param variant the variant to create
+     * @param variantId the variant to create
      * @return If the variant already exists, we return a 409 conflict {@link AbstractConfigResource#conflict(String)}.
      * If created, we return {@link AbstractConfigResource#created(String)}
      */
     @POST
-    @Path("/{variant}/default")
+    @Path("/{variantId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createVariant(final @PathParam("variant") String variant,
-                                  final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
+    public Response createVariant(final @PathParam("variantId") String variantId,
+                                  final @QueryParam("lastModifiedTimestamp") long versionStamp) {
 
         try {
-            this.containerItemComponentService.createVariant(variant, versionStamp);
-            return created("Variant '" + variant + "' created successfully");
+            this.containerItemComponentService.createVariant(variantId, versionStamp);
+            return created("Variant '" + variantId + "' created successfully");
         } catch (ClientException e) {
-            return errorClient("Could not create variant '" + variant + "'", e.getErrorStatus());
+            return errorClient("Could not create variant '" + variantId + "'", e.getErrorStatus());
         }catch (RepositoryException | ServerErrorException e) {
-            log.error("Unable to create new variant '{}'", variant, e);
-            return error("Unable to create new variant '" + variant + "'", ErrorStatus.unknown(e.getMessage()));
+            log.error("Could not create variant '{}'", variantId, e);
+            return error("Could not create variant '" + variantId + "'", ErrorStatus.unknown(e.getMessage()));
         }
     }
 
@@ -223,7 +205,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             return ok("Variant '" + variantId + "' deleted successfully");
         } catch (ClientException e) {
             log.warn("Could not delete variant '{}'", variantId, e);
-            return error("Could not delete variant '" + variantId + "'", e.getErrorStatus());
+            return errorClient("Could not delete variant '" + variantId + "'", e.getErrorStatus());
         } catch (RepositoryException e) {
             log.error("Could not delete variant '{}'", variantId, e);
             final ErrorStatus errorStatus = ErrorStatus.unknown(e.getMessage());

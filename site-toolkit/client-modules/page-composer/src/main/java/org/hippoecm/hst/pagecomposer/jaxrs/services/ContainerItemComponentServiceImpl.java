@@ -81,16 +81,11 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
     }
 
     @Override
-    public Set<String> retainVariants(final Set<String> variants, final long versionStamp) throws ClientException, RepositoryException, ServerErrorException {
-        try {
-            Node containerItem = getCurrentContainerItem();
-            Set<String> removedVariants = doRetainVariants(containerItem, variants, versionStamp);
-            log.info("Removed variants: {}", removedVariants.toString());
-            return removedVariants;
-        } catch (IllegalStateException e) {
-            log.error("Unable to cleanup the variants of the component", e);
-            throw new ServerErrorException("Unable to cleanup the variants of the component", e);
-        }
+    public Set<String> retainVariants(final Set<String> variants, final long versionStamp) throws RepositoryException {
+        Node containerItem = getCurrentContainerItem();
+        Set<String> removedVariants = doRetainVariants(containerItem, variants, versionStamp);
+        log.info("Removed variants: {}", removedVariants);
+        return removedVariants;
     }
 
     @Override
