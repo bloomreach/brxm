@@ -19,4 +19,19 @@
     <module>webfiles</module>
   </modules>
 
+  <build>
+    <plugins>
+      <!-- ARCHE-487: disable jrebel.xml generation for bootstrap modules -->
+      <plugin>
+        <groupId>org.zeroturnaround</groupId>
+        <artifactId>jrebel-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-rebel-xml</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
