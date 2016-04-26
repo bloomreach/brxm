@@ -25,7 +25,7 @@
           <div ng-repeat="container in iframe.getContainers()" class="qa-container">
             <overlay-element class="overlay-element-container"
                              layout="row"
-                             ng-class="{ 'overlay-element-container-visible': container.isEmpty() || iframe.isDragging(), 'overlay-permeable': iframe.isDraggingOrClicking() }"
+                             ng-class="{ 'overlay-element-container-visible': container.isEmpty() || container.isDisabled() || iframe.isDragging(), 'overlay-permeable': iframe.isDraggingOrClicking() || container.isDisabled() }"
                              structure-element="container">
             </overlay-element>
             <div ng-repeat="component in container.getComponents()" class="qa-component">

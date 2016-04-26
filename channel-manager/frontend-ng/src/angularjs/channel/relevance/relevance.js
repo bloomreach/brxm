@@ -16,8 +16,7 @@
 
 import { ViewAsDirective } from './viewAs.directive';
 import { ViewAsCtrl } from './viewAs.controller';
-import { ExperimentLabelDirective } from './experimentLabel.directive';
-import { ExperimentLabelCtrl } from './experimentLabel.controller';
+import { ExperimentStateService } from './experimentState.service';
 
 export const channelRelevanceModule = angular
   .module('hippo-cm.channel.relevance', [
@@ -25,5 +24,4 @@ export const channelRelevanceModule = angular
   ])
   .controller('ViewAsCtrl', ViewAsCtrl)
   .directive('relevanceViewAs', ViewAsDirective)
-  .controller('ExperimentLabelCtrl', ExperimentLabelCtrl)
-  .directive('experimentLabel', ExperimentLabelDirective);
+  .service('ExperimentStateService', ExperimentStateService);
