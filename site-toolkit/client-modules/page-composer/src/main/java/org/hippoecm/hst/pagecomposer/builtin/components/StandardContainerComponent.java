@@ -37,8 +37,8 @@ public class StandardContainerComponent extends GenericHstComponent {
                 response.setRenderPath("classpath:span.ftl");
             } else if ("HST.vBox".equalsIgnoreCase(xtype)) {
                 response.setRenderPath("classpath:vbox.ftl");
-            } else if ("HST.Transparent".equalsIgnoreCase(xtype)) {
-                response.setRenderPath("classpath:transparent.ftl");
+            } else if ("HST.NoMarkup".equalsIgnoreCase(xtype)) {
+                response.setRenderPath("classpath:nomarkup.ftl");
             } else {
                 response.setRenderPath("classpath:vbox.ftl");
             }
