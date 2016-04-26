@@ -67,7 +67,7 @@ describe('DragDropService', () => {
       {
         uuid: `container${number}`,
         'HST-Type': 'CONTAINER_COMPONENT',
-        'HST-XType': 'HST.Transparent',
+        'HST-XType': 'HST.NoMarkup',
       },
       mockCommentData[`container${number}`]
     );
