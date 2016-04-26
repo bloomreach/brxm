@@ -53,6 +53,7 @@ public class EditorPlugin extends RenderPlugin implements IFormService {
         try {
             if (HDC.isStarted()) {
                 onStartTask = HDC.getCurrentTask().startSubtask("EditorPlugin.onStart");
+                addModelInfoToDiagnosticsTaskAttributes(HDC.getCurrentTask());
             }
 
             super.onStart();
@@ -71,6 +72,7 @@ public class EditorPlugin extends RenderPlugin implements IFormService {
         try {
             if (HDC.isStarted()) {
                 onModelChangedTask = HDC.getCurrentTask().startSubtask("EditorPlugin.onModelChanged");
+                addModelInfoToDiagnosticsTaskAttributes(HDC.getCurrentTask());
             }
 
             if (!form.getModel().equals(getDefaultModel())) {
@@ -91,6 +93,7 @@ public class EditorPlugin extends RenderPlugin implements IFormService {
         try {
             if (HDC.isStarted()) {
                 renderTask = HDC.getCurrentTask().startSubtask("EditorPlugin.render");
+                addModelInfoToDiagnosticsTaskAttributes(HDC.getCurrentTask());
             }
 
             super.render(target);
@@ -106,21 +109,7 @@ public class EditorPlugin extends RenderPlugin implements IFormService {
     }
 
     protected EditorForm newForm() {
-        final JcrNodeModel model = (JcrNodeModel) getDefaultModel();
-
-        if (HDC.isStarted() && model != null) {
-            try {
-                final Node node = model.getNode();
-                if (node != null) {
-                    HDC.getCurrentTask().setAttribute("editorFormModelType", node.getPrimaryNodeType().getName());
-                    HDC.getCurrentTask().setAttribute("editorFormModelPath", node.getPath());
-                }
-            } catch (Exception e) {
-                log.error("Failed to get model info of the EditorForm.", e);
-            }
-        }
-
-        return new EditorForm("form", model, this, getPluginContext(), getPluginConfig());
+        return new EditorForm("form", (JcrNodeModel) getDefaultModel(), this, getPluginContext(), getPluginConfig());
     }
 
     @Override
@@ -128,4 +117,19 @@ public class EditorPlugin extends RenderPlugin implements IFormService {
         return form;
     }
 
+    private void addModelInfoToDiagnosticsTaskAttributes(final Task task) {
+        final JcrNodeModel model = (JcrNodeModel) getDefaultModel();
+
+        if (model != null) {
+            try {
+                final Node node = model.getNode();
+                if (node != null) {
+                    task.setAttribute("editorModelType", node.getPrimaryNodeType().getName());
+                    task.setAttribute("editorModelPath", node.getPath());
+                }
+            } catch (Exception e) {
+                log.error("Failed to get model info of the EditorForm.", e);
+            }
+        }
+    }
 }
