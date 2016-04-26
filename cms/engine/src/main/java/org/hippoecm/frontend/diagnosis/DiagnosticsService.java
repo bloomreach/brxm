@@ -43,4 +43,10 @@ public interface DiagnosticsService {
      */
     public int getDepth();
 
+    /**
+     * Return threshold time for a subtask to report diagnostics in milliseconds.
+     * @return threshold time for a subtask to report diagnostics in milliseconds
+     */
+    public long getUnitThresholdMillisec();
+
 }

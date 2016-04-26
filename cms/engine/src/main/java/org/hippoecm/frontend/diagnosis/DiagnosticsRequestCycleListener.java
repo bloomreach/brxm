@@ -63,12 +63,13 @@ public class DiagnosticsRequestCycleListener extends AbstractRequestCycleListene
                 final DiagnosticsService diagnosticsService = HippoServiceRegistry.getService(DiagnosticsService.class);
                 final long threshold = diagnosticsService != null ? diagnosticsService.getThresholdMillisec() : -1;
                 final int depth = diagnosticsService != null ? diagnosticsService.getDepth() : -1;
+                final long unitThreshold = diagnosticsService != null ? diagnosticsService.getUnitThresholdMillisec() : -1;
 
                 if (threshold > -1L && rootTask.getDurationTimeMillis() < threshold) {
                     log.debug("Skipping task '{}' because took only '{}' ms.",
                               rootTask.getName(), rootTask.getDurationTimeMillis());
                 } else {
-                    log.info("Diagnosis Summary:\n{}", TaskLogFormatUtils.getTaskLog(rootTask, depth));
+                    log.info("Diagnosis Summary:\n{}", TaskLogFormatUtils.getTaskLog(rootTask, depth, unitThreshold));
                 }
             } finally {
                 HDC.cleanUp();
