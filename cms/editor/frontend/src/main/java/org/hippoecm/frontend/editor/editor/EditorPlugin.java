@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.editor.editor;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.markup.html.form.Form;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.IFormService;
@@ -22,10 +24,16 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EditorPlugin extends RenderPlugin implements IFormService {
 
     private static final long serialVersionUID = 1L;
+
+    private static Logger log = LoggerFactory.getLogger(EditorPlugin.class);
 
     private EditorForm form;
 
@@ -40,28 +48,79 @@ public class EditorPlugin extends RenderPlugin implements IFormService {
 
     @Override
     protected void onStart() {
-        super.onStart();
-        add(form = newForm());
+        Task onStartTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                onStartTask = HDC.getCurrentTask().startSubtask("EditorPlugin.onStart");
+            }
+
+            super.onStart();
+            add(form = newForm());
+        } finally {
+            if (onStartTask != null) {
+                onStartTask.stop();
+            }
+        }
     }
 
     @Override
     public void onModelChanged() {
-        if (!form.getModel().equals(getDefaultModel())) {
-            form.destroy();
-            replace(form = newForm());
+        Task onModelChangedTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                onModelChangedTask = HDC.getCurrentTask().startSubtask("EditorPlugin.onModelChanged");
+            }
+
+            if (!form.getModel().equals(getDefaultModel())) {
+                form.destroy();
+                replace(form = newForm());
+            }
+        } finally {
+            if (onModelChangedTask != null) {
+                onModelChangedTask.stop();
+            }
         }
     }
 
     @Override
     public void render(PluginRequestTarget target) {
-        super.render(target);
-        if (form != null) {
-            form.render(target);
+        Task renderTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                renderTask = HDC.getCurrentTask().startSubtask("EditorPlugin.render");
+            }
+
+            super.render(target);
+
+            if (form != null) {
+                form.render(target);
+            }
+        } finally {
+            if (renderTask != null) {
+                renderTask.stop();
+            }
         }
     }
 
     protected EditorForm newForm() {
-        return new EditorForm("form", (JcrNodeModel) getDefaultModel(), this, getPluginContext(), getPluginConfig());
+        final JcrNodeModel model = (JcrNodeModel) getDefaultModel();
+
+        if (HDC.isStarted() && model != null) {
+            try {
+                final Node node = model.getNode();
+                if (node != null) {
+                    HDC.getCurrentTask().setAttribute("editorFormModelType", node.getPrimaryNodeType().getName());
+                    HDC.getCurrentTask().setAttribute("editorFormModelPath", node.getPath());
+                }
+            } catch (Exception e) {
+                log.error("Failed to get model info of the EditorForm.", e);
+            }
+        }
+
+        return new EditorForm("form", model, this, getPluginContext(), getPluginConfig());
     }
 
     @Override
