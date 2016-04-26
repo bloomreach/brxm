@@ -57,6 +57,10 @@ export class OverlayElementCtrl {
     return this._isContainer() && this.structureElement.isDisabled();
   }
 
+  getLockIcon() {
+    return this.structureElement.isInherited() ? 'remove_circle_outline' : 'lock';
+  }
+
   getLockedByText() {
     let result;
     if (this.structureElement.isInherited()) {

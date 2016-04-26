@@ -26,7 +26,7 @@
   <span class="overlay-label-text">{{ overlayElement.getLabelText() }}</span>
 </span>
 <md-icon class="overlay-lock-icon" ng-if="overlayElement.isLockIconVisible()">
-  lock
+  {{ overlayElement.getLockIcon() }}
   <md-tooltip class="overlay-lock-tooltip" md-direction="left">{{ overlayElement.getLockedByText() }}</md-tooltip>
 </md-icon>
 
