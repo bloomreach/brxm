@@ -117,8 +117,6 @@ export class PageStructureService {
           params.component = component.getLabel();
           return this._showFeedbackAndReload(errorKey, params);
         });
-      // TODO handle error
-      // show toast error message stating that the component could not be deleted.
     }
     this.$log.debug(`Could not remove component with ID '${componentId}' because it does not exist in the page structure.`);
     return this.$q.reject();
