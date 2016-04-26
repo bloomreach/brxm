@@ -94,7 +94,7 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
             Node containerItem = getCurrentContainerItem();
             HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
             if (componentParameters.hasPrefix(variantId)) {
-                throw new ClientException("Cannot create variant '" + variantId + "' because it already exists", ClientError.ITEM_EXISTED);
+                throw new ClientException("Cannot create variant '" + variantId + "' because it already exists", ClientError.ITEM_EXISTS);
             }
             doCreateVariant(containerItem, componentParameters, variantId);
 

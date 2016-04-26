@@ -71,7 +71,7 @@ public class PageComposerUtil {
         } catch (RepositoryException e) {
             log.error("Failed to load annotated default values", e);
         } catch (ClassNotFoundException e) {
-            log.error("Failed to load annotated default values", e);
+            log.error("Failed to load annotated default values, class not found", e);
         }
         return Collections.emptyMap();
     }

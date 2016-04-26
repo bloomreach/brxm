@@ -281,9 +281,9 @@ public class ContainerItemComponentResourceTest extends CXFTest {
     }
 
     @Test
-    public void cannot_create_an_existed_variant() throws RepositoryException, ServerErrorException {
+    public void cannot_create_an_existing_variant() throws RepositoryException, ServerErrorException {
         containerItemComponentService.createVariant("foo-variant", 1234);
-        EasyMock.expectLastCall().andThrow(new ClientException("bad request", ClientError.ITEM_EXISTED));
+        EasyMock.expectLastCall().andThrow(new ClientException("bad request", ClientError.ITEM_EXISTS));
         EasyMock.replay(containerItemComponentService);
 
         given()
@@ -293,7 +293,7 @@ public class ContainerItemComponentResourceTest extends CXFTest {
         .then()
             .statusCode(400)
             .body("message", equalTo("Could not create variant 'foo-variant'"),
-                    "data.error", equalTo("ITEM_EXISTED"));
+                    "data.error", equalTo("ITEM_EXISTS"));
 
         verify(containerItemComponentService);
     }

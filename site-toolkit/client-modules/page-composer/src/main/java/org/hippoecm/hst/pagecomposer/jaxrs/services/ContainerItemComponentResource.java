@@ -77,7 +77,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             return ok("Available variants: ", variants);
         } catch (ClientException e){
             log.warn("Unable to get the parameters of the component", e);
-            return errorClient("Unable to get the parameters of the component", e.getErrorStatus());
+            return clientError("Unable to get the parameters of the component", e.getErrorStatus());
         } catch (RepositoryException e) {
             log.error("Unable to get the parameters of the component", e);
             return error("Unable to get the parameters of the component", ErrorStatus.unknown(e.getMessage()));
@@ -155,7 +155,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                 return ok("Parameters renamed from '" + variantId + "' to '" + newVariantId + "' and saved successfully.");
             }
         } catch (ClientException e) {
-            return errorClient("Unable to set the parameters of component", e.getErrorStatus());
+            return clientError("Unable to set the parameters of component", e.getErrorStatus());
         } catch (RepositoryException e) {
             return error("Unable to set the parameters of component", ErrorStatus.unknown(e.getMessage()));
         }
@@ -183,8 +183,8 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             this.containerItemComponentService.createVariant(variantId, versionStamp);
             return created("Variant '" + variantId + "' created successfully");
         } catch (ClientException e) {
-            return errorClient("Could not create variant '" + variantId + "'", e.getErrorStatus());
-        }catch (RepositoryException | ServerErrorException e) {
+            return clientError("Could not create variant '" + variantId + "'", e.getErrorStatus());
+        } catch (RepositoryException | ServerErrorException e) {
             log.error("Could not create variant '{}'", variantId, e);
             return error("Could not create variant '" + variantId + "'", ErrorStatus.unknown(e.getMessage()));
         }
@@ -200,7 +200,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             return ok("Variant '" + variantId + "' deleted successfully");
         } catch (ClientException e) {
             log.warn("Could not delete variant '{}'", variantId, e);
-            return errorClient("Could not delete variant '" + variantId + "'", e.getErrorStatus());
+            return clientError("Could not delete variant '" + variantId + "'", e.getErrorStatus());
         } catch (RepositoryException e) {
             log.error("Could not delete variant '{}'", variantId, e);
             final ErrorStatus errorStatus = ErrorStatus.unknown(e.getMessage());
