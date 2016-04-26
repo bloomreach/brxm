@@ -15,4 +15,36 @@
  */
 
 export class ChangeManagementCtrl {
+  constructor(ChannelService) {
+    'ngInject';
+
+    this.changedBySet = ChannelService.getChannel().changedBySet;
+    this.selectedChanges = [];
+  }
+
+  publishChanges() {
+    this.onDone();
+  }
+
+  discardChanges() {
+    this.onDone();
+  }
+
+  toggleAll() {
+    if (this.selectedChanges.length === this.changedBySet.length) {
+      this.selectedChanges = [];
+    } else {
+      this.selectedChanges = this.changedBySet;
+    }
+  }
+
+  toggle(changedBy) {
+    const index = this.selectedChanges.findIndex((element) => element === changedBy);
+
+    if (index !== -1) {
+      this.selectedChanges.splice(index, 1);
+    } else {
+      this.selectedChanges.push(changedBy);
+    }
+  }
 }

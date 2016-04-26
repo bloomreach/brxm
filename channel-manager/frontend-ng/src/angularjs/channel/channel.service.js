@@ -47,6 +47,7 @@ export class ChannelService {
     this.CmsService.subscribe('channel-changed-in-extjs', this._onChannelChanged, this);
 
     this.CmsService.subscribe('load-channel', (channel) => {
+      console.log(channel);
       this.HstService.getChannel(channel.id).then((updatedChannel) => {
         this._load(updatedChannel).then((channelId) => {
           this.$state.go('hippo-cm.channel', { channelId }, { reload: true });

@@ -1,3 +1,36 @@
-<md-button ng-click="changeMan.onDone()">
-  Done
-</md-button>
+<md-toolbar class="qa-toolbar">
+  <div class="md-toolbar-tools">
+    <md-button ng-click="changeMan.onDone()">
+      Back
+    </md-button>
+
+    <span flex></span>
+
+    <h2>Change Management</h2>
+
+    <span flex></span>
+  </div>
+</md-toolbar>
+
+<md-content layout-padding>
+  <form>
+    <md-checkbox ng-click="changeMan.toggleAll()"
+        md-indeterminate>
+      Toggle all
+    </md-checkbox>
+    <div ng-repeat="changedBy in changeMan.changedBySet">
+      <md-checkbox ng-checked="changeMan.checked(changeBy)"
+          ng-click="changeMan.toggle(changedBy)">
+        {{changedBy}}
+      </md-checkbox>
+    </div>
+
+    <md-button ng-click="changeMan.onPublishChanges()">
+      Publish
+    </md-button>
+
+    <md-button ng-click="changeMan.onDiscardChanges()">
+      Discard
+    </md-button>
+  </form>
+</md-content>
