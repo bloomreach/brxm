@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-export function pageAddDirective() {
-  'ngInject';
+export class ChannelActionsCtrl {
+  constructor() {
+    'ngInject';
+  }
 
-  return {
-    restrict: 'E',
-    bindToController: {
-      onDone: '&',
-    },
-    templateUrl: 'channel/page/actions/add/add.html',
-    controller: 'PageAddCtrl',
-    controllerAs: 'pageAdd',
-  };
+  edit() {
+    this.onActionSelected({ subpage: 'channel-edit' });
+  }
 }

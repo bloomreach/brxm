@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-export function pageAddDirective() {
+export function channelActionsDirective() {
   'ngInject';
 
   return {
     restrict: 'E',
     bindToController: {
-      onDone: '&',
+      onActionSelected: '&',
     },
-    templateUrl: 'channel/page/actions/add/add.html',
-    controller: 'PageAddCtrl',
-    controllerAs: 'pageAdd',
+    templateUrl: 'channel/actions/channelActions.html',
+    controller: 'ChannelActionsCtrl',
+    controllerAs: 'channelActions',
   };
 }

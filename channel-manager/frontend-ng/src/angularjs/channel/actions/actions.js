@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-export function pageAddDirective() {
-  'ngInject';
+import { channelActionsDirective } from './channelActions.directive';
+import { ChannelActionsCtrl } from './channelActions.controller';
+import { channelEditDirective } from './edit/edit.directive';
+import { ChannelEditCtrl } from './edit/edit.controller';
 
-  return {
-    restrict: 'E',
-    bindToController: {
-      onDone: '&',
-    },
-    templateUrl: 'channel/page/actions/add/add.html',
-    controller: 'PageAddCtrl',
-    controllerAs: 'pageAdd',
-  };
-}
+export const channelActionsModule = angular
+  .module('hippo-cm.channel.actions', ['ngMessages'])
+  .controller('ChannelActionsCtrl', ChannelActionsCtrl)
+  .directive('channelActions', channelActionsDirective)
+  .controller('ChannelEditCtrl', ChannelEditCtrl)
+  .directive('channelEdit', channelEditDirective);

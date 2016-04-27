@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-export function pageAddDirective() {
-  'ngInject';
+export class ChannelEditCtrl {
+  constructor($translate, ChannelService) {
+    'ngInject';
 
-  return {
-    restrict: 'E',
-    bindToController: {
-      onDone: '&',
-    },
-    templateUrl: 'channel/page/actions/add/add.html',
-    controller: 'PageAddCtrl',
-    controllerAs: 'pageAdd',
-  };
+    this.pageTitle = $translate.instant('SUBPAGE_CHANNEL_EDIT_TITLE', {
+      channelName: ChannelService.getName(),
+    });
+  }
+
+  save() {
+    this.onDone();
+  }
+
+  back() {
+    this.onDone();
+  }
 }
