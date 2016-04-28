@@ -1,101 +1,38 @@
 {
-  "hippo:types" : {
-    "hipposys:String" : {
-      "en" : {
-        "jcr:name" : "String"
-      },
-      "nl" : {
-        "jcr:name" : "Korte tekst"
-      },
-      "de" : {
-        "jcr:name" : "String"
-      },
-      "fr" : {
-        "jcr:name" : "Texte court"
+  "hippo:types": {
+    "hipposys:String": {
+      "en": {
+        "jcr:name": "String"
       }
     },
-    "hipposys:Text" : {
-      "en" : {
-        "jcr:name" : "Text"
-      },
-      "nl" : {
-        "jcr:name" : "Tekst"
-      },
-      "de" : {
-        "jcr:name" : "Text"
-      },
-      "fr" : {
-        "jcr:name" : "Texte court"
+    "hipposys:Text": {
+      "en": {
+        "jcr:name": "Text"
       }
     },
-    "hipposys:Label" : {
-      "en" : {
-        "jcr:name" : "Label"
-      },
-      "nl" : {
-        "jcr:name" : "Label"
-      },
-      "de" : {
-        "jcr:name" : "Etikette"
-      },
-      "fr" : {
-        "jcr:name" : "Étiquette"
+    "hipposys:Label": {
+      "en": {
+        "jcr:name": "Label"
       }
     },
-    "hipposys:Boolean" : {
-      "en" : {
-        "jcr:name" : "Boolean"
-      },
-      "nl" : {
-        "jcr:name" : "Boolean"
-      },
-      "de" : {
-        "jcr:name" : "Boolean"
-      },
-      "fr" : {
-        "jcr:name" : "Booléen"
+    "hipposys:Boolean": {
+      "en": {
+        "jcr:name": "Boolean"
       }
     },
-    "hipposys:Date" : {
-      "en" : {
-        "jcr:name" : "Date"
-      },
-      "nl" : {
-        "jcr:name" : "Datum"
-      },
-      "de" : {
-        "jcr:name" : "Datum"
-      },
-      "fr" : {
-        "jcr:name" : "Date"
+    "hipposys:Date": {
+      "en": {
+        "jcr:name": "Date"
       }
     },
-    "hipposys:Long" : {
-      "en" : {
-        "jcr:name" : "Integer Number"
-      },
-      "nl" : {
-        "jcr:name" : "Geheel getal"
-      },
-      "de" : {
-        "jcr:name" : "Ganze Zahl"
-      },
-      "fr" : {
-        "jcr:name" : "Nombre entier"
+    "hipposys:Long": {
+      "en": {
+        "jcr:name": "Integer Number"
       }
     },
-    "hipposys:Double" : {
-      "en" : {
-        "jcr:name" : "Decimal Number"
-      },
-      "nl" : {
-        "jcr:name" : "Getal met decimalen"
-      },
-      "de" : {
-        "jcr:name" : "Zahl"
-      },
-      "fr" : {
-        "jcr:name" : "Nombre décimal"
+    "hipposys:Double": {
+      "en": {
+        "jcr:name": "Decimal Number"
       }
     }
   }
