@@ -31,6 +31,7 @@
       <label class="md-required">{{ 'SUBPAGE_PAGE_ADD_LABEL_TITLE' | translate }}</label>
       <input type="text" name="title" class="qa-title"
              required
+             focus-if
              ng-model="pageAdd.title">
       <div ng-messages="form.title.$error">
         <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
