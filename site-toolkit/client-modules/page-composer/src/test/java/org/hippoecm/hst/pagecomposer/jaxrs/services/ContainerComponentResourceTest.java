@@ -35,7 +35,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.jaxrs.cxf.CXFTest;
-import org.onehippo.jaxrs.cxf.hst.HstCXFTestFixtureHelper;
 import org.onehippo.repository.mock.MockNodeFactory;
 
 import static com.jayway.restassured.http.ContentType.JSON;
@@ -292,14 +291,6 @@ public class ContainerComponentResourceTest extends CXFTest {
         verify(containerComponentService);
     }
 
-    private ContainerRepresentation createMockContainerRepresentation() {
-        final ContainerRepresentation containerToBeUpdated = createNiceMock(ContainerRepresentation.class);
-        expect(containerToBeUpdated.getId()).andReturn("cafebabe").anyTimes();
-        expect(containerToBeUpdated.getName()).andReturn("foo-item").anyTimes();
-        expect(containerToBeUpdated.getLastModifiedTimestamp()).andReturn(1234L).anyTimes();
-        return containerToBeUpdated;
-    }
-
     @Test
     public void cannot_update_a_container_item_when_its_container_is_locked() throws RepositoryException, IOException, JAXBException {
         final Map<String, Object> params = new HashMap<>();
@@ -334,7 +325,6 @@ public class ContainerComponentResourceTest extends CXFTest {
         final ContainerRepresentation containerToBeUpdated = createMockContainerRepresentation();
         replay(containerComponentService, containerToBeUpdated);
 
-
         given()
             .contentType(JSON)
             .body(containerToBeUpdated)
@@ -366,5 +356,13 @@ public class ContainerComponentResourceTest extends CXFTest {
                     "parameterMap.errorReason", equalTo("unknown error"));
 
         verify(containerComponentService);
+    }
+
+    private ContainerRepresentation createMockContainerRepresentation() {
+        final ContainerRepresentation containerToBeUpdated = createNiceMock(ContainerRepresentation.class);
+        expect(containerToBeUpdated.getId()).andReturn("cafebabe").anyTimes();
+        expect(containerToBeUpdated.getName()).andReturn("foo-item").anyTimes();
+        expect(containerToBeUpdated.getLastModifiedTimestamp()).andReturn(1234L).anyTimes();
+        return containerToBeUpdated;
     }
 }
