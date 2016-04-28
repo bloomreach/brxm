@@ -42,6 +42,11 @@
   md-select:focus md-select-value {
     color: $white;
   }
+  md-select:focus:not([disabled]) md-select-value {
+    border-bottom-width: 1px;
+    border-bottom-color: transparent;
+  }
+
   md-select-value {
     font-size: 15px;
     font-weight: bold;
