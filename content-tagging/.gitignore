@@ -1,4 +1,6 @@
-/.classpath
-/.project
-/.settings
+*.iml
+/.idea/
+.project/
+.settings
+target/
 /log4j.log

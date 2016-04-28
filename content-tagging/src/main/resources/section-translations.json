@@ -1,17 +1,8 @@
 {
-  "hippo:cms" : {
-    "sections" : {
-      "en" : {
-        "section-tagcloud" : "Tag Cloud"
-      },
-      "nl" : {
-        "section-tagcloud" : "Woordenwolk"
-      },
-      "de" : {
-        "section-tagcloud" : "Schlagwortwolke"
-      },
-      "fr" : {
-        "section-tagcloud" : "Nuage de tags"
+  "hippo:cms": {
+    "sections": {
+      "en": {
+        "section-tagcloud": "Tag Cloud"
       }
     }
   }
