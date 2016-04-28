@@ -104,7 +104,7 @@ describe('PageActions', () => {
     const PageActionsCtrl = compileDirectiveAndGetController();
 
     PageActionsCtrl.trigger(PageActionsCtrl.actions[0]);
-    expect($scope.onActionSelected).not.toHaveBeenCalled();
+    expect($scope.onActionSelected).toHaveBeenCalledWith('page-edit');
 
     PageActionsCtrl.trigger(PageActionsCtrl.actions[1]);
     expect($scope.onActionSelected).toHaveBeenCalledWith('page-add');

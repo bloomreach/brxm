@@ -87,5 +87,9 @@
           ng-if="channelCtrl.currentSubpage == 'page-add'"
           on-done="channelCtrl.hideSubpage()">
 </page-add>
+<page-edit layout="column" flex
+           ng-if="channelCtrl.currentSubpage == 'page-edit'"
+           on-done="channelCtrl.hideSubpage()">
+</page-edit>
 
 <div class="mask qa-mask" mask></div>

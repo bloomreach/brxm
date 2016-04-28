@@ -41,6 +41,7 @@ export class PageActionsCtrl {
 
     this._findAction('add').isEnabled = () => ChannelService.hasWorkspace() && ChannelService.hasPrototypes();
     this._findAction('delete').isEnabled = () => SiteMapItemService.isEditable();
+    this._findAction('edit').isEnabled = () => SiteMapItemService.hasItem(); // TODO TBD
   }
 
   _findAction(id) {
@@ -52,11 +53,10 @@ export class PageActionsCtrl {
   }
 
   trigger(action) {
-    if (action.id === 'add') {
-      this.onActionSelected({ subpage: `page-${action.id}` });
-    }
     if (action.id === 'delete') {
       this._deletePage();
+    } else {
+      this.onActionSelected({ subpage: `page-${action.id}` });
     }
   }
 

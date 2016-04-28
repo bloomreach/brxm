@@ -40,6 +40,10 @@ export class SiteMapItemService {
     return !!this.item;
   }
 
+  get() {
+    return this.item;
+  }
+
   clear() {
     delete this.item;
   }
