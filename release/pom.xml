@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
-  <version>11.0.0-SNAPSHOT</version>
+  <version>11.0.0-translations-psp2-SNAPSHOT</version>
 
   <name>Hippo CMS7 Release POM</name>
   <description>Hippo CMS7 Release POM</description>
@@ -72,6 +72,9 @@
     <hippo.plugin.sitemap.version>3.0.0-SNAPSHOT</hippo.plugin.sitemap.version>
     <hippo.plugin.taxonomy.version>3.0.0-SNAPSHOT</hippo.plugin.taxonomy.version>
 
+    <hippo.maven.plugin.l10n>1.0.0-SNAPSHOT</hippo.maven.plugin.l10n>
+    <!-- included locales placeholder to be overridden by end projects -->
+    <hippo.cms.locales/>
   </properties>
 
   <repositories>
@@ -872,8 +875,39 @@
             </execution>
           </executions>
         </plugin>
+        <!-- end of 'nullify' inherited configuration -->
+        <plugin>
+          <groupId>org.onehippo.cms.l10n</groupId>
+          <artifactId>hippo-cms-l10n-maven-plugin</artifactId>
+          <version>${hippo.maven.plugin.l10n}</version>
+          <extensions>true</extensions>
+          <executions>
+            <execution>
+              <goals>
+                <goal>include-locales</goal>
+              </goals>
+              <configuration>
+                <artifactPrefixes>
+                  <artifactPrefix>org.onehippo.cms7:hippo-addon-channel-manager</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-content-blocks</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-content-tagging</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-dashboard-document-wizard</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-gallerypicker</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-cms</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-addon-hst-configuration-editor</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-poll</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-relateddocs</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-resourcebundle-editor</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-robotstxt</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-selections</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-taxonomy</artifactPrefix>
+                </artifactPrefixes>
+                <locales>${hippo.cms.locales}</locales>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
-      <!-- end of 'nullify' inherited configuration -->
     </pluginManagement>
   </build>
 
