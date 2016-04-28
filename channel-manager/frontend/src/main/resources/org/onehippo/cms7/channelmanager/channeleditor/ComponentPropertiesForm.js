@@ -88,11 +88,13 @@
               method: 'DELETE',
               url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id),
               headers: {
-                'FORCE_CLIENT_HOST': 'true'
+                'FORCE_CLIENT_HOST': 'true',
+                'lastModifiedTimestamp': this.lastModified
               },
               success: function () {
                 this.fireEvent('propertiesDeleted', this.variant.id);
               },
+              failure: this._onUpdateVariantFailure,
               scope: this
             });
           },
@@ -120,7 +122,7 @@
 
       Hippo.ChannelManager.ChannelEditor.ComponentPropertiesForm.superclass.initComponent.apply(this, arguments);
 
-      this.addEvents('propertiesChanged', 'variantDirty', 'variantPristine', 'propertiesSaved', 'close', 'propertiesDeleted');
+      this.addEvents('propertiesChanged', 'variantDirty', 'variantPristine', 'propertiesSaved', 'close', 'propertiesDeleted', 'componentLocked');
     },
 
     setNewVariant: function (newVariantId) {
@@ -182,27 +184,19 @@
       form.submit({
         headers: {
           'FORCE_CLIENT_HOST': 'true',
+          'Move-To': this.newVariantId,
           'lastModifiedTimestamp': this.lastModified
         },
         params: uncheckedValues,
-        url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/rename/' + encodeURIComponent(this.newVariantId),
-        method: 'POST',
+        url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id),
+        method: 'PUT',
         success: function () {
           this.fireEvent('propertiesSaved', this.newVariantId);
           this._fireVariantDirtyOrPristine();
           onSuccess(this.newVariantId);
         },
-        failure: function () {
-/*
-          TODO: show error message? Old code:
-
-          Hippo.Msg.alert(Hippo.ChannelManager.ChannelEditor.Resources['toolkit-store-error-message-title'],
-            Hippo.ChannelManager.ChannelEditor.Resources['toolkit-store-error-message'], function () {
-              Ext.getCmp('Hippo.ChannelManager.ChannelEditor.Instance').pageContainer.pageContext = null;
-              // reload channel manager
-              Ext.getCmp('Hippo.ChannelManager.ChannelEditor.Instance').pageContainer.refreshIframe();
-            });
-*/
+        failure: function (form, action) {
+          this._onUpdateVariantFailure(action.response);
           onFail();
         },
         scope: this
@@ -638,6 +632,19 @@
       if (operation === Ext.data.Record.COMMIT) {
         this.firePropertiesChanged();
       }
+    },
+
+    _onUpdateVariantFailure: function (response) {
+      if (response.status === 400) {
+        var jsonData = Ext.util.JSON.decode(response.responseText);
+        if (jsonData && jsonData.data.error === 'ITEM_ALREADY_LOCKED') {
+          this.fireEvent('componentLocked', jsonData.data);
+          return;
+        }
+      }
+      this.fireEvent('componentLocked', {
+        error: 'UNKNOWN'
+      });
     },
 
     _fireVariantDirtyOrPristine: function () {

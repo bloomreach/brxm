@@ -47,6 +47,7 @@
       this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
       this.iframeToHost.subscribe('component-removed', this._onComponentRemoved, this);
+      this.iframeToHost.subscribe('reset-component-properties', this._resetComponentPropertiesWindow, this);
       this.iframeToHost.subscribe('show-mask', this._maskSurroundings, this);
       this.iframeToHost.subscribe('remove-mask', this._unmaskSurroundings, this);
       this.iframeToHost.subscribe('edit-alter-ego', this._showAlterEgoEditor, this);
@@ -83,6 +84,18 @@
       this._syncChannel();
     },
 
+    _onComponentLocked: function(data) {
+      this._resetComponentPropertiesWindow();
+      this.hostToIFrame.publish('reload-channel', data);
+    },
+
+    _resetComponentPropertiesWindow: function() {
+      if (this.componentPropertiesWindow) {
+        this.componentPropertiesWindow.destroy();
+      }
+      this.componentPropertiesWindow = this._createComponentPropertiesWindow();
+    },
+
     _setChannel: function(channelId) {
       return new Hippo.Future(function (success, failure) {
         this._reloadChannels().when(function (channelStore) {
@@ -109,10 +122,7 @@
     _initialize: function(channel) {
       this.selectedChannel = channel;
 
-      if (this.componentPropertiesWindow) {
-        this.componentPropertiesWindow.destroy();
-      }
-      this.componentPropertiesWindow = this._createComponentPropertiesWindow();
+      this._resetComponentPropertiesWindow();
 
       // update breadcrumb
       this.setTitle(channel.name);
@@ -143,6 +153,7 @@
           deleteComponent: this._deleteComponent,
           propertiesChanged: this._renderComponent,
           componentChanged: this._onComponentChanged,
+          componentLocked: this._onComponentLocked,
           hide: function() {
             this.hostToIFrame.publish('hide-component-properties');
           },

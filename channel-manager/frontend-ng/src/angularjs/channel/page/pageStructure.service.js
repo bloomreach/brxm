@@ -110,9 +110,13 @@ export class PageStructureService {
           return this.renderContainer(oldContainer).then((newContainer) => { // eslint-disable-line arrow-body-style
             return { oldContainer, newContainer };
           });
+        },
+        (errorResponse) => {
+          const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED' ? 'ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED' : 'ERROR_DELETE_COMPONENT';
+          const params = errorResponse.parameterMap;
+          params.component = component.getLabel();
+          return this._showFeedbackAndReload(errorKey, params);
         });
-      // TODO handle error
-      // show toast error message stating that the component could not be deleted.
     }
     this.$log.debug(`Could not remove component with ID '${componentId}' because it does not exist in the page structure.`);
     return this.$q.reject();
@@ -217,11 +221,10 @@ export class PageStructureService {
           return this.renderContainer(container).then(() => this.getComponentById(newComponentJson.id));
         },
         (errorResponse) => {
-          const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED' ? 'ITEM_ALREADY_LOCKED' : 'ERROR_ADD_COMPONENT';
+          const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED' ? 'ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED' : 'ERROR_ADD_COMPONENT';
           const params = errorResponse.parameterMap;
           params.component = catalogComponent.name;
-          this.FeedbackService.showError(errorKey, params);
-          return this.HippoIframeService.reload().then(() => this.$q.reject());
+          return this._showFeedbackAndReload(errorKey, params);
         });
   }
 
@@ -322,5 +325,15 @@ export class PageStructureService {
     }
 
     return component;
+  }
+
+  _showFeedbackAndReload(errorKey, params) {
+    this.FeedbackService.showError(errorKey, params);
+    return this.HippoIframeService.reload().then(() => this.$q.reject());
+  }
+
+  reloadChannel(errorResponse) {
+    const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED' ? 'ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED' : 'ERROR_UPDATE_COMPONENT';
+    this._showFeedbackAndReload(errorKey, errorResponse.parameterMap);
   }
 }

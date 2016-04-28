@@ -94,11 +94,19 @@ export class HippoIframeCtrl {
       this.$log.warn(`Cannot delete unknown component with id:'${componentId}'`);
       return;
     }
-    this._confirmDelete(selectedComponent)
-      .then(() => this.PageStructureService.removeComponentById(componentId)
-        .then(({ oldContainer, newContainer }) => this.DragDropService.replaceContainer(oldContainer, newContainer))
-      )
-      .catch(() => this.PageStructureService.showComponentProperties(selectedComponent));
+    this._confirmDelete(selectedComponent).then(
+      this._doDelete(componentId),
+      () => this.PageStructureService.showComponentProperties(selectedComponent)
+    );
+  }
+
+  _doDelete(componentId) {
+    return () => this.PageStructureService.removeComponentById(componentId)
+      .then(
+        ({ oldContainer, newContainer }) => this.DragDropService.replaceContainer(oldContainer, newContainer),
+        // inform extjs to reset the component properties dialog if deletion is failed
+        () => this.CmsService.publish('reset-component-properties')
+      );
   }
 
   _confirmDelete(selectedComponent) {
