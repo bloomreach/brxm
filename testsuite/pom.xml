@@ -60,6 +60,8 @@
 
     <json-lib.version>2.2.2</json-lib.version>
 
+    <hippo.cms.locales>nl,de,fr</hippo.cms.locales>
+
   </properties>
 
   <repositories>
