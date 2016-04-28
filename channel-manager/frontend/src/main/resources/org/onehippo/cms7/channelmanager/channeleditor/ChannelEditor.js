@@ -88,8 +88,8 @@
       this._resetComponentPropertiesWindow();
       this.hostToIFrame.publish('reload-channel', data);
     },
-    
-    _resetComponentPropertiesWindow() {
+
+    _resetComponentPropertiesWindow: function() {
       if (this.componentPropertiesWindow) {
         this.componentPropertiesWindow.destroy();
       }
