@@ -1,51 +1,18 @@
 {
-  "hippo:types" : {
-    "robotstxt:robotstxt" : {
-      "en" : {
-        "jcr:name" : "Robots.txt configuration",
-        "robotstxt:section" : "Section",
-        "robotstxt:sitemap" : "Sitemap",
-        "robotstxt:sitemap#hint" : "One or more fully qualified URLs pointing to an XML sitemap"
-      },
-      "nl" : {
-        "jcr:name" : "Robots.txt configuratie",
-        "robotstxt:section" : "Sectie",
-        "robotstxt:sitemap" : "Sitemap",
-        "robotstxt:sitemap#hint" : "Eén of meer volledige URL's die verwijzen naar een XML sitemap"
-      },
-      "de" : {
-        "jcr:name" : "Robots.txt Konfiguration",
-        "robotstxt:section" : "Sektion",
-        "robotstxt:sitemap" : "Sitemap",
-        "robotstxt:sitemap#hint" : "Eine oder mehrere vollqualifizierte URLs, die auf eine XML-Sitemap verweisen"
-      },
-      "fr" : {
-        "jcr:name" : "Configuration robots.txt",
-        "robotstxt:section" : "Section",
-        "robotstxt:sitemap" : "Sitemap",
-        "robotstxt:sitemap#hint" : "Une ou plusieurs URL entièrement qualifiées indiquant un sitemap XML"
+  "hippo:types": {
+    "robotstxt:robotstxt": {
+      "en": {
+        "robotstxt:sitemap#hint": "One or more fully qualified URLs pointing to an XML sitemap",
+        "robotstxt:sitemap": "Sitemap",
+        "jcr:name": "Robots.txt configuration",
+        "robotstxt:section": "Section"
       }
     },
-    "robotstxt:section" : {
-      "en" : {
-        "jcr:name" : "Section",
-        "robotstxt:useragent" : "User-agent",
-        "robotstxt:disallow" : "Disallow"
-      },
-      "nl" : {
-        "jcr:name" : "Sectie",
-        "robotstxt:useragent" : "User-agent",
-        "robotstxt:disallow" : "Niet toestaan"
-      },
-      "de" : {
-        "jcr:name" : "Sektion",
-        "robotstxt:useragent" : "User-agent",
-        "robotstxt:disallow" : "Nicht zulassen"
-      },
-      "fr" : {
-        "jcr:name" : "Section",
-        "robotstxt:useragent" : "User-agent",
-        "robotstxt:disallow" : "Interdire"
+    "robotstxt:section": {
+      "en": {
+        "robotstxt:useragent": "User-agent",
+        "robotstxt:disallow": "Disallow",
+        "jcr:name": "Section"
       }
     }
   }
