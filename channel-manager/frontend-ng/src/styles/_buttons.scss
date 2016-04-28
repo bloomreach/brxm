@@ -49,17 +49,20 @@
   md-select-value {
     font-size: 14px;
     font-weight: bold;
-    padding: 2px;
     border-width: 0;
+
+    > span:not(._md-select-icon) {
+      transform: translate3d(0, 0, 0);
+      // Chrome/Safari are 1px too low
+      -webkit-transform: translate3d(0, -1px, 0) !important;
+      // For IE
+      overflow: visible;
+    }
   }
 
-  .md-text {
-    display: inline-block;
-    height: 20px;
-  }
-
-  .md-select-icon {
+  ._md-select-icon {
     width: 14px;
+    transform: translate3d(0, 0, 0);
   }
 
   label {
