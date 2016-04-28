@@ -1,17 +1,8 @@
 {
-  "hippo:types" : {
-    "resourcebundle:resourcebundle" : {
-      "en" : {
-        "jcr:name" : "Resource Bundle"
-      },
-      "nl" : {
-        "jcr:name" : "Resource Bundle"
-      },
-      "de" : {
-        "jcr:name" : "Resource Bundle"
-      },
-      "fr" : {
-        "jcr:name" : "Resource Bundle"
+  "hippo:types": {
+    "resourcebundle:resourcebundle": {
+      "en": {
+        "jcr:name": "Resource Bundle"
       }
     }
   }
