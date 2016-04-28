@@ -37,6 +37,9 @@ export class HippoIframeService {
   }
 
   _extractRenderPathInfo(path) {
+    if (path !== this.src) {
+      this.src = path;
+    }
     this.renderPathInfo = this.ChannelService.extractRenderPathInfo(path);
   }
 
