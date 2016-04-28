@@ -1,5 +1,5 @@
-/.classpath
-/.project
-/.settings
-addon-cms/*.iml
-hst/*.iml
+*.iml
+/.idea/
+.project/
+.settings
+target/
