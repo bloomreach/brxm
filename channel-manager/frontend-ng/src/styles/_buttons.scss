@@ -39,10 +39,10 @@
   md-select {
     margin: 0;
   }
-  md-select:focus .md-select-value {
+  md-select:focus md-select-value {
     color: $white;
   }
-  .md-select-value {
+  md-select-value {
     font-size: 15px;
     font-weight: bold;
     padding: 2px;
