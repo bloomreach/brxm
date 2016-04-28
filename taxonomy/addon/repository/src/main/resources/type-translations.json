@@ -1,45 +1,18 @@
 {
-  "hippo:types" : {
-    "hippotaxonomy:taxonomy" : {
-      "en" : {
-        "jcr:name" : "Taxonomy"
-      },
-      "nl" : {
-        "jcr:name" : "Taxonomie"
-      },
-      "de" : {
-        "jcr:name" : "Taxonomie"
-      },
-      "fr" : {
-        "jcr:name" : "Taxonomie"
+  "hippo:types": {
+    "hippotaxonomy:taxonomy": {
+      "en": {
+        "jcr:name": "Taxonomy"
       }
     },
-    "hippotaxonomy:canonised" : {
-      "en" : {
-        "jcr:name" : "Canonised"
-      },
-      "nl" : {
-        "jcr:name" : "Gekanoniseerd"
-      },
-      "de" : {
-        "jcr:name" : "Kanonisiert"
-      },
-      "fr" : {
-        "jcr:name" : "Canonique"
+    "hippotaxonomy:canonised": {
+      "en": {
+        "jcr:name": "Canonised"
       }
     },
-    "hippotaxonomy:classifiable" : {
-      "en" : {
-        "jcr:name" : "Classifiable"
-      },
-      "nl" : {
-        "jcr:name" : "Klassificeerbaar"
-      },
-      "de" : {
-        "jcr:name" : "Klassifizierbar"
-      },
-      "fr" : {
-        "jcr:name" : "Classifiable"
+    "hippotaxonomy:classifiable": {
+      "en": {
+        "jcr:name": "Classifiable"
       }
     }
   }
