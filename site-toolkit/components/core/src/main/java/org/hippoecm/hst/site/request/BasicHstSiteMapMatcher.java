@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
@@ -58,15 +57,10 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
 
     
     public ResolvedSiteMapItem match(String pathInfo, ResolvedMount resolvedMount) throws NotFoundException {
-        final Mount mount = resolvedMount.getMount();
-        if (!mount.isMapped()) {
-            throw new NotFoundException(String.format("Cannot match '%s' to a sitemap item for mount '%s' because the mount is not " +
-                    "mapped and thus does not have an associated sitemap.", pathInfo, mount));
-        }
-        HstSite hstSite = mount.getHstSite();
+        HstSite hstSite = resolvedMount.getMount().getHstSite();
+       
         Properties params = new Properties();
         
-
         pathInfo = PathUtils.normalizePath(pathInfo);
         
         if(linkProcessor != null) {
