@@ -40,6 +40,9 @@ export class ChannelService {
       this.HstService.getChannel(this.channel.id)
         .then((channel) => {
           this._setChannel(channel);
+        })
+        .catch(() => {
+          this.$log.error(`Cannot retrieve properties of the channel with id = "${this.channel.id}" from server`);
         });
     });
   }

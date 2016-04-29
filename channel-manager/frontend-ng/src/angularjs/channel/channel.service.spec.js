@@ -340,6 +340,20 @@ describe('ChannelService', () => {
     expect(ChannelService.channel.changedBySet).toEqual(['anotherUser']);
   });
 
+  it('prints console log when it is failed to update current channel as requested by Ext', () => {
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+
+    channelMock.changedBySet = ['anotherUser'];
+    HstService.getChannel.and.returnValue($q.reject());
+    spyOn($log, 'error');
+
+    window.CMS_TO_APP.publish('channel-changed-in-extjs');
+    $rootScope.$digest();
+
+    expect($log.error).toHaveBeenCalled();
+  });
+
   it('should update the channel\'s preview config flag after successfully creating the preview config', () => {
     channelMock.previewHstConfigExists = false;
     ChannelService._load(channelMock);
