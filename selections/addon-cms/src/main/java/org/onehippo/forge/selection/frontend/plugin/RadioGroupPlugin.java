@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -173,10 +173,11 @@ public class RadioGroupPlugin extends AbstractChoicePlugin {
     }
 
     protected ListItem getValueItem(IModel<?> model) {
-        String key;
-        key = model.getObject().toString();
-        ListItem selectedListItem = getValueList().getListItemByKey(key);
-        return selectedListItem;
+        if(model == null || model.getObject() == null) {
+            return null;
+        }
+        final String key = model.getObject().toString();
+        return getValueList().getListItemByKey(key);
     }
 
     /**
