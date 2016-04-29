@@ -15,10 +15,11 @@
  */
 
 export class PageAddCtrl {
-  constructor($element, $scope, $translate, ChannelService, SiteMapService, HippoIframeService,
+  constructor($element, $log, $scope, $translate, ChannelService, SiteMapService, HippoIframeService,
               FeedbackService, lowercaseFilter) {
     'ngInject';
 
+    this.$log = $log;
     this.ChannelService = ChannelService;
     this.SiteMapService = SiteMapService;
     this.FeedbackService = FeedbackService;
@@ -84,6 +85,7 @@ export class PageAddCtrl {
             break;
           default:
             messageKey = 'ERROR_PAGE_ADD_FAILED';
+            this.$log.info(extResponseRepresentation.message);
             break;
         }
 
