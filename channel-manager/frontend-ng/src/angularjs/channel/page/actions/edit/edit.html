@@ -49,26 +49,22 @@
       </md-select>
     </md-input-container>
     <md-switch ng-disabled="!pageEdit.isEditable"
-               ng-model="pageEdit.assignNewTemplate"
-               ng-change="pageEdit.retrievePrototypes()"
+               ng-model="pageEdit.isAssigningNewTemplate"
+               ng-disabled="!pageEdit.hasPrototypes()"
                aria-label="{{ 'SUBPAGE_PAGE_EDIT_LABEL_ASSIGN_NEW_TEMPLATE' | translate }}">
       {{ 'SUBPAGE_PAGE_EDIT_LABEL_ASSIGN_NEW_TEMPLATE' | translate }}
     </md-switch>
-    <md-input-container ng-if="pageEdit.assignNewTemplate" class="md-block">
+    <md-input-container ng-if="pageEdit.isAssigningNewTemplate" class="md-block">
       <label>{{ 'SUBPAGE_PAGE_ADD_LABEL_TEMPLATE' | translate }}</label>
       <md-select name="prototype" class="qa-template"
                  ng-model="pageEdit.prototype"
+                 ng-change="pageEdit.evaluatePrototype()"
                  ng-model-options="{trackBy: '$value.id'}">
         <md-option ng-repeat="prototype in pageEdit.prototypes" ng-value="{{prototype}}">
           {{ prototype.displayName }}
         </md-option>
       </md-select>
     </md-input-container>
-    <div ng-if="pageEdit.assignNewTemplate">
-      <p>
-        Test warning text
-      </p>
-    </div>
     <md-input-container>
       <md-button type="submit" class="md-raised md-primary qa-save"
                  ng-disabled="form.$invalid"

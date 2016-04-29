@@ -15,10 +15,18 @@
  */
 
 export class PageEditCtrl {
-  constructor($translate, SiteMapItemService, ChannelService) {
+  constructor($element, $translate, $mdDialog, SiteMapService, SiteMapItemService, ChannelService, HippoIframeService,
+              FeedbackService) {
     'ngInject';
 
+    this.feedbackParent = $element.find('.feedback-parent');
+    this.$translate = $translate;
+    this.$mdDialog = $mdDialog;
+    this.SiteMapService = SiteMapService;
+    this.SiteMapItemService = SiteMapItemService;
     this.ChannelService = ChannelService;
+    this.HippoIframeService = HippoIframeService;
+    this.FeedbackService = FeedbackService;
 
     const documentNone = {
       displayName: $translate.instant('SUBPAGE_PAGE_EDIT_PRIMARY_DOCUMENT_VALUE_NONE'),
@@ -27,18 +35,24 @@ export class PageEditCtrl {
 
     // The PageActionsCtrl has retrieved the page meta-data when opening the page menu.
     // Now, it is available through the SiteMapItemService.
-    this.page = SiteMapItemService.get();
+    this.item = SiteMapItemService.get();
     this.isEditable = SiteMapItemService.isEditable();
 
-    this.heading = $translate.instant('SUBPAGE_PAGE_EDIT_TITLE', { pageName: this.page.name });
-    this.title = this.page.pageTitle;
-    this.availableDocuments = this.page.availableDocumentRepresentations;
+    this.heading = $translate.instant('SUBPAGE_PAGE_EDIT_TITLE', { pageName: this.item.name });
+    this.title = this.item.pageTitle;
+    this.availableDocuments = this.item.availableDocumentRepresentations || [];
     this.availableDocuments.unshift(documentNone);
-    if (this.page.primaryDocumentRepresentation) {
-      this.primaryDocument = this.availableDocuments.find((dr) => dr.path === this.page.primaryDocumentRepresentation.path);
-    } else {
-      this.primaryDocument = documentNone;
-    }
+    const currentPrimaryDocumentPath = this.item.primaryDocumentRepresentation
+                                     ? this.item.primaryDocumentRepresentation.path : '';
+    this.primaryDocument = this.availableDocuments.find((dr) => dr.path === currentPrimaryDocumentPath);
+
+    this.ChannelService.getNewPageModel()
+      .then((data) => {
+        this.prototypes = data.prototypes;
+      })
+      .catch(() => {
+        this._showError('ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
+      });
   }
 
   back() {
@@ -46,18 +60,54 @@ export class PageEditCtrl {
   }
 
   save() {
-    // TODO save changes
-    this.onDone();
-  }
+    const item = {
+      id: this.item.id,
+      parentId: this.item.parentId,
+      name: this.item.name,
+      pageTitle: this.title,
+      primaryDocumentRepresentation: this.primaryDocument,
+    };
 
-  retrievePrototypes() {
-    this.ChannelService.getNewPageModel()
-      .then((data) => {
-        this.prototypes = data.prototypes;
+    if (this.isAssigningNewTemplate && this.prototype) {
+      item.componentConfigurationId = this.prototype.id;
+    }
+
+    this.SiteMapItemService.updateItem(item)
+      .then(() => {
+        this.HippoIframeService.reload();
+        this.SiteMapService.load(this.ChannelService.getSiteMapId());
+        this.ChannelService.recordOwnChange();
+        this.onDone();
       })
       .catch(() => {
-        this._showError('SUBPAGE_PAGE_ADD_ERROR_MODEL_RETRIEVAL_FAILED');
+        this._showError('ERROR_PAGE_SAVE_FAILED');
       });
+  }
+
+  hasPrototypes() {
+    return this.prototypes && this.prototypes.length > 0;
+  }
+
+  evaluatePrototype() {
+    if (this.isAssigningNewTemplate && this.item.hasContainerItemInPageDefinition) {
+      let textContent;
+      if (this.prototype.hasContainerInPageDefinition) {
+        textContent = this.$translate.instant('SUBPAGE_PAGE_EDIT_ALERT_CONTENT_REPOSITIONING');
+      } else {
+        textContent = this.$translate.instant('SUBPAGE_PAGE_EDIT_ALERT_CONTENT_REMOVAL');
+      }
+      this.$mdDialog.show(
+        this.$mdDialog.alert()
+          .clickOutsideToClose(true)
+          .title(this.$translate.instant('SUBPAGE_PAGE_EDIT_ALERT_TITLE'))
+          .textContent(textContent)
+          .ok(this.$translate.instant('ALERT_OK'))
+      );
+    }
+  }
+
+  _showError(key, params) {
+    this.FeedbackService.showError(key, params, this.feedbackParent);
   }
 }
 

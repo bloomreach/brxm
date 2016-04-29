@@ -47,7 +47,7 @@ export class PageAddCtrl {
         this.location = (data.locations.length > 0) ? data.locations[0] : undefined;
       })
       .catch(() => {
-        this._showError('SUBPAGE_PAGE_ADD_ERROR_MODEL_RETRIEVAL_FAILED');
+        this._showError('ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
       });
   }
 
@@ -67,7 +67,7 @@ export class PageAddCtrl {
         this.onDone();
       })
       .catch(() => {
-        this._showError('SUBPAGE_PAGE_ADD_ERROR_CREATION_FAILED');
+        this._showError('ERROR_PAGE_CREATION_FAILED');
       });
   }
 

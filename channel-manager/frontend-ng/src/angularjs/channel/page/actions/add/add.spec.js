@@ -127,7 +127,7 @@ describe('PageActionAdd', () => {
     const PageAddCtrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('SUBPAGE_PAGE_ADD_ERROR_MODEL_RETRIEVAL_FAILED',
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_MODEL_RETRIEVAL_FAILED',
                                                            undefined, PageAddCtrl.feedbackParent);
   });
 
@@ -181,7 +181,7 @@ describe('PageActionAdd', () => {
     });
     $rootScope.$digest();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('SUBPAGE_PAGE_ADD_ERROR_CREATION_FAILED',
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_CREATION_FAILED',
                                                            undefined, PageAddCtrl.feedbackParent);
   });
 });
