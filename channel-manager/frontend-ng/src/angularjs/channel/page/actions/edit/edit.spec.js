@@ -186,8 +186,34 @@ describe('PageActionEdit', () => {
     expect($scope.onDone).toHaveBeenCalled();
   });
 
+  it('tells the user that the page is already locked', () => {
+    const error = {
+      errorCode: 'ITEM_ALREADY_LOCKED',
+      data: { lockedBy: 'tobi' },
+    };
+    SiteMapItemService.updateItem.and.returnValue($q.reject(error));
+    const PageEditCtrl = compileDirectiveAndGetController();
+    $rootScope.$digest();
+
+    const savedItem = {
+      id: 'siteMapItemId',
+      parentId: null,
+      name: 'name',
+      pageTitle: 'title',
+      primaryDocumentRepresentation: PageEditCtrl.availableDocuments[0],
+    };
+
+    PageEditCtrl.save();
+    expect(SiteMapItemService.updateItem).toHaveBeenCalledWith(savedItem, 'siteMapId');
+    $rootScope.$digest();
+
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_LOCKED_BY',
+                                                           error.data, PageEditCtrl.feedbackParent);
+    expect($scope.onDone).not.toHaveBeenCalled();
+  });
+
   it('flashes a toast when saving failed', () => {
-    SiteMapItemService.updateItem.and.returnValue($q.reject());
+    SiteMapItemService.updateItem.and.returnValue($q.reject({ }));
     const PageEditCtrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 

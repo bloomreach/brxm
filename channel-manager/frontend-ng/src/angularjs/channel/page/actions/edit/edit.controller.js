@@ -81,8 +81,12 @@ export class PageEditCtrl {
         this.ChannelService.recordOwnChange();
         this.onDone();
       })
-      .catch(() => {
-        this._showError('ERROR_PAGE_SAVE_FAILED');
+      .catch((extResponseRepresentation) => {
+        const messageKey = extResponseRepresentation.errorCode === 'ITEM_ALREADY_LOCKED'
+          ? 'ERROR_PAGE_LOCKED_BY' : 'ERROR_PAGE_SAVE_FAILED';
+        const params = extResponseRepresentation.data;
+
+        this._showError(messageKey, params);
       });
   }
 

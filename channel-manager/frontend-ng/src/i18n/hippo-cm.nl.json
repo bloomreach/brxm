@@ -16,6 +16,7 @@
   "ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED": "Toevoegen van '{{component}}' is mislukt: de container is vergrendeld door '{{lockedBy}}'.",
   "ERROR_ENTER_EDIT": "Naar Bewerk modus schakelen is mislukt.",
   "ERROR_MOVE_COMPONENT_FAILED": "Het verplaatsen van component '{{component}}' is mislukt.",
+  "ERROR_PAGE_LOCKED_BY": "???",
   "ERROR_PAGE_CREATION_FAILED": "???",
   "ERROR_PAGE_MODEL_RETRIEVAL_FAILED": "???",
   "ERROR_PAGE_SAVE_FAILED": "???",
