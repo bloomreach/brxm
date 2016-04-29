@@ -48,9 +48,8 @@
         </md-option>
       </md-select>
     </md-input-container>
-    <md-switch ng-disabled="!pageEdit.isEditable"
+    <md-switch ng-disabled="!pageEdit.isEditable || !pageEdit.hasPrototypes()"
                ng-model="pageEdit.isAssigningNewTemplate"
-               ng-disabled="!pageEdit.hasPrototypes()"
                aria-label="{{ 'SUBPAGE_PAGE_EDIT_LABEL_ASSIGN_NEW_TEMPLATE' | translate }}">
       {{ 'SUBPAGE_PAGE_EDIT_LABEL_ASSIGN_NEW_TEMPLATE' | translate }}
     </md-switch>
@@ -67,7 +66,7 @@
     </md-input-container>
     <md-input-container>
       <md-button type="submit" class="md-raised md-primary qa-save"
-                 ng-disabled="form.$invalid"
+                 ng-disabled="form.$invalid || form.$pristine"
                  ng-click="pageEdit.save()">
         {{ 'SUBPAGE_BUTTON_SAVE' | translate }}
       </md-button>
