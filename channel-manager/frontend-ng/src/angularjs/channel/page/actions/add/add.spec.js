@@ -164,7 +164,7 @@ describe('PageActionAdd', () => {
   });
 
   it('flashes a toast when failing to create a new page with a parent sitemap item id', () => {
-    SiteMapService.create.and.returnValue($q.reject());
+    SiteMapService.create.and.returnValue($q.reject({ }));
     const PageAddCtrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
@@ -181,7 +181,40 @@ describe('PageActionAdd', () => {
     });
     $rootScope.$digest();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('SUBPAGE_PAGE_ADD_ERROR_CREATION_FAILED',
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_ADD_FAILED',
                                                            undefined, PageAddCtrl.feedbackParent);
+  });
+
+  it('correctly dispatches the error from the server when trying to create a new page', () => {
+    const PageAddCtrl = compileDirectiveAndGetController();
+    $rootScope.$digest();
+
+    const lockedError = {
+      errorCode: 'ITEM_ALREADY_LOCKED',
+      data: { lockedBy: 'tobi' },
+    };
+    SiteMapService.create.and.returnValue($q.reject(lockedError));
+    PageAddCtrl.create();
+    $rootScope.$digest();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_ADD_LOCKED_BY', lockedError.data,
+                                                           PageAddCtrl.feedbackParent);
+
+    SiteMapService.create.and.returnValue($q.reject({ errorCode: 'ITEM_NOT_IN_PREVIEW' }));
+    PageAddCtrl.create();
+    $rootScope.$digest();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_ADD_PARENT_MISSING', undefined,
+                                                           PageAddCtrl.feedbackParent);
+
+    SiteMapService.create.and.returnValue($q.reject({ errorCode: 'ITEM_NAME_NOT_UNIQUE' }));
+    PageAddCtrl.create();
+    $rootScope.$digest();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_ADD_PATH_EXISTS', undefined,
+                                                           PageAddCtrl.feedbackParent);
+
+    SiteMapService.create.and.returnValue($q.reject({ errorCode: 'INVALID_PATH_INFO' }));
+    PageAddCtrl.create();
+    $rootScope.$digest();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_ADD_PATH_INVALID', undefined,
+                                                           PageAddCtrl.feedbackParent);
   });
 });

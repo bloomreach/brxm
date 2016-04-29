@@ -66,8 +66,28 @@ export class PageAddCtrl {
         this.ChannelService.recordOwnChange();
         this.onDone();
       })
-      .catch(() => {
-        this._showError('SUBPAGE_PAGE_ADD_ERROR_CREATION_FAILED');
+      .catch((extResponseRepresentation) => {
+        const params = extResponseRepresentation.data;
+        let messageKey;
+        switch (extResponseRepresentation.errorCode) {
+          case 'ITEM_ALREADY_LOCKED':
+            messageKey = 'ERROR_PAGE_ADD_LOCKED_BY';
+            break;
+          case 'ITEM_NOT_IN_PREVIEW':
+            messageKey = 'ERROR_PAGE_ADD_PARENT_MISSING';
+            break;
+          case 'ITEM_NAME_NOT_UNIQUE':
+            messageKey = 'ERROR_PAGE_ADD_PATH_EXISTS';
+            break;
+          case 'INVALID_PATH_INFO':
+            messageKey = 'ERROR_PAGE_ADD_PATH_INVALID';
+            break;
+          default:
+            messageKey = 'ERROR_PAGE_ADD_FAILED';
+            break;
+        }
+
+        this._showError(messageKey, params);
       });
   }
 
