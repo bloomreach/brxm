@@ -21,6 +21,7 @@ describe('ChannelActionEdit', () => {
   let $rootScope;
   let $compile;
   let $translate;
+  let $element;
   let ChannelService;
 
   beforeEach(() => {
@@ -40,7 +41,7 @@ describe('ChannelActionEdit', () => {
   function compileDirectiveAndGetController() {
     $scope = $rootScope.$new();
     $scope.onDone = jasmine.createSpy('onDone');
-    const $element = angular.element('<channel-edit on-done="onDone()"> </channel-edit>');
+    $element = angular.element('<channel-edit on-done="onDone()"></channel-edit>');
     $compile($element)($scope);
     $scope.$digest();
 
@@ -54,17 +55,19 @@ describe('ChannelActionEdit', () => {
     expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_CHANNEL_EDIT_TITLE', { channelName: 'test-name' });
   });
 
-  it('returns to the main page when clicking the back button', () => {
-    const ChannelEditCtrl = compileDirectiveAndGetController();
+  it('notifies the event "on-done" when clicking the back button', () => {
+    compileDirectiveAndGetController();
 
-    ChannelEditCtrl.back();
+    $element.find('.qa-button-back').click();
+
     expect($scope.onDone).toHaveBeenCalled();
   });
 
-  it('returns to the main page when clicking the save button', () => {
-    const ChannelEditCtrl = compileDirectiveAndGetController();
+  it('notifies the event "on-done" when clicking the save button', () => {
+    compileDirectiveAndGetController();
 
-    ChannelEditCtrl.save();
+    $element.find('.qa-save').click();
+
     expect($scope.onDone).toHaveBeenCalled();
   });
 });

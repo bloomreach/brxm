@@ -20,6 +20,7 @@ describe('ChannelActions', () => {
   let $rootScope;
   let $compile;
   let $scope;
+  let $element;
 
   beforeEach(() => {
     module('hippo-cm');
@@ -33,7 +34,7 @@ describe('ChannelActions', () => {
   function compileDirectiveAndGetController() {
     $scope = $rootScope.$new();
     $scope.onActionSelected = jasmine.createSpy('onActionSelected');
-    const $element = angular.element('<channel-actions on-action-selected="onActionSelected(subpage)"></channel-actions>');
+    $element = angular.element('<channel-actions on-action-selected="onActionSelected(subpage)"></channel-actions>');
     $compile($element)($scope);
     $scope.$digest();
 
@@ -41,9 +42,10 @@ describe('ChannelActions', () => {
   }
 
   it('calls the on-action-selected callback when clicking the button', () => {
-    const ChannelActionsCtrl = compileDirectiveAndGetController();
+    compileDirectiveAndGetController();
 
-    ChannelActionsCtrl.edit();
+    $element.find('.qa-button-channel').click();
+
     expect($scope.onActionSelected).toHaveBeenCalledWith('channel-edit');
   });
 });
