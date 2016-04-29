@@ -71,7 +71,7 @@
     _syncChannel: function() {
       this._reloadChannels().when(function (channelStore) {
         this.selectedChannel = channelStore.getById(this.selectedChannel.id);
-        this.hostToIFrame.publish('channel-changed-in-extjs', this.selectedChannel.json);
+        this.hostToIFrame.publish('channel-changed-in-extjs');
       }.bind(this));
     },
 
@@ -148,7 +148,6 @@
         variantsUuid: this.variantsUuid,
         mountId: this.selectedChannel.mountId,
         listeners: {
-          save: this._syncChannel,
           variantDeleted: this._syncChannel,
           deleteComponent: this._deleteComponent,
           propertiesChanged: this._renderComponent,
