@@ -55,9 +55,11 @@ describe('SiteMapItemService', () => {
 
     $rootScope.$digest();
     expect(SiteMapItemService.hasItem()).toBe(true);
+    expect(SiteMapItemService.get()).toBe(siteMapItem);
 
     SiteMapItemService.clear();
     expect(SiteMapItemService.hasItem()).toBe(false);
+    expect(SiteMapItemService.get()).toBeUndefined();
   });
 
   it('flashes a toast when the retrieval of a sitemap item fails', () => {
@@ -144,5 +146,13 @@ describe('SiteMapItemService', () => {
       .then(() => fail())
       .catch(() => done());
     $rootScope.$digest();
+  });
+
+  it('asks HST service to update a sitemap item and returns its response', () => {
+    const siteMapItem = { };
+    const result = { };
+    HstService.doPost.and.returnValue(result);
+    expect(SiteMapItemService.updateItem(siteMapItem, 'siteMapId')).toBe(result);
+    expect(HstService.doPost).toHaveBeenCalledWith(siteMapItem, 'siteMapId', 'update');
   });
 });

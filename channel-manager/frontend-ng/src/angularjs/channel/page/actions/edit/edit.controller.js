@@ -44,7 +44,8 @@ export class PageEditCtrl {
     this.availableDocuments.unshift(documentNone);
     const currentPrimaryDocumentPath = this.item.primaryDocumentRepresentation
                                      ? this.item.primaryDocumentRepresentation.path : '';
-    this.primaryDocument = this.availableDocuments.find((dr) => dr.path === currentPrimaryDocumentPath);
+    this.primaryDocument = this.availableDocuments.find((dr) => dr.path === currentPrimaryDocumentPath) || documentNone;
+    this.prototypes = [];
 
     this.ChannelService.getNewPageModel()
       .then((data) => {
@@ -72,10 +73,11 @@ export class PageEditCtrl {
       item.componentConfigurationId = this.prototype.id;
     }
 
-    this.SiteMapItemService.updateItem(item)
+    const siteMapId = this.ChannelService.getSiteMapId();
+    this.SiteMapItemService.updateItem(item, siteMapId)
       .then(() => {
         this.HippoIframeService.reload();
-        this.SiteMapService.load(this.ChannelService.getSiteMapId());
+        this.SiteMapService.load(siteMapId);
         this.ChannelService.recordOwnChange();
         this.onDone();
       })

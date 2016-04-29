@@ -63,8 +63,8 @@ export class SiteMapItemService {
     return this.HstService.doPost(null, this.siteMapId, 'delete', this.item.id);
   }
 
-  updateItem(item) {
-    return this.HstService.doPost(item, this.siteMapId, 'update');
+  updateItem(item, siteMapId) {
+    return this.HstService.doPost(item, siteMapId, 'update');
   }
 
   _load(siteMapId, itemId) {
