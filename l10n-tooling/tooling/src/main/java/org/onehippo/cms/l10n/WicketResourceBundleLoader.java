@@ -19,9 +19,14 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static org.apache.commons.lang.StringUtils.substringBefore;
 
 class WicketResourceBundleLoader extends ResourceBundleLoader {
+
+    private static final Logger log = LoggerFactory.getLogger(WicketResourceBundleLoader.class);
 
     WicketResourceBundleLoader(final Collection<String> locales, final ClassLoader classLoader) {
         super(locales, classLoader);
@@ -44,8 +49,10 @@ class WicketResourceBundleLoader extends ResourceBundleLoader {
                     properties.load(classLoader.getResourceAsStream(entry));
                     bundles.add(new WicketResourceBundle(entry, entry, locale, TranslationsUtils.propertiesToMap(properties)));
                 }
+                else {
+                    log.warn("Unsupported properties resource {} detected without matching .class resource", entry);
+                }
             }
         }
     }
-
 }
