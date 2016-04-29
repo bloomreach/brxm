@@ -327,14 +327,15 @@ describe('ChannelService', () => {
     expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('channel-changed-in-angular');
   });
 
-  it('incorporates changes made in ExtJs', () => {
-    channelMock.changedBySet = ['testUser'];
+  it('updates the current channel when told so by Ext', () => {
     ChannelService._load(channelMock);
     $rootScope.$digest();
 
-    window.CMS_TO_APP.publish('channel-changed-in-extjs', {
-      changedBySet: ['anotherUser'],
-    });
+    channelMock.changedBySet = ['anotherUser'];
+    HstService.getChannel.and.returnValue($q.when(channelMock));
+    window.CMS_TO_APP.publish('channel-changed-in-extjs');
+    expect(HstService.getChannel).toHaveBeenCalledWith('channelId');
+    $rootScope.$digest();
 
     expect(ChannelService.channel.changedBySet).toEqual(['anotherUser']);
   });
