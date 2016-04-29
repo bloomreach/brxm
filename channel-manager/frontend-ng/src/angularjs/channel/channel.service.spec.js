@@ -229,6 +229,12 @@ describe('ChannelService', () => {
     expect(ChannelService.getId()).toEqual('test-id');
   });
 
+  it('should return the name of the current channel', () => {
+    ChannelService._load({ name: 'test-name' });
+    $rootScope.$digest();
+    expect(ChannelService.getName()).toEqual('test-name');
+  });
+
   it('should switch to a new channel', () => {
     const channelA = {
       id: 'channelA',

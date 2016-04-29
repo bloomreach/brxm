@@ -140,6 +140,10 @@ export class ChannelService {
     return this.channel.id;
   }
 
+  getName() {
+    return this.channel.name;
+  }
+
   switchToChannel(id) {
     return this.HstService.getChannel(id)
       .then((channel) => {
