@@ -48,7 +48,8 @@
         </md-option>
       </md-select>
     </md-input-container>
-    <md-switch ng-disabled="!pageEdit.isEditable || !pageEdit.hasPrototypes()"
+    <md-switch class="qa-assign-new-template"
+               ng-disabled="!pageEdit.isEditable || !pageEdit.hasPrototypes()"
                ng-model="pageEdit.isAssigningNewTemplate"
                aria-label="{{ 'SUBPAGE_PAGE_EDIT_LABEL_ASSIGN_NEW_TEMPLATE' | translate }}">
       {{ 'SUBPAGE_PAGE_EDIT_LABEL_ASSIGN_NEW_TEMPLATE' | translate }}
