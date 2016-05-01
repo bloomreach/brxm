@@ -68,6 +68,7 @@ export class PageAddCtrl {
         this.onDone();
       })
       .catch((extResponseRepresentation) => {
+        this.$log.info(extResponseRepresentation.message);
         const params = extResponseRepresentation.data;
         let messageKey;
         switch (extResponseRepresentation.errorCode) {
@@ -85,7 +86,6 @@ export class PageAddCtrl {
             break;
           default:
             messageKey = 'ERROR_PAGE_ADD_FAILED';
-            this.$log.info(extResponseRepresentation.message);
             break;
         }
 
