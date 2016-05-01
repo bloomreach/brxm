@@ -35,9 +35,15 @@ export class ChannelService {
     this.CmsService.subscribe('channel-changed-in-extjs', this._onChannelChanged, this);
   }
 
-  _onChannelChanged(channel) {
+  _onChannelChanged() {
     this.$rootScope.$apply(() => {
-      this.channel = channel;
+      this.HstService.getChannel(this.channel.id)
+        .then((channel) => {
+          this._setChannel(channel);
+        })
+        .catch(() => {
+          this.$log.error(`Cannot retrieve properties of the channel with id = "${this.channel.id}" from server`);
+        });
     });
   }
 
@@ -138,6 +144,10 @@ export class ChannelService {
 
   getId() {
     return this.channel.id;
+  }
+
+  getName() {
+    return this.channel.name;
   }
 
   switchToChannel(id) {

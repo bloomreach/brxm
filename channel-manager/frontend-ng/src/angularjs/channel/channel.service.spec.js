@@ -229,6 +229,12 @@ describe('ChannelService', () => {
     expect(ChannelService.getId()).toEqual('test-id');
   });
 
+  it('should return the name of the current channel', () => {
+    ChannelService._load({ name: 'test-name' });
+    $rootScope.$digest();
+    expect(ChannelService.getName()).toEqual('test-name');
+  });
+
   it('should switch to a new channel', () => {
     const channelA = {
       id: 'channelA',
@@ -327,16 +333,31 @@ describe('ChannelService', () => {
     expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('channel-changed-in-angular');
   });
 
-  it('incorporates changes made in ExtJs', () => {
-    channelMock.changedBySet = ['testUser'];
+  it('updates the current channel when told so by Ext', () => {
     ChannelService._load(channelMock);
     $rootScope.$digest();
 
-    window.CMS_TO_APP.publish('channel-changed-in-extjs', {
-      changedBySet: ['anotherUser'],
-    });
+    channelMock.changedBySet = ['anotherUser'];
+    HstService.getChannel.and.returnValue($q.when(channelMock));
+    window.CMS_TO_APP.publish('channel-changed-in-extjs');
+    expect(HstService.getChannel).toHaveBeenCalledWith('channelId');
+    $rootScope.$digest();
 
     expect(ChannelService.channel.changedBySet).toEqual(['anotherUser']);
+  });
+
+  it('prints console log when it is failed to update current channel as requested by Ext', () => {
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+
+    channelMock.changedBySet = ['anotherUser'];
+    HstService.getChannel.and.returnValue($q.reject());
+    spyOn($log, 'error');
+
+    window.CMS_TO_APP.publish('channel-changed-in-extjs');
+    $rootScope.$digest();
+
+    expect($log.error).toHaveBeenCalled();
   });
 
   it('should update the channel\'s preview config flag after successfully creating the preview config', () => {
