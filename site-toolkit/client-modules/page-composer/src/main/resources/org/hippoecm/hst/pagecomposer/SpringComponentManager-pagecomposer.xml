@@ -57,6 +57,8 @@
     <constructor-arg ref="pageComposerPropertyPresentationFactories"/>
   </bean>
 
+  <bean id="channelService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.ChannelServiceImpl"/>
+
   <bean id="siteMapHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper" parent="abstractHelper">
     <property name="pagesHelper" ref="pagesHelper"/>
     <property name="templateHelper" ref="templateHelper"/>
@@ -151,6 +153,7 @@
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.RootResource" parent="abstractConfigResource">
               <property name="rootPath" value="${hst.configuration.rootPath}"/>
+              <property name="channelService" ref="channelService"/>
             </bean>
           </constructor-arg>
         </bean>

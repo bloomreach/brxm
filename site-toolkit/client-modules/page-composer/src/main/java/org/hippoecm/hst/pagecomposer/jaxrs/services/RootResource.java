@@ -33,6 +33,7 @@ import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -40,6 +41,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.FeaturesRepresentation;
+import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +53,12 @@ public class RootResource extends AbstractConfigResource {
 
     private static final Logger log = LoggerFactory.getLogger(RootResource.class);
     private String rootPath;
+
+    private ChannelService channelService;
+
+    public void setChannelService(final ChannelService channelService) {
+        this.channelService = channelService;
+    }
 
     public void setRootPath(final String rootPath) {
         this.rootPath = rootPath;
@@ -93,12 +101,25 @@ public class RootResource extends AbstractConfigResource {
     @Path("/channels/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getChannel(@PathParam("id") String channelId) {
-        final VirtualHost virtualHost = RequestContextProvider.get().getResolvedMount().getMount().getVirtualHost();
         try {
-            final Channel channel = virtualHost.getVirtualHosts().getChannelById(virtualHost.getHostGroupName(), channelId);
+            final Channel channel = channelService.getChannel(channelId);
             return Response.ok().entity(channel).build();
         } catch (RuntimeRepositoryException e) {
             final String error = "Could not determine authorization";
+            log.warn(error, e);
+            return Response.serverError().entity(error).build();
+        }
+    }
+
+    @GET
+    @Path("/channels/{id}/info")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getChannelInfo(@PathParam("id") String channelId) {
+        try {
+            final ChannelInfoClassInfo channelInfo = channelService.getChannelInfo(channelId);
+            return Response.ok().entity(channelInfo).build();
+        } catch (ChannelException e) {
+            final String error = "Could not get channel setting information";
             log.warn(error, e);
             return Response.serverError().entity(error).build();
         }
