@@ -73,16 +73,16 @@ export class PageAddCtrl {
         let messageKey;
         switch (extResponseRepresentation.errorCode) {
           case 'ITEM_ALREADY_LOCKED':
-            messageKey = 'ERROR_PAGE_ADD_LOCKED_BY';
+            messageKey = 'ERROR_PAGE_LOCKED_BY';
             break;
           case 'ITEM_NOT_IN_PREVIEW':
-            messageKey = 'ERROR_PAGE_ADD_PARENT_MISSING';
+            messageKey = 'ERROR_PAGE_PARENT_MISSING';
             break;
           case 'ITEM_NAME_NOT_UNIQUE':
-            messageKey = 'ERROR_PAGE_ADD_PATH_EXISTS';
+            messageKey = 'ERROR_PAGE_PATH_EXISTS';
             break;
           case 'INVALID_PATH_INFO':
-            messageKey = 'ERROR_PAGE_ADD_PATH_INVALID';
+            messageKey = 'ERROR_PAGE_PATH_INVALID';
             break;
           default:
             messageKey = 'ERROR_PAGE_ADD_FAILED';
