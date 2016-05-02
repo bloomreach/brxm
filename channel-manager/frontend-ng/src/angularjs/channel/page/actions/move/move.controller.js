@@ -84,10 +84,11 @@ export class PageMoveCtrl {
           case 'ITEM_ALREADY_LOCKED':
             messageKey = 'ERROR_PAGE_LOCKED_BY';
             break;
-          case 'ITEM_NOT_IN_PREVIEW':
+          case 'ITEM_NOT_FOUND':
             messageKey = 'ERROR_PAGE_PARENT_MISSING';
             break;
           case 'ITEM_NAME_NOT_UNIQUE':
+          case 'ITEM_EXISTS_OUTSIDE_WORKSPACE':
             messageKey = 'ERROR_PAGE_PATH_EXISTS';
             break;
           case 'INVALID_PATH_INFO':
