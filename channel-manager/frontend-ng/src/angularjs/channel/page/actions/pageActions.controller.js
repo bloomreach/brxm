@@ -45,6 +45,7 @@ export class PageActionsCtrl {
 
     this._findAction('edit').isEnabled = () => SiteMapItemService.isEditable();
     this._findAction('delete').isEnabled = () => SiteMapItemService.isEditable();
+    this._findAction('move').isEnabled = () => SiteMapItemService.isEditable();
   }
 
   _findAction(id) {

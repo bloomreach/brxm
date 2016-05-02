@@ -20,6 +20,8 @@ import { pageAddDirective } from './add/add.directive';
 import { PageAddCtrl } from './add/add.controller';
 import { pageEditDirective } from './edit/edit.directive';
 import { PageEditCtrl } from './edit/edit.controller';
+import { pageMoveDirective } from './move/move.directive';
+import { PageMoveCtrl } from './move/move.controller';
 
 export const channelPageActionsModule = angular
   .module('hippo-cm.channel.page.actions', ['ngMessages', 'focus-if'])
@@ -28,4 +30,6 @@ export const channelPageActionsModule = angular
   .controller('PageAddCtrl', PageAddCtrl)
   .directive('pageAdd', pageAddDirective)
   .controller('PageEditCtrl', PageEditCtrl)
-  .directive('pageEdit', pageEditDirective);
+  .directive('pageEdit', pageEditDirective)
+  .controller('PageMoveCtrl', PageMoveCtrl)
+  .directive('pageMove', pageMoveDirective);

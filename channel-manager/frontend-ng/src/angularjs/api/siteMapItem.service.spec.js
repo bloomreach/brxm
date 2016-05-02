@@ -148,11 +148,16 @@ describe('SiteMapItemService', () => {
     $rootScope.$digest();
   });
 
-  it('asks HST service to update a sitemap item and returns its response', () => {
+  it('asks HST service to update a sitemap item and returns its response', (done) => {
     const siteMapItem = { };
-    const result = { };
-    HstService.doPost.and.returnValue(result);
-    expect(SiteMapItemService.updateItem(siteMapItem, 'siteMapId')).toBe(result);
+    const resultData = { renderPathInfo: '/test' };
+    HstService.doPost.and.returnValue($q.when({ data: resultData }));
+    SiteMapItemService.updateItem(siteMapItem, 'siteMapId')
+      .then((data) => {
+        expect(data).toBe(resultData);
+        done();
+      });
     expect(HstService.doPost).toHaveBeenCalledWith(siteMapItem, 'siteMapId', 'update');
+    $rootScope.$digest();
   });
 });

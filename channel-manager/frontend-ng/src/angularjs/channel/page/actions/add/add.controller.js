@@ -31,7 +31,7 @@ export class PageAddCtrl {
     this.siteMapId = ChannelService.getSiteMapId();
     this.illegalCharacters = '/ :';
     this.illegalCharactersMessage = $translate.instant('VALIDATION_ILLEGAL_CHARACTERS',
-            { characters: $translate.instant('SUBPAGE_PAGE_ADD_VALIDATION_ILLEGAL_CHARACTERS') });
+            { characters: $translate.instant('VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT') });
 
     $scope.$watch('pageAdd.title', () => {
       if (this.updateLastPathInfoElementAutomatically) {

@@ -167,14 +167,17 @@ describe('PageActions', () => {
   it('builds the action label correctly', () => {
     const PageActionsCtrl = compileDirectiveAndGetController();
     const editAction = PageActionsCtrl.actions.find((action) => action.id === 'edit');
+    const moveAction = PageActionsCtrl.actions.find((action) => action.id === 'move');
     const deleteAction = PageActionsCtrl.actions.find((action) => action.id === 'delete');
 
     SiteMapItemService.isEditable.and.returnValue(false);
     expect(PageActionsCtrl.getLabel(editAction).endsWith('...')).toBe(false);
+    expect(PageActionsCtrl.getLabel(moveAction).endsWith('...')).toBe(false);
     expect(PageActionsCtrl.getLabel(deleteAction).endsWith('...')).toBe(false);
 
     SiteMapItemService.isEditable.and.returnValue(true);
     expect(PageActionsCtrl.getLabel(editAction).endsWith('...')).toBe(true);
+    expect(PageActionsCtrl.getLabel(moveAction).endsWith('...')).toBe(true);
     expect(PageActionsCtrl.getLabel(deleteAction).endsWith('...')).toBe(false);
   });
 
