@@ -41,10 +41,6 @@
   md-select:focus md-select-value {
     color: $white;
   }
-  md-select:focus:not([disabled]) md-select-value {
-    border-bottom-width: 1px;
-    border-bottom-color: transparent;
-  }
 
   md-select-value {
     font-size: 14px;
@@ -52,11 +48,9 @@
     border-width: 0;
 
     > span:not(._md-select-icon) {
-      transform: translate3d(0, 0, 0);
       // Chrome/Safari are 1px too low
+      transform: translate3d(0, 0, 0);
       -webkit-transform: translate3d(0, -1px, 0) !important;
-      // For IE
-      overflow: visible;
     }
   }
 
