@@ -44,9 +44,9 @@ public abstract class ResourceBundleLoader {
 
     protected abstract void collectResourceBundles(final ArtifactInfo artifactInfo, final Collection<ResourceBundle> bundles) throws IOException;
 
-    public static Collection<ResourceBundleLoader> getResourceBundleLoaders(final Collection<String> locales, final ClassLoader classLoader) {
+    public static Collection<ResourceBundleLoader> getResourceBundleLoaders(final Collection<String> locales, final ClassLoader classLoader, final String[] excludes) {
         return Arrays.asList(new AngularResourceBundleLoader(locales, classLoader),
-                new WicketResourceBundleLoader(locales, classLoader), new RepositoryResourceBundleLoader(locales, classLoader));
+                new WicketResourceBundleLoader(locales, classLoader, excludes), new RepositoryResourceBundleLoader(locales, classLoader));
     }
 
     private List<ArtifactInfo> getHippoArtifactsOnClasspath() throws IOException {

@@ -32,16 +32,18 @@ public class Scanner {
     
     private final Collection<String> locales;
     private final ClassLoader classLoader;
+    private final String[] excludes;
 
-    public Scanner(final Collection<String> locales, final ClassLoader classLoader) {
+    public Scanner(final Collection<String> locales, final ClassLoader classLoader, final String[] excludes) {
         this.locales = locales;
         this.classLoader = classLoader;
+        this.excludes = excludes;
     }
     
     private void scan() throws IOException {
         int bundleCount = 0, keyCount = 0, wordCount = 0;
         final Set<String> files = new HashSet<>();
-        for (ResourceBundleLoader loader : getResourceBundleLoaders(locales, classLoader)) {
+        for (ResourceBundleLoader loader : getResourceBundleLoaders(locales, classLoader, excludes)) {
             for (ResourceBundle resourceBundle : loader.loadBundles()) {
                 bundleCount++;
                 keyCount += resourceBundle.getEntries().size();

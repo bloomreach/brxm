@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Properties;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +29,11 @@ class WicketResourceBundleLoader extends ResourceBundleLoader {
 
     private static final Logger log = LoggerFactory.getLogger(WicketResourceBundleLoader.class);
 
-    WicketResourceBundleLoader(final Collection<String> locales, final ClassLoader classLoader) {
+    private final String[] excludes;
+    
+    WicketResourceBundleLoader(final Collection<String> locales, final ClassLoader classLoader, final String[] excludes) {
         super(locales, classLoader);
+        this.excludes = excludes;
     }
 
     @Override
@@ -37,22 +41,34 @@ class WicketResourceBundleLoader extends ResourceBundleLoader {
         final Collection<String> entries = artifactInfo.getEntries();
         for (final String entry : entries) {
             if (entry.endsWith(".properties")) {
-                String baseName = substringBefore(entry, ".properties");
+                if (isExcluded(entry)) {
+                    log.debug("Skipping excluded properties file {}", entry);
+                    continue;
+                }
+                final String baseName = substringBefore(entry, ".properties");
                 String locale = "en";
                 final int offset = baseName.lastIndexOf('_');
                 if (offset != -1) {
-                    locale = baseName.substring(offset+1);
-                    baseName = baseName.substring(0, offset);
+                    try {
+                        LocaleUtils.toLocale(baseName.substring(offset+1));
+                        locale = baseName.substring(offset+1);
+                    } catch (IllegalArgumentException ignored) {}
                 }
-                if (entries.contains(baseName + ".class") && locales.contains(locale)) {
+                if (locales.contains(locale)) {
                     final Properties properties = new Properties();
                     properties.load(classLoader.getResourceAsStream(entry));
                     bundles.add(new WicketResourceBundle(entry, entry, locale, TranslationsUtils.propertiesToMap(properties)));
                 }
-                else {
-                    log.warn("Unsupported properties resource {} detected without matching .class resource", entry);
-                }
             }
         }
+    }
+    
+    private boolean isExcluded(final String entry) {
+        for (String exclude : excludes) {
+            if (exclude.equals(entry)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

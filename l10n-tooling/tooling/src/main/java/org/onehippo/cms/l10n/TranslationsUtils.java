@@ -111,7 +111,6 @@ public final class TranslationsUtils {
                     baseName = substringBeforeLast(baseName, "_");
                 } catch (IllegalArgumentException ignored) {
                 }
-                baseName = substringBeforeLast(baseName, "_");
                 return baseName + "." + REGISTRY_FILE_SUFFIX;
             }
         }

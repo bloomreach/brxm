@@ -46,14 +46,16 @@ class Registrar {
     private final Registry registry;
     private final String moduleName;
     private final ClassLoader classLoader;
+    private final String[] excludes;
     
-    Registrar(final File baseDir, final String moduleName, final Collection<String> locales, final ClassLoader classLoader) throws IOException {
+    Registrar(final File baseDir, final String moduleName, final Collection<String> locales, final ClassLoader classLoader, final String[] excludes) throws IOException {
         this.baseDir = baseDir;
         this.registryDir = new File(baseDir, "resources");
         this.locales = locales;
         registry = new Registry(registryDir);
         this.moduleName = moduleName;
         this.classLoader = classLoader;
+        this.excludes = excludes;
     }
 
     Registry getRegistry() {
@@ -61,7 +63,7 @@ class Registrar {
     }
 
     void addLocale(final String locale) throws IOException {
-        for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(Collections.singletonList("en"), classLoader)) {
+        for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(Collections.singletonList("en"), classLoader, excludes)) {
             for (ResourceBundle sourceBundle : bundleLoader.loadBundles()) {
                 RegistryInfo registryInfo = registry.getRegistryInfoForBundle(sourceBundle);
                 registryInfo.setBundleType(sourceBundle.getType());
@@ -84,9 +86,12 @@ class Registrar {
 
     void initialize() throws IOException {
         // iterate over all english source bundles and register all translations as UNRESOLVED
-        for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(Collections.singletonList("en"), classLoader)) {
+        for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(Collections.singletonList("en"), classLoader, excludes)) {
             for (ResourceBundle sourceBundle : bundleLoader.loadBundles()) {
                 RegistryInfo registryInfo = registry.getRegistryInfoForBundle(sourceBundle);
+                if (registryInfo.exists()) {
+                    continue;
+                }
                 registryInfo.setBundleType(sourceBundle.getType());
                 for (String sourceKey : sourceBundle.getEntries().keySet()) {
                     KeyData keyData = new KeyData(UPDATED);
@@ -101,7 +106,7 @@ class Registrar {
         }
 
         // iterate over all non-english source bundles and process the keys in there
-        for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(locales, classLoader)) {
+        for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(locales, classLoader, excludes)) {
             for (ResourceBundle sourceBundle : bundleLoader.loadBundles()) {
                 final RegistryInfo registryInfo = registry.getRegistryInfoForBundle(sourceBundle);
                 ResourceBundle targetBundle = null;
@@ -143,7 +148,7 @@ class Registrar {
 
     void scan(final UpdateListener listener) throws IOException {
         final Collection<String> bundles = new ArrayList<>();
-        for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(Collections.singletonList("en"), classLoader)) {
+        for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(Collections.singletonList("en"), classLoader, excludes)) {
             for (ResourceBundle sourceBundle : bundleLoader.loadBundles()) {
                 ResourceBundle referenceBundle = loadReferenceBundle(sourceBundle);
                 listener.startBundle(sourceBundle, referenceBundle);

@@ -49,6 +49,9 @@ public abstract class AbstractL10nMojo extends AbstractMojo {
     @Parameter(defaultValue = "Default")
     private String format;
     
+    @Parameter
+    private String[] excludes;
+    
     @Component
     protected MavenProject project;
     
@@ -101,6 +104,13 @@ public abstract class AbstractL10nMojo extends AbstractMojo {
     
     protected final ClassLoader getResourcesClassLoader() throws MalformedURLException {
         return new URLClassLoader(getHippoArtifactFiles());
+    }
+    
+    protected String[] getExcludes() {
+        if (excludes == null) {
+            return new String[] {};
+        }
+        return excludes;
     }
     
     private URL[] getHippoArtifactFiles() throws MalformedURLException {

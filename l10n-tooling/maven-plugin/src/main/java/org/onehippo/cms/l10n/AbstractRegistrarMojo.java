@@ -25,7 +25,7 @@ public abstract class AbstractRegistrarMojo extends AbstractL10nMojo {
     
     protected Registrar getRegistrar() throws IOException, MojoExecutionException {
         if (registrar == null) {
-            registrar = new Registrar(getBaseDir(), getModuleName(), getLocales(), getResourcesClassLoader());
+            registrar = new Registrar(getBaseDir(), getModuleName(), getLocales(), getResourcesClassLoader(), getExcludes());
         }
         return registrar;
     }

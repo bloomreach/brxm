@@ -35,7 +35,7 @@ public class ExtractMojo extends AbstractL10nMojo {
         final Collection<String> locales = new HashSet<>(getLocales());
         locales.add("en");
         try {
-            new Extractor(getRegistryDir(), getModuleName(), locales, getResourcesClassLoader()).extract();
+            new Extractor(getRegistryDir(), getModuleName(), locales, getResourcesClassLoader(), getExcludes()).extract();
         } catch (IOException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }

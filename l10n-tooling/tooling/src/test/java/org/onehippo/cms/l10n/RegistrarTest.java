@@ -45,9 +45,9 @@ public class RegistrarTest {
     public void setUp() throws IOException {
         final ClassLoader classLoader = getClass().getClassLoader();
         resources = temporaryFolder.newFolder("resources");
-        new Extractor(resources, "module", extractorLocales, classLoader).extract();
+        new Extractor(resources, "module", extractorLocales, classLoader, new String[] {}).extract();
 
-        registrar = new Registrar(temporaryFolder.getRoot(), "module", registrarLocales, classLoader);
+        registrar = new Registrar(temporaryFolder.getRoot(), "module", registrarLocales, classLoader, new String[]{});
         registrar.initialize();
 
         registry = registrar.getRegistry();

@@ -46,8 +46,8 @@ public class MoverTest {
     public void setUp() throws IOException {
         final ClassLoader classLoader = getClass().getClassLoader();
         final File resources = temporaryFolder.newFolder("resources");
-        new Extractor(resources, "module", extractorLocales, classLoader).extract();
-        registrar = new Registrar(temporaryFolder.getRoot(), "module", registrarLocales, classLoader);
+        new Extractor(resources, "module", extractorLocales, classLoader, new String[] {}).extract();
+        registrar = new Registrar(temporaryFolder.getRoot(), "module", registrarLocales, classLoader, new String[] {});
         registrar.initialize();
         registry = registrar.getRegistry();
     }

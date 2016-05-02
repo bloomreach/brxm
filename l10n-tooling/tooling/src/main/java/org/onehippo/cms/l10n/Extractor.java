@@ -34,22 +34,27 @@ public class Extractor {
     private final Collection<String> locales;
     private final String moduleName;
     private final ClassLoader classLoader;
+    private final String[] excludes;
     
-    public Extractor(final File registryDir, final String moduleName, final Collection<String> locales, final ClassLoader classLoader) {
+    public Extractor(final File registryDir, final String moduleName, final Collection<String> locales, final ClassLoader classLoader, final String[] excludes) {
         this.registryDir = registryDir;
         this.locales = locales;
         this.moduleName = moduleName;
         this.classLoader = classLoader;
+        this.excludes = excludes;
     }
     
     public void extract() throws IOException {
-        for (ResourceBundleLoader loader : getResourceBundleLoaders(locales, classLoader)) {
+        for (ResourceBundleLoader loader : getResourceBundleLoaders(locales, classLoader, excludes)) {
             for (ResourceBundle sourceBundle : loader.loadBundles()) {
                 final String bundleFileName = mapSourceBundleFileToTargetBundleFile(
                         sourceBundle.getFileName(), sourceBundle.getType(), sourceBundle.getLocale());
                 final ResourceBundle targetBundle = ResourceBundle.createInstance(
                         sourceBundle.getName(), bundleFileName, new File(registryDir, bundleFileName), sourceBundle.getType());
                 targetBundle.setModuleName(moduleName);
+                if (targetBundle.exists()) {
+                    continue;
+                }
                 for (Map.Entry<String, String> entry : sourceBundle.getEntries().entrySet()) {
                     targetBundle.getEntries().put(entry.getKey(), entry.getValue());
                 }
