@@ -158,6 +158,15 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
                 isUpscalingEnabled,
                 fitView,
                 thumbnailSize.getMarkupId(true));
+
+        if (configuredDimension.width > originalImageDimension.width || configuredDimension.height > originalImageDimension.height) {
+            final double cropFactor = determineScalingFactor(
+                    configuredDimension.getWidth(), configuredDimension.getHeight(),
+                    originalImageDimension.getWidth(), originalImageDimension.getHeight());
+            cropSettings.setInitialWidth((int)Math.floor(cropFactor * configuredDimension.getWidth()));
+            cropSettings.setInitialHeight((int)Math.floor(cropFactor * configuredDimension.getHeight()));
+        }
+
         final ImageCropBehavior imageCropBehavior = new ImageCropBehavior(cropSettings);
         final IModel<Boolean> fitViewModel = new PropertyModel<>(this, "fitView");
         final AjaxCheckBox fitViewCheckbox = new AjaxCheckBox("fit-view", fitViewModel) {
@@ -227,23 +236,36 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
      * Determine the scaling factor of the preview image, so that it fits within the max boundaries of
      * the preview container (e.g. {@code #MAX_PREVIEW_WIDTH} by {@code #MAX_PREVIEW_HEIGHT}).
      *
-     * @param previewWidth  width of preview image
+     * @param previewWidth width of preview image
      * @param previewHeight height of preview image
      * @return the scaling factor of the preview image
      */
     private double determinePreviewScalingFactor(final double previewWidth, final double previewHeight) {
+        return determineScalingFactor(previewWidth, previewHeight, MAX_PREVIEW_WIDTH, MAX_PREVIEW_HEIGHT);
+    }
+
+    /**
+     * Determine the scaling factor of the preview image, so that it fits within the max boundaries of
+     * the preview container (e.g. {@code #MAX_PREVIEW_WIDTH} by {@code #MAX_PREVIEW_HEIGHT}).
+     * @param width width of image
+     * @param height height of image
+     * @param maxWidth max width of image
+     * @param maxHeight max height of image
+     * @return the scaling factor of the preview image
+     */
+    private double determineScalingFactor(final double width, final double height, final double maxWidth, final double maxHeight) {
 
         final double widthBasedScaling;
-        if (previewWidth > MAX_PREVIEW_WIDTH) {
-            widthBasedScaling = MAX_PREVIEW_WIDTH / previewWidth;
+        if (width > maxWidth) {
+            widthBasedScaling = maxWidth / width;
         } else {
             widthBasedScaling = 1D;
         }
 
         final double heightBasedScaling;
 
-        if (previewHeight > MAX_PREVIEW_HEIGHT) {
-            heightBasedScaling = MAX_PREVIEW_HEIGHT / previewHeight;
+        if (height > maxHeight) {
+            heightBasedScaling = maxHeight / height;
         } else {
             heightBasedScaling = 1D;
         }
