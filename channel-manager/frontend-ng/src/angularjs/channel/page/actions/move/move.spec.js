@@ -189,16 +189,45 @@ describe('PageActionMove', () => {
     const PageMoveCtrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
-    const errorResponse = {
-      errorCode: 'ITEM_ALREADY_LOCKED',
-      data: { lockedBy: 'tobi' },
-    };
-    SiteMapItemService.updateItem.and.returnValue($q.reject(errorResponse));
+    SiteMapItemService.updateItem.and.returnValue($q.reject({}));
     PageMoveCtrl.move();
     $rootScope.$digest();
 
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_MOVE_FAILED',
                                                            undefined, PageMoveCtrl.feedbackParent);
     expect($scope.onDone).not.toHaveBeenCalled();
+  });
+
+  it('correctly dispatches the error from the server when trying to move a page', () => {
+    const PageMoveCtrl = compileDirectiveAndGetController();
+    $rootScope.$digest();
+
+    const lockedError = {
+      errorCode: 'ITEM_ALREADY_LOCKED',
+      data: { lockedBy: 'tobi' },
+    };
+    SiteMapItemService.updateItem.and.returnValue($q.reject(lockedError));
+    PageMoveCtrl.move();
+    $rootScope.$digest();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_LOCKED_BY', lockedError.data,
+      PageMoveCtrl.feedbackParent);
+
+    SiteMapItemService.updateItem.and.returnValue($q.reject({ errorCode: 'ITEM_NOT_IN_PREVIEW' }));
+    PageMoveCtrl.move();
+    $rootScope.$digest();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_PARENT_MISSING', undefined,
+      PageMoveCtrl.feedbackParent);
+
+    SiteMapItemService.updateItem.and.returnValue($q.reject({ errorCode: 'ITEM_NAME_NOT_UNIQUE' }));
+    PageMoveCtrl.move();
+    $rootScope.$digest();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_PATH_EXISTS', undefined,
+      PageMoveCtrl.feedbackParent);
+
+    SiteMapItemService.updateItem.and.returnValue($q.reject({ errorCode: 'INVALID_PATH_INFO' }));
+    PageMoveCtrl.move();
+    $rootScope.$digest();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_PATH_INVALID', undefined,
+      PageMoveCtrl.feedbackParent);
   });
 });

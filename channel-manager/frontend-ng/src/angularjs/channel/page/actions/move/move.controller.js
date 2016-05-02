@@ -15,10 +15,11 @@
  */
 
 export class PageMoveCtrl {
-  constructor($element, $translate, ChannelService, SiteMapService, SiteMapItemService, HippoIframeService,
+  constructor($log, $element, $translate, ChannelService, SiteMapService, SiteMapItemService, HippoIframeService,
               FeedbackService) {
     'ngInject';
 
+    this.$log = $log;
     this.ChannelService = ChannelService;
     this.SiteMapService = SiteMapService;
     this.SiteMapItemService = SiteMapItemService;
@@ -76,8 +77,28 @@ export class PageMoveCtrl {
         this.onDone();
       })
       .catch((extResponseRepresentation) => {
-        console.log(extResponseRepresentation);
-        this._showError('ERROR_PAGE_MOVE_FAILED');
+        this.$log.info(extResponseRepresentation.message);
+        const params = extResponseRepresentation.data;
+        let messageKey;
+        switch (extResponseRepresentation.errorCode) {
+          case 'ITEM_ALREADY_LOCKED':
+            messageKey = 'ERROR_PAGE_LOCKED_BY';
+            break;
+          case 'ITEM_NOT_IN_PREVIEW':
+            messageKey = 'ERROR_PAGE_PARENT_MISSING';
+            break;
+          case 'ITEM_NAME_NOT_UNIQUE':
+            messageKey = 'ERROR_PAGE_PATH_EXISTS';
+            break;
+          case 'INVALID_PATH_INFO':
+            messageKey = 'ERROR_PAGE_PATH_INVALID';
+            break;
+          default:
+            messageKey = 'ERROR_PAGE_MOVE_FAILED';
+            break;
+        }
+
+        this._showError(messageKey, params);
       });
   }
 
