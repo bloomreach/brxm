@@ -1,0 +1,49 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "commitEditableInstance" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "move" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "rename" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=cannot delete document which is not contained in a folder" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "disposeEditableInstance" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "obtainEditableInstance" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=Document type does not allow for reverting changes" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "delete-unknown" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "copy" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "setDisplayName" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "delete" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

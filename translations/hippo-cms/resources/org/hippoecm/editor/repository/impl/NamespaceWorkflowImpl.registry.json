@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "addDocumentType" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "addCompoundType" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

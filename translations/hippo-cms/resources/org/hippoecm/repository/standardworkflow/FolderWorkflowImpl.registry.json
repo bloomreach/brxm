@@ -1,0 +1,45 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "copyTo" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "add" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "move" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "rename" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "reorder" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "delete-unknown" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=Cannot rename document to same name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "copy" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "copyOver" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "delete" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}
