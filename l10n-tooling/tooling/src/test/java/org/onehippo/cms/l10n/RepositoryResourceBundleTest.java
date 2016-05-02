@@ -27,7 +27,7 @@ public class RepositoryResourceBundleTest extends ResourceBundleTest {
     
     @Override
     protected RepositoryResourceBundle createResourceBundle() {
-        final String fileName = "dummy-repository-translations_en.json";
+        final String fileName = "dummy-repository-translations_nl.json";
         return new RepositoryResourceBundle("foo", fileName, new File(temporaryFolder.getRoot(), fileName));
     }
     
@@ -51,7 +51,7 @@ public class RepositoryResourceBundleTest extends ResourceBundleTest {
         final RepositoryResourceBundle bundle2;
         
         createTwoBundles: {
-            final String fileName = "dummy-repository-translations_en.json";
+            final String fileName = "dummy-repository-translations_nl.json";
             bundle1 = new RepositoryResourceBundle("path.to.bundle1", fileName, new File(temporaryFolder.getRoot(), fileName));
             bundle2 = new RepositoryResourceBundle("path.to.bundle2", fileName, new File(temporaryFolder.getRoot(), fileName));
             bundle1.getEntries().put("key", "value");

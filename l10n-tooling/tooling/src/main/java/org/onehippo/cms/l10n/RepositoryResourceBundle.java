@@ -91,15 +91,19 @@ public class RepositoryResourceBundle extends ResourceBundle {
 
     @Override
     public void move(final File destFile) throws IOException {
-        final File extensionFile = getExtensionFile();
-        if (!extensionFile.exists()) {
-            throw new IOException("Extension file not found: " + getExtensionFileName());
+        if (!locale.equals("en")) {
+            final File extensionFile = getExtensionFile();
+            if (!extensionFile.exists()) {
+                throw new IOException("Extension file not found: " + getExtensionFileName());
+            }
+            final RepositoryExtension extension = RepositoryExtension.load(extensionFile);
+            extension.removeResourceBundlesItem(this);
+            super.move(destFile);
+            extension.addResourceBundlesItem(this);
+            extension.save(extensionFile);
+        } else {
+            super.move(destFile);
         }
-        final RepositoryExtension extension = RepositoryExtension.load(extensionFile);
-        extension.removeResourceBundlesItem(this);
-        super.move(destFile);
-        extension.addResourceBundlesItem(this);
-        extension.save(extensionFile);
     }
 
     static Iterable<ResourceBundle> createAllInstances(final String fileName, final File file, final String locale) throws IOException {
@@ -141,20 +145,21 @@ public class RepositoryResourceBundle extends ResourceBundle {
             current.clear();
             current.putAll(entries);
             FileUtils.write(file, o.toString(2));
-            final File extensionFile = getExtensionFile();
-            final RepositoryExtension extension;
-            if (extensionFile.exists()) {
-                extension = RepositoryExtension.load(extensionFile);
-            } else {
-                extension = RepositoryExtension.create();
+            if (!locale.equals("en")) {
+                final File extensionFile = getExtensionFile();
+                final RepositoryExtension extension;
+                if (extensionFile.exists()) {
+                    extension = RepositoryExtension.load(extensionFile);
+                } else {
+                    extension = RepositoryExtension.create();
+                }
+                if (!extension.containsResourceBundle(RepositoryResourceBundle.this)) {
+                    extension.addResourceBundlesItem(RepositoryResourceBundle.this);
+                    log.debug("Saving extension file {}", getExtensionFileName());
+                    createFileIfNotExists(extensionFile);
+                    extension.save(extensionFile);
+                }
             }
-            if (!extension.containsResourceBundle(RepositoryResourceBundle.this)) {
-                extension.addResourceBundlesItem(RepositoryResourceBundle.this);
-                log.debug("Saving extension file {}", getExtensionFileName());
-                createFileIfNotExists(extensionFile);
-                extension.save(extensionFile);
-            }
-
         }
 
         @Override
@@ -212,16 +217,18 @@ public class RepositoryResourceBundle extends ResourceBundle {
             if (o.isEmpty()) {
                 log.debug("Deleting file {}", fileName);
                 file.delete();
-                final File extensionFile = getExtensionFile();
-                if (extensionFile.exists()) {
-                    final RepositoryExtension extension = RepositoryExtension.load(extensionFile);
-                    extension.removeResourceBundlesItem(RepositoryResourceBundle.this);
-                    if (extension.isEmpty()) {
-                        extensionFile.delete();
-                    } else {
-                        extension.save(extensionFile);
+                if (!locale.equals("en")) {
+                    final File extensionFile = getExtensionFile();
+                    if (extensionFile.exists()) {
+                        final RepositoryExtension extension = RepositoryExtension.load(extensionFile);
+                        extension.removeResourceBundlesItem(RepositoryResourceBundle.this);
+                        if (extension.isEmpty()) {
+                            extensionFile.delete();
+                        } else {
+                            extension.save(extensionFile);
+                        }
                     }
-                } 
+                }
             } else {
                 FileUtils.write(file, o.toString(2));
             }

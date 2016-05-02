@@ -64,9 +64,13 @@ public class MoverTest {
             resourceBundle.setModuleName("module");
             assertEquals(1, resourceBundle.getEntries().size());
             assertTrue(resourceBundle.getEntries().containsKey("movedKey"));
-            final RepositoryExtension extension = RepositoryExtension.load(resourceBundle.getExtensionFile());
-            assertTrue(extension.containsResourceBundle(resourceBundle));
-            assertEquals(1, extension.getSize());
+            if (!locale.equals("en")) {
+                final RepositoryExtension extension = RepositoryExtension.load(resourceBundle.getExtensionFile());
+                assertTrue(extension.containsResourceBundle(resourceBundle));
+                assertEquals(1, extension.getSize());
+            } else {
+                assertFalse(resourceBundle.getExtensionFile().exists());
+            }
         }
     }
     
@@ -82,9 +86,11 @@ public class MoverTest {
             final RepositoryResourceBundle resourceBundle = (RepositoryResourceBundle) registry.getResourceBundle("bundle", locale, registryInfo);
             resourceBundle.setModuleName("module");
             assertTrue(resourceBundle.exists());
-            final RepositoryExtension extension = RepositoryExtension.load(resourceBundle.getExtensionFile());
-            assertTrue(extension.containsResourceBundle(resourceBundle));
-            assertEquals(1, extension.getSize());
+            if (!locale.equals("en")) {
+                final RepositoryExtension extension = RepositoryExtension.load(resourceBundle.getExtensionFile());
+                assertTrue(extension.containsResourceBundle(resourceBundle));
+                assertEquals(1, extension.getSize());
+            }
         }
     }
     

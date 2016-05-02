@@ -94,7 +94,7 @@ public class RepositoryExtension {
     }
 
     private String getItemName(final ResourceBundle bundle) {
-        return bundle.getModuleName() + "-" + StringUtils.substringBefore(bundle.getFileName(), ".json");
+        return bundle.getModuleName() + "-" + StringUtils.substringBefore(bundle.getFileName().replace('/', '-'), ".json");
     }
 
     public static RepositoryExtension load(final File file) throws IOException {

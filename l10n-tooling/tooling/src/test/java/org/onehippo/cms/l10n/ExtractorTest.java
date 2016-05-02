@@ -23,6 +23,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ExtractorTest {
@@ -42,13 +43,17 @@ public class ExtractorTest {
         assertFileExists("dummy-repository-translations_en.json");
         assertFileExists("dummy-repository-translations_nl.json");
         assertFileExists("dummy-repository-translations_fr.json");
-        assertFileExists("extensions/en/hippoecm-extension.xml");
         assertFileExists("extensions/nl/hippoecm-extension.xml");
         assertFileExists("extensions/fr/hippoecm-extension.xml");
+        assertFileNotExists("extensions/en/hippoecm-extension.xml");
     }
 
     private void assertFileExists(final String fileName) {
-        assertTrue("File no extracted: " + fileName, new File(temporaryFolder.getRoot(), fileName).exists());
+        assertTrue("File not extracted: " + fileName, new File(temporaryFolder.getRoot(), fileName).exists());
+    }
+    
+    private void assertFileNotExists(final String fileName) {
+        assertFalse("File extracted: " + fileName, new File(temporaryFolder.getRoot(), fileName).exists());
     }
 
 }
