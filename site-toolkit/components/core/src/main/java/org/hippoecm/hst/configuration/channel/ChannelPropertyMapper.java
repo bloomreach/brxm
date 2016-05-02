@@ -191,7 +191,7 @@ public class ChannelPropertyMapper {
         return properties;
     }
 
-    static void saveProperties(Node node, List<HstPropertyDefinition> definitions, Map<String, Object> properties) throws RepositoryException {
+    public static void saveProperties(Node node, List<HstPropertyDefinition> definitions, Map<String, Object> properties) throws RepositoryException {
         for (PropertyIterator propertyIterator = node.getProperties(); propertyIterator.hasNext(); ) {
             Property prop = propertyIterator.nextProperty();
             if (prop.getDefinition().isProtected()) {

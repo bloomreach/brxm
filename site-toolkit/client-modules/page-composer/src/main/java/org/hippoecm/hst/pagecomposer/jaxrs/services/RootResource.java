@@ -16,13 +16,16 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -41,6 +44,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.FeaturesRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
@@ -122,6 +126,26 @@ public class RootResource extends AbstractConfigResource {
             final String error = "Could not get channel setting information";
             log.warn(error, e);
             return Response.serverError().entity(error).build();
+        }
+    }
+
+    /**
+     * Update field setting properties of a channel
+     */
+    @PUT
+    @Path("/channels/{id}/properties")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response saveChannelProperties(@PathParam("id") String channelId, Map<String, Object> properties) {
+        try {
+            final Session session = RequestContextProvider.get().getSession();
+            this.channelService.saveChannelProperties(session, channelId, properties);
+            HstConfigurationUtils.persistChanges(session);
+
+            return Response.ok().entity(properties).build();
+        } catch (RepositoryException | IllegalStateException e) {
+            log.error("Failed to saveChannelProperties channel", e);
+            return Response.serverError().build();
         }
     }
 

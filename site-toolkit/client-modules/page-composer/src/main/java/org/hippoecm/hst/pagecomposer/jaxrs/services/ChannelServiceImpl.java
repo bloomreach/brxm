@@ -17,21 +17,22 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import java.util.List;
-import java.util.function.Predicate;
+import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
-import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.channel.ChannelInfoClassProcessor;
+import org.hippoecm.hst.configuration.channel.ChannelPropertyMapper;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
 import org.slf4j.Logger;
@@ -63,6 +64,35 @@ public class ChannelServiceImpl implements ChannelService {
     public Channel getChannel(final String channelId) {
         final VirtualHost virtualHost = getCurrentVirtualHost();
         return getVirtualHosts().getChannelById(virtualHost.getHostGroupName(), channelId);
+    }
+
+    @Override
+    public void saveChannelProperties(Session session, final String channelId, Map<String, Object> properties) throws RepositoryException, IllegalStateException {
+        final Channel channel = getChannel(channelId);
+        final String channelPath = channel.getChannelPath();
+        if (StringUtils.isEmpty(channelPath)) {
+            throw new IllegalStateException("Path for the channel '" + channel.getId() + "' not found");
+        }
+
+        final Node channelNode = session.getNode(channelPath);
+        final Node channelPropsNode = getOrAddChannelPropsNode(channelNode);
+
+        final String channelInfoClassName = channel.getChannelInfoClassName();
+        try {
+            Class<? extends ChannelInfo> channelInfoClass = (Class<? extends ChannelInfo>) ChannelPropertyMapper.class.getClassLoader().loadClass(channelInfoClassName);
+            ChannelPropertyMapper.saveProperties(channelPropsNode, ChannelInfoClassProcessor.getProperties(channelInfoClass), properties);
+        } catch (ClassNotFoundException e) {
+            log.warn("Could not find channel info class " + channelInfoClassName, e);
+            throw new IllegalStateException("Could not find channel info class ", e);
+        }
+    }
+
+    private Node getOrAddChannelPropsNode(final Node channelNode) throws RepositoryException {
+        if (!channelNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
+            return channelNode.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
+        } else {
+            return channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
+        }
     }
 
     private VirtualHost getCurrentVirtualHost() {
