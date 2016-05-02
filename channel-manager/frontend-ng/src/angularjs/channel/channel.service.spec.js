@@ -410,6 +410,18 @@ describe('ChannelService', () => {
     expect(ChannelService.extractRenderPathInfo('/testContextPath/')).toBe('');
   });
 
+  it('uses the channel\'s mount path to generate the homepage renderPathInfo', () => {
+    channelMock.mountPath = '/mou/nt';
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+    expect(ChannelService.getHomePageRenderPathInfo()).toBe('/mou/nt');
+
+    delete channelMock.mountPath;
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+    expect(ChannelService.getHomePageRenderPathInfo()).toBe('');
+  });
+
   it('should log a warning trying to extract a renderPathInfo if there is no matching channel prefix', () => {
     ChannelService._load(channelMock);
     $rootScope.$digest();
