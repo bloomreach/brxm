@@ -64,6 +64,9 @@ public class Channel implements Serializable {
     private Calendar lastModified;
 
     private int hashCode;
+
+    private String channelPath;
+
     /**
      * {@link Channel} default constructor it is required for REST de/serialization 
      */
@@ -450,4 +453,11 @@ public class Channel implements Serializable {
         return b.toString();
     }
 
+    public void setChannelPath(final String channelPath) {
+        this.channelPath = channelPath;
+    }
+
+    public String getChannelPath() {
+        return channelPath;
+    }
 }

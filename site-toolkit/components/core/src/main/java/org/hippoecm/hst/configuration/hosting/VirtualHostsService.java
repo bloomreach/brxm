@@ -1054,6 +1054,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
         channel.setPreviewHstConfigExists(previewHstSite.hasPreviewConfiguration());
         channel.setWorkSpaceExists(hasWorkspace(mount));
 
+        channel.setChannelPath(mount.isPreview() ? mount.getChannelPath() : mount.getPreviewChannelPath());
+
         String mountPath = mount.getMountPath();
         channel.setLocale(mount.getLocale());
         channel.setMountId(mount.getIdentifier());
@@ -1137,6 +1139,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
         preview.setHstConfigPath(channel.getHstConfigPath() + "-preview");
         preview.setPreviewHstConfigExists(channel.isPreviewHstConfigExists());
         preview.setWorkSpaceExists(channel.isWorkspaceExists());
+        preview.setChannelPath(channel.getChannelPath());
         preview.setLocale(channel.getLocale());
         preview.setHstMountPoint(channel.getHstMountPoint());
         preview.setMountId(channel.getMountId());
