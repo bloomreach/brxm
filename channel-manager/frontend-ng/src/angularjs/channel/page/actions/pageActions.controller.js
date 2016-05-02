@@ -30,22 +30,51 @@ export class PageActionsCtrl {
 
     this.actions = [];
 
-    ['edit', 'add', 'delete', 'move', 'copy']
+    ['edit', 'copy', 'move', 'delete']
       .forEach((id) => {
         this.actions.push({
           id,
-          label: $translate.instant(`TOOLBAR_MENU_PAGES_${id.toUpperCase()}`),
           isEnabled: () => false,
         });
       });
 
-    this._findAction('add').isEnabled = () => ChannelService.hasWorkspace() && ChannelService.hasPrototypes();
+    this.addAction = {
+      id: 'add',
+      isEnabled: () => ChannelService.hasWorkspace() && ChannelService.hasPrototypes(),
+    };
+
+    this._findAction('edit').isEnabled = () => SiteMapItemService.isEditable();
     this._findAction('delete').isEnabled = () => SiteMapItemService.isEditable();
-    this._findAction('edit').isEnabled = () => SiteMapItemService.hasItem(); // TODO TBD
   }
 
   _findAction(id) {
     return this.actions.find((action) => action.id === id);
+  }
+
+  getLabel(action) {
+    let label = this.$translate.instant(`TOOLBAR_MENU_PAGE_${action.id.toUpperCase()}`);
+    if (action.isEnabled() && action.id !== 'delete') {
+      label += '...';
+    }
+    return label;
+  }
+
+  getPageNotEditableMarker(action) {
+    if (this.SiteMapItemService.isEditable() || action.id !== 'edit') {
+      return '';
+    }
+
+    const disclaimer = this.$translate.instant('TOOLBAR_MENU_PAGE_PAGE_NOT_EDITABLE');
+    return `- ${disclaimer}`;
+  }
+
+  getSitemapNotEditableMarker() {
+    if (this.addAction.isEnabled()) {
+      return '';
+    }
+
+    const disclaimer = this.$translate.instant('TOOLBAR_MENU_PAGE_SITEMAP_NOT_EDITABLE');
+    return `- ${disclaimer}`;
   }
 
   onOpenMenu() {

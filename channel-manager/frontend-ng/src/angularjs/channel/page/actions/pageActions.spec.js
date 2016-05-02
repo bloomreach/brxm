@@ -90,14 +90,13 @@ describe('PageActions', () => {
   it('displays a menu with 5 actions', () => {
     const PageActionsCtrl = compileDirectiveAndGetController();
 
-    expect(PageActionsCtrl.actions.length).toBe(5);
+    expect(PageActionsCtrl.actions.length).toBe(4);
     expect(PageActionsCtrl.actions[0].id).toBe('edit');
-    expect(PageActionsCtrl.actions[0].label).toBe('EDIT');
-    expect(PageActionsCtrl.actions[0].isEnabled()).toBe(false);
-    expect(PageActionsCtrl.actions[1].id).toBe('add');
-    expect(PageActionsCtrl.actions[2].id).toBe('delete');
-    expect(PageActionsCtrl.actions[3].id).toBe('move');
-    expect(PageActionsCtrl.actions[4].id).toBe('copy');
+    expect(PageActionsCtrl.actions[1].id).toBe('copy');
+    expect(PageActionsCtrl.actions[2].id).toBe('move');
+    expect(PageActionsCtrl.actions[3].id).toBe('delete');
+
+    expect(PageActionsCtrl.addAction.id).toBe('add');
   });
 
   it('calls the passed in callback when selecting an action', () => {
@@ -107,28 +106,34 @@ describe('PageActions', () => {
     expect($scope.onActionSelected).toHaveBeenCalledWith('page-edit');
 
     PageActionsCtrl.trigger(PageActionsCtrl.actions[1]);
-    expect($scope.onActionSelected).toHaveBeenCalledWith('page-add');
+    expect($scope.onActionSelected).toHaveBeenCalledWith('page-copy');
   });
 
   it('enables the add action if the current channel has both a workspace and prototypes', () => {
     const PageActionsCtrl = compileDirectiveAndGetController();
-    const addAction = PageActionsCtrl.actions.find((action) => action.id === 'add');
+    const addAction = PageActionsCtrl.addAction;
 
+    $translate.instant.calls.reset();
     ChannelService.hasWorkspace.and.returnValue(false);
     ChannelService.hasPrototypes.and.returnValue(false);
     expect(addAction.isEnabled()).toBe(false);
+    expect(PageActionsCtrl.getSitemapNotEditableMarker()).not.toBe('');
+    expect($translate.instant).toHaveBeenCalledWith('TOOLBAR_MENU_PAGE_SITEMAP_NOT_EDITABLE');
 
     ChannelService.hasWorkspace.and.returnValue(false);
     ChannelService.hasPrototypes.and.returnValue(true);
     expect(addAction.isEnabled()).toBe(false);
+    expect(PageActionsCtrl.getSitemapNotEditableMarker()).not.toBe('');
 
     ChannelService.hasWorkspace.and.returnValue(true);
     ChannelService.hasPrototypes.and.returnValue(false);
     expect(addAction.isEnabled()).toBe(false);
+    expect(PageActionsCtrl.getSitemapNotEditableMarker()).not.toBe('');
 
     ChannelService.hasWorkspace.and.returnValue(true);
     ChannelService.hasPrototypes.and.returnValue(true);
     expect(addAction.isEnabled()).toBe(true);
+    expect(PageActionsCtrl.getSitemapNotEditableMarker()).toBe('');
   });
 
   it('enables the delete action if the current page is editable', () => {
@@ -137,9 +142,40 @@ describe('PageActions', () => {
 
     SiteMapItemService.isEditable.and.returnValue(false);
     expect(deleteAction.isEnabled()).toBe(false);
+    expect(PageActionsCtrl.getPageNotEditableMarker(deleteAction)).toBe('');
 
     SiteMapItemService.isEditable.and.returnValue(true);
     expect(deleteAction.isEnabled()).toBe(true);
+    expect(PageActionsCtrl.getPageNotEditableMarker(deleteAction)).toBe('');
+  });
+
+  it('enables the edit action if the current page is editable', () => {
+    const PageActionsCtrl = compileDirectiveAndGetController();
+    const editAction = PageActionsCtrl.actions.find((action) => action.id === 'edit');
+
+    $translate.instant.calls.reset();
+    SiteMapItemService.isEditable.and.returnValue(false);
+    expect(editAction.isEnabled()).toBe(false);
+    expect(PageActionsCtrl.getPageNotEditableMarker(editAction)).not.toBe('');
+    expect($translate.instant).toHaveBeenCalledWith('TOOLBAR_MENU_PAGE_PAGE_NOT_EDITABLE');
+
+    SiteMapItemService.isEditable.and.returnValue(true);
+    expect(editAction.isEnabled()).toBe(true);
+    expect(PageActionsCtrl.getPageNotEditableMarker(editAction)).toBe('');
+  });
+
+  it('builds the action label correctly', () => {
+    const PageActionsCtrl = compileDirectiveAndGetController();
+    const editAction = PageActionsCtrl.actions.find((action) => action.id === 'edit');
+    const deleteAction = PageActionsCtrl.actions.find((action) => action.id === 'delete');
+
+    SiteMapItemService.isEditable.and.returnValue(false);
+    expect(PageActionsCtrl.getLabel(editAction).endsWith('...')).toBe(false);
+    expect(PageActionsCtrl.getLabel(deleteAction).endsWith('...')).toBe(false);
+
+    SiteMapItemService.isEditable.and.returnValue(true);
+    expect(PageActionsCtrl.getLabel(editAction).endsWith('...')).toBe(true);
+    expect(PageActionsCtrl.getLabel(deleteAction).endsWith('...')).toBe(false);
   });
 
   it('does nothing when not confirming the deletion of a page', () => {

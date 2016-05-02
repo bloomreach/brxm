@@ -23,10 +23,21 @@
   <md-menu-content width="4" class="qa-page-menu">
     <md-menu-item ng-repeat="action in pageActions.actions">
       <md-button class="qa-page-action-{{ action.id }}"
-                 aria-label="{{ action.label }}"
+                 aria-label="{{ pageActions.getLabel(action) }}"
                  ng-click="pageActions.trigger(action)"
                  ng-disabled="!action.isEnabled()">
-        {{ action.label }}
+        {{ pageActions.getLabel(action) }}
+        <span class="disabled-marker">&nbsp;{{ pageActions.getPageNotEditableMarker(action) }}</span>
+      </md-button>
+    </md-menu-item>
+    <md-menu-divider></md-menu-divider>
+    <md-menu-item>
+      <md-button class="qa-page-action-add"
+                 aria-label="{{ pageActions.getLabel(pageActions.addAction) }}"
+                 ng-click="pageActions.trigger(pageActions.addAction)"
+                 ng-disabled="!pageActions.addAction.isEnabled()">
+        {{ pageActions.getLabel(pageActions.addAction) }}
+        <span class="disabled-marker">&nbsp;{{ pageActions.getSitemapNotEditableMarker() }}</span>
       </md-button>
     </md-menu-item>
   </md-menu-content>
