@@ -27,7 +27,7 @@ import org.hippoecm.hst.core.parameters.FieldGroupList;
 public class ChannelInfoClassInfo {
 
     private String className;
-    private List<FieldGroupInfo> fieldsGroup;
+    private List<FieldGroupInfo> fieldGroups;
 
     /**
      * {@link ChannelInfoClassInfo} default constructor
@@ -35,9 +35,9 @@ public class ChannelInfoClassInfo {
     public ChannelInfoClassInfo() {
     }
 
-    public ChannelInfoClassInfo(String className, List<FieldGroupInfo> fieldsGroup) {
+    public ChannelInfoClassInfo(String className, List<FieldGroupInfo> fieldGroups) {
         this.className = className;
-        this.fieldsGroup = fieldsGroup;
+        this.fieldGroups = fieldGroups;
     }
 
     /**
@@ -61,19 +61,19 @@ public class ChannelInfoClassInfo {
     /**
      * Retrieve {@link FieldGroupList}
      * 
-     * @return The fieldsGroup
+     * @return The fieldGroups
      */
-    public List<FieldGroupInfo> getFieldsGroup() {
-        return fieldsGroup;
+    public List<FieldGroupInfo> getFieldGroups() {
+        return fieldGroups;
     }
 
     /**
      * Set {@link FieldGroupList}
      * 
-     * @param fieldsGroup the fieldsGroup to set
+     * @param fieldGroups the fieldGroups to set
      */
-    public void setFieldsGroup(List<FieldGroupInfo> fieldsGroup) {
-        this.fieldsGroup = fieldsGroup;
+    public void setFieldGroups(List<FieldGroupInfo> fieldGroups) {
+        this.fieldGroups = fieldGroups;
     }
 
 }
