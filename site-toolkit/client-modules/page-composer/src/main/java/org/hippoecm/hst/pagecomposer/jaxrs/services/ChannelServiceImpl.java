@@ -17,7 +17,9 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -30,9 +32,11 @@ import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelInfoClassProcessor;
 import org.hippoecm.hst.configuration.channel.ChannelPropertyMapper;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
 import org.slf4j.Logger;
@@ -44,7 +48,7 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public ChannelInfoClassInfo getChannelInfo(final String channelId) throws ChannelException {
         try {
-            Class<? extends ChannelInfo> channelInfoClass = getVirtualHosts().getChannelInfoClass(getCurrentVirtualHost().getHostGroupName(), channelId);
+            Class<? extends ChannelInfo> channelInfoClass = getAllVirtualHosts().getChannelInfoClass(getCurrentVirtualHost().getHostGroupName(), channelId);
             ChannelInfoClassInfo channelInfoClassInfo = null;
             if (channelInfoClass != null) {
                 channelInfoClassInfo = InformationObjectsBuilder.buildChannelInfoClassInfo(channelInfoClass);
@@ -63,7 +67,7 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public Channel getChannel(final String channelId) {
         final VirtualHost virtualHost = getCurrentVirtualHost();
-        return getVirtualHosts().getChannelById(virtualHost.getHostGroupName(), channelId);
+        return getAllVirtualHosts().getChannelById(virtualHost.getHostGroupName(), channelId);
     }
 
     @Override
@@ -87,6 +91,17 @@ public class ChannelServiceImpl implements ChannelService {
         }
     }
 
+    @Override
+    public List<Channel> getChannels(final boolean previewConfigRequired, final boolean workspaceRequired) {
+        final VirtualHost virtualHost = getCurrentVirtualHost();
+        return virtualHost.getVirtualHosts().getChannels(virtualHost.getHostGroupName())
+                .values()
+                .stream()
+                .filter(channel -> previewConfigRequiredFiltered(channel, previewConfigRequired))
+                .filter(channel -> workspaceFiltered(channel, workspaceRequired))
+                .collect(Collectors.toList());
+    }
+
     private Node getOrAddChannelPropsNode(final Node channelNode) throws RepositoryException {
         if (!channelNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
             return channelNode.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
@@ -99,7 +114,24 @@ public class ChannelServiceImpl implements ChannelService {
         return RequestContextProvider.get().getResolvedMount().getMount().getVirtualHost();
     }
 
-    private VirtualHosts getVirtualHosts() {
+    private VirtualHosts getAllVirtualHosts() {
         return RequestContextProvider.get().getVirtualHost().getVirtualHosts();
+    }
+
+    private boolean previewConfigRequiredFiltered(final Channel channel, final boolean previewConfigRequired) {
+        return !previewConfigRequired || channel.isPreview();
+    }
+
+    private boolean workspaceFiltered(final Channel channel, final boolean required) throws RuntimeRepositoryException {
+        if (!required) {
+            return true;
+        }
+        final Mount mount = getAllVirtualHosts().getMountByIdentifier(channel.getMountId());
+        final String workspacePath = mount.getHstSite().getConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
+        try {
+            return RequestContextProvider.get().getSession().nodeExists(workspacePath);
+        } catch (RepositoryException e) {
+            throw new RuntimeRepositoryException(e);
+        }
     }
 }

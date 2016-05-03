@@ -17,6 +17,7 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
@@ -33,4 +34,6 @@ public interface ChannelService {
     Channel getChannel(String channelId);
 
     void saveChannelProperties(Session session, String channelId, Map<String, Object> properties) throws RepositoryException;
+
+    List<Channel> getChannels(boolean previewConfigRequired, boolean workspaceRequired);
 }
