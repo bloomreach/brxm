@@ -164,7 +164,7 @@ describe('PageActionAdd', () => {
   });
 
   it('flashes a toast when failing to create a new page with a parent sitemap item id', () => {
-    SiteMapService.create.and.returnValue($q.reject({ }));
+    SiteMapService.create.and.returnValue($q.reject());
     const PageAddCtrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 

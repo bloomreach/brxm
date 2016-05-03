@@ -67,11 +67,16 @@ export class PageAddCtrl {
         this.ChannelService.recordOwnChange();
         this.onDone();
       })
-      .catch((extResponseRepresentation) => {
-        this.$log.info(extResponseRepresentation.message);
-        const params = extResponseRepresentation.data;
+      .catch((response) => {
+        // response might be undefined or null (for example when the network connection is lost)
+        response = response || {};
+
+        if (response.message) {
+          this.$log.info(response.message);
+        }
+
         let messageKey;
-        switch (extResponseRepresentation.errorCode) {
+        switch (response.errorCode) {
           case 'ITEM_ALREADY_LOCKED':
             messageKey = 'ERROR_PAGE_LOCKED_BY';
             break;
@@ -89,6 +94,7 @@ export class PageAddCtrl {
             break;
         }
 
+        const params = response.data;
         this._showError(messageKey, params);
       });
   }
