@@ -21,20 +21,20 @@ describe('ChangesMenuCtrl', () => {
   let $q;
   let ChangesMenuCtrl;
   let $rootScope;
-  let $controller;
+  let $compile;
 
   beforeEach(() => {
     module('hippo-cm');
 
     inject((
-      _$controller_,
+      _$compile_,
       _$rootScope_,
       _$q_,
       _ChannelService_,
       _DialogService_,
       _HippoIframeService_
     ) => {
-      $controller = _$controller_;
+      $compile = _$compile_;
       $q = _$q_;
       ChannelService = _ChannelService_;
       DialogService = _DialogService_;
@@ -50,9 +50,14 @@ describe('ChangesMenuCtrl', () => {
     spyOn(HippoIframeService, 'reload');
     spyOn(DialogService, 'confirm').and.callThrough();
 
-    ChangesMenuCtrl = $controller('ChangesMenuCtrl', {
-      scope: $rootScope.$new(),
-    });
+    const el = angular.element(`
+      <changes-menu on-manage-changes="">
+      </changes-menu>
+    `);
+    $compile(el)($rootScope.$new());
+    $rootScope.$apply();
+
+    ChangesMenuCtrl = el.controller('changes-menu');
   });
 
   it('publishes changes', () => {
