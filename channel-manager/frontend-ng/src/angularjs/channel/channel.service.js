@@ -47,7 +47,6 @@ export class ChannelService {
     this.CmsService.subscribe('channel-changed-in-extjs', this._onChannelChanged, this);
 
     this.CmsService.subscribe('load-channel', (channel) => {
-      console.log(channel);
       this.HstService.getChannel(channel.id).then((updatedChannel) => {
         this._load(updatedChannel).then((channelId) => {
           this.$state.go('hippo-cm.channel', { channelId }, { reload: true });
@@ -71,7 +70,7 @@ export class ChannelService {
   _setChannel(channel) {
     this.channel = channel;
     this.channelPrefix = this._makeChannelPrefix(); // precompute to be more efficient
-    this.CatalogService.load(this._getMountId());
+    this.CatalogService.load(this.getMountId());
     this.SiteMapService.load(channel.siteMapId);
     this._augmentChannelWithPrototypeInfo();
   }
@@ -164,7 +163,7 @@ export class ChannelService {
   }
 
   createPreviewConfiguration() {
-    return this.HstService.doPost(null, this._getMountId(), 'edit')
+    return this.HstService.doPost(null, this.getMountId(), 'edit')
       .then(() => {
         this.channel.previewHstConfigExists = true;
       });
@@ -185,7 +184,7 @@ export class ChannelService {
   }
 
   publishOwnChanges() {
-    return this.HstService.doPost(null, this._getMountId(), 'publish')
+    return this.HstService.doPost(null, this.getMountId(), 'publish')
       .then((response) => {
         this._resetOwnChange();
         return response;
@@ -193,7 +192,7 @@ export class ChannelService {
   }
 
   discardOwnChanges() {
-    return this.HstService.doPost(null, this._getMountId(), 'discard')
+    return this.HstService.doPost(null, this.getMountId(), 'discard')
       .then((response) => {
         this._resetOwnChange();
         return response;
@@ -220,16 +219,20 @@ export class ChannelService {
   }
 
   getNewPageModel() {
-    return this.HstService.doGet(this._getMountId(), 'newpagemodel')
+    return this.HstService.doGet(this.getMountId(), 'newpagemodel')
       .then((response) => response.data);
   }
 
-  _getMountId() {
+  getMountId() {
     return this.channel.mountId;
   }
 
   _resetOwnChange() {
     this.channel.changedBySet.splice(this.channel.changedBySet.indexOf(this.ConfigService.cmsUser), 1);
     this.CmsService.publish('channel-changed-in-angular');
+  }
+
+  resetUserChanges(user) {
+    this.channel.changedBySet.splice(this.channel.changedBySet.indexOf(user), 1);
   }
 }

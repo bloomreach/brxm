@@ -16,23 +16,40 @@
 
 export class ChannelCtrl {
 
-  constructor($log, $scope, $translate, ChannelService, DialogService, PageMetaDataService, ScalingService,
-              SessionService, ComponentAdderService, ConfigService, HippoIframeService, FeedbackService, SiteMapService) {
+  constructor(
+      $timeout,
+      $log,
+      $scope,
+      $translate,
+      ChannelService,
+      CmsService,
+      ComponentAdderService,
+      ConfigService,
+      DialogService,
+      FeedbackService,
+      HippoIframeService,
+      PageMetaDataService,
+      ScalingService,
+      SessionService,
+      SiteMapService
+    ) {
     'ngInject';
 
+
+    this.$timeout = $timeout;
     this.$log = $log;
     this.$scope = $scope;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
+    this.CmsService = CmsService;
+    this.ConfigService = ConfigService;
     this.DialogService = DialogService;
+    this.FeedbackService = FeedbackService;
+    this.HippoIframeService = HippoIframeService;
     this.PageMetaDataService = PageMetaDataService;
     this.ScalingService = ScalingService;
     this.SessionService = SessionService;
-    this.ConfigService = ConfigService;
-    this.HippoIframeService = HippoIframeService;
-    this.FeedbackService = FeedbackService;
     this.SiteMapService = SiteMapService;
-
     this.isEditMode = false;
     this.isCreatingPreview = false;
 
@@ -128,5 +145,7 @@ export class ChannelCtrl {
 
   hideSubpage() {
     delete this.currentSubpage;
+    this.CmsService.publish('channel-changed-in-angular');
+    this.HippoIframeService.reload();
   }
 }

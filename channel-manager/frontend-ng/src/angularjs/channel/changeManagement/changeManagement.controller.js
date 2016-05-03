@@ -1,5 +1,5 @@
-/*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  /*
+   * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,36 +15,61 @@
  */
 
 export class ChangeManagementCtrl {
-  constructor(ChannelService) {
+  constructor(ChannelService, HstService, CmsService) {
     'ngInject';
 
-    this.changedBySet = ChannelService.getChannel().changedBySet;
-    this.selectedChanges = [];
+    this.ChannelService = ChannelService;
+    this.HstService = HstService;
+    this.CmsService = CmsService;
+
+    this.usersWithChanges = ChannelService.getChannel().changedBySet;
+    this.selectedUsers = [];
   }
 
   publishChanges() {
-    this.onDone();
+    const url = 'userswithchanges/publish';
+    this.HstService.doPost({ data: this.selectedUsers }, this.ChannelService.getMountId(), url)
+      .then(() => this._resetChanges());
   }
 
   discardChanges() {
+    const url = 'userswithchanges/discard';
+    this.HstService.doPost({ data: this.selectedUsers }, this.ChannelService.getMountId(), url)
+      .then(() => this._resetChanges());
+  }
+
+  _resetChanges() {
+    this.selectedUsers.forEach((user) => {
+      this.ChannelService.resetUserChanges(user);
+    });
+
+    this.selectedUsers = [];
     this.onDone();
   }
 
+  areAllChecked() {
+    return this.selectedUsers.length === this.usersWithChanges.length;
+  }
+
   toggleAll() {
-    if (this.selectedChanges.length === this.changedBySet.length) {
-      this.selectedChanges = [];
+    if (this.selectedUsers.length === this.usersWithChanges.length) {
+      this.selectedUsers = [];
     } else {
-      this.selectedChanges = this.changedBySet;
+      this.selectedUsers = this.usersWithChanges;
     }
   }
 
-  toggle(changedBy) {
-    const index = this.selectedChanges.findIndex((element) => element === changedBy);
+  checked(user) {
+    return this.selectedUsers.includes(user);
+  }
+
+  toggle(user) {
+    const index = this.selectedUsers.findIndex((element) => element === user);
 
     if (index !== -1) {
-      this.selectedChanges.splice(index, 1);
+      this.selectedUsers.splice(index, 1);
     } else {
-      this.selectedChanges.push(changedBy);
+      this.selectedUsers.push(user);
     }
   }
 }

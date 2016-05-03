@@ -18,6 +18,7 @@ export class ChangesMenuCtrl {
   constructor(
       $translate,
       ChannelService,
+      ConfigService,
       DialogService,
       HippoIframeService,
     ) {
@@ -26,6 +27,8 @@ export class ChangesMenuCtrl {
     this.ChannelService = ChannelService;
     this.DialogService = DialogService;
     this.HippoIframeService = HippoIframeService;
+
+    this.showManageChanges = ConfigService.canManageChanges;
   }
 
   publish() {

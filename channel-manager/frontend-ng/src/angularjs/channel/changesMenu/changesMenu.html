@@ -38,7 +38,7 @@
       </md-button>
     </md-menu-item>
 
-    <md-menu-item>
+    <md-menu-item ng-if="changes.showManageChanges">
       <md-button aria-label="{{ 'TOOLBAR_MENU_MANAGE_CHANGES' | translate }}"
           ng-click="changes.onManageChanges()">
         {{ 'TOOLBAR_MENU_MANAGE_CHANGES' | translate }}

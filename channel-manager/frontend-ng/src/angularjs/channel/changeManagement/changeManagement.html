@@ -1,6 +1,7 @@
 <md-toolbar class="qa-toolbar">
   <div class="md-toolbar-tools">
     <md-button ng-click="changeMan.onDone()">
+      <md-icon class="material-icons">keyboard_backspace</md-icon>
       Back
     </md-button>
 
@@ -15,21 +16,22 @@
 <md-content layout-padding>
   <form>
     <md-checkbox ng-click="changeMan.toggleAll()"
-        md-indeterminate>
+        md-indeterminate="!changeMan.areAllChecked()"
+        ng-checked="changeMan.areAllChecked()">
       Toggle all
     </md-checkbox>
-    <div ng-repeat="changedBy in changeMan.changedBySet">
-      <md-checkbox ng-checked="changeMan.checked(changeBy)"
-          ng-click="changeMan.toggle(changedBy)">
-        {{changedBy}}
+    <div ng-repeat="user in changeMan.usersWithChanges">
+      <md-checkbox ng-checked="changeMan.checked(user)"
+          ng-click="changeMan.toggle(user)">
+        {{user}}
       </md-checkbox>
     </div>
 
-    <md-button ng-click="changeMan.onPublishChanges()">
+    <md-button ng-click="changeMan.publishChanges()">
       Publish
     </md-button>
 
-    <md-button ng-click="changeMan.onDiscardChanges()">
+    <md-button ng-click="changeMan.discardChanges()">
       Discard
     </md-button>
   </form>
