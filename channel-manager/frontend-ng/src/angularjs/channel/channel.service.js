@@ -223,6 +223,14 @@ export class ChannelService {
       .then((response) => response.data);
   }
 
+  getFieldGroups() {
+    return this.HstService.getChannelInfo(this.channel.id).then((channelInfo) => channelInfo.fieldGroups);
+  }
+
+  saveProperties(properties) {
+    return this.HstService.saveChannelProperties(this.channel.id, properties);
+  }
+
   _getMountId() {
     return this.channel.mountId;
   }

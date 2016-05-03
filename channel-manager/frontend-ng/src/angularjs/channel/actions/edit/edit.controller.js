@@ -15,16 +15,29 @@
  */
 
 export class ChannelEditCtrl {
-  constructor($translate, ChannelService) {
+  constructor($translate, $scope, ChannelService) {
     'ngInject';
+    this.ChannelService = ChannelService;
 
     this.pageTitle = $translate.instant('SUBPAGE_CHANNEL_EDIT_TITLE', {
       channelName: ChannelService.getName(),
     });
+
+    ChannelService.getFieldGroups().then((fieldGroups) => {
+      this.fieldGroups = fieldGroups;
+    });
+
+    this.fields = ChannelService.getChannel().properties;
   }
 
   save() {
-    this.onDone();
+    this.ChannelService.saveProperties(this.fields).then(() => {
+      this.onDone();
+    });
+  }
+
+  getFieldGroups() {
+    return this.fieldGroups;
   }
 
   back() {
