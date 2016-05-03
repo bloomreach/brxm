@@ -39,9 +39,7 @@ export class ChannelService {
     this.ConfigService = ConfigService;
     this.CmsService = CmsService;
     this.SiteMapService = SiteMapService;
-  }
 
-  initialize() {
     this.channel = {};
 
     this.CmsService.subscribe('channel-changed-in-extjs', this._onChannelChanged, this);
@@ -59,6 +57,7 @@ export class ChannelService {
     });
   }
 
+  initialize() {
     this.CmsService.subscribe('load-channel', (channel) => {
       this.HstService.getChannel(channel.id).then((updatedChannel) => {
         this._load(updatedChannel).then((channelId) => {
@@ -74,15 +73,9 @@ export class ChannelService {
     this.CmsService.publish('reload-channel');
   }
 
-  _onChannelChanged(channel) {
-    this.$rootScope.$apply(() => {
-      this.channel = channel;
-    });
-  }
-
   _setChannel(channel) {
     this.channel = channel;
-    this.channelPrefix = this._makeChannelPrefix(); // precompute to be more efficient
+    this.channelPrefix = this.makeContextPrefix(channel.contextPath); // precompute to be more efficient
     this.CatalogService.load(this.getMountId());
     this.SiteMapService.load(channel.siteMapId);
     this._augmentChannelWithPrototypeInfo();
