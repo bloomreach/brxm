@@ -1,5 +1,5 @@
-  /*
-   * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+/*
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,16 +29,16 @@ export class ChangeManagementCtrl {
   publishChanges() {
     const url = 'userswithchanges/publish';
     this.HstService.doPost({ data: this.selectedUsers }, this.ChannelService.getMountId(), url)
-      .then(() => this._resetChanges());
+      .then(() => this.resetChanges());
   }
 
   discardChanges() {
     const url = 'userswithchanges/discard';
     this.HstService.doPost({ data: this.selectedUsers }, this.ChannelService.getMountId(), url)
-      .then(() => this._resetChanges());
+      .then(() => this.resetChanges());
   }
 
-  _resetChanges() {
+  resetChanges() {
     this.selectedUsers.forEach((user) => {
       this.ChannelService.resetUserChanges(user);
     });
@@ -47,29 +47,44 @@ export class ChangeManagementCtrl {
     this.onDone();
   }
 
-  areAllChecked() {
+  isChecked(user) {
+    return this.selectedUsers.includes(user);
+  }
+
+  checkUser(user) {
+    this.selectedUsers.push(user);
+  }
+
+  uncheckUser(user) {
+    const index = this.selectedUsers.findIndex((element) => element === user);
+    this.selectedUsers.splice(index, 1);
+  }
+
+  toggle(user) {
+    if (this.selectedUsers.includes(user)) {
+      this.uncheckUser(user);
+    } else {
+      this.checkUser(user);
+    }
+  }
+
+  allAreChecked() {
     return this.selectedUsers.length === this.usersWithChanges.length;
   }
 
   toggleAll() {
-    if (this.selectedUsers.length === this.usersWithChanges.length) {
-      this.selectedUsers = [];
+    if (this.allAreChecked()) {
+      this.usersWithChanges.forEach((user) => {
+        if (this.isChecked(user)) {
+          this.uncheckUser(user);
+        }
+      });
     } else {
-      this.selectedUsers = this.usersWithChanges;
-    }
-  }
-
-  checked(user) {
-    return this.selectedUsers.includes(user);
-  }
-
-  toggle(user) {
-    const index = this.selectedUsers.findIndex((element) => element === user);
-
-    if (index !== -1) {
-      this.selectedUsers.splice(index, 1);
-    } else {
-      this.selectedUsers.push(user);
+      this.usersWithChanges.forEach((user) => {
+        if (!this.isChecked(user)) {
+          this.checkUser(user);
+        }
+      });
     }
   }
 }

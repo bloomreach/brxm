@@ -28,15 +28,13 @@ describe('ChannelCtrl', () => {
   let SessionService;
   let ChannelCtrl;
   let HippoIframeService;
-  let SiteMapService;
   let $rootScope;
   let $q;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$q_, _ConfigService_, _DialogService_, _FeedbackService_, _SessionService_,
-            _SiteMapService_) => {
+    inject(($controller, _$rootScope_, _$q_, _ConfigService_, _DialogService_, _FeedbackService_, _SessionService_) => {
       const resolvedPromise = _$q_.when();
 
       $rootScope = _$rootScope_;
@@ -44,7 +42,6 @@ describe('ChannelCtrl', () => {
       ConfigService = _ConfigService_;
       FeedbackService = _FeedbackService_;
       SessionService = _SessionService_;
-      SiteMapService = _SiteMapService_;
 
       ChannelService = jasmine.createSpyObj('ChannelService', [
         'hasPreviewConfiguration',

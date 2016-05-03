@@ -16,12 +16,12 @@
 <md-content layout-padding>
   <form>
     <md-checkbox ng-click="changeMan.toggleAll()"
-        md-indeterminate="!changeMan.areAllChecked()"
-        ng-checked="changeMan.areAllChecked()">
+        md-indeterminate="!changeMan.allAreChecked()"
+        ng-checked="changeMan.allAreChecked()">
       Toggle all
     </md-checkbox>
     <div ng-repeat="user in changeMan.usersWithChanges">
-      <md-checkbox ng-checked="changeMan.checked(user)"
+      <md-checkbox ng-checked="changeMan.isChecked(user)"
           ng-click="changeMan.toggle(user)">
         {{user}}
       </md-checkbox>
