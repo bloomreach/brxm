@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -48,7 +46,7 @@ public class DocMetaDataPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
-                WorkflowDescriptorModel wdm = getModel();
+                final WorkflowDescriptorModel wdm = getModel();
                 return new DocumentMetadataDialog(wdm);
             }
 
