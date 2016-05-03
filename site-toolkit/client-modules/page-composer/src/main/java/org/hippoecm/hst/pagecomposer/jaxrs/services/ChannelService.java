@@ -25,11 +25,11 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
-import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 
 public interface ChannelService {
 
-    ChannelInfoClassInfo getChannelInfo(String channelId) throws ChannelException;
+    ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale) throws ChannelException;
 
     Channel getChannel(String channelId);
 

@@ -16,6 +16,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
@@ -34,15 +35,16 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.FeaturesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
-import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,10 +108,13 @@ public class RootResource extends AbstractConfigResource {
     @GET
     @Path("/channels/{id}/info")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getChannelInfo(@PathParam("id") String channelId) {
+    public Response getChannelInfoDescription(@PathParam("id") String channelId, @QueryParam("locale") String locale) {
+        if (StringUtils.isEmpty(locale)) {
+            locale = Locale.ENGLISH.getLanguage();
+        }
         try {
-            final ChannelInfoClassInfo channelInfo = channelService.getChannelInfo(channelId);
-            return Response.ok().entity(channelInfo).build();
+            final ChannelInfoDescription channelInfoDescription = channelService.getChannelInfoDescription(channelId, locale);
+            return Response.ok().entity(channelInfoDescription).build();
         } catch (ChannelException e) {
             final String error = "Could not get channel setting information";
             log.warn(error, e);

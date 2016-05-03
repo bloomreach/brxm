@@ -17,8 +17,12 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
@@ -37,6 +41,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
 import org.slf4j.Logger;
@@ -46,14 +51,15 @@ public class ChannelServiceImpl implements ChannelService {
     private static final Logger log = LoggerFactory.getLogger(ChannelServiceImpl.class);
 
     @Override
-    public ChannelInfoClassInfo getChannelInfo(final String channelId) throws ChannelException {
+    public ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale) throws ChannelException {
         try {
             Class<? extends ChannelInfo> channelInfoClass = getAllVirtualHosts().getChannelInfoClass(getCurrentVirtualHost().getHostGroupName(), channelId);
-            ChannelInfoClassInfo channelInfoClassInfo = null;
-            if (channelInfoClass != null) {
-                channelInfoClassInfo = InformationObjectsBuilder.buildChannelInfoClassInfo(channelInfoClass);
+
+            if (channelInfoClass == null) {
+                throw new ChannelException("Cannot find ChannelInfo class of the channel with id '" + channelId + "'");
             }
-            return channelInfoClassInfo;
+            final ChannelInfoClassInfo channelInfoClassInfo = InformationObjectsBuilder.buildChannelInfoClassInfo(channelInfoClass);
+            return new ChannelInfoDescription(channelInfoClassInfo.getFieldGroups(), getLocalizedResources(channelId, locale));
         } catch (ChannelException e) {
             if (log.isDebugEnabled()) {
                 log.info("Failed to retrieve channel info class for channel with id '{}'", channelId, e);
@@ -62,6 +68,16 @@ public class ChannelServiceImpl implements ChannelService {
             }
             throw e;
         }
+    }
+
+    private Map<String, String> getLocalizedResources(final String channelId, final String language) {
+        final ResourceBundle resourceBundle = getAllVirtualHosts().getResourceBundle(getChannel(channelId), new Locale(language));
+        if (resourceBundle == null) {
+            return Collections.EMPTY_MAP;
+        }
+
+        return resourceBundle.keySet().stream()
+                .collect(Collectors.toMap(Function.identity(), resourceBundle::getString));
     }
 
     @Override

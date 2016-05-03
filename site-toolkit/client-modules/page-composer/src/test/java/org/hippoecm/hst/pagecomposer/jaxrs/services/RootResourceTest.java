@@ -17,7 +17,9 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
@@ -26,7 +28,8 @@ import javax.ws.rs.Path;
 import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
+import org.hippoecm.hst.rest.beans.FieldGroupInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.jaxrs.cxf.hst.HstCXFTestFixtureHelper;
@@ -37,7 +40,7 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.Matchers.equalTo;
-
+import static org.hamcrest.Matchers.hasEntry;
 
 public class RootResourceTest extends AbstractResourceTest {
     private static final String MOCK_REST_PATH = "test-rootresource/";
@@ -69,32 +72,64 @@ public class RootResourceTest extends AbstractResourceTest {
     }
 
     @Test
-    public void can_get_channelsettings_information() throws ChannelException {
-        final ChannelInfoClassInfo channelFoo = new ChannelInfoClassInfo();
-        channelFoo.setClassName("org.onehippo.exampleproject.FooChannelInfo");
+    public void can_get_channel_info_description() throws ChannelException {
+        final Map<String, String> i18nResources = new HashMap<>();
+        i18nResources.put("field1", "Field 1");
+        i18nResources.put("field2", "Field 2");
+        final List<FieldGroupInfo> fieldGroups = new ArrayList<>();
+        final String[] fieldNames = {"field1", "field2"};
+        fieldGroups.add(new FieldGroupInfo(fieldNames, "fieldGroup1"));
+        fieldGroups.add(new FieldGroupInfo(fieldNames, "fieldGroup2"));
 
-        expect(channelService.getChannelInfo("channel-foo"))
-                .andReturn(channelFoo);
+        final ChannelInfoDescription channelInfoDescription = new ChannelInfoDescription(fieldGroups, i18nResources);
+
+        expect(channelService.getChannelInfoDescription("channel-foo", "nl"))
+                .andReturn(channelInfoDescription);
+        replay(channelService);
+
+        when()
+            .get(MOCK_REST_PATH + "channels/channel-foo/info?locale=nl")
+        .then()
+            .statusCode(200)
+            .body("fieldGroups[0].titleKey", equalTo("fieldGroup1"),
+                    "fieldGroups[1].titleKey", equalTo("fieldGroup2"),
+                    "i18nResources", hasEntry("field1", "Field 1"),
+                    "i18nResources", hasEntry("field2", "Field 2"));
+
+        verify(channelService);
+    }
+
+    @Test
+    public void can_get_channel_info_description_with_default_locale() throws ChannelException {
+        final Map<String, String> i18nResources = new HashMap<>();
+        i18nResources.put("field1", "Field 1");
+        final List<FieldGroupInfo> fieldGroups = new ArrayList<>();
+        fieldGroups.add(new FieldGroupInfo(null, "fieldGroup1"));
+
+        final ChannelInfoDescription channelInfoDescription = new ChannelInfoDescription(fieldGroups, i18nResources);
+
+        expect(channelService.getChannelInfoDescription("channel-foo", "en"))
+                .andReturn(channelInfoDescription);
         replay(channelService);
 
         when()
             .get(MOCK_REST_PATH + "channels/channel-foo/info")
         .then()
             .statusCode(200)
-            .body("className", equalTo("org.onehippo.exampleproject.FooChannelInfo"));
+            .body("fieldGroups[0].titleKey", equalTo("fieldGroup1"),
+                    "i18nResources", hasEntry("field1", "Field 1"));
 
         verify(channelService);
     }
 
-
     @Test
     public void cannot_get_channelsettings_information_when_sever_has_error() throws ChannelException {
-        expect(channelService.getChannelInfo("channel-foo"))
+        expect(channelService.getChannelInfoDescription("channel-foo", "en"))
                 .andThrow(new ChannelException("unknown error"));
         replay(channelService);
 
         when()
-            .get(MOCK_REST_PATH + "channels/channel-foo/info")
+            .get(MOCK_REST_PATH + "channels/channel-foo/info?locale=en")
         .then()
             .statusCode(500)
             .body(equalTo("Could not get channel setting information"));
