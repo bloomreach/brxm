@@ -23,8 +23,9 @@ export class ChannelEditCtrl {
       channelName: ChannelService.getName(),
     });
 
-    ChannelService.getFieldGroups().then((fieldGroups) => {
-      this.fieldGroups = fieldGroups;
+    ChannelService.getChannelInfoDescription().then((channelInfoDescription) => {
+      this.fieldGroups = channelInfoDescription.fieldGroups;
+      this.labels = channelInfoDescription.i18nResources;
     });
 
     this.fields = ChannelService.getChannel().properties;
@@ -38,6 +39,10 @@ export class ChannelEditCtrl {
 
   getFieldGroups() {
     return this.fieldGroups;
+  }
+
+  getLabel(fieldName) {
+    return this.labels[fieldName];
   }
 
   back() {

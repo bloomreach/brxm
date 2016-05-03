@@ -15,13 +15,14 @@
  */
 
 export class ChannelService {
-  constructor($log, $rootScope, $http, $state, SessionService, CatalogService, HstService, ConfigService, CmsService, SiteMapService) {
+  constructor($log, $rootScope, $http, $state, $translate, SessionService, CatalogService, HstService, ConfigService, CmsService, SiteMapService) {
     'ngInject';
 
     this.$log = $log;
     this.$rootScope = $rootScope;
     this.$http = $http;
     this.$state = $state;
+    this.$translate = $translate;
 
     this.SessionService = SessionService;
     this.CatalogService = CatalogService;
@@ -223,8 +224,8 @@ export class ChannelService {
       .then((response) => response.data);
   }
 
-  getFieldGroups() {
-    return this.HstService.getChannelInfo(this.channel.id).then((channelInfo) => channelInfo.fieldGroups);
+  getChannelInfoDescription() {
+    return this.HstService.getChannelInfoDescription(this.channel.id, this.$translate.use());
   }
 
   saveProperties(properties) {

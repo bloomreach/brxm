@@ -50,8 +50,8 @@ export class HstService {
     return this.doGet(this.config.rootUuid, 'channels', id);
   }
 
-  getChannelInfo(id) {
-    return this.doGet(this.config.rootUuid, 'channels', id, 'info');
+  getChannelInfoDescription(id, currentLocale) {
+    return this._callHst('GET', this.config.rootUuid, ['channels', id, 'info'], null, { locale: currentLocale });
   }
 
   saveChannelProperties(id, properties) {

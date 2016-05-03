@@ -29,11 +29,11 @@
   <form name="form" flex="initial" class="qa-channel-edit subpage-form">
 
     <div ng-repeat="fieldGroup in channelEdit.getFieldGroups()">
-      <div>Field group: {{ fieldGroup.titleKey }}</div>
+      <div>Field group: {{ channelEdit.getLabel(fieldGroup.titleKey) }}</div>
 
       <div ng-repeat="fieldName in fieldGroup.value">
         <md-input-container class="md-block" flex>
-          <label>{{ fieldName }}</label>
+          <label>{{ channelEdit.getLabel(fieldName) }}</label>
           <input type="text" ng-model="channelEdit.fields[fieldName]">
         </md-input-container>
       </div>
