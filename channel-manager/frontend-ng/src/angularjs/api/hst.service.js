@@ -26,9 +26,18 @@ function removeTrailingSlashes(path) {
 }
 
 function concatPaths(path1, path2) {
-  const path1Trimmed = removeTrailingSlashes(path1.trim());
-  const path2Trimmed = removeLeadingSlashes(path2.trim());
-  return `${path1Trimmed}/${path2Trimmed}`;
+  if (path1) {
+    if (path2) {
+      const path1Trimmed = removeTrailingSlashes(path1.trim());
+      const path2Trimmed = removeLeadingSlashes(path2.trim());
+      return `${path1Trimmed}/${path2Trimmed}`;
+    }
+    return path1.trim();
+  }
+  if (path2) {
+    return path2.trim();
+  }
+  return '';
 }
 
 export class HstService {

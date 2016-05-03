@@ -212,7 +212,7 @@ describe('PageActionMove', () => {
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_LOCKED_BY', lockedError.data,
       PageMoveCtrl.feedbackParent);
 
-    SiteMapItemService.updateItem.and.returnValue($q.reject({ errorCode: 'ITEM_NOT_IN_PREVIEW' }));
+    SiteMapItemService.updateItem.and.returnValue($q.reject({ errorCode: 'ITEM_NOT_FOUND' }));
     PageMoveCtrl.move();
     $rootScope.$digest();
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_PARENT_MISSING', undefined,
