@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions.dialogs;
 
-import java.text.Format;
-import java.text.MessageFormat;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -36,6 +36,7 @@ import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.StateIconAttributes;
 import org.hippoecm.frontend.plugins.reviewedactions.model.Revision;
 import org.hippoecm.frontend.plugins.reviewedactions.model.RevisionHistory;
+import org.hippoecm.frontend.plugins.standards.datetime.DateTimePrinter;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
@@ -147,8 +148,8 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
                 IModel labelModel = new IModel() {
                     @Override
                     public Object getObject() {
-                        Format format = new MessageFormat("{0,date} {0,time}", getLocale());
-                        return format.format(new Object[] { model.getObject().getCreationDate() });
+                        final Date creationDate = model.getObject().getCreationDate();
+                        return DateTimePrinter.of(creationDate).print(FormatStyle.LONG, FormatStyle.MEDIUM);
                     }
 
                     @Override

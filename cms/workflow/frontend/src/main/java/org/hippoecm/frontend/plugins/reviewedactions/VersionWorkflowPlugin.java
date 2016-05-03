@@ -1,12 +1,12 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,8 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.time.format.FormatStyle;
 import java.util.Calendar;
-import java.util.Date;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -37,6 +37,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.HistoryDialog;
+import org.hippoecm.frontend.plugins.standards.datetime.DateTimePrinter;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
@@ -66,14 +67,14 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected IModel getTitle() {
-                return new StringResourceModel("created", this, null, new LoadableDetachableModel<Date>() {
+                return new StringResourceModel("created", this, null, new LoadableDetachableModel<String>() {
 
-                    protected Date load() {
+                    protected String load() {
                         try {
                             Node frozenNode = ((WorkflowDescriptorModel) VersionWorkflowPlugin.this.getDefaultModel()).getNode();
                             Node versionNode = frozenNode.getParent();
                             Calendar calendar = versionNode.getProperty("jcr:created").getDate();
-                            return calendar.getTime();
+                            return DateTimePrinter.of(calendar).print(FormatStyle.LONG, FormatStyle.MEDIUM);
                         } catch (ValueFormatException e) {
                             log.error("Value is not a date", e);
                         } catch (PathNotFoundException e) {

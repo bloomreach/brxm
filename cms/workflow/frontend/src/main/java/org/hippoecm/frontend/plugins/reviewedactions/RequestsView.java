@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.text.DateFormat;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +41,7 @@ import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.reviewedactions.model.Request;
 import org.hippoecm.frontend.plugins.reviewedactions.model.RequestModel;
+import org.hippoecm.frontend.plugins.standards.datetime.DateTimePrinter;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
@@ -55,10 +56,6 @@ public class RequestsView extends RepeatingView {
 
     static final Logger log = LoggerFactory.getLogger(RequestsView.class);
 
-    private static final long serialVersionUID = 1L;
-
-    private final DateFormat dateFormatFull = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL,
-            getSession().getLocale());
     private final IPluginContext context;
 
     public RequestsView(String id, WorkflowDescriptorModel model, IPluginContext context) {
@@ -112,7 +109,8 @@ public class RequestsView extends RepeatingView {
                 Date schedule = request.getSchedule();
                 String state = request.getState();
 
-                final String parameter = schedule != null ? dateFormatFull.format(schedule) : "??";
+                final String parameter = schedule != null ?
+                        DateTimePrinter.of(schedule).appendDST().print(FormatStyle.FULL) : "??";
                 return new StringResourceModel("state-" + state, this, null, "unknown", parameter);
             }
 
