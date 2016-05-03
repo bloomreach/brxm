@@ -29,6 +29,7 @@ export class ChangesMenuCtrl {
     this.HippoIframeService = HippoIframeService;
 
     this.showManageChanges = ConfigService.canManageChanges;
+    this.hasOwnChanges = ChannelService.getChannel().changedBySet.indexOf(ConfigService.cmsUser) !== -1;
   }
 
   publish() {

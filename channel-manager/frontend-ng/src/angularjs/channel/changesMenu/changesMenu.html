@@ -24,14 +24,14 @@
 
   <md-menu-content width="4"
       class="qa-changes-menu">
-    <md-menu-item>
+      <md-menu-item ng-if="changes.hasOwnChanges">
       <md-button aria-label="{{ 'TOOLBAR_MENU_CHANGES_PUBLISH' | translate }}"
           ng-click="changes.publish()">
         {{ 'TOOLBAR_MENU_CHANGES_PUBLISH' | translate }}
       </md-button>
     </md-menu-item>
 
-    <md-menu-item>
+    <md-menu-item ng-if="changes.hasOwnChanges">
       <md-button aria-label="{{ 'TOOLBAR_MENU_CHANGES_DISCARD' | translate }}"
           ng-click="changes.discard()">
         {{ 'TOOLBAR_MENU_CHANGES_DISCARD' | translate }}

@@ -22,7 +22,6 @@ describe('ChannelCtrl', () => {
   let ChannelService;
   let ComponentsService;
   let ScalingService;
-  let ConfigService;
   let FeedbackService;
   let PageMetaDataService;
   let SessionService;
@@ -34,12 +33,11 @@ describe('ChannelCtrl', () => {
   beforeEach(() => {
     module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$q_, _ConfigService_, _DialogService_, _FeedbackService_, _SessionService_) => {
+    inject(($controller, _$rootScope_, _$q_, _DialogService_, _FeedbackService_, _SessionService_) => {
       const resolvedPromise = _$q_.when();
 
       $rootScope = _$rootScope_;
       $q = _$q_;
-      ConfigService = _ConfigService_;
       FeedbackService = _FeedbackService_;
       SessionService = _SessionService_;
 
@@ -184,16 +182,14 @@ describe('ChannelCtrl', () => {
     expect(ChannelService.createPreviewConfiguration).not.toHaveBeenCalled();
   });
 
-  it('detects that the current user has pending changes', () => {
-    ConfigService.cmsUser = 'testUser';
+  it('detects that users have pending changes', () => {
     ChannelService.getChannel.and.returnValue({ changedBySet: ['tobi', 'testUser', 'obiwan'] });
 
     expect(ChannelCtrl.hasChanges()).toBe(true);
   });
 
-  it('detects that the current user has no pending changes', () => {
-    ConfigService.cmsUser = 'testUser';
-    ChannelService.getChannel.and.returnValue({ changedBySet: ['tobi', 'obiwan'] });
+  it('detects that users have no pending changes', () => {
+    ChannelService.getChannel.and.returnValue({ changedBySet: [] });
 
     expect(ChannelCtrl.hasChanges()).toBe(false);
   });

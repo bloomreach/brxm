@@ -132,7 +132,8 @@ export class ChannelCtrl {
   }
 
   hasChanges() {
-    return this.ChannelService.getChannel().changedBySet.indexOf(this.ConfigService.cmsUser) !== -1;
+    const usersHaveChanges = this.ChannelService.getChannel().changedBySet.length > 0;
+    return usersHaveChanges;
   }
 
   isSubpageOpen() {
