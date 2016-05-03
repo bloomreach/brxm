@@ -15,12 +15,11 @@
  */
 
 export class ChangeManagementCtrl {
-  constructor(ChannelService, HstService, CmsService) {
+  constructor(ChannelService, HstService) {
     'ngInject';
 
     this.ChannelService = ChannelService;
     this.HstService = HstService;
-    this.CmsService = CmsService;
 
     this.usersWithChanges = ChannelService.getChannel().changedBySet;
     this.selectedUsers = [];
