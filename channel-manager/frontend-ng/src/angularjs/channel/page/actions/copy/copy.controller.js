@@ -22,13 +22,14 @@ export class PageCopyCtrl {
     this.$log = $log;
     this.ChannelService = ChannelService;
     this.SiteMapService = SiteMapService;
-    this.SiteMapItemService = SiteMapItemService;
     this.HippoIframeService = HippoIframeService;
     this.FeedbackService = FeedbackService;
 
     this.locations = [];
+    this.channels = [];
     this.feedbackParent = $element.find('.feedback-parent');
     this.siteMapId = ChannelService.getSiteMapId();
+    this.channelId = ChannelService.getId();
     this.illegalCharacters = '/ :';
     this.illegalCharactersMessage = $translate.instant('VALIDATION_ILLEGAL_CHARACTERS',
       { characters: $translate.instant('VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT') });
@@ -39,17 +40,17 @@ export class PageCopyCtrl {
     this.lastPathInfoElement = '';
     this.heading = $translate.instant('SUBPAGE_PAGE_COPY_TITLE', { pageName: this.item.name });
 
-    if (true) { // TODO ChannelService.isCrossChannelPageCopySupported()) {
+    if (ChannelService.isCrossChannelPageCopySupported()) {
       this.channels = ChannelService.getPageModifiableChannels();
       if (this.channels && this.channels.length > 0) {
-        if (this.channels.length > 1 || this.channels[0].id !== ChannelService.getId()) {
-          this.channel = this.channels.find((channel) => channel.id === ChannelService.getId()) || this.channels[0];
+        if (this.channels.length > 1 || this.channels[0].id !== this.channelId) {
+          this.channel = this.channels.find((channel) => channel.id === this.channelId) || this.channels[0];
           this.isCrossChannelCopyAvailable = true;
         }
       }
     }
 
-    this._loadLocations();
+    this._loadLocations(this.channel ? this.channel.mountId : undefined);
   }
 
   copy() {
@@ -85,7 +86,7 @@ export class PageCopyCtrl {
   }
 
   _returnToNewUrl(renderPathInfo) {
-    if (this.channel && this.channel.id !== this.ChannelService.getId()) {
+    if (this.channel && this.channel.id !== this.channelId) {
       this.ChannelService.switchToChannel(this.channel.id)
         .then(() => {
           this.HippoIframeService.load(renderPathInfo);
