@@ -94,8 +94,7 @@ export class PageAddCtrl {
             break;
         }
 
-        const params = response.data;
-        this._showError(messageKey, params);
+        this._showError(messageKey, response.data);
       });
   }
 
