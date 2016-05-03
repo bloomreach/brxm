@@ -50,7 +50,7 @@ import org.hippoecm.hst.core.parameters.HstValueType;
 import org.hippoecm.hst.core.parameters.ImageSetPath;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
-import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
+import org.hippoecm.hst.rest.beans.ChannelInfoDescription;
 import org.hippoecm.hst.rest.beans.FieldGroupInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.json.JSONArray;
@@ -312,9 +312,9 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
             return Collections.emptyList();
         }
 
-        final ChannelInfoClassInfo channelInfoClassInfo;
+        final ChannelInfoDescription channelInfoDescription;
         try {
-            channelInfoClassInfo = channelStore.getChannelInfoClassInfo(channel);
+            channelInfoDescription = channelStore.getChannelInfoDescription(channel);
         } catch (ChannelException ce) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve channel info class for channel with id '" + channel.getId() + "'", ce);
@@ -325,19 +325,19 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
             return Collections.emptyList();
         }
 
-        if (channelInfoClassInfo == null) {
+        if (channelInfoDescription == null) {
             return Collections.emptyList();
         }
 
-        List<FieldGroupInfo> fieldGroupList = channelInfoClassInfo.getFieldsGroup();
+        List<FieldGroupInfo> fieldGroupList = channelInfoDescription.getFieldGroups();
 
         if (fieldGroupList == null) {
             log.warn("Channel info class '{}' contains a '{}' annotation with a null value: no channel properties will be shown",
-                    channelInfoClassInfo.getClassName(), FieldGroupList.class.getName());
+                    channelInfoDescription.getClassName(), FieldGroupList.class.getName());
             return Collections.emptyList();
         } else if (fieldGroupList.size() == 0) {
             log.warn("Channel info class '{}' does not contain any '{}' annotations: no channel properties will be shown",
-                    channelInfoClassInfo.getClassName(), FieldGroup.class.getName());
+                    channelInfoDescription.getClassName(), FieldGroup.class.getName());
             return Collections.emptyList();
         }
 
