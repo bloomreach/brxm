@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelNotFoundException;
 import org.hippoecm.hst.rest.ChannelService;
-import org.hippoecm.hst.rest.beans.ChannelInfoDescription;
+import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -490,9 +490,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
      * @return the ChannelInfo class for the given channel, or <code>null</code> if the channel does not have a custom
      * ChannelInfo class or the channel manager could not be loaded (e.g. because the site is down).
      */
-    public ChannelInfoDescription getChannelInfoDescription(Channel channel) throws ChannelException {
+    public ChannelInfoClassInfo getChannelInfoClassInfo(Channel channel) throws ChannelException {
         ChannelService channelService = getRestProxy(channel).createSecureRestProxy(ChannelService.class);
-        return channelService.getChannelInfoDescription(channel.getId());
+        return channelService.getChannelInfoClassInfo(channel.getId());
     }
 
     public void update() {
