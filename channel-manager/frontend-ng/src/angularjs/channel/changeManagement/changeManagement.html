@@ -2,12 +2,12 @@
   <div class="md-toolbar-tools">
     <md-button ng-click="changeMan.onDone()">
       <md-icon class="material-icons">keyboard_backspace</md-icon>
-      Back
+      {{ 'TOOLBAR_BUTTON_BACK' | translate }}
     </md-button>
 
     <span flex></span>
 
-    <h2>Change Management</h2>
+    <h2>{{ 'SUBPAGE_CHANGEMANAGEMENT_TITLE' | translate }}</h2>
 
     <span flex></span>
   </div>
@@ -18,21 +18,21 @@
     <md-checkbox ng-click="changeMan.toggleAll()"
         md-indeterminate="!changeMan.allAreChecked()"
         ng-checked="changeMan.allAreChecked()">
-      Toggle all
+      {{ 'SUBPAGE_CHANGEMANAGEMENT_LABEL_TOGGLE_ALL' | translate }}
     </md-checkbox>
     <div ng-repeat="user in changeMan.usersWithChanges">
       <md-checkbox ng-checked="changeMan.isChecked(user)"
           ng-click="changeMan.toggle(user)">
-        {{user}}
+        {{ user }}
       </md-checkbox>
     </div>
 
     <md-button ng-click="changeMan.publishChanges()">
-      Publish
+      {{ 'SUBPAGE_CHANGEMANAGEMENT_PUBLISH' | translate }}
     </md-button>
 
     <md-button ng-click="changeMan.discardChanges()">
-      Discard
+      {{ 'SUBPAGE_CHANGEMANAGEMENT_DISCARD' | translate }}
     </md-button>
   </form>
 </md-content>
