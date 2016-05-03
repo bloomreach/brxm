@@ -32,16 +32,16 @@ export class HippoIframeService {
   }
 
   load(renderPathInfo) {
-    const targetSrc = this.ChannelService.makePath(renderPathInfo);
     if (renderPathInfo !== this.renderPathInfo) {
       // navigate to a new page
-      if (targetSrc === this.src && this.iframeJQueryElement /* pro-forma-check */) {
+      const targetSrc = this.ChannelService.makePath(renderPathInfo);
+      if (targetSrc !== this.src) {
+        this.src = targetSrc;
+      } else if (this.iframeJQueryElement /* pro-forma-check */) {
         // the src attribute of the iframe already has the desired value, and
         // angular's 2-way binding won't trigger a reload, so use jQuery to achieve the desired effect
         this.iframeJQueryElement.attr('src', this.src);
       }
-      // else 2-way binding kicks in
-      this.src = targetSrc;
     } else {
       // we're already on the right page. We trigger a reload and forget about the src attribute
       this.reload();
@@ -79,6 +79,7 @@ export class HippoIframeService {
 
   // called by the hippoIframe controller when the processing of the loaded page is completed.
   signalPageLoadCompleted() {
+    console.log('I LOAD');
     this._extractRenderPathInfo(this.iframeJQueryElement[0].contentWindow.location.pathname);
 
     const deferred = this._deferredReload;
