@@ -21,33 +21,38 @@ describe('ChangesMenuCtrl', () => {
   let $q;
   let ChangesMenuCtrl;
   let $rootScope;
+  let $controller;
 
   beforeEach(() => {
     module('hippo-cm');
 
     inject((
-      $controller,
+      _$controller_,
       _$rootScope_,
       _$q_,
       _ChannelService_,
       _DialogService_,
       _HippoIframeService_
     ) => {
+      $controller = _$controller_;
       $q = _$q_;
       ChannelService = _ChannelService_;
       DialogService = _DialogService_;
       HippoIframeService = _HippoIframeService_;
       $rootScope = _$rootScope_;
-
-      ChangesMenuCtrl = $controller('ChangesMenuCtrl', {
-        scope: $rootScope.$new(),
-      });
     });
 
     spyOn(ChannelService, 'publishOwnChanges').and.returnValue($q.resolve());
     spyOn(ChannelService, 'discardOwnChanges').and.returnValue($q.resolve());
+    spyOn(ChannelService, 'getChannel').and.returnValue({
+      changedBySet: [],
+    });
     spyOn(HippoIframeService, 'reload');
     spyOn(DialogService, 'confirm').and.callThrough();
+
+    ChangesMenuCtrl = $controller('ChangesMenuCtrl', {
+      scope: $rootScope.$new(),
+    });
   });
 
   it('publishes changes', () => {
