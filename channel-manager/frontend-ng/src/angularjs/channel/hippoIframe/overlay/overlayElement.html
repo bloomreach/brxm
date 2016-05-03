@@ -15,7 +15,19 @@
   -->
 
 <span class="overlay-label"
-      layout="row" layout-align="start center"
-      experiment-label>
-  <span class="overlay-label-text">{{ overlayElement.getLabel() }}</span>
+      ng-if="overlayElement.isLabelTextVisible()"
+      ng-class="{ 'overlay-label-with-icon': overlayElement.isLabelIconVisible() }"
+      layout="row" layout-align="start center">
+  <md-icon class="overlay-label-icon"
+           ng-if="overlayElement.isLabelIconVisible()"
+           ng-attr-qa-experiment-id="{{overlayElement.getExperimentId()}}">
+    {{ overlayElement.getLabelIcon() }}
+  </md-icon>
+  <span class="overlay-label-text">{{ overlayElement.getLabelText() }}</span>
 </span>
+<md-icon class="overlay-lock-icon" ng-if="overlayElement.isLockIconVisible()"
+         ng-attr-qa-locked-by="{{ overlayElement.getQaLockedLabel() }}">
+  {{ overlayElement.getLockIcon() }}
+  <md-tooltip class="overlay-lock-tooltip" md-direction="left">{{ overlayElement.getLockedByText() }}</md-tooltip>
+</md-icon>
+

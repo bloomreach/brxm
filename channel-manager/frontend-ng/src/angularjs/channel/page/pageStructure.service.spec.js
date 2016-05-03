@@ -293,17 +293,44 @@ describe('PageStructureService', () => {
     expect(ChannelService.recordOwnChange).toHaveBeenCalled();
   });
 
-  it('removes a valid component but fails to call HST', () => {
+  it('removes a valid component but fails to call HST due to an unknown reason, then iframe should be reloaded and a feedback toast should be shown', () => {
     registerVBoxContainer();
     registerVBoxComponent('componentA');
 
+    spyOn(FeedbackService, 'showError');
+    spyOn(HippoIframeService, 'reload').and.returnValue($q.when(''));
     // mock the call to HST to be failed
-    spyOn(HstService, 'removeHstComponent').and.returnValue($q.reject());
+    spyOn(HstService, 'removeHstComponent').and.returnValue($q.reject({ error: 'unknown', parameterMap: {} }));
 
     PageStructureService.removeComponentById('aaaa');
     $rootScope.$digest();
 
     expect(HstService.removeHstComponent).toHaveBeenCalledWith('container-vbox', 'aaaa');
+
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT',
+      jasmine.objectContaining({ component: 'component A' }));
+
+    expect(HippoIframeService.reload).toHaveBeenCalled();
+  });
+
+  it('removes a valid component but fails to call HST due to locked component then iframe should be reloaded and a feedback toast should be shown', () => {
+    registerVBoxContainer();
+    registerVBoxComponent('componentA');
+
+    spyOn(FeedbackService, 'showError');
+    spyOn(HippoIframeService, 'reload').and.returnValue($q.when(''));
+    // mock the call to HST to be failed
+    spyOn(HstService, 'removeHstComponent').and.returnValue($q.reject({ error: 'ITEM_ALREADY_LOCKED', parameterMap: {} }));
+
+    PageStructureService.removeComponentById('aaaa');
+    $rootScope.$digest();
+
+    expect(HstService.removeHstComponent).toHaveBeenCalledWith('container-vbox', 'aaaa');
+
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED',
+      jasmine.objectContaining({ component: 'component A' }));
+
+    expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
   it('removes an invalid component', () => {
@@ -410,7 +437,7 @@ describe('PageStructureService', () => {
     $rootScope.$digest();
 
     expect(HstService.addHstComponent).toHaveBeenCalledWith(catalogComponent, 'container-1');
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ITEM_ALREADY_LOCKED', {
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED', {
       lockedBy: 'another-user',
       lockedOn: 1234,
       component: 'Foo Bah Component',

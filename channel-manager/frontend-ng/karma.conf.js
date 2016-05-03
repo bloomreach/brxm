@@ -36,6 +36,7 @@ module.exports = function karmaConfig(config) {
     `${cfg.bowerDir}/dragula.js/dist/dragula.js`,
     `${cfg.bowerDir}/re-tree/re-tree.js`,
     `${cfg.bowerDir}/ng-device-detector/ng-device-detector.js`,
+    `${cfg.bowerDir}/ng-focus-if/focusIf.js`,
   ];
 
   options.systemjs.config.map = cfg.systemjsOptions.map;

@@ -20,7 +20,7 @@ import { pageAddDirective } from './add/add.directive';
 import { PageAddCtrl } from './add/add.controller';
 
 export const channelPageActionsModule = angular
-  .module('hippo-cm.channel.page.actions', ['ngMessages'])
+  .module('hippo-cm.channel.page.actions', ['ngMessages', 'focus-if'])
   .controller('PageActionsCtrl', PageActionsCtrl)
   .directive('pageActions', pageActionsDirective)
   .controller('PageAddCtrl', PageAddCtrl)

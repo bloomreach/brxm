@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-export function ExperimentLabelDirective() {
+export function channelActionsDirective() {
   'ngInject';
 
   return {
-    restrict: 'A',
-    scope: false,
-    transclude: true,
-    template: '<md-icon ng-if="experimentLabel.hasExperiment()" class="overlay-label-icon">toys</md-icon><ng-transclude/>',
-    controller: 'ExperimentLabelCtrl',
-    controllerAs: 'experimentLabel',
-    link(scope, element, attrs) {
-      // override component label
-      if (attrs.experimentState) {
-        element.find('.overlay-label-text').text(attrs.experimentState);
-        element.addClass('has-icon');
-      }
+    restrict: 'E',
+    bindToController: {
+      onActionSelected: '&',
     },
+    templateUrl: 'channel/actions/channelActions.html',
+    controller: 'ChannelActionsCtrl',
+    controllerAs: 'channelActions',
   };
 }

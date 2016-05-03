@@ -23,7 +23,7 @@ export class ContainerElement extends PageStructureElement {
   constructor(startCommentDomElement, metaData, commentProcessor) {
     let [boxDomElement, endCommentDomElement] = commentProcessor.locateComponent(metaData.uuid, startCommentDomElement);
 
-    if (PageStructureElement.isTransparentXType(metaData)) {
+    if (PageStructureElement.isXTypeNoMarkup(metaData)) {
       boxDomElement = startCommentDomElement.parentNode;
     }
 

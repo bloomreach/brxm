@@ -45,6 +45,19 @@ export class ChannelService {
     this.channel = {};
 
     this.CmsService.subscribe('channel-changed-in-extjs', this._onChannelChanged, this);
+  }
+
+  _onChannelChanged() {
+    this.$rootScope.$apply(() => {
+      this.HstService.getChannel(this.channel.id)
+        .then((channel) => {
+          this._setChannel(channel);
+        })
+        .catch(() => {
+          this.$log.error(`Cannot retrieve properties of the channel with id = "${this.channel.id}" from server`);
+        });
+    });
+  }
 
     this.CmsService.subscribe('load-channel', (channel) => {
       this.HstService.getChannel(channel.id).then((updatedChannel) => {
@@ -104,16 +117,6 @@ export class ChannelService {
     return this.ConfigService.contextPaths.map((path) => this.makeContextPrefix(path));
   }
 
-  _makeChannelPrefix() {
-    let prefix = this.makeContextPrefix(this.channel.contextPath);
-
-    if (this.channel.mountPath) {
-      prefix += this.channel.mountPath;
-    }
-
-    return prefix;
-  }
-
   makePath(renderPathInfo) {
     let path = this.channelPrefix;
 
@@ -148,6 +151,14 @@ export class ChannelService {
 
   getId() {
     return this.channel.id;
+  }
+
+  getName() {
+    return this.channel.name;
+  }
+
+  getHomePageRenderPathInfo() {
+    return this.channel.mountPath ? this.channel.mountPath : '';
   }
 
   switchToChannel(id) {

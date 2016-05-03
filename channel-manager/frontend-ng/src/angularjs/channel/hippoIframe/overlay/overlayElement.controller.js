@@ -17,23 +17,70 @@
 const MIN_HEIGHT = '40px';
 
 export class OverlayElementCtrl {
-  constructor($scope, $element, OverlaySyncService) {
+
+  constructor($scope, $element, $translate, ExperimentStateService, OverlaySyncService) {
     'ngInject';
 
     this.$scope = $scope;
+    this.$translate = $translate;
+    this.ExperimentStateService = ExperimentStateService;
     this.OverlaySyncService = OverlaySyncService;
+
     this.structureElement.setJQueryElement('overlay', $element);
     this._prepareIframeElement($scope);
-    $element.attr('qa-label', this.getLabel());
-
-    // the share data-model between controllers
-    $scope.structureElement = this.structureElement;
+    $element.attr('qa-label', this.structureElement.getLabel());
 
     OverlaySyncService.registerElement(this.structureElement);
   }
 
-  getLabel() {
-    return this.structureElement.getLabel();
+  isLabelIconVisible() {
+    return this._isComponent() && this.ExperimentStateService.hasExperiment(this.structureElement);
+  }
+
+  getLabelIcon() {
+    return this.ExperimentStateService.getExperimentStateIcon(this.structureElement);
+  }
+
+  getExperimentId() {
+    return this._isComponent() ? this.ExperimentStateService.getExperimentId(this.structureElement) : undefined;
+  }
+
+  isLabelTextVisible() {
+    return this._isComponent() || this.structureElement.isEmpty();
+  }
+
+  getLabelText() {
+    return this.ExperimentStateService.getExperimentStateLabel(this.structureElement) || this.structureElement.getLabel();
+  }
+
+  isLockIconVisible() {
+    return this._isContainer() && this.structureElement.isDisabled();
+  }
+
+  getLockIcon() {
+    return this.structureElement.isInherited() ? 'remove_circle_outline' : 'lock';
+  }
+
+  getQaLockedLabel() {
+    return this.structureElement.isInherited() ? 'inheritance' : this.structureElement.getLockedBy();
+  }
+
+  getLockedByText() {
+    let result;
+    if (this.structureElement.isInherited()) {
+      result = this.$translate.instant('CONTAINER_INHERITED');
+    } else {
+      result = this.$translate.instant('CONTAINER_LOCKED_BY', { user: this.structureElement.getLockedBy() });
+    }
+    return result;
+  }
+
+  _isComponent() {
+    return this.structureElement.type === 'component';
+  }
+
+  _isContainer() {
+    return this.structureElement.type === 'container';
   }
 
   _prepareIframeElement($scope) {

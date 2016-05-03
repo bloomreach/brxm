@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-export class ExtJsHandlerService {
+import { channelActionsDirective } from './channelActions.directive';
+import { ChannelActionsCtrl } from './channelActions.controller';
+import { channelEditDirective } from './edit/edit.directive';
+import { ChannelEditCtrl } from './edit/edit.controller';
 
-  constructor(CmsService, PageStructureService) {
-    'ngInject';
-
-    this.CmsService = CmsService;
-    this.PageStructureService = PageStructureService;
-  }
-
-  initialize() {
-    this.CmsService.subscribe('render-component', (componentId, propertiesMap) => this.PageStructureService.renderComponent(componentId, propertiesMap));
-    this.CmsService.subscribe('reload-channel', (errorResponse) => this.PageStructureService.reloadChannel(errorResponse));
-  }
-}
+export const channelActionsModule = angular
+  .module('hippo-cm.channel.actions', ['ngMessages'])
+  .controller('ChannelActionsCtrl', ChannelActionsCtrl)
+  .directive('channelActions', channelActionsDirective)
+  .controller('ChannelEditCtrl', ChannelEditCtrl)
+  .directive('channelEdit', channelEditDirective);

@@ -33,6 +33,6 @@ export const HstConstants = {
   RENDER_VARIANT: 'HST-Render-Variant',
   SITEMAPITEM_ID: 'HST-SitemapItem-Id',
   XTYPE: 'HST-XType',
-  XTYPE_TRANSPARENT: 'HST.Transparent',
+  XTYPE_NOMARKUP: 'HST.NoMarkup',
   END_MARKER: 'HST-End',
 };

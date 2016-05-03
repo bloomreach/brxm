@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-export class ExtJsHandlerService {
+export function channelEditDirective() {
+  'ngInject';
 
-  constructor(CmsService, PageStructureService) {
-    'ngInject';
-
-    this.CmsService = CmsService;
-    this.PageStructureService = PageStructureService;
-  }
-
-  initialize() {
-    this.CmsService.subscribe('render-component', (componentId, propertiesMap) => this.PageStructureService.renderComponent(componentId, propertiesMap));
-    this.CmsService.subscribe('reload-channel', (errorResponse) => this.PageStructureService.reloadChannel(errorResponse));
-  }
+  return {
+    restrict: 'E',
+    bindToController: {
+      onDone: '&',
+    },
+    templateUrl: 'channel/actions/edit/edit.html',
+    controller: 'ChannelEditCtrl',
+    controllerAs: 'channelEdit',
+  };
 }

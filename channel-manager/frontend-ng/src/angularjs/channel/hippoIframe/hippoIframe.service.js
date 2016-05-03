@@ -28,7 +28,7 @@ export class HippoIframeService {
     this.iframeJQueryElement = iframeJQueryElement;
 
     // start at the home page
-    this.renderPathInfo = '';
+    this.renderPathInfo = this.ChannelService.getHomePageRenderPathInfo();
     this.load(this.renderPathInfo);
   }
 
@@ -37,6 +37,9 @@ export class HippoIframeService {
   }
 
   _extractRenderPathInfo(path) {
+    if (path !== this.src) {
+      this.src = path;
+    }
     this.renderPathInfo = this.ChannelService.extractRenderPathInfo(path);
   }
 

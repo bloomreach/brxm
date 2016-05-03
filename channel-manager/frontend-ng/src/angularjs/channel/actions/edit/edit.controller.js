@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-export class ExtJsHandlerService {
-
-  constructor(CmsService, PageStructureService) {
+export class ChannelEditCtrl {
+  constructor($translate, ChannelService) {
     'ngInject';
 
-    this.CmsService = CmsService;
-    this.PageStructureService = PageStructureService;
+    this.pageTitle = $translate.instant('SUBPAGE_CHANNEL_EDIT_TITLE', {
+      channelName: ChannelService.getName(),
+    });
   }
 
-  initialize() {
-    this.CmsService.subscribe('render-component', (componentId, propertiesMap) => this.PageStructureService.renderComponent(componentId, propertiesMap));
-    this.CmsService.subscribe('reload-channel', (errorResponse) => this.PageStructureService.reloadChannel(errorResponse));
+  save() {
+    this.onDone();
+  }
+
+  back() {
+    this.onDone();
   }
 }

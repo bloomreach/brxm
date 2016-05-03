@@ -20,6 +20,8 @@ $black-shadow: rgba(0, 0, 0, 0.25);
 $half-white: rgba(255, 255, 255, 0.50);
 
 $canvas-bgcolor: #c1c3c5;
-$scroll-bgcolor: #f0f0f0;
+
+// the default background color in browsers is white, so make the sheet white too
+$sheet-bgcolor: #fff;
 
 $list-item-active-bgcolor: rgba(158, 158, 158, 0.2);

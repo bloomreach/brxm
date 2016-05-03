@@ -28,6 +28,7 @@ describe('DragDropService', () => {
   let iframe;
   let base;
 
+  let mockCommentData;
   let container1;
   let component1;
   let component2;
@@ -57,25 +58,34 @@ describe('DragDropService', () => {
 
     iframe = $j('#testIframe');
     base = $j('#testBase');
+    mockCommentData = {};
   });
 
   function createContainer(number) {
     const iframeContainerComment = iframe.contents().find(`#iframeContainerComment${number}`)[0];
-    PageStructureService.registerParsedElement(iframeContainerComment, {
-      uuid: `container${number}`,
-      'HST-Type': 'CONTAINER_COMPONENT',
-      'HST-XType': 'HST.Transparent',
-    });
+    const commentData = Object.assign(
+      {
+        uuid: `container${number}`,
+        'HST-Type': 'CONTAINER_COMPONENT',
+        'HST-XType': 'HST.NoMarkup',
+      },
+      mockCommentData[`container${number}`]
+    );
+    PageStructureService.registerParsedElement(iframeContainerComment, commentData);
     return PageStructureService.containers[PageStructureService.containers.length - 1];
   }
 
   function createComponent(number) {
     const iframeComponentComment = iframe.contents().find(`#iframeComponentComment${number}`)[0];
-    PageStructureService.registerParsedElement(iframeComponentComment, {
-      uuid: `component${number}`,
-      'HST-Type': 'CONTAINER_ITEM_COMPONENT',
-      'HST-Label': `Component ${number}`,
-    });
+    const commentData = Object.assign(
+      {
+        uuid: `component${number}`,
+        'HST-Type': 'CONTAINER_ITEM_COMPONENT',
+        'HST-Label': `Component ${number}`,
+      },
+      mockCommentData[`component${number}`]
+    );
+    PageStructureService.registerParsedElement(iframeComponentComment, commentData);
     return PageStructureService.getComponentById(`component${number}`);
   }
 
@@ -237,7 +247,9 @@ describe('DragDropService', () => {
   });
 
   it('cancels the click simulation for showing a component\'s properties when the mouse cursor leaves a disabled component', (done) => {
-    spyOn(container1, 'isDisabled').and.returnValue(true);
+    mockCommentData.container1 = {
+      'HST-LockedBy': 'anotherUser',
+    };
     loadIframeFixture(() => {
       const mockedMouseDownEvent = {
         clientX: 100,
@@ -317,10 +329,26 @@ describe('DragDropService', () => {
     });
   });
 
-  it('does not register a disabled container', () => {
-    spyOn(container1, 'isDisabled').and.returnValue(true);
+  it('does not register a disabled container', (done) => {
+    mockCommentData.container1 = {
+      'HST-LockedBy': 'anotherUser',
+    };
     loadIframeFixture(() => {
       expect(DragDropService.drake.containers).toEqual([container2.getBoxElement()]);
+      done();
+    });
+  });
+
+  it('checks internally whether a container is disabled', (done) => {
+    loadIframeFixture(() => {
+      expect(DragDropService._isContainerEnabled(container1.getBoxElement())).toBeTruthy();
+
+      spyOn(container1, 'isDisabled').and.returnValue(true);
+      expect(DragDropService._isContainerEnabled(container1.getBoxElement())).toBeFalsy();
+
+      expect(DragDropService._isContainerEnabled(iframe)).toBeFalsy();
+
+      done();
     });
   });
 

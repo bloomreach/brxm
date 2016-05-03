@@ -56,9 +56,16 @@ export class HippoIframeCtrl {
 
     HippoIframeService.initialize(this.iframeJQueryElement);
 
-    OverlaySyncService.init(this.iframeJQueryElement, $element.find('.overlay'));
+    const baseJQueryElement = $element.find('.channel-iframe-base');
+    OverlaySyncService.init(
+      baseJQueryElement,
+      $element.find('.channel-iframe-sheet'),
+      $element.find('.channel-iframe-scroll-x'),
+      this.iframeJQueryElement,
+      $element.find('.overlay')
+    );
     ScalingService.init($element);
-    DragDropService.init(this.iframeJQueryElement, $element.find('.channel-iframe-base'));
+    DragDropService.init(this.iframeJQueryElement, baseJQueryElement);
 
     const deleteComponentHandler = (componentId) => this.deleteComponent(componentId);
     CmsService.subscribe('delete-component', deleteComponentHandler);
@@ -87,11 +94,19 @@ export class HippoIframeCtrl {
       this.$log.warn(`Cannot delete unknown component with id:'${componentId}'`);
       return;
     }
-    this._confirmDelete(selectedComponent)
-      .then(() => this.PageStructureService.removeComponentById(componentId)
-        .then(({ oldContainer, newContainer }) => this.DragDropService.replaceContainer(oldContainer, newContainer))
-      )
-      .catch(() => this.PageStructureService.showComponentProperties(selectedComponent));
+    this._confirmDelete(selectedComponent).then(
+      this._doDelete(componentId),
+      () => this.PageStructureService.showComponentProperties(selectedComponent)
+    );
+  }
+
+  _doDelete(componentId) {
+    return () => this.PageStructureService.removeComponentById(componentId)
+      .then(
+        ({ oldContainer, newContainer }) => this.DragDropService.replaceContainer(oldContainer, newContainer),
+        // inform extjs to reset the component properties dialog if deletion is failed
+        () => this.CmsService.publish('reset-component-properties')
+      );
   }
 
   _confirmDelete(selectedComponent) {

@@ -15,7 +15,7 @@
   -->
 
 <md-sidenav class="channel-sidenav" md-component-id="channel-sidenav">
-  <md-tabs md-dynamic-height>
+  <md-tabs md-dynamic-height class="qa-sidenav-tabs">
     <md-tab label="{{ 'SIDENAV_TAB_SITEMAP' | translate }}">
       <md-list md-no-ink class="qa-sitemap">
         <md-list-item class="md-2-line qa-sitemap-item"
@@ -24,7 +24,7 @@
                       md-autofocus="sidenav.isActiveSiteMapItem(item)"
                       ng-click="sidenav.showPage(item)">
           <div class="md-list-item-text">
-            <h4>{{ item.pathInfo | startWithSlash }}</h4>
+            <h4 class="qa-pathinfo">{{ item.pathInfo | startWithSlash }}</h4>
             <p class="qa-name">{{ item.pageTitle || item.name }}</p>
           </div>
           <md-divider ng-if="!$last"></md-divider>

@@ -16,6 +16,7 @@
 
 import { channelPageModule } from './page/page';
 import { channelPageActionsModule } from './page/actions/actions';
+import { channelActionsModule } from './actions/actions';
 import { channelSidenavModule } from './sidenav/sidenav';
 import { channelHippoIframeModule } from './hippoIframe/hippoIframe';
 import { channelMaskModule } from './mask/mask';
@@ -35,6 +36,7 @@ export const channelModule = angular
     changeManagementModule.name,
     channelPageModule.name,
     channelPageActionsModule.name,
+    channelActionsModule.name,
     channelSidenavModule.name,
     channelHippoIframeModule.name,
     channelMaskModule.name,

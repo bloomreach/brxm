@@ -121,7 +121,7 @@ overlay-element {
   &-visible {
     display: block;
 
-    > .overlay-label.has-icon {
+    > .overlay-label.overlay-label-with-icon {
       display: flex; // if the label has an icon, it should always be shown.
 
       .overlay-label-icon {
@@ -129,6 +129,22 @@ overlay-element {
       }
     }
   }
+}
+
+.overlay-lock-icon {
+  background: $black;
+  color: white;
+  cursor: default;
+  float: right;
+  // prevent the on-hover effect of a component against a container's edge by shifting the lock icon 1px up and right
+  margin-top: -1px;
+  margin-right: -1px;
+  pointer-events: all;
+}
+
+.overlay-lock-tooltip ._md-content {
+  // make 'lock' tooltips black without transparency so the channel does not shine through
+  background-color: #000 !important;
 }
 
 .channel-dragula-mirror {
