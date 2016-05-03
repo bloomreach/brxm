@@ -229,6 +229,10 @@ public class InitializeItem {
     private boolean isNodetypesResource() throws RepositoryException {
         return getNodetypesResource() != null;
     }
+    
+    private boolean isResourceBundles() throws RepositoryException {
+        return getResourceBundles() != null;
+    }
 
     public URL getNodetypesResourceURL() throws RepositoryException {
         final String nodetypesResource = getNodetypesResource();
@@ -425,7 +429,7 @@ public class InitializeItem {
                 itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_FAILED);
                 itemNode.setProperty(HIPPO_ERRORMESSAGE, message);
             } else {
-                if (isReloadEnabled() || isNodetypesResource()) {
+                if (isReloadEnabled() || isNodetypesResource() || isResourceBundles()) {
                     log.info("Item {} set to status reload", tempItemNode.getName());
                     itemNode.setProperty(HIPPO_STATUS, ITEM_STATUS_RELOAD);
                 } else {
