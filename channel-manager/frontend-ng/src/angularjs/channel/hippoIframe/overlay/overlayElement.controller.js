@@ -28,7 +28,7 @@ export class OverlayElementCtrl {
 
     this.structureElement.setJQueryElement('overlay', $element);
     this._prepareIframeElement($scope);
-    $element.attr('qa-label', this.getLabelText());
+    $element.attr('qa-label', this.structureElement.getLabel());
 
     OverlaySyncService.registerElement(this.structureElement);
   }
@@ -59,6 +59,10 @@ export class OverlayElementCtrl {
 
   getLockIcon() {
     return this.structureElement.isInherited() ? 'remove_circle_outline' : 'lock';
+  }
+
+  getQaLockedLabel() {
+    return this.structureElement.isInherited() ? 'inheritance' : this.structureElement.getLockedBy();
   }
 
   getLockedByText() {

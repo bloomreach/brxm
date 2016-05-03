@@ -132,4 +132,26 @@ describe('HippoIframeService', () => {
     HippoIframeService.signalPageLoadCompleted();
     expect(HippoIframeService.getCurrentRenderPathInfo()).toBe('dummy');
   });
+
+  it('triggers a reload when trying to load the current page', (done) => {
+    ChannelService.extractRenderPathInfo.and.returnValue('/target');
+    spyOn(HippoIframeService, 'reload');
+    loadIframeFixture(() => { // give the iframe something to reload.
+      HippoIframeService.signalPageLoadCompleted();
+      HippoIframeService.load('/target');
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+      done();
+    });
+  });
+
+  it('uses jQuery to trigger a reload if the src attribute matches the to-be-loaded path', (done) => {
+    ChannelService.extractRenderPathInfo.and.returnValue('/target');
+    loadIframeFixture(() => { // give the iframe something to reload.
+      HippoIframeService.signalPageLoadCompleted();
+      spyOn(iframe, 'attr');
+      HippoIframeService.load('/not/target');
+      expect(iframe.attr).toHaveBeenCalled();
+      done();
+    });
+  });
 });
