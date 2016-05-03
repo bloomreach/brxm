@@ -162,4 +162,20 @@ public class TestSearchInputParsingUtils {
         assertEquals("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", SearchInputParsingUtils.parse("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", true, new char[]{'&'}));
         assertEquals("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", SearchInputParsingUtils.parse("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", false, new char[]{'&'}));
     }
+
+    @Test
+    public void testSearchInputParsingUtils_removeInvalidAndEscapeChars_removesTrailingExclamation() {
+        assertEquals("No exclamation",SearchInputParsingUtils.removeInvalidAndEscapeChars("No exclamation!", false));
+        assertEquals("No exclamation",SearchInputParsingUtils.removeInvalidAndEscapeChars("No exclamation!", true));
+        assertEquals("No exclamation",SearchInputParsingUtils.removeInvalidAndEscapeChars("No exclamation !", false));
+        assertEquals("No exclamation",SearchInputParsingUtils.removeInvalidAndEscapeChars("No exclamation !", true));
+    }
+
+    @Test
+    public void testSearchInputParsingUtils_removeInvalidAndEscapeChars_removesTrailingDash() {
+        assertEquals("No dash",SearchInputParsingUtils.removeInvalidAndEscapeChars("No dash-", false));
+        assertEquals("No dash",SearchInputParsingUtils.removeInvalidAndEscapeChars("No dash-", true));
+        assertEquals("No dash",SearchInputParsingUtils.removeInvalidAndEscapeChars("No dash -", false));
+        assertEquals("No dash",SearchInputParsingUtils.removeInvalidAndEscapeChars("No dash -", true));
+    }
 }
