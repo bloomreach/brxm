@@ -28,7 +28,7 @@ export class HippoIframeService {
     this.iframeJQueryElement = iframeJQueryElement;
 
     // start at the home page
-    this.renderPathInfo = '';
+    this.renderPathInfo = this.ChannelService.getHomePageRenderPathInfo();
     this.load(this.renderPathInfo);
   }
 
