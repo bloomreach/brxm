@@ -57,10 +57,19 @@ export class ChannelService {
       // TODO: handle error.
       // If this goes wrong, the CM won't work. display a toast explaining so
       // and switch back to the channel overview.
+
+      this._loadGlobalFeatures();
     });
 
     // Handle reloading of iframe by BrowserSync during development
     this.CmsService.publish('reload-channel');
+  }
+
+  _loadGlobalFeatures() {
+    this.HstService.doGet(this.ConfigService.rootUuid, 'features')
+      .then((response) => {
+        this.crossChannelPageCopySupported = response.data.crossChannelPageCopySupported;
+      });
   }
 
   _setChannel(channel) {
@@ -218,9 +227,29 @@ export class ChannelService {
     return this.channel.workspaceExists;
   }
 
-  getNewPageModel() {
-    return this.HstService.doGet(this._getMountId(), 'newpagemodel')
+  getNewPageModel(mountId) {
+    const params = mountId ? { mountId } : undefined;
+    return this.HstService.doGetWithParams(this._getMountId(), params, 'newpagemodel')
       .then((response) => response.data);
+  }
+
+  isCrossChannelPageCopySupported() {
+    return this.crossChannelPageCopySupported;
+  }
+
+  loadPageModifiableChannels() {
+    const params = {
+      previewConfigRequired: true,
+      workspaceRequired: true,
+    };
+    this.HstService.doGetWithParams(this.ConfigService.rootUuid, params, 'channels')
+      .then((response) => {
+        this.pageModifiableChannels = response.data || [];
+      });
+  }
+
+  getPageModifiableChannels() {
+    return this.pageModifiableChannels;
   }
 
   _getMountId() {

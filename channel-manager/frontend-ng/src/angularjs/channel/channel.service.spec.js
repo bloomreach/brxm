@@ -76,6 +76,7 @@ describe('ChannelService', () => {
 
     spyOn(HstService, 'doPost');
     spyOn(HstService, 'doGet').and.returnValue($q.when({ data: {} }));
+    spyOn(HstService, 'doGetWithParams').and.returnValue($q.when({ data: {} }));
     spyOn(HstService, 'getChannel');
     spyOn(SiteMapService, 'load');
     spyOn(window.APP_TO_CMS, 'publish');
@@ -90,6 +91,7 @@ describe('ChannelService', () => {
     spyOn(CmsService, 'subscribe');
     HstService.getChannel.and.returnValue($q.resolve(testChannel));
     spyOn(ChannelService, '_load').and.callThrough();
+    spyOn(ChannelService, '_loadGlobalFeatures');
     spyOn($state, 'go');
 
     ChannelService.initialize();
@@ -98,6 +100,7 @@ describe('ChannelService', () => {
     window.CMS_TO_APP.publish('load-channel', testChannel);
 
     expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id);
+    expect(ChannelService._loadGlobalFeatures).toHaveBeenCalled();
     $rootScope.$digest();
 
     expect(ChannelService._load).toHaveBeenCalledWith(testChannel);
@@ -140,13 +143,13 @@ describe('ChannelService', () => {
   });
 
   it('should save a reference to the channel when load succeeds', () => {
-    HstService.doGet.and.returnValue($q.when({ data: { prototypes: ['test'] } }));
+    HstService.doGetWithParams.and.returnValue($q.when({ data: { prototypes: ['test'] } }));
     ChannelService._load(channelMock);
     expect(ChannelService.getChannel()).not.toEqual(channelMock);
     $rootScope.$digest();
     expect(ChannelService.getChannel()).toEqual(channelMock);
     expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
-    expect(HstService.doGet).toHaveBeenCalledWith(channelMock.mountId, 'newpagemodel');
+    expect(HstService.doGetWithParams).toHaveBeenCalledWith(channelMock.mountId, undefined, 'newpagemodel');
     $rootScope.$digest();
     expect(ChannelService.hasPrototypes()).toBe(true);
     expect(ChannelService.hasWorkspace()).toBe(true);
@@ -431,20 +434,20 @@ describe('ChannelService', () => {
   it('should retrieve the new page model from the HST service', (done) => {
     ChannelService._load(channelMock);
     $rootScope.$digest();
-    HstService.doGet.and.returnValue($q.when({ data: 'test' }));
+    HstService.doGetWithParams.and.returnValue($q.when({ data: 'test' }));
 
     ChannelService.getNewPageModel().then((result) => {
       expect(result).toBe('test');
       done();
     });
-    expect(HstService.doGet).toHaveBeenCalledWith(channelMock.mountId, 'newpagemodel');
+    expect(HstService.doGetWithParams).toHaveBeenCalledWith(channelMock.mountId, undefined, 'newpagemodel');
     $rootScope.$digest();
   });
 
   it('should relay failure to retrieve the new page model from the HST service', (done) => {
     ChannelService._load(channelMock);
     $rootScope.$digest();
-    HstService.doGet.and.returnValue($q.reject());
+    HstService.doGetWithParams.and.returnValue($q.reject());
 
     ChannelService.getNewPageModel()
       .then(() => {
@@ -454,5 +457,47 @@ describe('ChannelService', () => {
         done();
       });
     $rootScope.$digest();
+  });
+
+  it('retrieves the global features during initialization', () => {
+    const features = {
+      crossChannelPageCopySupported: true,
+    };
+    HstService.doGet.and.returnValue($q.when({ data: features }));
+    ChannelService._loadGlobalFeatures();
+    expect(HstService.doGet).toHaveBeenCalledWith('testRootUuid', 'features');
+    $rootScope.$digest();
+    expect(ChannelService.isCrossChannelPageCopySupported()).toBe(true);
+
+    features.crossChannelPageCopySupported = false;
+    ChannelService._loadGlobalFeatures();
+    $rootScope.$digest();
+    expect(ChannelService.isCrossChannelPageCopySupported()).toBe(false);
+
+    HstService.doGet.and.returnValue($q.reject());
+    ChannelService._loadGlobalFeatures();
+    $rootScope.$digest();
+    expect(ChannelService.isCrossChannelPageCopySupported()).toBeFalsy();
+  });
+
+  it('loads and caches the page modifiable channels', () => {
+    const channels = ['a', 'b'];
+    HstService.doGetWithParams.and.returnValue($q.when({ data: channels }));
+    ChannelService.loadPageModifiableChannels();
+    expect(HstService.doGetWithParams).toHaveBeenCalled();
+    $rootScope.$digest();
+    expect(ChannelService.getPageModifiableChannels()).toBe(channels);
+
+    HstService.doGetWithParams.and.returnValue($q.when({ }));
+    ChannelService.loadPageModifiableChannels();
+    $rootScope.$digest();
+    expect(ChannelService.getPageModifiableChannels()).toEqual([]);
+  });
+
+  it('retrieves the new page model for a different channel', () => {
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+    ChannelService.getNewPageModel('other-mount');
+    expect(HstService.doGetWithParams).toHaveBeenCalledWith('mountId', { mountId: 'other-mount' }, 'newpagemodel');
   });
 });

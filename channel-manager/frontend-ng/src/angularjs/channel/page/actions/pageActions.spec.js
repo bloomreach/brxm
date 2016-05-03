@@ -65,9 +65,13 @@ describe('PageActions', () => {
     spyOn(ChannelService, 'hasPrototypes');
     spyOn(ChannelService, 'hasWorkspace');
     spyOn(ChannelService, 'recordOwnChange');
+    spyOn(ChannelService, 'loadPageModifiableChannels');
+    spyOn(ChannelService, 'getPageModifiableChannels');
+    spyOn(ChannelService, 'isCrossChannelPageCopySupported').and.returnValue(true);
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
     spyOn(SiteMapService, 'load');
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(false);
+    spyOn(SiteMapItemService, 'isLocked').and.returnValue(false);
     spyOn(SiteMapItemService, 'deleteItem');
     spyOn(SiteMapItemService, 'clear');
     spyOn(SiteMapItemService, 'loadAndCache');
@@ -164,6 +168,32 @@ describe('PageActions', () => {
     expect(PageActionsCtrl.getPageNotEditableMarker(editAction)).toBe('');
   });
 
+  it('enables the copy action if the page can be copied', () => {
+    const PageActionsCtrl = compileDirectiveAndGetController();
+    const copyAction = PageActionsCtrl.actions.find((action) => action.id === 'copy');
+
+    SiteMapItemService.isLocked.and.returnValue(true);
+    expect(copyAction.isEnabled()).toBe(false);
+
+    SiteMapItemService.isLocked.and.returnValue(false);
+    ChannelService.hasWorkspace.and.returnValue(true);
+    expect(copyAction.isEnabled()).toBe(true);
+
+    ChannelService.hasWorkspace.and.returnValue(false);
+    ChannelService.isCrossChannelPageCopySupported.and.returnValue(false);
+    expect(copyAction.isEnabled()).toBe(false);
+
+    ChannelService.isCrossChannelPageCopySupported.and.returnValue(true);
+    ChannelService.getPageModifiableChannels.and.returnValue(undefined);
+    expect(copyAction.isEnabled()).toBe(false);
+
+    ChannelService.getPageModifiableChannels.and.returnValue([]);
+    expect(copyAction.isEnabled()).toBe(false);
+
+    ChannelService.getPageModifiableChannels.and.returnValue(['dummy']);
+    expect(copyAction.isEnabled()).toBe(true);
+  });
+
   it('builds the action label correctly', () => {
     const PageActionsCtrl = compileDirectiveAndGetController();
     const editAction = PageActionsCtrl.actions.find((action) => action.id === 'edit');
@@ -231,5 +261,6 @@ describe('PageActions', () => {
 
     PageActionsCtrl.onOpenMenu();
     expect(SiteMapItemService.loadAndCache).toHaveBeenCalledWith('siteMapId', 'siteMapItemId');
+    expect(ChannelService.loadPageModifiableChannels).toHaveBeenCalled();
   });
 });

@@ -43,4 +43,9 @@ export class SiteMapService {
     return this.HstService.doPost(page, siteMapId, 'create', parentSiteMapItemId)
       .then((response) => response.data);
   }
+
+  copy(siteMapId, headers) {
+    return this.HstService.doPostWithHeaders(siteMapId, headers, 'copy')
+      .then((response) => response.data);
+  }
 }

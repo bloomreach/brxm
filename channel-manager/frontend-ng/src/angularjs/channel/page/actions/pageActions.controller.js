@@ -34,7 +34,6 @@ export class PageActionsCtrl {
       .forEach((id) => {
         this.actions.push({
           id,
-          isEnabled: () => false,
         });
       });
 
@@ -44,12 +43,29 @@ export class PageActionsCtrl {
     };
 
     this._findAction('edit').isEnabled = () => SiteMapItemService.isEditable();
-    this._findAction('delete').isEnabled = () => SiteMapItemService.isEditable();
+    this._findAction('copy').isEnabled = () => this._isCopyEnabled();
     this._findAction('move').isEnabled = () => SiteMapItemService.isEditable();
+    this._findAction('delete').isEnabled = () => SiteMapItemService.isEditable();
   }
 
   _findAction(id) {
     return this.actions.find((action) => action.id === id);
+  }
+
+  _isCopyEnabled() {
+    if (this.SiteMapItemService.isLocked()) {
+      return false;
+    }
+    if (this.ChannelService.hasWorkspace()) {
+      return true; // copy inside this channel is supported
+    }
+    if (this.ChannelService.isCrossChannelPageCopySupported()) {
+      const channels = this.ChannelService.getPageModifiableChannels();
+      if (channels && channels.length > 0) {
+        return true;
+      }
+    }
+    return false;
   }
 
   getLabel(action) {
@@ -80,6 +96,7 @@ export class PageActionsCtrl {
 
   onOpenMenu() {
     this.SiteMapItemService.loadAndCache(this.ChannelService.getSiteMapId(), this.PageMetaDataService.getSiteMapItemId());
+    this.ChannelService.loadPageModifiableChannels();
   }
 
   trigger(action) {

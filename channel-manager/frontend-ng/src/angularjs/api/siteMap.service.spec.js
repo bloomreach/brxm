@@ -37,6 +37,7 @@ describe('SiteMapService', () => {
     });
 
     spyOn(HstService, 'doPost');
+    spyOn(HstService, 'doPostWithHeaders');
     spyOn(HstService, 'getSiteMap');
     spyOn(FeedbackService, 'showError');
   });
@@ -102,6 +103,42 @@ describe('SiteMapService', () => {
         done();
       });
     expect(HstService.doPost).toHaveBeenCalledWith({}, 'siteMapId', 'create', undefined);
+    $rootScope.$digest();
+  });
+
+  it('delegates copying a page to the HST service', (done) => {
+    const headers = {
+      foo: 'bar',
+      key: 'value',
+    };
+    HstService.doPostWithHeaders.and.returnValue($q.when({ data: 'test' }));
+    SiteMapService.copy('siteMapId', headers)
+      .then((result) => {
+        expect(result).toBe('test');
+        done();
+      })
+      .catch(() => {
+        fail();
+      });
+    expect(HstService.doPostWithHeaders).toHaveBeenCalledWith('siteMapId', headers, 'copy');
+    $rootScope.$digest();
+  });
+
+  it('relays a failure to copy a page', (done) => {
+    const headers = {
+      foo: 'bar',
+      key: 'value',
+    };
+    const response = { };
+    HstService.doPostWithHeaders.and.returnValue($q.reject(response));
+    SiteMapService.copy('siteMapId', headers)
+      .then(() => {
+        fail();
+      })
+      .catch((result) => {
+        expect(result).toBe(response);
+        done();
+      });
     $rootScope.$digest();
   });
 });

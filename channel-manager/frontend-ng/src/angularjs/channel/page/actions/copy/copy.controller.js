@@ -1,0 +1,133 @@
+/*
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+export class PageCopyCtrl {
+  constructor($log, $element, $translate, ChannelService, SiteMapService, SiteMapItemService, HippoIframeService,
+              FeedbackService) {
+    'ngInject';
+
+    this.$log = $log;
+    this.ChannelService = ChannelService;
+    this.SiteMapService = SiteMapService;
+    this.SiteMapItemService = SiteMapItemService;
+    this.HippoIframeService = HippoIframeService;
+    this.FeedbackService = FeedbackService;
+
+    this.locations = [];
+    this.feedbackParent = $element.find('.feedback-parent');
+    this.siteMapId = ChannelService.getSiteMapId();
+    this.illegalCharacters = '/ :';
+    this.illegalCharactersMessage = $translate.instant('VALIDATION_ILLEGAL_CHARACTERS',
+      { characters: $translate.instant('VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT') });
+
+    // The PageActionsCtrl has retrieved the page meta-data when opening the page menu.
+    // Now, it is available through the SiteMapItemService.
+    this.item = SiteMapItemService.get();
+    this.lastPathInfoElement = '';
+    this.heading = $translate.instant('SUBPAGE_PAGE_COPY_TITLE', { pageName: this.item.name });
+
+    if (true) { // TODO ChannelService.isCrossChannelPageCopySupported()) {
+      this.channels = ChannelService.getPageModifiableChannels();
+      if (this.channels && this.channels.length > 0) {
+        if (this.channels.length > 1 || this.channels[0].id !== ChannelService.getId()) {
+          this.channel = this.channels.find((channel) => channel.id === ChannelService.getId()) || this.channels[0];
+          this.isCrossChannelCopyAvailable = true;
+        }
+      }
+    }
+
+    this._loadLocations();
+  }
+
+  copy() {
+    const headers = {
+      siteMapItemUUId: this.item.id,
+      targetName: this.lastPathInfoElement,
+    };
+    if (this.channel) {
+      headers.mountId = this.channel.mountId;
+    }
+    if (this.location.id) {
+      headers.targetSiteMapItemUUID = this.location.id;
+    }
+    this.SiteMapService.copy(this.siteMapId, headers)
+      .then((data) => {
+        this._returnToNewUrl(data.renderPathInfo);
+      })
+      .catch((extResponseRepresentation) => {
+        this.$log.info(extResponseRepresentation.message);
+        const params = extResponseRepresentation.data;
+        let messageKey;
+        switch (extResponseRepresentation.errorCode) {
+          case 'ITEM_CANNOT_BE_CLONED':
+            messageKey = 'ERROR_PAGE_COPY_TARGET_EXISTS';
+            break;
+          default:
+            messageKey = 'ERROR_PAGE_COPY_FAILED';
+            break;
+        }
+
+        this._showError(messageKey, params);
+      });
+  }
+
+  _returnToNewUrl(renderPathInfo) {
+    if (this.channel && this.channel.id !== this.ChannelService.getId()) {
+      this.ChannelService.switchToChannel(this.channel.id)
+        .then(() => {
+          this.HippoIframeService.load(renderPathInfo);
+          this.onDone();
+        })
+        .catch(() => {
+          this.onDone();
+          setTimeout(() => {
+            this.FeedbackService.showError('ERROR_CHANNEL_SWITCH_FAILED'); // TODO check correctness
+          });
+        });
+    } else {
+      this.HippoIframeService.load(renderPathInfo);
+      this.SiteMapService.load(this.siteMapId);
+      this.ChannelService.recordOwnChange();
+      this.onDone();
+    }
+  }
+
+  back() {
+    this.onDone();
+  }
+
+  channelChanged() {
+    this._loadLocations(this.channel.mountId);
+  }
+
+  _loadLocations(mountId) {
+    this.ChannelService.getNewPageModel(mountId)
+      .then((data) => {
+        this.locations = data.locations || [];
+        this.location = this.locations.find((location) => this.item.parentLocation.id === location.id);
+        if (!this.location && this.locations.length > 0) {
+          this.location = this.locations[0];
+        }
+      })
+      .catch(() => {
+        this._showError('ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED');
+      });
+  }
+
+  _showError(key, params) {
+    this.FeedbackService.showError(key, params, this.feedbackParent);
+  }
+}
