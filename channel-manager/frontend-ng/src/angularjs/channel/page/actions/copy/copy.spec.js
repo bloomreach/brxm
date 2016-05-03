@@ -310,7 +310,16 @@ describe('PageActionCopy', () => {
   });
 
   it('successfully copies a page into another channel, but the channel switch fails', () => {
-    // TODO
+    const PageCopyCtrl = compileDirectiveAndGetController();
+
+    SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path' }));
+    ChannelService.switchToChannel.and.returnValue($q.reject());
+    PageCopyCtrl.channel = channels[2];
+    PageCopyCtrl.copy();
+    $rootScope.$digest(); // copy-success
+    $rootScope.$digest(); // channel switch-failure
+    expect($scope.onDone).toHaveBeenCalled();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANNEL_SWITCH_FAILED');
   });
 
   it('fails to copy a page', () => {

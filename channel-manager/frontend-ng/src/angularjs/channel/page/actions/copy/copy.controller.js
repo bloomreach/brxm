@@ -94,9 +94,8 @@ export class PageCopyCtrl {
         })
         .catch(() => {
           this.onDone();
-          setTimeout(() => {
-            this.FeedbackService.showError('ERROR_CHANNEL_SWITCH_FAILED'); // TODO check correctness
-          });
+          // this error message will show on the main page
+          this.FeedbackService.showError('ERROR_CHANNEL_SWITCH_FAILED');
         });
     } else {
       this.HippoIframeService.load(renderPathInfo);
