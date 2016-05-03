@@ -23,18 +23,15 @@ import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.ws.rs.Path;
 import javax.xml.bind.JAXBException;
 
-import org.easymock.EasyMock;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.jaxrs.cxf.CXFTest;
 import org.onehippo.repository.mock.MockNodeFactory;
 
 import static com.jayway.restassured.http.ContentType.JSON;
@@ -48,13 +45,11 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.Matchers.equalTo;
 
-public class ContainerComponentResourceTest extends CXFTest {
+public class ContainerComponentResourceTest extends AbstractResourceTest {
 
     private static final String MOCK_REST_PATH = "test-containercomponent/";
 
     private ContainerComponentService containerComponentService;
-
-    private Session mockSession;
 
     /**
      * Override the @Path annotation in the {@link ContainerItemComponentResource} for ease of testing
@@ -79,14 +74,6 @@ public class ContainerComponentResourceTest extends CXFTest {
         Config config = createDefaultConfig()
                 .addServerSingleton(containerComponentResource);
         setup(config);
-    }
-
-    private HstRequestContext createMockHstContext() throws RepositoryException {
-        mockSession = EasyMock.createNiceMock(Session.class);
-        final HstRequestContext context = createMock(HstRequestContext.class);
-        expect(context.getSession()).andReturn(mockSession).anyTimes();
-        replay(context);
-        return context;
     }
 
     @Test
