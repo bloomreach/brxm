@@ -28,18 +28,27 @@ export class HippoIframeService {
     this.iframeJQueryElement = iframeJQueryElement;
 
     // start at the home page
-    this.renderPathInfo = '';
-    this.load(this.renderPathInfo);
+    this.load(this.ChannelService.getHomePageRenderPathInfo());
   }
 
   load(renderPathInfo) {
-    this.src = this.ChannelService.makePath(renderPathInfo);
+    if (renderPathInfo !== this.renderPathInfo) {
+      // navigate to a new page
+      const targetSrc = this.ChannelService.makePath(renderPathInfo);
+      if (targetSrc !== this.src) {
+        this.src = targetSrc;
+      } else if (this.iframeJQueryElement /* pro-forma-check */) {
+        // the src attribute of the iframe already has the desired value, and
+        // angular's 2-way binding won't trigger a reload, so use jQuery to achieve the desired effect
+        this.iframeJQueryElement.attr('src', this.src);
+      }
+    } else {
+      // we're already on the right page. We trigger a reload and forget about the src attribute
+      this.reload();
+    }
   }
 
   _extractRenderPathInfo(path) {
-    if (path !== this.src) {
-      this.src = path;
-    }
     this.renderPathInfo = this.ChannelService.extractRenderPathInfo(path);
   }
 

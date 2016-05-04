@@ -65,7 +65,7 @@ export class ChannelService {
 
   _setChannel(channel) {
     this.channel = channel;
-    this.channelPrefix = this._makeChannelPrefix(); // precompute to be more efficient
+    this.channelPrefix = this.makeContextPrefix(channel.contextPath); // precompute to be more efficient
     this.CatalogService.load(this._getMountId());
     this.SiteMapService.load(channel.siteMapId);
     this._augmentChannelWithPrototypeInfo();
@@ -98,16 +98,6 @@ export class ChannelService {
 
   getPreviewPaths() {
     return this.ConfigService.contextPaths.map((path) => this.makeContextPrefix(path));
-  }
-
-  _makeChannelPrefix() {
-    let prefix = this.makeContextPrefix(this.channel.contextPath);
-
-    if (this.channel.mountPath) {
-      prefix += this.channel.mountPath;
-    }
-
-    return prefix;
   }
 
   makePath(renderPathInfo) {
@@ -148,6 +138,10 @@ export class ChannelService {
 
   getName() {
     return this.channel.name;
+  }
+
+  getHomePageRenderPathInfo() {
+    return this.channel.mountPath ? this.channel.mountPath : '';
   }
 
   switchToChannel(id) {

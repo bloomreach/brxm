@@ -81,12 +81,21 @@ export class PageEditCtrl {
         this.ChannelService.recordOwnChange();
         this.onDone();
       })
-      .catch((extResponseRepresentation) => {
-        const messageKey = extResponseRepresentation.errorCode === 'ITEM_ALREADY_LOCKED'
-          ? 'ERROR_PAGE_LOCKED_BY' : 'ERROR_PAGE_SAVE_FAILED';
-        const params = extResponseRepresentation.data;
+      .catch((response) => {
+        // response might be undefined or null (for example when the network connection is lost)
+        response = response || {};
 
-        this._showError(messageKey, params);
+        let messageKey;
+        switch (response.errorCode) {
+          case 'ITEM_ALREADY_LOCKED':
+            messageKey = 'ERROR_PAGE_LOCKED_BY';
+            break;
+          default:
+            messageKey = 'ERROR_PAGE_SAVE_FAILED';
+            break;
+        }
+
+        this._showError(messageKey, response.data);
       });
   }
 
