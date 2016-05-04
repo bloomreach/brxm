@@ -15,10 +15,12 @@
  */
 
 export class ChannelEditCtrl {
-  constructor($translate, FeedbackService, ChannelService) {
+  constructor($element, $translate, FeedbackService, ChannelService) {
     'ngInject';
     this.ChannelService = ChannelService;
     this.FeedbackService = FeedbackService;
+
+    this.feedbackParent = $element.find('.feedback-parent');
 
     this.pageTitle = $translate.instant('SUBPAGE_CHANNEL_EDIT_TITLE', {
       channelName: ChannelService.getName(),
@@ -27,7 +29,9 @@ export class ChannelEditCtrl {
     ChannelService.getChannelInfoDescription().then((channelInfoDescription) => {
       this.fieldGroups = channelInfoDescription.fieldGroups;
       this.labels = channelInfoDescription.i18nResources;
-    });
+    },
+      () => this.onError({ key: 'SUBPAGE_CHANNEL_EDIT_ERROR_RETRIEVE_CHANNEL_INFO' })
+    );
 
     this.fields = ChannelService.getChannel().properties;
   }
@@ -50,6 +54,6 @@ export class ChannelEditCtrl {
   }
 
   back() {
-    this.onDone();
+    this.onCancel();
   }
 }

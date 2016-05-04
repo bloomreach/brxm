@@ -29,10 +29,10 @@
   <form name="form" flex="initial" class="qa-channel-edit subpage-form">
 
     <div ng-repeat="fieldGroup in channelEdit.getFieldGroups()">
-      <div>Field group: {{ channelEdit.getLabel(fieldGroup.titleKey) }}</div>
+      <div class="qa-channel-edit-fieldgroup">{{ channelEdit.getLabel(fieldGroup.titleKey) }}</div>
 
       <div ng-repeat="fieldName in fieldGroup.value">
-        <md-input-container class="md-block" flex>
+        <md-input-container class="qa-channel-edit-field md-block" flex>
           <label>{{ channelEdit.getLabel(fieldName) }}</label>
           <input type="text" ng-model="channelEdit.fields[fieldName]">
         </md-input-container>
@@ -40,7 +40,7 @@
     </div>
 
     <md-input-container>
-      <md-button type="submit" class="md-raised md-primary qa-save"
+      <md-button type="submit" class="qa-channel-edit-save md-raised md-primary"
                  ng-disabled="form.$pristine || form.$invalid"
                  ng-click="channelEdit.save()">
         {{ 'SUBPAGE_CHANNEL_EDIT_BUTTON_SAVE' | translate }}
