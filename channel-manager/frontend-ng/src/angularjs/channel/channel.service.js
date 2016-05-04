@@ -236,7 +236,11 @@ export class ChannelService {
     this.CmsService.publish('channel-changed-in-angular');
   }
 
-  resetUserChanges(user) {
-    this.channel.changedBySet.splice(this.channel.changedBySet.indexOf(user), 1);
+  resetUserChanges(users) {
+    users.forEach((user) => {
+      this.channel.changedBySet.splice(this.channel.changedBySet.indexOf(user), 1);
+    });
+
+    this.CmsService.publish('channel-changed-in-angular');
   }
 }

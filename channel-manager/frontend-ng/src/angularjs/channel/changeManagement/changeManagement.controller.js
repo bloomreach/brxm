@@ -42,10 +42,7 @@ export class ChangeManagementCtrl {
   }
 
   resetChanges() {
-    this.selectedUsers.forEach((user) => {
-      this.ChannelService.resetUserChanges(user);
-    });
-
+    this.ChannelService.resetUserChanges(this.selectedUsers);
     this.selectedUsers = [];
     this.onDone();
   }
