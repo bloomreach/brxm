@@ -18,7 +18,6 @@ export class ChannelCtrl {
 
   constructor(
       ChannelService,
-//      CmsService,
       ComponentAdderService,
       FeedbackService,
       HippoIframeService,
@@ -30,7 +29,6 @@ export class ChannelCtrl {
 
 
     this.ChannelService = ChannelService;
-//    this.CmsService = CmsService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.PageMetaDataService = PageMetaDataService;
@@ -127,8 +125,5 @@ export class ChannelCtrl {
 
   hideSubpage() {
     delete this.currentSubpage;
-    // TODO argh...?
-//    this.CmsService.publish('channel-changed-in-angular');
-//    this.HippoIframeService.reload();
   }
 }

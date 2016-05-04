@@ -20,6 +20,8 @@ describe('ChangeManagementCtrl', () => {
   let $rootScope;
   let ChangeManagementCtrl;
   let ChannelService;
+  let CmsService;
+  let HippoIframeService;
   let HstService;
 
   beforeEach(() => {
@@ -30,12 +32,16 @@ describe('ChangeManagementCtrl', () => {
       _$q_,
       _$rootScope_,
       _ChannelService_,
+      _CmsService_,
+      _HippoIframeService_,
       _HstService_
     ) => {
       $compile = _$compile_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
+      CmsService = _CmsService_;
+      HippoIframeService = _HippoIframeService_;
       HstService = _HstService_;
     });
 
@@ -87,11 +93,16 @@ describe('ChangeManagementCtrl', () => {
 
   it('should reset changes', () => {
     spyOn(ChangeManagementCtrl, 'onDone');
+    spyOn(CmsService, 'publish');
+    spyOn(HippoIframeService, 'reload');
 
     ChangeManagementCtrl.selectedUsers = ['testuser', 'otheruser'];
     ChangeManagementCtrl.resetChanges();
 
     expect(ChangeManagementCtrl.selectedUsers).toEqual([]);
+    expect(CmsService.publish).toHaveBeenCalled();
+    expect(HippoIframeService.reload).toHaveBeenCalled();
+    expect(ChangeManagementCtrl.onDone).toHaveBeenCalled();
   });
 
   it('should check a user', () => {

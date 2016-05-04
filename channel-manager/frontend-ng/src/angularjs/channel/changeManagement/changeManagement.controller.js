@@ -15,10 +15,12 @@
  */
 
 export class ChangeManagementCtrl {
-  constructor(ChannelService, HstService) {
+  constructor(CmsService, ChannelService, HippoIframeService, HstService) {
     'ngInject';
 
     this.ChannelService = ChannelService;
+    this.CmsService = CmsService;
+    this.HippoIframeService = HippoIframeService;
     this.HstService = HstService;
 
     this.usersWithChanges = ChannelService.getChannel().changedBySet;
@@ -38,6 +40,8 @@ export class ChangeManagementCtrl {
   resetChanges() {
     this.ChannelService.resetUserChanges(this.selectedUsers);
     this.selectedUsers = [];
+    this.CmsService.publish('channel-changed-in-angular');
+    this.HippoIframeService.reload();
     this.onDone();
   }
 
