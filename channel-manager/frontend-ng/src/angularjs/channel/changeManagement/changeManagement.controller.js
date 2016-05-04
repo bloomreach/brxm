@@ -59,8 +59,7 @@ export class ChangeManagementCtrl {
   }
 
   uncheckUser(user) {
-    // TODO consistency: CHannelService.resetUserChanges() uses indexOf()
-    const index = this.selectedUsers.findIndex((element) => element === user);
+    const index = this.selectedUsers.indexOf(user);
     this.selectedUsers.splice(index, 1);
   }
 
