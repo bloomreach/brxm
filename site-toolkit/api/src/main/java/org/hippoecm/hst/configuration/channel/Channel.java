@@ -308,7 +308,7 @@ public class Channel implements Serializable {
         this.workspaceExists = workspaceExists;
     }
 
-    public boolean hasCustomProperties() {
+    public boolean getHasCustomProperties() {
         return hasCustomProperties;
     }
 

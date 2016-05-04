@@ -1130,7 +1130,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
         VirtualHost virtualHost = mount.getVirtualHost();
 
         try {
-            return virtualHost.getVirtualHosts().getChannelInfoClass(virtualHost.getHostGroupName(), channel.getId()) != null;
+            return virtualHost.getVirtualHosts().getChannelInfoClass(virtualHost.getHostGroupName(), channel.getId()) != ChannelInfo.class;
         } catch (ChannelException e) {
             return false;
         }
@@ -1150,7 +1150,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
         preview.setHstConfigPath(channel.getHstConfigPath() + "-preview");
         preview.setPreviewHstConfigExists(channel.isPreviewHstConfigExists());
         preview.setWorkSpaceExists(channel.isWorkspaceExists());
-        preview.setHasCustomProperties(channel.hasCustomProperties());
+        preview.setHasCustomProperties(channel.getHasCustomProperties());
         preview.setLocale(channel.getLocale());
         preview.setHstMountPoint(channel.getHstMountPoint());
         preview.setMountId(channel.getMountId());
