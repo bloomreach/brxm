@@ -16,6 +16,7 @@
 
 <md-button aria-label="{{ 'TOOLBAR_BUTTON_CHANNEL' | translate }}"
            class="qa-button-channel"
+           ng-disabled="channelActions.isChannelEditDisabled()"
            ng-click="channelActions.edit()">
   {{ 'TOOLBAR_BUTTON_CHANNEL' | translate }}
 </md-button>
