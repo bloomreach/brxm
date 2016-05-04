@@ -15,9 +15,10 @@
  */
 
 export class ChannelEditCtrl {
-  constructor($translate, $scope, ChannelService) {
+  constructor($translate, FeedbackService, ChannelService) {
     'ngInject';
     this.ChannelService = ChannelService;
+    this.FeedbackService = FeedbackService;
 
     this.pageTitle = $translate.instant('SUBPAGE_CHANNEL_EDIT_TITLE', {
       channelName: ChannelService.getName(),
@@ -32,9 +33,8 @@ export class ChannelEditCtrl {
   }
 
   save() {
-    this.ChannelService.saveProperties(this.fields).then(() => {
-      this.onDone();
-    });
+    this.ChannelService.saveProperties(this.fields).then(() => this.onDone(),
+      () => this._showError('SUBPAGE_CHANNEL_EDIT_ERROR_SAVING'));
   }
 
   getFieldGroups() {
@@ -43,6 +43,10 @@ export class ChannelEditCtrl {
 
   getLabel(fieldName) {
     return this.labels[fieldName];
+  }
+
+  _showError(key, params) {
+    this.FeedbackService.showError(key, params, this.feedbackParent);
   }
 
   back() {
