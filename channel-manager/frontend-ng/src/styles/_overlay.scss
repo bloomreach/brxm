@@ -86,7 +86,9 @@ overlay-element {
 
   &-visible {
     display: block;
+  }
 
+  &.overlay-label-visible {
     > .overlay-label {
       display: flex;
 
