@@ -1053,13 +1053,13 @@ public class VirtualHostsService implements MutableVirtualHosts {
         final HstSite previewHstSite = mount.getPreviewHstSite();
         channel.setPreviewHstConfigExists(previewHstSite.hasPreviewConfiguration());
         channel.setWorkSpaceExists(hasWorkspace(mount));
-
-        channel.setChannelPath(mount.isPreview() ? mount.getChannelPath() : mount.getPreviewChannelPath());
+        channel.setHasCustomProperties(hasChannelCustomProperties(channel, mount));
 
         String mountPath = mount.getMountPath();
         channel.setLocale(mount.getLocale());
         channel.setMountId(mount.getIdentifier());
         channel.setMountPath(mountPath);
+        channel.setChannelPath(mount.getChannelPath());
 
         if (mount.getHstSite().getSiteMap() instanceof CanonicalInfo) {
             channel.setSiteMapId(((CanonicalInfo)mount.getHstSite().getSiteMap()).getCanonicalIdentifier());
@@ -1114,6 +1114,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
                         channelsRoot + channel.getName()+"-preview");
             }
             populatePreviewChannel(previewChannel, channel);
+            previewChannel.setChannelPath(mount.getPreviewChannelPath());
             if (previewHstSite.getSiteMap() instanceof CanonicalInfo) {
                 previewChannel.setSiteMapId(((CanonicalInfo)previewHstSite.getSiteMap()).getCanonicalIdentifier());
             }
@@ -1123,6 +1124,16 @@ public class VirtualHostsService implements MutableVirtualHosts {
             mount.setChannelInfo(getChannelInfo(channel), getChannelInfo(previewChannel));
         }
         log.info("Attaching channel {} to mount took {} ms ",channel, (System.currentTimeMillis() - start));
+    }
+
+    private boolean hasChannelCustomProperties(final Channel channel, final ContextualizableMount mount) {
+        VirtualHost virtualHost = mount.getVirtualHost();
+
+        try {
+            return virtualHost.getVirtualHosts().getChannelInfoClass(virtualHost.getHostGroupName(), channel.getId()) != null;
+        } catch (ChannelException e) {
+            return false;
+        }
     }
 
     private boolean hasWorkspace(final Mount mount) {
@@ -1139,7 +1150,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
         preview.setHstConfigPath(channel.getHstConfigPath() + "-preview");
         preview.setPreviewHstConfigExists(channel.isPreviewHstConfigExists());
         preview.setWorkSpaceExists(channel.isWorkspaceExists());
-        preview.setChannelPath(channel.getChannelPath());
+        preview.setHasCustomProperties(channel.hasCustomProperties());
         preview.setLocale(channel.getLocale());
         preview.setHstMountPoint(channel.getHstMountPoint());
         preview.setMountId(channel.getMountId());

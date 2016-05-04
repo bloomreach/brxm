@@ -37,6 +37,7 @@ public class Channel implements Serializable {
     private String contextPath;
     private String cmsPreviewPrefix;
     private String mountPath;
+    private String channelPath;
 
     private String url; //Probably not needed for all channels ?
 
@@ -51,6 +52,7 @@ public class Channel implements Serializable {
     private String locale;
     private boolean previewHstConfigExists;
     private boolean workspaceExists;
+    private boolean hasCustomProperties;
 
     // the set of users that have changes for the channel: Can be the channel node itself or some
     // hst configuration belonging to the channel
@@ -64,8 +66,6 @@ public class Channel implements Serializable {
     private Calendar lastModified;
 
     private int hashCode;
-
-    private String channelPath;
 
     /**
      * {@link Channel} default constructor it is required for REST de/serialization 
@@ -92,6 +92,7 @@ public class Channel implements Serializable {
         contextPath = channel.contextPath;
         cmsPreviewPrefix = channel.cmsPreviewPrefix;
         mountPath = channel.mountPath;
+        channelPath = channel.channelPath;
         url = channel.url;
         hstMountPoint = channel.hstMountPoint;
         hstConfigPath = channel.hstConfigPath;
@@ -107,6 +108,7 @@ public class Channel implements Serializable {
         locale = channel.locale;
         previewHstConfigExists = channel.previewHstConfigExists;
         workspaceExists = channel.workspaceExists;
+        hasCustomProperties = channel.hasCustomProperties;
         // not a deep clone: Not a problem! Note even the same instance is used, this is because
         // channel.changedBySet can be a ChannelLazyLoadingChangedBySet
         changedBySet = channel.changedBySet;
@@ -223,6 +225,14 @@ public class Channel implements Serializable {
         return this.mountPath;
     }
 
+    public void setChannelPath(final String channelPath) {
+        this.channelPath = channelPath;
+    }
+
+    public String getChannelPath() {
+        return channelPath;
+    }
+
     public void setProperties(Map<String, Object> properties){
         this.properties = properties;
     }
@@ -296,6 +306,14 @@ public class Channel implements Serializable {
 
     public void setWorkSpaceExists(final boolean workspaceExists) {
         this.workspaceExists = workspaceExists;
+    }
+
+    public boolean hasCustomProperties() {
+        return hasCustomProperties;
+    }
+
+    public void setHasCustomProperties(final boolean hasCustomProperties) {
+        this.hasCustomProperties = hasCustomProperties;
     }
 
     /**
@@ -451,13 +469,5 @@ public class Channel implements Serializable {
         b.append('}');
 
         return b.toString();
-    }
-
-    public void setChannelPath(final String channelPath) {
-        this.channelPath = channelPath;
-    }
-
-    public String getChannelPath() {
-        return channelPath;
     }
 }
