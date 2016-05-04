@@ -17,39 +17,25 @@
 export class ChannelCtrl {
 
   constructor(
-      $timeout,
-      $log,
-      $scope,
-      $translate,
       ChannelService,
-      CmsService,
+//      CmsService,
       ComponentAdderService,
-      ConfigService,
-      DialogService,
       FeedbackService,
       HippoIframeService,
       PageMetaDataService,
       ScalingService,
-      SessionService,
-      SiteMapService
+      SessionService
     ) {
     'ngInject';
 
 
-    this.$timeout = $timeout;
-    this.$log = $log;
-    this.$scope = $scope;
-    this.$translate = $translate;
     this.ChannelService = ChannelService;
-    this.CmsService = CmsService;
-    this.ConfigService = ConfigService;
-    this.DialogService = DialogService;
+//    this.CmsService = CmsService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.PageMetaDataService = PageMetaDataService;
     this.ScalingService = ScalingService;
     this.SessionService = SessionService;
-    this.SiteMapService = SiteMapService;
     this.isEditMode = false;
     this.isCreatingPreview = false;
 
@@ -131,11 +117,6 @@ export class ChannelCtrl {
     return this.PageMetaDataService.getRenderVariant();
   }
 
-  hasChanges() {
-    const usersHaveChanges = this.ChannelService.getChannel().changedBySet.length > 0;
-    return usersHaveChanges;
-  }
-
   isSubpageOpen() {
     return !!this.currentSubpage;
   }
@@ -146,7 +127,8 @@ export class ChannelCtrl {
 
   hideSubpage() {
     delete this.currentSubpage;
-    this.CmsService.publish('channel-changed-in-angular');
-    this.HippoIframeService.reload();
+    // TODO argh...?
+//    this.CmsService.publish('channel-changed-in-angular');
+//    this.HippoIframeService.reload();
   }
 }

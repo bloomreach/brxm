@@ -181,16 +181,4 @@ describe('ChannelCtrl', () => {
     ChannelCtrl.enterEditMode();
     expect(ChannelService.createPreviewConfiguration).not.toHaveBeenCalled();
   });
-
-  it('detects that users have pending changes', () => {
-    ChannelService.getChannel.and.returnValue({ changedBySet: ['tobi', 'testUser', 'obiwan'] });
-
-    expect(ChannelCtrl.hasChanges()).toBe(true);
-  });
-
-  it('detects that users have no pending changes', () => {
-    ChannelService.getChannel.and.returnValue({ changedBySet: [] });
-
-    expect(ChannelCtrl.hasChanges()).toBe(false);
-  });
 });

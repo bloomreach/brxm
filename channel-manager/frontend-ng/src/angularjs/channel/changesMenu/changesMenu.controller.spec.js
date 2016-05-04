@@ -18,8 +18,8 @@ describe('ChangesMenuCtrl', () => {
   let ChannelService;
   let DialogService;
   let HippoIframeService;
+  let ConfigService;
   let $q;
-  let ChangesMenuCtrl;
   let $rootScope;
   let $compile;
 
@@ -32,13 +32,15 @@ describe('ChangesMenuCtrl', () => {
       _$q_,
       _ChannelService_,
       _DialogService_,
-      _HippoIframeService_
+      _HippoIframeService_,
+      _ConfigService_
     ) => {
       $compile = _$compile_;
       $q = _$q_;
       ChannelService = _ChannelService_;
       DialogService = _DialogService_;
       HippoIframeService = _HippoIframeService_;
+      ConfigService = _ConfigService_;
       $rootScope = _$rootScope_;
     });
 
@@ -50,6 +52,11 @@ describe('ChangesMenuCtrl', () => {
     spyOn(HippoIframeService, 'reload');
     spyOn(DialogService, 'confirm').and.callThrough();
 
+    ConfigService.cmsUser = 'testUser';
+    ConfigService.canManageChanges = true;
+  });
+
+  function createChangesMenuCtrl() {
     const el = angular.element(`
       <changes-menu on-manage-changes="">
       </changes-menu>
@@ -57,10 +64,43 @@ describe('ChangesMenuCtrl', () => {
     $compile(el)($rootScope.$new());
     $rootScope.$apply();
 
-    ChangesMenuCtrl = el.controller('changes-menu');
+    return el.controller('changes-menu');
+  }
+
+  it('determines if there are own changes', () => {
+    const ChangesMenuCtrl = createChangesMenuCtrl();
+    expect(ChangesMenuCtrl.hasOwnChanges()).toBe(false);
+
+    ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser'] });
+    expect(ChangesMenuCtrl.hasOwnChanges()).toBe(false);
+
+    ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser'] });
+    expect(ChangesMenuCtrl.hasOwnChanges()).toBe(true);
+
+    ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser', 'testUser'] });
+    expect(ChangesMenuCtrl.hasOwnChanges()).toBe(true);
+  });
+
+  it('determines if there are manageable changes', () => {
+    let ChangesMenuCtrl = createChangesMenuCtrl();
+    expect(ChangesMenuCtrl.hasChangesToManage()).toBe(false);
+
+    ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser'] });
+    expect(ChangesMenuCtrl.hasChangesToManage()).toBe(true);
+
+    ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser'] });
+    expect(ChangesMenuCtrl.hasChangesToManage()).toBe(true);
+
+    ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser', 'testUser'] });
+    expect(ChangesMenuCtrl.hasChangesToManage()).toBe(true);
+
+    ConfigService.canManageChanges = false;
+    ChangesMenuCtrl = createChangesMenuCtrl();
+    expect(ChangesMenuCtrl.hasChangesToManage()).toBe(false);
   });
 
   it('publishes changes', () => {
+    const ChangesMenuCtrl = createChangesMenuCtrl();
     ChangesMenuCtrl.publish();
     $rootScope.$digest();
 
@@ -71,6 +111,7 @@ describe('ChangesMenuCtrl', () => {
   it('discards changes', () => {
     spyOn(DialogService, 'show').and.returnValue($q.resolve());
 
+    const ChangesMenuCtrl = createChangesMenuCtrl();
     ChangesMenuCtrl.discard();
     $rootScope.$digest();
 
@@ -83,6 +124,7 @@ describe('ChangesMenuCtrl', () => {
   it('does not discard changes if not confirmed', () => {
     spyOn(DialogService, 'show').and.returnValue($q.reject());
 
+    const ChangesMenuCtrl = createChangesMenuCtrl();
     ChangesMenuCtrl.discard();
     $rootScope.$digest();
 

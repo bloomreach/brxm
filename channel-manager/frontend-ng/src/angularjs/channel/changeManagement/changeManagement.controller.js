@@ -26,15 +26,19 @@ export class ChangeManagementCtrl {
   }
 
   publishChanges() {
+    // TODO: move the HST-specific stuff into the ChannelService?
     const url = 'userswithchanges/publish';
     this.HstService.doPost({ data: this.selectedUsers }, this.ChannelService.getMountId(), url)
       .then(() => this.resetChanges());
+    // TODO must handle failure
   }
 
   discardChanges() {
+    // TODO: move the HST-specific stuff into the ChannelService?
     const url = 'userswithchanges/discard';
     this.HstService.doPost({ data: this.selectedUsers }, this.ChannelService.getMountId(), url)
       .then(() => this.resetChanges());
+    // TODO must handle failure
   }
 
   resetChanges() {
@@ -55,6 +59,7 @@ export class ChangeManagementCtrl {
   }
 
   uncheckUser(user) {
+    // TODO consistency: CHannelService.resetUserChanges() uses indexOf()
     const index = this.selectedUsers.findIndex((element) => element === user);
     this.selectedUsers.splice(index, 1);
   }
@@ -74,7 +79,7 @@ export class ChangeManagementCtrl {
   toggleAll() {
     if (this.allAreChecked()) {
       this.usersWithChanges.forEach((user) => {
-        if (this.isChecked(user)) {
+        if (this.isChecked(user)) { // TODO double-up
           this.uncheckUser(user);
         }
       });

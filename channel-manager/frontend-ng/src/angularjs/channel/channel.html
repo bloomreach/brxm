@@ -37,9 +37,7 @@
 
       <span flex></span>
 
-      <changes-menu ng-if="channelCtrl.hasChanges()"
-                    on-manage-changes="channelCtrl.showSubpage('manage-changes')">
-      </changes-menu>
+      <changes-menu on-manage-changes="channelCtrl.showSubpage('manage-changes')"></changes-menu>
 
       <span class="button-group">
         <md-button class="qa-button-edit"
@@ -77,14 +75,14 @@
           on-done="channelCtrl.hideSubpage()">
 </page-add>
 
-<change-management layout="column" flex
-    ng-if="channelCtrl.isSubpageOpen()"
-    on-done="channelCtrl.hideSubpage()">
-</change-management>
-
 <channel-edit layout="column" flex
               ng-if="channelCtrl.currentSubpage == 'channel-edit'"
               on-done="channelCtrl.hideSubpage()">
 </channel-edit>
+
+<change-management layout="column" flex
+                   ng-if="channelCtrl.currentSubpage == 'manage-changes'"
+                   on-done="channelCtrl.hideSubpage()">
+</change-management>
 
 <div class="mask qa-mask" mask></div>

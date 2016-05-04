@@ -29,7 +29,19 @@ export class ChangesMenuCtrl {
     this.HippoIframeService = HippoIframeService;
 
     this.showManageChanges = ConfigService.canManageChanges;
-    this.hasOwnChanges = ChannelService.getChannel().changedBySet.indexOf(ConfigService.cmsUser) !== -1;
+    this.currentUser = ConfigService.cmsUser;
+  }
+
+  hasOwnChanges() {
+    return this.ChannelService.getChannel().changedBySet.indexOf(this.currentUser) !== -1;
+  }
+
+  hasChangesToManage() {
+    return this.showManageChanges && this.ChannelService.getChannel().changedBySet.length > 0;
+  }
+
+  isShowChangesMenu() {
+    return this.hasChangesToManage() || this.hasOwnChanges();
   }
 
   publish() {

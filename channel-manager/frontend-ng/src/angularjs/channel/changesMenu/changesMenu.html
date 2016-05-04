@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<md-menu>
+<md-menu ng-if="changes.isShowChangesMenu()">
   <md-button aria-label="{{ 'TOOLBAR_BUTTON_CHANGES' | translate }}"
       class="qa-button-changes"
       ng-click="$mdOpenMenu($event)">
@@ -24,21 +24,21 @@
 
   <md-menu-content width="4"
       class="qa-changes-menu">
-      <md-menu-item ng-if="changes.hasOwnChanges">
+      <md-menu-item ng-if="changes.hasOwnChanges()">
       <md-button aria-label="{{ 'TOOLBAR_MENU_CHANGES_PUBLISH' | translate }}"
           ng-click="changes.publish()">
         {{ 'TOOLBAR_MENU_CHANGES_PUBLISH' | translate }}
       </md-button>
     </md-menu-item>
 
-    <md-menu-item ng-if="changes.hasOwnChanges">
+    <md-menu-item ng-if="changes.hasOwnChanges()">
       <md-button aria-label="{{ 'TOOLBAR_MENU_CHANGES_DISCARD' | translate }}"
           ng-click="changes.discard()">
         {{ 'TOOLBAR_MENU_CHANGES_DISCARD' | translate }}
       </md-button>
     </md-menu-item>
 
-    <md-menu-item ng-if="changes.showManageChanges">
+    <md-menu-item ng-if="changes.hasChangesToManage()">
       <md-button aria-label="{{ 'TOOLBAR_MENU_MANAGE_CHANGES' | translate }}"
           ng-click="changes.onManageChanges()">
         {{ 'TOOLBAR_MENU_MANAGE_CHANGES' | translate }}
