@@ -25,17 +25,19 @@ describe('ChannelActionEdit', () => {
   let $q;
   let ChannelService;
   let FeedbackService;
+  let HippoIframeService;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _FeedbackService_) => {
+    inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _FeedbackService_, _HippoIframeService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $translate = _$translate_;
       $q = _$q_;
       ChannelService = _ChannelService_;
       FeedbackService = _FeedbackService_;
+      HippoIframeService = _HippoIframeService_;
     });
 
     spyOn($translate, 'instant');
@@ -113,6 +115,8 @@ describe('ChannelActionEdit', () => {
   it('notifies the event "on-done" when saving is successful', () => {
     mockChannelInfoDescription();
     spyOn(ChannelService, 'saveProperties').and.returnValue($q.when());
+    spyOn(ChannelService, 'recordOwnChange');
+    spyOn(HippoIframeService, 'reload').and.returnValue($q.when());
     compileDirectiveAndGetController();
 
     $scope.form.$setDirty();
@@ -120,6 +124,8 @@ describe('ChannelActionEdit', () => {
     $element.find('.qa-channel-edit-save').click();
 
     expect(ChannelService.saveProperties).toHaveBeenCalled();
+    expect(HippoIframeService.reload).toHaveBeenCalled();
+    expect(ChannelService.recordOwnChange).toHaveBeenCalled();
     expect($scope.onDone).toHaveBeenCalled();
   });
 

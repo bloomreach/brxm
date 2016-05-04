@@ -91,7 +91,9 @@
 
 <channel-edit layout="column" flex
               ng-if="channelCtrl.currentSubpage == 'channel-edit'"
-              on-done="channelCtrl.hideSubpage()">
+              on-done="channelCtrl.onChannelEditDone()"
+              on-cancel="channelCtrl.hideSubpage()"
+              on-error="channelCtrl.onChannelEditError(key)">
 </channel-edit>
 
 <div class="mask qa-mask" mask></div>

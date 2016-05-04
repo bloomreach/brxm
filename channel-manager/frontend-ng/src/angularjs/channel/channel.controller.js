@@ -161,4 +161,15 @@ export class ChannelCtrl {
   hideSubpage() {
     delete this.currentSubpage;
   }
+
+  onChannelEditDone() {
+    this.hideSubpage();
+    // TODO show a toast message notify this change
+    this.$log.info('Channel setting is saved successfully');
+  }
+
+  onChannelEditError(key) {
+    this.hideSubpage();
+    this.FeedbackService.showError(key);
+  }
 }

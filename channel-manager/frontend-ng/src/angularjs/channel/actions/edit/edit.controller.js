@@ -15,10 +15,11 @@
  */
 
 export class ChannelEditCtrl {
-  constructor($element, $translate, FeedbackService, ChannelService) {
+  constructor($element, $translate, FeedbackService, ChannelService, HippoIframeService) {
     'ngInject';
     this.ChannelService = ChannelService;
     this.FeedbackService = FeedbackService;
+    this.HippoIframeService = HippoIframeService;
 
     this.feedbackParent = $element.find('.feedback-parent');
 
@@ -37,8 +38,16 @@ export class ChannelEditCtrl {
   }
 
   save() {
-    this.ChannelService.saveProperties(this.fields).then(() => this.onDone(),
+    this.ChannelService.saveProperties(this.fields).then(
+      () => this._onSaveDone(),
       () => this._showError('SUBPAGE_CHANNEL_EDIT_ERROR_SAVING'));
+  }
+
+  _onSaveDone() {
+    return this.HippoIframeService.reload().then(() => {
+      this.ChannelService.recordOwnChange();
+      this.onDone();
+    });
   }
 
   getFieldGroups() {
