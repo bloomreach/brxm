@@ -79,7 +79,6 @@ export class HippoIframeService {
 
   // called by the hippoIframe controller when the processing of the loaded page is completed.
   signalPageLoadCompleted() {
-    console.log('I LOAD');
     this._extractRenderPathInfo(this.iframeJQueryElement[0].contentWindow.location.pathname);
 
     const deferred = this._deferredReload;
