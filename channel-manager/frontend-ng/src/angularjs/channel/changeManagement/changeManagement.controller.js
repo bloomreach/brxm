@@ -28,13 +28,11 @@ export class ChangeManagementCtrl {
   publishSelectedChanges() {
     this.ChannelService.publishChanges(this.selectedUsers)
       .then(() => this.resetChanges());
-    // TODO must handle failure
   }
 
   discardSelectedChanges() {
     this.ChannelService.discardChanges(this.selectedUsers)
       .then(() => this.resetChanges());
-    // TODO must handle failure
   }
 
   resetChanges() {

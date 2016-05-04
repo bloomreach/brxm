@@ -22,6 +22,7 @@ export class ChannelService {
       $state,
       SessionService,
       CatalogService,
+      FeedbackService,
       HstService,
       ConfigService,
       CmsService,
@@ -35,6 +36,7 @@ export class ChannelService {
     this.$state = $state;
     this.SessionService = SessionService;
     this.CatalogService = CatalogService;
+    this.FeedbackService = FeedbackService;
     this.HstService = HstService;
     this.ConfigService = ConfigService;
     this.CmsService = CmsService;
@@ -193,7 +195,8 @@ export class ChannelService {
       .then((response) => {
         this.resetUserChanges();
         return response;
-      });
+      })
+      .catch(() => this.FeedbackService.showError('ERROR_PUBLISH_CHANGES'));
   }
 
   discardChanges(users = [this.ConfigService.cmsUser]) {
@@ -202,7 +205,8 @@ export class ChannelService {
       .then((response) => {
         this.resetUserChanges();
         return response;
-      });
+      })
+      .catch(() => this.FeedbackService.showError('ERROR_DISCARD_CHANGES'));
   }
 
   getSiteMapId() {
