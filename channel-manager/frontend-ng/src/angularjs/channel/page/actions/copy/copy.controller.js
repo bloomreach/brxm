@@ -68,11 +68,13 @@ export class PageCopyCtrl {
       .then((data) => {
         this._returnToNewUrl(data.renderPathInfo);
       })
-      .catch((extResponseRepresentation) => {
-        this.$log.info(extResponseRepresentation.message);
-        const params = extResponseRepresentation.data;
+      .catch((response) => {
+        // response might be undefined or null (for example when the network connection is lost)
+        response = response || {};
+
+        this.$log.info(response.message);
         let messageKey;
-        switch (extResponseRepresentation.errorCode) {
+        switch (response.errorCode) {
           case 'ITEM_CANNOT_BE_CLONED':
             messageKey = 'ERROR_PAGE_COPY_TARGET_EXISTS';
             break;
@@ -81,7 +83,7 @@ export class PageCopyCtrl {
             break;
         }
 
-        this._showError(messageKey, params);
+        this._showError(messageKey, response.data);
       });
   }
 
