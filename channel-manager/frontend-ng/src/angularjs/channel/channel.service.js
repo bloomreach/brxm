@@ -190,7 +190,7 @@ export class ChannelService {
   publishOwnChanges() {
     return this.HstService.doPost(null, this.getMountId(), 'publish')
       .then((response) => {
-        this._resetOwnChange();
+        this.resetUserChanges();
         return response;
       });
   }
@@ -198,7 +198,7 @@ export class ChannelService {
   discardOwnChanges() {
     return this.HstService.doPost(null, this.getMountId(), 'discard')
       .then((response) => {
-        this._resetOwnChange();
+        this.resetUserChanges();
         return response;
       });
   }
@@ -231,12 +231,7 @@ export class ChannelService {
     return this.channel.mountId;
   }
 
-  _resetOwnChange() {
-    this.channel.changedBySet.splice(this.channel.changedBySet.indexOf(this.ConfigService.cmsUser), 1);
-    this.CmsService.publish('channel-changed-in-angular');
-  }
-
-  resetUserChanges(users) {
+  resetUserChanges(users = [this.ConfigService.cmsUser]) {
     users.forEach((user) => {
       this.channel.changedBySet.splice(this.channel.changedBySet.indexOf(user), 1);
     });
