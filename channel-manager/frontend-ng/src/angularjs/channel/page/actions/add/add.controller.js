@@ -15,10 +15,11 @@
  */
 
 export class PageAddCtrl {
-  constructor($element, $scope, $translate, ChannelService, SiteMapService, HippoIframeService,
+  constructor($element, $log, $scope, $translate, ChannelService, SiteMapService, HippoIframeService,
               FeedbackService, lowercaseFilter) {
     'ngInject';
 
+    this.$log = $log;
     this.ChannelService = ChannelService;
     this.SiteMapService = SiteMapService;
     this.FeedbackService = FeedbackService;
@@ -66,8 +67,34 @@ export class PageAddCtrl {
         this.ChannelService.recordOwnChange();
         this.onDone();
       })
-      .catch(() => {
-        this._showError('ERROR_PAGE_CREATION_FAILED');
+      .catch((response) => {
+        // response might be undefined or null (for example when the network connection is lost)
+        response = response || {};
+
+        if (response.message) {
+          this.$log.info(response.message);
+        }
+
+        let messageKey;
+        switch (response.errorCode) {
+          case 'ITEM_ALREADY_LOCKED':
+            messageKey = 'ERROR_PAGE_LOCKED_BY';
+            break;
+          case 'ITEM_NOT_IN_PREVIEW':
+            messageKey = 'ERROR_PAGE_PARENT_MISSING';
+            break;
+          case 'ITEM_NAME_NOT_UNIQUE':
+            messageKey = 'ERROR_PAGE_PATH_EXISTS';
+            break;
+          case 'INVALID_PATH_INFO':
+            messageKey = 'ERROR_PAGE_PATH_INVALID';
+            break;
+          default:
+            messageKey = 'ERROR_PAGE_CREATION_FAILED';
+            break;
+        }
+
+        this._showError(messageKey, response.data);
       });
   }
 

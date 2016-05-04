@@ -31,6 +31,7 @@
       <md-input-container class="md-block" flex>
         <label>{{ 'SUBPAGE_PAGE_ADD_LABEL_URL_STEM' | translate }}</label>
         <md-select required name="location" class="qa-url-stem"
+                   focus-if
                    ng-model="pageMove.location"
                    ng-model-options="{trackBy: '$value.location'}">
           <md-option ng-repeat="location in pageMove.locations" ng-value="{{location}}">

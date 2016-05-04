@@ -76,11 +76,13 @@ export class PageMoveCtrl {
         this.ChannelService.recordOwnChange();
         this.onDone();
       })
-      .catch((extResponseRepresentation) => {
-        this.$log.info(extResponseRepresentation.message);
-        const params = extResponseRepresentation.data;
+      .catch((response) => {
+        // response might be undefined or null (for example when the network connection is lost)
+        response = response || {};
+
+        this.$log.info(response.message);
         let messageKey;
-        switch (extResponseRepresentation.errorCode) {
+        switch (response.errorCode) {
           case 'ITEM_ALREADY_LOCKED':
             messageKey = 'ERROR_PAGE_LOCKED_BY';
             break;
@@ -99,7 +101,7 @@ export class PageMoveCtrl {
             break;
         }
 
-        this._showError(messageKey, params);
+        this._showError(messageKey, response.data);
       });
   }
 
