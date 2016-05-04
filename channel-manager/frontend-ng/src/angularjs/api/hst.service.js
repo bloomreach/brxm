@@ -50,14 +50,6 @@ export class HstService {
     return this.doGet(this.config.rootUuid, 'channels', id);
   }
 
-  getChannelInfoDescription(id, currentLocale) {
-    return this._callHst('GET', this.config.rootUuid, ['channels', id, 'info'], null, { locale: currentLocale });
-  }
-
-  saveChannelProperties(id, properties) {
-    return this._callHst('PUT', this.config.rootUuid, ['channels', id, 'properties'], properties);
-  }
-
   getSiteMap(id) {
     return this.doGet(id, 'pages')
       .then((response) => response.data.pages);
@@ -73,6 +65,10 @@ export class HstService {
 
   doPost(data, uuid, ...pathElements) {
     return this._callHst('POST', uuid, pathElements, data);
+  }
+
+  doPut(data, uuid, ...pathElements) {
+    return this._callHst('PUT', uuid, pathElements, data);
   }
 
   _callHst(method, uuid, pathElements, data, params) {

@@ -63,9 +63,12 @@ describe('ChannelActionEdit', () => {
     $scope = $rootScope.$new();
     $scope.onDone = jasmine.createSpy('onDone');
     $scope.onError = jasmine.createSpy('onError');
-    $scope.onCancel = jasmine.createSpy('onCancel');
+    $scope.onSuccess = jasmine.createSpy('onSuccess');
 
-    $element = angular.element('<channel-edit on-done="onDone()" on-cancel="onCancel()" on-error="onError(key)"></channel-edit>');
+    $element = angular.element(`
+      <channel-edit on-done="onDone()" on-success="onSuccess(key, params)" on-error="onError(key, params)">
+      </channel-edit>
+    `);
     $compile($element)($scope);
     $scope.$digest();
 
@@ -100,19 +103,19 @@ describe('ChannelActionEdit', () => {
     spyOn(ChannelService, 'getChannelInfoDescription').and.returnValue($q.reject());
     compileDirectiveAndGetController();
 
-    expect($scope.onError).toHaveBeenCalledWith('SUBPAGE_CHANNEL_EDIT_ERROR_RETRIEVE_CHANNEL_INFO');
+    expect($scope.onError).toHaveBeenCalledWith('ERROR_CHANNEL_INFO_RETRIEVAL_FAILED', undefined);
   });
 
-  it('notifies the event "on-cancel" when clicking the back button', () => {
+  it('notifies the event "on-done" when clicking the back button', () => {
     mockChannelInfoDescription();
     compileDirectiveAndGetController();
 
     $element.find('.qa-button-back').click();
 
-    expect($scope.onCancel).toHaveBeenCalled();
+    expect($scope.onDone).toHaveBeenCalled();
   });
 
-  it('notifies the event "on-done" when saving is successful', () => {
+  it('notifies the event "on-success" when saving is successful', () => {
     mockChannelInfoDescription();
     spyOn(ChannelService, 'saveProperties').and.returnValue($q.when());
     spyOn(ChannelService, 'recordOwnChange');
@@ -126,7 +129,7 @@ describe('ChannelActionEdit', () => {
     expect(ChannelService.saveProperties).toHaveBeenCalled();
     expect(HippoIframeService.reload).toHaveBeenCalled();
     expect(ChannelService.recordOwnChange).toHaveBeenCalled();
-    expect($scope.onDone).toHaveBeenCalled();
+    expect($scope.onSuccess).toHaveBeenCalledWith('CHANNEL_PROPERTIES_SAVE_SUCCESS', undefined);
   });
 
   it('shows feedback message when saving is failed', () => {
@@ -141,6 +144,6 @@ describe('ChannelActionEdit', () => {
     $element.find('.qa-channel-edit-save').click();
 
     expect(ChannelService.saveProperties).toHaveBeenCalled();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('SUBPAGE_CHANNEL_EDIT_ERROR_SAVING', undefined, feedbackParent);
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED', undefined, feedbackParent);
   });
 });

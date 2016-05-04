@@ -24,7 +24,7 @@ export class ChannelActionsCtrl {
     this.onActionSelected({ subpage: 'channel-edit' });
   }
 
-  isChannelEditDisabled() {
-    return !this.ChannelService.getChannel().hasCustomProperties;
+  isChannelEditAvailable() {
+    return this.ChannelService.getChannel().hasCustomProperties;
   }
 }

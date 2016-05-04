@@ -1,6 +1,7 @@
 {
   "BUTTON_NO": "Nee",
   "BUTTON_YES": "Ja",
+  "CHANNEL_PROPERTIES_SAVE_SUCCESS": "???",
   "CONFIRM_DELETE_COMPONENT_MESSAGE": "Weet u zeker dat u {0} wilt verwijderen?",
   "CONFIRM_DELETE_COMPONENT_TITLE": "Bevestig het verwijderen",
   "CONFIRM_DELETE_PAGE_TITLE": "Bevestig het verwijderen",
@@ -13,6 +14,8 @@
   "ERROR_DELETE_PAGE": "Pagina verwijderen is mislukt.",
   "ERROR_ADD_COMPONENT": "Toevoegen van '{{component}}' is mislukt.",
   "ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED": "Toevoegen van '{{component}}' is mislukt: de container is vergrendeld door '{{lockedBy}}'.",
+  "ERROR_CHANNEL_INFO_RETRIEVAL_FAILED": "???",
+  "ERROR_CHANNEL_PROPERTIES_SAVE_FAILED": "???",
   "ERROR_ENTER_EDIT": "Naar Bewerk modus schakelen is mislukt.",
   "ERROR_MOVE_COMPONENT_FAILED": "Het verplaatsen van component '{{component}}' is mislukt.",
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "Het ophalen van de globale varianten ('Toon als') is mislukt.",

@@ -162,14 +162,18 @@ export class ChannelCtrl {
     delete this.currentSubpage;
   }
 
-  onChannelEditDone() {
+  onSubpageSuccess(key, params) {
     this.hideSubpage();
-    // TODO show a toast message notify this change
-    this.$log.info('Channel setting is saved successfully');
+    if (key) {
+      // TODO show a toast message notify this change
+      this.$log.info(this.$translate.instant(key, params));
+    }
   }
 
-  onChannelEditError(key) {
+  onSubpageError(key, params) {
     this.hideSubpage();
-    this.FeedbackService.showError(key);
+    if (key) {
+      this.FeedbackService.showError(key, params);
+    }
   }
 }

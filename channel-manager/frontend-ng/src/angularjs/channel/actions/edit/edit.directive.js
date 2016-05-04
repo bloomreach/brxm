@@ -21,7 +21,7 @@ export function channelEditDirective() {
     restrict: 'E',
     bindToController: {
       onDone: '&',
-      onCancel: '&',
+      onSuccess: '&',
       onError: '&',
     },
     templateUrl: 'channel/actions/edit/edit.html',

@@ -88,6 +88,7 @@ describe('ChannelCtrl', () => {
         HippoIframeService,
       });
     });
+    spyOn(FeedbackService, 'showError');
   });
 
   it('resets the ScalingService pushWidth state during initialization', () => {
@@ -162,7 +163,6 @@ describe('ChannelCtrl', () => {
   });
 
   it('shows an error when the creation of the preview configuration fails', () => {
-    spyOn(FeedbackService, 'showError');
     const deferCreatePreview = $q.defer();
 
     ChannelService.hasPreviewConfiguration.and.returnValue(false);
@@ -240,5 +240,34 @@ describe('ChannelCtrl', () => {
     expect(DialogService.confirm).toHaveBeenCalled();
     expect(DialogService.show).toHaveBeenCalled();
     expect(ChannelService.discardOwnChanges).not.toHaveBeenCalled();
+  });
+
+  it('correctly shows and hides subpages', () => {
+    expect(ChannelCtrl.isSubpageOpen()).toBe(false);
+
+    ChannelCtrl.showSubpage('test');
+    expect(ChannelCtrl.isSubpageOpen()).toBe(true);
+
+    ChannelCtrl.hideSubpage();
+    expect(ChannelCtrl.isSubpageOpen()).toBe(false);
+
+    ChannelCtrl.showSubpage('test');
+    ChannelCtrl.onSubpageError('key', { param: 'value' });
+    expect(ChannelCtrl.isSubpageOpen()).toBe(false);
+    expect(FeedbackService.showError).toHaveBeenCalledWith('key', { param: 'value' });
+
+    FeedbackService.showError.calls.reset();
+    ChannelCtrl.showSubpage('test');
+    ChannelCtrl.onSubpageError();
+    expect(ChannelCtrl.isSubpageOpen()).toBe(false);
+    expect(FeedbackService.showError).not.toHaveBeenCalled();
+
+    ChannelCtrl.showSubpage('test');
+    ChannelCtrl.onSubpageSuccess('key', { param: 'value' });
+    expect(ChannelCtrl.isSubpageOpen()).toBe(false);
+
+    ChannelCtrl.showSubpage('test');
+    ChannelCtrl.onSubpageSuccess();
+    expect(ChannelCtrl.isSubpageOpen()).toBe(false);
   });
 });

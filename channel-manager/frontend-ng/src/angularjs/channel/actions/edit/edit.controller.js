@@ -27,31 +27,28 @@ export class ChannelEditCtrl {
       channelName: ChannelService.getName(),
     });
 
-    ChannelService.getChannelInfoDescription().then((channelInfoDescription) => {
-      this.fieldGroups = channelInfoDescription.fieldGroups;
-      this.labels = channelInfoDescription.i18nResources;
-    },
-      () => this.onError({ key: 'SUBPAGE_CHANNEL_EDIT_ERROR_RETRIEVE_CHANNEL_INFO' })
-    );
+    ChannelService.getChannelInfoDescription()
+      .then((channelInfoDescription) => {
+        this.fieldGroups = channelInfoDescription.fieldGroups;
+        this.labels = channelInfoDescription.i18nResources;
+      })
+      .catch(() => {
+        this.onError({ key: 'ERROR_CHANNEL_INFO_RETRIEVAL_FAILED' });
+      });
 
-    this.fields = ChannelService.getChannel().properties;
+    this.values = ChannelService.getChannel().properties;
   }
 
   save() {
-    this.ChannelService.saveProperties(this.fields).then(
-      () => this._onSaveDone(),
-      () => this._showError('SUBPAGE_CHANNEL_EDIT_ERROR_SAVING'));
-  }
-
-  _onSaveDone() {
-    return this.HippoIframeService.reload().then(() => {
-      this.ChannelService.recordOwnChange();
-      this.onDone();
-    });
-  }
-
-  getFieldGroups() {
-    return this.fieldGroups;
+    this.ChannelService.saveProperties(this.values)
+      .then(() => {
+        this.HippoIframeService.reload();
+        this.ChannelService.recordOwnChange();
+        this.onSuccess({ key: 'CHANNEL_PROPERTIES_SAVE_SUCCESS' });
+      })
+      .catch(() => {
+        this._showError('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED');
+      });
   }
 
   getLabel(fieldName) {
@@ -63,6 +60,6 @@ export class ChannelEditCtrl {
   }
 
   back() {
-    this.onCancel();
+    this.onDone();
   }
 }
