@@ -67,7 +67,7 @@ public class TestSearchInputParsingUtils {
         // allow wildcard false
         assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The ?*qu??ic?k br?ow*?n fo*x jumps over the lazy dog", false));
 
-        assertEquals("The quick brown fox jumps  over   the lazy dog", SearchInputParsingUtils.parse("The (quick brown) (fox jumps) &( over ] ] [the lazy dog", true));
+        assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The (quick brown) (fox jumps) &( over ] ] [the lazy dog", true));
 
         assertEquals("The -quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The NOT quick brown fox jumps over the lazy dog", true));
 
