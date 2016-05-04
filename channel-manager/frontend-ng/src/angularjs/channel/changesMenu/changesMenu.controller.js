@@ -45,7 +45,7 @@ export class ChangesMenuCtrl {
   }
 
   publish() {
-    this.ChannelService.publishOwnChanges().then(() => this.HippoIframeService.reload());
+    this.ChannelService.publishChanges().then(() => this.HippoIframeService.reload());
     // TODO: what if this fails?
     // show a toast that all went well, or that the publication failed.
     // More information may be exposed by logging an error(?) in the console,
@@ -54,7 +54,7 @@ export class ChangesMenuCtrl {
 
   discard() {
     this._confirmDiscard().then(() => {
-      this.ChannelService.discardOwnChanges().then(() => this.HippoIframeService.reload());
+      this.ChannelService.discardChanges().then(() => this.HippoIframeService.reload());
       // TODO: what if this fails?
       // show a toast that discarding the changed failed.
       // More information may be exposed by logging an error(?) in the console,

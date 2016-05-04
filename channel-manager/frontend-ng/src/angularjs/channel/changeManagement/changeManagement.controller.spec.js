@@ -67,7 +67,7 @@ describe('ChangeManagementCtrl', () => {
     spyOn(ChangeManagementCtrl, 'resetChanges');
 
     ChangeManagementCtrl.selectedUsers = ['testuser'];
-    ChangeManagementCtrl.publishChanges();
+    ChangeManagementCtrl.publishSelectedChanges();
     $rootScope.$apply();
 
     expect(HstService.doPost).toHaveBeenCalled();
@@ -78,7 +78,7 @@ describe('ChangeManagementCtrl', () => {
     spyOn(ChangeManagementCtrl, 'resetChanges');
 
     ChangeManagementCtrl.selectedUsers = ['testuser'];
-    ChangeManagementCtrl.discardChanges();
+    ChangeManagementCtrl.discardSelectedChanges();
     $rootScope.$apply();
 
     expect(HstService.doPost).toHaveBeenCalled();

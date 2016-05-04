@@ -25,18 +25,14 @@ export class ChangeManagementCtrl {
     this.selectedUsers = [];
   }
 
-  publishChanges() {
-    // TODO: move the HST-specific stuff into the ChannelService?
-    const url = 'userswithchanges/publish';
-    this.HstService.doPost({ data: this.selectedUsers }, this.ChannelService.getMountId(), url)
+  publishSelectedChanges() {
+    this.ChannelService.publishChanges(this.selectedUsers)
       .then(() => this.resetChanges());
     // TODO must handle failure
   }
 
-  discardChanges() {
-    // TODO: move the HST-specific stuff into the ChannelService?
-    const url = 'userswithchanges/discard';
-    this.HstService.doPost({ data: this.selectedUsers }, this.ChannelService.getMountId(), url)
+  discardSelectedChanges() {
+    this.ChannelService.discardChanges(this.selectedUsers)
       .then(() => this.resetChanges());
     // TODO must handle failure
   }

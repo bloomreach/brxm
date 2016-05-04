@@ -44,8 +44,8 @@ describe('ChangesMenuCtrl', () => {
       $rootScope = _$rootScope_;
     });
 
-    spyOn(ChannelService, 'publishOwnChanges').and.returnValue($q.resolve());
-    spyOn(ChannelService, 'discardOwnChanges').and.returnValue($q.resolve());
+    spyOn(ChannelService, 'publishChanges').and.returnValue($q.resolve());
+    spyOn(ChannelService, 'discardChanges').and.returnValue($q.resolve());
     spyOn(ChannelService, 'getChannel').and.returnValue({
       changedBySet: [],
     });
@@ -104,7 +104,7 @@ describe('ChangesMenuCtrl', () => {
     ChangesMenuCtrl.publish();
     $rootScope.$digest();
 
-    expect(ChannelService.publishOwnChanges).toHaveBeenCalled();
+    expect(ChannelService.publishChanges).toHaveBeenCalled();
     expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
@@ -117,7 +117,7 @@ describe('ChangesMenuCtrl', () => {
 
     expect(DialogService.confirm).toHaveBeenCalled();
     expect(DialogService.show).toHaveBeenCalled();
-    expect(ChannelService.discardOwnChanges).toHaveBeenCalled();
+    expect(ChannelService.discardChanges).toHaveBeenCalled();
     expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
@@ -130,6 +130,6 @@ describe('ChangesMenuCtrl', () => {
 
     expect(DialogService.confirm).toHaveBeenCalled();
     expect(DialogService.show).toHaveBeenCalled();
-    expect(ChannelService.discardOwnChanges).not.toHaveBeenCalled();
+    expect(ChannelService.discardChanges).not.toHaveBeenCalled();
   });
 });

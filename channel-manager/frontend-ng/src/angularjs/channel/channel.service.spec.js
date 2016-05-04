@@ -279,14 +279,14 @@ describe('ChannelService', () => {
 
     const deferred = $q.defer();
     HstService.doPost.and.returnValue(deferred.promise);
-    ChannelService.publishOwnChanges().then((response) => {
+    ChannelService.publishChanges().then((response) => {
       expect(response).toBe('pass-through');
     });
 
     deferred.resolve('pass-through');
     $rootScope.$digest();
 
-    expect(HstService.doPost).toHaveBeenCalledWith(null, 'mountId', 'publish');
+    expect(HstService.doPost).toHaveBeenCalledWith({ data: ['testUser'] }, 'mountId', 'userswithchanges/publish');
     expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('channel-changed-in-angular');
     expect(channelMock.changedBySet).toEqual([]);
   });
@@ -298,14 +298,14 @@ describe('ChannelService', () => {
 
     const deferred = $q.defer();
     HstService.doPost.and.returnValue(deferred.promise);
-    ChannelService.discardOwnChanges().then((response) => {
+    ChannelService.discardChanges().then((response) => {
       expect(response).toBe('pass-through');
     });
 
     deferred.resolve('pass-through');
     $rootScope.$digest();
 
-    expect(HstService.doPost).toHaveBeenCalledWith(null, 'mountId', 'discard');
+    expect(HstService.doPost).toHaveBeenCalledWith({ data: ['testUser'] }, 'mountId', 'userswithchanges/discard');
     expect(channelMock.changedBySet).toEqual([]);
     expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('channel-changed-in-angular');
   });

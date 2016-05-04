@@ -187,16 +187,18 @@ export class ChannelService {
     this.CmsService.publish('channel-changed-in-angular');
   }
 
-  publishOwnChanges() {
-    return this.HstService.doPost(null, this.getMountId(), 'publish')
+  publishChanges(users = [this.ConfigService.cmsUser]) {
+    const url = 'userswithchanges/publish';
+    return this.HstService.doPost({ data: users }, this.getMountId(), url)
       .then((response) => {
         this.resetUserChanges();
         return response;
       });
   }
 
-  discardOwnChanges() {
-    return this.HstService.doPost(null, this.getMountId(), 'discard')
+  discardChanges(users = [this.ConfigService.cmsUser]) {
+    const url = 'userswithchanges/discard';
+    return this.HstService.doPost({ data: users }, this.getMountId(), url)
       .then((response) => {
         this.resetUserChanges();
         return response;

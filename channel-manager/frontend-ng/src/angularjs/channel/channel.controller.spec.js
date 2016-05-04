@@ -45,8 +45,8 @@ describe('ChannelCtrl', () => {
         'hasPreviewConfiguration',
         'createPreviewConfiguration',
         'getChannel',
-        'publishOwnChanges',
-        'discardOwnChanges',
+        'publishChanges',
+        'discardChanges',
         'getCatalog',
         'getSiteMapId',
       ]);
