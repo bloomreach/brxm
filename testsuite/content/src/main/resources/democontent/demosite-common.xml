@@ -144,10 +144,10 @@
         <sv:value>8450fa0d-28ff-47f8-bef7-ad33c34d8b5b</sv:value>
       </sv:property>
       <sv:property sv:name="demosite:summary" sv:type="String">
-        <sv:value>This is the home page of the generated HST website.</sv:value>
+        <sv:value>This is the home page of the generated &lt;HST&gt; website.</sv:value>
       </sv:property>
       <sv:property sv:name="demosite:title" sv:type="String">
-        <sv:value>Home Page</sv:value>
+        <sv:value>Home Page &lt;NEW&gt;</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
         <sv:value>live</sv:value>
