@@ -30,12 +30,19 @@
       <sv:value>687a34af-bed0-4938-aeab-21d7435f0f83</sv:value>
     </sv:property>
     <sv:property sv:name="hst:script" sv:type="String">
-      <sv:value>&lt;#assign hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;&#xd;
+      <sv:value>&lt;#ftl output_format="HTML" auto_esc=false&gt;&#xd;
+&#xd;
+&lt;#assign hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;&#xd;
+&#xd;
+&lt;@hst.defineObjects/&gt;&#xd;
 &#xd;
   &lt;div class="yui-u"&gt;&#xd;
 &#xd;
-    &lt;h1&gt;${document.title}&lt;/h1&gt;&#xd;
-    &lt;p&gt;${document.summary}&lt;/p&gt;&#xd;
+    &lt;#autoesc&gt;&#xd;
+      &lt;h1&gt;${document.title}&lt;/h1&gt;&#xd;
+      &lt;p&gt;${document.summary}&lt;/p&gt;&#xd;
+    &lt;/#autoesc&gt;&#xd;
+&#xd;
     &lt;@hst.html hippohtml=document.html/&gt;&#xd;
 &#xd;
     &lt;p&gt;Example channel property: '${channelInfoExample}'&lt;/p&gt;&#xd;
@@ -118,6 +125,16 @@ LINK URL: &lt;@hst.link path="/news" escapeXml=false&gt;&lt;@hst.param name="a" 
 &#xd;
     &lt;br/&gt;&lt;br/&gt;&#xd;
 &#xd;
+    &lt;hr&gt;&#xd;
+    &#xd;
+    &lt;div style="border-width: 2px; border-style: solid; border-color: blue; "&gt;&#xd;
+      Child content window names:&#xd;
+      &lt;#list hstResponse.childContentNames as childContentName&gt;&#xd;
+        ${childContentName}&lt;#sep&gt;, &#xd;
+      &lt;/#list&gt;&#xd;
+    &lt;/div&gt;&#xd;
+    &lt;br/&gt;&lt;br/&gt;&#xd;
+    &#xd;
     &lt;div style="color:red"&gt;&#xd;
       Note: this page is loaded by a repository freemarker template, &#xd;
       see [/hst:hst/hst:configurations/democommon/hst:scripts/home.ftl] &#xd;
