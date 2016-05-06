@@ -193,7 +193,8 @@ export class ChannelService {
     const url = 'userswithchanges/publish';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
       .then((response) => {
-        this.resetUserChanges();
+        this.resetUserChanges(users);
+        this.CmsService.publish('channel-changed-in-angular');
         return response;
       })
       .catch(() => this.FeedbackService.showError('ERROR_PUBLISH_CHANGES'));
@@ -203,10 +204,17 @@ export class ChannelService {
     const url = 'userswithchanges/discard';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
       .then((response) => {
-        this.resetUserChanges();
+        this.resetUserChanges(users);
+        this.CmsService.publish('channel-changed-in-angular');
         return response;
       })
       .catch(() => this.FeedbackService.showError('ERROR_DISCARD_CHANGES'));
+  }
+
+  resetUserChanges(users) {
+    users.forEach((user) => {
+      this.channel.changedBySet.splice(this.channel.changedBySet.indexOf(user), 1);
+    });
   }
 
   getSiteMapId() {
@@ -235,13 +243,5 @@ export class ChannelService {
 
   getMountId() {
     return this.channel.mountId;
-  }
-
-  resetUserChanges(users = [this.ConfigService.cmsUser]) {
-    users.forEach((user) => {
-      this.channel.changedBySet.splice(this.channel.changedBySet.indexOf(user), 1);
-    });
-
-    this.CmsService.publish('channel-changed-in-angular');
   }
 }

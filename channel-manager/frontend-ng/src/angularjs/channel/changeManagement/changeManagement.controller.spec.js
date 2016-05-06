@@ -70,25 +70,25 @@ describe('ChangeManagementCtrl', () => {
   });
 
   it('should publish selected users changes', () => {
-    spyOn(ChangeManagementCtrl, 'resetChanges');
+    spyOn(ChangeManagementCtrl, 'resetSelection');
 
     ChangeManagementCtrl.selectedUsers = ['testuser'];
     ChangeManagementCtrl.publishSelectedChanges();
     $rootScope.$apply();
 
     expect(HstService.doPost).toHaveBeenCalled();
-    expect(ChangeManagementCtrl.resetChanges).toHaveBeenCalled();
+    expect(ChangeManagementCtrl.resetSelection).toHaveBeenCalled();
   });
 
   it('should discard selected users changes', () => {
-    spyOn(ChangeManagementCtrl, 'resetChanges');
+    spyOn(ChangeManagementCtrl, 'resetSelection');
 
     ChangeManagementCtrl.selectedUsers = ['testuser'];
     ChangeManagementCtrl.discardSelectedChanges();
     $rootScope.$apply();
 
     expect(HstService.doPost).toHaveBeenCalled();
-    expect(ChangeManagementCtrl.resetChanges).toHaveBeenCalled();
+    expect(ChangeManagementCtrl.resetSelection).toHaveBeenCalled();
   });
 
   it('should reset changes', () => {
@@ -97,11 +97,9 @@ describe('ChangeManagementCtrl', () => {
     spyOn(HippoIframeService, 'reload');
 
     ChangeManagementCtrl.selectedUsers = ['testuser', 'otheruser'];
-    ChangeManagementCtrl.resetChanges();
+    ChangeManagementCtrl.resetSelection();
 
     expect(ChangeManagementCtrl.selectedUsers).toEqual([]);
-    expect(CmsService.publish).toHaveBeenCalled();
-    expect(HippoIframeService.reload).toHaveBeenCalled();
     expect(ChangeManagementCtrl.onDone).toHaveBeenCalled();
   });
 

@@ -29,19 +29,22 @@ export class ChangeManagementCtrl {
 
   publishSelectedChanges() {
     this.ChannelService.publishChanges(this.selectedUsers)
-      .then(() => this.resetChanges());
+      .then(() => {
+        this.resetSelection();
+        this.HippoIframeService.reload();
+      });
   }
 
   discardSelectedChanges() {
     this.ChannelService.discardChanges(this.selectedUsers)
-      .then(() => this.resetChanges());
+      .then(() => {
+        this.resetSelection();
+        this.HippoIframeService.reload();
+      });
   }
 
-  resetChanges() {
-    this.ChannelService.resetUserChanges(this.selectedUsers);
+  resetSelection() {
     this.selectedUsers = [];
-    this.CmsService.publish('channel-changed-in-angular');
-    this.HippoIframeService.reload();
     this.onDone();
   }
 

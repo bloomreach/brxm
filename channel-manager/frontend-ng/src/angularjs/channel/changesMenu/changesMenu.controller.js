@@ -25,23 +25,35 @@ export class ChangesMenuCtrl {
     'ngInject';
     this.$translate = $translate;
     this.ChannelService = ChannelService;
+    this.ConfigService = ConfigService;
     this.DialogService = DialogService;
     this.HippoIframeService = HippoIframeService;
 
-    this.showManageChanges = ConfigService.canManageChanges;
-    this.currentUser = ConfigService.cmsUser;
+    this.canManageChanges = ConfigService.canManageChanges;
   }
 
-  hasOwnChanges() {
-    return this.ChannelService.getChannel().changedBySet.indexOf(this.currentUser) !== -1;
+  _getChangedBySet() {
+    return this.ChannelService.getChannel().changedBySet;
   }
 
   hasChangesToManage() {
-    return this.showManageChanges && this.ChannelService.getChannel().changedBySet.length > 0;
+    return this.canManageChanges && this._getChangedBySet().length > 0;
+  }
+
+  hasOwnChanges() {
+    return this._getChangedBySet().indexOf(this.ConfigService.cmsUser) !== -1;
+  }
+
+  hasOnlyOwnChanges() {
+    return this.hasOwnChanges() && this._getChangedBySet().length === 1;
   }
 
   isShowChangesMenu() {
     return this.hasChangesToManage() || this.hasOwnChanges();
+  }
+
+  isShowManageChanges() {
+    return this.hasChangesToManage() && !this.hasOnlyOwnChanges();
   }
 
   publish() {
