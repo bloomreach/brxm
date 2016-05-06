@@ -80,8 +80,9 @@ describe('ChangeManagementCtrl', () => {
     expect(ChangeManagementCtrl.resetSelection).toHaveBeenCalled();
   });
 
-  it('should discard selected users changes', () => {
+  it('should discard selected users changes on confirm', () => {
     spyOn(ChangeManagementCtrl, 'resetSelection');
+    spyOn(ChangeManagementCtrl, '_confirmDiscard').and.returnValue($q.resolve());
 
     ChangeManagementCtrl.selectedUsers = ['testuser'];
     ChangeManagementCtrl.discardSelectedChanges();
@@ -91,7 +92,19 @@ describe('ChangeManagementCtrl', () => {
     expect(ChangeManagementCtrl.resetSelection).toHaveBeenCalled();
   });
 
-  it('should reset changes', () => {
+  it('should not discard selected users changes on cancel', () => {
+    spyOn(ChangeManagementCtrl, 'resetSelection');
+    spyOn(ChangeManagementCtrl, '_confirmDiscard').and.returnValue($q.reject());
+
+    ChangeManagementCtrl.selectedUsers = ['testuser'];
+    ChangeManagementCtrl.discardSelectedChanges();
+    $rootScope.$apply();
+
+    expect(HstService.doPost).not.toHaveBeenCalled();
+    expect(ChangeManagementCtrl.resetSelection).not.toHaveBeenCalled();
+  });
+
+  it('should reset selection and be done', () => {
     spyOn(ChangeManagementCtrl, 'onDone');
     spyOn(CmsService, 'publish');
     spyOn(HippoIframeService, 'reload');

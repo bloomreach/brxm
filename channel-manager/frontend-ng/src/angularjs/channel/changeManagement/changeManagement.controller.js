@@ -15,11 +15,20 @@
  */
 
 export class ChangeManagementCtrl {
-  constructor(CmsService, ChannelService, HippoIframeService, HstService) {
+  constructor(
+      $translate,
+      ChannelService,
+      CmsService,
+      DialogService,
+      HippoIframeService,
+      HstService
+    ) {
     'ngInject';
 
+    this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.DialogService = DialogService;
     this.HippoIframeService = HippoIframeService;
     this.HstService = HstService;
 
@@ -28,23 +37,29 @@ export class ChangeManagementCtrl {
   }
 
   publishSelectedChanges() {
-    this.ChannelService.publishChanges(this.selectedUsers)
-      .then(() => {
-        this.resetSelection();
-        this.HippoIframeService.reload();
-      });
+    this.ChannelService.publishChanges(this.selectedUsers).then(() => this.resetSelection());
   }
 
   discardSelectedChanges() {
-    this.ChannelService.discardChanges(this.selectedUsers)
-      .then(() => {
-        this.resetSelection();
-        this.HippoIframeService.reload();
-      });
+    this._confirmDiscard().then(() => {
+      this.ChannelService.discardChanges(this.selectedUsers).then(() => this.resetSelection());
+    });
+  }
+
+  _confirmDiscard() {
+    const confirm = this.DialogService.confirm()
+      .title(this.$translate.instant('CONFIRM_DISCARD_CHANGES_TITLE'))
+      .textContent(this.$translate.instant('CONFIRM_DISCARD_SELECTED_CHANGES_MESSAGE'))
+      .ok(this.$translate.instant('BUTTON_YES'))
+      .cancel(this.$translate.instant('BUTTON_NO'));
+
+    return this.DialogService.show(confirm);
   }
 
   resetSelection() {
     this.selectedUsers = [];
+    this.CmsService.publish('channel-changed-in-angular');
+    this.HippoIframeService.reload();
     this.onDone();
   }
 
