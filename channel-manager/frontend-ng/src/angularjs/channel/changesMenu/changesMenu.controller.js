@@ -19,12 +19,14 @@ export class ChangesMenuCtrl {
       $translate,
       ChannelService,
       ConfigService,
+      CmsService,
       DialogService,
       HippoIframeService,
     ) {
     'ngInject';
     this.$translate = $translate;
     this.ChannelService = ChannelService;
+    this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.DialogService = DialogService;
     this.HippoIframeService = HippoIframeService;
@@ -57,26 +59,24 @@ export class ChangesMenuCtrl {
   }
 
   publish() {
-    this.ChannelService.publishChanges().then(() => this.HippoIframeService.reload());
-    // TODO: what if this fails?
-    // show a toast that all went well, or that the publication failed.
-    // More information may be exposed by logging an error(?) in the console,
-    // based on the actual error details from the back-end.
+    this.ChannelService.publishChanges().then(() => {
+      this.CmsService.publish('channel-changed-in-angular');
+      this.HippoIframeService.reload();
+    });
   }
 
   discard() {
     this._confirmDiscard().then(() => {
-      this.ChannelService.discardChanges().then(() => this.HippoIframeService.reload());
-      // TODO: what if this fails?
-      // show a toast that discarding the changed failed.
-      // More information may be exposed by logging an error(?) in the console,
-      // based on the actual error details from the back-end.
+      this.ChannelService.discardChanges().then(() => {
+        this.CmsService.publish('channel-changed-in-angular');
+        this.HippoIframeService.reload();
+      });
     });
   }
 
   _confirmDiscard() {
     const confirm = this.DialogService.confirm()
-      .title(this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_TITLE'))
+      .title(this.$translate.instant('CONFIRM_DISCARD_CHANGES_TITLE'))
       .textContent(this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_MESSAGE'))
       .ok(this.$translate.instant('BUTTON_YES'))
       .cancel(this.$translate.instant('BUTTON_NO'));

@@ -192,22 +192,14 @@ export class ChannelService {
   publishChanges(users = [this.ConfigService.cmsUser]) {
     const url = 'userswithchanges/publish';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
-      .then((response) => {
-        this.resetUserChanges(users);
-        this.CmsService.publish('channel-changed-in-angular');
-        return response;
-      })
+      .then(() => this.resetUserChanges(users))
       .catch(() => this.FeedbackService.showError('ERROR_PUBLISH_CHANGES'));
   }
 
   discardChanges(users = [this.ConfigService.cmsUser]) {
     const url = 'userswithchanges/discard';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
-      .then((response) => {
-        this.resetUserChanges(users);
-        this.CmsService.publish('channel-changed-in-angular');
-        return response;
-      })
+      .then(() => this.resetUserChanges(users))
       .catch(() => this.FeedbackService.showError('ERROR_DISCARD_CHANGES'));
   }
 
