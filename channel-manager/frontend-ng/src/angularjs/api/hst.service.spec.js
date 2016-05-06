@@ -284,4 +284,49 @@ describe('HstService', () => {
 
     expect(catchSpy).toHaveBeenCalled();
   });
+
+  it('augments the set of requested POST headers', () => {
+    const promiseSpy = jasmine.createSpy('promiseSpy');
+    const uuid = 'test-uuid';
+    const url = `${contextPath}${apiUrlPrefix}/${uuid}./pages`;
+    const appHeaders = {
+      foo: 'bar',
+      test: 'me',
+    };
+    const httpHeaders = {
+      foo: 'bar',
+      test: 'me',
+      'CMS-User': 'testUser',
+      FORCE_CLIENT_HOST: 'true',
+      Accept: 'application/json, text/plain, */*',
+    };
+    const response = { data: { key: 'value' } };
+    $httpBackend.expectPOST(url, undefined, httpHeaders).respond(200, response);
+    hstService.doPostWithHeaders(uuid, appHeaders, 'pages').then(promiseSpy);
+    $httpBackend.flush();
+
+    expect(promiseSpy).toHaveBeenCalledWith(response);
+  });
+
+  it('handles undefined path elements gracefully', () => {
+    $httpBackend.expectGET(`${contextPath}${apiUrlPrefix}./one`).respond(200);
+    hstService.doGet(undefined, 'one');
+    $httpBackend.flush();
+
+    $httpBackend.expectGET(`${contextPath}${apiUrlPrefix}/uuid./one`).respond(200);
+    hstService.doGet('uuid', undefined, 'one');
+    $httpBackend.flush();
+
+    delete ConfigServiceMock.contextPath;
+    $httpBackend.expectGET(`${apiUrlPrefix}/uuid./`).respond(200);
+    hstService.doGet('uuid');
+    $httpBackend.flush();
+
+    delete ConfigServiceMock.apiUrlPrefix;
+    $httpBackend.expectGET('uuid./').respond(200);
+    hstService.doGet('uuid');
+    $httpBackend.flush();
+    ConfigServiceMock.apiUrlPrefix = apiUrlPrefix;
+    ConfigServiceMock.contextPath = contextPath;
+  });
 });

@@ -76,12 +76,17 @@ export class HstService {
     return this._callHst('POST', uuid, pathElements, data);
   }
 
-  _callHst(method, uuid, pathElements, data, params) {
+  doPostWithHeaders(uuid, headers, ...pathElements) {
+    return this._callHst('POST', uuid, pathElements, undefined, undefined, headers);
+  }
+
+  _callHst(method, uuid, pathElements, data, params, headers) {
     const url = this._createApiUrl(uuid, pathElements, params);
-    const headers = {
-      'CMS-User': this.config.cmsUser,
-      FORCE_CLIENT_HOST: 'true',
-    };
+
+    headers = headers || {};
+    headers['CMS-User'] = this.config.cmsUser;
+    headers.FORCE_CLIENT_HOST = 'true';
+
     return q((resolve, reject) => {
       http({ method, url, headers, data })
         .success((response) => resolve(response))
