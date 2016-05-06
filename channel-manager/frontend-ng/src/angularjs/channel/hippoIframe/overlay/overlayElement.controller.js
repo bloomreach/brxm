@@ -18,9 +18,10 @@ const MIN_HEIGHT = '40px';
 
 export class OverlayElementCtrl {
 
-  constructor($scope, $element, $translate, ExperimentStateService, OverlaySyncService) {
+  constructor($scope, $document, $element, $translate, ExperimentStateService, OverlaySyncService) {
     'ngInject';
 
+    this.$document = $document;
     this.$scope = $scope;
     this.$translate = $translate;
     this.ExperimentStateService = ExperimentStateService;
@@ -119,7 +120,8 @@ export class OverlayElementCtrl {
 
   _createAndInsertTemporaryBox() {
     const startCommentJQueryElement = this.structureElement.getStartComment();
-    const div = document.createElement('div');
+    const div = this.$document.createElement('div');
+
 
     if (startCommentJQueryElement[0].nextSibling !== null) {
       // this should always be the case due to the presence of the HST-End marker
@@ -128,6 +130,6 @@ export class OverlayElementCtrl {
       startCommentJQueryElement.parent()[0].appendChild(div);
     }
 
-    return $(div);
+    return angular.element(div);
   }
 }
