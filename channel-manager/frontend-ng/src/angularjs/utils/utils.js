@@ -17,6 +17,7 @@
 import { DomService } from './dom.service';
 import { ThrottleService } from './throttle.service';
 import { FeedbackService } from './feedback.service';
+import { PathService } from './path.service';
 import { startWithSlashFilter } from './startWithSlash.filter';
 import { illegalCharactersDirective } from './directive/illegalCharacters.directive';
 
@@ -25,5 +26,6 @@ export const utilsModule = angular
   .service('DomService', DomService)
   .service('ThrottleService', ThrottleService)
   .service('FeedbackService', FeedbackService)
+  .service('PathService', PathService)
   .filter('startWithSlash', startWithSlashFilter)
   .directive('illegalCharacters', illegalCharactersDirective);
