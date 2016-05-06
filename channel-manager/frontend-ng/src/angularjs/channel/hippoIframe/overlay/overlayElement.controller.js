@@ -41,14 +41,6 @@ export class OverlayElementCtrl {
     return this.ExperimentStateService.getExperimentStateIcon(this.structureElement);
   }
 
-  getExperimentId() {
-    return this._isComponent() ? this.ExperimentStateService.getExperimentId(this.structureElement) : undefined;
-  }
-
-  isLabelTextVisible() {
-    return this._isComponent() || this.structureElement.isEmpty();
-  }
-
   getLabelText() {
     return this.ExperimentStateService.getExperimentStateLabel(this.structureElement) || this.structureElement.getLabel();
   }
@@ -59,6 +51,10 @@ export class OverlayElementCtrl {
 
   getLockIcon() {
     return this.structureElement.isInherited() ? 'remove_circle_outline' : 'lock';
+  }
+
+  getQaExperimentId() {
+    return this._isComponent() ? this.ExperimentStateService.getExperimentId(this.structureElement) : undefined;
   }
 
   getQaLockedLabel() {
