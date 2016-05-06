@@ -116,7 +116,7 @@
           return;
         }
         Hippo.ChannelManager.ChannelEditor.Instance.loadChannel(channelId);
-        Ext.getCmp('rootPanel').showTemplateComposer();
+        self._showChannelEditor();
       };
 
       this.gridPanel.on('channel-selected', channelSelectedHandler, this);
@@ -219,7 +219,7 @@
       this.layout.setActiveItem(0);
     },
 
-    showTemplateComposer: function () {
+    _showChannelEditor: function () {
       this.toolbar.pushItem({
         card: this.items.get(1),
         click: function () {
