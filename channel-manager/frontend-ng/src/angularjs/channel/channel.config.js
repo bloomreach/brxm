@@ -21,5 +21,8 @@ export function config($stateProvider) {
     url: '/channel/:channelId/',
     controller: 'ChannelCtrl as channelCtrl',
     templateUrl: 'channel/channel.html',
+    params: {
+      initialPath: '/',
+    },
   });
 }

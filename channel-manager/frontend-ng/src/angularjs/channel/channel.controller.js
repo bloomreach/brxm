@@ -16,7 +16,7 @@
 
 export class ChannelCtrl {
 
-  constructor($log, $scope, $translate, ChannelService, DialogService, PageMetaDataService, ScalingService,
+  constructor($log, $scope, $stateParams, $translate, ChannelService, DialogService, PageMetaDataService, ScalingService,
               SessionService, ComponentAdderService, ConfigService, HippoIframeService, FeedbackService, SiteMapService) {
     'ngInject';
 
@@ -64,6 +64,8 @@ export class ChannelCtrl {
 
     ComponentAdderService.setCatalogContainerClass('catalog-dd-container');
     ComponentAdderService.setCatalogContainerItemClass('catalog-dd-container-item');
+
+    this.HippoIframeService.load($stateParams.initialPath);
   }
 
   selectViewPort(viewPort) {

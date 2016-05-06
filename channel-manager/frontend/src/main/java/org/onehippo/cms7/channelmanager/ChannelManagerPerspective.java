@@ -36,7 +36,6 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IRestProxyService;
-import org.onehippo.cms7.channelmanager.channeleditor.ChannelEditor;
 import org.onehippo.cms7.channelmanager.channeleditor.ChannelEditorApiHeaderItem;
 import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
 import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
@@ -128,11 +127,8 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     @Override
     public void viewChannel(final String channelId, final String channelPath) {
         if (siteIsUp) {
-            ChannelEditor channelEditor = rootPanel.getChannelEditor();
-            channelEditor.setChannelId(channelId);
-            channelEditor.setChannelPath(channelPath);
-            channelEditor.setPreviewMode(true);
-            rootPanel.setActiveCard(RootPanel.CardId.TEMPLATE_COMPOSER);
+            rootPanel.getChannelEditor().viewChannel(channelId, channelPath);
+            rootPanel.setActiveCard(RootPanel.CardId.CHANNEL_EDITOR);
             focus(null);
         }
     }

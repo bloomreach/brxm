@@ -53,9 +53,9 @@
       this.iframeToHost.subscribe('edit-alter-ego', this._showAlterEgoEditor, this);
     },
 
-    loadChannel: function(channelId) {
+    loadChannel: function(channelId, initialPath) {
       this._setChannel(channelId).when(function(channelRecord) {
-        this.hostToIFrame.publish('load-channel', channelRecord.json);
+        this.hostToIFrame.publish('load-channel', channelRecord.json, initialPath);
       }.bind(this));
     },
 

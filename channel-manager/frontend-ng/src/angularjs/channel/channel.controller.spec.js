@@ -48,6 +48,10 @@ describe('ChannelCtrl', () => {
       SessionService = _SessionService_;
       SiteMapService = _SiteMapService_;
 
+      const $stateParams = {
+        initialPath: '/testPath',
+      };
+
       ChannelService = jasmine.createSpyObj('ChannelService', [
         'hasPreviewConfiguration',
         'createPreviewConfiguration',
@@ -76,11 +80,13 @@ describe('ChannelCtrl', () => {
       ]);
 
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', [
+        'load',
         'reload',
       ]);
 
       ChannelCtrl = $controller('ChannelCtrl', {
         $scope: $rootScope.$new(),
+        $stateParams,
         ComponentsService,
         ChannelService,
         PageMetaDataService,
@@ -88,6 +94,10 @@ describe('ChannelCtrl', () => {
         HippoIframeService,
       });
     });
+  });
+
+  it('loads the initial page', () => {
+    expect(HippoIframeService.load).toHaveBeenCalledWith('/testPath');
   });
 
   it('resets the ScalingService pushWidth state during initialization', () => {
