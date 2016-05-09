@@ -19,6 +19,7 @@ export class ChannelCtrl {
   constructor(
       $log,
       $translate,
+      $stateParams,
       ChannelService,
       ComponentAdderService,
       FeedbackService,

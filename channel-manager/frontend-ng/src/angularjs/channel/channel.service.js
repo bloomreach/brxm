@@ -93,7 +93,7 @@ export class ChannelService {
     const contextPrefix = this._makeContextPrefix(channel.contextPath);
     this.channelPrefix = this.PathService.concatPaths(contextPrefix, this.channel.mountPath);
 
-    this.CatalogService.load(this._getMountId());
+    this.CatalogService.load(this.getMountId());
     this.SiteMapService.load(channel.siteMapId);
     this._augmentChannelWithPrototypeInfo();
   }
