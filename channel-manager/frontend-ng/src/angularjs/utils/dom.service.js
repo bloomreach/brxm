@@ -70,7 +70,7 @@ export class DomService {
       const cssPropertyName = fromComputedStyle.item(i);
       if (!excludeRegExp || !excludeRegExp.test(cssPropertyName)) {
         const fromValue = fromComputedStyle.getPropertyValue(cssPropertyName);
-        if (fromValue.length > 0) {
+        if (fromValue && fromValue.length) {
           const toValue = toComputedStyle.getPropertyValue(cssPropertyName);
           if (fromValue !== toValue) {
             cssDiff.push(`${cssPropertyName}:${fromValue}`);
@@ -78,13 +78,13 @@ export class DomService {
         }
       } else {
         const toStyleValue = toElement.style.getPropertyValue(cssPropertyName);
-        if (toStyleValue.length > 0) {
+        if (toStyleValue && toStyleValue.length) {
           cssDiff.push(`${cssPropertyName}:${toStyleValue}`);
         }
       }
     }
 
-    if (cssDiff.length > 0) {
+    if (cssDiff.length) {
       toElement.style.cssText = cssDiff.join(';');
     }
   }
