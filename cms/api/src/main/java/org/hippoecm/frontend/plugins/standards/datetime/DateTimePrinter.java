@@ -27,6 +27,7 @@ import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.session.UserSession;
 
 /**
@@ -67,7 +68,9 @@ public interface DateTimePrinter extends IClusterable {
     String print(final FormatStyle dateStyle, final FormatStyle timeStyle);
 
     /**
-     * Append the string (DST) to the printed date if it is in Daylight Saving Time.
+     * Append an explanatory string to the printed date if it is in Daylight Saving Time.
+     * Java shifts the time zone +1 if a date is in DST (e.g. CET becomes CEST), so to avoid confusion we add
+     * a description after the time zone (e.g. " (DST)" in English).
      * @return the DateTimePrinter instance
      */
     DateTimePrinter appendDST();
@@ -142,7 +145,8 @@ public interface DateTimePrinter extends IClusterable {
         private String print(DateTimeFormatter formatter) {
             final ZonedDateTime dateTime = ZonedDateTime.ofInstant(instant, zoneId);
             formatter = formatter.withLocale(locale);
-            final String suffix = appendDST && isDST() ? " (DST)" : StringUtils.EMPTY;
+            final String dst = new ClassResourceModel("dst", JavaDateTimePrinter.class).getObject();
+            final String suffix = appendDST && isDST() ? " (" + dst + ")" : StringUtils.EMPTY;
             return dateTime.format(formatter) + suffix;
         }
 
