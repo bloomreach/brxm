@@ -128,6 +128,9 @@ describe('hippoIframeCtrl', () => {
 
     expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
     expect(hstCommentsProcessorService.run).toHaveBeenCalled();
+
+    $rootScope.$digest();
+
     expect(hippoIframeCtrl._updateDragDrop).toHaveBeenCalled();
     expect(PageMetaDataService.getChannelId).toHaveBeenCalled();
     expect(ChannelService.getId).toHaveBeenCalled();
