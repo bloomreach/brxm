@@ -22,10 +22,11 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
-import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
@@ -37,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtProperty;
-import org.wicketstuff.js.ext.util.ExtPropertyConverter;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
 
 @ExtClass("Hippo.ChannelManager.ChannelEditor.ChannelEditor")
@@ -46,8 +46,6 @@ public class ChannelEditor extends ExtPanel {
 
     private static final long DEFAULT_INITIAL_CONNECTION_TIMEOUT = 60000L;
     private static final long DEFAULT_EXT_AJAX_TIMEOUT = 30000L;
-
-    private static final Boolean DEFAULT_PREVIEW_MODE = Boolean.TRUE;
 
     @ExtProperty
     private Boolean debug = false;
@@ -59,14 +57,6 @@ public class ChannelEditor extends ExtPanel {
     @ExtProperty
     @SuppressWarnings("unused")
     private String apiUrlPrefix;
-
-    @ExtProperty
-    @SuppressWarnings("unused")
-    private String channelId;
-
-    @ExtProperty
-    @SuppressWarnings("unused")
-    private String channelPath;
 
     @ExtProperty
     @SuppressWarnings("unused")
@@ -96,11 +86,7 @@ public class ChannelEditor extends ExtPanel {
     @SuppressWarnings("unused")
     private Boolean hideHstConfigEditor;
 
-    @ExtProperty
-    private Boolean previewMode = DEFAULT_PREVIEW_MODE;
-
     private ExtStoreFuture<Object> channelStoreFuture;
-    private boolean redraw = false;
 
     public ChannelEditor(final IPluginContext context, final IPluginConfig config, final String apiUrlPrefix,
                          final ExtStoreFuture<Object> channelStoreFuture, final String[] contextPaths) {
@@ -118,7 +104,6 @@ public class ChannelEditor extends ExtPanel {
             variantsPath = config.getString("variantsPath");
             this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", DEFAULT_INITIAL_CONNECTION_TIMEOUT);
             this.extAjaxTimeout = config.getLong("extAjaxTimeoutMillis", DEFAULT_EXT_AJAX_TIMEOUT);
-            this.previewMode = config.getAsBoolean("previewMode", DEFAULT_PREVIEW_MODE);
             this.canManageChanges = canManageChanges(this.cmsUser, config);
         }
         this.variantsUuid = getVariantsUuidOrNull(variantsPath);
@@ -155,32 +140,13 @@ public class ChannelEditor extends ExtPanel {
         properties.put("channelStoreFuture", new JSONIdentifier(this.channelStoreFuture.getJsObjectId()));
     }
 
-    public void render(final PluginRequestTarget target) {
-        if (redraw) {
-            JSONObject update = new JSONObject();
-            ExtPropertyConverter.addProperties(this, getClass(), update);
-            target.appendJavaScript("Ext.getCmp('" + getMarkupId() + "').loadChannel(" + update.toString() + ");");
-            redraw = false;
+    public void viewChannel(final String channelId, final String initialPath) {
+        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+        if (target != null) {
+            final String loadChannelScript = String.format("Ext.getCmp('%1s').loadChannel('%2s', '%3s');",
+                    getMarkupId(), channelId, initialPath);
+            target.appendJavaScript(loadChannelScript);
         }
-    }
-
-    public void setChannelId(final String channelId) {
-        this.channelId = channelId;
-        redraw();
-    }
-
-    public void setChannelPath(final String channelPath) {
-        this.channelPath = channelPath;
-        redraw();
-    }
-
-    public void setPreviewMode(final Boolean previewMode) {
-        this.previewMode = previewMode;
-        redraw();
-    }
-
-    public void redraw() {
-        redraw = true;
     }
 
     private boolean canManageChanges(final String user, final IPluginConfig config) {

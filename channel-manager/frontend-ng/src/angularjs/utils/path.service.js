@@ -13,16 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+export class PathService {
 
-export function config($stateProvider) {
-  'ngInject';
+  concatPaths(path1, path2) {
+    if (!path1 && !path2) {
+      return '';
+    }
+    if (!path1) {
+      return path2.trim();
+    }
+    if (!path2) {
+      return path1.trim();
+    }
 
-  $stateProvider.state('hippo-cm.channel', {
-    url: '/channel/:channelId/',
-    controller: 'ChannelCtrl as channelCtrl',
-    templateUrl: 'channel/channel.html',
-    params: {
-      initialPath: '/',
-    },
-  });
+    const path1Trimmed = this._removeTrailingSlashes(path1.trim());
+    const path2Trimmed = this._removeLeadingSlashes(path2.trim());
+    return `${path1Trimmed}/${path2Trimmed}`;
+  }
+
+  _removeTrailingSlashes(path) {
+    return path.replace(/\/*$/, '');
+  }
+
+  _removeLeadingSlashes(path) {
+    return path.replace(/^\/*/, '');
+  }
 }
+

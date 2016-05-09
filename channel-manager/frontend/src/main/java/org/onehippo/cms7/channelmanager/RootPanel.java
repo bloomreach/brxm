@@ -30,13 +30,13 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeUtils;
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.cms7.channelmanager.channeleditor.ChannelEditor;
 import org.onehippo.cms7.channelmanager.channels.BlueprintStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelOverview;
 import org.onehippo.cms7.channelmanager.channels.ChannelStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelStoreFactory;
 import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
 import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
-import org.onehippo.cms7.channelmanager.channeleditor.ChannelEditor;
 import org.onehippo.cms7.channelmanager.widgets.ExtLinkPicker;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.layout.BorderLayout;
@@ -56,7 +56,7 @@ public class RootPanel extends ExtPanel {
 
     public enum CardId {
         CHANNEL_MANAGER(0),
-        TEMPLATE_COMPOSER(1),
+        CHANNEL_EDITOR(1),
         HST_CONFIG_EDITOR(2);
 
         private final int tabIndex;
@@ -131,7 +131,7 @@ public class RootPanel extends ExtPanel {
         // card 0: channel manager
         final ExtPanel channelManagerCard = new ExtPanel();
         channelManagerCard.setBorder(false);
-        channelManagerCard.setTitle(new Model<String>("Channel Manager"));
+        channelManagerCard.setTitle(Model.of(getString("channel-manager")));
         channelManagerCard.setHeader(false);
         channelManagerCard.setLayout(new BorderLayout());
 
@@ -168,7 +168,6 @@ public class RootPanel extends ExtPanel {
     }
 
     public void render(final PluginRequestTarget target) {
-        channelEditor.render(target);
         channelStore.update();
         if (target != null) {
             if (redraw) {

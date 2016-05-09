@@ -17,37 +17,15 @@
 let q;
 let http;
 
-function removeLeadingSlashes(path) {
-  return path.replace(/^\/*/, '');
-}
-
-function removeTrailingSlashes(path) {
-  return path.replace(/\/*$/, '');
-}
-
-function concatPaths(path1, path2) {
-  if (path1) {
-    if (path2) {
-      const path1Trimmed = removeTrailingSlashes(path1.trim());
-      const path2Trimmed = removeLeadingSlashes(path2.trim());
-      return `${path1Trimmed}/${path2Trimmed}`;
-    }
-    return path1.trim();
-  }
-  if (path2) {
-    return path2.trim();
-  }
-  return '';
-}
-
 export class HstService {
-  constructor($q, $http, ConfigService) {
+  constructor($q, $http, ConfigService, PathService) {
     'ngInject';
 
     q = $q;
     http = $http;
 
     this.config = ConfigService;
+    this.PathService = PathService;
   }
 
   initializeSession(hostname, mountId) {
@@ -99,13 +77,13 @@ export class HstService {
   }
 
   _createApiUrl(uuid, pathElements, params) {
-    let apiUrl = concatPaths(this.config.contextPath, this.config.apiUrlPrefix);
-    apiUrl = concatPaths(apiUrl, uuid);
+    let apiUrl = this.PathService.concatPaths(this.config.contextPath, this.config.apiUrlPrefix);
+    apiUrl = this.PathService.concatPaths(apiUrl, uuid);
     apiUrl += './';
 
     pathElements.forEach((pathElement) => {
       if (pathElement) {
-        apiUrl = concatPaths(apiUrl, pathElement);
+        apiUrl = this.PathService.concatPaths(apiUrl, pathElement);
       }
     });
 

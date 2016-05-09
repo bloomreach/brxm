@@ -53,12 +53,6 @@ describe('HippoIframeService', () => {
     iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/hippoIframe.service.iframe.fixture.html`);
   }
 
-  it('initializes the path using the channel service', () => {
-    // initialize call done in beforeEach
-    expect(ChannelService.makePath).toHaveBeenCalledWith('');
-    expect(HippoIframeService.getSrc()).toBe('/test/url');
-  });
-
   it('logs a warning when a reload is requested before the iframe has been initialized', (done) => {
     spyOn($log, 'warn');
 
@@ -144,14 +138,13 @@ describe('HippoIframeService', () => {
     });
   });
 
-  it('uses jQuery to trigger a reload if the src attribute matches the to-be-loaded path', (done) => {
+  it('uses jQuery to trigger a reload if the src attribute matches the to-be-loaded path', () => {
     ChannelService.extractRenderPathInfo.and.returnValue('/target');
-    loadIframeFixture(() => { // give the iframe something to reload.
-      HippoIframeService.signalPageLoadCompleted();
-      spyOn(iframe, 'attr');
-      HippoIframeService.load('/not/target');
-      expect(iframe.attr).toHaveBeenCalled();
-      done();
-    });
+    HippoIframeService.load('/target');
+    HippoIframeService.signalPageLoadCompleted();
+
+    spyOn(iframe, 'attr');
+    HippoIframeService.load('/not/target');
+    expect(iframe.attr).toHaveBeenCalledWith('src', '/test/url');
   });
 });

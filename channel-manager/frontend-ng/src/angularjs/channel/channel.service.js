@@ -26,7 +26,8 @@ export class ChannelService {
       HstService,
       ConfigService,
       CmsService,
-      SiteMapService
+      SiteMapService,
+      PathService
     ) {
     'ngInject';
 
@@ -41,6 +42,7 @@ export class ChannelService {
     this.ConfigService = ConfigService;
     this.CmsService = CmsService;
     this.SiteMapService = SiteMapService;
+    this.PathService = PathService;
 
     this.channel = {};
 
@@ -60,10 +62,10 @@ export class ChannelService {
   }
 
   initialize() {
-    this.CmsService.subscribe('load-channel', (channel) => {
+    this.CmsService.subscribe('load-channel', (channel, initialPath) => {
       this.HstService.getChannel(channel.id).then((updatedChannel) => {
         this._load(updatedChannel).then((channelId) => {
-          this.$state.go('hippo-cm.channel', { channelId }, { reload: true });
+          this.$state.go('hippo-cm.channel', { channelId, initialPath }, { reload: true });
         });
       });
       // TODO: handle error.
@@ -86,8 +88,12 @@ export class ChannelService {
 
   _setChannel(channel) {
     this.channel = channel;
-    this.channelPrefix = this.makeContextPrefix(channel.contextPath); // precompute to be more efficient
-    this.CatalogService.load(this.getMountId());
+
+    // precompute channel prefix to be more efficient
+    const contextPrefix = this._makeContextPrefix(channel.contextPath);
+    this.channelPrefix = this.PathService.concatPaths(contextPrefix, this.channel.mountPath);
+
+    this.CatalogService.load(this._getMountId());
     this.SiteMapService.load(channel.siteMapId);
     this._augmentChannelWithPrototypeInfo();
   }
@@ -105,27 +111,23 @@ export class ChannelService {
       });
   }
 
-  makeContextPrefix(contextPath) {
+  _makeContextPrefix(contextPath) {
     let path = contextPath;
-    if (path === '/') {
-      path = '';
-    }
-
     if (this.channel.cmsPreviewPrefix) {
-      path += `/${this.channel.cmsPreviewPrefix}`;
+      path = this.PathService.concatPaths(path, this.channel.cmsPreviewPrefix);
     }
     return path;
   }
 
   getPreviewPaths() {
-    return this.ConfigService.contextPaths.map((path) => this.makeContextPrefix(path));
+    return this.ConfigService.contextPaths.map((path) => this._makeContextPrefix(path));
   }
 
   makePath(renderPathInfo) {
     let path = this.channelPrefix;
 
     if (renderPathInfo) {
-      path += renderPathInfo;
+      path = this.PathService.concatPaths(path, renderPathInfo);
     }
 
     if (path === this.channel.contextPath) {
@@ -159,10 +161,6 @@ export class ChannelService {
 
   getName() {
     return this.channel.name;
-  }
-
-  getHomePageRenderPathInfo() {
-    return this.channel.mountPath ? this.channel.mountPath : '';
   }
 
   switchToChannel(id) {
