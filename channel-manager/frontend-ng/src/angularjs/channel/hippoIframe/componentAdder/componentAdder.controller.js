@@ -29,33 +29,39 @@ export class ComponentAdderCtrl {
       moves: (el) => ComponentAdderService.isCatalogContainerItem(el),
       accepts: (el, target) => this._isEnabledOverlayContainer(target),
     });
+
     drake.on('cloned', (clone, original) => {
       $scope.$apply(() => {
         this.selectedCatalogItem = CatalogService.getComponentByDomElement(original);
         $element.addClass('add-mode');
       });
     });
+
     drake.on('dragend', () => {
       $scope.$apply(() => {
         $element.removeClass('add-mode');
         this.isAddingComponent = false;
       });
     });
+
     drake.on('over', (el, container) => {
       $scope.$apply(() => {
         $(container).addClass('has-shadow'); // CSS :hover didn't work, use the over and out events instead.
       });
     });
+
     drake.on('out', (el, container) => {
       $scope.$apply(() => {
         $(container).removeClass('has-shadow');
       });
     });
+
     drake.on('shadow', (el) => {
       $scope.$apply(() => {
         $(el).addClass('gu-hide'); // never show the shadow when adding a component
       });
     });
+
     drake.on('drop', (el, target) => {
       if (target !== null) {
         $scope.$apply(() => {

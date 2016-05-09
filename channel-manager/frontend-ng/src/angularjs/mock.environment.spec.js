@@ -15,6 +15,7 @@
  */
 
 'use strict';
+// TODO: move this to api/cms.service.mock.spec.js
 
 function createMessageBus() {
   const subscriptions = {};

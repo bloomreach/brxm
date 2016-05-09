@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-// TODO: Remove directive and use ng-class in channel.html
+import { changeManagementDirective } from './changeManagement.directive';
+import { ChangeManagementCtrl } from './changeManagement.controller';
 
-export function maskDirective(MaskService, CmsService) {
-  'ngInject';
-
-  return {
-    restrict: 'A',
-    link: (scope, element) => {
-      MaskService.initialize(element);
-
-      CmsService.subscribe('hide-component-properties', () => MaskService.remove());
-    },
-  };
-}
+export const changeManagementModule = angular
+  .module('hippo-cm.changeManagement', [])
+  .controller('ChangeManagementCtrl', ChangeManagementCtrl)
+  .directive('changeManagement', changeManagementDirective);

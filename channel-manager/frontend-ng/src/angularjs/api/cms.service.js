@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// TODO: Rename this to ExtApiService
+
 export class CmsService {
 
   constructor($window, $log) {
@@ -70,7 +72,7 @@ export class CmsService {
     const iframePanel = this.getParentIFramePanel();
     const config = iframePanel.initialConfig.iframeConfig;
 
-    if (config === undefined) {
+    if (angular.isUndefined(config)) {
       throw new Error('Parent iframe panel does not contain iframe configuration');
     }
 

@@ -18,10 +18,15 @@
   <md-toolbar class="qa-toolbar">
     <div class="md-toolbar-tools">
       <channel-sidenav-toggle></channel-sidenav-toggle>
+
       <channel-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></channel-actions>
+
       <page-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
+
       <relevance-view-as render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
+
       <span flex></span>
+
       <md-button ng-repeat="viewPort in channelCtrl.viewPorts"
                  ng-click="channelCtrl.selectViewPort(viewPort)"
                  ng-class="{ 'md-accent': channelCtrl.isViewPortSelected(viewPort) }"
@@ -29,29 +34,10 @@
                  class="md-icon-button qa-button-viewport-{{viewPort.name}}">
         <md-icon title="{{ viewPort.titleKey | translate }}" class="material-icons">{{viewPort.icon}}</md-icon>
       </md-button>
+
       <span flex></span>
-      <md-menu ng-if="channelCtrl.hasChanges()">
-        <md-button aria-label="{{ 'TOOLBAR_BUTTON_CHANGES' | translate }}"
-                   class="qa-button-changes"
-                   ng-click="$mdOpenMenu($event)">
-          <md-icon class="material-icons">change_history</md-icon>
-          {{ 'TOOLBAR_BUTTON_CHANGES' | translate }}
-        </md-button>
-        <md-menu-content width="4" class="qa-changes-menu">
-          <md-menu-item>
-            <md-button aria-label="{{ 'TOOLBAR_MENU_CHANGES_PUBLISH' | translate }}"
-                       ng-click="channelCtrl.publish()">
-              {{ 'TOOLBAR_MENU_CHANGES_PUBLISH' | translate }}
-            </md-button>
-          </md-menu-item>
-          <md-menu-item>
-            <md-button aria-label="{{ 'TOOLBAR_MENU_CHANGES_DISCARD' | translate }}"
-                       ng-click="channelCtrl.discard()">
-              {{ 'TOOLBAR_MENU_CHANGES_DISCARD' | translate }}
-            </md-button>
-          </md-menu-item>
-        </md-menu-content>
-      </md-menu>
+
+      <changes-menu on-manage-changes="channelCtrl.showSubpage('manage-changes')"></changes-menu>
 
       <span class="button-group">
         <md-button class="qa-button-edit"
@@ -61,6 +47,7 @@
                    ng-click="channelCtrl.enterEditMode()">
           {{ 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
         </md-button>
+
         <md-button class="qa-button-view"
                    ng-class="{ 'md-accent md-raised': !channelCtrl.isEditModeActive() }"
                    ng-if="channelCtrl.isEditable()"
@@ -80,7 +67,6 @@
       layout="row"
       edit-mode="channelCtrl.isEditMode">
     </hippo-iframe>
-
   </md-content>
 </div>
 
@@ -110,5 +96,10 @@
               on-success="channelCtrl.onSubpageSuccess(key, params)"
               on-error="channelCtrl.onSubpageError(key, params)">
 </channel-edit>
+
+<change-management layout="column" flex
+                   ng-if="channelCtrl.currentSubpage == 'manage-changes'"
+                   on-done="channelCtrl.hideSubpage()">
+</change-management>
 
 <div class="mask qa-mask" mask></div>

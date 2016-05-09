@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// TODO: Look at this construct, feels weird
+
 export function CatalogComponentDirective(CatalogService) {
   'ngInject';
 

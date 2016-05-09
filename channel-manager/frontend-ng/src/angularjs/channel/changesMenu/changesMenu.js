@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-// TODO: Remove directive and use ng-class in channel.html
+import { changesMenuDirective } from './changesMenu.directive';
+import { ChangesMenuCtrl } from './changesMenu.controller';
 
-export function maskDirective(MaskService, CmsService) {
-  'ngInject';
-
-  return {
-    restrict: 'A',
-    link: (scope, element) => {
-      MaskService.initialize(element);
-
-      CmsService.subscribe('hide-component-properties', () => MaskService.remove());
-    },
-  };
-}
+export const changesMenuModule = angular
+  .module('hippo-cm.changesMenu', [])
+  .controller('ChangesMenuCtrl', ChangesMenuCtrl)
+  .directive('changesMenu', changesMenuDirective);

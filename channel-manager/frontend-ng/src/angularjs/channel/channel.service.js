@@ -15,16 +15,28 @@
  */
 
 export class ChannelService {
-  constructor($log, $rootScope, $http, $state, SessionService, CatalogService, HstService, ConfigService, CmsService, SiteMapService) {
+  constructor(
+      $log,
+      $rootScope,
+      $http,
+      $state,
+      SessionService,
+      CatalogService,
+      FeedbackService,
+      HstService,
+      ConfigService,
+      CmsService,
+      SiteMapService
+    ) {
     'ngInject';
 
     this.$log = $log;
     this.$rootScope = $rootScope;
     this.$http = $http;
     this.$state = $state;
-
     this.SessionService = SessionService;
     this.CatalogService = CatalogService;
+    this.FeedbackService = FeedbackService;
     this.HstService = HstService;
     this.ConfigService = ConfigService;
     this.CmsService = CmsService;
@@ -75,7 +87,7 @@ export class ChannelService {
   _setChannel(channel) {
     this.channel = channel;
     this.channelPrefix = this.makeContextPrefix(channel.contextPath); // precompute to be more efficient
-    this.CatalogService.load(this._getMountId());
+    this.CatalogService.load(this.getMountId());
     this.SiteMapService.load(channel.siteMapId);
     this._augmentChannelWithPrototypeInfo();
   }
@@ -166,7 +178,7 @@ export class ChannelService {
   }
 
   createPreviewConfiguration() {
-    return this.HstService.doPost(null, this._getMountId(), 'edit')
+    return this.HstService.doPost(null, this.getMountId(), 'edit')
       .then(() => {
         this.channel.previewHstConfigExists = true;
       });
@@ -186,20 +198,24 @@ export class ChannelService {
     this.CmsService.publish('channel-changed-in-angular');
   }
 
-  publishOwnChanges() {
-    return this.HstService.doPost(null, this._getMountId(), 'publish')
-      .then((response) => {
-        this._resetOwnChange();
-        return response;
-      });
+  publishChanges(users = [this.ConfigService.cmsUser]) {
+    const url = 'userswithchanges/publish';
+    return this.HstService.doPost({ data: users }, this.getMountId(), url)
+      .then(() => this.resetUserChanges(users))
+      .catch(() => this.FeedbackService.showError('ERROR_PUBLISH_CHANGES'));
   }
 
-  discardOwnChanges() {
-    return this.HstService.doPost(null, this._getMountId(), 'discard')
-      .then((response) => {
-        this._resetOwnChange();
-        return response;
-      });
+  discardChanges(users = [this.ConfigService.cmsUser]) {
+    const url = 'userswithchanges/discard';
+    return this.HstService.doPost({ data: users }, this.getMountId(), url)
+      .then(() => this.resetUserChanges(users))
+      .catch(() => this.FeedbackService.showError('ERROR_DISCARD_CHANGES'));
+  }
+
+  resetUserChanges(users) {
+    users.forEach((user) => {
+      this.channel.changedBySet.splice(this.channel.changedBySet.indexOf(user), 1);
+    });
   }
 
   getSiteMapId() {
@@ -223,7 +239,7 @@ export class ChannelService {
 
   getNewPageModel(mountId) {
     const params = mountId ? { mountId } : undefined;
-    return this.HstService.doGetWithParams(this._getMountId(), params, 'newpagemodel')
+    return this.HstService.doGetWithParams(this.getMountId(), params, 'newpagemodel')
       .then((response) => response.data);
   }
 
@@ -255,12 +271,7 @@ export class ChannelService {
     return this.pageModifiableChannels;
   }
 
-  _getMountId() {
+  getMountId() {
     return this.channel.mountId;
-  }
-
-  _resetOwnChange() {
-    this.channel.changedBySet.splice(this.channel.changedBySet.indexOf(this.ConfigService.cmsUser), 1);
-    this.CmsService.publish('channel-changed-in-angular');
   }
 }

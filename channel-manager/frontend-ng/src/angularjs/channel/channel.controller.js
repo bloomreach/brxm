@@ -16,23 +16,24 @@
 
 export class ChannelCtrl {
 
-  constructor($log, $scope, $translate, ChannelService, DialogService, PageMetaDataService, ScalingService,
-              SessionService, ComponentAdderService, ConfigService, HippoIframeService, FeedbackService, SiteMapService) {
+  constructor(
+      ChannelService,
+      ComponentAdderService,
+      FeedbackService,
+      HippoIframeService,
+      PageMetaDataService,
+      ScalingService,
+      SessionService
+    ) {
     'ngInject';
 
-    this.$log = $log;
-    this.$scope = $scope;
-    this.$translate = $translate;
+
     this.ChannelService = ChannelService;
-    this.DialogService = DialogService;
+    this.FeedbackService = FeedbackService;
+    this.HippoIframeService = HippoIframeService;
     this.PageMetaDataService = PageMetaDataService;
     this.ScalingService = ScalingService;
     this.SessionService = SessionService;
-    this.ConfigService = ConfigService;
-    this.HippoIframeService = HippoIframeService;
-    this.FeedbackService = FeedbackService;
-    this.SiteMapService = SiteMapService;
-
     this.isEditMode = false;
     this.isCreatingPreview = false;
 
@@ -112,42 +113,6 @@ export class ChannelCtrl {
 
   getRenderVariant() {
     return this.PageMetaDataService.getRenderVariant();
-  }
-
-  hasChanges() {
-    return this.ChannelService.getChannel().changedBySet.indexOf(this.ConfigService.cmsUser) !== -1;
-  }
-
-  publish() {
-    this.ChannelService.publishOwnChanges().then(() => this.HippoIframeService.reload());
-    // TODO: what if this fails?
-    // show a toast that all went well, or that the publication failed.
-    // More information may be exposed by logging an error(?) in the console,
-    // based on the actual error details from the back-end.
-  }
-
-  discard() {
-    this._confirmDiscard().then(() => {
-      this.ChannelService.discardOwnChanges()
-        .then(() => {
-          this.HippoIframeService.reload();
-          this.SiteMapService.load(this.ChannelService.getSiteMapId());
-        });
-      // TODO: what if this fails?
-      // show a toast that discarding the changed failed.
-      // More information may be exposed by logging an error(?) in the console,
-      // based on the actual error details from the back-end.
-    });
-  }
-
-  _confirmDiscard() {
-    const confirm = this.DialogService.confirm()
-      .title(this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_TITLE'))
-      .textContent(this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_MESSAGE'))
-      .ok(this.$translate.instant('BUTTON_YES'))
-      .cancel(this.$translate.instant('BUTTON_NO'));
-
-    return this.DialogService.show(confirm);
   }
 
   isSubpageOpen() {

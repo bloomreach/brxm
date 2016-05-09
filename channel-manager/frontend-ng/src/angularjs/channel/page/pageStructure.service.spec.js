@@ -78,7 +78,6 @@ describe('PageStructureService', () => {
         return child;
       }
     }
-    console.log('No child comment found!');
     return null;
   };
 
@@ -89,7 +88,6 @@ describe('PageStructureService', () => {
         return element;
       }
     }
-    console.log('no previous comment found!');
     return null;
   };
 
@@ -100,7 +98,6 @@ describe('PageStructureService', () => {
         return element;
       }
     }
-    console.log('no next comment found!');
     return null;
   };
 

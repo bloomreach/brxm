@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-// TODO: Remove directive and use ng-class in channel.html
-
-export function maskDirective(MaskService, CmsService) {
-  'ngInject';
-
+export function changesMenuDirective() {
   return {
-    restrict: 'A',
-    link: (scope, element) => {
-      MaskService.initialize(element);
-
-      CmsService.subscribe('hide-component-properties', () => MaskService.remove());
+    restrict: 'E',
+    templateUrl: 'channel/changesMenu/changesMenu.html',
+    controller: 'ChangesMenuCtrl as changes',
+    bindToController: {
+      onManageChanges: '&',
     },
   };
 }
