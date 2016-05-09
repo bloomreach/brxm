@@ -16,20 +16,19 @@
 export class PathService {
 
   concatPaths(path1, path2) {
-    let result;
-
-    if (typeof path1 === 'undefined' && typeof path2 === 'undefined') {
-      result = '';
-    } else if (!path1) {
-      result = path2;
-    } else if (!path2) {
-      result = path1;
-    } else {
-      const path1Trimmed = this._removeTrailingSlashes(path1.trim());
-      const path2Trimmed = this._removeLeadingSlashes(path2.trim());
-      result = `${path1Trimmed}/${path2Trimmed}`;
+    if (!path1 && !path2) {
+      return '';
     }
-    return result;
+    if (!path1) {
+      return path2.trim();
+    }
+    if (!path2) {
+      return path1.trim();
+    }
+
+    const path1Trimmed = this._removeTrailingSlashes(path1.trim());
+    const path2Trimmed = this._removeLeadingSlashes(path2.trim());
+    return `${path1Trimmed}/${path2Trimmed}`;
   }
 
   _removeTrailingSlashes(path) {

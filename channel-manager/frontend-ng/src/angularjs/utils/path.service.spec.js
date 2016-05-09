@@ -43,7 +43,10 @@ describe('PathService', () => {
   it('ignores falsy paths', () => {
     expect(PathService.concatPaths()).toEqual('');
     expect(PathService.concatPaths('', '')).toEqual('');
+    expect(PathService.concatPaths('')).toEqual('');
     expect(PathService.concatPaths('one')).toEqual('one');
+    expect(PathService.concatPaths('', 'two ')).toEqual('two');
+    expect(PathService.concatPaths('one', '')).toEqual('one');
     expect(PathService.concatPaths(undefined, 'two')).toEqual('two');
     expect(PathService.concatPaths('one', '')).toEqual('one');
     expect(PathService.concatPaths('', 'two')).toEqual('two');
